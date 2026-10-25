@@ -4689,3 +4689,6 @@
 | `CYCLE-20261025-7DKU` | `2026-10-25T05:34:03.390Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4080` | Yes (`c6be5f00...`) |
 | `CYCLE-20261025-7HMN` | `2026-10-25T05:34:08.639Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4081` | Yes (`0214aaac...`) |
 | `CYCLE-20261025-7J78` | `2026-10-25T05:34:10.676Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4082, Rule 1150, Rule 4083` | Yes (`b68ca8e0...`) |
+| `CYCLE-20261025-MSUJ` | `2026-10-25T05:46:03.019Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`8fc16d44...`) |
+| `CYCLE-20261025-MTY4` | `2026-10-25T05:46:04.444Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4084` | Yes (`83a65d65...`) |
+| `CYCLE-20261025-N2X1` | `2026-10-25T05:46:16.069Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4085` | Yes (`c1076425...`) |

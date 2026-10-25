@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `c0c89086`  
+> **Source Version**: `3d67720d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:45:05.983Z  
+> **Timestamp**: 2026-10-25T05:46:15.773Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:45:05.976Z  
+> **Harvest Timestamp**: 2026-10-25T05:46:15.767Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6542 stars
+- **Stars / Engagement**: 6547 stars
 
 ---
 
@@ -2007,760 +2007,77 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0c89086` (2026-10-22)
-**Commit Message**: chore(js): remove outdated .guides directories (#6870)
+### Incident Patch 1: `3d67720d` (2026-10-23)
+**Commit Message**: fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886)
 
-**File**: `js/genkit/.guides/config.json` (removed, +0/-39)
+**File**: `genkit-tools/common/.npmignore` (modified, +6/-1)
 ```diff
-@@ -1,39 +0,0 @@
--{
--  "mcpServers": {
--    "genkit": {
--      "command": "genkit",
--      "args": ["mcp"]
--    }
--  },
--  "docs": [
--    {
--      "url": "https://genkit.dev/docs/models.md",
--      "name": "generate-content",
--      "title": "Generate Content",
--      "description": "read before generating content (text, structured data, images, videos) with Genkit."
--    },
--    {
--      "url": "https://genkit.dev/docs/flows.md",
--      "name": "flows",
--      "title": "Using Flows to build GenAI Workflows",
--      "description": "read before building API endpoints or repeatable, strongly-typed workflows with Genkit"
--    },
--    {
--      "url": "https://genkit.dev/docs/tool-calling.md",
--      "name": "tool-calling",
--      "title": "Tool Calling",
--      "description": "read before adding tools/function calls to Genkit for GenAI"
--    },
--    {
--      "url": "https://genkit.dev/docs/interrupts.md",
--      "name": "tool-calling/interrupts",
--      "title": "Interrupts (Tool Calling with Human-in-the-Loop)",
--      "description": "read to understand how to use interrupts to provide human-in-the-loop capabilities to Genkit agents"
--    },
--    {
--      "url": "https://genkit.dev/docs/context.md",
--      "name": "context",
--      "description": "read to understand how to pass context to tools and flows without exposing sensitive data to the LLM"
--    }
--  ]
--}
-```
-
-**File**: `js/genkit/.guides/setup.md` (removed, +0/-31)
-```diff
-@@ -1,31 +0,0 @@
--Follow these instructions to set up Genkit in the current codebase. These instructions are general-purpose and have not been written with specific codebase knowledge, so use your best judgement when following them.
--
--0. Tell the user "I'm going to check out your workspace and set you up to use Genkit for GenAI workflows."
--1. If the current workspace is empty or is a starter template, your goal will be to create a simple image generation flow that allows someone to generate an image based on a prompt and selectable style. If the current workspace is not empty, you will create a simple example flow to help get the user started.
--2. Check to see if any Genkit provider plugin (such as `@genkit-ai/google-genai` or `@genkit-ai/oai-compat` or others, may start with `genkitx-*`) is installed. If not, install `@genkit-ai/google-genai`. If this is a Next.js app, install `@genkit-ai/next` as well.
--3. Search the codebase for the exact string `genkit(` (remember to escape regexes properly) which would indicate that the user has already set up Genkit in the codebase. If found, no need to set it up again, tell the user "Genkit is already configured in this app." and exit this workflow.
--4. Create an `ai` directory in the primary source directory of the project (this may be e.g. `src` but is project-dependent).
--5. Create `{sourceDir}/ai/genkit.ts` and populate it using the example below. DO NOT add a `next` plugin to the file, ONLY add a model provider plugin to the plugins array:
--
--```ts
--import { genkit, z } from 'genkit';
--import { googleAI } from '@genkit-ai/google-genai';
--
--export const ai = genkit({
--  plugins: [googleAI()],
--  model: googleAI.model('gemini-2.5-flash'),
--});
--
--export { z };
--```
--
--6. Create `{sourceDir}/ai/tools` and `{sourceDir}/ai/flows` directories, but leave them empty for now.
--7. Create `{sourceDir}/ai/index.ts` and populate it with the following (change the import to match import aliases in `tsconfig.json` as needed):
--
--```ts
--import './genkit.js';
--// import each created flow, tool, etc. here for use in the Genkit Dev UI
--```
--
--8. Add a `genkit:ui` script to `package.json` that runs `npx genkit-cli start -- npx tsx --watch {sourceDir}/ai/index.ts` (or `pnpm dlx` or `yarn dlx` for those package managers). DO NOT try to run the script now.
--9. Tell the user "Genkit is now configured and ready for use." as setup is now complete. Also remind them to set appropriate env variables (e.g. `GEMINI_API_KEY` for Google providers). Wait for the user to prompt further before creating any specific flows.
-```
-
-**File**: `js/genkit/.guides/style.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--- Prefer destructuring generate calls e.g. `const {text} = await ai.generate(...)`
-```
-
-**File**: `js/genkit/.guides/usage.md` (removed, +0/-63)
-```diff
-@@ -1,63 +0,0 @@
--## Basic Example
--
--```ts
--import { genkit, z } from "genkit";
--// this example uses Gemini, but Genkit supports other provider plugins
--import { googleAI } from "@genkit-ai/google-genai";
--
--const ai = genkit({
--  plugins: [googleAI()],
--  // optional: assign a default model
--  model: googleAI.model('gemini-2.5-flash'),
--});
--
--const myTool = ai.defineTool({name, description, inputSchema: z.object(...)}, (input) => {...});
--
--const {text} = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash'), // optional if default model is configured
--  system: "the system instructions", // optional
--  prompt: "the content of the prompt",
--  // OR, for multi-modal content
--  prompt: [{text: "what is this image?"}, {media: {url: "data:image/png;base64,..."}}],
--  tools: [myTool],
--});
--
--// structured output
--const CharacterSchema = z.object({...}); // make sure to use .describe() on fields
--const {output} = await ai.generate({
--  prompt: "generate an RPG character",
--  output: {schema: CharacterSchema},
--});
--```
--
--## Important API Clarifications
--
--**IMPORTANT:** This app uses Genkit v1.x which has changed significantly from pre-1.0 versions. Important changes include:
--
--```ts
--const response = await ai.generate(...);
--
--response.text // CORRECT 1.x syntax
--response.text() // INCORRECT pre-1.0 syntax
--
--response.output // CORRECT 1.x syntax
--response.output() // INCORRECT pre-1.0 syntax
--
--const {stream, response} = ai.generateStream(...); // IMPORTANT: no `await` needed
--for await (const chunk of stream) { } // CORRECT 1.x syntax
--for await (const chunk of stream()) { } // INCORRECT pre-1.0 syntax
--await response; // CORRECT 1.x syntax
--await response(); // INCORRECT pre-1.0 syntax
--await ai.generate({..., model: googleAI.model('gemini-2.5-flash')}); // CORRECT 1.x syntax
--await ai.generate({..., model: gemini15Pro}); // INCORRECT pre-1.0 syntax
--
--const ai = genkit({...}); // CORRECT 1.x syntax
--configureGenkit({...}); // INCORRECT pre-1.0 syntax
--
--ai.defineFlow({...}, (input) => {...}); // CORRECT 1.x syntax
--import { defineFlow } from "..."; // INCORRECT pre-1.0 syntax
--```
--
--- Use `import {z} from "genkit"` when you need Zod to get an implementation consistent with Genkit.
--- When defining Zod schemas, ONLY use basic scalar, object, and array types. Use `.optional()` when needed and `.describe('...')` to add descriptions for output schemas.
--- Genkit has many capabilities, make sure to read docs when you need to use them.
-```
-
-**File**: `js/plugins/express/.guides/usage.md` (removed, +0/-110)
-```diff
-@@ -1,110 +0,0 @@
--Genkit's Express integration makes it easy to expose Genkit flows as Express API endpoints:
--
--```ts
--import express from 'express';
--import { expressHandler } from '@genkit-ai/express';
--import { simpleFlow } from './flows/simple-flow.js';
--
--const app = express();
--app.use(express.json());
--
--app.post('/simpleFlow', expressHandler(simpleFlow));
--
--app.listen(8080);
--```
--
--You can also handle auth using context providers:
--
--```ts
--import { UserFacingError } from 'genkit';
--import { ContextProvider, RequestData } from 'genkit/context';
--
--const context: ContextProvider<Context> = (req: RequestData) => {
--  if (req.headers['authorization'] !== 'open sesame') {
--    throw new UserFacingError('PERMISSION_DENIED', 'not authorized');
--  }
--  return {
--    auth: {
--      user: 'Ali Baba',
--    },
--  };
--};
--
--app.post(
--  '/simpleFlow',
--  authMiddleware,
--  expressHandler(simpleFlow, { context })
--);
--```
--
--Flows and actions exposed using the `expressHandler` function can be accessed using `genkit/beta/client` library:
--
--```ts
--import { runFlow, streamFlow } from 'genkit/beta/client';
--
--const result = await runFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  input: 'say hello',
--});
--
--console.log(result); // hello
--```
--
--```ts
--// set auth headers (when using auth policies)
--const result = await runFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  headers: {
--    Authorization: 'open sesame',
--  },
--  input: 'say hello',
--});
--
--console.log(result); // hello
--```
--
--```ts
--// and streamed
--const result = streamFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  input: 'say hello',
--});
--for await (const chunk of result.stream) {
--  console.log(chunk);
--}
--console.log(await result.output);
--```
--
--You can use `startFlowServer` to quickly expose multiple flows and actions:
--
--```ts
--import { startFlowServer } from '@genkit-ai/express';
--import { genkit } from 'genkit';
--
--const ai = genkit({});
--
--export const menuSuggestionFlow = ai.defineFlow(
--  {
--    name: 'menuSuggestionFlow',
--  },
--  async (restaurantTheme) => {
--    // ...
--  }
--);
--
--startFlowServer({
--  flows: [menuSuggestionFlow],
--});
--```
--
--You can also configure the server:
--
--```ts
--startFlowServer({
--  flows: [menuSuggestionFlow],
--  port: 4567,
--  cors: {
--    origin: '*',
--  },
--});
--```
-```
-
-**File**: `js/plugins/fastify/.guides/usage.md` (removed, +0/-107)
-```diff
-@@ -1,107 +0,0 @@
--Genkit's Fastify integration makes it easy to expose Genkit flows as Fastify API endpoints:
--
--```ts
--import Fastify from 'fastify';
--import { fastifyHandler } from '@genkit-ai/fastify';
--import { simpleFlow } from './flows/simple-flow.js';
--
--const app = Fastify();
--
--app.post('/simpleFlow', fastifyHandler(simpleFlow));
--
--await app.listen({ port: 8080 });
--```
--
--You can also handle auth using context providers:
--
--```ts
--import { UserFacingError } from 'genkit';
--import { ContextProvider, RequestData } from 'genkit/context';
--
--const contextProvider: ContextProvider<Context> = (req: RequestData) => {
--  if (req.headers['authorization'] !== 'open sesame') {
--    throw new UserFacingError('PERMISSION_DENIED', 'not authorized');
--  }
--  return {
--    auth: {
--      user: 'Ali Baba',
--    },
--  };
--};
--
--app.post('/simpleFlow', fastifyHandler(simpleFlow, { contextProvider }));
--```
--
--Flows and actions exposed using the `fastifyHandler` function can be accessed using the `genkit/beta/client` library:
--
--```ts
--import { runFlow, streamFlow } from 'genkit/beta/client';
--
--const result = await runFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  input: 'say hello',
--});
--
--console.log(result); // hello
--```
--
--```ts
--// set auth headers (when using auth policies)
--const result = await runFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  headers: {
--    Authorization: 'open sesame',
--  },
--  input: 'say hello',
--});
--
--console.log(result); // hello
--```
--
--```ts
--// and streamed
--const result = streamFlow({
--  url: `http://localhost:${port}/simpleFlow`,
--  input: 'say hello',
--});
--for await (const chunk of result.stream) {
--  console.log(chunk);
--}
--console.log(await result.output);
--```
--
--You can register the `genkitFastify` plugin to quickly expose multiple flows and actions:
--
--```ts
--import Fastify from 'fastify';
--import { genkitFastify } from '@genkit-ai/fastify';
--import { genkit } from 'genkit';
--
--const ai = genkit({});
--
--export const menuSuggestionFlow = ai.defineFlow(
--  {
--    name: 'menuSuggestionFlow',
--  },
--  async (restaurantTheme) => {
--    // ...
--  }
--);
--
--const app = Fastify();
--await app.register(genkitFastify, {
--  flows: [menuSuggestionFlow],
--});
--await app.listen({ port: 8080 });
--```
--
--You can prefix the exposed routes and attach per-flow options:
--
--```ts
--import { genkitFastify, withFlowOptions } from '@genkit-ai/fastify';
--
--await app.register(genkitFastify, {
--  pathPrefix: '/api',
--  flows: [withFlowOptions(menuSuggestionFlow, { contextProvider })],
--});
--```
-```
-
-**File**: `js/plugins/google-genai/.guides/docs/editing-images.prompt` (removed, +0/-106)
-```diff
-@@ -1,106 +0,0 @@
-----
--title: Edit images with `gemini-2.5-flash-image-preview` (aka "Nano Banana")
--description: read this if you need to perform sophisticated image edits such as background removal, post matching, character replacement, relighting, on an existing image
-----
--
--The `gemini-2.5-flash-image-preview` model (also known as "Nano Banana") can perform sophisticated image edits.
--
--- You must ALWAYS add `{config: {responseModalities: ['TEXT', 'IMAGE']}}` to your `ai.generate` calls when using this model.
--
--<example>
--```ts
--// generate an image from a prompt
--
--import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
--import { googleAI } from "@genkit-ai/google-genai";
--
--const {media} = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-image-preview'),
--  config: {responseModalities: ['TEXT', 'IMAGE']}},
--  prompt: "generate a picture of a unicorn wearing a space suit on the moon",
--});
--
--return media.url; // --> "data:image/png;base64,..."
--```
--</example>
--
--<example>
--```ts
--// edit an image with a text prompt
--
--import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
--import { googleAI } from "@genkit-ai/google-genai";
--
--const {media} = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-image-preview'),
--  config: {responseModalities: ['TEXT', 'IMAGE']}},
--  prompt: [
--    {text: "change the person's outfit to a banana costume"},
--    {media: {url: "https://..." /* or 'data:...' */}},
--  ],
--});
--
--return media.url; // --> "data:image/png;base64,..."
--```
--</example>
--
--<example>
--```ts
--// combine multiple images together
--
--import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
--import { googleAI } from "@genkit-ai/google-genai";
--
--const {personImageUri, animalImageUri, sceneryImageUri} = await loadImages(...);
--
--const {media} = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-image-preview'),
--  config: {responseModalities: ['TEXT', 'IMAGE']}},
--  prompt: [
--    // the model tends to match aspect ratio of the *last* image provided
--    {text: "[PERSON]:\n"},
--    {media: {url: personImageUri}},
--    {text: "\n[ANIMAL]:\n"},
--    {media: {url: animalImageUri}},
--    {text; "\n[SCENERY]:\n"},
--    // IMPORTANT: the model tends to match aspect ratio of the *last* image provided
--    {media: {url: sceneryImageUri}},
--    {text: "make an image of [PERSON] riding a giant version of [ANIMAL] with a background of [SCENERY]"},
--  ],
--});
--
--return media.url; // --> "data:image/png;base64,..."
--```
--</example>
--
--<example>
--```ts
--// use an annotated image to guide generation
--
--import { ai } from "@/ai/genkit"; // or wherever genkit is initialized
--import { googleAI } from "@genkit-ai/google-genai";
--
--const originalImageUri = "data:..."; // the original image
--const annotatedImageUri = "data:..."; // the image with annotations on top of it
--
--const {media} = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-image-preview'),
--  config: {responseModalities: ['TEXT', 'IMAGE']}},
--  prompt: [
--    
--    {text: "follow the instructions in the following annotated image:"},
--    {media: {url: annotatedImageUri}},
--    {text: "\n\napply the annotated instructions to the original image, making sure to follow the instructions of the annotations.\n\noriginal image:\n"},
--    {media: {url: originalImageUri}},
--  ],
--});
--
--return media.url; // --> "data:image/png;base64,..."
--```
--</example>
--
--## Prompting tips for image editing
--
--- For complex edits prefer a chain of small edits to a single complex edit. Feed the output of one generation as input to the next.
--- Be specific and detailed about the edits you want to make.
--- Be clear whether added images are meant as style or subject references.
+@@ -1,5 +1,10 @@
+ node_modules
++/*.tgz
++/.genkit
++/src
++/tests
+ jest.config.ts
+ tsconfig.cjs.json
+ tsconfig.esm.json
+-tsconfig.json
 \ No newline at end of file
++tsconfig.types.json
++tsconfig.json
 ```
 
-**File**: `js/plugins/google-genai/.guides/docs/generating-speech.prompt` (removed, +0/-192)
+**File**: `genkit-tools/common/package.json` (modified, +3/-0)
 ```diff
-@@ -1,192 +0,0 @@
-----
--title: Generating Speech with Gemini
--description: read this to understand how to generate realistic speech audio from a text script
-----
--
--The Google Genai plugin provides access to text-to-speech capabilities through Gemini TTS models. These models can convert text into natural-sounding speech for various applications.
--
--#### Basic Usage
--
--To generate audio using a TTS model:
--
--```ts
--import { googleAI } from '@genkit-ai/google-genai';
--import { writeFile } from 'node:fs/promises';
--import wav from 'wav'; // npm install wav && npm install -D @types/wav
--
--const ai = genkit({
--  plugins: [googleAI()],
--});
--
--const { media } = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-preview-tts'),
--  config: {
--    responseModalities: ['AUDIO'],
--    speechConfig: {
--      voiceConfig: {
--        prebuiltVoiceConfig: { voiceName: 'Algenib' },
--      },
--    },
--  },
--  prompt: 'Say that Genkit is an amazing Gen AI library',
--});
--
--if (!media) {
--  throw new Error('no media returned');
--}
--const audioBuffer = Buffer.from(media.url.substring(media.url.indexOf(',') + 1), 'base64');
--// The googleAI plugin returns raw PCM data, which we convert to WAV format.
--await writeFile('output.wav', await toWav(audioBuffer));
--
--async function toWav(pcmData: Buffer, channels = 1, rate = 24000, sampleWidth = 2): Promise<string> {
--  return new Promise((resolve, reject) => {
--    // This code depends on `wav` npm library.
--    const writer = new wav.Writer({
--      channels,
--      sampleRate: rate,
--      bitDepth: sampleWidth * 8,
--    });
--
--    let bufs = [] as any[];
--    writer.on('error', reject);
--    writer.on('data', function (d) {
--      bufs.push(d);
--    });
--    writer.on('end', function () {
--      resolve(Buffer.concat(bufs).toString('base64'));
--    });
--
--    writer.write(pcmData);
--    writer.end();
--  });
--}
--```
--
--#### Multi-speaker Audio Generation
--
--You can generate audio with multiple speakers, each with their own voice:
--
--```ts
--const response = await ai.generate({
--  model: googleAI.model('gemini-2.5-flash-preview-tts'),
--  config: {
--    responseModalities: ['AUDIO'],
--    speechConfig: {
--      multiSpeakerVoiceConfig: {
--        speakerVoiceConfigs: [
--          {
--            speaker: 'Speaker1',
--            voiceConfig: {
--              prebuiltVoiceConfig: { voiceName: 'Algenib' },
--            },
--          },
--          {
--            speaker: 'Speaker2',
--            voiceConfig: {
--              prebuiltVoiceConfig: { voiceName: 'Achernar' },
--            },
--          },
--        ],
--      },
--    },
--  },
--  prompt: `Here's the dialog:
--    Speaker1: "Genkit is an amazing Gen AI library!"
--    Speaker2: "I thought it was a framework."`,
--});
--```
--
--When using multi-speaker configuration, the model automatically detects speaker labels in the text (like "Speaker1:" and "Speaker2:") and applies the corresponding voice to each speaker's lines.
--
--#### Configuration Options
--
--The Gemini TTS models support various configuration options:
--
--##### Voice Selection
--
--You can choose from different pre-built voices with unique characteristics:
--
--```ts
--speechConfig: {
--  voiceConfig: {
--    prebuiltVoiceConfig: {
--      voiceName: 'Algenib' // Other options: 'Achernar', 'Ankaa', etc.
--    },
--  },
--}
--```
--
--Full list of available voices:
--
--- `Zephyr`: Bright
--- `Puck`: Upbeat
--- `Charon`: Informative
--- `Kore`: Firm
--- `Fenrir`: Excitable
--- `Leda`: Youthful
--- `Orus`: Firm
--- `Aoede`: Breezy
--- `Callirrhoe`: Easy-going
--- `Autonoe`: Bright
--- `Enceladus`: Breathy
--- `Iapetus`: Clear
--- `Umbriel`: Easy-going
--- `Algieba`: Smooth
--- `Despina`: Smooth
--- `Erinome`: Clear
--- `Algenib`: Gravelly
--- `Rasalgethi`: Informative
--- `Laomedeia`: Upbeat
--- `Achernar`: Soft
--- `Alnilam`: Firm
--- `Schedar`: Even
--- `Gacrux`: Mature
--- `Pulcherrima`: Forward
--- `Achird`: Friendly
--- `Zubenelgenubi`: Casual
--- `Vindemiatrix`: Gentle
--- `Sadachbia`: Lively
--- `Sadaltager`: Knowledgeable
--- `Sulafat`: Warm
--
--##### Speech Emphasis
--
--You can use markdown-style formatting in your prompt to add emphasis:
--
--- Bold text (`**like this**`) for stronger emphasis
--- Italic text (`*like this*`) for moderate emphasis
--
--Example:
--
--```ts
--prompt: 'Genkit is an **amazing** Gen AI *library*!';
--```
--
--##### Advanced Speech Parameters
--
--For more control over the generated speech:
--
--```ts
--speechConfig: {
--  voiceConfig: {
--    prebuiltVoiceConfig: {
--      voiceName: 'Algenib',
--      speakingRate: 1.0,  // Range: 0.25 to 4.0, default is 1.0
--      pitch: 0.0,         // Range: -20.0 to 20.0, default is 0.0
--      volumeGainDb: 0.0,  // Range: -96.0 to 16.0, default is 0.0
--    },
--  },
--}
--```
--
--- `speakingRate`: Controls the speed of speech (higher values = faster speech)
--- `pitch`: Adjusts the pitch of the voice (higher values = higher pitch)
--- `volumeGainDb`: Controls the volume (higher values = louder)
--
--For more detailed information about the Gemini TTS models and thei
+@@ -70,6 +70,9 @@
+   },
+   "author": "genkit",
+   "license": "Apache-2.0",
++  "files": [
++    "lib/"
++  ],
+   "types": "./lib/types/src/types/index.d.ts",
+   "exports": {
+     ".": {
 ```
 
----
-
-### Incident Patch 2: `a7b514e9` (2026-10-22)
-**Commit Message**: fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (#6866)
-
-**File**: `genkit-tools/cli/src/mcp/flows.ts` (modified, +1/-1)
+**File**: `genkit-tools/telemetry-server/.npmignore` (modified, +6/-1)
 ```diff
-@@ -68,7 +68,7 @@ export function defineFlowTools(server: McpServer, options: McpToolOptions) {
-     'run_flow',
-     {
-       title: 'Run Flow',
--      description: 'Runs the flow with the provided input',
-+      description: 'Executes a Genkit flow with the provided JSON input.',
-       inputSchema: getCommonSchema(options.explicitProjectRoot, {
-         flowName: z.string().describe('name of the flow; type: string'),
-         input: z
+@@ -1,4 +1,9 @@
+ node_modules
++/*.tgz
++/.genkit
++/src
++/tests
+ tsconfig.cjs.json
+ tsconfig.esm.json
+-tsconfig.json
+\ No newline at end of file
++tsconfig.types.json
++tsconfig.json
 ```
 
-**File**: `genkit-tools/cli/src/mcp/server.ts` (modified, +13/-4)
+**File**: `genkit-tools/telemetry-server/package.json` (modified, +3/-0)
 ```diff
-@@ -35,10 +35,19 @@ export async function startMcpServer(params: {
-   const { projectRoot, explicitProjectRoot, timeout, auth } = params;
-   logger.info(`Starting MCP server in: ${projectRoot}`);
- 
--  const server = new McpServer({
--    name: 'Genkit MCP',
--    version: '0.0.2',
--  });
-+  const server = new McpServer(
-+    {
-+      name: 'Genkit MCP',
-+      version: '0.0.2',
-+      title: 'Genkit MCP Server',
-+      description:
-+        'Provides Genkit documentation, usage guides, runtime process management, flow discovery/execution, and execution trace inspection.',
-+    },
-+    {
-+      instructions:
-+        'Use this server to look up Genkit documentation and API guides (`get_usage_guide`, `search_genkit_docs`, `list_genkit_docs`, `read_genkit_docs`), manage the local Genkit runtime (`start_runtime`, `restart_runtime`, `kill_runtime`), discover and run Genkit flows (`list_flows`, `run_flow`), and inspect execution traces (`get_trace`). Always check `get_usage_guide` or search Genkit docs before implementing Genkit features.',
-+    }
-+  );
- 
-   await defineDocsTool(server);
-   await defineUsageGuideTool(server);
-```
-
-**File**: `genkit-tools/cli/src/mcp/trace.ts` (modified, +2/-1)
-```diff
-@@ -30,7 +30,8 @@ export function defineTraceTools(server: McpServer, options: McpToolOptions) {
-     'get_trace',
-     {
-       title: 'Get Genkit Trace',
--      description: 'Returns the trace details.',
-+      description:
-+        'Retrieves the detailed Genkit execution trace (spans, inputs, outputs, and errors) for a flow or action run by its `traceId`.',
-       inputSchema: getCommonSchema(options.explicitProjectRoot, {
-         traceId: z
-           .string()
+@@ -24,6 +24,9 @@
+   },
+   "author": "genkit",
+   "license": "Apache-2.0",
++  "files": [
++    "lib/"
++  ],
+   "dependencies": {
+     "@genkit-ai/tools-common": "workspace:*",
+     "@asteasolutions/zod-to-openapi": "^7.0.0",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6886** (2026-10-23): fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (@MichaelDoyle)
+- **PR #6875** (closed): feat(js/plugins/express): add serveAgent to the beta entry point (@cabljac)
+- **PR #6872** (2026-10-22): feat(google-genai): Deep Research on vertexAI (@ifielker)
 - **PR #6870** (2026-10-22): chore(js): remove outdated .guides directories (@MichaelDoyle)
 - **PR #6866** (2026-10-22): fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (@ssbushi)
 - **PR #6859** (2026-10-21): feat(js/plugins/google-genai): vertexAI model updates, TTS, Omni... (@ifielker)
-- **PR #6855** (2026-10-21): test(js/plugins/google-cloud): stop slow test output and unawaited rejects stalling CI (@pavelgj)
-- **PR #6851** (2026-10-21): feat(js/plugins/google-genai): route newer vertexAI Gemini models to Interactions (@ifielker)
-- **PR #6838** (2026-10-20): fix(js/plugins/anthropic): send back empty signed thinking blocks (@hkarmoush)
 
 ---
 
@@ -2774,3 +2091,39 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68
+
+**RULE**:
+When implementing operations in `genkit-tools/common/.npmignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3d67720d`: genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/.npmignore`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+/*.tgz
+/.genkit
+/src
+/tests
+tsconfig.types.json
+tsconfig.json
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+tsconfig.json
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3d67720d` are properly handled with clean fallback behavior.

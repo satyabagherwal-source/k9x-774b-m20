@@ -4696,3 +4696,6 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `2c800e6b` | Multi-dimensional audit evidence | 2026-10-25T05:34:03.393Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `37f49f24` | Multi-dimensional audit evidence | 2026-10-25T05:34:08.641Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-25T05:34:10.678Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-25T05:46:03.022Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `157caa55` | Multi-dimensional audit evidence | 2026-10-25T05:46:04.447Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `3d67720d` | Multi-dimensional audit evidence | 2026-10-25T05:46:16.072Z |

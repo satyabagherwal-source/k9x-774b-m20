@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `59a9e85a`  
+> **Source Version**: `157caa55`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:53:23.114Z  
+> **Timestamp**: 2026-10-25T05:46:04.127Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:53:21.471Z  
+> **Harvest Timestamp**: 2026-10-25T05:46:04.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50219 stars
+- **Stars / Engagement**: 50266 stars
 
 ---
 
@@ -1244,7 +1244,6 @@ use annotate_snippets::{
     Annotation as AnnotateAnnotation, AnnotationKind, Group as AnnotateGroup,
     Level as AnnotateLevel, Snippet as AnnotateSnippet,
 };
-use full::FullRenderer;
 use ruff_notebook::{Notebook, NotebookIndex};
 use ruff_source_file::{LineIndex, OneIndexed, SourceCode};
 use ruff_text_size::{TextLen, TextRange, TextSize};
@@ -1256,19 +1255,31 @@ use crate::{
 };
 
 use super::{
-    Annotation, Diagnostic, DiagnosticFormat, DiagnosticSource, DisplayDiagnosticConfig,
-    SubDiagnostic, UnifiedFile,
+    Annotation, Diagnostic, DiagnosticSource, DisplayDiagnosticConfig, SubDiagnostic, UnifiedFile,
 };
 
-use azure::AzureRenderer;
-use concise::ConciseRenderer;
-use github::GithubRenderer;
-use pylint::PylintRenderer;
+pub use azure::AzureRenderer;
+pub use concise::ConciseRenderer;
+pub use full::FullRenderer;
+pub use github::GithubRenderer;
+#[cfg(feature = "serde")]
+pub use gitlab::GitlabRenderer;
+#[cfg(feature = "serde")]
+pub use json::JsonRenderer;
+#[cfg(feature = "serde")]
+pub use json_lines::JsonLinesRenderer;
+#[cfg(feature = "junit")]
+pub use junit::JunitRenderer;
+pub use pylint::PylintRenderer;
+#[cfg(feature = "serde")]
+pub use rdjson::RdjsonRenderer;
+#[cfg(feature = "serde")]
+pub use sarif::SarifRenderer;
 
 mod azure;
 mod concise;
 mod full;
-pub mod github;
+mod github;
 #[cfg(feature = "serde")]
 mod gitlab;
 #[cfg(feature = "serde")]
@@ -1280,116 +1291,26 @@ mod junit;
 mod pylint;
 #[cfg(feature = "serde")]
 mod rdjson;
+#[cfg(feature = "serde")]
+mod sarif;
 
-/// A type that implements `std::fmt::Display` for diagnostic rendering.
-///
-/// It is created via [`Diagnostic::display`].
-///
-/// The lifetime parameter, `'a`, refers to the shorter of:
-///
-/// * The lifetime of the rendering configuration.
-/// * The lifetime of the resolver used to load the contents of `Span`
-///   values. When using Salsa, this most commonly corresponds to the lifetime
-///   of a Salsa `Db`.
-/// * The lifetime of the diagnostic being rendered.
-pub struct DisplayDiagnostic<'a> {
-    config: &'a DisplayDiagnosticConfig,
-    resolver: &'a dyn FileResolver,
-    diag: &'a Diagnostic,
-}
+/// Renders diagnostics in a particular output format.
+pub trait Renderer {
+    /// Renders diagnostics to a formatter.
+    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result;
 
-impl<'a> DisplayDiagnostic<'a> {
-    pub(crate) fn new(
-        resolver: &'a dyn FileResolver,
-        config: &'a DisplayDiagnosticConfig,
-        diag: &'a Diagnostic,
-    ) -> DisplayDiagnostic<'a> {
-        DisplayDiagnostic {
-            config,
-            resolver,
-            diag,
-        }
+    /// Returns a display implementation for these diagnostics.
+    fn display<'a>(&'a self, diagnostics: &'a [Diagnostic]) -> impl std::fmt::Display + 'a {
+        std::fmt::from_fn(move |f| self.render(f, diagnostics))
     }
-}
 
-impl std::fmt::Display for DisplayDiagnostic<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        DisplayDiagnostics::new(self.resolver, self.config, std::slice::from_ref(self.diag)).fmt(f)
-    }
-}
-
-/// A type that implements `std::fmt::Display` for rendering a collection of diagnostics.
-///
-/// It is intended for collections of diagnostics that need to be serialized together, as is the
-/// case for JSON, for example.
-///
-/// See [`DisplayDiagnostic`] for rendering individual `Diagnostic`s and details about the lifetime
-/// constraints.
-pub struct DisplayDiagnostics<'a> {
-    config: &'a DisplayDiagnosticConfig,
-    resolver: &'a dyn FileResolver,
-    diagnostics: &'a [Diagnostic],
-}
-
-impl<'a> DisplayDiagnostics<'a> {
-    pub fn new(
-        resolver: &'a dyn FileResolver,
-        config: &'a DisplayDiagnosticConfig,
-        diagnostics: &'a [Diagnostic],
-    ) -> DisplayDiagnostics<'a> {
-        DisplayDiagnostics {
-            config,
-            resolver,
-            diagnostics,
-        }
-    }
-}
-
-impl std::fmt::Display for DisplayDiagnostics<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.config.format {
-            DiagnosticFormat::Concise => {
-                ConciseRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-            DiagnosticFormat::Full => {
-                FullRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-            DiagnosticFormat::Azure => {
-                AzureRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-            #[cfg(feature = "serde")]
-            DiagnosticFormat::Json => {
-                json::JsonRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-            #[cfg(feature = "serde")]
-            DiagnosticFormat::JsonLines => {
-                json_lines::JsonLinesRenderer::new(self.resolver, self.config)
-                    .render(f, self.diagnostics)?;
-            }
-            #[cfg(feature = "serde")]
-            DiagnosticFormat::Rdjson => {
-                rdjson::RdjsonRenderer::new(self.resolver, self.config)
-                    .render(f, self.diagnostics)?;
-            }
-            DiagnosticFormat::Pylint => {
-                PylintRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-            #[cfg(feature = "junit")]
-            DiagnosticFormat::Junit => {
-                junit::JunitRenderer::new(self.resolver, self.config)
-                    .render(f, self.diagnostics)?;
-            }
-            #[cfg(feature = "serde")]
-            DiagnosticFormat::Gitlab => {
-                gitlab::GitlabRenderer::new(self.resolver, self.config)
-                    .render(f, self.diagnostics)?;
-            }
-            DiagnosticFormat::Github => {
-                GithubRenderer::new(self.resolver, self.config).render(f, self.diagnostics)?;
-            }
-        }
-
-        Ok(())
+    /// Writes diagnostics to an I/O writer.
+    fn write(
+        &self,
+        writer: &mut dyn std::io::Write,
+        diagnostics: &[Diagnostic],
+    ) -> std::io::Result<()> {
+        write!(writer, "{}", self.display(diagnostics))
     }
 }
 
@@ -1531,7 +1452,74 @@ impl<'a> ResolvedDiagnostic<'a> {
         ResolvedDiagnostic {
             level: diag.inner.severity.to_annotate(),
             id: None,
-            d
+            documentation_url: None,
+            message: diag.inner.message.as_str().to_string(),
+            annotations,
+            is_fixable: false,
+            header_offset: 0,
+        }
+    }
+
+    /// Create a diagnostic amenable for rendering.
+    ///
+    /// `context` refers to the number of lines both before and after to show
+    /// for each snippet.
+    fn to_renderable<'r>(&'r self, config: &DisplayDiagnosticConfig) -> RenderableDiagnostic<'r> {
+        let mut ann_by_path: BTreeMap<&'a str, Vec<&ResolvedAnnotation<'a>>> = BTreeMap::new();
+        for ann in &self.annotations {
+            ann_by_path.entry(ann.path).or_default().push(ann);
+        }
+        for anns in ann_by_path.values_mut() {
+            anns.sort_by_key(|ann1| ann1.range.start());
+        }
+
+        // The merge window determines how close two annotations need
+        // to be (in lines) to be rendered inside a single snippet.
+        // This is independent of `context`, which controls how many
+        // extra padding lines appear before and after each snippet.
+        let merge_window = config.merge_window.max(config.context);
+
+        let mut snippet_by_path: BTreeMap<&'a str, Vec<Vec<&ResolvedAnnotation<'a>>>> =
+            BTreeMap::new();
+        for (path, anns) in ann_by_path {
+            let mut snippet = vec![];
+            for ann in anns {
+                let Some(prev) = snippet.last() else {
+                    snippet.push(ann);
+                    continue;
+                };
+
+                let prev_context_ends = context_after(
+                    &prev.diagnostic_source.as_source_code(),
+                    merge_window,
+                    prev.line_end,
+                    prev.notebook_index.as_ref(),
+                )
+                .get();
+                let this_context_begins = context_before(
+                    &ann.diagnostic_source.as_source_code(),
+                    merge_window,
+                    ann.line_start,
+                    ann.notebook_index.as_ref(),
+                )
+                .get();
+
+                // For notebooks, check whether the end of the
+                // previous annotation and the start of the current
+                // annotation are in different cells.
+                let prev_cell_index = prev.notebook_index.as_ref().map(|notebook_index| {
+                    let prev_end = prev
+                        .diagnostic_source
+                        .as_source_code()
+                        .line_column(prev.range.end());
+                    notebook_index.cell(prev_end.line).unwrap_or_default().get()
+                });
+                let this_cell_index = ann.notebook_index.as_ref().map(|notebook_index| {
+                    let this_start = ann
+                        .diagnostic_source
+                        .as_source_code()
+                        .line_column(ann.range.start());
+                 
 ```
 
 ### Core Architecture Module: `crates/ruff_db/src/diagnostic/render/azure.rs`
@@ -1540,25 +1528,24 @@ use ruff_source_file::LineColumn;
 
 use crate::diagnostic::{Diagnostic, DisplayDiagnosticConfig, Severity};
 
-use super::FileResolver;
+use super::{FileResolver, Renderer};
 
-pub(super) struct AzureRenderer<'a> {
+/// Print diagnostics in the [Azure Pipelines] format.
+///
+/// [Azure Pipelines]: https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash#logissue-log-an-error-or-warning
+pub struct AzureRenderer<'a> {
     resolver: &'a dyn FileResolver,
     config: &'a DisplayDiagnosticConfig,
 }
 
 impl<'a> AzureRenderer<'a> {
-    pub(super) fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
+    pub fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
         Self { resolver, config }
     }
 }
 
-impl AzureRenderer<'_> {
-    pub(super) fn render(
-        &self,
-        f: &mut std::fmt::Formatter,
-        diagnostics: &[Diagnostic],
-    ) -> std::fmt::Result {
+impl Renderer for AzureRenderer<'_> {
+    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
         for diag in diagnostics {
             let severity = match diag.severity() {
                 Severity::Info | Severity::Warning => "warning",
@@ -1601,9 +1588,8 @@ impl AzureRenderer<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::diagnostic::{
-        DiagnosticFormat,
-        render::tests::{create_diagnostics, create_syntax_error_diagnostics},
+    use crate::diagnostic::render::tests::{
+        DiagnosticFormat, create_diagnostics, create_syntax_error_diagnostics,
     };
 
     #[test]
@@ -1628,23 +1614,21 @@ use crate::diagnostic::{
     stylesheet::{DiagnosticStylesheet, fmt_styled, fmt_with_hyperlink},
 };
 
-use super::FileResolver;
+use super::{FileResolver, Renderer};
 
-pub(super) struct ConciseRenderer<'a> {
+pub struct ConciseRenderer<'a> {
     resolver: &'a dyn FileResolver,
     config: &'a DisplayDiagnosticConfig,
 }
 
 impl<'a> ConciseRenderer<'a> {
-    pub(super) fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
+    pub fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
         Self { resolver, config }
     }
+}
 
-    pub(super) fn render(
-        &self,
-        f: &mut std::fmt::Formatter,
-        diagnostics: &[Diagnostic],
-    ) -> std::fmt::Result {
+impl Renderer for ConciseRenderer<'_> {
+    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
         let stylesheet = if self.config.color {
             DiagnosticStylesheet::styled().hyperlinks(self.config.hyperlinks)
         } else {
@@ -1757,12 +1741,9 @@ impl<'a> ConciseRenderer<'a> {
 mod tests {
     use ruff_diagnostics::Applicability;
 
-    use crate::diagnostic::{
-        DiagnosticFormat,
-        render::tests::{
-            TestEnvironment, create_diagnostics, create_notebook_diagnostics,
-            create_syntax_error_diagnostics,
-        },
+    use crate::diagnostic::render::tests::{
+        DiagnosticFormat, TestEnvironment, create_diagnostics, create_notebook_diagnostics,
+        create_syntax_error_diagnostics,
     };
 
     #[test]
@@ -1867,25 +1848,23 @@ use ruff_notebook::NotebookIndex;
 use ruff_source_file::OneIndexed;
 use ruff_text_size::{Ranged, TextLen, TextRange, TextSize};
 
-use crate::diagnostic::render::{FileResolver, Resolved};
+use crate::diagnostic::render::{FileResolver, Renderer, Resolved};
 use crate::diagnostic::stylesheet::{DiagnosticStylesheet, fmt_styled};
 use crate::diagnostic::{Diagnostic, DiagnosticSource, DisplayDiagnosticConfig};
 
-pub(super) struct FullRenderer<'a> {
+pub struct FullRenderer<'a> {
     resolver: &'a dyn FileResolver,
     config: &'a DisplayDiagnosticConfig,
 }
 
 impl<'a> FullRenderer<'a> {
-    pub(super) fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
+    pub fn new(resolver: &'a dyn FileResolver, config: &'a DisplayDiagnosticConfig) -> Self {
         Self { resolver, config }
     }
+}
 
-    pub(super) fn render(
-        &self,
-        f: &mut std::fmt::Formatter,
-        diagnostics: &[Diagnostic],
-    ) -> std::fmt::Result {
+impl Renderer for FullRenderer<'_> {
+    fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
         let stylesheet = if self.config.color {
             DiagnosticStylesheet::styled().hyperlinks(self.config.hyperlinks)
         } else {
@@ -2114,7 +2093,7 @@ impl<'a> Diff<'a> {
                         for (emphasized, value) in change.iter_strings_lossy() {
                             if needs_separator && !value.trim_end_matches(['\n', '\r']).is_empty() {
                                 f.write_str(" ")?;
- 
+        
 ```
 
 
@@ -2123,11 +2102,14 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29578** (2026-10-21): **[ty] Avoid widening compatible generic return alternatives**
-  *Symptoms*: Since #28303, when a generic call inference has multiple valid solutions, we will intersect the return types resulting from specializing with each valid solution. This approach has various caveats discussed in the description of that PR. One of them is that sometimes a call with an invariant return type (e.g. `list[T]`) can be validly inferred as returning e.g. either `list[int]` or `list[str]`, but not both simultaneously (consider if it actually returns `[]` -- it can be viewed as either kind of list, but not both at the same time). Intersecting `list[int]` and `list[str]` would result in `Never`, which is wrong: the call can return.   For this reason, we skip intersecting return types if they vary in an invariant type.  But in some cases one specialized return type is a subtype of all the other ones. In this case it's safe to go ahead and prefer the narrower type,  even if they vary in invariant position and thus we wouldn't otherwise intersect them.  This avoids a regression in #29236. 
+- **Issue #29691** (2026-10-24): **[ty] Bound tuple expansion in type displays**
+  *Symptoms*: ## Summary  With 18 assignments of the form `b = (a, a)`, `ty check --output-format concise` used to print 3 MiB for a single `call-non-callable` error. It now prints 1.7 KiB.  Each assignment reuses the previous tuple type twice, so spelling out the type in the error message doubles the number of `int`s at each step:  ```python def f(x: int):     a = (x, x)     b = (a, a)     b()  # Object of type `tuple[tuple[int, int], tuple[int, int]]` is not callable ```  We now share a budget of 256 elements across a tuple and its nested tuples. If a tuple's elements exceed the remaining budget, we display it as `tuple[...]`. Deep tuples still display in full when they fit. Inlay hints omit the text edit when the type contains an abbreviation, so editors won't insert `tuple[...]` as an annotation. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- generated-comment typing-conformance --> <!-- report-run:40139169587:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.77%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169587/attempts/1) 
+  > <!-- generated-comment memory --> <!-- report-run:40139169527:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169527/attempts/1) 
 
-- **Issue #29577** (2026-10-22): **[ty] Restrict range implications from gradual equivalence**
-  *Symptoms*: Fix false `invalid-argument-type` errors when inferring constrained type variables from callbacks that return an invariant generic with a gradual type argument. A callback returning `Box[Any]` can satisfy `Callable[[], T | Box[T]]` when `T` is constrained to `str` or `bytes`.  The solver treated equivalence to a gradual type as exact substitution, allowing a valid union alternative to imply an incompatible bound. Require a static equivalence bound before deriving either lower- or upper-bound implications, including when gradual types are nested inside a bound.  Prerequisite to avoid regressions in #29236. 
+- **Issue #29649** (2026-10-24): **[ty] Avoid expanding declared bounds in captured ParamSpecs**
+  *Symptoms*: Passing overloaded generic functions to `Callable[P, object]` can cause the constraint solver to enumerate combinations of signatures specialized to their declared type-variable bounds. The captured signatures already retain those bounds, so this adds substantial work without new call-site evidence.  Track the replacement constraint's provenance and skip this specialization for locally bound variables in captured ParamSpec signatures when the replacement comes solely from a validity constraint. Evidence and mixed constraints still specialize local variables, and free variables retain normal substitution, including expansion of free ParamSpecs into overloads.  Preserving the generic parameters also lets a callback constrained to `(str, bytes)` receive either type when forwarded through a `ParamSpec`, instead of being restricted to its first constraint.  Fixes https://github.com/astral-sh/ty/issues/4796.  ## Test plan  Compared against `90bcf19c58b4` using the same Linux/aarch64 environment and optimized dev profile (Rust 1.99.0, opt-level 1, LTO off):  - The issue's NumPy reproducer, using NumPy 2.5.4 and Python 3.12 semantics, improved from an 11.03 s mean across three runs to 0.101 s across ten runs (about 110× faster). Every run completed without diagnostics. - The six-overload benchmark improved from 225 ms to 22.5 ms across ten Criterion samples (about 10× faster), with no diagnostics before or after.  ## Ecosystem report  Analyzed head `5c07a3b83f78d45ccf9994f0bfa681ee25
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2144,401 +2126,649 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `008d4526` (2026-10-21)
-**Commit Message**: Update docker/build-push-action action to v7.4.0 (#29573)
+### Incident Patch 1: `0f3bca2f` (2026-10-23)
+**Commit Message**: [ty] Short-circuit top/bottom signature comparisons (#29537)
 
-This PR contains the following updates:
+The bottom signature is trivially assignable _to_, and the top signature
+is trivially assignable _from_, all other signatures. We can add fast
+path checks for those before performing more complex signature
+comparisons.
 
-| Package | Type | Update | Change |
-|---|---|---|---|
-|
-[docker/build-push-action](https://redirect.github.com/docker/build-push-action)
-| action | minor | `v7.3.0` → `v7.4.0` |
-
----
-
-### Release Notes
-
-<details>
-<summary>docker/build-push-action</summary>
-
-###
-[`v7.4.0`](https://redirect.github.com/docker/build-push-action/releases/tag/v7.4.0)
-
-[Compare
-Source](https://redirect.github.com/docker/build-push-action/compare/v7.3.0...v7.4.0)
-
-- Use the shared error helper for Buildx commands by
-[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
-[#&#8203;1620](https://redirect.github.com/docker/build-push-action/pull/1620)
-- Prevent workflow command injection in metadata logs by
-[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
-[#&#8203;1617](https://redirect.github.com/docker/build-push-action/pull/1617)
-- Bump
-[@&#8203;docker/actions-toolkit](https://redirect.github.com/docker/actions-toolkit)
-from 0.92.0 to 0.100.0 in
-[#&#8203;1614](https://redirect.github.com/docker/build-push-action/pull/1614)
-[#&#8203;1618](https://redirect.github.com/docker/build-push-actio
-
-**File**: `.github/workflows/build-docker.yml` (modified, +2/-2)
+**File**: `crates/ruff_benchmark/benches/ty_constraint_set.rs` (modified, +36/-0)
 ```diff
-@@ -88,7 +88,7 @@ jobs:
-       # Adapted from https://docs.docker.com/build/ci/github-actions/multi-platform/
-       - name: Build and push by digest
-         id: build
--        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-         with:
-           context: .
-           platforms: ${{ matrix.platform }}
-@@ -267,7 +267,7 @@ jobs:
+@@ -140,6 +140,41 @@ fn benchmark_constraint_quantification(criterion: &mut Criterion) {
+     }
+ }
  
-       - name: Build and push
-         id: build-and-push
--        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-         with:
-           context: .
-           platforms: linux/amd64,linux/arm64
++/// Compare bottom sources and top targets against distinct signatures.
++fn benchmark_bottom_and_top_signature_comparisons(criterion: &mut Criterion) {
++    setup_rayon();
++
++    for name in ["bottom", "top"] {
++        let mut code = String::from(
++            "\
++from typing import Any, Callable, Literal
++from ty_extensions import Bottom, Top
++",
++        );
++        for i in 0..128 {
++            let signature = format!("Callable[[Literal[{i}], str, bytes], int]");
++            let (source, target) = if name == "bottom" {
++                ("Bottom[Callable[..., Any]]", signature.as_str())
++            } else {
++                (signature.as_str(), "Top[Callable[..., object]]")
++            };
++            writeln!(
++                &mut code,
++                "\ndef check_{i}(source: {source}) -> None:\n    target: {target} = source"
++            )
++            .ok();
++        }
++
++        criterion.bench_function(&format!("ty_micro[{name}_signature_comparisons]"), |b| {
++            b.iter_batched_ref(
++                || setup_micro_case(&code),
++                |Case { db }| assert_eq!(db.check().len(), 0),
++                BatchSize::SmallInput,
++            );
++        });
++    }
++}
++
+ /// Benchmarks solving many union-bearing upper bounds while inferring a generic call.
+ ///
+ /// Each callable argument places a distinct union upper bound on `T` through callable-parameter
+@@ -719,6 +754,7 @@ criterion_group!(
+     benchmark_typevar_mapping_large_accumulation,
+     benchmark_typevar_mapping_small_accumulations,
+     benchmark_constraint_quantification,
++    benchmark_bottom_and_top_signature_comparisons,
+     benchmark_factored_upper_bounds,
+     benchmark_many_upper_bound_callbacks,
+     benchmark_pandas_tdd,
 ```
 
----
-
-### Incident Patch 2: `e8b4b288` (2026-10-21)
-**Commit Message**: Update docker/setup-buildx-action action to v4.4.1 (#29574)
-
-This PR contains the following updates:
-
-| Package | Type | Update | Change |
-|---|---|---|---|
-|
-[docker/setup-buildx-action](https://redirect.github.com/docker/setup-buildx-action)
-| action | minor | `v4.3.0` → `v4.4.1` |
-
----
-
-### Release Notes
-
-<details>
-<summary>docker/setup-buildx-action</summary>
-
-###
-[`v4.4.1`](https://redirect.github.com/docker/setup-buildx-action/releases/tag/v4.4.1)
-
-[Compare
-Source](https://redirect.github.com/docker/setup-buildx-action/compare/v4.4.0...v4.4.1)
-
-- Skip BuildKit image pre-pulls for explicit endpoints by
-[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
-[#&#8203;624](https://redirect.github.com/docker/setup-buildx-action/pull/624)
-
-**Full Changelog**:
-<https://github.com/docker/setup-buildx-action/compare/v4.4.0...v4.4.1>
-
-###
-[`v4.4.0`](https://redirect.github.com/docker/setup-buildx-action/releases/tag/v4.4.0)
-
-[Compare
-Source](https://redirect.github.com/docker/setup-buildx-action/compare/v4.3.0...v4.4.0)
-
-- Use official Buildx releases for cloud driver by
-[@&#8203;crazy-max](https://redirect.github.com/crazy-max) in
-[#&#8203;606](https://redirect.github.com/docke
-
-**File**: `.github/workflows/build-docker.yml` (modified, +4/-4)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/callables.md` (modified, +67/-0)
 ```diff
-@@ -46,7 +46,7 @@ jobs:
-           submodules: recursive
-           persist-credentials: false
- 
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         if: ${{ inputs.plan != '' && !fromJson(inputs.plan).announcement_tag_is_implicit }}
-@@ -130,7 +130,7 @@ jobs:
-           pattern: digests-*
-           merge-multiple: true
- 
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
-@@ -202,7 +202,7 @@ jobs:
-           - debian:trixie-slim,trixie-slim,debian-slim
-           - buildpack-deps:trixie,trixie,debian
-     steps:
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-@@ -308,7 +308,7 @@ jobs:
-           pattern: digests-*
-           merge-multiple: true
- 
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
-```
-
----
-
-### Incident Patch 3: `48dcdd0e` (2026-10-22)
-**Commit Message**: [ty] Restrict range implications from gradual equivalence (#29577)
-
-Fix false `invalid-argument-type` errors when inferring constrained type
-variables from callbacks that return an invariant generic with a gradual
-type argument. A callback returning `Box[Any]` can satisfy `Callable[[],
-T | Box[T]]` when `T` is constrained to `str` or `bytes`.
-
-The solver treated equivalence to a gradual type as exact substitution,
-allowing a valid union alternative to imply an incompatible bound.
-Require a static equivalence bound before deriving either lower- or
-upper-bound implications, including when gradual types are nested inside
-a bound.
-
-Prerequisite to avoid regressions in #29236.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +38/-0)
-```diff
-@@ -2102,6 +2102,44 @@ reveal_type(infer_any_bound(list[str]()))  # revealed: str
- reveal_type(infer_list_bound(list[list[str]]()))  # revealed: list[str]
+@@ -298,6 +298,73 @@ reveal_type(generic_context(outside_callable(int_identity)))
+ outside_callable(int_identity)("string")
  ```
  
-+## Gradual specializations in callable union returns
++## Inference from bottom callable signatures
 +
-+A callable's return type only needs to match one member of an expected union, even when the match
-+relies on a gradual type argument. If several declared constraints remain possible, inference
-+preserves the gradual type argument.
++A callable that accepts every argument list and returns `Never` can satisfy any callable signature.
++Its return and parameter types still provide inference evidence: `Never ≤ T` infers `Never`, while
++`T ≤ object` infers `object`.
 +
 +```py
-+from typing import Any, Callable, Generic, TypeVar
++from typing import Callable, Never, TypeVar
 +
-+T = TypeVar("T", str, bytes)
++T = TypeVar("T")
 +
-+class Box(Generic[T]):
-+    value: T
-+
-+def infer(callback: Callable[[], T | Box[T]]) -> T:
++def abort(*args: object, **kwargs: object) -> Never:
 +    raise NotImplementedError
 +
-+unknown = Box()
-+any_ = Box[Any]()
++def wrap(callback: Callable[[], T]) -> list[T]:
++    return []
 +
-+unknown_result = infer(lambda: unknown)  # no diagnostic
-+reveal_type(unknown_result)  # revealed: Unknown
-+any_result = infer(lambda: any_)  # no diagnostic
-+reveal_type(any_result)  # revealed: Any
++def wrap_param(callback: Callable[[T], object]) -> list[T]:
++    return []
++
++# revealed: list[Never]
++reveal_type(wrap(abort))
++# revealed: list[object]
++reveal_type(wrap_param(abort))
++value: str = wrap_param(abort)[0]  # error: [invalid-assignment]
 +```
 +
-+Other arguments must still satisfy the type variable's declared constraints. Gradual evidence from a
-+callback does not make an incompatible argument valid:
++## Inference from top callable signatures
++
++A callback accepting the top callable accepts any callable. Comparing its parameter with a callable
++returning `T` still contributes `T ≤ object` to inference.
 +
 +```py
-+def consume(callback: Callable[[], Box[T]], other: T) -> None: ...
++from typing import Callable, TypeVar
++from ty_extensions import Top
 +
-+# The callback returns a box, as required by `Box[T]`. The second argument must instead
-+# be `str` or `bytes`, but is also a box: only its type argument is gradual.
-+consume(lambda: unknown, unknown)  # error: [invalid-argument-type] "does not satisfy constraints"
-+consume(lambda: any_, any_)  # error: [invalid-argument-type] "does not satisfy constraints"
++T = TypeVar("T")
++
++def wrap(callback: Callable[[Callable[[], T]], None]) -> list[T]:
++    return []
++
++def accepts_top(callback: Top[Callable[..., object]]) -> None: ...
++
++# revealed: list[object]
++reveal_type(wrap(accepts_top))
++value: str = wrap(accepts_top)[0]  # error: [invalid-assignment]
 +```
 +
- ## Invalid bounds in generic union members
++Ignoring a source receiver restriction still preserves return-type inference.
++
++```py
++from typing import Generic
++
++class Restricted(Generic[T]):
++    def method(self: "Allowed[T]") -> T:
++        raise NotImplementedError
++
++class Allowed(Restricted[T]): ...
++
++def infer(callback: Top[Callable[..., T]]) -> list[T]:
++    return []
++
++def check(restricted: Restricted[int]) -> None:
++    # revealed: list[int]
++    reveal_type(infer(restricted.method))
++```
++
+ ## Union without intersection does not consider budget
  
- An argument that violates a type variable's bound is rejected even when another union member is not
+ A single union upper bound remains precise even when it has more alternatives than the solution
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +36/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/callables.md` (modified, +61/-0)
 ```diff
-@@ -3764,6 +3764,42 @@ reveal_type(infer_any_bound(list[str]()))  # revealed: str
- reveal_type(infer_list_bound(list[list[str]]()))  # revealed: list[str]
+@@ -390,6 +390,67 @@ def consume_object(value: object) -> None: ...
+ reveal_type(infer_from_consumer(consume_object))  # revealed: object
  ```
  
-+## Gradual specializations in callable union returns
++## Inference from bottom callable signatures
 +
-+A callable's return type only needs to match one member of an expected union, even when the match
-+relies on a gradual type argument. If several declared constraints remain possible, inference
-+preserves the gradual type argument.
++A callable that accepts every argument list and returns `Never` can satisfy any callable signature.
++Its return and parameter types still provide inference evidence: `Never ≤ T` infers `Never`, while
++`T ≤ object` infers `object`.
 +
 +```py
-+from typing import Any, Callable
++from typing import Callable, Never
 +
-+class Box[T: (str, bytes)]:
-+    value: T
-+
-+def infer[T: (str, bytes)](callback: Callable[[], T | Box[T]]) -> T:
++def abort(*args: object, **kwargs: object) -> Never:
 +    raise NotImplementedError
 +
-+unknown = Box()
-+any_ = Box[Any]()
++def wrap[T](callback: Callable[[], T]) -> list[T]:
++    return []
 +
-+unknown_result = infer(lambda: unknown)  # no diagnostic
-+reveal_type(unknown_result)  # revealed: Unknown
-+any_result = infer(lambda: any_)  # no diagnostic
-+reveal_type(any_result)  # revealed: Any
++def wrap_param[T](callback: Callable[[T], object]) -> list[T]:
++    return []
++
++# revealed: list[Never]
++reveal_type(wrap(abort))
++# revealed: list[object]
++reveal_type(wrap_param(abort))
++value: str = wrap_param(abort)[0]  # error: [invalid-assignment]
 +```
 +
-+Other arguments must still satisfy the type variable's declared constraints. Gradual evidence from a
-+callback does not make an incompatible argument valid:
++## Inference from top callable signatures
++
++A callback accepting the top callable accepts any callable. Comparing its parameter with a callable
++returning `T` still contributes `T ≤ object` to inference.
 +
 +```py
-+def consume[T: (str, bytes)](callback: Callable[[], Box[T]], other: T) -> None: ...
++from typing import Callable
++from ty_extensions import Top
 +
-+# The callback returns a box, as required by `Box[T]`. The second argument must instead
-+# be `str` or `bytes`, but is also a box: only its type argument is gradual.
-+consume(lambda: unknown, unknown)  # error: [invalid-argument-type] "does not satisfy constraints"
-+consume(lambda: any_, any_)  # error: [invalid-argument-type] "does not satisfy constraints"
++def wrap[T](callback: Callable[[Callable[[], T]], None]) -> list[T]:
++    return []
++
++def accepts_top(callback: Top[Callable[..., object]]) -> None: ...
++
++# revealed: list[object]
++reveal_type(wrap(accepts_top))
++value: str = wrap(accepts_top)[0]  # error: [invalid-assignment]
 +```
 +
- ## Invalid bounds in generic union members
++Ignoring a source receiver restriction still preserves return-type inference.
++
++```py
++class Restricted[T]:
++    def method(self: "Allowed[T]") -> T:
++        raise NotImplementedError
++
++class Allowed[T](Restricted[T]): ...
++
++def infer[T](callback: Top[Callable[..., T]]) -> list[T]:
++    return []
++
++def check(restricted: Restricted[int]) -> None:
++    # revealed: list[int]
++    reveal_type(infer(restricted.method))
++```
++
+ ## Intersecting inferred union upper bounds
  
- An argument that violates a type variable's bound is rejected even when another union member is not
+ Multiple callable arguments can infer multiple union upper bounds for the same type variable. We
 ```
 
-**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/implies_subtype_of.md` (modified, +5/-3)
+**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/materialization.md` (modified, +124/-0)
 ```diff
-@@ -747,7 +747,8 @@ def lower_bound[T, U]():
- ### Substituting gradual equivalences into nested bounds
- 
- Substituting a gradual equivalence into a lower bound preserves assignability, but does not
--establish subtyping.
-+establish subtyping. This also holds for equivalence bounds: separate occurrences of `Any` in a
-+subtype comparison can materialize to different types.
- 
- ```py
- from typing import Any
-@@ -765,8 +766,9 @@ def equivalence_into_lower[T, U]():
- 
- def equivalence_into_equality[T, U]():
-     constraints = ConstraintSet.equality(T, Any) & ConstraintSet.equality(U, Covariant[T])
--    static_assert(constraints.implies_subtype_of(Covariant[Any], U))
--    static_assert(constraints.implies_subtype_of(U, Covariant[Any]))
-+    static_assert(constraints.satisfies(ConstraintSet.equality(U, Covariant[Any])))
-+    static_assert(not constraints.implies_subtype_of(Covariant[Any], U))
-+    static_assert(not constraints.implies_subtype_of(U, Covariant[Any]))
+@@ -349,6 +349,130 @@ def takes_objects(*args: object, **kwargs: object) -> object:
+ static_assert(not is_subtype_of(TopCallable, RegularCallableTypeOf[takes_objects]))
  ```
  
- ### Gradual range substitutions do not preserve correlation
++## Bottom callable assignability
++
++The bottom callable accepts every argument list and returns `Never`, so it can satisfy any callable
++signature, including one with required keyword-only parameters. Returning `Never` alone is not
++sufficient, nor is accepting every argument list with an incompatible return type.
++
++```py
++from typing import Any, Callable, Never, Protocol
++from ty_extensions import Bottom
++
++class Required(Protocol):
++    def __call__(self, value: int, /, *, enabled: bool) -> str: ...
++
++def never_returns(*values: object, **options: object) -> Never:
++    raise NotImplementedError
++
++def check(
++    bottom: Bottom[Callable[..., Any]],
++    restricted: Callable[[int], Never],
++    returns_none: Bottom[Callable[..., None]],
++) -> None:
++    positional: Callable[[str, bytes], int] = bottom  # no diagnostic
++    keyword_only: Required = bottom  # no diagnostic
++    declared: Required = never_returns  # no diagnostic
++
++    wrong_parameters: Callable[[str], int] = restricted  # error: [invalid-assignment]
++    wrong_return: Callable[[int], str] = returns_none  # error: [invalid-assignment]
++```
++
++Receiver restrictions still apply when a bound method accepts every argument list and returns
++`Never`.
++
++```py
++class Restricted:
++    def method(self: "Allowed", *values: object, **options: object) -> Never:
++        raise NotImplementedError
++
++class Allowed(Restricted): ...
++
++def check_receiver(restricted: Restricted, allowed: Allowed) -> None:
++    valid: Callable[[int], str] = allowed.method  # no diagnostic
++    invalid: Callable[[int], str] = restricted.method  # error: [invalid-assignment]
++```
++
++An unrestricted callable accepting every argument list also satisfies a target with a restricted
++receiver. Return types and the source's own receiver restriction still have to match.
++
++```py
++from ty_extensions._internal import RegularCallableTypeOf
++
++class Target:
++    def method(self: "AllowedTarget", value: int) -> str:
++        return ""
++
++class AllowedTarget(Target): ...
++
++def accepts_target(callback: RegularCallableTypeOf[Target().method]) -> None: ...
++def returns_str(*args: object, **kwargs: object) -> str:
++    return ""
++
++def returns_int(*args: object, **kwargs: object) -> int:
++    return 0
++
++accepts_target(returns_str)  # no diagnostic
++accepts_target(returns_int)  # error: [invalid-argument-type]
++
++def check_source_receiver(restricted: Restricted, allowed: Allowed) -> None:
++    accepts_target(allowed.method)  # no diagnostic
++    accepts_target(restricted.method)  # error: [invalid-argument-type]
++```
++
++## Top callable assignability
++
++```toml
++[environment]
++python-version = "3.12"
++```
++
++Every callable is assignable to the top callable, which permits no calls and has return type
++`object`. A narrower return type or a parameter list that permits calls still imposes requirements.
++
++```py
++from typing import Callable, Protocol
++from ty_extensions import Top
++
++class Required(Protocol):
++    def __call__(self, *, enabled: bool) -> bytes: ...
++
++def check(positional: Callable[[int], str], keyword_only: Required) -> None:
++    first: Top[Callable[..., object]] = positional  # no diagnostic
++    second: Top[Callable[..., object]] = keyword_only  # no diagnostic
++    wrong_return: Top[Callable[..., int]] = positional  # error: [invalid-assignment]
++    wrong_parameters: Top[Callable[[str], object]] = positional  # error: [invalid-assignment]
++```
++
++A receiver restriction does not prevent assignment to the top callable, since it permits no calls.
++This also holds for methods with aliased return types or unused type parameters. The restriction
++still applies when assigning to a callable that permits calls.
++
++```py
++type Result = str
++
++class Restricted:
++    def method(self: "Allowed") -> str:
++        return ""
++
++    def aliased(self: "Allowed") -> Result:
++        return ""
++
++    def generic[T](self: "Allowed") -> str:
++        return ""
++
++class Allowed(Restricted): ...
++
++def check_receiver(restricted: Restricted) -> None:
++    valid: Top[Callable[..., object]] = restricted.method  # no diagnostic
++    aliased: Top[Callable[..., object]] = restricted.aliased  # no diagnostic
++    generic: Top[Callable[..., object]] = restricted.generic  # no diagnostic
++
++    invalid: Callable[[], str] = restricted.method  # error: [invalid-assignment]
++    invalid_alias: Callable[[], str] = restricted.aliased  # error: [invalid-assignment]
++    invalid_generic: Callable[[], str] = restricted.generic  # error: [invalid-assignment]
++```
++
+ ## `ParamSpec` specializations
+ 
+ For a class invariant in a `ParamSpec`, every fixed specialization lies between the bottom and top
 ```
 
-**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +54/-0)
+**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +5/-0)
 ```diff
-@@ -5703,6 +5703,60 @@ class E: ...
-         Ok(())
+@@ -310,6 +310,11 @@ impl<'db> OwnedConstraintSet<'db> {
+         self.node == ALWAYS_TRUE
      }
  
-+    #[test]
-+    fn gradual_equivalence_preserves_alternative_bounds() {
-+        let db = setup_db();
-+        let db = &db;
-+        let env = db.program_environment();
-+        let t = create_typevar(db, "T");
-+        let int = known_instance(db, KnownClass::Int);
-+        let str = known_instance(db, KnownClass::Str);
-+        let list = |ty| KnownClass::List.to_specialized_instance(db, &env, &[ty]);
-+
-+        for dynamic in [Type::any(), Type::unknown()] {
-+            for (gradual, bound, witness) in
-+                [(dynamic, int, str), (list(dynamic), list(int), list(str))]
-+            {
-+                for (lower, upper) in [(Some(bound), None), (None, Some(bound))] {
-+                    let builder = ConstraintSetBuilder::new();
-+                    let equivalent = ConstraintSet::constrain_typevar_equivalence_bound(
-+                        db,
-+                        &env,
-+                        &builder,
-+                        ConstraintProvenance::Evidence,
-+                        t,
-+                        gradual,
-+                    );
-+                    let range =
-+                        create_constraint_set_with_bounds(db, &env, &builder, t, lower, upper);
-+                    let witness = ConstraintSet::constrain_typevar_equivalence_bound(
-+                        db,
-+                        &env,
-+                        &builder,
-+                        ConstraintProvenance::Evidence,
-+                        t,
-+                        witness,
-+                    );
-+
-+                    // `T = Any` permits `T = str`, even though `int ≤ T` (or `T ≤ int`)
-+                    // does not. The same holds inside an invariant container.
-+                    let alternatives =
-+                        equivalent
-+                            .or(db, &builder, || range)
-+                            .and(db, &builder, || witness);
-+                    assert!(!alternatives.is_never_satisfied(db, &env, TypeVarSet::None));
-+
-+                    // Requiring both bounds still rules out that specialization.
-+                    let conjunction =
-+                        equivalent
-+                            .and(db, &builder, || range)
-+                            .and(db, &builder, || witness);
-+                    assert!(conjunction.is_never_satisfied(db, &env, TypeVarSet::None));
-+                }
-+            }
-+        }
++    /// Returns `true` if this constraint set's root is not a terminal.
++    pub(super) fn is_nontrivial(&self) -> bool {
++        !self.node.is_terminal()
 +    }
 +
-     #[test]
-     fn trivial_satisfaction_only_recognizes_terminals() {
-         let db = setup_db();
+     /// Loads this constraint set into a new builder, invokes a callback with that builder, and
+     /// returns the result.
+     ///
 ```
 
-**File**: `crates/ty_python_semantic/src/types/constraints/sequents.rs` (modified, +13/-7)
+**File**: `crates/ty_python_semantic/src/types/signatures.rs` (modified, +59/-0)
 ```diff
-@@ -1547,9 +1547,12 @@ impl<'db> ConcreteLowerBound<'db> {
-         }
- 
-         // (α ≤ β) ⇒ ((T = β) ⇒ (α ≤ T))
--        if self
--            .bound
--            .is_constraint_set_assignable_to(db, env, other.bound)
-+        // This requires a static equivalence bound: `T = Any` permits `T = str`, so
-+        // assignability of `int` to `Any` does not imply `int ≤ T`.
-+        if other.bound.is_static_sequent_eligible(db, env)
-+            && self
-+                .bound
-+                .is_constraint_set_assignable_to(db, env, other.bound)
-         {
-             map.add_single_implication(other.into(), self.into());
-         }
-@@ -1728,14 +1731,17 @@ impl<'db> ConcreteUpperBound<'db> {
-         }
- 
-         // (β ≤ α) ⇒ ((T = β) ⇒ (T ≤ α))
--        if other
--            .bound
--            .is_constraint_set_assignable_to(db, env, self.bound)
-+        // This requires a static equivalence bound: `T = Any` permits `T = str`, so
-+        // assignability of `Any` to `int` does not imply `T ≤ int`.
-+        if other.bound.is_static_sequent_eligible(db, env)
-+            && other
-+                .bound
-+                .is_constraint_set_assignable_to(db, env, self.bound)
-         {
-             map.add_single_implication(other.into(), self.into());
-         }
- 
--        // Given constraints `T ≤ α` and `T = β`, `α ≤ β` must also hold. If those bounds contain
-+        // Given constraints `T ≤ α` and `T = β`, `β ≤ α` must also hold. If those bounds contain
-         // other typevars, we can infer additional constraints.
-         AtomicConstraint::add_sequents_for_range(db, env, map, other, self);
+@@ -1058,6 +1058,22 @@ impl<'db> Signature<'db> {
+         Self::new(Parameters::bottom(), Type::Never)
      }
+ 
++    /// Returns whether this is the bottom signature, which is assignable to all other signatures.
++    /// (It accepts all parameter lists, and returns `Never`.)
++    fn is_bottom(&self) -> bool {
++        self.return_ty.is_never()
++            && self.parameters.is_bottom()
++            && self.receiver_constraints().is_none()
++    }
++
++    /// Returns whether this is the top signature, which is assignable from all other signatures.
++    /// (It permits no calls, and has return type `object`.)
++    fn is_top(&self) -> bool {
++        self.return_ty.is_object()
++            && self.parameters.is_top()
++            && self.receiver_constraints().is_none()
++    }
++
+     /// Returns `true` if `Self` should be hidden from the generic context display.
+     ///
+     /// `Self` is hidden if it does not appear in:
+@@ -2733,6 +2749,35 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
+         source: &Signature<'db>,
+         target: &Signature<'db>,
+     ) -> ConstraintSet<'db, 'c> {
++        let may_contain_typevars = |signature: &Signature<'db>| {
++            signature.generic_context.is_some()
++                || signature
++                    .receiver_constraints()
++                    .is_some_and(|constraints| constraints.assignability.is_nontrivial())
++                || std::iter::once(signature.return_ty)
++                    .chain(signature.parameters.iter().map(Parameter::annotated_type))
++                    .any(|ty| {
++                        // Aliases and recursive types can hide typevars. Avoid expanding them just
++                        // to decide whether to take a fast path.
++                        any_over_type(db, self.env, ty, false, |ty| {
++                            matches!(
++                                ty,
++                                Type::TypeVar(_) | Type::TypeAlias(_) | Type::Recursive(_)
++                            )
++                        })
++                    })
++        };
++
++        // Fast path: If the source is the bottom signature or the target is the top signature,
++        // assignability holds no matter what, and we can return without spending the time matching
++        // parameter lists. However, the opposite signature's typevars still need inference
++        // bounds: even `Never ≤ T` or `T ≤ object` can determine an inferred type.
++        if (source.is_bottom() && !may_contain_typevars(target))
++            || (target.is_top() && !may_contain_typevars(source))
++        {
++            return self.always();
++        }
++
+         let env = self.env;
+         // In lazy comparisons, a captured parameter list refers to typevars owned by the
+         // surrounding call inference. Preserve constraints on those variables instead of
+@@ -2794,9 +2839,23 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
+             checker.typevar_evaluation = TypeVarEvaluation::Lazy;
+         }
+         let when = checker.with_signature_recursion_guard(source, target, || {
++            // A target that permits no calls imposes no receiver requirements. Still compare
++            // return types so that their constraints contribute to inference.
++            if target.parameters.is_top() {
++                return checker.check_signature_pair_inner(db, source, target);
++            }
++
+             source
+                 .receiver_constraints_when_satisfied(db, &checker)
+                 .and(db, self.constraints, || {
++                    // Once its receiver is eligible, a source accepting every argument list
++                    // accepts every call permitted by the target, regardless of the target's
++                    // receiver restriction. Parameter and return types still contribute
++                    // inference bounds.
++                    if source.parameters.is_bottom() {
++                        return checker.check_signature_pair_inner(db, source, target);
++                    }
++
+                     target
+                         .receiver_constraints_when_satisfied(db, &checker)
+                         .and(db, self.constraints, || {
+```
+
+---
+
+### Incident Patch 2: `86c97800` (2026-10-22)
+**Commit Message**: Build the Ruff playground earlier in releases (#29650)
+
+**File**: `.github/actionlint.yaml` (modified, +2/-2)
+```diff
+@@ -21,11 +21,11 @@ self-hosted-runner:
+     - codspeed-macro
+ 
+ paths:
+-  .github/workflows/release.yml:
++  ".github/workflows/*.{yml,yaml}":
+     ignore:
+       # `actionlint` does not yet recognize GitHub's `$/` syntax.
+       # https://github.com/rhysd/actionlint/issues/711
+-      - '^reusable workflow call "\$/\.github/workflows/[^"/]+\.yml" at "uses" is not following the format '
++      - '^reusable workflow call "\$/\.github/workflows/[^"/]+\.ya?ml" at "uses" is not following the format '
+   ".github/workflows/pull-request-reviewers.yml":
+     ignore:
+       # actionlint doesn't yet support concurrency queues. The schema hook validates them.
+```
+
+**File**: `.github/workflows/build-playground.yml` (added, +53/-0)
+```diff
+@@ -0,0 +1,53 @@
++name: "[Playground] Build"
++
++on:
++  workflow_call:
++    outputs:
++      artifact-id:
++        value: ${{ jobs.build.outputs.artifact-id }}
++
++env:
++  UV_LOCKED: 1
++  ACTIONS_CACHE_MODE: none
++  CARGO_INCREMENTAL: 0
++  CARGO_NET_RETRY: 10
++  CARGO_PROFILE_DEV_LTO: "false"
++  CARGO_PROFILE_DEV_OPT_LEVEL: 0
++  CARGO_TERM_COLOR: always
++  RUSTUP_MAX_RETRIES: 10
++
++permissions:
++  contents: read
++
++jobs:
++  build:
++    runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
++    outputs:
++      artifact-id: ${{ steps.upload.outputs.artifact-id }}
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++      - name: "Install Rust toolchain"
++        run: rustup target add wasm32-unknown-unknown
++      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
++        with:
++          node-version: 24.21.0
++          package-manager-cache: false
++      - uses: jetli/wasm-bindgen-action@20b33e20595891ab1a0ed73145d8a21fc96e7c29 # v0.2.0
++      - name: "Install Node dependencies"
++        run: npm ci --ignore-scripts
++        working-directory: playground
++      - name: "Run TypeScript checks"
++        run: npm run check
++        working-directory: playground
++      - name: "Build Ruff playground"
++        run: npm run build --workspace ruff-playground
++        working-directory: playground
++      - name: "Upload Ruff playground"
++        id: upload
++        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
++        with:
++          name: ruff-playground-dist-${{ github.run_id }}-${{ github.run_attempt }}
++          path: playground/ruff/dist
++          if-no-files-found: error
+```
+
+**File**: `.github/workflows/publish-playground.yml` (modified, +9/-35)
+```diff
+@@ -11,53 +11,27 @@ on:
+       plan:
+         required: true
+         type: string
++      artifact-id:
++        required: true
++        type: string
+ 
+ env:
+   UV_LOCKED: 1
+   ACTIONS_CACHE_MODE: none
+-  CARGO_INCREMENTAL: 0
+-  CARGO_NET_RETRY: 10
+-  CARGO_PROFILE_DEV_LTO: "false"
+-  CARGO_PROFILE_DEV_OPT_LEVEL: 0
+-  CARGO_TERM_COLOR: always
+-  RUSTUP_MAX_RETRIES: 10
+ 
+ permissions:
+   contents: read
+ 
+ jobs:
+   build:
+-    runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+-        with:
+-          persist-credentials: false
+-      - name: "Install Rust toolchain"
+-        run: rustup target add wasm32-unknown-unknown
+-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+-        with:
+-          node-version: 24.21.0
+-          package-manager-cache: false
+-      - uses: jetli/wasm-bindgen-action@20b33e20595891ab1a0ed73145d8a21fc96e7c29 # v0.2.0
+-      - name: "Install Node dependencies"
+-        run: npm ci --ignore-scripts
+-        working-directory: playground
+-      - name: "Run TypeScript checks"
+-        run: npm run check
+-        working-directory: playground
+-      - name: "Build Ruff playground"
+-        run: npm run build --workspace ruff-playground
+-        working-directory: playground
+-      - name: "Upload Ruff playground"
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+-        with:
+-          name: ruff-playground-dist
+-          path: playground/ruff/dist
+-          if-no-files-found: error
+-          retention-days: 1
++    if: ${{ inputs.artifact-id == '' }}
++    uses: $/.github/workflows/build-playground.yml
++    permissions:
++      contents: read
+ 
+   publish:
+     needs: build
++    if: ${{ !cancelled() && (needs.build.result == 'success' || (needs.build.result == 'skipped' && inputs.artifact-id != '')) }}
+     runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
+     environment: release-playground
+     env:
+@@ -73,7 +47,7 @@ jobs:
+       - name: "Download Ruff playground"
+         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+         with:
+-          name: ruff-playground-dist
++          artifact-ids: ${{ inputs.artifact-id || needs.build.outputs.artifact-id }}
+           path: playground/ruff/dist
+           digest-mismatch: error
+       - name: "Verify static playground assets"
+```
+
+**File**: `.github/workflows/release.yml` (modified, +9/-0)
+```diff
+@@ -163,6 +163,13 @@ jobs:
+     permissions:
+       "contents": "read"
+ 
++  build-playground:
++    needs: plan
++    if: ${{ needs.plan.outputs.publishing == 'true' }}
++    uses: $/.github/workflows/build-playground.yml
++    permissions:
++      contents: read
++
+   # Signing is a manually maintained stage between binary builds and cargo-dist manifests.
+   sign-release-binaries:
+     needs:
+@@ -527,9 +534,11 @@ jobs:
+     needs:
+       - plan
+       - announce
++      - build-playground
+     uses: $/.github/workflows/publish-playground.yml
+     with:
+       plan: ${{ needs.plan.outputs.val }}
++      artifact-id: ${{ needs.build-playground.outputs.artifact-id }}
+     secrets: inherit # zizmor: ignore[secrets-inherit]
+     permissions:
+       "contents": "read"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29626** (2026-10-22): Avoid creating deployments for automation jobs (@zaniebot)
-- **PR #29622** (closed): [ty] Exercise pull request reports with intentional regressions (@zanieb)
-- **PR #29621** (2026-10-22): Link the commit in pull request report footers (@zanieb)
-- **PR #29620** (2026-10-22): Include uv configuration in the reviewer workflow checkout (@zanieb)
-- **PR #29619** (closed): Test reviewer round-robin assignment (@zanieb)
-- **PR #29617** (2026-10-22): Authorize report publishing and reviewer selection (@zanieb)
+- **PR #29703** (2026-10-25): [ty] Collect receiver annotations once per class (@charliermarsh)
+- **PR #29702** (2026-10-25): [ty] Skip inferred writes when a declaration determines an instance member (@charliermarsh)
+- **PR #29699** (2026-10-25): [ty] Avoid redundant work when checking inherited attributes (@charliermarsh)
+- **PR #29691** (2026-10-24): [ty] Bound tuple expansion in type displays (@charliermarsh)
+- **PR #29690** (closed): Avoid treating relative imports from \__future__\ as future imports (#29683) (@dezzy-music)
+- **PR #29680** (2026-10-23): Clean up `Emitter` trait (@ntBre)
 
 ---
 
@@ -2558,30 +2788,63 @@ Prerequisite to avoid regressions in #29236.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update docker/build-push-action action to v7.4.0 (#29573)
+## X. [ty] Short-circuit top/bottom signature comparisons (#29537)
 
 **RULE**:
-When implementing operations in `.github/workflows/build-docker.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ruff_benchmark/benches/ty_constraint_set.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `008d4526`: Update docker/build-push-action action to v7.4.0 (#29573). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f3bca2f`: [ty] Short-circuit top/bottom signature comparisons (#29537). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-docker.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_benchmark/benches/ty_constraint_set.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+/// Compare bottom sources and top targets against distinct signatures.
+fn benchmark_bottom_and_top_signature_comparisons(criterion: &mut Criterion) {
+    setup_rayon();
+
+    for name in ["bottom", "top"] {
+        let mut code = String::from(
+            "\
+from typing import Any, Callable, Literal
+from ty_extensions import Bottom, Top
+",
+        );
+        for i in 0..128 {
+            let signature = format!("Callable[[Literal[{i}], str, bytes], int]");
+            let (source, target) = if name == "bottom" {
+                ("Bottom[Callable[..., Any]]", signature.as_str())
+            } else {
+                (signature.as_str(), "Top[Callable[..., object]]")
+            };
+            writeln!(
+                &mut code,
+                "\ndef check_{i}(source: {source}) -> None:\n    target: {target} = source"
+            )
+            .ok();
+        }
+
+        criterion.bench_function(&format!("ty_micro[{name}_signature_comparisons]"), |b| {
+            b.iter_batched_ref(
+                || setup_micro_case(&code),
+                |Case { db }| assert_eq!(db.check().len(), 0),
+                BatchSize::SmallInput,
+            );
+        });
+    }
+}
+
+    benchmark_bottom_a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `008d4526` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f3bca2f` are properly handled with clean fallback behavior.

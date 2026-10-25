@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-F9TV",
-    "timestamp": "2026-10-21T04:09:32.035Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "373ff328d988f47e7ec12d9c856897ccdaa29665876fa4c1db4acc9678189e97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-NE9M",
-    "timestamp": "2026-10-21T04:15:51.034Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-NEG0",
-    "timestamp": "2026-10-21T04:15:51.264Z",
-    "repository": "taiga-family/taiga-ui",
-    "learningId": "learn-github-taiga-family-taiga-ui",
-    "contentHash": "50725806aa837dabcecec624893f7f0b76eee0c73adde65124b46c6acd165ba2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-NORK",
     "timestamp": "2026-10-21T04:16:04.640Z",
     "repository": "xerj-org/xerj",
@@ -7492,6 +7447,51 @@
     "contentHash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-MSUJ",
+    "timestamp": "2026-10-25T05:46:03.019Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-MTY4",
+    "timestamp": "2026-10-25T05:46:04.444Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "83a65d65bf07cafe616eecc0f2f9268a2ce79d5119601ecf2f908509c29b695e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-N2X1",
+    "timestamp": "2026-10-25T05:46:16.069Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

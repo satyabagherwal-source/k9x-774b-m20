@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T05:34:10.690Z",
+  "last_updated": "2026-10-25T05:46:16.083Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "9e5cedd78a5a425b9fa83b586a77d9683a4b47a41f67415ffb17fa3b9e56fba1",
-      "verified_at": "2026-10-20T13:47:02.654Z",
+      "content_hash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
+      "verified_at": "2026-10-25T05:46:03.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:47:02.654Z"
+      "last_updated": "2026-10-25T05:46:03.028Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
-      "verified_at": "2026-10-22T17:45:06.163Z",
+      "content_hash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
+      "verified_at": "2026-10-25T05:46:16.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:45:06.163Z"
+      "last_updated": "2026-10-25T05:46:16.082Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
-      "verified_at": "2026-10-22T15:53:23.545Z",
+      "content_hash": "83a65d65bf07cafe616eecc0f2f9268a2ce79d5119601ecf2f908509c29b695e",
+      "verified_at": "2026-10-25T05:46:04.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:53:23.545Z"
+      "last_updated": "2026-10-25T05:46:04.454Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

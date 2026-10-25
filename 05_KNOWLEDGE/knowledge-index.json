@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:34:10.632Z",
+  "last_updated": "2026-10-25T05:46:16.027Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3223,8 +3223,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "59a9e85a",
-      "content_hash": "783b2c721430e64d5420c22d7f47898e9ee5372bfbb6b5b7fca3aa189725deb6",
+      "source_version": "157caa55",
+      "content_hash": "83a65d65bf07cafe616eecc0f2f9268a2ce79d5119601ecf2f908509c29b695e",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3247,6 +3247,11 @@
           "number": 3616,
           "title": "Update docker/build-push-action action to v7.4.0 (#29573)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4084,
+          "title": "[ty] Short-circuit top/bottom signature comparisons (#29537)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3254,7 +3259,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:53:23.446Z",
+      "verified_at": "2026-10-25T05:46:04.394Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12013,8 +12018,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "c0c89086",
-      "content_hash": "e0ab9c143bdc680640343623f10e7b610a51d1a6524016243446ce29252fac53",
+      "source_version": "3d67720d",
+      "content_hash": "c10764253e3467311a475df1fb470c6865d7ec568b471a47b975b9032fc419f8",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -12037,6 +12042,11 @@
           "number": 3421,
           "title": "js/plugins/anthropic): send back empty signed thinking blocks (#6838)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4085,
+          "title": "genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12044,7 +12054,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:45:06.074Z",
+      "verified_at": "2026-10-25T05:46:16.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19378,7 +19388,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "9e5cedd78a5a425b9fa83b586a77d9683a4b47a41f67415ffb17fa3b9e56fba1",
+      "content_hash": "8fc16d44e404b5948280e1c286c9fd1736fcde500f0a69c7fc5d9426b19e7e67",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -19763,7 +19773,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-20T13:47:02.594Z",
+      "verified_at": "2026-10-25T05:46:02.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118863,6 +118873,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:34:10.623Z"
+    },
+    "rule-4084": {
+      "learning_id": "rule-4084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4084,
+      "title": "[ty] Short-circuit top/bottom signature comparisons (#29537)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "157caa55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:46:04.394Z"
+    },
+    "rule-4085": {
+      "learning_id": "rule-4085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4085,
+      "title": "genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "3d67720d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:46:16.017Z"
     }
   },
   "aliases": {

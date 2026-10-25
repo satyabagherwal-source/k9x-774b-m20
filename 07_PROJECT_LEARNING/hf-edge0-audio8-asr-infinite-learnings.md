@@ -3,7 +3,7 @@
 > **Source Version**: `hf-edge0-aud`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:47:02.510Z  
+> **Timestamp**: 2026-10-25T05:46:02.860Z  
 > **Learning ID**: `learn-huggingface-edge0-audio8-asr-infinite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:47:01.595Z  
+> **Harvest Timestamp**: 2026-10-25T05:46:02.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 42229 downloads | 869 likes
+- **Stars / Engagement**: 39454 downloads | 873 likes
 
 ---
 
