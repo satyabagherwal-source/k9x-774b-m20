@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:50:26.316Z",
-  "total_cycles_completed": 4794,
-  "total_learnings_persisted": 4794,
-  "total_rules_promoted": 4171,
+  "last_updated": "2026-10-25T12:56:52.345Z",
+  "total_cycles_completed": 4797,
+  "total_learnings_persisted": 4797,
+  "total_rules_promoted": 4174,
   "history": [
-    {
-      "timestamp": "2026-10-25T02:42:42.665Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:44:02.498Z",
-      "repository": "ynqa/jnv",
-      "learningId": "learn-github-ynqa-jnv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T02:50:29.543Z",
-      "repository": "actions/actions-runner-controller",
-      "learningId": "learn-github-actions-actions-runner-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T02:58:25.790Z",
       "repository": "apache/shardingsphere",
@@ -1403,6 +1382,27 @@
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:56:43.535Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:56:44.978Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T12:56:52.345Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

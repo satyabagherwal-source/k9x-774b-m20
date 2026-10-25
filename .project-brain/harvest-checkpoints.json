@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T12:50:26.319Z",
+  "last_updated": "2026-10-25T12:56:52.353Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
-      "verified_at": "2026-10-20T17:55:39.586Z",
+      "content_hash": "0534eeb6d4a2cd0a9bd54758746eb62ca8fe0c44b737c128e8e3e2025a09ee9c",
+      "verified_at": "2026-10-25T12:56:44.980Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:55:39.586Z"
+      "last_updated": "2026-10-25T12:56:44.980Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
-      "verified_at": "2026-10-22T19:42:17.366Z",
+      "content_hash": "bf41708cb15021cbb4eeb0e2cb62a06b2b0c8c5b26d12cee535e0252e73c3a4c",
+      "verified_at": "2026-10-25T12:56:43.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:42:17.366Z"
+      "last_updated": "2026-10-25T12:56:43.538Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
-      "verified_at": "2026-10-23T06:49:55.068Z",
+      "content_hash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
+      "verified_at": "2026-10-25T12:56:52.348Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:49:55.068Z"
+      "last_updated": "2026-10-25T12:56:52.348Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",

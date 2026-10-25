@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T12:32:01.296Z",
+  "last_updated": "2026-10-25T12:56:43.534Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2686,6 +2686,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-agent-field-agentfield"
+    },
+    {
+      "id": "CD-0NIM",
+      "directive_title": "auto-activate): keep the prompt hook out of forked subshells (#4813)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "flox/flox",
+      "source_commit": "0e1822c8",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-flox-flox"
     }
   ]
 }

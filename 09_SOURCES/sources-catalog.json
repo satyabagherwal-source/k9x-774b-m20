@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
-    "lastHarvestedAt": "2026-10-20T17:55:39.580Z",
+    "contentHash": "0534eeb6d4a2cd0a9bd54758746eb62ca8fe0c44b737c128e8e3e2025a09ee9c",
+    "lastHarvestedAt": "2026-10-25T12:56:44.974Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "288bc241",
+    "sourceVersion": "0e1822c8",
     "license": "GPL-2.0",
-    "contentHash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
-    "lastHarvestedAt": "2026-10-22T19:42:17.354Z",
+    "contentHash": "bf41708cb15021cbb4eeb0e2cb62a06b2b0c8c5b26d12cee535e0252e73c3a4c",
+    "lastHarvestedAt": "2026-10-25T12:56:43.529Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "9e052d7c",
+    "sourceVersion": "2904d9e1",
     "license": "Apache-2.0",
-    "contentHash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
-    "lastHarvestedAt": "2026-10-23T06:49:55.056Z",
+    "contentHash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
+    "lastHarvestedAt": "2026-10-25T12:56:52.341Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {

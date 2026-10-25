@@ -4817,3 +4817,6 @@
 | `CYCLE-20261025-M819` | `2026-10-25T12:45:30.285Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`8d95ae1f...`) |
 | `CYCLE-20261025-MFXH` | `2026-10-25T12:45:40.517Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4295` | Yes (`a3ae5b9d...`) |
 | `CYCLE-20261025-SKG5` | `2026-10-25T12:50:26.309Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`6171825c...`) |
+| `CYCLE-20261025-0NIF` | `2026-10-25T12:56:43.527Z` | `flox/flox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/flox-flox-learnings.md` | Yes (`bf41708c...`) |
+| `CYCLE-20261025-0OMK` | `2026-10-25T12:56:44.972Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4296, Rule 4297` | Yes (`0534eeb6...`) |
+| `CYCLE-20261025-0UB6` | `2026-10-25T12:56:52.338Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4298` | Yes (`e0b4c9cc...`) |

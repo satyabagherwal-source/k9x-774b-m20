@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T12:50:26.252Z",
+  "last_updated": "2026-10-25T12:56:52.295Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11590,8 +11590,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "288bc241",
-      "content_hash": "7b0e8d3d422f4ec8e8f97c76a36bfe8a882b30233d359a0802596c6635f6c89a",
+      "source_version": "0e1822c8",
+      "content_hash": "bf41708cb15021cbb4eeb0e2cb62a06b2b0c8c5b26d12cee535e0252e73c3a4c",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -11616,7 +11616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:42:17.269Z",
+      "verified_at": "2026-10-25T12:56:43.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15451,7 +15451,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "a0003d78f18052b813b83f9490a0c430551fa93b582ae8498c491a5c33001e24",
+      "content_hash": "0534eeb6d4a2cd0a9bd54758746eb62ca8fe0c44b737c128e8e3e2025a09ee9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -15635,6 +15635,16 @@
           "number": 3302,
           "title": "**Position ID Alignment Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4296,
+          "title": "Consistent Cache Policy Across Model and Generation Configurations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4297,
+          "title": "Unique and Non‑Overlapping Special Token IDs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15655,7 +15665,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-20T17:55:39.526Z",
+      "verified_at": "2026-10-25T12:56:44.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52149,8 +52159,8 @@
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "9e052d7c",
-      "content_hash": "99ab27294004ca6d7aa3a0a4c83a8e189d7bc5520108571ddc17623f3d0d6cb0",
+      "source_version": "2904d9e1",
+      "content_hash": "e0b4c9cc5161acb8f20b9ca1d9a61117ba53961b07c7fb497ea94ef5d7f3d428",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "promoted_rules": [
@@ -52178,6 +52188,11 @@
           "number": 3796,
           "title": "fix!: simplify image layer caching to avoid concurrency issues (#5495)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4298,
+          "title": "feat!: stop duplicating package data in package secret (#5527)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52185,7 +52200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:49:54.990Z",
+      "verified_at": "2026-10-25T12:56:52.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -123001,6 +123016,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T12:45:40.422Z"
+    },
+    "rule-4296": {
+      "learning_id": "rule-4296",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4296,
+      "title": "Consistent Cache Policy Across Model and Generation Configurations",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:56:44.904Z"
+    },
+    "rule-4297": {
+      "learning_id": "rule-4297",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4297,
+      "title": "Unique and Non‑Overlapping Special Token IDs",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:56:44.904Z"
+    },
+    "rule-4298": {
+      "learning_id": "rule-4298",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4298,
+      "title": "feat!: stop duplicating package data in package secret (#5527)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "2904d9e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:56:52.286Z"
     }
   },
   "aliases": {

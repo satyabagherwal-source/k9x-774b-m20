@@ -4824,3 +4824,6 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `9c6fc8a2` | Multi-dimensional audit evidence | 2026-10-25T12:45:30.289Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `1b30ad1b` | Multi-dimensional audit evidence | 2026-10-25T12:45:40.520Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-25T12:50:26.312Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `0e1822c8` | Multi-dimensional audit evidence | 2026-10-25T12:56:43.529Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-25T12:56:44.974Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `2904d9e1` | Multi-dimensional audit evidence | 2026-10-25T12:56:52.341Z |
