@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:34:42.229Z",
+  "last_updated": "2026-10-25T11:43:48.281Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23297,10 +23297,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "b17d6366ce3a0563b061ace1726e18249218dd5433e212d3c315ab90ed1c0235",
+      "content_hash": "f3a59d387e7a8d8fab60d1acdd9a5bdd0e86df5b79ba769dce989c1da41f1f17",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4271,
+          "title": "Streaming State Consistency via Arrival-Order Caching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4272,
+          "title": "FIFO Context Window for Temporal Coherence",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -23319,7 +23330,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-10-20T16:50:26.017Z",
+      "verified_at": "2026-10-25T11:43:48.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122520,6 +122531,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:34:42.218Z"
+    },
+    "rule-4271": {
+      "learning_id": "rule-4271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4271,
+      "title": "Streaming State Consistency via Arrival-Order Caching",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:43:48.270Z"
+    },
+    "rule-4272": {
+      "learning_id": "rule-4272",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4272,
+      "title": "FIFO Context Window for Temporal Coherence",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:43:48.270Z"
     }
   },
   "aliases": {

@@ -4798,3 +4798,4 @@ Every entry in this ledger must capture:
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `834e9701` | Multi-dimensional audit evidence | 2026-10-25T11:31:50.427Z |
 | `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `fd585329` | Multi-dimensional audit evidence | 2026-10-25T11:33:35.982Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-25T11:34:42.304Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-25T11:43:48.337Z |

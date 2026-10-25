@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T11:34:42.309Z",
-  "total_cycles_completed": 4768,
-  "total_learnings_persisted": 4768,
-  "total_rules_promoted": 4145,
+  "last_updated": "2026-10-25T11:43:48.342Z",
+  "total_cycles_completed": 4769,
+  "total_learnings_persisted": 4769,
+  "total_rules_promoted": 4147,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:41:57.306Z",
-      "repository": "lokoe-mehdi/scouter",
-      "learningId": "learn-github-lokoe-mehdi-scouter",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:42:01.325Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-25T11:34:42.309Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:43:48.342Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

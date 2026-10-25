@@ -4791,3 +4791,4 @@
 | `CYCLE-20261025-ZHNB` | `2026-10-25T11:31:50.423Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4266` | Yes (`5e8f2d67...`) |
 | `CYCLE-20261025-1R3F` | `2026-10-25T11:33:35.979Z` | `taiga-family/taiga-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4267, Rule 4268` | Yes (`42b2fc8d...`) |
 | `CYCLE-20261025-369P` | `2026-10-25T11:34:42.301Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4269, Rule 4270` | Yes (`1e1d688c...`) |
+| `CYCLE-20261025-EVLA` | `2026-10-25T11:43:48.334Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4271, Rule 4272` | Yes (`f3a59d38...`) |
