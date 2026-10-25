@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T11:14:37.956Z",
-  "total_cycles_completed": 4759,
-  "total_learnings_persisted": 4759,
-  "total_rules_promoted": 4132,
+  "last_updated": "2026-10-25T11:20:55.266Z",
+  "total_cycles_completed": 4762,
+  "total_learnings_persisted": 4762,
+  "total_rules_promoted": 4137,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:11:17.038Z",
-      "repository": "autogluon/chronos-2",
-      "learningId": "learn-huggingface-autogluon-chronos-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:11:20.043Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:11:26.340Z",
-      "repository": "malisper/pgrust",
-      "learningId": "learn-github-malisper-pgrust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:19:13.475Z",
       "repository": "Comfy-Org/MOSS-Image",
@@ -1403,6 +1382,27 @@
       "repository": "sharkdp/fd",
       "learningId": "learn-github-sharkdp-fd",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:20:46.715Z",
+      "repository": "guokaigdg/animal-island-ui",
+      "learningId": "learn-github-guokaigdg-animal-island-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:20:49.959Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:20:55.266Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

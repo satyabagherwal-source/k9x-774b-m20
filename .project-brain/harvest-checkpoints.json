@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T11:14:37.960Z",
+  "last_updated": "2026-10-25T11:20:55.273Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
-      "verified_at": "2026-10-20T16:37:49.432Z",
+      "content_hash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
+      "verified_at": "2026-10-25T11:20:55.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:37:49.432Z"
+      "last_updated": "2026-10-25T11:20:55.268Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
-      "verified_at": "2026-10-25T07:19:16.672Z",
+      "content_hash": "6541c3f98f9bc2a71923e98fe4d6e2bd80c9bc2726da3ddfdea59ac650924f59",
+      "verified_at": "2026-10-25T11:20:49.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:19:16.672Z"
+      "last_updated": "2026-10-25T11:20:49.961Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9096,14 +9096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-guokaigdg-animal-island-ui",
-      "content_hash": "762a9359f3b7dee1cb68e94e9b65e877a661ee8d4ff7de44cff188907979efd1",
-      "verified_at": "2026-10-23T06:02:45.580Z",
+      "content_hash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
+      "verified_at": "2026-10-25T11:20:46.718Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:02:45.581Z"
+      "last_updated": "2026-10-25T11:20:46.718Z"
     },
     "nezhahq/nezha": {
       "repository": "nezhahq/nezha",

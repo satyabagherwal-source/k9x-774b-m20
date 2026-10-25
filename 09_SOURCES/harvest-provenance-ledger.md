@@ -4789,3 +4789,6 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `827d551c` | Multi-dimensional audit evidence | 2026-10-25T11:11:17.445Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-25T11:12:02.936Z |
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `c44735ec` | Multi-dimensional audit evidence | 2026-10-25T11:14:37.952Z |
+| `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `8df30b8f` | Multi-dimensional audit evidence | 2026-10-25T11:20:46.711Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `62bbcebf` | Multi-dimensional audit evidence | 2026-10-25T11:20:49.955Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T11:20:55.261Z |

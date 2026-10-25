@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `877d0136`  
+> **Source Version**: `62bbcebf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:30:34.378Z  
+> **Timestamp**: 2026-10-25T11:20:49.647Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:30:33.140Z  
+> **Harvest Timestamp**: 2026-10-25T11:20:48.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41108 stars
+- **Stars / Engagement**: 41118 stars
 
 ---
 
@@ -36,6 +36,243 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `crates/agent-contract/src/worker_profile.rs`
+```
+//! Worker runtime profile — the per-role capability contract for a CodeWhale
+//! worker (#3217, #3211, #3213, and the child-permission-intersection issues
+//! #414 / #426 / #1186).
+//!
+//! This is the **Workflow substrate**: every detached worker — whether launched
+//! as an `agent` sub-agent or a Fleet worker — should run under a profile
+//! that bounds what it may do (permissions, shell access, tool scope, model
+//! route, recursion budget, foreground/background). A child profile is always
+//! **derived** from its parent and can never escalate beyond it.
+//!
+//! Scope: this module defines the contract and the parent→child derivation with
+//! tests. `agent` and Fleet worker records now build and persist these
+//! profiles so parent-visible worker projections have a single capability
+//! contract. Runtime enforcement of every declared field remains incremental
+//! follow-up work (#3217).
+
+use crate::role::FleetRole;
+use serde::{Deserialize, Serialize};
+
+/// Coarse capability classes a worker may exercise, beyond read access (reads
+/// are always permitted). A child may only ever hold a *subset* of its parent's
+/// capabilities.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermissionSet {
+    /// May modify the workspace (`write_file` / `edit_file` / `apply_patch`).
+    pub write: bool,
+    /// May use network-capable tools (web search/fetch, networked MCP servers).
+    pub network: bool,
+}
+
+impl PermissionSet {
+    /// Full capabilities (write + network).
+    pub const fn full() -> Self {
+        Self {
+            write: true,
+            network: true,
+        }
+    }
+
+    /// Read-only: no write, no network.
+    pub const fn read_only() -> Self {
+        Self {
+            write: false,
+            network: false,
+        }
+    }
+
+    /// Read-only inspection: read-only on the workspace, but network-capable.
+    ///
+    /// The read-only investigator posture (scout/reviewer): it must not
+    /// mutate the workspace, but real read-only inspection needs
+    /// `git`/`gh`/web reach — the old `read_only()` default left such lanes
+    /// with no way to run any command or reach any remote, which made default
+    /// scout lanes useless for the inspection they exist for.
+    pub const fn read_only_with_network() -> Self {
+        Self {
+            write: false,
+            network: true,
+        }
+    }
+
+    /// Intersection: a capability is granted only if **both** sets grant it.
+    /// This is the core non-escalation primitive — `parent.intersect(child)`
+    /// can never produce a capability the parent lacks.
+    #[must_use]
+    pub fn intersect(self, other: Self) -> Self {
+        Self {
+            write: self.write && other.write,
+            network: self.network && other.network,
+        }
+    }
+}
+
+/// Shell access policy — the replacement for the legacy per-worker shell boolean
+/// (#3217). Ordered from most to least restrictive so `min` yields the safer of
+/// two policies.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum ShellPolicy {
+    /// No shell access.
+    None,
+    /// Read-only / non-mutating commands only (the policy enforcement lives in
+    /// the exec/sandbox layer; this is the declared intent).
+    ReadOnly,
+    /// Full shell access.
+    Full,
+}
+
+impl ShellPolicy {
+    /// Convert the legacy top-level shell opt-in into the typed shell policy.
+    #[must_use]
+    pub const fn from_legacy_allow_shell(allow_shell: bool) -> Self {
+        if allow_shell { Self::Full } else { Self::None }
+    }
+
+    /// Whether any shell tools should be exposed under this policy.
+    #[must_use]
+    pub const fn allows_shell(self) -> bool {
+        !matches!(self, Self::None)
+    }
+
+    /// The more restrictive (safer) of two policies. A child can never exceed
+    /// its parent's shell policy.
+    #[must_use]
+    pub fn min_with(self, other: Self) -> Self {
+        if self <= other { self } else { other }
+    }
+}
+
+/// Which tools a worker may call. Mirrors the existing `AgentWorkerToolProfile`
+/// (`Inherited` / `Explicit`) so the two can be reconciled when this is wired in.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ToolScope {
+    /// Inherit the parent's tool surface.
+    Inherit,
+    /// Only the explicitly listed tool names.
+    Explicit(Vec<String>),
+}
+
+/// File-system authority axis of a [`ChildGrant`]. Ordered least to most
+/// permissive so `Ord::min` is the non-escalation primitive.
+///
+/// `None` is not "no writes" — it is "no file access of any kind", which is
+/// what a child with an empty tool surface experiences. `Read` permits
+/// evidence collection only; `Write` permits mutation inside the session's
+/// write policy (workspace boundary, exact-file claims, approval posture).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum FileGrant {
+    None,
+    Read,
+    Write,
+}
+
+/// Process authority axis of a [`ChildGrant`]. Ordered least to most
+/// permissive so `Ord::min` is the non-escalation primitive.
+///
+/// `Inspect` is the read-only shell: canonical `bash` only, and only calls
+/// the agent read-only classifier proves mutation-free (the explore /
+/// reviewer / planner posture). `Verify` is the bounded built-in verification
+/// surface — default workspace checks, pure test selection, and bounded Git
+/// fetch/merge-tree — with no shell grammar (the test/verifier posture). A
+/// child asking for a surface its parent does not hold degrades to the
+/// narrower side (`Inspect ∩ Verify = Inspect`): bounded inspection is a
+/// subset of bounded process authority, never a widening.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ShellGrant {
+    None,
+    Inspect,
+    Verify,
+    Full,
+}
+
+/// The named tool surface a grant exposes, before the explicit scope narrows
+/// it. This is the role-preset axis of `tools` — distinct from
+/// [`ChildGrant::scope`], which is the caller's own allowlist.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ToolSurface {
+    /// Every registered tool the grant's other axes admit.
+    Inherited,
+    /// The read-only evidence surface — `readonly_evidence_tool` plus
+    /// `agent` (delegation). The explore / reviewer preset.
+    Evidence,
+}
+
+/// The single authority object a delegated child runs under (#5633).
+///
+/// Roles are *presets over this object*, never a second permission system:
+/// [`ChildGrant::for_role`] gives the widest grant a role can hold, and
+/// [`ChildGrant::resolve`] intersects it with the effective parent-derived
+/// profile and the caller's explicit scope. One projection serves every
+/// consumer — the child's tool catalog, its dispatch refusals, and its
+/// capability envelope all read the same fields, so a tool that is visible
+/// is callable and a tool that is denied never appears.
+///
+/// This is deliberately a *projection*, not a second persisted record:
+/// [`WorkerRuntimeProfile`] remains the wire/persistence shape and
+/// `ChildAuthority` /
+/// `ToolAuthorityEnvelope`
+/// remain the transports that carry the same authority across the durable
+/// Fleet and `codewhale exec` subprocess boundaries. What this object retires
+/// is the *semantic* duplication — posture sentinel entries read back off a
+/// deny list, and role-keyed re-derivation inside the registry.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ChildGrant {
+    /// File-system authority.
+    pub files: FileGrant,
+    /// Process authority.
+    pub shell: ShellGrant,
+    /// May reach the network through any surface.
+    pub network: bool,
+    /// May drive the operator's machine (computer-use / desktop tools).
+    /// Children never hold this today; the field is declared so every
+    /// surface reports the same denial rather than implying a grant.
+    pub desktop: bool,
+    /// The named tool surface before explicit scope narrowing.
+    pub surface: ToolSurface,
+    /// The caller's explicit allowlist, already intersected with the parent's
+    /// scope at spawn. `Some(vec![])` — the `tools = false` posture — permits
+    /// nothing at all.
+    pub scope: Option<Vec<String>>,
+    /// May delegate children of its own (remaining spawn depth).
+    pub spawn: bool,
+}
+
+impl ChildGrant {
+    /// The widest grant a role can ever hold — the role preset.
+    ///
+    /// This is the role-to-authority table, expressed once: everything else
+    /// only narrows it. Read-only roles stay read-only on the workspace by
+    /// intent; network reach is a read, and a worker cut off from it for no
+    /// role reason cannot do its job. `desktop` is never in any preset.
+    #[must_use]
+    pub fn for_role(role: &FleetRole) -> Self {
+        let (files, shell, surface) = match role {
+            // Read-only investigators: evidence collection only, with the
+            // classifier-bounded inspection shell.
+            FleetRole::Scout | FleetRole::Reviewer => {
+                (FileGrant::Read, ShellGrant::Inspect, ToolSurface::Evidence)
+            }
+            // Planner: analysis only, same bounded shell, broader read
+            // surface — a plan may consult any read the session offers.
+            FleetRole::Planner => (FileGrant::Read, ShellGrant::Inspect, ToolSurface::Inherited),
+            // Counsel only: reads to ground advice, never acts — no process
+            // surface at all (#4752).
+            FleetRole::Consultant => (FileGrant::Read, ShellGrant::None, ToolSurface::Inherited),
+            // Verifier: bounded workspace checks and bounded Git reference
+            // reads, no shell grammar.
+            FleetRole::Verifier => (FileGrant::Read, ShellGrant::Verify, ToolSurface::Inherited),
+            // Doers, and Custom: the preset asks for everything; the parent
+            // profile and explicit scope do all the narrowing.
+            FleetRole::Builder | FleetRole::Worker | FleetRole::Custom => {
+                (FileGrant::Write, She
+```
 
 ### Core Architecture Module: `crates/config/src/setup_state.rs`
 ```
@@ -1283,62 +1520,17 @@ pub use codewhale_protocol::role::*;
 
 ```
 
-### Core Architecture Module: `crates/core/src/secret_eq.rs`
-```
-//! The one constant-time comparison for bearer tokens, nonces and proofs.
-//!
-//! Every credential check in the engine (Runtime API token, web and mobile
-//! session proofs, computer-display tokens, the app-server bearer) goes
-//! through [`constant_time_eq`], so a timing fix lands once.
-
-/// Compares the full length of both inputs regardless of where they first
-/// differ, so an auth failure leaks neither the matching prefix length nor,
-/// beyond the loop bound, which input was shorter.
-#[must_use]
-pub fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
-    let mut diff = a.len() ^ b.len();
-    for i in 0..a.len().max(b.len()) {
-        let x = a.get(i).copied().unwrap_or(0);
-        let y = b.get(i).copied().unwrap_or(0);
-        diff |= usize::from(x ^ y);
-    }
-    std::hint::black_box(diff) == 0
-}
-
-#[cfg(test)]
-mod tests {
-    use super::constant_time_eq;
-
-    #[test]
-    fn equal_inputs_match() {
-        assert!(constant_time_eq(b"", b""));
-        assert!(constant_time_eq(b"secret-token", b"secret-token"));
-    }
-
-    #[test]
-    fn different_inputs_do_not_match() {
-        assert!(!constant_time_eq(b"secret-token", b"secret-tokem"));
-        assert!(!constant_time_eq(b"secret", b"secret-token"));
-        assert!(!constant_time_eq(b"secret-token", b"secret"));
-        assert!(!constant_time_eq(b"", b"x"));
-        // A zero-padded prefix must not collide with the shorter input.
-        assert!(!constant_time_eq(b"abc", b"abc\0"));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7008** (2026-10-17): **Need supported recovery for legacy Fleet ledger after workspace migration**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  On CodeWhale v0.10.1 on Windows, historical Fleet state copied during a workspace migration can disagree with the original ledger. In the new workspace, `fleet status` reports one queued item while `fleet list` shows the corresponding historical run as running; no worker process or usable lease is present. The originating workspace's ledger records that run as cancelled. `fleet inspect <run-id>` returns `unknown`. `fleet restart <run-id>` refuses with a persisted launch-spec / task-lease / attempt mismatch, and `fleet resume <run-id>` reports no change without reconciling it. A separate historical run is terminal exit 0 but verifier status is partial because its declared output is missing, while its worker snapshot still says running and refers to the old workspace.  No ledger was edited, no old task was replayed or terminated, and no receipt was fabricated.  What is the supported procedure to reconcile or disposition these migrated runs and produce a truthful custody record without replaying old work or editing the append-only ledger? Which evidence should an operator preserve, and which command should be used when the original and copied ledgers disagree?  ### Steps to reproduce 复现步骤  1. In CodeWhale v0.10.1, use a Fleet ledger copied from a prior workspace. 2. Run `codewhale fleet status` and `codewhale fleet list`; note the stale queued/running pr
+- **Issue #7069** (2026-10-25): **Composer history ignores CODEWHALE_HOME: typed prompts go to $HOME/.codewhale and are shared across isolated homes**
+  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. **Target:** 0.10.3  ## Repro ```sh export CODEWHALE_HOME=/tmp/cw-isolated   # an explicit, isolated home codewhale                                # type and send any prompt, then quit ls ~/.codewhale/composer_history.jsonl   # exists, and holds the prompt ls /tmp/cw-isolated/composer_history.jsonl  # absent ``` I saw this across several sessions, each with its own `CODEWHALE_HOME`. All their prompts went to one `$HOME/.codewhale/composer_history.jsonl`, so Up-arrow history in each "isolated" home shows the others' prompts.  ## Cause `composer_history::default_history_path()` builds the path from `effective_home_dir()` (the user's `$HOME`) plus `.codewhale` (`crates/tui/src/composer_history.rs:43-72`). It never consults `CODEWHALE_HOME`. It can also fall back to `~/.deepseek/composer_history.jsonl` when that file exists.  ## Why it matters - `docs/REBRAND.md` says: "An explicit `CODEWHALE_HOME` intentionally isolates that home and disables the ambient `~/.deepseek` fallback." Composer history breaks both halves of that. - History holds everything the user typed, which can include pasted secrets. People use a separate home for CI, demos, classrooms or per-client separation, and they don't expect prompts to land in, or be read back from, the shared ambient home.  ## Expected When `CODEWHALE_HOME` is set, read and write `$CODEWHALE_HOME/composer_history.jsonl`, with no `~/.deepseek` fallback. Keep today's resolution only whe
 
-- **Issue #6972** (2026-10-15): **Saved DeepSeek key reads back as missing while DeepSeek is not the active provider (root vs [providers.deepseek] auth_mode marker mismatch)**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  After saving a DeepSeek API key, an engine restart keeps reporting DeepSeek's credential as missing as long as another provider is active (e.g. zai). The key is present in the durable secret store but is never read for a non-active DeepSeek route.  Root cause: DeepSeek's save path writes the api-key marker at the ROOT of config.toml only, while the non-active-provider read gate only probes the durable secret store when that provider's own [providers.<name>] table carries auth_mode = 'api_key'. The marker the save writes is not the marker the read checks.  Observed home (macOS): - ~/.codewhale/secrets/secrets.json holds the deepseek slot. - ~/.codewhale/config.toml has root auth_mode = 'api_key' and [providers.deepseek] model = '...', but no [providers.deepseek] auth_mode. - the active provider is zai. Result: the provider picker / GET /v1/providers reports DeepSeek as missing on every restart.  Code pointers: - crates/tui/src/config.rs save_api_key_for_identity: for Deepseek returns save_api_key() (~L12062). - save_api_key() -> save_root_api_key_for_secret_slot(key, 'deepseek', 'deepseek') (~L11443). - save_root_api_key_metadata_without_plaintext writes only root auth_mode, never [providers.deepseek] auth_mode (~L11546-L11566). - Every other provider goes through codewhale_config::credentials::prepare_provider_api_key_metadata (crates/config/src/crede
+- **Issue #7058** (2026-10-24): **v0.11: Model refresh can still drift — 24 unseeded remote providers, unreachable non-text rows, unflagged stale pins, no scheduled job**
+  *Symptoms*: **Why this matters.** The founder reported that the OpenAI/ChatGPT models were visibly out of date and concluded the model-updating system had failed. The user-visible symptom had a real cause (see "What was fixed"), but investigating it surfaced four systemic gaps that keep any route able to drift silently: 24 remote providers have no offline seed facts, non-text-output rows are unreachable, a stale-but-present pin is never flagged, and the scheduled refresh exists only as prose. Each is independently checkable, so they are tracked here as one body of work rather than four vague wishes.  ## What was fixed (evidence, verified against the shipped binary)  The refresh pipeline was healthy; the installed binary was older than the catalog it read.  - `codewhale models --provider openai` on the installed release binary showed `source=models_dev_cache status={"state":"fresh"}` with 51 rows. - `~/.codewhale/catalog/models-dev-catalog.json` held 230 providers / 8,849 rows, `python3 scripts/catalog_models_dev.py seed age --max-days 30` → 0.0 days. - Stale ChatGPT-plan rosters at launch were fixed in `c869044358`.  So "OpenAI is stale" was a stale *binary*, not a dead updater. The gaps below are what remains.  ## Gap 1 — 24 remote providers have no offline seed block  `crates/config/assets/provider_descriptors.json` declares 52 providers; `scripts/catalog/models_dev_seed.toml` has 23 seed blocks. Four uncovered entries are loopback (`custom`, `ollama`, `sglang`, `vllm`) and one is a di
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1355,468 +1547,393 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38d7a091` (2026-10-22)
-**Commit Message**: fix(CW-7503): the committed secret scrubber did not compile; own the block type
+### Incident Patch 1: `485382f8` (2026-10-25)
+**Commit Message**: fix(runtime): name a started Fleet member's child by its member id (CW-7182)
 
-`d1fd6f1a31` landed `session_secret_scrub.rs` with a borrow the compiler
-rejects: `block_type` borrowed `map` immutably, and the two following
-`get_mut` calls need it mutably, so the crate did not build.
+917e6b2 passed the member's display_name as the child's session name. The
+spawn path validates session names as ASCII letters, digits, '-', '_' and
+'.', so any whale whose name has a space or non-ASCII text ("Ana Lovelace",
+小鲸) failed every member start with "name must not contain whitespace". The
+child is now named by member_id (the whale's Agent id), which is always a
+valid session name and is unique per whale, so the existing "one live child
+per name" rule still refuses a second start for a busy member. The platform's
+members inspection maps that id back to the whale's name (platform 6ea8a0f).
+docs/RUNTIME_API.md says the session name is the member id.
 
-The block type is now an owned `String` read once before the mutations, which
-is the smallest change that keeps the behaviour identical: the same two
-branches, the same `tool_use`/`server_tool_use` test, the same redaction calls.
+Also moves the FleetMemberStarted alias above SessionSnapshot's doc comment;
+917e6b2 had inserted it between the comment's two lines, so the alias took
+SessionSnapshot's first doc line.
 
-Found while compiling the review slice on top of it; committed separately so
-the security slice and the review slice stay reviewable on their own.
+Verification: cargo test -p codewhale-tui --lib -- protocol_covers_engine_ops
+runtime_info spawn_ plus a throwaway test (not committed) of
+parse_spawn_request: 105 passed, 0 failed. The throwaway test showed
+"Ana Lovelace" refused ("name must not contain whitespace…"), 
 
-Checks: `scripts/dev-cargo.sh check -p codewhale-tui --lib` clean;
-`scripts/dev-cargo.sh test -p codewhale-tui --lib tools::review` = 86 passed,
-0 failed.
-
-Refs CW-7503
-
-**File**: `crates/tui/src/session_secret_scrub.rs` (modified, +4/-3)
+**File**: `crates/tui/src/core/ops.rs` (modified, +1/-1)
 ```diff
-@@ -341,8 +341,9 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
-     match value {
-         Value::Object(map) => {
-             let mut changed = 0;
--            let block_type = map.get("type").and_then(Value::as_str);
--            if block_type == Some("tool_result") {
-+            // Owned, so the two `get_mut` calls below can borrow the map.
-+            let block_type = map.get("type").and_then(Value::as_str).map(str::to_string);
-+            if block_type.as_deref() == Some("tool_result") {
-                 if let Some(Value::String(content)) = map.get_mut("content") {
-                     changed += usize::from(scrub_text(content, secrets));
-                 }
-@@ -356,7 +357,7 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
-                     }
-                 }
-             }
--            if matches!(block_type, Some("tool_use" | "server_tool_use"))
-+            if matches!(block_type.as_deref(), Some("tool_use" | "server_tool_use"))
-                 && let Some(input) = map.get_mut("input")
-             {
-                 let redacted = crate::client::redact_json_model_bound_text(input, secrets);
+@@ -16,9 +16,9 @@ use std::path::PathBuf;
+ /// Prefix used for tool-call ids created by local composer shell shortcuts.
+ pub const USER_SHELL_TOOL_ID_PREFIX: &str = "user_shell_";
+ 
+-/// Snapshot of session state for saving to disk.
+ pub type FleetMemberStarted = Result<String, String>;
+ 
++/// Snapshot of session state for saving to disk.
+ /// Returned by `Op::GetSessionSnapshot` via a oneshot channel.
+ #[derive(Debug, Clone, PartialEq, serde::Serialize)]
+ pub struct SessionSnapshot {
+```
+
+**File**: `crates/tui/src/tools/subagent/mod.rs` (modified, +1/-1)
+```diff
+@@ -20369,7 +20369,7 @@ pub(crate) async fn start_fleet_member(
+     let input = json!({
+         "action": "start",
+         "profile": start.member_id,
+-        "name": start.display_name,
++        "name": start.member_id,
+         "prompt": start.prompt,
+     });
+     let (result, _) = spawn_subagent_from_input(
+```
+
+**File**: `docs/RUNTIME_API.md` (modified, +2/-1)
+```diff
+@@ -3124,7 +3124,8 @@ The response is `200 {thread_id, member_id, agent_id, state: "started"}`, or
+ between turns. Repeating the same `operation_key` with the same body returns
+ the original `agent_id` once started; a different body under the same key is
+ refused. The child appears in `/v1/agent-runs` with `owner_session_id` set to the
+-thread and its `display_name` as `session_name`; `agent.spawned`,
++thread and its `member_id` as `session_name` (a display name may hold spaces or
++non-ASCII text, which session names refuse); `agent.spawned`,
+ `agent.progress` and `agent.completed` arrive on the thread's event stream.
+ Stop it with `POST /v1/agent-runs/{id}/cancel`, which also stops its
+ descendants. A second start for a member whose child is still running is
 ```
 
 ---
 
-### Incident Patch 2: `d1fd6f1a` (2026-10-22)
-**Commit Message**: fix(security): redact tool-call arguments, gate redirects, widen the SSRF guard
+### Incident Patch 2: `62bbcebf` (2026-10-25)
+**Commit Message**: docs: correct FreeBSD source-build claims (#1097)
 
-Six hardening fixes from a read-only audit of this tree. Each is small; the
-first is the one that mattered.
+FreeBSD stays a source-only target, with no prebuilt asset and no
+release-matrix row (founder decision 2026-10-25, item 14). This change
+fixes the claims the issue sweep found to be false or stale:
 
-1. Tool-call arguments were never redacted. `redact_tool_result_blocks`
-   matched only `ContentBlock::ToolResult` and `continue`d on everything else,
-   so a model-authored command carrying a credential (`curl -H 'Authorization:
-   Bearer ...'`, `API_KEY=... ./run`, a `.env` write) was persisted verbatim
-   into `SavedSession.messages` and the journal, and replayed on resume. The
-   doc comment claimed "a token a tool printed is never written to disk live",
-   which was true for printed and false for given. Now `redact_tool_blocks`
-   covers `ToolUse` and `ServerToolUse` input as well.
+- packaging/freebsd/README.md said x86_64-unknown-freebsd "is validated in
+  CI ... on the release/0.9.5 branch". No job does this:
+  `git grep -i freebsd -- .github scripts` matches only a YAML comment. The
+  README now says no CI job checks the target and gives the cargo check
+  command to run on a FreeBSD host.
+- The README pointed to crates/tui/build.rs for the rquickjs bindgen fix.
+  1582ba9653/5eb0385e8f touch only crates/workflow-js/Cargo.toml, which
+  holds the target_os = "freebsd" bindgen dependency. It now names that
+  file.
+- The README now states the Rust minimum, 1.89 (Cargo.toml rust-version),
+  and its verification block no longer says ">= 1.88". The matrix list now
+  says Linux musl arm64, which is the target the matrix builds, not gnu.
+- The release-artifacts.yml build-job comment no longer claims a FreeBSD
+  cargo check. It now says FreeBSD has no prebuilt asset, no npm binary and
+  no CI check.
+- "OpenBSD" is dropped
 
-   `session_secret_scrub` had the same hole from the other side, so existing
-   files on disk could not be remediated: it rewrote `tool_result` and
-   `tool_call` summaries but never arguments. It scrubs `tool_use` and
-   `server_tool_use` input now.
-
-2. `[redaction] model_bound = false` disabled the *at-rest* boundary, not only
-   the request one. The opt-out exists so the model can quote file bytes back
-   for
-
-**File**: `crates/execpolicy/src/command_safety.rs` (modified, +11/-0)
+**File**: `.github/workflows/release-artifacts.yml` (modified, +2/-3)
 ```diff
-@@ -382,12 +382,23 @@ pub fn prefix_allow_matches(pattern: &str, command: &str) -> bool {
- 
-     // Fallback: normalised exact match for patterns not in the arity table
-     // (e.g. exact-match rules like `"ls -la"` that lack a dictionary entry).
-+    // A prefix grant never covers a compound or expansion-bearing command: the
-+    // allow is for one inert invocation, so a shell operator fails closed here
-+    // rather than depending on the caller having classified it first.
-     let command_norm: String = command
-         .trim()
-         .to_ascii_lowercase()
-         .split_whitespace()
-         .collect::<Vec<_>>()
-         .join(" ");
-+    if command_norm.chars().any(|c| {
-+        matches!(
-+            c,
-+            ';' | '&' | '|' | '`' | '$' | '(' | ')' | '<' | '>' | '\n' | '\r'
-+        )
-+    }) {
-+        return false;
-+    }
-     command_norm == pattern_norm || command_norm.starts_with(&format!("{pattern_norm} "))
- }
- 
+@@ -87,9 +87,8 @@ jobs:
+     # Both cold macOS artifact builds on 0.10.1 exhausted 90 minutes inside
+     # compilation. Keep the full CI build budget; packaging stays capped below.
+     timeout-minutes: 210
+-    # FreeBSD is a source-build target validated via `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked`
+-    # (see packaging/freebsd/README.md and docs/INSTALL.md#freebsd). The 7×1 prebuilt matrix stays 7 targets;
+-    # FreeBSD has no prebuilt asset, no npm binary, and no matrix bloat — it builds from source.
++    # FreeBSD is a source-build target with no prebuilt asset, no npm binary and no CI check
++    # (see packaging/freebsd/README.md and docs/INSTALL.md#freebsd).
+     strategy:
+       fail-fast: false
+       matrix:
 ```
 
-**File**: `crates/tui/src/client.rs` (modified, +30/-10)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -903,6 +903,30 @@ fn request_query_secret_values(url: &reqwest::Url) -> Vec<String> {
-     values
- }
- 
-+/// Redirects are followed only within one host, over the same or a stronger
-+/// scheme.
-+///
-+/// Provider keys ride in headers this stack may send under names reqwest does
-+/// not strip on a cross-host hop (`x-api-key`, operator `http_headers`), so a
-+/// compromised or open-redirecting endpoint could otherwise collect a key by
-+/// answering `302`. A same-host hop to plaintext would expose the same key to
-+/// anything on the path, so a downgrade stops too. Upgrades and same-scheme
-+/// hops still work for the endpoints that use them.
-+fn same_host_redirects() -> reqwest::redirect::Policy {
-+    reqwest::redirect::Policy::custom(|attempt| {
-+        let from = attempt.previous().last();
-+        let next = attempt.url();
-+        let same_host = from.is_some_and(|previous| previous.host_str() == next.host_str());
-+        let downgrade =
-+            from.is_some_and(|previous| previous.scheme() == "https" && next.scheme() == "http");
-+        if same_host && !downgrade && attempt.previous().len() < 10 {
-+            attempt.follow()
-+        } else {
-+            attempt.stop()
-+        }
-+    })
-+}
-+
- pub(crate) fn redact_model_bound_text(text: &str, exact_secret_values: &[String]) -> String {
-     let mut redacted = text.to_string();
-     for secret in exact_secret_values {
-@@ -1872,7 +1896,7 @@ impl CodewhaleClient {
-         let http_client = if plugin_provider.is_some() || api_key_source == "Claude sign-in" {
-             http_client.redirect(reqwest::redirect::Policy::none())
-         } else {
--            http_client
-+            http_client.redirect(same_host_redirects())
-         }
-         .build()?;
-         let models_http_client = Self::http_client_builder_with_auth_mode(
-@@ -2179,16 +2203,12 @@ impl CodewhaleClient {
-         redact_model_bound_text(text, &self.model_bound_secret_values)
-     }
- 
--    /// Redact tool output as it enters the transcript. Same masking as the
--    /// request boundary, including the confirmed `[redaction] model_bound`
--    /// opt-out: a user who chose to let the model see file bytes verbatim
--    /// keeps that, and everyone else never stores a live credential.
-+    /// Redact tool output as it enters the transcript. Unlike the request
-+    /// boundary, this path always redacts: the `[redaction] model_bound`
-+    /// opt-out exists so the model can quote file bytes back for exact edits,
-+    /// never to write a live credential to disk.
-     pub(crate) fn redact_tool_output_for_transcript(&self, text: &str) -> String {
--        if self.model_bound_masking {
--            redact_model_bound_text(text, &self.model_bound_secret_values)
--        } else {
--            text.to_string()
--        }
-+        redact_model_bound_text(text, &self.model_bound_secret_values)
-     }
- 
-     /// Alternate models share this client's frozen endpoint and declarations.
+@@ -1,6 +1,7 @@
+ # Build artifacts
+ /target
+ /target-*
++/vendor/codewhale-ratatui/target/
+ .entire/
+ .cursor/
+ .plans/
 ```
 
-**File**: `crates/tui/src/core/engine.rs` (modified, +46/-23)
+**File**: `docs/INSTALL.md` (modified, +1/-1)
 ```diff
-@@ -918,26 +918,47 @@ enum EngineHostSetup {
-     Rlm(rlm_host::RlmHostSetup),
- }
+@@ -1005,7 +1005,7 @@ v0.8.8 onward. Linux RISC-V prebuilts are temporarily paused because the locked
+ | Windows | arm64 | `codewhale-windows-arm64.exe`, `codew-windows-arm64.exe` | ✅ | ✅ |
+ | Linux x64 or arm64 on musl (Alpine) | native arch | matching static Linux asset | ✅ (static) | ✅ |
+ | Other Linux (musl on other arches) | — | build from source | ❌¹ | ✅² |
+-| FreeBSD 14+ / OpenBSD | x64, arm64 | `cargo install codewhale-cli --locked` (no prebuilt; see § FreeBSD) | ❌ | ✅² |
++| FreeBSD 14+ | x64, arm64 | `cargo install codewhale-cli --locked` (no prebuilt; see § FreeBSD) | ❌ | ✅² |
  
--/// Rewrite the text of every tool result in `message`, including text
--/// content blocks, with `redact`.
--pub(crate) fn redact_tool_result_blocks(message: &mut Message, redact: impl Fn(&str) -> String) {
-+/// Rewrite the text of every tool result and tool-call input in `message`,
-+/// including text content blocks, with `redact`.
-+pub(crate) fn redact_tool_blocks(message: &mut Message, redact: impl Fn(&str) -> String) {
-     for block in &mut message.content {
--        let ContentBlock::ToolResult {
--            content,
--            content_blocks,
--            ..
--        } = block
--        else {
--            continue;
--        };
--        *content = redact(content);
--        for value in content_blocks.iter_mut().flatten() {
--            if value.get("type").and_then(serde_json::Value::as_str) == Some("text")
--                && let Some(serde_json::Value::String(text)) = value.get_mut("text")
--            {
--                *text = redact(text);
-+        match block {
-+            ContentBlock::ToolResult {
-+                content,
-+                content_blocks,
-+                ..
-+            } => {
-+                *content = redact(content);
-+                for value in content_blocks.iter_mut().flatten() {
-+                    if value.get("type").and_then(serde_json::Value::as_str) == Some("text")
-+                        && let Some(serde_json::Value::String(text)) = value.get_mut("text")
-+                    {
-+                        *text = redact(text);
-+                    }
-+                }
-+            }
-+            ContentBlock::ToolUse { input, .. } | ContentBlock::ServerToolUse { input, .. } => {
-+                redact_json_strings(input, &redact);
-+            }
-+            _ => {}
-+        }
-+    }
-+}
-+
-+fn redact_json_strings(value: &mut serde_json::Value, redact: &impl Fn(&str) -> String) {
-+    match value {
-+        serde_json::Value::String(text) => *text = redact(text),
-+        serde_json::Value::Array(values) => {
-+            for value in values {
-+                redact_json_strings(value, redact);
-+            }
-+        }
-+        serde_json::Value::Object(values) => {
-+            for value in values.values_mut() {
-+                redact_json_strings(value, redact);
-             }
-         }
-+        _ => {}
-     }
- }
- 
-@@ -4701,13 +4722,15 @@ impl Engine {
-         self.emit_session_updated().await;
-     }
- 
--    /// Scrub credentials from tool output once, as it enters the transcript
--    /// (B1). The transcript is what session JSON, the journal and every
--    /// later request are built from, so a token a tool printed is never
--    /// written to disk live. Honors the confirmed `[redaction] model_bound`
--    /// opt-out the same way the request boundary does.
-+    /// Scrub credentials from tool output and tool-call input once, as it
-+    /// enters the transcript (B1). The transcript is what session JSON, the
-+    /// journal and every later request are built from, so a token a tool
-+    /// printed — or one a tool was *given* in its arguments — is never written
-+    /// to disk live. Unlike the request boundary this does not honor the
-+    /// `[redaction] model_bound` opt-out: that opt-out exists so the model can
-+    /// quote file bytes back for exact edits, never to relax storage.
-     fn redact_tool_results_for_transcript(&self, message: &mut Message) {
--        redact_tool_result_blocks(message, |text| self.redact_tool_output_for_transcript(text));
-+        redact_tool_blocks(message, |text| self.redact_tool_output_for_transcript(text));
-     }
- 
-     fn redact_tool_output_for_transcript(&self, text: &str) -> String {
+ ¹ The npm package will exit with a clear error and point you here.
+ ² Provided your toolchain can compile a recent Rust workspace; see
 ```
 
-**File**: `crates/tui/src/mcp.rs` (modified, +14/-9)
+**File**: `docs/zh_hans/INSTALL.md` (modified, +1/-1)
 ```diff
-@@ -1439,23 +1439,28 @@ fn resource_template_pattern(template: &str) -> Option<String> {
- ///
- /// This runs per URI per advertised template, while the template itself is
- /// fixed by the server's listing, so compiling it on every call was pure
--/// repetition. `None` still means "matches nothing" (#6213 T7).
-+/// repetition. `None` still means "matches nothing" (#6213 T7). The cache is
-+/// bounded because the template list is server-supplied: an unbounded key set
-+/// would let one server pin memory for the life of the process.
- fn compiled_resource_template(template: &str) -> Option<Arc<regex::Regex>> {
-+    const MAX_CACHED_TEMPLATES: usize = 512;
-     static CACHE: std::sync::OnceLock<
-         std::sync::Mutex<HashMap<String, Option<Arc<regex::Regex>>>>,
-     > = std::sync::OnceLock::new();
-     let cache = CACHE.get_or_init(|| std::sync::Mutex::new(HashMap::new()));
-     let mut cache = cache
-         .lock()
-         .unwrap_or_else(|poisoned| poisoned.into_inner());
--    cache
--        .entry(template.to_string())
--        .or_insert_with(|| {
--            resource_template_pattern(template)
--                .and_then(|pattern| regex::Regex::new(&pattern).ok())
--                .map(Arc::new)
--        })
--        .clone()
-+    if let Some(cached) = cache.get(template) {
-+        return cached.clone();
-+    }
-+    let compiled = resource_template_pattern(template)
-+        .and_then(|pattern| regex::Regex::new(&pattern).ok())
-+        .map(Arc::new);
-+    if cache.len() < MAX_CACHED_TEMPLATES {
-+        cache.insert(template.to_string(), compiled.clone());
-+    }
-+    compiled
- }
+@@ -764,7 +764,7 @@ v0.10.0 的已知 bug。bash 和 fish 没问题。
+ | Windows | arm64 | `codewhale-windows-arm64.exe`, `codew-windows-arm64.exe` | ✅ | ✅ |
+ | Linux x64 或 arm64 上的 musl（Alpine） | 原生架构 | 匹配的静态 Linux 资源 | ✅（静态） | ✅ |
+ | 其他 Linux（其他架构上的 musl） | — | 从源码构建 | ❌¹ | ✅² |
+-| FreeBSD 14+ / OpenBSD | x64, arm64 | `cargo install codewhale-cli --locked`（无预编译；见 § FreeBSD） | ❌ | ✅² |
++| FreeBSD 14+ | x64, arm64 | `cargo install codewhale-cli --locked`（无预编译；见 § FreeBSD） | ❌ | ✅² |
  
- fn resource_uri_matches_template(uri: &str, template: &str) -> bool {
+ ¹ npm 包会以明确的错误退出，并引导你到这里。
+ ² 前提是你的工具链能编译较新的 Rust workspace；见下文[从源码构建](#5-cargo-与从源码构建)。
 ```
 
-**File**: `crates/tui/src/runtime_threads.rs` (modified, +1/-1)
+**File**: `packaging/freebsd/README.md` (modified, +7/-5)
 ```diff
-@@ -19469,7 +19469,7 @@ impl RuntimeThreadManager {
-         {
-             let mut messages = engine.get_session_snapshot().await?.messages;
-             for message in &mut messages {
--                crate::core::engine::redact_tool_result_blocks(message, |text| {
-+                crate::core::engine::redact_tool_blocks(message, |text| {
-                     crate::client::redact_model_bound_text(text, &receipt_secrets)
-                 });
-             }
-```
-
-**File**: `crates/tui/src/session_secret_scrub.rs` (modified, +17/-6)
-```diff
-@@ -8,9 +8,10 @@
- //! `codewhale doctor` reports them and `codewhale sessions scrub-secrets`
- //! rewrites them on request.
- //!
--//! Only transcript tool results and Runtime tool receipts (including event
--//! copies) are touched. Cleanup masks credential shapes and currently configured
--//! secret values; bare secrets absent from current configuration cannot be recovered.
-+//! Only transcript tool results, transcript tool-call arguments and Runtime
-+//! tool receipts (including event copies) are touched. Cleanup masks credential
-+//! shapes and currently configured secret values; bare secrets absent from
-+//! current configuration cannot be recovered.
- //! Runtime rewrites require the exclusive process lease, and session rewrites
- //! the session's live lease; busy stores and sessions open in an interactive
- //! surface are reported and left untouched while the remaining files are
-@@ -334,13 +335,14 @@ fn scrub_file(path: &Path, apply: bool, secrets: &[String]) -> io::Result<FileSc
-     Ok(FileScan::Dirty(redacted))
- }
+@@ -5,7 +5,8 @@ Resolves #1097 — FreeBSD install via `cargo` today, native `pkg` port planned.
+ ## Current: cargo install (supported)
  
--/// Mask credentials in every `tool_result` text field below `value`.
--/// Returns how many fields changed.
-+/// Mask credentials in every `tool_result` and `tool_call` argument below
-+/// `value`. Returns how many fields changed.
- fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
-     match value {
-         Value::Object(map) => {
-             let mut changed = 0;
--            if map.get("type").and_then(Value::as_str) == Some("tool_result") {
-+            let block_type = map.get("type").and_then(Value::as_str);
-+            if block_type == Some("tool_result") {
-                 if let Some(Value::String(content)) = map.get_mut("content") {
-                     changed += usize::from(scrub_text(content, secrets));
-                 }
-@@ -354,6 +356,15 @@ fn scrub_value(value: &mut Value, secrets: &[String]) -> usize {
-                     }
-                 }
-             }
-+            if matches!(block_type, Some("tool_use" | "server_tool_use"))
-+                && let Some(input) = map.get_mut("input")
-+            {
-+                let redacted = crate::client::redact_json_model_bound_text(input, secrets);
-+                if *input != redacted {
-+                    *input = redacted;
-+                    changed += 1;
-+                }
-+            }
-             if map.get("kind").and_then(Value::as_str) == Some("tool_call") {
-                 for key in ["summary", "detail", "metadata"] {
-                     if let Some(value) = map.get_mut(key) {
-```
-
-**File**: `crates/tui/src/tools/web/guard.rs` (modified, +23/-0)
-```diff
-@@ -62,14 +62,37 @@ pub(crate) fn is_restricted_ip(ip: &IpAddr) -> bool {
-             if let Some(v4) = v6.to_ipv4_mapped() {
-                 return is_restricted_ip(&IpAddr::V4(v4));
-             }
-+            // A NAT64 gateway reaches the embedded IPv4 target, so the prefix
-+            // must not hide a restricted address.
-+            if let Some(v4) = nat64_ipv4(*v6)
-+                && is_restricted_ip(&IpAddr::V4(v4))
-+            {
-+                return true;
-+            }
-             v6.is_loopback()
-                 || v6.is_multicast()
-                 || matches!(v6.segments(), [0xfc00..=0xfdff, ..]) // ULA fc00::/7
-                 || matches!(v6.segments(), [0xfe80..=0xfebf, ..]) // Link-local fe80::/10
-+                || matches!(v6.segments(), [0xfec0..=0xfeff, ..]) // Site-local fec0::/10
-+                || matches!(v6.segments(), [0x2002, ..]) // 6to4 2002::/16
-+                || matches!(v6.segments(), [0x2001, 0x0000, ..]) // Teredo 2001::/32
-+                || matches!(v6.segments(), [0, 0, 0, 0, 0, 0, ..]) // IPv4-compatible ::a.b.c.d
-         }
-     }
- }
+ FreeBSD has no prebuilt GitHub Release asset. The npm wrapper intentionally fails with
+-`Unsupported platform: freebsd` and points to the Cargo path. Build from source:
++`Unsupported platform: freebsd` and points to the Cargo path. Build from source with
++Rust 1.89 or newer (the workspace `rust-version`):
  
-+/// The IPv4 target of a well-known-prefix NAT64 address (`64:ff9b::/96`).
-+fn nat64_ipv4(v6: std::net::Ipv6Addr) -> Option<std::net::Ipv4Addr> {
-+    let segments = v6.segments();
-+    if segments[0] == 0x0064 && segments[1] == 0xff9b && segments[2..6].iter().all(|s| *s == 0) {
-+        let octets = v6.octets();
-+        return Some(std::net::Ipv4Addr::new(
-+            octets[12], octets[13], octets[14], octets[15],
-+        ));
-+    }
-+    None
-+}
-+
- /// Validate that `url` is a safe fetch target under SSRF and network policy.
- ///
- /// On success returns an optional DNS pin `(hostname, ip)` for hostnames that
+ ```bash
+ pkg install -y rust pkgconf git  # or: pkg install -y lang/rust devel/pkgconf devel/git
+@@ -22,13 +23,14 @@ installed `codewhale-tui` from ports or Cargo, run
+ 
+ Linux `libdbus-1` / `pkg-config` build deps are not needed on FreeBSD for the default
+ feature set; the `rquickjs` FreeBSD bindings are generated at build time via `bindgen`
+-(see `crates/tui/build.rs` and the `1582ba965`/`5eb0385e8` FreeBSD bindgen fix).
++(see the `target_os = "freebsd"` dependency in `crates/workflow-js/Cargo.toml`, added by
++`1582ba965`/`5eb0385e8`).
+ 
+ ## Target validation
+ 
+-- Rust tier-2 target `x86_64-unknown-freebsd` is validated in CI via `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked` on the `release/0.9.5` branch.
++- No CI job builds or checks the Rust tier-2 target `x86_64-unknown-freebsd`, so FreeBSD source builds are not verified before a release. To check one, run `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked` on a FreeBSD host.
+ - `aarch64-unknown-freebsd` cross-check is tracked for future hardware.
+-- The release matrix in `.github/workflows/release-artifacts.yml` remains 7×1 (Linux musl x64, Linux gnu arm64, Android arm64, macOS x64/arm64, Windows x64/arm64). FreeBSD is a source-build target — no prebuilt asset, no matrix bloat, but the row in `docs/INSTALL.md` is authoritative.
++- The release matrix in `.github/workflows/release-artifacts.yml` remains 7×1 (Linux musl x64, Linux musl arm64, Android arm64, macOS x64/arm64, Windows x64/arm64). FreeBSD is a source-build target — no prebuilt asset, no matrix bloat, but the row in `docs/INSTALL.md` is authoritative.
+ 
+ ## Future: native pkg / port
+ 
+@@ -53,7 +55,7 @@ and report the `codewhale doctor` JSON in #1097.
+ 
+ ```bash
+ # on a FreeBSD 14.1 amd64 host or VM
+-rustc --version  # >= 1.88
++rustc --version  # >= 1.89
+ cargo install --path crates/cli --locked
+ codewhale --version
+ codewhale exec --auto "run pwd"
 ```
 
 ---
 
-### Incident Patch 3: `1d444351` (2026-10-22)
-**Commit Message**: fix(plugins): give the plugin state file room, and derive its limit message
+### Incident Patch 3: `f6b7af39` (2026-10-25)
+**Commit Message**: fix(tui): treat a child silent for 10m as suspect again (#6184)
 
-`MAX_PLUGIN_STATE_BYTES` was 1 MiB. A plugin state file that outgrew it made
-`load_state` fail with "plugin state … exceeds the 1 MiB limit", which turns
-every plugin into a load failure for that user with no way out short of
-deleting their state by hand. The ceiling is now 16 MiB.
+CW-7500 (574dc76e26) removed SUBAGENT_SUSPECT_AFTER, which treated a
+Running child past its wall budget as suspect, together with the default
+child wall time. Since then, every current-session Running row in
+subagent_cache counts in live_running_agent_count. Every recovery
+branch of reconcile_turn_liveness_with requires !has_running_agents,
+and the engine heartbeat enters TurnPhase::Tools with no bound, leaving
+that bound to the UI tool-hang watchdog. So a tool batch waiting on a
+wedged child, or on a ghost Running row whose AgentComplete was lost,
+could again sit silent forever while follow-up messages queued behind
+it.
 
-The read stays bounded: `file.take(MAX_PLUGIN_STATE_BYTES + 1)` caps it before
-the length check, so this raises the ceiling without ever reading an unbounded
-file. The refusal message now derives its number from the constant instead of
-restating "1 MiB", so the next change cannot leave the message lying.
+Founder decision (FOUNDER-DECISIONS-20261025 item 7): a running child
+that has reported no progress for 10 minutes counts as suspect again.
+"No progress" is measured from AgentProgressMeta.last_progress_at,
+which each mailbox envelope and Engine AgentProgress event refreshes. If no envelope has
+arrived yet, it is measured from the row's started_at. It is not
+measured as elapsed wall time. The bound reuses
+max(TOOL_HANG_WATCHDOG_TIMEOUT, child heartbeat_timeout_ms), preserving
+legitimate child operati
 
-Found as uncommitted work in the shared checkout and landed under the Own
-everything in CW rule after it had been unchanged for 19 minutes. No test pins
-the old 1 MiB value.
-
-Verification: `rustfmt --check` passes on the file. A crate build was not run -
-the shared build lock was held by another session throughout the attempt - so
-CI is the verifier for compilation.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/tui/src/plugins/registry.rs` (modified, +4/-3)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -847,7 +847,7 @@ fn load_state(path: &Path) -> Result<PluginStateFile, String> {
+@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   installs provider access in the running computer's memory. Retries retain
+   one operation key and the account/VM binding. Existing Agent Work dispatch
+   remains available when no computer conversation is selected.
++- A delegated agent still marked running that has reported no progress for 10
++  minutes no longer holds its parent turn open: the turn's stall watchdogs can
++  recover again, and the stall record names the agent. A child's running time
++  stays unlimited; only silence counts (#6184).
+ - A long draft or paste now grows the composer past its density row limit, up
+   to half the screen (never less than that limit) while leaving room for the
+   transcript, so the text can be read and edited before sending. While a
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   installs provider access in the running computer's memory. Retries retain
+   one operation key and the account/VM binding. Existing Agent Work dispatch
+   remains available when no computer conversation is selected.
++- A delegated agent still marked running that has reported no progress for 10
++  minutes no longer holds its parent turn open: the turn's stall watchdogs can
++  recover again, and the stall record names the agent. A child's running time
++  stays unlimited; only silence counts (#6184).
+ - A long draft or paste now grows the composer past its density row limit, up
+   to half the screen (never less than that limit) while leaving room for the
+   transcript, so the text can be read and edited before sending. While a
+```
+
+**File**: `crates/tui/src/tui/ui.rs` (modified, +1/-1)
+```diff
+@@ -1329,7 +1329,7 @@ pub(crate) fn flush_background_finished(app: &mut App, config: &Config, parent_i
+         return;
+     }
+     let mode = config.notifications_config().subagent_completion;
+-    let finite_work_live = session_state::live_running_agent_count(app) > 0
++    let finite_work_live = session_state::live_running_agent_count(app, Instant::now()) > 0
+         || frame::workflow_tool_is_running(app)
+         || app.task_panel.iter().any(|entry| {
+             // A stale entry (a recovered task whose ownership is unverified)
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +1/-0)
+```diff
+@@ -4109,6 +4109,7 @@ pub(crate) async fn run_event_loop(
+                             app.agent_progress.insert(id.clone(), display.clone());
+                         }
+                         let meta = app.agent_progress_meta.entry(id.clone()).or_default();
++                        meta.last_progress_at = Some(Instant::now());
+                         meta.parent_run_id = parent_run_id;
+                         meta.spawn_depth = spawn_depth;
+                         let current_tool = activity
+```
+
+**File**: `crates/tui/src/tui/ui/session_state.rs` (modified, +24/-9)
+```diff
+@@ -159,20 +159,35 @@ pub(crate) fn restore_matching_offline_queue_state(
+     true
  }
  
- /// Maximum bytes read from the plugin state file.
--const MAX_PLUGIN_STATE_BYTES: u64 = 1024 * 1024;
-+const MAX_PLUGIN_STATE_BYTES: u64 = 16 * 1024 * 1024;
+-/// Prior-session Running rows have no live actor in this process. Elapsed
+-/// time alone does not establish that a current child is stalled.
+-pub(crate) fn suspect_running_agents(app: &App) -> Vec<String> {
++/// Running rows that never veto recovery: a prior-session row has no live
++/// actor in this process, and a current child silent beyond its heartbeat
++/// bound (at least `TOOL_HANG_WATCHDOG_TIMEOUT`) may have lost its terminal event (#6184).
++/// Elapsed time alone does not establish that a current child is stalled.
++pub(crate) fn suspect_running_agents(app: &App, now: Instant) -> Vec<String> {
+     app.subagent_cache
+         .iter()
+         .filter(|agent| matches!(agent.status, SubAgentStatus::Running))
+-        .filter(|agent| agent.from_prior_session)
++        .filter(|agent| {
++            agent.from_prior_session
++                || app
++                    .agent_progress_meta
++                    .get(&agent.agent_id)
++                    .and_then(|meta| meta.last_progress_at)
++                    .or(agent.started_at)
++                    .is_some_and(|at| {
++                        now.saturating_duration_since(at)
++                            > TOOL_HANG_WATCHDOG_TIMEOUT.max(Duration::from_millis(
++                                agent.heartbeat_timeout_ms.unwrap_or(0),
++                            ))
++                    })
++        })
+         .map(|agent| agent.agent_id.clone())
+         .collect()
+ }
  
- fn load_state_unlocked(path: &Path) -> Result<PluginStateFile, String> {
-     let Some(file) = open_existing_regular_file(path, false)? else {
-@@ -859,8 +859,9 @@ fn load_state_unlocked(path: &Path) -> Result<PluginStateFile, String> {
-         .map_err(|e| format!("failed to read {}: {e}", path.display()))?;
-     if raw.len() as u64 > MAX_PLUGIN_STATE_BYTES {
-         return Err(format!(
--            "plugin state {} exceeds the 1 MiB limit",
--            path.display()
-+            "plugin state {} exceeds the {} MiB limit",
-+            path.display(),
-+            MAX_PLUGIN_STATE_BYTES / (1024 * 1024)
-         ));
+ /// Running sub-agents that still legitimately hold the turn open.
+-pub(crate) fn live_running_agent_count(app: &App) -> usize {
+-    let suspects = suspect_running_agents(app);
++pub(crate) fn live_running_agent_count(app: &App, now: Instant) -> usize {
++    let suspects = suspect_running_agents(app, now);
+     let mut ids: std::collections::HashSet<&str> =
+         app.agent_progress.keys().map(String::as_str).collect();
+     for agent in app
+@@ -197,10 +212,10 @@ fn held_queue_note(app: &App) -> String {
+ 
+ /// Log, record under `crashes/`, and name a stall the UI watchdog saw.
+ fn record_ui_stall(app: &App, phase: &str, since_progress: Duration, bound: Duration) {
+-    let suspects = suspect_running_agents(app);
++    let suspects = suspect_running_agents(app, Instant::now());
+     let detail = (!suspects.is_empty()).then(|| {
+         format!(
+-            "sub-agent(s) retained from a prior session, with no live actor: {}",
++            "sub-agent(s) from a prior session or with no progress for 10m, treated as suspect: {}",
+             suspects.join(", ")
+         )
+     });
+@@ -247,7 +262,7 @@ pub(crate) fn reconcile_turn_liveness_supervised(
+         let text = format!("{}{}", stall.status_line(), held_queue_note(app));
+         app.push_status_toast(text, StatusToastLevel::Error, None);
      }
-     let state: PluginStateFile = serde_json::from_str(&raw)
+-    let has_live_agents = live_running_agent_count(app) > 0;
++    let has_live_agents = live_running_agent_count(app, now) > 0;
+     let recovered = reconcile_turn_liveness_with(app, now, has_live_agents, Some(heartbeat));
+     if recovered && turn_in_progress && app.runtime_turn_status.is_none() {
+         engine.cancel_with_reason(crate::core::engine::CancelReason::Stalled);
+```
+
+**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +9/-4)
+```diff
+@@ -15743,7 +15743,7 @@ fn stall_engine_report_shows_phase_and_held_queue() {
+ }
+ 
+ /// Prior-session Running rows do not veto recovery. Current children remain
+-/// live regardless of elapsed time.
++/// live regardless of elapsed time while they report progress.
+ #[test]
+ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
+     use crate::core::engine::turn_heartbeat::{TurnPhase, set_test_stall_record_dir};
+@@ -15770,10 +15770,10 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
+     let idle = stall_heartbeat(TurnPhase::Idle, None, None);
+ 
+     assert_eq!(
+-        suspect_running_agents(&app),
++        suspect_running_agents(&app, now),
+         vec!["agent_ghost".to_string()]
+     );
+-    assert_eq!(live_running_agent_count(&app), 0);
++    assert_eq!(live_running_agent_count(&app, now), 0);
+     let engine = crate::core::engine::mock_engine_handle();
+     assert!(!engine.handle.is_cancelled());
+     assert!(reconcile_turn_liveness_supervised(
+@@ -15815,7 +15815,11 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
+     fresh.started_at = now.checked_sub(Duration::from_secs(2 * 60 * 60));
+     assert!(fresh.started_at.is_some());
+     app.subagent_cache = vec![fresh];
+-    assert_eq!(live_running_agent_count(&app), 1);
++    app.agent_progress_meta
++        .entry("agent_fresh".to_string())
++        .or_default()
++        .last_progress_at = Some(now);
++    assert_eq!(live_running_agent_count(&app, now), 1);
+     let engine = crate::core::engine::mock_engine_handle();
+     assert!(!reconcile_turn_liveness_supervised(
+         &mut app,
+@@ -15828,6 +15832,7 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
+         !engine.handle.is_cancelled(),
+         "a turn that is still live is never cancelled"
+     );
++
+     set_test_stall_record_dir(None);
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7046** (2026-10-22): fix(web): document JSONPath subset (@zhuowp)
-- **PR #7041** (2026-10-22): fix(shell): preserve Python stdio env defaults (@zhuowp)
-- **PR #7034** (2026-10-21): fix(tui): put the approval footer's separators between its hints (@Lstarsky0)
-- **PR #7033** (2026-10-21): fix(tui): keep a to-do row's status word when its title is long (@Lstarsky0)
-- **PR #7032** (closed): chore(deps): bump the npm_and_yarn group across 4 directories with 3 updates (@dependabot[bot])
-- **PR #7031** (closed): chore(deps-dev): bump vite from 8.3.0 to 8.3.4 in /web in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #7084** (closed): feat(tui): consider Ctrl+C clearing a non-empty composer before it arms exit (Esc/Ctrl+C split revisited) (@Hmbown)
+- **PR #7083** (closed): feat(engine): soft model-facing context notice while auto-compaction is enabled (no competing save/compact ceremony) (@Hmbown)
+- **PR #7082** (closed): feat(tui): optionally show the running command on a foreground shell card — off by default, with a one-line or fully wrapped detail mode (@Hmbown)
+- **PR #7081** (closed): feat(config): optional knobs for the standing-instruction budget, and a visible notice when instruction content is trimmed or dropped (@Hmbown)
+- **PR #7080** (closed): CPU Usage Regression: v0.9.12 (idle) → v0.9.13 (moderate) → v0.10.0 (heavy) (@Hmbown)
+- **PR #7079** (closed): Black text on black background (@Hmbown)
 
 ---
 
@@ -1836,33 +1953,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CW-7503): the committed secret scrubber did not compile; own the block type
+## X. runtime): name a started Fleet member's child by its member id (CW-7182)
 
 **RULE**:
-When implementing operations in `crates/tui/src/session_secret_scrub.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/tui/src/core/ops.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38d7a091`: CW-7503): the committed secret scrubber did not compile; own the block type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `485382f8`: runtime): name a started Fleet member's child by its member id (CW-7182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/session_secret_scrub.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/core/ops.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Owned, so the two `get_mut` calls below can borrow the map.
-            let block_type = map.get("type").and_then(Value::as_str).map(str::to_string);
-            if block_type.as_deref() == Some("tool_result") {
-            if matches!(block_type.as_deref(), Some("tool_use" | "server_tool_use"))
+/// Snapshot of session state for saving to disk.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let block_type = map.get("type").and_then(Value::as_str);
-            if block_type == Some("tool_result") {
-            if matches!(block_type, Some("tool_use" | "server_tool_use"))
+/// Snapshot of session state for saving to disk.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38d7a091` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `485382f8` are properly handled with clean fallback behavior.

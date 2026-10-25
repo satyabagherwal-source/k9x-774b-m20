@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:14:37.879Z",
+  "last_updated": "2026-10-25T11:20:55.214Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6615,13 +6615,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "2947e4c5",
-      "content_hash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "62bbcebf",
+      "content_hash": "6541c3f98f9bc2a71923e98fe4d6e2bd80c9bc2726da3ddfdea59ac650924f59",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6667,6 +6667,11 @@
           "number": 4153,
           "title": "Stable Byte Order Serialization for Prefix-Cache Fingerprints",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4259,
+          "title": "runtime): name a started Fleet member's child by its member id (CW-7182)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6674,7 +6679,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:19:16.589Z",
+      "verified_at": "2026-10-25T11:20:49.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13670,8 +13675,8 @@
       "slug": "guokaigdg-animal-island-ui",
       "platform": "github",
       "source_url": "https://github.com/guokaigdg/animal-island-ui",
-      "source_version": "2d855fc6",
-      "content_hash": "762a9359f3b7dee1cb68e94e9b65e877a661ee8d4ff7de44cff188907979efd1",
+      "source_version": "8df30b8f",
+      "content_hash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
       "dossier_path": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "promoted_rules": [
@@ -13689,6 +13694,11 @@
           "number": 3778,
           "title": "time-picker): ignore escaped literals in seconds detection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4258,
+          "title": "overlays): stop the modal and drawer chrome from being selectable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13696,7 +13706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:02:45.497Z",
+      "verified_at": "2026-10-25T11:20:46.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24244,7 +24254,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "46e1a6478d37e5a3d2874614152fd4851600be353fe311ba52054f5b6264d93e",
+      "content_hash": "4577f352edaf8085d3508476f4abbdb4bd2ec4e540c7800ce6c85748a95ef61c",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -24254,6 +24264,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi",
           "verified_at": "2026-10-11T10:52:45.212Z"
+        },
+        {
+          "number": 4260,
+          "title": "Unified Modality Stream Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4261,
+          "title": "Prefix KV Cache for Diffusion Steps",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4262,
+          "title": "Native RGBA Channel Prediction",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24274,7 +24299,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-20T16:37:49.353Z",
+      "verified_at": "2026-10-25T11:20:55.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122273,6 +122298,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:14:37.867Z"
+    },
+    "rule-4258": {
+      "learning_id": "rule-4258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4258,
+      "title": "overlays): stop the modal and drawer chrome from being selectable",
+      "source_url": "https://github.com/guokaigdg/animal-island-ui",
+      "source_version": "8df30b8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:20:46.653Z"
+    },
+    "rule-4259": {
+      "learning_id": "rule-4259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4259,
+      "title": "runtime): name a started Fleet member's child by its member id (CW-7182)",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "62bbcebf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:20:49.898Z"
+    },
+    "rule-4260": {
+      "learning_id": "rule-4260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4260,
+      "title": "Unified Modality Stream Efficiency",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+      "source_version": "hf-qwen-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:20:55.204Z"
+    },
+    "rule-4261": {
+      "learning_id": "rule-4261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4261,
+      "title": "Prefix KV Cache for Diffusion Steps",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+      "source_version": "hf-qwen-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:20:55.204Z"
+    },
+    "rule-4262": {
+      "learning_id": "rule-4262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4262,
+      "title": "Native RGBA Channel Prediction",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+      "source_version": "hf-qwen-qwen-image-2.1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:20:55.204Z"
     }
   },
   "aliases": {
