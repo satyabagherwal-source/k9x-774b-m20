@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
-    "lastHarvestedAt": "2026-10-20T14:44:26.745Z",
+    "contentHash": "c64aad709fb664098eec5ea5ed50e9699f3d4643ac3050931ca8d0bce3dbf4f6",
+    "lastHarvestedAt": "2026-10-25T06:55:57.586Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "40bddf72",
+    "sourceVersion": "bef37c08",
     "license": "Apache-2.0",
-    "contentHash": "0fbe024ccece434f6735e4e2b25db1ca6e8b9753faf4d99878fc8f4bbe0b08bf",
-    "lastHarvestedAt": "2026-10-22T19:29:19.057Z",
+    "contentHash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
+    "lastHarvestedAt": "2026-10-25T06:55:58.691Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -5133,10 +5133,10 @@
     "repository": "primer/react",
     "platform": "github",
     "sourceUrl": "https://github.com/primer/react",
-    "sourceVersion": "3a71047a",
+    "sourceVersion": "190fafd9",
     "license": "MIT",
-    "contentHash": "dedef40b51d55b35c333ac02028e0284538758336f24b87df8008d6ce43e46d2",
-    "lastHarvestedAt": "2026-10-22T19:42:15.917Z",
+    "contentHash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
+    "lastHarvestedAt": "2026-10-25T06:56:52.349Z",
     "learningId": "learn-github-primer-react"
   },
   "smol-rs-smol": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "17638a0d",
+    "sourceVersion": "8a2408ed",
     "license": "MIT",
-    "contentHash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
-    "lastHarvestedAt": "2026-10-22T16:32:17.438Z",
+    "contentHash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
+    "lastHarvestedAt": "2026-10-25T06:55:50.959Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-890T",
-    "timestamp": "2026-10-21T05:28:03.245Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "0a8b9d123a86f18980f9bf64f0d6fc094bdf0a69d85fcb19313ce48285caa4ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-G7ZU",
-    "timestamp": "2026-10-21T05:34:15.162Z",
-    "repository": "ionic-team/ionic-framework",
-    "learningId": "learn-github-ionic-team-ionic-framework",
-    "contentHash": "57ea2aa0b3e202f6ff03d3a6b15a99c5faf8bd3e986e04e7b3f7930d178085eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-G9RM",
-    "timestamp": "2026-10-21T05:34:17.458Z",
-    "repository": "serpapi/google-search-results-nodejs",
-    "learningId": "learn-github-serpapi-google-search-results-nodejs",
-    "contentHash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-O5FC",
-    "timestamp": "2026-10-21T05:40:25.080Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui",
-    "contentHash": "4348344d49897eea3372747401f04f34f17e0e1256eabb049a0b7c5665e19f72",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-O5LA",
     "timestamp": "2026-10-21T05:40:25.294Z",
     "repository": "graphprotocol/graph-node",
@@ -7490,6 +7430,66 @@
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
     "contentHash": "5cb4356860441b2d273ea8b5a6d8c3294865c272afcb45803469cc38f7ca1f81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4KA4",
+    "timestamp": "2026-10-25T06:55:50.956Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4PE7",
+    "timestamp": "2026-10-25T06:55:57.583Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "c64aad709fb664098eec5ea5ed50e9699f3d4643ac3050931ca8d0bce3dbf4f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-4Q8W",
+    "timestamp": "2026-10-25T06:55:58.688Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-5VNE",
+    "timestamp": "2026-10-25T06:56:52.346Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

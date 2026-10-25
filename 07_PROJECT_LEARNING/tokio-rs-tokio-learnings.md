@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `17638a0d`  
+> **Source Version**: `8a2408ed`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:32:17.156Z  
+> **Timestamp**: 2026-10-25T06:55:50.739Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:32:15.791Z  
+> **Harvest Timestamp**: 2026-10-25T06:55:50.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33487 stars
+- **Stars / Engagement**: 33506 stars
 
 ---
 
@@ -1934,11 +1934,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8701** (2026-10-22): **task: clarify `block_in_place` panics in LocalSet**
-  *Symptoms*: While investigating a [shutdown hang in OpenTelemetry](https://github.com/open-telemetry/opentelemetry-rust/pull/3811), I ran into a confusing panic from `block_in_place`: it asks for a multithreaded runtime even when it’s already running on one. The call was inside a `LocalSet`, which also disallows in-place blocking, but the panic message and docs didn’t make that clear.  This documents the restriction and updates the panic message. It also updates the existing panic assertions and adds a small test confirming that calls outside a runtime still work. 
+- **Issue #8714** (2026-10-24): **Merge 'tokio-1.51.x' into 'tokio-1.53.x'**
+  *Symptoms*: 
 
-- **Issue #8698** (2026-10-22): **time: wake parked driver on `advance()` while auto-advance is inhibited**
-  *Symptoms*: Fixes #8696.  With `test-util`, if a `spawn_blocking` task is running, auto-advance is inhibited and the time driver parks in real time for the timer's remaining duration. Calling `time::advance()` past the deadline from another thread never wakes it, so the timer only fires when the real-time park expires (~8.2 s, one wheel slot, in the repro) instead of right after the advance.  `BlockingSchedule::release` already unparks the driver when a blocking task finishes; this adds the same wakeup to public `time::advance()`, the only other cross-thread clock-moving entry point. Stray unparks are harmless (the parker has no token accumulation).  Verified: the issue's repro goes from 8.2 s to ~100 ms of real time; new regression test `advance_wakes_parked_driver_while_auto_advance_inhibited` in `tokio/tests/time_pause.rs` (red without the fix, green with it); existing `time_pause`/`time_sleep`/`time_interval`/`time_timeout`/`time_rt`/`rt_time_start_paused` suites all pass.
+- **Issue #8711** (2026-10-23): **sync: add `SetOnce::take`**
+  *Symptoms*: ## Motivation  `SetOnce` has `get_mut` for exclusive in-place mutation and `into_inner` for consuming ownership, but lacks `take` to extract the contained value and leave the cell empty without deallocating or dropping the cell.  `OnceCell` already provides this via `take(&mut self) -> Option<T>` by relying on `Default`. Because `SetOnce` already implements `Default`, adding the matching `take` method completes the standard Rust cell API matrix across `OnceCell` and `SetOnce`.  ## Solution  Add `pub fn take(&mut self) -> Option<T>` to `SetOnce<T>`: ```rust pub fn take(&mut self) -> Option<T> {     std::mem::take(self).into_inner() } ``` This replaces `*self` with an uninitialized `SetOnce::default()` and extracts the inner value via `.into_inner()`, allowing the cell to be inspected, drained, or re-initialized with `set()`.  ## Validation  - Added unit tests in `tokio/tests/sync_set_once.rs`:   - `take_uninit`: Verifies `take()` returns `None` on an empty cell.   - `take_and_reset`: Verifies `take()` extracts the contained value, resets `get()` to `None`, and allows re-initialization with `set()`.   - `take_from`: Verifies `take()` works on cells initialized with `SetOnce::from()`. - Verified 100% passing test battery locally (`cargo test --test sync_set_once --features full` — 20/20 tests passed). - Verified documentation test (`cargo test --doc --features full -- sync::set_once` — 6/6 doctests passed). - Checked formatting with `cargo fmt --check`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2119,515 +2119,518 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 3: `5ed619bb` (2026-10-21)
-**Commit Message**: time: revert "remove the runtime handle from timers" (#8692)
+### Incident Patch 3: `b6b49d01` (2026-10-23)
+**Commit Message**: Merge two CI fixes from 'tokio-1.51.x' into 'master'
 
-This reverts commit af4f3c2a999248310b81cfdad861c0fc262695b1 (#8458).
-
-Commit af4f3c2a removed the `Drop` implementations from `TimerEntry`
-and `time_alt::Timer`, causing `Sleep::reset_without_timer` to drop
-elapsed timer entries without synchronizing with the timer driver. Since
-`StateCell::fire` marks the timer as deregistered before taking its
-waker, a concurrent `Interval::poll_tick` can drop or overwrite the
-entry while the driver is still accessing it, leading to a data race and
-use-after-free.
-
-**File**: `tokio/src/runtime/mod.rs` (modified, +9/-27)
+**File**: `.github/workflows/ci.yml` (modified, +3/-3)
 ```diff
-@@ -463,10 +463,10 @@ cfg_time! {
-     impl Timer {
-         #[cfg_attr(not(all(tokio_unstable, feature = "rt-multi-thread")), allow(unused_variables))]
-         #[track_caller]
--        pub(crate) fn new(handle: &scheduler::Handle, deadline: u64) -> Self {
-+        pub(crate) fn new(handle: scheduler::Handle, deadline: u64) -> Self {
-             match handle.timer_flavor() {
-                 TimerFlavor::Traditional => {
--                    Timer::Traditional(time::TimerEntry::new())
-+                    Timer::Traditional(time::TimerEntry::new(handle))
-                 }
-                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-                 TimerFlavor::Alternative => {
-@@ -475,13 +475,13 @@ cfg_time! {
-             }
-         }
+@@ -1349,14 +1349,14 @@ jobs:
+           # and contains no duplicates.
+           #
+           # Since `sort` is sensitive to locale, we set it
+-          # using LC_ALL to en_US.UTF8 to be consistent in different
++          # using LC_ALL to C to be consistent in different
+           # environments.
  
--        pub(crate) fn init(self: Pin<&mut Self>, handle: &scheduler::Handle, deadline: u64) {
-+        pub(crate) fn init(self: Pin<&mut Self>, deadline: u64) {
-             // Safety: we never move the inner entries.
-             let this = unsafe { self.get_unchecked_mut() };
-             match this {
-                 // Safety: we never move the inner entries.
-                 Timer::Traditional(entry) => unsafe {
--                    Pin::new_unchecked(entry).init(handle, deadline);
-+                    Pin::new_unchecked(entry).init(deadline)
-                 }
-                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-                 Timer::Alternative(_) => {},
-@@ -496,51 +496,33 @@ cfg_time! {
-             }
-         }
+           (
+-            sed '1d' $FILE | LC_ALL=en_US.UTF8 sort -uc
++            sed '1d' $FILE | LC_ALL=C sort -uc
+           ) || {
+             echo "Dictionary is not in sorted order. Correct order is:"
+-            LC_ALL=en_US.UTF8 sort -u <(sed '1d' $FILE)
++            LC_ALL=C sort -u <(sed '1d' $FILE)
+             false
+           }
+       - name: Run cargo-spellcheck
+```
+
+**File**: `spellcheck.dic` (modified, +97/-97)
+```diff
+@@ -1,12 +1,6 @@
+ 333
+ &
+ +
+-<
+-=
+->
+-\
+-~
+-—
+ 0o777
+ 0s
+ 0xA
+@@ -15,31 +9,113 @@
+ 100ns
+ 10ms
+ 10μs
+-~12
+-120s
+ 12.5%
+-±1m
+-±1ms
++120s
+ 1ms
+ 1s
+ 25%
+ 250ms
+ 2x
+-~4
+ 443
+ 450ms
+ 50ms
+ 8MB
++<
++=
++>
+ ABI
++AIO
++APIs
++Adaptors
++Blockingly
++CLI
++CQE
++Cancelling
++Config
++Customizable
++Cygwin
++DNS
++Datagram
++Deallocates
++Deregisters
++Destructures
++Dev
++DoS
++EWMA
++Emscripten
++Emscripten's
++EntryInner
++Erlang's
++FIFOs
++FreeBSD
++GID
++Growable
++H2
++HashMaps
++HdrHistogram
++ICMP
++IOCP
++IOs
++IP
++IPv4
++IPv6
++Illumos
++Invariants
++JSPI
++Kotlin's
++LLVM
++Lauck
++MacOS
++Marsaglia's
++Mio
++Multi
++Multithreaded
++Mutex
++NTO
++NUMA
++Nagle
++NetBSD
++ORed
++OpenBSD
++PGID
++PID
++POSIX
++RAII
++RCU
++RMW
++RNG
++Redox
++SQE
++SmallCrush
++Solaris
++Splitter
++TCP
++TLS
++TOCTOU
++TODO
++TestU01
++Tokio
++Tokio's
++Tuple
++UDP
++UID
++Unpark
++Unparks
++Unsets
++Valgrind
++Varghese
++WASI
++Wakers
++Wasm
++WebAssembly
++ZST
++\
+ accessors
+ adaptor
+ adaptors
+-Adaptors
+-AIO
+ ambient
+ amongst
+ api
+-APIs
+ async
+ atomics
+ awaitable
+@@ -51,13 +127,10 @@ backtracing
+ binded
+ bitfield
+ bitfields
+-Blockingly
+ boolean
+ broadcasted
+ cancelled
+ cancelling
+-Cancelling
+-CLI
+ cloneable
+ codebase
+ codec
+@@ -66,23 +139,17 @@ combinator
+ combinators
+ condvar
+ config
+-Config
+ connectionless
+ coroutines
+ cpu
+ cpus
+ cqe
+-CQE
+ cqe's
+ customizable
+-Customizable
+-Cygwin
+ datagram
+-Datagram
+ datagrams
+ deallocate
+ deallocated
+-Deallocates
+ debuginfo
+ decrement
+ decrementing
+@@ -94,57 +161,39 @@ deregister
+ deregistered
+ deregistering
+ deregisters
+-Deregisters
+ deregistration
+ descriptor's
+ destructor
+ destructors
+ destructure
+-Destructures
+-Dev
+ dns
+-DNS
+-DoS
+ dwOpenMode
+-Emscripten
+-Emscripten's
+ endian
+ enqueue
+ enqueued
+-EntryInner
+ enum
+ eof
+-Erlang's
+ errored
+-EWMA
+ expirations
+ fcntl
+ fd
+ fd's
+-FIFOs
+ filename
+ filesystem
+ filesystems
+ fn
+ fns
+-FreeBSD
+ frontend
+ fs
+ functionalities
+ getters
+-GID
+ goroutines
+-Growable
+ gzip
+-H2
+ hashmaps
+-HashMaps
+ hashsets
+-HdrHistogram
+-ICMP
++iOS
+ ie
+ iff
+-Illumos
+ impl
+ implementers
+ implementor
+@@ -153,31 +202,17 @@ incrementing
+ inlining
+ interoperate
+ invariants
+-Invariants
+ io
+-IOCP
+-iOS
+-IOs
+ io_uring
+-IP
+-IPv4
+-IPv6
+ iteratively
+-JSPI
+-Kotlin's
+ latencies
+-Lauck
+ libc
+ lifecycle
+ lifo
+-LLVM
+ lookups
+ macOS
+-MacOS
+-Marsaglia's
+ metadata
+ mio
+-Mio
+ mio's
+ miri
+ misconfigured
+@@ -186,43 +221,28 @@ monomorphization
+ mpmc
+ mpsc
+ multi
+-Multi
+ multicast
+-Multithreaded
+ mut
+ mutex
+-Mutex
+-Nagle
+ namespace
+-NetBSD
+ nonblocking
+ nondecreasing
+ noop
+ ntasks
+-NTO
+-NUMA
+ ok
+ oneshot
+ opcode
+-OpenBSD
+-ORed
+ os
+ parker
+ parsers
+ peekable
+-PGID
+-PID
+ plaintext
+ poller
+-POSIX
+ proxied
+ pthreads
+ qos
+-RAII
+-RCU
+ reallocations
+ recv's
+-Redox
+ refactors
+ refcount
+ refcounting
+@@ -233,8 +253,6 @@ reqwest
+ reregistering
+ resize
+ resized
+-RMW
+-RNG
+ runtime
+ runtime's
+ runtimes
+@@ -247,14 +265,10 @@ setpgid
+ sharded
+ signalled
+ signalling
+-SmallCrush
+-Solaris
+ spawner
+ spawners
+-Splitter
+ spmc
+ spsc
+-SQE
+ src
+ stabilised
+ startup
+@@ -277,44 +291,29 @@ sys
+ syscall
+ syscalls
+ tcp
+-TCP
+-TestU01
+ threadpool
+ timestamp
+ timestamps
+-TLS
+-TOCTOU
+-TODO
+ tokio
+-Tokio
+ tokio's
+-Tokio's
+ tuple
+-Tuple
+ tvOS
+ tx
+ udp
+-UDP
+-UID
+ unhandled
+ unix
+ unlink
+ unpark
+-Unpark
+ unparked
+ unparking
+ unparks
+-Unparks
+ unreceived
+ unsafety
+ unsets
+-Unsets
+ unsynchronized
+ untrusted
+ uring
+ usecases
+-Valgrind
+-Varghese
+ vec
+ versa
+ versioned
+@@ -323,12 +322,13 @@ visionOS
+ vtable
+ waker
+ wakers
+-Wakers
+ wakeup
+ wakeups
+-WASI
+-Wasm
+ watchOS
+-WebAssembly
+ workstealing
+-ZST
++~
++~12
++~4
++±1m
++±1ms
++—
+```
+
+**File**: `tokio/tests/tracing_sync.rs` (modified, +16/-5)
+```diff
+@@ -5,11 +5,18 @@
+ #![warn(rust_2018_idioms)]
+ #![cfg(all(tokio_unstable, feature = "tracing", target_has_atomic = "64"))]
  
--        pub(crate) fn cancel(self: Pin<&mut Self>, handle: &scheduler::Handle) {
--            // Safety: we never move the inner entries.
--            let this = unsafe { self.get_unchecked_mut() };
--            match this {
--                // Safety: we never move the inner entries.
--                Timer::Traditional(entry) => unsafe {
--                    Pin::new_unchecked(entry).cancel(handle);
--                }
--                // Safety: we never move the inner entries.
--                #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
--                Timer::Alternative(entry) => unsafe {
--                    Pin::new_unchecked(entry).cancel();
--                }
--            }
--        }
++use std::sync::Mutex;
+ use tokio::sync;
+ use tracing_mock::{expect, subscriber};
+ 
++// Serialize tests in this file so they cannot race on `tracing-core` callsite
++// interest registration.
++static TEST_MUTEX: Mutex<()> = Mutex::new(());
++
+ #[test]
+ fn test_barrier_creates_span() {
++    let _guard = TEST_MUTEX.lock();
++
+     let barrier_span = expect::span()
+         .named("runtime.resource")
+         .with_target("tokio::sync::barrier");
+@@ -45,6 +52,8 @@ fn test_barrier_creates_span() {
+ 
+ #[test]
+ fn test_mutex_creates_span() {
++    let _guard = TEST_MUTEX.lock();
++
+     let mutex_span = expect::span()
+         .named("runtime.resource")
+         .with_target("tokio::sync::mutex");
+@@ -89,6 +98,8 @@ fn test_mutex_creates_span() {
+ 
+ #[test]
+ fn test_oneshot_creates_span() {
++    let _guard = TEST_MUTEX.lock();
++
+     let oneshot_span_id = expect::id();
+     let oneshot_span = expect::span()
+         .with_id(oneshot_span_id.clone())
+@@ -188,6 +199,8 @@ fn test_oneshot_creates_span() {
+ 
+ #[test]
+ fn test_rwlock_creates_span() {
++    let _guard = TEST_MUTEX.lock();
++
+     let rwlock_span = expect::span()
+         .named("runtime.resource")
+         .with_target("tokio::sync::rwlock");
+@@ -244,6 +257,8 @@ fn test_rwlock_creates_span() {
+ 
+ #[test]
+ fn test_semaphore_creates_span() {
++    let _guard = TEST_MUTEX.lock();
++
+     let semaphore_span = expect::span()
+         .named("runtime.resource")
+         .with_target("tokio::sync::semaphore");
+@@ -285,19 +300,15 @@ fn test_semaphore_creates_span() {
+ /// is in the middle of an operation.
+ #[cfg(panic = "unwind")]
+ mod subscriber_panic {
++    use super::TEST_MUTEX;
+     use std::future::Future;
+     use std::panic::{catch_unwind, AssertUnwindSafe};
+     use std::sync::atomic::{AtomicBool, Ordering};
+-    use std::sync::Mutex;
+     use tokio::sync;
+     use tokio_test::{assert_pending, assert_ready_ok, task};
+     use tracing::span::{Attributes, Id, Record};
+     use tracing::{Event, Metadata, Subscriber};
+ 
+-    // Serialize tests that run instrumented operations outside `with_default`
+-    // so they cannot race with `tracing-core` callsite interest registration.
+-    static TEST_MUTEX: Mutex<()> = Mutex::new(());
 -
--        pub(crate) fn reset(self: Pin<&mut Self>, handle: &scheduler::Handle, deadline: u64) {
-+        #[cfg_attr(not(all(tokio_unstable, feature = "rt-multi-thread")), allow(unused_variables))]
-+        pub(crate) fn reset(self: Pin<&mut Self>, handle: scheduler::Handle, deadline: u64) {
-             // Safety: we never move the inner entries.
-             let this = unsafe { self.get_unchecked_mut() };
-             match this {
-                 // Safety: we never move the inner entries.
-                 Timer::Traditional(entry) => unsafe {
--                    Pin::new_unchecked(entry).reset(handle, deadline);
-+                    Pin::new_unchecked(entry).reset(deadline)
-                 }
-                 // Safety: we never move the inner entries.
-                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-                 Timer::Alternative(entry) => unsafe {
--                    let mut entry = Pin::new_unchecked(entry);
--                    entry.cancel();
--                    entry.set(time_alt::Timer::new(handle, deadline));
-+                    Pin::new_unchecked(entry).set(time_alt::Timer::new(handle, deadline))
-                 },
-             }
-         }
- 
-         pub(crate) fn poll_elapsed(
-             self: Pin<&mut Self>,
-             cx: &mut Context<'_>,
--            handle: &scheduler::Handle,
-         ) -> Poll<Result<(), crate::time::error::Error>> {
-             // Safety: we never move the inner entries.
-             let this = unsafe { self.get_unchecked_mut() };
-             match this {
-                 // Safety: we never move the inner entries.
-                 Timer::Traditional(entry) => unsafe {
--                    Pin::new_unchecked(entry).poll_elapsed(cx, handle)
-+                    Pin::new_unchecked(entry).poll_elapsed(cx)
-                 }
-                 // Safety: we never move the inner entries.
-                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-```
-
-**File**: `tokio/src/runtime/time/entry.rs` (modified, +24/-15)
-```diff
-@@ -284,6 +284,9 @@ pin_project! {
-     // before polling.
-     #[derive(Debug)]
-     pub(crate) struct TimerEntry {
-+        // Arc reference to the runtime handle. We can only free the driver after
-+        // deregistering everything from their respective timer wheels.
-+        driver: scheduler::Handle,
-         // Shared inner structure; this is part of an intrusive linked list, and
-         // therefore other references can exist to it while mutable references to
-         // Entry exist.
-@@ -292,6 +295,12 @@ pin_project! {
-         #[pin]
-         inner: TimerShared,
-     }
-+
-+    impl PinnedDrop for TimerEntry {
-+        fn drop(this: Pin<&mut Self>) {
-+            this.cancel();
-+        }
-+    }
- }
- 
- unsafe impl Send for TimerEntry {}
-@@ -461,18 +470,17 @@ unsafe impl linked_list::Link for TimerShared {
- // ===== impl Entry =====
- 
- impl TimerEntry {
--    pub(crate) fn new() -> Self {
-+    pub(crate) fn new(handle: scheduler::Handle) -> Self {
-         Self {
-+            driver: handle,
-             inner: TimerShared::new(),
-         }
-     }
- 
--    pub(crate) fn init(self: Pin<&mut Self>, handle: &scheduler::Handle, deadline: u64) {
-+    pub(crate) fn init(self: Pin<&mut Self>, deadline: u64) {
-         unsafe {
--            handle
--                .driver()
--                .time()
--                .reregister(&handle.driver().io, deadline, (&self.inner).into());
-+            self.driver()
-+                .reregister(&self.driver.driver().io, deadline, (&self.inner).into());
-         }
-     }
- 
-@@ -482,7 +490,7 @@ impl TimerEntry {
-     }
- 
-     /// Cancels and deregisters the timer. This operation is irreversible.
--    pub(crate) fn cancel(self: Pin<&mut Self>, handle: &scheduler::Handle) {
-+    pub(crate) fn cancel(self: Pin<&mut Self>) {
-         // We need to perform an acq/rel fence with the driver thread, and the
-         // simplest way to do so is to grab the driver lock.
-         //
-@@ -505,35 +513,36 @@ impl TimerEntry {
-         // driver did so far and happens-before everything the driver does in
-         // the future. While we have the lock held, we also go ahead and
-         // deregister the entry if necessary.
--        unsafe { handle.driver().time().clear_entry((&self.inner).into()) };
-+        unsafe { self.driver().clear_entry(NonNull::from(&self.inner)) };
-     }
- 
--    pub(crate) fn reset(self: Pin<&mut Self>, handle: &scheduler::Handle, deadline: u64) {
-+    pub(crate) fn reset(self: Pin<&mut Self>, deadline: u64) {
-         if self.inner.extend_expiration(deadline).is_ok() {
-             return;
-         }
- 
-         unsafe {
--            handle
--                .driver()
--                .time()
--                .reregister(&handle.driver().io, deadline, (&self.inner).into());
-+            self.driver()
-+                .reregister(&self.driver.driver().io, deadline, (&self.inner).into());
-         }
-     }
- 
-     pub(crate) fn poll_elapsed(
-         self: Pin<&mut Self>,
-         cx: &mut Context<'_>,
--        handle: &scheduler::Handle,
-     ) -> Poll<Result<(), super::Error>> {
-         assert!(
--            !handle.driver().time().is_shutdown(),
-+            !self.driver().is_shutdown(),
-             "{}",
-             crate::util::error::RUNTIME_SHUTTING_DOWN_ERROR
-         );
- 
-         self.inner.state.poll(cx.waker())
-     }
-+
-+    fn driver(&self) -> &super::Handle {
-+        self.driver.driver().time()
-+    }
- }
- 
- impl TimerHandle {
-```
-
-**File**: `tokio/src/runtime/time/tests/mod.rs` (modified, +64/-69)
-```diff
-@@ -48,15 +48,11 @@ fn single_timer() {
- 
-         let inner = handle.inner.clone();
-         let jh = thread::spawn(move || {
--            let entry = TimerEntry::new();
-+            let entry = TimerEntry::new(inner.clone());
-             pin!(entry);
--            entry.as_mut().init(&inner, inner.driver().now() + 1000);
-+            entry.as_mut().init(inner.driver().now() + 1000);
- 
--            block_on(std::future::poll_fn(|cx| {
--                entry.as_mut().poll_elapsed(cx, &inner)
--            }))
--            .unwrap();
--            entry.cancel(&inner);
-+            block_on(std::future::poll_fn(|cx| entry.as_mut().poll_elapsed(cx))).unwrap();
-         });
- 
-         thread::yield_now();
-@@ -79,19 +75,16 @@ fn drop_timer() {
- 
-         let inner = handle.inner.clone();
-         let jh = thread::spawn(move || {
--            let entry = TimerEntry::new();
-+            let entry = TimerEntry::new(inner.clone());
-             pin!(entry);
--            entry.as_mut().init(&inner, inner.driver().now() + 1000);
--
--            let _ = entry.as_mut().poll_elapsed(
--                &mut Context::from_waker(futures::task::noop_waker_ref()),
--                &inner,
--            );
--            let _ = entry.as_mut().poll_elapsed(
--                &mut Context::from_waker(futures::task::noop_waker_ref()),
--                &inner,
--            );
--            entry.cancel(&inner);
-+            entry.as_mut().init(inner.driver().now() + 1000);
-+
-+            let _ = entry
-+                .as_mut()
-+                .poll_elapsed(&mut Context::from_waker(futures::task::noop_waker_ref()));
-+            let _ = entry
-+                .as_mut()
-+                .poll_elapsed(&mut Context::from_waker(futures::task::noop_waker_ref()));
-         });
- 
-         thread::yield_now();
-@@ -114,20 +107,15 @@ fn change_waker() {
- 
-         let inner = handle.inner.clone();
-         let jh = thread::spawn(move || {
--            let entry = TimerEntry::new();
-+            let entry = TimerEntry::new(inner.clone());
-             pin!(entry);
--            entry.as_mut().init(&inner, inner.driver().now() + 1000);
-+            entry.as_mut().init(inner.driver().now() + 1000);
- 
--            let _ = entry.as_mut().poll_elapsed(
--                &mut Context::from_waker(futures::task::noop_waker_ref()),
--                &inner,
--            );
-+            let _ = entry
-+                .as_mut()
-+                .poll_elapsed(&mut Context::from_waker(futures::task::noop_waker_ref()));
- 
--            block_on(std::future::poll_fn(|cx| {
--                entry.as_mut().poll_elapsed(cx, &inner)
--            }))
--            .unwrap();
--            entry.cancel(&inner);
-+            block_on(std::future::poll_fn(|cx| entry.as_mut().poll_elapsed(cx))).unwrap();
-         });
- 
-         thread::yield_now();
-@@ -155,25 +143,20 @@ fn reset_future() {
-         let start = handle.inner.driver().now();
- 
-         let jh = thread::spawn(move || {
--            let entry = TimerEntry::new();
-+            let entry = TimerEntry::new(inner.clone());
-             pin!(entry);
--            entry.as_mut().init(&inner, start + 1000);
-+            entry.as_mut().init(start + 1000);
- 
--            let _ = entry.as_mut().poll_elapsed(
--                &mut Context::from_waker(futures::task::noop_waker_ref()),
--                &inner,
--            );
-+            let _ = entry
-+                .as_mut()
-+                .poll_elapsed(&mut Context::from_waker(futures::task::noop_waker_ref()));
- 
--            entry.as_mut().reset(&inner, start + 2000);
-+            entry.as_mut().reset(start + 2000);
- 
-             // shouldn't complete before 2s
--            block_on(std::future::poll_fn(|cx| {
--                entry.as_mut().poll_elapsed(cx, &inner)
--            }))
--            .unwrap();
-+            block_on(std::future::poll_fn(|cx| entry.as_mut().poll_elapsed(cx))).unwrap();
- 
-             finished_early_.store(true, Ordering::Relaxed);
--            entry.cancel(&inner);
-         });
- 
-         thread::yield_now();
-@@ -192,6 +175,31 @@ fn reset_future() {
-     })
- }
- 
-+#[test]
-+fn interval_poll_tick_races_with_fire() {
-+    model(|| {
-+        let rt = rt(false);
-+        let handle = rt.handle().clone();
-+
-+        let jh = thread::spawn(move || {
-+            let _guard = handle.enter();
-+            let mut interval = crate::time::interval_at(
-+                crate::time::Instant::now() + crate::time::Duration::from_secs(1),
-+                crate::time::Duration::from_secs(1),
-+            );
-+            let mut cx = Context::from_waker(futures::task::noop_waker_ref());
-+            let _ = interval.poll_tick(&mut cx);
-+            let _ = interval.poll_tick(&mut cx);
-+        });
-+
-+        let time = rt.handle().inner.driver().time();
-+        let clock = rt.handle().inner.driver().clock();
-+        time.process_at_time(time.time_source().now(clock) + 2_000_000_000);
-+
-+        jh.join().unwrap();
-+    })
-+}
-+
- #[cfg(not(loom))]
- fn normal_
-```
-
-**File**: `tokio/src/runtime/time_alt/timer.rs` (modified, +9/-7)
-```diff
-@@ -18,10 +18,16 @@ impl std::fmt::Debug for Timer {
-     }
- }
- 
-+impl Drop for Timer {
-+    fn drop(&mut self) {
-+        self.entry.cancel();
-+    }
-+}
-+
- impl Timer {
-     #[track_caller]
--    pub(crate) fn new(handle: &scheduler::Handle, deadline: u64) -> Self {
--        let entry = with_current_temp_local_context(handle, |ctx| match ctx {
-+    pub(crate) fn new(handle: scheduler::Handle, deadline: u64) -> Self {
-+        let entry = with_current_temp_local_context(&handle, |ctx| match ctx {
-             Some(TempLocalContext::Running { registration_queue }) => {
-                 let entry = EntryHandle::new(deadline);
-                 unsafe { registration_queue.push_front(entry.clone()) }
-@@ -32,18 +38,14 @@ impl Timer {
- 
-             _ => {
-                 let entry = EntryHandle::new(deadline);
--                push_from_remote(handle, entry.clone());
-+                push_from_remote(&handle, entry.clone());
-                 entry
-             }
-         });
- 
-         Timer { entry }
-     }
- 
--    pub(crate) fn cancel(&self) {
--        self.entry.cancel();
--    }
--
-     pub(crate) fn is_elapsed(&self) -> bool {
-         self.entry.is_woken_up()
-     }
-```
-
-**File**: `tokio/src/time/interval.rs` (modified, +5/-5)
-```diff
-@@ -455,8 +455,8 @@ impl Interval {
-     /// [`Context`] passed to the most recent call is scheduled to receive a
-     /// wakeup.
-     pub fn poll_tick(&mut self, cx: &mut Context<'_>) -> Poll<Instant> {
--        // Wait for the internal timer to elapse.
--        ready!(self.delay.as_mut().poll(cx));
-+        // Wait for the delay to be done
-+        ready!(Pin::new(&mut self.delay).poll(cx));
- 
-         // Get the time when we were scheduled to tick
-         let timeout = self.delay.deadline();
-@@ -477,10 +477,10 @@ impl Interval {
-             timeout + self.period
-         };
- 
--        // Do not register the internal timer yet. It should be registered with
-+        // When we arrive here, the internal delay returned `Poll::Ready`.
-+        // Reset the delay but do not register it. It should be registered with
-         // the next call to [`poll_tick`].
--        // SAFETY: the internal timer is elapsed.
--        unsafe { self.delay.as_mut().reset_without_timer(next) }
-+        self.delay.as_mut().reset_without_timer(next);
- 
-         // Return the time when we were scheduled to tick
-         Poll::Ready(timeout)
-```
-
-**File**: `tokio/src/time/sleep.rs` (modified, +8/-21)
-```diff
-@@ -225,15 +225,6 @@ pin_project! {
-         #[pin]
-         timer: Option<Timer>,
-     }
--
--    impl PinnedDrop for Sleep {
--        fn drop(this: Pin<&mut Self>) {
--            let this = this.project();
--            if let Some(timer) = this.timer.as_pin_mut() {
--                timer.cancel(this.driver);
--            }
--        }
--    }
- }
- 
- cfg_trace! {
-@@ -371,23 +362,19 @@ impl Sleep {
-         }
- 
-         match this.timer.as_mut().as_pin_mut() {
--            Some(timer) => timer.reset(handle, deadline),
-+            Some(timer) => timer.reset(handle.clone(), deadline),
-             None => {
--                let timer = Timer::new(handle, deadline);
-+                let timer = Timer::new(handle.clone(), deadline);
-                 this.timer.set(Some(timer));
--                this.timer.as_pin_mut().unwrap().init(handle, deadline);
-+                this.timer.as_pin_mut().unwrap().init(deadline);
-             }
-         }
-     }
- 
-     /// Resets the `Sleep` instance to a new deadline.
+     /// A subscriber that panics on the first event with the given target.
      ///
-     /// Unlike [`reset`][Self::reset], this __removes__ the internal timer.
--    ///
--    /// # Safety
--    ///
--    /// The internal timer must be elapsed.
--    pub(super) unsafe fn reset_without_timer(self: Pin<&mut Self>, deadline: Instant) {
-+    pub(super) fn reset_without_timer(self: Pin<&mut Self>, deadline: Instant) {
-         let mut this = self.project();
-         *this.deadline = deadline;
-         this.timer.set(None);
-@@ -414,10 +401,10 @@ impl Sleep {
-         #[cfg(any(not(tokio_unstable), not(feature = "tracing")))]
-         let coop = ready!(crate::task::coop::poll_proceed(cx));
- 
--        let handle = this.driver;
-         let timer = match this.timer.as_mut().as_pin_mut() {
-             Some(timer) => timer,
-             None => {
-+                let handle = this.driver;
-                 let time_source = handle.driver().time().time_source();
-                 let deadline = time_source.deadline_to_tick(*this.deadline);
- 
-@@ -433,15 +420,15 @@ impl Sleep {
-                     );
-                 }
- 
--                let timer = Timer::new(handle, deadline);
-+                let timer = Timer::new(handle.clone(), deadline);
-                 this.timer.set(Some(timer));
-                 let mut timer = this.timer.as_pin_mut().unwrap();
--                timer.as_mut().init(handle, deadline);
-+                timer.as_mut().init(deadline);
-                 timer
-             }
-         };
- 
--        let result = timer.poll_elapsed(cx, handle).map(move |r| {
-+        let result = timer.poll_elapsed(cx).map(move |r| {
-             coop.made_progress();
-             r
-         });
+     /// Later events, such as those emitted while unwinding, are ignored.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8714** (2026-10-24): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
+- **PR #8711** (closed): sync: add `SetOnce::take` (@SofiaDev225)
+- **PR #8710** (closed): [DO NOT MERGE] tokio: simplify WakeList internals (@ADD-SP)
+- **PR #8708** (2026-10-24): ci: pass -std=gnu11 when building Linux kernel for io_uring tests (@Darksonn)
+- **PR #8705** (2026-10-23): ci: use LC_ALL=C for spellcheck.dic sort check (@Darksonn)
 - **PR #8701** (2026-10-22): task: clarify `block_in_place` panics in LocalSet (@darkraider01)
-- **PR #8698** (closed): time: wake parked driver on `advance()` while auto-advance is inhibited (@Jeremiah-D)
-- **PR #8693** (2026-10-21): chore: prepare Tokio v1.54.1 (@Darksonn)
-- **PR #8692** (2026-10-21): time: revert "remove the runtime handle from timers" (@Darksonn)
-- **PR #8691** (closed): codec: defer default Framed buffer allocations (@fallintoplace)
-- **PR #8689** (closed): io: defer ReaderStream custom buffer allocation (@fallintoplace)
 
 ---
 

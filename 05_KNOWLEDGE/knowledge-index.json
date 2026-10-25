@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T06:44:58.994Z",
+  "last_updated": "2026-10-25T06:56:52.284Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21594,10 +21594,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "e96077319202c3dc733e564a98e3aabad7ef2546652ba8cd4dd6a87dd148d172",
+      "content_hash": "c64aad709fb664098eec5ea5ed50e9699f3d4643ac3050931ca8d0bce3dbf4f6",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4121,
+          "title": "Hybrid Attention Layer Interleaving for Edge Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4122,
+          "title": "Zero-Token Decision Head for Deterministic Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4123,
+          "title": "Multimodal Tile-Based Image Processing with Dynamic Resizing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21616,7 +21632,7 @@
         "learn-huggingface-hf-liquidai-d1-3b-mv4341q9",
         "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma"
       ],
-      "verified_at": "2026-10-20T14:44:26.708Z",
+      "verified_at": "2026-10-25T06:55:57.530Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29812,8 +29828,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "40bddf72",
-      "content_hash": "0fbe024ccece434f6735e4e2b25db1ca6e8b9753faf4d99878fc8f4bbe0b08bf",
+      "source_version": "bef37c08",
+      "content_hash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -29841,6 +29857,11 @@
           "number": 3714,
           "title": "ds): bound per-client publication and preserve coherent snapshots (#14698)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4124,
+          "title": "ds): keep a queued de-reference prune from rolling routes back (#14877)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29848,7 +29869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:29:18.994Z",
+      "verified_at": "2026-10-25T06:55:58.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39888,8 +39909,8 @@
       "slug": "primer-react",
       "platform": "github",
       "source_url": "https://github.com/primer/react",
-      "source_version": "3a71047a",
-      "content_hash": "dedef40b51d55b35c333ac02028e0284538758336f24b87df8008d6ce43e46d2",
+      "source_version": "190fafd9",
+      "content_hash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -39922,6 +39943,21 @@
           "number": 3483,
           "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4125,
+          "title": "React Compiler-Safe Mutable Accumulator Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4126,
+          "title": "Effect Cleanup Local Reference Snapshotting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4127,
+          "title": "Slot-Segregated Child Partitioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39929,7 +39965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:42:15.841Z",
+      "verified_at": "2026-10-25T06:56:52.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47552,8 +47588,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "17638a0d",
-      "content_hash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
+      "source_version": "8a2408ed",
+      "content_hash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -47580,7 +47616,7 @@
         {
           "number": 3640,
           "title": "task: clarify `block_in_place` panics in `LocalSet` (#8701)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47588,7 +47624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:32:17.388Z",
+      "verified_at": "2026-10-25T06:55:50.893Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112395,13 +112431,13 @@
       "rule_number": 3640,
       "title": "task: clarify `block_in_place` panics in `LocalSet` (#8701)",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "17638a0d",
+      "source_version": "8a2408ed",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T16:32:17.388Z"
+      "verified_at": "2026-10-25T06:55:50.893Z"
     },
     "rule-3641": {
       "learning_id": "rule-3641",
@@ -119638,6 +119674,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T06:44:58.983Z"
+    },
+    "rule-4121": {
+      "learning_id": "rule-4121",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4121,
+      "title": "Hybrid Attention Layer Interleaving for Edge Efficiency",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:55:57.530Z"
+    },
+    "rule-4122": {
+      "learning_id": "rule-4122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4122,
+      "title": "Zero-Token Decision Head for Deterministic Classification",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:55:57.530Z"
+    },
+    "rule-4123": {
+      "learning_id": "rule-4123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4123,
+      "title": "Multimodal Tile-Based Image Processing with Dynamic Resizing",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:55:57.530Z"
+    },
+    "rule-4124": {
+      "learning_id": "rule-4124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4124,
+      "title": "ds): keep a queued de-reference prune from rolling routes back (#14877)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "bef37c08",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:55:58.635Z"
+    },
+    "rule-4125": {
+      "learning_id": "rule-4125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4125,
+      "title": "React Compiler-Safe Mutable Accumulator Pattern",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "190fafd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:56:52.274Z"
+    },
+    "rule-4126": {
+      "learning_id": "rule-4126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4126,
+      "title": "Effect Cleanup Local Reference Snapshotting",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "190fafd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:56:52.274Z"
+    },
+    "rule-4127": {
+      "learning_id": "rule-4127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4127,
+      "title": "Slot-Segregated Child Partitioning Invariant",
+      "source_url": "https://github.com/primer/react",
+      "source_version": "190fafd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:56:52.274Z"
     }
   },
   "aliases": {

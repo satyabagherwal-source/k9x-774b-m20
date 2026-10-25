@@ -4723,3 +4723,7 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `0d632b1d` | Multi-dimensional audit evidence | 2026-10-25T06:44:48.566Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `103984cd` | Multi-dimensional audit evidence | 2026-10-25T06:44:56.569Z |
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T06:44:59.050Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `8a2408ed` | Multi-dimensional audit evidence | 2026-10-25T06:55:50.959Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T06:55:57.586Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `bef37c08` | Multi-dimensional audit evidence | 2026-10-25T06:55:58.691Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `190fafd9` | Multi-dimensional audit evidence | 2026-10-25T06:56:52.349Z |

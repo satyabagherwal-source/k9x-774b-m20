@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T06:44:59.055Z",
-  "total_cycles_completed": 4693,
-  "total_learnings_persisted": 4693,
-  "total_rules_promoted": 3993,
+  "last_updated": "2026-10-25T06:56:52.353Z",
+  "total_cycles_completed": 4697,
+  "total_learnings_persisted": 4697,
+  "total_rules_promoted": 4001,
   "history": [
-    {
-      "timestamp": "2026-10-23T09:51:22.652Z",
-      "repository": "chakra-ui/chakra-ui",
-      "learningId": "learn-github-chakra-ui-chakra-ui",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:51:51.975Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:58:01.663Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T09:58:07.325Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T09:58:08.110Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T06:44:59.055Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:55:50.963Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:55:57.590Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:55:58.695Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T06:56:52.353Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

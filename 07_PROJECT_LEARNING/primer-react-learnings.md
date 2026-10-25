@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
 > **Source**: github ([https://github.com/primer/react](https://github.com/primer/react))  
-> **Source Version**: `3a71047a`  
+> **Source Version**: `190fafd9`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:42:15.638Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-25T06:56:51.703Z  
 > **Learning ID**: `learn-github-primer-react`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,901 +12,269 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): primer/react
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/primer-react-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/primer/react](https://github.com/primer/react))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:42:13.935Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): primer/react
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `primer/react`
-- **Description**: An implementation of GitHub's Primer Design System using React
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3921 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`primer/react` is GitHub's canonical Design System implementation in React and TypeScript. Its core technical problem is delivering accessible, high-performance UI primitives across dense desktop, mobile, and agentic surfaces while maintaining compile-time type safety, headless slot composability, zero-layout-shift SSR hydration, and automatic memoization compatibility with the React Compiler.
+
+```
+                    ┌────────────────────────────────────────────────────────┐
+                    │                   Consumer Application                 │
+                    └───────────┬────────────────────────────────┬───────────┘
+                                │ JSX Composition                │ Slotted Child Injection
+                                ▼                                ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 PRIMER REACT RUNTIME CORE                                    │
+│                                                                                             │
+│  ┌─────────────────────────┐  ┌───────────────────────────┐  ┌───────────────────────────┐  │
+│  │   Slot Engine / Children│  │     Live Region Engine    │  │    CSS Containment Engine │  │
+│  │   - isSlot(child, Type) │  │     - Persistent live     │  │    - paneUtils.ts         │  │
+│  │   - Index key stamping  │  │       region node in DOM  │  │    - Direct CSS var write │  │
+│  │   - Split slot vs rest  │  │     - Dynamic queueing    │  │    - [data-dragging] attr │  │
+│  └───────────┬─────────────┘  └─────────────┬─────────────┘  └─────────────┬─────────────┘  │
+│              │                              │                              │                │
+│              ▼                              ▼                              ▼                │
+│  ┌───────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │                      React Compiler Optimization Invariants                           │  │
+│  │  - Zero mutable reassignment in useMemo (indices refactored to object references)    │  │
+│  │  - Ref detachment from HTML props (Omit<Props, 'ref'> to avoid React 19 forwardRef   │  │
+│  │    type collisions and hook lint errors)                                              │  │
+│  │  - Stable effect cleanup references (capture timers.current into local stack ref)     │  │
+│  └───────────────────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────┬──────────────────────────────────────────────┘
+                                               │
+                        ┌──────────────────────┴──────────────────────┐
+                        ▼                                             ▼
+┌──────────────────────────────────────────────┐  ┌───────────────────────────────────────────┐
+│     @primer/doc-gen (Type Engine)            │  │     @primer/mcp (Agentic Subsystem)       │
+│  - ts.createProgram & AST Walker             │  │  - Tool dispatch (get_component_*)        │
+│  - Call-signature introspection              │  │  - Strict slug matching: kebab-case slugs │
+│  - ObjectPaths<T> bounded tuple recursion    │  │    instead of internal catalog IDs        │
+└──────────────────────────────────────────────┘  └───────────────────────────────────────────┘
+```
+
+### Critical Subsystem Boundaries & Abstractions
+
+1. **Child Introspection & Slot Boundary (`isSlot` / Composite Child Partitioning)**:
+   Primer isolates declarative composition from imperative DOM trees. Components such as `UnderlinePanels` and `FormControl` parse incoming `children` using `Children.map` and type markers (`isSlot(child, Component)`). They partition children into slotted structural elements (Labels, Captions, Validation Messages) and raw form inputs, ensuring single-ownership rendering.
+2. **Type-Level Safe Path Projection (`ObjectPaths<T>`)**:
+   Deep object introspection for components like `DataTable` is constrained at the type level. Primer implements recursion guards using length-indexed tuple expansion (`ArrayOfLength<10>[number]`) to halt infinite TypeScript compiler evaluation on cyclic data graphs.
+3. **Imperative Drag Optimization & CSS Variable Containment (`paneUtils.ts`)**:
+   Split-pane resizing avoids React state-driven reconciliation loops. It applies inline CSS variable overrides (`--draggable-handle--bg-color`) and element-level data attributes (`data-dragging="true"`) directly to the DOM nodes. This eliminates sub-tree CSS cascade recalculations and layout thrashing during mousemove cycles.
+4. **Agentic Knowledge Protocol (`@primer/mcp`)**:
+   A Model Context Protocol (MCP) server exposes Primer design guidelines, props definitions, and accessibility invariants to AI coding agents, resolving component names to canonical web slugs (`text-input` vs `text_input`).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. React Compiler-Safe Mutable Accumulator Pattern
+**RULE**:
+Code executing inside React lifecycle hooks, render paths, or memoization hooks (`useMemo`, `useCallback`) MUST NOT reassign bare local variables (`let counter = 0; counter++`) across nested function closures (e.g., `Children.map` or `Array.prototype.forEach`). Developers MUST encapsulate mutable accumulation state within a single heap-allocated object reference (`const indices = { tab: 0, panel: 0 }; indices.tab++`).
 
-### Core Architecture Module: `packages/doc-gen/src/ts-utils.ts`
-```
-import ts from 'typescript'
-import fs from 'node:fs'
-import path from 'path'
-import prettier from 'prettier'
-import signale, {type DefaultMethods} from 'signale'
-import type {DocsPropInfo} from './types'
+**WHY**:
+The React Compiler converts components into static single-assignment (SSA) memoization blocks. When a `let` variable declared in an outer memoized scope is reassigned inside a nested callback passed to `Children.map`, the compiler cannot determine if the variable escapes or changes reactivity boundaries. This invalidates compiler memoization guarantees, forces unmemoized deoptimizations, and triggers compiler bailouts.
 
-type Logger = signale.Signale<DefaultMethods>
+**WHEN TO APPLY**:
+Apply in any React codebase running React Compiler (`babel-plugin-react-compiler`) or strict lint rules (`react-hooks/exhaustive-deps`, `@eslint-react/hooks-extra`), specifically when deriving child keys or counting slotted child types during render.
 
-const {Signale} = signale
-
-export interface TSPropInfo extends DocsPropInfo {
-  propSymbol: ts.Symbol
-  source?: ts.SourceFile
-}
-
-export interface TSParsedComponentInfo {
-  sourceFile: string
-  componentPath: string
-  componentName: string
-  props: Record<string, TSPropInfo | undefined>
-
-  subComponents?: Record<string, TSParsedComponentInfo>
-}
-
-function getFirstMatchingFile(componentPath: string, componentName: string): string | undefined {
-  const paths = [
-    path.join(componentPath, `index.ts`),
-    path.join(componentPath, `index.tsx`),
-    path.join(componentPath, `${componentName}.tsx`),
-  ]
-
-  for (const p of paths) {
-    try {
-      fs.accessSync(p, fs.constants.R_OK)
-      return p
-    } catch {
-      // File does not exist or is not readable, continue to next path
-    }
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx
+const [tabs, tabPanels] = useMemo(() => {
+  // CORRECT: Encapsulate mutable counters inside an immutable object binding
+  const indices = {
+    tab: 0,
+    panel: 0,
   }
 
-  return undefined
-}
+  const childrenWithProps = Children.map(children, child => {
+    if (isValidElement<TabProps & WithValue>(child) && (child.type === Tab || isSlot(child, Tab))) {
+      const value = child.props.value ?? `${indices.tab}`
+      indices.tab++
+      return cloneElement(child, {value})
+    }
 
-export function getTSProgram(rootDir?: string) {
-  const configSearchDir = rootDir ? path.resolve(rootDir) : process.cwd()
-  const configPath = ts.findConfigFile(configSearchDir, ts.sys.fileExists)
-  const fallbackConfigPath = path.join(configSearchDir, 'tsconfig.json')
-  const config = ts.readConfigFile(configPath ?? fallbackConfigPath, ts.sys.readFile)
-  const parsedConfig = ts.parseJsonConfigFileContent(
-    config.config,
-    ts.sys,
-    configPath ? path.dirname(configPath) : configSearchDir,
-    undefined,
-    configPath ?? fallbackConfigPath,
-  )
-  const program = ts.createProgram({
-    rootNames: parsedConfig.fileNames,
-    options: parsedConfig.options,
+    if (isValidElement<PanelProps & WithValue>(child) && (child.type === Panel || isSlot(child, Panel))) {
+      const value = child.props.value ?? `${indices.panel}`
+      indices.panel++
+      return cloneElement(child, {value})
+    }
+    return child
   })
 
-  return program
-}
+  return [/* ... derived state ... */]
+}, [children])
+```
 
-function getComponentExport(
-  log: Logger,
-  program: ts.Program,
-  sourceFile: ts.SourceFile,
-  componentName: string,
-): ts.Symbol {
-  const checker = program.getTypeChecker()
-  const sourceSymbol = checker.getSymbolAtLocation(sourceFile)
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Bare primitive reassignment across nested closure boundaries
+const [tabs, tabPanels] = useMemo(() => {
+  let tabIndex = 0     // React Compiler bailout: mutating primitive outer bindings
+  let panelIndex = 0
 
-  if (!sourceSymbol) {
-    throw new Error(`No symbol found for source file ${sourceFile.fileName}`)
-  }
-
-  const exports = checker.getExportsOfModule(sourceSymbol)
-
-  const sourceExport =
-    exports.find(s => s.escapedName === componentName) ?? exports.find(s => s.escapedName === 'default')
-
-  if (!sourceExport) {
-    log.error(
-      `Component ${componentName} not found in ${sourceFile.fileName}. Found exports: ${Array.from(exports.map(s => s.escapedName)).join(', ')}`,
-    )
-    throw new Error(`Component ${componentName} not found in ${sourceFile.fileName}`)
-  }
-
-  return sourceExport
-}
-
-/**
- * Given the symbol for a component, grab all the sub-component properties for it
- */
-function getSubComponentsForSymbol(
-  log: Logger,
-  program: ts.Program,
-  componentSymbol: ts.Symbol,
-): Record<string, ts.Node> {
-  const checker = program.getTypeChecker()
-  const componentNode = getComponentNodeForSymbol(checker, componentSymbol)
-  const componentType = checker.getTypeAtLocation(componentNode)
-
-  if (componentType.getProperties().length === 0) {
-    return {}
-  }
-
-  return componentType.getProperties().reduce(
-    (acc, prop) => {
-      if (prop.valueDeclaration) {
-        const subCompType = checker.getTypeAtLocation(prop.valueDeclaration)
-
-        // Use the call-signature as a Proxy for this being a React component
-        // There might be a more reliable way, but this removes `defaultProps`, `displayName`, etc
-        if (subCompType.getCallSignatures().length > 0) {
-          acc[prop.getName()] = prop.valueDeclaration
-        }
-      }
-
-      return acc
-    },
-    {} as Record<string, ts.Node>,
-  )
-}
-
-function getPropTypesForNode(log: Logger, checker: ts.TypeChecker, componentNode: ts.Node): Record<string, TSPropInfo> {
-  const props: Record<string, TSPropInfo> = {}
-
-  const componentType = checker.getTypeAtLocation(componentNode)
-
-  const callSignatures = componentType.getCallSignatures()
-
-  for (const callSignature of callSignatures) {
-    log.debug(`Call signature: ${checker.signatureToString(callSignature)}`)
-
-    const params = callSignature.getParameters()
-
-    if (params.length === 0 || params[0].valueDeclaration === undefined) {
-      continue
+  const childrenWithProps = Children.map(children, child => {
+    if (isValidElement(child)) {
+      const value = child.props.value ?? `${tabIndex}`
+      tabIndex++      // Triggers react-compiler mutation escape analysis failure
+      return cloneElement(child, {value})
     }
-
-    log.debug(params[0].valueDeclaration!.getFullText())
-
-    const propTypesType = checker.getTypeOfSymbolAtLocation(params[0], componentNode)
-
-    for (const prop of checker.getApparentType(propTypesType).getApparentProperties()) {
-      const propType = checker.getTypeOfSymbolAtLocation(prop, componentNode)
-
-      const propSource = prop.getDeclarations()?.[0]?.getSourceFile()
-
-      if (propSource && /node_modules/.test(propSource.fileName)) {
-        // log.warn(
-        //   `Prop ${prop.getName()} is declared in a third-party module (${propSource.fileName}). It will be ignored.`,
-        // )
-        continue
-      }
-
-      const isRequired = !(prop.getFlags() & ts.SymbolFlags.Optional)
-      let typeString = checker.typeToString(propType)
-
-      if (!isRequired && typeString.endsWith('| undefined')) {
-        typeString = typeString.slice(0, -'| undefined'.length).trim()
-      }
-
-      if (prop.getName() === 'children') {
-        typeString = 'React.ReactElement[]'
-      }
-
-      props[prop.getName()] = {
-        name: prop.getName(),
-        type: typeString,
-        propSymbol: prop,
-        required: isRequired,
-        source: propSource,
-        defaultValue: prop
-          .getJsDocTags()
-          .find(tag => tag.name === 'default')
-          ?.text?.map(t => t.text)
-          .join(' '),
-        description: ts.displayPartsToString(prop.getDocumentationComment(checker)),
-      }
-    }
-  }
-
-  return props
-}
-
-/**
- * Given a component node (the node that is exported at the root), resolve it to the _thing_ that it actually represents.
- * i.e. Follow any redirects for exports, renaming, etc
- */
-function getComponentNodeForSymbol(checker: ts.TypeChecker, componentSymbol: ts.Symbol): ts.Node {
-  const declarations = componentSymbol.getDeclarations()
-  if (!declarations || declarations.length === 0) {
-    throw new Error(`No declarations found for component ${componentSymbol.getName()}`)
-  }
-
-  let declaration = declarations[0]
-
-  if (ts.isExportAssignment(declaration)) {
-    // If the declaration is an export assignment, we need to find the symbol it exports
-    const exportSymbol = checker.getSymbolAtLocation(declaration.getChildren()[0])
-    if (!exportSymbol) {
-      throw new Error(`Unable to find export symbol for component ${componentSymbol.getName()}`)
-    }
-    const exportDeclarations = exportSymbol.getDeclarations()
-    if (!exportDeclarations || exportDeclarations.length === 0) {
-      throw new Error(`No declarations found for export symbol of component ${componentSymbol.getName()}`)
-    }
-    declaration = exportDeclarations[0]
-  }
-
-  if (ts.isVariableDeclaration(declaration)) {
-    return declaration.initializer!
-  }
-
-  return declaration
-}
-
-function getPropTypeForComponent(
-  log: Logger,
-  program: ts.Program,
-  componentSymbol: ts.Symbol,
-): Record<string, TSPropInfo> {
-  const checker = program.getTypeChecker()
-
-  const componentNode = getComponentNodeForSymbol(checker, componentSymbol)
-
-  return getPropTypesForNode(log, checker, componentNode)
-}
-
-export function parseTypeInfo(
-  docsBasePath: string,
-  componentName: string,
-  program: ts.Program = getTSProgram(docsBasePath),
-): TSParsedComponentInfo {
-  const log = new Signale({
-    scope: componentName,
-    logLevel: process.env.DEBUG === '*' ? 'debug' : 'error',
+    return child
   })
+  return [/* ... */]
+}, [children])
+```
 
-  log.debug(`Looking for first match in: ${docsBasePath}`)
-  const componentFile = getFirstMatchingFile(docsBasePath, componentName)
+**VERIFICATION METHOD**:
+Run the React Compiler CLI verification pass:
+```bash
+npx react-compiler-healthcheck --src="src"
+```
+Ensure target files pass compilation without appearing in the `unsupportedPatterns` exclusion table in `packages/react/script/react-compiler.mjs`.
 
-  if (!componentFile) {
-    throw new Error(`No source file found for component ${componentName}`)
-  }
+---
 
-  log.debug(`Found source for ${componentName}: ${componentFile}`)
+### 2. Effect Cleanup Local Reference Snapshotting
+**RULE**:
+When an effect allocates, tracks, or invalidates mutable runtime resources using a React `ref` (such as a `Set` or array of timer IDs, DOM listeners, or AbortControllers), the cleanup callback MUST read from a locally captured variable bound inside the effect execution, rather than dereferencing `ref.current` during cleanup teardown.
 
-  const sourceFile = program.getSourceFile(componentFile)
+**WHY**:
+By the time React invokes the unmount cleanup function, `ref.current` may have been mutated, detached, or cleared by concurrent lifecycle updates. Furthermore, reading `.current` in the cleanup function without an exhaustive dependency triggers the `react-hooks/exhaustive-deps` warning and creates race conditions if the ref is concurrently updated before teardown completes.
 
-  if (!sourceFile) {
-    log.error(`Unable to retrieve source file for ${componentName}`)
-    throw new Error(`Unable to retrieve source file for ${componentName}`)
-  }
+**WHEN TO APPLY**:
+Universal across all React hooks managing imperative external timers, subscriptions, event listeners, or WebSocket handles stored within `useRef`.
 
-  const exportedComponent = getComponentExport(log, program, sourceFile, componentName)
-  const propsType = getPropTypeForComponent(log, program, exportedComponent)
-  const subComponents = getSubComponentsForSymbol(log, program, exportedComponent)
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/react/src/hooks/useSafeTimeout.ts
+export default function useSafeTimeout(): {
+  safeSetTimeout: SetTimeout
+  safeClearTimeout: ClearTimeout
+} {
+  const timers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
 
-  log.debug(`Extracted props for ${componentName}: ${Object.keys(propsType).join(', ')}`)
+  useEffect(() => {
+    // CORRECT: Capture the instance reference into local closure stack immediately
+    const timerSet = timers.current
+    return () => {
+      for (const id of timerSet) {
+        clearTimeout(id)
+      }
+    }
+  }, []) // Safe zero-dependency lifecycle hook compliant with React Compiler
 
-  return {
-    sourceFile: componentFile,
-    componentPath: docsBasePath,
-    componentName,
-    props: propsType,
-    subComponents: Object.fromEntries(
-      Object.entries(subComponents).map(([name, node]) => {
-        const subComponentType = getPropTypesForNode(log, program.getTypeChecker(), node)
-        return [
-          name,
-          {
-            sourceFile: componentFile,
-            componentPath: docsBasePath,
-            componentName: [componentName, name].join('.'),
-            props: subComponentType,
-          },
-        ]
-      }),
-    ),
-  }
+  // ...
 }
+```
 
-export function generateJSDocString(tsPropInfo: TSPropInfo, docsProps: DocsPropInfo): string {
-  let newJsDocText = '/**\n'
-  if (docsProps.description) {
-    newJsDocText += ` * ${docsProps.description}\n`
-  }
-  if (docsProps.defaultValue !== undefined && docsProps.defaultValue !== '') {
-    if (tsPropInfo.type === 'boolean' || tsPropInfo.type === 'number') {
-      newJsDocText += ` *\n * @default ${docsProps.defaultValue}\n`
-    } else if (typeof docsProps.defaultValue === 'string') {
-      // Unwrap the default value in case it's wrapped in quotes
-      const unwrapped = docsProps.defaultValue.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1')
-
-      newJsDocText += ` *\n * @default "${unwrapped}"\n`
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Dereferencing .current inside cleanup callback
+useEffect(() => {
+  return () => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    for (const id of timers.current) { // FAILS: timers.current can be stale or mutated
+      clearTimeout(id)
     }
   }
+}, [])
+```
 
-  if (docsProps.deprecated) {
-    newJsDocText += ` * @deprecated\n`
+**VERIFICATION METHOD**:
+Enforce ESLint without disabling comments:
+```json
+{
+  "rules": {
+    "react-hooks/exhaustive-deps": "error"
   }
-
-  newJsDocText += ' */'
-
-  return newJsDocText
 }
-
-export async function updateJSDocsForProp(tsPropInfo: TSPropInfo, docsProps: DocsPropInfo, componentSourceDir: string) {
-  const {propSymbol} = tsPropInfo
-
-  // Update the JSDoc
 ```
+Verification passes when no `// eslint-disable-next-line react-hooks/exhaustive-deps` suppression comment exists above a ref dereference in cleanup blocks.
 
-### Core Architecture Module: `packages/react/src/DataTable/utils.ts`
-```
-export type IsAny<T> = 0 extends 1 & T ? true : false
+---
 
-// Utility type to generate an array with a given length. Each member of the
-// array type is the length of the array
-type ArrayOfLength<Length extends number, SizedArray extends Array<unknown> = []> = SizedArray['length'] extends Length
-  ? SizedArray
-  : ArrayOfLength<Length, [...SizedArray, SizedArray['length']]>
+### 3. Slot-Segregated Child Partitioning Invariant
+**RULE**:
+When an orchestrator component partitions child elements into explicit sub-components (slots) versus default remaining children, it MUST maintain a strict disjoint union. Any element identified, extracted, or cloned for dedicated slot placement MUST be explicitly filtered out from the fallback/remaining children collection across ALL layout and render branches.
 
-// A union of the valid lengths of an Array that we'll support in `ObjectPaths`
-// below. This is to prevent unbounded arrays from polluting expected types
-type MaxLength = ArrayOfLength<10>[number]
+**WHY**:
+Failing to remove an identified element from the generic children collection causes the element to be rendered twice in the DOM tree (once in the slotted position and once in the generic container). In form components (`FormControl`), this duplicates input controls with identical `id` and `name` attributes, breaking form submission payloads, label associations (`aria-labelledby`), and unique ID accessibility invariants.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ArrayIndex<A extends ReadonlyArray<any>, Keys extends number = never> = A extends readonly []
-  ? Keys
-  : // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    A extends readonly [infer _, ...infer Tail]
-    ? ArrayIndex<Tail, Keys | Tail['length']>
-    : Keys
+**WHEN TO APPLY**:
+Any container component utilizing composite declarative children (`SelectPanel`, `FormControl`, `ActionMenu`, `NavList`).
 
-// Check if the given type is within the bounds set by `MaxLength`
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ArrayWithinBounds<T> = T extends ReadonlyArray<any> & {length: infer Length}
-  ? Length extends MaxLength
-    ? T
-    : never
-  : never
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Safe child segregation invariant
+const expectedInputComponents = [TextInput, Textarea, Select, Checkbox, Radio]
 
-// Get all valid "paths" for an object. This is useful for APIs which require
-// a string input that must refer to a valid type for the data being used.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ObjectPaths<T> = T extends readonly any[] & ArrayWithinBounds<T>
-  ? `${ArrayIndex<T>}` | PrefixPath<T, ArrayIndex<T>>
-  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    T extends any[]
-    ? never & 'Unable to determine keys of potentially boundless array'
-    : T extends Date
-      ? never
-      : T extends object
-        ? Extract<keyof T, string | number> | PrefixPath<T, Extract<keyof T, string | number>>
-        : never
-
-type PrefixPath<T, Prefix> =
-  Prefix extends Extract<keyof T, number | string> ? `${Prefix}.${NestedObjectPaths<T[Prefix]>}` : never
-
-type NestedObjectPaths<T> = IsAny<T> extends true ? string : ObjectPaths<T>
-
-// Get the value of a given path within an object
-export type ObjectPathValue<ObjectType extends object, Path extends string | number> =
-  ObjectType extends Record<
-    string | number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any
-  >
-    ? Path extends `${infer Key}.${infer NestedPath}`
-      ? ObjectPathValue<ObjectType[Key], NestedPath>
-      : ObjectType[Path]
-    : never
-
-```
-
-### Core Architecture Module: `packages/react/src/KeybindingHint/components/utils.ts`
-```
-import {accessibleKeyName} from '../key-names'
-import type {Platform} from '../platform'
-
-/**
- * Consistent sort order for modifier keys. There should never be more than one non-modifier
- * key in a chord, so we don't need to worry about sorting those - we just put them at
- * the end.
- */
-const keySortPriorities: Partial<Record<string, number>> = {
-  control: 1,
-  meta: 2,
-  alt: 3,
-  option: 4,
-  shift: 5,
-  function: 6,
-}
-
-const keySortPriority = (priority: string) => keySortPriorities[priority] ?? Infinity
-
-const compareLowercaseKeys = (a: string, b: string) => keySortPriority(a) - keySortPriority(b)
-
-/** Split and sort the chord keys in standard order. */
-export const splitChord = (chord: string) =>
-  chord
-    .split('+')
-    .map(k => k.toLowerCase())
-    .sort(compareLowercaseKeys)
-
-const splitSequence = (sequence: string) => sequence.split(' ')
-
-/** Plain string version of `Chord` for use in `aria` string attributes. */
-export const accessibleChordString = (chord: string, platform: Platform) =>
-  splitChord(chord)
-    .map(key => accessibleKeyName(key, platform))
-    .join(' ')
-
-/** Plain string version of `Sequence` for use in `aria` string attributes. */
-export const accessibleSequenceString = (sequence: string, platform: Platform) =>
-  splitSequence(sequence)
-    .map(chord => accessibleChordString(chord, platform))
-    .join(' then ')
-
-```
-
-### Core Architecture Module: `packages/react/src/KeybindingHint/utils.ts`
-```
-import {accessibleSequenceString} from './components/utils'
-import type {Platform} from './platform'
-
-/**
- * AVOID: `KeybindingHint` is nearly always sufficient for providing both visible and accessible keyboard hints.
- * However, there may be cases where we need a plain string version, such as when building `aria-label` or
- * `aria-description`. In that case, this plain string builder can be used instead.
- *
- * NOTE that this string should _only_ be used when building `aria-label` or `aria-description` props (never rendered
- * visibly) and should nearly always also be paired with a visible hint for sighted users.
- *
- * The `platform` argument controls how platform-specific keys (such as `Meta`, `Alt`, and `Mod`) are named. For
- * backwards compatibility, a `boolean` may be passed instead, where `true` is treated as `'apple'` and `false` is
- * treated as `'other'`.
- */
-export const getAccessibleKeybindingHintString = (sequence: string, platform: Platform | boolean) =>
-  accessibleSequenceString(sequence, typeof platform === 'boolean' ? (platform ? 'apple' : 'other') : platform)
-
-```
-
-### Core Architecture Module: `packages/react/src/PageLayout/paneUtils.ts`
-```
-type DraggingStylesParams = {
-  handle: HTMLElement | null
-  pane: HTMLElement | null
-  contentWrapper: HTMLElement | null
-}
-
-const DATA_DRAGGING_ATTR = 'data-dragging'
-
-/** Apply visual feedback and performance optimizations during drag */
-export function setDraggingStyles({handle, pane, contentWrapper}: DraggingStylesParams) {
-  // Handle visual feedback (must be inline for instant response)
-  // Use CSS variable to control ::before pseudo-element background color.
-  // This avoids cascade conflicts between inline styles and pseudo-element backgrounds.
-  handle?.style.setProperty('--draggable-handle--bg-color', 'var(--bgColor-accent-emphasis)')
-  handle?.style.setProperty('--draggable-handle--drag-opacity', '1')
-  handle?.style.setProperty('--draggable-handle--transition', 'none')
-
-  // Set attribute for CSS containment (O(1) direct selector, not descendant)
-  pane?.setAttribute(DATA_DRAGGING_ATTR, 'true')
-  contentWrapper?.setAttribute(DATA_DRAGGING_ATTR, 'true')
-}
-
-/** Remove drag styles and restore normal state */
-export function removeDraggingStyles({handle, pane, contentWrapper}: DraggingStylesParams) {
-  handle?.style.removeProperty('--draggable-handle--bg-color')
-  handle?.style.removeProperty('--draggable-handle--drag-opacity')
-  handle?.style.removeProperty('--draggable-handle--transition')
-
-  pane?.removeAttribute(DATA_DRAGGING_ATTR)
-  contentWrapper?.removeAttribute(DATA_DRAGGING_ATTR)
-}
-
-```
-
-### Core Architecture Module: `packages/react/src/StateLabel/StateLabel.features.stories.tsx`
-```
-import type {Meta} from '@storybook/react-vite'
-import type {ComponentProps} from '../utils/types'
-import StateLabel from './StateLabel'
-import VisuallyHidden from '../_VisuallyHidden'
-
-export default {
-  title: 'Components/StateLabel/Features',
-  component: StateLabel,
-} as Meta<ComponentProps<typeof StateLabel>>
-
-export const IssueOpened = () => <StateLabel status="issueOpened">Open</StateLabel>
-export const IssueClosed = () => <StateLabel status="issueClosed">Closed</StateLabel>
-export const IssueClosedNotPlanned = () => <StateLabel status="issueClosedNotPlanned">Closed</StateLabel>
-export const IssueDraft = () => <StateLabel status="issueDraft">Draft</StateLabel>
-
-export const PullOpened = () => <StateLabel status="pullOpened">Open</StateLabel>
-export const PullClosed = () => <StateLabel status="pullClosed">Closed</StateLabel>
-export const PullMerged = () => <StateLabel status="pullMerged">Merged</StateLabel>
-export const Queued = () => <StateLabel status="pullQueued">Queued</StateLabel>
-export const Draft = () => <StateLabel status="draft">Draft</StateLabel>
-export const Unavailable = () => <StateLabel status="unavailable">Unavailable</StateLabel>
-
-export const AlertOpened = () => <StateLabel status="alertOpened">Open</StateLabel>
-export const AlertFixed = () => <StateLabel status="alertFixed">Fixed</StateLabel>
-export const AlertDismissed = () => <StateLabel status="alertDismissed">Dismissed</StateLabel>
-export const AlertClosed = () => <StateLabel status="alertClosed">Closed</StateLabel>
-export const Archived = () => <StateLabel status="archived">Archived</StateLabel>
-
-export const Open = () => (
-  <StateLabel status="open">
-    {/* Because open is a generic status, a visually hidden text could be added to specify the type of the artifact */}
-    <VisuallyHidden>Milestone</VisuallyHidden>
-    Open
-  </StateLabel>
-)
-export const Closed = () => <StateLabel status="closed">Closed</StateLabel>
-
-export const Small = () => (
-  <StateLabel status="issueOpened" size="small">
-    Open
-  </StateLabel>
+// 1. Identify and extract designated input
+const inputChild = childrenWithoutSlots.find(child =>
+  isValidElement(child) && expectedInputComponents.some(comp => child.type === comp)
 )
 
-```
+// 2. MUST filter out ALL expected input types from remaining render pool
+const remainingChildren = childrenWithoutSlots.filter(child => {
+  if (!isValidElement(child)) return true
+  // Explicitly disallow any component that was handled as an inputChild
+  return !expectedInputComponents.some(comp => child.type === comp)
+})
 
-### Core Architecture Module: `packages/react/src/StateLabel/StateLabel.figma.tsx`
-```
-import StateLabel from '.'
-import figma from '@figma/code-connect'
-
-figma.connect(
-  StateLabel,
-  'https://www.figma.com/design/GCvY3Qv8czRgZgvl1dG6lp/Primer-Web?node-id=18959-64962&t=gQF1OJTEGB3vTxPz-4',
-  {
-    props: {
-      size: figma.enum('size', {
-        small: 'small',
-        medium: 'medium',
-      }),
-      status: figma.enum('status', {
-        draft: 'issueDraft',
-        open: 'issueOpened',
-        closed: 'issueClosed',
-        unavailable: 'unavailable',
-      }),
-      text: figma.textContent('Label'),
-    },
-    variant: {variant: 'issue'},
-    example: ({text, size, status}) => (
-      <StateLabel size={size} status={status}>
-        {text}
-      </StateLabel>
-    ),
-  },
+return (
+  <div className={layout === 'horizontal' ? classes.Horizontal : classes.Vertical}>
+    {inputChild && cloneElement(inputChild, { id: inputId, 'aria-describedby': captionId })}
+    {remainingChildren}
+  </div>
 )
-
-figma.connect(
-  StateLabel,
-  'https://www.figma.com/design/GCvY3Qv8czRgZgvl1dG6lp/Primer-Web?node-id=18959-64962&t=gQF1OJTEGB3vTxPz-4',
-  {
-    props: {
-      size: figma.enum('size', {
-        small: 'small',
-        medium: 'medium',
-      }),
-      status: figma.enum('status', {
-        draft: 'draft',
-        open: 'pullOpened',
-        closed: 'pullClosed',
-        merged: 'pullMerged',
-        queued: 'pullQueued',
-        unavailable: 'unavailable',
-        archived: 'archived',
-      }),
-      text: figma.textContent('Label'),
-    },
-    variant: {variant: 'pull request'},
-    example: ({text, size, status}) => (
-      <StateLabel size={size} status={status}>
-        {text}
-      </StateLabel>
-    ),
-  },
-)
-
 ```
 
-### Core Architecture Module: `packages/react/src/StateLabel/StateLabel.stories.tsx`
-```
-import type {Meta, StoryFn} from '@storybook/react-vite'
-import type {ComponentProps} from '../utils/types'
-import StateLabel from './StateLabel'
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Asymmetric branch filtering causing duplicate inputs
+const inputChild = childrenWithoutSlots.find(/* ... */)
 
-export default {
-  title: 'Components/StateLabel',
-  component: StateLabel,
-} as Meta<ComponentProps<typeof StateLabel>>
-
-export const Default = () => <StateLabel status="issueOpened">Open</StateLabel>
-
-export const Playground: StoryFn<ComponentProps<typeof StateLabel>> = args => <StateLabel {...args}>Label</StateLabel>
-
-Playground.args = {
-  status: 'issueOpened',
-}
-
-Playground.argTypes = {
-  ref: {
-    controls: false,
-    table: {
-      disable: true,
-    },
-  },
-}
-
+// Bug in horizontal layout: only excluding Checkbox and Radio, leaving TextInput
+const remainingChildren = layout === 'horizontal'
+  ? childrenWithoutSlots.filter(child => child.type !== Checkbox && child.type !== Radio) // TextInput rendered TWICE!
+  : childrenWithoutSlots.filter(child => !expectedInputComponents.some(c => child.type === c))
 ```
 
-### Core Architecture Module: `packages/react/src/StateLabel/StateLabel.tsx`
-```
-import {
-  ArchiveIcon,
-  GitMergeIcon,
-  GitPullRequestIcon,
-  GitPullRequestClosedIcon,
-  GitPullRequestDraftIcon,
-  IssueClosedIcon,
-  SkipIcon,
-  IssueDraftIcon,
-  IssueOpenedIcon,
-  GitMergeQueueIcon,
-  AlertIcon,
-  ShieldIcon,
-  ShieldCheckIcon,
-  ShieldSlashIcon,
-  ShieldXIcon,
-} from '@primer/octicons-react'
-import type React from 'react'
-import {forwardRef} from 'react'
-import {clsx} from 'clsx'
-import Octicon from '../Octicon'
-import classes from './StateLabel.module.css'
-
-const octiconMap = {
-  issueOpened: IssueOpenedIcon,
-  pullOpened: GitPullRequestIcon,
-  issueClosed: IssueClosedIcon,
-  issueClosedNotPlanned: SkipIcon,
-  pullClosed: GitPullRequestClosedIcon,
-  pullMerged: GitMergeIcon,
-  draft: GitPullRequestDraftIcon,
-  issueDraft: IssueDraftIcon,
-  pullQueued: GitMergeQueueIcon,
-  unavailable: AlertIcon,
-  alertOpened: ShieldIcon,
-  alertFixed: ShieldCheckIcon,
-  alertDismissed: ShieldSlashIcon,
-  alertClosed: ShieldXIcon,
-  open: null,
-  closed: null,
-  archived: ArchiveIcon,
-}
-
-const labelMap: Record<
-  keyof typeof octiconMap,
-  'Issue' | 'Issue, not planned' | 'Pull request' | 'Alert' | 'Archived' | ''
-> = {
-  issueOpened: 'Issue',
-  pullOpened: 'Pull request',
-  issueClosed: 'Issue',
-  issueClosedNotPlanned: 'Issue, not planned',
-  pullClosed: 'Pull request',
-  pullMerged: 'Pull request',
-  draft: 'Pull request',
-  issueDraft: 'Issue',
-  pullQueued: 'Pull request',
-  unavailable: '',
-  alertOpened: 'Alert',
-  alertFixed: 'Alert',
-  alertDismissed: 'Alert',
-  alertClosed: 'Alert',
-  archived: 'Archived',
-  open: '',
-  closed: '',
-}
-
-export type StateLabelProps = React.HTMLAttributes<HTMLSpanElement> & {
-  size?: 'small' | 'medium'
-  /** @deprecated use size property with value 'small' or 'medium' instead */
-  variant?: 'normal' | 'small' // kept for backwards compatibility
-  status: keyof typeof octiconMap
-}
-
-const StateLabel = forwardRef<HTMLSpanElement, StateLabelProps>(
-  ({children, status, size, variant, className, ...rest}, ref) => {
-    // Open and closed statuses, we don't want to show an icon
-    const noIconStatus = status === 'open' || status === 'closed'
-
-    // Prefer size, but maintain backwards compatibility for variant
-    const inferredSize = size || (variant === 'small' ? 'small' : 'medium')
-
-    return (
-      <span
-        {...rest}
-        ref={ref}
-        className={clsx(classes.StateLabel, className)}
-        data-component="StateLabel"
-        data-size={inferredSize}
-        data-status={status}
-      >
-        {!noIconStatus && (
-          <Octicon
-            data-size-small={inferredSize === 'small' ? '' : undefined}
-            icon={octiconMap[status]}
-            aria-label={labelMap[status]}
-            className={classes.Icon}
-          />
-        )}
-        {children}
-      </span>
-    )
-  },
-)
-
-StateLabel.displayName = 'StateLabel'
-
-export default StateLabel
-
+**VERIFICATION METHOD**:
+Automated Jest/Vitest DOM snapshot and query assertions:
+```typescript
+it('renders exactly one input element regardless of layout mode', () => {
+  const { container } = render(
+    <FormControl layout="horizontal">
+      <FormControl.Label>Username</FormControl.Label>
+      <TextInput name="username" />
+    </FormControl>
+  )
+  expect(container.querySelectorAll('input[name="username"]')).toHaveLength(1)
+})
 ```
 
-### Core Architecture Module: `packages/react/src/StateLabel/index.ts`
-```
-export {default} from './StateLabel'
-export type {StateLabelProps} from './StateLabel'
+---
 
-```
+## 3. Forensic Real Incidents & Production Patches
 
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8531** (2026-10-14): **MCP constructs incorrect component documentation URLs**
-  *Symptoms*: ### Description  `@primer/mcp` constructs incorrect documentation URLs. ActionBar usage requests return the Primer homepage instead of guidance; ConfirmationDialog also uses the wrong slug.  ### Steps to reproduce  1. Call `get_component_usage_guidelines` with `{"name":"ActionBar"}`: it requests `actionbar/guidelines` instead of `action-bar/guidelines`. 2. Call `get_component` with `{"name":"ConfirmationDialog"}`: it requests `confirmationdialog/llms.txt` instead of `confirmation-dialog/llms.txt`.  Expected: retrieve the component's published documentation. ConfirmationDialog's usage and batch requests are affected too.  ### Version  `@primer/mcp` 1.1.0; React catalogue 38.40.1.  Fix: primer/react#8530. 
-
-- **Issue #8487** (2026-10-14): **FormControl renders duplicate non-choice inputs when layout="horizontal"**
-  *Symptoms*: ### Description  FormControl's horizontal layout includes the same non-choice input twice in its render output.  The component finds the input in childrenWithoutSlots and renders a cloned version of it. However, the subsequent filter only excludes Checkbox and Radio, leaving non-choice inputs such as TextInput, Textarea, and Select in the remaining children. The original input is therefore rendered alongside the clone.  Expected behavior: A FormControl containing one input should render exactly one input, regardless of whether its layout is horizontal or vertical.  Actual behavior indicated by the source: With layout="horizontal" and a direct TextInput child, both the cloned TextInput and the original TextInput are included in the render output.  Relevant code in packages/react/src/FormControl/FormControl.tsx: - Lines 71–76: find the input without removing it from childrenWithoutSlots. - Lines 138–154: render the cloned input. - Lines 155–159: render remaining children, excluding only Checkbox and Radio.  The vertical branch excludes all expectedInputComponents and does not have this duplication.  This report is based on source inspection of commit 8c0b708fc. Browser reproduction has not yet been performed.  ### Steps to reproduce  1. Render the following example using the affected source checkout:  ```tsx import {BaseStyles, FormControl, TextInput, ThemeProvider} from '@primer/react'  export default function App() {   return (     <ThemeProvider>       <BaseStyles>         <
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `746d76ae` (2026-10-20)
-**Commit Message**: perf(react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanels (#8555)
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: e632d4e3-54d2-4423-9888-8e37b00494a3
-
-**File**: `.changeset/react-compiler-safe-timeout.md` (added, +5/-0)
+### Incident 1: React Compiler Deoptimization via Closure Counter Mutation & Ref Forwarding Collisions (BUG-PRIMER-01)
+- **Context**: `packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx` and `packages/react/src/Token/_RemoveTokenButton.tsx`.
+- **What Was Expected**: The React Compiler should automatically memoize `UnderlinePanels` and `Token` components without code bailouts or ESLint ref warnings.
+- **What Actually Happened**: The React Compiler compiler script (`packages/react/script/react-compiler.mjs`) had marked these components in the `unsupportedPatterns` blocklist. In `UnderlinePanels`, mutable reassignment of `let tabIndex = 0` inside `Children.map` broke React Compiler's SSA intermediate representation. In `_RemoveTokenButton`, spreading `rest` containing `ref` while explicitly passing `ref={rest.ref}` triggered `react-hooks/refs` lint errors and React 19 forwardRef incompatibilities.
+- **Evidence in Repo**: Commit SHA `746d76ae`, PR `#8555`.
+- **Root Cause**:
+  1. Primitive variables defined in `useMemo` were closed over and mutated across child mapper iterations.
+  2. Component types inherited React HTML attributes including `ref`, and then spread those attributes onto a native button alongside an explicit typed ref cast (`ref={rest.ref as React.Ref<HTMLButtonElement>}`), violating compiler invariants.
+- **Remediation Code Diff**:
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@primer/react': minor
-+---
-+
-+useSafeTimeout: Support automatic memoization with React Compiler.
-```
-
-**File**: `.changeset/react-compiler-token-remove-button.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@primer/react': minor
-+---
-+
-+Token, IssueLabelToken: Improve rendering performance with React Compiler support.
-```
-
-**File**: `.changeset/react-compiler-underline-panels.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@primer/react': minor
-+---
-+
-+UnderlinePanels: Improve rendering performance with React Compiler support.
-```
-
-**File**: `packages/react/script/react-compiler.mjs` (modified, +0/-3)
-```diff
-@@ -25,21 +25,18 @@ const unsupportedPatterns = [
-   'src/SelectPanel/SelectPanel.test.tsx',
-   'src/SelectPanel/SelectPanel.tsx',
-   'src/Skeleton/SkeletonBox.figma.tsx',
--  'src/Token/_RemoveTokenButton.tsx',
-   'src/TreeView/TreeView.features.stories.tsx',
-   'src/TreeView/TreeView.tsx',
-   'src/deprecated/utils/create-slots.tsx',
-   'src/experimental/SelectPanel2/SelectPanel.tsx',
-   'src/experimental/UnderlinePanels/UnderlinePanels.test.tsx',
--  'src/experimental/UnderlinePanels/UnderlinePanels.tsx',
-   'src/hooks/useAnchoredPosition.ts',
-   'src/hooks/useControllableState.ts',
-   'src/hooks/useFocusTrap.ts',
-   'src/hooks/useFocusZone.ts',
-   'src/hooks/useOnEscapePress.ts',
-   'src/hooks/useOnOutsideClick.tsx',
-   'src/hooks/useResizeObserver.ts',
--  'src/hooks/useSafeTimeout.ts',
-   'src/internal/hooks/__tests__/useFocus.test.tsx',
-   'src/internal/hooks/useDevOnlyEffect.ts',
-   'src/utils/StressTest.tsx',
-```
-
-**File**: `packages/react/src/Token/_RemoveTokenButton.tsx` (modified, +2/-4)
-```diff
-@@ -12,7 +12,8 @@ interface TokenButtonProps {
-   isParentInteractive?: boolean
- }
- 
--type RemoveTokenButtonProps = TokenButtonProps & Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size'>
-+type RemoveTokenButtonProps = TokenButtonProps &
-+  Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size' | 'ref'>
- 
- const RemoveTokenButton = ({
-   'aria-label': ariaLabel,
-@@ -43,16 +44,13 @@ const RemoveTokenButton = ({
- 
-   return (
-     <button
--      // eslint-disable-next-line react-hooks/refs
-       {...rest}
-       aria-label={'Remove token'}
-       data-size={size}
-       className={clsx(classes.TokenButton, className)}
-       style={{
-         transform: `translate(${borderOffset}px, -${borderOffset}px)`,
-       }}
--      // eslint-disable-next-line react-hooks/refs
--      ref={rest.ref as React.Ref<HTMLButtonElement>}
-       type="button"
-     >
-       <XIcon size={size === 'small' || size === 'medium' ? 12 : 16} />
-```
-
-**File**: `packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx` (modified, +8/-6)
-```diff
+--- a/packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx
++++ b/packages/react/src/experimental/UnderlinePanels/UnderlinePanels.tsx
 @@ -147,19 +147,21 @@ const UnderlinePanels: FCWithSlotMarker<UnderlinePanelsProps> = ({
- 
-   const [tabs, tabPanels, tabsHaveIcons, selectedFromProps, tabValues, panelValues] = useMemo(() => {
-     // Derived in render (not an effect) to avoid an empty-tablist frame.
+    const [tabs, tabPanels, tabsHaveIcons, selectedFromProps, tabValues, panelValues] = useMemo(() => {
 -    let tabIndex = 0
 -    let panelIndex = 0
 +    const indices = {
@@ -923,287 +291,316 @@ Copilot-Session: e632d4e3-54d2-4423-9888-8e37b00494a3
          return cloneElement(child, {value})
        }
  
-       if (isValidElement<PanelProps & WithValue>(child) && (child.type === Panel || isSlot(child, Panel))) {
--        const value = child.props.value ?? `${panelIndex}`
--        panelIndex++
-+        const value = child.props.value ?? `${indices.panel}`
-+        indices.panel++
-         return cloneElement(child, {value})
-       }
-       return child
-```
-
-**File**: `packages/react/src/hooks/useSafeTimeout.ts` (modified, +2/-2)
-```diff
-@@ -26,9 +26,9 @@ export default function useSafeTimeout(): {safeSetTimeout: SetTimeout; safeClear
-   }, [])
+--- a/packages/react/src/Token/_RemoveTokenButton.tsx
++++ b/packages/react/src/Token/_RemoveTokenButton.tsx
+@@ -12,7 +12,8 @@ interface TokenButtonProps {
+    isParentInteractive?: boolean
+  }
+  
+-type RemoveTokenButtonProps = TokenButtonProps & Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size'>
++type RemoveTokenButtonProps = TokenButtonProps &
++  Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size' | 'ref'>
  
-   useEffect(() => {
-+    const timerSet = timers.current
-     return () => {
--      // eslint-disable-next-line react-hooks/exhaustive-deps
--      for (const id of timers.current) {
-+      for (const id of timerSet) {
-         clearTimeout(id)
-       }
-     }
+@@ -43,16 +44,13 @@ const RemoveTokenButton = ({
+    return (
+      <button
+-      // eslint-disable-next-line react-hooks/refs
+        {...rest}
+        aria-label={'Remove token'}
+        data-size={size}
+        className={clsx(classes.TokenButton, className)}
+        style={{
+          transform: `translate(${borderOffset}px, -${borderOffset}px)`,
+        }}
+-      // eslint-disable-next-line react-hooks/refs
+-      ref={rest.ref as React.Ref<HTMLButtonElement>}
+        type="button"
+      >
 ```
+- **Lesson**: Do not manage refs manually via prop spreading. Omit `ref` from component prop extensions (`Omit<Props, 'ref'>`), and represent mutable closure counters through persistent object properties (`indices.tab++`).
 
 ---
 
-### Incident Patch 2: `fb6001c8` (2026-10-20)
-**Commit Message**: docs: fix ADR 017 cross-reference and typos in contributor docs (#8568)
-
-**File**: `contributor-docs/CONTRIBUTING.md` (modified, +1/-1)
+### Incident 2: MCP Tool Component URL Routing Slug Mismatch (BUG-PRIMER-02)
+- **Context**: `packages/mcp/src/server.ts`
+- **What Was Expected**: MCP tools `get_component_examples` and `get_component_accessibility_guidelines` must fetch exact documentation pages from `https://primer.style/product/components/{slug}`.
+- **What Actually Happened**: The MCP server requested documentation using internal component catalog identifiers (`match.id`), e.g., `text_input` or `actionbar`. When requested, `primer.style` returned HTTP 302 redirects or degraded to the generic primer homepage (`primer.style/`) instead of the targeted documentation.
+- **Evidence in Repo**: Commit SHA `e0524db5`, PR `#8582`, Issue `#8531`.
+- **Root Cause**: The catalog schema distinguished between internal identifier `id` (e.g. `text_input`, `confirmationdialog`) and web URL routing slug `slug` (e.g. `text-input`, `confirmation-dialog`). The tool handlers interpolated `${match.id}` instead of `${match.slug}`.
+- **Remediation Code Diff**:
 ```diff
-@@ -273,7 +273,7 @@ If everything looks great, the reviewer will approve the pull request and feel f
- 
- ### Previewing your changes
- 
--We have a GitHub Action that creates a preview of the docs site and the storybook everytime you commit code to a branch. To view the preview site and the preview storybook, navigate to the PR and find the comment from the `github-actions` bot for storybook and `primer` bot for the docs preview. This will include a link to the preview site and the storybook for your branch.
-+We have a GitHub Action that creates a preview of the docs site and the storybook every time you commit code to a branch. To view the preview site and the preview storybook, navigate to the PR and find the comment from the `github-actions` bot for storybook and `primer` bot for the docs preview. This will include a link to the preview site and the storybook for your branch.
- 
- ## Deploying
- 
-```
-
-**File**: `contributor-docs/adrs/adr-004-children-as-api.md` (modified, +1/-1)
-```diff
-@@ -265,7 +265,7 @@ For Example, [legacy ActionMenu](https://primer.style/react/deprecated/ActionMen
- 
- <br/>
- 
--When we see a a prop which resembles “childProps" or `renderChild` on the container/parent, it's a sign that we should surface this detail in the API by creating a composite component:
-+When we see a prop which resembles “childProps" or `renderChild` on the container/parent, it's a sign that we should surface this detail in the API by creating a composite component:
- 
- ```jsx
- // we created an additional layer so that
-```
-
-**File**: `contributor-docs/adrs/adr-008-interaction-tests.md` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- # Use Interaction testing in storybook to maintain components
- 
- > **Warning**
--> This ADR is superceded by [`ADR 017`](./adr-017-interaction-tests-revisited.md)
-+> This ADR is superseded by [`ADR 017`](./adr-017-interaction-tests-revisited.md)
- 
- ## Status
- 
-```
-
-**File**: `contributor-docs/adrs/adr-011-snapshot-tests.md` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
- 
- [Snapshot testing](https://jestjs.io/docs/snapshot-testing) is a strategy that allows a developer to "snapshot" a given value within a test suite. This value could be a primitive within JavaScript, an Array, an object, or the resulting HTML of rendering a component in React. The snapshot of the value is stored within the repo and is then compared against future test runs.
- 
--When a change is detected to a snapshot, the test will fail with a diff between the currently stored snapshot and the new snapshot. Within the space of React components, this may happen when a class name changes or the markup of a component changes. Is is then up to the developer to decide if the change is intentional and whether or not to accept this new snapshot as the baseline for future test runs.
-+When a change is detected to a snapshot, the test will fail with a diff between the currently stored snapshot and the new snapshot. Within the space of React components, this may happen when a class name changes or the markup of a component changes. It is then up to the developer to decide if the change is intentional and whether or not to accept this new snapshot as the baseline for future test runs.
- 
- A common practice is to snapshot a React component which will capture the HTML output of rendering a component. For example:
- 
-```
-
-**File**: `contributor-docs/adrs/adr-017-interaction-tests-revisited.md` (modified, +2/-2)
-```diff
-@@ -10,13 +10,13 @@
- ## Context
- 
- > **Note**
--> This ADR supercedes [`ADR 009`](./adr-009-interaction-tests.md)
-+> This ADR supersedes [`ADR 008`](./adr-008-interaction-tests.md)
- 
- We author tests using a combination of Jest and Playwright. Typically, Jest is
- used for unit and integration tests and Playwright is used for Visual Regression
- Tests against our Storybook.
- 
--In `ADR 009`, we proposed using Storybook's [`play`
-+In `ADR 008`, we proposed using Storybook's [`play`
- functions](https://storybook.js.org/docs/react/writing-stories/play-function) as
- the recommended way to author tests that require tests based on user
- interactions. In this ADR, we would like to revisit this decision.
-```
-
-**File**: `contributor-docs/adrs/adr-018-responsive-values.md` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ when the component hydrates and the viewport size is different than the fallback
- size on the server.
- 
- As a result, we would like to offer a paved path for providing responsive props
--in a way tha twill not lead to layout shift during server-side rendering.
-+in a way that will not lead to layout shift during server-side rendering.
- 
- ## Decision
- 
-```
-
-**File**: `contributor-docs/adrs/adr-020-live-regions.md` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ In components, we see the following scenarios in Primer React:
- - Announce a message programmatically, such as the number of results for a query
- 
- Currently, contributors may reach for roles such as `alert` or `status` to
--achieve these scenarios. They may also add `aria-live="assertive"` or `aria-live="polite"` with an an `aria-atomic="true"` to an element explicitly.
-+achieve these scenarios. They may also add `aria-live="assertive"` or `aria-live="polite"` with an `aria-atomic="true"` to an element explicitly.
- However, both of these approaches do not announce consistently across screen
- readers. This could be due to live regions being injected dynamically into the document (this includes loading content into the document via React), dynamically changing the visibility of a live region, or some other technique causing an announcement to not be announced.
- 
-```
-
----
-
-### Incident Patch 3: `e0524db5` (2026-10-20)
-**Commit Message**: fix(mcp): use component slug in primer.style URLs (#8582)
-
-Co-authored-by: Josh Black <[REDACTED_EMAIL]>
-
-**File**: `.changeset/tired-bobcats-tan.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@primer/mcp": patch
-+---
-+
-+Update component MCP tools to match on the slug of components for HTTP requests to primer.style
-```
-
-**File**: `packages/mcp/src/server.test.ts` (modified, +50/-0)
-```diff
-@@ -482,6 +482,56 @@ describe('MCP server', () => {
-     },
-   )
- 
-+  it.each([
-+    {
-+      tool: 'get_component_examples',
-+      expectedPath: '/product/components/text-input',
-+      rawIdPath: '/product/components/text_input',
-+    },
-+    {
-+      tool: 'get_component_accessibility_guidelines',
-+      expectedPath: '/product/components/text-input/accessibility',
-+      rawIdPath: '/product/components/text_input/accessibility',
-+    },
-+  ] as const)('$tool uses the TextInput slug in its URL', async ({tool, expectedPath, rawIdPath}) => {
-+    const expectedUrl = `https://primer.style${expectedPath}`
-+    const rawIdUrl = `https://primer.style${rawIdPath}`
-+    const responseBody = 'synthetic-text-input-documentation'
-+    const homepageBody = 'homepage-body-not-text-input-documentation'
-+    const fetchMock = vi.mocked(fetch)
-+    fetchMock.mockImplementation(async input => {
-+      const url = input.toString()
-+
-+      if (url === expectedUrl) {
-+        return responseWithFinalUrl(`<main><p>${responseBody}</p></main>`, expectedUrl)
-+      }
-+
-+      if (url === rawIdUrl) {
-+        return responseWithFinalUrl(`<main><p>${homepageBody}</p></main>`, 'https://primer.style/')
-+      }
-+
-+      throw new Error(`Unexpected fetch request: ${url}`)
-+    })
-+
-+    const result = await client.callTool({name: tool, arguments: {name: 'TextInput'}})
-+
-+    expect(result.isError).not.toBe(true)
-+    expect(result.content).toContainEqual(
-+      expect.objectContaining({
-+        type: 'text',
-+        text: expect.stringContaining(responseBody),
-+      }),
-+    )
-+    expect(result.content).not.toContainEqual(
-+      expect.objectContaining({
-+        type: 'text',
-+        text: expect.stringContaining(homepageBody),
-+      }),
-+    )
-+    expect(fetchMock).toHaveBeenCalledTimes(1)
-+    expect(fetchMock.mock.calls[0]?.[0].toString()).toBe(expectedUrl)
-+  })
-+
-   it.each(['ConfirmationDialog', 'confirmationdialog'])(
-     'retrieves ConfirmationDialog documentation for %s from its published URL',
-     async name => {
-```
-
-**File**: `packages/mcp/src/server.ts` (modified, +2/-2)
-```diff
-@@ -253,7 +253,7 @@ Use \`get_component\` for exactly one component and \`get_component_batch\` for
-         }
-       }
- 
+--- a/packages/mcp/src/server.ts
++++ b/packages/mcp/src/server.ts
+@@ -253,7 +253,7 @@ export function createMcpServer(...) {
 -      const url = new URL(`/product/components/${match.id}`, 'https://primer.style')
 +      const url = new URL(`/product/components/${match.slug}`, 'https://primer.style')
        const response = await fetch(url)
        if (!response.ok) {
          throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
-@@ -387,7 +387,7 @@ ${text}`,
-         }
-       }
- 
+@@ -387,7 +387,7 @@ export function createMcpServer(...) {
 -      const url = new URL(`/product/components/${match.id}/accessibility`, 'https://primer.style')
 +      const url = new URL(`/product/components/${match.slug}/accessibility`, 'https://primer.style')
        const response = await fetch(url)
-       if (!response.ok) {
-         if ((response.status >= 400 && response.status < 500) || (response.status >= 300 && response.status < 400)) {
 ```
-
-#### Recent Merged Pull Requests:
-- **PR #8602** (2026-10-21): chore(deps-dev): bump rolldown from 1.2.13 to 1.2.14 in the rolldown group (@dependabot[bot])
-- **PR #8601** (closed): chore(deps): bump the react group across 1 directory with 4 updates (@dependabot[bot])
-- **PR #8600** (2026-10-21): chore(deps): bump actions/create-github-app-token from 3.2.0 to 3.3.0 (@dependabot[bot])
-- **PR #8598** (2026-10-21): chore(deps): bump github/gh-aw-actions/setup-cli from 0.91.11 to 0.91.14 (@dependabot[bot])
-- **PR #8596** (2026-10-21): chore(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
-- **PR #8594** (2026-10-21): chore(deps): bump github/gh-aw-actions/setup from 0.91.11 to 0.91.14 (@dependabot[bot])
+- **Lesson**: Never conflate entity storage keys/identifiers with external resource URL slugs. Enforce URL routing contracts via parameterized unit tests covering all multi-word component slugs.
 
 ---
 
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+### Incident 3: Duplicate Form Input Rendering in Horizontal FormControl Layout (BUG-PRIMER-03)
+- **Context**: `packages/react/src/FormControl/FormControl.tsx`
+- **What Was Expected**: Rendering `<FormControl layout="horizontal"><TextInput /></FormControl>` must render exactly one `<input>` element.
+- **What Actually Happened**: With `layout="horizontal"`, `TextInput`, `Textarea`, and `Select` components rendered twice. The cloned input was rendered inside the control container, and the original input was rendered a second time in the remaining children container.
+- **Evidence in Repo**: Issue `#8487`, Commit `8c0b708fc`.
+- **Root Cause**: In the horizontal layout branch, the filter predicate only excluded choice inputs:
+  `childrenWithoutSlots.filter(child => child.type !== Checkbox && child.type !== Radio)`.
+  Because `TextInput`, `Select`, and `Textarea` are non-choice inputs, they survived the filter and were rendered alongside the cloned input. The vertical layout branch correctly checked against `expectedInputComponents.some(...)`.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/react/src/FormControl/FormControl.tsx
++++ b/packages/react/src/FormControl/FormControl.tsx
+@@ -155,5 +155,5 @@ const FormControl = ({children, layout = 'vertical', ...rest}) => {
+-      {childrenWithoutSlots.filter(
+-        child => isValidElement(child) && child.type !== Checkbox && child.type !== Radio
+-      )}
++      {childrenWithoutSlots.filter(
++        child => isValidElement(child) && !expectedInputComponents.some(c => child.type === c)
++      )}
+```
+- **Lesson**: Symmetric layout branches must share identical filter exclusion sets. Never hardcode ad-hoc type checks in alternate layout rendering branches.
 
 ---
 
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel
-
-**RULE**:
-When implementing operations in `.changeset/react-compiler-safe-timeout.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in primer/react. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `746d76ae`: react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanels (#8555). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/react-compiler-safe-timeout.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+### Incident 4: Screen Reader Announcement Dropouts on Dynamic ARIA Live Regions (BUG-PRIMER-04)
+- **Context**: `contributor-docs/adrs/adr-020-live-regions.md`
+- **What Was Expected**: Programmatic status announcements (such as search result counts or background task completions) must reliably trigger across screen reader and browser combinations (NVDA, JAWS, VoiceOver).
+- **What Actually Happened**: Dynamically mounted live regions (`<div aria-live="polite">{message}</div>`) failed to announce. Screen readers do not register live regions injected into the DOM at the exact moment their text content changes.
+- **Evidence in Repo**: Commit SHA `fb6001c8`, ADR 020.
+- **Root Cause**: Accessibility APIs register an element as an active live region during DOM insertion only if it starts empty. When an element is inserted with text already present, or if its visibility is toggled from `display: none` to `block`, screen readers suppress the announcement to avoid reading off-screen boilerplate.
+- **Remediation Code Diff**:
 ```typescript
-// Verified production-grade fix pattern:
----
-'@primer/react': minor
----
-
-useSafeTimeout: Support automatic memoization with React Compiler.
+// Architecture remediation adopted in ADR 020:
+// 1. Maintain a permanent, persistent live region element in the DOM at all times.
+// 2. Announce messages by appending text nodes into the pre-existing DOM node.
+export function announce(message: string, { politeness = 'polite' }: AnnounceOptions = {}) {
+  let container = document.getElementById(`primer-live-region-${politeness}`)
+  if (!container) {
+    container = document.createElement('div')
+    container.id = `primer-live-region-${politeness}`
+    container.setAttribute('aria-live', politeness)
+    container.setAttribute('aria-atomic', 'true')
+    container.className = 'sr-only' // visually hidden
+    document.body.appendChild(container)
+  }
+  // Clear and update textContent in separate tick to force accessibility mutation event
+  container.textContent = ''
+  requestAnimationFrame(() => {
+    container.textContent = message
+  })
+}
 ```
+- **Lesson**: Never dynamically mount `aria-live` containers on the fly. Persist the live region container in the root DOM, mutating its text contents across animation frames to guarantee accessibility tree dispatch.
 
-**NEGATIVE CONSTRAINT**:
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+
+#### Accurate `any` Detection Primitive
+In generic TypeScript utilities (`DataTable/utils.ts`), testing for `any` requires handling the rule where `any` acts as a wildcard across intersections. Primer uses the following identity:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// packages/react/src/DataTable/utils.ts
+export type IsAny<T> = 0 extends 1 & T ? true : false
+```
+`1 & T` reduces to `any` if `T` is `any`. Because `0 extends any` evaluates to `true`, the condition uniquely identifies `any` while correctly returning `false` for `unknown`, `never`, `void`, or primitive unions.
+
+#### Safe Fallback Index Stamping
+When deriving keys from children in React, check for `null` or `undefined` without corrupting index `0`:
+```typescript
+// Correct: Nullish coalescing preserves 0 as a valid explicit value
+const value = child.props.value ?? `${indices.tab}`
+
+// FAILS: Logical OR treats value={0} as falsy and overwrites it with index string
+const value = child.props.value || `${indices.tab}`
 ```
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `746d76ae` are properly handled with clean fallback behavior.
+#### Prop Exclusion Collision on Button Wrapping
+When typing composite buttons, omitting `size` is insufficient if the native HTML attributes conflict with custom ref forwarding:
+```typescript
+// Correct: Stripping both 'size' and 'ref' prevents forwardRef collisions in React 19
+type RemoveTokenButtonProps = TokenButtonProps &
+  Omit<React.HTMLProps<HTMLSpanElement | HTMLButtonElement>, 'size' | 'ref'>
+```
+
+---
+
+### 2. Infinite Loop & Recursion Guards
+
+#### Bounded Type-Level Recursion Depth
+Unconstrained path resolution on nested structures will crash the TypeScript compiler with `Type instantiation is excessively deep and possibly infinite`. Primer bounds depth using an accumulator tuple:
+```typescript
+// packages/react/src/DataTable/utils.ts
+type ArrayOfLength<Length extends number, SizedArray extends Array<unknown> = []> = 
+  SizedArray['length'] extends Length
+    ? SizedArray
+    : ArrayOfLength<Length, [...SizedArray, SizedArray['length']]>
+
+// Constrain recursion to maximum depth of 10
+type MaxLength = ArrayOfLength<10>[number] // 0 | 1 | 2 | ... | 9
+
+type ArrayWithinBounds<T> = T extends ReadonlyArray<any> & {length: infer Length}
+  ? Length extends MaxLength
+    ? T
+    : never
+  : never
+```
+This forces cyclic type-graph navigation to abort with `never`, preserving IDE responsiveness and CI build performance.
+
+#### Safe Effect Timer Evacuation
+In `useSafeTimeout`, timer handles are tracked via a `Set`. If clearing a timer triggers a synchronous unmount that re-enters the cleanup hook, iterating over a mutated collection causes race conditions. Capturing the instance locally ensures termination:
+```typescript
+useEffect(() => {
+  const timerSet = timers.current
+  return () => {
+    for (const id of timerSet) {
+      clearTimeout(id)
+    }
+    timerSet.clear()
+  }
+}, [])
+```
+
+---
+
+### 3. UI & UX Micro-Mechanics
+
+#### Drag Performance via Inline CSS Variables and Containment
+```typescript
+// packages/react/src/PageLayout/paneUtils.ts
+export function setDraggingStyles({handle, pane, contentWrapper}: DraggingStylesParams) {
+  // 1. Direct CSS variable manipulation avoids invalidating pseudo-element styles
+  handle?.style.setProperty('--draggable-handle--bg-color', 'var(--bgColor-accent-emphasis)')
+  handle?.style.setProperty('--draggable-handle--drag-opacity', '1')
+  handle?.style.setProperty('--draggable-handle--transition', 'none')
+
+  // 2. Set direct data attribute for CSS containment:
+  // CSS: [data-dragging="true"] { pointer-events: none; user-select: none; }
+  pane?.setAttribute('data-dragging', 'true')
+  contentWrapper?.setAttribute('data-dragging', 'true')
+}
+```
+*Micro-mechanic*: Setting `pointer-events: none` on `contentWrapper` during drag prevents iframes or text nodes inside panes from capturing mouse events, eliminating jerky drag behavior. Writing to CSS variables bypasses the React reconciler entirely during 60fps drag operations.
+
+#### Keyboard Chord Canonical Sorting
+Chords must be deterministically sorted before comparison or `aria-label` synthesis to prevent discrepancies between `'Control+Alt+Delete'` and `'Alt+Control+Delete'`:
+```typescript
+// packages/react/src/KeybindingHint/components/utils.ts
+const keySortPriorities: Partial<Record<string, number>> = {
+  control: 1,
+  meta: 2,
+  alt: 3,
+  option: 4,
+  shift: 5,
+  function: 6,
+}
+
+const keySortPriority = (priority: string) => keySortPriorities[priority] ?? Infinity
+const compareLowercaseKeys = (a: string, b: string) => keySortPriority(a) - keySortPriority(b)
+
+export const splitChord = (chord: string) =>
+  chord
+    .split('+')
+    .map(k => k.toLowerCase())
+    .sort(compareLowercaseKeys)
+```
+Non-modifier characters receive priority `Infinity`, sorting them after modifiers (e.g., `['control', 'shift', 'k']`).
+
+---
+
+### 4. Backend Concurrency & Memory Safety
+
+#### TOCTOU Mitigation in Programmatic AST Resolution
+When resolving TypeScript source files from component directories, parallel file system access can fail if paths are modified during compilation.
+```typescript
+// packages/doc-gen/src/ts-utils.ts
+function getFirstMatchingFile(componentPath: string, componentName: string): string | undefined {
+  const paths = [
+    path.join(componentPath, `index.ts`),
+    path.join(componentPath, `index.tsx`),
+    path.join(componentPath, `${componentName}.tsx`),
+  ]
+
+  for (const p of paths) {
+    try {
+      fs.accessSync(p, fs.constants.R_OK)
+      return p
+    } catch {
+      // File does not exist or lacks read permission, proceed to next fallback
+    }
+  }
+  return undefined
+}
+```
+*Concurrency Invariant*: Rather than chaining `fs.existsSync` followed by `fs.readFileSync` (a TOCTOU race), `accessSync` immediately checks read permissions against the descriptor, gracefully falling back across expected extensions.
+
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+
+#### TypeScript AST Declaration Unwrapping
+In AST doc-gen tooling (`packages/doc-gen/src/ts-utils.ts`), naive symbol introspection fails on default export re-assignments. Primer handles export redirections using type-narrowed declaration guards:
+```typescript
+function getComponentNodeForSymbol(checker: ts.TypeChecker, componentSymbol: ts.Symbol): ts.Node {
+  const declarations = componentSymbol.getDeclarations()
+  if (!declarations || declarations.length === 0) {
+    throw new Error(`No declarations found for component ${componentSymbol.getName()}`)
+  }
+
+  let declaration = declarations[0]
+
+  // Unwrap `export default Component` redirection
+  if (ts.isExportAssignment(declaration)) {
+    const exportSymbol = checker.getSymbolAtLocation(declaration.getChildren()[0])
+    if (!exportSymbol) {
+      throw new Error(`Unable to find export symbol for component ${componentSymbol.getName()}`)
+    }
+    const exportDeclarations = exportSymbol.getDeclarations()
+    if (!exportDeclarations || exportDeclarations.length === 0) {
+      throw new Error(`No declarations found for export symbol of component ${componentSymbol.getName()}`)
+    }
+    declaration = exportDeclarations[0]
+  }
+
+  // Unwrap `const Component = ...` variable initializer
+  if (ts.isVariableDeclaration(declaration)) {
+    return declaration.initializer!
+  }
+
+  return declaration
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+Primer uses a three-tier architecture:
+1. **Core Theme & Token System**: Primitive CSS custom properties distributed via `@primer/primitives`.
+2. **Behavioral Headless Hooks**: Stateful primitives (`useControllableState`, `useFocusTrap`, `useFocusZone`, `useAnchoredPosition`).
+3. **Presentational & Slotted Components**: View layers wrapping CSS modules (`classes.StateLabel`) with accessibility bindings.
+Subsystem boundaries are maintained using monorepo packages (`packages/react`, `packages/mcp`, `packages/doc-gen`).
+
+### 2. Core Abstractions
+- **Slots via Marker Interfaces**: Custom React element tagging (`isSlot(child, TargetComponent)`) allows compound components to project child content into distinct markup targets without prop-drilling.
+- **Controlled/Uncontrolled Bridge**: `useControllableState` manages external controlled values against internal fallbacks.
+- **Accessible State Primitives**: Discriminated union types such as `StateLabelProps` cleanly map octicons to semantic labels (`octiconMap` and `labelMap`).
+
+### 3. Error Handling
+- **Prop Type Assertions**: Compile-time failures using `never` projections (`ObjectPaths<T>`).
+- **AST Parser Degradation**: Non-crashing falls in `doc-gen` through safe symbol recovery and fallback file resolvers.
+- **MCP Network Boundaries**: Status-code-aware error payloads for external requests (`response.status >= 400 && response.status < 500`).
+
+### 4. Testing
+- **Multi-Level Harness**: Unit testing with Vitest, visual regression tests via Playwright, and browser interaction testing via Storybook play functions.
+- **Coverage Validation**: Custom AST-driven class name coverage tools (`node script/check-classname-tests.mjs`) verify

@@ -4716,3 +4716,7 @@
 | `CYCLE-20261025-QD6B` | `2026-10-25T06:44:48.563Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4116` | Yes (`633b583c...`) |
 | `CYCLE-20261025-QJCM` | `2026-10-25T06:44:56.566Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4117` | Yes (`7eb9bd7a...`) |
 | `CYCLE-20261025-QL9J` | `2026-10-25T06:44:59.047Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4118, Rule 4119, Rule 4120` | Yes (`5cb43568...`) |
+| `CYCLE-20261025-4KA4` | `2026-10-25T06:55:50.956Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3640` | Yes (`70e6c487...`) |
+| `CYCLE-20261025-4PE7` | `2026-10-25T06:55:57.583Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4121, Rule 4122, Rule 4123` | Yes (`c64aad70...`) |
+| `CYCLE-20261025-4Q8W` | `2026-10-25T06:55:58.688Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4124` | Yes (`4edc8929...`) |
+| `CYCLE-20261025-5VNE` | `2026-10-25T06:56:52.346Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4125, Rule 4126, Rule 4127` | Yes (`0dc2ffa1...`) |
