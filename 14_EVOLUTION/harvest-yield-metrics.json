@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T20:43:18.383Z",
-  "total_cycles_completed": 4964,
-  "total_learnings_persisted": 4964,
-  "total_rules_promoted": 4331,
+  "last_updated": "2026-10-25T20:49:24.509Z",
+  "total_cycles_completed": 4967,
+  "total_learnings_persisted": 4967,
+  "total_rules_promoted": 4332,
   "history": [
-    {
-      "timestamp": "2026-10-25T11:31:45.548Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:31:50.432Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:33:35.986Z",
-      "repository": "taiga-family/taiga-ui",
-      "learningId": "learn-github-taiga-family-taiga-ui",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:34:42.309Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T20:43:18.383Z",
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:49:13.796Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:49:20.129Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:49:24.509Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

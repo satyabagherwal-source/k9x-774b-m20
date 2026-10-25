@@ -4987,3 +4987,6 @@
 | `CYCLE-20261025-GA7R` | `2026-10-25T20:36:46.647Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4445` | Yes (`3227ba0c...`) |
 | `CYCLE-20261025-OEUL` | `2026-10-25T20:43:05.901Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`523f0f76...`) |
 | `CYCLE-20261025-OOH3` | `2026-10-25T20:43:18.375Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4446` | Yes (`0e52dc72...`) |
+| `CYCLE-20261025-WAPQ` | `2026-10-25T20:49:13.790Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`ef61d53f...`) |
+| `CYCLE-20261025-WFLN` | `2026-10-25T20:49:20.123Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md` | Yes (`97ce928d...`) |
+| `CYCLE-20261025-WIZB` | `2026-10-25T20:49:24.503Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4447` | Yes (`20c6d8e5...`) |

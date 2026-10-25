@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-5RY9",
-    "timestamp": "2026-10-23T07:21:26.721Z",
-    "repository": "wasm-bindgen/wasm-pack",
-    "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "47ea217009509f995e1336f76dfbb65de4c86cd2dd0b714887ca19de4c79e939",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-683L",
-    "timestamp": "2026-10-23T07:21:47.649Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "ec30f362ba091e991c92a21b7378e0ad00873ac5beafc8aa2a447df29fd7cecc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-7BXU",
-    "timestamp": "2026-10-23T07:22:39.282Z",
-    "repository": "QwikDev/qwik",
-    "learningId": "learn-github-qwikdev-qwik",
-    "contentHash": "9b97229156c628be86cb6bcc77c1613233349dac5231c57667a074c0d50f5d26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-SUEN",
     "timestamp": "2026-10-23T07:39:22.991Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7445,51 @@
     "repository": "mitmproxy/mitmproxy",
     "learningId": "learn-github-mitmproxy-mitmproxy",
     "contentHash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-WAPQ",
+    "timestamp": "2026-10-25T20:49:13.790Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "ef61d53f847fd5a74e280baa7f21ac7b52521dca9ba1babb08e86705ff31668b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-WFLN",
+    "timestamp": "2026-10-25T20:49:20.123Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "97ce928dc7e25c5931d0dd8fb77648e14945bce6838cd66dec690bf15351dd04",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-WIZB",
+    "timestamp": "2026-10-25T20:49:24.503Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

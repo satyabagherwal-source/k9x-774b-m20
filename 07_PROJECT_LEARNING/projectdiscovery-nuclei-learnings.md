@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `445e6ab9`  
+> **Source Version**: `47398198`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:49:18.281Z  
+> **Timestamp**: 2026-10-25T20:49:24.266Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:49:18.273Z  
+> **Harvest Timestamp**: 2026-10-25T20:49:24.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32303 stars
+- **Stars / Engagement**: 32306 stars
 
 ---
 
@@ -1445,807 +1445,114 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f8abe2c` (2026-10-25)
-**Commit Message**: Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits
+### Incident Patch 1: `39c5d876` (2026-10-25)
+**Commit Message**: Merge pull request #7928 from projectdiscovery/fix/http-large-request-body-memory
 
-fix(core): honour the scan context when acquiring worker slots and JS runtimes
+http: stop copying large request bodies (fixes OOM on multi-MB body templates)
 
-**File**: `internal/runner/runner.go` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -995,7 +995,7 @@ func (r *Runner) executeSmartWorkflowInput(executorOpts *protocols.ExecutorOptio
- 	if err != nil {
- 		return nil, errors.Wrap(err, "could not create automatic scan service")
- 	}
--	if err := service.Execute(); err != nil {
-+	if err := service.Execute(context.Background()); err != nil {
- 		return nil, errors.Wrap(err, "could not execute automatic scan")
- 	}
- 	result := &atomic.Bool{}
+@@ -253,6 +253,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/execute_options.go` (modified, +5/-2)
+**File**: `README_CN.md` (modified, +1/-0)
 ```diff
-@@ -126,7 +126,7 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
- 		}
- 
- 		// resize check point - nop if there are no changes
--		wp.RefreshWithConfig(e.GetWorkPoolConfig())
-+		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
- 
- 		templateType := template.Type()
- 		var wg *syncutil.AdaptiveWaitGroup
-@@ -173,7 +173,10 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
- 		default:
- 		}
- 
--		wp.Add()
-+		if err := wp.AddWithContext(ctx); err != nil {
-+			return false
-+		}
-+
- 		go func(targetval *contextargs.MetaInput) {
- 			defer wp.Done()
- 			e.executeTemplatesOnTarget(ctx, templatesList, targetval, results)
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/executors.go` (modified, +1/-1)
+**File**: `README_ES.md` (modified, +1/-0)
 ```diff
-@@ -255,7 +255,7 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
- 		}
- 
- 		// resize check point - nop if there are no changes
--		wp.RefreshWithConfig(e.GetWorkPoolConfig())
-+		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
- 
- 		var sg *syncutil.AdaptiveWaitGroup
- 		if tpl.Type() == types.HeadlessProtocol {
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/executors_test.go` (modified, +111/-0)
+**File**: `README_ID.md` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"testing"
- 	"time"
- 
-+	"github.com/projectdiscovery/gologger"
- 	inputtypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
-@@ -655,3 +656,113 @@ func Test_executeTemplateWithTargets_RespectsCancellation(t *testing.T) {
- 	var matched atomic.Bool
- 	e.executeTemplateWithTargets(ctx, tpl, targets, &matched)
- }
-+
-+func newCancelTestEngine() *Engine {
-+	opts := &types.Options{
-+		TemplateThreads:         1,
-+		HeadlessTemplateThreads: 1,
-+		BulkSize:                1,
-+		HeadlessBulkSize:        1,
-+		Logger:                  gologger.DefaultLogger,
-+	}
-+	e := New(opts)
-+	e.SetExecuterOptions(&protocols.ExecutorOptions{Logger: e.Logger, ResumeCfg: types.NewResumeCfg(), ProtocolType: tmpltypes.HTTPProtocol})
-+	return e
-+}
-+
-+type gateExecuter struct {
-+	started chan struct{}
-+	once    sync.Once
-+}
-+
-+func (g *gateExecuter) Compile() error { return nil }
-+func (g *gateExecuter) Requests() int  { return 1 }
-+func (g *gateExecuter) Execute(ctx *scan.ScanContext) (bool, error) {
-+	g.once.Do(func() { close(g.started) })
-+	<-ctx.Context().Done()
-+	return false, ctx.Context().Err()
-+}
-+func (g *gateExecuter) ExecuteWithResults(ctx *scan.ScanContext) ([]*output.ResultEvent, error) {
-+	_, err := g.Execute(ctx)
-+	return nil, err
-+}
-+
-+func TestExecuteTemplateSprayUnblocksCancelledAcquire(t *testing.T) {
-+	e := newCancelTestEngine()
-+	gate := &gateExecuter{started: make(chan struct{})}
-+	templatesList := []*templates.Template{{Executer: gate}, {Executer: &gateExecuter{started: make(chan struct{})}}}
-+	targets := &fakeTargetProvider{values: []*contextargs.MetaInput{{Input: "a"}}}
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		e.executeTemplateSpray(ctx, templatesList, targets)
-+	}()
-+
-+	select {
-+	case <-gate.started:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("first template did not start")
-+	}
-+	cancel()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("executeTemplateSpray stayed blocked after cancel")
-+	}
-+}
-+
-+func TestExecuteHostSprayUnblocksCancelledAcquire(t *testing.T) {
-+	e := newCancelTestEngine()
-+	gate := &gateExecuter{started: make(chan struct{})}
-+	templatesList := []*templates.Template{{Executer: gate}}
-+	targets := &fakeTargetProvider{values: []*contextargs.MetaInput{{Input: "a"}, {Input: "b"}}}
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		e.executeHostSpray(ctx, templatesList, targets)
-+	}()
-+
-+	select {
-+	case <-gate.started:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("first host did not start")
-+	}
-+	cancel()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("executeHostSpray stayed blocked after cancel")
-+	}
-+}
-+
-+func TestExecuteTemplatesOnTargetUnblocksCancelledAcquire(t *testing.T) {
-+	e := newCancelTestEngine()
-+	gate := &gateExecuter{started: make(chan struct{})}
-+	var matched atomic.Bool
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		e.executeTemplatesOnTarget(ctx, []*templates.Template{{Executer: gate}, {Executer: &gateExecuter{started: make(chan struct{})}}}, &contextargs.MetaInput{Input: "a"}, &matched)
-+	}()
-+
-+	select {
-+	case <-gate.started:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("first template did not start")
-+	}
-+	cancel()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("executeTemplatesOnTarget stayed blocked after cancel")
-+	}
-+}
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/workflow_execute.go` (modified, +6/-2)
+**File**: `README_JP.md` (modified, +1/-0)
 ```diff
-@@ -132,7 +132,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
- 					}
- 
- 					for _, subtemplate := range matcher.Subtemplates {
--						swg.Add()
-+						if err := swg.AddWithContext(ctx.Context()); err != nil {
-+							return
-+						}
- 
- 						go func(subtemplate *workflows.WorkflowTemplate) {
- 							defer swg.Done()
-@@ -161,7 +163,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
- 	}
- 	if len(template.Subtemplates) > 0 && firstMatched {
- 		for _, subtemplate := range template.Subtemplates {
--			swg.Add()
-+			if err := swg.AddWithContext(ctx.Context()); err != nil {
-+				return err
-+			}
- 
- 			go func(template *workflows.WorkflowTemplate) {
- 				// create a new context with the same input but with unset callbacks
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/workflow_execute_test.go` (modified, +57/-0)
+**File**: `README_KR.md` (modified, +1/-0)
 ```diff
-@@ -2,7 +2,9 @@ package core
- 
- import (
- 	"context"
-+	"sync/atomic"
- 	"testing"
-+	"time"
- 
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-@@ -301,6 +303,61 @@ func TestWorkflowsSameStepExecutersRefreshTemplateContext(t *testing.T) {
- 	require.Equal(t, "foo", secondWhoami, "could not refresh workflow context into later executers in the same step")
- }
- 
-+func TestWorkflowSubtemplatesUnblockCancelledAcquire(t *testing.T) {
-+	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
-+	var started atomic.Int32
-+	block := &mockExecuter{result: true, executeScanHook: func(ctx *scan.ScanContext) {
-+		started.Add(1)
-+		<-ctx.Context().Done()
-+	}}
-+	var waitingStarted atomic.Bool
-+	waiting := &mockExecuter{result: true, executeScanHook: func(ctx *scan.ScanContext) {
-+		waitingStarted.Store(true)
-+		<-ctx.Context().Done()
-+	}}
-+
-+	// Two slots: the two blockers occupy them so the third AddWithContext waits.
-+	workflow := &workflows.Workflow{Options: &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 2}}, Workflows: []*workflows.WorkflowTemplate{
-+		{Executers: []*workflows.ProtocolExecuterPair{{
-+			Executer: &mockExecuter{result: true, outputs: []*output.InternalWrappedEvent{
-+				{OperatorsResult: &operators.Result{}, Results: []*output.ResultEvent{{}}},
-+			}}, Options: &protocols.ExecutorOptions{Progress: progressBar}},
-+		}, Subtemplates: []*workflows.WorkflowTemplate{
-+			{Executers: []*workflows.ProtocolExecuterPair{{Executer: block, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
-+			{Executers: []*workflows.ProtocolExecuterPair{{Executer: block, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
-+			{Executers: []*workflows.ProtocolExecuterPair{{Executer: waiting, Options: &protocols.ExecutorOptions{Progress: progressBar}}}},
-+		}},
-+	}}
-+
-+	engine := &Engine{}
-+	parent, cancel := context.WithCancel(context.Background())
-+	input := contextargs.NewWithInput(parent, "https://test.com")
-+	ctx := scan.NewScanContext(parent, input)
-+
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		engine.executeWorkflow(ctx, workflow)
-+	}()
-+
-+	deadline := time.After(2 * time.Second)
-+	for started.Load() < 2 {
-+		select {
-+		case <-deadline:
-+			t.Fatal("blocking subtemplates did not occupy both slots")
-+		case <-time.After(10 * time.Millisecond):
-+		}
-+	}
-+	cancel()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("workflow stayed blocked after cancel")
-+	}
-+	require.False(t, waitingStarted.Load(), "third subtemplate must not start while slots are held")
-+}
-+
- type mockExecuter struct {
- 	result          bool
- 	executeHook     func(input *contextargs.MetaInput)
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/core/workpool.go` (modified, +5/-1)
+**File**: `README_PT-BR.md` (modified, +1/-0)
 ```diff
-@@ -62,6 +62,10 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
- }
- 
- func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
-+	w.RefreshWithConfigContext(context.Background(), config)
-+}
-+
-+func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPoolConfig) {
- 	if w.config.TypeConcurrency != config.TypeConcurrency {
- 		w.config.TypeConcurrency = config.TypeConcurrency
- 	}
-@@ -74,7 +78,7 @@ func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
- 	if w.config.HeadlessInputConcurrency != config.HeadlessInputConcurrency {
- 		w.config.HeadlessInputConcurrency = config.HeadlessInputConcurrency
- 	}
--	w.Refresh(context.Background())
-+	w.Refresh(ctx)
- }
- 
- func (w *WorkPool) Refresh(ctx context.Context) {
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
-**File**: `pkg/js/libs/smb/smb_share.go` (modified, +2/-2)
+**File**: `README_TR.md` (modified, +1/-0)
 ```diff
-@@ -29,7 +29,7 @@ func listDir(ctx context.Context, executionId string, host string, port int, use
- 		return nil, err
- 	}
- 	defer sess.Close()
--	return sess.ListDir(share, dir)
-+	return sess.ListDirContext(ctx, share, dir)
- }
- 
- // @memo
-@@ -55,5 +55,5 @@ func listTree(ctx context.Context, executionId string, host string, port int, us
- 		return nil, err
- 	}
- 	defer sess.Close()
--	return sess.ListTree(share, dir, smbsession.DefaultMaxTreeDepth, smbsession.DefaultMaxTreeEntries)
-+	return sess.ListTreeContext(ctx, share, dir, smbsession.DefaultMaxTreeDepth, smbsession.DefaultMaxTreeEntries)
- }
-```
-
----
-
-### Incident Patch 2: `5a339a8d` (2026-10-25)
-**Commit Message**: fix lint
-
-**File**: `pkg/protocols/http/httputils/spm_test.go` (modified, +2/-2)
-```diff
-@@ -21,8 +21,8 @@ func TestAcquireHonoursCancelledContextWhenPoolIsFull(t *testing.T) {
- 	}()
- 
- 	select {
--	case <-done:
--		t.Fatal("Acquire returned while the pool is full")
-+	case err := <-done:
-+		t.Fatal("Acquire returned while the pool is full", err)
- 	case <-time.After(50 * time.Millisecond):
- 	}
- 
-```
-
----
-
-### Incident Patch 3: `71805f50` (2026-10-25)
-**Commit Message**: Merge pull request #7857 from AdamMagued/fix-issue-7829
-
-perf(protocols/http): defer building FullResponseString when unused by operators
-
-**File**: `pkg/operators/extractors/extractors.go` (modified, +24/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 
- 	"github.com/itchyny/gojq"
- 	"github.com/projectdiscovery/govaluate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
- )
- 
- // Extractor is used to extract part of response using a regex.
-@@ -134,3 +135,26 @@ type Extractor struct {
- 
- 	llmClient LLMClient
- }
-+
-+// NeedsResponse returns true if the extractor reads the full response.
-+func (extractor *Extractor) NeedsResponse() bool {
-+	if extractor == nil {
-+		return false
-+	}
-+	if matchers.IsResponseVar(extractor.Part) {
-+		return true
-+	}
-+	for _, k := range extractor.KVal {
-+		if matchers.IsResponseVar(k) {
-+			return true
-+		}
-+	}
-+	for _, expr := range extractor.dslCompiled {
-+		for _, v := range expr.Vars() {
-+			if matchers.IsResponseVar(v) {
-+				return true
-+			}
-+		}
-+	}
-+	return matchers.MentionsResponse(extractor.DSL, extractor.Regex)
-+}
-```
-
-**File**: `pkg/operators/matchers/matchers.go` (modified, +38/-0)
-```diff
-@@ -2,6 +2,7 @@ package matchers
- 
- import (
- 	"regexp"
-+	"strings"
- 
- 	"github.com/projectdiscovery/govaluate"
- )
-@@ -213,3 +214,40 @@ func (matcher *Matcher) ResultWithMatchedSnippet(data bool, matchedSnippet []str
- 	}
- 	return data, matchedSnippet
- }
-+
-+// NeedsResponse returns true if the matcher reads the full response.
-+func (matcher *Matcher) NeedsResponse() bool {
-+	if matcher == nil {
-+		return false
-+	}
-+	if IsResponseVar(matcher.Part) {
-+		return true
-+	}
-+	for _, expr := range matcher.dslCompiled {
-+		for _, v := range expr.Vars() {
-+			if IsResponseVar(v) {
-+				return true
-+			}
-+		}
-+	}
-+	return MentionsResponse(matcher.DSL, matcher.Words, matcher.Regex)
-+}
-+
-+// IsResponseVar reports whether name is the full response or a numbered copy of it.
-+func IsResponseVar(name string) bool {
-+	name = strings.ToLower(name)
-+	return name == "response" || strings.HasPrefix(name, "response_")
-+}
-+
-+// MentionsResponse reports whether any value refers to the response by name,
-+// either as a DSL variable or as a {{response}} placeholder.
-+func MentionsResponse(values ...[]string) bool {
-+	for _, list := range values {
-+		for _, value := range list {
-+			if strings.Contains(strings.ToLower(value), "response") {
-+				return true
-+			}
-+		}
-+	}
-+	return false
-+}
-```
-
-**File**: `pkg/operators/operators.go` (modified, +18/-0)
-```diff
-@@ -86,6 +86,24 @@ func (operators *Operators) GetMatchersCondition() matchers.ConditionType {
- 	return operators.matchersCondition
- }
- 
-+// NeedsResponse returns true if any matcher or extractor requires the full response.
-+func (operators *Operators) NeedsResponse() bool {
-+	if operators == nil {
-+		return false
-+	}
-+	for _, matcher := range operators.Matchers {
-+		if matcher.NeedsResponse() {
-+			return true
-+		}
-+	}
-+	for _, extractor := range operators.Extractors {
-+		if extractor.NeedsResponse() {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
- // Result is a result structure created from operators running on data.
- type Result struct {
- 	// Matched is true if any matchers matched
-```
-
-**File**: `pkg/protocols/common/globalmatchers/globalmatchers.go` (modified, +15/-0)
-```diff
-@@ -54,6 +54,21 @@ func (s *Storage) HasMatchers() bool {
- 	return len(s.requests) > 0
- }
- 
-+// NeedsResponse returns true if any global matcher operator requires the full response.
-+func (s *Storage) NeedsResponse() bool {
-+	if !s.hasStorage() {
-+		return false
-+	}
-+	for _, item := range s.requests {
-+		for _, operator := range item.Operators {
-+			if operator.NeedsResponse() {
-+				return true
-+			}
-+		}
-+	}
-+	return false
-+}
-+
- // Match matches the global matchers against the response
- func (s *Storage) Match(
- 	event output.InternalEvent,
-```
-
-**File**: `pkg/protocols/http/operators.go` (modified, +16/-2)
-```diff
-@@ -32,7 +32,11 @@ func (request *Request) Match(data map[string]interface{}, matcher *matchers.Mat
- 		if !ok {
- 			return false, []string{}
- 		}
--		return matcher.Result(matcher.MatchStatusCode(statusCode)), []string{responsehighlighter.CreateStatusCodeSnippet(data["response"].(string), statusCode)}
-+		respSnippet := types.ToString(data["response"])
-+		if respSnippet == "" {
-+			respSnippet = types.ToString(data["header"])
-+		}
-+		return matcher.Result(matcher.MatchStatusCode(statusCode)), []string{responsehighlighter.CreateStatusCodeSnippet(respSnippet, statusCode)}
- 	case matchers.SizeMatcher:
- 		return matcher.Result(matcher.MatchSize(len(item))), []string{}
- 	case matchers.WordsMatcher:
-@@ -205,7 +209,7 @@ func (request *Request) MakeResultEventItem(wrapped *output.InternalWrappedEvent
- 		IP:               fields.Ip,
- 		GlobalMatchers:   isGlobalMatchers,
- 		Request:          types.ToString(wrapped.InternalEvent["request"]),
--		Response:         request.truncateResponse(wrapped.InternalEvent["response"]),
-+		Response:         request.truncateResponse(eventResponse(wrapped.InternalEvent)),
- 		CURLCommand:      types.ToString(wrapped.InternalEvent["curl-command"]),
- 		TemplateEncoded:  request.options.EncodeTemplate(),
- 		Error:            types.ToString(wrapped.InternalEvent["error"]),
-@@ -215,6 +219,16 @@ func (request *Request) MakeResultEventItem(wrapped *output.InternalWrappedEvent
- 	return data
- }
- 
-+// eventResponse returns the full response of event. Events matched after the
-+// response chain is released, such as interactsh matches, may not carry it, so
-+// it is rebuilt from the headers and body they keep.
-+func eventResponse(event output.InternalEvent) string {
-+	if response := types.ToString(event["response"]); response != "" {
-+		return response
-+	}
-+	return types.ToString(event["all_headers"]) + types.ToString(event["body"])
-+}
-+
- func (request *Request) truncateResponse(response interface{}) string {
- 	responseString := types.ToString(response)
- 	if len(responseString) > request.options.Options.ResponseSaveSize {
-```
-
-**File**: `pkg/protocols/http/request.go` (modified, +59/-2)
-```diff
-@@ -40,6 +40,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/interactsh"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/marker"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/utils/vardump"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httpclientpool"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/httputils"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http/signer"
-@@ -1458,12 +1459,24 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		// Cache response strings once per Fill() to avoid repeated allocs.
- 		// NOTE(dwisiswant0): These are valid until Previous() (which reloads
- 		// the buffer).
--		fullResponseStr := respChain.FullResponseString()
- 		bodyStr := respChain.BodyString()
- 		headersStr := respChain.HeadersString()
- 
- 		statusCode := respChain.Response().StatusCode
- 
-+		needsFullResponse := request.needsFullResponse(generatedRequest)
-+		var fullResponseStr string
-+		var fullResponseOnce sync.Once
-+		getFullResponse := func() string {
-+			fullResponseOnce.Do(func() {
-+				fullResponseStr = respChain.FullResponseString()
-+			})
-+			return fullResponseStr
-+		}
-+		if needsFullResponse {
-+			fullResponseStr = getFullResponse()
-+		}
-+
- 		// Detect HTTP-to-HTTPS port mismatch (400 error with specific message) so
- 		// later requests to the same host:port are auto-upgraded to https. For the
- 		// standard net/http path this is normally already handled by the
-@@ -1580,6 +1593,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		isDebug := request.options.Options.Debug || request.options.Options.DebugResponse
- 		event := eventcreator.CreateEventWithAdditionalOptions(request, interimEvent, isDebug, func(internalWrappedEvent *output.InternalWrappedEvent) {
- 			internalWrappedEvent.OperatorsResult.PayloadValues = generatedRequest.meta
-+			if internalWrappedEvent.InternalEvent["response"] == "" || internalWrappedEvent.InternalEvent["response"] == nil {
-+				internalWrappedEvent.InternalEvent["response"] = getFullResponse()
-+			}
- 		})
- 
- 		if hasInteractMatchers {
-@@ -1590,6 +1606,9 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 		if request.options.GlobalMatchers.HasMatchers() {
- 			request.options.GlobalMatchers.Match(interimEvent, request.Match, request.Extract, isDebug, func(event output.InternalEvent, result *operators.Result) {
- 				globalMatched = true
-+				if event["response"] == "" || event["response"] == nil {
-+					event["response"] = getFullResponse()
-+				}
- 				callback(eventcreator.CreateEventWithOperatorResults(request, event, result))
- 			})
- 		}
-@@ -1617,7 +1636,7 @@ func (request *Request) executeRequest(input *contextargs.Context, generatedRequ
- 				StatusCode:    respChain.Response().StatusCode,
- 				Matched:       event.HasResults(),
- 				RawRequest:    string(dumpedRequest),
--				RawResponse:   fullResponseStr,
-+				RawResponse:   getFullResponse(),
- 				Severity:      request.options.TemplateInfo.SeverityHolder.Severity.String(),
- 			})
- 		}
-@@ -1890,6 +1909,44 @@ func (request *Request) isUnresponsiveAddress(input *contextargs.Context) bool {
- 	return false
- }
- 
-+// needsFullResponse returns true if operators, debug flags, or stats require the full HTTP response.
-+func (request *Request) needsFullResponse(generatedRequest *generatedRequest) bool {
-+	if request.options != nil && request.options.Options != nil {
-+		cliOptions := request.options.Options
-+		if cliOptions.Debug || cliOptions.DebugResponse || cliOptions.StoreResponse || cliOptions.HTTPStats {
-+			return true
-+		}
-+	}
-+	if vardump.EnableVarDump {
-+		return true
-+	}
-+	if request.options != nil && request.options.FuzzStatsDB != nil && generatedRequest != nil && generatedRequest.fuzzGeneratedRequest.Request != nil {
-+		return true
-+	}
-+	if request.options != nil && (request.options.IsMultiProtocol || request.options.Flow != "") {
-+		return true
-+	}
-+	// request-condition history copies the event, so later requests can read response_N
-+	if request.NeedsRequestCondition() {
-+		return true
-+	}
-+	if request.CompiledOperators != nil && request.CompiledOperators.NeedsResponse() {
-+		return true
-+	}
-+	if request.NeedsResponse() {
-+		return true
-+	}
-+	for _, filter := range request.FuzzPreCondition {
-+		if filter.NeedsResponse() {
-+			return true
-+		}
-+	}
-+	if request.options != nil && request.options.GlobalMatchers != nil && request.options.GlobalMatchers.NeedsResponse() {
-+		return true
-+	}
-+	return false
-+}
-+
- // getEffectiveReadLimit returns the effective body read limit for this request.
- func (request *Request) getEffectiveReadLimit() int {
- 	maxBodylimit := MaxBodyRead // 10MB
-```
-
-**File**: `pkg/protocols/http/response_defer_test.go` (added, +426/-0)
-```diff
-@@ -0,0 +1,426 @@
-+package http
-+
-+import (
-+	"context"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/extractors"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/operators/matchers"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/types"
-+)
-+
-+func TestNeedsFullResponse(t *testing.T) {
-+	options := testutils.DefaultOptions
-+	testutils.Init(options)
-+
-+	t.Run("body matcher does not need full response", func(t *testing.T) {
-+		req := &Request{
-+			ID:     "body-only",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Operators: operators.Operators{
-+				Matchers: []*matchers.Matcher{{
-+					Part:  "body",
-+					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+					Words: []string{"test"},
-+				}},
-+			},
-+		}
-+		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "body-only"})
-+		require.NoError(t, req.Compile(execOpts))
-+		require.False(t, req.needsFullResponse(nil))
-+	})
-+
-+	t.Run("header matcher does not need full response", func(t *testing.T) {
-+		req := &Request{
-+			ID:     "header-only",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Operators: operators.Operators{
-+				Matchers: []*matchers.Matcher{{
-+					Part:  "header",
-+					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+					Words: []string{"Content-Type"},
-+				}},
-+			},
-+		}
-+		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "header-only"})
-+		require.NoError(t, req.Compile(execOpts))
-+		require.False(t, req.needsFullResponse(nil))
-+	})
-+
-+	t.Run("status matcher does not need full response", func(t *testing.T) {
-+		req := &Request{
-+			ID:     "status-only",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Operators: operators.Operators{
-+				Matchers: []*matchers.Matcher{{
-+					Type:   matchers.MatcherTypeHolder{MatcherType: matchers.StatusMatcher},
-+					Status: []int{200},
-+				}},
-+			},
-+		}
-+		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "status-only"})
-+		require.NoError(t, req.Compile(execOpts))
-+		require.False(t, req.needsFullResponse(nil))
-+	})
-+
-+	t.Run("matcher with part response needs full response", func(t *testing.T) {
-+		req := &Request{
-+			ID:     "part-response",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Operators: operators.Operators{
-+				Matchers: []*matchers.Matcher{{
-+					Part:  "response",
-+					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+					Words: []string{"test"},
-+				}},
-+			},
-+		}
-+		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "part-response"})
-+		require.NoError(t, req.Compile(execOpts))
-+		require.True(t, req.needsFullResponse(nil))
-+	})
-+
-+	t.Run("matcher with part all reads body and headers only", func(t *testing.T) {
-+		req := &Request{
-+			ID:     "part-all",
-+			Method: HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Operators: operators.Operators{
-+				Matchers: []*matchers.Matcher{{
-+					Part:  "all",
-+					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+					Words: []string{"test"},
-+				}},
-+			},
-+		}
-+		execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "part-all"})
-+		require.NoError(t, req.Compile(execOpts))
-+		require.False(t, req.needsFullResponse(nil))
-+	})
-+
-+	for _, tc := range []struct {
-+		name    string
-+		matcher *matchers.Matcher
-+	}{
-+		{"numbered response part", &matchers.Matcher{Part: "response_1", Type: matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher}, Words: []string{"test"}}},
-+		{"response placeholder in words", &matchers.Matcher{Part: "body", Type: matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher}, Words: []string{"{{response}}"}}},
-+		{"request condition", &matchers.Matcher{Type: matchers.MatcherTypeHolder{MatcherType: matchers.DSLMatcher}, DSL: []string{"status_code_1 == 200 && status_code_2 == 200"}}},
-+	} {
-+		t.Run(tc.name+" needs full response", func(t *testing.T) {
-+			req := &Request{
-+				ID:        "response-ref",
-+				Method:    HTTPMethodTypeHolder{MethodType: HTTPGet},
-+				Operators: operators.Operators{Matchers: []*matchers.Matcher{tc.matcher}},
-+			}
-+			execOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{ID: "response-ref"})
-+			require.NoError(t, req.Compile(execOpts))
-+			require.True(t, req.needsFullResponse(nil))
-+		})
-+	}
-+
-+	t.Run("dsl matcher without response does not need full response", func(t *testing.T) {
-+		req := &Reques
+@@ -250,6 +250,7 @@ CONFIGURATIONS:
+    -sip, -source-ip string               source ip address to use for network scan
+    -rsr, -response-size-read int         max response size to read in bytes
+    -rss, -response-size-save int         max response size to read in bytes (default 1048576)
++   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
+    -reset                                reset removes all nuclei configuration and data files (including nuclei-templates)
+    -tlsi, -tls-impersonate               enable experimental client hello (ja3) tls randomization
+    -hae, -http-api-endpoint string       experimental http api endpoint
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
 - **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
+- **PR #7928** (2026-10-25): http: stop copying large request bodies (fixes OOM on multi-MB body templates) (@Ice3man543)
 - **PR #7926** (2026-10-25): apply host backoff to javascript template dials (@dogancanbakir)
 - **PR #7923** (closed): fix(http): bound memory for large Flow request bodies (@knakul853)
 - **PR #7922** (2026-10-24): fix(offlinehttp): preserve response content during HTTP version normalization (@MasterchiefGalaxy)
-- **PR #7914** (2026-10-25): feat(payloads): iterate payload combinations in a random order (@mazzz3r)
 
 ---
 
@@ -2265,28 +1572,28 @@ perf(protocols/http): defer building FullResponseString when unused by operators
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits
+## X. Merge pull request #7928 from projectdiscovery/fix/http-large-request-body-memor
 
 **RULE**:
-When implementing operations in `internal/runner/runner.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f8abe2c`: Merge pull request #7678 from gnuletik/fix/cancellable-template-and-js-waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39c5d876`: Merge pull request #7928 from projectdiscovery/fix/http-large-request-body-memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/runner.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if err := service.Execute(context.Background()); err != nil {
+   -rqss, -request-size-save int         max request body size to save in bytes (0 to save the whole body) (default 32768)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if err := service.Execute(); err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f8abe2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39c5d876` are properly handled with clean fallback behavior.

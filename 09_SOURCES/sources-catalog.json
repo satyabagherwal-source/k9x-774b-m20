@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
-    "lastHarvestedAt": "2026-10-21T01:04:34.534Z",
+    "contentHash": "ef61d53f847fd5a74e280baa7f21ac7b52521dca9ba1babb08e86705ff31668b",
+    "lastHarvestedAt": "2026-10-25T20:49:13.792Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "445e6ab9",
+    "sourceVersion": "47398198",
     "license": "MIT",
-    "contentHash": "6ca361f2806f20d8e0e92c2b845bf7cf879a3aba9a52902be41dfd3b0feb1c96",
-    "lastHarvestedAt": "2026-10-25T17:49:18.662Z",
+    "contentHash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
+    "lastHarvestedAt": "2026-10-25T20:49:24.506Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "f9842d50",
+    "sourceVersion": "2e354062",
     "license": "MPL-2.0",
-    "contentHash": "09fde911ac002ae8d7b668fe504d6e1ed993e19ef86906d857d687f3dc7308b8",
-    "lastHarvestedAt": "2026-10-21T03:37:03.054Z",
+    "contentHash": "97ce928dc7e25c5931d0dd8fb77648e14945bce6838cd66dec690bf15351dd04",
+    "lastHarvestedAt": "2026-10-25T20:49:20.125Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {
