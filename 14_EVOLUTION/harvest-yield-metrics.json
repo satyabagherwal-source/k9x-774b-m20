@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:02:21.770Z",
-  "total_cycles_completed": 4971,
-  "total_learnings_persisted": 4971,
-  "total_rules_promoted": 4334,
+  "last_updated": "2026-10-25T21:08:41.000Z",
+  "total_cycles_completed": 4973,
+  "total_learnings_persisted": 4973,
+  "total_rules_promoted": 4335,
   "history": [
-    {
-      "timestamp": "2026-10-25T11:59:45.099Z",
-      "repository": "watchexec/watchexec",
-      "learningId": "learn-github-watchexec-watchexec",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:59:51.016Z",
-      "repository": "apollographql/apollo-kotlin",
-      "learningId": "learn-github-apollographql-apollo-kotlin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:59:52.946Z",
       "repository": "clastix/kamaji",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T21:02:21.770Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:08:40.808Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:08:41.000Z",
+      "repository": "primer/react",
+      "learningId": "learn-github-primer-react",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

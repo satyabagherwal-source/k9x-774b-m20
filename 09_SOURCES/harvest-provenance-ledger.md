@@ -5001,3 +5001,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-25T21:02:04.831Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a1e51f49` | Multi-dimensional audit evidence | 2026-10-25T21:02:15.981Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0f38c118` | Multi-dimensional audit evidence | 2026-10-25T21:02:21.766Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T21:08:40.803Z |
+| `learn-github-primer-react` | `https://github.com/primer/react` | `190fafd9` | Multi-dimensional audit evidence | 2026-10-25T21:08:40.996Z |

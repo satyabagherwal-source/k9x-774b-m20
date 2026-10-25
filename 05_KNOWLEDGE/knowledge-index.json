@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:02:21.707Z",
+  "last_updated": "2026-10-25T21:08:40.940Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19776,7 +19776,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
       "source_version": "hf-deepseek-ai-deepseek-v3",
-      "content_hash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
+      "content_hash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "promoted_rules": [],
@@ -19797,7 +19797,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
       ],
-      "verified_at": "2026-10-21T01:23:39.468Z",
+      "verified_at": "2026-10-25T21:08:40.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41138,7 +41138,7 @@
       "platform": "github",
       "source_url": "https://github.com/primer/react",
       "source_version": "190fafd9",
-      "content_hash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
+      "content_hash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
       "dossier_path": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/primer-react-learnings.md",
       "promoted_rules": [
@@ -41193,7 +41193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:56:52.274Z",
+      "verified_at": "2026-10-25T21:08:40.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111493,13 +111493,13 @@
       "rule_number": 3483,
       "title": "react-compiler): enable useSafeTimeout, token remove buttons, and UnderlinePanel",
       "source_url": "https://github.com/primer/react",
-      "source_version": "3a71047a",
+      "source_version": "190fafd9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T19:42:15.841Z"
+      "verified_at": "2026-10-25T21:08:40.928Z"
     },
     "rule-3484": {
       "learning_id": "rule-3484",

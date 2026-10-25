@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T21:02:21.776Z",
+  "last_updated": "2026-10-25T21:08:41.004Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1310,14 +1310,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "content_hash": "9689fd7c3b41de72e31a5e5fca034de07e8f72acf91841309777e01811468a96",
-      "verified_at": "2026-10-21T01:23:39.508Z",
+      "content_hash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
+      "verified_at": "2026-10-25T21:08:40.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:23:39.508Z"
+      "last_updated": "2026-10-25T21:08:40.812Z"
     },
     "baidu/Unlimited-OCR": {
       "repository": "baidu/Unlimited-OCR",
@@ -7821,14 +7821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-primer-react",
-      "content_hash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
-      "verified_at": "2026-10-25T06:56:52.360Z",
+      "content_hash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
+      "verified_at": "2026-10-25T21:08:41.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:56:52.360Z"
+      "last_updated": "2026-10-25T21:08:41.003Z"
     },
     "smol-rs/smol": {
       "repository": "smol-rs/smol",

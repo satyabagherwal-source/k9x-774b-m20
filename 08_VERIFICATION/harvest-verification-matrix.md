@@ -4994,3 +4994,5 @@
 | `CYCLE-20261025-CTNH` | `2026-10-25T21:02:04.829Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`bd34cb5e...`) |
 | `CYCLE-20261025-D296` | `2026-10-25T21:02:15.978Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4448` | Yes (`12b25180...`) |
 | `CYCLE-20261025-D6PU` | `2026-10-25T21:02:21.762Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4449` | Yes (`e982eec1...`) |
+| `CYCLE-20261025-LB6N` | `2026-10-25T21:08:40.799Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`e95ef162...`) |
+| `CYCLE-20261025-LBC1` | `2026-10-25T21:08:40.993Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`36721dc2...`) |

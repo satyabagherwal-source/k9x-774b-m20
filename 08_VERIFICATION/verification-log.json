@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-OHVC",
-    "timestamp": "2026-10-23T08:03:59.736Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "d9480a24eb3508a593bcbc37b0e1763943150b4945d3ebcc8da31fa3bba2d764",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-WD7C",
-    "timestamp": "2026-10-23T08:10:06.936Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "cebb8d3026f019e47acc16f01c70140af87e227ccdcf8f845a664db10dcf1271",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-CRJB",
     "timestamp": "2026-10-23T08:22:52.007Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "e982eec13d8e6ebb14b7deb8550c8a6472932f2a7854d8d4be64c91732cf869b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LB6N",
+    "timestamp": "2026-10-25T21:08:40.799Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "e95ef162a3a9a489151c0ed80794867f53cf86473006a5dedddbc3ba69b4c2d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LBC1",
+    "timestamp": "2026-10-25T21:08:40.993Z",
+    "repository": "primer/react",
+    "learningId": "learn-github-primer-react",
+    "contentHash": "36721dc20052739b00d07c3cbd20e661f320b735eec5acdba64989b1c975f237",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
