@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
-> **Source Version**: `d440abf5`  
+> **Source Version**: `1fc6d9c8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T04:55:57.085Z  
+> **Timestamp**: 2026-10-25T22:13:56.505Z  
 > **Learning ID**: `learn-github-tauri-apps-tauri`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T04:55:56.463Z  
+> **Harvest Timestamp**: 2026-10-25T22:13:49.267Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 112071 stars
+- **Stars / Engagement**: 112188 stars
 
 ---
 
@@ -330,10 +330,11 @@ use std::process::Command;
 use std::{
   fs,
   path::{Path, PathBuf},
+  sync::Once,
 };
 use ureq::ResponseExt;
 
-use crate::bundle::settings::Arch;
+use crate::bundle::settings::{Arch, Settings};
 use crate::utils::http_utils::{base_ureq_agent, download};
 
 pub const WEBVIEW2_BOOTSTRAPPER_URL: &str = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
@@ -565,6 +566,47 @@ pub fn processor_architecture<'a>() -> Option<&'a str> {
   }
 }
 
+/// Returns the directory where the NSIS and WiX toolsets are cached, along with the WebView2
+/// installers that the NSIS bundler downloads.
+///
+/// This is `<local tools directory>/.tauri` when `bundle > useLocalToolsDir` is enabled,
+/// and `<cache dir>/tauri` otherwise.
+///
+/// NSIS and WiX are 32-bit programs. When the cache dir is inside the Windows system directory,
+/// which is the case for the `SYSTEM` account (`C:\Windows\System32\config\systemprofile`) that
+/// CI runners and build agents installed as Windows services usually run as, WOW64 file system
+/// redirection makes those tools look for their own files in `C:\Windows\SysWOW64` instead, and
+/// bundling fails with errors like `Unable to start child process, error 0x2`. In that case the
+/// tools are stored in the project output directory instead, as they are when there's no cache
+/// dir, and if that is inside the system directory too, this returns an error.
+pub fn tools_directory(settings: &Settings) -> crate::Result<PathBuf> {
+  select_tools_directory(
+    settings.local_tools_directory(),
+    dirs::cache_dir(),
+    settings.project_out_directory(),
+    wow64_redirected_system_directory().as_deref(),
+  )
+}
+
+/// Picks the [`tools_directory`]. `system_dir` is the Windows system directory if NSIS and WiX are
+/// redirected away from it.
+fn select_tools_directory(
+  local_tools_directory: Option<&Path>,
+  cache_dir: Option<PathBuf>,
+  project_out_directory: &Path,
+  system_dir: Option<&Path>,
+) -> crate::Result<PathBuf> {
+  let is_redirected = |path: &Path| {
+    system_dir.is_some_and(|system_dir| starts_with_ignore_ascii_case(path, system_dir))
+  };
+
+  let tools_path = match (local_tools_directory, cache_dir) {
+    (Some(local_tools_directory), _) => local_tools_directory.join(".tauri"),
+    (None, Some(cache_dir)) if !is_redirected(&cache_dir) => cache_dir.join("tauri"),
+    (None, cache_dir) => {
+      let tools_path = project_out_directory.join(".tauri");
+      if let Some(cache_dir) = cache_dir {
+        // both 
 ```
 
 ### Core Architecture Module: `crates/tauri-bundler/src/utils/fs_utils.rs`
@@ -2220,11 +2262,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16339** (2026-10-21): **chore(deps): update dependency vitest to v5.0.5**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [vitest](https://vitest.dev) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest)) | [`5.0.4` → `5.0.5`](https://renovatebot.com/diffs/npm/vitest/5.0.4/5.0.5) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.0.5?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.0.4/5.0.5?slim=true) |  ---  ### Release Notes  <details> <summary>vitest-dev/vitest (vitest)</summary>  ### [`v5.0.5`](https://redirect.github.com/vitest-dev/vitest/releases/tag/v5.0.5)  [Compare Source](https://redirect.github.com/vitest-dev/vitest/compare/v5.0.4...v5.0.5)  #####    🐞 Bug Fixes  - Keep vite default `fs.deny` with api token file  -  by [@&#8203;hi-ogawa](https://redirect.github.com/hi-ogawa), **Hiroshi Ogawa** and **Claude Opus 5.5** in [#&#8203;11578](https://redirect.github.com/vitest-dev/vitest/issues/11578) [<samp>(28dc1)</samp>](https://redirect.github.com/vitest-dev/vitest/commit/28dc1edfb) - Handle quoted file names in `--changed`  -  by [@&#8203;sheremet-va](https://redirect.github.com/sheremet-va) in [#&#8203;11583](https://redirect.github.com/vitest-dev/vitest/issues/11583) [<samp>(14921)</samp>](https://redirect.github.com/vitest-dev/vitest/commit/14921e962) - Add `data` to the `import.meta.hot` stub  -  b
+- **Issue #16392** (2026-10-24): **chore(deps): update tokio (lockfile-only), closes #16390**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > **Review the following changes in direct dependencies.** Learn more about [Socket for GitHub](https://socket.dev?utm_medium=gh).  <table> <thead> <tr> <th>Diff</th> <th width="200px">Package</th> <th align="left" width="100px">Supply Chain<br/>Security</th> <th align="left" width="100px">Vulnerability</th> <th align="left" width="100px">Quality</th> <th align="left" width="100px">Maintenance</th> <th align="left" width="100px">License</th> </tr> </thead> <tbody> <tr><td align="center"><a href="https://socket.dev/dashboard/org/tauri-apps/diff-scan/7c3e803b-3e8e-4ec2-9b6d-50b1eb7e7cc7?tab=dependencies&dependency_item_key=101962252093"><img src="https://github-app-statics.socket.dev/diff-updated.svg" title="Updated" alt="Updated" width="20" height="20"></a></td><td><a href="https://socket.dev/dashboard/org/tauri-apps/diff-scan/7c3e803b-3e8e-4ec2-9b6d-50b1eb7e7cc7?tab=dependencies&dependency_item_key=101962252093">cargo/​tokio@​1.45.1 ⏵ 1.53.3</a></td><td align="left"><a href="https://sock
 
-- **Issue #16335** (2026-10-19): **fix(bundler): fix malformed tokens in NSIS language files**
-  *Symptoms*: same as #16332 but against dev
+- **Issue #16390** (2026-10-24): **RUSTSEC-2026-0386: `AsyncFd::new` and related constructors violate I/O safety**
+  *Symptoms*:  > `AsyncFd::new` and related constructors violate I/O safety  | Details             |                                                | | ------------------- | ---------------------------------------------- | | Status              | unsound                | | Package             | `tokio`                      | | Version             | `1.45.1`                   | | URL                 | [https://github.com/tokio-rs/tokio/pull/8587](https://github.com/tokio-rs/tokio/pull/8587) | | Date                | 2026-10-13                         |  `tokio::io::unix::AsyncFd` provides safe constructors (`new`, `with_interest`, `try_new`, and `try_with_interest`) that accept any `T: AsRawFd` rather than requiring proof of ownership or validity of the file descriptor. Because `RawFd` implements `AsRawFd`, safe code can construct an `AsyncFd` from an arbitrary or closed file descriptor, or close/replace the underlying file descriptor while the `AsyncFd` is still alive.  This violates I/O safety in two ways:  1. `AsyncFd&lt;T&gt;` implements `AsFd` for all `T: AsRawFd` by calling `BorrowedFd::borrow_raw(self.as_raw_fd())`, allowing safe code to obtain an arbitrary `BorrowedFd&lt;&#39;_&gt;` without owning the file descriptor. 2. Tokio&#39;s I/O driver stores a pointer to an internal allocation in the `epoll`/`kqueue` user data for registered file descriptors. If the underlying file descriptor is duplicated and then closed while an `AsyncFd` is alive, and the OS reuses that file descriptor n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2241,73 +2285,384 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d0ab831` (2026-10-19)
-**Commit Message**: fix(tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webview is reparented (#15513)
+### Incident Patch 1: `8d3efdee` (2026-10-21)
+**Commit Message**: fix(bundler): keep NSIS and WiX out of System32 when bundling as SYSTEM (#16060)
 
-The Linux button-press and touch handlers assumed the widget hierarchy webview -> GtkBox -> GtkWindow and unwrapped a downcast of the webview's second ancestor. Embedding applications that reparent the webview into another container (e.g. a GtkPaned) panic the main thread on the first click. Resolve the webview's toplevel window instead - identical behavior for the stock hierarchy, correct at any nesting depth.
+* fix(bundler): keep NSIS and WiX out of System32 when bundling as SYSTEM
 
-Co-authored-by: Avi <[REDACTED_EMAIL]>
-Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
+When the cache dir is inside the Windows system directory, as it is for the SYSTEM account, WOW64 redirects the 32-bit NSIS and WiX executables to SysWOW64 and makensis fails with "Unable to start child process, error 0x2". Store the tools in the project output directory in that case.
 
-**File**: `.changes/undecorated-resizing-reparented-webview.md` (added, +5/-0)
+* fix(bundler): fail clearly when the tools dir is still inside System32
+
+The fallback to the project output directory doesn't help when the project or its target directory is itself inside the Windows system directory, for example a Jenkins workspace under the SYSTEM profile, and neither does `useLocalToolsDir`. NSIS and WiX would then fail with the same `error 0x2`, after a warning claiming the tools were moved somewhere safe. Check the final tools directory and return an error that explains the redirection instead.
+
+* docs(config): describe where tools go for the SYSTEM account
+
+The `useLocalToolsDir` docs still said tools are always cached in the user's cache directory when it's disabled and recommended enabling it for the Windows SYSTEM user
+
+**File**: `.changes/bundler-system-account-tools-dir.md` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++---
++"tauri-bundler": "patch:bug"
++"tauri-cli": "patch:bug"
++"@tauri-apps/cli": "patch:bug"
++---
++
++Fix NSIS and MSI bundling failing with `Unable to start child process, error 0x2` when running as the Windows `SYSTEM` account, for example on a CI runner installed as a service. When the cache directory is inside `C:\Windows\System32`, where WOW64 file system redirection hides the downloaded tools from the 32-bit NSIS and WiX executables, the bundler now stores them in the project output directory instead. If the tools directory would still be inside `System32`, for example because the project is, bundling now fails early with an error that explains why.
+```
+
+**File**: `crates/tauri-bundler/src/bundle/windows/msi/mod.rs` (modified, +2/-5)
+```diff
+@@ -10,7 +10,7 @@ use crate::{
+       sign::{should_sign, try_sign},
+       util::{
+         WIX_OUTPUT_FOLDER_NAME, WIX_UPDATER_OUTPUT_FOLDER_NAME, download_webview2_bootstrapper,
+-        download_webview2_offline_installer, vc_runtime_dlls,
++        download_webview2_offline_installer, tools_directory, vc_runtime_dlls,
+       },
+     },
+   },
+@@ -56,10 +56,7 @@ const WIX_REQUIRED_FILES: &[&str] = &[
+ /// Runs all of the commands to build the MSI installer.
+ /// Returns a vector of PathBuf that shows where the MSI was created.
+ pub fn bundle_project(settings: &Settings, updater: bool) -> crate::Result<Vec<PathBuf>> {
+-  let tauri_tools_path = settings
+-    .local_tools_directory()
+-    .map(|d| d.join(".tauri"))
+-    .unwrap_or_else(|| dirs::cache_dir().unwrap().join("tauri"));
++  let tauri_tools_path = tools_directory(settings)?;
+ 
+   let wix_path = tauri_tools_path.join("WixTools314");
+ 
+```
+
+**File**: `crates/tauri-bundler/src/bundle/windows/nsis/mod.rs` (modified, +2/-5)
+```diff
+@@ -10,7 +10,7 @@ use crate::{
+       sign::{should_sign, sign_command, try_sign},
+       util::{
+         NSIS_OUTPUT_FOLDER_NAME, NSIS_UPDATER_OUTPUT_FOLDER_NAME, download_webview2_bootstrapper,
+-        download_webview2_offline_installer, vc_runtime_dlls,
++        download_webview2_offline_installer, tools_directory, vc_runtime_dlls,
+       },
+     },
+   },
+@@ -79,10 +79,7 @@ const NSIS_REQUIRED_FILES_HASH: &[(&str, &str, &str, HashAlgorithm)] = &[(
+ /// Runs all of the commands to build the NSIS installer.
+ /// Returns a vector of PathBuf that shows where the NSIS installer was created.
+ pub fn bundle_project(settings: &Settings, updater: bool) -> crate::Result<Vec<PathBuf>> {
+-  let tauri_tools_path = settings
+-    .local_tools_directory()
+-    .map(|d| d.join(".tauri"))
+-    .unwrap_or_else(|| dirs::cache_dir().unwrap().join("tauri"));
++  let tauri_tools_path = tools_directory(settings)?;
+ 
+   let nsis_toolset_path = tauri_tools_path.join("NSIS");
+ 
+```
+
+**File**: `crates/tauri-bundler/src/bundle/windows/util.rs` (modified, +233/-1)
+```diff
+@@ -9,10 +9,11 @@ use std::process::Command;
+ use std::{
+   fs,
+   path::{Path, PathBuf},
++  sync::Once,
+ };
+ use ureq::ResponseExt;
+ 
+-use crate::bundle::settings::Arch;
++use crate::bundle::settings::{Arch, Settings};
+ use crate::utils::http_utils::{base_ureq_agent, download};
+ 
+ pub const WEBVIEW2_BOOTSTRAPPER_URL: &str = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
+@@ -243,3 +244,234 @@ pub fn processor_architecture<'a>() -> Option<&'a str> {
+     _ => None,
+   }
+ }
++
++/// Returns the directory where the NSIS and WiX toolsets are cached, along with the WebView2
++/// installers that the NSIS bundler downloads.
++///
++/// This is `<local tools directory>/.tauri` when `bundle > useLocalToolsDir` is enabled,
++/// and `<cache dir>/tauri` otherwise.
++///
++/// NSIS and WiX are 32-bit programs. When the cache dir is inside the Windows system directory,
++/// which is the case for the `SYSTEM` account (`C:\Windows\System32\config\systemprofile`) that
++/// CI runners and build agents installed as Windows services usually run as, WOW64 file system
++/// redirection makes those tools look for their own files in `C:\Windows\SysWOW64` instead, and
++/// bundling fails with errors like `Unable to start child process, error 0x2`. In that case the
++/// tools are stored in the project output directory instead, as they are when there's no cache
++/// dir, and if that is inside the system directory too, this returns an error.
++pub fn tools_directory(settings: &Settings) -> crate::Result<PathBuf> {
++  select_tools_directory(
++    settings.local_tools_directory(),
++    dirs::cache_dir(),
++    settings.project_out_directory(),
++    wow64_redirected_system_directory().as_deref(),
++  )
++}
++
++/// Picks the [`tools_directory`]. `system_dir` is the Windows system directory if NSIS and WiX are
++/// redirected away from it.
++fn select_tools_directory(
++  local_tools_directory: Option<&Path>,
++  cache_dir: Option<PathBuf>,
++  project_out_directory: &Path,
++  system_dir: Option<&Path>,
++) -> crate::Result<PathBuf> {
++  let is_redirected = |path: &Path| {
++    system_dir.is_some_and(|system_dir| starts_with_ignore_ascii_case(path, system_dir))
++  };
++
++  let tools_path = match (local_tools_directory, cache_dir) {
++    (Some(local_tools_directory), _) => local_tools_directory.join(".tauri"),
++    (None, Some(cache_dir)) if !is_redirected(&cache_dir) => cache_dir.join("tauri"),
++    (None, cache_dir) => {
++      let tools_path = project_out_directory.join(".tauri");
++      if let Some(cache_dir) = cache_dir {
++        // both the NSIS and the MSI bundlers, and their updater variants, ask for this directory
++        static WARNING: Once = Once::new();
++        WARNING.call_once(|| {
++          log::warn!(
++            "The cache directory {} is inside the Windows system directory, where 32-bit tools like NSIS and WiX can't find their own files because of WOW64 file system redirection, so the bundler tools will be stored in {} instead. To share them across build profiles and targets in `target/.tauri` and silence this warning, set `bundle > useLocalToolsDir` to `true`.",
++            cache_dir.display(),
++            tools_path.display()
++          )
++        });
++      }
++      tools_path
++    }
++  };
++
++  if is_redirected(&tools_path) {
++    return Err(crate::Error::GenericError(format!(
++      "The bundler tools directory {} is inside the Windows system directory, where WOW64 file system redirection stops 32-bit programs like NSIS and WiX from finding files. Move the project and its target directory out of the system directory.",
++      tools_path.display()
++    )));
++  }
++
++  Ok(tools_path)
++}
++
++/// There's no WOW64 file system redirection outside of Windows.
++#[cfg(not(target_os = "windows"))]
++fn wow64_redirected_system_directory() -> Option<PathBuf> {
++  None
++}
++
++/// Returns the Windows system directory (usually `C:\Windows\System32`) if the 32-bit x86 NSIS and
++/// WiX see a different one than this process, that is, unless this is a 32-bit x86 build too,
++/// which is either redirected the same way or runs on a 32-bit Windows that doesn't redirect.
++#[cfg(target_os = "windows")]
++fn wow64_redirected_system_directory() -> Option<PathBuf> {
++  use std::{ffi::OsString, os::windows::ffi::OsStringExt};
++  use windows_sys::Win32::System::SystemInformation::GetSystemDirectoryW;
++
++  if cfg!(target_arch = "x86") {
++    return None;
++  }
++
++  let mut buffer = [0u16; 260];
++  let len = unsafe { GetSystemDirectoryW(buffer.as_mut_ptr(), buffer.len() as u32) } as usize;
++  if len == 0 || len >= buffer.len() {
++    return None;
++  }
++  Some(PathBuf::from(OsString::from_wide(&buffer[..len])))
++}
++
++/// Like [`Path::starts_with`] but ignores ASCII case, since Windows paths are case insensitive.
++fn starts_with_ignore_ascii_case(path: &Path, base: &Path) -> bool {
++  let mut path = path.components();
++  base.components().all(|base| {
++    path
++      .next()
++      .is_some_and(|path| path.as_os_str().eq_ignore_ascii_case(base.as_os_str()))
++ 
+```
+
+**File**: `crates/tauri-cli/config.schema.json` (modified, +1/-1)
+```diff
+@@ -2337,7 +2337,7 @@
+           ]
+         },
+         "useLocalToolsDir": {
+-          "description": "Whether to use the project's `target` directory, for caching build tools (e.g., Wix and NSIS) when building this application. Defaults to `false`.\n\n If true, tools will be cached in `target/.tauri/`.\n If false, tools will be cached in the current user's platform-specific cache directory.\n\n An example where it can be appropriate to set this to `true` is when building this application as a Windows System user (e.g., AWS EC2 workloads),\n because the Window system's app data directory is restricted.",
++          "description": "Whether to use the project's `target` directory, for caching build tools (e.g., Wix and NSIS) when building this application. Defaults to `false`.\n\n If true, tools will be cached in `target/.tauri/`.\n If false, tools will be cached in the current user's platform-specific cache directory.\n\n When building this application as the Windows `SYSTEM` user (e.g., AWS EC2 workloads or CI runners installed as a service),\n that cache directory is inside `C:\\Windows\\System32`, where the 32-bit NSIS and WiX tools can't find their own files,\n so they are cached in the build's output directory (e.g., `target/release/.tauri/`) instead.\n Setting this to `true` in that case shares them across build profiles and targets.",
+           "default": false,
+           "type": "boolean"
+         },
+```
+
+**File**: `crates/tauri-schema-generator/schemas/config.schema.json` (modified, +1/-1)
+```diff
+@@ -2337,7 +2337,7 @@
+           ]
+         },
+         "useLocalToolsDir": {
+-          "description": "Whether to use the project's `target` directory, for caching build tools (e.g., Wix and NSIS) when building this application. Defaults to `false`.\n\n If true, tools will be cached in `target/.tauri/`.\n If false, tools will be cached in the current user's platform-specific cache directory.\n\n An example where it can be appropriate to set this to `true` is when building this application as a Windows System user (e.g., AWS EC2 workloads),\n because the Window system's app data directory is restricted.",
++          "description": "Whether to use the project's `target` directory, for caching build tools (e.g., Wix and NSIS) when building this application. Defaults to `false`.\n\n If true, tools will be cached in `target/.tauri/`.\n If false, tools will be cached in the current user's platform-specific cache directory.\n\n When building this application as the Windows `SYSTEM` user (e.g., AWS EC2 workloads or CI runners installed as a service),\n that cache directory is inside `C:\\Windows\\System32`, where the 32-bit NSIS and WiX tools can't find their own files,\n so they are cached in the build's output directory (e.g., `target/release/.tauri/`) instead.\n Setting this to `true` in that case shares them across build profiles and targets.",
+           "default": false,
+           "type": "boolean"
+         },
+```
+
+**File**: `crates/tauri-utils/src/config.rs` (modified, +4/-2)
+```diff
+@@ -1674,8 +1674,10 @@ pub struct BundleConfig {
+   /// If true, tools will be cached in `target/.tauri/`.
+   /// If false, tools will be cached in the current user's platform-specific cache directory.
+   ///
+-  /// An example where it can be appropriate to set this to `true` is when building this application as a Windows System user (e.g., AWS EC2 workloads),
+-  /// because the Window system's app data directory is restricted.
++  /// When building this application as the Windows `SYSTEM` user (e.g., AWS EC2 workloads or CI runners installed as a service),
++  /// that cache directory is inside `C:\Windows\System32`, where the 32-bit NSIS and WiX tools can't find their own files,
++  /// so they are cached in the build's output directory (e.g., `target/release/.tauri/`) instead.
++  /// Setting this to `true` in that case shares them across build profiles and targets.
+   #[serde(default, alias = "use-local-tools-dir")]
+   pub use_local_tools_dir: bool,
+   /// A list of—either absolute or relative—paths to binaries to embed with your application.
+```
+
+---
+
+### Incident Patch 2: `d40c19cf` (2026-10-23)
+**Commit Message**: fix(api): pass onScaleChanged size as a PhysicalSize (#16381)
+
+**File**: `.changes/api-on-scale-changed-physical-size.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"tauri-runtime-wry": "patch:bug"
++"@tauri-apps/api": patch:bug
 +---
 +
-+Fix undecorated window resizing on Linux when the webview was moved into another GTK container (e.g. a `GtkPaned`).
++Fix `Window.onScaleChanged` passing `size` as a plain object instead of a `PhysicalSize`, so methods such as `toLogical` were missing on it. It is now wrapped the same way as the `onResized` payload.
 ```
 
-**File**: `crates/tauri-runtime-wry/src/undecorated_resizing.rs` (modified, +11/-6)
+**File**: `crates/tauri/scripts/bundle.global.js` (modified, +1/-1)
 ```diff
-@@ -547,7 +547,8 @@ mod gtk {
+@@ -1 +1 @@
+-var __TAURI_IIFE__=function(e){"use strict";function n(e,n,t,i){if("a"===t&&!i)throw new TypeError("Private accessor was defined without a getter");if("function"==typeof n?e!==n||!i:!n.has(e))throw new TypeError("Cannot read private member from an object whose class did not declare it");return"m"===t?i:"a"===t?i.call(e):i?i.value:n.get(e)}function t(e,n,t,i,r){if("m"===i)throw new TypeError("Private method is not writable");if("a"===i&&!r)throw new TypeError("Private accessor was defined without a setter");if("function"==typeof n?e!==n||!r:!n.has(e))throw new TypeError("Cannot write private member to an object whose class did not declare it");return"a"===i?r.call(e,t):r?r.value=t:n.set(e,t),t}var i,r,s,a,l,o,u;"function"==typeof SuppressedError&&SuppressedError;const c="__TAURI_TO_IPC_KEY__";function d(e,n=!1){return window.__TAURI_INTERNALS__.transformCallback(e,n)}class p{constructor(e){i.add(this),r.set(this,void 0),s.set(this,0),a.set(this,[]),l.set(this,void 0),t(this,r,e||(()=>{}),"f"),this.id=d(e=>{const r=e.index;if("end"in e)return void(r==n(this,s,"f")?this.cleanupCallback():t(this,l,r,"f"));const u=e.message;if(r==n(this,s,"f")){for(n(this,i,"m",o).call(this,u),t(this,s,n(this,s,"f")+1,"f");n(this,s,"f")in n(this,a,"f");){const e=n(this,a,"f")[n(this,s,"f")];n(this,i,"m",o).call(this,e),delete n(this,a,"f")[n(this,s,"f")],t(this,s,n(this,s,"f")+1,"f")}n(this,s,"f")===n(this,l,"f")&&this.cleanupCallback()}else n(this,a,"f")[r]=u})}cleanupCallback(){window.__TAURI_INTERNALS__.unregisterCallback(this.id)}set onmessage(e){t(this,r,e,"f")}get onmessage(){return n(this,r,"f")}[(r=new WeakMap,s=new WeakMap,a=new WeakMap,l=new WeakMap,i=new WeakSet,o=function(e){try{n(this,r,"f").call(this,e)}catch(e){queueMicrotask(()=>{throw e})}},c)](){return`__CHANNEL__:${this.id}`}toJSON(){return this[c]()}}class h{constructor(e,n,t){this.plugin=e,this.event=n,this.channelId=t}async unregister(){return _(`plugin:${this.plugin}|remove_listener`,{event:this.event,channelId:this.channelId})}}async function w(e,n,t){const i=new p(t);try{return await _(`plugin:${e}|register_listener`,{event:n,handler:i}),new h(e,n,i.id)}catch{return await _(`plugin:${e}|registerListener`,{event:n,handler:i}),new h(e,n,i.id)}}async function _(e,n={},t){return window.__TAURI_INTERNALS__.invoke(e,n,t)}class y{get rid(){return n(this,u,"f")}constructor(e){u.set(this,void 0),t(this,u,e,"f")}async close(){return _("plugin:resources|close",{rid:this.rid})}async[(u=new WeakMap,Symbol.asyncDispose)](){await this.close()}}var g=Object.freeze({__proto__:null,Channel:p,PluginListener:h,Resource:y,SERIALIZE_TO_IPC_FN:c,addPluginListener:w,checkPermissions:async function(e){return _(`plugin:${e}|check_permissions`)},convertFileSrc:function(e,n="asset"){return window.__TAURI_INTERNALS__.convertFileSrc(e,n)},invoke:_,isTauri:function(){return!!(globalThis||window).isTauri},requestPermissions:async function(e){return _(`plugin:${e}|request_permissions`)},transformCallback:d});class b extends y{constructor(e){super(e)}static async new(e,n,t){return _("plugin:image|new",{rgba:e,width:n,height:t}).then(e=>new b(e))}static async fromBytes(e){return _("plugin:image|from_bytes",{bytes:e}).then(e=>new b(e))}static async fromPath(e){return _("plugin:image|from_path",{path:e}).then(e=>new b(e))}async rgba(){return _("plugin:image|rgba",{rid:this.rid}).then(e=>new Uint8Array(e))}async size(){return _("plugin:image|size",{rid:this.rid})}}function m(e){return null==e?null:"string"==typeof e?e:e instanceof b?e.rid:e}var v,f=Object.freeze({__proto__:null,Image:b,transformImage:m});!function(e){e.Nsis="nsis",e.Msi="msi",e.Deb="deb",e.Rpm="rpm",e.AppImage="appimage",e.App="app"}(v||(v={}));var k=Object.freeze({__proto__:null,get BundleType(){return v},defaultWindowIcon:async function(){return _("plugin:app|default_window_icon").then(e=>e?new b(e):null)},exit:async function(e=0){return _("plugin:app|exit",{code:e})},fetchDataStoreIdentifiers:async function(){return _("plugin:app|fetch_data_store_identifiers")},getBundleType:async function(){return _("plugin:app|bundle_type")},getIdentifier:async function(){return _("plugin:app|identifier")},getName:async function(){return _("plugin:app|name")},getTauriVersion:async function(){return _("plugin:app|tauri_version")},getVersion:async function(){return _("plugin:app|version")},hide:async function(){return _("plugin:app|app_hide")},onBackButtonPress:async function(e){return w("app","back-button",e)},removeDataStore:async function(e){return _("plugin:app|remove_data_store",{uuid:e})},setDockVisibility:async function(e){return _("plugin:app|set_dock_visibility",{visible:e})},setTheme:async function(e){return _("plugin:app|set_app_theme",{theme:e})},show:async function(){return _("plugin:app|app_show")},supportsMultipleWindows:async function(){return _("plugin:app|supports_multiple_windows")}});class A{constructor(...e){this.type="Logical",1===e.length?"Logical"in e[0]?(this.width=e[0].Logical.width,this.height=e[0].
+```
+
+**File**: `packages/api-e2e/test/specs/window.spec.ts` (modified, +41/-0)
+```diff
+@@ -3,6 +3,7 @@
+ // SPDX-License-Identifier: MIT
+ 
+ import { expect } from '@wdio/globals'
++import type { ScaleFactorChanged } from '@tauri-apps/api/window'
+ import {
+   tauri,
+   eventually,
+@@ -59,6 +60,46 @@ describeApi('window', () => {
+     expect(metrics.outer.width).toBeGreaterThanOrEqual(metrics.inner.width)
+   })
+ 
++  it('onScaleChanged passes the size as a PhysicalSize', async () => {
++    const result = await tauri(async (api) => {
++      let timer: ReturnType<typeof setTimeout> | undefined
++      let unlisten: (() => void) | undefined
++      try {
++        const payload = await new Promise<ScaleFactorChanged>(
++          (resolve, reject) => {
++            timer = setTimeout(
++              () => reject(new Error('event was not received')),
++              5000
++            )
++            api.window
++              .getCurrentWindow()
++              .onScaleChanged((event) => resolve(event.payload))
++              .then((fn) => {
++                unlisten = fn
++                return api.event.emit('tauri://scale-change', {
++                  scaleFactor: 2,
++                  size: { width: 1600, height: 1200 }
++                })
++              })
++              .catch(reject)
++          }
++        )
++        const logical = payload.size.toLogical(payload.scaleFactor)
++        return {
++          isPhysicalSize: payload.size instanceof api.dpi.PhysicalSize,
++          logical: { width: logical.width, height: logical.height }
++        }
++      } finally {
++        clearTimeout(timer)
++        unlisten?.()
++      }
++    })
++    expect(result).toEqual({
++      isPhysicalSize: true,
++      logical: { width: 800, height: 600 }
++    })
++  })
++
+   itOn(
+     'android',
+     'activityName reports the activity hosting the window',
+```
+
+**File**: `packages/api/src/window.ts` (modified, +4/-1)
+```diff
+@@ -2536,7 +2536,10 @@ class Window {
+   ): Promise<UnlistenFn> {
+     return this.listen<ScaleFactorChanged>(
+       TauriEvent.WINDOW_SCALE_FACTOR_CHANGED,
+-      handler
++      (e) => {
++        e.payload.size = new PhysicalSize(e.payload.size)
++        handler(e)
++      }
+     )
    }
  
-   fn resizable_window(webview: &webkit2gtk::WebView) -> Option<gtk::Window> {
--    let window = webview.parent()?.parent()?.downcast::<gtk::Window>().ok()?;
-+    // The webview may be nested at any depth (e.g. reparented into a GtkPaned), so resolve its toplevel
-+    let window = webview.toplevel()?.downcast::<gtk::Window>().ok()?;
-     (!window.is_decorated() && window.is_resizable() && !window.is_maximized()).then_some(window)
-   }
+```
+
+---
+
+### Incident Patch 3: `ba1e205f` (2026-10-22)
+**Commit Message**: fix(linux): begin touch resize drag only on TouchBegin (fix #16276) (#16368)
+
+Co-authored-by: Amr Bashir <[REDACTED_EMAIL]>
+
+**File**: `.changes/fix-linux-touch-resize-drag.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"tauri": patch:bug
++"tauri-runtime-wry": patch:bug
++---
++
++Fix a Linux session crash where every touch event near the border of an undecorated window started another resize drag. A resize drag now only starts on touch begin.
+```
+
+**File**: `crates/tauri-runtime-wry/src/undecorated_resizing.rs` (modified, +6/-0)
+```diff
+@@ -629,6 +629,12 @@ mod gtk {
  
-@@ -585,18 +586,22 @@ mod gtk {
- 
-     webview.connect_motion_notify_event(
-       move |webview: &webkit2gtk::WebView, event: &gtk::gdk::EventMotion| {
--        let Some(window) = resizable_window(webview).and_then(|_| webview.window()) else {
-+        let Some(window) = resizable_window(webview).and_then(|w| w.window()) else {
+     webview.connect_touch_event(
+       move |webview: &webkit2gtk::WebView, event: &gtk::gdk::Event| {
++        // Start the resize drag once per touch sequence. Issuing it for every
++        // touch event re-sends `xdg_toplevel.resize` with a serial the compositor
++        // already consumed, which can crash the session (e.g. gnome-shell).
++        if event.event_type() != gtk::gdk::EventType::TouchBegin {
 +          return Propagation::Proceed;
-+        };
-+        let Some(webview_window) = webview.window() else {
++        }
+         let Some(window) = resizable_window(webview).and_then(|w| w.window()) else {
            return Propagation::Proceed;
          };
- 
--        let (x, y) = event.position();
--        let result = hit_test_window(&window, x, y);
-+        // hit test against the toplevel like the button press handler, the webview may not fill it
-+        let (root_x, root_y) = event.root();
-+        let result = hit_test_window_root(&window, root_x, root_y);
-         if matches!(result, HitTestResult::Client | HitTestResult::NoWhere) {
-           return Propagation::Proceed;
-         }
- 
--        let cursor = result.to_cursor(&window.display());
--        window.set_cursor(cursor.as_ref());
-+        let cursor = result.to_cursor(&webview_window.display());
-+        webview_window.set_cursor(cursor.as_ref());
-         Propagation::Stop
-       },
-     );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16339** (2026-10-21): chore(deps): update dependency vitest to v5.0.5 (@renovate[bot])
-- **PR #16335** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
-- **PR #16333** (2026-10-19): fix(nsis): correct the chooseHowToInstall language key (@amrbashir)
-- **PR #16332** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
-- **PR #16331** (closed): fix(nsis): quote file association executable paths (@amrbashir)
-- **PR #16330** (2026-10-19): fix(nsis): quote the executable path in file associations (@lazerg)
+- **PR #16392** (2026-10-24): chore(deps): update tokio (lockfile-only), closes #16390 (@FabianLars)
+- **PR #16381** (2026-10-23): fix(api): pass `onScaleChanged` size as a `PhysicalSize` (@spokodev)
+- **PR #16377** (2026-10-23): chore(deps): update rust crate insta to v1.49.0 (@renovate[bot])
+- **PR #16376** (2026-10-22): fix(mobile): preserve original URL on mobile dev proxy (@Legend-Master)
+- **PR #16372** (closed): chore(deps): update rust crate html5ever to 0.40 (@renovate[bot])
+- **PR #16370** (closed): chore(deps): update rust crate gtk to 0.19 (@renovate[bot])
 
 ---
 
@@ -2327,25 +2682,27 @@ Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webvie
+## X. bundler): keep NSIS and WiX out of System32 when bundling as SYSTEM (#16060)
 
 **RULE**:
-When implementing operations in `.changes/undecorated-resizing-reparented-webview.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/bundler-system-account-tools-dir.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d0ab831`: tauri-runtime-wry): don't panic in undecorated-resizing hit-test when the webview is reparented (#15513). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d3efdee`: bundler): keep NSIS and WiX out of System32 when bundling as SYSTEM (#16060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/undecorated-resizing-reparented-webview.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/bundler-system-account-tools-dir.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-"tauri-runtime-wry": "patch:bug"
+"tauri-bundler": "patch:bug"
+"tauri-cli": "patch:bug"
+"@tauri-apps/cli": "patch:bug"
 ---
 
-Fix undecorated window resizing on Linux when the webview was moved into another GTK container (e.g. a `GtkPaned`).
+Fix NSIS and MSI bundling failing with `Unable to start child process, error 0x2` when running as the Windows `SYSTEM` account, for example on a CI runner installed as a service. When the cache directory is inside `C:\Windows\System32`, where WOW64 file system redirection hides the downloaded tools from the 32-bit NSIS and WiX executables, the bundler now stores them in the project output directory instead. If the tools directory would still be inside `System32`, for example because the project is, bundling now fails early with an error that explains why.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2355,4 +2712,4 @@ Fix undecorated window resizing on Linux when the webview was moved into another
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d0ab831` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d3efdee` are properly handled with clean fallback behavior.

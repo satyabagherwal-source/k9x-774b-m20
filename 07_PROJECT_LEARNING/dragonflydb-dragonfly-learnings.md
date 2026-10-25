@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `0ee8584a`  
+> **Source Version**: `68f60e27`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:06:25.296Z  
+> **Timestamp**: 2026-10-25T22:13:56.700Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:06:24.839Z  
+> **Harvest Timestamp**: 2026-10-25T22:13:55.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31817 stars
+- **Stars / Engagement**: 31818 stars
 
 ---
 
@@ -2321,546 +2321,65 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b946781` (2026-10-22)
-**Commit Message**: fix(transaction): replay dropped polls of blocked transactions (#8538)
+### Incident Patch 1: `68f60e27` (2026-10-25)
+**Commit Message**: chore(deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
 
-Polls dropped while running_tx_ is held were retried with trans=nullptr, which cannot
-reach blocked transactions outside the transaction queue and continuation. Lost hops
-could hang blocking clients in Release or fail the reachability DCHECK in Debug.
-
-Retain these polls with owning transaction references and replay them through the existing
-scheduler. Already-disarmed polls are ignored. Drain only when running_tx_ is clear and
-poll_depth_ is zero, and release retained references during shard shutdown.
-
-Add regression coverage for blocked transactions awakened on the same shard and another shard.
-
-Related: #8458, #8520
-
-**File**: `src/server/engine_shard.cc` (modified, +26/-6)
-```diff
-@@ -4,6 +4,7 @@
- 
- #include "server/engine_shard.h"
- 
-+#include <absl/cleanup/cleanup.h>
- #include <absl/strings/str_cat.h>
- #include <absl/strings/str_format.h>
- 
-@@ -433,6 +434,7 @@ void EngineShard::Shutdown() {
- 
-   queue_.Shutdown();
-   queue2_.Shutdown();
-+  deferred_polls_.clear();  // release while the shard's thread-local state is still alive
-   DCHECK(!fiber_heartbeat_periodic_.IsJoinable());
-   DCHECK(!fiber_shard_handler_periodic_.IsJoinable());
- }
-@@ -568,7 +570,12 @@ void EngineShard::PollExecution(const char* context, Transaction* trans) {
-     // Check that trans doesn't need processing or is guaranteed to be found via txq/continuation
-     DCHECK(trans == nullptr || !trans->DEBUG_IsArmedInShard(shard_id())  // tx was already disarmed
-            || trans->DEBUG_GetTxqPosInShard(shard_id()) != TxQueue::kEnd ||
--           continuation_trans_ == trans);
-+           continuation_trans_ == trans || trans->IsBlockedInShard(shard_id()));
-+
-+    // A repoll without trans does not reach blocked transactions, so their polls are kept.
-+    // Duplicates are harmless: replaying a transaction that is no longer armed is a no-op.
-+    if (trans && trans->IsBlockedInShard(shard_id()))
-+      deferred_polls_.emplace_back(trans);
-     needs_repoll_ = true;
-     return;
-   }
-@@ -578,13 +585,26 @@ void EngineShard::PollExecution(const char* context, Transaction* trans) {
- 
-   // Executing `trans` out of order above would not follow up with queue processing, so
-   // we need to issue another poll if we interruped another poll request.
--  // Because it runs with trans=nullptr, it progresses only on the loop and does not need follow ups
-   PollExecutionIfDeferred();
- }
- 
- void EngineShard::PollExecutionIfDeferred() {
--  if (std::exchange(needs_repoll_, false))
--    PollExecutionInternal("repoll", nullptr);
-+  // Replayed polls can be interrupted again. A running callback or poll replays them when done.
-+  // Any deferred poll can be replayed: a transaction awakened on this shard never meets an
-+  // active continuation, since NotifyPending wakes none while one is active and the tx queue
-+  // starts none while one is awakened. A stale entry is not armed anymore, so its replay is a
-+  // no-op.
-+  while (running_tx_ == nullptr && poll_depth_ == 0) {
-+    if (!deferred_polls_.empty()) {
-+      boost::intrusive_ptr<Transaction> trans = std::move(deferred_polls_.back());
-+      deferred_polls_.pop_back();
-+      PollExecutionInternal("repoll", trans.get());
-+    } else if (std::exchange(needs_repoll_, false)) {
-+      PollExecutionInternal("repoll", nullptr);
-+    } else {
-+      break;
-+    }
-+  }
- }
- 
- void EngineShard::PollExecutionInternal(const char* context, Transaction* trans) {
-@@ -594,6 +614,8 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
-   DCHECK(running_tx_ == nullptr) << running_tx_->DebugId();
-   ShardId sid = shard_id();
-   stats_.poll_execution_total++;
-+  ++poll_depth_;
-+  absl::Cleanup poll_done = [this] { --poll_depth_; };
- 
-   // If any of the following flags are present, we are guaranteed to run in this function:
-   // 1. AWAKED_Q -> Blocking transactions are executed immediately after waking up, they don't
-@@ -628,7 +650,6 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
-   }
- 
-   bool update_stats = false;
--  ++poll_concurrent_factor_;
- 
-   auto run = [this, &update_stats](Transaction* tx, bool allow_removal) -> bool /* concluding */ {
-     update_stats = true;
-@@ -711,7 +732,6 @@ void EngineShard::PollExecutionInternal(const char* context, Transaction* trans)
-       LOG_IF(DFATAL, trans->DEBUG_GetTxqPosInShard(sid) == TxQueue::kEnd);
-     }
-   }
--  --poll_concurrent_factor_;
-   if (update_stats) {
-     CacheStats();
-   }
-```
-
-**File**: `src/server/engine_shard.h` (modified, +8/-1)
-```diff
-@@ -4,7 +4,10 @@
- 
- #pragma once
- 
-+#include <absl/container/inlined_vector.h>
-+
- #include <array>
-+#include <boost/smart_ptr/intrusive_ptr.hpp>
- 
- #include "core/intent_lock.h"
- #include "core/mi_memory_resource.h"
-@@ -365,8 +368,12 @@ class EngineShard {
-   Transaction* running_tx_ = nullptr;
-   bool needs_repoll_ = false;  // set when running_tx_ interrupted a PollExecution call
- 
-+  // Dropped polls of blocked transactions, which a repoll without trans can't reach.
-+  // Owning: a stale entry can outlive its hop.
-+  absl::InlinedVector<boost::intrusive_ptr<Transaction>, 4> deferred_polls_;
-+
-   std::string continuation_debug_id_;
--  unsigned poll_concurrent_factor_ = 0;
-+  unsigned poll_depth_ = 0;  // PollExecutionInternal calls in progress
- 
-   IntentLock shard_lock_;
- 
-```
-
-**File**: `src/server/transaction.cc` (modified, +1/-1)
-```diff
-@@ -799,7 +799,7 @@ void Transaction::ScheduleInternal() {
-       run_barrier_.Dec();
- 
-       // If the optimistic run above held running_tx_ and deferred any poll on this shard,
--      // drain it now. Uses the same needs_repoll_ mechanism as PollExecution's re-drive loop.
-+      // drain it now, like PollExecution does after its own run.
-       EngineShard::tlocal()->PollExecutionIfDeferred();
-       break;
-     }
-```
-
-**File**: `src/server/transaction.h` (modified, +6/-0)
-```diff
-@@ -295,6 +295,12 @@ class Transaction {
-   // Returns if the transaction spans this shard. Safe only when the transaction is armed.
-   bool IsActive(ShardId sid) const;
- 
-+  // Whether the transaction is armed on this shard while blocked (suspended or awakened).
-+  bool IsBlockedInShard(ShardId sid) const {
-+    const auto& sd = shard_data_[SidToId(sid)];
-+    return sd.is_armed.load(std::memory_order_acquire) && (sd.local_mask & WAS_SUSPENDED);
-+  }
-+
-   // Whether shard sid woke this blocking transaction.
-   bool IsWokenOn(ShardId sid) const;
- 
-```
-
-**File**: `src/server/transaction_test.cc` (modified, +142/-0)
-```diff
-@@ -98,6 +98,16 @@ class TransactionTest : public Test {
-     OnShard(kNumThreads - 1, [d] { ThisFiber::SleepFor(d); });
-   }
- 
-+  // Whether the poll of `tx`, coordinated from proactor `coord`, ran on shard `sid` and was
-+  // dropped, i.e. `tx` is still armed after the shard queue fiber processed the poll.
-+  bool PollDropped(Transaction* tx, unsigned sid, unsigned coord) {
-+    if (!AwaitOnShard(sid, [tx, sid] { return tx->DEBUG_IsArmedInShard(sid); }))
-+      return false;
-+    OnShard(coord, [] {});         // the coordinator has queued the poll
-+    shard_set->Await(sid, [] {});  // and the shard queue has run it
-+    return OnShard(sid, [tx, sid] { return tx->DEBUG_IsArmedInShard(sid); });
-+  }
-+
-   // Handle for a transaction parked mid-callback while holding running_tx_.
-   struct InlineHold {
-     fb2::Done parked, release;
-@@ -494,6 +504,138 @@ TEST_F(TransactionTest, SingleHopAsyncDrainsDeferredPoll) {
-   ASSERT_TRUE(v_ran) << "V was stranded: the poll deferred by Z's async hop was never replayed";
- }
- 
-+// T is blocked on shards 0 and 2 and woken on shard 2. Its action hop poll on shard 0 is dropped
-+// while X, run by a drain on a connection fiber, holds running_tx_. A repoll without trans does
-+// not reach T, so the drain must replay the poll with T.
-+TEST_F(TransactionTest, BlockedTxPollDroppedDuringReplay) {
-+  ASSERT_EQ(0u, Shard("a", shard_set->size()));
-+  ASSERT_EQ(0u, Shard("x", shard_set->size()));
-+  ASSERT_EQ(2u, Shard("z", shard_set->size()));
-+
-+  static CommandId cid_t{"tx_test_rp_t", 0, -1, 1, -1, acl::NONE};
-+  static CommandId cid_h{"tx_test_rp_h", 0, -1, 1, -1, acl::NONE};
-+  static CommandId cid_x{"tx_test_rp_x", 0, -1, 1, -1, acl::NONE};
-+
-+  auto tx_t = MakeTx(&cid_t, {"x", "z"});
-+  auto tx_h = MakeTx(&cid_h, {"a"});
-+  auto tx_x = MakeTx(&cid_x, {"a"});
-+
-+  // T: first hop, then it watches once t_watch fires, then its action hop.
-+  fb2::Done t_first_hop, t_watch, t_done;
-+  auto fb_t = pp_->at(1)->LaunchFiber([&] {
-+    tx_t->Execute(Noop, false);
-+    t_first_hop.Notify();
-+    t_watch.Wait();
-+    auto ready = [](EngineShard*, const DbContext&, std::string_view) {
-+      return KeyReadyResult::kReady;
-+    };
-+    facade::ConnectionContext cntx{nullptr};
-+    auto tp = Transaction::time_point::max();
-+    ASSERT_EQ(OpStatus::OK, tx_t->WaitOnWatch(tp, Transaction::kShardArgs, ready, &cntx));
-+    tx_t->Execute(Noop, true);
-+    t_done.Notify();
-+  });
-+  ASSERT_TRUE(t_first_hop.WaitFor(5s));
-+
-+  // H parks inline holding running_tx_: the polls of T's watch hop and X's first hop drop.
-+  auto h = ParkHoldingRunningTx(0, tx_h.get());
-+  ASSERT_TRUE(h->WaitParked());
-+  t_watch.Notify();
-+  ASSERT_TRUE(PollDropped(tx_t.get(), 0, 1));
-+
-+  fb2::Done x_parked, x_release, x_last;
-+  auto fb_x = pp_->at(1)->LaunchFiber([&] {
-+    tx_x->Execute(
-+        [&](Transaction*, EngineShard*) {
-+          x_parked.Notify();
-+          x_release.Wait();
-+          return OpStatus::OK;
-+        },
-+        false);
-+    x_last.Wait();
-+    tx_x->Execute(Noop, true);
-+  });
-+  ASSERT_TRUE(PollDropped(tx_x.get(), 0, 1));
-+
-+  // H's drain runs T's watch hop and parks X. T's action hop poll drops and X stays the
-+  // continuation.
-+  h->release.Notify();
-+  ASSERT_TRUE(x_parked.WaitFor(5s));
-+  OnShard(2, [] {
-+    auto* bc = namespaces->GetDefaultNamespace().GetBlockingController(2);
-+    bc->Awaken(0, "z");
-+    bc->NotifyPending();
-+  });
-+  ASSERT_TRUE(PollDropped(tx_t.get(), 0, 1));
-+  x_release.Notify();
-+  h->fiber.Join();
-+
-+  bool t_ran = t_done.WaitFor(5s);
-+  if (!t_ran)  // unstick T so the test fails instead of hanging
-+    shard_set->Await(0, [&] { EngineShard::tlocal()->PollExecution("test_unstick", tx_t.get()); });
-+  fb_t.Join();
-+  EXPECT_TRUE(t_ran) << "T was stranded on shard 0";
-+  x_last.Notify();
-+  fb_x.Join();
-+}
-+
-+// T is blocked on shard 0 and woken there, but its action hop poll is dropped because a fiber
-+// other than the shard queue fiber holds running_tx_, e.g. a drain replaying another blocked
-+// transaction. The holder's drain must replay the poll with T. Until T runs, its shard's
-+// HasAwakedTransaction() also stops the tx queue.
-+TEST_F(TransactionTest, AwakenedTxPollDroppedWhileRunning) {
-+  ASSERT_EQ(0u, Shard("x", shard_set->size()));
-+
-+  static CommandId cid_t{"tx_test_aw_t", 0, -1, 1, -1, acl::NONE};
-+  static CommandId cid_h{"tx_test_aw_h", 0, -1, 1, -1, acl::NONE};
-+
-+  auto tx_t = MakeTx(&cid_t, {"x"});
-+  auto tx_h = MakeTx(&cid_h, {"a"});  // only stands for the holder of running_tx_
-+
-+  fb2::Done t_done;
-+  auto fb_t = pp_->at(1)->LaunchFiber([&] {
-+    tx_t->Execute(Noop, false);
-+    auto ready = [](EngineShard*, const DbContext&, std::string_view) {
-+      return KeyReadyResult::kReady;
-+    };
-+    facade::ConnectionContext cntx{nullptr};
-+    auto tp = Transaction::time_point::max();
-+    ASSERT_EQ(OpStatus::OK, tx_t->WaitOnWatch(tp, Transaction::kShardArgs, ready, &cntx));
-+    tx_t->Execute(Noop, true);
-+    t_done.Notify();
-+ 
-```
+Bumps [setuptools](https://github.com/pypa/setuptools) from 84.0.0 to 84.1.0.
+- [Release notes](https://github.com/pypa/setuptools/releases)
+- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
+- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.1.0)
 
 ---
+updated-dependencies:
+- dependency-name: setuptools
+  dependency-version: 84.1.0
+  dependency-type: indirect
+...
 
-### Incident Patch 2: `c22075c3` (2026-10-23)
-**Commit Message**: chore(server): hold running_tx_ in DEBUG POPULATE instead of RunSquashedMultiCb (#8658)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-RunSquashedMultiCb took running_tx_ for NON_ATOMIC stubs, which pipeline squashing used when
-#7459 added it. Since #7784 pipelines squash with SHARD_LOCAL transactions, so DEBUG POPULATE
-is the only NON_ATOMIC stub left.
-
-- DoPopulateBatch holds running_tx_ for its batch and drains deferred polls when it releases it,
-  like the other holders.
-- RunSquashedMultiCb no longer sets running_tx_; it DCHECKs that the caller holds it.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/server/debugcmd.cc` (modified, +10/-0)
+**File**: `uv.lock` (modified, +5/-4)
 ```diff
-@@ -1654,6 +1654,16 @@ void DebugCmd::DoPopulateBatch(const PopulateOptions& options, const PopulateBat
-     sf_.service().InvokeCmd(args, &cmd_cntx);
-   };
+@@ -1,5 +1,5 @@
+ version = 1
+-revision = 3
++revision = 5
+ requires-python = ">=3.10"
+ resolution-markers = [
+     "python_full_version >= '3.14'",
+@@ -754,6 +754,7 @@ wheels = [
+ name = "dragonfly-tests"
+ version = "0.0.0"
+ source = { virtual = "." }
++default-groups = ["test"]
  
-+  // The stub runs its commands without a parent hop, so hold running_tx_ for it like RunCallback
-+  // does, and replay the polls dropped meanwhile once done.
-+  EngineShard* shard = EngineShard::tlocal();
-+  DCHECK(shard->running_tx() == nullptr);
-+  shard->set_running_tx(stub_tx.get());
-+  absl::Cleanup release_shard = [shard] {
-+    shard->set_running_tx(nullptr);
-+    shard->PollExecutionIfDeferred();
-+  };
-+
-   for (unsigned i = 0; i < batch.sz; ++i) {
-     string key = StrCat(options.prefix, ":", batch.index[i]);
-     uint32_t elements_left = options.elements;
-```
-
-**File**: `src/server/transaction.cc` (modified, +3/-11)
-```diff
-@@ -1537,14 +1537,9 @@ OpStatus Transaction::RunSquashedMultiCb(RunnableType cb) {
-   auto* shard = EngineShard::tlocal();
-   auto& db_slice = GetDbSlice(shard->shard_id());
+ [package.dev-dependencies]
+ test = [
+@@ -2372,11 +2373,11 @@ wheels = [
  
--  // In NON_ATOMIC mode SquashedHopCb is invoked directly, without a wrapping RunCallback,
--  // so this stub owns the running_tx_ slot. In atomic modes (LOCK_AHEAD / GLOBAL) the
--  // parent transaction's RunCallback has already set running_tx_ to itself.
--  bool owns_running_tx = multi_->mode == NON_ATOMIC;
--  if (owns_running_tx) {
--    DCHECK(shard->running_tx() == nullptr);
--    shard->set_running_tx(this);
--  }
-+  // The caller holds running_tx_ while stubs run: the parent transaction's RunCallback, or
-+  // DEBUG POPULATE, which runs its stub without a parent hop.
-+  DCHECK(shard->running_tx() != nullptr);
+ [[package]]
+ name = "setuptools"
+-version = "84.0.0"
++version = "84.1.0"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
++    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
+ ]
  
-   // An escaping exception would skip the cleanup below and leave the EXEC reply incomplete.
-   RunnableResult result;
-@@ -1562,9 +1557,6 @@ OpStatus Transaction::RunSquashedMultiCb(RunnableType cb) {
-   LogAutoJournalOnShard(shard, result);
-   MaybeInvokeTrackingCb();
- 
--  if (owns_running_tx)
--    shard->set_running_tx(nullptr);
--
-   DCHECK_EQ(result.flags, 0);  // if it's sophisticated, we shouldn't squash it
-   return result;
- }
-```
-
----
-
-### Incident Patch 3: `d8cd94ba` (2026-10-23)
-**Commit Message**: Report data size of tiered values in DEBUG OBJHIST (#8655)
-
-feat(server): report data size of tiered values in DEBUG OBJHIST
-
-Tiered values have zero malloc size, so OBJHIST gave no insight into their size
-distribution. Add a data size histogram that works for both in-memory and tiered
-values, and a histogram of serialized sizes for tiered values. Tiered values are
-handled before inspecting in-memory structures, which also fixes a crash on
-offloaded hashes.
-
-**File**: `src/server/debugcmd.cc` (modified, +45/-19)
-```diff
-@@ -153,50 +153,61 @@ const CommandId* GeneratePopulateCommand(string_view type, std::string key, size
- 
- struct ObjHist {
-   base::Histogram key_len;
--  base::Histogram val_len;    // overall malloc-used size of the value.
--  base::Histogram card;       // for sets, hashmaps etc - it's number of entries.
--  base::Histogram entry_len;  // for sets, hashmaps etc - it's the length of each entry.
--  base::Histogram listpack;   // for listpack encodings - the malloc used of the listpack.
-+  base::Histogram malloc_used;  // overall malloc-used size of the value.
-+  base::Histogram data_len;     // logical size of the value data, both for in-memory and tiered.
-+  base::Histogram tiered_len;   // serialized size of the tiered (external) values.
-+  base::Histogram card;         // for sets, hashmaps etc - it's number of entries.
-+  base::Histogram entry_len;    // for sets, hashmaps etc - it's the length of each entry.
-+  base::Histogram listpack;     // for listpack encodings - the malloc used of the listpack.
- };
- 
- // No yield: runs inside Traverse, which holds a raw segment pointer a yield could free.
- void AddObjHist(PrimeIterator it, ObjHist* hist) {
-   using namespace container_utils;
-   const PrimeValue& pv = it->second;
--  size_t val_len = 0;
-+  size_t malloc_used = 0;
-+  size_t data_len = 0;
- 
-   auto per_entry_cb = [&](ContainerEntry entry) {
-     if (entry.IsString()) {
--      val_len += entry.size();
-+      data_len += entry.size();
-       hist->entry_len.Add(entry.size());
-     } else {
--      val_len += 8;  // size of long
-+      data_len += 8;  // size of long
-     }
-     return true;
-   };
- 
-   hist->key_len.Add(it->first.MallocUsed());
- 
--  if (pv.ObjType() == OBJ_LIST) {
-+  // Tiered values have no in-memory representation to inspect, so we only know their size.
-+  if (pv.IsExternal()) {
-+    size_t serialized_size = pv.GetExternalSlice().second;
-+    hist->tiered_len.Add(serialized_size);
-+    hist->data_len.Add(pv.ObjType() == OBJ_STRING ? pv.Size() : serialized_size);
-+    return;
-+  }
-+
-+  if (pv.ObjType() == OBJ_STRING) {
-+    data_len = pv.Size();
-+  } else if (pv.ObjType() == OBJ_LIST) {
-     IterateList(pv, per_entry_cb, 0, SIZE_MAX, /*allow_yield=*/false);
-     if (pv.Encoding() == kEncodingQL2) {
-       const QList* ql = static_cast<QList*>(pv.RObjPtr());
--      val_len = ql->MallocUsed(true);
-+      malloc_used = ql->MallocUsed(true);
-     } else if (pv.Encoding() == kEncodingListPack) {
--      val_len = pv.MallocUsed();
--      hist->listpack.Add(val_len);
-+      malloc_used = pv.MallocUsed();
-+      hist->listpack.Add(malloc_used);
-     }
-   } else if (pv.ObjType() == OBJ_ZSET) {
-     IterateSortedSet(
-         pv, [&](ContainerEntry entry, double) { return per_entry_cb(entry); }, 0, SIZE_MAX,
-         /*reverse=*/false, /*use_score=*/false, /*allow_yield=*/false);
--    val_len = 0;  // reset - will be calculated below.
-     if (pv.Encoding() == OBJ_ENCODING_LISTPACK) {
-       hist->listpack.Add(pv.MallocUsed());
-     }
-   } else if (pv.ObjType() == OBJ_SET) {
-     IterateSet(pv, per_entry_cb, /*allow_yield=*/false);
--    val_len = 0;  // reset - will be calculated below.
-     if (pv.Encoding() == kEncodingIntSet) {
-       hist->listpack.Add(pv.MallocUsed());
-     }
-@@ -205,6 +216,7 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
-         pv,
-         [&](ContainerEntry key, ContainerEntry value) {
-           hist->entry_len.Add(key.size() + value.size());
-+          data_len += key.size() + value.size();
-           return true;
-         },
-         /*allow_yield=*/false);
-@@ -214,12 +226,16 @@ void AddObjHist(PrimeIterator it, ObjHist* hist) {
-   }
-   // TODO: streams
- 
--  if (val_len == 0) {
-+  if (malloc_used == 0) {
-     // Fallback
--    val_len = pv.MallocUsed(true);
-+    malloc_used = pv.MallocUsed(true);
-   }
- 
--  hist->val_len.Add(val_len);
-+  hist->malloc_used.Add(malloc_used);
-+
-+  // TODO: data size for json and streams.
-+  if (pv.ObjType() != OBJ_JSON && pv.ObjType() != OBJ_STREAM)
-+    hist->data_len.Add(data_len);
- 
-   if (pv.ObjType() != OBJ_STRING && pv.ObjType() != OBJ_JSON)
-     hist->card.Add(pv.Size());
-@@ -236,7 +252,9 @@ void MergeObjHistMap(ObjHistMap&& src, ObjHistMap* dest) {
-       dest_hist = std::move(src_hist);
-     } else {
-       dest_hist->key_len.Merge(src_hist->key_len);
--      dest_hist->val_len.Merge(src_hist->val_len);
-+      dest_hist->malloc_used.Merge(src_hist->malloc_used);
-+      dest_hist->data_len.Merge(src_hist->data_len);
-+      dest_hist->tiered_len.Merge(src_hist->tiered_len);
-       dest_hist->card.Merge(src_hist->card);
-       dest_hist->entry_len.Merge(src_hist->entry_len);
-       dest_hist->listpack.Merge(src_hist->listpack);
-@@ -572,7 +590,7 @@ void DebugCmd::Run(facade::CmdArgParser parser, CommandContext* cmd_cntx) {
-         "    ELEMENTS specifies how many sub elements if relevant (like entries in a list / set).",
-         "    EXPIRE specifies key expire ttl range.",
-         "OBJHIST",
--        "    Prints histogram of o
-```
-
-**File**: `src/server/tiered_storage_test.cc` (modified, +30/-0)
-```diff
-@@ -980,6 +980,36 @@ TEST_F(PureDiskTSTest, Dump) {
-   EXPECT_EQ(resp, "OK");
- }
- 
-+TEST_F(PureDiskTSTest, DebugObjHist) {
-+  SetFlag(&FLAGS_tiered_experimental_hash_support, true);
-+  UpdateFromFlags();
-+  const int kNum = 10;
-+  for (size_t i = 0; i < kNum; i++) {
-+    Run({"SET", absl::StrCat("k", i), BuildString(3000)});
-+  }
-+  ExpectConditionWithinTimeout([&] { return GetMetrics().db_stats[0].tiered_entries == kNum; });
-+
-+  auto resp = Run({"DEBUG", "OBJHIST"});
-+  string hist = resp.GetString();
-+  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\n"
-+                              "Count: 10 Average: 3000.0000"));
-+  EXPECT_THAT(hist, HasSubstr("Tiered values - Serialized size:\nCount: 10 "));
-+
-+  // Offloaded hashes must be reported without touching their (absent) in-memory representation.
-+  Run({"FLUSHALL"});
-+  for (size_t i = 0; i < 100; ++i) {
-+    Run({"HSET", absl::StrCat("hash:", i), "field-a", BuildString(40, 'a'), "field-b",
-+         BuildString(40, 'b')});
-+  }
-+  ExpectConditionWithinTimeout([&] { return GetMetrics().db_stats[0].tiered_entries > 0; });
-+
-+  resp = Run({"DEBUG", "OBJHIST"});
-+  hist = resp.GetString();
-+  EXPECT_THAT(hist, HasSubstr("OBJECT:hash"));
-+  EXPECT_THAT(hist, HasSubstr("Values - Data size (in-memory and tiered):\nCount: 100 "));
-+  EXPECT_THAT(hist, HasSubstr("Tiered values - Serialized size:\n"));
-+}
-+
- TEST_F(PureDiskTSTest, OffloadedStringSnapshotPreservesMemcacheFlags) {
-   SetFlag(&FLAGS_tiered_upload_threshold, 1.0f);
-   InitWithDbFilename();
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8676** (2026-10-25): chore(deps): bump setuptools from 84.0.0 to 84.1.0 (@dependabot[bot])
 - **PR #8675** (2026-10-24): fix(search): build sort_indices.cc against libc++. (macOS fix) (@vyavdoshenko)
 - **PR #8665** (2026-10-23): fix: wait command preempts in atomic section (@kostasrim)
 - **PR #8664** (2026-10-23): fix(search): order SORTBY ties by key and rank missing values last (@vyavdoshenko)
 - **PR #8662** (closed): refactor(engine_shard): replay deferred polls without the continuation filter (@romange)
 - **PR #8659** (2026-10-23): fix(server): hide CONFIG SET values and ACL SETUSER tokens in logs and errors (@vyavdoshenko)
-- **PR #8658** (2026-10-23): chore(server): hold running_tx_ in DEBUG POPULATE instead of RunSquashedMultiCb (@romange)
 
 ---
 
@@ -2880,52 +2399,35 @@ offloaded hashes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transaction): replay dropped polls of blocked transactions (#8538)
+## X. deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
 
 **RULE**:
-When implementing operations in `src/server/engine_shard.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b946781`: transaction): replay dropped polls of blocked transactions (#8538). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68f60e27`: deps): bump setuptools from 84.0.0 to 84.1.0 (#8676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/engine_shard.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <absl/cleanup/cleanup.h>
-  deferred_polls_.clear();  // release while the shard's thread-local state is still alive
-           continuation_trans_ == trans || trans->IsBlockedInShard(shard_id()));
-
-    // A repoll without trans does not reach blocked transactions, so their polls are kept.
-    // Duplicates are harmless: replaying a transaction that is no longer armed is a no-op.
-    if (trans && trans->IsBlockedInShard(shard_id()))
-      deferred_polls_.emplace_back(trans);
-  // Replayed polls can be interrupted again. A running callback or poll replays them when done.
-  // Any deferred poll can be replayed: a transaction awakened on this shard never meets an
-  // active continuation, since NotifyPending wakes none while one is active and the tx queue
-  // starts none while one is awakened. A stale entry is not armed anymore, so its replay is a
-  // no-op.
-  while (running_tx_ == nullptr && poll_depth_ == 0) {
-    if (!deferred_polls_.empty()) {
-      boost::intrusive_ptr<Transaction> trans = std::move(deferred_polls_.back());
-      deferred_polls_.pop_back();
-      PollExecutionInternal("repoll", trans.get());
-    } else if (std::exchange(needs_repoll_, false)) {
-      Po
+revision = 5
+default-groups = ["test"]
+version = "84.1.0"
+sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
+    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-           continuation_trans_ == trans);
-  // Because it runs with trans=nullptr, it progresses only on the loop and does not need follow ups
-  if (std::exchange(needs_repoll_, false))
-    PollExecutionInternal("repoll", nullptr);
-  ++poll_concurrent_factor_;
-  --poll_concurrent_factor_;
+revision = 3
+version = "84.0.0"
+sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
+    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b946781` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68f60e27` are properly handled with clean fallback behavior.

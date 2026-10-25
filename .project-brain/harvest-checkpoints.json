@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T22:07:24.387Z",
+  "last_updated": "2026-10-25T22:16:02.843Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1430,14 +1430,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "content_hash": "8588d0f2f7ead8e5c0ce914250172e548e610c751dd50f0bc21c5340a5325e7c",
-      "verified_at": "2026-10-21T02:21:27.577Z",
+      "content_hash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
+      "verified_at": "2026-10-25T22:16:02.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:21:27.577Z"
+      "last_updated": "2026-10-25T22:16:02.842Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "01d2a52b29b2ca4713980fea784318ed06f32a672adab63cbfc7da8b256c9c85",
-      "verified_at": "2026-10-25T06:06:25.532Z",
+      "content_hash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
+      "verified_at": "2026-10-25T22:13:57.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:06:25.532Z"
+      "last_updated": "2026-10-25T22:13:57.106Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "5df368ee59d7f4748e82c96975a0dd8af2ac0a62750214703661b17133731dd9",
-      "verified_at": "2026-10-21T04:55:57.551Z",
+      "content_hash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
+      "verified_at": "2026-10-25T22:13:56.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:55:57.551Z"
+      "last_updated": "2026-10-25T22:13:56.933Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",

@@ -5024,3 +5024,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-25T22:07:10.338Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `ae5d475e` | Multi-dimensional audit evidence | 2026-10-25T22:07:15.952Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `a3c14189` | Multi-dimensional audit evidence | 2026-10-25T22:07:24.379Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `1fc6d9c8` | Multi-dimensional audit evidence | 2026-10-25T22:13:56.925Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `68f60e27` | Multi-dimensional audit evidence | 2026-10-25T22:13:57.098Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-25T22:16:02.834Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-J7VF",
-    "timestamp": "2026-10-23T09:51:51.963Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "8e5dbaf828f3d177a3bc1ed46a2562cb3f288af3c50af841565b551d49b35b83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-R54J",
-    "timestamp": "2026-10-23T09:58:01.651Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "9577e368257b9785e3b59b6e15bf0b681b1b562f1c8f606c54fedc5e1098370a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-R9HU",
-    "timestamp": "2026-10-23T09:58:07.314Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "b34a58833d92c6829425fbf96025acd3338a325a0b31e85a6ee1bbce41f94607",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-RA3N",
     "timestamp": "2026-10-23T09:58:08.099Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7492,6 +7447,51 @@
     "contentHash": "075eec4cce42203d4fb22e3f0747be30bb35e9f51b27947d94a192b0a15a4c60",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-X8VU",
+    "timestamp": "2026-10-25T22:13:56.922Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-X90N",
+    "timestamp": "2026-10-25T22:13:57.095Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "0121de5004a5c6dc2f80afcb8a215a8c0207e7b2c680abd636a374a41faac495",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZY1A",
+    "timestamp": "2026-10-25T22:16:02.830Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "d0cb0ed7b0ade4acc1161688655171875022495dde7d8ae18f77f679155ef075",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
