@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `d0f481d7`  
+> **Source Version**: `66e63611`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:08:01.618Z  
+> **Timestamp**: 2026-10-25T14:25:10.506Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:08:00.121Z  
+> **Harvest Timestamp**: 2026-10-25T14:25:10.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19266 stars
+- **Stars / Engagement**: 19274 stars
 
 ---
 
@@ -390,6 +390,7 @@ use hurl_core::error::{DisplaySourceError, OutputFormat};
 use hurl_core::input::Input;
 use hurl_core::text::{Format, Style, StyledString};
 
+use crate::http::CurlCmd;
 use crate::runner::Value;
 use crate::util::redacted::Redact;
 use crate::util::term::{Stderr, WriteMode};
@@ -504,7 +505,8 @@ impl Logger {
     /// Prints curl cmd to this logger [`Stderr`] instance, no matter what is the verbosity.
     ///
     /// Displayed debug messages start with `*`.
-    pub fn info_curl_cmd(&mut self, cmd: &str) {
+    pub fn info_curl_cmd(&mut self, cmd: &CurlCmd) {
+        let cmd = cmd.to_redacted_string(&self.secrets);
         let fmt = self.format();
         let mut s = StyledString::new();
         s.push_with("*", Style::new().blue().bold());
@@ -512,7 +514,7 @@ impl Logger {
         s.push("Request can be run with the following curl command:\n");
         s.push_with("*", Style::new().blue().bold());
         s.push(" ");
-        s.push(cmd);
+        s.push(&cmd);
         self.eprintln(&s.to_string(fmt));
     }
 
@@ -536,6 +538,17 @@ impl Logger {
             s.push(message);
         }
         self.eprintln(&s.to_string(fmt));
+    }
+
+    /// Prints a curl command `cmd` to this logger [`Stderr`] instance, if verbosity is high.
+    ///
+    /// Secrets are redacted before shell encoding the command.
+    pub fn debug_curl_cmd(&mut self, cmd: &CurlCmd) {
+        let cmd = cmd.to_redacted_string(&self.secrets);
+        self.debug("");
+        self.debug("Request can be run with the following curl command:");
+        self.debug(&cmd);
+        self.debug("");
     }
 
     /// Prints a given debug message in bold to this logger [`Stderr`] instance, in verbose and very verbose mode.
@@ -673,21 +686,7 @@ impl Logger {
     pub fn warning(&mut self, message: &str) {
         let fmt = self.format();
         let mut s = StyledString::new();
-        s.push_with("warning", Style::new().yellow().bold());
-        s.push(": ");
-        s.push_with(message, Style::new().bold());
-        self.eprintln(&s.to_string(fmt));
-    }
-
-    /// Prints an error message to this logger [`Stderr`] instance, no matter what is the verbosity.
-    pub fn error_rich(&mut self, message: &str) {
-        let fmt = self.format();
-        let mut s = StyledString::new();
-        s.push_with("error", Style::new().red().bold());
-        s.push(": ");
-        s.push(message);
-        s.push("\n");
-  
+        s.push_w
 ```
 
 ### Core Architecture Module: `packages/hurl/src/util/mod.rs`
@@ -1826,11 +1825,11 @@ pub mod visit;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5374** (2026-10-23): **Escape curl command from --curl option and --verbose log**
+  *Symptoms*: Using this Hurl file  ```hurl GET http://localhost:8000/x'; touch foo; : ' ```  The curl command in verbose mode (or using `--curl`) can produces malicious shell command:  ```shell $ hurl --verbose foo.hurl * ------------------------------------------------------------------------------ * Executing entry 1 * * Cookie store: * * Request: * GET http://127.0.0.1:8000/x'; touch foo; : ' * * Request can be run with the following curl command: * curl 'http://127.0.0.1:8000/x'; touch foo; : '' * error: HTTP connection   --> /tmp/test.hurl:1:5    |  1 | GET http://127.0.0.1:8000/x'; touch foo; : '    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ (3) URL rejected: Malformed input to a URL function    | ```  Then running the curl command `curl 'http://127.0.0.1:8000/x'; touch foo; : ''`will produce a `foo` file  
+
 - **Issue #5356** (2026-10-16): **Fix crash when receiving non-UTF-8 server cookie**
   *Symptoms*: When receiving non UTF-8 cookie from server (i.e. `Set-Cookie: bad=\xff`), Hurl 8.0.1 crash:  ```shell $ hurl thread 'main' (3620034) panicked at packages/hurl/src/http/client.rs:793:47: called `Result::unwrap()` on an `Err` value: Utf8Error { valid_up_to: 49, error_len: Some(1) } note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace zsh: abort      /opt/homebrew/bin/hurl --cookie-jar build/cookies.txt --no-output  ``` 
-
-- **Issue #5354** (2026-10-17): **Fix hurlfmt panic when importing curl commands without a URL**
-  *Symptoms*: Hurlfmt panics if the url is missing in the curl command            $ echo "curl -v" | hurlfmt --in curl                      thread 'main' (663615) panicked at packages/hurlfmt/src/curl/matches.rs:51:46:           called `Option::unwrap()` on a `None` value           note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace   I should raise a standard parsing error such as          error: Can not parse curl command at line 1: URL is missing 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1847,57 +1846,303 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0f481d7` (2026-10-22)
-**Commit Message**: Fix curl command generation for --tls-min option
+### Incident Patch 1: `c2a23872` (2026-10-20)
+**Commit Message**: Refacto on CurlCmd to prevent secrets leaks and malicious shell command construction.
 
-**File**: `integration/hurl/tests_ssl/tls_min.curl` (modified, +1/-1)
+**File**: `packages/hurl/src/http/client.rs` (modified, +2/-1)
 ```diff
-@@ -1 +1 @@
--curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tls-min 1.2 'https://localhost:8001/hello'
-+curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tlsv1.2 'https://localhost:8001/hello'
+@@ -1215,6 +1215,7 @@ mod tests {
+ 
+     #[test]
+     fn command_line_args() {
++        let secrets: &[&str] = &[];
+         let mut client = Client::new();
+         let request = RequestSpec {
+             method: Method("GET".to_string()),
+@@ -1247,7 +1248,7 @@ mod tests {
+ 
+         let cmd = client.curl_command_line(&request, &context_dir, output, &options, &mut logger);
+         assert_eq!(
+-            cmd.to_string(),
++            cmd.to_redacted_string(secrets),
+             "curl \
+          --aws-sigv4 aws:amz:sts \
+          --cacert /etc/cert.pem \
 ```
 
-**File**: `integration/hurl/tests_ssl/tls_min_option.curl` (modified, +2/-2)
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +321/-207)
 ```diff
-@@ -1,2 +1,2 @@
--curl --insecure --tls-min 1.2 'https://localhost:8001/hello'
--curl --insecure --tls-min 1.2 'https://localhost:8001/hello'
-+curl --insecure --tlsv1.2 'https://localhost:8001/hello'
-+curl --insecure --tlsv1.2 'https://localhost:8001/hello'
-```
-
-**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +4/-3)
-```diff
-@@ -517,8 +517,9 @@ impl ClientOptions {
-         match self.tls_min {
-             TlsVersion::Default => {}
-             version => {
--                args.push("--tls-min".to_string());
--                args.push(version.to_string());
-+                // curl has no --tls-min option, minimum TLS version is
-+                // set with --tlsv1.X options.
-+                args.push(format!("--tlsv{version}"));
-             }
+@@ -15,13 +15,12 @@
+  * limitations under the License.
+  *
+  */
+-use core::fmt;
+-use std::collections::HashMap;
+ use std::path::Path;
+ 
+ use crate::http::TlsVersion;
+ use crate::runner::Output;
+ use crate::util::path::ContextDir;
++use crate::util::redacted::Redact;
+ use hurl_core::types::Count;
+ 
+ use super::cookie_store::CookieStore;
+@@ -35,26 +34,55 @@ use super::request_spec::{Body, FileParam, Method, MultipartParam, RequestSpec};
+ #[derive(Clone, Debug, PartialEq, Eq)]
+ pub struct CurlCmd {
+     /// The args of this command.
+-    args: Vec<String>,
+-    /// An optional command feeding the request body to curl's stdin
+-    /// (used when the body contains a NUL byte, which can not be
+-    /// embedded in a shell string).
+-    stdin: Option<String>,
++    args: Vec<Arg>,
++    /// An optional command feeding the request body to curl's stdin (used when the body contains
++    /// a NUL byte, which can not be embedded in a shell string).
++    stdin: Option<Vec<u8>>,
+ }
+ 
+-impl fmt::Display for CurlCmd {
+-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+-        match &self.stdin {
+-            Some(stdin) => write!(f, "{} | {}", stdin, self.args.join(" ")),
+-            None => write!(f, "{}", self.args.join(" ")),
++/// A curl command argument.
++///
++/// Arguments are stored unencoded: shell encoding is only done when the command is rendered, so
++/// any value (URL, headers, file paths etc...) is always safely escaped.
++#[derive(Clone, Debug, PartialEq, Eq)]
++enum Arg {
++    /// An argument rendered as-is if it only contains shell safe characters, quoted otherwise
++    /// (option names, file paths, `host:port` values etc...).
++    Plain(String),
++    /// An argument always rendered quoted (URL, headers, data etc...).
++    Quoted(String),
++    /// Raw bytes, rendered as `$'\x..'` (binary body).
++    Bytes(Vec<u8>),
++}
++
++impl Arg {
++    /// Constructs a plain curl arg (maybe quoted or not).
++    fn plain(s: &str) -> Self {
++        Arg::Plain(s.to_string())
++    }
++
++    /// Constructs a quoted curl arg (always quoted).
++    fn quoted(s: &str) -> Self {
++        Arg::Quoted(s.to_string())
++    }
++
++    /// Returns the shell encoded string of this argument, with `secrets` redacted.
++    fn encode(&self, secrets: &[impl AsRef<str>]) -> String {
++        match self {
++            Arg::Plain(s) => {
++                let s = s.redact(secrets);
++                if is_shell_safe(&s) { s } else { quote(&s) }
++            }
++            Arg::Quoted(s) => quote(&s.redact(secrets)),
++            Arg::Bytes(bytes) => format!("$'{}'", encode_bytes(bytes)),
          }
-         match self.tls_max {
-@@ -801,7 +802,7 @@ mod tests {
-         --limit-rate 8000 \
-         --max-redirs 10 \
-         --max-time 10 \
--        --tls-min 1.0 \
-+        --tlsv1.0 \
-         --tls-max 1.2 \
-         --negotiate \
-         --netrc-file '/var/run/netrc' \
+     }
+ }
+ 
+ impl Default for CurlCmd {
+     fn default() -> Self {
+         CurlCmd {
+-            args: vec!["curl".to_string()],
++            args: vec![Arg::plain("curl")],
+             stdin: None,
+         }
+     }
+@@ -70,7 +98,7 @@ impl CurlCmd {
+         output: Option<&Output>,
+         options: &ClientOptions,
+     ) -> Self {
+-        let mut args = vec!["curl".to_string()];
++        let mut args = vec![Arg::plain("curl")];
+ 
+         let mut params = method_params(request_spec, options.follow_location);
+         args.append(&mut params);
+@@ -103,10 +131,27 @@ impl CurlCmd {
+ 
+         CurlCmd { args, stdin }
+     }
++
++    /// Returns the shell command line of this curl command, with `secrets` redacted.
++    ///
++    /// Secrets are redacted on the unencoded arguments, before shell encoding, so a secret is
++    /// redacted even if its encoded value is different (for instance, if it contains a quote).
++    pub fn to_redacted_string(&self, secrets: &[impl AsRef<str>]) -> String {
++        let args = self
++            .args
++            .iter()
++            .map(|arg| arg.encode(secrets))
++            .collect::<Vec<_>>()
++            .join(" ");
++        match &self.stdin {
++            Some(bytes) => format!("printf '{}' | {args}", encode_bytes(bytes)),
++            None => args,
++        }
++    }
+ }
+ 
+ /// Returns the curl args corresponding to the HTTP method, from a request spec.
+-fn method_params(request_spec: &RequestSpec, follow_location: FollowLocation) -> Vec<String> {
++fn method_params(request_spec: &RequestSpec, follow_location: FollowLocation) -> Vec<Arg> {
+     let has_body = !request_spec.multipart.is_empty()
+         || !request_spec.form.is_empty()
+         || !request_spec.body.bytes().is_empty();
+@@ -119,7 +164,7 @@ fn headers_params(
+     headers: &HeaderVec,
+     implicit_content_type: Option<&str>,
+     body: &Body,
+-) -> Vec<String> {
++) -> Vec<Arg> {
+     let mut args = vec![];
+ 
+     for header in headers.iter() {
+@@ -135,34 +180,26 @@ fn headers_params(
+         if content_type != "application/x-www-form-urlencoded"
+             && content_type != "multipart/form-data"
+         {
+-            args.push("--header".to_string());
+-            args.push(format!("'{CONTENT_TYPE}: {content_type}'"));
++            args.push(Arg::plain("--header"));
++            args.push(Arg::quoted(&format!("{CONTENT_TYPE}: {content_type}
+```
+
+**File**: `packages/hurl/src/json/result.rs` (modified, +1/-1)
+```diff
+@@ -263,7 +263,7 @@ impl EntryResultJson {
+             captures,
+             asserts,
+             time: entry.transfer_duration.as_millis() as u64,
+-            curl_cmd: entry.curl_cmd.to_string().redact(secrets),
++            curl_cmd: entry.curl_cmd.to_redacted_string(secrets),
+         })
+     }
+ }
+```
+
+**File**: `packages/hurl/src/report/curl.rs` (modified, +1/-2)
+```diff
+@@ -22,7 +22,6 @@ use std::path::Path;
+ use crate::report::ReportError;
+ use crate::runner::HurlResult;
+ use crate::util::path::create_dir_all;
+-use crate::util::redacted::Redact;
+ 
+ /// Creates a curl export from a list of `hurl_results`.
+ ///
+@@ -46,7 +45,7 @@ pub fn write_curl(
+     let mut cmds = hurl_results
+         .iter()
+         .flat_map(|h| &h.entries)
+-        .map(|e| e.curl_cmd.to_string().redact(secrets))
++        .map(|e| e.curl_cmd.to_redacted_string(secrets))
+         .collect::<Vec<_>>()
+         .join("\n");
+     cmds.push('\n');
+```
+
+**File**: `packages/hurl/src/report/html/run.rs` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ fn get_entry_html(entry: &EntryResult, entry_index: usize, secrets: &[&str]) ->
+     let mut text = String::new();
+     text.push_str(&format!("<summary>Entry {entry_index}</summary>"));
+ 
+-    let cmd = entry.curl_cmd.to_string().redact(secrets).html_escape();
++    let cmd = entry.curl_cmd.to_redacted_string(secrets).html_escape();
+     let table = new_table("Debug", &[("Command", &cmd)]);
+     text.push_str(&table);
+ 
+```
+
+**File**: `packages/hurl/src/runner/entry.rs` (modified, +1/-4)
+```diff
+@@ -352,10 +352,7 @@ fn log_request(
+             logger.debug(&cookie.to_string());
+         }
+     }
+-    logger.debug("");
+-    logger.debug("Request can be run with the following curl command:");
+-    logger.debug(&curl_cmd.to_string());
+-    logger.debug("");
++    logger.debug_curl_cmd(curl_cmd);
+ }
+ 
+ /// Logs the `captures` from the entry HTTP response.
+```
+
+**File**: `packages/hurl/src/runner/hurl_file.rs` (modified, +1/-1)
+```diff
+@@ -621,7 +621,7 @@ fn log_errors(
+     if logger.error_format == ErrorFormat::Long
+         && let Some(Call { response, .. }) = entry_result.calls.last()
+     {
+-        logger.info_curl_cmd(&entry_result.curl_cmd.to_string());
++        logger.info_curl_cmd(&entry_result.curl_cmd);
+         logger.info("");
+ 
+         response.log_info_all(logger);
+```
+
+**File**: `packages/hurl/src/util/logger.rs` (modified, +15/-2)
+```diff
+@@ -21,6 +21,7 @@ use hurl_core::error::{DisplaySourceError, OutputFormat};
+ use hurl_core::input::Input;
+ use hurl_core::text::{Format, Style, StyledString};
+ 
++use crate::http::CurlCmd;
+ use crate::runner::Value;
+ use crate::util::redacted::Redact;
+ use crate::util::term::{Stderr, WriteMode};
+@@ -135,15 +136,16 @@ impl Logger {
+     /// Prints curl cmd to this logger [`Stderr`] instance, no matter what is the verbosity.
+     ///
+     /// Displayed debug messages start with `*`.
+-    pub fn info_curl_cmd(&mut self, cmd: &str) {
++    pub fn info_curl_cmd(&mut self, cmd: &CurlCmd) {
++        let cmd = cmd.to_redacted_string(&self.secrets);
+         let fmt = self.format();
+         let mut s = StyledString::new();
+         s.push_with("*", Style::new().blue().bold());
+         s.push(" ");
+         s.push("Request can be run with the following curl command:\n");
+         s.push_with("*", Style::new().blue().bold());
+         s.push(" ");
+-        s.push(cmd);
++        s.push(&cmd);
+         self.eprintln(&s.to_string(fmt));
+     }
+ 
+@@ -169,6 +171,17 @@ impl Logger {
+         self.eprintln(&s.to_string(fmt));
+     }
+ 
++    /// Prints a curl command `cmd` to this logger [`Stderr`] instance, if verbosity is high.
++    ///
++    /// Secrets are redacted before shell encoding the command.
++    pub fn debug_curl_cmd(&mut self, cmd: &CurlCmd) {
++        let cmd = cmd.to_redacted_string(&self.secrets);
++        self.debug("");
++        self.debug("Request can be run with the following curl command:");
++        self.debug(&cmd);
++        self.debug("");
++    }
++
+     /// Prints a given debug message in bold to this logger [`Stderr`] instance, in verbose and very verbose mode.
+     ///
+     /// Displayed debug messages start with `*`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5370** (2026-10-22): Update Python dev dependencies (@jcamiel)
-- **PR #5368** (2026-10-21): Update crates (@hurl-bot)
-- **PR #5367** (2026-10-20): Update debug tips with --fail-with-body. (@jcamiel)
-- **PR #5366** (2026-10-20): Update crates (@hurl-bot)
-- **PR #5364** (2026-10-19): Update doc about JSONPath coercion. (@jcamiel)
-- **PR #5363** (2026-10-19): Update actions (@hurl-bot)
+- **PR #5379** (2026-10-25): Update crates (@hurl-bot)
+- **PR #5378** (2026-10-24): Update changelog. (@jcamiel)
+- **PR #5377** (2026-10-24): Update standalone docs: HTML, PDF, EPUB (@jcamiel)
+- **PR #5376** (2026-10-24): Update crates (@hurl-bot)
+- **PR #5375** (2026-10-23): Update changelog. (@jcamiel)
+- **PR #5373** (2026-10-23): Reorganize import for hurl_core/src/parser. (@jcamiel)
 
 ---
 
@@ -1917,28 +2162,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. curl command generation for --tls-min option
+## X. Refacto on CurlCmd to prevent secrets leaks and malicious shell command construc
 
 **RULE**:
-When implementing operations in `integration/hurl/tests_ssl/tls_min.curl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/http/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0f481d7`: curl command generation for --tls-min option. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2a23872`: Refacto on CurlCmd to prevent secrets leaks and malicious shell command construction.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurl/tests_ssl/tls_min.curl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/http/client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tlsv1.2 'https://localhost:8001/hello'
+        let secrets: &[&str] = &[];
+            cmd.to_redacted_string(secrets),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-curl --cacert tests_ssl/certs/server/cert.selfsigned.pem --tls-min 1.2 'https://localhost:8001/hello'
+            cmd.to_string(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0f481d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2a23872` are properly handled with clean fallback behavior.

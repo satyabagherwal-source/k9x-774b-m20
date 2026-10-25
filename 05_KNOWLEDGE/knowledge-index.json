@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:18:54.675Z",
+  "last_updated": "2026-10-25T14:25:20.165Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7138,14 +7138,19 @@
       "slug": "crosspaste-crosspaste-desktop",
       "platform": "github",
       "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
-      "source_version": "e9e85210",
-      "content_hash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
+      "source_version": "36683ed7",
+      "content_hash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
       "dossier_path": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": 2479,
           "title": ":bug: report Windows plugin script failures as a single line (#5229)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4338,
+          "title": ":bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7154,7 +7159,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T21:27:33.927Z",
+      "verified_at": "2026-10-25T14:25:16.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15001,7 +15006,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "45c68b928869a936f8cef5faf5839fdbf52e83a496da2d18039004229f7c4bc3",
+      "content_hash": "cfec98b669361ed0f8071280f04c0ef119280a59a138de4b9f3aeeabc948cd64",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -15020,6 +15025,11 @@
           "verified_at": "2026-10-11T11:56:46.824Z"
         },
         {
+          "number": 1131,
+          "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1344,
           "title": "Left-Padding Strict Invariant for Discriminative Decoder Heads",
           "status": "PROMOTED_AND_VERIFIED"
@@ -15032,6 +15042,16 @@
         {
           "number": 1346,
           "title": "Suppression Invariant for Structural Boundary Delimiters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4339,
+          "title": "Modality-Specific Token Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4340,
+          "title": "Classification Head Projection Dimension Constraint",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15053,7 +15073,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-10-20T18:58:10.080Z",
+      "verified_at": "2026-10-25T14:25:20.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32970,8 +32990,8 @@
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "20aef31d",
-      "content_hash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
+      "source_version": "7faf8762",
+      "content_hash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "promoted_rules": [
@@ -32994,6 +33014,11 @@
           "number": 3548,
           "title": "packages): Update sponsors (#5034)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4336,
+          "title": "ci): prevent broken and duplicate metadata suggestions (#5065)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33001,7 +33026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:22:30.467Z",
+      "verified_at": "2026-10-25T14:25:09.792Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39193,8 +39218,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "d0f481d7",
-      "content_hash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
+      "source_version": "66e63611",
+      "content_hash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -39217,6 +39242,11 @@
           "number": 3742,
           "title": "curl command generation for --tls-min option",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4337,
+          "title": "Refacto on CurlCmd to prevent secrets leaks and malicious shell command construc",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39224,7 +39254,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:08:01.899Z",
+      "verified_at": "2026-10-25T14:25:10.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76942,14 +76972,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1131,
       "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
-      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
-      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T13:42:22.623Z"
+      "verified_at": "2026-10-25T14:25:20.154Z"
     },
     "rule-1132": {
       "learning_id": "rule-1132",
@@ -123800,6 +123830,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:18:54.663Z"
+    },
+    "rule-4336": {
+      "learning_id": "rule-4336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4336,
+      "title": "ci): prevent broken and duplicate metadata suggestions (#5065)",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "7faf8762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:25:09.792Z"
+    },
+    "rule-4337": {
+      "learning_id": "rule-4337",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4337,
+      "title": "Refacto on CurlCmd to prevent secrets leaks and malicious shell command construc",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "66e63611",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:25:10.809Z"
+    },
+    "rule-4338": {
+      "learning_id": "rule-4338",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4338,
+      "title": ":bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)",
+      "source_url": "https://github.com/CrossPaste/crosspaste-desktop",
+      "source_version": "36683ed7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:25:16.076Z"
+    },
+    "rule-4339": {
+      "learning_id": "rule-4339",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4339,
+      "title": "Modality-Specific Token Boundary Enforcement",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:25:20.154Z"
+    },
+    "rule-4340": {
+      "learning_id": "rule-4340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4340,
+      "title": "Classification Head Projection Dimension Constraint",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:25:20.154Z"
     }
   },
   "aliases": {

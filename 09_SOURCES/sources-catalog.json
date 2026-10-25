@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "45c68b928869a936f8cef5faf5839fdbf52e83a496da2d18039004229f7c4bc3",
-    "lastHarvestedAt": "2026-10-20T18:58:10.162Z",
+    "contentHash": "cfec98b669361ed0f8071280f04c0ef119280a59a138de4b9f3aeeabc948cd64",
+    "lastHarvestedAt": "2026-10-25T14:25:20.222Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "d0f481d7",
+    "sourceVersion": "66e63611",
     "license": "Apache-2.0",
-    "contentHash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
-    "lastHarvestedAt": "2026-10-22T21:08:01.967Z",
+    "contentHash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
+    "lastHarvestedAt": "2026-10-25T14:25:10.879Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -6873,10 +6873,10 @@
     "repository": "lucide-icons/lucide",
     "platform": "github",
     "sourceUrl": "https://github.com/lucide-icons/lucide",
-    "sourceVersion": "20aef31d",
+    "sourceVersion": "7faf8762",
     "license": "NOASSERTION",
-    "contentHash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
-    "lastHarvestedAt": "2026-10-21T15:22:30.502Z",
+    "contentHash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
+    "lastHarvestedAt": "2026-10-25T14:25:09.863Z",
     "learningId": "learn-github-lucide-icons-lucide"
   },
   "iconoir-icons-iconoir": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "e9e85210",
+    "sourceVersion": "36683ed7",
     "license": "AGPL-3.0",
-    "contentHash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
-    "lastHarvestedAt": "2026-10-20T21:27:34.013Z",
+    "contentHash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
+    "lastHarvestedAt": "2026-10-25T14:25:16.146Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

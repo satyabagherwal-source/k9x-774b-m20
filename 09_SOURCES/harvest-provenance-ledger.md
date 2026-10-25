@@ -4856,3 +4856,7 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `d60598a6` | Multi-dimensional audit evidence | 2026-10-25T14:18:50.669Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T14:18:54.241Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `4ab22a49` | Multi-dimensional audit evidence | 2026-10-25T14:18:54.733Z |
+| `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `7faf8762` | Multi-dimensional audit evidence | 2026-10-25T14:25:09.863Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `66e63611` | Multi-dimensional audit evidence | 2026-10-25T14:25:10.879Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `36683ed7` | Multi-dimensional audit evidence | 2026-10-25T14:25:16.146Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-25T14:25:20.222Z |

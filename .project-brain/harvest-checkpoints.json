@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:18:54.747Z",
+  "last_updated": "2026-10-25T14:25:20.235Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -590,14 +590,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "45c68b928869a936f8cef5faf5839fdbf52e83a496da2d18039004229f7c4bc3",
-      "verified_at": "2026-10-20T18:58:10.170Z",
+      "content_hash": "cfec98b669361ed0f8071280f04c0ef119280a59a138de4b9f3aeeabc948cd64",
+      "verified_at": "2026-10-25T14:25:20.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:58:10.170Z"
+      "last_updated": "2026-10-25T14:25:20.230Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "818559490c30d2047cfd69c17d70010d937e6189df45c5946eceb46aadb9a79b",
-      "verified_at": "2026-10-22T21:08:01.979Z",
+      "content_hash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
+      "verified_at": "2026-10-25T14:25:10.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:08:01.979Z"
+      "last_updated": "2026-10-25T14:25:10.887Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -10371,14 +10371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lucide-icons-lucide",
-      "content_hash": "596260c2d0b723d066ec3270e28249628fdf38f78410679383afaff5ec917090",
-      "verified_at": "2026-10-21T15:22:30.507Z",
+      "content_hash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
+      "verified_at": "2026-10-25T14:25:09.872Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:22:30.507Z"
+      "last_updated": "2026-10-25T14:25:09.872Z"
     },
     "iconoir-icons/iconoir": {
       "repository": "iconoir-icons/iconoir",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "4107819731782647339ebae70fd10ccd73df10cb81131ce88e041b36db9950e0",
-      "verified_at": "2026-10-20T21:27:34.019Z",
+      "content_hash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
+      "verified_at": "2026-10-25T14:25:16.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:27:34.019Z"
+      "last_updated": "2026-10-25T14:25:16.154Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

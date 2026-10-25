@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-B1EL",
-    "timestamp": "2026-10-22T17:25:43.773Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "e13d8a1e76e8e177c79c748f74cea1c4af39304f4828af0b114c68167a6cf82e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-B2NA",
-    "timestamp": "2026-10-22T17:25:45.382Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "332c226130ea5ffaeca3c60e3ac879928d4c300ad8c9c876e060c742f8b83813",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-IU1V",
-    "timestamp": "2026-10-22T17:31:47.491Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-IZ7Q",
-    "timestamp": "2026-10-22T17:31:54.182Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "aba69d13fcac4d03873853b228083ebaa130dbb558a3a3372aa3490d444f0d99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-J0I5",
     "timestamp": "2026-10-22T17:31:55.853Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7432,66 @@
     "contentHash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6DWJ",
+    "timestamp": "2026-10-25T14:25:09.859Z",
+    "repository": "lucide-icons/lucide",
+    "learningId": "learn-github-lucide-icons-lucide",
+    "contentHash": "a84567b478a798a713233090e12994e26f8f22db4c4f2aba9a09a634dea6790b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6EOS",
+    "timestamp": "2026-10-25T14:25:10.876Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6IR3",
+    "timestamp": "2026-10-25T14:25:16.143Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "6b5344c3ec41398ad8f33f604621a20ccb31d6d430fa7967043f3efe907c6dfd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6LWA",
+    "timestamp": "2026-10-25T14:25:20.218Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "cfec98b669361ed0f8071280f04c0ef119280a59a138de4b9f3aeeabc948cd64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
