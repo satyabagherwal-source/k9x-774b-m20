@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `b9479757`  
+> **Source Version**: `2c800e6b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:46:44.245Z  
+> **Timestamp**: 2026-10-25T05:34:03.098Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:46:43.053Z  
+> **Harvest Timestamp**: 2026-10-25T05:34:02.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17214 stars
+- **Stars / Engagement**: 17219 stars
 
 ---
 
@@ -1377,13 +1377,14 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54940** (2026-10-22): **GH-54937: [C++] Fix DenseUnionArray::Make for sliced type_ids and value_offsets arrays**
-  *Symptoms*: ### Rationale for this change  `DenseUnionArray::Make` used `type_ids.offset()` as the union offset for both the type ids and the value offsets buffers, and never checked the length of `value_offsets`. With a `value_offsets` array that is sliced differently from `type_ids` the union reads value offsets from the wrong positions (and `ValidateFull` cannot tell), and a too-short `value_offsets` array is accepted. See GH-54937; same root cause as GH-54907 (#54938).  ### What changes are included in this PR?  - `DenseUnionArray::Make` returns `Invalid` when `value_offsets` is shorter than `type_ids`. A longer `value_offsets` array is still tolerated (only the first `len(type_ids)` offsets are used), since existing callers rely on that. - When `type_ids` or `value_offsets` is sliced, its buffer is sliced (zero-copy) to the logical window and the union is built with offset 0. Unsliced inputs keep using the original buffers. - Regression test `TestUnionArrayFactories.TestMakeDenseSliced`.  ### Are these changes tested?  Yes. The new test fails on main (sliced `value_offsets` yields `[10, 20]` instead of `[20, 30]`, and the short `value_offsets` array is accepted) and passes with the fix. `arrow-array-test`, `arrow-ipc-read-write-test`, `arrow-scalar-test` and `arrow-compute-scalar-type-test` pass locally (Debug, ASan/UBSan).  ### Are there any user-facing changes?  `DenseUnionArray::Make` now returns `Invalid` when `value_offsets` is shorter than `type_ids`, and the resulting array h
+- **Issue #55159** (2026-10-23): **MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale**
+  *Symptoms*: ### Rationale for this change  `DecimalRescale` (behind `Decimal{32,64,128,256}::Rescale`) looks up `GetScaleMultiplier(abs(new_scale - original_scale))` in the `kDecimal*PowersOfTen` tables, and the only bound on that index is a `DCHECK`. `Decimal*::FromString` rejects a large negative parsed scale but lets a positive one through, and the precision it reports only counts significant digits. So a CSV cell `1E-41` read as `decimal128(10, 2)` parses as precision 1, scale 41, passes the precision check in `DecimalValueDecoder::Decode`, and `Rescale(41, 2)` reads one entry past `kDecimal128PowersOfTen` (ASan reports a global-buffer-overflow READ of size 16 with `basic_decimal.cc` built with `NDEBUG`). `1E-100000` reads about 1.6 MB past the table. The JSON reader's decimal converter and the default `cast(string -> decimal)` take the same path, and the cast with `allow_decimal_truncate=true` calls `ReduceScaleBy(parsed_scale - out_scale)` directly with the same unbounded value. Debug builds abort on the `DCHECK` for all of these.  ### What changes are included in this PR?  - `DecimalRescale` returns `kRescaleDataLoss` when the scale delta exceeds `kMaxScale`. No multiplier that large fits in the type, so any non-zero value would overflow or lose digits; zero still rescales to zero. - The truncating branch of `StringToDecimal` returns zero when more than `kMaxScale` digits are dropped, which is the truncated result for any value the type can hold.  The check sits in `DecimalRescale
 
-- **Issue #54923** (2026-10-22): **GH-54903: [C++][OSS-Fuzz fuzzing] Update parquet encoding fuzzer and corpora/dict preparation**
-  *Symptoms*: This PR updates the parquet encodingfuzzer with new corpora/dict. This PR is the 4th PR aiming to improve the overall fuzzing coverage and effectiveness of the arrow project, mentioned in https://github.com/apache/arrow/issues/54903. * GitHub Issue: #54903
+- **Issue #55114** (2026-10-23): **GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones**
+  *Symptoms*: ### Rationale for this change  GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)  ### What changes are included in this PR?  Install `tzdata-legacy` package if available to have the required timezone.  ### Are these changes tested?  Yes on CI  ### Are there any user-facing changes? No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55113
   **Post-Mortem & Fix Analysis**:
-  > <!--   Licensed to the Apache Software Foundation (ASF) under one   or more contributor license agreements.  See the NOTICE file   distributed with this work for additional information   regarding copyright ownership.  The ASF licenses this file   to you under the Apache License, Version 2.0 (the   "License"); you may not use this file except in compliance   with the License.  You may obtain a copy of the License at      http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,   software distributed under the License is distributed on an   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY   KIND, either express or implied.  See the License for the   specific language governing permissions and limitations   under the License. -->  Thanks for opening a pull request!  **This pull request has been automatically closed because you currently have 4 open pull requests, which is more than the limit of 3.**  Due to the increase in pull reques
+  > @thisisnic just a minor fix to CI
+  > Thanks for fixing this! The change makes sense, but I'm wondering if it's gonna be slightly more efficient to just do a text-replace swapping out "EST" for "America/New_York" and avoid installing another dependency?  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1400,64 +1401,386 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4b74e56` (2026-10-21)
-**Commit Message**: GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695)
+### Incident Patch 1: `2c800e6b` (2026-10-23)
+**Commit Message**: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943)
+
+### TBD
 
 ### Rationale for this change
 
-The Dremio-backed ODBC test suite fails in StatementTest/1.TestChangingAppRowDescriptorRebindsColumns because Dremio treats VALUE as a reserved keyword. The same query succeeds against the SQLite mock, so the failure was only exposed by the remote suite.
+Several Linux Packaging jobs are currently failing with out of space on the verify reproducibility step. This is due to `/tmp` size. Ubuntu runner image changed from Ubuntu 24.04 to Ubuntu 26.04 where the `/tmp` folder is mounted.
+In the past the `/tmp` folder was on the root disk which had 145 GB of disk space.
+```
+ Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       145G   60G   85G  42% /
+tmpfs           7.9G   84K  7.9G   1% /dev/shm
+tmpfs           3.2G  988K  3.2G   1% /run
+tmpfs           5.0M     0  5.0M   0% /run/lock
+efivarfs        128M   32K  128M   1% /sys/firmware/efi/efivars
+/dev/sda16      881M   85M  735M  11% /boot
+/dev/sda15      105M  6.2M   99M   6% /boot/efi
+tmpfs           1.6G   12K  1.6G   1% /run/user/1001
+```
+With the new runner the `/tmp` folder is on `tmpfs` with 7.8GB.
+```
+2026-10-23T02:23:08.8104328Z Filesystem      Size  Used Avail Use% Mounted on
+2026-10-23T02:23:08.8104761Z /dev/root       145G   58G   88G  40% /
+2026-10-23T02:23:08.8105145Z tmpfs           7.9G     0  7.9G   0% /dev/shm
+2026-10-23T02:
+
+**File**: `.github/workflows/package_linux.yml` (modified, +2/-0)
+```diff
+@@ -349,6 +349,8 @@ jobs:
+         if: env.TASK_NAMESPACE == 'apt'
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          # Required because the default /tmp is a size-limited tmpfs on some runner images.
++          TMPDIR: ${{ runner.temp }}
+         run: |
+           # Validate reproducibility. Reprotest runs the build twice
+           # inside its own tempdir and doesn't copy artifacts back,
+```
+
+---
+
+### Incident Patch 2: `2db03408` (2026-10-23)
+**Commit Message**: GH-51663: [C++][Gandiva] Race condition with Gandiva expressions (#51665)
+
+### Rationale for this change
+
+I originally identified [this issue in arrow-java](https://github.com/apache/arrow-java/issues/601) and fixed it on the arrow-java side with a coarse grained lock on the Projector and Filter Make methods. That fixed the issue but adds some undesirable overhead in certain multi threaded workflows.
+This issue captures the deeper problem that is occurring in the C++ side of Gandiva and was not touched by my previous fix though it is prevented from happening. I have a proposed solution for this and believe it is a better overall solution.
+
+`Projector::Make()` and `Filter::Make()` read the shared expression cache once to decide the `is_cached` status and then call `SetLLVMObjectCache()`. That performs its own second, unsynchronized read of the same key before pre-loading a cached object into the LLJIT.
+
+Those two reads could disagree. If another thread compiling the identical (schema, expressions, selection vector mode, configuration) tuple inserted between them, the first thread would:
+
+1. take the `is_cached == false` path, generating `expr_0_0` into its IR module, and
+2. also see
+
+**File**: `cpp/src/gandiva/engine.cc` (modified, +8/-3)
+```diff
+@@ -304,9 +304,14 @@ void RemoveBuildTargetAttributes(llvm::Module& module) {
+ 
+ }  // namespace
+ 
+-Status Engine::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
+-  auto cached_buffer = object_cache.getObject(nullptr);
+-  if (cached_buffer) {
++Status Engine::SetLLVMObjectCache(
++    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
++  if (prev_cached_obj) {
++    // Copy rather than hand over the cache's own buffer -- addObjectFile takes
++    // ownership and may free it, but the shared cache map holds a reference to the
++    // same object too.
++    auto cached_buffer = llvm::MemoryBuffer::getMemBufferCopy(
++        prev_cached_obj->getBuffer(), prev_cached_obj->getBufferIdentifier());
+     auto error = lljit_->addObjectFile(std::move(cached_buffer));
+     if (error) {
+       return Status::CodeGenError("Failed to add cached object file to LLJIT: ",
+```
+
+**File**: `cpp/src/gandiva/engine.h` (modified, +6/-2)
+```diff
+@@ -74,8 +74,12 @@ class GANDIVA_EXPORT Engine {
+   /// Optimise and compile the module.
+   Status FinalizeModule();
+ 
+-  /// Set LLVM ObjectCache.
+-  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
++  /// Pre-load the LLJIT with an already-compiled object for the current module, if
++  /// one was found by the caller's own cache lookup. Takes the lookup result directly
++  /// rather than re-querying the cache, so this can never disagree with the \p cached
++  /// flag passed to \p Make -- avoiding the load being based on a newer cache state
++  /// than the one that decided whether Make() would still build (and load) fresh IR.
++  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
+ 
+   /// Get the compiled function corresponding to the irfunction.
+   Result<void*> CompiledFunction(const std::string& function);
+```
+
+**File**: `cpp/src/gandiva/filter.cc` (modified, +5/-2)
+```diff
+@@ -76,8 +76,11 @@ Status Filter::Make(SchemaPtr schema, ConditionPtr condition,
+     ARROW_RETURN_NOT_OK(expr_validator.Validate(condition));
+   }
+ 
+-  // Set the object cache for LLVM
+-  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
++  // Pre-load the already-compiled object from the cache lookup above, if there was
++  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
++  // shared cache, so this can never disagree with the is_cached snapshot that
++  // decided whether Build() below still compiles.
++  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
+ 
+   ARROW_RETURN_NOT_OK(llvm_gen->Build({condition}, SelectionVector::Mode::MODE_NONE));
+ 
+```
+
+**File**: `cpp/src/gandiva/llvm_generator.cc` (modified, +3/-2)
+```diff
+@@ -64,8 +64,9 @@ LLVMGenerator::GetCache() {
+   return shared_cache;
+ }
+ 
+-Status LLVMGenerator::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
+-  return engine_->SetLLVMObjectCache(object_cache);
++Status LLVMGenerator::SetLLVMObjectCache(
++    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
++  return engine_->SetLLVMObjectCache(prev_cached_obj);
+ }
+ 
+ Status LLVMGenerator::Add(const ExpressionPtr expr, const FieldDescriptorPtr output) {
+```
+
+**File**: `cpp/src/gandiva/llvm_generator.h` (modified, +5/-2)
+```diff
+@@ -58,8 +58,11 @@ class GANDIVA_EXPORT LLVMGenerator {
+   static std::shared_ptr<Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>>
+   GetCache();
+ 
+-  /// \brief Set LLVM ObjectCache.
+-  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
++  /// \brief Pre-load the engine with an already-compiled object for the current
++  /// module, if the caller's own cache lookup found one. See the equivalent Engine
++  /// method for why this takes the lookup result directly instead of re-querying
++  /// the cache.
++  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
+ 
+   /// \brief Build the code for the expression trees for default mode with a LLVM
+   /// ObjectCache. Each element in the vector represents an expression tree
+```
+
+**File**: `cpp/src/gandiva/projector.cc` (modified, +5/-2)
+```diff
+@@ -94,8 +94,11 @@ Status Projector::Make(SchemaPtr schema, const ExpressionVector& exprs,
+     }
+   }
+ 
+-  // Set the object cache for LLVM
+-  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
++  // Pre-load the already-compiled object from the cache lookup above, if there was
++  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
++  // shared cache, so this can never disagree with the is_cached snapshot that
++  // decided whether Build() below still compiles.
++  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
+ 
+   ARROW_RETURN_NOT_OK(llvm_gen->Build(exprs, selection_vector_mode));
+ 
+```
+
+**File**: `cpp/src/gandiva/tests/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -19,6 +19,7 @@ add_gandiva_test(projector-test
+                  SOURCES
+                  binary_test.cc
+                  boolean_expr_test.cc
++                 cache_race_test.cc
+                  date_time_test.cc
+                  decimal_alignment_test.cc
+                  decimal_single_test.cc
+```
+
+**File**: `cpp/src/gandiva/tests/cache_race_test.cc` (added, +212/-0)
+```diff
+@@ -0,0 +1,212 @@
++// Licensed to the Apache Software Foundation (ASF) under one
++// or more contributor license agreements.  See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership.  The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License.  You may obtain a copy of the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing,
++// software distributed under the License is distributed on an
++// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++// KIND, either express or implied.  See the License for the
++// specific language governing permissions and limitations
++// under the License.
++
++// Deterministic regression test for GH-51663.
++//
++// Projector::Make() and Filter::Make() read the shared expression cache once to decide
++// `is_cached`. Before the fix, SetLLVMObjectCache() performed a *second*, independent
++// read of the same key. A thread that saw a miss on the first read and a hit on the
++// second one would both pre-load the cached object (defining e.g. "expr_0_0" in its
++// JITDylib) and add its own compiled IR module defining the same symbol, so LLVM ORC's
++// duplicate-symbol detection fired. (Originally reported against the Java bindings as
++// apache/arrow-java#601.)
++
++#include <gtest/gtest.h>
++
++#include <atomic>
++#include <memory>
++#include <utility>
++#include <vector>
++
++#include "arrow/memory_pool.h"
++#include "gandiva/cache.h"
++#include "gandiva/configuration.h"
++#include "gandiva/exported_funcs.h"
++#include "gandiva/exported_funcs_registry.h"
++#include "gandiva/expression_cache_key.h"
++#include "gandiva/filter.h"
++#include "gandiva/llvm_generator.h"
++#include "gandiva/projector.h"
++#include "gandiva/tests/test_util.h"
++#include "gandiva/tree_expr_builder.h"
++
++namespace gandiva {
++
++using arrow::boolean;
++using arrow::int32;
++
++namespace {
++
++using ObjectCacheType = Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>;
++
++struct PendingInjection {
++  std::shared_ptr<ObjectCacheType> cache;
++  std::shared_ptr<ExpressionCacheKey> key;
++  std::shared_ptr<llvm::MemoryBuffer> object;
++  std::atomic<bool> armed{false};
++};
++
++PendingInjection* GetPendingInjection() {
++  static PendingInjection instance;
++  return &instance;
++}
++
++// Registered once; fires only while armed.
++class CacheRaceInjector : public ExportedFuncsBase {
++ public:
++  arrow::Status AddMappings(Engine* engine) const override {
++    auto* pending = GetPendingInjection();
++    // exchange() disarms, so this injects exactly once per arming even though the
++    // registry keeps calling us on every subsequent Engine::Init().
++    if (pending->armed.exchange(false)) {
++      pending->cache->PutObjectCode(*pending->key, pending->object);
++    }
++    return arrow::Status::OK();
++  }
++};
++
++REGISTER_EXPORTED_FUNCS(CacheRaceInjector);
++
++// Arms the injection that will run inside the next Make()'s engine construction.
++void ArmInjection(std::shared_ptr<ObjectCacheType> cache,
++                  std::shared_ptr<ExpressionCacheKey> key,
++                  std::shared_ptr<llvm::MemoryBuffer> object) {
++  auto* pending = GetPendingInjection();
++  pending->cache = std::move(cache);
++  pending->key = std::move(key);
++  pending->object = std::move(object);
++  pending->armed.store(true);
++}
++
++}  // namespace
++
++class TestCacheRace : public ::testing::Test {
++ public:
++  void SetUp() { pool_ = arrow::default_memory_pool(); }
++
++  void TearDown() { GetPendingInjection()->armed.store(false); }
++
++ protected:
++  arrow::MemoryPool* pool_;
++};
++
++TEST_F(TestCacheRace, TestProjectorCacheInsertedDuringMake) {
++  auto field0 = field("f0", int32());
++  auto field1 = field("f1", int32());
++  auto schema = arrow::schema({field0, field1});
++  auto field_sum = field("add", int32());
++  auto sum_expr = TreeExprBuilder::MakeExpression("add", {field0, field1}, field_sum);
++  ExpressionVector exprs = {sum_expr};
++
++  // Two separately built configurations with identical content: same hash, different
++  // keys.
++  auto config_a = ConfigurationBuilder().build();
++  auto config_b = ConfigurationBuilder().build();
++
++  // Build once under config_a so the expression is cached.
++  std::shared_ptr<Projector> warm_projector;
++  ASSERT_OK(Projector::Make(schema, exprs, config_a, &warm_projector));
++
++  auto cache = LLVMGenerator::GetCache();
++  ExpressionCacheKey key_a(schema, config_a, exprs, SelectionVector::Mode::MODE_NONE);
++  auto cached_object = cache->GetObjectCode(key_a);
++  ASSERT_NE(cached_object, nullptr) << "expected the first Make() to populate the cache";
++
++  // config_b has never been built, so Make()'s first read is a guaranteed miss.
++  auto key_b = std::make_shared<ExpressionCacheKey>(schema, config_b, exprs,
++                                                    SelectionVector::Mode::MODE_NONE);
++
+```
+
+---
+
+### Incident Patch 3: `0c6b47bc` (2026-10-23)
+**Commit Message**: GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (#55114)
+
+### Rationale for this change
+
+GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)
 
 ### What changes are included in this PR?
 
-Rename the test query alias from value to val, which is accepted by both SQLite and Dremio.
+Install `tzdata-legacy` package if available to have the required timezone.
 
 ### Are these changes tested?
 
-Yes. Ran the Ubuntu 24.04 CI-equivalent ODBC job locally:
-
-    UBUNTU=24.04 docker compose run --rm ubuntu-cpp-odbc
-
-All 61 C++ test executables passed, including the Dremio-backed arrow-flight-sql-odbc-test.
-
-Maintainer note: please apply the CI: Extra: C++ label so the ODBC CI job runs.
+Yes on CI
 
 ### Are there any user-facing changes?
-
-No. This is a test-only compatibility fix.
+No
 
 ### Was AI used for this PR?
 
-In accordance to the AI generation guidelines, AI was used to investigate the failure, prepare the one-line test fix, run validation, and draft this description.
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
 
 **PR code and description written by:**
 
-- [ ] Human
+- [x] Human
 - [x] AI
 
 **Reviewed before submission by:**
 
-- [x] Huma
+- [x] Human
+- [ ] AI
+- [ ] Not reviewed
 
-**File**: `cpp/src/arrow/flight/sql/odbc/tests/statement_test.cc` (modified, +1/-1)
+* GitHub Issue: #55113
+
+Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
+
+**File**: `ci/scripts/r_docker_configure.sh` (modified, +5/-0)
 ```diff
-@@ -1789,7 +1789,7 @@ TYPED_TEST(StatementTest, TestChangingAppRowDescriptorRebindsColumns) {
+@@ -85,6 +85,11 @@ else
+   "$PACKAGE_MANAGER" install -y rsync cmake curl
+ fi
  
-   ASSIGN_SQLWCHAR_ARR_AND_LEN(wsql,
-                               LR"(
--   SELECT 1 AS value
-+   SELECT 1 AS val
-    UNION ALL SELECT 2
-    UNION ALL SELECT 3;
-  )");
++# Newer Debian/Ubuntu require tzdata-legacy for our tests, install it if available.
++if [ "$PACKAGE_MANAGER" = "apt-get" ] && apt-cache show tzdata-legacy > /dev/null 2>&1; then
++  apt-get install -y tzdata-legacy
++fi
++
+ 
+ # Update clang version to latest available.
+ # The rhub/ubuntu-clang image ships clang-15 but CRAN's debian-clang now uses
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55159** (closed): MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale (@Nayana-Naik73)
+- **PR #55114** (2026-10-23): GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (@raulcd)
+- **PR #54960** (2026-10-22): MINOR: [Dev] Update collaborators list (@rok)
+- **PR #54943** (2026-10-23): GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (@raulcd)
 - **PR #54940** (closed): GH-54937: [C++] Fix DenseUnionArray::Make for sliced type_ids and value_offsets arrays (@JonSnow1807)
 - **PR #54923** (closed): GH-54903: [C++][OSS-Fuzz fuzzing] Update parquet encoding fuzzer and corpora/dict preparation (@arthurscchan)
-- **PR #54911** (closed): [C++] Validate union type_id range in ArrayFromJSONString (@Nayana-Naik73)
-- **PR #54883** (2026-10-21): GH-54687: [GLib] Add missing owner references to GBytes (@kou)
-- **PR #54695** (2026-10-21): GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (@vikrantpuppala)
-- **PR #54686** (closed): GH-44827: [C++] Skip null slots when transposing dictionary indices (@Nayana-Naik73)
 
 ---
 
@@ -1477,28 +1800,29 @@ In accordance to the AI generation guidelines, AI was used to investigate the fa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695)
+## X. GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of 
 
 **RULE**:
-When implementing operations in `cpp/src/arrow/flight/sql/odbc/tests/statement_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/package_linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4b74e56`: GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c800e6b`: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/flight/sql/odbc/tests/statement_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/package_linux.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-   SELECT 1 AS val
+          # Required because the default /tmp is a size-limited tmpfs on some runner images.
+          TMPDIR: ${{ runner.temp }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-   SELECT 1 AS value
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4b74e56` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c800e6b` are properly handled with clean fallback behavior.

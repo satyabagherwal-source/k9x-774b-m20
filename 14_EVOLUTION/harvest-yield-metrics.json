@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:27:49.127Z",
-  "total_cycles_completed": 4663,
-  "total_learnings_persisted": 4663,
-  "total_rules_promoted": 3948,
+  "last_updated": "2026-10-25T05:34:10.686Z",
+  "total_cycles_completed": 4666,
+  "total_learnings_persisted": 4666,
+  "total_rules_promoted": 3953,
   "history": [
-    {
-      "timestamp": "2026-10-23T07:06:48.057Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T07:21:26.730Z",
-      "repository": "wasm-bindgen/wasm-pack",
-      "learningId": "learn-github-wasm-bindgen-wasm-pack",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T07:21:47.659Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T07:22:39.292Z",
       "repository": "QwikDev/qwik",
@@ -1403,6 +1382,27 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:34:03.402Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:34:08.649Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:34:10.686Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

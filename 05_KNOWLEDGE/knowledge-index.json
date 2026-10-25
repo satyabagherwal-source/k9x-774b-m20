@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:27:49.060Z",
+  "last_updated": "2026-10-25T05:34:10.632Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2031,8 +2031,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "b9479757",
-      "content_hash": "e750d900fa2f204ba02f5473d2ef15b3b3ae3f770835242376cf6563c0962210",
+      "source_version": "2c800e6b",
+      "content_hash": "c6be5f00c37cf47c4e2e17d1df38c311f70a5df8347eb03d971f9f49c83f8703",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2055,6 +2055,11 @@
           "number": 3613,
           "title": "GH-54645: [C++][FlightRPC][ODBC] Fix descriptor test query (#54695)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4080,
+          "title": "GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2062,7 +2067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:46:44.582Z",
+      "verified_at": "2026-10-25T05:34:03.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5452,8 +5457,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "24e5e1e7",
-      "content_hash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
+      "source_version": "37f49f24",
+      "content_hash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -5471,6 +5476,11 @@
           "number": 3693,
           "title": "physicalmachinechaos): reject empty UID before injection (#5148)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4081,
+          "title": "workflow): support serviceAccountName for task pods (#5162)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5478,7 +5488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:30:42.696Z",
+      "verified_at": "2026-10-25T05:34:08.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18088,7 +18098,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "38d7ad89c65926a5a16209ccfc8b09088ee69271c83a436eca83d480f65435b1",
+      "content_hash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -18140,8 +18150,8 @@
         },
         {
           "number": 1150,
-          "title": "Strictly Proper Scoring Rule Calibration Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "Strictly Proper Scoring Rule Calibration",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1151,
@@ -18156,6 +18166,16 @@
         {
           "number": 1231,
           "title": "Dynamic Model Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4082,
+          "title": "Non-Autoregressive Decision Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4083,
+          "title": "Typed Question Schema Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -18501,7 +18521,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-20T13:40:32.599Z",
+      "verified_at": "2026-10-25T05:34:10.623Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75961,15 +75981,15 @@
       "learning_id": "rule-1150",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1150,
-      "title": "Strictly Proper Scoring Rule Calibration Invariant (Harvested from convaiinnovations/laya)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Strictly Proper Scoring Rule Calibration",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-25T05:34:10.623Z"
     },
     "rule-1151": {
       "learning_id": "rule-1151",
@@ -118787,6 +118807,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:27:49.048Z"
+    },
+    "rule-4080": {
+      "learning_id": "rule-4080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4080,
+      "title": "GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "2c800e6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:34:03.338Z"
+    },
+    "rule-4081": {
+      "learning_id": "rule-4081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4081,
+      "title": "workflow): support serviceAccountName for task pods (#5162)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "37f49f24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:34:08.584Z"
+    },
+    "rule-4082": {
+      "learning_id": "rule-4082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4082,
+      "title": "Non-Autoregressive Decision Boundaries",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:34:10.623Z"
+    },
+    "rule-4083": {
+      "learning_id": "rule-4083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4083,
+      "title": "Typed Question Schema Enforcement",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:34:10.623Z"
     }
   },
   "aliases": {

@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "38d7ad89c65926a5a16209ccfc8b09088ee69271c83a436eca83d480f65435b1",
-    "lastHarvestedAt": "2026-10-20T13:40:32.672Z",
+    "contentHash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
+    "lastHarvestedAt": "2026-10-25T05:34:10.678Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "24e5e1e7",
+    "sourceVersion": "37f49f24",
     "license": "Apache-2.0",
-    "contentHash": "5da1aa4c1c9da347464bc70ab5d1076aafe278871a72974da48a44332545117e",
-    "lastHarvestedAt": "2026-10-22T18:30:42.767Z",
+    "contentHash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
+    "lastHarvestedAt": "2026-10-25T05:34:08.641Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "b9479757",
+    "sourceVersion": "2c800e6b",
     "license": "Apache-2.0",
-    "contentHash": "e750d900fa2f204ba02f5473d2ef15b3b3ae3f770835242376cf6563c0962210",
-    "lastHarvestedAt": "2026-10-22T15:46:44.655Z",
+    "contentHash": "c6be5f00c37cf47c4e2e17d1df38c311f70a5df8347eb03d971f9f49c83f8703",
+    "lastHarvestedAt": "2026-10-25T05:34:03.393Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

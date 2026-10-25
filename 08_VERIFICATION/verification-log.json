@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-Z0RS",
-    "timestamp": "2026-10-21T03:56:53.800Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "a8f0f13ef963a05c91a5d701e1fe66e47d6bec1d05c38dd648ce6c9b892fb534",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-78DB",
-    "timestamp": "2026-10-21T04:03:16.895Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "f23c4b9b11a66402a995e49a44938b9326a92b324bc5f5500dc7251b7a5e7062",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-F9GZ",
-    "timestamp": "2026-10-21T04:09:31.571Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "79f072da1346f703f33dde38b35e8e4c53292041c39f9c4d0f397d8f1e8dbb4d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-F9TV",
     "timestamp": "2026-10-21T04:09:32.035Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7447,51 @@
     "contentHash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7DKU",
+    "timestamp": "2026-10-25T05:34:03.390Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "c6be5f00c37cf47c4e2e17d1df38c311f70a5df8347eb03d971f9f49c83f8703",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7HMN",
+    "timestamp": "2026-10-25T05:34:08.639Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7J78",
+    "timestamp": "2026-10-25T05:34:10.676Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "b68ca8e05d304d6c52f4094494584021c6982a735cec0e7b8ab89609cbd71cb3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

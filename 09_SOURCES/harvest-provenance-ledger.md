@@ -4693,3 +4693,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-metro` | `https://github.com/react/metro` | `5cfcfe21` | Multi-dimensional audit evidence | 2026-10-25T05:27:41.051Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T05:27:45.419Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `5f8ed384` | Multi-dimensional audit evidence | 2026-10-25T05:27:49.116Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `2c800e6b` | Multi-dimensional audit evidence | 2026-10-25T05:34:03.393Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `37f49f24` | Multi-dimensional audit evidence | 2026-10-25T05:34:08.641Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-25T05:34:10.678Z |
