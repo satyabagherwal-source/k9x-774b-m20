@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `9edd3db1`  
+> **Source Version**: `e1f3ae29`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:44:56.263Z  
+> **Timestamp**: 2026-10-25T09:58:47.629Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:44:55.674Z  
+> **Harvest Timestamp**: 2026-10-25T09:53:46.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18855 stars
+- **Stars / Engagement**: 18859 stars
 
 ---
 
@@ -37,880 +37,2341 @@
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `console/packages/console-frontend/src/api/queues/index.ts`
+### Core Architecture Module: `crates/iii-compose/src/engine.rs`
 ```
-export * from './queues'
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
 
-```
+//! The daemon's own connection to the engine.
+//!
+//! The daemon is an ordinary worker: it connects with the SDK, registers in
+//! `default` as `compose`, and exposes `compose::*` there — where a trigger
+//! with no namespace flag lands. One connection serves every project it holds,
+//! whatever namespaces those declare.
+//!
+//! It is also the daemon's window into the engine: readiness is "the child
+//! showed up in `engine::workers::list` under `(namespace, container)`", and
+//! configuration is fetched here before any child is spawned.
 
-### Core Architecture Module: `console/packages/console-frontend/src/api/queues/queues.ts`
-```
-import { getDevtoolsApi } from '../config'
-import { unwrapResponse } from '../utils'
+use std::time::Duration;
 
-export interface QueueTopic {
-  name: string
-  broker_type: string
-  subscriber_count: number
+use iii_sdk::{IIIClient, InitOptions, protocol::TriggerRequest, register_worker};
+
+use serde_json::{Value, json};
+
+use crate::{
+    error::{ComposeError, Result},
+    process::Supervised,
+};
+
+/// How often readiness is re-checked. Short enough that a fast worker is not
+/// held back, long enough not to hammer the engine for a minute.
+const READINESS_POLL_INTERVAL: Duration = Duration::from_millis(200);
+
+/// Where a worker lands when it does not know about namespaces, and where the
+/// engine serves its own functions.
+///
+/// The daemon lives in its own namespace, and the SDK sends a worker's calls
+/// there unless told otherwise. `configuration::*` and `engine::*` are compiled
+/// into the engine and exist only here, so every call the daemon makes to one
+/// names this namespace. Unqualified, they would look for the engine's
+/// functions in the daemon's own and find nothing.
+const DEFAULT_NAMESPACE: &str = "default";
+
+/// Budget for a single introspection or configuration call.
+const CALL_TIMEOUT_MS: u64 = 10_000;
+
+pub struct EngineClient {
+    client: IIIClient,
+    /// Namespace this daemon registered in — the same one `compose::*` lands
+    /// in. Children live in the *project* namespace, which is separate.
+    namespace: String,
 }
 
-export interface QueueStats {
-  depth: number
-  consumer_count: number
-  dlq_depth: number
-  config: Record<string, unknown> | null
-}
+/// The last few lines a container printed, for an error that would otherwise
+/// carry only an exit code.
+///
+/// Bounded on both axes — a handful of lines, and each one cut — because this
+/// travels inside an error message that a caller will see on one terminal
+/// line. The whole log stays on disk; `compose::status` says where.
+fn log_tail(log_dir: &std::path::Path, container: &str) -> Option<String> {
+    const LINES: usize = 5;
+    const WIDTH: usize = 200;
 
-export interface QueueDetail {
-  topic: string
-  stats: QueueStats
-}
-
-export interface DlqTopic {
-  topic: string
-  broker_type: string
-  message_count: number
-}
-
-export interface DlqMessage {
-  id: string
-  payload: unknown
-  error: string
-  failed_at: number
-  retries: number
-  size_bytes: number
-}
-
-export async function fetchQueues(): Promise<{ queues: QueueTopic[] }> {
-  const res = await fetch(`${getDevtoolsApi()}/queues`)
-  return unwrapResponse(res)
-}
-
-export async function fetchQueueDetail(topic: string): Promise<QueueDetail> {
-  const res = await fetch(`${getDevtoolsApi()}/queues/${encodeURIComponent(topic)}`)
-  return unwrapResponse(res)
-}
-
-export async function publishToQueue(topic: string, data: unknown): Promise<void> {
-  const res = await fetch(`${getDevtoolsApi()}/queues/${encodeURIComponent(topic)}/publish`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data }),
-  })
-  return unwrapResponse(res)
-}
-
-export async function fetchDlqTopics(): Promise<{ topics: DlqTopic[] }> {
-  const res = await fetch(`${getDevtoolsApi()}/dlq`)
-  return unwrapResponse(res)
-}
-
-export async function fetchDlqMessages(
-  topic: string,
-  offset = 0,
-  limit = 50,
-): Promise<{ topic: string; messages: DlqMessage[] }> {
-  const res = await fetch(`${getDevtoolsApi()}/dlq/${encodeURIComponent(topic)}/messages`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ offset, limit }),
-  })
-  return unwrapResponse(res)
-}
-
-export async function redriveDlq(topic: string): Promise<{ queue: string; redriven: number }> {
-  const res = await fetch(`${getDevtoolsApi()}/dlq/${encodeURIComponent(topic)}/redrive`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({}),
-  })
-  return unwrapResponse(res)
-}
-
-export async function discardMessage(
-  topic: string,
-  messageId: string,
-): Promise<{ queue: string; redriven: number }> {
-  const res = await fetch(
-    `${getDevtoolsApi()}/dlq/${encodeURIComponent(topic)}/messages/${encodeURIComponent(messageId)}/discard`,
-    { method: 'DELETE' },
-  )
-  return unwrapResponse(res)
-}
-
-export async function redriveMessage(
-  topic: string,
-  messageId: string,
-): Promise<{ queue: string; redriven: number }> {
-  const res = await fetch(
-    `${getDevtoolsApi()}/dlq/${encodeURIComponent(topic)}/messages/${encodeURIComponent(messageId)}/redrive`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
-    },
-  )
-  return unwrapResponse(res)
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/api/state/state.ts`
-```
-import { getDevtoolsApi } from '../config'
-import { unwrapResponse } from '../utils'
-
-// ============================================================================
-// State Types
-// ============================================================================
-
-export interface StateItem {
-  groupId: string
-  key: string
-  value: unknown
-  type: string
-  timestamp?: number
-}
-
-export interface StateGroup {
-  id: string
-  count: number
-}
-
-// ============================================================================
-// State Functions (used functions only)
-// ============================================================================
-
-export async function fetchStateItems(
-  groupId: string,
-): Promise<{ items: StateItem[]; count: number }> {
-  const res = await fetch(`${getDevtoolsApi()}/states/group`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ scope: groupId }),
-  })
-  if (!res.ok) throw new Error('Failed to fetch state items')
-  const data = await unwrapResponse<{ items: unknown[] }>(res)
-  const items: StateItem[] = (data.items || []).map((item: unknown, index: number) => {
-    const typedItem = item as Record<string, unknown>
-    return {
-      groupId,
-      key: (typedItem.id as string) || `item-${index}`,
-      value: item,
-      type: typeof item === 'object' ? 'object' : typeof item,
-      timestamp: Date.now(),
+    let text = std::fs::read_to_string(log_dir.join(format!("{container}.log"))).ok()?;
+    let tail: Vec<&str> = text
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .rev()
+        .take(LINES)
+        .collect();
+    if tail.is_empty() {
+        return None;
     }
-  })
-  return { items, count: items.length }
-}
-
-export async function fetchStateGroups(): Promise<{
-  groups: StateGroup[]
-  count: number
-}> {
-  const res = await fetch(`${getDevtoolsApi()}/states/groups`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  })
-  if (!res.ok) throw new Error('Failed to fetch state groups')
-  const data = await unwrapResponse<{ groups: StateGroup[] }>(res)
-  return { groups: data.groups || [], count: (data.groups || []).length }
-}
-
-export async function setStateItem(groupId: string, key: string, value: unknown): Promise<void> {
-  const res = await fetch(`${getDevtoolsApi()}/states/${encodeURIComponent(groupId)}/item`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key, value }),
-  })
-  if (!res.ok) throw new Error('Failed to set state item')
-}
-
-export async function deleteStateItem(groupId: string, key: string): Promise<void> {
-  const res = await fetch(
-    `${getDevtoolsApi()}/states/${encodeURIComponent(groupId)}/item/${encodeURIComponent(key)}`,
-    {
-      method: 'DELETE',
-    },
-  )
-  if (!res.ok) throw new Error('Failed to delete state item')
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/api/state/streams.ts`
-```
-import { getConfig, getDevtoolsApi } from '../config'
-import { unwrapResponse } from '../utils'
-
-// ============================================================================
-// Stream Types
-// ============================================================================
-
-export interface StreamInfo {
-  id: string
-  type: string
-  description: string
-  groups: string[]
-  status: string
-  internal?: boolean
-}
-
-// ============================================================================
-// Stream Functions (used functions only)
-// ============================================================================
-
-export async function fetchStreams(): Promise<{
-  streams: StreamInfo[]
-  count: number
-  websocket_port: number
-}> {
-  console.log('[Streams API] Starting fetch from:', `${getDevtoolsApi()}/streams/list`)
-  try {
-    const res = await fetch(`${getDevtoolsApi()}/streams/list`, {
-      method: 'GET',
-    })
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch streams: ${res.statusText}`)
-    }
-
-    const data = await unwrapResponse(res)
-    return data as {
-      streams: StreamInfo[]
-      count: number
-      websocket_port: number
-    }
-  } catch (error) {
-    console.error('[Streams API] ERROR:', error)
-    // Fallback to empty list on error
-    return {
-      streams: [],
-      count: 0,
-      websocket_port: getConfig().wsPort,
-    }
-  }
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/api/system/workers.ts`
-```
-import { getDevtoolsApi } from '../config'
-import { unwrapResponse } from '../utils'
-
-export interface WorkerMetrics {
-  cpu_percent: number
-  cpu_system_micros: number
-  cpu_user_micros: number
-  event_loop_lag_ms: number
-  memory_external: number
-  memory_heap_total: number
-  memory_heap_used: number
-  memory_rss: number
-  runtime: string
-  timestamp_ms: number
-  uptime_seconds: number
-}
-
-export interface WorkerTelemetry {
-  language: string | null
-  project_name: string | null
-  framework: string | null
-}
-
-export interface WorkerInfo {
-  id: string
-  name: string | null
-  runtime: string | null
-  version: string | null
-  os: string | null
-  ip_address: string
-  status: string
-  connected_at_ms: number
-  function_count: number
-  functions: string[]
-  active_invocations: number
-  latest_metrics: WorkerMetrics | null
-  pid: number | null
-  isolation: string | null
-  telemetry: WorkerTelemetry | null
-  internal?: boolean
-}
-
-export async function fetchWorkers(): Promise<{
-  workers: WorkerInfo[]
-  count: number
-  timestamp: number
-}> {
-  const res = await fetch(`${getDevtoolsApi()}/workers`)
-  if (!res.ok) throw new Error('Failed to fetch workers')
-  const data = await unwrapResponse<{ workers: WorkerInfo[]; timestamp: number }>(res)
-  // In-process/built-in workers (configuration, iii-telemetry, etc.) are reported
-  // with `function_count` but no `functions` array. Normalize so the non-optional
-  // `functions: string[]` contract holds for every consumer (e.g. the worker
-  // detail page reads `worker.functions.length`).
-  const workers = (data.workers || []).map((worker) => ({
-    ...worker,
-    functions: worker.functions ?? [],
-  }))
-  return {
-    workers,
-    count: workers.length,
-    timestamp: data.timestamp,
-  }
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/api/utils.ts`
-```
-import { getDevtoolsApi } from './config'
-
-interface WrappedResponse<T> {
-  status_code: number
-  headers: [string, string][]
-  body: T
-}
-
-const CORS_ERROR_MESSAGE =
-  'Connection blocked by CORS. Check iii-engine CORS settings for this console origin.'
-
-async function unwrapResponse<T>(res: Response): Promise<T> {
-  const data = await res.json()
-
-  if (data && typeof data === 'object' && 'status_code' in data && 'body' in data) {
-    const wrapped = data as WrappedResponse<T>
-    if (wrapped.status_code !== 200) {
-      throw new Error(`API Error: ${JSON.stringify(wrapped.body)}`)
-    }
-    return wrapped.body
-  }
-
-  return data as T
-}
-
-export function isCorsLikeFetchError(error: unknown): boolean {
-  if (!(error instanceof Error)) {
-    return false
-  }
-
-  if (error.name === 'AbortError') {
-    return false
-  }
-
-  const message = error.message.toLowerCase()
-
-  return (
-    message.includes('failed to fetch') ||
-    message.includes('networkerror') ||
-    message.includes('cors') ||
-    message.includes('cross-origin') ||
-    message.includes('access-control-allow-origin')
-  )
-}
-
-export function getConnectionErrorMessage(error: unknown, fallback = 'Network error'): string {
-  if (isCorsLikeFetchError(error)) {
-    return CORS_ERROR_MESSAGE
-  }
-
-  if (error instanceof Error && error.message) {
-    return error.message
-  }
-
-  return fallback
-}
-
-export async function fetchWithFallback<T>(
-  devtoolsPath: string,
-  _managementPath?: string,
-  options?: RequestInit,
-): Promise<T> {
-  try {
-    const res = await fetch(`${getDevtoolsApi()}${devtoolsPath}`, options)
-    if (!res.ok) {
-      throw new Error(`Failed to fetch from ${devtoolsPath}: ${res.status}`)
-    }
-    return await unwrapResponse<T>(res)
-  } catch (error) {
-    throw new Error(getConnectionErrorMessage(error))
-  }
-}
-
-export type { WrappedResponse }
-export { CORS_ERROR_MESSAGE, unwrapResponse }
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/components/flow/nodes/queue-node.tsx`
-```
-import { ListOrdered } from 'lucide-react'
-import type { NodeData } from '../../../api/flows/types'
-import { BaseNode } from './base-node'
-
-export function QueueFlowNode({ data }: { data: NodeData }) {
-  const queueTrigger = data.triggers?.find((t) => t.type === 'durable:subscriber')
-
-  return (
-    <BaseNode
-      data={data}
-      variant="durable:subscriber"
-      title={data.name}
-      subtitle={data.description}
-      disableSourceHandle={!data.emits?.length && !data.virtualEmits?.length}
-      disableTargetHandle={!data.subscribes?.length && !data.virtualSubscribes?.length}
-    >
-      {queueTrigger?.topic && (
-        <div className="text-[10px] text-[#9CA3AF] flex items-center gap-1.5 font-mono">
-          <ListOrdered className="w-3 h-3" /> {queueTrigger.topic}
-        </div>
-      )}
-    </BaseNode>
-  )
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/components/flow/nodes/state-node.tsx`
-```
-import type { NodeData } from '../../../api/flows/types'
-import { BaseNode } from './base-node'
-
-export function StateFlowNode({ data }: { data: NodeData }) {
-  return (
-    <BaseNode
-      data={data}
-      variant="state"
-      title={data.name}
-      subtitle={data.description}
-      disableSourceHandle={!data.emits?.length && !data.virtualEmits?.length}
-      disableTargetHandle={!data.subscribes?.length && !data.virtualSubscribes?.length}
-    />
-  )
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/components/flow/use-flow-state.ts`
-```
-import {
-  type Edge,
-  type Node,
-  type OnNodesChange,
-  useEdgesState,
-  useNodesState,
-} from '@xyflow/react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { saveFlowConfig } from '../../api/flows/flows'
-import type { FlowConfigResponse, FlowResponse, NodeConfig, NodeData } from '../../api/flows/types'
-import { ApiFlowNode } from './nodes/api-node'
-import { CronFlowNode } from './nodes/cron-node'
-import { EventFlowNode } from './nodes/event-node'
-import { NoopFlowNode } from './nodes/noop-node'
-import { QueueFlowNode } from './nodes/queue-node'
-import { StateFlowNode } from './nodes/state-node'
-
-const DEFAULT_CONFIG: NodeConfig = { x: 0, y: 0 }
-
-const NODE_TYPES = {
-  event: EventFlowNode,
-  http: ApiFlowNode,
-  api: ApiFlowNode, // fallback
-  noop: NoopFlowNode,
-  cron: CronFlowNode,
-  queue: QueueFlowNode, // fallback
-  'durable:subscriber': QueueFlowNode,
-  state: StateFlowNode,
-}
-
-function buildNodes(flow: FlowResponse, flowConfig: FlowConfigResponse): Node<NodeData>[] {
-  return flow.steps.map((step) => {
-    const cfg = step.filePath
-      ? (flowConfig?.config[step.filePath] ?? DEFAULT_CONFIG)
-      : DEFAULT_CONFIG
-    return {
-      id: step.id,
-      type: step.type,
-      position: { x: cfg.x, y: cfg.y },
-      data: { ...step, nodeConfig: cfg },
-    }
-  })
-}
-
-function buildEdges(flow: FlowResponse): Edge[] {
-  return flow.edges.map((edge) => ({
-    ...edge,
-    type: 'base',
-  }))
-}
-
-export function useFlowState(flow: FlowResponse, flowConfig: FlowConfigResponse) {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
-
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const lastSyncKeyRef = useRef<string>('')
-  const isUserDragRef = useRef(false)
-
-  const savePositions = useCallback(() => {
-    setNodes((currentNodes) => {
-      const config = currentNodes.reduce<FlowConfigResponse['config']>((acc, node) => {
-        const data = node.data as NodeData
-        if (data.filePath) {
-          acc[data.filePath] = {
-            x: Math.round(node.position.x),
-            y: Math.round(node.position.y),
-          }
-          if (data.nodeConfig?.sourceHandlePosition) {
-            acc[data.filePath].sourceHandlePosition = data.nodeConfig.sourceHandlePosition
-          }
-          if (data.nodeConfig?.targetHandlePosition) {
-            acc[data.filePath].targetHandlePosition = data.nodeConfig.targetHandlePosition
-          }
-        }
-        return acc
-      }, {})
-
-      saveFlowConfig(flow.id, { id: flow.id, config }).catch((err) =>
-        console.error('Failed to save flow config:', err),
-      )
-
-      return currentNodes
-    })
-  }, [flow.id, setNodes])
-
-  // Memoize config serialization -- only recomputes when flowConfig reference changes
-  const configStr = useMemo(() => JSON.stringify(flowConfig?.config ?? {}), [flowConfig])
-
-  // Sync nodes/edges from flow data - only when data actually changes
-  useEffect(() => {
-    if (!flow) return
-
-    const syncKey = `${flow.id}:${flow.steps.length}:${flow.edges.length}:${configStr}`
-    if (syncKey === lastSyncKeyRef.current) return
-    lastSyncKeyRef.current = syncKey
-
-    setNodes(buildNodes(flow, flowConfig))
-    setEdges(buildEdges(flow))
-  }, [flow, flowConfig, configStr, setNodes, setEdges])
-
-  // Wrap onNodesChange to detect user-initiated drags
-  const handleNodesChange: OnNodesChange<Node<NodeData>> = useCallback(
-    (changes) => {
-      const hasDrag = changes.some((c) => c.type === 'position' && c.dragging)
-      const hasDragEnd = changes.some((c) => c.type === 'position' && !c.dragging)
-
-      if (hasDrag) {
-        isUserDragRef.current = true
-      }
-
-      onNodesChange(changes)
-
-      // Save config only after user finishes dragging
-      if (hasDragEnd && isUserDragRef.current) {
-        isUserDragRef.current = false
-
-        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
-        saveTimeoutRef.current = setTimeout(() => savePositions(), 300)
-      }
-    },
-    [onNodesChange, savePositions],
-  )
-
-  // Cleanup timeout on unmount -- flush pending save
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-        savePositions()
-      }
-    }
-  }, [savePositions])
-
-  return useMemo(
-    () => ({
-      nodes,
-      edges,
-      setNodes,
-      onNodesChange: handleNodesChange,
-      onEdgesChange,
-      nodeTypes: NODE_TYPES,
-      savePositions,
-    }),
-    [nodes, edges, setNodes, handleNodesChange, onEdgesChange, savePositions],
-  )
-}
-
-```
-
-### Core Architecture Module: `console/packages/console-frontend/src/components/queues/QueueDlqTab.tsx`
-```
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  AlertTriangle,
-  CheckCircle,
-  ChevronRight,
-  Inbox,
-  RotateCcw,
-  Trash2,
-  XCircle,
-} from 'lucide-react'
-import { useState } from 'react'
-import { dlqMessagesQuery } from '@/api/queries'
-import type { DlqMessage, DlqTopic } from '@/api/queues/queues'
-import { discardMessage, redriveDlq, redriveMessage } from '@/api/queues/queues'
-import { Badge, Button } from '@/components/ui/card'
-import { EmptyState } from '@/components/ui/empty-state'
-import { JsonViewer } from '@/components/ui/json-viewer'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tooltip } from '@/components/ui/tooltip'
-import { extractErrorMessage } from './dlq-error'
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-interface QueueDlqTabProps {
-  topic: string
-  dlqEntry: DlqTopic | undefined
-}
-
-export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
-  const [expandedMessage, setExpandedMessage] = useState<string | null>(null)
-  const [confirmDiscard, setConfirmDiscard] = useState<string | null>(null)
-  const [redriveSuccess, setRedriveSuccess] = useState<string | null>(null)
-  const [redriveError, setRedriveError] = useState<string | null>(null)
-  const [confirmRedriveAll, setConfirmRedriveAll] = useState(false)
-
-  const queryClient = useQueryClient()
-  const { data: messagesData, isLoading } = useQuery({
-    ...dlqMessagesQuery(topic),
-    refetchInterval: 3000,
-  })
-
-  const messages = messagesData?.messages ?? []
-  const expandedMsg = messages.find((m) => m.id === expandedMessage)
-
-  const bulkRedriveMutation = useMutation({
-    mutationFn: () => redriveDlq(topic),
-    onSuccess: (data) => {
-      setRedriveError(null)
-      setRedriveSuccess(`Redrived ${data.redriven} messages to ${data.queue}`)
-      setExpandedMessage(null)
-      queryClient.invalidateQueries({ queryKey: ['dlq-topics'] })
-      queryClient.invalidateQueries({ queryKey: ['dlq-messages'] })
-      queryClient.invalidateQueries({ queryKey: ['queue-detail', topic] })
-      setTimeout(() => setRedriveSuccess(null), 4000)
-    },
-    onError: (e: Error) => {
-      setRedriveError(`Redrive failed: ${e.message}`)
-      setTimeout(() => setRedriveError(null), 6000)
-    },
-  })
-
-  const messageRedriveMutation = useMutation({
-    mutationFn: (messageId: string) => redriveMessage(topic, messageId),
-    onMutate: async (messageId) => {
-      await queryClient.cancelQueries({ queryKey: ['dlq-messages', topic, 0, 50] })
-      const prev = queryClient.getQueryData<{ topic: string; messages: DlqMessage[] }>([
-        'dlq-messages',
-        topic,
-        0,
-        50,
-      ])
-      if (prev) {
-        queryClient.setQueryData(['dlq-messages', topic, 0, 50], {
-          ...prev,
-          messages: prev.messages.filter((m) => m.id !== messageId),
-        })
-      }
-      if (expandedMessage === messageId) setExpandedMessage(null)
-      return { prev }
-    },
-    onError: (_err, _messageId, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(['dlq-messages', topic, 0, 50], context.prev)
-      }
-      setRedriveError('Message redrive failed')
-      setTimeout(() => setRedriveError(null), 4000)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['dlq-messages'] })
-      queryClient.invalidateQueries({ queryKey: ['dlq-topics'] })
-      queryClient.invalidateQueries({ queryKey: ['queue-detail', topic] })
-    },
-  })
-
-  const discardMutation = useMutation({
-    mutationFn: (messageId: string) => discardMessage(topic, messageId),
-    onMutate: async (messageId) => {
-      await queryClient.cancelQueries({ queryKey: ['dlq-messages', topic, 0, 50] })
-      const prev = queryClient.getQueryData<{ topic: string; messages: DlqMessage[] }>([
-        'dlq-messages',
-        topic,
-        0,
-        50,
-      ])
-      if (prev) {
-        queryClient.setQueryData(['dlq-messages', topic, 0, 50], {
-          ...prev,
-          messages: prev.messages.filter((m) => m.id !== messageId),
-        })
-      }
-      if (expandedMessage === messageId) setExpandedMessage(null)
-      return { prev }
-    },
-    onError: (_err, _messageId, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(['dlq-messages', topic, 0, 50], context.prev)
-      }
-      setRedriveError('Discard failed')
-      setTimeout(() => setRedriveError(null), 4000)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['dlq-messages'] })
-      queryClient.invalidateQueries({ queryKey: ['dlq-topics'] })
-      queryClient.invalidateQueries({ queryKey: ['queue-detail', topic] })
-    },
-  })
-
-  // Celebration only when DLQ entry explicitly has 0 messages (after redrive)
-  // NOT when messages haven't loaded yet or API returned empty despite having a count
-  const hasDlqEntry = dlqEntry !== undefined
-  const isDlqCleared = hasDlqEntry && dlqEntry.message_count === 0
-
-  if (isLoading) {
-    return (
-      <div className="p-4 space-y-3">
-        {(['dlq-sk-0', 'dlq-sk-1', 'dlq-sk-2', 'dlq-sk-3', 'dlq-sk-4'] as const).map((sk) => (
-          <div key={sk} className="flex items-center gap-4 px-4 py-3">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 flex-1" />
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-8" />
-          </div>
-        ))}
-      </div>
+    Some(
+        tail.into_iter()
+            .rev()
+            .map(|line| {
+                let trimmed: String = line.chars().take(WIDTH).collect();
+                format!("  {trimmed}")
+            })
+            .collect::<Vec<_>>()
+            .join("\n"),
     )
-  }
+}
 
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header with redrive + feedback */}
-      <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-dark-gray/30">
-        <div className="flex items-center gap-2 min-w-0">
-          {redriveSuccess && (
-            <div className="flex items-center gap-1.5 text-[10px] text-success font-mono animate-trace-flash">
-              <CheckCircle className="w-3 h-3" />
-              {redriveSuccess}
-            </div>
-          )}
-          {redriveError && (
-            <div className="flex items-center gap-1.5 text-[10px] text-error font-mono">
-              <XCircle className="w-3 h-3" />
-              {redriveError}
-            </div>
-          )}
-        </div>
-        {confirmRedriveAll ? (
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs text-muted font-mono">
-              Redrive all {messages.length} messages?
-            </span>
-            <Button
-              variant="accent"
-              size="sm"
-              onClick={() => {
-                bulkRedriveMutation.mutate()
-                setConfirmRedriveAll(false)
-              }}
-              disabled={bulkRedriveMutation.isPending}
-              className="h-7 text-xs gap-1.5"
-            >
-              Confirm
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setConfirmRedriveAll(false)}
-              className="h-7 text-xs"
-            >
-              Cancel
-            </Button>
-          </div>
-        ) : (
-          <Button
-            variant="accent"
-            size="sm"
-            onClick={() => setConfirmRedriveAll(true)}
-            disabled={bulkRedriveMutation.isPending || messages.length === 0}
-            className="gap-1.5 shrink-0"
-          >
-            <RotateCcw
-              className={`w-3 h-3 ${bulkRedriveMutation.isPending ? 'animate-spin' : ''}`}
-            />
-            Redrive All
-          </Button>
-        )}
-      </div>
+/// Whether a trigger failure is the configuration worker reporting an
+/// unregistered id, as opposed to anything that went wrong reaching it.
+///
+/// The distinction is the whole of fetch-or-fail: one means "nothing stored
+/// yet", the other means "we do not know what is stored", and only the second
+/// is a reason to refuse to start.
+fn is_not_found(error: &iii_sdk::Error) -> bool {
+    matches!(error, iii_sdk::Error::Remote { code, .. } if code == "NOT_FOUND")
+}
 
-      {/* Message list or empty state */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden">
-        {messages.length === 0 ? (
-          isDlqCleared ? (
-            <EmptyState
-              icon={CheckCircle}
-              variant="success"
-              title="All clear"
-              description="No dead letters for this queue"
-            />
-          ) : (
-            <EmptyState
-              icon={AlertTriangle}
-              title="No failed messages"
-              description="Messages that fail processing will appear here"
-            />
-          )
-        ) : (
-          <div className="divide-y divide-border/50">
-            {messages.map((m) => {
-              const isExpanded = m.id === expandedMessage
-              const errorMsg = extractErrorMessage(m.error)
+/// What the engine showed for one container before compose started it.
+///
+/// Readiness reports differences, so it needs a "before" that predates the
+/// child. See [`EngineClient::readiness_baseline`].
+#[derive(Debug, Clone, Default)]
+pub struct ReadinessBaseline {
+    /// Workers already in the project namespace.
+    present: Vec<String>,
+    /// `(function id, namespace)` already owned by this container name.
+    functions: Vec<(String, String)>,
+    /// A worker of this name was already in `default`, so one showing up there
+    /// is not evidence that ours ignored `III_NAMESPACE`.
+    stray: bool,
+}
 
-              return (
-                <div key={m.id} className="group/row">
-                  {/* Row */}
-                  <div
-                    className={`relative flex items-center transition-colors ${
-                      isExpanded
-                        ? 'bg-error/5 border-l-2 border-l-error'
-                        : 'hover:bg-dark-gray/30 border-l-2 border-l-transparent'
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setExpandedMessage(isExpanded ? null : m.id)}
-                      className="flex-1 flex items-center gap-3 px-4 py-3 cursor-pointer text-left min-w-0"
-                    >
-                      <ChevronRight
-                        className={`w-3.5 h-3.5 shrink-0 text-muted transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-[13px] text-foreground truncate">
-                            {m.id}
-                          </span>
-                          <Badge
-                            variant={m.retries > 2 ? 'warning' : 'default'}
-                            className="text-[10px] shrink-0"
-                          >
-                            {m.retries}x
-                          </Badge>
-                          <span className="font-mono text-[11px] text-muted shrink-0">
-        
+impl EngineClient {
+    /// Connects as `daemon_id` in `namespace`, the same one its containers
+    /// register in.
+    ///
+    /// A second daemon on the same pair collides on `(namespace, worker_name)`
+    /// and the engine rejects it fatally — see [`EngineClient::fatal_error`].
+    /// Two copies of one project are a duplicate, not two projects.
+    pub fn connect(address: &str, daemon_id: &str, namespace: &str) -> Self {
+        let mut metadata = iii_sdk::iii::WorkerMetadata {
+            name: daemon_id.to_string(),
+            description: Some("compose daemon".to_string()),
+            ..Default::default()
+        };
+        metadata.namespace = Some(namespace.to_string());
+
+        let client = register_worker(
+            address,
+            InitOptions {
+                metadata: Some(metadata),
+                namespace: Some(namespace.to_string()),
+                ..Default::default()
+            },
+        );
+
+        Self {
+            client,
+            namespace: namespace.to_string(),
+        }
+    }
+
+    pub fn client(&self) -> &IIIClient {
+        &self.client
+    }
+
+    pub fn namespace(&self) -> &str {
+        &self.namespace
+    }
+
+    /// Whether the socket is up right now.
+    ///
+    /// The SDK reconnects on its own and replays the daemon's registrations,
+    /// but says nothing about the children — so the daemon polls this to notice
+    /// the connection coming back and re-check the project against the engine.
+    pub fn is_connected(&self) -> bool {
+        matches!(
+            self.client.get_connection_state(),
+            iii_sdk::runtime::IIIConnectionState::Connected
+        )
+    }
+
+    /// The registration rejection that stopped this daemon, if any. Populated
+    /// when another daemon already holds this `--id`.
+    pub fn fatal_error(&self) -> Option<iii_sdk::Error> {
+        self.client.fatal_error()
+    }
+
+    /// Fetches a configuration entry from the configuration worker.
+    ///
+    /// Fetch-or-fail, with one deliberate exception. A configuration worker
+    /// that errors or cannot be reached fails the container: starting it on
+    /// defaults it did not ask for is a silent downgrade, and an http worker on
+    /// the wrong port is worse than no http worker.
+    ///
+    /// An entry that simply *does not exist yet* is not that. The worker is
+    /// what registers its own id, with its own schema, on the boot compose
+    /// would be refusing — so treating a first boot as a fetch failure
+    /// deadlocks every project that names a configuration before it has ever
+    /// run. Absent resolves to `None`: the layer contributes nothing, and what
+    /// the compose file declares still reaches the child.
+    pub async fn fetch_config(&self, name: &str) -> Result<Option<serde_yaml::Value>> {
+        let response = match self
+            .client
+            .trigger(
+                TriggerRequest {
+                    function_id: "configuration::get".to_string(),
+                    // Use the current configuration, preserving raw env placeholders.
+                    payload: json!({ "id": name, "raw": true }),
+                    action: None,
+                    timeout_ms: Some(CALL_TIMEOUT_MS),
+                }
+                .namespace(DEFAULT_NAMESPACE),
+            )
+            .await
+        {
+            Ok(response) => response,
+            Err(source) if is_not_found(&source) => return Ok(None),
+            Err(source) => {
+                return Err(ComposeError::ConfigFetchFailed {
+                    name: name.to_string(),
+                    message: source.to_string(),
+                });
+            }
+        };
+
+        let value = response.get("value").cloned().unwrap_or(response);
+        // Absence is NOT_FOUND; explicit null is a stored value, including
+        // during migration. Never replace it with package defaults implicitly.
+        serde_yaml::to_value(value)
+            .map(Some)
+            .map_err(|err| ComposeError::ConfigFetchFailed {
+                name: name.to_string(),
+                message: err.to_string(),
+            })
+    }
+
+    /// Update active configuration before spawn without touching persistent storage.
+    pub async fn set_config(&self, name: &str, value: serde_yaml::Value) -> Result<()> {
+        let value = serde_json::to_value(value).map_err(|err| ComposeError::ConfigFetchFailed {
+            name: name.into(),
+            message: err.to_string(),
+        })?;
+        self.client
+            .trigger(
+                TriggerRequest {
+                    function_id: "configuration::set".into(),
+                    payload: json!({"id": name, "value": value, "flush": false}),
+                    action: None,
+                    timeout_ms: Some(CALL_TIMEOUT_MS),
+                }
+                .namespace(DEFAULT_NAMESPACE),
+            )
+            .await
+            .map_err(|err| ComposeError::ConfigFetchFailed {
+                name: name.into(),
+                message: format!("runtime configuration injection failed: {err}"),
+            })?;
+        Ok(())
+    }
+
+    /// Ask the configuration authority to migrate the exact previous default.
+    /// Returns true only when both source and destination are missing.
+    /// A missing function is an upgrade error, never permission to reset defaults.
+    pub async fn migrate_config(&self, from_id: &str, to_id: &str) -> Result<bool> {
+        let capabilities = self.client.trigger(TriggerRequest {
+            function_id: "configuration::migration-capabilities".into(),
+            payload: json!({}),
+            action: None,
+            timeout_ms: Some(CALL_TIMEOUT_MS),
+        }.namespace(DEFAULT_NAMESPACE)).await
+```
+
+### Core Architecture Module: `crates/iii-compose/src/hooks.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Container hooks.
+//!
+//! `pre_run` blocks the container's start and is budgeted: a hung migration
+//! must fail the container instead of holding the whole graph. `post_run` fires
+//! after the container's exit is confirmed and is not awaited by teardown. A
+//! project supervisor still owns it, so shutdown waits for supervised hooks
+//! and their timeout kills and reaps a cleanup script that hangs.
+//!
+//! Both run with the same environment and working directory as the container
+//! itself, and both get their own process group so a timeout can take their
+//! children down too.
+
+use std::{process::Stdio, time::Duration};
+
+use colored::Colorize;
+use tokio::io::AsyncReadExt;
+use tokio::sync::Mutex;
+
+use crate::{
+    manifest::StartSpec,
+    report,
+    spawn::{SpawnCtx, spawn_plan},
+};
+
+#[derive(Debug, thiserror::Error)]
+pub enum HookError {
+    #[error("{hook} could not start: {source}")]
+    Spawn {
+        hook: &'static str,
+        #[source]
+        source: std::io::Error,
+    },
+
+    #[error("{hook} failed with exit code {code}")]
+    Failed { hook: &'static str, code: i32 },
+
+    #[error("{hook} timed out after {}s", timeout.as_secs())]
+    Timeout {
+        hook: &'static str,
+        timeout: Duration,
+    },
+}
+
+impl HookError {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::Spawn { .. } => "HOOK_SPAWN_FAILED",
+            Self::Failed { .. } => "HOOK_FAILED",
+            Self::Timeout { .. } => "HOOK_TIMEOUT",
+        }
+    }
+}
+
+/// Owns every detached `post_run` task for one project.
+///
+/// Teardown does not wait for a cleanup hook, but project shutdown does. This
+/// keeps a short hook asynchronous without letting a hung hook outlive the
+/// compose process.
+#[derive(Default)]
+pub struct PostRunSupervisor {
+    state: Mutex<PostRunState>,
+}
+
+#[derive(Default)]
+struct PostRunState {
+    shutting_down: bool,
+    tasks: Vec<tokio::task::JoinHandle<()>>,
+}
+
+impl PostRunSupervisor {
+    /// Starts one bounded cleanup hook and returns as soon as it is supervised.
+    pub async fn fire(&self, ctx: &SpawnCtx<'_>, script: &str, timeout: Duration) {
+        const HOOK: &str = "post_run";
+
+        let mut state = self.state.lock().await;
+        state.tasks.retain(|task| !task.is_finished());
+        if state.shutting_down {
+            return;
+        }
+
+        let container = ctx.container_key.to_string();
+        let mut hook = match spawn_hook(ctx, script) {
+            Ok(hook) => hook,
+            Err(err) => {
+                report::line(&format!(
+                    "{} {}",
+                    format!("[{HOOK}:{container}]").dimmed(),
+                    format!("could not start: {err}").red()
+                ));
+                return;
+            }
+        };
+        state.tasks.push(tokio::spawn(async move {
+            let child = &mut hook.child;
+            let mut stdout = child.stdout.take();
+            let mut stderr = child.stderr.take();
+            let run = async {
+                let (status, out, err) =
+                    tokio::join!(child.wait(), read_all(&mut stdout), read_all(&mut stderr));
+                (status, out, err)
+            };
+
+            enum PostRunOutcome {
+                Finished((std::io::Result<std::process::ExitStatus>, String, String)),
+                TimedOut,
+            }
+
+            let outcome = {
+                tokio::pin!(run);
+                let timer = tokio::time::sleep(timeout);
+                tokio::pin!(timer);
+                tokio::select! {
+                    result = &mut run => PostRunOutcome::Finished(result),
+                    _ = &mut timer => PostRunOutcome::TimedOut,
+                }
+            };
+
+            match outcome {
+                PostRunOutcome::Finished((status, out, err)) => {
+                    log_output(HOOK, &container, &out, &err);
+                    match status {
+                        Ok(status) if status.success() => {}
+                        Ok(status) => report::line(&format!(
+                            "{} {}",
+                            format!("[{HOOK}:{container}]").dimmed(),
+                            format!("exited with {}", status.code().unwrap_or(-1)).yellow()
+                        )),
+                        Err(err) => report::line(&format!(
+                            "{} {}",
+                            format!("[{HOOK}:{container}]").dimmed(),
+                            format!("could not be waited on: {err}").yellow()
+                        )),
+                    }
+                }
+                PostRunOutcome::TimedOut => {
+                    hook.kill_tree();
+                    let _ = hook.child.wait().await;
+                    report::line(&format!(
+                        "{} {}",
+                        format!("[{HOOK}:{container}]").dimmed(),
+                        format!("timed out after {}s", timeout.as_secs_f64()).yellow()
+                    ));
+                }
+            }
+        }));
+    }
+
+    /// Waits for every supervised cleanup hook to finish or reach its timeout.
+    pub async fn shutdown(&self) {
+        let tasks = {
+            let mut state = self.state.lock().await;
+            state.shutting_down = true;
+            std::mem::take(&mut state.tasks)
+        };
+
+        for task in tasks {
+            let _ = task.await;
+        }
+    }
+}
+
+/// Runs `pre_run` to completion. On timeout the hook's whole process group is
+/// killed before the error returns, so nothing survives into the next attempt.
+pub async fn await_pre_run(
+    ctx: &SpawnCtx<'_>,
+    script: &str,
+    timeout: Duration,
+) -> Result<(), HookError> {
+    await_pre_run_until_shutdown(ctx, script, timeout, None)
+        .await
+        .expect("a hook without a shutdown signal cannot be interrupted")
+}
+
+/// Runs `pre_run`, killing and reaping its process group if foreground compose
+/// is interrupted while the hook is active.
+pub(crate) async fn await_pre_run_until_shutdown(
+    ctx: &SpawnCtx<'_>,
+    script: &str,
+    timeout: Duration,
+    shutdown: Option<&mut crate::shutdown::ShutdownSignal>,
+) -> Option<Result<(), HookError>> {
+    const HOOK: &str = "pre_run";
+
+    let mut hook = match spawn_hook(ctx, script) {
+        Ok(hook) => hook,
+        Err(source) => return Some(Err(HookError::Spawn { hook: HOOK, source })),
+    };
+    let child = &mut hook.child;
+
+    let mut stdout = child.stdout.take();
+    let mut stderr = child.stderr.take();
+
+    // Draining both pipes while waiting: a hook that writes more than a pipe
+    // buffer would otherwise block forever and look like a timeout.
+    let run = async {
+        let (status, out, err) =
+            tokio::join!(child.wait(), read_all(&mut stdout), read_all(&mut stderr));
+        (status, out, err)
+    };
+
+    enum HookOutcome {
+        Finished((std::io::Result<std::process::ExitStatus>, String, String)),
+        TimedOut,
+        Interrupted,
+    }
+
+    let outcome = {
+        tokio::pin!(run);
+        let timer = tokio::time::sleep(timeout);
+        tokio::pin!(timer);
+        match shutdown {
+            Some(shutdown) => tokio::select! {
+                biased;
+                _ = shutdown.wait() => HookOutcome::Interrupted,
+                result = &mut run => HookOutcome::Finished(result),
+                _ = &mut timer => HookOutcome::TimedOut,
+            },
+            None => tokio::select! {
+                result = &mut run => HookOutcome::Finished(result),
+                _ = &mut timer => HookOutcome::TimedOut,
+            },
+        }
+    };
+
+    match outcome {
+        HookOutcome::Finished((status, out, err)) => {
+            log_output(HOOK, ctx.container_key, &out, &err);
+            let status = match status {
+                Ok(status) => status,
+                Err(source) => return Some(Err(HookError::Spawn { hook: HOOK, source })),
+            };
+            if status.success() {
+                Some(Ok(()))
+            } else {
+                Some(Err(HookError::Failed {
+                    hook: HOOK,
+                    code: status.code().unwrap_or(-1),
+                }))
+            }
+        }
+        HookOutcome::TimedOut => {
+            // Kill before waiting: the hook is hung by definition, so waiting
+            // first would never return.
+            hook.kill_tree();
+            let _ = hook.child.wait().await;
+            Some(Err(HookError::Timeout {
+                hook: HOOK,
+                timeout,
+            }))
+        }
+        HookOutcome::Interrupted => {
+            hook.kill_tree();
+            let _ = hook.child.wait().await;
+            None
+        }
+    }
+}
+
+/// A hook process plus whatever the platform needs to take its descendants
+/// down: a process group on unix, a job object on windows.
+struct HookProcess {
+    child: tokio::process::Child,
+    #[cfg(windows)]
+    job: Option<crate::process::windows::JobHandle>,
+}
+
+impl HookProcess {
+    fn kill_tree(&mut self) {
+        #[cfg(unix)]
+        if let Some(pid) = self.child.id() {
+            crate::process::unix::signal_group(pid as i32, nix::sys::signal::Signal::SIGKILL);
+        }
+        #[cfg(windows)]
+        match &self.job {
+            Some(job) => job.terminate(),
+            // No job: the hook itself still dies, its own children may not.
+            None => {
+                let _ = self.child.start_kill();
+            }
+        }
+    }
+}
+
+impl Drop for HookProcess {
+    fn drop(&mut self) {
+        // Last-resort cleanup for an abrupt runtime drop. Normal timeout and
+        // project shutdown kill and wait before this point.
+        self.kill_tree();
+    }
+}
+
+/// Builds a hook command that mirrors the co
+```
+
+### Core Architecture Module: `crates/iii-compose/src/lifecycle.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! `up` and `down`.
+//!
+//! Three rules shape everything here:
+//!
+//! 1. **A container is up only when the engine has seen it.** Spawning is not
+//!    starting: readiness is the child appearing under `(namespace, container)`
+//!    in the engine, which is the same fact its dependents rely on.
+//! 2. **Rollback undoes this operation, not the world.** A failed `up` stops
+//!    what it started, in reverse order, and leaves containers that were
+//!    already running untouched.
+//! 3. **Teardown follows the graph backwards.** Dependents stop before the
+//!    things they depend on, so nothing is talking to a worker that just went
+//!    away. Removal is the explicit exception: its validated new graph first
+//!    drops those edges, then only the deleted container stops.
+
+use std::{
+    collections::BTreeMap,
+    time::{Duration, Instant},
+};
+
+use futures::StreamExt;
+use serde::Serialize;
+
+use crate::{
+    config::{ComposeFile, Container, RestartPolicy},
+    configuration::merge,
+    dag,
+    engine::EngineClient,
+    error::{ComposeError, Result},
+    hooks,
+    logs::LogStore,
+    manifest::{StartSpec, VmSpec, resolve_start},
+    process::{Outcome, Supervised, spawn_supervised_piped},
+    report, restart,
+    spawn::{SpawnCtx, resolve_working_dir, spawn_plan},
+    state::{ChildRecord, ChildStatus},
+};
+
+/// Outcome of one `up` or `down`. The shape is the JSON that `compose::*`
+/// returns, so it is a contract: fields are added, never repurposed.
+#[derive(Debug, Clone, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+pub struct OpResult {
+    pub operation_id: String,
+    pub status: OpStatus,
+    /// False when the operation was a no-op — every requested container was
+    /// already in the desired state.
+    pub changed: bool,
+    pub containers: Vec<ContainerResult>,
+    #[serde(skip)]
+    #[schemars(skip)]
+    pub(crate) primary_error: Option<OpError>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum OpStatus {
+    Ok,
+    Failed,
+}
+
+#[derive(Debug, Clone, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+pub struct ContainerResult {
+    pub container: String,
+    pub state: ChildStatus,
+    pub changed: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<OpError>,
+}
+
+#[derive(Debug, Clone, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+pub struct OpError {
+    pub code: String,
+    pub message: String,
+}
+
+impl From<&ComposeError> for OpError {
+    fn from(error: &ComposeError) -> Self {
+        Self {
+            code: error.code().to_string(),
+            message: error.to_string(),
+        }
+    }
+}
+
+pub(crate) fn cancelled_op(operation_id: String) -> OpResult {
+    let error = ComposeError::OperationCancelled {
+        operation_id: operation_id.clone(),
+    };
+    failed_op(operation_id, None, &error)
+}
+
+/// Everything `up`/`down` need that is not the compose file itself.
+pub struct LifecycleCtx<'a> {
+    pub(crate) shutdown: &'a crate::shutdown::ShutdownController,
+    pub file: &'a ComposeFile,
+    pub engine: &'a EngineClient,
+    pub post_runs: &'a hooks::PostRunSupervisor,
+    /// Namespace of the compose daemon that owns this project. Children use
+    /// it for explicit per-call routing to `compose::*`.
+    pub compose_namespace: &'a str,
+    /// Namespace the *children* register in — not the daemon's own.
+    pub project_namespace: &'a str,
+    pub engine_url: &'a str,
+    /// Where installed packages live, shared across projects on this machine.
+    pub package_cache: &'a std::path::Path,
+    /// Persistent, bounded stdout and stderr for every project worker.
+    pub logs: &'a LogStore,
+    /// Root of the per-container VM state.
+    pub vm_dir: &'a std::path::Path,
+    pub(crate) empty_env_diagnostics: &'a crate::config::EmptyEnvDiagnostics,
+}
+
+/// What one container's start produced: which one, how long it took, and
+/// whether it came up.
+enum StartAttempt {
+    Ready {
+        record: ChildRecord,
+        child: Supervised,
+        recovery: Option<RetryRecovery>,
+    },
+    Failed(ComposeError),
+    Interrupted,
+}
+
+struct RetryRecovery {
+    attempt: u32,
+    total_attempts: u32,
+    elapsed: Duration,
+}
+
+enum StartFailure {
+    Failed(ComposeError),
+    Interrupted,
+}
+
+impl From<ComposeError> for StartFailure {
+    fn from(error: ComposeError) -> Self {
+        Self::Failed(error)
+    }
+}
+
+/// Containers currently supervised by this daemon, keyed by container id.
+pub type Children = BTreeMap<String, Supervised>;
+
+/// Starts `target` (or the whole graph) in dependency order.
+///
+/// Containers already running are left alone and reported `changed: false`, so
+/// a repeated `up` is a no-op.
+pub async fn up(
+    ctx: &LifecycleCtx<'_>,
+    children: &mut Children,
+    records: &mut BTreeMap<String, ChildRecord>,
+    target: Option<&str>,
+    operation_id: String,
+) -> OpResult {
+    up_inner(
+        ctx,
+        children,
+        records,
+        target,
+        operation_id.clone(),
+        Some(ctx.shutdown.signal()),
+    )
+    .await
+    .unwrap_or_else(|| cancelled_op(operation_id))
+}
+
+/// Starts the foreground project's graph, rolling back this operation when an
+/// OS shutdown signal arrives.
+pub(crate) async fn up_until_shutdown(
+    ctx: &LifecycleCtx<'_>,
+    children: &mut Children,
+    records: &mut BTreeMap<String, ChildRecord>,
+    target: Option<&str>,
+    operation_id: String,
+    shutdown: crate::shutdown::ShutdownSignal,
+) -> Option<OpResult> {
+    up_inner(
+        ctx,
+        children,
+        records,
+        target,
+        operation_id,
+        Some(shutdown.or(ctx.shutdown.signal())),
+    )
+    .await
+}
+
+async fn up_inner(
+    ctx: &LifecycleCtx<'_>,
+    children: &mut Children,
+    records: &mut BTreeMap<String, ChildRecord>,
+    target: Option<&str>,
+    operation_id: String,
+    shutdown: Option<crate::shutdown::ShutdownSignal>,
+) -> Option<OpResult> {
+    report::in_project_scope(
+        &ctx.file.path,
+        up_scoped(ctx, children, records, target, operation_id, shutdown),
+    )
+    .await
+}
+
+async fn up_scoped(
+    ctx: &LifecycleCtx<'_>,
+    children: &mut Children,
+    records: &mut BTreeMap<String, ChildRecord>,
+    target: Option<&str>,
+    operation_id: String,
+    shutdown: Option<crate::shutdown::ShutdownSignal>,
+) -> Option<OpResult> {
+    let began = Instant::now();
+    let order = match plan_targets(ctx.file, target) {
+        Ok(order) => order,
+        Err(error) => {
+            report::summary_failed("up", error.code(), began.elapsed());
+            return Some(failed_op(operation_id, target, &error));
+        }
+    };
+
+    let mut results: Vec<ContainerResult> = Vec::new();
+    // Only what *this* operation started may be rolled back.
+    let mut started: Vec<String> = Vec::new();
+    // Containers that failed and said their failure does not fail the
+    // operation. Named so the closing line reports the partial project.
+    let mut not_required_failures = Vec::new();
+    let max_parallel_workers = crate::parallelism::max_parallel_workers();
+
+    // Everything this operation will touch, drawn before any of it moves, so an
+    // operator sees the shape rather than a line at a time.
+    let versions = version_labels(ctx.file, order.iter().map(String::as_str));
+    if target.is_none() {
+        report::plan_full_labeled(&dag::outline(ctx.file, &order), &versions);
+    } else {
+        report::plan_labeled(&dag::outline(ctx.file, &order), &versions);
+    }
+    if let Some(operation) = crate::operation::active(&operation_id) {
+        let outline = dag::outline(ctx.file, &order);
+        operation.plan(outline.len()).await;
+        for (key, depth) in &outline {
+            operation
+                .emit_tree(key, *depth, "waiting for dependencies")
+                .await;
+        }
+    }
+
+    // Grouped rather than listed: only a declared dependency has to wait, and
+    // in a project of fourteen where one worker calls the other thirteen, the
+    // thirteen have nothing to wait for.
+    for wave in dag::waves(ctx.file, &order) {
+        if shutdown.as_ref().is_some_and(|signal| signal.requested()) {
+            report::plan_done();
+            rollback(ctx, children, records, &started, &mut results).await;
+            return None;
+        }
+
+        let mut starting: Vec<String> = Vec::new();
+        for key in &wave {
+            if is_running(children, key) {
+                report::unchanged(key, "already running");
+                if let Some(operation) = crate::operation::active(&operation_id) {
+                    operation.emit(Some(key), "ready", "already running").await;
+                    operation.completed_one().await;
+                }
+                results.push(ContainerResult {
+                    container: key.clone(),
+                    state: ChildStatus::Ready,
+                    changed: false,
+                    error: None,
+                });
+                continue;
+            }
+            report::starting(key, "starting");
+            if let Some(operation) = crate::operation::active(&operation_id) {
+                operation
+                    .emit(Some(key), "starting", "starting worker")
+                    .await;
+            }
+            starting.push(key.clone());
+        }
+        // Bounded: a wave may hold every container in the file, and each one
+        // can be a download, a process, or a VM. An operator's machine should
+        // not have to survive all of them at once.
+        let mut outcomes = futures::stream::iter(starting.into_iter().map(|key| {
+            let shutdown = shutdown.clone();
+            let start_operation_id
+```
+
+### Core Architecture Module: `crates/iii-compose/src/managed_engine.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Lifecycle of the engine process owned by `iii compose --up`.
+
+use std::{
+    io::{Read, Seek, SeekFrom, Write},
+    path::{Path, PathBuf},
+    process::{ExitStatus, Stdio},
+    time::Duration,
+};
+
+use serde::Serialize;
+use tokio::io::AsyncReadExt;
+
+use crate::{
+    config::{CONFIGURABLE_ENGINE_WORKERS, EngineSpec},
+    error::{ComposeError, Result},
+    process::{ChildOutput, DEFAULT_STOP_GRACE, Supervised},
+    state::StateStore,
+};
+
+/// Maximum size of the active engine log before it rolls into an archive.
+const ENGINE_LOG_MAX_BYTES: u64 = 10 * 1024 * 1024;
+/// Number of old engine log segments retained beside `engine.log`.
+const ENGINE_LOG_ARCHIVES: usize = 3;
+const ENGINE_LOCK_FILE: &str = "engine.lock";
+const ENGINE_CONFIG_FILE: &str = "engine-config.yaml";
+const DEFAULT_WORKER_MANAGER_HOST: &str = "0.0.0.0";
+
+/// Private marker enabling the managed engine's stdin lifeline.
+const ENGINE_LIFELINE_STDIN_ENV: &str = "III_COMPOSE_ENGINE_LIFELINE_STDIN";
+const DEFAULT_WORKER_MANAGER_PORT: u16 = 49134;
+
+/// The engine process owned by one foreground compose invocation.
+pub struct ManagedEngine {
+    process: Supervised,
+    logs: LogCapture,
+    config_path: PathBuf,
+    log_path: PathBuf,
+    remove_config_on_stop: bool,
+    _lifeline: EngineLifeline,
+    _namespace_lock: Option<NamespaceLock>,
+}
+
+impl ManagedEngine {
+    /// Starts the current `iii` executable with output detached from compose's
+    /// terminal and captured in the owning project's namespace directory.
+    pub async fn start(
+        spec: &EngineSpec,
+        daemon_namespace: &str,
+        compose_path: &Path,
+    ) -> Result<Self> {
+        ensure_listener_available(spec)?;
+        let executable =
+            std::env::current_exe().map_err(|err| ComposeError::EngineSpawnFailed {
+                message: format!("could not locate the current iii executable: {err}"),
+            })?;
+        let store = StateStore::for_project(daemon_namespace, compose_path)?;
+        let namespace_dir = store.dir();
+        let lock_dir = namespace_dir.to_path_buf();
+        let namespace = daemon_namespace.to_string();
+        let namespace_lock =
+            tokio::task::spawn_blocking(move || NamespaceLock::acquire(&lock_dir, &namespace))
+                .await
+                .map_err(|source| ComposeError::EngineSpawnFailed {
+                    message: format!("could not claim the managed engine namespace: {source}"),
+                })??;
+        let config_path = materialize_engine_config(spec, namespace_dir)?;
+        let log_path = engine_log_path(namespace_dir);
+        let mut engine = Self::spawn_with_materialized_config(
+            &executable,
+            &config_path,
+            &log_path,
+            daemon_namespace,
+        )
+        .await?;
+        engine._namespace_lock = Some(namespace_lock);
+        Ok(engine)
+    }
+
+    async fn spawn_with_materialized_config(
+        executable: &Path,
+        config_path: &Path,
+        log_path: &Path,
+        namespace: &str,
+    ) -> Result<Self> {
+        // Cancellation before spawn must remove the materialized configuration.
+        struct PendingConfig(Option<PathBuf>);
+        impl Drop for PendingConfig {
+            fn drop(&mut self) {
+                if let Some(path) = &self.0 {
+                    let _ = std::fs::remove_file(path);
+                }
+            }
+        }
+        let mut pending = PendingConfig(Some(config_path.to_path_buf()));
+        match Self::spawn_with_paths(executable, config_path, log_path, namespace).await {
+            Ok(mut engine) => {
+                pending.0 = None;
+                engine.remove_config_on_stop = true;
+                Ok(engine)
+            }
+            Err(error) => {
+                let _ = std::fs::remove_file(config_path);
+                Err(error)
+            }
+        }
+    }
+
+    async fn spawn_with_paths(
+        executable: &Path,
+        config_path: &Path,
+        log_path: &Path,
+        namespace: &str,
+    ) -> Result<Self> {
+        let parent = log_path.parent().unwrap_or_else(|| Path::new("."));
+        std::fs::create_dir_all(parent).map_err(|source| ComposeError::Io {
+            path: parent.to_path_buf(),
+            source,
+        })?;
+        owner_only(parent).map_err(|source| ComposeError::Io {
+            path: parent.to_path_buf(),
+            source,
+        })?;
+
+        let owned_log_path = log_path.to_path_buf();
+        let log = tokio::task::spawn_blocking(move || {
+            RotatingLog::open(&owned_log_path, ENGINE_LOG_MAX_BYTES, ENGINE_LOG_ARCHIVES)
+        })
+        .await
+        .map_err(|source| ComposeError::EngineSpawnFailed {
+            message: format!("could not prepare the engine log: {source}"),
+        })?
+        .map_err(|source| ComposeError::Io {
+            path: log_path.to_path_buf(),
+            source,
+        })?;
+
+        let mut command = tokio::process::Command::new(executable);
+        command
+            .arg("--config")
+            .arg(config_path)
+            .env(ENGINE_LIFELINE_STDIN_ENV, "1")
+            .stdin(Stdio::piped());
+        #[cfg(target_os = "linux")]
+        {
+            use std::os::unix::process::CommandExt;
+
+            command
+                .as_std_mut()
+                .arg0(crate::process_title::command_name(
+                    crate::process_title::Role::Engine,
+                    namespace,
+                ));
+        }
+        #[cfg(not(target_os = "linux"))]
+        let _ = namespace;
+
+        let (process, output, lifeline) =
+            spawn_managed_engine(command).map_err(|err| ComposeError::EngineSpawnFailed {
+                message: format!("could not start {}: {err}", executable.display()),
+            })?;
+        let logs = capture_output(output, log);
+
+        Ok(Self {
+            process,
+            logs,
+            config_path: config_path.to_path_buf(),
+            log_path: log_path.to_path_buf(),
+            remove_config_on_stop: false,
+            _lifeline: lifeline,
+            _namespace_lock: None,
+        })
+    }
+
+    pub fn pid(&self) -> u32 {
+        self.process.pid
+    }
+
+    pub fn config_path(&self) -> &Path {
+        &self.config_path
+    }
+
+    pub fn log_path(&self) -> &Path {
+        &self.log_path
+    }
+
+    pub fn follow_command(&self) -> String {
+        follow_command(&self.log_path)
+    }
+
+    pub fn log_tail(&self) -> Option<String> {
+        log_tail(&self.log_path)
+    }
+
+    #[cfg(test)]
+    async fn wait(&self) -> ExitStatus {
+        let status = self.process.wait().await;
+        self.finish_logging().await;
+        status
+    }
+
+    pub fn poll(&self) -> crate::process::Outcome {
+        self.process.poll()
+    }
+
+    pub async fn stop(&self, grace: Duration) -> ExitStatus {
+        let status = self.process.stop(grace).await;
+        self.finish_logging().await;
+        if self.remove_config_on_stop {
+            let _ = std::fs::remove_file(&self.config_path);
+        }
+        status
+    }
+
+    pub async fn stop_with_default_grace(&self) -> ExitStatus {
+        self.stop(DEFAULT_STOP_GRACE).await
+    }
+
+    /// Lets the output readers flush the final bytes after the child exits.
+    pub async fn finish_logging(&self) {
+        let _ = tokio::time::timeout(Duration::from_secs(2), self.logs.wait()).await;
+    }
+}
+
+/// The Compose-owned endpoint whose lifetime governs only the managed engine.
+struct EngineLifeline {
+    _stdin: tokio::process::ChildStdin,
+}
+
+fn spawn_managed_engine(
+    command: tokio::process::Command,
+) -> std::io::Result<(Supervised, ChildOutput, EngineLifeline)> {
+    let (process, output, stdin) = crate::process::spawn_supervised_piped_with_stdin(command)?;
+    Ok((process, output, EngineLifeline { _stdin: stdin }))
+}
+
+#[derive(Serialize)]
+struct MaterializedEngineConfig<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    registration_namespace_grace_ms: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    observers: Option<&'a serde_yaml::Value>,
+    workers: Vec<MaterializedWorker<'a>>,
+}
+
+#[derive(Serialize)]
+struct MaterializedWorker<'a> {
+    name: &'a str,
+    config: &'a serde_yaml::Value,
+}
+
+fn materialize_engine_config(spec: &EngineSpec, namespace_dir: &Path) -> Result<PathBuf> {
+    std::fs::create_dir_all(namespace_dir).map_err(|source| ComposeError::Io {
+        path: namespace_dir.to_path_buf(),
+        source,
+    })?;
+    owner_only(namespace_dir).map_err(|source| ComposeError::Io {
+        path: namespace_dir.to_path_buf(),
+        source,
+    })?;
+
+    let inferred_worker_manager = (!spec.workers.contains_key("iii-worker-manager"))
+        .then(|| worker_manager_config_from_url(&spec.url))
+        .transpose()?;
+    let mut workers = Vec::new();
+    for worker_type in CONFIGURABLE_ENGINE_WORKERS {
+        workers.extend(
+            spec.workers
+                .iter()
+                .filter(|(name, _)| crate::config::engine_worker_type(name) == *worker_type)
+                .map(|(name, config)| MaterializedWorker { name, config }),
+        );
+        if *worker_type == "iii-worker-manager"
+            && let Some(config) = inferred_worker_manager.as_ref()
+        {
+            workers.push(MaterializedWorker {
+                name: "iii-worker-manager",
+                config,
+            });
+        }
+    }
+    let document = MaterializedEngineConfig {
+        registration_namespace_grace_ms: spec.registration_namespace_grace_ms,
+        observers: spec.observers.as_ref(),
+        workers,
+    };
+    let text = serde_yaml::to_string(&document).map_err(|err| ComposeError::EngineSpawnFailed {
+        message: format!("could not serialize managed en
+```
+
+### Core Architecture Module: `crates/iii-compose/src/state.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Durable per-child state and restart reconciliation.
+//!
+//! A compose daemon can die while its children keep running — that is the point
+//! of putting them in their own process groups. On the next start the daemon has
+//! to work out, for each child it recorded, whether that process is still the
+//! one it started.
+//!
+//! The answer is never guessed. [`reconcile`] only reads: it compares the
+//! recorded birth fingerprint against the live one and reports
+//! [`Reconciliation::Unverifiable`] when they disagree, so a recycled PID is
+//! surfaced for manual cleanup instead of being signalled.
+
+use std::{
+    collections::BTreeMap,
+    io::Write,
+    path::{Path, PathBuf},
+};
+
+use serde::{Deserialize, Serialize};
+
+use crate::{
+    error::{ComposeError, Result},
+    process::{BirthIdentity, birth_identity},
+};
+
+pub const STATE_FILE: &str = "state.json";
+
+/// Directory name for relocated project state, derived from its compose file.
+///
+/// Two halves for two jobs: the parent directory's name so an operator
+/// browsing `$III_COMPOSE_STATE_DIR` recognises what they are looking at, and a hash of
+/// the canonical path so two projects that happen to share a directory name
+/// stay apart. The file name itself is nearly always `worker-compose.yaml`, so
+/// it carries nothing.
+pub fn project_slug(compose_path: &Path) -> String {
+    use sha2::{Digest, Sha256};
+
+    let readable = compose_path
+        .parent()
+        .and_then(|dir| dir.file_name())
+        .and_then(|name| name.to_str())
+        .map(|name| {
+            name.chars()
+                .map(|c| if c.is_ascii_alphanumeric() { c } else { '-' })
+                .collect::<String>()
+        })
+        .filter(|name| !name.is_empty())
+        .unwrap_or_else(|| "project".to_string());
+
+    let digest = hex::encode(Sha256::digest(compose_path.as_os_str().as_encoded_bytes()));
+    format!("{readable}-{}", &digest[..8])
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum ChildStatus {
+    /// Spawned, not yet visible in the engine.
+    Starting,
+    /// Registered in the engine under `(namespace, container)`.
+    Ready,
+    /// Exited after it was ready, declared a `restart` policy, and is inside
+    /// the wait before the supervisor's next attempt. Nothing is running under
+    /// this name right now, which is what separates it from `Ready`, and the
+    /// supervisor has not given up on it, which is what separates it from
+    /// `Failed`.
+    Restarting,
+    /// Exited unsuccessfully with no eligible retry, exhausted its retries, or
+    /// a hook failed.
+    Failed,
+    /// Stopped by the daemon, or exited successfully without an eligible
+    /// restart.
+    Stopped,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ChildRecord {
+    pub pid: u32,
+    /// Fingerprint taken when the child was spawned. Without a match, the PID is
+    /// never signalled again.
+    pub birth: BirthIdentity,
+    pub status: ChildStatus,
+    /// Seconds since the unix epoch, for `compose::status` output.
+    pub started_at: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_error: Option<String>,
+}
+
+impl ChildRecord {
+    pub fn new(pid: u32, birth: BirthIdentity, status: ChildStatus) -> Self {
+        Self {
+            pid,
+            birth,
+            status,
+            started_at: now_unix(),
+            last_error: None,
+        }
+    }
+
+    pub fn from_supervised(child: &crate::process::Supervised, status: ChildStatus) -> Self {
+        Self::new(child.pid, child.birth.clone(), status)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DaemonState {
+    /// Compose file this state belongs to, canonicalized. It is also what the
+    /// state is bound to — see [`DaemonState::check_binding`].
+    pub compose_path: PathBuf,
+    pub namespace: String,
+    #[serde(default)]
+    pub containers: BTreeMap<String, ChildRecord>,
+    /// The compose process that opened this project last. `None` in state
+    /// written before it was recorded.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub owner: Option<Owner>,
+}
+
+/// One compose process, fingerprinted like the children it records.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Owner {
+    pub pid: u32,
+    pub birth: BirthIdentity,
+}
+
+impl Owner {
+    pub fn current() -> Self {
+        let pid = std::process::id();
+        Self {
+            pid,
+            birth: birth_identity(pid),
+        }
+    }
+
+    /// Whether this compose process is still running. Children recorded by a
+    /// live owner are its own, even when another process reads the state; a
+    /// dead owner's survivors are supervised by nobody.
+    pub fn is_alive(&self) -> bool {
+        // Equality, not `matches`: this process is alive even where no
+        // fingerprint can be taken.
+        if self.pid == std::process::id() {
+            return self.birth == birth_identity(self.pid);
+        }
+        crate::process::is_running(self.pid) && self.birth.matches(&birth_identity(self.pid))
+    }
+}
+
+impl DaemonState {
+    pub fn new(compose_path: &Path, namespace: &str) -> Self {
+        Self {
+            compose_path: compose_path.to_path_buf(),
+            namespace: namespace.to_string(),
+            containers: BTreeMap::new(),
+            owner: None,
+        }
+    }
+
+    /// Refuses state recorded for a different compose file.
+    ///
+    /// Two compose files in the same directory must use different namespaces.
+    /// Adopting another file's state would let one project kill its children.
+    pub fn check_binding(&self, compose_path: &Path) -> Result<()> {
+        if self.compose_path == compose_path {
+            return Ok(());
+        }
+        Err(ComposeError::InvalidState {
+            path: compose_path.to_path_buf(),
+            message: format!(
+                "it records {} instead. Use a different namespace for each compose file in this directory",
+                self.compose_path.display()
+            ),
+        })
+    }
+}
+
+/// What a restarting daemon should do with one recorded child.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Reconciliation {
+    /// Same process, still running: re-adopt it without restarting anything.
+    /// Only a live owner's children are kept that way; see
+    /// [`DaemonState::owner`].
+    Adopt,
+    /// The process is gone. Its `post_run` still owes a run and its local
+    /// dependents have to come down.
+    Gone,
+    /// A live PID that is not provably the recorded process — a recycled PID, or
+    /// a platform that cannot fingerprint. Never signalled; reported instead.
+    Unverifiable,
+    /// This daemon stopped it on purpose and recorded that: nothing to adopt,
+    /// nothing to report. `down` leaves the record behind and `restart`
+    /// re-opens the project right after it.
+    Stopped,
+}
+
+/// Read-only: inspects the recorded child and returns what to do. Signals
+/// nothing, kills nothing.
+pub fn reconcile(record: &ChildRecord) -> Reconciliation {
+    if record.status == ChildStatus::Stopped {
+        return Reconciliation::Stopped;
+    }
+    if !crate::process::is_running(record.pid) {
+        return Reconciliation::Gone;
+    }
+    if record.birth.matches(&birth_identity(record.pid)) {
+        Reconciliation::Adopt
+    } else {
+        Reconciliation::Unverifiable
+    }
+}
+
+/// Owner-only directory holding one daemon's durable state.
+#[derive(Debug, Clone)]
+pub struct StateStore {
+    dir: PathBuf,
+}
+
+impl StateStore {
+    /// Shared package storage: `~/.iii/compose`, or `$III_COMPOSE_STATE_DIR`.
+    /// Project state lives beside the compose file unless explicitly relocated.
+    pub fn root() -> Result<PathBuf> {
+        match std::env::var_os("III_COMPOSE_STATE_DIR") {
+            Some(root) => Ok(PathBuf::from(root)),
+            None => Ok(dirs::home_dir()
+                .ok_or(ComposeError::StateDirUnavailable)?
+                .join(".iii")
+                .join("compose")),
+        }
+    }
+
+    /// Registry packages are shared by every Compose daemon and project on
+    /// this machine.
+    pub fn package_cache() -> Result<PathBuf> {
+        Ok(Self::root()?.join("packages"))
+    }
+
+    /// Where one project's state lives:
+    /// `<compose-dir>/.iii/compose/<daemon-namespace>`, or
+    /// `$III_COMPOSE_STATE_DIR/<project-slug>/<daemon-namespace>` when relocated.
+    ///
+    /// Callers pass the canonical compose path so `--file` and symlinks use
+    /// the same directory. A shared external root needs a slug to keep projects
+    /// apart, while the default is already scoped to the project directory.
+    pub fn for_project(daemon_namespace: &str, compose_path: &Path) -> Result<Self> {
+        let project_dir = match std::env::var_os("III_COMPOSE_STATE_DIR") {
+            Some(root) => PathBuf::from(root).join(project_slug(compose_path)),
+            None => compose_path
+                .parent()
+                .unwrap_or_else(|| Path::new("."))
+                .join(".iii")
+                .join("compose"),
+        };
+        Ok(Self::at(project_dir.join(daemon_namespace)))
+    }
+
+    pub fn at(dir: impl Into<PathBuf>) -> Self {
+        Self { dir: dir.into() }
+    }
+
+    pub fn dir(&self) -> &Path {
+        &self.dir
+    }
+
+    pub fn path(&self) -> PathBuf {
+        self.dir.join(STATE_FILE)
+    }
+
+    /// `None` when this daemon has never written state. A corrupt file is an
+    /// error, never a silent reset: that is exactly the moment children may be
+    /// running unaccounted for.
+    pub fn loa
+```
+
+### Core Architecture Module: `crates/iii-worker/examples/dump_worker_env.rs`
+```
+//! Quick demo: dumps the env hashmap that `iii worker start <name>`
+//! would inject into the sandbox VM for a given worker, after
+//! `${VAR}` / `${VAR:default}` expansion. Run from a directory
+//! containing `config.yaml`:
+//!
+//!     ANTHROPIC_API_KEY=sk-real \
+//!       cargo run -p iii-worker --example dump_worker_env -- ai-worker
+
+fn main() {
+    let name = std::env::args().nth(1).unwrap_or_else(|| {
+        eprintln!("usage: dump_worker_env <worker-name>");
+        std::process::exit(2);
+    });
+    let env = iii_worker::cli::config_file::get_worker_config_as_env(&name);
+    if env.is_empty() {
+        eprintln!("(empty — worker not found, or expansion failed; see stderr above)");
+        std::process::exit(1);
+    }
+    let mut keys: Vec<_> = env.keys().collect();
+    keys.sort();
+    for k in keys {
+        println!("{}={}", k, env[k]);
+    }
+}
+
+```
+
+### Core Architecture Module: `crates/iii-worker/examples/gen-golden.rs`
+```
+//! One-time generator for the embedded golden upper image.
+//!
+//! Reads a raw (sparse) empty ext4 image and emits the compressed
+//! sparse-extent format consumed by `cli::upper` at runtime. Driven by
+//! `crates/iii-worker/vendor/regen-golden.sh`; not built into the shipped
+//! binary.
+//!
+//! Usage: gen-golden <raw.ext4> <out.iiu.gz>
+
+use iii_worker::cli::upper;
+use std::path::Path;
+
+fn main() {
+    let mut args = std::env::args().skip(1);
+    let (raw, out) = match (args.next(), args.next()) {
+        (Some(raw), Some(out)) => (raw, out),
+        _ => {
+            eprintln!("usage: gen-golden <raw.ext4> <out.iiu.gz>");
+            std::process::exit(2);
+        }
+    };
+
+    match upper::build_golden(Path::new(&raw), Path::new(&out)) {
+        Ok(stats) => {
+            let on_disk = std::fs::metadata(&out).map(|m| m.len()).unwrap_or(0);
+            eprintln!(
+                "gen-golden: {} -> {}\n  logical {:.1} GiB, {} non-zero {}-byte blocks kept, artifact {:.2} MiB",
+                raw,
+                out,
+                stats.total_len as f64 / (1u64 << 30) as f64,
+                stats.blocks_kept,
+                stats.block_size,
+                on_disk as f64 / (1u64 << 20) as f64,
+            );
+        }
+        Err(e) => {
+            eprintln!("gen-golden: failed: {e}");
+            std::process::exit(1);
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `crates/iii-worker/src/cli/app.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+use clap::{Args, Parser, Subcommand};
+use std::path::PathBuf;
+
+/// Default engine WebSocket port (must match engine's DEFAULT_PORT).
+pub const DEFAULT_PORT: u16 = 49134;
+
+/// Shared arguments for `add` and `reinstall` commands.
+#[derive(Args, Debug)]
+pub struct AddArgs {
+    /// iii registry worker names (ex. `database` or `pdfkit@1.0.0`), local worker
+    /// paths (ex. `./my_worker`, a directory containing `iii.worker.yaml`), or
+    /// Docker / OCI image references (ex. `ghcr.io/org/worker:tag`)
+    #[arg(value_name = "WORKER[@VERSION]|PATH", required = true, num_args = 1..)]
+    pub worker_names: Vec<String>,
+
+    /// Discard the worker's config.yaml entry and recreate it fresh
+    /// (dropping any hand-written config block), instead of keeping the
+    /// existing entry. With `add`, takes effect only together with --force;
+    /// `reinstall` applies force automatically.
+    #[arg(long)]
+    pub reset_config: bool,
+
+    /// Proceed without prompting when the resolved dependency graph contains
+    /// more than 32 workers. Required for large-graph installs in CI or other
+    /// non-interactive environments.
+    #[arg(long, short = 'y')]
+    pub yes: bool,
+}
+
+#[derive(Parser, Debug)]
+#[command(
+    name = "iii worker",
+    bin_name = "iii worker",
+    version,
+    about = "iii managed worker runtime"
+)]
+pub struct Cli {
+    #[command(subcommand)]
+    pub command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+pub enum Commands {
+    /// Install a worker from the iii registry, a path to a local worker directory (ex.
+    /// `./myWorker` with a `iii.worker.yaml` file within it)
+    /// or by OCI image reference. To create a NEW worker from scratch, use
+    /// `iii worker init`.
+    /// By default `add` waits up to 120s for the worker to report ready.
+    /// After which the worker will continue to boot but the command will
+    /// return to the shell. See `iii worker status` to continue observing
+    /// a booting worker and `iii worker logs` for logs.
+    Add {
+        #[command(flatten)]
+        args: AddArgs,
+
+        /// Force re-download: delete existing artifacts before adding
+        #[arg(long, short = 'f')]
+        force: bool,
+
+        /// Don't block waiting for the engine to finish booting the worker.
+        #[arg(long)]
+        no_wait: bool,
+    },
+
+    /// Remove one or more workers from config.yaml and iii.lock. The engine's
+    /// file watcher tears down any running sandbox. Artifacts under
+    /// ~/.iii/managed/{name}/ remain; use `iii worker clear {name}` to delete them.
+    Remove {
+        /// Worker names to remove (e.g., "pdfkit")
+        #[arg(value_name = "WORKER", required = true, num_args = 1..)]
+        worker_names: Vec<String>,
+
+        /// Skip the confirmation prompt when a worker is currently running
+        #[arg(long, short = 'y')]
+        yes: bool,
+    },
+
+    /// Re-download a worker (like `add --force`, but returns immediately instead of waiting
+    /// for the worker to report ready; pass `--reset-config` to also reset its config.yaml
+    /// entry to registry defaults)
+    Reinstall {
+        #[command(flatten)]
+        args: AddArgs,
+    },
+
+    /// Update workers pinned in iii.lock to the latest version published in the registry,
+    /// rewriting config.yaml and iii.lock
+    Update {
+        /// Optional worker name to update. If omitted, updates every worker in iii.lock.
+        #[arg(value_name = "WORKER")]
+        worker_name: Option<String>,
+    },
+
+    /// Clear downloaded worker artifacts from ~/.iii/ (local-only, no engine connection needed).
+    /// Does not affect a worker's own build artifacts or dependencies (e.g. node_modules, Cargo.lock).
+    Clear {
+        /// Worker name to clear (omit to clear all)
+        #[arg(value_name = "WORKER")]
+        worker_name: Option<String>,
+
+        /// Skip confirmation prompt
+        #[arg(long, short = 'y')]
+        yes: bool,
+    },
+
+    /// Start a previously stopped managed worker container. If the worker has no
+    /// local artifacts (e.g. after `iii worker clear`), it is fetched from the
+    /// registry first.
+    /// By default waits up to 120s for the worker to report ready before returning.
+    /// Workers will continue to start after 120s, see `iii worker status` and `iii worker logs` for
+    /// tracking workers.
+    Start {
+        /// Worker name to start
+        #[arg(value_name = "WORKER")]
+        worker_name: String,
+
+        /// Return immediately. Don't block waiting for the worker to report ready.
+        #[arg(long)]
+        no_wait: bool,
+
+        /// Engine WebSocket port the spawned worker connects back to. Defaults
+        /// to the iii-worker-manager port in config.yaml (else 49134); the
+        /// engine passes its configured port explicitly when auto-spawning
+        /// external workers so non-default manager ports don't silently
+        /// break connectivity.
+        #[arg(long)]
+        port: Option<u16>,
+
+        /// YAML config forwarded to the spawned worker binary as `--config <path>`.
+        /// Binary workers only; OCI workers warn and ignore.
+        #[arg(long, value_name = "PATH")]
+        config: Option<PathBuf>,
+    },
+
+    /// Stop a managed worker container. Stop is treated as a routine,
+    /// reversible action; running `iii worker start <name>` brings the worker
+    /// back up.
+    Stop {
+        /// Worker name to stop
+        #[arg(value_name = "WORKER")]
+        worker_name: String,
+        /// Backward-compat no-op. Stop never prompts; the flag is kept
+        /// so scripts that already pass `-y` keep working.
+        #[arg(short = 'y', long = "yes")]
+        yes: bool,
+    },
+
+    /// Restart a managed worker: stop if running, then start (same start path as
+    /// `iii worker start`, including the registry fetch for missing local artifacts).
+    /// By default waits up to 120s for the worker to report ready (same as start).
+    Restart {
+        /// Worker name to restart
+        #[arg(value_name = "WORKER")]
+        worker_name: String,
+
+        /// Return immediately. Don't block waiting for the worker to report ready.
+        #[arg(long)]
+        no_wait: bool,
+
+        /// Engine WebSocket port the spawned worker connects back to. Same
+        /// semantics as `start --port`.
+        #[arg(long)]
+        port: Option<u16>,
+
+        /// Same as `start --config`.
+        #[arg(long, value_name = "PATH")]
+        config: Option<PathBuf>,
+    },
+
+    /// List all workers and their status
+    List,
+
+    /// Install registry-managed workers exactly from iii.lock.
+    Sync {
+        /// Verify lockfile dependencies without mutating local files.
+        /// Useful for validation in CICD.
+        #[arg(long)]
+        frozen: bool,
+    },
+
+    /// Verify config.yaml and iii.lock agree: every managed worker in config.yaml
+    /// must be pinned in iii.lock for this platform.
+    Verify {
+        /// Also check dependency declarations against locked versions.
+        #[arg(long)]
+        strict: bool,
+    },
+
+    /// Show detailed status of one worker (config, sandbox, process, logs).
+    /// By default refreshes live in place until the worker reaches a success
+    /// or failure state; exits immediately when the engine is not running.
+    Status {
+        /// Worker name
+        #[arg(value_name = "WORKER")]
+        worker_name: String,
+
+        /// Print status and exit immediately (no live refresh)
+        #[arg(long)]
+        no_watch: bool,
+    },
+
+    /// Show logs from a managed worker container. Logs are read from the
+    /// local log files under ~/.iii/logs/{name}/.
+    Logs {
+        /// Worker name
+        #[arg(value_name = "WORKER")]
+        worker_name: String,
+
+        /// Follow log output
+        #[arg(long, short)]
+        follow: bool,
+    },
+
+    /// Scaffold a NEW standalone worker repo from scratch.
+    /// To install an EXISTING worker, use `iii worker add`.
+    Init(super::init::InitArgs),
+
+    /// Run a command inside a running worker's VM. Pipes stdin/stdout/
+    /// stderr through and returns the child's exit code. Pass `-t` for
+    /// an interactive PTY.
+    Exec(ExecArgs),
+
+    /// Manage ephemeral sandboxes (create/exec/stop short-lived VMs).
+    Sandbox {
+        #[command(subcommand)]
+        cmd: SandboxCmd,
+    },
+
+    /// Internal: sandbox RPC daemon. Started automatically by the iii
+    /// engine when `iii-sandbox` appears in config.yaml.
+    #[command(name = "sandbox-daemon", hide = true)]
+    SandboxDaemon(SandboxDaemonArgs),
+
+    /// Internal: boot a libkrun VM (crash-isolated subprocess)
+    #[command(name = "__vm-boot", hide = true)]
+    VmBoot(super::vm_boot::VmBootArgs),
+
+    /// Internal: build a bundle worker's VM and print how to start it
+    #[command(name = "__bundle-prepare", hide = true)]
+    BundlePrepare,
+
+    /// Internal: build a local-path worker's VM and print how to start it
+    #[command(name = "__local-prepare", hide = true)]
+    LocalPrepare,
+
+    /// Internal: download base images into the shared rootfs cache without
+    /// starting anything, so a later spawn finds them already there.
+    #[command(name = "__pull-images", hide = true)]
+    PullImages {
+        /// OCI references, e.g. `docker.io/iiidev/node:latest`.
+        #[arg(required = true)]
+        images: Vec<String>,
+    },
+
+    /// Internal: host-side source watcher sidecar for local-path workers
+    #[command(name = "__watch-source", hide = true)]
+    WatchSource(WatchSourceArgs),
+
+    /// Generate the committed MDX CLI reference page from this binary's
+    /// clap definitions (build tooling; see scripts/generate-cli-docs.sh)
+    #[command(name = "gen-cli-docs", hide = true)]
+    Ge
+```
+
+### Core Architecture Module: `crates/iii-worker/src/cli/binary_download.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Binary worker download, checksum verification, and installation.
+
+use super::registry::validate_worker_name;
+use sha2::{Digest, Sha256};
+use std::io::Read as _;
+use std::path::PathBuf;
+use std::sync::{
+    LazyLock,
+    atomic::{AtomicU64, Ordering},
+};
+
+/// Maximum allowed download size: 512 MB.
+const MAX_DOWNLOAD_BYTES: u64 = 512 * 1024 * 1024;
+const MAX_REDIRECTS: usize = 10;
+static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
+
+static NO_REDIRECT_HTTP_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
+    reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(120))
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .expect("Failed to create no-redirect HTTP client")
+});
+
+/// Returns the directory where binary workers are installed: `~/.iii/workers/`.
+pub fn binary_workers_dir() -> PathBuf {
+    dirs::home_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join(".iii")
+        .join("workers")
+}
+
+/// Returns the path where a named binary worker is installed: `~/.iii/workers/{name}`.
+pub fn binary_worker_path(name: &str) -> PathBuf {
+    binary_workers_dir().join(name)
+}
+
+/// Returns the compile-time target triple for the current platform.
+pub fn current_target() -> &'static str {
+    #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+    return "aarch64-apple-darwin";
+
+    #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+    return "x86_64-apple-darwin";
+
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    return "x86_64-unknown-linux-gnu";
+
+    #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
+    return "aarch64-unknown-linux-gnu";
+
+    #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+    return "x86_64-pc-windows-msvc";
+
+    #[cfg(all(target_os = "windows", target_arch = "aarch64"))]
+    return "aarch64-pc-windows-msvc";
+
+    #[cfg(not(any(
+        all(target_os = "macos", target_arch = "aarch64"),
+        all(target_os = "macos", target_arch = "x86_64"),
+        all(target_os = "linux", target_arch = "x86_64"),
+        all(target_os = "linux", target_arch = "aarch64"),
+        all(target_os = "windows", target_arch = "x86_64"),
+        all(target_os = "windows", target_arch = "aarch64"),
+    )))]
+    return "unknown";
+}
+
+/// Returns the platform-appropriate archive extension.
+pub fn archive_extension(target: &str) -> &'static str {
+    if target.contains("windows") {
+        "zip"
+    } else {
+        "tar.gz"
+    }
+}
+
+/// Extracts a named binary from a tar.gz archive.
+///
+/// Looks for an entry whose filename matches `binary_name` (ignoring directory prefixes).
+pub fn extract_binary_from_targz(
+    binary_name: &str,
+    archive_bytes: &[u8],
+) -> Result<Vec<u8>, String> {
+    let decoder = flate2::read::GzDecoder::new(archive_bytes);
+    let mut archive = tar::Archive::new(decoder);
+
+    for entry in archive
+        .entries()
+        .map_err(|e| format!("Failed to read tar archive: {}", e))?
+    {
+        let mut entry = entry.map_err(|e| format!("Failed to read tar entry: {}", e))?;
+        let path = entry
+            .path()
+            .map_err(|e| format!("Failed to read entry path: {}", e))?;
+
+        let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
+        if file_name == binary_name {
+            let mut buf = Vec::new();
+            entry
+                .read_to_end(&mut buf)
+                .map_err(|e| format!("Failed to read binary from archive: {}", e))?;
+            return Ok(buf);
+        }
+    }
+
+    Err(format!("Binary '{}' not found in archive", binary_name))
+}
+
+/// Verifies SHA256 checksum of `data` against the provided checksum content.
+///
+/// The checksum content may be in the format `"<hex>  <filename>"` (as produced by
+/// `sha256sum`) or simply `"<hex>"`. Returns `Ok(())` on success, or an error
+/// string describing the mismatch.
+pub fn verify_sha256(data: &[u8], checksum_content: &str) -> Result<(), String> {
+    let trimmed = checksum_content.trim();
+    if trimmed.is_empty() {
+        return Err("Checksum file is empty".to_string());
+    }
+
+    // Extract the hex portion — the first whitespace-separated token.
+    let expected_hex = trimmed
+        .split_whitespace()
+        .next()
+        .ok_or_else(|| "Checksum file has no content".to_string())?;
+
+    let mut hasher = Sha256::new();
+    hasher.update(data);
+    let actual_hex = format!("{:x}", hasher.finalize());
+
+    if actual_hex == expected_hex {
+        Ok(())
+    } else {
+        Err(format!(
+            "SHA256 mismatch: expected {}, got {}",
+            expected_hex, actual_hex
+        ))
+    }
+}
+
+pub fn validate_locked_artifact_url(url: &str) -> Result<(), String> {
+    let parsed =
+        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
+    let host = parsed
+        .host_str()
+        .ok_or_else(|| format!("artifact URL `{url}` has no host"))?;
+
+    #[cfg(debug_assertions)]
+    if matches!(parsed.scheme(), "http" | "https") && is_loopback_host(host) {
+        return Ok(());
+    }
+
+    if parsed.scheme() != "https" {
+        return Err(format!(
+            "artifact URL `{url}` is not trusted: locked worker artifacts must use HTTPS registry URLs"
+        ));
+    }
+
+    if is_private_or_loopback_host(host) {
+        return Err(format!(
+            "artifact URL `{url}` is not trusted: private and loopback hosts are not allowed in iii.lock"
+        ));
+    }
+
+    Ok(())
+}
+
+#[cfg(debug_assertions)]
+fn is_loopback_host(host: &str) -> bool {
+    host == "localhost"
+        || host
+            .parse::<std::net::IpAddr>()
+            .map(|ip| ip.is_loopback())
+            .unwrap_or(false)
+}
+
+fn is_private_or_loopback_host(host: &str) -> bool {
+    let Ok(ip) = host.parse::<std::net::IpAddr>() else {
+        return false;
+    };
+    match ip {
+        std::net::IpAddr::V4(ip) => {
+            ip.is_loopback()
+                || ip.is_private()
+                || ip.is_link_local()
+                || ip.is_broadcast()
+                || ip.is_documentation()
+                || ip.octets()[0] == 0
+        }
+        std::net::IpAddr::V6(ip) => {
+            ip.is_loopback()
+                || ip.is_unspecified()
+                || ip.segments()[0] & 0xfe00 == 0xfc00
+                || ip.segments()[0] & 0xffc0 == 0xfe80
+        }
+    }
+}
+
+async fn download_archive_bytes(
+    url: &str,
+    validate_final_url: Option<&(dyn Fn(&str) -> Result<(), String> + Send + Sync)>,
+) -> Result<Vec<u8>, String> {
+    let resp = match validate_final_url {
+        Some(validator) => download_archive_bytes_with_validated_redirects(url, validator).await?,
+        None => super::registry::HTTP_CLIENT
+            .get(url)
+            .send()
+            .await
+            .map_err(|e| format!("Failed to download binary: {}", e))?,
+    };
+
+    if !resp.status().is_success() {
+        return Err(format!(
+            "Binary download failed with HTTP {}",
+            resp.status()
+        ));
+    }
+
+    if let Some(content_length) = resp.content_length()
+        && content_length > MAX_DOWNLOAD_BYTES
+    {
+        return Err(format!(
+            "Binary download too large ({:.1} MB, max {:.1} MB)",
+            content_length as f64 / 1_048_576.0,
+            MAX_DOWNLOAD_BYTES as f64 / 1_048_576.0,
+        ));
+    }
+
+    let binary_data = resp
+        .bytes()
+        .await
+        .map_err(|e| format!("Failed to read binary data: {}", e))?;
+
+    if binary_data.len() as u64 > MAX_DOWNLOAD_BYTES {
+        return Err(format!(
+            "Downloaded data exceeds maximum size ({:.1} MB)",
+            binary_data.len() as f64 / 1_048_576.0,
+        ));
+    }
+
+    Ok(binary_data.to_vec())
+}
+
+async fn download_archive_bytes_with_validated_redirects(
+    url: &str,
+    validator: &(dyn Fn(&str) -> Result<(), String> + Send + Sync),
+) -> Result<reqwest::Response, String> {
+    let mut current_url =
+        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
+
+    for redirects_followed in 0..=MAX_REDIRECTS {
+        let resp = NO_REDIRECT_HTTP_CLIENT
+            .get(current_url.clone())
+            .send()
+            .await
+            .map_err(|e| format!("Failed to download binary: {}", e))?;
+
+        if !resp.status().is_redirection() {
+            return Ok(resp);
+        }
+
+        if redirects_followed == MAX_REDIRECTS {
+            return Err(format!(
+                "Binary download exceeded {MAX_REDIRECTS} redirects"
+            ));
+        }
+
+        let location = resp
+            .headers()
+            .get(reqwest::header::LOCATION)
+            .ok_or_else(|| {
+                format!(
+                    "Binary download redirect from `{}` did not include a Location header",
+                    current_url
+                )
+            })?
+            .to_str()
+            .map_err(|e| format!("Binary download redirect has invalid Location header: {e}"))?;
+        let next_url = current_url.join(location).map_err(|e| {
+            format!(
+                "Binary download redirect from `{}` has invalid Location `{}`: {}",
+                current_url, location, e
+            )
+        })?;
+
+        validator(next_url.as_str()).map_err(|e| {
+            format!("artifact download for `{url}` was redirected to an untrusted URL: {e}")
+        })?;
+        current_url = next_url;
+    }
+
+    unreachable!("redirect loop always returns or errors");
+}
+
+pub async fn download_locked_binary_archive(
+    worker_name: &str,
+    target: &str,
+    binary_info: &super::registry::BinaryInfo,
+) -> Result<Vec<u8>, String> {
+    validate_worker_name(worker_name)?;
+    validate_locked_artifac
+```
+
+### Core Architecture Module: `crates/iii-worker/src/cli/builtin_defaults.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+/// Configurable engine workers for which this support binary still carries a
+/// default YAML config.
+pub const BUILTIN_NAMES: [&str; 2] = ["iii-stream", "iii-sandbox"];
+
+/// Internal builtin workers that are always present and never user-configured.
+/// Defaults live in Rust (`ObservabilityWorkerConfig::default`, etc.), not in
+/// a `config:` block written into `config.yaml`.
+pub const MANDATORY_BUILTIN_NAMES: [&str; 6] = [
+    "configuration",
+    "iii-worker-manager",
+    "iii-telemetry",
+    "iii-engine-functions",
+    "iii-http-functions",
+    "iii-observability",
+];
+
+/// Returns true if the name is any engine builtin (configurable, optional, or mandatory).
+pub fn is_any_builtin(name: &str) -> bool {
+    BUILTIN_NAMES.contains(&name) || MANDATORY_BUILTIN_NAMES.contains(&name)
+}
+
+/// Version used for built-in worker metadata when the caller did not request
+/// an explicit registry version.
+pub const ENGINE_BUILTIN_VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// Resolve the version to use for builtin worker telemetry and display.
+pub fn resolve_builtin_version(requested: Option<&str>) -> &str {
+    requested
+        .filter(|version| !version.is_empty())
+        .unwrap_or(ENGINE_BUILTIN_VERSION)
+}
+
+const STREAM_MANIFEST: &str = include_str!("../../../../engine/src/workers/stream/iii.worker.yaml");
+
+fn manifest_for_builtin(name: &str) -> Option<&'static str> {
+    match name {
+        "iii-stream" => Some(STREAM_MANIFEST),
+        _ => None,
+    }
+}
+
+fn extract_manifest_config_yaml(manifest: &str) -> Option<String> {
+    let manifest: serde_yaml::Value = serde_yaml::from_str(manifest).ok()?;
+    let config_key = serde_yaml::Value::String("config".into());
+    let config = manifest.as_mapping()?.get(&config_key)?;
+    let yaml = serde_yaml::to_string(config).ok()?;
+    let yaml = yaml.strip_prefix("---\n").unwrap_or(&yaml).trim_end();
+
+    if yaml.is_empty() || yaml == "null" {
+        None
+    } else {
+        Some(yaml.to_string())
+    }
+}
+
+// Flat SandboxConfig shape — parsed directly by the daemon's config
+// loader. Renders in config.yaml as a clean `config:` block without a
+// redundant `sandbox:` key nested under an entry already named
+// `iii-sandbox`.
+//
+// `image_allowlist` ships with `python` and `node` because those cover
+// ~95% of AI-agent use cases. `bash` and `alpine` are still catalog
+// presets (see sandbox_daemon/catalog.rs::PRESETS) — users opt in by
+// adding them to this list. An empty allowlist means nothing boots.
+const SANDBOX_DEFAULT: &str = "\
+auto_install: true
+image_allowlist:
+  - python
+  - node
+default_idle_timeout_secs: 300
+max_concurrent_sandboxes: 32
+default_cpus: 1
+default_memory_mb: 512
+";
+
+/// Return the default YAML configuration for a builtin worker, or `None` if the
+/// name is not a recognised builtin.
+pub fn get_builtin_default(name: &str) -> Option<String> {
+    if name == "iii-sandbox" {
+        return Some(SANDBOX_DEFAULT.to_string());
+    }
+
+    manifest_for_builtin(name).and_then(extract_manifest_config_yaml)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_yaml::Value;
+
+    #[test]
+    fn all_builtins_return_some() {
+        for name in &BUILTIN_NAMES {
+            assert!(
+                get_builtin_default(name).is_some(),
+                "expected Some for builtin '{name}'"
+            );
+        }
+    }
+
+    #[test]
+    fn unknown_name_returns_none() {
+        assert!(get_builtin_default("iii-unknown").is_none());
+        assert!(get_builtin_default("").is_none());
+        assert!(get_builtin_default("http").is_none());
+    }
+
+    #[test]
+    fn all_defaults_are_valid_yaml() {
+        for name in &BUILTIN_NAMES {
+            let yaml = get_builtin_default(name).unwrap();
+            let result: Result<Value, _> = serde_yaml::from_str(&yaml);
+            assert!(
+                result.is_ok(),
+                "invalid YAML for '{name}': {:?}",
+                result.err()
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_builtin_version_uses_engine_version_by_default() {
+        assert_eq!(resolve_builtin_version(None), ENGINE_BUILTIN_VERSION);
+        assert_eq!(resolve_builtin_version(Some("")), ENGINE_BUILTIN_VERSION);
+    }
+
+    #[test]
+    fn resolve_builtin_version_accepts_explicit_versions() {
+        assert_eq!(resolve_builtin_version(Some("0.10.0")), "0.10.0");
+        assert_eq!(
+            resolve_builtin_version(Some("0.11.4-next.2")),
+            "0.11.4-next.2"
+        );
+        assert_eq!(
+            resolve_builtin_version(Some("custom-channel")),
+            "custom-channel"
+        );
+    }
+
+    #[test]
+    fn observability_is_mandatory_without_yaml_default() {
+        // Defaults live in ObservabilityWorkerConfig::default(); the
+        // iii.worker.yaml no longer carries a config: block, so
+        // get_builtin_default must not invent one for config.yaml.
+        assert!(MANDATORY_BUILTIN_NAMES.contains(&"iii-observability"));
+        assert!(!BUILTIN_NAMES.contains(&"iii-observability"));
+        assert!(get_builtin_default("iii-observability").is_none());
+        assert!(is_any_builtin("iii-observability"));
+    }
+
+    #[test]
+    fn stream_default_uses_kv_adapter() {
+        let yaml = get_builtin_default("iii-stream").unwrap();
+        let val: Value = serde_yaml::from_str(&yaml).unwrap();
+        let map = val.as_mapping().unwrap();
+
+        assert_eq!(
+            map[&Value::String("port".into())],
+            Value::Number(3112.into())
+        );
+
+        let adapter = map[&Value::String("adapter".into())]
+            .as_mapping()
+            .expect("adapter should be a mapping");
+        assert_eq!(
+            adapter[&Value::String("name".into())],
+            Value::String("kv".into())
+        );
+
+        let config = adapter[&Value::String("config".into())]
+            .as_mapping()
+            .expect("config should be a mapping");
+        assert_eq!(
+            config[&Value::String("store_method".into())],
+            Value::String("file_based".into())
+        );
+    }
+
+    #[test]
+    fn sandbox_default_allowlist_is_python_and_node_only() {
+        // The "just works" defaults ship with python + node only. bash
+        // and alpine are still catalog presets but opt-in — users who
+        // want them edit config.yaml by hand. Pinning the exact contents
+        // here makes any future change to the default a conscious PR,
+        // not a silent addition that changes the security surface.
+        let yaml = get_builtin_default("iii-sandbox").unwrap();
+        let val: Value = serde_yaml::from_str(&yaml).unwrap();
+        let allowlist: Vec<&str> = val
+            .as_mapping()
+            .and_then(|m| m.get(&Value::String("image_allowlist".into())))
+            .and_then(|v| v.as_sequence())
+            .expect("image_allowlist must be a top-level sequence")
+            .iter()
+            .map(|v| v.as_str().unwrap())
+            .collect();
+        assert_eq!(
+            allowlist,
+            vec!["python", "node"],
+            "sandbox default allowlist changed — confirm this is intentional \
+             and update engine/config.yaml + docs/api-reference/sandbox.mdx"
+        );
+    }
+
+    #[test]
+    fn sandbox_default_has_no_wrapping_sandbox_key() {
+        // Guard against regressions to the wrapped shape. The flat shape
+        // is what renders cleanly under `config:` in config.yaml; adding
+        // a wrapping `sandbox:` key back would produce
+        // `iii-sandbox.config.sandbox.image_allowlist` — double-nested
+        // and ugly.
+        let yaml = get_builtin_default("iii-sandbox").unwrap();
+        let val: Value = serde_yaml::from_str(&yaml).unwrap();
+        assert!(
+            val.as_mapping()
+                .map(|m| !m.contains_key(&Value::String("sandbox".into())))
+                .unwrap_or(false),
+            "iii-sandbox default must use flat shape (no wrapping `sandbox:` key)"
+        );
+    }
+
+    #[test]
+    fn builtin_names_matches_function() {
+        for name in &BUILTIN_NAMES {
+            assert!(
+                get_builtin_default(name).is_some(),
+                "BUILTIN_NAMES contains '{name}' but get_builtin_default returns None"
+            );
+        }
+
+        let known: std::collections::HashSet<&str> = BUILTIN_NAMES.iter().copied().collect();
+        for extra in &["iii-unknown", "iii-foo", "redis", ""] {
+            assert!(
+                !known.contains(extra),
+                "unexpected name '{extra}' found in BUILTIN_NAMES"
+            );
+            assert!(
+                get_builtin_default(extra).is_none(),
+                "get_builtin_default should return None for '{extra}'"
+            );
+        }
+    }
+}
+
 ```
 
 
@@ -940,936 +2401,286 @@ export function QueueDlqTab({ topic, dlqEntry }: QueueDlqTabProps) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c012a89d` (2026-10-20)
-**Commit Message**: fix(deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisories (#2351)
+### Incident Patch 1: `51ab46eb` (2026-10-23)
+**Commit Message**: fix(deps): update Tokio to address RUSTSEC-2026-0386 (#2391)
 
-Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
+Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +6/-6)
+**File**: `Cargo.lock` (modified, +14/-14)
 ```diff
-@@ -5473,9 +5473,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
+@@ -151,7 +151,7 @@ version = "1.1.5"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
+ checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
  dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -7211,18 +7211,18 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.7"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
-+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
- dependencies = [
-  "rustls-pki-types",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
  ]
  
  [[package]]
- name = "webpki-roots"
--version = "1.0.7"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+@@ -162,7 +162,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
  dependencies = [
-  "rustls-pki-types",
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
  ]
-```
-
-**File**: `pnpm-lock.yaml` (modified, +33/-31)
-```diff
-@@ -98,7 +98,7 @@ importers:
-         version: 1.163.3(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@tanstack/router-core@1.163.3)(csstype@3.2.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-       '@tanstack/router-plugin':
-         specifier: 1.164.0
--        version: 1.164.0(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 1.164.0(@tanstack/react-router@1.163.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-       '@types/dagre':
-         specifier: ^0.7.53
-         version: 0.7.54
-@@ -113,7 +113,7 @@ importers:
-         version: 19.2.3(@types/react@19.2.14)
-       '@vitejs/plugin-react':
-         specifier: ^5.1.3
--        version: 5.1.4(vite@7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 5.1.4(vite@7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-       autoprefixer:
-         specifier: ^10.4.24
-         version: 10.4.27(postcss@8.5.28)
-@@ -128,7 +128,7 @@ importers:
-         version: 5.9.3
-       vite:
-         specifier: ^7.3.1
--        version: 7.3.6(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1)
-+        version: 7.3.7(@types/node@25.3.3)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1)
-       vitest:
-         specifier: ^2.1.9
-         version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@25.3.3)(happy-dom@20.14.5)(lightningcss@1.32.0)
-@@ -217,7 +217,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
  
-   sdk/packages/node/iii:
-     dependencies:
-@@ -257,7 +257,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ [[package]]
+@@ -989,7 +989,7 @@ version = "3.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.48.0",
+ ]
  
-   sdk/packages/node/iii-browser:
-     devDependencies:
-@@ -278,7 +278,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-       ws:
-         specifier: ^8.21.0
-         version: 8.21.3
-@@ -319,7 +319,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.6(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+ [[package]]
+@@ -1648,7 +1648,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users 0.5.2",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
  
-   website:
-     dependencies:
-@@ -1436,12 +1436,14 @@ packages:
-   '@opentelemetry/sdk-trace-base@2.11.0':
-     resolution: {integrity: sha512-H19x/TX/LZdqiYOjM7fqtSxwlplC5pgelavqbQdHbhdq0q/AI/TGkM2dfGuuynTXmJPeF2HoZVoPDu+TGoW78A==}
-     engines: {node: ^18.19.0 || >=20.6.0}
-+    deprecated: Use @opentelemetry/sdk-trace package
-     peerDependencies:
-       '@opentelemetry/api': '>=1.3.0 <1.10.0'
+ [[package]]
+@@ -1767,7 +1767,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
-   '@opentelemetry/sdk-trace-node@2.11.0':
-     resolution: {integrity: sha512-CuvCMJmZxswhNLlM2LfuLOW3h3fZujA4hsG4B+Sz4dX2zvaXO8Ng74cnDHWD64gLszTlhiG3c0iNUjj4g+0/sA==}
-     engines: {node: ^18.19.0 || >=20.6.0}
-+    deprecated: Use @opentelemetry/sdk-trace package
-     peerDependencies:
-       '@opentelemetry/api': '>=1.0.0 <1.10.0'
+ [[package]]
+@@ -3203,7 +3203,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
+ dependencies = [
+  "hermit-abi",
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
-@@ -3978,8 +3980,8 @@ packages:
-     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
-     engines: {node: '>=10'}
+ [[package]]
+@@ -4080,7 +4080,7 @@ version = "0.50.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
  
--  ma
+ [[package]]
+@@ -5369,7 +5369,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -5452,7 +5452,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -5947,7 +5947,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
+ ]
+ 
+ [[package]]
+@@ -6199,7 +6199,7 @@ dependencies = [
+  "getrandom 0.4.2",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -6404,9 +6404,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+ 
+ [[package]]
+ name = "tokio"
+-version = "1.52.2"
++version = "1.53.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "110a78583f19d5cdb2c5ccf321d1290344e71313c6c37d43520d386027d18386"
++checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+ dependencies = [
+  "bytes",
+  "libc",
+@@ -7268,7 +7268,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
 ```
 
 ---
 
-### Incident Patch 2: `9edd3db1` (2026-10-22)
-**Commit Message**: fix(telemetry): make project_created and the init events reliable (#2361)
+### Incident Patch 2: `bdfd4f09` (2026-10-23)
+**Commit Message**: fix(python): require websockets>=14.0 (#2385)
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `crates/scaffolder-core/src/tui/prompts.rs` (modified, +72/-13)
+**File**: `sdk/packages/python/helpers/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -535,6 +535,10 @@ fn check_runtimes(
-     }
- }
+@@ -24,7 +24,7 @@ dependencies = [
+     "opentelemetry-api>=1.25",
+     "opentelemetry-sdk>=1.25",
+     "httpx>=0.27",
+-    "websockets>=12.0",
++    "websockets>=14.0",
+ ]
  
-+/// How long `create_project` waits for its `project_created` send before the
-+/// command moves on. Matches the engine CLI's `REPORT_TIMEOUT`.
-+const CREATED_EVENT_WAIT: std::time::Duration = std::time::Duration::from_secs(3);
-+
- async fn create_project(
-     product_name: &'static str,
-     cli_version: &str,
-@@ -589,24 +593,44 @@ async fn create_project(
-         project_dir.display()
-     ));
- 
--    if !skip_install {
--        let install_spinner = cliclack::spinner();
--        install_spinner.start("Installing dependencies (when applicable)...");
--        match telemetry::run_dependency_install(project_dir, selected_languages).await {
--            Ok(()) => install_spinner.stop("Dependency step finished"),
--            Err(e) => {
--                install_spinner.stop("Dependency installation failed");
--                return Err(e);
--            }
-+    install_dependencies(
-+        (!skip_install).then(|| telemetry::run_dependency_install(project_dir, selected_languages)),
-+        created_handle,
-+    )
-+    .await
-+}
-+
-+/// Runs the dependency step, if there is one, then waits up to
-+/// [`CREATED_EVENT_WAIT`] for the `project_created` send.
-+///
-+/// The send was spawned before the install, so the two overlap and the wait
-+/// is usually zero. The wait happens when the install fails too: the project
-+/// was created either way, and the caller exits on the error, which would
-+/// drop a send still in flight.
-+async fn install_dependencies(
-+    install: Option<impl std::future::Future<Output = Result<()>>>,
-+    created_handle: Option<tokio::task::JoinHandle<()>>,
-+) -> Result<()> {
-+    let installed = match install {
-+        Some(install) => {
-+            let install_spinner = cliclack::spinner();
-+            install_spinner.start("Installing dependencies (when applicable)...");
-+            let installed = install.await;
-+            install_spinner.stop(match installed {
-+                Ok(()) => "Dependency step finished",
-+                Err(_) => "Dependency installation failed",
-+            });
-+            installed
-         }
--    }
-+        None => Ok(()),
-+    };
- 
--    // Best-effort flush: wait up to 2s for telemetry to complete, then move on
-+    // Best-effort flush: wait up to CREATED_EVENT_WAIT for telemetry to complete, then move on
-     if let Some(handle) = created_handle {
--        let _ = tokio::time::timeout(std::time::Duration::from_secs(2), handle).await;
-+        let _ = tokio::time::timeout(CREATED_EVENT_WAIT, handle).await;
-     }
- 
--    Ok(())
-+    installed
- }
- 
- fn print_next_steps(
-@@ -637,3 +661,38 @@ fn print_next_steps(
- 
-     Ok(())
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[tokio::test]
-+    async fn a_failed_install_still_waits_for_project_created() {
-+        use std::sync::Arc;
-+        use std::sync::atomic::{AtomicBool, Ordering};
-+
-+        let sent = Arc::new(AtomicBool::new(false));
-+        let sending = Arc::clone(&sent);
-+        let created = tokio::spawn(async move {
-+            tokio::time::sleep(std::time::Duration::from_millis(50)).await;
-+            sending.store(true, Ordering::SeqCst);
-+        });
-+
-+        let result = install_dependencies(
-+            Some(async { Err(anyhow::anyhow!("npm install: exit status: 1")) }),
-+            Some(created),
-+        )
-+        .await;
-+
-+        assert!(result.is_err(), "the install failure is still returned");
-+        assert!(
-+            sent.load(Ordering::SeqCst),
-+            "project_created was dropped with the failed install"
-+        );
-+    }
-+
-+    #[test]
-+    fn project_created_may_hold_the_command_for_three_seconds() {
-+        assert_eq!(CREATED_EVENT_WAIT, std::time::Duration::from_secs(3));
-+    }
-+}
+ [project.urls]
 ```
 
-**File**: `engine/src/cli/project/mod.rs` (modified, +81/-36)
+**File**: `sdk/packages/python/iii/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -140,21 +140,23 @@ async fn run_init(args: InitArgs) -> i32 {
-     };
- 
-     if let Err(e) = std::fs::create_dir_all(&root) {
--        crate::cli::telemetry::send_project_init_failed("create_dir", &e.to_string());
--        return print_err(
-+        let code = print_err(
-             &format!("could not create {}", root.display()),
-             &e.to_string(),
-             "check parent directory permissions or pick a different --directory",
-         );
-+        crate::cli::telemetry::send_project_init_failed("create_dir", &e.to_string()).await;
-+        return code;
-     }
- 
-     if let Err(e) = check_directory_state(&root, args.allow_non_empty, "project.ini") {
--        crate::cli::telemetry::send_project_init_failed("non_empty_dir", &e);
--        return print_err(
-+        let code = print_err(
-             "target directory is not empty",
-             &e,
-             "pass --allow-non-empty to scaffold into an existing project, or pick a different directory",
-         );
-+        crate::cli::telemetry::send_project_init_failed("non_empty_dir", &e).await;
-+        return code;
-     }
- 
-     let device_id = iii::workers::telemetry::environment::get_or_create_device_id();
-@@ -169,50 +171,84 @@ async fn run_init(args: InitArgs) -> i32 {
-     let mut fetcher = match build_fetcher(args.template_dir.as_deref()) {
-         Ok(f) => f,
-         Err(e) => {
--            crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string());
--            return print_err(
-+            let code = print_err(
-                 "could not build template fetcher",
-                 &e.to_string(),
-                 "check III_TEMPLATE_URL or pass --template-dir <path>",
-             );
-+            crate::cli::telemetry::send_project_init_failed("fetcher", &e.to_string()).await;
-+            return code;
-         }
-     };
- 
-     if let Err(e) = apply_template_idempotent(&mut fetcher, "bare", &root).await {
--        crate::cli::telemetry::send_project_init_failed("apply_bare", &e.to_string());
--        return print_err(
-+        let code = print_err(
-             "could not apply 'bare' template",
-             &e.to_string(),
-             "see template fetch error above",
-         );
-+        crate::cli::telemetry::send_project_init_failed("apply_bare", &e.to_string()).await;
-+        return code;
-     }
- 
--    let project_id = match persist_project_ini(&root, &project_name, "init", &device_id).await {
--        Ok(id) => id,
--        Err(e) => {
--            crate::cli::telemetry::send_project_init_failed("write_project_ini", &e.to_string());
--            return print_err(
--                "could not write .iii/project.ini",
--                &e.to_string(),
--                "check that the target directory is writable",
--            );
--        }
-+    let (project_id, is_new_project) =
-+        match persist_project_ini(&root, &project_name, "init", &device_id).await {
-+            Ok(persisted) => persisted,
-+            Err(e) => {
-+                let code = print_err(
-+                    "could not write .iii/project.ini",
-+                    &e.to_string(),
-+                    "check that the target directory is writable",
-+                );
-+                crate::cli::telemetry::send_project_init_failed(
-+                    "write_project_ini",
-+                    &e.to_string(),
-+                )
-+                .await;
-+                return code;
-+            }
-+        };
-+
-+    // A re-init keeps the project_id, so it is the same project and is not
-+    // reported again. Spawned here so the send overlaps the docker step, and
-+    // awaited once, together with the init event, just before returning.
-+    let created = if is_new_project {
-+        scaffolder_core::telemetry::spawn_project_event(
-+            "project_created",
-+            scaffolder_core::telemetry::platform_for_product("iii"),
-+            env!("CARGO_PKG_VERSION").to_string(),
-+            serde_json::json!({
-+                "project_id": project_id,
-+                "project_name": project_name,
-+                "template": "bare",
-+                "product": "iii",
-+            }),
-+        )
-+    } else {
-+        None
-     };
- 
-     if args.docker
-         && let Err(e) = apply_docker(&mut fetcher, &root, &device_id).await
-     {
--        crate::cli::telemetry::send_project_init_failed("apply_docker", &e.to_string());
--        return print_err(
-+        let error = e.to_string();
-+        let code = print_err(
-             "could not apply 'docker' template",
--            &e.to_string(),
-+            &error,
-             "remove existing Dockerfile/docker-compose.yml or check write permissions",
-         );
-+        tokio::join!(
-+            crate::cli::telemetry::send_project_init_failed("apply_docker", &error),
-+            crate::cli::telemetry::wait_for_report(created),
-+        );
-+        return code;
-     }
- 
--    crate::cli::telemetry::send_project_init_succeeded(args.docker, &project_id);
--
-     print_init_suc
+@@ -20,7 +20,7 @@ classifiers = [
+     "Operating System :: OS Independent",
+ ]
+ dependencies = [
+-    "websockets>=12.0",
++    "websockets>=14.0",
+     "pydantic>=2.0",
+     "opentelemetry-api>=1.25",
+     "iii-helpers==0.25.0",
 ```
 
-**File**: `engine/src/cli/telemetry.rs` (modified, +161/-11)
-```diff
-@@ -98,8 +98,16 @@ fn send_fire_and_forget(event: ProductEvent) {
-     });
- }
- 
-+/// Sends one event and waits for it, for at most [`REPORT_TIMEOUT`].
-+///
-+/// For events sent on the way out of a command: a spawned send is dropped
-+/// with the runtime when `main` returns, before its request completes.
-+async fn send_before_exit(event: ProductEvent) {
-+    let _ = tokio::time::timeout(REPORT_TIMEOUT, send_direct(event)).await;
-+}
-+
- /// How long an awaited report may hold the command that is sending it.
--const REPORT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(2);
-+pub(crate) const REPORT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
- 
- /// Lets `iii-compose` report through the same CLI path as every other
- /// command.
-@@ -145,6 +153,28 @@ async fn report_compose_batch(reports: Vec<iii_compose::telemetry::Report>) {
-     .await;
- }
- 
-+/// Makes sure `~/.iii/telemetry.yaml` holds a device id before the
-+/// scaffolder runs.
-+///
-+/// The scaffolder only reads that file. On a machine where neither the
-+/// engine nor the curl installer has run, it is missing, and the scaffolder
-+/// reports `iii_tools_telemetry_failed` in place of `project_created`.
-+/// Nothing is written when telemetry is off.
-+pub(crate) fn ensure_device_id_for_scaffolder() {
-+    if is_telemetry_disabled() {
-+        return;
-+    }
-+    environment::ensure_device_id();
-+}
-+
-+/// Waits for a report that was spawned earlier, for at most
-+/// [`REPORT_TIMEOUT`].
-+pub(crate) async fn wait_for_report(handle: Option<tokio::task::JoinHandle<()>>) {
-+    if let Some(handle) = handle {
-+        let _ = tokio::time::timeout(REPORT_TIMEOUT, handle).await;
-+    }
-+}
-+
- pub async fn send_install_lifecycle_event(event_type: &str, properties: serde_json::Value) {
-     let install_method = properties
-         .get("install_method")
-@@ -154,7 +184,7 @@ pub async fn send_install_lifecycle_event(event_type: &str, properties: serde_js
-         event.platform = "install-script".to_string();
-         // The install script exits right after this; the retry ladder in
-         // send_direct can otherwise hold it for over a minute.
--        let _ = tokio::time::timeout(REPORT_TIMEOUT, send_direct(event)).await;
-+        send_before_exit(event).await;
-     }
- }
- 
-@@ -188,7 +218,7 @@ pub fn send_cli_update_started(target_binary: &str, from_version: &str) {
-     }
- }
- 
--pub fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_version: &str) {
-+pub async fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_version: &str) {
-     if let Some(event) = build_event(
-         "cli_update_succeeded",
-         serde_json::json!({
-@@ -199,11 +229,11 @@ pub fn send_cli_update_succeeded(target_binary: &str, from_version: &str, to_ver
-         }),
-         None,
-     ) {
--        send_fire_and_forget(event);
-+        send_before_exit(event).await;
-     }
- }
- 
--pub fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &str) {
-+pub async fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &str) {
-     if let Some(event) = build_event(
-         "cli_update_failed",
-         serde_json::json!({
-@@ -214,11 +244,11 @@ pub fn send_cli_update_failed(target_binary: &str, from_version: &str, error: &s
-         }),
-         None,
-     ) {
--        send_fire_and_forget(event);
-+        send_before_exit(event).await;
-     }
- }
- 
--pub fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
-+pub async fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
-     if let Some(event) = build_event(
-         "project_init_succeeded",
-         serde_json::json!({
-@@ -228,11 +258,11 @@ pub fn send_project_init_succeeded(with_docker: bool, project_id: &str) {
-         }),
-         None,
-     ) {
--        send_fire_and_forget(event);
-+        send_before_exit(event).await;
-     }
- }
- 
--pub fn send_project_init_failed(stage: &str, error: &str) {
-+pub async fn send_project_init_failed(stage: &str, error: &str) {
-     if let Some(event) = build_event(
-         "project_init_failed",
-         serde_json::json!({
-@@ -242,7 +272,7 @@ pub fn send_project_init_failed(stage: &str, error: &str) {
-         }),
-         None,
-     ) {
--        send_fire_and_forget(event);
-+        send_before_exit(event).await;
-     }
- }
- 
-@@ -329,7 +359,12 @@ mod tests {
-     }
- 
-     /// Generous slack over the bound, for a slow machine.
--    const RELEASED_WITHIN: std::time::Duration = std::time::Duration::from_secs(3);
-+    const RELEASED_WITHIN: std::time::Duration = std::time::Duration::from_secs(4);
-+
-+    #[test]
-+    fn an_awaited_report_may_hold_the_command_for_three_seconds() {
-+        assert_eq!(REPORT_TIMEOUT, std::time::Duration::from_secs(3));
-+    }
- 
-     #[tokio::test]
-     #[serial]
-@@ -371,6 +406,121 @@ mod tests {
-         assert!(elapsed < RELEASED_WITHIN, "held for {elapsed:?}");
-     }
- 
-+    /// Points HOME and the project root at a throwaway directory, so b
-```
+---
 
-**File**: `engine/src/cli/update.rs` (modified, +6/-4)
-```diff
-@@ -300,15 +300,16 @@ pub async fn update_binary(
-                 spec.name,
-                 &from_version_str,
-                 &latest_version.to_string(),
--            );
-+            )
-+            .await;
-             Ok(UpdateResult::Updated {
-                 binary: spec.name.to_string(),
-                 from: previous_version,
-                 to: latest_version,
-             })
-         }
-         Err(e) => {
--            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string());
-+            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string()).await;
-             Err(UpdateError::Download(e))
-         }
-     }
-@@ -411,15 +412,16 @@ pub async fn self_update(
-                 spec.name,
-                 &from_version_str,
-                 &latest_version.to_string(),
--            );
-+            )
-+            .await;
-             Ok(UpdateResult::Updated {
-                 binary: spec.name.to_string(),
-                 from: previous_version,
-                 to: latest_version,
-             })
-         }
-         Err(e) => {
--            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string());
-+            telemetry::send_cli_update_failed(spec.name, &from_version_str, &e.to_string()).await;
-             Err(UpdateError::Download(e))
-         }
-     }
-```
+### Incident Patch 3: `cd537cbd` (2026-10-22)
+**Commit Message**: test: fix iii-worker and iii-filesystem tests on Ubuntu 26.04 runners (#2379)
 
-**File**: `engine/src/workers/telemetry/environment.rs` (modified, +42/-6)
-```diff
-@@ -317,22 +317,30 @@ fn load_or_migrate_v2_state() -> TelemetryYaml {
- }
- 
- pub fn get_or_create_device_id() -> String {
-+    let id = ensure_device_id();
-+    if !is_container_environment() {
-+        write_device_id_to_project_ini(&id);
-+    }
-+    id
-+}
-+
-+/// The device id from `~/.iii/telemetry.yaml`, creating the version-2 file
-+/// when it is missing.
-+///
-+/// Unlike [`get_or_create_device_id`], this never writes `device_id=` into the
-+/// `.iii/project.ini` found from the current directory, which may belong to an
-+/// unrelated project.
-+pub fn ensure_device_id() -> String {
-     let mut state = load_or_migrate_v2_state();
-     if let Some(existing) = state.identity.device_id.clone()
-         && !existing.is_empty()
-     {
--        if !is_container_environment() {
--            write_device_id_to_project_ini(&existing);
--        }
-         return existing;
-     }
- 
-     let id = generate_new_device_id();
-     state.identity.device_id = Some(id.clone());
-     write_telemetry_yaml(&state);
--    if !is_container_environment() {
--        write_device_id_to_project_ini(&id);
--    }
-     id
- }
- 
-@@ -608,6 +616,34 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    #[serial]
-+    fn ensure_device_id_writes_the_yaml_and_leaves_project_ini_alone() {
-+        let home = tempfile::tempdir().unwrap();
-+        let unrelated = tempfile::tempdir().unwrap();
-+        let ini = unrelated.path().join(".iii").join("project.ini");
-+        std::fs::create_dir_all(ini.parent().unwrap()).unwrap();
-+        let before = "[project]\nproject_id=unrelated\n";
-+        std::fs::write(&ini, before).unwrap();
-+        unsafe {
-+            env::set_var("HOME", home.path());
-+            env::set_var("III_PROJECT_ROOT", unrelated.path());
-+        }
-+
-+        let id = ensure_device_id();
-+        let state = read_telemetry_yaml(&telemetry_config_path());
-+        let after = std::fs::read_to_string(&ini).unwrap();
-+
-+        unsafe {
-+            env::remove_var("HOME");
-+            env::remove_var("III_PROJECT_ROOT");
-+        }
-+        let state = state.expect("telemetry.yaml written");
-+        assert_eq!(state.version, Some(TELEMETRY_SCHEMA_VERSION));
-+        assert_eq!(state.identity.device_id.as_deref(), Some(id.as_str()));
-+        assert_eq!(after, before);
-+    }
-+
-     #[test]
-     #[serial]
-     fn test_v1_yaml_resets_to_fresh_v2_state() {
-```
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `engine/tests/project_init_e2e.rs` (modified, +100/-0)
+**File**: `crates/iii-filesystem/tests/filesystem_integration.rs` (modified, +18/-10)
 ```diff
-@@ -448,3 +448,103 @@ fn project_init_failure_emits_problem_cause_fix() {
-         "stderr should contain 'fix:':\n{stderr}"
+@@ -538,16 +538,24 @@ fn readdir_pagination_with_nonzero_offset() {
+         all_entries.len()
      );
- }
-+
-+/// Runs `iii project init` with telemetry on and pointed at `posthog`, in a
-+/// throwaway HOME so the run reads and writes no real `~/.iii`.
-+fn init_reporting_to(posthog: &str, home: &Path, project: &Path) -> std::process::Output {
-+    let mut cmd = iii_bin();
-+    cmd.args(["project", "init", "--template-dir"])
-+        .arg(fixtures())
-+        .arg("--directory")
-+        .arg(project)
-+        .current_dir(home)
-+        .env("HOME", home)
-+        .env("POSTHOG_HOST", posthog)
-+        .env_remove("III_PROJECT_ROOT")
-+        .env_remove("III_TELEMETRY_ENABLED")
-+        .env_remove("III_TELEMETRY_DEV");
-+    for ci in [
-+        "CI",
-+        "GITHUB_ACTIONS",
-+        "GITLAB_CI",
-+        "CIRCLECI",
-+        "JENKINS_URL",
-+        "TRAVIS",
-+        "BUILDKITE",
-+        "TF_BUILD",
-+        "CODEBUILD_BUILD_ID",
-+        "BITBUCKET_BUILD_NUMBER",
-+        "DRONE",
-+        "TEAMCITY_VERSION",
-+    ] {
-+        cmd.env_remove(ci);
-+    }
-+    cmd.output().expect("failed to run iii")
-+}
-+
-+/// Every event the mock PostHog has received, across all batches.
-+async fn received_events(server: &wiremock::MockServer) -> Vec<serde_json::Value> {
-+    server
-+        .received_requests()
-+        .await
-+        .unwrap_or_default()
+ 
+-    // Verify that the tail batch entries all have offsets > mid_offset.
+-    for e in &tail_entries {
+-        assert!(
+-            e.offset > mid_offset,
+-            "entry '{}' offset {} should be > mid_offset {}",
+-            String::from_utf8_lossy(e.name),
+-            e.offset,
+-            mid_offset,
+-        );
+-    }
++    // `offset` is an opaque cookie, not a position: on Linux it is the
++    // kernel's `d_off`, and tmpfs on recent kernels hands out cookies that do
++    // not grow along the listing. Resuming from an entry's cookie must return
++    // exactly the entries listed after it.
++    let tail_names: Vec<String> = tail_entries
 +        .iter()
-+        .filter_map(|r| serde_json::from_slice::<serde_json::Value>(&r.body).ok())
-+        .flat_map(|body| body["batch"].as_array().cloned().unwrap_or_default())
-+        .collect()
-+}
-+
-+fn named<'a>(events: &'a [serde_json::Value], name: &str) -> Vec<&'a serde_json::Value> {
-+    events.iter().filter(|e| e["event"] == name).collect()
-+}
-+
-+#[tokio::test(flavor = "multi_thread")]
-+async fn bare_init_reports_project_created_once_per_project() {
-+    use wiremock::matchers::{method, path};
-+    use wiremock::{Mock, MockServer, ResponseTemplate};
-+
-+    let server = MockServer::start().await;
-+    Mock::given(method("POST"))
-+        .and(path("/batch/"))
-+        .respond_with(ResponseTemplate::new(200))
-+        .mount(&server)
-+        .await;
-+    let home = tempdir().unwrap();
-+    let project = home.path().join("my-bare-app");
-+
-+    let first = init_reporting_to(&server.uri(), home.path(), &project);
-+    assert!(
-+        first.status.success(),
-+        "init failed: {}",
-+        String::from_utf8_lossy(&first.stderr)
-+    );
-+    let events = received_events(&server).await;
-+    let created = named(&events, "project_created");
-+    assert_eq!(created.len(), 1, "events: {events:#?}");
-+    let ini = std::fs::read_to_string(project.join(".iii").join("project.ini")).unwrap();
-+    let project_id = ini
-+        .lines()
-+        .find_map(|l| l.trim().strip_prefix("project_id="))
-+        .unwrap()
-+        .trim()
-+        .to_string();
-+    let props = &created[0]["properties"];
-+    assert_eq!(props["project_id"], project_id.as_str());
-+    assert_eq!(props["project_name"], "my-bare-app");
-+    assert_eq!(props["template"], "bare");
-+    assert_eq!(props["product"], "iii");
-+    assert_eq!(named(&events, "project_init_succeeded").len(), 1);
-+    assert!(named(&events, "iii_tools_telemetry_failed").is_empty());
-+
-+    // Re-init keeps the project_id, so it is the same project: no second
-+    // project_created.
-+    let second = init_reporting_to(&server.uri(), home.path(), &project);
-+    assert!(second.status.success());
-+    let events = received_events(&server).await;
++        .map(|e| String::from_utf8_lossy(e.name).into_owned())
++        .collect();
++    let expected_names: Vec<String> = all_entries[mid..]
++        .iter()
++        .map(|e| String::from_utf8_lossy(e.name).into_owned())
++        .collect();
 +    assert_eq!(
-+        named(&events, "project_created").len(),
-+        1,
-+        "events: {events:#?}"
++        tail_names,
++        expected_names,
++        "readdir from offset {mid_offset} must resume right after entry {}",
++        mid - 1
 +    );
-+    assert_eq!(named(&events, "project_init_succeeded").len(), 2);
+ 
+     // Verify that reading past the last entry returns empty.
+     let last_offset = all_entries.last().unwrap().offset;
+```
+
+**File**: `crates/iii-worker/tests/worker_list_discovery_integration.rs` (modified, +18/-8)
+```diff
+@@ -58,6 +58,20 @@ impl Drop for HomeGuard {
+     }
+ }
+ 
++/// Copies `/bin/sleep` to `~/.iii/workers/<name>/sleep`, a path the ps
++/// matcher attributes to worker `<name>` (the first component under the
++/// workers dir). The copy keeps the basename `sleep` because multicall
++/// coreutils (uutils, the default on Ubuntu 26.04) pick the utility from
++/// argv[0]: a copy named after the worker exits at once with
++/// "unknown program" instead of sleeping.
++fn install_sleeper(workers_dir: &std::path::Path, name: &str) -> std::path::PathBuf {
++    let dir = workers_dir.join(name);
++    std::fs::create_dir_all(&dir).unwrap();
++    let bin = dir.join("sleep");
++    std::fs::copy("/bin/sleep", &bin).expect("/bin/sleep must exist on Unix");
++    bin
 +}
-```
-
----
-
-### Incident Patch 3: `c0b7b8f9` (2026-10-22)
-**Commit Message**: fix(deps): bump vitest to 4.1.12 in the Node SDK packages for Supply Chain advisories (#2376)
-
-Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
-
-**File**: `pnpm-lock.yaml` (modified, +91/-106)
-```diff
-@@ -204,8 +204,8 @@ importers:
-         specifier: ^8.18.1
-         version: 8.18.1
-       '@vitest/coverage-v8':
--        specifier: ^4.1.11
--        version: 4.1.11(vitest@4.1.11)
-+        specifier: ^4.1.12
-+        version: 4.1.12(vitest@4.1.12)
-       tsdown:
-         specifier: ^0.21.4
-         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
-@@ -216,8 +216,8 @@ importers:
-         specifier: ^5.9.3
-         version: 5.9.3
-       vitest:
--        specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        specifier: ^4.1.12
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@24.11.0)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@24.11.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
++
+ /// True once `pid`'s own argv is visible to the OS and contains `needle`.
+ /// `spawn()` returns pre-exec, and around the exec transition the kernel can
+ /// report no cmdline at all; the identity cross-check reads the same source
+@@ -136,8 +150,7 @@ fn is_worker_running_true_for_alive_pid() {
  
-   sdk/packages/node/iii:
-     dependencies:
-@@ -244,8 +244,8 @@ importers:
-         specifier: ^8.18.1
-         version: 8.18.1
-       '@vitest/coverage-v8':
--        specifier: ^4.1.11
--        version: 4.1.11(vitest@4.1.11)
-+        specifier: ^4.1.12
-+        version: 4.1.12(vitest@4.1.12)
-       tsdown:
-         specifier: ^0.21.4
-         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
-@@ -256,8 +256,8 @@ importers:
-         specifier: ^5.9.3
-         version: 5.9.3
-       vitest:
--        specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        specifier: ^4.1.12
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
+     let workers_dir = tmp.path().join(".iii/workers");
+     std::fs::create_dir_all(&workers_dir).unwrap();
+-    let worker_bin = workers_dir.join("alive-worker");
+-    std::fs::copy("/bin/sleep", &worker_bin).unwrap();
++    let worker_bin = install_sleeper(&workers_dir, "alive-worker");
+     let mut child = std::process::Command::new(&worker_bin)
+         .arg("30")
+         .spawn()
+@@ -233,8 +246,7 @@ async fn kill_stale_worker_sweeps_pidfile_less_process() {
  
-   sdk/packages/node/iii-browser:
-     devDependencies:
-@@ -277,8 +277,8 @@ importers:
-         specifier: ^5.9.3
-         version: 5.9.3
-       vitest:
--        specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        specifier: ^4.1.12
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-       ws:
-         specifier: ^8.21.0
-         version: 8.21.3
-@@ -309,17 +309,17 @@ importers:
-         version: link:../helpers
-     devDependencies:
-       '@vitest/coverage-v8':
--        specifier: ^4.1.11
--        version: 4.1.11(vitest@4.1.11)
-+        specifier: ^4.1.12
-+        version: 4.1.12(vitest@4.1.12)
-       tsdown:
-         specifier: ^0.21.4
-         version: 0.21.10(synckit@0.11.12)(typescript@5.9.3)
-       typescript:
-         specifier: ^5.9.3
-         version: 5.9.3
-       vitest:
--        specifier: ^4.1.11
--        version: 4.1.11(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.11)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
-+        specifier: ^4.1.12
-+        version: 4.1.12(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.0)(@types/node@25.9.4)(@vitest/coverage-v8@4.1.12)(happy-dom@20.14.5)(vite@7.3.7(@types/node@25.9.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.9.1))
- 
-   website:
-     dependencies:
-@@ -2497,20 +2497,20 @@ packages:
-     peerDependencies:
-       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
- 
--  '@vitest/coverage-v8@4.1.11':
--    resolution: {integrity: sha512-8MVGEFnJIcdGjcbfKmeq8z0pZHH0JlVtoVZH9Q/qwUp6wyFnEJUBMrw9DCaj+ra3vShGmhavjalMIhPNxZAUcw==}
-+  '@vitest/coverage-v8@4.1.12':
-+    resolution: {integrity: sha512-6S7/iVknKglLAxMFxQGNppBI0iqJS2NgM6FBxavitj7KaDq/vywOWGf6dGu7F2L1Qy0G6S3uTp7aGshHrzK8JA==}
-     peerDependencies:
--      '@vitest/browser': 4.1.11
--      vitest: 4.1.11
-+      '@vitest/browser': 4.1.12
-+      vitest: 4.1.12
-     peerDependenciesMeta:
-       '@vitest/browser':
-         optional: true
- 
-   '@vitest/expect@2.1.9':
-     resolution: {integrity: sha512-UJCIkTBenHeKT1TTlKMJWy1laZewsRIzYighyYiJKZreqtdxSos/S1t+ktRMQWu2CKqaarrkeszJx1cgC5tGZw==}
- 
--  '@vitest/expect@4.1.11':
--    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
-+  '@vitest/expect@4.1.12':
-+    resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
- 
-   '@vitest/mocker@2.1.9':
-     resolution: {integrity: sha512-tVL6uJgoUdi6icpxmdrn5YNo3g3Dxv+IHJBr0GXHaEdTcw3F+cPKnsXFhli6nO+f/6SDKPHEK1UN+k+TQv0Ehg==}
-@@ -2523,8 +2523,8 @@ 
-```
-
-**File**: `sdk/packages/node/helpers/package.json` (modified, +2/-2)
-```diff
-@@ -58,10 +58,10 @@
-   "devDependencies": {
-     "@types/node": "^24.10.1",
-     "@types/ws": "^8.18.1",
--    "@vitest/coverage-v8": "^4.1.11",
-+    "@vitest/coverage-v8": "^4.1.12",
-     "tsdown": "^0.21.4",
-     "typedoc": "^0.28.20",
-     "typescript": "^5.9.3",
--    "vitest": "^4.1.11"
-+    "vitest": "^4.1.12"
-   }
- }
-```
-
-**File**: `sdk/packages/node/iii-browser/package.json` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@
-     "tsdown": "^0.21.4",
-     "typedoc": "^0.28.20",
-     "typescript": "^5.9.3",
--    "vitest": "^4.1.11",
-+    "vitest": "^4.1.12",
-     "ws": "^8.21.0"
-   }
- }
-```
-
-**File**: `sdk/packages/node/iii/package.json` (modified, +2/-2)
-```diff
-@@ -88,10 +88,10 @@
-     "@opentelemetry/instrumentation": "^0.222.0",
-     "@opentelemetry/sdk-trace-base": "^2.11.0",
-     "@types/ws": "^8.18.1",
--    "@vitest/coverage-v8": "^4.1.11",
-+    "@vitest/coverage-v8": "^4.1.12",
-     "tsdown": "^0.21.4",
-     "typedoc": "^0.28.20",
-     "typescript": "^5.9.3",
--    "vitest": "^4.1.11"
-+    "vitest": "^4.1.12"
-   }
- }
-```
-
-**File**: `sdk/packages/node/observability/package.json` (modified, +2/-2)
-```diff
-@@ -33,9 +33,9 @@
-     "@iii-dev/helpers": "workspace:*"
-   },
-   "devDependencies": {
--    "@vitest/coverage-v8": "^4.1.11",
-+    "@vitest/coverage-v8": "^4.1.12",
-     "tsdown": "^0.21.4",
-     "typescript": "^5.9.3",
--    "vitest": "^4.1.11"
-+    "vitest": "^4.1.12"
-   }
- }
+     let workers_dir = tmp.path().join(".iii/workers");
+     std::fs::create_dir_all(&workers_dir).unwrap();
+-    let worker_bin = workers_dir.join("sweep-me");
+-    std::fs::copy("/bin/sleep", &worker_bin).unwrap();
++    let worker_bin = install_sleeper(&workers_dir, "sweep-me");
+     let mut child = std::process::Command::new(&worker_bin)
+         .arg("30")
+         .spawn()
+@@ -362,8 +374,7 @@ fn find_worker_pid_from_ps_locates_live_orphan_binary() {
+     let workers_dir = canonical_home.join(".iii/workers");
+     std::fs::create_dir_all(&workers_dir).unwrap();
+     let worker_name = format!("test-orphan-{}", std::process::id());
+-    let worker_bin = workers_dir.join(&worker_name);
+-    std::fs::copy("/bin/sleep", &worker_bin).expect("/bin/sleep must exist on Unix");
++    let worker_bin = install_sleeper(&workers_dir, &worker_name);
+     {
+         use std::os::unix::fs::PermissionsExt;
+         std::fs::set_permissions(&worker_bin, std::fs::Permissions::from_mode(0o755)).unwrap();
+@@ -451,8 +462,7 @@ fn restart_orphan_invisible_to_is_worker_running_but_visible_to_ps() {
+     let workers_dir = canonical_home.join(".iii/workers");
+     std::fs::create_dir_all(&workers_dir).unwrap();
+     let worker_name = format!("test-restart-orphan-{}", std::process::id());
+-    let worker_bin = workers_dir.join(&worker_name);
+-    std::fs::copy("/bin/sleep", &worker_bin).expect("/bin/sleep must exist on Unix");
++    let worker_bin = install_sleeper(&workers_dir, &worker_name);
+     {
+         use std::os::unix::fs::PermissionsExt;
+         std::fs::set_permissions(&worker_bin, std::fs::Permissions::from_mode(0o755)).unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2376** (2026-10-22): fix(deps): bump vitest to 4.1.12 in the Node SDK packages for Supply Chain advisories (@guibeira)
-- **PR #2375** (closed): feat(engine): optional shared namespace ownership (@ytallo)
-- **PR #2374** (2026-10-22): docs(linkly): 400/409/500, stopping the project, and other fixes from the validation runs (@guibeira)
-- **PR #2373** (2026-10-22): fix(engine): keep workers connected when they send an oversized message (@sergiofilhowz)
-- **PR #2372** (2026-10-21): fix(observe): bound how much of the time report backpressure holds a worker (@sergiofilhowz)
-- **PR #2371** (2026-10-21): Revert "fix(engine): close oversized worker messages with 1009 (#2366)" (@sergiofilhowz)
+- **PR #2392** (closed): chore(deps): bump the cargo-minor-and-patch group across 1 directory with 31 updates (@dependabot[bot])
+- **PR #2391** (2026-10-23): fix(deps): update Tokio to address RUSTSEC-2026-0386 (@guibeira)
+- **PR #2386** (2026-10-23): test(rust): give the oversized result_wire case a 30s budget (@guibeira)
+- **PR #2385** (2026-10-23): fix(python): require websockets>=14.0 (@guibeira)
+- **PR #2383** (2026-10-23): docs(changelog): complete 0.25.0 release notes (@guibeira)
+- **PR #2382** (closed): chore(deps): bump the npm-minor-and-patch group across 1 directory with 36 updates (@dependabot[bot])
 
 ---
 
@@ -1889,13 +2700,13 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisori
+## X. deps): update Tokio to address RUSTSEC-2026-0386 (#2391)
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c012a89d`: deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisories (#2351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51ab46eb`: deps): update Tokio to address RUSTSEC-2026-0386 (#2391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1903,24 +2714,40 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
-version = "1.0.10"
-checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+ "windows-sys 0.48.0",
+ "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
+ "windows-sys 0.52.0",
+version = "1.53.3"
+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+ "windows-sys 0.48.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-version = "1.0.7"
-checksum = "f31141ce3fc3e300ae89b78c0dd67f9708061d1d2eda54b8209346fd6be9a92c"
-version = "1.0.7"
-checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "1.52.2"
+checksum = "110a78583f19d5cdb2c5ccf321d1290344e71313c6c37d43520d386027d18386"
+ "windows-sys 0.61.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c012a89d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51ab46eb` are properly handled with clean fallback behavior.

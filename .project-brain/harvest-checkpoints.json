@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T09:38:23.297Z",
+  "last_updated": "2026-10-25T10:01:30.982Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
-      "verified_at": "2026-10-20T15:49:56.203Z",
+      "content_hash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
+      "verified_at": "2026-10-25T09:56:06.712Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:49:56.203Z"
+      "last_updated": "2026-10-25T09:56:06.712Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
-      "verified_at": "2026-10-22T17:44:56.612Z",
+      "content_hash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
+      "verified_at": "2026-10-25T09:58:48.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:44:56.612Z"
+      "last_updated": "2026-10-25T09:58:48.066Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "d9480a24eb3508a593bcbc37b0e1763943150b4945d3ebcc8da31fa3bba2d764",
-      "verified_at": "2026-10-23T08:03:59.751Z",
+      "content_hash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
+      "verified_at": "2026-10-25T09:53:59.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:03:59.751Z"
+      "last_updated": "2026-10-25T09:53:59.021Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -8571,14 +8571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-franken-ui-ui",
-      "content_hash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
-      "verified_at": "2026-10-22T21:22:12.002Z",
+      "content_hash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
+      "verified_at": "2026-10-25T10:01:30.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:22:12.002Z"
+      "last_updated": "2026-10-25T10:01:30.982Z"
     },
     "DataDog/glommio": {
       "repository": "DataDog/glommio",
@@ -10416,14 +10416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nirdiamant-rag_techniques",
-      "content_hash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
-      "verified_at": "2026-10-21T00:55:38.581Z",
+      "content_hash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
+      "verified_at": "2026-10-25T09:53:59.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:55:38.581Z"
+      "last_updated": "2026-10-25T09:53:59.399Z"
     },
     "medialab/xan": {
       "repository": "medialab/xan",

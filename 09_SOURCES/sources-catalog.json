@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
-    "lastHarvestedAt": "2026-10-20T15:49:56.197Z",
+    "contentHash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
+    "lastHarvestedAt": "2026-10-25T09:56:06.702Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "9edd3db1",
+    "sourceVersion": "e1f3ae29",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
-    "lastHarvestedAt": "2026-10-22T17:44:56.604Z",
+    "contentHash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
+    "lastHarvestedAt": "2026-10-25T09:58:48.056Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "7cb38827",
+    "sourceVersion": "05237822",
     "license": "MIT",
-    "contentHash": "d9480a24eb3508a593bcbc37b0e1763943150b4945d3ebcc8da31fa3bba2d764",
-    "lastHarvestedAt": "2026-10-23T08:03:59.739Z",
+    "contentHash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
+    "lastHarvestedAt": "2026-10-25T09:53:59.010Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
-    "lastHarvestedAt": "2026-10-22T21:22:11.988Z",
+    "contentHash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
+    "lastHarvestedAt": "2026-10-25T10:01:30.975Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {
@@ -6903,10 +6903,10 @@
     "repository": "NirDiamant/RAG_Techniques",
     "platform": "github",
     "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "sourceVersion": "37c1900e",
+    "sourceVersion": "afab9abc",
     "license": "NOASSERTION",
-    "contentHash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
-    "lastHarvestedAt": "2026-10-21T00:55:38.573Z",
+    "contentHash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
+    "lastHarvestedAt": "2026-10-25T09:53:59.388Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
   },
   "medialab-xan": {

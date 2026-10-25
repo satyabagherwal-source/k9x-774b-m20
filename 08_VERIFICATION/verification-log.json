@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-D34U",
-    "timestamp": "2026-10-21T18:07:38.526Z",
-    "repository": "cheaper-inference/OmniRoute",
-    "learningId": "learn-github-cheaper-inference-omniroute",
-    "contentHash": "f8d78fd111e3652da2bf69eb52a9312a41ab9c83f7105014ee981d53674d0ade",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-D77D",
-    "timestamp": "2026-10-21T18:07:43.801Z",
-    "repository": "ai-job-search-dev/ai-job-search",
-    "learningId": "learn-github-ai-job-search-dev-ai-job-search",
-    "contentHash": "89f017a0e3fd0461a59684179d6fe2a701e94bbb66b1e803dad92fe4da2034f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-DE9I",
-    "timestamp": "2026-10-21T18:07:52.950Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "046be9ad9fc497dcfea6ccb43dd97a17c414208045a9a3a7a733c9c352d768f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-DGDP",
-    "timestamp": "2026-10-21T18:07:55.693Z",
-    "repository": "melbahja/seo",
-    "learningId": "learn-github-melbahja-seo",
-    "contentHash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-L5T0",
-    "timestamp": "2026-10-21T18:13:55.236Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "89dad1e531934dd5a4e273e9db9941bb4d1d64d8b0ed89d70f19490b044b3d02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-L9MA",
     "timestamp": "2026-10-21T18:14:00.178Z",
     "repository": "chrisbanes/skills",
@@ -7492,6 +7417,81 @@
     "contentHash": "49e4e5efa691f8d8000f69e470e1a8d7e50dbd343c430264b81927800a7584f8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HN8F",
+    "timestamp": "2026-10-25T09:53:59.007Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-HNIX",
+    "timestamp": "2026-10-25T09:53:59.386Z",
+    "repository": "NirDiamant/RAG_Techniques",
+    "learningId": "learn-github-nirdiamant-rag_techniques",
+    "contentHash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-KDRF",
+    "timestamp": "2026-10-25T09:56:06.699Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-NU9H",
+    "timestamp": "2026-10-25T09:58:48.053Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RBZ0",
+    "timestamp": "2026-10-25T10:01:30.972Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

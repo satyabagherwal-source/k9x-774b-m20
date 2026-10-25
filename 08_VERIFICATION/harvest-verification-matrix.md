@@ -4755,3 +4755,8 @@
 | `CYCLE-20261025-SI8H` | `2026-10-25T09:34:26.129Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4213` | Yes (`7b2e3fd5...`) |
 | `CYCLE-20261025-X2VV` | `2026-10-25T09:37:59.515Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4214, Rule 4215` | Yes (`133cdee8...`) |
 | `CYCLE-20261025-XL82` | `2026-10-25T09:38:23.282Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4216, Rule 4217, Rule 4218` | Yes (`49e4e5ef...`) |
+| `CYCLE-20261025-HN8F` | `2026-10-25T09:53:59.007Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4219` | Yes (`3c65adf1...`) |
+| `CYCLE-20261025-HNIX` | `2026-10-25T09:53:59.386Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4220` | Yes (`b72052d1...`) |
+| `CYCLE-20261025-KDRF` | `2026-10-25T09:56:06.699Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4221, Rule 4222, Rule 4223` | Yes (`f39f70f2...`) |
+| `CYCLE-20261025-NU9H` | `2026-10-25T09:58:48.053Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4224` | Yes (`57b41f52...`) |
+| `CYCLE-20261025-RBZ0` | `2026-10-25T10:01:30.972Z` | `franken-ui/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4225, Rule 4226` | Yes (`fd1d856d...`) |

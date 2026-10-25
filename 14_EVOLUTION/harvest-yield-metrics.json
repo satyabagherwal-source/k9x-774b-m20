@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T09:38:23.289Z",
-  "total_cycles_completed": 4732,
-  "total_learnings_persisted": 4732,
-  "total_rules_promoted": 4092,
+  "last_updated": "2026-10-25T10:01:30.979Z",
+  "total_cycles_completed": 4737,
+  "total_learnings_persisted": 4737,
+  "total_rules_promoted": 4100,
   "history": [
-    {
-      "timestamp": "2026-10-24T19:22:30.865Z",
-      "repository": "NomaDamas/CozyClay",
-      "learningId": "learn-github-nomadamas-cozyclay",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:28:28.541Z",
-      "repository": "expressjs/express",
-      "learningId": "learn-github-expressjs-express",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:28:32.840Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:28:36.268Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:28:40.240Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T19:28:40.766Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1368,41 @@
       "repository": "cloudscape-design/components",
       "learningId": "learn-github-cloudscape-design-components",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:53:59.014Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:53:59.392Z",
+      "repository": "NirDiamant/RAG_Techniques",
+      "learningId": "learn-github-nirdiamant-rag_techniques",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:56:06.706Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:58:48.060Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:01:30.979Z",
+      "repository": "franken-ui/ui",
+      "learningId": "learn-github-franken-ui-ui",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

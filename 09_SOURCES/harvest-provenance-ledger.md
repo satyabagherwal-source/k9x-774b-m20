@@ -4762,3 +4762,8 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `903f657d` | Multi-dimensional audit evidence | 2026-10-25T09:34:26.132Z |
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-25T09:37:59.518Z |
 | `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `1f35242c` | Multi-dimensional audit evidence | 2026-10-25T09:38:23.285Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `05237822` | Multi-dimensional audit evidence | 2026-10-25T09:53:59.010Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `afab9abc` | Multi-dimensional audit evidence | 2026-10-25T09:53:59.388Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-25T09:56:06.702Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `e1f3ae29` | Multi-dimensional audit evidence | 2026-10-25T09:58:48.056Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-25T10:01:30.975Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T09:38:23.229Z",
+  "last_updated": "2026-10-25T10:01:30.886Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11725,7 +11725,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
+      "content_hash": "fd1d856dc2fb24f960f1b92d0da921501ed8c474a6e7f553f8c047aa12c33bab",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -11733,6 +11733,16 @@
           "number": 2109,
           "title": "input-date with pre-defined value off by a day for UTC minus",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4225,
+          "title": "Timezone-Agnostic Calendar Date Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4226,
+          "title": "Grouped Short-Flag CLI Parsing Sanitization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11740,7 +11750,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:22:11.908Z",
+      "verified_at": "2026-10-25T10:01:30.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27935,8 +27945,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "9edd3db1",
-      "content_hash": "f73c2a143d72bff7ad53a70c4346499fc9e4eabfc4f4f951216875ec922686b7",
+      "source_version": "e1f3ae29",
+      "content_hash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -27964,6 +27974,11 @@
           "number": 3672,
           "title": "deps): bump TLS, vite and markdown-it lockfile entries for Supply Chain advisori",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4224,
+          "title": "deps): update Tokio to address RUSTSEC-2026-0386 (#2391)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27971,7 +27986,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:44:56.543Z",
+      "verified_at": "2026-10-25T09:58:47.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34956,8 +34971,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "7cb38827",
-      "content_hash": "d9480a24eb3508a593bcbc37b0e1763943150b4945d3ebcc8da31fa3bba2d764",
+      "source_version": "05237822",
+      "content_hash": "3c65adf1fb2c52706911638e242ec2cbbc6b98998e38a432bb545844fe3f3db4",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -35020,6 +35035,11 @@
           "number": 3823,
           "title": "Multi-Valued Header Case-Insensitive Preservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4219,
+          "title": "outdated example paths in the docs (#8512)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35027,7 +35047,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:03:59.674Z",
+      "verified_at": "2026-10-25T09:53:58.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36859,8 +36879,8 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "37c1900e",
-      "content_hash": "7eebeff289415b4efaa02843ba7aef1011b6385f095c7b222af7759680fb3dc4",
+      "source_version": "afab9abc",
+      "content_hash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
@@ -36873,6 +36893,11 @@
           "number": 3469,
           "title": "Add Document Parsing with Mistral OCR 4 (sponsored by Mistral AI) (#210)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4220,
+          "title": "Point book links to Amazon instead of the Gumroad landing pages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36880,7 +36905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:55:38.495Z",
+      "verified_at": "2026-10-25T09:53:59.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59822,7 +59847,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "b91713bdc26fe9405563b96d2ba17b09a8ee4d3cb1630af52be4cd7521c8877b",
+      "content_hash": "f39f70f22f74d2b620ff175787c04c02b9ed2980389bb25e05f47107e94c07a1",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -59930,6 +59955,21 @@
           "number": "EXISTING",
           "title": "Tokenizer Special‑Token Integrity",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4221,
+          "title": "Hybrid Linear-Full Attention State Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4222,
+          "title": "Intra-ViT Intermediate Feature Downsampling Token Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4223,
+          "title": "Canvas-Mode Multimodal Rotary Embedding (M-RoPE) Interleaving Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59937,7 +59977,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:49:56.134Z",
+      "verified_at": "2026-10-25T09:56:06.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121530,6 +121570,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T09:38:23.217Z"
+    },
+    "rule-4219": {
+      "learning_id": "rule-4219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4219,
+      "title": "outdated example paths in the docs (#8512)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "05237822",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:53:58.930Z"
+    },
+    "rule-4220": {
+      "learning_id": "rule-4220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4220,
+      "title": "Point book links to Amazon instead of the Gumroad landing pages",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "afab9abc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:53:59.314Z"
+    },
+    "rule-4221": {
+      "learning_id": "rule-4221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4221,
+      "title": "Hybrid Linear-Full Attention State Synchronization Invariant",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:56:06.630Z"
+    },
+    "rule-4222": {
+      "learning_id": "rule-4222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4222,
+      "title": "Intra-ViT Intermediate Feature Downsampling Token Invariant",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:56:06.630Z"
+    },
+    "rule-4223": {
+      "learning_id": "rule-4223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4223,
+      "title": "Canvas-Mode Multimodal Rotary Embedding (M-RoPE) Interleaving Rule",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:56:06.630Z"
+    },
+    "rule-4224": {
+      "learning_id": "rule-4224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4224,
+      "title": "deps): update Tokio to address RUSTSEC-2026-0386 (#2391)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "e1f3ae29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:58:47.982Z"
+    },
+    "rule-4225": {
+      "learning_id": "rule-4225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4225,
+      "title": "Timezone-Agnostic Calendar Date Invariant",
+      "source_url": "https://github.com/franken-ui/ui",
+      "source_version": "32af1a27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:01:30.868Z"
+    },
+    "rule-4226": {
+      "learning_id": "rule-4226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4226,
+      "title": "Grouped Short-Flag CLI Parsing Sanitization Invariant",
+      "source_url": "https://github.com/franken-ui/ui",
+      "source_version": "32af1a27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:01:30.868Z"
     }
   },
   "aliases": {
