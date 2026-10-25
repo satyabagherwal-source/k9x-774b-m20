@@ -4946,3 +4946,4 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `1bcd8820` | Multi-dimensional audit evidence | 2026-10-25T18:15:28.965Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fe883d1b` | Multi-dimensional audit evidence | 2026-10-25T18:15:32.845Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `796c21ca` | Multi-dimensional audit evidence | 2026-10-25T18:15:34.599Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-25T18:21:51.061Z |

@@ -4939,3 +4939,4 @@
 | `CYCLE-20261025-EKSH` | `2026-10-25T18:15:28.961Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3977` | Yes (`214f3857...`) |
 | `CYCLE-20261025-ENS9` | `2026-10-25T18:15:32.841Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4409` | Yes (`2673a5c6...`) |
 | `CYCLE-20261025-EP50` | `2026-10-25T18:15:34.596Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4410` | Yes (`a9c31fb7...`) |
+| `CYCLE-20261025-MRMA` | `2026-10-25T18:21:51.058Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`002169a9...`) |
