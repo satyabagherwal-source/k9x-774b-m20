@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:00:00.284Z",
-  "total_cycles_completed": 4927,
-  "total_learnings_persisted": 4927,
-  "total_rules_promoted": 4300,
+  "last_updated": "2026-10-25T19:06:28.498Z",
+  "total_cycles_completed": 4930,
+  "total_learnings_persisted": 4930,
+  "total_rules_promoted": 4302,
   "history": [
-    {
-      "timestamp": "2026-10-25T09:14:37.321Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T09:18:01.389Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T09:34:26.137Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T09:37:59.523Z",
       "repository": "lodestones/Kromoss",
@@ -1403,6 +1382,27 @@
       "repository": "hexgrad/Kokoro-82M",
       "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:06:27.354Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:06:27.614Z",
+      "repository": "rsuite/rsuite",
+      "learningId": "learn-github-rsuite-rsuite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:06:28.498Z",
+      "repository": "mlua-rs/mlua",
+      "learningId": "learn-github-mlua-rs-mlua",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

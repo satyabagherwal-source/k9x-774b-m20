@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:00:00.244Z",
+  "last_updated": "2026-10-25T19:06:28.417Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35777,14 +35777,19 @@
       "slug": "mlua-rs-mlua",
       "platform": "github",
       "source_url": "https://github.com/mlua-rs/mlua",
-      "source_version": "a186d461",
-      "content_hash": "87cc93baa62ce94a395dae6dc2c5b10f9b5f03cd3df3c7583ca97a46b5243656",
+      "source_version": "ff96ed78",
+      "content_hash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
       "dossier_path": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "promoted_rules": [
         {
           "number": 2115,
           "title": "Prevent buffer seek overflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4418,
+          "title": "minimum integer lookup paths",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35793,7 +35798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:19:28.478Z",
+      "verified_at": "2026-10-25T19:06:28.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43273,8 +43278,8 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "79077a69",
-      "content_hash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
+      "source_version": "71175b9a",
+      "content_hash": "ff9907d7780aec2c6afea8d1150c542df9c97f0cc25d42e116a39a73edc2a878",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
@@ -43312,6 +43317,11 @@
           "number": 4035,
           "title": "Merge source-map security main and preserve both boundary checks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4417,
+          "title": "Merge pull request #5015 from rsuite/perf/picker-keyboard-option-lookup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43319,7 +43329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:12:26.448Z",
+      "verified_at": "2026-10-25T19:06:27.540Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61184,7 +61194,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
+      "content_hash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -61239,7 +61249,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:25:14.123Z",
+      "verified_at": "2026-10-25T19:06:27.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125414,6 +125424,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T18:41:00.178Z"
+    },
+    "rule-4417": {
+      "learning_id": "rule-4417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4417,
+      "title": "Merge pull request #5015 from rsuite/perf/picker-keyboard-option-lookup",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "71175b9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:06:27.540Z"
+    },
+    "rule-4418": {
+      "learning_id": "rule-4418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4418,
+      "title": "minimum integer lookup paths",
+      "source_url": "https://github.com/mlua-rs/mlua",
+      "source_version": "ff96ed78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:06:28.406Z"
     }
   },
   "aliases": {

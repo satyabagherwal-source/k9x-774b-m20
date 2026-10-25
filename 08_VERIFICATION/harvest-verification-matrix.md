@@ -4950,3 +4950,6 @@
 | `CYCLE-20261025-JHGL` | `2026-10-25T18:47:17.541Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a170f5aa...`) |
 | `CYCLE-20261025-S7ZT` | `2026-10-25T18:54:05.177Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`bde2cb99...`) |
 | `CYCLE-20261025-ZTZQ` | `2026-10-25T19:00:00.278Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`5293fa39...`) |
+| `CYCLE-20261025-84NM` | `2026-10-25T19:06:27.346Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`ef438780...`) |
+| `CYCLE-20261025-84UU` | `2026-10-25T19:06:27.606Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4417` | Yes (`ff9907d7...`) |
+| `CYCLE-20261025-85JD` | `2026-10-25T19:06:28.489Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4418` | Yes (`9908bbca...`) |

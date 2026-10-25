@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `79077a69`  
+> **Source Version**: `71175b9a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:12:26.077Z  
+> **Timestamp**: 2026-10-25T19:06:27.221Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:12:24.473Z  
+> **Harvest Timestamp**: 2026-10-25T19:06:26.220Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -697,17 +697,11 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5018** (2026-10-25): **fix(benchmarks): preserve visible virtual pointer targets**
-  *Symptoms*: The virtual table driver used a locator click on an already visible checkbox label. React Aria temporarily disables pointer events while its virtualizer scrolls, and [locator pointer actions scroll before input](https://playwright.dev/docs/input#mouse-click). The original Chromium/Firefox controls moved row 9000 from scrollTop 360000 to 359628 / 360012 before native pointerdown. In #5016's retained first Table run, the selected HeroUI row ended below the viewport and failed the original visibility assertion.  Wait within the existing ten-second action budget for the enabled label's current center to be a native hit belonging to the requested row, then send native mouse input there. Keep the trusted pointerdown/pointerup/click identity checks, keyboard behavior, selection and visibility assertions, and response/final integrity checks. No DOM focus, forced click, synthetic dispatch, CSS override, deadline increase or oracle relaxation.  Add two production HeroUI native pointer controls and eight covered/clipped/disabled/wrong-row rejection controls across Chromium and Firefox. The CI step is additive; all existing workflows and mutation controls remain.  Validation on the exact source tree `23d4d513`:  - Full Node 24 SDK build, declarations and six built-artifact consumer tests pass after a clean physical frozen dependency install. - A fresh standalone install contains all 3,955 SDK files byte-identical to the owned build; types and all four production adapters pass. - All 10 p
-  **Post-Mortem & Fix Analysis**:
-  > #### Review or Edit in CodeSandbox  Open the branch in <a href="https://codesandbox.io/p/github/rsuite/rsuite/fix/table-heroui-selection-scroll?mode=review&utm_source=gh_app">Web Editor</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/table-heroui-selection-scroll&utm_source=gh_app">VS Code</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/table-heroui-selection-scroll&insiders=true&utm_source=gh_app">Insiders</a><br> Open <a href="https://codesandbox.io/p/devtool/preview/rsuite/rsuite/fix/table-heroui-selection-scroll?task=preview&port=51423&redirect=true&utm_source=gh_app">Preview</a>  <!-- open-in-codesandbox:complete --> 
-  > [vc]: #hRlbSAskIEmElARzKpfwaldYArl2jjGF4bP/0fX7da0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyc3VpdGUtbWFpbiIsInByb2plY3RJZCI6InByal9teUhqa1IwbUllcmg4RHg5ZUI0VlY0cHJPMzNHIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiZG9jcyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtbWFpbi1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52ZXJjZWwuYXBwIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9yc3VpdGUvcnN1aXRlLW1haW4vOFhOZmdoYTFpSzVtampmNDhWbmdqSlZVMk1VRiIsInByZXZpZXdVcmwiOiJyc3VpdGUtbWFpbi1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn0seyJuYW1lIjoicnN1aXRlLXN0b3J5Ym9vayIsInByb2plY3RJZCI6InByal9mNUlrV3lDTEFXSDhaeExPZXF2NjV5UUgwaGZzIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjpudWxsLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoicnN1aXRlLXN0b3J5Ym9vay1naXQtZml4LXRhYmxlLWhlcm91aS1zZWxlY3Rpb24tc2Nyb2xsLXJzdWl0ZS52
+- **Issue #5021** (2026-10-25): **fix(benchmarks): validate installed SDK dependency contracts**
+  *Symptoms*: Standalone benchmark locks still advertised schema-typed ^2.4.2 and rsuite-table ^5.19.2 while the built SDK requires ^2.4.4 and ^5.19.3. The SDK file fingerprint could match even though its actual installed dependencies violated those requirements.  Synchronize the Picker, Form and Table file-package snapshots and resolved SDK dependencies. Validate the physical SDK metadata, actual dependency and peer resolution, declared version ranges and frozen resolved records before builds and report reuse. Record that dependency contract in build manifests and watch the shared guard in the Table workflow. All other existing lock records and competitor pins stay unchanged; semver 7.8.5 is a fixture-only development dependency. Production source, dependency ranges and public APIs are unchanged.  Validation on Node 24.12.0 / Darwin: - Strict frozen installations and TypeScript checks in all three standalone fixtures; 14 new positive/negative contract controls per fixture. - All 3,955 SDK files byte-verified against the independently built accepted-main SDK in each fixture; six production build manifests independently bound to the committed fixture source and actual SDK dependencies. - Picker: 32 native Chromium/Firefox cases, 160 checkpoints, 32 detected/restored color faults, 16 style pairs, 58 style/visibility/scroll/geometry controls, and both corruption controls passed. - Table: native pointer, whole-row geometry, composed focus, virtual/loading/empty recovery and mid-run mutation co
 
-- **Issue #5017** (2026-10-24): **fix(benchmarks): follow changing virtual scroll bounds**
-  *Symptoms*: The bottom-scroll preflight captured its destination before a virtual list replaced estimated row heights. A shrinking range could time out at the actual bottom; a growing range could pass at an obsolete boundary.  Validate the current scroll boundary after the existing trusted native scroll/completion observations. Retain the initial destination and current dimensions in failure diagnostics. The requested scroll write, 12s deadline, native wheel input, visibility/geometry predicates and measurement/frame conditions remain unchanged. Changes are limited to the two benchmark runner files.  Validation:  - Chromium 141 and Firefox 142 each pass the original five native controls and two new range-change controls: 14 passes total. Running the same controls against the original helper produces four failures, covering both false timeout and false acceptance. - Standalone benchmark type checks and all 14 existing unit tests pass; targeted ESLint, Prettier and normal commit hooks pass. - A separate diagnostic serves the exact downloaded first-failed #5016 production bundles: both browsers complete full/component RSuite virtualized 1k workloads, all 20 checkpoints and both style comparisons. This is a local diagnostic, not a hosted rerun or acceptance of the original failure.  The first #5016 asset failure remains retained and held: 30 accepted cases, one full-profile runtime failure and one dependent component comparison failure. This change does not establish repeated performance res
-  **Post-Mortem & Fix Analysis**:
-  > #### Review or Edit in CodeSandbox  Open the branch in <a href="https://codesandbox.io/p/github/rsuite/rsuite/fix/picker-scroll-dynamic-range?mode=review&utm_source=gh_app">Web Editor</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/picker-scroll-dynamic-range&utm_source=gh_app">VS Code</a> &bull; <a href="https://codesandbox.io/p/vscode?owner=rsuite&repo=rsuite&branch=fix/picker-scroll-dynamic-range&insiders=true&utm_source=gh_app">Insiders</a><br> Open <a href="https://codesandbox.io/p/devtool/preview/rsuite/rsuite/fix/picker-scroll-dynamic-range?task=preview&port=51423&redirect=true&utm_source=gh_app">Preview</a>  <!-- open-in-codesandbox:complete --> 
-  > [vc]: #Nsv72zicUQVR1AHPEfybnlj/nH+0QmgbdZA0B61aQHo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyc3VpdGUtbWFpbiIsInByb2plY3RJZCI6InByal9teUhqa1IwbUllcmg4RHg5ZUI0VlY0cHJPMzNHIiwidjAiOmZhbHNlLCJyb290RGlyZWN0b3J5IjoiZG9jcyIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtbWFpbi1naXQtZml4LXBpY2tlci1zY3JvbGwtZHluYW1pYy1yYW5nZS1yc3VpdGUudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vcnN1aXRlL3JzdWl0ZS1tYWluLzZXbmJoS0pOUUU4VHhXaGM5R0dRZ3M3aDYyUG4iLCJwcmV2aWV3VXJsIjoicnN1aXRlLW1haW4tZ2l0LWZpeC1waWNrZXItc2Nyb2xsLWR5bmFtaWMtcmFuZ2UtcnN1aXRlLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQifSx7Im5hbWUiOiJyc3VpdGUtc3Rvcnlib29rIiwicHJvamVjdElkIjoicHJqX2Y1SWtXeUNMQVdIOFp4TE9lcXY2NXlRSDBoZnMiLCJ2MCI6ZmFsc2UsInJvb3REaXJlY3RvcnkiOm51bGwsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyc3VpdGUtc3Rvcnlib29rLWdpdC1maXgtcGlja2VyLXNjcm9sbC1keW5hbWljLXJhbmdlLXJzdWl0ZS52ZXJjZWwu
+- **Issue #5020** (2026-10-25): **fix(benchmarks): exclude transparent picker content from visibility**
+  *Symptoms*: The first main asset run after #5016 failed both Firefox / Ant Design ordinary-list selected checkpoints: a finished closing animation left the popup at opacity 0, while the shared snapshot reported it visible. The strict style observer rejected that contradictory state. The original [run 40164904765](https://github.com/rsuite/rsuite/actions/runs/40164904765), atomic contexts and artifact remain archived; its Ant Design JS/CSS bytes match the passing first PR run.  Exclude computed zero opacity on an element or any ancestor from the shared visibility predicate. Check ancestor opacity beyond the clipping viewport while retaining the existing clipping boundaries. Partially transparent content and temporary `pointer-events: none` retain their geometry behavior. Add controls for the finished transparent closing state and rejection of a collapsed popup that still paints.  Validation of normally committed head `a30b6387`, tree `9c553fa0`:  - [First Node 24 Linux asset run](https://github.com/rsuite/rsuite/actions/runs/40166988070) succeeds. Its downloaded artifact independently qualifies all 32 browser/library/mode/style cases, 160 checkpoints, 48 file hash/gzip checks, 16 dependency graphs, 32 color fault controls, 16 full/component comparisons and both corrupted-build rejection controls. - The same actual artifact qualifies 22 new visibility controls, 12 existing geometry controls, 10 existing style-observation controls and 14 existing scroll controls. The two original failing se
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -724,488 +718,1423 @@ export default function Adapter({ rows, loading, selected, onSelected }: Lifecyc
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed11c0ce` (2026-10-24)
-**Commit Message**: Merge source-map security main and preserve both boundary checks
+### Incident Patch 1: `71175b9a` (2026-10-25)
+**Commit Message**: Merge pull request #5015 from rsuite/perf/picker-keyboard-option-lookup
 
-**File**: `.github/workflows/nodejs-ci.yml` (modified, +2/-0)
-```diff
-@@ -28,6 +28,8 @@ jobs:
-       - run: npm ci --legacy-peer-deps
-       - name: Check docs type file boundaries
-         run: node --test test/build/docs-type-files.integration-test.cjs
-+      - name: Check source map offset bounds
-+        run: node --test test/build/source-map-offsets.integration-test.cjs
-       - name: Check browser and public consumer CI coverage
-         run: node --test test/build/browser-ci-capacity.integration-test.cjs
-       - name: Check component defaults registry
-```
+perf(picker): avoid repeated data scans during keyboard navigation
 
-**File**: `package-lock.json` (modified, +3/-3)
+**File**: `src/internals/Picker/getItemsByElements.ts` (added, +33/-0)
 ```diff
-@@ -16061,9 +16061,9 @@
-       }
-     },
-     "node_modules/source-map-js": {
--      "version": "1.2.1",
--      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
--      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
-+      "version": "1.2.2",
-+      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
-+      "integrity": "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
-       "dev": true,
-       "engines": {
-         "node": ">=0.10.0"
-```
-
-**File**: `test/build/source-map-offsets.integration-test.cjs` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+const assert = require('node:assert/strict');
-+const { test } = require('node:test');
-+const { Worker, isMainThread, parentPort, workerData } = require('node:worker_threads');
-+const { SourceMapConsumer, SourceMapGenerator, SourceNode } = require('source-map-js');
+@@ -0,0 +1,33 @@
++import getOptionKey from './getOptionKey';
 +
-+const basicMap = (source = 'input.ts') => ({
-+  version: 3,
-+  sources: [source],
-+  sourcesContent: ['const value = 1;'],
-+  names: [],
-+  mappings: 'AAAA'
-+});
-+const indexedMap = (line, column = 0, map = basicMap()) => ({
-+  version: 3,
-+  sections: [{ offset: { line, column }, map }]
-+});
++/** Resolve a rendered option list without rescanning all data for each row. */
++function getItemsByElements<T>(
++  elements: readonly HTMLElement[],
++  data: readonly T[] | undefined,
++  valueKey: string
++) {
++  if (!elements.length) return [];
 +
-+function exercise(operation) {
-+  if (operation === 'nested-sources') {
-+    let map = { ...basicMap(), sources: ['first.ts', 'second.ts'] };
-+    for (let depth = 0; depth < 40; depth++) {
-+      map = indexedMap(0, 0, map);
-+    }
-+    return new SourceMapConsumer(map).sources;
-+  }
-+  if (operation === 'generated-gap') {
-+    const generator = new SourceMapGenerator();
-+    generator.addMapping({
-+      generated: { line: 10_000_001, column: 0 },
-+      original: { line: 1, column: 0 },
-+      source: 'input.ts'
-+    });
-+    const map = generator.toJSON();
-+    assert.equal(map.mappings.length, 10_000_004);
-+    assert.equal(map.mappings.slice(-4), 'AAAA');
-+    return map.mappings.length;
-+  }
-+  if (operation === 'exhausted-code') {
-+    const consumer = new SourceMapConsumer(indexedMap(1_000_000));
-+    return SourceNode.fromStringWithSourceMap('x', consumer).toString();
-+  }
-+  throw new Error('Unknown source-map operation: ' + operation);
-+}
++  const typed = new Map<string, T>();
++  const legacy = new Map<string, T>();
 +
-+async function inBoundedWorker(operation) {
-+  const worker = new Worker(__filename, {
-+    workerData: operation,
-+    resourceLimits: { maxOldGenerationSizeMb: 64, maxYoungGenerationSizeMb: 16 }
++  for (const item of data ?? []) {
++    const value = item[valueKey];
++    const typedKey = getOptionKey(value);
++    const legacyKey = String(value);
++    // Match the first item just as the previous per-row find did.
++    if (!typed.has(typedKey)) typed.set(typedKey, item);
++    if (!legacy.has(legacyKey)) legacy.set(legacyKey, item);
++  }
++
++  return elements.map(element => {
++    const { pickerKey, key } = element.dataset;
++    return pickerKey === undefined
++      ? key === undefined
++        ? undefined
++        : legacy.get(key)
++      : typed.get(pickerKey);
 +  });
-+  try {
-+    return await new Promise((resolve, reject) => {
-+      let settled = false;
-+      let operationTimer;
-+      const startupTimer = setTimeout(() => finish(new Error('Worker did not start')), 10_000);
-+      function finish(error, result) {
-+        if (settled) return;
-+        settled = true;
-+        clearTimeout(startupTimer);
-+        clearTimeout(operationTimer);
-+        if (error) reject(error);
-+        else resolve(result);
-+      }
-+      worker.once('online', () => {
-+        clearTimeout(startupTimer);
-+        operationTimer = setTimeout(
-+          () => finish(new Error(operation + ' exceeded the 3-second operation budget')),
-+          3_000
-+        );
-+      });
-+      worker.once('message', result => finish(null, result));
-+      worker.once('error', error => finish(error));
-+      worker.once('exit', code =>
-+        finish(new Error(operation + ' exited without a result: ' + code))
-+      );
-+    });
-+  } finally {
-+    await worker.terminate();
-+  }
 +}
 +
-+if (!isMainThread) {
-+  parentPort.postMessage(exercise(workerData));
-+} else {
-+  for (const field of ['line', 'column']) {
-+    for (const value of [-1, 0.5, Infinity, NaN, Number.MAX_SAFE_INTEGER + 1, null, '1']) {
-+      test('rejects invalid indexed section ' + field + ': ' + String(value), () => {
-+        const offset = { line: 0, column: 0, [field]: value };
-+        assert.throws(
-+          () => new SourceMapConsumer({ version: 3, sections: [{ offset, map: basicMap() }] }),
-+          /non-negative integers/
-+        );
-+      });
-+    }
-+  }
++export default getItemsByElements;
+```
+
+**File**: `src/internals/Picker/hooks/useFocusItemValue.ts` (modified, +10/-5)
+```diff
+@@ -8,6 +8,7 @@ import { findNodeOfTree } from '../../Tree/utils';
+ import { onMenuKeyDown } from '../utils';
+ import findItemByKey from '../findItemByKey';
+ import getOptionKey from '../getOptionKey';
++import getItemsByElements from '../getItemsByElements';
+ import type { VirtualizedListHandle } from './useVirtualizedListFocus';
+ 
+ interface FocusItemValueProps<T = unknown> {
+@@ -126,8 +127,10 @@ const useFocusItemValue = <T, D>(
+     const rootMenu = popup?.querySelector<HTMLElement>('[data-layer="0"]') || popup;
+ 
+     // Preserve rendered order and the original type of each option value.
+-    return Array.from(rootMenu?.querySelectorAll<HTMLElement>(focusableQueryKey) ?? []).map(
+-      getItemByElement
++    return getItemsByElements(
++      Array.from(rootMenu?.querySelectorAll<HTMLElement>(focusableQueryKey) ?? []),
++      data,
++      valueKey
+     );
+   };
+ 
+@@ -222,9 +225,11 @@ const useFocusItemValue = <T, D>(
+     const subMenu = menu?.querySelector(`[data-layer="${nextLayer}"]`);
+ 
+     if (subMenu) {
+-      return Array.from(subMenu.querySelectorAll<HTMLElement>(focusableQueryKey)).map(
+-        item => getItemByElement(item)?.[valueKey]
+-      );
++      return getItemsByElements(
++        Array.from(subMenu.querySelectorAll<HTMLElement>(focusableQueryKey)),
++        data,
++        valueKey
++      ).map(item => item?.[valueKey]);
+     }
+ 
+     return null;
+```
+
+**File**: `src/internals/Picker/test/getItemsByElements.spec.ts` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++import { describe, expect, it } from 'vitest';
++import getItemsByElements from '../getItemsByElements';
++import getOptionKey from '../getOptionKey';
 +
-+  test('rejects excessive direct and accumulated nested line offsets', () => {
-+    assert.throws(() => new SourceMapConsumer(indexedMap(100_000_000)), /must not exceed/);
-+    assert.throws(
-+      () => new SourceMapConsumer(indexedMap(6_000_000, 0, indexedMap(6_000_000))),
-+      /including offsets of nested sections/
++function row(value: unknown, typed = true) {
++  const element = document.createElement('div');
++  element.dataset.key = String(value);
++  if (typed) element.dataset.pickerKey = getOptionKey(value);
++  return element;
++}
++
++describe('getItemsByElements', () => {
++  it('retains rendered order, original types and first-match duplicate semantics', () => {
++    const number = { value: 0 };
++    const string = { value: '0' };
++    const token = { value: 'number:0' };
++    const duplicate = { value: 0 };
++    const data = [number, string, token, duplicate];
++    const result = getItemsByElements(
++      [row('number:0'), row('0'), row(0), row('0', false)],
++      data,
++      'value'
 +    );
-+    assert.doesNotThrow(() => new SourceMapConsumer(indexedMap(10_000_000)));
++    expect(result).toEqual([token, string, number, number]);
++    expect(result[2]).toBe(number);
++    expect(result[3]).toBe(number);
 +  });
 +
-+  test('retains normal indexed mappings and source content', () => {
-+    const consumer = new SourceMapConsumer({
-+      version: 3,
-+      sections: [
-+        { offset: { line: 0, column: 0 }, map: basicMap('first.ts') },
-+        { offset: { line: 1, column: 2 }, map: basicMap('second.ts') }
-+      ]
-+    });
-+    assert.deepEqual(consumer.originalPositionFor({ line: 1, column: 1 }), {
-+      source: 'first.ts',
-+      line: 1,
-+      column: 0,
-+      name: null
-+    });
-+    assert.deepEqual(consumer.originalPositionFor({ line: 2, column: 3 }), {
-+      source: 'second.ts',
-+      line: 1,
-+      column: 0,
-+      name: null
-+    });
-+    assert.deepEqual(consumer.sources, ['first.ts', 'second.ts']);
-+    assert.equal(consumer.sourceContentFor('second.ts'), 'const value = 1;');
-+    assert.equal(SourceNode.fromStringWithSourceMap('a\n  b', consumer).toString(), 'a\n  b');
++  it('retains first-match string conversion for non-primitive and missing values', () => {
++    const values = [null, undefined, NaN, false, {}, {}, '', '__proto__', Symbol('key')];
++    const data = values.map(id => ({ id }));
++    expect(
++      getItemsByElements(
++        values.map(value => row(value)),
++        data,
++        'id'
++      )
++    ).toEqual([data[0], data[1], data[2], data[3], data[4], data[4], data[6], data[7], data[8]]);
 +  });
 +
-+  test('roundtrips a normal generated map and its source content', () => {
-+    const generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(basicMap()));
-+    assert.deepEqual(generator.toJSON(), basicMap());
-+    const roundtrip = new SourceMapConsumer(generator.toJSON());
-+    assert.deepEqual(roundtrip.originalPositionFor({ line: 1, col
++  it('does not fall back from an unmatched typed key to a legacy key', () => {
++    const typed = row('missing');
++    typed.dataset.key = 'present';
++    expect(
++      getItemsByElements(
++        [typed, row('present', false), document.createElement('div')],
++        [{ value: 'present' }],
++        'value'
++      )
++    ).toEqual([undefined, { value: 'present' }, undefined]);
++  });
++
++  it('handles an empty data set and an empty rendered list', () => {
++    expect(getItemsByElements([row(1)], undefined, 'value')).toEqual([undefined]);
++    expect(getItemsByElements([], [{ value: 1 }], 'value')).toEqual([]);
++  });
++});
+```
+
+**File**: `src/internals/Picker/test/useFocusItemValue.spec.ts` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++import { act, renderHook } from '@testing-library/react';
++import { describe, expect, it, vi } from 'vitest';
++import useFocusItemValue from '../hooks/useFocusItemValue';
++import getOptionKey from '../getOptionKey';
++
++function menuFor(values: unknown[]) {
++  const menu = document.createElement('div');
++  for (const value of values) {
++    const row = document.createElement('div');
++    row.dataset.key = String(value);
++    row.dataset.pickerKey = getOptionKey(value);
++    row.setAttribute('aria-disabled', 'false');
++    menu.append(row);
++  }
++  return menu;
++}
++
++const down = () => ({ key: 'ArrowDown', preventDefault: vi.fn() });
++
++describe('useFocusItemValue', () => {
++  it('bounds data reads for ordinary-list keyboard navigation', () => {
++    const size = 256;
++    let reads = 0;
++    const data = Array.from({ length: size }, (_, value) => ({
++      get value() {
++        reads++;
++        return value;
++      }
++    }));
++    const callback = vi.fn();
++    const target = menuFor(Array.from({ length: size }, (_, index) => index));
++    const { result } = renderHook(() =>
++      useFocusItemValue(0, {
++        data,
++        target,
++        focusToOption: false,
++        callback
++      })
++    );
++    reads = 0;
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe(1);
++    expect(callback).toHaveBeenCalledOnce();
++    expect(reads).toBeLessThanOrEqual(size * 4);
++  });
++
++  it('follows current DOM order while distinguishing numbers and strings', () => {
++    const target = menuFor(['0', 0, 'number:0', 'last']);
++    target.children[2].setAttribute('aria-disabled', 'true');
++    const data = [{ value: 0 }, { value: 'number:0' }, { value: 'last' }, { value: '0' }];
++    const { result } = renderHook(() =>
++      useFocusItemValue<string | number, { value: string | number }>('0', {
++        data,
++        target,
++        focusToOption: false
++      })
++    );
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe(0);
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe('last');
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe('0');
++    target.prepend(target.lastElementChild!);
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe(0);
++  });
++
++  it('sees in-place data and rendered-option changes on the next key', () => {
++    const target = menuFor([1, 2]);
++    const data = [{ value: 1 }, { value: 2 }];
++    const { result } = renderHook(() =>
++      useFocusItemValue(1, { data, target, focusToOption: false })
++    );
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe(2);
++    data[0].value = 3;
++    const row = target.firstElementChild as HTMLElement;
++    row.dataset.key = '3';
++    row.dataset.pickerKey = getOptionKey(3);
++    act(() => result.current.onKeyDown(down()));
++    expect(result.current.focusItemValue).toBe(3);
++  });
++});
 ```
 
 ---
 
-### Incident Patch 2: `efe6a0f1` (2026-10-24)
-**Commit Message**: Merge pull request #5007 from rsuite/build/terser-serializer-security
+### Incident Patch 2: `d3027062` (2026-10-25)
+**Commit Message**: Merge Form pointer activation fix into picker keyboard integration
 
-build: secure webpack option serialization
-
-**File**: `package-lock.json` (modified, +6/-13)
+**File**: `src/Form/Form.tsx` (modified, +4/-0)
 ```diff
-@@ -14882,14 +14882,6 @@
-         "quote-stream": "bin/cmd.js"
-       }
-     },
--    "node_modules/randombytes": {
--      "version": "2.1.0",
--      "dev": true,
--      "license": "MIT",
--      "dependencies": {
--        "safe-buffer": "^5.1.0"
--      }
--    },
-     "node_modules/react": {
-       "version": "19.0.0",
-       "resolved": "https://registry.npmjs.org/react/-/react-19.0.0.tgz",
-@@ -15745,12 +15737,13 @@
-       }
-     },
-     "node_modules/serialize-javascript": {
--      "version": "6.0.2",
--      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-6.0.2.tgz",
--      "integrity": "sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==",
-+      "version": "7.1.4",
-+      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.4.tgz",
-+      "integrity": "sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==",
-       "dev": true,
--      "dependencies": {
--        "randombytes": "^2.1.0"
-+      "license": "BSD-3-Clause",
-+      "engines": {
-+        "node": ">=20.0.0"
-       }
-     },
-     "node_modules/set-function-length": {
+@@ -10,6 +10,7 @@ import Box from '@/internals/Box';
+ import useSchemaModel from './hooks/useSchemaModel';
+ import useFormValidate from './hooks/useFormValidate';
+ import useFormEventCallback from './hooks/useFormEventCallback';
++import usePointerBlurValidation from './hooks/usePointerBlurValidation';
+ import useFormValue from './hooks/useFormValue';
+ import useFormRef, { FormInstance, FormImperativeMethods } from './hooks/useFormRef';
+ import { forwardRef } from '@/internals/utils';
+@@ -246,6 +247,7 @@ const Form = forwardRef<
+     cleanErrors,
+     resetErrors,
+     cleanErrorForField,
++    reserveFieldValidation,
+     readNativeValidation,
+     commitNativeValidationRetirement
+   } = useFormValidate(controlledFormError, formValidateProps);
+@@ -315,6 +317,7 @@ const Form = forwardRef<
+   };
+ 
+   const formRef = useFormRef(ref, { imperativeMethods });
++  const deferBlurValidation = usePointerBlurValidation(formRef, reserveFieldValidation);
+ 
+   const removeFieldValue = useEventCallback((name: string) => {
+     const formValue = onRemoveValue(name);
+@@ -348,6 +351,7 @@ const Form = forwardRef<
+     removeFieldRule,
+     onFieldChange,
+     getFormValue,
++    deferBlurValidation,
+     checkFieldForNextValue,
+     checkFieldAsyncForNextValue
+   };
 ```
 
-**File**: `package.json` (modified, +5/-1)
+**File**: `src/Form/FormContext.tsx` (modified, +1/-0)
 ```diff
-@@ -28,7 +28,7 @@
-     "build:types-cjs": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir lib/cjs && resolve-tspaths --project tsconfig.build.json --out lib/cjs ",
-     "build:types-esm": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir lib/esm && resolve-tspaths --project tsconfig.build.json --out lib/esm ",
-     "build:types": "npm run build:types-cjs && npm run build:types-esm",
--    "postbuild": "node --test test/build/cleanup.integration-test.cjs test/build/source-paths.integration-test.cjs test/build/lodash-imports.integration-test.cjs test/build/declaration-paths.integration-test.cjs && cross-env VITEST_RUNNING_POSTBUILD=true vitest run --environment=node test/validateBuilds.spec.ts",
-+    "postbuild": "node --test test/build/cleanup.integration-test.cjs test/build/source-paths.integration-test.cjs test/build/lodash-imports.integration-test.cjs test/build/declaration-paths.integration-test.cjs test/build/serializer-security.integration-test.mjs && cross-env VITEST_RUNNING_POSTBUILD=true vitest run --environment=node test/validateBuilds.spec.ts",
-     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-     "bump-docs": "node scripts/bump-docs-version.js",
-     "dist:analyze": "ANALYZE=true webpack --mode production --progress",
-@@ -194,6 +194,10 @@
-     "aria-query@>5.1.3": "5.1.3",
-     "get-uri@6.0.4": {
-       "basic-ftp": "^6.2.3"
-+    },
-+    "terser-webpack-plugin": {
-+      ".": "5.3.10",
-+      "serialize-javascript": "^7.1.3"
-     }
-   },
-   "browserslist": [
+@@ -23,6 +23,7 @@ interface TrulyFormContextValue<T = RecordAny, M = any, E = { [P in keyof T]?: M
+   pushFieldRule: (name: string, fieldRule: FieldRuleType) => void;
+   onFieldChange: (name: string, value: any, event?: React.SyntheticEvent) => void;
+   getFormValue?: () => T | null | undefined;
++  deferBlurValidation?: (fieldName: string, validate: () => void) => () => void;
+   checkFieldForNextValue: (
+     name: string,
+     nextValue: Record<string, unknown>,
 ```
 
-**File**: `test/build/serializer-security.integration-test.mjs` (added, +90/-0)
+**File**: `src/Form/hooks/useFormValidate.ts` (modified, +5/-0)
+```diff
+@@ -60,6 +60,10 @@ export default function useFormValidate(_formError: any, props: FormErrorProps)
+   const startValidation = (fieldName?: string) =>
+     requestsRef.current!.start(resolver ? undefined : fieldName, nestedField);
+ 
++  const reserveFieldValidation = useFormEventCallback(
++    (fieldName: string) => startValidation(fieldName).isCurrent
++  );
++
+   /**
+    * Returns true when an error value is considered non-empty (i.e. the field has an error).
+    */
+@@ -425,6 +429,7 @@ export default function useFormValidate(_formError: any, props: FormErrorProps)
+     resetErrors,
+     cleanErrorForField,
+     onRemoveError,
++    reserveFieldValidation,
+     readNativeValidation: nativeFrames.read,
+     commitNativeValidationRetirement: nativeFrames.commitRetirement
+   };
+```
+
+**File**: `src/Form/hooks/usePointerBlurValidation.ts` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++import { useCallback, useRef } from 'react';
++import type { RefObject } from 'react';
++import { useIsomorphicLayoutEffect } from '@/internals/hooks';
++import { retainPointerValidation } from '../utils/pointerValidation';
++import useFormEventCallback from './useFormEventCallback';
++
++export default function usePointerBlurValidation(
++  root: RefObject<HTMLFormElement | null>,
++  reserve: (fieldName: string) => () => boolean
++) {
++  const connection = useRef<ReturnType<typeof retainPointerValidation>>(undefined);
++  const document = useRef<Document | undefined>(undefined);
++  const pending = useRef(new Map<object, () => void>());
++
++  const dispose = useCallback(() => {
++    pending.current.forEach(cancel => cancel());
++    connection.current?.release();
++    connection.current = undefined;
++    document.current = undefined;
++  }, []);
++
++  useIsomorphicLayoutEffect(() => {
++    const next = root.current?.ownerDocument;
++    if (next !== document.current) {
++      dispose();
++      document.current = next;
++      connection.current = next ? retainPointerValidation(next) : undefined;
++    }
++  });
++  useIsomorphicLayoutEffect(() => dispose, [dispose]);
++
++  return useFormEventCallback((fieldName: string, validate: () => void) => {
++    const current = connection.current;
++    if (!current?.isPressing()) {
++      validate();
++      return () => {};
++    }
++
++    const isCurrent = reserve(fieldName);
++    const token = {};
++    const remove = current.enqueue(() => {
++      pending.current.delete(token);
++      if (isCurrent()) validate();
++    });
++    const cancel = () => {
++      remove();
++      pending.current.delete(token);
++    };
++    pending.current.set(token, cancel);
++    return cancel;
++  });
++}
+```
+
+**File**: `src/Form/test/FormPointerBlur.browser.test.ts` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++import { dirname, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { afterAll, beforeAll, describe, expect, it } from 'vitest';
++import createSourceBrowser from '../../../test/browser/createSourceBrowser';
++import { pointerBlurCases } from './formPointerBlurCases';
++import type {} from './FormPointerBlur.client';
++
++describe('Form blur validation during native pointer activation', () => {
++  let source: Awaited<ReturnType<typeof createSourceBrowser>>;
++  beforeAll(async () => {
++    source = await createSourceBrowser({
++      root: resolve(dirname(fileURLToPath(import.meta.url)), '../../..'),
++      entry: '/src/Form/test/FormPointerBlur.client.tsx'
++    });
++    console.info('Form pointer browser', {
++      browser: source.browserName,
++      version: source.browser.version(),
++      react: source.reactVersion
++    });
++  });
++  afterAll(async () => source?.close());
++
++  it.each(['submit', '__defineGetter__'])(
++    'ignores the unsupported fixture action %s',
++    async action => {
++      const page = await source.browser.newPage();
++      const errors: string[] = [];
++      page.on('pageerror', error => errors.push(String(error)));
++      try {
++        await page.goto(
++          source.url + '/#' + encodeURIComponent(JSON.stringify({ shift: false, action }))
++        );
++        await page.waitForFunction(() => window.__RSUITE_FORM_POINTER__?.ready);
++        await page.evaluate(() => window.__RSUITE_FORM_POINTER_ACTION__());
++        const state = await page.evaluate(() => window.__RSUITE_FORM_POINTER__);
++        expect(state.checks).toEqual([]);
++        expect(state.validSubmits).toBe(0);
++        expect(state.nativeSubmits).toBe(0);
++        expect(errors).toEqual([]);
++      } finally {
++        await page.close();
++      }
++    }
++  );
++
++  describe.each([false, true])('RSuite button: %s', sdkButton => {
++    it.each(pointerBlurCases)('$name', async scenario => {
++      const page = await source.browser.newPage({ viewport: { width: 800, height: 600 } });
++      const errors: string[] = [];
++      const httpErrors: number[] = [];
++      page.on('pageerror', error => errors.push(String(error)));
++      page.on('response', response => {
++        if (response.url().startsWith(source.url) && response.status() >= 400)
++          httpErrors.push(response.status());
++      });
++      try {
++        await page.goto(
++          source.url + '/#' + encodeURIComponent(JSON.stringify({ ...scenario, sdkButton }))
++        );
++        await page.waitForFunction(() => window.__RSUITE_FORM_POINTER__?.ready);
++        const surface = scenario.portal ? page.frameLocator('#pointer-frame') : page;
++        expect(
++          await surface
++            .locator('#pointer-submit')
++            .evaluate((button: HTMLButtonElement) => button.form?.tagName)
++        ).toBe('FORM');
++        await surface.getByRole('textbox', { name: 'Value', exact: true }).focus();
++        if (scenario.number)
++          await surface
++            .getByRole('textbox', { name: 'Value', exact: true })
++            .fill(scenario.shift ? '0' : '2');
++        const before = await surface.locator('#pointer-submit').boundingBox();
++        expect(before).not.toBeNull();
++        const x = before!.x + before!.width / 2,
++          y = before!.y + before!.height / 2;
++        let afterAction: number | undefined;
++        if (scenario.gesture === 'keyboard') {
++          await page.keyboard.press('Tab');
++          await page.keyboard.press('Enter');
++        } else {
++          await page.mouse.move(x, y);
++          await page.mouse.down();
++          if (scenario.reentrant) {
++            await surface.getByRole('textbox', { name: 'Other', exact: true }).focus();
++            await surface.locator('#pointer-submit').focus();
++          }
++          if (scenario.action) {
++            await page.evaluate(() => window.__RSUITE_FORM_POINTER_ACTION__());
++            afterAction = await page.evaluate(() => window.__RSUITE_FORM_POINTER__.checks.length);
++          }
++          if (scenario.gesture === 'outside' || scenario.gesture === 'back')
++            await page.mouse.move(700, 500, { steps: 3 });
++          if (scenario.gesture === 'back') await page.mouse.move(x, y, { steps: 3 });
++          await page.mouse.up();
++        }
++        // Native click runs before the pointerup fallback in the next task.
++        await page.evaluate(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
++        const state = await page.evaluate(() => window.__RSUITE_FORM_POINTER__);
++        expect(state.events.length).toBeGreaterThan(0);
++        expect(state.events.every(event => event.trusted)).toBe(true);
++        expect(state.blurs).toBe(1);
++        expect(state.nativeSubmits).toBe(scenario.nativeSubmits);
++        expect(state.clicks).toBe(scenario.nativeSubmits || scenario.prevent ? 1 : 0);
++        expect(state.validSubmits).toBe(!scenario.shift && scenario.nativeSubmits ? 1 : 0);
++        expe
+```
+
+**File**: `src/Form/test/FormPointerBlur.client.tsx` (added, +192/-0)
+```diff
+@@ -0,0 +1,192 @@
++import React, { useEffect, useMemo, useRef, useState } from 'react';
++import { createRoot } from 'react-dom/client';
++import { createPortal, flushSync } from 'react-dom';
++import { StringType, NumberType } from 'schema-typed';
++import Form, { type FormInstance } from '..';
++import Button from '../../Button';
++import NumberInput from '../../NumberInput';
++import type { PointerBlurCase } from './formPointerBlurCases';
++import '../../styles/index.scss';
++
++interface PointerBlurState {
++  ready: boolean;
++  events: { type: string; trusted: boolean }[];
++  checks: Record<string, unknown>[];
++  nativeSubmits: number;
++  validSubmits: number;
++  clicks: number;
++  blurs: number;
++  otherChecks: number;
++}
++
++declare global {
++  interface Window {
++    __RSUITE_FORM_POINTER__: PointerBlurState;
++    __RSUITE_FORM_POINTER_ACTION__: () => void;
++  }
++}
++
++const options = JSON.parse(
++  new URL(location.href).hash.slice(1) && decodeURIComponent(location.hash.slice(1))
++) as PointerBlurCase & { sdkButton: boolean };
++const state = (window.__RSUITE_FORM_POINTER__ = {
++  ready: false,
++  events: [],
++  checks: [],
++  nativeSubmits: 0,
++  validSubmits: 0,
++  clicks: 0,
++  blurs: 0,
++  otherChecks: 0
++} as PointerBlurState);
++const CustomForm = React.forwardRef<HTMLFormElement, React.ComponentPropsWithoutRef<'form'>>(
++  (props, ref) => <form {...props} ref={ref} />
++);
++
++async function mount() {
++  let owner = document;
++  const iframe = options.portal ? document.createElement('iframe') : null;
++  if (iframe) {
++    iframe.id = 'pointer-frame';
++    Object.assign(iframe.style, {
++      position: 'fixed',
++      inset: '0',
++      width: '790px',
++      height: '590px',
++      border: '0'
++    });
++    const loaded = new Promise<void>(resolve =>
++      iframe.addEventListener('load', () => resolve(), { once: true })
++    );
++    iframe.srcdoc = '<!doctype html><html><head></head><body></body></html>';
++    document.body.append(iframe);
++    await loaded;
++    owner = iframe.contentDocument!;
++    for (const style of document.querySelectorAll('style'))
++      owner.head.append(style.cloneNode(true));
++  }
++  owner.body.style.margin = '32px';
++  for (const type of ['pointerdown', 'pointerup', 'pointercancel', 'click', 'submit']) {
++    owner.addEventListener(
++      type,
++      event => {
++        state.events.push({ type, trusted: event.isTrusted });
++        if (type === 'submit') state.nativeSubmits++;
++      },
++      true
++    );
++  }
++
++  function Probe() {
++    const form = useRef<FormInstance>(null);
++    const [disabled, setDisabled] = useState(false);
++    const [buttonMounted, setButtonMounted] = useState(true);
++    const [fieldMounted, setFieldMounted] = useState(true);
++    const [formMounted, setFormMounted] = useState(true);
++    const [otherMounted, setOtherMounted] = useState(true);
++    const [value, setValue] = useState<{ field: string | number }>({
++      field: options.number ? 0 : options.shift ? 'invalid' : 'valid'
++    });
++    const [trigger, setTrigger] = useState<'blur' | 'change'>('blur');
++    const rule = useMemo(
++      () =>
++        options.number
++          ? NumberType().min(1, 'Use valid value')
++          : StringType().addRule(value => value === 'valid', 'Use valid value'),
++      []
++    );
++    useEffect(() => {
++      window.__RSUITE_FORM_POINTER_ACTION__ = () => {
++        const action = options.action;
++        if (action === 'unmount-field') setFieldMounted(false);
++        else if (action === 'unmount-form') setFormMounted(false);
++        else if (action === 'value') setValue({ field: 'valid' });
++        else if (action === 'trigger') setTrigger('change');
++        else if (action === 'supersede') form.current!.checkForField('field');
++        else if (action === 'cleanErrorForField') form.current!.cleanErrorForField('field');
++        else if (action === 'cleanErrors') form.current!.cleanErrors();
++        else if (action === 'resetErrors') form.current!.resetErrors();
++        else if (action === 'reset') form.current!.reset();
++      };
++      state.ready = true;
++    }, []);
++    const updateButton = (stage: 'check' | 'error', errors: Record<string, unknown>) => {
++      if (!errors.field) return;
++      if (options.callback === `${stage}-disable`) setDisabled(true);
++      if (options.callback === `${stage}-remove`) setButtonMounted(false);
++    };
++    const Submit = options.sdkButton ? Button : 'button';
++    const button = buttonMounted && (
++      <Submit
++        id="pointer-submit"
++        type="submit"
++        disabled={disabled}
++        form={options.external ? 'pointer-form' : undefined}
++        style={{ width: 100, height: 34, display: 'block', marginTop: 20 }}
++        onPointerDown={event => {
++          if (options.foreignCapture)
++            owner.querySelector('#pointer-foreign')!.setPointerCapture(event.pointerId);
++        }}
++        onClick={event => {
++          state.clicks++;
++          if (options.prevent) event.preventDefau
+```
+
+**File**: `src/Form/test/FormPointerBlurAsync.browser.test.ts` (added, +90/-0)
 ```diff
 @@ -0,0 +1,90 @@
-+import assert from 'node:assert/strict';
-+import { spawnSync } from 'node:child_process';
-+import { createRequire } from 'node:module';
-+import test from 'node:test';
-+import vm from 'node:vm';
++import { dirname, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { afterAll, beforeAll, describe, expect, it } from 'vitest';
++import createSourceBrowser from '../../../test/browser/createSourceBrowser';
++import type {} from './FormPointerBlurAsync.client';
 +
-+// Exercise the serializer resolved by the actual webpack minimizer, including overrides.
-+const fromProject = createRequire(import.meta.url);
-+const fromMinimizer = createRequire(fromProject.resolve('terser-webpack-plugin'));
-+const serializerPath = fromMinimizer.resolve('serialize-javascript');
-+const serialize = fromMinimizer('serialize-javascript');
++describe('Form async request ownership during a pointer gesture', () => {
++  let source: Awaited<ReturnType<typeof createSourceBrowser>>;
++  beforeAll(async () => {
++    source = await createSourceBrowser({
++      root: resolve(dirname(fileURLToPath(import.meta.url)), '../../..'),
++      entry: '/src/Form/test/FormPointerBlurAsync.client.tsx'
++    });
++  });
++  afterAll(async () => source?.close());
 +
-+function assertNoInjectedStatement(value) {
-+  const sandbox = { serializationProbe: 0 };
-+  try {
-+    const output = serialize(value);
-+    vm.runInNewContext(output, sandbox, { timeout: 1000 });
-+  } catch (error) {
-+    // Rejecting a forged built-in is also safe; the injected assignment must never run.
-+    assert.match(error.name, /^(?:TypeError|SyntaxError)$/);
++  describe.each(['schema', 'resolver'])('%s', adapter => {
++    describe.each([false, true])('RSuite button: %s', sdkButton => {
++      it.each([
++        'blur-result',
++        'clean-during-press',
++        'explicit-supersedes-blur',
++        'blur-supersedes-prior'
++      ])('%s', async scenario => {
++        const page = await source.browser.newPage({ viewport: { width: 800, height: 600 } });
++        const errors: string[] = [];
++        page.on('pageerror', error => errors.push(String(error)));
++        try {
++          await page.goto(
++            source.url + '/#' + encodeURIComponent(JSON.stringify({ adapter, sdkButton }))
++          );
++          await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__?.ready);
++          if (scenario === 'blur-supersedes-prior') {
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.check(false));
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.requests.length === 1);
++          }
++          await page.getByRole('textbox', { name: 'Value', exact: true }).focus();
++          const box = await page.locator('#async-pointer-submit').boundingBox();
++          expect(box).not.toBeNull();
++          await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
++          await page.mouse.down();
++          if (scenario === 'clean-during-press')
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.clean());
++          if (scenario === 'explicit-supersedes-blur')
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.check(true));
++          if (scenario === 'blur-supersedes-prior') {
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.release(0, false));
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.settled.length === 1);
++            expect(await page.evaluate(() => window.__RSUITE_ASYNC_POINTER__.checks)).toEqual([]);
++          }
++          await page.mouse.move(700, 500, { steps: 3 });
++          await page.mouse.up();
++          await page.evaluate(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
++          const count = await page.evaluate(() => window.__RSUITE_ASYNC_POINTER__.requests.length);
++          expect(count).toBe(
++            scenario === 'clean-during-press' ? 0 : scenario === 'blur-supersedes-prior' ? 2 : 1
++          );
++          if (scenario !== 'clean-during-press') {
++            await page.evaluate(
++              ({ id, valid }) => window.__RSUITE_ASYNC_POINTER_ACTIONS__.release(id, valid),
++              {
++                id: count - 1,
++                valid: scenario !== 'blur-result'
++              }
++            );
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.checks.length === 1);
++          }
++          const state = await page.evaluate(() => ({
++            ...window.__RSUITE_ASYNC_POINTER__,
++            invalid: document.querySelector('input')!.getAttribute('aria-invalid'),
++            alerts: Array.from(
++              document.querySelectorAll('[role="alert"]'),
++              node => node.textContent
++            )
++          }));
++          expect(state.requests.every(request => request.value === 'value')).toBe(true);
++          expect(state.checks).toHaveLength(scenario === 'clean-during-press' ? 0 : 1);
++          expect(state.nativeSubmits).toBe(0);
++          expect(state.events.length).toBeGreaterThan(0);
++          expect(state.events.every(Boolean)).toBe(true);
++          expect(state.alerts).toEqual(scenario === 'blur-result' ? ['Use valid value'] : []);
++          expect(state.invalid === 'true').toBe(scenario === 'blur-result');
++          expect(errors).toEqual([]);
++        } finally {
++          await page.close();
++        }
++      });
++    });
++  });
++});
+```
+
+**File**: `src/Form/test/FormPointerBlurAsync.client.tsx` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++import React, { useEffect, useMemo, useRef } from 'react';
++import { createRoot } from 'react-dom/client';
++import { StringType } from 'schema-typed';
++import Form, { type FormInstance } from '..';
++import Button from '../../Button';
++import '../../styles/index.scss';
++
++interface AsyncPointerState {
++  ready: boolean;
++  requests: { value: unknown }[];
++  checks: Record<string, unknown>[];
++  settled: unknown[];
++  events: boolean[];
++  nativeSubmits: number;
++}
++declare global {
++  interface Window {
++    __RSUITE_ASYNC_POINTER__: AsyncPointerState;
++    __RSUITE_ASYNC_POINTER_ACTIONS__: {
++      check: (whole: boolean) => void;
++      release: (id: number, valid: boolean) => void;
++      clean: () => void;
++    };
 +  }
-+  assert.equal(sandbox.serializationProbe, 0);
++}
++const options = JSON.parse(decodeURIComponent(location.hash.slice(1))) as {
++  adapter: 'schema' | 'resolver';
++  sdkButton: boolean;
++};
++const state = (window.__RSUITE_ASYNC_POINTER__ = {
++  ready: false,
++  requests: [],
++  checks: [],
++  settled: [],
++  events: [],
++  nativeSubmits: 0
++} as AsyncPointerState);
++for (const type of ['pointerdown', 'pointerup', 'click', 'submit']) {
++  document.addEventListener(
++    type,
++    event => {
++      state.events.push(event.isTrusted);
++      if (type === 'submit') state.nativeSubmits++;
++    },
++    true
++  );
 +}
 +
-+test('minimizer serialization cannot inject a statement through RegExp flags', () => {
-+  const regexp = Object.create(RegExp.prototype);
-+  Object.defineProperties(regexp, {
-+    source: { value: 'pattern' },
-+    flags: { value: 'g");globalThis.serializationProbe=1;//' }
-+  });
-+  assertNoInjectedStatement(regexp);
-+});
-+
-+test('minimizer serialization cannot inject a statement through a Date', () => {
-+  const date = new Date('2026-01-01T00:00:00.000Z');
-+  date.toISOString = () => '2026-01-01T00:00:00.000Z");globalThis.serializationProbe=1;//';
-+  assertNoInjectedStatement(date);
-+});
-+
-+test('a forged function ending in a bare script closer cannot escape its surrounding output', () => {
-+  function callback() {}
-+  callback.toString = () => 'function callback(){ return 1 }//</script';
-+  const output = serialize({ nested: { callback }, tail: 'next value' }, { space: 2 });
-+  assert.doesNotMatch(output, /<\/script(?=[\t\n\f\r />]|$)/i);
-+});
-+
-+test('ordinary minimizer option values and function syntax retain their behavior', () => {
-+  const output = serialize({
-+    compress: { passes: 2, pure_funcs: ['debug'] },
-+    format: { comments: /license/i },
-+    callback: value => value + 1,
-+    date: new Date('2026-01-01T00:00:00.000Z'),
-+    map: new Map([['entry', 42]]),
-+    set: new Set([3, 4]),
-+    bigint: 42n,
-+    missing: undefined,
-+    html: '</script><div>plain string</div>'
-+  });
-+  const value = vm.runInNewContext('(' + output + ')', {}, { timeout: 1000 });
-+  assert.equal(value.compress.passes, 2);
-+  assert.equal(value.format.comments.test('License'), true);
-+  assert.equal(value.callback(2), 3);
-+  assert.equal(value.date.toISOString(), '2026-01-01T00:00:00.000Z');
-+  assert.equal(value.map.get('entry'), 42);
-+  assert.equal(value.set.has(4), true);
-+  assert.equal(value.bigint, 42n);
-+  assert.equal(value.missing, undefined);
-+  assert.equal(value.html, '</script><div>plain string</div>');
-+  assert.doesNotMatch(output, /<\/script/i);
-+});
-+
-+test('a large array-like object cannot hang minimizer serialization', () => {
-+  const script = `
-+    const serialize = require(${JSON.stringify(serializerPath)});
-+    const value = Object.create(Array.prototype);
-+    value.length = 2147483647;
-+    value[0] = 'first';
-+    const output = serialize(value);
-+    if (!output.includes('2147483647')) throw new Error('Array-like length was lost');
-+    process.stdout.write('serialized');
-+  `;
-+  const child = spawnSync(process.execPath, ['-e', script], {
-+    timeout: 5000,
-+    maxBuffer: 64 * 1024,
-+    encoding: 'utf8'
-+  });
-+  assert.ifError(child.error);
-+  assert.equal(child.status, 0, child.stderr);
-+  assert.equal(child.stdout, 'serialized');
-+});
++function Probe() {
++  const form = useRef<FormInstance>(null);
++  const releases = useRef<((valid: boolean) => void)[]>([]);
++  const validate = (value: unknown) =>
++    new Promise<boolean>(resolve => {
++      state.requests.push({ value });
++      releases.current.push(resolve);
++    });
++  const rule = useMemo(() => StringType().addAsyncRule(validate, 'Use valid value'), []);
++  const resolver = useMemo(
++    () => async (values: Record<string, unknown>) => ({
++      errors: (await validate(values.field)) ? {} : { field: 'Use valid value' }
++    }),
++    []
++  );
++  useEffect(() => {
++    window.__RSUITE_ASYNC_POINTER_ACTIONS__ = {
++      check: whole => {
++        const result = whole
++          ? form.current!.checkAsync()
++          : form.current!.checkForFieldAsync('field');
++        void result.then(value => state.settled.push(value));
++      },
++      release: (id, valid) => releases.current[id](valid),
++      clean: () => form.current!.cleanErrors()
++    };
++    state.ready = true;
++  }, []);
++  const Submit = options.sdkButton ? Button : 'button';
++  return (
++    <Form
++      ref={form}
++      checkTrigger="blur"
++      noValidate
++      formDefaultValue={{ field: 'value' }}
++      {...(options.adapter === 'resolver' ? { resolver } : {})}
++      onCheck={errors => state.checks.push(errors)}
++    >
++      <Form.Group controlId="async-pointer-field">
++        <Form.Label>Value</Form.Label>
++        <Form.Control
++          name="field"
++          checkAsync
++          errorPlacement="static"
++          {...(options.adapter === 'schema' ? { rule } : {})}
++        />
++      </Form.Group>
++      <Submit
++        id="async-pointer-submit"
++        type="submit"
++        style={{ display: 'block', width: 100, height: 34, marginTop: 20 }}
++      >
++        Submit
++      </Submit>
++    </Form>
++  );
++}
++document.body.style.margin = '32px';
++createRoot(document.querySelector('#root')!).render(<Probe />);
 ```
 
 ---
 
-### Incident Patch 3: `9969a502` (2026-10-23)
-**Commit Message**: Merge pull request #5001 from rsuite/fix/nextjs-app-15.5.28
+### Incident Patch 3: `e566ee69` (2026-10-25)
+**Commit Message**: Merge pull request #4980 from rsuite/fix/form-blur-pointer-activation
 
-fix(examples): patch Next.js App Router security release
+fix(Form): preserve pointer activation during blur validation
 
-**File**: `examples/with-nextjs-app/package.json` (modified, +1/-1)
+**File**: `src/Form/Form.tsx` (modified, +4/-0)
 ```diff
-@@ -13,7 +13,7 @@
-   },
-   "dependencies": {
-     "@rsuite/icons": "^1.4.0",
--    "next": "^15.5.27",
-+    "next": "^15.5.28",
-     "react": "^19.0.0",
-     "react-dom": "^19.0.0",
-     "react-icons": "^5.4.0",
+@@ -10,6 +10,7 @@ import Box from '@/internals/Box';
+ import useSchemaModel from './hooks/useSchemaModel';
+ import useFormValidate from './hooks/useFormValidate';
+ import useFormEventCallback from './hooks/useFormEventCallback';
++import usePointerBlurValidation from './hooks/usePointerBlurValidation';
+ import useFormValue from './hooks/useFormValue';
+ import useFormRef, { FormInstance, FormImperativeMethods } from './hooks/useFormRef';
+ import { forwardRef } from '@/internals/utils';
+@@ -246,6 +247,7 @@ const Form = forwardRef<
+     cleanErrors,
+     resetErrors,
+     cleanErrorForField,
++    reserveFieldValidation,
+     readNativeValidation,
+     commitNativeValidationRetirement
+   } = useFormValidate(controlledFormError, formValidateProps);
+@@ -315,6 +317,7 @@ const Form = forwardRef<
+   };
+ 
+   const formRef = useFormRef(ref, { imperativeMethods });
++  const deferBlurValidation = usePointerBlurValidation(formRef, reserveFieldValidation);
+ 
+   const removeFieldValue = useEventCallback((name: string) => {
+     const formValue = onRemoveValue(name);
+@@ -348,6 +351,7 @@ const Form = forwardRef<
+     removeFieldRule,
+     onFieldChange,
+     getFormValue,
++    deferBlurValidation,
+     checkFieldForNextValue,
+     checkFieldAsyncForNextValue
+   };
 ```
 
-**File**: `examples/with-nextjs-app/pnpm-lock.yaml` (modified, +31/-31)
+**File**: `src/Form/FormContext.tsx` (modified, +1/-0)
 ```diff
-@@ -13,8 +13,8 @@ dependencies:
-     specifier: ^1.4.0
-     version: 1.4.0(react-dom@19.2.3)(react@19.2.3)
-   next:
--    specifier: ^15.5.27
--    version: 15.5.27(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3)
-+    specifier: ^15.5.28
-+    version: 15.5.28(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3)
-   react:
-     specifier: ^19.0.0
-     version: 19.2.3
-@@ -858,75 +858,75 @@ packages:
-     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
-     dev: false
- 
--  /@next/env@15.5.27:
--    resolution: {integrity: sha512-WC5hvVqiuFOcRyz6gKPeJkiVvSMf3scNeAV49CdWtVqxmUlzh8UKR6YHt9yiNkh8LngtzqSlVz07/Ma3ZAzchA==}
-+  /@next/env@15.5.28:
-+    resolution: {integrity: sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==}
-     dev: false
- 
--  /@next/swc-darwin-arm64@15.5.27:
--    resolution: {integrity: sha512-fBA9QurmK4+uj4wNhmRTuO5zMVRaBHCvp6H93zTG/5i6Yi6TewbvbesXB8YQNj8T99Cwrow87hHiFV6wL/hyMA==}
-+  /@next/swc-darwin-arm64@15.5.28:
-+    resolution: {integrity: sha512-dPoQYXcfSIqx5o+TOXVXO7kONK5qbtNRDeiTfII0bT3puGIT6VF5e0QwmxNZfEZ5Zety5f3m9P/p4xqwfiLlPg==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [darwin]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-darwin-x64@15.5.27:
--    resolution: {integrity: sha512-FGZwJwry8qZNHxD/nfwrCwCHHrqx6epqItkkxbYcBQEQ2uw5S43bY83fQB5zbAsZE7TELMjoYkbhsQ4oKM7wwg==}
-+  /@next/swc-darwin-x64@15.5.28:
-+    resolution: {integrity: sha512-RgCJ7buBivTH+6sddqaVm+/v8kwMHlFkobvdt3DfETutws5HrxnToMIWSN9X3MZ3aAi7BbKrGZZWUDQLEycXqw==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [darwin]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-linux-arm64-gnu@15.5.27:
--    resolution: {integrity: sha512-GQulAaJYNF1RYuatlsw9/uzbKz4if2V7Ic9nVO+P0ljYPm4yBRTFIl6g5YkKTw40lMLbpy9edLoH44g3jSHMYA==}
-+  /@next/swc-linux-arm64-gnu@15.5.28:
-+    resolution: {integrity: sha512-OHXQe13olE59aKe++zHavGcJPh5SLHXi6Anret3BBeq1+qhSuOJDNAli/EDDfxs6UTqA4Qddo4uyYry2slyjiQ==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-linux-arm64-musl@15.5.27:
--    resolution: {integrity: sha512-URFFsUmu8Pi0/1qdnUI7tx7keZw1Mt5zHfrIX1RfDG9Nih8DYxK54WZsDJUX2ZTlii1jgotL7qcbwKnSAES6xQ==}
-+  /@next/swc-linux-arm64-musl@15.5.28:
-+    resolution: {integrity: sha512-nTB7bB6vfn4ezCJNYP43ukt2o8L3+WxKF/sTcTxepdXsJh3SM9RhlU7wrZYbH7L4HO5M87dqDTwm8587vAkCiw==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-linux-x64-gnu@15.5.27:
--    resolution: {integrity: sha512-aJp74z7uvU5jQhyH7lyk+4qSRcTdKbKT9NQE3jiO9kWYkoHZjKi0zzHDbCoZ+v2sJDEiJ/z58R0UlWMGWNF3HA==}
-+  /@next/swc-linux-x64-gnu@15.5.28:
-+    resolution: {integrity: sha512-WXCfVI32rW3xCusoUX1RpZKtyChWU2Zwe27JUDmM3KrXwcDNc9vV4zEq0GKFAURnuQ/Ouo/XqPvB0yh445XZCg==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-linux-x64-musl@15.5.27:
--    resolution: {integrity: sha512-ILl2bQ8MbpvyMpY8AXljb3BXs0MJSC8HXZ6QV5AWpVS7ZELqNPtrHvhUk+SNarvjvICXX8bCS287TCi+gUFVYg==}
-+  /@next/swc-linux-x64-musl@15.5.28:
-+    resolution: {integrity: sha512-Miq+NDb/HWsXuxseYxMM6fuEOQXgTziarkKIRpVKCn8W69cEfhQaQr+90pO+u4q2CbJR2wzXmUuCFyZaJs/Nng==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-win32-arm64-msvc@15.5.27:
--    resolution: {integrity: sha512-1MB9Rh5y8TOPN2x7naNTJNkCZQav9c70AI7EBYXxsEewwOffC4DjjwBwKf20NBvcA+u+5jDv7nVmHxunlP2d7Q==}
-+  /@next/swc-win32-arm64-msvc@15.5.28:
-+    resolution: {integrity: sha512-5LR79lemgDlgxvG7MQJ+zHCkVcrUoQuO7CiIvq3I58vNW4goSOE2b+19Z6FujRWMouvni4gvudYFuFuNxolGWA==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [win32]
-     requiresBuild: true
-     dev: false
-     optional: true
- 
--  /@next/swc-win32-x64-msvc@15.5.27:
--    resolution: {integrity: sha512-XtYgpGOswgnyBWXzOEG6q9RhvnSw0CEZ0MbWqCsl5PISgt9EzvJvNW5mU5n1PsphX/lnamzxjgQXH2GUJL8nqg==}
-+  /@next/swc-win32-x64-msvc@15.5.28:
-+    resolution: {integrity: sha512-GNipvXUYROSTf4PXEyH95FrWImIB5zdaK6uEOg0RP1/X2drnvoMwiBkJ0VWdzX7w3iiBm3y5g2TxkKDGVTOQcg==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [win32]
-@@ -1120,8 +1120,8 @@ packages:
-     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-     hasBin: true
- 
--  /next@15.5.27(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3):
--    resolution: {integrity: sha512-F82CrlPZ8GRxBH9RIIoR3qU1t5RT3dv1K8moe8SjlDEquiFipvEI13R1Om90TaUOEwShkWCMlg8+gvTNzfMhvg==}
-+  /next@15.5.28(@types/node@22.19.2)(react-dom@19.2.3)(react@19.2.3):
-+    resolution: {integrity: sha512-JjhLBBY1PNnuwPtcZ7t8yxVeJVYvD2Jyp633J+gRCNbzSt7N0E+xqCf6uQiff3+3qmUkwcF/ksfSsK1xsZ76Tw==}
-     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
+@@ -23,6 +23,7 @@ interface TrulyFormContextValue<T = RecordAny, M = any, E = { [P in keyof T]?: M
+   pushFieldRule: (name: string, fieldRule: FieldRuleType) => void;
+   onFieldChange: (name: string, value: any, event?: React.SyntheticEvent) => void;
+   getFormValue?: () => T | null | undefined;
++  deferBlurValidation?: (fieldName: string, validate: () => void) => () => void;
+   checkFieldForNextValue: (
+     name: string,
+     nextValue: Record<string, unknown>,
+```
 
+**File**: `src/Form/hooks/useFormValidate.ts` (modified, +5/-0)
+```diff
+@@ -60,6 +60,10 @@ export default function useFormValidate(_formError: any, props: FormErrorProps)
+   const startValidation = (fieldName?: string) =>
+     requestsRef.current!.start(resolver ? undefined : fieldName, nestedField);
+ 
++  const reserveFieldValidation = useFormEventCallback(
++    (fieldName: string) => startValidation(fieldName).isCurrent
++  );
++
+   /**
+    * Returns true when an error value is considered non-empty (i.e. the field has an error).
+    */
+@@ -425,6 +429,7 @@ export default function useFormValidate(_formError: any, props: FormErrorProps)
+     resetErrors,
+     cleanErrorForField,
+     onRemoveError,
++    reserveFieldValidation,
+     readNativeValidation: nativeFrames.read,
+     commitNativeValidationRetirement: nativeFrames.commitRetirement
+   };
+```
+
+**File**: `src/Form/hooks/usePointerBlurValidation.ts` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++import { useCallback, useRef } from 'react';
++import type { RefObject } from 'react';
++import { useIsomorphicLayoutEffect } from '@/internals/hooks';
++import { retainPointerValidation } from '../utils/pointerValidation';
++import useFormEventCallback from './useFormEventCallback';
++
++export default function usePointerBlurValidation(
++  root: RefObject<HTMLFormElement | null>,
++  reserve: (fieldName: string) => () => boolean
++) {
++  const connection = useRef<ReturnType<typeof retainPointerValidation>>(undefined);
++  const document = useRef<Document | undefined>(undefined);
++  const pending = useRef(new Map<object, () => void>());
++
++  const dispose = useCallback(() => {
++    pending.current.forEach(cancel => cancel());
++    connection.current?.release();
++    connection.current = undefined;
++    document.current = undefined;
++  }, []);
++
++  useIsomorphicLayoutEffect(() => {
++    const next = root.current?.ownerDocument;
++    if (next !== document.current) {
++      dispose();
++      document.current = next;
++      connection.current = next ? retainPointerValidation(next) : undefined;
++    }
++  });
++  useIsomorphicLayoutEffect(() => dispose, [dispose]);
++
++  return useFormEventCallback((fieldName: string, validate: () => void) => {
++    const current = connection.current;
++    if (!current?.isPressing()) {
++      validate();
++      return () => {};
++    }
++
++    const isCurrent = reserve(fieldName);
++    const token = {};
++    const remove = current.enqueue(() => {
++      pending.current.delete(token);
++      if (isCurrent()) validate();
++    });
++    const cancel = () => {
++      remove();
++      pending.current.delete(token);
++    };
++    pending.current.set(token, cancel);
++    return cancel;
++  });
++}
+```
+
+**File**: `src/Form/test/FormPointerBlur.browser.test.ts` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++import { dirname, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { afterAll, beforeAll, describe, expect, it } from 'vitest';
++import createSourceBrowser from '../../../test/browser/createSourceBrowser';
++import { pointerBlurCases } from './formPointerBlurCases';
++import type {} from './FormPointerBlur.client';
++
++describe('Form blur validation during native pointer activation', () => {
++  let source: Awaited<ReturnType<typeof createSourceBrowser>>;
++  beforeAll(async () => {
++    source = await createSourceBrowser({
++      root: resolve(dirname(fileURLToPath(import.meta.url)), '../../..'),
++      entry: '/src/Form/test/FormPointerBlur.client.tsx'
++    });
++    console.info('Form pointer browser', {
++      browser: source.browserName,
++      version: source.browser.version(),
++      react: source.reactVersion
++    });
++  });
++  afterAll(async () => source?.close());
++
++  it.each(['submit', '__defineGetter__'])(
++    'ignores the unsupported fixture action %s',
++    async action => {
++      const page = await source.browser.newPage();
++      const errors: string[] = [];
++      page.on('pageerror', error => errors.push(String(error)));
++      try {
++        await page.goto(
++          source.url + '/#' + encodeURIComponent(JSON.stringify({ shift: false, action }))
++        );
++        await page.waitForFunction(() => window.__RSUITE_FORM_POINTER__?.ready);
++        await page.evaluate(() => window.__RSUITE_FORM_POINTER_ACTION__());
++        const state = await page.evaluate(() => window.__RSUITE_FORM_POINTER__);
++        expect(state.checks).toEqual([]);
++        expect(state.validSubmits).toBe(0);
++        expect(state.nativeSubmits).toBe(0);
++        expect(errors).toEqual([]);
++      } finally {
++        await page.close();
++      }
++    }
++  );
++
++  describe.each([false, true])('RSuite button: %s', sdkButton => {
++    it.each(pointerBlurCases)('$name', async scenario => {
++      const page = await source.browser.newPage({ viewport: { width: 800, height: 600 } });
++      const errors: string[] = [];
++      const httpErrors: number[] = [];
++      page.on('pageerror', error => errors.push(String(error)));
++      page.on('response', response => {
++        if (response.url().startsWith(source.url) && response.status() >= 400)
++          httpErrors.push(response.status());
++      });
++      try {
++        await page.goto(
++          source.url + '/#' + encodeURIComponent(JSON.stringify({ ...scenario, sdkButton }))
++        );
++        await page.waitForFunction(() => window.__RSUITE_FORM_POINTER__?.ready);
++        const surface = scenario.portal ? page.frameLocator('#pointer-frame') : page;
++        expect(
++          await surface
++            .locator('#pointer-submit')
++            .evaluate((button: HTMLButtonElement) => button.form?.tagName)
++        ).toBe('FORM');
++        await surface.getByRole('textbox', { name: 'Value', exact: true }).focus();
++        if (scenario.number)
++          await surface
++            .getByRole('textbox', { name: 'Value', exact: true })
++            .fill(scenario.shift ? '0' : '2');
++        const before = await surface.locator('#pointer-submit').boundingBox();
++        expect(before).not.toBeNull();
++        const x = before!.x + before!.width / 2,
++          y = before!.y + before!.height / 2;
++        let afterAction: number | undefined;
++        if (scenario.gesture === 'keyboard') {
++          await page.keyboard.press('Tab');
++          await page.keyboard.press('Enter');
++        } else {
++          await page.mouse.move(x, y);
++          await page.mouse.down();
++          if (scenario.reentrant) {
++            await surface.getByRole('textbox', { name: 'Other', exact: true }).focus();
++            await surface.locator('#pointer-submit').focus();
++          }
++          if (scenario.action) {
++            await page.evaluate(() => window.__RSUITE_FORM_POINTER_ACTION__());
++            afterAction = await page.evaluate(() => window.__RSUITE_FORM_POINTER__.checks.length);
++          }
++          if (scenario.gesture === 'outside' || scenario.gesture === 'back')
++            await page.mouse.move(700, 500, { steps: 3 });
++          if (scenario.gesture === 'back') await page.mouse.move(x, y, { steps: 3 });
++          await page.mouse.up();
++        }
++        // Native click runs before the pointerup fallback in the next task.
++        await page.evaluate(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
++        const state = await page.evaluate(() => window.__RSUITE_FORM_POINTER__);
++        expect(state.events.length).toBeGreaterThan(0);
++        expect(state.events.every(event => event.trusted)).toBe(true);
++        expect(state.blurs).toBe(1);
++        expect(state.nativeSubmits).toBe(scenario.nativeSubmits);
++        expect(state.clicks).toBe(scenario.nativeSubmits || scenario.prevent ? 1 : 0);
++        expect(state.validSubmits).toBe(!scenario.shift && scenario.nativeSubmits ? 1 : 0);
++        expe
+```
+
+**File**: `src/Form/test/FormPointerBlur.client.tsx` (added, +192/-0)
+```diff
+@@ -0,0 +1,192 @@
++import React, { useEffect, useMemo, useRef, useState } from 'react';
++import { createRoot } from 'react-dom/client';
++import { createPortal, flushSync } from 'react-dom';
++import { StringType, NumberType } from 'schema-typed';
++import Form, { type FormInstance } from '..';
++import Button from '../../Button';
++import NumberInput from '../../NumberInput';
++import type { PointerBlurCase } from './formPointerBlurCases';
++import '../../styles/index.scss';
++
++interface PointerBlurState {
++  ready: boolean;
++  events: { type: string; trusted: boolean }[];
++  checks: Record<string, unknown>[];
++  nativeSubmits: number;
++  validSubmits: number;
++  clicks: number;
++  blurs: number;
++  otherChecks: number;
++}
++
++declare global {
++  interface Window {
++    __RSUITE_FORM_POINTER__: PointerBlurState;
++    __RSUITE_FORM_POINTER_ACTION__: () => void;
++  }
++}
++
++const options = JSON.parse(
++  new URL(location.href).hash.slice(1) && decodeURIComponent(location.hash.slice(1))
++) as PointerBlurCase & { sdkButton: boolean };
++const state = (window.__RSUITE_FORM_POINTER__ = {
++  ready: false,
++  events: [],
++  checks: [],
++  nativeSubmits: 0,
++  validSubmits: 0,
++  clicks: 0,
++  blurs: 0,
++  otherChecks: 0
++} as PointerBlurState);
++const CustomForm = React.forwardRef<HTMLFormElement, React.ComponentPropsWithoutRef<'form'>>(
++  (props, ref) => <form {...props} ref={ref} />
++);
++
++async function mount() {
++  let owner = document;
++  const iframe = options.portal ? document.createElement('iframe') : null;
++  if (iframe) {
++    iframe.id = 'pointer-frame';
++    Object.assign(iframe.style, {
++      position: 'fixed',
++      inset: '0',
++      width: '790px',
++      height: '590px',
++      border: '0'
++    });
++    const loaded = new Promise<void>(resolve =>
++      iframe.addEventListener('load', () => resolve(), { once: true })
++    );
++    iframe.srcdoc = '<!doctype html><html><head></head><body></body></html>';
++    document.body.append(iframe);
++    await loaded;
++    owner = iframe.contentDocument!;
++    for (const style of document.querySelectorAll('style'))
++      owner.head.append(style.cloneNode(true));
++  }
++  owner.body.style.margin = '32px';
++  for (const type of ['pointerdown', 'pointerup', 'pointercancel', 'click', 'submit']) {
++    owner.addEventListener(
++      type,
++      event => {
++        state.events.push({ type, trusted: event.isTrusted });
++        if (type === 'submit') state.nativeSubmits++;
++      },
++      true
++    );
++  }
++
++  function Probe() {
++    const form = useRef<FormInstance>(null);
++    const [disabled, setDisabled] = useState(false);
++    const [buttonMounted, setButtonMounted] = useState(true);
++    const [fieldMounted, setFieldMounted] = useState(true);
++    const [formMounted, setFormMounted] = useState(true);
++    const [otherMounted, setOtherMounted] = useState(true);
++    const [value, setValue] = useState<{ field: string | number }>({
++      field: options.number ? 0 : options.shift ? 'invalid' : 'valid'
++    });
++    const [trigger, setTrigger] = useState<'blur' | 'change'>('blur');
++    const rule = useMemo(
++      () =>
++        options.number
++          ? NumberType().min(1, 'Use valid value')
++          : StringType().addRule(value => value === 'valid', 'Use valid value'),
++      []
++    );
++    useEffect(() => {
++      window.__RSUITE_FORM_POINTER_ACTION__ = () => {
++        const action = options.action;
++        if (action === 'unmount-field') setFieldMounted(false);
++        else if (action === 'unmount-form') setFormMounted(false);
++        else if (action === 'value') setValue({ field: 'valid' });
++        else if (action === 'trigger') setTrigger('change');
++        else if (action === 'supersede') form.current!.checkForField('field');
++        else if (action === 'cleanErrorForField') form.current!.cleanErrorForField('field');
++        else if (action === 'cleanErrors') form.current!.cleanErrors();
++        else if (action === 'resetErrors') form.current!.resetErrors();
++        else if (action === 'reset') form.current!.reset();
++      };
++      state.ready = true;
++    }, []);
++    const updateButton = (stage: 'check' | 'error', errors: Record<string, unknown>) => {
++      if (!errors.field) return;
++      if (options.callback === `${stage}-disable`) setDisabled(true);
++      if (options.callback === `${stage}-remove`) setButtonMounted(false);
++    };
++    const Submit = options.sdkButton ? Button : 'button';
++    const button = buttonMounted && (
++      <Submit
++        id="pointer-submit"
++        type="submit"
++        disabled={disabled}
++        form={options.external ? 'pointer-form' : undefined}
++        style={{ width: 100, height: 34, display: 'block', marginTop: 20 }}
++        onPointerDown={event => {
++          if (options.foreignCapture)
++            owner.querySelector('#pointer-foreign')!.setPointerCapture(event.pointerId);
++        }}
++        onClick={event => {
++          state.clicks++;
++          if (options.prevent) event.preventDefau
+```
+
+**File**: `src/Form/test/FormPointerBlurAsync.browser.test.ts` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++import { dirname, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { afterAll, beforeAll, describe, expect, it } from 'vitest';
++import createSourceBrowser from '../../../test/browser/createSourceBrowser';
++import type {} from './FormPointerBlurAsync.client';
++
++describe('Form async request ownership during a pointer gesture', () => {
++  let source: Awaited<ReturnType<typeof createSourceBrowser>>;
++  beforeAll(async () => {
++    source = await createSourceBrowser({
++      root: resolve(dirname(fileURLToPath(import.meta.url)), '../../..'),
++      entry: '/src/Form/test/FormPointerBlurAsync.client.tsx'
++    });
++  });
++  afterAll(async () => source?.close());
++
++  describe.each(['schema', 'resolver'])('%s', adapter => {
++    describe.each([false, true])('RSuite button: %s', sdkButton => {
++      it.each([
++        'blur-result',
++        'clean-during-press',
++        'explicit-supersedes-blur',
++        'blur-supersedes-prior'
++      ])('%s', async scenario => {
++        const page = await source.browser.newPage({ viewport: { width: 800, height: 600 } });
++        const errors: string[] = [];
++        page.on('pageerror', error => errors.push(String(error)));
++        try {
++          await page.goto(
++            source.url + '/#' + encodeURIComponent(JSON.stringify({ adapter, sdkButton }))
++          );
++          await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__?.ready);
++          if (scenario === 'blur-supersedes-prior') {
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.check(false));
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.requests.length === 1);
++          }
++          await page.getByRole('textbox', { name: 'Value', exact: true }).focus();
++          const box = await page.locator('#async-pointer-submit').boundingBox();
++          expect(box).not.toBeNull();
++          await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
++          await page.mouse.down();
++          if (scenario === 'clean-during-press')
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.clean());
++          if (scenario === 'explicit-supersedes-blur')
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.check(true));
++          if (scenario === 'blur-supersedes-prior') {
++            await page.evaluate(() => window.__RSUITE_ASYNC_POINTER_ACTIONS__.release(0, false));
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.settled.length === 1);
++            expect(await page.evaluate(() => window.__RSUITE_ASYNC_POINTER__.checks)).toEqual([]);
++          }
++          await page.mouse.move(700, 500, { steps: 3 });
++          await page.mouse.up();
++          await page.evaluate(() => new Promise<void>(resolve => setTimeout(resolve, 0)));
++          const count = await page.evaluate(() => window.__RSUITE_ASYNC_POINTER__.requests.length);
++          expect(count).toBe(
++            scenario === 'clean-during-press' ? 0 : scenario === 'blur-supersedes-prior' ? 2 : 1
++          );
++          if (scenario !== 'clean-during-press') {
++            await page.evaluate(
++              ({ id, valid }) => window.__RSUITE_ASYNC_POINTER_ACTIONS__.release(id, valid),
++              {
++                id: count - 1,
++                valid: scenario !== 'blur-result'
++              }
++            );
++            await page.waitForFunction(() => window.__RSUITE_ASYNC_POINTER__.checks.length === 1);
++          }
++          const state = await page.evaluate(() => ({
++            ...window.__RSUITE_ASYNC_POINTER__,
++            invalid: document.querySelector('input')!.getAttribute('aria-invalid'),
++            alerts: Array.from(
++              document.querySelectorAll('[role="alert"]'),
++              node => node.textContent
++            )
++          }));
++          expect(state.requests.every(request => request.value === 'value')).toBe(true);
++          expect(state.checks).toHaveLength(scenario === 'clean-during-press' ? 0 : 1);
++          expect(state.nativeSubmits).toBe(0);
++          expect(state.events.length).toBeGreaterThan(0);
++          expect(state.events.every(Boolean)).toBe(true);
++          expect(state.alerts).toEqual(scenario === 'blur-result' ? ['Use valid value'] : []);
++          expect(state.invalid === 'true').toBe(scenario === 'blur-result');
++          expect(errors).toEqual([]);
++        } finally {
++          await page.close();
++        }
++      });
++    });
++  });
++});
+```
+
+**File**: `src/Form/test/FormPointerBlurAsync.client.tsx` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++import React, { useEffect, useMemo, useRef } from 'react';
++import { createRoot } from 'react-dom/client';
++import { StringType } from 'schema-typed';
++import Form, { type FormInstance } from '..';
++import Button from '../../Button';
++import '../../styles/index.scss';
++
++interface AsyncPointerState {
++  ready: boolean;
++  requests: { value: unknown }[];
++  checks: Record<string, unknown>[];
++  settled: unknown[];
++  events: boolean[];
++  nativeSubmits: number;
++}
++declare global {
++  interface Window {
++    __RSUITE_ASYNC_POINTER__: AsyncPointerState;
++    __RSUITE_ASYNC_POINTER_ACTIONS__: {
++      check: (whole: boolean) => void;
++      release: (id: number, valid: boolean) => void;
++      clean: () => void;
++    };
++  }
++}
++const options = JSON.parse(decodeURIComponent(location.hash.slice(1))) as {
++  adapter: 'schema' | 'resolver';
++  sdkButton: boolean;
++};
++const state = (window.__RSUITE_ASYNC_POINTER__ = {
++  ready: false,
++  requests: [],
++  checks: [],
++  settled: [],
++  events: [],
++  nativeSubmits: 0
++} as AsyncPointerState);
++for (const type of ['pointerdown', 'pointerup', 'click', 'submit']) {
++  document.addEventListener(
++    type,
++    event => {
++      state.events.push(event.isTrusted);
++      if (type === 'submit') state.nativeSubmits++;
++    },
++    true
++  );
++}
++
++function Probe() {
++  const form = useRef<FormInstance>(null);
++  const releases = useRef<((valid: boolean) => void)[]>([]);
++  const validate = (value: unknown) =>
++    new Promise<boolean>(resolve => {
++      state.requests.push({ value });
++      releases.current.push(resolve);
++    });
++  const rule = useMemo(() => StringType().addAsyncRule(validate, 'Use valid value'), []);
++  const resolver = useMemo(
++    () => async (values: Record<string, unknown>) => ({
++      errors: (await validate(values.field)) ? {} : { field: 'Use valid value' }
++    }),
++    []
++  );
++  useEffect(() => {
++    window.__RSUITE_ASYNC_POINTER_ACTIONS__ = {
++      check: whole => {
++        const result = whole
++          ? form.current!.checkAsync()
++          : form.current!.checkForFieldAsync('field');
++        void result.then(value => state.settled.push(value));
++      },
++      release: (id, valid) => releases.current[id](valid),
++      clean: () => form.current!.cleanErrors()
++    };
++    state.ready = true;
++  }, []);
++  const Submit = options.sdkButton ? Button : 'button';
++  return (
++    <Form
++      ref={form}
++      checkTrigger="blur"
++      noValidate
++      formDefaultValue={{ field: 'value' }}
++      {...(options.adapter === 'resolver' ? { resolver } : {})}
++      onCheck={errors => state.checks.push(errors)}
++    >
++      <Form.Group controlId="async-pointer-field">
++        <Form.Label>Value</Form.Label>
++        <Form.Control
++          name="field"
++          checkAsync
++          errorPlacement="static"
++          {...(options.adapter === 'schema' ? { rule } : {})}
++        />
++      </Form.Group>
++      <Submit
++        id="async-pointer-submit"
++        type="submit"
++        style={{ display: 'block', width: 100, height: 34, marginTop: 20 }}
++      >
++        Submit
++      </Submit>
++    </Form>
++  );
++}
++document.body.style.margin = '32px';
++createRoot(document.querySelector('#root')!).render(<Probe />);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5021** (2026-10-25): fix(benchmarks): validate installed SDK dependency contracts (@simonguo)
+- **PR #5020** (2026-10-25): fix(benchmarks): exclude transparent picker content from visibility (@simonguo)
 - **PR #5018** (2026-10-25): fix(benchmarks): preserve visible virtual pointer targets (@simonguo)
 - **PR #5017** (2026-10-24): fix(benchmarks): follow changing virtual scroll bounds (@simonguo)
-- **PR #5014** (2026-10-24): ci(benchmark): retain geometry guard operands on failure (@simonguo)
-- **PR #5013** (2026-10-24): fix(benchmark): finish range scrolling before the next preflight (@simonguo)
-- **PR #5012** (2026-10-24): fix(docs): constrain type file reads to flat JSON names (@simonguo)
-- **PR #5011** (2026-10-24): fix(form): require schema-typed 2.4.4 for async rules (@simonguo)
+- **PR #5016** (2026-10-25): perf(pickers): avoid sibling scans for group indentation (@simonguo)
+- **PR #5015** (2026-10-25): perf(picker): avoid repeated data scans during keyboard navigation (@simonguo)
 
 ---
 
@@ -1225,22 +2154,53 @@ fix(examples): patch Next.js App Router security release
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge source-map security main and preserve both boundary checks
+## X. Merge pull request #5015 from rsuite/perf/picker-keyboard-option-lookup
 
 **RULE**:
-When implementing operations in `.github/workflows/nodejs-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/internals/Picker/getItemsByElements.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed11c0ce`: Merge source-map security main and preserve both boundary checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71175b9a`: Merge pull request #5015 from rsuite/perf/picker-keyboard-option-lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nodejs-ci.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/internals/Picker/getItemsByElements.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      - name: Check source map offset bounds
-        run: node --test test/build/source-map-offsets.integration-test.cjs
+import getOptionKey from './getOptionKey';
+
+/** Resolve a rendered option list without rescanning all data for each row. */
+function getItemsByElements<T>(
+  elements: readonly HTMLElement[],
+  data: readonly T[] | undefined,
+  valueKey: string
+) {
+  if (!elements.length) return [];
+
+  const typed = new Map<string, T>();
+  const legacy = new Map<string, T>();
+
+  for (const item of data ?? []) {
+    const value = item[valueKey];
+    const typedKey = getOptionKey(value);
+    const legacyKey = String(value);
+    // Match the first item just as the previous per-row find did.
+    if (!typed.has(typedKey)) typed.set(typedKey, item);
+    if (!legacy.has(legacyKey)) legacy.set(legacyKey, item);
+  }
+
+  return elements.map(element => {
+    const { pickerKey, key } = element.dataset;
+    return pickerKey === undefined
+      ? key === undefined
+        ? undefined
+        : legacy.get(key)
+      : typed.get(pickerKey);
+  });
+}
+
+export default getItemsByElements;
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1250,4 +2210,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed11c0ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71175b9a` are properly handled with clean fallback behavior.

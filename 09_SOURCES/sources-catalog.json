@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
-    "lastHarvestedAt": "2026-10-20T23:25:14.204Z",
+    "contentHash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
+    "lastHarvestedAt": "2026-10-25T19:06:27.349Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "79077a69",
+    "sourceVersion": "71175b9a",
     "license": "MIT",
-    "contentHash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
-    "lastHarvestedAt": "2026-10-25T04:12:26.530Z",
+    "contentHash": "ff9907d7780aec2c6afea8d1150c542df9c97f0cc25d42e116a39a73edc2a878",
+    "lastHarvestedAt": "2026-10-25T19:06:27.609Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "a186d461",
+    "sourceVersion": "ff96ed78",
     "license": "NOASSERTION",
-    "contentHash": "87cc93baa62ce94a395dae6dc2c5b10f9b5f03cd3df3c7583ca97a46b5243656",
-    "lastHarvestedAt": "2026-10-19T04:19:28.570Z",
+    "contentHash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
+    "lastHarvestedAt": "2026-10-25T19:06:28.493Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {

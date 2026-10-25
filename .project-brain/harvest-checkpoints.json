@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T19:00:00.291Z",
+  "last_updated": "2026-10-25T19:06:28.502Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2301,14 +2301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "5edf871d17a8a41b4af0065da9e15fe220d900d7630a41adb09a14bac010eeb9",
-      "verified_at": "2026-10-20T23:25:14.213Z",
+      "content_hash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
+      "verified_at": "2026-10-25T19:06:27.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T23:25:14.213Z"
+      "last_updated": "2026-10-25T19:06:27.358Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",
@@ -6471,14 +6471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "4e6c253e9678773b181f12b74966dc86aa00a66301230bbafda2542c7770885b",
-      "verified_at": "2026-10-25T04:12:26.546Z",
+      "content_hash": "ff9907d7780aec2c6afea8d1150c542df9c97f0cc25d42e116a39a73edc2a878",
+      "verified_at": "2026-10-25T19:06:27.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:12:26.546Z"
+      "last_updated": "2026-10-25T19:06:27.617Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -8661,14 +8661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mlua-rs-mlua",
-      "content_hash": "87cc93baa62ce94a395dae6dc2c5b10f9b5f03cd3df3c7583ca97a46b5243656",
-      "verified_at": "2026-10-19T04:19:28.575Z",
+      "content_hash": "9908bbca4161887edf9df438a17502a89bc24d1e72edc58c4468647231af1b87",
+      "verified_at": "2026-10-25T19:06:28.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:19:28.575Z"
+      "last_updated": "2026-10-25T19:06:28.501Z"
     },
     "APSL/react-native-keyboard-aware-scroll-view": {
       "repository": "APSL/react-native-keyboard-aware-scroll-view",
