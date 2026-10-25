@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `fe561573`  
+> **Source Version**: `b28d8046`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:05:07.877Z  
+> **Timestamp**: 2026-10-25T04:31:51.718Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:05:06.195Z  
+> **Harvest Timestamp**: 2026-10-25T04:31:51.483Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25708 stars
+- **Stars / Engagement**: 25709 stars
 
 ---
 
@@ -1259,14 +1259,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49583** (2026-10-23): **README: Update releases**
-  *Symptoms*: 
+- **Issue #49602** (2026-10-25): **fix(deps): update all go dependencies main (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | |---|---|---|---|---|---| | [github.com/go-openapi/strfmt](https://redirect.github.com/go-openapi/strfmt) | `v0.27.3` → `v0.27.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fstrfmt/v0.27.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fstrfmt/v0.27.3/v0.27.4?slim=true) | require | patch | | [github.com/vishvananda/netlink](https://redirect.github.com/vishvananda/netlink) | `3fdd742` → `5537980` |  |  | require | digest |  ---  ### Release Notes  <details> <summary>go-openapi/strfmt (github.com/go-openapi/strfmt)</summary>  ### [`v0.27.4`](https://redirect.github.com/go-openapi/strfmt/releases/tag/v0.27.4)  [Compare Source](https://redirect.github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4)  #### [0.27.4](https://redirect.github.com/go-openapi/strfmt/tree/v0.27.4) - 2026-10-19  **Full Changelog**: <https://github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4>  5 commits in this release.  ***  ##### <!-- 07 -->Miscellaneous tasks  - chore: prepare release v0.27.4 by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;319](https://redirect.github.com/go-openapi/strfmt/pull/319) [...](https://redirect.github.com/go-openapi/strfmt/commit/f4233
   **Post-Mortem & Fix Analysis**:
   > /test
   > /test
 
-- **Issue #49582** (2026-10-23): **[v1.20] Revert ".github: Set envoy.rollOutPods in the e2e upgrade tests"**
-  *Symptoms*: We set envoy.rollOutPods=true in the e2e upgrade tests so that their patch legs restart cilium-envoy when the xDS mode switches from ADS in v1.20.3 to split on this branch. Since v1.20.4, the tested release renders split as well, so the patch legs no longer switch modes.  This commit removes the workaround, so these tests run with the default chart values again.  This PR was prepared with AIL:3. I personally checked the diff. 
+- **Issue #49597** (2026-10-25): **fix(deps): update all go dependencies main (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | |---|---|---|---|---|---| | [github.com/go-openapi/strfmt](https://redirect.github.com/go-openapi/strfmt) | `v0.27.3` → `v0.27.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fstrfmt/v0.27.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fstrfmt/v0.27.3/v0.27.4?slim=true) | require | patch | | [github.com/vishvananda/netlink](https://redirect.github.com/vishvananda/netlink) | `3fdd742` → `5537980` |  |  | require | digest |  ---  ### Release Notes  <details> <summary>go-openapi/strfmt (github.com/go-openapi/strfmt)</summary>  ### [`v0.27.4`](https://redirect.github.com/go-openapi/strfmt/releases/tag/v0.27.4)  [Compare Source](https://redirect.github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4)  #### [0.27.4](https://redirect.github.com/go-openapi/strfmt/tree/v0.27.4) - 2026-10-19  **Full Changelog**: <https://github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4>  5 commits in this release.  ***  ##### <!-- 07 -->Miscellaneous tasks  - chore: prepare release v0.27.4 by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;319](https://redirect.github.com/go-openapi/strfmt/pull/319) [...](https://redirect.github.com/go-openapi/strfmt/commit/f4233
   **Post-Mortem & Fix Analysis**:
   > /test
   > /test
@@ -1286,793 +1286,225 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a5dc574` (2026-10-22)
-**Commit Message**: aws/ipam: Stop expanding delegated prefixes into ENI addresses
-
-The operator flattened every /28 delegated prefix into 16 individual
-entries of the ENI Addresses field. This was needed by agents using the
-CRD allocator, which consume per-IP entries from Spec.IPAM.Pool. ENI
-agents have used the multi-pool allocator since v1.20 and read prefixes
-directly, so the expansion only bloats the CiliumNode and forces several
-places to undo it.
-
-Report prefixes as-is and drop the logic that compensated for the
-expansion.
-
-The agent keeps skipping addresses covered by a prefix when building its
-pool, so that it never ends up with overlapping CIDRs while running
-against a v1.20 operator.
-
-Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/ipam/nodemanager/node.go` (modified, +14/-1)
-```diff
-@@ -747,7 +747,20 @@ func (n *Node) recalculate(ctx context.Context) {
- 		n.stats.IPv4.AssignedStaticIP = n.resource.Status.IPAM.AssignedStaticIP.Addr
- 	}
- 
--	n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
-+	// Providers backing the multi-pool allocator report the attached CIDRs,
-+	// which are the source of truth for the available IPv4 count since the
-+	// AllocationMap does not list addresses of delegated prefixes. Providers
-+	// backing the CRD allocator return nil and only rely on the AllocationMap.
-+	if attached := n.ops.GetAttachedCIDRs(); attached != nil {
-+		n.stats.IPv4.AvailableIPs = 0
-+		for _, c := range attached {
-+			if c.Addr().Is4() {
-+				n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
-+			}
-+		}
-+	} else {
-+		n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
-+	}
- 	n.stats.IPv4.RemainingInterfaces = stats.RemainingAvailableInterfaceCount
- 	n.stats.IPv4.Capacity = stats.NodeCapacity
- 	n.stats.IPv6.AvailablePrefixes = stats.NodeIPv6Prefixes
-```
-
-**File**: `operator/pkg/ipam/nodemanager/node_manager.go` (modified, +6/-4)
-```diff
-@@ -101,10 +101,12 @@ type NodeOperations interface {
- 
- 	// GetAttachedCIDRs returns the CIDRs currently attached to the node's
- 	// network interfaces, as observed by the cloud-specific implementation.
--	// Used by multi-pool mode to reconcile the tracking map against ground
--	// truth (drop CIDRs no longer attached, seed releases that survived an
--	// operator restart). Implementations that do not support multi-pool may
--	// return nil.
-+	// Used to compute the available IPv4 count, and by multi-pool mode to
-+	// reconcile the tracking map against ground truth (drop CIDRs no longer
-+	// attached, seed releases that survived an operator restart).
-+	// Implementations that do not support multi-pool must return nil, so
-+	// that the available IPv4 count is taken from the AllocationMap
-+	// returned by ResyncInterfacesAndIPs instead.
- 	GetAttachedCIDRs() []netip.Prefix
- 
- 	// PrepareCIDRRelease maps released CIDRs back to their source
-```
-
-**File**: `operator/pkg/ipam/nodemanager/node_test.go` (modified, +22/-0)
-```diff
-@@ -390,6 +390,28 @@ func TestRecalculateIPv6Only(t *testing.T) {
- 	})
- }
- 
-+func TestRecalculateAvailableIPs(t *testing.T) {
-+	t.Run("every IPv4 address of attached CIDRs is counted", func(t *testing.T) {
-+		n := newPoolDemandNode(t, 8, 0)
-+		n.ops.(*nodeOperationsMock).attachedCIDRs = []netip.Prefix{
-+			netip.MustParsePrefix("10.0.0.1/32"),
-+			netip.MustParsePrefix("10.0.0.16/28"),
-+			netip.MustParsePrefix("2001:db8::/80"),
-+		}
-+		n.recalculate(t.Context())
-+
-+		require.Equal(t, 17, n.Stats().IPv4.AvailableIPs)
-+	})
-+
-+	t.Run("allocation map is counted when no attached CIDRs are reported", func(t *testing.T) {
-+		n := newPoolDemandNode(t, 8, 0)
-+		n.ops.(*nodeOperationsMock).allocatedIPs = []string{"10.0.0.1", "10.0.0.2"}
-+		n.recalculate(t.Context())
-+
-+		require.Equal(t, 2, n.Stats().IPv4.AvailableIPs)
-+	})
-+}
-+
- func TestDetermineMaintenanceActionIPv6Only(t *testing.T) {
- 	t.Run("IPv6-only node allocates no IPv4 addresses", func(t *testing.T) {
- 		n := newPoolDemandNode(t, 0, 8)
-```
-
-**File**: `pkg/aws/agent/pools.go` (modified, +5/-5)
-```diff
-@@ -49,11 +49,11 @@ var poolAccessor = ipam.PoolSpecAccessors{
- 
- 			cidrs = append(cidrs, eni.IPv6Prefixes...)
- 
--			// In parseENI (pkg/aws/api), we currently use PrefixToIps to flatten each prefixes
--			// into 16 individual IPs and append those IPs to the ENI Addresses field.
--			// Here we need to apply a reverse logic to only advertise as /32 CIDRs in the pool
--			// regular secondary addresses (or the ENI primary IP when using UsePrimaryAddress)
--			// and not addresses that are already being advertised through a /28 CIDR.
-+			// Operators up to v1.20 flatten each delegated prefix into individual
-+			// IPs and append those IPs to the ENI Addresses field. Skip addresses
-+			// already advertised through a prefix so that the pool never contains
-+			// overlapping CIDRs while running against such an operator.
-+			// TODO: Remove in v1.22 development cycle.
- 			for _, addr := range eni.Addresses {
- 				if !addr.IsValid() {
- 					continue
-```
-
-**File**: `pkg/aws/api/api.go` (modified, +0/-11)
-```diff
-@@ -587,17 +587,6 @@ func parseENI(iface *ec2_types.NetworkInterface, vpcs ipamTypes.VirtualNetworkMa
- 		if err != nil {
- 			return "", nil, fmt.Errorf("unable to parse ENI Ipv4 prefix %q: %w", prefixStr, err)
- 		}
--		ips, e := iputil.PrefixToIps(prefixStr, 0)
--		if e != nil {
--			return "", nil, fmt.Errorf("unable to expand ENI Ipv4 prefix %s: %w", prefixStr, e)
--		}
--		for _, ipStr := range ips {
--			a, err := netip.ParseAddr(ipStr)
--			if err != nil {
--				return "", nil, fmt.Errorf("unable to parse ENI prefix IP %q: %w", ipStr, err)
--			}
--			eni.Addresses = append(eni.Addresses, iputil.AddrFrom(a))
--		}
- 		eni.Prefixes = append(eni.Prefixes, iputil.PrefixFrom(p))
- 	}
- 
-```
-
-**File**: `pkg/aws/api/api_test.go` (modified, +27/-0)
-```diff
-@@ -4,6 +4,7 @@
- package api
- 
- import (
-+	"net/netip"
- 	"sort"
- 	"strings"
- 	"testing"
-@@ -12,6 +13,8 @@ import (
- 	ec2_types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+
-+	iputil "github.com/cilium/cilium/pkg/ip"
- )
- 
- type Filters []ec2_types.Filter
-@@ -195,6 +198,30 @@ func TestParseENIPublicIP(t *testing.T) {
- 	}
- }
- 
-+func TestParseENIIPv4Prefixes(t *testing.T) {
-+	iface := &ec2_types.NetworkInterface{
-+		PrivateIpAddress: aws.String("10.0.0.1"),
-+		PrivateIpAddresses: []ec2_types.NetworkInterfacePrivateIpAddress{
-+			{PrivateIpAddress: aws.String("10.0.0.1"), Primary: aws.Bool(true)},
-+			{PrivateIpAddress: aws.String("10.0.0.2")},
-+		},
-+		Ipv4Prefixes: []ec2_types.Ipv4PrefixSpecification{
-+			{Ipv4Prefix: aws.String("10.0.1.0/28")},
-+		},
-+	}
-+
-+	_, eni, err := parseENI(iface, nil, nil)
-+	require.NoError(t, err)
-+
-+	// Delegated prefixes are reported as-is and are not expanded into
-+	// individual addresses.
-+	require.Equal(t, []iputil.Prefix{iputil.PrefixFrom(netip.MustParsePrefix("10.0.1.0/28"))}, eni.Prefixes)
-+	require.Equal(t, []iputil.Addr{
-+		iputil.AddrFrom(netip.MustParseAddr("10.0.0.1")),
-+		iputil.AddrFrom(netip.MustParseAddr("10.0.0.2")),
-+	}, eni.Addresses)
-+}
-+
- func TestParseENIIPv6(t *testing.T) {
- 	// addr describes one entry of the ENI's assigned IPv6 addresses.
- 	type addr struct {
-```
-
-**File**: `pkg/aws/api/mock/mock.go` (modified, +10/-33)
-```diff
-@@ -6,7 +6,6 @@ package mock
- import (
- 	"context"
- 	"fmt"
--	"net"
- 	"net/netip"
- 	"slices"
- 
-@@ -15,6 +14,7 @@ import (
- 	"github.com/aws/smithy-go"
- 	"github.com/google/uuid"
- 	"golang.org/x/time/rate"
-+	"k8s.io/apimachinery/pkg/util/sets"
- 
- 	"github.com/cilium/cilium/pkg/api/helpers"
- 	"github.com/cilium/cilium/pkg/aws/api"
-@@ -564,14 +564,6 @@ func assignPrefixToENI(e *API, eni *types.ENI, prefixes int32) error {
- 		}
- 
- 		eni.Prefixes = append(eni.Prefixes, iputil.PrefixFrom(pfx))
--		prefixIPs, err := iputil.PrefixToIps(pfx.String(), 0)
--		if err != nil {
--			return fmt.Errorf("unable to convert prefix %s to ips", pfx.String())
--		}
--		for _, ipStr := range prefixIPs {
--			a, _ := netip.ParseAddr(ipStr)
--			eni.Addresses = append(eni.Addresses, iputil.AddrFrom(a))
--		}
- 	}
- 	subnet.AvailableAddresses -= int(prefixes * option.ENIPDBlockSizeIPv4)
- 	return nil
-@@ -607,26 +599,15 @@ func (e *API) UnassignENIPrefixes(ctx context.Context, eniID string, prefixes []
- 		return err
- 	}
- 
--	addresses := make([]string, 0)
--	// Convert prefixes to IP addresses and release prefix from pd allocator
-+	releaseSet := make(sets.Set[netip.Prefix], len(prefixes))
-+	// Validate prefixes and release them from the pd allocator
- 	for _, prefix := range prefixes {
- 		pfx, err := netip.ParsePrefix(prefix)
- 		if err != nil {
- 			return fmt.Errorf("Invalid CIDR block %s", prefix)
- 		}
- 		e.pdAllocator.Release(pfx)
--		ips, _ := iputil.PrefixToIps(prefix, 0)
--		addresses = append(addresses, ips...)
--	}
--
--	releaseMap := make(map[string]int)
--	for _, addr := range addresses {
--		// Validate given addresses
--		ipaddr := net.ParseIP(addr)
--		if ipaddr == nil {
--			return fmt.Errorf("Invalid IP address %s", addr)
--		}
--		releaseMap[addr] = 1
-+		releaseSet.Insert(pfx)
- 	}
- 
- 	for _, enis := range e.enis {
-@@ -639,17 +620,13 @@ func (e *API) UnassignENIPrefixes(ctx context.Context, eniID string, prefixes []
- 			return fmt.Errorf("subnet %s not found", eni.Subnet.ID)
- 		}
- 
--		var addressesAfterRelease []iputil.Addr
--
--		for _, address := range eni.Addresses {
--			_, ok := releaseMap[address.String()]
--			if !ok {
--				addressesAfterRelease = append(addressesAfterRelease, address)
--			} else {
--				subnet.AvailableAddresses++
-+		eni.Prefixes = slices.DeleteFunc(eni.Prefixes, func(p iputil.Prefix) bool {
-+			if releaseSet.Has(p.Prefix) {
-+				subnet.AvailableAddresses += option.ENIPDBlockSizeIPv4
-+				return true
- 			}
--		}
--		eni.Addresses = addressesAfterRelease
-+			return false
-+		})
- 		return nil
- 	}
- 	return fmt.Errorf("Unable to find ENI with ID %s", eniID)
-```
-
-**File**: `pkg/aws/ipam/node.go` (modified, +19/-22)
-```diff
-@@ -191,41 +191,31 @@ func (n *Node) PrepareIPRelease(excessIPs int, scopedLog *slog.Logger) *nodemana
- }
- 
- // GetAttachedCIDRs returns the CIDRs (addresses as /32 or /128, and
--// prefixes) currently attached across all ENIs of this node.
-+// prefixes) currently attached across all ENIs of this node. ENIs excluded
-+// by the CiliumNode spec are skipped, since they are not used for IPAM.
- func (n *Node) GetAttachedCIDRs() []netip.Prefix {
- 	n.mutex.RLock()
- 	defer n.mutex.RUnlock()
- 
- 	var attached []netip.Prefix
- 	for _, eni := range n.enis {
--		prefixes := make([]netip.Prefix, 0, len(eni.Prefixes)+len(eni.IPv6Prefixes))
--		for _, prefix := range eni.Prefixes {
--			if prefix.IsValid() {
--				prefixes = append(prefixes, prefix.Prefix)
--			}
-+		if eni.IsExcludedBySpec(n.k8sObj.Spec.ENI) {
-+			continue
- 		}
--		for _, prefix := range eni.IPv6Prefixes {
-+		for _, prefix := range slices.Concat(eni.Prefixes, eni.IPv6Prefixes) {
- 			if prefix.IsValid() {
--				prefixes = append(prefixes, prefix.Prefix)
-+				attached = append(attached, prefix.Prefix)
- 			}
- 		}
--		attached = append(attached, prefixes...)
--
- 		for _, addr := range eni.Addresses {
--			if !addr.IsValid() || prefixContains(prefixes, addr.Addr) {
--				continue
-+			if addr.IsValid() {
-+				attached = append(attached, netip.PrefixFrom(addr.Addr, addr.BitLen()))
- 			}
--			attached = append(attached, netip.PrefixFrom(addr.Addr, addr.BitLen()))
- 		}
- 	}
- 	return attached
- }
- 
--// prefixContains reports whether addr falls inside any of the prefixes.
--func prefixContains(prefixes []netip.Prefix, addr netip.Addr) bool {
--	return slices.ContainsFunc(prefixes, func(p netip.Prefix) bool { return p.Contains(addr) })
--}
--
- // PrepareCIDRRelease maps released CIDRs back to their source ENIs
- // and returns release actions grouped by ENI interface ID.
- func (n *Node) PrepareCIDRRelease(releasedCIDRs []netip.Prefix) []*nodemanager.ReleaseAction {
-@@ -336,6 +326,12 @@ func (n *Node) ReleaseIPs(ctx context.Context, r *nodemanager.ReleaseAction) err
- 	return errors.New("not implemented")
- }
- 
-+// assignedIPv4Count returns the number of IPv4 addresses assigned to the ENI,
-+// counting every address of its delegated prefixes.
-+func assignedIPv4Count(e *types.ENI) int {
-+	return len(e.Addresses) + len(e.Prefixes)*option.ENIPDBlockSizeIPv4
-+}
-+
- // PrepareIPAllocation returns the number of ENI IPs and interfaces that can be
- // allocated/created.
- func (n *Node) PrepareIPAllocation(scopedLog *slog.Logger) (a *nodemanager.AllocationAction, err error) {
-@@ -362,7 +358,7 @@ func (n *Node) PrepareIPAllocation(scopedLog *slog.Logger) (a *nodemanager.Alloc
- 			logfields.NeedIndex, *n.k8sObj.Spec.ENI.FirstInterfaceIndex,
- 			logfields.Index, e.Number,
- 			logfields.AddressLimit, limits.IPv4,
--			logfields.NumAddresses, len(e.Addresses),
-+			logfields.NumAddresses, assignedIPv4Count(&e),
- 		)
- 
- 		if e.IsExcludedBySpec(n.k8sObj.Spec.ENI) {
-@@ -378,7 +374,7 @@ func (n *Node) PrepareIPAllocation(scopedLog *slog.Logger) (a *nodemanager.Alloc
- 		}
- 
- 		_, effectiveLimits := n.getEffectiveIPLimits(&e, limits.IPv4)
--		availableOnENI := max(effectiveLimits-len(e.Addresses), 0)
-+		availableOnENI := max(effectiveLimits-assignedIPv4Count(&e), 0)
- 		if availableOnENI <= 0 {
- 			continue
- 		} else {
-@@ -472,7 +468,8 @@ func (n *Node) AllocateIPs(ctx context.Context, a *nodemanager.AllocationAction)
- 				// this accounting stops being necessary.
- 				maxAllocatableIPs--
- 			}
--			maxAllocatableIPs -= len(e.Addresses) - len(e.Prefixes)*(option.ENIPDBlockSizeIPv4-1)
-+			// Each prefix occupies a single address slot on the ENI.
-+			maxAllocatableIPs -= len(e.Addresses) + len(e.Prefixes)
- 			a.IPv4.AvailableForAllocation = min(a.IPv4.AvailableForAllocation, maxAllocatableIPs)
- 		}
- 		assignedIPs, err := n.manager.ec2api.AssignPrivateIpAddresses(ctx, a.InterfaceID, int32(a.IPv4.AvailableForAllocation))
-@@ -824,7 +821,7 @@ func (n *Node) ResyncInterfacesAndIPs(ctx context.Context, scopedLog *slog.Logge
- 			stats.NodeCapacity += leftoverPrefixCapcity
- 			stats.NodeIPv6Prefixes += len(e.IPv6Prefixes)
- 
--			availableOnENI := max(effectiveLimits-len(e.Addresses), 0)
-+			availableOnENI := max(effectiveLimits-assignedIPv4Count(e), 0)
- 			if availableOnENI > 0 {
- 				stats.RemainingAvailableInterfaceCount++
- 			}
-```
-
----
-
-### Incident Patch 2: `1d6923a5` (2026-10-20)
-**Commit Message**: api: set go field name for `require-routing` to `RequireBPFRouting`
-
-This better reflects its semantic. Moreover, this also rename any
-internal field/API referring to or deriving from the property.
-
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
-
-**File**: `api/v1/models/endpoint_datapath_configuration.go` (modified, +4/-4)
-```diff
-@@ -17,6 +17,10 @@ import (
- // swagger:model EndpointDatapathConfiguration
- type EndpointDatapathConfiguration struct {
- 
-+	// Endpoint requires BPF routing to be enabled, when disabled, routing is delegated to Linux routing.
-+	//
-+	RequireBPFRouting *bool `json:"require-routing,omitempty"`
-+
- 	// Disable source IP verification for the endpoint.
- 	//
- 	DisableSipVerification bool `json:"disable-sip-verification,omitempty"`
-@@ -35,10 +39,6 @@ type EndpointDatapathConfiguration struct {
- 	// Endpoint requires a host-facing egress program to be attached to implement ingress policy and reverse NAT.
- 	//
- 	RequireEgressProg bool `json:"require-egress-prog,omitempty"`
--
--	// Endpoint requires BPF routing to be enabled, when disabled, routing is delegated to Linux routing.
--	//
--	RequireRouting *bool `json:"require-routing,omitempty"`
- }
- 
- // Validate validates this endpoint datapath configuration
-```
-
-**File**: `api/v1/openapi.yaml` (modified, +1/-0)
-```diff
-@@ -1279,6 +1279,7 @@ definitions:
-         description: >
-           Endpoint requires BPF routing to be enabled, when disabled, routing
-           is delegated to Linux routing.
-+        x-go-name: RequireBPFRouting
-         type: boolean
-         default: true
-       install-endpoint-route:
-```
-
-**File**: `api/v1/server/embedded_spec.go` (modified, +4/-2)
-```diff
-@@ -2799,7 +2799,8 @@ func init() {
-         "require-routing": {
-           "description": "Endpoint requires BPF routing to be enabled, when disabled, routing is delegated to Linux routing.\n",
-           "type": "boolean",
--          "default": true
-+          "default": true,
-+          "x-go-name": "RequireBPFRouting"
-         }
-       }
-     },
-@@ -8248,7 +8249,8 @@ func init() {
-         "require-routing": {
-           "description": "Endpoint requires BPF routing to be enabled, when disabled, routing is delegated to Linux routing.\n",
-           "type": "boolean",
--          "default": true
-+          "default": true,
-+          "x-go-name": "RequireBPFRouting"
-         }
-       }
-     },
-```
-
-**File**: `pkg/datapath/config/endpoint.go` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ func Endpoint(ep endpoint.Config, lnc *Config) any {
- 		cfg.SocketLB.EnableTracing = option.Config.UnsafeDaemonConfigOption.EnableSocketLBTracing
- 	}
- 
--	cfg.EnableBPFRouting = ep.RequireRouting()
-+	cfg.EnableBPFRouting = ep.RequireBPFRouting()
- 
- 	return cfg
- }
-```
-
-**File**: `pkg/endpoint/api/endpoint_api_manager.go` (modified, +1/-1)
-```diff
-@@ -116,7 +116,7 @@ func (m *endpointAPIManager) CreateEndpoint(ctx context.Context, epTemplate *mod
- 		// Delegate routing to the Linux stack rather than tail-calling
- 		// between BPF programs.
- 		disabled := false
--		epTemplate.DatapathConfiguration.RequireRouting = &disabled
-+		epTemplate.DatapathConfiguration.RequireBPFRouting = &disabled
- 	}
- 
- 	m.logger.Info("Create endpoint request",
-```
-
-**File**: `pkg/endpoint/bpf.go` (modified, +4/-4)
-```diff
-@@ -1590,12 +1590,12 @@ func (e *Endpoint) RequireEgressProg() bool {
- 	return e.DatapathConfiguration.RequireEgressProg
- }
- 
--// RequireRouting returns true if the endpoint requires BPF routing to be
-+// RequireBPFRouting returns true if the endpoint requires BPF routing to be
- // enabled, when disabled, routing is delegated to Linux routing
--func (e *Endpoint) RequireRouting() (required bool) {
-+func (e *Endpoint) RequireBPFRouting() (required bool) {
- 	required = true
--	if e.DatapathConfiguration.RequireRouting != nil {
--		required = *e.DatapathConfiguration.RequireRouting
-+	if e.DatapathConfiguration.RequireBPFRouting != nil {
-+		required = *e.DatapathConfiguration.RequireBPFRouting
- 	}
- 	return
- }
-```
-
-**File**: `pkg/endpoint/cache.go` (modified, +5/-5)
-```diff
-@@ -36,7 +36,7 @@ type epInfoCache struct {
- 	ipv6                   netip.Addr
- 	requireARPPassthrough  bool
- 	requireEgressProg      bool
--	requireRouting         bool
-+	requireBPFRouting      bool
- 	requireEndpointRoute   bool
- 	atHostNS               bool
- 	policyVerdictLogFilter uint32
-@@ -91,7 +91,7 @@ func (e *Endpoint) createEpInfoCache(epdir string) *epInfoCache {
- 		ipv6:                   e.IPv6Address(),
- 		requireARPPassthrough:  e.RequireARPPassthrough(),
- 		requireEgressProg:      e.RequireEgressProg(),
--		requireRouting:         e.RequireRouting(),
-+		requireBPFRouting:      e.RequireBPFRouting(),
- 		requireEndpointRoute:   e.RequireEndpointRoute(),
- 		policyVerdictLogFilter: e.GetPolicyVerdictLogFilter(),
- 		options:                e.Options.DeepCopy(),
-@@ -186,10 +186,10 @@ func (ep *epInfoCache) RequireEgressProg() bool {
- 	return ep.requireEgressProg
- }
- 
--// RequireRouting returns true if the endpoint requires BPF routing to be
-+// RequireBPFRouting returns true if the endpoint requires BPF routing to be
- // enabled, when disabled, routing is delegated to Linux routing
--func (ep *epInfoCache) RequireRouting() bool {
--	return ep.requireRouting
-+func (ep *epInfoCache) RequireBPFRouting() bool {
-+	return ep.requireBPFRouting
- }
- 
- // RequireEndpointRoute returns if the endpoint wants a per endpoint route
-```
-
-**File**: `pkg/endpoint/endpoint.go` (modified, +1/-1)
-```diff
-@@ -1045,7 +1045,7 @@ func NewDatapathConfiguration() models.EndpointDatapathConfiguration {
- 		// Delegate routing to the Linux stack rather than tail-calling
- 		// between BPF programs.
- 		disabled := false
--		config.RequireRouting = &disabled
-+		config.RequireBPFRouting = &disabled
- 	}
- 	return config
- }
-```
-
----
-
-### Incident Patch 3: `c736b42b` (2026-10-22)
+### Incident Patch 1: `b28d8046` (2026-10-25)
 **Commit Message**: fix(deps): update all go dependencies main
 
 Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-**File**: `Documentation/cmdref/cilium_install.md` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -40,7 +40,7 @@ cilium install [flags]
-       --set-file stringArray     Set helm values from respective files specified via the command line (can specify multiple or separate values with commas: key1=path1,key2=path2)
-       --set-string stringArray   Set helm STRING values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)
-   -f, --values strings           Specify helm values in a YAML file or a URL (can specify multiple)
--      --version string           Cilium version to install (default "v1.20.2")
-+      --version string           Cilium version to install (default "v1.20.3")
-       --wait                     Wait for helm install to finish
-       --wait-duration duration   Maximum time to wait for status (default 5m0s)
- ```
+@@ -45,7 +45,7 @@ require (
+ 	github.com/go-openapi/loads v0.25.3
+ 	github.com/go-openapi/runtime v0.33.3
+ 	github.com/go-openapi/spec v1.0.1
+-	github.com/go-openapi/strfmt v0.27.3
++	github.com/go-openapi/strfmt v0.27.4
+ 	github.com/go-openapi/swag v0.29.2
+ 	github.com/go-openapi/swag/cmdutils v0.29.2
+ 	github.com/go-openapi/swag/conv v0.29.2
+@@ -102,7 +102,7 @@ require (
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/tidwall/gjson v1.20.0
+ 	github.com/tidwall/sjson v1.2.5
+-	github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153
++	github.com/vishvananda/netlink v1.3.2-0.20261024083927-5537980921d8
+ 	github.com/vishvananda/netns v0.0.5
+ 	go.etcd.io/etcd/api/v3 v3.7.2
+ 	go.etcd.io/etcd/client/pkg/v3 v3.7.2
 ```
 
-**File**: `Documentation/cmdref/cilium_upgrade.md` (modified, +1/-1)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -44,7 +44,7 @@ cilium upgrade [flags]
-       --set-file stringArray      Set helm values from respective files specified via the command line (can specify multiple or separate values with commas: key1=path1,key2=path2)
-       --set-string stringArray    Set helm STRING values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)
-   -f, --values strings            Specify helm values in a YAML file or a URL (can specify multiple)
--      --version string            Cilium version to install (default "v1.20.2")
-+      --version string            Cilium version to install (default "v1.20.3")
-       --wait                      Wait for helm install to finish
-       --wait-duration duration    Maximum time to wait for status (default 5m0s)
- ```
+@@ -284,8 +284,8 @@ github.com/go-openapi/runtime/server-middleware v0.33.3 h1:Td5UBla/J/KCjlsD0tmZY
+ github.com/go-openapi/runtime/server-middleware v0.33.3/go.mod h1:dopwrwqIqXe4xWtovDZkkXJzYqKw+Ybmy7G/hIDUWKY=
+ github.com/go-openapi/spec v1.0.1 h1:lj2vdGpNDcVgwRc6qXdw6qt/KQpCtSa9tnUH6vpDPDk=
+ github.com/go-openapi/spec v1.0.1/go.mod h1:M//GWQGtDUAjnP37gE6fInLgaczB+FatoipV3H1fYw8=
+-github.com/go-openapi/strfmt v0.27.3 h1:cyf4J5Wjpd6bFpAs44MF8PsbWF/mWXhn82Ck/hgQZgw=
+-github.com/go-openapi/strfmt v0.27.3/go.mod h1:Bl+xadPLa3nhBiaCAxNND1vrQfzyEjF0vBrLx96n/4E=
++github.com/go-openapi/strfmt v0.27.4 h1:E1xsvHb8R9vsuYru4TP2PVVTv9AIgSFAUACUZrFQfCI=
++github.com/go-openapi/strfmt v0.27.4/go.mod h1:SCOff81PPhU26acBiW96jHaFycEbT2nkQRvojM+V2z0=
+ github.com/go-openapi/swag v0.29.2 h1:9n8frkcsuQRA0INU31VbxNxt1zBaHxrHYGEf5BUjFi4=
+ github.com/go-openapi/swag v0.29.2/go.mod h1:RkCiX1gCVXWgLOavDXE3ALJrQ/VO2ziiIzOUs3z10xo=
+ github.com/go-openapi/swag/cmdutils v0.29.2 h1:cXEzX/nWCODon251f+1HgL75/R4XXML5IZxgLCWMoro=
+@@ -713,8 +713,8 @@ github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaO
+ github.com/uber/jaeger-client-go v2.30.0+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
+ github.com/uber/jaeger-lib v2.4.1+incompatible h1:td4jdvLcExb4cBISKIpHuGoVXh+dVKhn2Um6rjCsSsg=
+ github.com/uber/jaeger-lib v2.4.1+incompatible/go.mod h1:ComeNDZlWwrWnDv8aPp0Ba6+uUTzImX/AauajbLI56U=
+-github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153 h1:h+5tbko9K2pYcDASxNj0GYkEJnWmdtpF0GN7PSuY9oM=
+-github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153/go.mod h1:lEui7SPMd9fgxzHVGRAvTxsBGCF6PRH81o2kLWLWHgw=
++github.com/vishvananda/netlink v1.3.2-0.20261024083927-5537980921d8 h1:zBb5wLK7rZq5COBtH0Nl3hfwi3q7GO9KmmIBHE+70Hs=
++github.com/vishvananda/netlink v1.3.2-0.20261024083927-5537980921d8/go.mod h1:lEui7SPMd9fgxzHVGRAvTxsBGCF6PRH81o2kLWLWHgw=
+ github.com/vishvananda/netns v0.0.5 h1:DfiHV+j8bA32MFM7bfEunvT8IAqQ/NzSJHtcmW5zdEY=
+ github.com/vishvananda/netns v0.0.5/go.mod h1:SpkAiCQRtJ6TvvxPnOSyH3BMl6unz3xZlaprSwhNNJM=
+ github.com/weppos/publicsuffix-go v0.12.0/go.mod h1:z3LCPQ38eedDQSwmsSRW4Y7t2L8Ln16JPQ02lHAdn5k=
 ```
 
-**File**: `go.mod` (modified, +6/-6)
+**File**: `vendor/github.com/vishvananda/netlink/ethtool_ntuple_linux.go` (modified, +89/-4)
 ```diff
-@@ -13,11 +13,11 @@ require (
- 	github.com/aws/aws-sdk-go-v2 v1.47.3
- 	github.com/aws/aws-sdk-go-v2/config v1.33.9
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0
- 	github.com/aws/smithy-go v1.28.5
- 	github.com/blang/semver/v4 v4.0.0
- 	github.com/cespare/xxhash/v2 v2.3.0
--	github.com/cilium/charts v0.0.0-20261002190002-21db35622a44
-+	github.com/cilium/charts v0.0.0-20261015145443-f1e3aa524c3b
- 	github.com/cilium/coverbee v0.3.3-0.20240723084546-664438750fce
- 	github.com/cilium/dns v1.1.51-0.20240603182237-af788769786a
- 	github.com/cilium/ebpf v0.22.0
-@@ -114,7 +114,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5
- 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
- 	golang.org/x/crypto v0.58.0
--	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
-+	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
- 	golang.org/x/mod v0.42.0
- 	golang.org/x/net v0.61.0
- 	golang.org/x/sync v0.24.0
-@@ -127,7 +127,7 @@ require (
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b
- 	google.golang.org/grpc v1.84.0
- 	google.golang.org/protobuf v1.36.12
--	helm.sh/helm/v4 v4.3.0
-+	helm.sh/helm/v4 v4.3.1
- 	k8s.io/api v0.37.1
- 	k8s.io/apiextensions-apiserver v0.37.1
- 	k8s.io/apimachinery v0.37.1
-@@ -183,7 +183,7 @@ require (
- 	github.com/chai2010/gettext-go v1.0.2 // indirect
- 	github.com/cilium/deepequal-gen v0.0.0-20260817061921-e5a8128944c9 // indirect
- 	github.com/cilium/endpointslice v0.29.4-0.20240409195643-982ad68ab7ba // indirect
--	github.com/cilium/linters v0.5.0 // indirect
-+	github.com/cilium/linters v0.6.0 // indirect
- 	github.com/cloudflare/circl v1.6.3 // indirect
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/containerd/log v0.1.0 // indirect
-@@ -327,7 +327,7 @@ require (
- 	sigs.k8s.io/controller-tools v0.20.1 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
- 	sigs.k8s.io/kustomize/api v0.21.1 // indirect
--	sigs.k8s.io/kustomize/kyaml v0.21.1 // indirect
-+	sigs.k8s.io/kustomize/kyaml v0.21.2 // indirect
- 	sigs.k8s.io/randfill v1.0.0 // indirect
- 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
- 	tags.cncf.io/container-device-interface/specs-go v1.1.0 // indirect
-```
-
-**File**: `go.sum` (modified, +28/-28)
-```diff
-@@ -88,8 +88,8 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQO
- github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6/go.mod h1:ONzdPVYC95oBOu0VWNEsKEntcoemP3xVKjT+qWml1s4=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4 h1:1PZfVMz36He601uRm1PiKyDcsEKBk76QYwyISwjOjjY=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.338.4/go.mod h1:RttUwBa++DWLLpzTAQdcQzqI9uBF9cfRI/ek8gXzLR4=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0 h1:QeML374NiRru1tMjY46LznOzY7VMbWstpnhrFPgscvM=
-+github.com/aws/aws-sdk-go-v2/service/ec2 v1.339.0/go.mod h1:RttUwBa++DWLLpzTAQdcQzqI9uBF9cfRI/ek8gXzLR4=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21/go.mod h1:obpHAMP693+f3/A8PkLhIqfK1C+NWWn8zXzqD3OH520=
- github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5le1sjJdolitV7uVvYg3wkaeM1Ju2fDgeZQ=
-@@ -119,8 +119,8 @@ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UF
- github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
- github.com/chai2010/gettext-go v1.0.2 h1:1Lwwip6Q2QGsAdl/ZKPCwTe9fe0CjlUbqj5bFNSjIRk=
- github.com/chai2010/gettext-go v1.0.2/go.mod h1:y+wnP2cHYaVj19NZhYKAwEMH2CI1gNHeQQ+5AjwawxA=
--github.com/cilium/charts v0.0.0-20261002190002-21db35622a44 h1:24WTnpqBzJ3HTm2GPgIOU5g6wUyo5pqVFW6rS6XEc04=
--github.com/cilium/charts v0.0.0-20261002190002-21db35622a44/go.mod h1:M3C9VOlFvRzuV+a01t07Tw4uFLSfkCH3L542IWjf6BU=
-+github.com/cilium/charts v0.0.0-20261015145443-f1e3aa524c3b h1:SMSuwB6GzGkW6siPWWQpWa+jZ+x4pSb0lNv1WNUWGmQ=
-+github.com/cilium/charts v0.0.0-20261015145443-f1e3aa524c3b/go.mod h1:M3C9VOlFvRzuV+a01t07Tw4uFLSfkCH3L542IWjf6BU=
- github.com/cilium/controller-tools v0.22.0-1 h1:I2hG0zDMK+afrurMa6CXoB5NIOa0O/p1S/6qU0XDncg=
- github.com/cilium/controller-tools v0.22.0-1/go.mod h1:VizwUStoZK7rReCj704czGGrB7mLxXTiJSJt7wN5ilI=
- github.com/cilium/coverbee v0.3.3-0.20240723084546-664438750fce h1:gqzXY3NuHllVVDw9vD49mlXx+9bYFPlg23rdrkQNFDM=
-@@ -139,8 +139,8 @@ github.com/cilium/fake v0.7.0 h1:4EKBtTweQrJoD4q45qDGu8udulmYMo48Y0BhEbrB1jc=
- github.com/cilium/fake v0.7.0/go.mod h1:hA1YsEjgIs5Gdeq/DVrDWGuhLCoVok7THTvQaGDO5bc=
- github.com/cilium/hive v1.0.6 h1:Uly6mUnslt/LvYYiuG35L6sJGrOdYOZhm/qECjzysTw=
- github.com/cilium/hive v1.0.6/go.mod h1:NY1wD3TQ4sya7zkhkB4QX6eIZ4FjwZPG+lnUB2IH5Xs=
--github.com/cilium/linters v0.5.0 h1:1W26l5OWAfMZzWOdV4Q+Rb1ZlzcctMFCp7kmvmFbc0s=
--github.com/cilium/linters v0.5.0/go.mod h1:97bbbgIqSXoa20fFxpeL9/DLRUeGhkPbuoE3x2ln8NI=
-+github.com/cilium/linters v0.6.0 h1:9unxGSyq8TY5Q1ezjgoqVmNTBqqftdkTiWK0RdcrVbE=
-+github.com/cilium/linters v0.6.0/go.mod h1:qeYNuYm1ZnzmAf92atIt60aigjtJ2NdMD3bNv5tNIqg=
- github.com/cilium/lumberjack/v2 v2.4.2 h1:Wea2z1+ikRhjS5z36I6vgeMlgh7xzvIzqW+t9tTvpkQ=
- github.com/cilium/lumberjack/v2 v2.4.2/go.mod h1:yfbtPGmg4i//5oEqzaMxDqSWqgfZFmMoV70Mc2k6v0A=
- github.com/cilium/proxy v0.0.0-20261020105557-fd18fd552619 h1:a2SXy5SrKsPgPbs/RU54+52e5Afpd0wZ8G83mSA8LeM=
-@@ -760,24 +760,24 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
- go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
- go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
--go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.18.0 h1:deI9UQMoGFgrg5iLPgzueqFPHevDl+28YKfSpPTI6rY=
--go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.18.0/go.mod h1:PFx9NgpNUKXdf7J4Q3agRxMs3Y07QhTCVipKmLsMKnU=
--go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
--go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0/go.mod h1:ji9vId85hMxqfvICA0Jt8JqEdrXaAkcpkI9HPXya0ro=
-+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=
-+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0/go.mod h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=
-+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0 h1:fvNHGyo3CdRv/DQveXqhqBxnKTDyRaC5sMSQxilX/A0=
-+go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.21.0/go.mod h1:zyGrjRKL2B/6+Jc/m4/otPoZqV2MY9ZjC/aBraRO7zc=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.42.0 h1:MdKucPl/HbzckWWEisiNqMPhRrAOQX8r4jTuGr636gk=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.42.0/go.mod h1:RolT8tWtfHcjajEH5wFIZ4Dgh5jpPdFXYV9pTAk/qjc=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.43.0 h1:w
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+# v1.339.0 (2026-10-14)
+@@ -41,10 +41,10 @@ const (
+ // 32 bits); bits 32-39 hold an optional VF id which we leave zero.
+ const ethtoolRxFlowSpecRing = 0x00000000FFFFFFFF
+ 
+-// NetDevRxFlow is a typed RX flow steering rule. Exactly one of the typed match
+-// fields (Ether, TCP4, ...) must be set; it identifies the flow to match and
+-// supplies both the value (h_u) and mask (m_u) halves of the rule. Queue is the
+-// target RX queue index that matching packets are delivered to (the "action").
++// NetDevRxFlow is a typed RX flow steering rule. Match identifies the flow to
++// match and supplies both the value (h_u) and mask (m_u) halves of the rule.
++// Queue is the target RX queue index that matching packets are delivered to
++// (the "action").
+ type NetDevRxFlow struct {
+ 	// Match is the flow matcher; its concrete type selects the flow type.
+ 	Match NetDevRxFlowMatch
+@@ -120,6 +120,43 @@ func (f TCPIP4Fields) serialize() (val [52]byte, mask [52]byte) {
+ 	return val, mask
+ }
+ 
++// TCP6Flow and UDP6Flow match on IPv6 TCP/UDP 5-tuple fields. Addresses are
++// serialized as 16 network-order bytes, and ports are serialized in network
++// byte order as struct ethtool_tcpip6_spec expects. A zero mask field means
++// "don't care". Address masks are passed to the kernel unchanged, so callers
++// can use IPv6 CIDR masks; individual drivers may restrict which masks their
++// hardware can offload.
++type TCP6Flow struct{ TCPIP6Fields }
++type UDP6Flow struct{ TCPIP6Fields }
 +
-+* **Feature**: Adds T8i instance sizes to the InstanceType enum. T8i instances are low-cost burstable instances powered by custom sixth generation Intel Xeon 6 processors, available exclusively on AWS, and built on the latest sixth generation AWS Nitro cards
++// TCPIP6Fields holds the IPv6 TCP/UDP match fields shared by TCP6Flow/UDP6Flow.
++type TCPIP6Fields struct {
++	SrcIP, SrcIPMask     net.IP // IPv6
++	DstIP, DstIPMask     net.IP
++	SrcPort, SrcPortMask uint16
++	DstPort, DstPortMask uint16
++}
 +
- # v1.338.4 (2026-10-09.2)
- 
- * **Dependency Update**: Update to smithy-go v1.28.5.
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/go_module_metadata.go` (modified, +1/-1)
-```diff
-@@ -3,4 +3,4 @@
- package ec2
- 
- // goModuleVersion is the tagged release for this module
--const goModuleVersion = "1.338.4"
-+const goModuleVersion = "1.339.0"
-```
-
-**File**: `vendor/github.com/aws/aws-sdk-go-v2/service/ec2/types/enums.go` (modified, +18/-0)
-```diff
-@@ -5830,6 +5830,15 @@ const (
- 	InstanceTypeR9gd48xlarge       InstanceType = "r9gd.48xlarge"
- 	InstanceTypeR9gdMetal48xl      InstanceType = "r9gd.metal-48xl"
- 	InstanceTypeM9gMedium          InstanceType = "m9g.medium"
-+	InstanceTypeT8iNano            InstanceType = "t8i.nano"
-+	InstanceTypeT8iMicro           InstanceType = "t8i.micro"
-+	InstanceTypeT8iSmall           InstanceType = "t8i.small"
-+	InstanceTypeT8iMedium          InstanceType = "t8i.medium"
-+	InstanceTypeI8gMetal48xl       InstanceType = "i8g.metal-48xl"
-+	InstanceTypeR8gb48xlarge       InstanceType = "r8gb.48xlarge"
-+	InstanceTypeR8gbMetal48xl      InstanceType = "r8gb.metal-48xl"
-+	InstanceTypeM9gdMedium         InstanceType = "m9gd.medium"
-+	InstanceTypeTrn2u48xlarge      InstanceType = "trn2u.48xlarge"
- )
- 
- // Values returns all known values for InstanceType. Note that this can be
-@@ -7266,6 +7275,15 @@ func (InstanceType) Values() []InstanceType {
- 		"r9gd.48xlarge",
- 		"r9gd.metal-48xl",
- 		"m9g.medium",
-+		"t8i.nano",
-+		"t8i.micro",
-+		"t8i.small",
-+		"t8i.medium",
-+		"i8g.metal-48xl",
-+		"r8gb.48xlarge",
-+		"r8gb.metal-48xl",
-+		"m9gd.medium",
-+		"trn2u.48xlarge",
++func (TCP6Flow) flowType() uint32 { return TCP_V6_FLOW }
++func (UDP6Flow) flowType() uint32 { return UDP_V6_FLOW }
++
++func (f TCP6Flow) serialize() ([52]byte, [52]byte) { return f.TCPIP6Fields.serialize() }
++func (f UDP6Flow) serialize() ([52]byte, [52]byte) { return f.TCPIP6Fields.serialize() }
++
++func (f TCPIP6Fields) serialize() (val [52]byte, mask [52]byte) {
++	// struct ethtool_tcpip6_spec { __be32 ip6src[4]; __be32 ip6dst[4];
++	//                              __be16 psrc; __be16 pdst; __u8 tclass; }
++	putIP6(val[0:16], f.SrcIP)
++	putIP6(val[16:32], f.DstIP)
++	networkOrder.PutUint16(val[32:34], f.SrcPort)
++	networkOrder.PutUint16(val[34:36], f.DstPort)
++	putIP6(mask[0:16], f.SrcIPMask)
++	putIP6(mask[16:32], f.DstIPMask)
++	networkOrder.PutUint16(mask[32:34], f.SrcPortMask)
++	networkOrder.PutUint16(mask[34:36], f.DstPortMask)
++	return val, mask
++}
++
+ // ethtoolRxFlowSpec is the logical representation of struct
+ // ethtool_rx_flow_spec. It is encoded explicitly because the Linux 386 ABI
+ // aligns uint64 fields to 4 bytes while the other supported Linux ABIs align
+@@ -254,6 +291,15 @@ func putIP4(dst []byte, ip net.IP) {
  	}
  }
  
++func putIP6(dst []byte, ip net.IP) {
++	if ip.To4() != nil {
++		return
++	}
++	if ip6 := ip.To16(); ip6 != nil {
++		copy(dst, ip6)
++	}
++}
++
+ func validateHardwareAddr(field string, addr net.HardwareAddr) error {
+ 	if len(addr) != 0 && len(addr) != 6 {
+ 		return fmt.Errorf("netlink: %s must contain exactly 6 bytes", field)
+@@ -268,6 +314,13 @@ func validateIPv4(field string, ip net.IP) error {
+ 	return nil
+ }
+ 
++func validateIPv6(field string, ip net.IP) error {
++	if len(ip) != 0 && (ip.To16() == nil || ip.To4() != nil) {
++		return fmt.Errorf("netlink: %s must be an IPv6 address", field)
++	}
++	return nil
++}
++
+ func validateNetDevRxFlowMatch(match NetDevRxFlowMatch) error {
+ 	switch m := match.(type) {
+ 	case EtherFlow:
+@@ -291,6 +344,20 @@ func validateNetDevRxFlowMatch(match NetDevRxFlowMatch) error {
+ 			return fmt.Errorf("netlink: NetDevRxFlow.Match must be set")
+ 		}
+ 		return validateTCPIP4Fields("UDP4Flow", m.TCPIP4Fields)
++	case TCP6Flow:
++		return validateTCPIP6Fields("TCP6Flow", m.TCPIP6Fields)
++	case *TCP6Flow:
++		if m == nil {
++			return fmt.Errorf("netlink: NetDevRxFlow.Match must be set")
++		}
++		return validateTCPIP6Fields("TCP6Flow", m.TCPIP6Fields)
++	case UDP6Flow:
++		return validateTCPIP6Fields("UDP6Flow", m.TCPIP6Fields)
++	case *UDP6Flow:
++		if m == nil {
++			return fmt.Errorf("netlink: NetDevRxFlow.Match must be set")
++		}
++		return validateTCPIP6Fields("UDP6Flow", m.TCPIP6Fields)
+ 	default:
+ 		return fmt.Errorf("netlink: unsupported NetDevRxFlow.Match type %T", match)
+ 	}
+@@ -332,6 +399,24 @@ func validateTCPIP4Fields(flowType string, fields TCPIP4Fields) error {
+ 	return nil
+ }
+ 
++func validateTCPIP6Fields(flowType string, fields TCPIP6Fields) error {
++	addresses := []struct {
++		name string
++		ip   net.IP
++	}{
++		{flowType + ".SrcIP", fields.SrcIP},
++		{flowType + ".SrcIPMask", fields.SrcIPMask},
++		{flowType + ".DstIP", fields.DstIP},
++		{flowType + ".DstIPMask", fields.DstIPMask},
++	}
++	for _, address := range addresses {
++		if err := validateIPv6(address.name, address.ip); err != nil {
++			return err
++		}
++	}
++	return nil
++}
++
+ // NetDevRxFlowInsert inserts (or updates) an RX flow st
 ```
 
-**File**: `vendor/github.com/cilium/charts/README.md` (modified, +3/-0)
+**File**: `vendor/modules.txt` (modified, +2/-2)
 ```diff
-@@ -3,6 +3,7 @@ This repository holds helm templates for the following Cilium releases:
- * [v1.21.0-pre.3](https://github.com/cilium/cilium/releases/tag/v1.21.0-pre.3) (_[source](https://github.com/cilium/cilium/tree/v1.21.0-pre.3/install/kubernetes/cilium)_)
- * [v1.21.0-pre.2](https://github.com/cilium/cilium/releases/tag/v1.21.0-pre.2) (_[source](https://github.com/cilium/cilium/tree/v1.21.0-pre.2/install/kubernetes/cilium)_)
- * [v1.21.0-pre.0](https://github.com/cilium/cilium/releases/tag/v1.21.0-pre.0) (_[source](https://github.com/cilium/cilium/tree/v1.21.0-pre.0/install/kubernetes/cilium)_)
-+* [v1.20.3](https://github.com/cilium/cilium/releases/tag/v1.20.3) (_[source](https://github.com/cilium/cilium/tree/v1.20.3/install/kubernetes/cilium)_)
- * [v1.20.2](https://github.com/cilium/cilium/releases/tag/v1.20.2) (_[source](https://github.com/cilium/cilium/tree/v1.20.2/install/kubernetes/cilium)_)
- * [v1.20.1](https://github.com/cilium/cilium/releases/tag/v1.20.1) (_[source](https://github.com/cilium/cilium/tree/v1.20.1/install/kubernetes/cilium)_)
- * [v1.20.0](https://github.com/cilium/cilium/releases/tag/v1.20.0) (_[source](https://github.com/cilium/cilium/tree/v1.20.0/install/kubernetes/cilium)_)
-@@ -13,6 +14,7 @@ This repository holds helm templates for the following Cilium releases:
- * [v1.20.0-pre.2](https://github.com/cilium/cilium/releases/tag/v1.20.0-pre.2) (_[source](https://github.com/cilium/cilium/tree/v1.20.0-pre.2/install/kubernetes/cilium)_)
- * [v1.20.0-pre.1](https://github.com/cilium/cilium/releases/tag/v1.20.0-pre.1) (_[source](https://github.com/cilium/cilium/tree/v1.20.0-pre.1/install/kubernetes/cilium)_)
- * [v1.20.0-pre.0](https://github.com/cilium/cilium/releases/tag/v1.20.0-pre.0) (_[source](https://github.com/cilium/cilium/tree/v1.20.0-pre.0/install/kubernetes/cilium)_)
-+* [v1.19.9](https://github.com/cilium/cilium/releases/tag/v1.19.9) (_[source](https://github.com/cilium/cilium/tree/v1.19.9/install/kubernetes/cilium)_)
- * [v1.19.8](https://github.com/cilium/cilium/releases/tag/v1.19.8) (_[source](https://github.com/cilium/cilium/tree/v1.19.8/install/kubernetes/cilium)_)
- * [v1.19.7](https://github.com/cilium/cilium/releases/tag/v1.19.7) (_[source](https://github.com/cilium/cilium/tree/v1.19.7/install/kubernetes/cilium)_)
- * [v1.19.6](https://github.com/cilium/cilium/releases/tag/v1.19.6) (_[source](https://github.com/cilium/cilium/tree/v1.19.6/install/kubernetes/cilium)_)
-@@ -29,6 +31,7 @@ This repository holds helm templates for the following Cilium releases:
- * [v1.19.0-pre.2](https://github.com/cilium/cilium/releases/tag/v1.19.0-pre.2) (_[source](https://github.com/cilium/cilium/tree/v1.19.0-pre.2/install/kubernetes/cilium)_)
- * [v1.19.0-pre.1](https://github.com/cilium/cilium/releases/tag/v1.19.0-pre.1) (_[source](https://github.com/cilium/cilium/tree/v1.19.0-pre.1/install/kubernetes/cilium)_)
- * [v1.19.0-pre.0](https://github.com/cilium/cilium/releases/tag/v1.19.0-pre.0) (_[source](https://github.com/cilium/cilium/tree/v1.19.0-pre.0/install/kubernetes/cilium)_)
-+* [v1.18.15](https://github.com/cilium/cilium/releases/tag/v1.18.15) (_[source](https://github.com/cilium/cilium/tree/v1.18.15/install/kubernetes/cilium)_)
- * [v1.18.14](https://github.com/cilium/cilium/releases/tag/v1.18.14) (_[source](https://github.com/cilium/cilium/tree/v1.18.14/install/kubernetes/cilium)_)
- * [v1.18.13](https://github.com/cilium/cilium/releases/tag/v1.18.13) (_[source](https://github.com/cilium/cilium/tree/v1.18.13/install/kubernetes/cilium)_)
- * [v1.18.12](https://github.com/cilium/cilium/releases/tag/v1.18.12) (_[source](https://github.com/cilium/cilium/tree/v1.18.12/install/kubernetes/cilium)_)
+@@ -920,7 +920,7 @@ github.com/go-openapi/runtime/server-middleware/negotiate/header
+ # github.com/go-openapi/spec v1.0.1
+ ## explicit; go 1.26.0
+ github.com/go-openapi/spec
+-# github.com/go-openapi/strfmt v0.27.3
++# github.com/go-openapi/strfmt v0.27.4
+ ## explicit; go 1.26.0
+ github.com/go-openapi/strfmt
+ github.com/go-openapi/strfmt/internal/bsonlite
+@@ -1606,7 +1606,7 @@ github.com/tidwall/pretty
+ # github.com/tidwall/sjson v1.2.5
+ ## explicit; go 1.14
+ github.com/tidwall/sjson
+-# github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153
++# github.com/vishvananda/netlink v1.3.2-0.20261024083927-5537980921d8
+ ## explicit; go 1.23
+ github.com/vishvananda/netlink
+ github.com/vishvananda/netlink/nl
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49602** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
+- **PR #49597** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
 - **PR #49583** (2026-10-23): README: Update releases (@aanm)
 - **PR #49582** (2026-10-23): [v1.20] Revert ".github: Set envoy.rollOutPods in the e2e upgrade tests" (@aanm)
 - **PR #49578** (2026-10-23): install: Update image digests for v1.20.4 (@cilium-release-bot[bot])
 - **PR #49577** (2026-10-23): install: Update image digests for v1.18.16 (@cilium-release-bot[bot])
-- **PR #49576** (2026-10-23): install: Update image digests for v1.19.10 (@cilium-release-bot[bot])
-- **PR #49575** (2026-10-23): Prepare for release v1.20.4 (@cilium-release-bot[bot])
 
 ---
 
@@ -2092,41 +1524,30 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. aws/ipam: Stop expanding delegated prefixes into ENI addresses
+## X. deps): update all go dependencies main
 
 **RULE**:
-When implementing operations in `operator/pkg/ipam/nodemanager/node.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a5dc574`: aws/ipam: Stop expanding delegated prefixes into ENI addresses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b28d8046`: deps): update all go dependencies main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/ipam/nodemanager/node.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Providers backing the multi-pool allocator report the attached CIDRs,
-	// which are the source of truth for the available IPv4 count since the
-	// AllocationMap does not list addresses of delegated prefixes. Providers
-	// backing the CRD allocator return nil and only rely on the AllocationMap.
-	if attached := n.ops.GetAttachedCIDRs(); attached != nil {
-		n.stats.IPv4.AvailableIPs = 0
-		for _, c := range attached {
-			if c.Addr().Is4() {
-				n.stats.IPv4.AvailableIPs += 1 << (32 - c.Bits())
-			}
-		}
-	} else {
-		n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
-	}
+	github.com/go-openapi/strfmt v0.27.4
+	github.com/vishvananda/netlink v1.3.2-0.20261024083927-5537980921d8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	n.stats.IPv4.AvailableIPs = len(n.ipv4Alloc.available)
+	github.com/go-openapi/strfmt v0.27.3
+	github.com/vishvananda/netlink v1.3.2-0.20261015184244-3fdd74264153
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a5dc574` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b28d8046` are properly handled with clean fallback behavior.

@@ -4669,3 +4669,5 @@ Every entry in this ledger must capture:
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `dd8250de` | Multi-dimensional audit evidence | 2026-10-25T04:19:00.897Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-25T04:25:22.340Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `180c08d6` | Multi-dimensional audit evidence | 2026-10-25T04:25:25.107Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-25T04:31:49.149Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b28d8046` | Multi-dimensional audit evidence | 2026-10-25T04:31:51.963Z |

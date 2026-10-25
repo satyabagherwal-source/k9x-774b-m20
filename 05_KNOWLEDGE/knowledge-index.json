@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:25:25.049Z",
+  "last_updated": "2026-10-25T04:31:51.909Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5808,8 +5808,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "fe561573",
-      "content_hash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
+      "source_version": "b28d8046",
+      "content_hash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -5865,8 +5865,8 @@
         },
         {
           "number": 3344,
-          "title": "deps): update all go dependencies main (major)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "deps): update all go dependencies main",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3476,
@@ -5914,7 +5914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:05:08.160Z",
+      "verified_at": "2026-10-25T04:31:51.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21282,7 +21282,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "53fc451508fae00e19dfc61e7cca14b33560f7081beb00155599ff5b2e0f8a63",
+      "content_hash": "ef7421b2cbd134f82d01bccfabfe9c2d825febb84dad85e217f783411a4bbaa6",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -21346,6 +21346,16 @@
           "number": 1833,
           "title": "LoRA Strength and CFG Calibration for Conditional Editing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4045,
+          "title": "Geometric Ground-Truth Injection for Diffusion Editing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4046,
+          "title": "LoRA Strength Calibration for Structural Edits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21365,7 +21375,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-20T12:31:03.039Z",
+      "verified_at": "2026-10-25T04:31:49.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -107510,15 +107520,15 @@
       "learning_id": "rule-3344",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3344,
-      "title": "deps): update all go dependencies main (major)",
+      "title": "deps): update all go dependencies main",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "19c45cf5",
+      "source_version": "b28d8046",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T19:30:48.871Z"
+      "verified_at": "2026-10-25T04:31:51.898Z"
     },
     "rule-3345": {
       "learning_id": "rule-3345",
@@ -118084,6 +118094,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:25:25.035Z"
+    },
+    "rule-4045": {
+      "learning_id": "rule-4045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4045,
+      "title": "Geometric Ground-Truth Injection for Diffusion Editing",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:31:49.084Z"
+    },
+    "rule-4046": {
+      "learning_id": "rule-4046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4046,
+      "title": "LoRA Strength Calibration for Structural Edits",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:31:49.084Z"
     }
   },
   "aliases": {

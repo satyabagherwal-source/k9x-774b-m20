@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:25:25.112Z",
-  "total_cycles_completed": 4639,
-  "total_learnings_persisted": 4639,
-  "total_rules_promoted": 3907,
+  "last_updated": "2026-10-25T04:31:51.967Z",
+  "total_cycles_completed": 4641,
+  "total_learnings_persisted": 4641,
+  "total_rules_promoted": 3910,
   "history": [
-    {
-      "timestamp": "2026-10-23T05:50:36.754Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:56:31.848Z",
-      "repository": "Nasiko-Labs/nasiko",
-      "learningId": "learn-github-nasiko-labs-nasiko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T06:02:45.578Z",
       "repository": "guokaigdg/animal-island-ui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T04:25:25.112Z",
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:31:49.159Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:31:51.967Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

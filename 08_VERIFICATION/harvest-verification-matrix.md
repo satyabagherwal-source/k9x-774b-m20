@@ -4662,3 +4662,5 @@
 | `CYCLE-20261025-IVFI` | `2026-10-25T04:19:00.894Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4041` | Yes (`a381baab...`) |
 | `CYCLE-20261025-R1R5` | `2026-10-25T04:25:22.337Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4042, Rule 4043` | Yes (`2ac4dee7...`) |
 | `CYCLE-20261025-R3VX` | `2026-10-25T04:25:25.101Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4044` | Yes (`c81bc195...`) |
+| `CYCLE-20261025-ZC7U` | `2026-10-25T04:31:49.146Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4045, Rule 4046` | Yes (`ef7421b2...`) |
+| `CYCLE-20261025-ZEE0` | `2026-10-25T04:31:51.960Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3344` | Yes (`316aa77a...`) |

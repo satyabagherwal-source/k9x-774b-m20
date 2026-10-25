@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:25:25.116Z",
+  "last_updated": "2026-10-25T04:31:51.971Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "53fc451508fae00e19dfc61e7cca14b33560f7081beb00155599ff5b2e0f8a63",
-      "verified_at": "2026-10-20T12:31:03.104Z",
+      "content_hash": "ef7421b2cbd134f82d01bccfabfe9c2d825febb84dad85e217f783411a4bbaa6",
+      "verified_at": "2026-10-25T04:31:49.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:31:03.104Z"
+      "last_updated": "2026-10-25T04:31:49.173Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "b931d22bb1e455a82cc4a3983e76c264047eeaa7391430295c611d1025d02f00",
-      "verified_at": "2026-10-24T20:05:08.206Z",
+      "content_hash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
+      "verified_at": "2026-10-25T04:31:51.971Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:05:08.206Z"
+      "last_updated": "2026-10-25T04:31:51.971Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
