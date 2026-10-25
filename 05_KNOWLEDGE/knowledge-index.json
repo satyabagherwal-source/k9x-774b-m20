@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:06:56.276Z",
+  "last_updated": "2026-10-25T05:14:47.036Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21062,7 +21062,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "1c3a5f3981e605fd53d91b978de2bbe4283d06496279cade509c81eb0c226de1",
+      "content_hash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -21080,6 +21080,11 @@
           "number": 986,
           "title": "Left-Padding Invariant for Batched Causal LM Inference",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1131,
+          "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1870,
@@ -21110,6 +21115,16 @@
           "number": 3189,
           "title": "Logit Soft-Capping Numerical Stabilization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4071,
+          "title": "Logit Softcapping for Quantization Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4072,
+          "title": "Factual Preservation Constraint in Text Rewriting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21129,7 +21144,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-20T13:21:13.986Z",
+      "verified_at": "2026-10-25T05:14:47.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34628,15 +34643,15 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "1d3897ae",
-      "content_hash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
+      "source_version": "fc10d048",
+      "content_hash": "72a6de191e6520cf2710f4a532fedc5723412f3828f1c18fcd79eebb9380e21d",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
         {
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3158,
@@ -34659,7 +34674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:11:09.468Z",
+      "verified_at": "2026-10-25T05:14:46.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75640,15 +75655,15 @@
       "learning_id": "rule-1131",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1131,
-      "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency (Harvested from vllm-sr/d3)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-25T05:14:47.016Z"
     },
     "rule-1132": {
       "learning_id": "rule-1132",
@@ -83629,14 +83644,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
-      "source_url": "https://github.com/rook/rook",
-      "source_version": "d5af15a5",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "fc10d048",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T05:10:30.531Z"
+      "verified_at": "2026-10-25T05:14:46.386Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -118606,6 +118621,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:06:56.265Z"
+    },
+    "rule-4071": {
+      "learning_id": "rule-4071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4071,
+      "title": "Logit Softcapping for Quantization Stability",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:14:47.016Z"
+    },
+    "rule-4072": {
+      "learning_id": "rule-4072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4072,
+      "title": "Factual Preservation Constraint in Text Rewriting",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:14:47.016Z"
     }
   },
   "aliases": {

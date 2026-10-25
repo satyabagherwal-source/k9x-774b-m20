@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "1c3a5f3981e605fd53d91b978de2bbe4283d06496279cade509c81eb0c226de1",
-    "lastHarvestedAt": "2026-10-20T13:21:14.059Z",
+    "contentHash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
+    "lastHarvestedAt": "2026-10-25T05:14:47.098Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "1d3897ae",
+    "sourceVersion": "fc10d048",
     "license": "Apache-2.0",
-    "contentHash": "ba0bce382dd6340b9f463af75a3ed47feb9145a7e757a301db402dadd88eca03",
-    "lastHarvestedAt": "2026-10-22T18:11:09.532Z",
+    "contentHash": "72a6de191e6520cf2710f4a532fedc5723412f3828f1c18fcd79eebb9380e21d",
+    "lastHarvestedAt": "2026-10-25T05:14:46.472Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {

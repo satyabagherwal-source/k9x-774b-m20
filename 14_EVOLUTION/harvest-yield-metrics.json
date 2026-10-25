@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:06:56.352Z",
-  "total_cycles_completed": 4656,
-  "total_learnings_persisted": 4656,
-  "total_rules_promoted": 3936,
+  "last_updated": "2026-10-25T05:14:47.107Z",
+  "total_cycles_completed": 4658,
+  "total_learnings_persisted": 4658,
+  "total_rules_promoted": 3940,
   "history": [
-    {
-      "timestamp": "2026-10-23T06:36:22.410Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:42:34.184Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T06:49:43.608Z",
       "repository": "fastapi/fastapi",
@@ -1403,6 +1389,20 @@
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "learningId": "learn-huggingface-openmoss-team-moss-image-base",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:14:46.483Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:14:47.107Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

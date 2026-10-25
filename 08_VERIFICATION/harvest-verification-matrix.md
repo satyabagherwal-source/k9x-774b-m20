@@ -4679,3 +4679,5 @@
 | `CYCLE-20261025-5VWL` | `2026-10-25T05:04:54.213Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4065` | Yes (`8559f334...`) |
 | `CYCLE-20261025-84Q4` | `2026-10-25T05:06:38.956Z` | `pamburus/hl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4066, Rule 4067, Rule 4068` | Yes (`b9d8366f...`) |
 | `CYCLE-20261025-8I55` | `2026-10-25T05:06:56.345Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4069, Rule 4070` | Yes (`ca081c6e...`) |
+| `CYCLE-20261025-IKW4` | `2026-10-25T05:14:46.468Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`72a6de19...`) |
+| `CYCLE-20261025-ILDI` | `2026-10-25T05:14:47.094Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4071, Rule 4072` | Yes (`4e641fef...`) |

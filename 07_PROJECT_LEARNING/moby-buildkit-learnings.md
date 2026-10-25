@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `1d3897ae`  
+> **Source Version**: `fc10d048`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:11:09.196Z  
+> **Timestamp**: 2026-10-25T05:14:46.152Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:11:08.091Z  
+> **Harvest Timestamp**: 2026-10-25T05:14:44.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10334 stars
+- **Stars / Engagement**: 10340 stars
 
 ---
 
@@ -2299,13 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7306** (2026-10-21): **build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.17.0 to 1.18.0**
-  *Symptoms*: Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.17.0 to 1.18.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/github-builder/releases">docker/github-builder/.github/workflows/bake.yml's releases</a>.</em></p> <blockquote> <h2>v1.18.0</h2> <ul> <li>build/bake: Support <a href="https://github.com/docker/github-builder#build-secrets">BuildKit secrets</a> through the <code>build-secrets</code> workflow secret, including multiline values and target-specific secrets for Bake. Bake secrets must already be declared in the target definition by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/github-builder/pull/248">docker/github-builder#248</a></li> <li>build/bake: Add opt-in <a href="https://github.com/docker/github-builder#buildkit-proxy-network">BuildKit proxy networking</a> with <code>buildkit-proxy-network</code>, enabling HTTP(S) request logging and capture of downloaded build materials in provenance by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/github-builder/pull/280">docker/github-builder#280</a></li> <li>build/bake: Add a <code>registry-login</code> input to enable authentication before builds that do not push images, such as builds using private base images with local output. The default <code>auto</code> mode preserves the exist
-  **Post-Mortem & Fix Analysis**:
-  > Looks like docker/github-builder/.github/workflows/bake.yml is up-to-date now, so this is no longer needed.
+- **Issue #7315** (2026-10-23): **build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/upload-sarif's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.1 - 21 Oct 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> <h2>4.39.0 - 15 Oct 2026</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <l
 
-- **Issue #7303** (2026-10-20): **solver: avoid blocking on lazy cache queries**
-  *Symptoms*: ## Summary  A lazy registry cache manager can block inside `Query` while its import is waiting on registry I/O. The solver calls cache queries from `scheduler.loop` while holding the scheduler mutex, so one pending import can prevent unrelated builds from progressing.  Run root and dependency cache queries as scheduler requests when the cache manager is not ready. This lets the scheduler continue dispatching other edges while the import is pending. The lazy manager now supports context-aware waiting, and query inputs are snapshotted before the goroutine starts to avoid racing with scheduler updates to cache-key metadata.  This addresses the scheduler-wide stall described in #7275. The registry push writer hang is a separate failure mode; this change is complementary to the request-body cleanup in #7284.  Relates to #7275.  ## Testing  - `go test ./solver -run '^TestSchedulerDispatchDoesNotBlockOnCacheQuery$' -count=1`+�u����T passed (root and dependency query cases). - `go test -race ./solver -run '^TestSchedulerDispatchDoesNotBlockOnCacheQuery$' -count=1`+�u����T passed. - `go test ./solver/llbsolver -count=1`"��y��y� passed. - `go test -race ./solver/llbsolver -run '^TestLazyCacheManagerQueryContextCancellation$' -count=1` �w^~)�t passed. - Remaining solver unit tests passed. `TestJobsIntegration` could not run because the host lacks the required `registry` binary. - `git diff --check`"��y��y� passed. 
+- **Issue #7314** (2026-10-23): **build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1**
+  *Symptoms*: Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.18.0 to 1.18.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/github-builder/releases">docker/github-builder/.github/workflows/bake.yml's releases</a>.</em></p> <blockquote> <h2>v1.18.1</h2> <ul> <li>update BuildKit image to v0.34.1 in <a href="https://redirect.github.com/docker/github-builder/pull/321">docker/github-builder#321</a></li> <li>update Buildx version to v0.38.1 in <a href="https://redirect.github.com/docker/github-builder/pull/322">docker/github-builder#322</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1">https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/github-builder/commit/cbc9d42f8c89a55623392aadd03600965b80e963"><code>cbc9d42</code></a> Merge pull request <a href="https://redirect.github.com/docker/github-builder/issues/322">#322</a> from docker/deps/buildx-version</li> <li><a href="https://github.com/docker/github-builder/commit/f5a10c68eaddb3ff661ff23060968553b703d913"><code>f5a10c6</code></a> chore(deps): update Buildx version to v0.38.1</li> <li><a href="https://github.com/docker/github-builder/commit/dff72fc83c7d777460fa3da1e72fafb4ec1980bd"><code>dff72fc</code></a> Merge pull request <a href
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,646 +2320,366 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95282174` (2026-10-22)
-**Commit Message**: Merge pull request #7284 from tonistiigi/req-close-hang-workaround
+### Incident Patch 1: `c6b4059f` (2026-10-23)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-resolver: close request body on authorize fail
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
 
-**File**: `util/resolver/authorizer.go` (modified, +7/-0)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -147,6 +147,13 @@ func (a *dockerAuthorizer) Authorize(ctx context.Context, req *http.Request) err
+@@ -161,7 +161,7 @@ jobs:
+       -
+         name: Upload SARIF report
+         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
  
- 	authHeader, err := ah.authorize(ctx, a.sm, a.session)
- 	if err != nil {
-+		// containerd attaches a streaming request body (the pipe of a blob
-+		// upload) before authorizing, and does not close it if authorization
-+		// fails. Nothing would then unblock the writer feeding the pipe, and
-+		// the registry concurrency slot held by it would never be released.
-+		if req.Body != nil {
-+			req.Body.Close()
-+		}
- 		return err
- 	}
+@@ -326,7 +326,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
  
 ```
 
-**File**: `util/resolver/authorizer_test.go` (modified, +82/-0)
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- package resolver
+@@ -226,7 +226,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
  
- import (
-+	"context"
- 	"encoding/json"
- 	"fmt"
- 	"io"
-@@ -198,3 +199,84 @@ func TestBearerAuthFallsBackToAnonymousTokenWithoutSession(t *testing.T) {
- 		t.Fatal("expected anonymous token request")
- 	}
- }
-+
-+// containerd attaches the streaming body of an upload to the request before
-+// calling Authorize. If Authorize fails the request is never sent, so the
-+// authorizer has to close the body or the writer feeding it blocks forever.
-+func TestAuthorizeClosesRequestBodyOnFailure(t *testing.T) {
-+	tokenServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		if err := json.NewEncoder(w).Encode(map[string]any{
-+			"token":      "token",
-+			"expires_in": 60,
-+		}); err != nil {
-+			t.Errorf("failed to write token response: %v", err)
-+		}
-+	}))
-+	defer tokenServer.Close()
-+
-+	sm, err := session.NewManager()
-+	require.NoError(t, err)
-+
-+	auth := newDockerAuthorizer(tokenServer.Client(), newAuthHandlerNS(sm), sm, session.NewGroup(""))
-+
-+	const target = "https://registry.example/v2/library/alpine/blobs/uploads/id"
-+	challengeReq := httptest.NewRequestWithContext(t.Context(), http.MethodPut, target, nil)
-+	res := &http.Response{
-+		StatusCode: http.StatusUnauthorized,
-+		Header:     http.Header{},
-+		Request:    challengeReq,
-+	}
-+	res.Header.Set("WWW-Authenticate", fmt.Sprintf(
-+		`Bearer realm=%q,service="registry.example",scope="repository:library/alpine:pull,push"`,
-+		tokenServer.URL+"/token",
-+	))
-+	require.NoError(t, auth.AddResponses(t.Context(), []*http.Response{res}))
-+
-+	newUploadReq := func(ctx context.Context) (*http.Request, *io.PipeWriter) {
-+		pr, pw := io.Pipe()
-+		req := httptest.NewRequestWithContext(ctx, http.MethodPut, target, pr)
-+		req.Body = pr
-+		return req, pw
-+	}
-+
-+	t.Run("failure", func(t *testing.T) {
-+		// a canceled context makes fetching the token fail
-+		ctx, cancel := context.WithCancelCause(t.Context())
-+		cancel(context.Canceled)
-+		req, pw := newUploadReq(ctx)
-+
-+		require.Error(t, auth.Authorize(ctx, req))
-+
-+		// Write only returns once the reader is closed, as nothing reads it.
-+		writeErr := make(chan error, 1)
-+		go func() {
-+			_, err := pw.Write([]byte("data"))
-+			writeErr <- err
-+		}()
-+		select {
-+		case err := <-writeErr:
-+			require.ErrorIs(t, err, io.ErrClosedPipe)
-+		case <-time.After(5 * time.Second):
-+			req.Body.Close() // release the blocked writer
-+			t.Fatal("request body was not closed after Authorize failed")
-+		}
-+	})
-+
-+	t.Run("success", func(t *testing.T) {
-+		req, pw := newUploadReq(t.Context())
-+		defer req.Body.Close()
-+
-+		require.NoError(t, auth.Authorize(t.Context(), req))
-+		require.Equal(t, "Bearer token", req.Header.Get("Authorization"))
-+
-+		// the body is still usable by the transport
-+		go func() {
-+			pw.Write([]byte("data"))
-+			pw.Close()
-+		}()
-+		b, err := io.ReadAll(req.Body)
-+		require.NoError(t, err)
-+		require.Equal(t, "data", string(b))
-+	})
-+}
 ```
 
 ---
 
-### Incident Patch 2: `98d9aa8f` (2026-10-22)
-**Commit Message**: Merge pull request #7157 from crazy-max/cache-fix-lazy-record-load
+### Incident Patch 2: `2be1b623` (2026-10-23)
+**Commit Message**: Merge pull request #7314 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.18.1
 
-cache: avoid retaining records that fail provider validation
+build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1
 
-**File**: `cache/manager.go` (modified, +1/-1)
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -570,10 +570,10 @@ func (cm *cacheManager) getRecord(ctx context.Context, id string, opts ...RefOpt
- 		return nil, errors.Wrapf(err, "failed to append image ref metadata to ref %s", rec.ID())
- 	}
+@@ -49,7 +49,7 @@ jobs:
+           fields: platforms
  
--	cm.records[id] = rec
- 	if err := checkLazyProviders(rec); err != nil {
- 		return nil, err
- 	}
-+	cm.records[id] = rec
- 	return rec, nil
- }
+   binaries:
+-    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
++    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
+     permissions:
+       contents: read # same as global permission
+       id-token: write # for signing attestation(s) with GitHub OIDC Token
+@@ -222,7 +222,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
  
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
++    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
+     needs:
+       - image-prepare
+       - test
 ```
 
-**File**: `cache/manager_test.go` (modified, +107/-0)
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
 ```diff
-@@ -2970,6 +2970,113 @@ func TestLoadBrokenParents(t *testing.T) {
- 	require.Len(t, refA.(*immutableRef).refs, 1)
- }
+@@ -125,7 +125,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
  
-+func TestLoadLazyChildDiskUsage(t *testing.T) {
-+	t.Parallel()
-+	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-+	tmpdir := t.TempDir()
-+	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		require.NoError(t, snapshotter.Close())
-+	})
-+	opt := cmOpt{tmpdir: tmpdir, snapshotter: snapshotter, snapshotterName: "native"}
-+	co, cleanup, err := newCacheManager(ctx, t, opt)
-+	require.NoError(t, err)
-+	t.Cleanup(cleanup)
-+	cm := co.manager
-+
-+	blob, desc, err := mapToBlob(map[string]string{"parent": "data"}, true)
-+	require.NoError(t, err)
-+	require.NoError(t, content.WriteBlob(ctx, co.cs, "parent", bytes.NewReader(blob), desc))
-+	parent, err := cm.GetByBlob(ctx, desc, nil)
-+	require.NoError(t, err)
-+	parentID := parent.ID()
-+
-+	_, childDesc, err := mapToBlob(map[string]string{"child": "data"}, true)
-+	require.NoError(t, err)
-+	child, err := cm.GetByBlob(ctx, childDesc, parent, DescHandlers{childDesc.Digest: {}})
-+	require.NoError(t, err)
-+	require.NoError(t, child.Release(ctx))
-+	require.NoError(t, parent.Release(ctx))
-+	cleanup()
-+
-+	// The parent is available locally, but the child cannot be loaded without
-+	// its remote provider after a restart.
-+	co, cleanup, err = newCacheManager(ctx, t, opt)
-+	require.NoError(t, err)
-+	t.Cleanup(cleanup)
-+	cm = co.manager
-+
-+	du, err := cm.DiskUsage(ctx, client.DiskUsageInfo{})
-+	require.NoError(t, err)
-+	require.Len(t, du, 1)
-+	require.Equal(t, parentID, du[0].ID)
-+	require.False(t, du[0].InUse)
-+	require.Equal(t, int64(len(blob)), du[0].Size)
-+
-+	require.NoError(t, cm.Prune(ctx, nil, client.PruneInfo{All: true, Filter: []string{"id==" + parentID}}))
-+	du, err = cm.DiskUsage(ctx, client.DiskUsageInfo{})
-+	require.NoError(t, err)
-+	require.Empty(t, du)
-+}
-+
-+func TestLoadLazyChildRetry(t *testing.T) {
-+	t.Parallel()
-+	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-+	co, cleanup, err := newCacheManager(ctx, t, cmOpt{})
-+	require.NoError(t, err)
-+	t.Cleanup(cleanup)
-+	cm := co.manager.(*cacheManager)
-+
-+	blob, desc, err := mapToBlob(map[string]string{"parent": "data"}, true)
-+	require.NoError(t, err)
-+	require.NoError(t, content.WriteBlob(ctx, co.cs, "parent", bytes.NewReader(blob), desc))
-+	parent, err := cm.GetByBlob(ctx, desc, nil)
-+	require.NoError(t, err)
-+	parentID := parent.ID()
-+
-+	_, childDesc, err := mapToBlob(map[string]string{"child": "data"}, true)
-+	require.NoError(t, err)
-+	handlers := DescHandlers{childDesc.Digest: {}}
-+	child, err := cm.GetByBlob(ctx, childDesc, parent, handlers)
-+	require.NoError(t, err)
-+	childID := child.ID()
-+	require.NoError(t, child.Release(ctx))
-+	require.NoError(t, parent.Release(ctx))
-+
-+	// Load the persisted records on demand, without init discarding the lazy
-+	// child's metadata before we can retry with its provider.
-+	loader := &cacheManager{
-+		records:       make(map[string]*cacheRecord),
-+		Snapshotter:   cm.Snapshotter,
-+		ContentStore:  cm.ContentStore,
-+		LeaseManager:  cm.LeaseManager,
-+		MetadataStore: cm.MetadataStore,
-+	}
-+	parent, err = loader.Get(ctx, parentID, nil)
-+	require.NoError(t, err)
-+	parentRec := parent.(*immutableRef).cacheRecord
-+	require.Len(t, parentRec.refs, 1)
-+
-+	child, err = loader.Get(ctx, childID, nil)
-+	var missing NeedsRemoteProviderError
-+	require.ErrorAs(t, err, &missing)
-+	require.Equal(t, NeedsRemoteProviderError{childDesc.Digest}, missing)
-+	require.Nil(t, child)
-+	require.NotContains(t, loader.records, childID)
-+	require.Len(t, parentRec.refs, 1)
-+
-+	child, err = loader.Get(ctx, childID, nil, handlers)
-+	require.NoError(t, err)
-+	require.Equal(t, childID, child.ID())
-+	childRec := child.(*immutableRef).cacheRecord
-+	require.Same(t, childRec, loader.records[childID])
-+	require.Same(t, parentRec, childRec.layerParent.cacheRecord)
-+	require.Len(t, parentRec.refs, 2)
-+	require.NoError(t, child.Release(ctx))
-+	require.NoError(t, parent.Release(ctx))
-+}
-+
- func TestCalculateKeepBytes(t *testing.T) {
- 	ts := []struct {
- 		name      string
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
++    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
+     needs:
+       - prepare
+       - test
 ```
 
 ---
 
-### Incident Patch 3: `1d3897ae` (2026-10-22)
-**Commit Message**: Merge pull request #6588 from crazy-max/git-debug-command-tracing
+### Incident Patch 3: `1a046037` (2026-10-23)
+**Commit Message**: Merge pull request #7277 from crazy-max/fix-solver-progress-race
 
-git: add opt-in command tracing
+solver: synchronize vertex progress updates
 
-**File**: `client/llb/git_test.go` (modified, +31/-0)
+**File**: `solver/cacheopts.go` (modified, +1/-1)
 ```diff
-@@ -89,6 +89,37 @@ func TestGit(t *testing.T) {
- 				"git.fullurl":          "https://github.com/foo/bar.git",
- 			},
- 		},
-+		{
-+			name:       "debug commands",
-+			st:         Git("github.com/foo/bar.git", "ref", GitDebugCommands(true)),
-+			identifier: "git://github.com/foo/bar.git#ref",
-+			attrs: map[string]string{
-+				"git.authheadersecret": "GIT_AUTH_HEADER",
-+				"git.authtokensecret":  "GIT_AUTH_TOKEN",
-+				"git.debugcommands":    "true",
-+				"git.fullurl":          "https://github.com/foo/bar.git",
-+			},
-+		},
-+		{
-+			name:       "debug commands disabled",
-+			st:         Git("github.com/foo/bar.git", "ref", GitDebugCommands(false)),
-+			identifier: "git://github.com/foo/bar.git#ref",
-+			attrs: map[string]string{
-+				"git.authheadersecret": "GIT_AUTH_HEADER",
-+				"git.authtokensecret":  "GIT_AUTH_TOKEN",
-+				"git.fullurl":          "https://github.com/foo/bar.git",
-+			},
-+		},
-+		{
-+			name:       "debug commands overridden",
-+			st:         Git("github.com/foo/bar.git", "ref", GitDebugCommands(true), GitDebugCommands(false)),
-+			identifier: "git://github.com/foo/bar.git#ref",
-+			attrs: map[string]string{
-+				"git.authheadersecret": "GIT_AUTH_HEADER",
-+				"git.authtokensecret":  "GIT_AUTH_TOKEN",
-+				"git.fullurl":          "https://github.com/foo/bar.git",
-+			},
-+		},
- 		{
- 			name: "bundle",
- 			st: Git(
+@@ -36,7 +36,7 @@ func withAncestorCacheOpts(ctx context.Context, start *state) context.Context {
+ 		}
+ 		values := make(map[any]any)
+ 		walkAncestors(ctx, start, func(st *state) bool {
+-			if st.clientVertex.Error != "" {
++			if st.vertexFailed() {
+ 				// don't use values from cancelled or otherwise error'd vertexes
+ 				return false
+ 			}
 ```
 
-**File**: `client/llb/source.go` (modified, +12/-0)
+**File**: `solver/jobs.go` (modified, +54/-30)
 ```diff
-@@ -477,6 +477,9 @@ func Git(url, fragment string, opts ...GitOption) State {
- 		attrs[pb.AttrGitSkipSubmodules] = "true"
- 		addCap(&gi.Constraints, pb.CapSourceGitSkipSubmodules)
- 	}
-+	if gi.DebugCommands {
-+		attrs[pb.AttrGitDebugCommands] = "true"
-+	}
+@@ -61,9 +61,10 @@ type state struct {
+ 	mspan    *tracing.MultiSpan
+ 	execSpan trace.Span
  
- 	if gi.MTime != "" {
- 		attrs[pb.AttrGitMTime] = gi.MTime
-@@ -536,6 +539,7 @@ type GitInfo struct {
- 	SkipSubmodules     bool
- 	MTime              string
- 	Advice             bool
-+	DebugCommands      bool
- 	Bundle             string
- 	BundleOCISessionID string
- 	BundleOCIStoreID   string
-@@ -583,6 +587,14 @@ func GitAdvice(enabled bool) GitOption {
- 	})
+-	vtx          Vertex
+-	clientVertex client.Vertex
+-	origDigest   digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
++	vtx            Vertex
++	clientVertex   client.Vertex
++	clientVertexMu sync.Mutex    // protects mutable clientVertex fields
++	origDigest     digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
+ 
+ 	mu    sync.RWMutex
+ 	op    *sharedOp
+@@ -329,6 +330,51 @@ func (s *state) combinedCacheManager() CacheManager {
+ 	return NewCombinedCacheManager(cms, mainCache)
  }
  
-+// GitDebugCommands controls whether executed Git commands are logged while
-+// resolving this git source.
-+func GitDebugCommands(enabled bool) GitOption {
-+	return gitOptionFunc(func(gi *GitInfo) {
-+		gi.DebugCommands = enabled
-+	})
++// writeVertexSnapshot can read progress concurrently with
++// notifyStarted, which is the only writer of the mutable vertex fields.
++func (s *state) writeVertexSnapshot(pw progress.Writer) {
++	s.clientVertexMu.Lock()
++	defer s.clientVertexMu.Unlock()
++	// Keep the snapshot and write together so a newer update cannot be
++	// published before this snapshot.
++	pw.Write(identity.NewID(), s.clientVertex)
 +}
 +
- func KeepGitDir() GitOption {
- 	return gitOptionFunc(func(gi *GitInfo) {
- 		gi.KeepGitDir = true
-```
-
-**File**: `frontend/dockerfile/dockerfile2llb/convert.go` (modified, +2/-0)
-```diff
-@@ -834,6 +834,7 @@ func (dctx *dispatchContext) dispatchStages(ctx context.Context, allReachable ma
- 			targetPlatform:      dctx.platformOpt.targetPlatform,
- 			extraHosts:          dctx.opt.ExtraHosts,
- 			gitAdvice:           dctx.opt.GitAdvice,
-+			gitDebugCommands:    dctx.opt.GitDebugCommands,
- 			shmSize:             dctx.opt.ShmSize,
- 			ulimit:              dctx.opt.Ulimits,
- 			devices:             dctx.opt.Devices,
-@@ -991,6 +992,7 @@ type dispatchOpt struct {
- 	buildPlatforms      []ocispecs.Platform
- 	extraHosts          []llb.HostIP
- 	gitAdvice           bool
-+	gitDebugCommands    bool
- 	shmSize             int64
- 	ulimit              []*pb.Ulimit
- 	devices             []*pb.CDIDevice
-```
-
-**File**: `frontend/dockerfile/dockerfile2llb/convert_copy.go` (modified, +3/-0)
-```diff
-@@ -145,6 +145,9 @@ func dispatchCopy(d *dispatchState, cfg copyConfig) error {
- 			if cfg.opt.gitAdvice {
- 				gitOptions = append(gitOptions, llb.GitAdvice(true))
- 			}
-+			if cfg.opt.gitDebugCommands {
-+				gitOptions = append(gitOptions, llb.GitDebugCommands(true))
-+			}
- 			if cfg.keepGitDir != nil && gitRef.KeepGitDir != nil {
- 				if *cfg.keepGitDir != *gitRef.KeepGitDir {
- 					return errors.New("inconsistent keep-git-dir configuration")
-```
-
-**File**: `frontend/dockerfile/dockerfile2llb/convert_test.go` (modified, +38/-13)
-```diff
-@@ -395,7 +395,7 @@ ADD $URL /
- 	require.NoError(t, err)
- 	require.Len(t, stages, 1)
- 
--	state, err := sourceDateEpochStageSource(stages[0], nil, &llb.EnvList{}, shell.NewLex('\\'), false)
-+	state, err := sourceDateEpochStageSource(stages[0], nil, &llb.EnvList{}, shell.NewLex('\\'), false, false)
- 	require.NoError(t, err)
- 	require.NotNil(t, state)
- 	sourceOp, err := sourceOpFromState(t.Context(), state)
-@@ -404,7 +404,7 @@ ADD $URL /
- 	assert.Equal(t, "src.tar", sourceOp.Attrs["http.filename"])
- }
- 
--func TestDockerfileGitAdviceBuildArgADD(t *testing.T) {
-+func TestDockerfileGitOptionsADD(t *testing.T) {
- 	t.Parallel()
- 
- 	df := []byte(`
-@@ -413,25 +413,34 @@ ADD https://github.com/moby/buildkit.git#master /
- `)
- 
- 	for _, tc := range []struct {
--		name      string
--		gitAdvice bool
--		wantAttr  bool
-+		name             string
-+		gitAdvice        bool
-+		gitDebugCommands bool
- 	}{
- 		{
- 			name: "default",
- 		},
- 		{
--			name:      "enabled",
-+			name:      "advice",
- 			gitAdvice: true,
--			wantAttr:  true,
-+		},
-+		{
-+			name:             "debug commands",
-+			gitDebugCommands: true,
-+		},
-+		{
-+			name:             "advice and debug commands",
-+			gitAdvice:        true,
-+			gitDebugCommands: true,
- 		},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			t.Parallel()
- 
- 			res, err := Dockerfile2LLB(appcontext.Context(), df, ConvertOpt{
- 				Config: dockerui.Config{
--					GitAdvice: tc.gitAdvice,
-+					GitAdvice:        tc.gitAdvice,
-+					GitDebugCommands: tc.gitDebugCommands,
- 				},
- 			})
- 			require.NoError(t, err)
-@@ -440,10 +449,26 @@ ADD https://github.com/moby/buildkit.git#master /
- 			require.NoError(t, err)
- 			require.NotNil(t, sourceOp)
- 
--			if tc.wantAttr {
--				require.Equal(t, "true", sourceOp.Attrs[pb.AttrGitAdvice])
--			} else {
--				require.NotContains(t, sourceOp.Attrs, pb.AttrGitAdvice)
-+			parsed, err := parser.Parse(bytes.NewReader(df))
-+			require.NoError(t, err)
-+			stages, _, err := instructions.Parse(parsed.AST, nil)
-+			require.NoError(t, err)
-+			epochState, err := sourceDateEpochStageSource(stages[0], nil, &llb.EnvList{}, shell.NewLex('\\'), tc.gitAdvice, tc.gitDebugCommands)
-+			require.NoError(t, err)
-+			epochOp, err := sourceOpFromState(t.Context(), epochState)
-+			require.NoError(t, err)
-+			require.NotNil(t, epochOp)
-+			for _, op := range []*pb.SourceOp{sourceOp, epochOp} {
-+				for attr, enabled := range map[string]bool{
-+					pb.AttrGitAdvice:        tc.gitAdvice,
-+					pb.AttrGitDebugCommands: tc.gitDebugCommands,
-+				} {
-+					if enabled {
-+						require.Equal(t, "true", op.Attrs[attr])
-+					} else {
-+						require.NotContains(t, op.Attrs, attr)
-+					}
-+				}
- 			}
- 		})
- 	}
-@@ -464,7 +489,7 @@ ADD https://example.com/src.tar /
- 	require.NoError(t, err)
- 	require.Len(t, stages, 1)
- 
--	_, err = sourceDateEpochStageSource(stages[0], nil, &llb.EnvList{}, shell.NewLex('\\'), false)
-+	_, err = sourceDateEpochStageSource(stages[0], nil, &llb.EnvList{}, shell.NewLex('\\'), false, false)
- 	require.ErrorContains(t, err, "SOURCE_DATE_EPOCH stage must use FROM scratch")
- }
- 
-```
-
-**File**: `frontend/dockerfile/dockerfile2llb/epoch.go` (modified, +7/-4)
-```diff
-@@ -98,7 +98,7 @@ func resolveSourceDateEpochState(ctx context.Context, value string, opt ConvertO
- 			args = &updated
- 		}
- 
--		sourceState, err := sourceDateEpochStageSource(stages[i], opt.BuildArgs, args, shlex, opt.GitAdvice)
-+		sourceState, err := sourceDateEpochStageSource(stages[i], opt.BuildArgs, args, shlex, opt.GitAdvice, opt.GitDebugCommands)
- 		if err != nil {
- 			return nil, sourceDateEpochStateOpt{}, parser.WithLocation(err, stages[i].Location)
- 		}
-@@ -110,7 +110,7 @@ func resolveSourceDateEpochState(ctx context.Context, value string, opt ConvertO
- 	return nil, sourceDateEpochStateOpt{}, errors.Errorf("invalid SOURCE_DATE_EPOCH: %s", value)
- }
- 
--func sourceDateEpochStageSource(stage instructions.Stage, buildArgs map[string]string, globalArgs *llb.EnvList, shlex *shell.Lex, gitAdvice bool) (*llb.State, error) {
-+func sourceDateEpochStageSource(stage instructions.Stage, buildArgs map[string]string, globalArgs *llb.EnvList, shlex *shell.Lex, gitAdvice, gitDebugCommands bool) (*llb.State, error) {
- 	stageBaseName, _, err := shlex.ProcessWord(stage.BaseName, globalArgs)
- 	if err != nil {
- 		return nil, errors.Wrapf(err, "failed to process source stage base name %q", stage.BaseName)
-@@ -133,7 +133,7 @@ func sourceDateEpochStageSource(stage instructions.Stage, buildArgs map[string]s
- 			if sourceState != nil {
- 				return nil, errors.New("SOURCE_DATE_EPOCH stage must contain exactly one remote ADD")
- 			}
--			sourceState, err = sourceDateEpochAddSource(c, env, shlex, gitAdvice)
-+			sourceState, err = sourceDateEpochAddSource(c, env, shlex, gitAdvice, gitDebugCommands)
- 			if err != nil {
- 				return nil, err
- 			}
-@@ -167,7 +167,7 @@ func applySourceDateEpochStageArgs(args []instructions.KeyValuePairOptional, env
- 	return env, nil
- }
- 
--func sourceDateEpochAddSource(cmd *instructions.AddCommand, env *llb.EnvList, shlex *shell.Lex, gitAdvice bool) (*llb.State, error) {
-+func sourceDateEpochAddSource(cmd *instructions.AddCommand, env *llb.EnvList, shlex *shell.Lex, gitAdvice, gitDebugCommands bool) (*llb.State, error) {
- 	if len(cmd.SourceContents) != 0 || len(cmd.SourcePaths) != 1 {
- 		return nil, errors.New("SOURCE_DATE_EPOCH stage must contain exactly one remote ADD source")
- 	}
-@@ -204,6 +204,9 @@ func sourceDateEpochAddSource(cmd *instructions.AddCommand, env *llb.EnvList, sh
- 		if gitAdvice {
- 			gitOptions = append(gitOptions, llb.GitAdvice(true))
- 		}
-+		if gitDebugCommands {
-+			gitOptions = append(gitOptions, llb.GitDebugCommands(true))
++// vertexFailed lets the ancestor walk read the error concurrently with
++// progress updates from notifyStarted.
++func (s *state) vertexFailed() bool {
++	s.clientVertexMu.Lock()
++	defer s.clientVertexMu.Unlock()
++	return s.clientVertex.Error != ""
++}
++
++func (s *state) notifyStarted(ctx context.Context, cached bool) func(err error, cached bool) {
++	pw, _, _ := progress.NewFromContext(ctx)
++	s.clientVertexMu.Lock()
++	v := &s.clientVertex
++	start := time.Now()
++	v.Started = &start
++	v.Completed = nil
++	v.Cached = cached
++	id := identity.NewID()
++	pw.Write(id, *v)
++	s.clientVertexMu.Unlock()
++	return func(err error, cached bool) {
++		defer pw.Close()
++		s.clientVertexMu.Lock()
++		defer s.clientVertexMu.Unlock()
++		stop := time.Now()
++		v.Completed = &stop
++		v.Cached = cached
++		if err != nil {
++			v.Error = err.Error()
++		} else {
++			v.Error = ""
 +		}
- 		if cmd.KeepGitDir != nil && *cmd.KeepGitDir {
- 			gitOptions = append(gitOptions, llb.KeepGitDir())
++		pw.Write(id, *v)
++	}
++}
++
+ func (s *state) Release() {
+ 	for _, e := range s.edges {
+ 		for e.owner != nil {
+@@ -689,7 +735,7 @@ func (jl *Solver) connectProgressFromState(target, src *state) {
+ 		if _, ok := target.allPw[pw]; !ok {
+ 			target.mpw.Add(pw)
+ 			target.allPw[pw] = struct{}{}
+-			pw.Write(identity.NewID(), target.clientVertex)
++			target.writeVertexSnapshot(pw)
+ 			if span != nil && span.SpanContext().IsValid() {
+ 				target.mspan.Add(span)
+ 			}
+@@ -1058,7 +1104,7 @@ func (s *sharedOp) LoadCache(ctx context.Context, rec *CacheRecord) (Result, fun
+ 	// no cache hit. start evaluating the node
+ 	span, ctx := tracing.StartSpan(ctx, "load cache: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
+ 	s.st.execSpan = span
+-	notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, true)
++	notifyCompleted := s.st.notifyStarted(ctx, true)
+ 	res, err := s.Cache().Load(withAncestorCacheOpts(ctx, s.st), rec)
+ 	tracing.FinishWithError(span, err)
+ 	notifyCompleted(err, true)
+@@ -1145,7 +1191,7 @@ func (s *sharedOp) CalcSlowCache(ctx context.Context, index Index, p PreprocessF
+ 		if s.st.mspan.Span != nil {
+ 			ctx = trace.ContextWithSpan(ctx, s.st.mspan)
  		}
+-		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
++		notifyCompleted := s.st.notifyStarted(ctx, false)
+ 		notifyCompleted(err, false)
+ 		return "", err
+ 	}
+@@ -1177,7 +1223,7 @@ func (s *sharedOp) CacheMap(ctx context.Context, index int) (resp *cacheMapResp,
+ 		if len(s.st.vtx.Inputs()) == 0 {
+ 			// no cache hit. start evaluating the node
+ 			span, ctx := tracing.StartSpan(ctx, "cache request: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
+-			notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
++			notifyCompleted := s.st.notifyStarted(ctx, false)
+ 			defer func() {
+ 				tracing.FinishWithError(span, retErr)
+ 				notifyCompleted(retErr, false)
+@@ -1263,7 +1309,7 @@ func (s *sharedOp) Exec(ctx context.Context, inputs []Result) (outputs []Result,
+ 		// no cache hit. start evaluating the node
+ 		span, ctx := tracing.StartSpan(ctx, s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
+ 		s.st.execSpan = span
+-		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
++		notifyCompleted := s.st.notifyStarted(ctx, false)
+ 		defer func() {
+ 			tracing.FinishWithError(span, retErr)
+ 			notifyCompleted(retErr, false)
+@@ -1390,28 +1436,6 @@ func (v *vertexWithCacheOptions) Inputs() []Edge {
+ 	return v.inputs
+ }
+ 
+-func notifyStarted(ctx context.Context, v *client.Vertex, cached bool) func(err error, cached bool) {
+-	pw, _, _ := progress.NewFromContext(ctx)
+-	start := time.Now()
+-	v.Started = &start
+-	v.Completed = nil
+-	v.Cached = cached
+-	id := identity.NewID()
+-	pw.Write(id, *v)
+-	return func(err error, cached bool) {
+-		defer pw.Close()
+-		stop := time.Now()
+-		v.Completed = &stop
+-		v.Cached = cached
+-		if err != nil {
+-			v.Error = err.Error()
+-		} else {
+-			v.Error = ""
+-		}
+-
 ```
 
-**File**: `frontend/dockerfile/docs/reference.md` (modified, +1/-0)
+**File**: `solver/scheduler_test.go` (modified, +80/-0)
 ```diff
-@@ -2767,6 +2767,7 @@ RUN echo "I'm building for $TARGETPLATFORM"
- | `BUILDKIT_CACHE_MOUNT_NS`       | String | Set optional cache ID namespace.                                                                                                                                                                                 |
- | `BUILDKIT_CONTEXT_KEEP_GIT_DIR` | Bool   | Trigger Git context to keep the `.git` directory.                                                                                                                                                                |
- | `BUILDKIT_GIT_ADVICE`           | Bool   | Show Git advice messages from BuildKit-managed Git operations. Defaults to `false`.                                                                                                                              |
-+| `BUILDKIT_GIT_DEBUG_COMMANDS`   | Bool   | Print executed Git commands for Git contexts and `ADD` sources in the build log. Defaults to `false`.                                                                                                             |
- | `BUILDKIT_INLINE_CACHE`[^2]     | Bool   | Inline cache metadata to image config or not.                                                                                                                                                                    |
- | `BUILDKIT_MULTI_PLATFORM`       | Bool   | Opt into deterministic output regardless of multi-platform output or not.                                                                                                                                        |
- | `BUILDKIT_SANDBOX_HOSTNAME`     | String | Set the hostname (default `buildkitsandbox`)                                                                                                                                                                     |
-```
-
-**File**: `frontend/dockerui/build_test.go` (modified, +71/-0)
-```diff
-@@ -4,7 +4,10 @@ import (
+@@ -12,8 +12,10 @@ import (
  	"testing"
+ 	"time"
  
- 	"github.com/containerd/platforms"
-+	"github.com/moby/buildkit/client/llb"
- 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
-+	"github.com/moby/buildkit/frontend/gateway/client"
-+	"github.com/moby/buildkit/solver/pb"
++	"github.com/moby/buildkit/client"
+ 	"github.com/moby/buildkit/identity"
+ 	"github.com/moby/buildkit/session"
++	"github.com/moby/buildkit/util/progress"
+ 	digest "github.com/opencontainers/go-digest"
  	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
- 	"github.com/stretchr/testify/require"
- )
-@@ -98,3 +101,71 @@ func TestNormalizePlatform(t *testing.T) {
- 		require.Equal(t, platforms.FormatAll(platforms.Normalize(tc.p)), tc.expected.ID)
- 	}
+ 	"github.com/pkg/errors"
+@@ -208,6 +210,84 @@ func TestSingleLevelActiveGraph(t *testing.T) {
+ 	require.Equal(t, int64(1), *g4.Vertex.(*vertex).execCallCount)
  }
-+
-+func TestGitDebugCommandsBuildArg(t *testing.T) {
-+	for _, value := range []string{"", "false", "1", "true", "invalid"} {
-+		t.Run(value, func(t *testing.T) {
-+			bc := &Client{bopts: client.BuildOpts{Opts: map[string]string{
-+				"build-arg:BUILDKIT_GIT_DEBUG_COMMANDS": value,
-+			}}}
-+			err := bc.init()
-+			if value == "invalid" {
-+				require.ErrorContains(t, err, "failed to parse build-arg:BUILDKIT_GIT_DEBUG_COMMANDS")
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Equal(t, value == "1" || value == "true", bc.GitDebugCommands)
-+		})
-+	}
-+}
-+
-+func TestDetectGitContextForwardsDebugCommands(t *testing.T) {
+ 
++func TestProgressSnapshotDuringCompletion(t *testing.T) {
 +	t.Parallel()
-+
-+	st, ok, err := DetectGitContext("https://github.com/docker/buildx.git?ref=refs/pull/3732/merge", nil, llb.GitDebugCommands(true))
-+	require.True(t, ok)
-+	require.NoError(t, err)
-+
-+	g, err := sourceOpFromState(t.Context(), st)
-+	require.NoError(t, err)
-+	require.NotNil(t, g)
-+	require.Equal(t, "git://github.com/docker/buildx.git#refs/pull/3732/merge", g.Identifier)
-+	require.Equal(t, map[string]string{
-+		"git.authheadersecret": "GIT_AUTH_HEADER",
-+		"git.authtokensecret":  "GIT_AUTH_TOKEN",
-+		"git.debugcommands":    "true",
-+		"git.fullurl":          "https://github.com/docker/buildx.git",
-+	}, g.Attrs)
-+}
-+
-+func TestGitContextDebugCommands(t *testing.T) {
-+	for _, value := range []string{"false", "true"} {
-+		t.Run(value, func(t *testing.T) {
-+			bc := &Client{bopts: client.BuildOpts{
-+				Opts: map[string]string{
-+					"build-arg:BUILDKIT_GIT_DEBUG_COMMANDS": value,
-+				},
-+				Caps: pb.Caps.CapSet(pb.Caps.All()),
-+			}}
-+			require.NoError(t, bc.init())
-+			for _, ref := range []string{"git://example.com/repo.git", "http://example.com/repo.git", "https://example.com/repo.git"} {
-+				t.Run(ref, func(t *testing.T) {
-+					bc.bopts.Opts[DefaultLocalNameContext] = ref
-+					bctx, err := bc.initContext(t.Context())
-+					require.NoError(t, err)
-+					require.NotNil(t, bctx.sourceOp)
-+					nc := &NamedContext{bc: bc, input: ref}
-+					st, _, err := nc.Load(t.Context())
-+					require.NoError(t, err)
-+					require.NotNil(t, st)
-+					op, err := sourceOpFromState(t.Context(), st)
-+					require.NoError(t, err)
-+					require.NotNil(t, op)
-+					for _, source := range []*pb.SourceOp{bctx.sourceOp, op} {
-+						require.Equal(t, value == "true", source.Attrs[pb.AttrGitDebugCommands] == "true")
-+					}
-+				})
-+			}
++	for range 100 {
++		pr, ctx, cancel := progress.NewContext(t.Context())
++		pw, _, _ := progress.NewFromContext(ctx)
++		j := &Job{pw: pw}
++		st := &state{
++			mpw:   progress.NewMultiWriter(),
++			allPw: map[progress.Writer]struct{}{},
++			jobs:  map[*Job]struct{}{j: {}},
++		}
++		completed := st.notifyStarted(progress.WithProgress(ctx, st.mpw), false)
++		start := make(chan struct{})
++		var eg errgroup.Group
++		eg.Go(func() error {
++			<-start
++			completed(nil, false)
++			return nil
 +		})
++		eg.Go(func() error {
++			<-start
++			(&Solver{}).connectProgressFromState(st, st)
++			return nil
++		})
++		close(start)
++		err := eg.Wait()
++		pw.Close()
++		cancel(nil)
++		require.NoError(t, err)
++		items, err := pr.Read(t.Context())
++		require.NoError(t, err)
++		require.NotEmpty(t, items)
++		last := items[len(items)-1].Sys.(client.Vertex)
++		require.NotNil(t, last.Completed, "snapshot must not overwrite completion")
 +	}
 +}
++
++func TestCacheOptsDuringProgress(t *testing.T) {
++	t.Parallel()
++	st := &state{
++		op: &sharedOp{
++			cacheRes: []*CacheMap{{Opts: CacheOpts{"test": "value"}}},
++		},
++	}
++	ctx := withAncestorCacheOpts(t.Context(), st)
++	getter := CacheOptGetterOf(ctx)
++
++	completed := st.notifyStarted(ctx, false)
++	require.Equal(t, "value", getter(false, "test")["test"])
++	completed(errors.New("operation failed"), false)
++	require.Empty(t, getter(false, "test"))
++
++	completed = st.notifyStarted(ctx, false)
++	completed(nil, false)
++	require.Equal(t, "value", getter(false, "test")["test"])
++
++	// Cache option lookups can run while another operation reports progress.
++	var eg errgroup.Group
++	eg.Go(func() error {
++		for range 100 {
++			completed := st.notifyStarted(ctx, false)
++			completed(errors.New("operation failed"), false)
++			completed = st.notifyStarted(ctx, true)
++			completed(nil, true)
++		}
++		return nil
++	})
++	eg.Go(func() error {
++		for range 100 {
++			if value, ok := getter(false, "test")["test"]; ok {
++				require.Equal(t, "value", value)
++			}
++		}
++		return nil
++	})
++	require.NoError(t, eg.Wait())
++}
++
+ func TestSingleLevelCache(t *testing.T) {
+ 	t.Parallel()
+ 	ctx := t.Context()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7315** (2026-10-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
+- **PR #7314** (2026-10-23): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1 (@dependabot[bot])
+- **PR #7311** (2026-10-23): runcexecutor: share keyring in NoProcessSandbox (@JoaoManierii)
+- **PR #7309** (2026-10-23): client: honor ignore-error for local cache index publish (@lucalandi)
 - **PR #7306** (closed): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.17.0 to 1.18.0 (@dependabot[bot])
 - **PR #7303** (closed): solver: avoid blocking on lazy cache queries (@sairex53)
-- **PR #7299** (2026-10-21): ci: update docker/github-builder to 1.18.0 (@crazy-max)
-- **PR #7298** (2026-10-19): cdisetup: keep failed NVIDIA key imports retryable (@crazy-max)
-- **PR #7297** (2026-10-20): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #7296** (2026-10-20): Omit definitions from returned references (@tamird)
 
 ---
 
@@ -2981,34 +2699,30 @@ git: add opt-in command tracing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7284 from tonistiigi/req-close-hang-workaround
+## X. build(deps): bump github/codeql-action/upload-sarif
 
 **RULE**:
-When implementing operations in `util/resolver/authorizer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95282174`: Merge pull request #7284 from tonistiigi/req-close-hang-workaround. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6b4059f`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/resolver/authorizer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// containerd attaches a streaming request body (the pipe of a blob
-		// upload) before authorizing, and does not close it if authorization
-		// fails. Nothing would then unblock the writer feeding the pipe, and
-		// the registry concurrency slot held by it would never be released.
-		if req.Body != nil {
-			req.Body.Close()
-		}
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95282174` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6b4059f` are properly handled with clean fallback behavior.

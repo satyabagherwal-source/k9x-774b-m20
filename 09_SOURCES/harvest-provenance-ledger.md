@@ -4686,3 +4686,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `566f89e0` | Multi-dimensional audit evidence | 2026-10-25T05:04:54.216Z |
 | `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `3aae7bc7` | Multi-dimensional audit evidence | 2026-10-25T05:06:38.959Z |
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-25T05:06:56.348Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `fc10d048` | Multi-dimensional audit evidence | 2026-10-25T05:14:46.472Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-25T05:14:47.098Z |
