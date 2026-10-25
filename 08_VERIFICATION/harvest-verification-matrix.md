@@ -4675,3 +4675,7 @@
 | `CYCLE-20261025-VPGI` | `2026-10-25T04:56:59.298Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4056, Rule 4057, Rule 4058` | Yes (`1e27c583...`) |
 | `CYCLE-20261025-W6DS` | `2026-10-25T04:57:21.232Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4059, Rule 4060` | Yes (`c67df6d3...`) |
 | `CYCLE-20261025-XOJL` | `2026-10-25T04:58:31.425Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4061, Rule 4062, Rule 4063` | Yes (`e8c977e2...`) |
+| `CYCLE-20261025-5UPU` | `2026-10-25T05:04:52.674Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4064` | Yes (`a78e7b6f...`) |
+| `CYCLE-20261025-5VWL` | `2026-10-25T05:04:54.213Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4065` | Yes (`8559f334...`) |
+| `CYCLE-20261025-84Q4` | `2026-10-25T05:06:38.956Z` | `pamburus/hl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4066, Rule 4067, Rule 4068` | Yes (`b9d8366f...`) |
+| `CYCLE-20261025-8I55` | `2026-10-25T05:06:56.345Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4069, Rule 4070` | Yes (`ca081c6e...`) |

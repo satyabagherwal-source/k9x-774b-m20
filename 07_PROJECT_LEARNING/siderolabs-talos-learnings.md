@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `7c40a452`  
+> **Source Version**: `0770c5f3`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:04:37.780Z  
+> **Timestamp**: 2026-10-25T05:04:52.318Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:04:36.255Z  
+> **Harvest Timestamp**: 2026-10-25T05:04:51.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11390 stars
+- **Stars / Engagement**: 11403 stars
 
 ---
 
@@ -1920,13 +1920,11 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14711** (2026-10-22): **chore: mount git common dir into dockerized commands**
-  *Symptoms*: This mirrors the change https://github.com/siderolabs/kres/pull/717, but for Talos where these files are not under kres control. 
-  **Post-Mortem & Fix Analysis**:
-  > /m
+- **Issue #14724** (2026-10-24): **feat: load kernel modules on demand via the modprobe usermode helper **
+  *Symptoms*: There are multiple ways kernel modules can be loaded:  * udevd loads based on hardware detected (works) * Talos machine config explicit module load (works) * kernel requests dynamic module dependencies (this PR, works with it) * userspace triggers module load (e.g. mounting a filesystem, creating a   new link type) - still blocked.  Since the kernel was built with `CONFIG_MODPROBE_PATH=""`, `request_module()` returns early and no module can be loaded on demand: a driver loading a helper module while probing a device (e.g. `earth-pt3` requesting `tc90522`), or DRBD loading its transport module, fails unless the modules are listed in the machine config and happen to be loaded in the right order.  Set the `kernel.modprobe` sysctl to `/sbin/modprobe` so the kernel invokes the static usermode helper (machined) with that argv[0], and handle the `modprobe` entrypoint. The helper verifies it was spawned by a kernel thread, looks the name up in modules.dep without resolving aliases, reads the module parameters from the machine config (`KernelModuleSpec`) via the read-only machined API, and loads the module itself: it runs as root in the initial namespaces, so there is no need for a mutation path into machined.  Modules requested by kernel code no longer need to be listed in the machine config, and the order of the listed modules doesn't matter. Aliases are never resolved: kernel code requests modules by name, while subsystem aliases (`fs-*`, `net-pf-*`, `crypto-*`, ...) are what users
 
-- **Issue #14709** (2026-10-22): **feat: implement swap resource limits for containers**
-  *Symptoms*: This started as a fix for a flaky test `TestIntegration/api.ContainersSuite/TestWorkloadMemoryLimitEnforced` which fails when it runs on the node with swap enabled, as the OOM is never triggered, but a proper fix is to have control over container's swap.  The default is unchanged - swap is unrestricted, but now the swap can be disabled for a container or limited.  The 2nd commit actually should fix a flaky test.
+- **Issue #14723** (2026-10-23): **feat: add EDAC_10NM kernel module**
+  *Symptoms*: Fixes #14717  
   **Post-Mortem & Fix Analysis**:
   > /m
 
@@ -1945,644 +1943,1141 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe3aeb01` (2026-10-20)
-**Commit Message**: test: boot Alpine with builtin virtual machine profiles
+### Incident Patch 1: `7e5e8729` (2026-10-22)
+**Commit Message**: fix: ignore netlink recoverable errors in watchers
 
-Select host, passthrough and legacy before the guest's first start.
-Verify projected intent, rendered CPU and machine settings, and CPU
-architecture, count and basic flags inside the stock Alpine guest.
+We have a set of netlink watchers in Talos which don't actually need to
+decode the notification - on any change to the reported subsystem we
+wake up the controller to do processing.
 
-Reuse the serial-console fixture, retain bounded failure diagnostics,
-and confirm the transient domain is removed during cleanup.
+So replace what we had previously with raw netlink receivers - this
+drops the decoding part of the packets (which might have failures on the
+way we don't care about) with raw netlink sockets - we just care that
+the socket received something.
 
-Refs #14672
+Treat the error like `ENOBUFS` (buffer overflow) as a notification - we
+don't care how much we received, we just need to know we received
+something.
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Fixes #14678
 
-**File**: `internal/integration/hypervisor/virtual_machine_alpine.go` (modified, +331/-4)
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/watch/ethtool.go` (modified, +26/-25)
 ```diff
-@@ -26,6 +26,7 @@ import (
- 	"github.com/opencontainers/go-digest"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"libvirt.org/go/libvirtxml"
+@@ -10,12 +10,13 @@ import (
+ 	"sync"
  
- 	"github.com/siderolabs/talos/internal/integration/base"
- 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
-@@ -57,7 +58,7 @@ func (suite *LibvirtSuite) prepareAlpineGuest() (string, *hypervisorcfg.VirtualM
+ 	"github.com/mdlayher/genetlink"
++	"github.com/mdlayher/netlink"
+ 	"golang.org/x/sys/unix"
+ )
+ 
+ type ethtoolWatcher struct {
+ 	wg   sync.WaitGroup
+-	conn *genetlink.Conn
++	conn *netlink.Conn
+ }
+ 
+ // NewEthtool starts ethtool watch.
+@@ -24,48 +25,48 @@ func NewEthtool(trigger Trigger) (Watcher, error) {
+ 
+ 	var err error
+ 
+-	watcher.conn, err = genetlink.Dial(nil)
++	// the raw netlink connection is used for receiving, as the messages are never decoded,
++	// while the generic netlink wrapper is only used to resolve the multicast group
++	watcher.conn, err = netlink.Dial(unix.NETLINK_GENERIC, nil)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error dialing ethtool watch socket: %w", err)
  	}
  
- 	ourRecord := extraDHCPRecords[len(extraDHCPRecords)-1]
--	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20)
-+	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20, "")
+-	ethFamily, err := watcher.conn.GetFamily(unix.ETHTOOL_GENL_NAME)
++	monitorID, err := ethtoolMonitorGroup(genetlink.NewConn(watcher.conn))
+ 	if err != nil {
+-		return nil, fmt.Errorf("error getting family information for ethtool: %w", err)
+-	}
+-
+-	var monitorID uint32
+-
+-	for _, g := range ethFamily.Groups {
+-		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
+-			monitorID = g.ID
++		watcher.conn.Close() //nolint:errcheck
  
- 	return node, doc, ourRecord.Gateway.String(), ourRecord.IP.Addr().String()
- }
-@@ -87,9 +88,15 @@ func (suite *LibvirtSuite) requireAlpineGuestNode() (string, context.Context) {
- 	return node, nodeCtx
- }
+-			break
+-		}
+-	}
+-
+-	if monitorID == 0 {
+-		return nil, errors.New("could not find monitor multicast group ID for ethtool")
++		return nil, err
+ 	}
  
--// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM and optional NIC.
-+// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM, profile and optional NIC.
- // A nil DHCP record needs neither a reservation nor host macvtap support.
--func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context.Context, ourRecord *provision.DHCPRecord, memoryBytes uint64) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
-+func (suite *LibvirtSuite) prepareAlpineGuestOnNode(
-+	node string,
-+	nodeCtx context.Context,
-+	ourRecord *provision.DHCPRecord,
-+	memoryBytes uint64,
-+	profile string,
-+) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
- 	suite.T().Helper()
- 
- 	original, err := suite.ReadConfigFromNode(nodeCtx)
-@@ -169,6 +176,11 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
- 
- 	doc := hypervisorcfg.NewVirtualMachineConfigV1Alpha1()
- 	doc.MetaName = name
+ 	if err = watcher.conn.JoinGroup(monitorID); err != nil {
++		watcher.conn.Close() //nolint:errcheck
 +
-+	if profile != "" {
-+		doc.ProfileConfig = &profile
-+	}
-+
- 	doc.PowerStateConfig = hypervisorhelpers.PowerStateRunning
- 	doc.FirmwareConfig.FirmwareType = hypervisorhelpers.VirtualMachineFirmwareTypeBIOS
- 	doc.CPUConfig.CPUCount = 1
-@@ -197,6 +209,7 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
- 		cleanupCtx := client.WithNode(ctx, node)
- 		suite.RemoveMachineConfigDocumentsByName(cleanupCtx, hypervisorcfg.VirtualMachineConfigKind, name)
- 		rtestutils.AssertNoResource[*hypervisor.VirtualMachineDomainStatus](cleanupCtx, suite.T(), suite.Client.COSI, name)
-+		suite.assertNoDomainWithContext(cleanupCtx, node, name)
+ 		return nil, fmt.Errorf("error joing multicast group for ethtool: %w", err)
+ 	}
+ 
+ 	watcher.wg.Go(func() {
+-		for {
+-			_, _, watchErr := watcher.conn.Receive()
+-			if watchErr != nil {
+-				return
+-			}
+-
+-			trigger.QueueReconcile()
+-		}
++		watch(watcher.conn, trigger)
  	})
  
- 	suite.PatchMachineConfig(nodeCtx, doc)
-@@ -214,6 +227,320 @@ func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context
- 	return doc
+ 	return watcher, nil
  }
  
-+// TestAlpineBuiltinProfiles boots the stock ISO on each amd64 builtin guest ABI.
-+// The selected profile is present before the VM is first created and started.
-+func (suite *LibvirtSuite) TestAlpineBuiltinProfiles() {
-+	node, nodeCtx := suite.requireAlpineGuestNode()
-+
-+	for _, test := range []struct {
-+		name     string
-+		machine  string
-+		cpuMode  hypervisorhelpers.VirtualMachineProfileCPUMode
-+		model    string
-+		fallback string
-+	}{
-+		{
-+			name:    "host",
-+			machine: "q35",
-+			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostModel,
-+		},
-+		{
-+			name:    "passthrough",
-+			machine: "q35",
-+			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostPassthrough,
-+		},
-+		{
-+			name:     "legacy",
-+			machine:  "pc-i440fx-9.2",
-+			cpuMode:  hypervisorhelpers.VirtualMachineProfileCPUModeCustom,
-+			model:    "kvm64",
-+			fallback: "forbid",
-+		},
-+	} {
-+		suite.Run(test.name, func() {
-+			const cpuCount = 1
-+
-+			doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20, test.name)
-+			suite.Require().NotNil(doc.ProfileConfig)
-+			suite.Require().Equal(test.name, *doc.ProfileConfig)
-+
-+			rtestutils.AssertResource(nodeCtx, suite.T(), suite.Client.COSI, doc.Name(),
-+				func(spec *hypervisor.VirtualMachineSpec, asrt *assert.Assertions) {
-+					asrt.Equal(test.name, spec.TypedSpec().Profile)
-+					asrt.EqualValues(cpuCount, spec.TypedSpec().CPU.Count)
-+				})
-+
-+			rtestutils.AssertResource(nodeCtx, suite.T(), suite.Client.COSI, doc.Name(),
-+				func(spec *hypervisor.VirtualMachineDomainSpec, asrt *assert.Assertions) {
-+					var domain libvirtxml.Domain
-+					if !asrt.NoError(domain.Unmarshal(spec.TypedSpec().DomainXML)) || !asrt.NotNil(domain.CPU) || !asrt.NotNil(domain.OS) || !asrt.NotNil(domain.OS.Type) {
-+						return
-+					}
-+
-+					asrt.Equal("x86_64", domain.OS.Type.Arch)
-+					asrt.Equal(test.machine, domain.OS.Type.Machine)
-+					asrt.Equal(test.cpuMode.String(), domain.CPU.Mode)
-+
-+					if test.model == "" {
-+						asrt.Nil(domain.CPU.Model, "host CPU mode must not pin a literal model")
-+					} else if asrt.NotNil(domain.CPU.Model) {
-+						asrt.Equal(test.model, domain.CPU.Model.Value)
-+						asrt.Equal(test.fallback, domain.CPU.Model.Fallback)
-+						asrt.Empty(domain.CPU.Features)
-+					}
-+				})
-+
-+			suite.T().Cleanup(func() {
-+				if suite.T().Failed() {
-+					suite.T().Logf("profile %q VM log: %q", test.name, suite
-```
-
-**File**: `internal/integration/hypervisor/virtual_machine_console_format.go` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ import (
- func (suite *LibvirtSuite) TestAlpineConsoleBlankDiskFormat() {
- 	node, nodeCtx := suite.requireAlpineGuestNode()
- 	// Reuse the ISO upload and cleanup, without a DHCP reservation or guest networking.
--	live := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20)
-+	live := suite.prepareAlpineGuestOnNode(node, nodeCtx, nil, 512<<20, "")
- 	live.PowerStateConfig = hypervisorhelpers.PowerStateStopped
- 	suite.PatchMachineConfig(nodeCtx, live)
- 	suite.assertStoppedDomain(nodeCtx, node, live.Name())
-```
-
-**File**: `internal/integration/hypervisor/virtual_machine_logs.go` (modified, +7/-0)
-```diff
-@@ -253,6 +253,13 @@ func (suite *LibvirtSuite) attachAlpineConsole(ctx context.Context, name string)
- func (suite *LibvirtSuite) loginAlpineConsole(ctx context.Context, name string) *alpineConsole {
- 	suite.T().Helper()
- 	console := suite.attachAlpineConsole(ctx, name)
-+
-+	defer func() {
-+		if suite.T().Failed() {
-+			suite.T().Logf("Alpine login serial transcript (bounded): %q", console.transcript)
-+		}
-+	}()
-+
- 	suite.Require().NoError(console.send("\n"))
- 	suite.Require().NoError(console.expectAfter(0, []byte("login:")))
- 	start := console.mark()
-```
-
----
-
-### Incident Patch 2: `4f5fb57e` (2026-10-15)
-**Commit Message**: fix: provide proper concurrency for health checks
-
-Replace the for loops with multiplex calls, fix some places
-where the order of the messages in the errors was not deterministic.
-
-Fixes #14565
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `pkg/cluster/check/diagnostics.go` (modified, +17/-7)
-```diff
-@@ -17,6 +17,7 @@ import (
- 
- 	"github.com/siderolabs/talos/pkg/conditions"
- 	"github.com/siderolabs/talos/pkg/machinery/client"
-+	"github.com/siderolabs/talos/pkg/machinery/client/multiplex"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
- )
- 
-@@ -32,19 +33,28 @@ func NoDiagnostics(ctx context.Context, cluster ClusterInfo) error {
- 
- 	warningsByNode := map[string][]*runtime.Diagnostic{}
- 
--	for _, nodeIP := range nodeInternalIPs {
--		warnings, err := safe.StateListAll[*runtime.Diagnostic](client.WithNode(ctx, nodeIP), cli.COSI)
--		if err != nil {
--			if client.StatusCode(err) == codes.PermissionDenied {
-+	ctx, cancel := context.WithCancel(ctx)
-+	defer cancel()
-+
-+	respCh := multiplex.Unary(
-+		ctx, nodeInternalIPs,
-+		func(ctx context.Context) (safe.List[*runtime.Diagnostic], error) {
-+			return safe.StateListAll[*runtime.Diagnostic](ctx, cli.COSI)
-+		},
-+	)
-+
-+	for resp := range respCh {
-+		if resp.Err != nil {
-+			if client.StatusCode(resp.Err) == codes.PermissionDenied {
- 				// not supported, skip
- 				return conditions.ErrSkipAssertion
- 			}
- 
--			return err
-+			return fmt.Errorf("error getting diagnostics for node %q: %w", resp.Node, resp.Err)
- 		}
- 
--		for res := range warnings.All() {
--			warningsByNode[nodeIP] = append(warningsByNode[nodeIP], res)
-+		for res := range resp.Payload.All() {
-+			warningsByNode[resp.Node] = append(warningsByNode[resp.Node], res)
- 		}
- 	}
- 
-```
-
-**File**: `pkg/cluster/check/nodes.go` (modified, +70/-28)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/cosi-project/runtime/pkg/safe"
- 	"github.com/dustin/go-humanize"
- 	"github.com/hashicorp/go-multierror"
-+	"github.com/siderolabs/gen/maps"
- 	"google.golang.org/grpc/codes"
- 
- 	"github.com/siderolabs/talos/pkg/conditions"
-@@ -27,6 +28,8 @@ import (
- )
- 
- // AllNodesMemorySizes checks that all nodes have enough memory.
-+//
-+//nolint:gocyclo
- func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
- 	cl, err := cluster.Client()
- 	if err != nil {
-@@ -46,22 +49,25 @@ func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
- 		return nil
- 	}
- 
-+	ctx, cancel := context.WithCancel(ctx)
-+	defer cancel()
-+
- 	respCh := multiplex.Unary(
- 		ctx, nodesIP,
- 		func(ctx context.Context) (*machineapi.MemoryResponse, error) {
- 			return cl.Memory(ctx)
- 		},
- 	)
- 
--	var resultErr error
--
- 	nodeToType := getNodesTypes(cluster, machine.TypeInit, machine.TypeControlPlane, machine.TypeWorker)
- 
-+	errorsByNode := map[string]error{}
-+
- 	for resp := range respCh {
- 		hostname := resp.Node
- 
- 		if resp.Err != nil {
--			resultErr = multierror.Append(resultErr, fmt.Errorf("error getting memory info for node %q: %w", hostname, resp.Err))
-+			errorsByNode[hostname] = fmt.Errorf("error getting memory info for node %q: %w", hostname, resp.Err)
- 
- 			continue
- 		}
-@@ -73,26 +79,42 @@ func AllNodesMemorySizes(ctx context.Context, cluster ClusterInfo) error {
- 
- 		minimum, _, err := minimal.Memory(typ)
- 		if err != nil {
--			resultErr = multierror.Append(resultErr, err)
-+			errorsByNode[hostname] = fmt.Errorf("error getting minimal memory for node %q: %w", hostname, err)
-+
-+			continue
-+		}
-+
-+		if len(resp.Payload.GetMessages()) == 0 {
-+			errorsByNode[hostname] = fmt.Errorf("no memory info returned for node %q", hostname)
- 
- 			continue
- 		}
- 
- 		msg := resp.Payload.GetMessages()[0]
- 
- 		if totalMemory := msg.Meminfo.Memtotal * humanize.KiByte; totalMemory < minimum {
--			resultErr = multierror.Append(
--				resultErr,
--				fmt.Errorf(
--					"node %q does not meet memory requirements: expected at least %d MiB, actual %d MiB",
--					hostname,
--					minimum/humanize.MiByte,
--					totalMemory/humanize.MiByte,
--				),
-+			errorsByNode[hostname] = fmt.Errorf(
-+				"node %q does not meet memory requirements: expected at least %d MiB, actual %d MiB",
-+				hostname,
-+				minimum/humanize.MiByte,
-+				totalMemory/humanize.MiByte,
- 			)
- 		}
- 	}
- 
-+	if len(errorsByNode) == 0 {
-+		return nil
++func ethtoolMonitorGroup(conn *genetlink.Conn) (uint32, error) {
++	ethFamily, err := conn.GetFamily(unix.ETHTOOL_GENL_NAME)
++	if err != nil {
++		return 0, fmt.Errorf("error getting family information for ethtool: %w", err)
 +	}
 +
-+	errorNodes := maps.Keys(errorsByNode)
-+	slices.Sort(errorNodes)
-+
-+	var resultErr *multierror.Error
-+
-+	for _, node := range errorNodes {
-+		resultErr = multierror.Append(resultErr, errorsByNode[node])
++	for _, g := range ethFamily.Groups {
++		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
++			return g.ID, nil
++		}
 +	}
 +
- 	return resultErr
- }
- 
-@@ -130,40 +152,60 @@ func AllNodesDiskSizes(ctx context.Context, cluster ClusterInfo) error {
- 		return nil
- 	}
- 
--	var resultErr error
-+	// calculate EPHEMERAL by subtracting the size of all other partitions and GPT overhead
-+	ps := quirks.New("").PartitionSizes()
-+	minimalEphemeralSize := minimal.DiskSize() - (ps.UKIEFISize() + ps.StateSize() + ps.METASize() + 10*1048576 /* GPT overhead, including alignment */)
- 
--	slices.Sort(nodesIP)
-+	ctx, cancel := context.WithCancel(ctx)
-+	defer cancel()
- 
--	for _, nodeIP := range nodesIP {
--		vs, err := safe.StateGetByID[*block.VolumeStatus](client.WithNode(ctx, nodeIP), cl.COSI, constants.EphemeralPartitionLabel)
--		if err != nil {
--			if client.StatusCode(err) == codes.PermissionDenied {
-+	respCh := multiplex.Unary(
-+		ctx, nodesIP,
-+		func(ctx context.Context) (*block.VolumeStatus, error) {
-+			return safe.StateGetByID[*block.VolumeStatus](ctx, cl.COSI, constants.EphemeralPartitionLabel)
-+		},
-+	)
++	return 0, errors.New("could not find monitor multicast group ID for ethtool")
++}
 +
-+	errorsByNode := map[string]error{}
-+
-+	for resp := range respCh {
-+		if resp.Err != nil {
-+			if client.StatusCode(resp.Err) == codes.PermissionDenied {
- 				// old Talos versions don't support this resource
- 				return conditions.ErrSkipAssertion
- 			}
+ func (watcher *ethtoolWatcher) Done() {
+ 	watcher.conn.Close() //nolint:errcheck
  
--			resultErr = multierror.Append(resultErr, fmt.Errorf("error getting volume status for node %q: %w", nodeIP, err))
-+			errorsByNode[resp.Node] = fmt.Errorf("error getting volume status for node %q: %w", resp.Node, resp.Err)
- 
- 			continue
- 		}
- 
--		actualSize := vs.TypedSpec().Size
--
--		// calculate EPHEMERAL by subtracting the size of all other partitions and GPT overhead
--		ps := quirks.New("").PartitionSizes()
--		minimalEphemeralSize := minimal.DiskSize() - (ps.UKIEFISize() + ps.StateSize() + ps.METASize() + 10*1048576 /* GPT overhead, including alignment */)
-+		actualSize := resp.Payload.TypedSpec().Size
- 
- 		if actualSize < minimalEphemeralSize {
--			resultErr = multierror.Append(resultErr, fmt.Errorf(
-+			errorsByNode[resp.Node] = fmt.Errorf(
- 				"ephemeral partition %q for node %q is too small, expected at least %s, actual %s",
--				vs.TypedSpec().Location,
--				nodeIP,
-+				resp.Payload.TypedSpec().Location,
-+				resp.Node,
- 				humanize.IBytes(minimalEphemeralSize),
- 				humanize.IBytes(actualSize),
--			))
-+			)
- 		}
- 	}
- 
-+	if len(errorsByNode) == 0
 ```
 
----
-
-### Incident Patch 3: `b80589fa` (2026-10-22)
-**Commit Message**: fix: preserve rejected edits in talosctl edit
-
-Keep the recovery copy by registering cleanup after the return that reports its path.
-
-Signed-off-by: immanuwell <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `cmd/talosctl/cmd/talos/edit.go` (modified, +18/-15)
+**File**: `internal/app/machined/pkg/controllers/network/watch/rtnetlink.go` (modified, +7/-11)
 ```diff
-@@ -10,7 +10,6 @@ import (
- 	"errors"
+@@ -8,13 +8,13 @@ import (
  	"fmt"
- 	"io"
--	"io/fs"
- 	"os"
- 	"runtime"
- 	"strings"
-@@ -40,11 +39,6 @@ var editCmdFlags struct {
+ 	"sync"
  
- //nolint:gocyclo
- func editFn() func(ctx context.Context, c *client.Client, node string, mc resource.Resource) error {
--	var (
--		path      string
--		lastError string
--	)
--
- 	edit := editor.NewDefaultEditor([]string{
- 		"TALOS_EDITOR",
- 		"EDITOR",
-@@ -56,6 +50,8 @@ func editFn() func(ctx context.Context, c *client.Client, node string, mc resour
- 			return err
+-	"github.com/jsimonetti/rtnetlink/v2"
+ 	"github.com/mdlayher/netlink"
++	"golang.org/x/sys/unix"
+ )
+ 
+ type rtnetlinkWatcher struct {
+ 	wg   sync.WaitGroup
+-	conn *rtnetlink.Conn
++	conn *netlink.Conn
+ }
+ 
+ // NewRtNetlink starts rtnetlink watch over specified groups.
+@@ -23,7 +23,8 @@ func NewRtNetlink(trigger Trigger, groups uint32, netlinkGroups ...uint32) (Watc
+ 
+ 	var err error
+ 
+-	watcher.conn, err = rtnetlink.Dial(&netlink.Config{
++	// the raw netlink connection is used, as the messages are never decoded
++	watcher.conn, err = netlink.Dial(unix.NETLINK_ROUTE, &netlink.Config{
+ 		Groups: groups,
+ 	})
+ 	if err != nil {
+@@ -32,19 +33,14 @@ func NewRtNetlink(trigger Trigger, groups uint32, netlinkGroups ...uint32) (Watc
+ 
+ 	for _, group := range netlinkGroups {
+ 		if err := watcher.conn.JoinGroup(group); err != nil {
++			watcher.conn.Close() //nolint:errcheck
++
+ 			return nil, fmt.Errorf("error joining group %d: %w", group, err)
  		}
+ 	}
  
-+		var lastError string
-+
- 		edited := body
- 
- 		for {
-@@ -90,26 +86,33 @@ func editFn() func(ctx context.Context, c *client.Client, node string, mc resour
- 
- 			editedDiff := edited
- 
-+			var path string
-+
- 			edited, path, err = edit.LaunchTempFile(fmt.Sprintf("%s-%s-edit-", mc.Metadata().Type(), mc.Metadata().ID()), ".yaml", &buf)
- 			if err != nil {
-+				if path != "" {
-+					os.Remove(path) //nolint:errcheck
-+				}
-+
- 				return err
- 			}
- 
--			defer os.Remove(path) //nolint:errcheck
+ 	watcher.wg.Go(func() {
+-		for {
+-			_, _, watchErr := watcher.conn.Receive()
+-			if watchErr != nil {
+-				return
+-			}
 -
- 			edited = stripEditingComment(edited)
-+			stripped := yamlstrip.Comments(edited)
+-			trigger.QueueReconcile()
+-		}
++		watch(watcher.conn, trigger)
+ 	})
  
- 			// If we're retrying the loop because of an error, and no change was made in the file, short-circuit
--			if lastError != "" && bytes.Equal(yamlstrip.Comments(editedDiff), yamlstrip.Comments(edited)) {
--				if _, err = os.Stat(path); !errors.Is(err, fs.ErrNotExist) {
--					message := addEditingComment(lastError)
--					message += fmt.Sprintf("A copy of your changes has been stored to %q\nEdit canceled, no valid changes were saved.\n", path)
-+			// keeping the temporary file around as a recovery copy of the rejected changes.
-+			if lastError != "" && bytes.Equal(yamlstrip.Comments(editedDiff), stripped) {
-+				message := addEditingComment(lastError)
-+				message += fmt.Sprintf("A copy of your changes has been stored to %q\nEdit canceled, no valid changes were saved.\n", path)
- 
--					return errors.New(message)
--				}
-+				return errors.New(message)
- 			}
- 
--			if len(bytes.TrimSpace(bytes.TrimSpace(yamlstrip.Comments(edited)))) == 0 {
-+			// The contents have been read already, so the temporary file is no longer needed.
-+			os.Remove(path) //nolint:errcheck
-+
-+			if len(bytes.TrimSpace(stripped)) == 0 {
- 				fmt.Fprintln(safeout.Stderr(), "Apply was skipped: empty file.")
- 
- 				break
+ 	return watcher, nil
 ```
 
-**File**: `cmd/talosctl/cmd/talos/edit_test.go` (added, +154/-0)
+**File**: `internal/app/machined/pkg/controllers/network/watch/watch.go` (modified, +41/-0)
 ```diff
-@@ -0,0 +1,154 @@
+@@ -5,6 +5,14 @@
+ // Package watch provides netlink watchers via multicast groups.
+ package watch
+ 
++import (
++	"errors"
++	"os"
++
++	"github.com/mdlayher/netlink"
++	"golang.org/x/sys/unix"
++)
++
+ // Watcher interface allows to stop watching.
+ type Watcher interface {
+ 	Done()
+@@ -14,3 +22,36 @@ type Watcher interface {
+ type Trigger interface {
+ 	QueueReconcile()
+ }
++
++// receiver is the part of *netlink.Conn used by the watch loop.
++type receiver interface {
++	Receive() ([]netlink.Message, error)
++}
++
++// watch receives multicast notifications from the connection until it is closed, queueing a reconcile on each of them.
++//
++// The contents of the notifications are never inspected: any activity on the subscribed multicast groups is just a hint
++// that the kernel state might have changed, and the controllers re-list the full state on reconcile.
++//
++// For the same reason the only error which stops the loop is the connection being closed (via Done()).
++// In particular, ENOBUFS is reported once by the kernel after the socket receive buffer overflowed and some notifications
++// were dropped, but the socket is fully usable afterwards; the dropped notifications are compensated for by queueing
++// a reconcile. Any other error (e.g. a malformed datagram) doesn't make the socket unusable either, as the offending
++// datagram has already been consumed.
++func watch(conn receiver, trigger Trigger) {
++	for {
++		if _, err := conn.Receive(); err != nil && isClosed(err) {
++			return
++		}
++
++		trigger.QueueReconcile()
++	}
++}
++
++// isClosed returns true if the error indicates that the netlink socket was closed.
++//
++// EBADF is returned for any operation attempted after Close(), while os.ErrClosed is returned by the runtime poller
++// if Close() raced with the receive in progress.
++func isClosed(err error) bool {
++	return errors.Is(err, unix.EBADF) || errors.Is(err, os.ErrClosed)
++}
+```
+
+---
+
+### Incident Patch 2: `fc6681a7` (2026-10-22)
+**Commit Message**: fix: correctly pass hostname to the proxy in gRPC dial
+
+We can't use upstream gRPC library dialer (and proxy support), as Talos
+supports dynamic HTTP proxy configuration via the environment variables.
+
+Our previous dynamic proxy dialer implementation always ended up
+resolving before dial, so the proxy received the IP address instead of
+the hostname, which is often blocked by corporate proxies.
+
+The gRPC upstream switched to sending hostnames to the proxies
+(deferring resolving to the proxy).
+
+Implement same scheme in our dialer, where the dial decision is deferred
+if the proxy is in use.
+
+This also fixed `NO_PROXY` handling - it previously only matched by IP
+address for such dials, not by hostnames.
+
+In the test harness, deny HTTP proxy CONNECT with an IP address.
+
+Fixes #14706
+
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `cmd/talosctl/cmd/mgmt/debug/air-gapped.go` (modified, +13/-0)
+```diff
+@@ -44,6 +44,7 @@ var airgappedFlags struct {
+ 	injectHTTPProxy         bool
+ 	httpsReverseProxyPort   int
+ 	httpsReverseProxyTarget string
++	allowIPConnect          bool
+ }
+ 
+ // airgappedCmd represents the `gen ca` command.
+@@ -153,6 +154,17 @@ func runHTTPServer(ctx context.Context, certPEM, keyPEM []byte) error {
+ func handleTunneling(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+ 	addr := r.URL.Host
+ 
++	if !airgappedFlags.allowIPConnect {
++		if host, _, err := net.SplitHostPort(addr); err == nil && net.ParseIP(host) != nil {
++			// mimic corporate proxies which allow CONNECT only by hostname, so that clients
++			// which resolve the hostname locally and tunnel to the IP address are caught by the tests
++			log.Printf("HTTP CONNECT: rejecting %s: CONNECT to an IP address is not allowed", addr)
++			http.Error(w, fmt.Sprintf("CONNECT to an IP address %q is not allowed, use the hostname", addr), http.StatusForbidden)
++
++			return
++		}
++	}
++
+ 	dstConn, err := (&net.Dialer{Timeout: 10 * time.Second}).DialContext(ctx, "tcp", addr)
+ 	if err != nil {
+ 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+@@ -376,6 +388,7 @@ func init() {
+ 	airgappedCmd.Flags().BoolVar(&airgappedFlags.injectHTTPProxy, "inject-http-proxy", true, "Whether to inject HTTP proxy configuration.")
+ 	airgappedCmd.Flags().IntVar(&airgappedFlags.httpsReverseProxyPort, "https-reverse-proxy-port", 8004, "The HTTPS reverse proxy port.")
+ 	airgappedCmd.Flags().StringVar(&airgappedFlags.httpsReverseProxyTarget, "https-reverse-proxy-target", "http://localhost/", "The HTTPS reverse proxy target (URL).")
++	airgappedCmd.Flags().BoolVar(&airgappedFlags.allowIPConnect, "allow-ip-connect", false, "Whether to allow HTTP CONNECT to IP addresses (by default only hostnames are allowed).")
+ 
+ 	Cmd.AddCommand(airgappedCmd)
+ }
+```
+
+**File**: `internal/app/machined/pkg/controllers/cluster/discovery_service.go` (modified, +4/-5)
+```diff
+@@ -24,7 +24,6 @@ import (
+ 	"github.com/siderolabs/gen/optional"
+ 	"github.com/siderolabs/gen/xslices"
+ 	"go.uber.org/zap"
+-	"google.golang.org/grpc"
+ 
+ 	"github.com/siderolabs/talos/pkg/httpdefaults"
+ 	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
+@@ -326,18 +325,18 @@ func (ctrl *DiscoveryServiceController) startClient(ctx context.Context, logger
+ 		}
+ 	}
+ 
++	proxy := dialer.NewDynamicProxy(tlsConfigFunc)
++
+ 	client, err := discoveryclient.NewClient(discoveryclient.Options{
+ 		Cipher:        cipherBlock,
+-		Endpoint:      spec.endpoint,
++		Endpoint:      proxy.Target(spec.endpoint),
+ 		ClusterID:     spec.clusterID,
+ 		AffiliateID:   spec.affiliateID,
+ 		TTL:           defaultDiscoveryTTL,
+ 		Insecure:      spec.insecure,
+ 		ClientVersion: version.Tag,
+ 		TLSConfig:     tlsConfigFunc,
+-		DialOptions: []grpc.DialOption{
+-			grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(tlsConfigFunc)),
+-		},
++		DialOptions:   proxy.DialOptions(),
+ 	})
+ 	if err != nil {
+ 		return fmt.Errorf("error initializing discovery client %q: %w", name, err)
+```
+
+**File**: `internal/app/machined/pkg/controllers/runtime/events_sink.go` (modified, +4/-3)
+```diff
+@@ -164,10 +164,11 @@ func (ctrl *EventsSinkController) Run(ctx context.Context, r controller.Runtime,
+ 			// establish connection
+ 			logger.Debug("establishing connection to event sink", zap.String("endpoint", cfg.TypedSpec().Endpoint))
+ 
++			proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
++
+ 			conn, err = grpc.NewClient(
+-				cfg.TypedSpec().Endpoint,
+-				grpc.WithTransportCredentials(insecure.NewCredentials()),
+-				grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
++				proxy.Target(cfg.TypedSpec().Endpoint),
++				append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, proxy.DialOptions()...)...,
+ 			)
+ 			if err != nil {
+ 				return fmt.Errorf("error establishing connection to event sink: %w", err)
+```
+
+**File**: `internal/app/machined/pkg/controllers/siderolink/manager.go` (modified, +4/-3)
+```diff
+@@ -364,10 +364,11 @@ func (ctrl *ManagerController) provision(ctx context.Context, r controller.Runti
+ 		ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+ 		defer cancel()
+ 
++		proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
++
+ 		conn, connErr := grpc.NewClient(
+-			cfg.TypedSpec().Host,
+-			withTransportCredentials(cfg.TypedSpec().Insecure),
+-			grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
++			proxy.Target(cfg.TypedSpec().Host),
++			append([]grpc.DialOption{withTransportCredentials(cfg.TypedSpec().Insecure)}, proxy.DialOptions()...)...,
+ 		)
+ 		if connErr != nil {
+ 			return nil, fmt.Errorf("error dialing SideroLink endpoint %q: %w", cfg.TypedSpec().Host, connErr)
+```
+
+**File**: `internal/pkg/encryption/keys/kms.go` (modified, +4/-3)
+```diff
+@@ -142,9 +142,10 @@ func (h *KMSKeyHandler) getConn() (*grpc.ClientConn, error) {
+ 		})
+ 	}
+ 
++	proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
++
+ 	return grpc.NewClient(
+-		endpoint.Host,
+-		grpc.WithTransportCredentials(transportCredentials),
+-		grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
++		proxy.Target(endpoint.Host),
++		append([]grpc.DialOption{grpc.WithTransportCredentials(transportCredentials)}, proxy.DialOptions()...)...,
+ 	)
+ }
+```
+
+**File**: `pkg/machinery/client/dialer/resolver.go` (added, +331/-0)
+```diff
+@@ -0,0 +1,331 @@
 +// This Source Code Form is subject to the terms of the Mozilla Public
 +// License, v. 2.0. If a copy of the MPL was not distributed with this
 +// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+//go:build !windows
-+
-+package talos //nolint:testpackage // to test editFn
++package dialer
 +
 +import (
 +	"context"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
++	"crypto/tls"
++	"errors"
++	"fmt"
++	"net"
++	"sync"
 +
-+	"github.com/stretchr/testify/require"
 +	"google.golang.org/grpc"
-+
-+	"github.com/siderolabs/talos/pkg/machinery/api/machine"
-+	"github.com/siderolabs/talos/pkg/machinery/client"
-+	"github.com/siderolabs/talos/pkg/machinery/config/configloader"
-+	configres "github.com/siderolabs/talos/pkg/machinery/resources/config"
++	"google.golang.org/grpc/resolver"
 +)
 +
 +const (
-+	editTestConfig        = "version: v1alpha1\nmachine:\n  type: worker\n"
-+	editTestInvalidConfig = "version: [\n"
-+	editTestValidConfig   = "version: v1alpha1\nmachine:\n  type: controlplane\n"
++	dynamicProxyResolverScheme = "talosdynamicproxy"
++	dnsResolverScheme          = "dns"
++	defaultPort                = "443"
 +)
 +
-+type editMachineClient struct {
-+	machine.MachineServiceClient
++// DynamicProxy pairs a gRPC resolver with a dialer, so that both agree on whether the proxy
++// from the environment applies to the connection endpoint.
++//
++// gRPC has its own support for deferring DNS resolution of the target to the HTTP proxy, but it is
++// disabled as soon as a custom dialer is used. With the default `dns` resolver the custom dialer
++// receives resolved IP addresses, so the proxy gets `CONNECT <ip>:<port>` which is rejected by the
++// proxies filtering by hostname, and domain-based `no_proxy` rules never match.
++//
++// The resolver evaluates the proxy settings from the environment for the endpoint:
++//
++//   - if a proxy applies to the endpoint, the endpoint is passed as is to the dialer, so the proxy
++//     performs DNS resolution and `CONNECT` carries the hostname;
++//   - otherwise, the resolver delegates to the standard gRPC `dns` resolver, and remembers the
++//     addresses it produced, so that the dialer connects to them directly even if the proxy settings
++//     would match the IP address (e.g. with a domain-based `no_proxy` rule).
++//
++// The proxy settings are re-evaluated every time gRPC requests re-resolution (e.g. on connection failure),
++// so the changes in the environment are picked up without restarting the client.
++//
++// Use Target to build the gRPC target and DialOptions to configure the client:
++//
++//	proxy := dialer.NewDynamicProxy(nil)
++//	conn, err := grpc.NewClient(proxy.Target("discovery.talos.dev:443"), proxy.DialOptions()...)
++//
++// A single DynamicProxy might be shared by multiple gRPC clients.
++type DynamicProxy struct {
++	tlsConfigFunc func() *tls.Config
++
++	mu sync.Mutex
++	// locally resolved addresses, per resolver (there's one resolver per gRPC client)
++	local map[*dynamicProxyResolver]map[string]struct{}
 +}
 +
-+func (editMachineClient) ApplyConfiguration(_ context.Context, req *machine.ApplyConfigurationRequest, _ ...grpc.CallOption) (*machine.ApplyConfigurationResponse, error) {
-+	_, err := configloader.NewFromBytes(req.Data)
-+	if err != nil {
-+		return nil, err
++// NewDynamicProxy creates a new DynamicProxy.
++//
++// The tlsConfigFunc is used to connect to HTTPS proxies, it might be nil.
++func NewDynamicProxy(tlsConfigFunc func() *tls.Config) *DynamicProxy {
++	if tlsConfigFunc == nil {
++		tlsConfigFunc = func() *tls.Config { return &tls.Config{} }
 +	}
 +
-+	return &machine.ApplyConfigurationResponse{}, nil
++	return &DynamicProxy{
++		tlsConfigFunc: tlsConfigFunc,
++		local:         map[*dynamicProxyResolver]map[string]struct{}{},
++	}
 +}
 +
-+// installEditor sets up a shell script as the editor for the test.
-+//
-+// The script runs the given shell snippet with $1 set to the file being edited and $N set to the
-+// 1-based number of the editor launch, and the returned function lists the files edited so far.
-+//
-+// Temporary files are redirected into the test directory, so they are cleaned up with it.
-+func installEditor(t *testing.T, script string) func() []string {
++// Target wraps the endpoint (`host[:port]`) into a gRPC target handled by the DynamicProxy resolver.
++func (p *DynamicProxy) Target(endpoint string) string {
++	return dynamicProxyResolverScheme + ":///" + endpoint
++}
++
++// DialOptions returns gRPC dial options which should be used with the target built by Target.
++func (p *DynamicProxy) DialOptions() []grpc.DialOption {
++	return []grpc.DialOption{
++		grpc.WithResolvers(dynamicProxyResolverBuilder{proxy: p}),
++		grpc.WithContextDialer(p.Dial),
++	}
++}
++
++// Dial is a gRPC context dialer which connects directly to the addresses resolved locally,
++// and otherwise behaves as DynamicProxyDialerWithTLSConfig.
++func (p *DynamicProxy) Dial(ctx context.Context, addr string) (net.Conn, error) {
++	if p.resolvedLocally(addr) {
++		return NetDialerWithTCPKeepalive().DialContext(ctx, "tcp", addr)
++	}
++
++	return DynamicProxyDialerWithTLSConfig(p.tlsConfigFunc)(ctx, addr)
++}
++
++func (p *DynamicProxy) resolvedLocally(addr string) bool {
++	p.mu.Lock()
++	defer p.mu.Unlock()
++
++	for _, addrs := range p.local {
++		if _, ok := addrs[addr]; ok {
++			return true
++		}
++	}
++
++	return false
++}
++
++func (p *DynamicProxy) setResolvedLocally(r *dynamicProxyResolver, addresses []resolver.Address) {
++	addrs := make(map[string]struct{}, len(addresses))
++
++	for _, address := range addresses {
++		addrs[address.Addr] = struct{}{}
++	}
++
++	p.mu.Lock()
++	defer p.mu.Unlock()
++
++	p.local[r] = addrs
++}
++
++func (p *DynamicProxy) clearResolvedLocally(r *dynamicProxyResolver) {
++	p.mu.Lock()
++	defer p.mu.Unlock()
++
++	delete(p.local, r)
++}
++
++type dynamicProxyResolverBuilder struct {
++	proxy *DynamicProxy
++
++	// fallback is the resolver builder used when no proxy applies to the endpoint.
++	//
++	// If nil, the standard gRPC `dns` resolver is used.
++	fallback resolver.Builder
++}
++
++// Scheme implements resolver.Builder.
++func (dynamicProxyResolverBuilder) Scheme() string {
++	return dynamicProxyResolverScheme
++}
++
++// Build implements resolver.Builder.
++func (b dynamicProxyResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
++	fallback := b.fallback
++	if fallback == nil {
++		fallback = resolver.Get(dnsResolverScheme)
++	}
++
++	if
+```
+
+**File**: `pkg/machinery/client/dialer/resolver_internal_test.go` (added, +259/-0)
+```diff
+@@ -0,0 +1,259 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package dialer
++
++import (
++	"errors"
++	"net/url"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc/resolver"
++	"google.golang.org/grpc/serviceconfig"
++)
++
++type fakeClientConn struct {
++	states []resolver.State
++	errors []error
++}
++
++func (cc *fakeClientConn) UpdateState(state resolver.State) error {
++	cc.states = append(cc.states, state)
++
++	return nil
++}
++
++func (cc *fakeClientConn) ReportError(err error) {
++	cc.errors = append(cc.errors, err)
++}
++
++func (cc *fakeClientConn) NewAddress(addresses []resolver.Address) {
++	cc.UpdateState(resolver.State{Addresses: addresses}) //nolint:errcheck
++}
++
++func (cc *fakeClientConn) ParseServiceConfig(string) *serviceconfig.ParseResult {
++	return &serviceconfig.ParseResult{Err: errors.New("not supported")}
++}
++
++func (cc *fakeClientConn) lastAddrs(t *testing.T) []string {
 +	t.Helper()
 +
-+	dir := t.TempDir()
-+	pathsFile := filepath.Join(dir, "paths")
-+	editorPath := filepath.Join(dir, "editor.sh")
++	require.NotEmpty(t, cc.states)
 +
-+	require.NoError(t, os.WriteFile(editorPath, []byte(
-+		"#!/bin/sh\nprintf '%s\\n' \"$1\" >> \"$EDIT_PATHS\"\nN=$(wc -l < \"$EDIT_PATHS\" | tr -d ' ')\n"+script,
-+	), 0o700))
++	last := cc.states[len(cc.states)-1]
 +
-+	t.Setenv("TMPDIR", dir)
-+	t.Setenv("TALOS_EDITOR", editorPath)
-+	t.Setenv("EDIT_PATHS", pathsFile)
++	addrs := make([]string, 0, len(last.Addresses))
++	for _, a := range last.Addresses {
++		addrs = append(addrs, a.Addr)
++	}
 +
-+	return func() []string {
-+		paths, err := os.ReadFile(pathsFile)
++	return addrs
++}
++
++// fakeFallbackBuilder stands in for the `dns` resolver: it pushes a fixed address and records the lifecycle calls.
++type fakeFallbackBuilder struct {
++	builds     int
++	closes     int
++	resolveNow int
++	lastTarget resolver.Target
++}
++
++func (b *fakeFallbackBuilder) Scheme() string {
++	return "fakedns"
++}
++
++func (b *fakeFallbackBuilder) Build(target resolver.Target, cc resolver.ClientConn, _ resolver.BuildOptions) (resolver.Resolver, error) {
++	b.builds++
++	b.lastTarget = target
++
++	cc.UpdateState(resolver.State{Addresses: []resolver.Address{{Addr: "192.0.2.1:443"}}}) //nolint:errcheck
++
++	return &fakeFallbackResolver{b: b}, nil
++}
++
++type fakeFallbackResolver struct {
++	b *fakeFallbackBuilder
++}
++
++func (r *fakeFallbackResolver) ResolveNow(resolver.ResolveNowOptions) {
++	r.b.resolveNow++
++}
++
++func (r *fakeFallbackResolver) Close() {
++	r.b.closes++
++}
++
++func buildTarget(endpoint string) resolver.Target {
++	return resolver.Target{URL: url.URL{Scheme: dynamicProxyResolverScheme, Path: "/" + endpoint}}
++}
++
++func clearProxyEnv(t *testing.T) {
++	t.Helper()
++
++	for _, name := range []string{"HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy", "NO_PROXY", "no_proxy"} {
++		t.Setenv(name, "")
++	}
++}
++
++func TestDynamicProxyResolver(t *testing.T) {
++	t.Run("proxied", func(t *testing.T) {
++		clearProxyEnv(t)
++		t.Setenv("HTTPS_PROXY", "http://proxy.example.com:3128")
++
++		cc := &fakeClientConn{}
++		fallback := &fakeFallbackBuilder{}
++		proxy := NewDynamicProxy(nil)
++
++		r, err := dynamicProxyResolverBuilder{proxy: proxy, fallback: fallback}.Build(buildTarget("discovery.talos.dev:443"), cc, resolver.BuildOptions{})
 +		require.NoError(t, err)
 +
-+		return strings.Split(strings.TrimSpace(string(paths)), "\n")
-+	}
-+}
++		t.Cleanup(r.Close)
 +
-+func editTestResource(t *testing.T) *configres.MachineConfig {
++		// the hostname is passed through unresolved
++		assert.Equal(t, []string{"discovery.talos.dev:443"}, cc.lastAddrs(t))
++		assert.Len(t, cc.states[len(cc.states)-1].Endpoints, 1)
++		assert.Zero(t, fallback.builds)
++		assert.False(t, proxy.resolvedLocally("discovery.talos.dev:443"))
++
++		// re-resolution in proxied mode is a no-op
++		r.ResolveNow(resolver.ResolveNowOptions{})
++
++		assert.Len(t, cc.states, 1)
++		assert.Zero(t, fallback.builds)
++		assert.Empty(t, cc.errors)
++	})
++
++	t.Run("proxied default port", func(t *testing.T) {
++		clearProxyEnv(t)
++		t.Setenv("HTTPS_PROXY", "http://proxy.example.com:3128")
++
++		cc := &fakeClientConn{}
++
++		r, err := dynamicProxyResolverBuilder{proxy: NewDynamicProxy(nil), fallback: &fakeFallbackBuilder{}}.Build(buildTarget("discovery.talos.dev"), cc, resolver.BuildOptions{})
++		require.NoError(t, err)
++
++		t.Cleanup(r.Close)
++
++		assert.Equal(t, []string{"discovery.talos.dev:443"}, cc.lastAddrs(t))
++	})
++
++	t.Run("direct", func(t *testing.T) {
++		clearProxyEnv(t)
++
++		cc := &fakeClientConn{}
++		fallback := &fakeFallbackBuilder{}
++		proxy := NewDynamicProxy(nil)
++
++		r, err := dynamicProxyResolverBuilder{proxy: proxy, fallback: fallback}.Build(buildTarget("discovery.talos.dev:443"), cc, resolver.BuildOptions{})
++		require.NoError(t, err)
++
++		assert.Equal(t, 1, fallback.builds)
++		assert.Equal(t, "fakedns", fallback.lastTarget.URL.Scheme)
++		assert.Equal(t, "discovery.talos.dev:443", fallback.lastTarget.Endpoint())
++		assert.Equal(t, []string{"192.0.2.1:443"}, cc.lastAddrs(t))
++
++		// the dialer should connect directly to the locally resolved address even if the proxy would match it
++		assert.True(t, proxy.resolvedLocally("192.0.2.1:443"))
++		assert.False(t, proxy.resolvedLocally("192.0.2.2:443"))
++
++		// re-resolution is forwarded to the delegate
++		r.ResolveNow(resolver.ResolveNowOptions{})
++		assert.Equal(t, 1, fallback.resolveNow)
++		assert.Equal(t, 1, fallback.builds)
++
++		r.Cl
+```
+
+**File**: `pkg/machinery/client/dialer/resolver_test.go` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package dialer_test
++
++import (
++	"bufio"
++	"context"
++	"io"
++	"net"
++	"net/http"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/credentials/insecure"
++	"google.golang.org/grpc/status"
++	"google.golang.org/protobuf/types/known/emptypb"
++
++	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
++)
++
++// startConnectProxy runs a minimal HTTP CONNECT proxy which tunnels every request to backend
++// (ignoring the requested destination) and reports the requested destination via the channel.
++func startConnectProxy(t *testing.T, backend string) (string, <-chan string) {
 +	t.Helper()
 +
-+	cfg, err := configloader.NewFromBytes([]byte(editTestConfig))
++	lis, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
 +	require.NoError(t, err)
 +
-+	return configres.NewMachineConfig(cfg)
++	t.Cleanup(func() { lis.Close() }) //nolint:errcheck
++
++	requested := make(chan string, 16)
++
++	go func() {
++		for {
++			conn, err := lis.Accept()
++			if err != nil {
++				return
++			}
++
++			go func() {
++				defer conn.Close() //nolint:errcheck
++
++				req, err := http.ReadRequest(bufio.NewReader(conn))
++				if err != nil || req.Method != http.MethodConnect {
++					return
++				}
++
++				requested <- req.URL.Host
++
++				upstream, err := (&net.Dialer{}).DialContext(context.Background(), "tcp", backend)
++				if err != nil {
++					return
++				}
++
++				defer upstream.Close() //nolint:errcheck
++
++				if _, err = io.WriteString(conn, "HTTP/1.1 200 Connection established\r\n\r\n"); err != nil {
++					return
++				}
++
++				go io.Copy(upstream, conn) //nolint:errcheck
++
++				io.Copy(conn, upstream) //nolint:errcheck
++			}()
++		}
++	}()
++
++	return lis.Addr().String(), requested
 +}
 +
-+func TestEditPreservesRejectedChanges(t *testing.T) {
-+	editedPaths := installEditor(t, `if [ "$N" -eq 1 ]; then printf '`+editTestInvalidConfig+`' > "$1"; fi`)
++func startGRPCServer(t *testing.T) string {
++	t.Helper()
 +
-+	err := editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "127.0.0.1", editTestResource(t))
-+	require.ErrorContains(t, err, "Edit canceled, no valid changes were saved.")
++	lis, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
++	require.NoError(t, err)
 +
-+	files := editedPaths()
-+	require.Len(t, files, 2)
++	srv := grpc.NewServer()
 +
-+	require.Contains(t, err.Error(), files[1])
-+	data, readErr := os.ReadFile(files[1])
-+	require.NoError(t, readErr, "the recovery copy named in the error must remain available")
-+	require.Contains(t, string(data), editTestInvalidConfig)
-+	require.NoFileExists(t, files[0], "superseded temporary files should still be removed")
++	go srv.Serve(lis) //nolint:errcheck
++
++	t.Cleanup(srv.Stop)
++
++	return lis.Addr().String()
 +}
 +
-+func TestEditRetriesRejectedChanges(t *testing.T) {
-+	editedPaths := installEditor(t, `if [ "$N" -eq 1 ]; then printf '`+editTestInvalidConfig+`' > "$1"; else printf '`+editTestValidConfig+`' > "$1"; fi`)
++// invoke performs a call against a server with no services registered, so a successful tunnel yields Unimplemented.
++func invoke(t *testing.T, endpoint string) {
++	t.Helper()
 +
-+	require.NoError(t, editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "127.0.0.1", editTestResource(t)))
++	proxy := dialer.NewDynamicProxy(nil)
 +
-+	files := editedPaths()
-+	require.Len(t, files, 2)
++	conn, err := grpc.NewClient(
++		proxy.Target(endpoint),
++		append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, proxy.DialOptions()...)...,
++	)
++	require.NoError(t, err)
 +
-+	for _, file := range files {
-+		require.NoFileExists(t, file)
++	t.Cleanup(func() { conn.Close() }) //nolint:errcheck
++
++	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
++	defer cancel()
++
++	err = conn.Invoke(ctx, "/talos.test.Service/Method", &emptypb.Empty{}, &emptypb.Empty{})
++	require.Equal(t, codes.Unimplemented, status.Code(err), "unexpected error: %v", err)
++}
++
++func TestDynamicProxyTarget_HostnamePassedToProxy(t *testing.T) {
++	for _, name := range []string{"HTTP_PROXY", "http_proxy", "NO_PROXY", "no_proxy", "https_proxy"} {
++		t.Setenv(name, "")
++	}
++
++	backend := startGRPCServer(t)
++	proxyAddr, requested := startConnectProxy(t, backend)
++
++	t.Setenv("HTTPS_PROXY", "http://"+proxyAddr)
++
++	// the hostname is never resolved: the proxy gets it as is and tunnels to the backend
++	_, port, err := net.SplitHostPort(backend)
++	require.NoError(t, err)
++
++	endpoint := net.JoinHostPort("discovery.talos.dev", port)
++
++	invoke(t, endpoint)
++
++	select {
++	case got := <-requested:
++		assert.Equal(t, endpoint, got)
++	case <-time.After(10 * time.Second):
++		t.Fatal("proxy didn't receive a CONNECT request")
 +	}
 +}
 +
-+func TestEditResetsErrorBetweenNodes(t *testing.T) {
-+	editedPaths := installEditor(t, `if [ "$N" -le 2 ]; then printf '`+editTestInvalidConfig+`' > "$1"; fi`)
++func TestDynamicProxyTarget_Direct(t *testing.T) {
++	for _, name := range []string{"HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy"} {
++		t.Setenv(name, "")
++	}
 +
-+	fn := editFn()
-+	c := &client.Client{MachineClient: editMachineClient{}}
++	backend := startGRPCServer(t)
 +
-+	err := fn(context.Background(), c, "127.0.0.1", editTestResource(t))
-+	require.ErrorContains(t, err, "Edit canceled, no valid changes were saved.")
++	invoke(t, backend)
++}
+```
+
+---
+
+### Incident Patch 3: `38e5d8be` (2026-10-22)
+**Commit Message**: fix: resolve link aliases in EthernetConfig and RoutingRuleConfig
+
+There's no reason why they should not work with an alias as Talos documentation states that:
+
+> link alias can be used interchangeably with physical link names in all networking configuration sections
+
+https://docs.siderolabs.com/talos/v1.14/networking/configuration/aliases
+
+Signed-off-by: Orzelius <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/ethernet_config.go` (modified, +17/-3)
+```diff
+@@ -30,6 +30,11 @@ func (ctrl *EthernetConfigController) Name() string {
+ // Inputs implements controller.Controller interface.
+ func (ctrl *EthernetConfigController) Inputs() []controller.Input {
+ 	return []controller.Input{
++		{
++			Namespace: network.NamespaceName,
++			Type:      network.LinkStatusType,
++			Kind:      controller.InputWeak,
++		},
+ 		{
+ 			Namespace: config.NamespaceName,
+ 			Type:      config.MachineConfigType,
+@@ -65,8 +70,15 @@ func (ctrl *EthernetConfigController) Run(ctx context.Context, r controller.Runt
+ 			return fmt.Errorf("error reading machine configuration: %w", err)
+ 		}
+ 
++		linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
++		if err != nil {
++			return fmt.Errorf("error listing link statuses: %w", err)
++		}
 +
-+	// the next node leaves the configuration unchanged, so the previous node's error must not cancel the edit
-+	require.NoError(t, fn(context.Background(), c, "127.0.0.2", editTestResource(t)))
++		linkNameResolver := network.NewLinkResolver(linkStatuses.All)
 +
-+	files := editedPaths()
-+	require.Len(t, files, 3)
-+	require.NoFileExists(t, files[2])
+ 		if cfg != nil {
+-			if err = ctrl.apply(ctx, r, cfg.Config().EthernetConfigs()); err != nil {
++			if err = ctrl.apply(ctx, r, cfg.Config().EthernetConfigs(), linkNameResolver); err != nil {
+ 				return fmt.Errorf("error applying EthernetSpec: %w", err)
+ 			}
+ 		}
+@@ -77,9 +89,11 @@ func (ctrl *EthernetConfigController) Run(ctx context.Context, r controller.Runt
+ 	}
+ }
+ 
+-func (ctrl *EthernetConfigController) apply(ctx context.Context, r controller.Runtime, configs []configtypes.EthernetConfig) error {
++func (ctrl *EthernetConfigController) apply(
++	ctx context.Context, r controller.Runtime, configs []configtypes.EthernetConfig, linkNameResolver *network.LinkResolver,
++) error {
+ 	for _, cfg := range configs {
+-		if err := safe.WriterModify(ctx, r, network.NewEthernetSpec(network.NamespaceName, cfg.Name()), func(spec *network.EthernetSpec) error {
++		if err := safe.WriterModify(ctx, r, network.NewEthernetSpec(network.NamespaceName, linkNameResolver.Resolve(cfg.Name())), func(spec *network.EthernetSpec) error {
+ 			spec.TypedSpec().Rings = network.EthernetRingsSpec(cfg.Rings())
+ 			spec.TypedSpec().Channels = network.EthernetChannelsSpec(cfg.Channels())
+ 			spec.TypedSpec().Features = cfg.Features()
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/ethernet_config_test.go` (modified, +21/-0)
+```diff
+@@ -69,6 +69,27 @@ func (suite *EthernetConfigSuite) TestReconcile() {
+ 	ctest.AssertNoResource[*network.EthernetSpec](suite, "enp0s2")
+ }
+ 
++func (suite *EthernetConfigSuite) TestReconcileAlias() {
++	status := network.NewLinkStatus(network.NamespaceName, "enp0s3")
++	status.TypedSpec().Alias = "net0"
++	suite.Create(status)
++
++	ethCfg := networkcfg.NewEthernetConfigV1Alpha1("net0")
++	ethCfg.RingsConfig = &networkcfg.EthernetRingsConfig{
++		RX: new(uint32(16)),
++	}
++
++	ctr, err := container.New(ethCfg)
++	suite.Require().NoError(err)
++
++	suite.Create(config.NewMachineConfig(ctr))
++
++	ctest.AssertResource(suite, "enp0s3", func(spec *network.EthernetSpec, asrt *assert.Assertions) {
++		asrt.Equal(uint32(16), pointer.SafeDeref(spec.TypedSpec().Rings.RX))
++	})
++	ctest.AssertNoResource[*network.EthernetSpec](suite, "net0")
 +}
 +
-+func TestEditRemovesTemporaryFiles(t *testing.T) {
-+	for _, test := range []struct {
-+		name        string
-+		edit        string
-+		expectedErr string
-+	}{
-+		{name: "unchanged"},
-+		{name: "accepted", edit: `printf '\n' >> "$1"`},
-+		{name: "empty", edit: `: > "$1"`},
-+		{name: "editor failed", edit: `exit 1`, expectedErr: "there was a problem with the editor"},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			editedPaths := installEditor(t, test.edit)
+ func TestEthernetConfigSuite(t *testing.T) {
+ 	t.Parallel()
+ 
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/routing_rule_config.go` (modified, +16/-2)
+```diff
+@@ -41,6 +41,11 @@ func (ctrl *RoutingRuleConfigController) Name() string {
+ // Inputs implements controller.Controller interface.
+ func (ctrl *RoutingRuleConfigController) Inputs() []controller.Input {
+ 	return []controller.Input{
++		{
++			Namespace: network.NamespaceName,
++			Type:      network.LinkStatusType,
++			Kind:      controller.InputWeak,
++		},
+ 		{
+ 			Namespace: config.NamespaceName,
+ 			Type:      config.MachineConfigType,
+@@ -78,10 +83,18 @@ func (ctrl *RoutingRuleConfigController) Run(ctx context.Context, r controller.R
+ 			}
+ 		}
+ 
++		linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
++		if err != nil {
++			return fmt.Errorf("error listing link statuses: %w", err)
++		}
 +
-+			err := editFn()(context.Background(), &client.Client{MachineClient: editMachineClient{}}, "
++		linkNameResolver := network.NewLinkResolver(linkStatuses.All)
++
+ 		if machineConfig != nil {
+ 			rules := ctrl.processConfig(
+ 				logger,
+ 				machineConfig.Config().NetworkRoutingRuleConfigs(),
++				linkNameResolver,
+ 			)
+ 
+ 			if err = ctrl.apply(ctx, r, rules); err != nil {
+@@ -120,6 +133,7 @@ func (ctrl *RoutingRuleConfigController) apply(ctx context.Context, r controller
+ func (ctrl *RoutingRuleConfigController) processConfig(
+ 	logger *zap.Logger,
+ 	ruleConfigs []cfg.NetworkRoutingRuleConfig,
++	linkNameResolver *network.LinkResolver,
+ ) []network.RoutingRuleSpecSpec {
+ 	rules := make([]network.RoutingRuleSpecSpec, 0, len(ruleConfigs))
+ 
+@@ -142,8 +156,8 @@ func (ctrl *RoutingRuleConfigController) processConfig(
+ 
+ 		rule.Src = src
+ 		rule.Dst = dst
+-		rule.IIFName = ruleCfg.IIFName()
+-		rule.OIFName = ruleCfg.OIFName()
++		rule.IIFName = linkNameResolver.Resolve(ruleCfg.IIFName())
++		rule.OIFName = linkNameResolver.Resolve(ruleCfg.OIFName())
+ 		rule.FwMark = ruleCfg.FwMark()
+ 		rule.FwMask = ruleCfg.FwMask()
+ 		rule.ConfigLayer = network.ConfigMachineConfiguration
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/routing_rule_config_test.go` (modified, +37/-0)
+```diff
+@@ -146,6 +146,43 @@ func (suite *RoutingRuleConfigSuite) TestMachineConfigurationWithFwMark() {
+ 	)
+ }
+ 
++func (suite *RoutingRuleConfigSuite) TestMachineConfigurationWithLinkAlias() {
++	suite.Require().NoError(suite.Runtime().RegisterController(&netctrl.RoutingRuleConfigController{}))
++
++	for _, link := range []struct {
++		name  string
++		alias string
++	}{
++		{name: "enp0s3", alias: "net0"},
++		{name: "enp0s4", alias: "net1"},
++	} {
++		status := network.NewLinkStatus(network.NamespaceName, link.name)
++		status.TypedSpec().Alias = link.alias
++		suite.Create(status)
++	}
++
++	rc1 := networkcfg.NewRoutingRuleConfigV1Alpha1(500)
++	rc1.RuleSrc = meta.Prefix{Prefix: netip.MustParsePrefix("10.0.0.0/8")}
++	rc1.RuleTable = nethelpers.RoutingTable(100)
++	rc1.RuleIIFName = "net0"
++	rc1.RuleOIFName = "net1"
++
++	ctr, err := container.New(rc1)
++	suite.Require().NoError(err)
++
++	suite.Create(config.NewMachineConfig(ctr))
++
++	ctest.AssertResource(
++		suite,
++		"configuration/inet4/00500",
++		func(r *network.RoutingRuleSpec, asrt *assert.Assertions) {
++			asrt.Equal("enp0s3", r.TypedSpec().IIFName)
++			asrt.Equal("enp0s4", r.TypedSpec().OIFName)
++		},
++		rtestutils.WithNamespace(network.ConfigNamespaceName),
++	)
++}
++
+ // TestReservedPrioritySkipped verifies that user configs at kernel-reserved
+ // priorities never produce a RoutingRuleSpec, so the spec controller can
+ // never tear down (and thus delete) kernel-managed rules at those priorities.
+```
+
+**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
+```diff
+@@ -6410,9 +6410,9 @@
+         "name": {
+           "type": "string",
+           "title": "name",
+-          "description": "Alias for the link.\n\nDon’t use system interface names like “eth0”, “ens3”, “enp0s2”, etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (%d) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. net0, net1, …) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\n",
+-          "markdownDescription": "Alias for the link.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
+-          "x-intellij-html-description": "\u003cp\u003eAlias for the link.\u003c/p\u003e\n\n\u003cp\u003eDon\u0026rsquo;t use system interface names like \u0026ldquo;eth0\u0026rdquo;, \u0026ldquo;ens3\u0026rdquo;, \u0026ldquo;enp0s2\u0026rdquo;, etc. as those may conflict\nwith existing physical interfaces.\u003c/p\u003e\n\n\u003cp\u003eThe name can contain a single integer format verb (\u003ccode\u003e%d\u003c/code\u003e) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. \u003ccode\u003enet0\u003c/code\u003e, \u003ccode\u003enet1\u003c/code\u003e, \u0026hellip;) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\u003c/p\u003e\n"
++          "description": "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon’t use system interface names like “eth0”, “ens3”, “enp0s2”, etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (%d) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. net0, net1, …) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\n",
++          "markdownDescription": "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
++          "x-intellij-html-description": "\u003cp\u003eAlias for a link.\u003c/p\u003e\n\n\u003cp\u003eLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\u003c/p\u003e\n\n\u003cp\u003eDon\u0026rsquo;t use system interface names like \u0026ldquo;eth0\u0026rdquo;, \u0026ldquo;ens3\u0026rdquo;, \u0026ldquo;enp0s2\u0026rdquo;, etc. as those may conflict\nwith existing physical interfaces.\u003c/p\u003e\n\n\u003cp\u003eThe name can contain a single integer format verb (\u003ccode\u003e%d\u003c/code\u003e) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. \u003ccode\u003enet0\u003c/code\u003e, \u003ccode\u003enet1\u003c/code\u003e, \u0026hellip;) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\u003c/p\u003e\n"
+         },
+         "selector": {
+           "$ref": "#/$defs/network.LinkSelector",
+```
+
+**File**: `pkg/machinery/config/types/network/link_alias.go` (modified, +4/-1)
+```diff
+@@ -52,7 +52,10 @@ type LinkAliasConfigV1Alpha1 struct {
+ 	meta.Meta `yaml:",inline"`
+ 
+ 	//   description: |
+-	//    Alias for the link.
++	//    Alias for a link.
++	//
++	//    Link aliases can be used interchangeably with physical link names in all networking configuration
++	//    sections that take an existing link name as input.
+ 	//
+ 	//    Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict
+ 	//    with existing physical interfaces.
+```
+
+**File**: `pkg/machinery/config/types/network/network_doc.go` (modified, +2/-2)
+```diff
+@@ -1848,8 +1848,8 @@ func (LinkAliasConfigV1Alpha1) Doc() *encoder.Doc {
+ 				Name:        "name",
+ 				Type:        "string",
+ 				Note:        "",
+-				Description: "Alias for the link.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
+-				Comments:    [3]string{"" /* encoder.HeadComment */, "Alias for the link." /* encoder.LineComment */, "" /* encoder.FootComment */},
++				Description: "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
++				Comments:    [3]string{"" /* encoder.HeadComment */, "Alias for a link." /* encoder.LineComment */, "" /* encoder.FootComment */},
+ 			},
+ 			{
+ 				Name:        "selector",
+```
+
+**File**: `website/content/v1.15/reference/configuration/network/linkaliasconfig.md` (modified, +3/-3)
+```diff
+@@ -17,7 +17,7 @@ title: LinkAliasConfig
+ {{< highlight yaml >}}
+ apiVersion: v1alpha1
+ kind: LinkAliasConfig
+-name: int0 # Alias for the link.
++name: int0 # Alias for a link.
+ # Selector to match the link to alias.
+ selector:
+     match: glob("00:1a:2b:*", mac(link.permanent_addr)) # The Common Expression Language (CEL) expression to match the link.
+@@ -26,7 +26,7 @@ selector:
+ {{< highlight yaml >}}
+ apiVersion: v1alpha1
+ kind: LinkAliasConfig
+-name: net%d # Alias for the link.
++name: net%d # Alias for a link.
+ # Selector to match the link to alias.
+ selector:
+     match: link.driver == "e1000" # The Common Expression Language (CEL) expression to match the link.
+@@ -35,7 +35,7 @@ selector:
+ 
+ | Field | Type | Description | Value(s) |
+ |-------|------|-------------|----------|
+-|`name` |string |Alias for the link.<br><br>Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict<br>with existing physical interfaces.<br><br>The name can contain a single integer format verb (`%d`) to create multiple aliases<br>from a single config document. When a format verb is detected, each matched link receives a sequential<br>alias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.<br>Links already aliased by a previous config are automatically skipped. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
++|`name` |string |Alias for a link.<br><br>Link aliases can be used interchangeably with physical link names in all networking configuration<br>sections that take an existing link name as input.<br><br>Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict<br>with existing physical interfaces.<br><br>The name can contain a single integer format verb (`%d`) to create multiple aliases<br>from a single config document. When a format verb is detected, each matched link receives a sequential<br>alias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.<br>Links already aliased by a previous config are automatically skipped. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
+ name: net0
+ {{< /highlight >}}{{< highlight yaml >}}
+ name: private
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14711** (2026-10-22): chore: mount git common dir into dockerized commands (@smira)
-- **PR #14709** (2026-10-22): feat: implement swap resource limits for containers (@smira)
-- **PR #14703** (2026-10-22): fix: preserve rejected edits in talosctl edit (@immanuwell)
-- **PR #14699** (2026-10-22): test: pin Cilium version explicitly (@smira)
-- **PR #14698** (2026-10-22): feat: bring in kTLS changes (@smira)
-- **PR #14697** (2026-10-21): test: add a test matrix for NVIDIA 'new feature' flavor (@smira)
+- **PR #14724** (2026-10-24): feat: load kernel modules on demand via the modprobe usermode helper  (@smira)
+- **PR #14723** (2026-10-23): feat: add EDAC_10NM kernel module (@smira)
+- **PR #14722** (2026-10-23): refactor: move all resource list to pkg/machinery (@smira)
+- **PR #14720** (2026-10-23): test: skip VM projection tests on non-amd64 nodes (@shanduur)
+- **PR #14719** (2026-10-23): fix: race with platform accessing metadata volumes (@smira)
+- **PR #14718** (2026-10-23): feat: update etcd to 3.7.3 (@smira)
 
 ---
 
@@ -2602,66 +3097,77 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: boot Alpine with builtin virtual machine profiles
+## X. ignore netlink recoverable errors in watchers
 
 **RULE**:
-When implementing operations in `internal/integration/hypervisor/virtual_machine_alpine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/network/watch/ethtool.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe3aeb01`: test: boot Alpine with builtin virtual machine profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e5e8729`: ignore netlink recoverable errors in watchers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/integration/hypervisor/virtual_machine_alpine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/watch/ethtool.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"libvirt.org/go/libvirtxml"
-	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20, "")
-// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM, profile and optional NIC.
-func (suite *LibvirtSuite) prepareAlpineGuestOnNode(
-	node string,
-	nodeCtx context.Context,
-	ourRecord *provision.DHCPRecord,
-	memoryBytes uint64,
-	profile string,
-) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
+	"github.com/mdlayher/netlink"
+	conn *netlink.Conn
+	// the raw netlink connection is used for receiving, as the messages are never decoded,
+	// while the generic netlink wrapper is only used to resolve the multicast group
+	watcher.conn, err = netlink.Dial(unix.NETLINK_GENERIC, nil)
+	monitorID, err := ethtoolMonitorGroup(genetlink.NewConn(watcher.conn))
+		watcher.conn.Close() //nolint:errcheck
+		return nil, err
+		watcher.conn.Close() //nolint:errcheck
 
-	if profile != "" {
-		doc.ProfileConfig = &profile
+		watch(watcher.conn, trigger)
+func ethtoolMonitorGroup(conn *genetlink.Conn) (uint32, error) {
+	ethFamily, err := conn.GetFamily(unix.ETHTOOL_GENL_NAME)
+	if err != nil {
+		return 0, fmt.Errorf("error getting family information for ethtool: %w", err)
 	}
 
-		suite.assertNoDomainWithContext(cleanupCtx, node, name)
-// TestAlpineBuiltinProfiles boots the stock ISO on each amd64 builtin guest ABI.
-// The selected profile is present before the VM is first created and started.
-func (suite *LibvirtSuite) TestAlpineBuiltinProfiles() {
-	node, nodeCtx := suite.requireAlpineGuestNode()
+	for _, g := range ethFamily.Groups {
+		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
+			return g.ID, nil
+		}
+	}
 
-	for _, test := range []struct {
-		name     string
-		machine  string
-		cpuMode  hypervisorhelpers.VirtualMachineProfileCPUMode
-		model    string
-		fallback string
-	}{
-		{
-			name:    "host",
-			machine: "q35",
-			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHostModel,
-		},
-		{
-			name:    "passthrough",
-			machine: "q35",
-			cpuMode: hypervisorhelpers.VirtualMachineProfileCPUModeHo
+	return 0, errors.New("could not find monitor multicast group ID for ethtool")
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	doc := suite.prepareAlpineGuestOnNode(node, nodeCtx, &ourRecord, 512<<20)
-// prepareAlpineGuestOnNode provisions the stock ISO with the requested RAM and optional NIC.
-func (suite *LibvirtSuite) prepareAlpineGuestOnNode(node string, nodeCtx context.Context, ourRecord *provision.DHCPRecord, memoryBytes uint64) *hypervisorcfg.VirtualMachineConfigV1Alpha1 {
+	conn *genetlink.Conn
+	watcher.conn, err = genetlink.Dial(nil)
+	ethFamily, err := watcher.conn.GetFamily(unix.ETHTOOL_GENL_NAME)
+		return nil, fmt.Errorf("error getting family information for ethtool: %w", err)
+	}
+
+	var monitorID uint32
+
+	for _, g := range ethFamily.Groups {
+		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
+			monitorID = g.ID
+			break
+		}
+	}
+
+	if monitorID == 0 {
+		return nil, errors.New("could not find monitor multicast group ID for ethtool")
+		for {
+			_, _, watchErr := watcher.conn.Receive()
+			if watchErr != nil {
+				return
+			}
+
+			trigger.QueueReconcile()
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe3aeb01` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e5e8729` are properly handled with clean fallback behavior.

@@ -4682,3 +4682,7 @@ Every entry in this ledger must capture:
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `c4e2dcf8` | Multi-dimensional audit evidence | 2026-10-25T04:56:59.302Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-25T04:57:21.235Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `3bf26499` | Multi-dimensional audit evidence | 2026-10-25T04:58:31.428Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `0770c5f3` | Multi-dimensional audit evidence | 2026-10-25T05:04:52.677Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `566f89e0` | Multi-dimensional audit evidence | 2026-10-25T05:04:54.216Z |
+| `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `3aae7bc7` | Multi-dimensional audit evidence | 2026-10-25T05:06:38.959Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-25T05:06:56.348Z |

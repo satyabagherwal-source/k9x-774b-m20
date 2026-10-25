@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:58:31.438Z",
-  "total_cycles_completed": 4652,
-  "total_learnings_persisted": 4652,
-  "total_rules_promoted": 3929,
+  "last_updated": "2026-10-25T05:06:56.352Z",
+  "total_cycles_completed": 4656,
+  "total_learnings_persisted": 4656,
+  "total_rules_promoted": 3936,
   "history": [
-    {
-      "timestamp": "2026-10-23T06:30:10.625Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:30:11.972Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:30:19.417Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:36:15.525Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T06:36:22.410Z",
       "repository": "appwrite/appwrite",
@@ -1403,6 +1375,34 @@
       "repository": "agent-of-empires/agent-of-empires",
       "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:04:52.686Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:04:54.225Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:06:38.969Z",
+      "repository": "pamburus/hl",
+      "learningId": "learn-github-pamburus-hl",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:06:56.352Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

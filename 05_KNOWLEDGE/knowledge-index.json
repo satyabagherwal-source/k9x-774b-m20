@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:58:31.372Z",
+  "last_updated": "2026-10-25T05:06:56.276Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38626,8 +38626,8 @@
       "slug": "pamburus-hl",
       "platform": "github",
       "source_url": "https://github.com/pamburus/hl",
-      "source_version": "3a71b1a5",
-      "content_hash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
+      "source_version": "3aae7bc7",
+      "content_hash": "b9d8366f507ad693264ad4e92a9cc1afc92a96a329eff90b9c0e027fe3abd38f",
       "dossier_path": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "promoted_rules": [
@@ -38640,6 +38640,21 @@
           "number": 2897,
           "title": "build(cross): link aarch64 musl without the noisy linker wrapper (#1601)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4066,
+          "title": "Platform-Agnostic Signal Interception with Debounced Process Termination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4067,
+          "title": "Strict Decimal Epoch Parser with Boundary Rounding Carry",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4068,
+          "title": "Asynchronous Safe RAII Resource Tear-Down for Blocking Descriptors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38647,7 +38662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T19:12:14.463Z",
+      "verified_at": "2026-10-25T05:06:38.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43444,8 +43459,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "7c40a452",
-      "content_hash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
+      "source_version": "0770c5f3",
+      "content_hash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -43473,6 +43488,11 @@
           "number": 3683,
           "title": "test: boot Alpine with builtin virtual machine profiles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4064,
+          "title": "ignore netlink recoverable errors in watchers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43480,7 +43500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:04:38.013Z",
+      "verified_at": "2026-10-25T05:04:52.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46137,8 +46157,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "3c134666",
-      "content_hash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
+      "source_version": "566f89e0",
+      "content_hash": "8559f334005d327dc08c39f9765c8c5184ceb62c40b19ceb6d1fc370ca838beb",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -46186,6 +46206,11 @@
           "number": 3963,
           "title": "Monotonic Cursor Synchronization for Polled Event Arrays",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4065,
+          "title": "ipn/ipnlocal: fix serve app caps leaking across mounts (#21931)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46193,7 +46218,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:42:01.244Z",
+      "verified_at": "2026-10-25T05:04:54.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60147,7 +60172,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "047bc01998259478a2cf9886ecbc715226c3cbd9fb10f25c24c0aebc14dd7b69",
+      "content_hash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [
@@ -60170,6 +60195,16 @@
           "number": 3179,
           "title": "Multi-Language Tokenizer Boundary Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4069,
+          "title": "Invariant Latent Scaling Normalization in Diffusion Autoencoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4070,
+          "title": "Bilingual Context Length & Sequence Alignment Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60177,7 +60212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T13:10:16.413Z",
+      "verified_at": "2026-10-25T05:06:56.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118473,6 +118508,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:58:31.361Z"
+    },
+    "rule-4064": {
+      "learning_id": "rule-4064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4064,
+      "title": "ignore netlink recoverable errors in watchers",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "0770c5f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:04:52.609Z"
+    },
+    "rule-4065": {
+      "learning_id": "rule-4065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4065,
+      "title": "ipn/ipnlocal: fix serve app caps leaking across mounts (#21931)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "566f89e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:04:54.149Z"
+    },
+    "rule-4066": {
+      "learning_id": "rule-4066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4066,
+      "title": "Platform-Agnostic Signal Interception with Debounced Process Termination",
+      "source_url": "https://github.com/pamburus/hl",
+      "source_version": "3aae7bc7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:06:38.891Z"
+    },
+    "rule-4067": {
+      "learning_id": "rule-4067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4067,
+      "title": "Strict Decimal Epoch Parser with Boundary Rounding Carry",
+      "source_url": "https://github.com/pamburus/hl",
+      "source_version": "3aae7bc7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:06:38.891Z"
+    },
+    "rule-4068": {
+      "learning_id": "rule-4068",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4068,
+      "title": "Asynchronous Safe RAII Resource Tear-Down for Blocking Descriptors",
+      "source_url": "https://github.com/pamburus/hl",
+      "source_version": "3aae7bc7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:06:38.891Z"
+    },
+    "rule-4069": {
+      "learning_id": "rule-4069",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4069,
+      "title": "Invariant Latent Scaling Normalization in Diffusion Autoencoders",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:06:56.265Z"
+    },
+    "rule-4070": {
+      "learning_id": "rule-4070",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4070,
+      "title": "Bilingual Context Length & Sequence Alignment Boundary Guard",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:06:56.265Z"
     }
   },
   "aliases": {

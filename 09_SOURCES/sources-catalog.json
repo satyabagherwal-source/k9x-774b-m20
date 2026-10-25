@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "047bc01998259478a2cf9886ecbc715226c3cbd9fb10f25c24c0aebc14dd7b69",
-    "lastHarvestedAt": "2026-10-20T13:10:16.482Z",
+    "contentHash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
+    "lastHarvestedAt": "2026-10-25T05:06:56.348Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "3c134666",
+    "sourceVersion": "566f89e0",
     "license": "BSD-3-Clause",
-    "contentHash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
-    "lastHarvestedAt": "2026-10-24T20:42:01.315Z",
+    "contentHash": "8559f334005d327dc08c39f9765c8c5184ceb62c40b19ceb6d1fc370ca838beb",
+    "lastHarvestedAt": "2026-10-25T05:04:54.216Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "7c40a452",
+    "sourceVersion": "0770c5f3",
     "license": "MPL-2.0",
-    "contentHash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
-    "lastHarvestedAt": "2026-10-22T18:04:38.060Z",
+    "contentHash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
+    "lastHarvestedAt": "2026-10-25T05:04:52.677Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7473,10 +7473,10 @@
     "repository": "pamburus/hl",
     "platform": "github",
     "sourceUrl": "https://github.com/pamburus/hl",
-    "sourceVersion": "3a71b1a5",
+    "sourceVersion": "3aae7bc7",
     "license": "MIT",
-    "contentHash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
-    "lastHarvestedAt": "2026-10-21T19:12:14.569Z",
+    "contentHash": "b9d8366f507ad693264ad4e92a9cc1afc92a96a329eff90b9c0e027fe3abd38f",
+    "lastHarvestedAt": "2026-10-25T05:06:38.959Z",
     "learningId": "learn-github-pamburus-hl"
   },
   "linkwarden-linkwarden": {

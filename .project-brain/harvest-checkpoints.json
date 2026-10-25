@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:58:31.442Z",
+  "last_updated": "2026-10-25T05:06:56.356Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "047bc01998259478a2cf9886ecbc715226c3cbd9fb10f25c24c0aebc14dd7b69",
-      "verified_at": "2026-10-20T13:10:16.492Z",
+      "content_hash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
+      "verified_at": "2026-10-25T05:06:56.355Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:10:16.492Z"
+      "last_updated": "2026-10-25T05:06:56.355Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
-      "verified_at": "2026-10-24T20:42:01.328Z",
+      "content_hash": "8559f334005d327dc08c39f9765c8c5184ceb62c40b19ceb6d1fc370ca838beb",
+      "verified_at": "2026-10-25T05:04:54.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:42:01.328Z"
+      "last_updated": "2026-10-25T05:04:54.229Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
-      "verified_at": "2026-10-22T18:04:38.070Z",
+      "content_hash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
+      "verified_at": "2026-10-25T05:04:52.690Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:04:38.070Z"
+      "last_updated": "2026-10-25T05:04:52.690Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11256,14 +11256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pamburus-hl",
-      "content_hash": "be291c48098c65db62dbd712bc959b24e7b084adf1e5d4a18b50e69eb911ad8f",
-      "verified_at": "2026-10-21T19:12:14.580Z",
+      "content_hash": "b9d8366f507ad693264ad4e92a9cc1afc92a96a329eff90b9c0e027fe3abd38f",
+      "verified_at": "2026-10-25T05:06:38.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T19:12:14.580Z"
+      "last_updated": "2026-10-25T05:06:38.972Z"
     },
     "linkwarden/linkwarden": {
       "repository": "linkwarden/linkwarden",

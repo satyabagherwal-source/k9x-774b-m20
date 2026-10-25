@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-T4A6",
-    "timestamp": "2026-10-21T03:24:18.798Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "a27607a838d42636f6c5fb19f6650f724bfa351e98ccc0ac01ffcb0d962f92e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-TB9N",
-    "timestamp": "2026-10-21T03:24:27.851Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-12R0",
-    "timestamp": "2026-10-21T03:30:30.060Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "66c6bb3e2421961c03d9fc9bc267a8e29b6d50f4d6a811d52c7ae1635f6a5a0e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-1DDF",
-    "timestamp": "2026-10-21T03:30:43.827Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "66543ba9fe7027efbc2667592533bb95af14da74c7c4940970651e783724ddf5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-9EBG",
     "timestamp": "2026-10-21T03:36:58.300Z",
     "repository": "openai-community/gpt2",
@@ -7492,6 +7432,66 @@
     "contentHash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-5UPU",
+    "timestamp": "2026-10-25T05:04:52.674Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-5VWL",
+    "timestamp": "2026-10-25T05:04:54.213Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "8559f334005d327dc08c39f9765c8c5184ceb62c40b19ceb6d1fc370ca838beb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-84Q4",
+    "timestamp": "2026-10-25T05:06:38.956Z",
+    "repository": "pamburus/hl",
+    "learningId": "learn-github-pamburus-hl",
+    "contentHash": "b9d8366f507ad693264ad4e92a9cc1afc92a96a329eff90b9c0e027fe3abd38f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8I55",
+    "timestamp": "2026-10-25T05:06:56.345Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
