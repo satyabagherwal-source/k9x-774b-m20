@@ -4799,3 +4799,6 @@
 | `CYCLE-20261025-ZJVW` | `2026-10-25T11:59:52.940Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4275` | Yes (`a7aace4e...`) |
 | `CYCLE-20261025-ZNTT` | `2026-10-25T11:59:58.049Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4276` | Yes (`979f0a51...`) |
 | `CYCLE-20261025-ZOTH` | `2026-10-25T11:59:59.333Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4277, Rule 4278` | Yes (`ad9506a9...`) |
+| `CYCLE-20261025-7EN4` | `2026-10-25T12:05:59.392Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | Yes (`4edb0339...`) |
+| `CYCLE-20261025-7IHC` | `2026-10-25T12:06:04.368Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 881, Rule 4279` | Yes (`7c09b547...`) |
+| `CYCLE-20261025-DQ9K` | `2026-10-25T12:10:54.392Z` | `carbon-design-system/carbon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4280` | Yes (`99eb769a...`) |

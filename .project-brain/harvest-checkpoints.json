@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T11:59:59.344Z",
+  "last_updated": "2026-10-25T12:10:54.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
-      "verified_at": "2026-10-20T17:10:19.823Z",
+      "content_hash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
+      "verified_at": "2026-10-25T12:06:04.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:10:19.823Z"
+      "last_updated": "2026-10-25T12:06:04.377Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -9531,14 +9531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon",
-      "content_hash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
-      "verified_at": "2026-10-23T06:36:15.528Z",
+      "content_hash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
+      "verified_at": "2026-10-25T12:10:54.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:36:15.528Z"
+      "last_updated": "2026-10-25T12:10:54.399Z"
     },
     "emilkowalski/vaul": {
       "repository": "emilkowalski/vaul",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
-      "verified_at": "2026-10-20T19:50:42.334Z",
+      "content_hash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
+      "verified_at": "2026-10-25T12:05:59.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:50:42.334Z"
+      "last_updated": "2026-10-25T12:05:59.403Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",

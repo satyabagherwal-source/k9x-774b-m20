@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:43:23.875Z",
+  "last_updated": "2026-10-25T12:05:59.399Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2642,6 +2642,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-clockworklabs-spacetimedb"
+    },
+    {
+      "id": "CD-7ENB",
+      "directive_title": "Empirical Invariant Guard in index.js",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "necolas/react-native-web",
+      "source_commit": "2b1ee50a",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-necolas-react-native-web"
     }
   ]
 }

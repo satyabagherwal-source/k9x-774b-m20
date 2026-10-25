@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T11:59:59.303Z",
+  "last_updated": "2026-10-25T12:10:54.345Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5273,8 +5273,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "f4967e5c",
-      "content_hash": "21d9d2990fba1c390f5b563eb73ee3beef42ad0fe5493d18e5f8648fb2de371b",
+      "source_version": "dc9a20d0",
+      "content_hash": "99eb769a293832d0728098c240eee2beec14ee737bce944ffceb06233e2da78e",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -5312,6 +5312,11 @@
           "number": 3791,
           "title": "TagOverflow): use unique id for overflow popover (#23791)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4280,
+          "title": "MultiSelect): omit empty aria-activedescendant on the toggle button (#23819)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5319,7 +5324,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:36:15.473Z",
+      "verified_at": "2026-10-25T12:10:54.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26680,7 +26685,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "a1d2bc347be6b6aa4ea653de0b2c8b765e2638f702ed5d06d24b5e2d65024265",
+      "content_hash": "7c09b5474c05292c8382694cea686baa3d13c9afbc2b66177f9132c7f7a4b304",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -26690,6 +26695,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0",
           "verified_at": "2026-10-11T11:07:49.943Z"
+        },
+        {
+          "number": 881,
+          "title": "The Few-Step Distillation Scheduler Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4279,
+          "title": "The Quantized LoRA Merge Boundary Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26710,7 +26725,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-20T17:10:19.754Z",
+      "verified_at": "2026-10-25T12:06:04.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36456,8 +36471,8 @@
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "ad047791",
-      "content_hash": "e421dee75383bc1b2634018ba9de0571f624713f397e0c74dc456d01505511f4",
+      "source_version": "2b1ee50a",
+      "content_hash": "4edb0339ff7e244f8b661c392e7aece2fe0cefdc379679c69294d47753038aa7",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "promoted_rules": [
@@ -36482,7 +36497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T19:50:42.227Z",
+      "verified_at": "2026-10-25T12:05:59.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73155,15 +73170,15 @@
       "learning_id": "rule-881",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 881,
-      "title": "The Few-Step Distillation Scheduler Invariant (Harvested from Viggle/Qwen-Image-2.1-viggle-turbo)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "The Few-Step Distillation Scheduler Invariant",
+      "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.815Z"
+      "verified_at": "2026-10-25T12:06:04.322Z"
     },
     "rule-882": {
       "learning_id": "rule-882",
@@ -122673,6 +122688,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T11:59:59.297Z"
+    },
+    "rule-4279": {
+      "learning_id": "rule-4279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4279,
+      "title": "The Quantized LoRA Merge Boundary Rule",
+      "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:06:04.322Z"
+    },
+    "rule-4280": {
+      "learning_id": "rule-4280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4280,
+      "title": "MultiSelect): omit empty aria-activedescendant on the toggle button (#23819)",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "dc9a20d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T12:10:54.338Z"
     }
   },
   "aliases": {

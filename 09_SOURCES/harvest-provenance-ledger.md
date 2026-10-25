@@ -4806,3 +4806,6 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `f9bfdd48` | Multi-dimensional audit evidence | 2026-10-25T11:59:52.943Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `71d0dcf6` | Multi-dimensional audit evidence | 2026-10-25T11:59:58.051Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-25T11:59:59.335Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `2b1ee50a` | Multi-dimensional audit evidence | 2026-10-25T12:05:59.395Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-25T12:06:04.371Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `dc9a20d0` | Multi-dimensional audit evidence | 2026-10-25T12:10:54.394Z |
