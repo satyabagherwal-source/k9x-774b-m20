@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
-    "lastHarvestedAt": "2026-10-20T23:04:18.372Z",
+    "contentHash": "a170f5aa4f27d6a6a8638426c50cbf70fe0f8e7fb43228da51e5b33d95abc986",
+    "lastHarvestedAt": "2026-10-25T18:47:17.544Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {

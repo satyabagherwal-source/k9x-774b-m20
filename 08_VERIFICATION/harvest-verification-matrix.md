@@ -4947,3 +4947,4 @@
 | `CYCLE-20261025-3CHB` | `2026-10-25T18:34:44.591Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4016` | Yes (`5c3c7bad...`) |
 | `CYCLE-20261025-B48A` | `2026-10-25T18:40:47.146Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4413` | Yes (`b4ec955a...`) |
 | `CYCLE-20261025-BEBD` | `2026-10-25T18:41:00.217Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4414, Rule 4415, Rule 4416` | Yes (`98acc68f...`) |
+| `CYCLE-20261025-JHGL` | `2026-10-25T18:47:17.541Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a170f5aa...`) |

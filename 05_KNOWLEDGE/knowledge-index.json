@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T18:41:00.184Z",
+  "last_updated": "2026-10-25T18:47:17.491Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61831,7 +61831,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "d34e504eaba884df9017204b865f5194a06b8d83bdb80baae7e0e7acd8c71778",
+      "content_hash": "a170f5aa4f27d6a6a8638426c50cbf70fe0f8e7fb43228da51e5b33d95abc986",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [],
@@ -61840,7 +61840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T23:04:18.323Z",
+      "verified_at": "2026-10-25T18:47:17.481Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

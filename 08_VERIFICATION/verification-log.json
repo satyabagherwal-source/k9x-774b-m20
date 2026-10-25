@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-81AO",
-    "timestamp": "2026-10-22T21:35:20.208Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "f6d9511e888b789348c4b6a1014711b6622bdcb0901e26f201be1b275c05910a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-85PJ",
     "timestamp": "2026-10-22T21:35:25.927Z",
     "repository": "langchain4j/langchain4j",
@@ -7492,6 +7477,21 @@
     "contentHash": "98acc68f055bfe4fa5f9113f9c10f59038fc3f666df20b58089f81611ded0ce0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JHGL",
+    "timestamp": "2026-10-25T18:47:17.541Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "a170f5aa4f27d6a6a8638426c50cbf70fe0f8e7fb43228da51e5b33d95abc986",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

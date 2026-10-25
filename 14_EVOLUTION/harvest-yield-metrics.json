@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:41:00.222Z",
-  "total_cycles_completed": 4924,
-  "total_learnings_persisted": 4924,
+  "last_updated": "2026-10-25T18:47:17.548Z",
+  "total_cycles_completed": 4925,
+  "total_learnings_persisted": 4925,
   "total_rules_promoted": 4300,
   "history": [
-    {
-      "timestamp": "2026-10-25T08:57:57.167Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T08:58:12.473Z",
       "repository": "nguyenphutrong/quotio",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:47:17.548Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
