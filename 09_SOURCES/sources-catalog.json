@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
-    "lastHarvestedAt": "2026-10-21T00:56:45.766Z",
+    "contentHash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
+    "lastHarvestedAt": "2026-10-25T20:36:41.690Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "dd8250de",
+    "sourceVersion": "921b14bd",
     "license": "Apache-2.0",
-    "contentHash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
-    "lastHarvestedAt": "2026-10-25T04:19:00.897Z",
+    "contentHash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
+    "lastHarvestedAt": "2026-10-25T20:36:46.650Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T20:30:15.310Z",
+  "last_updated": "2026-10-25T20:36:46.603Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22205,13 +22205,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
+      "content_hash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
         {
           "number": 378,
           "title": "Tokenizer Determinism & Unicode Normalization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 416,
+          "title": "Tokenizer Special Token Isolation Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -22293,6 +22298,16 @@
           "number": 3470,
           "title": "Strict Delimiter Isolation in Structured Chat Template Serialization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4443,
+          "title": "KV-Cache Memory Bound Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4444,
+          "title": "Attention Mask Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22312,7 +22327,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-21T00:56:45.683Z",
+      "verified_at": "2026-10-25T20:36:41.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52351,8 +52366,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "dd8250de",
-      "content_hash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
+      "source_version": "921b14bd",
+      "content_hash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -52385,6 +52400,11 @@
           "number": 4041,
           "title": "Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4445,
+          "title": "Reduce ut_restore CPU requirement from 4 to 1 (#56745)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52392,7 +52412,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:19:00.842Z",
+      "verified_at": "2026-10-25T20:36:46.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67461,15 +67481,15 @@
       "learning_id": "rule-416",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 416,
-      "title": "Tokenizer Special Token Isolation Invariant (Harvested from meta-llama/Llama-2-7b-chat-hf)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Special Token Isolation Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.811Z"
+      "verified_at": "2026-10-25T20:36:41.627Z"
     },
     "rule-417": {
       "learning_id": "rule-417",
@@ -125936,6 +125956,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T20:23:52.565Z"
+    },
+    "rule-4443": {
+      "learning_id": "rule-4443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4443,
+      "title": "KV-Cache Memory Bound Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:36:41.627Z"
+    },
+    "rule-4444": {
+      "learning_id": "rule-4444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4444,
+      "title": "Attention Mask Alignment Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:36:41.627Z"
+    },
+    "rule-4445": {
+      "learning_id": "rule-4445",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4445,
+      "title": "Reduce ut_restore CPU requirement from 4 to 1 (#56745)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "921b14bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:36:46.592Z"
     }
   },
   "aliases": {

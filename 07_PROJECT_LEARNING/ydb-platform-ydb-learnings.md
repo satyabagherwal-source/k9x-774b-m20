@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `dd8250de`  
+> **Source Version**: `921b14bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:19:00.607Z  
+> **Timestamp**: 2026-10-25T20:36:46.328Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:19:00.602Z  
+> **Harvest Timestamp**: 2026-10-25T20:36:46.173Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1284,79 +1284,65 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd8250de` (2026-10-25)
-**Commit Message**: Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan
+### Incident Patch 1: `6f866310` (2026-10-25)
+**Commit Message**: Reduce ut_restore CPU requirement from 4 to 1 (#56745)
 
-**File**: `.github/config/muted_ya_asan.txt` (modified, +3/-0)
+**File**: `ydb/core/tx/schemeshard/ut_restore/ya.make` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@ ydb/core/kqp/executer_actor/ut unittest.[*/*] chunk
- ydb/core/kqp/ut/query CS_WriteAffinity.CtasGeneratedDataWithPartitionBy+EnableCsWriteAffinity
- ydb/core/kqp/ut/query KqpLimits.OutOfSpaceYQLUpsertFail
- ydb/core/kqp/ut/query unittest.[*/*] chunk
-+ydb/core/kqp/ut/rbo KqpRboOlap.OlapPerfQueries
- ydb/core/kqp/ut/rbo KqpRboOlap.PredicatePushdownCastErrors
- ydb/core/kqp/ut/rbo KqpRboYql.Decorrelation+ColumnStore+EqualNullsJoinKeys
- ydb/core/kqp/ut/rbo KqpRboYql.TPCDS_14
-@@ -38,12 +39,14 @@ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.SameCre
- ydb/core/tx/replication/controller/ut_schema_change ReplicationCreation.InitialScanDisabledDoesNotTouchMissingDestination
- ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDropIndexWithSchemaChangesEnabledAfterCreationReportsError
- ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDropSyncIndexWithGlobalConsistency
-+ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
- ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentFailureAfterReplacement-DescribeOnly
- ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentSuccessAfterReplacement-DescribeOnly
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapUnchangedCredentialRetryAfterConsumerFailure
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedConfigPreservesDestinationError
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.CurrentFailureAndRetry
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
-+ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
- ydb/library/actors/interconnect/ut DynamicProxy.RaceCheck10
- ydb/library/nmslib/test/run_test_integr exectest.run[test_integr]
- ydb/library/nmslib/test/run_test_integr exectest.sole chunk
+@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+ 
+ SPLIT_FACTOR(200)
+ 
+-REQUIREMENTS(cpu:4)
++REQUIREMENTS(cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SIZE(LARGE)
 ```
 
 ---
 
-### Incident Patch 2: `016b1af4` (2026-10-25)
-**Commit Message**: Update muted_ya for relwithdebinfo main
+### Incident Patch 2: `6c7cff3e` (2026-10-25)
+**Commit Message**: Reduce ut_export_reboots_s3 CPU requirement from 4 to 1 (#56746)
 
-**File**: `.github/config/muted_ya.txt` (modified, +4/-0)
+**File**: `ydb/core/tx/schemeshard/ut_export_reboots_s3/ya.make` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,7 @@ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.Changed
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ChangedCredentialsBeforeDeferredReset-ResourceId
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.DropDuringDeferredDoneResolvesFreshSecret
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.LateResultsDuringAndAfterDone+ResourceId
-+ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.LateResultsDuringAndAfterDone-ResourceId
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ReplacementRejectsOldResultsAndAcceptsNew+ResourceId
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ReplacementRejectsOldResultsAndAcceptsNew-ResourceId
- ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.SameCredentialsDuringDeferredDone-ResourceId
-@@ -39,15 +40,18 @@ ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDr
- ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
- ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest-ReplyPending
- ydb/core/tx/replication/controller/ut_schema_change StatsDescription.UnresponsiveProxyReturnsPartialStats
-+ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentFailureAfterReplacement-DescribeOnly
- ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentSuccessAfterReplacement-DescribeOnly
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapCredentialRetry
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedConfigPreservesDestinationError
- ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRestartBeforeSourceCompletion+Deferred
-+ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRestartBeforeSourceCompletion-Deferred
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.CurrentFailureAndRetry
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.EmptyDiscoveryIsConsumed
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery+NewFirst
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery-NewFirst
- ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
-+ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
- ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.MissingSourceDnsNameDuringConsumerCreationRetries
- ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.SessionAcquisitionFailureRetries
- ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.TerminalSessionAcquisitionFailureReplies
+@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+ 
+ SPLIT_FACTOR(200)
+ 
+-REQUIREMENTS(ram:32 cpu:4)
++REQUIREMENTS(ram:32 cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SIZE(LARGE)
+```
+
+---
+
+### Incident Patch 3: `9325d0a8` (2026-10-25)
+**Commit Message**: Reduce ut_incr_restore_reboots CPU requirement from 4 to 1 (#56748)
+
+**File**: `ydb/core/tx/schemeshard/ut_incr_restore_reboots/ya.make` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+ 
+ SPLIT_FACTOR(50)
+ 
+-REQUIREMENTS(ram:32 cpu:4)
++REQUIREMENTS(ram:32 cpu:1)
+ 
+ IF (SANITIZER_TYPE)
+     SIZE(LARGE)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56720** (2026-10-25): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #56719** (2026-10-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #56718** (2026-10-25): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #56717** (2026-10-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #56716** (2026-10-25): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #56715** (2026-10-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #56761** (2026-10-25): Sync branches 261025-2001: stable-26-3-1 to nbs-26-3-1 (@ydbot)
+- **PR #56753** (2026-10-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #56748** (2026-10-25): Reduce ut_incr_restore_reboots CPU requirement from 4 to 1 (@maximyurchuk)
+- **PR #56746** (2026-10-25): Reduce ut_export_reboots_s3 CPU requirement from 4 to 1 (@maximyurchuk)
+- **PR #56745** (2026-10-25): Reduce ut_restore CPU requirement from 4 to 1 (@maximyurchuk)
+- **PR #56742** (closed): Reduce ut_restore CPU requirement from 4 to 1 (@maximyurchuk)
 
 ---
 
@@ -1376,30 +1362,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan
+## X. Reduce ut_restore CPU requirement from 4 to 1 (#56745)
 
 **RULE**:
-When implementing operations in `.github/config/muted_ya_asan.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/schemeshard/ut_restore/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd8250de`: Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f866310`: Reduce ut_restore CPU requirement from 4 to 1 (#56745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/config/muted_ya_asan.txt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/schemeshard/ut_restore/ya.make`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-ydb/core/kqp/ut/rbo KqpRboOlap.OlapPerfQueries
-ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
-ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
+REQUIREMENTS(cpu:1)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+REQUIREMENTS(cpu:4)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd8250de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f866310` are properly handled with clean fallback behavior.

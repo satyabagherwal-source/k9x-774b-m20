@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T20:30:15.384Z",
-  "total_cycles_completed": 4960,
-  "total_learnings_persisted": 4960,
-  "total_rules_promoted": 4326,
+  "last_updated": "2026-10-25T20:36:46.654Z",
+  "total_cycles_completed": 4962,
+  "total_learnings_persisted": 4962,
+  "total_rules_promoted": 4330,
   "history": [
-    {
-      "timestamp": "2026-10-25T11:20:49.959Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T11:20:55.266Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T11:31:38.835Z",
       "repository": "ajeetdsouza/zoxide",
@@ -1403,6 +1389,20 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-openai-gpt-oss-20b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:36:41.694Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T20:36:46.654Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

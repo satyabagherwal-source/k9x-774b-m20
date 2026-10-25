@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T20:30:15.393Z",
+  "last_updated": "2026-10-25T20:36:46.662Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "dcb8eed888917fa3626e2418119593ba757189a4e792e08feeea65963252c433",
-      "verified_at": "2026-10-21T00:56:45.774Z",
+      "content_hash": "e488462a3831525c5bb0dec5c3f81f53d0e688ed8ddb4e51a464733d057ada8c",
+      "verified_at": "2026-10-25T20:36:41.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T00:56:45.774Z"
+      "last_updated": "2026-10-25T20:36:41.697Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
-      "verified_at": "2026-10-25T04:19:00.908Z",
+      "content_hash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
+      "verified_at": "2026-10-25T20:36:46.657Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:19:00.908Z"
+      "last_updated": "2026-10-25T20:36:46.657Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

@@ -4990,3 +4990,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-25T20:23:37.578Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `545b420b` | Multi-dimensional audit evidence | 2026-10-25T20:23:52.606Z |
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T20:30:15.377Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T20:36:41.690Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `921b14bd` | Multi-dimensional audit evidence | 2026-10-25T20:36:46.650Z |
