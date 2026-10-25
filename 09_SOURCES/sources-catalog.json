@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
-    "lastHarvestedAt": "2026-10-21T00:02:04.336Z",
+    "contentHash": "b5e4276f42af927fea016888c18df62c3d5f4663594e707a09e1246fd44098a6",
+    "lastHarvestedAt": "2026-10-25T19:45:00.077Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "883413ab",
+    "sourceVersion": "e72789f4",
     "license": "NOASSERTION",
-    "contentHash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
-    "lastHarvestedAt": "2026-10-25T16:41:25.974Z",
+    "contentHash": "678f33447e0bf245f5461a1c1782ab9b8a3ed409fac0df0efb7d12321d7edb9c",
+    "lastHarvestedAt": "2026-10-25T19:45:11.432Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "91ffbe06",
+    "sourceVersion": "f2f80ab7",
     "license": "NOASSERTION",
-    "contentHash": "9232c672923a83064f8bae492f2d936291506c062f4f8e49402eaf0a68cc662e",
-    "lastHarvestedAt": "2026-10-25T03:22:13.883Z",
+    "contentHash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
+    "lastHarvestedAt": "2026-10-25T19:45:16.757Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "a20c79b7",
-    "license": "Apache-2.0",
-    "contentHash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
-    "lastHarvestedAt": "2026-10-24T19:52:49.970Z",
+    "sourceVersion": "15fa673c",
+    "license": "WTFPL",
+    "contentHash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
+    "lastHarvestedAt": "2026-10-25T19:45:01.837Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {

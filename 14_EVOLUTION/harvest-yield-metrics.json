@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:38:36.259Z",
-  "total_cycles_completed": 4941,
-  "total_learnings_persisted": 4941,
-  "total_rules_promoted": 4310,
+  "last_updated": "2026-10-25T19:45:16.762Z",
+  "total_cycles_completed": 4945,
+  "total_learnings_persisted": 4945,
+  "total_rules_promoted": 4313,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:10:58.473Z",
-      "repository": "influxdata/influxdb",
-      "learningId": "learn-github-influxdata-influxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:16:52.882Z",
-      "repository": "vikejs/vike",
-      "learningId": "learn-github-vikejs-vike",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:16:54.929Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:16:58.797Z",
-      "repository": "lysine-dev/okio",
-      "learningId": "learn-github-lysine-dev-okio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:17:01.849Z",
       "repository": "autotrust/JEV-35B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T19:38:36.259Z",
       "repository": "emberstack/kubernetes-reflector",
       "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:45:00.082Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:45:01.841Z",
+      "repository": "nezhahq/nezha",
+      "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:45:11.437Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:45:16.762Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

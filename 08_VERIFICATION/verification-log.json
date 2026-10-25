@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-CL32",
-    "timestamp": "2026-10-23T06:02:45.566Z",
-    "repository": "guokaigdg/animal-island-ui",
-    "learningId": "learn-github-guokaigdg-animal-island-ui",
-    "contentHash": "762a9359f3b7dee1cb68e94e9b65e877a661ee8d4ff7de44cff188907979efd1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-COOL",
-    "timestamp": "2026-10-23T06:02:50.229Z",
-    "repository": "scrapinghub/dateparser",
-    "learningId": "learn-github-scrapinghub-dateparser",
-    "contentHash": "51d0bec1ca9296eb18f9ea8e7c2a7a02a32a6f56494f2cd1d05f534c9288282b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-CRKB",
-    "timestamp": "2026-10-23T06:02:53.963Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "a04b5269518276f86de4ade449f6a6a02184d73fc59d456e89725ac042827d4b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-CSGI",
-    "timestamp": "2026-10-23T06:02:55.122Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "291421d5869bfd0bc6a4376b9e8e8dc672677cd5f6195a4ea5ee9424b3186960",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-L4KR",
     "timestamp": "2026-10-23T06:09:24.075Z",
     "repository": "iliyami/MacSai",
@@ -7490,6 +7430,66 @@
     "repository": "emberstack/kubernetes-reflector",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
     "contentHash": "93da8a4c6fbe8fadccd4cb3b19004f8526822ef848974583c98f9debcc5260a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LP62",
+    "timestamp": "2026-10-25T19:45:00.074Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "b5e4276f42af927fea016888c18df62c3d5f4663594e707a09e1246fd44098a6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LQIX",
+    "timestamp": "2026-10-25T19:45:01.833Z",
+    "repository": "nezhahq/nezha",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-LXXH",
+    "timestamp": "2026-10-25T19:45:11.429Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "678f33447e0bf245f5461a1c1782ab9b8a3ed409fac0df0efb7d12321d7edb9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-M21E",
+    "timestamp": "2026-10-25T19:45:16.754Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

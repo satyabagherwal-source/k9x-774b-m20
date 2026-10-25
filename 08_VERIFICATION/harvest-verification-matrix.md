@@ -4964,3 +4964,7 @@
 | `CYCLE-20261025-51YY` | `2026-10-25T19:32:03.514Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4425` | Yes (`78d75c28...`) |
 | `CYCLE-20261025-DBL7` | `2026-10-25T19:38:29.227Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`8d38b9a6...`) |
 | `CYCLE-20261025-DH0B` | `2026-10-25T19:38:36.251Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4426` | Yes (`93da8a4c...`) |
+| `CYCLE-20261025-LP62` | `2026-10-25T19:45:00.074Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`b5e4276f...`) |
+| `CYCLE-20261025-LQIX` | `2026-10-25T19:45:01.833Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4427` | Yes (`bde7a8dd...`) |
+| `CYCLE-20261025-LXXH` | `2026-10-25T19:45:11.429Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4428` | Yes (`678f3344...`) |
+| `CYCLE-20261025-M21E` | `2026-10-25T19:45:16.754Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4429` | Yes (`c1a04817...`) |

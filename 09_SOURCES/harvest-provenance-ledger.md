@@ -4971,3 +4971,7 @@ Every entry in this ledger must capture:
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `a3909eff` | Multi-dimensional audit evidence | 2026-10-25T19:32:03.517Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-25T19:38:29.231Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `65460492` | Multi-dimensional audit evidence | 2026-10-25T19:38:36.254Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T19:45:00.077Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `15fa673c` | Multi-dimensional audit evidence | 2026-10-25T19:45:01.837Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `e72789f4` | Multi-dimensional audit evidence | 2026-10-25T19:45:11.432Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `f2f80ab7` | Multi-dimensional audit evidence | 2026-10-25T19:45:16.757Z |

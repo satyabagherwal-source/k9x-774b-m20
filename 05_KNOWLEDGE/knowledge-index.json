@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:38:36.195Z",
+  "last_updated": "2026-10-25T19:45:16.700Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2649,8 +2649,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "91ffbe06",
-      "content_hash": "9232c672923a83064f8bae492f2d936291506c062f4f8e49402eaf0a68cc662e",
+      "source_version": "f2f80ab7",
+      "content_hash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2678,6 +2678,11 @@
           "number": 4012,
           "title": "Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expan",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4429,
+          "title": "Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2685,7 +2690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:22:13.817Z",
+      "verified_at": "2026-10-25T19:45:16.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11877,8 +11882,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "883413ab",
-      "content_hash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
+      "source_version": "e72789f4",
+      "content_hash": "678f33447e0bf245f5461a1c1782ab9b8a3ed409fac0df0efb7d12321d7edb9c",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -11961,6 +11966,11 @@
           "number": 4382,
           "title": "test): give each test process its own temp root for node data dirs (#5986)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4428,
+          "title": "ring): an expected inbound connection starts without a peer identity (#5989)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11968,7 +11978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:41:25.903Z",
+      "verified_at": "2026-10-25T19:45:11.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19790,7 +19800,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "d57ec8f6d9eb6f968fb30d417c4d1a4417f5076b6a8f9190a731b591007bb6f3",
+      "content_hash": "b5e4276f42af927fea016888c18df62c3d5f4663594e707a09e1246fd44098a6",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [
@@ -19843,7 +19853,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-10-21T00:02:04.245Z",
+      "verified_at": "2026-10-25T19:45:00.004Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37388,8 +37398,8 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "a20c79b7",
-      "content_hash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
+      "source_version": "15fa673c",
+      "content_hash": "bde7a8dd2a22d047b2e055b0064f6596402df48e33b2116a207c2ed73ea485f4",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
@@ -37412,6 +37422,11 @@
           "number": 3932,
           "title": "Orphaned Relational Aggregate Invariant Guard (Safe Historical Ingestion)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4427,
+          "title": "test: cover embedded and local frontend path confinement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37419,7 +37434,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:52:49.909Z",
+      "verified_at": "2026-10-25T19:45:01.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125604,6 +125619,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T19:38:36.183Z"
+    },
+    "rule-4427": {
+      "learning_id": "rule-4427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4427,
+      "title": "test: cover embedded and local frontend path confinement",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "15fa673c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:45:01.766Z"
+    },
+    "rule-4428": {
+      "learning_id": "rule-4428",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4428,
+      "title": "ring): an expected inbound connection starts without a peer identity (#5989)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "e72789f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:45:11.347Z"
+    },
+    "rule-4429": {
+      "learning_id": "rule-4429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4429,
+      "title": "Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "f2f80ab7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T19:45:16.689Z"
     }
   },
   "aliases": {

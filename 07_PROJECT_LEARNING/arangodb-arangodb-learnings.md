@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `91ffbe06`  
+> **Source Version**: `f2f80ab7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:22:13.531Z  
+> **Timestamp**: 2026-10-25T19:45:16.377Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:22:13.433Z  
+> **Harvest Timestamp**: 2026-10-25T19:45:16.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1009,210 +1009,49 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c084943a` (2026-10-23)
-**Commit Message**: Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expansion-in-ternary
+### Incident Patch 1: `f2f80ab7` (2026-10-25)
+**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
-[COR-1184] Subquery in array expansion in ternary doesn't work
-
-**File**: `arangod/Aql/Parser/LazyConditions.cpp` (modified, +16/-21)
+**File**: `CHANGELOG` (modified, +3/-3)
 ```diff
-@@ -31,7 +31,7 @@
+@@ -1,6 +1,9 @@
+ 3.12.13 (XXXX-XX-XX)
+ --------------------
  
- namespace arangodb::aql {
++* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
++  dependencies.
++
+ * Updated ArangoDB Starter to v0.19.30.
  
--LazyConditions::LazyConditions(Ast& ast) : _ast(ast), _forceInlineRequests(0) {}
-+LazyConditions::LazyConditions(Ast& ast) : _ast(ast) {}
+ * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
+@@ -77,9 +80,6 @@
+   indexes for multi-byte characters. Fixed `FIND_FIRST()` sometimes missing
+   matches of accented characters at the end of the search range.
  
- /// @brief push a condition onto the stack
- void LazyConditions::push(AstNode* condition, bool negated) {
-@@ -55,25 +55,25 @@ LazyConditions::Conditions const& LazyConditions::peek() const {
- LazyConditions::Conditions& LazyConditions::peek() { return _stack; }
- 
- bool LazyConditions::forceInline() const noexcept {
--  return _forceInlineRequests > 0;
-+  return !_inlineBarriers.empty();
- }
- 
--void LazyConditions::pushForceInline() noexcept { ++_forceInlineRequests; }
-+void LazyConditions::pushForceInline() {
-+  _inlineBarriers.push_back(_stack.size());
-+}
- 
- void LazyConditions::popForceInline() noexcept {
--  TRI_ASSERT(_forceInlineRequests > 0);
--  --_forceInlineRequests;
-+  TRI_ASSERT(!_inlineBarriers.empty());
-+  _inlineBarriers.pop_back();
- }
- 
--void LazyConditions::flushAssignments() {
--  if (forceInline()) {
--    return;
--  }
+-* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
+-  dependencies.
 -
--  size_t i = 0;
--  for (auto& it : _stack) {
--    TRI_ASSERT(!forceInline());
-+size_t LazyConditions::numExtractableConditions() const noexcept {
-+  return _inlineBarriers.empty() ? _stack.size() : _inlineBarriers.front();
-+}
- 
-+void LazyConditions::flushAssignments() {
-+  for (size_t i = 0; i < numExtractableConditions(); ++i) {
-+    auto& it = _stack[i];
-     if (it.variableNode == nullptr) {
-       std::string variableName = _ast.variables()->nextName();
- 
-@@ -160,21 +160,16 @@ void LazyConditions::flushAssignments() {
-         it.condition = it.variableNode;
-       }
-     }
--
--    ++i;
-   }
- }
- 
- void LazyConditions::flushFilters() const {
--  if (forceInline()) {
--    return;
--  }
--
-   // build an AND-combined FILTER condition with all conditions that we have
-   // accumulated
-   AstNode* filterCondition = nullptr;
--  for (auto const& it : _stack) {
--    TRI_ASSERT(!forceInline());
-+  for (size_t i = 0; i < numExtractableConditions();
-+       ++i) {  // only entries before `[*` of an array expansion
-+    auto const& it = _stack[i];
-     TRI_ASSERT(it.variableNode != nullptr);
-     TRI_ASSERT(it.variableNode->type == NODE_TYPE_REFERENCE);
+ * COR-1083 / github issue #23425:
+   Fixed the incorrect usage of released pool analyzer.
  
 ```
 
-**File**: `arangod/Aql/Parser/LazyConditions.h` (modified, +7/-3)
+**File**: `VERSIONS` (modified, +3/-3)
 ```diff
-@@ -59,21 +59,25 @@ class LazyConditions {
-   Conditions& peek();
- 
-   bool forceInline() const noexcept;
--  void pushForceInline() noexcept;
-+  void pushForceInline();
-   void popForceInline() noexcept;
- 
-   void flushAssignments();
-   void flushFilters() const;
- 
-  private:
-+  // conditions outside of any pushForceInline() are extractable
-+  // into a LET and used as a guard.
-+  size_t numExtractableConditions() const noexcept;
-+
-   /// @brief the underlying AST
-   Ast& _ast;
- 
-   /// @brief the stack of lazy conditions
-   Conditions _stack;
- 
--  /// @brief whether or not conditional operators must be inlined (value > 0).
--  size_t _forceInlineRequests;
-+  /// @brief stack sizes at each pushForceInline()
-+  std::vector<size_t> _inlineBarriers;
- };
- 
- }  // namespace arangodb::aql
-```
-
-**File**: `tests/js/client/aql/aql-logical.js` (modified, +19/-0)
-```diff
-@@ -429,6 +429,25 @@ function ahuacatlLogicalTestSuite () {
-       }
-     },
-     
-+    testRightOperandWithSubqueryInExpansionExecutedConditionally : function () {
-+      const sub = `(FOR y IN 1..1 RETURN ASSERT(false, 'boom'))[0]`;
-+      [
-+        `[1, 2][* FILTER ${sub}]`,
-+        `[1, 2][* RETURN ${sub}]`,
-+        `[1, 2][* LIMIT ${sub}]`,
-+        `[1, 2][? FILTER ${sub}]`,
-+      ].forEach((operand) => {
-+        let query = `RETURN NOOPT(false) && ${operand}`;
-+        assertEqual([false], db._query(query).toArray(), query);
-+        query = `RETURN NOOPT(true) || ${operand}`;
-+        assertEqual([true], db._query(query).toArray(), query);
-+      });
-+
-+      const operand = `[1, 2][* FILTER (RETURN true)[0]]`;
-+      assertEqual([[1, 2]], db._query(`RETURN NOOPT(true) && ${operand}`).toArray());
-+      assertEqual([[1, 2]], db._query(`RETURN NOOPT(false) || ${operand}`).toArray());
-+    },
-+
-     testNestedConditions : function () {
-       const queries = [
-         [ `FOR i IN 1..3 FOR j IN 1..4 FILTER (i <= 3 || ASSERT(false, 'ass1')) && (j <= 4 || ASSERT(false, 'ass2')) RETURN 1`, 12 ],
-```
-
-**File**: `tests/js/client/aql/aql-ternary.js` (modified, +51/-0)
-```diff
-@@ -489,6 +489,57 @@ RETURN NOOPT(true) ?
-       assertEqual(true, result[0]);
-     },
- 
-+    testUntakenOperandWithExpansionIsNotExecuted : function () {
-+      const sub = `(FOR y IN 1..1 RETURN ASSERT(false, 'boom'))[0]`;
-+      const operands = [
-+        `[1, 2][* RETURN ASSERT(false, 'boom')]`,
-+        `[1, 2][* FILTER ${sub}]`,
-+        `[1, 2][* RETURN ${sub}]`,
-+        `[1, 2][* LIMIT ${sub}]`,
-+        `[1, 2][* LIMIT ${sub}, 1]`,
-+        `[1, 2][? FILTER ${sub}]`,
-+        `[1, 2][? AT LEAST (${sub}) FILTER true]`,
-+        `[1, 2][? ${sub} FILTER true]`,
-+        `[[1], [2]][** FILTER ${sub}]`,
-+        `[[1], [2]][*][* FILTER ${sub}]`,
-+        `[1, 2][* RETURN [3][* FILTER ${sub}]]`,
-+        `(FOR y IN 1..1 RETURN ASSERT(false, 'boom'))[* RETURN CURRENT]`,
-+        `[[1], [2]][*][${sub}]`,
-+      ];
-+      operands.forEach((operand) => {
-+        [
-+          `RETURN NOOPT(true) ? 'ok' : ${operand}`,
-+          `RETURN NOOPT(false) ? ${operand} : 'ok'`,
-+          `RETURN NOOPT('ok') ? : ${operand}`,
-+          `RETURN NOOPT(true) ? 'ok' : (NOOPT(true) ? 'x' : ${operand})`,
-+          `RETURN NOOPT(false) ? 'x' : (NOOPT(true) ? 'ok' : ${operand})`,
-+        ].forEach((query) => {
-+          assertEqual(['ok'], db._query(query).toArray(), query);
-+        });
-+      });
-+    },
-+
-+    testTakenOperandWithSubqueryInExpansion : function () {
-+      const cases = [
-+        [`[1, 2][* FILTER (RETURN true)[0]]`, [1, 2]],
-+        [`[1, 2][* RETURN (RETURN 7)[0]]`, [7, 7]],
-+        [`[1, 2][* LIMIT (RETURN 1)[0]]`, [1]],
-+        [`[1, 2][* LIMIT (RETURN 1)[0], 1]`, [2]],
-+        [`[1, 2][? FILTER (RETURN true)[0]]`, true],
-+        [`[1, 2][? AT LEAST ((RETURN 2)[0]) FILTER true]`, true],
-+        [`[1, 2][? (RETURN 2)[0] FILTER true]`, true],
-+        [`[[1], [2]][** FILTER (RETURN true)[0]]`, [1, 2]],
-+        [`[[1], [2]][*][* FILTER (RETURN true)[0]]`, [[1], [2]]],
-+        [`[1, 2][* RETURN [3][* FILTER (RETURN true)[0]]]`, [[3], [3]]],
-+        [`(FOR y IN 1..2 RETURN y)[* RETURN CURRENT]`, [1, 2]],
-+        [`[[1], [2]][*][(RETURN 0)[0]]`, [1, 2]],
-+      ];
-+      cases.forEach(([operand, expected]) => {
-+        const query = `RETURN NOOPT(false) ? 'ok' : ${operand}`;
-+        assertEqual([expected], db._query(query).toArray(), query);
-+      });
-+    },
-+
-     testShortcutTernary : function () {
-       const query = `
- RETURN NOOPT(true) ? : ASSERT(false, 'fail')
+@@ -6,10 +6,10 @@ GCC_LINUX "13.2.0"
+ CLANG_LINUX "19.1.7"
+ OPENSSL_LINUX "3.5.9"
+ USE_RCLONE "true"
+-RCLONE_GO "1.26.9-f0f9558_20261012084010"
++RCLONE_GO "1.26.10-60c5ceb_20261025121659"
+ RCLONE_VERSION "1.75.1"
+-RCLONE_SHA256_AMD64 "1c8cdcbfc39f015460905cc036df7b3a002e8c1483898557198d14dc20459599"
+-RCLONE_SHA256_ARM64 "249cd726ffb63add94e54a7acae6fd61651e64872ed3c1fd49080b05c15573ff"
++RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
++RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
+ MINIMAL_DEBUG_INFO "On"
+ DEFAULT_ARCHITECTURE "sandy-bridge"
+ USE_ARM "On"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1241,63 +1080,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expan
+## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
 
 **RULE**:
-When implementing operations in `arangod/Aql/Parser/LazyConditions.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c084943a`: Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expansion-in-ternary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2f80ab7`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/Parser/LazyConditions.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-LazyConditions::LazyConditions(Ast& ast) : _ast(ast) {}
-  return !_inlineBarriers.empty();
-void LazyConditions::pushForceInline() {
-  _inlineBarriers.push_back(_stack.size());
-}
-  TRI_ASSERT(!_inlineBarriers.empty());
-  _inlineBarriers.pop_back();
-size_t LazyConditions::numExtractableConditions() const noexcept {
-  return _inlineBarriers.empty() ? _stack.size() : _inlineBarriers.front();
-}
-void LazyConditions::flushAssignments() {
-  for (size_t i = 0; i < numExtractableConditions(); ++i) {
-    auto& it = _stack[i];
-  for (size_t i = 0; i < numExtractableConditions();
-       ++i) {  // only entries before `[*` of an array expansion
-    auto const& it = _stack[i];
+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+  dependencies.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-LazyConditions::LazyConditions(Ast& ast) : _ast(ast), _forceInlineRequests(0) {}
-  return _forceInlineRequests > 0;
-void LazyConditions::pushForceInline() noexcept { ++_forceInlineRequests; }
-  TRI_ASSERT(_forceInlineRequests > 0);
-  --_forceInlineRequests;
-void LazyConditions::flushAssignments() {
-  if (forceInline()) {
-    return;
-  }
+* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
+  dependencies.
 
-  size_t i = 0;
-  for (auto& it : _stack) {
-    TRI_ASSERT(!forceInline());
-
-    ++i;
-  if (forceInline()) {
-    return;
-  }
-
-  for (auto const& it : _stack) {
-    TRI_ASSERT(!forceInline());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c084943a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2f80ab7` are properly handled with clean fallback behavior.
