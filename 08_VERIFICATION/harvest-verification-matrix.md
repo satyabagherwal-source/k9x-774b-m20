@@ -5008,3 +5008,9 @@
 | `CYCLE-20261025-YDAW` | `2026-10-25T21:46:49.688Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4459` | Yes (`79decd2a...`) |
 | `CYCLE-20261025-6NGX` | `2026-10-25T21:53:16.113Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`5c0c2233...`) |
 | `CYCLE-20261025-6S64` | `2026-10-25T21:53:22.204Z` | `callstack/react-native-builder-bob` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4460` | Yes (`6976497b...`) |
+| `CYCLE-20261025-G34D` | `2026-10-25T22:00:36.301Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4461` | Yes (`1e2713ce...`) |
+| `CYCLE-20261025-G4N6` | `2026-10-25T22:00:38.274Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4462` | Yes (`dea7a07b...`) |
+| `CYCLE-20261025-G7EX` | `2026-10-25T22:00:41.865Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4463, Rule 4464` | Yes (`c2ee9d90...`) |
+| `CYCLE-20261025-G7IZ` | `2026-10-25T22:00:42.011Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4465` | Yes (`7dbadf05...`) |
+| `CYCLE-20261025-GCIA` | `2026-10-25T22:00:48.466Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4466` | Yes (`99da3ba6...`) |
+| `CYCLE-20261025-GE1C` | `2026-10-25T22:00:50.448Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4467` | Yes (`a33dee87...`) |

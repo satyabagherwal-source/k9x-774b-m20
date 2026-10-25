@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T21:53:22.215Z",
+  "last_updated": "2026-10-25T22:00:50.460Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
-      "verified_at": "2026-10-21T02:08:37.587Z",
+      "content_hash": "c2ee9d907d3025b7f231df94882b8e6a3f335158c42f52c7d85314e6600c5dcb",
+      "verified_at": "2026-10-25T22:00:41.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T02:08:37.587Z"
+      "last_updated": "2026-10-25T22:00:41.879Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
-      "verified_at": "2026-10-25T14:03:30.695Z",
+      "content_hash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
+      "verified_at": "2026-10-25T22:00:50.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:03:30.695Z"
+      "last_updated": "2026-10-25T22:00:50.459Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -8406,14 +8406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
-      "verified_at": "2026-10-25T08:57:49.155Z",
+      "content_hash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
+      "verified_at": "2026-10-25T22:00:36.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T08:57:49.155Z"
+      "last_updated": "2026-10-25T22:00:36.311Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "e9a616dbf3ec02ca7edd57cb6c4ac55b09b80255f2146df32a1c84665fc27b67",
-      "verified_at": "2026-10-22T17:51:54.216Z",
+      "content_hash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
+      "verified_at": "2026-10-25T22:00:48.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:51:54.216Z"
+      "last_updated": "2026-10-25T22:00:48.476Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
-      "verified_at": "2026-10-25T03:31:45.619Z",
+      "content_hash": "dea7a07be6165e4790438eaca0ad583d1d90f054d455112d2ec02951230a6fc9",
+      "verified_at": "2026-10-25T22:00:38.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:31:45.619Z"
+      "last_updated": "2026-10-25T22:00:38.285Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -12711,14 +12711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-electron-electron",
-      "content_hash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
-      "verified_at": "2026-10-21T04:43:00.593Z",
+      "content_hash": "7dbadf051c921ead22df6deb193d813fbd3511039d615fb3cb64594d2a6a61e1",
+      "verified_at": "2026-10-25T22:00:42.022Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:43:00.593Z"
+      "last_updated": "2026-10-25T22:00:42.022Z"
     },
     "mistralai/Timestral-209M": {
       "repository": "mistralai/Timestral-209M",

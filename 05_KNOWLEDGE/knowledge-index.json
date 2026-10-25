@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:53:22.149Z",
+  "last_updated": "2026-10-25T22:00:50.400Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5230,8 +5230,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "4de2f318",
-      "content_hash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
+      "source_version": "21400fab",
+      "content_hash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -5299,6 +5299,11 @@
           "number": 4202,
           "title": "Native Constraint Validation Bubble Suppression with User-Intent Gating",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4461,
+          "title": "slider): move the number input below a short track",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5306,7 +5311,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:57:49.079Z",
+      "verified_at": "2026-10-25T22:00:36.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9786,8 +9791,8 @@
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "30db5188",
-      "content_hash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
+      "source_version": "0240841b",
+      "content_hash": "7dbadf051c921ead22df6deb193d813fbd3511039d615fb3cb64594d2a6a61e1",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "promoted_rules": [
@@ -9800,6 +9805,11 @@
           "number": 3523,
           "title": "apply the certificate SPKI blocklist to Node and add entries (#55126)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4465,
+          "title": "handle a null pending call in dbus::ObjectProxy (#55236)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9807,7 +9817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T04:43:00.510Z",
+      "verified_at": "2026-10-25T22:00:41.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24330,7 +24340,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
+      "content_hash": "c2ee9d907d3025b7f231df94882b8e6a3f335158c42f52c7d85314e6600c5dcb",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -24403,6 +24413,16 @@
           "number": 2590,
           "title": "LoRA Weight Injection Invariant Across Heterogeneous Attention Projections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4463,
+          "title": "Temporal Loop Closure Invariant for FL2V Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4464,
+          "title": "Prompt-Weighted Motion Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -24422,7 +24442,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-21T02:08:37.497Z",
+      "verified_at": "2026-10-25T22:00:41.776Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38100,8 +38120,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "63ada8be",
-      "content_hash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
+      "source_version": "8f6b18ba",
+      "content_hash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -38154,6 +38174,11 @@
           "number": 4330,
           "title": "Add NUC categories and selection policy",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4467,
+          "title": "Accept NUC 49 colon-free conditional suites",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38161,7 +38186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:03:30.646Z",
+      "verified_at": "2026-10-25T22:00:50.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42770,8 +42795,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "724e39f0",
-      "content_hash": "e9a616dbf3ec02ca7edd57cb6c4ac55b09b80255f2146df32a1c84665fc27b67",
+      "source_version": "f25c7ebb",
+      "content_hash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -42794,6 +42819,11 @@
           "number": 3676,
           "title": "[MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4466,
+          "title": "[MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42801,7 +42831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:51:54.140Z",
+      "verified_at": "2026-10-25T22:00:48.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42952,8 +42982,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "4b2fb2ce",
-      "content_hash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
+      "source_version": "c57aa66f",
+      "content_hash": "dea7a07be6165e4790438eaca0ad583d1d90f054d455112d2ec02951230a6fc9",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -42991,6 +43021,11 @@
           "number": 4013,
           "title": "[UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/re",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4462,
+          "title": "[tests] Kill local cluster nodes when a test exits without cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42998,7 +43033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:31:45.539Z",
+      "verified_at": "2026-10-25T22:00:38.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126283,6 +126318,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T21:53:22.138Z"
+    },
+    "rule-4461": {
+      "learning_id": "rule-4461",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4461,
+      "title": "slider): move the number input below a short track",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "21400fab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:36.235Z"
+    },
+    "rule-4462": {
+      "learning_id": "rule-4462",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4462,
+      "title": "[tests] Kill local cluster nodes when a test exits without cleanup",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "c57aa66f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:38.215Z"
+    },
+    "rule-4463": {
+      "learning_id": "rule-4463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4463,
+      "title": "Temporal Loop Closure Invariant for FL2V Models",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:41.776Z"
+    },
+    "rule-4464": {
+      "learning_id": "rule-4464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4464,
+      "title": "Prompt-Weighted Motion Decoupling",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:41.777Z"
+    },
+    "rule-4465": {
+      "learning_id": "rule-4465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4465,
+      "title": "handle a null pending call in dbus::ObjectProxy (#55236)",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "0240841b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:41.955Z"
+    },
+    "rule-4466": {
+      "learning_id": "rule-4466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4466,
+      "title": "[MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "f25c7ebb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:48.408Z"
+    },
+    "rule-4467": {
+      "learning_id": "rule-4467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4467,
+      "title": "Accept NUC 49 colon-free conditional suites",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "8f6b18ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T22:00:50.390Z"
     }
   },
   "aliases": {

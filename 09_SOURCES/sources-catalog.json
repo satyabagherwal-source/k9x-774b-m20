@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "567de3dbf1d23cae36258f859717eee0daf0024d99651f6fa9214018c5e06a22",
-    "lastHarvestedAt": "2026-10-21T02:08:37.579Z",
+    "contentHash": "c2ee9d907d3025b7f231df94882b8e6a3f335158c42f52c7d85314e6600c5dcb",
+    "lastHarvestedAt": "2026-10-25T22:00:41.869Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "63ada8be",
+    "sourceVersion": "8f6b18ba",
     "license": "Apache-2.0",
-    "contentHash": "558f67c02d81de4f4756b7e8dd4c2eb60bff91da78e8b3c4dac61eaf266ce83d",
-    "lastHarvestedAt": "2026-10-25T14:03:30.689Z",
+    "contentHash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
+    "lastHarvestedAt": "2026-10-25T22:00:50.452Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "4de2f318",
+    "sourceVersion": "21400fab",
     "license": "Apache-2.0",
-    "contentHash": "5df24ddc2152e418339cd60e6dc76b25655855be52adf69119e20a32fa320fe4",
-    "lastHarvestedAt": "2026-10-25T08:57:49.144Z",
+    "contentHash": "1e2713ce5151383255000ef9407b969acb49c652878fee78d0e35c002b740591",
+    "lastHarvestedAt": "2026-10-25T22:00:36.304Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "724e39f0",
+    "sourceVersion": "f25c7ebb",
     "license": "NOASSERTION",
-    "contentHash": "e9a616dbf3ec02ca7edd57cb6c4ac55b09b80255f2146df32a1c84665fc27b67",
-    "lastHarvestedAt": "2026-10-22T17:51:54.204Z",
+    "contentHash": "99da3ba61b65ca83a399c1a062fb6cc4dce4c121e59300842ed1113dd2581764",
+    "lastHarvestedAt": "2026-10-25T22:00:48.469Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "4b2fb2ce",
+    "sourceVersion": "c57aa66f",
     "license": "NOASSERTION",
-    "contentHash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
-    "lastHarvestedAt": "2026-10-25T03:31:45.607Z",
+    "contentHash": "dea7a07be6165e4790438eaca0ad583d1d90f054d455112d2ec02951230a6fc9",
+    "lastHarvestedAt": "2026-10-25T22:00:38.277Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "30db5188",
+    "sourceVersion": "0240841b",
     "license": "MIT",
-    "contentHash": "e9e869ec950f9b2c500f23af1ecbaeaeceff477816798e132480276f3bfe8b36",
-    "lastHarvestedAt": "2026-10-21T04:43:00.586Z",
+    "contentHash": "7dbadf051c921ead22df6deb193d813fbd3511039d615fb3cb64594d2a6a61e1",
+    "lastHarvestedAt": "2026-10-25T22:00:42.014Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {

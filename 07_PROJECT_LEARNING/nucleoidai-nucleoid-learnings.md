@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `63ada8be`  
+> **Source Version**: `8f6b18ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:03:30.432Z  
+> **Timestamp**: 2026-10-25T22:00:50.119Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:03:30.427Z  
+> **Harvest Timestamp**: 2026-10-25T22:00:50.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1003,504 +1003,412 @@ export function isObject(value: unknown): value is {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63ada8be` (2026-10-25)
-**Commit Message**: Add NUC categories and selection policy
+### Incident Patch 1: `cd1f7fdb` (2026-10-25)
+**Commit Message**: Accept NUC 49 colon-free conditional suites
 
-Introduce a proposal category registry and classify existing NUCs in their headers and indexes. Update proposal and evaluation workflows to confirm uncertain classifications, review proposals when categories are added, and select unspecified enhancements uniformly from eligible categories.
+Allow optional conditional-header colons only before genuine indented bodies, including native CLI continuation. Independent evaluation measured 8 shorter cases, 625 unchanged and no increases, preserving complete ASTs and accepted syntax.
 
-**File**: `.github/agents/nuc-evaluate.agent.md` (modified, +10/-4)
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +12/-6)
 ```diff
-@@ -10,8 +10,12 @@ You independently evaluate exactly one completed NUC revision. Follow
- ## Scope
+@@ -650,8 +650,10 @@ assert(display, 5)
  
- - Require the proposal agent's completed handoff, including the proposal path
--  and Git blob revision, accepted Git revision, immutable baseline JSON
--  artifact, candidate worktree, and a fresh report artifact path.
-+  and Git blob revision, confirmed category, accepted Git revision, immutable
-+  baseline JSON artifact, candidate worktree, and a fresh report artifact path.
-+- Verify the proposal's `Category` header against the handoff and registry.
-+  Return uncertainty about category additions, selections, updates, or
-+  assignments to the caller, who asks the user for confirmation; do not
-+  assign or change a category during evaluation.
- - Use a fresh context, separate from the proposal agent; never evaluate your
-   own proposal work.
- - Run independent behavior checks and the `evaluate_proposal` gate. Decide
-@@ -24,12 +28,14 @@ You independently evaluate exactly one completed NUC revision. Follow
-   to the caller; a revised candidate requires a fresh proposal/evaluation pair.
- - During continuous cycles, do not ask questions or request confirmation.
-   Return missing prerequisites or other blockers explicitly without inventing
--  inputs; the caller owns outcome recording and non-interactive continuation
-+  inputs; the caller owns category clarification with the user, outcome
-+  recording, and continuation
-   under the skill's [continuous-cycle handoff](../skills/nuc-evaluate/SKILL.md#continuous-cycle-handoff-caller-only).
+ - Accepted [NUC 34](docs/nuc-0034.md) permits this optional final-`else` spelling
+   only before a real indented body. `else:` remains valid and equivalent.
+-- `if` and `else if` keep their colons; inline, semicolon-separated and braced
+-  alternatives still need `else:`. A same-line semicolon cannot enable omission.
++- This legacy control deliberately retains its condition colon.
++  [NUC 49](docs/nuc-0049.md) also permits omission for genuine-indented
++  `if`/`else if` suites; inline, semicolon-separated and braced alternatives
++  still require their accepted colons. A header-line semicolon cannot qualify.
+ - Nested branch association, live inputs, scope, returns and rollback are
+   unchanged. Strings and comments containing `else:` are not rewritten.
  
- ## Result
+@@ -841,9 +843,9 @@ assert(source, "todo:three")
  
--Return the proposal and baseline revisions, decision, report path, independent
-+Return the proposal and baseline revisions, confirmed category, decision,
-+report path, independent
- checks, counts of `less`/`same`/`more` cases, and every increased, missing,
- unpaired, or invalid case with its before/after counts or explicit reason.
- Do not offset a per-case increase with savings elsewhere. The caller owns
-```
-
-**File**: `.github/agents/nuc-proposal.agent.md` (modified, +13/-4)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: nuc-proposal
--description: Draft and prototype one NUC syntax or runtime-feature revision, preserving existing behavior and baseline cases for a separate evaluation agent.
-+description: Draft and prototype one categorized NUC revision, preserving existing behavior and baseline cases for a separate evaluation agent.
- ---
- 
- You draft and prototype exactly one added or updated NUC revision. Follow
-@@ -11,8 +11,17 @@ You draft and prototype exactly one added or updated NUC revision. Follow
- 
- - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
-   do not redraw the selected category.
--- Require the proposal path and requested change, accepted Git revision,
--  immutable baseline JSON artifact, and isolated candidate worktree.
-+- Require the proposal path, confirmed category and requested change,
-+  accepted Git revision, immutable baseline JSON artifact, and isolated
-+  candidate worktree.
-+- Write the confirmed `Category` header using the
-+  [classification rule](../skills/nuc-proposal/SKILL.md#classify-every-proposal).
-+  Return uncertainty about category additions, selections, updates, or
-+  proposal assignments to the caller, who asks the user for confirmation
-+  before proceeding; do not guess or invent a category.
-+- When a category is added, the caller reviews all existing NUCs and supplies
-+  any required reclassification as a separate revision per proposal. Preserve
-+  unaffected categories, types, statuses, and historical outcomes.
- - Always preserve accepted syntax and its behavior under the skill's
-   [syntax compatibility rule](../skills/nuc-proposal/SKILL.md#preserve-syntax-compatibility);
-   verify unchanged legacy forms alongside candidate forms.
-@@ -29,7 +38,7 @@ You draft and prototype exactly one added or updated NUC revision. Follow
- ## Handoff
- 
- Return the proposal path and Git blob revision, baseline revision and artifact
--path, selected enhancement category and selection rationale when applicable,
-+path, confirmed proposal category and selection rationale when applicable,
- candidate worktree, changed files, development and syntax-compatibility checks,
- and any blockers.
- Declare the candidate ready for independent evaluation only when its inputs
-```
-
-**File**: `.github/instructions/proposals.instructions.md` (modified, +31/-24)
-```diff
-@@ -27,24 +27,29 @@ another case cannot offset an increase. Missing baselines block acceptance.
- Keep reports in the session workspace and do not apply rejected candidates.
- Evaluation outcome metadata does not recursively trigger another agent.
- 
--## All-around enhancement selection
--
--When choosing unspecified enhancements, develop the language as a whole rather
--than repeatedly extending one narrow niche. Review recent NUCs and unmet needs
--across logic and reasoning, reactive dependencies, functions and scope, control
--flow, collections and strings, data modeling, and diagnostics.
--
--Prioritize distinct user value and broader expressiveness while weighing API
--complexity.
--Do not repeatedly favor math helpers or closely related utility variants merely
--because they are easy to implement, baseline, or shorten in measured examples.
--Math remains eligible when it addresses a clear need; token savings alone do
--not establish feature priority. Record the selection rationale in the handoff.
-+## Enhancement selection
-+
-+Every NUC, including existing and rejected proposals, has one `Category`
-+header from the extensible
-+[category registry](../../docs/nuc-0001.md#proposal-categories).
-+Keep its category and index entries consistent without changing its `Type`
-+or status. Only the user adds categories or resolves uncertainty. Whenever a
-+category is added, selected, or updated, the caller must ask the user for
-+confirmation before proceeding if its meaning, automatic-selection eligibility,
-+or proposal assignments are unclear, including during continuous cycles.
-+
-+Every category addition also triggers a review of all existing NUCs across
-+every status. Reclassify proposals that fit the new category more accurately,
-+ask about uncertain moves, and synchronize their headers and both NUC indexes.
-+Preserve unaffected categories, types, statuses, and historical outcomes;
-+the normal independent proposal/evaluation requirements still apply.
- 
- Follow the caller-owned
- [selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement).
--Breadth guides feature choice within the existing 50/50 syntax/runtime draw;
--it does not authorize redraws, fixed rotations, or weaker acceptance checks.
-+Unspecified enhancements use equal random selection across the registry's
-+eligible categories, currently Syntax enhancement, Runtime features, Utility
-+enhancement, and Reasoning enhancement. Documentation is classified but is
-+not automatically selected for a language enhancement.
- Explicit feature/category requests still take precedence.
- 
- ## Detailed proposal workflow
-@@ -61,8 +66,8 @@ executable cases can demonstrate equal token usage.
- 
- Pin the accepted Git revision and record its token baseline before editing
- runtime behavior or executable cases. Give the proposer its requested change,
--proposal path, baseline revision and immutable JSON artifact, and candidate
--worktree. Use `.github/agents/nuc-proposal.agent.md` and
-+proposal path and confirmed category, baseline revision and immutable JSON
-+artifact, and candidate worktree. Use `.github/agents/nuc-proposal.agent.md` and
- `.github/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
- case rewrites, synchronization, and development checks. It must not run the
- acceptance gate or mark the proposal Accepted or Rejected.
-@@ -125,13 +130,15 @@ Only the caller continues; workers stop at their handoffs. This does not
- recursively reevaluate the completed NUC's outcome metadata. Stop or pause
- under the conditions defined by the skill rather than bypassing a blocker.
- 
--Continuous cycles, including those coordinated through `/nuc-evaluate`, are
--non-interactive. Neither the caller nor workers ask questions or request
--confirmation to record an outcome or start the next NUC. Use the existing
--selection rules and verified inputs; a rejection is not a reason to interrupt
--continuation. If a required input cannot be obtained or another blocking
--condition occurs, report it and pause without asking a question. Never invent
--baselines, bypass checks or required tool approvals, or ignore a user stop.
-+Continuous cycles, including those coordinated through `/nuc-evaluate`, do not
-+request confirmation to record an outcome or start the next NUC. An uncertain
-+category addition, selection, or update is the exception: workers return it
-+to the caller, who asks the user for confirmation before proceeding.
-+Use the existing selection rules and verified inputs;
-+a rejection is not a reason to interrupt continuation. For other missing
-+prerequisites or blockers, report them and pause without asking a question.
-+Never invent baselines, bypass checks or required tool approvals, or ignore
-+a user stop.
- 
- This is a Copilot-session policy, not a filesystem watcher or GitHub Actions
- trigger. Do not claim that an edit outside a Copilot session launched an agent.
-```
-
-**File**: `.github/skills/nuc-evaluate/SKILL.md` (modified, +15/-8)
-```diff
-@@ -18,9 +18,12 @@ Evaluate exactly one completed revision, independently of the proposal agent.
- 
- Require the proposal path and handed-off Git blob revision, accepted baseline
- Git revision and immutable JSON artifact, candidate worktree, and fresh report
--artifact path in the session workspace. Confirm that the current proposal blob
--matches the handoff and the baseline matches the accepted revision. Missing
--prerequisites block evaluation; never invent measurements.
-+artifact path in the session workspace. Require the confirmed proposal
-+category and verify that its header matches the handoff and
-+[category registry](../../../docs/nuc-0001.md#proposal-categories).
-+Confirm that the current proposal blob matches the handoff and the baseline
-+matches the accepted revision. Missing prerequisites block evaluation; never
-+invent measurements or guess an uncertain category.
- 
- Treat candidate sources, generated exports, and the baseline as read-only.
- Only new session reports and normal ignored build outputs may be written.
-@@ -82,7 +85,8 @@ handoff. If no report was produced, state that and the actual error explicitly.
- 
- ## Return the evidence
- 
--Return the proposal and baseline revisions, decision, report path, independent
-+Return the proposal and baseline revisions, confirmed category, decision,
-+report path, independent
- checks including syntax compatibility, counts of `less`/`same`/`more`, and each
- increased, missing, unpaired, invalid or syntax-incompatible case with its
- before/after counts or reason. Keep the candidate and baseline unchanged.
-@@ -105,8 +109,11 @@ unstaged work. Baselines and reports remain in the session workspace.
- 
- After recording the outcome, follow the
- [continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
--without asking questions or requesting confirmation. Neither caller nor
--workers prompt for choices during continuous cycles; use the existing rules
--and verified inputs. A missing prerequisite or other blocker pauses the
--cycle with an explicit report, not a question or invented measurement.
-+without requesting confirmation to record outcomes or continue. For uncertain
-+category additions, selections, updates, or assignments, workers return the
-+question to the caller, who asks the user for confirmation under the proposal skill's
-+[classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
-+Otherwise use the existing rules and verified inputs; a missing prerequisite
-+or other blocker pauses the cycle with an explicit report, not a question
-+or invented measurement.
- Required tool approvals and user stop/pause instructions still apply.
-```
-
-**File**: `.github/skills/nuc-proposal/SKILL.md` (modified, +54/-42)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: nuc-proposal
--description: Draft or revise a Nucleoid NUC and prototype syntax improvements or runtime features. Use for proposal preparation, not acceptance evaluation.
-+description: Draft or revise a Nucleoid NUC and prototype its changes. Use for proposal preparation, not acceptance evaluation.
- ---
- 
- # Preparing a NUC proposal
-@@ -13,52 +13,62 @@ agent. Inside that agent, execute the steps below; do not spawn another agent.
- Follow `.github/copilot-instructions.md` and `docs/nuc-0001.md`.
- Work on exactly one proposal revision in the caller's isolated candidate.
- 
-+## Classify every proposal
-+
-+Give every new and existing NUC exactly one `Category` header from the
-+[proposal category registry](../../../docs/nuc-0001.md#proposal-categories),
-+including Draft, Accepted, Rejected, Active, and Superseded documents.
-+Category describes the proposal's purpose; it does not replace `Type` or
-+change its status.
-+
-+Use the user's explicit classification when supplied. Whenever a category is
-+added, selected, or updated, the coordinating caller must ask the user for
-+confirmation if anything is uncertain, including its meaning, automatic-selection
-+eligibility, or which proposals belong to it. Ask before proceeding, not after
-+guessing. Workers return the question to the caller. This clarification also
-+applies during continuous cycles.
-+
-+The user may add categories in the future. Every category addition requires
-+reviewing all existing NUCs, across every status, and reclassifying proposals
-+that fit the new category more accurately. Keep unaffected classifications,
-+`Type`, `Status`, and historical outcomes unchanged. Synchronize the registry,
-+affected proposal headers, and both category and numerical indexes through the
-+normal proposal/evaluation process. Ask for confirmation on uncertain moves;
-+do not invent categories or retain stale classifications without review.
-+
- ## Select an unspecified enhancement
- 
- When asked to choose a language enhancement without a specific feature or
--category, the coordinating caller makes one unbiased random draw:
--
--- **50% language syntax improvement:** simplify syntax or reduce lexer tokens
--  while preserving behavior.
--- **50% new language runtime feature:** add a runtime capability while
--  preserving existing behavior.
--
--Use a tool-backed draw, such as `Get-Random -Minimum 0 -Maximum 2`, with `0`
--selecting syntax improvement and `1` selecting a runtime feature. Choose one
--bounded enhancement in that category; do not redraw to favor a preferred
--category or substitute deterministic alternation for randomness.
--
--Within the selected category, pursue all-around language development:
--
--- Review the current specification and recent NUCs to identify unmet needs and
--  avoid repeatedly extending the same narrow feature family.
--- Consider gaps across logic and reasoning, reactive dependencies, functions
--  and scope, control flow, collections and strings, data modeling, and
--  diagnostics. Prefer underrepresented areas when user value is comparable.
--- Weigh distinct user value, broader expressiveness, and API complexity.
--  Do not repeatedly choose math helpers or other closely related utility
--  variants merely for easy implementation, baselines, or token savings.
--- Keep math eligible when it fills a clear gap. Broaden coverage without a
--  math ban, fixed rotation, quota, or category redraw; preserve every
--  compatibility and acceptance requirement.
-+category, the coordinating caller makes one unbiased random draw with equal
-+probability across the registry's automatically selectable enhancement
-+categories. The current four enhancement categories each have a 25% chance;
-+`Documentation` is not part of this automatic language-enhancement draw.
-+
-+Read the current registry before drawing; do not hard-code its size or retain
-+the former 50/50 syntax/runtime split. For example, populate `$categories`
-+from the eligible registry entries and use
-+`Get-Random -Minimum 0 -Maximum $categories.Count` to select an index.
-+Choose one bounded enhancement in that category; do not redraw to favor a
-+preferred category or substitute deterministic alternation for randomness.
- 
- Select before recording baselines or delegating preparation. Supply the
--selected category, requested change, and a brief selection rationale explaining
--the unmet need and fit with recent coverage to the proposal agent, which must
--not redraw. Include the category and rationale in its handoff. Explicit
-+selected category, requested change, and a brief selection rationale to the
-+proposal agent, which must not redraw. Include the category and rationale in
-+its handoff and write the same category in the proposal header. Explicit
- feature/category requests take precedence, and process or documentation-only
- revisions are not randomized.
- 
--Runtime features retain the same baseline and acceptance requirements. New
-+Every category retains the same baseline and acceptance requirement
-```
-
-**File**: `CONTRIBUTING.md` (modified, +10/-0)
-```diff
-@@ -109,6 +109,16 @@ and [evaluation skill](.github/skills/nuc-evaluate/SKILL.md), with separate
- profiles in `.github/agents/`. The caller starts both stages; neither agent
- delegates to the other. See [NUC 1](docs/nuc-0001.md#proposal-evaluation).
- 
-+Every NUC has one `Category` header from the extensible
-+[proposal category registry](docs/nuc-0001.md#proposal-categories), separate
-+from its `Type` and `Status`. Whenever a category is added, selected, or updated,
-+ask the user for confirmation before proceeding if its meaning, eligibility,
-+or proposal assignments are uncertain. Every category addition requires
-+reviewing all existing proposals and updating those that fit the new category
-+more accurately, with synchronized category and numerical indexes. Unspecified
-+enhancements use an equal random draw across the currently eligible categories;
-+Documentation is not part of that draw.
-+
- The gate measures each case from the specification and executable reference,
- README, and examples. It uses Nucleoid lexer tokens, including `Newline`,
- `Indent`, and `Dedent`, excluding `Eof`; it does not measure LLM tokens,
-```
-
-**File**: `docs/nuc-0000.md` (modified, +93/-77)
-```diff
-@@ -6,6 +6,7 @@ Title: Index of NUC Documents
- Author: Can Mingir <canmingir@gmail.com>
- Status: Active
- Type: Informational
-+Category: Documentation
- Created: 31-Jul-2026
+ ```nuc
+ def label(state):
+-    if state == "done":
++    if state == "done"
+         return "archive"
+-    else state == "ready":
++    else state == "ready"
+         return "send"
+     else:
+         return "wait"
+@@ -857,16 +859,20 @@ assert(result, "wait")
  ```
  
-@@ -22,27 +23,10 @@ Created: 31-Jul-2026
+ - [NUC 43](docs/nuc-0043.md) optionally omits the second `if` only
+-  before a complete colon-bearing condition with a genuine indented body.
++  before a complete condition with a genuine indented body.
+   `elif condition:` is the same optional spelling through the existing
+   `elif` alias for `else`.
++- [NUC 49](docs/nuc-0049.md) additionally makes the header colon optional
++  for initial `if`, explicit `else if`/`elif if`, and these direct alternatives,
++  only before a genuine indented suite. The CLI recognizes initial colon-free
++  headers and autoindents without treating literal/comment punctuation as syntax.
+ - Explicit `else if` remains supported, including inline/braced bodies.
+   Final `else:`/`elif:` and genuine-indented colon-free final alternatives
+   retain their unconditional meaning. No standalone or inline direct
+   conditional alternative is added.
+ - Parsing lowers to the same nested conditional, keeping first-match
+   evaluation, live dependencies, scopes, returns and rollback unchanged.
+-  See the [root contract](nucleoid.spec.md#direct-conditional-alternatives).
++  See the [root contract](nucleoid.spec.md#colon-free-indented-conditional-suites).
  
- ## Index by Category
+ ## Comma-free explicit object properties
  
--### Meta-NUCs (NUCs about NUCs)
-+### Syntax enhancement
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-5)
+```diff
+@@ -386,11 +386,11 @@
+ {"id":"spec-0386","description":"Nucleoid keeps literal replacement reactive","code":"text = \"red|blue|red\"\nsearch = \"|\"\nreplacement = \"/\"\nnormalized = text.replaceAll(search, replacement)\nfrozen = normalized.value\nassert(normalized, \"red/blue/red\")\nreplacement = \"-\"\nassert(normalized, \"red-blue-red\")\ntext = \"blue|green\"\nassert(normalized, \"blue-green\")\nsearch = \"blue\"\nassert(normalized, \"-|green\")\nreplacement = \"cyan\"\nassert(normalized, \"cyan|green\")\nassert(frozen, \"red/blue/red\")\nassert(text, \"blue|green\")","return":null}
+ {"id":"spec-0387","description":"Nucleoid replaces literal strings in class rules","code":"class Page(title: str):\n    this.title = title\n$Page.slug = $Page.title.replaceAll(\" \", \"-\")\nfirst = Page(\"One Two One\")\nsecond = Page(\"Three Four\")\nslugs = Page.map(page => page.slug)\nassert(first.slug, \"One-Two-One\")\nassert(slugs, [\"One-Two-One\", \"Three-Four\"])\nfirst.title = \"Fresh Page\"\nassert(first.slug, \"Fresh-Page\")\nassert(slugs, [\"Fresh-Page\", \"Three-Four\"])\n$Page.slug = $Page.title.lower().replaceAll(\" \", \"_\")\nassert(first.slug, \"fresh_page\")\nassert(second.slug, \"three_four\")\nassert(slugs, [\"fresh_page\", \"three_four\"])","return":null}
+ {"id":"spec-0388","description":"Nucleoid rolls back literal replacement argument failures","code":"source = \"a|b\"\ndef fail():\n    source = \"changed|changed\"\n    throw \"stop\"\ntry:\n    source.replaceAll(\"|\", fail())\ncatch error:\n    assert(error, \"stop\")\nassert(source, \"a|b\")\nrecovered = source.replaceAll(\"|\", \"/\")\nassert(recovered, \"a/b\")","return":null}
+-{"id":"spec-0389","description":"Nucleoid selects direct conditional alternatives","code":"def classify(state, urgent):\n    if state == \"blocked\":\n        return \"hold\"\n    else urgent:\n        return \"fast\"\n    elif state == \"ready\":\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nurgent = false\nlabel = classify(state, urgent)\nassert(label, \"send\")\nurgent = true\nassert(label, \"fast\")\nstate = \"blocked\"\nassert(label, \"hold\")\nurgent = false\nassert(label, \"hold\")\nstate = \"queued\"\nassert(label, \"wait\")\nlabel","return":"\"wait\""}
+-{"id":"spec-0390","description":"Nucleoid keeps direct conditional class alternatives reactive","code":"class Ticket\nfirst = Ticket()\nfirst.state = \"new\"\nfirst.priority = \"normal\"\nsecond = Ticket()\nsecond.state = \"review\"\nsecond.priority = \"urgent\"\nif $Ticket.state == \"blocked\":\n    $Ticket.queue = \"hold\"\nelse $Ticket.priority == \"urgent\":\n    $Ticket.queue = \"fast\"\nelif $Ticket.state == \"review\":\n    $Ticket.queue = \"review\"\nelse:\n    $Ticket.queue = \"normal\"\nassert(first.queue, \"normal\")\nassert(second.queue, \"fast\")\nfirst.state = \"blocked\"\nassert(first.queue, \"hold\")\nsecond.priority = \"normal\"\nassert(second.queue, \"review\")\nfirst.priority = \"urgent\"\nassert(first.queue, \"hold\")\nfirst.state = \"new\"\nassert(first.queue, \"fast\")\nassert(second.queue, \"review\")\nsecond.state = \"done\"\nassert(second.queue, \"normal\")","return":null}
+-{"id":"spec-0391","description":"Nucleoid preserves direct alternative evaluation order","code":"def decide(first, second, third):\n    if first:\n        return \"first\"\n    else second:\n        return \"second\"\n    elif third:\n        return \"third\"\n    else:\n        return \"none\"\nassert(decide(true, true, true), \"first\")\nassert(decide(false, true, true), \"second\")\nassert(decide(false, false, true), \"third\")\nassert(decide(false, false, false), \"none\")\ndef guarded(value):\n    if value:\n        return \"ready\"\n    else missing:\n        return \"bad\"\n    else:\n        return \"other\"\nassert(guarded(true), \"ready\")\ntry:\n    guarded(false)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))","return":null}
+-{"id":"spec-0392","description":"Nucleoid preserves direct alternative scope and return flow","code":"class Router:\n    def init(prefix):\n        this.prefix = prefix\n    def choose(status, fallback):\n        if status == \"blocked\":\n            return this.prefix + \"hold\"\n        else status == \"ready\":\n            return this.prefix + \"send\"\n        elif fallback:\n            return this.prefix + \"later\"\n        else:\n            return this.prefix + \"skip\"\nrouter = Router(\"a:\")\nstatus = \"ready\"\nlive = router.choose(status, false)\nsnapshot = live.value\nassert(live, \"a:send\")\nassert(snapshot, \"a:send\")\nassert(router.choose(\"unknown\", false), \"a:skip\")\nassert(router.choose(\"unknown\", true), \"a:later\")\nassert(router.choose(\"blocked\", true), \"a:hold\")\nassert(router.choose(\"ready\", true), \"a:send\")\nassert(status, \"ready\")\nassert(router.prefix, \"a:\")","return":null}
+-{"id":"spec-0393","description":"Nucleoid rolls back failed direct alternatives","code":"source 
+```
+
+**File**: `dataset/nucleoid.synth.29.jsonl` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++{"id":"synth-29-0001","description":"Nucleoid mixes explicit and direct conditional alternatives without indented header colons","code":"def route(state, urgent):\n    if state == \"blocked\"\n        return \"hold\"\n    else if urgent\n        return \"fast\"\n    elif state == \"ready\"\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nurgent = false\nlane = route(state, urgent)\nassert(lane, \"send\")\nurgent = true\nassert(lane, \"fast\")\nstate = \"blocked\"\nassert(lane, \"hold\")\nurgent = false\nstate = \"queued\"\nassert(lane, \"wait\")\nlane","return":"\"wait\""}
++{"id":"synth-29-0002","description":"Nucleoid keeps colon-free conditional class suites reactive independently per instance","code":"class Parcel\nfirst = Parcel()\nfirst.state = \"queued\"\nsecond = Parcel()\nsecond.state = \"ready\"\nif $Parcel.state == \"blocked\"\n    $Parcel.lane = \"hold\"\nelse $Parcel.state == \"ready\"\n    $Parcel.lane = \"send\"\nelif:\n    $Parcel.lane = \"wait\"\n$Parcel.label = $Parcel.lane + \"!\"\nassert(first.lane, \"wait\")\nassert(second.label, \"send!\")\nfirst.state = \"blocked\"\nassert(first.label, \"hold!\")\nassert(second.lane, \"send\")\nsecond.state = \"queued\"\nassert(first.lane, \"hold\")\nassert(second.label, \"wait!\")\nsecond.label","return":"\"wait!\""}
++{"id":"synth-29-0003","description":"Nucleoid preserves frozen classifier definitions and live inputs with colon-free conditional suites","code":"def classify(state):\n    if state == \"ready\"\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nfrozen = classify.value\nlive = classify(state)\nusingFrozen = frozen(state)\nsnapshot = usingFrozen.value\nassert(live, \"send\")\nassert(usingFrozen, \"send\")\ndef classify(state):\n    if state == \"ready\"\n        return \"go\"\n    else:\n        return \"queue\"\nassert(live, \"go\")\nassert(usingFrozen, \"send\")\nstate = \"queued\"\nassert(live, \"queue\")\nassert(usingFrozen, \"wait\")\nassert(snapshot, \"send\")\nlive","return":"\"queue\""}
++{"id":"synth-29-0004","description":"Nucleoid rolls back failed reactive alternatives while preserving colon-free suite behavior","code":"source = \"ready\"\ndef route(status):\n    if status == \"ready\"\n        return \"send\"\n    else status == \"hold\"\n        return \"wait\"\n    else:\n        return \"skip\"\nlive = route(source)\nassert(live, \"send\")\ntry:\n    source = \"hold\"\n    def route(status):\n        if status == \"ready\"\n            return \"send\"\n        elif status == \"hold\"\n            throw \"blocked\"\n        else:\n            return \"skip\"\ncatch error:\n    assert(error, \"blocked\")\nassert(source, \"ready\")\nassert(live, \"send\")\nsource = \"hold\"\nassert(live, \"wait\")\nsource = \"unknown\"\nassert(live, \"skip\")\nlive","return":"\"skip\""}
+```
+
+**File**: `docs/README.md` (modified, +24/-9)
+```diff
+@@ -674,13 +674,18 @@ Full detail: [NUC 6](nuc-0006.md).
+ - A conditional can run again when an input changes later in the same cascade. An unchanged write does not restart feedback.
+ - Accepted [NUC 34](nuc-0034.md) makes the colon after a final `else` optional
+   only before a genuine indented suite. The unchanged `else:` spelling is
+-  equivalent; `if` and `else if` still require their existing colons.
++  equivalent; final `else`/`elif` remains unconditional.
++- The [conditional-suite contract](../nucleoid.spec.md#colon-free-indented-conditional-suites)
++  also allows the colon to be omitted after an initial `if condition`, explicit
++  `else if condition`/`elif if condition`, or an accepted direct alternative.
++  Only a genuine indented body qualifies; every colon-bearing spelling remains
++  supported. [NUC 49](nuc-0049.md) describes this source-only addition.
+ - Require immediate newline/indent after `else` and a real indent after only
+   normal newline/semicolon layout. Blank/comment lines create no indent;
+   same-line statements, semicolons and braces cannot qualify for omission.
+ - Reuse the whole existing body and nested/dangling-else association. Inline,
+   semicolon-separated and braced alternatives retain their required colon.
+-  All other headers, canonical rendering, live rules, scopes, returns, throws,
++  Unrelated headers, canonical rendering, live rules, scopes, returns, throws,
+   rollback and limits remain unchanged.
  
- | NUC | Title | Status |
- | --- | --- | --- |
--| [0](nuc-0000.md) | Index of NUC Documents | Active |
--| [1](nuc-0001.md) | NUC Purpose and Guidelines | Active |
--
--### Language Reference
--
--| NUC | Title | Status |
--| --- | --- | --- |
--| [2](nuc-0002.md) | Variables and Declarative Assignment | Draft |
--| [3](nuc-0003.md) | Types and Instances | Draft |
--| [4](nuc-0004.md) | Properties | Draft |
--| [5](nuc-0005.md) | Class-Level Rules | Draft |
--| [6](nuc-0006.md) | Blocks and Scope | Draft |
--| [7](nuc-0007.md) | Control Flow | Draft |
--| [8](nuc-0008.md) | Functions | Accepted |
--| [9](nuc-0009.md) | Transactions and Error Handling | Draft |
--| [10](nuc-0010.md) | Standard Built-in Objects | Draft |
--| [11](nuc-0011.md) | Reasoning Operations | Draft |
- | [12](nuc-0012.md) | Expression-Bodied Named Functions | Accepted |
- | [13](nuc-0013.md) | Compound Arithmetic Assignment | Accepted |
- | [14](nuc-0014.md) | Bodyless Empty Class Declarations | Accepted |
-@@ -52,9 +36,6 @@ Created: 31-Jul-2026
- | [18](nuc-0018.md) | Bare Single-Parameter Named Arrows | Accepted |
- | [19](nuc-0019.md) | Bare Single-Parameter Indented Block Definitions | Accepted |
- | [20](nuc-0020.md) | Bare Typed Single-Parameter Named Arrows | Accepted |
--| [21](nuc-0021.md) | Reactive Numeric Clamping | Accepted |
--| [22](nuc-0022.md) | Reactive Numeric Interpolation | Accepted |
--| [23](nuc-0023.md) | Reactive Unit-Interval Saturation | Accepted |
- | [24](nuc-0024.md) | Bare Typed Single-Parameter Indented Block Definitions | Accepted |
- | [26](nuc-0026.md) | Logical Compound Assignment | Accepted |
- | [27](nuc-0027.md) | Bare Multiple-Parameter Named Arrows | Accepted |
-@@ -63,73 +44,108 @@ Created: 31-Jul-2026
- | [30](nuc-0030.md) | Bare Typed Multiple-Parameter Indented Blocks | Accepted |
- | [31](nuc-0031.md) | Implicit Iterator Indented Loops | Accepted |
- | [32](nuc-0032.md) | Indented Named Arrow Expressions | Accepted |
--| [33](nuc-0033.md) | Reactive Cubic Smoothstep | Accepted |
- | [34](nuc-0034.md) | Colon-Free Indented Else Suites | Accepted |
--| [35](nuc-0035.md) | Reactive Quintic Smootherstep | Accepted |
--| [36](nuc-0036.md) | Reactive Fractional Part | Accepted |
- | [37](nuc-0037.md) | Comma-Free Bare Named Arrows | Accepted |
--| [38](nuc-0038.md) | Reactive Inverse Interpolation | Accepted |
--| [39](nuc-0039.md) | Reactive Range Remapping | Accepted |
- | [40](nuc-0040.md) | Comma-Free Bare Indented Blocks | Accepted |
--| [41](nuc-0041.md) | Reactive Flat Mapping | Accepted |
--| [42](nuc-0042.md) | Reactive Literal String Replacement | Accepted |
- | [43](nuc-0043.md) | Direct Conditional Alternatives | Accepted |
+ ```
+@@ -720,20 +725,22 @@ assert(signal.output, 8)
+   Same-line `else pass` and `else { pass }` retain their missing-colon errors.
+ - The authoritative [colon-free indented else suites](../nucleoid.spec.md#colon-free-indented-else-suites)
+   section records layout, exact inherited diagnostics and executable traces.
+-- The CLI already buffers a conditional from its initial colon header.
+-  Bare final `else` stays in that buffer until blank-line commit or EOF;
+-  no new continuation heuristic or literal/comment delimiter is added.
++- The CLI buffers initial colon-bearing and lexical colon-free `if` headers,
++  including lexical comments and balanced condition delimiters. Explicit and
++  direct alternatives autoindent only in that same submission; blank-line
++  commit/EOF still uses the real parser and exposes missing-body or other errors.
+ - [NUC 43](nuc-0043.md) also permits `else condition:` or
+   `elif condition:` in an existing chain, only with a complete balanced
+-  colon-bearing header and a genuine indented suite. Both lower exactly to
++  condition header and a genuine indented suite. Both lower exactly to
+   the nested conditional of `else if condition:`.
+ - `elif` is still the lexical alias for `else`. Explicit `elif if` works
+   just like `else if`; unconditional `elif:` and colon-free indented final
+   `elif` keep their accepted behavior. No new keyword or standalone
+   alternative statement is introduced.
+-- Direct conditions cannot use inline/braced bodies, `:;`, a missing colon
+-  or header separators. A non-consuming balanced token scan ignores nested
+-  colons and checks the existing real-indent predicate. Failed qualification
++- Direct conditions cannot use inline/braced bodies, `:;` or header separators.
++  The colon is optional only at genuine indentation. A non-consuming balanced
++  token scan ignores nested colons and checks the existing real-indent predicate.
++  Failed qualification
+   leaves the final-else parser and original-source diagnostics untouched;
+   qualified conditions and bodies report ordinary parsing errors.
+ - The document/JSONL exporter retains complete `else` and `elif` keywords
+@@ -1906,12 +1913,20 @@ super(arguments)                       explicit parent-constructor arguments
+ 
+ if condition:                          conditional
+     statement
++if condition                           same conditional, genuine indentation only (NUC 49)
++    statement
+ else if condition:
+     statement
++else if condition                      optional colon at genuine indentation
++    statement
+ else condition:                        optional direct alternative, indented only (NUC 43)
+     statement
++else condition                         same direct alternative without its colon
++    statement
+ elif condition:                        equivalent existing Else alias, indented only
+     statement
++elif condition                         same direct alternative without its colon
++    statement
+ else:
+     statement
+ elif:                                  existing unconditional Else alias
+```
+
+**File**: `docs/examples.md` (modified, +15/-9)
+```diff
+@@ -1944,8 +1944,10 @@ assert(item.status, "EMPTY")
+ ```
+ 
+ - Accepted [NUC 34](nuc-0034.md) makes only a final real-indented `else` colon
+-  optional; the same source with `else:` remains equivalent. Every condition
+-  header retains its colon and existing branch order.
++  optional; the same source with `else:` remains equivalent.
++- This legacy control deliberately retains every condition colon.
++  [NUC 49](nuc-0049.md) also permits their omission before genuine indentation,
++  with unchanged branch order.
+ 
+ **Smooth quintic transitions preserve clamped endpoints**
+ 
+@@ -2182,11 +2184,11 @@ assert(snapshot, "archive/notes")
+ 
+ ```nuc
+ def classify(state, urgent):
+-    if state == "blocked":
++    if state == "blocked"
+         return "hold"
+-    else urgent:
++    else urgent
+         return "fast"
+-    elif state == "ready":
++    elif state == "ready"
+         return "send"
+     else:
+         return "wait"
+@@ -2202,11 +2204,11 @@ urgent = true
+ assert(live, "fast")
+ assert(usingFrozen, "fast")
+ def classify(state, urgent):
+-    if state == "blocked":
++    if state == "blocked"
+         return "pause"
+-    else urgent:
++    else urgent
+         return "rush"
+-    elif state == "ready":
++    elif state == "ready"
+         return "go"
+     else:
+         return "queue"
+@@ -2221,12 +2223,16 @@ assert(usingFrozen, "hold")
+ - [NUC 43](nuc-0043.md) adds only an optional spelling for genuine
+   indented conditional alternatives. `else condition:` and `elif condition:`
+   retain the complete AST and behavior of `else if condition:`.
++- [NUC 49](nuc-0049.md) permits the additional colon-free spellings shown
++  here, including initial and explicit else-if conditions, only at genuine
++  indentation. Colon-bearing, mixed and legacy inline/braced suites remain
++  valid wherever previously supported.
+ - Function definitions may be live or frozen without freezing their inputs.
+   Ordinary noncapture, explicit returns, receiver scopes and transaction
+   failures are unchanged; no receiver-frame repair is included.
+ - Explicit `else if`, unconditional `else:`/`elif:` and their accepted
+   colon-free indented final forms remain supported. See the
+-  [root contract](../nucleoid.spec.md#direct-conditional-alternatives) and
++  [root contract](../nucleoid.spec.md#colon-free-indented-conditional-suites) and
+   [reference](README.md#conditionals) for layout and exact errors.
+ 
+ ## Comma-free explicit object properties
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -51,6 +51,7 @@ Created: 31-Jul-2026
  | [44](nuc-0044.md) | Comma-Free Explicit Object Properties | Accepted |
  | [45](nuc-0045.md) | Colon-Led Assertion Statements | Accepted |
  | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Accepted |
-+
-+### Runtime features
-+
-+| NUC | Title | Status |
-+| --- | --- | --- |
-+| [2](nuc-0002.md) | Variables and Declarative Assignment | Draft |
-+| [3](nuc-0003.md) | Types and Instances | Draft |
-+| [4](nuc-0004.md) | Properties | Draft |
-+| [6](nuc-0006.md) | Blocks and Scope | Draft |
-+| [7](nuc-0007.md) | Control Flow | Draft |
-+| [8](nuc-0008.md) | Functions | Accepted |
-+| [9](nuc-0009.md) | Transactions and Error Handling | Draft |
- | [47](nuc-0047.md) | Default Named Constructors | Accepted |
++| [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Accepted |
  
-+### Utility enhancement
-+
-+| NUC | Title | Status |
-+| --- | --- | --- |
-+| [10](nuc-0010.md) | Standard Built-in Objects | Draft |
-+| [21](nuc-0021.md) | Reactive Numeric Clamping | Accepted |
-+| [22](nuc-0022.md) | Reactive Numeric Interpolation | Accepted |
-+| [23](nuc-0023.md) | Reactive Unit-Interval Saturation | Accepted |
-+| [33](nuc-0033.md) | Reactive Cubic Smoothstep | Accepted |
-+| [35](nuc-0035.md) | Reactive Quintic Smootherstep | Accepted |
-+| [36](nuc-0036.md) | Reactive Fractional Part | Accepted |
-+| [38](nuc-0038.md) | Reactive Inverse Interpolation | Accepted |
-+| [39](nuc-0039.md) | Reactive Range Remapping | Accepted |
-+| [41](nuc-0041.md) | Reactive Flat Mapping | Accepted |
-+| [42](nuc-0042.md) | Reactive Literal String Replacement | Accepted |
-+
-+### Reasoning enhancement
-+
-+| NUC | Title | Status |
-+| --- | --- | --- |
-+| [5](nuc-0005.md) | Class-Level Rules | Draft |
-+| [11](nuc-0011.md) | Reasoning Operations | Draft |
-+
-+### Documentation
-+
-+| NUC | Title | Status |
-+| --- | --- | --- |
-+| [0](nuc-0000.md) | Index of NUC Documents | Active |
-+| [1](nuc-0001.md) | NUC Purpose and Guidelines | Active |
-+
- ## Numerical Index
+ ### Runtime features
  
--| NUC | Title | Type | Status |
--| --- | --- | --- | --- |
--| [0](nuc-0000.md) | Index of NUC Documents | Informational | Active |
--| [1](nuc-0001.md) |
+@@ -148,6 +149,7 @@ Created: 31-Jul-2026
+ | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Standards Track | Syntax enhancement | Accepted |
+ | [47](nuc-0047.md) | Default Named Constructors | Standards Track | Runtime features | Accepted |
+ | [48](nuc-0048.md) | State-Filtered Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
 ```
 
-**File**: `docs/nuc-0001.md` (modified, +38/-1)
+**File**: `docs/nuc-0049.md` (added, +210/-0)
 ```diff
-@@ -6,6 +6,7 @@ Title: NUC Purpose and Guidelines
- Author: Can Mingir <canmingir@gmail.com>
- Status: Active
- Type: Process
-+Category: Documentation
- Created: 31-Jul-2026
- ```
+@@ -0,0 +1,210 @@
++# NUC 49 -- Colon-Free Indented Conditional Suites
++
++```
++NUC: 49
++Title: Colon-Free Indented Conditional Suites
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Accepted
++Type: Standards Track
++Category: Syntax enhancement
++Created: 25-Oct-2026
++Requires: 34, 43
++```
++
++## Abstract
++
++- Make a conditional header's colon optional only before a genuine indented
++  suite: initial `if`, explicit `else if`/`elif if`, and accepted direct
++  `else condition`/`elif condition`.
++- Preserve every accepted spelling, complete conditional AST, canonical
++  rendering, graph identity, source positions, runtime behavior and limits.
++- Keep final bare `else`/`elif` unchanged and unconditional.
++
++## Motivation
++
++- Genuine indentation already identifies the suite boundary without the
++  redundant colon, as established for final alternatives and exception suites.
++- Conditional routing should use that optional spelling without requiring a
++  second control-flow implementation or replacing accepted syntax.
++- The existing routing, reactive class, evaluation-order, scope, rollback and
++  frozen-function examples exercise the addition without new measured cases.
++
++## Rationale
++
++- The caller's single registry-derived uniform draw selected index 0,
++  `Syntax enhancement`, from the four eligible enhancement categories.
++- Extend the established genuine-indentation colon-omission pattern to redundant
++  conditional-header colons without changing control flow; do not redraw.
++- Reuse `has_indented_body`, `has_indented_suite` and `suite_body`, rather than
++  making general `suite()` colon-optional or changing unrelated header grammars.
++- Reject inline/braced colon omission, header-line semicolons, inferred bodies,
++  speculative expression parsing, caught errors, parser rewinds and fake
++  continuation success.
++- Preserve explicit colons for all currently accepted suite forms, and keep
++  representative legacy forms documented and covered.
++
++## Specification
++
++- The normative contract is
++  [Colon-free indented conditional suites](../nucleoid.spec.md#colon-free-indented-conditional-suites),
++  together with the unchanged conditional semantics and accepted alternatives.
++- Parse the initial or explicit alternative condition using the existing
++  expression parser. If a colon follows, use the unchanged `suite()` path.
++- Otherwise require immediate `Newline` or `Indent`; the first token after only
++  `Newline`/`Semicolon` layout must be a real `Indent`. Inspect without consuming
++  tokens; success selects the complete existing `suite_body()` parser.
++- Direct alternatives first qualify a nonempty balanced header, matching
++  parentheses, brackets and braces. Its top-level colon or body-layout boundary
++  must satisfy the same genuine-indentation guard. Mismatches, unbalanced
++  prefixes, header-line semicolons, dedents and EOF do not qualify.
++- Nested call/slice/object/function expressions and annotations do not delimit
++  the header; strings, regexes, templates and lexical comments remain tokens,
++  not punctuation guesses. LF, CRLF, tabs and delimited multiline expressions
++  keep existing lexer behavior.
++- Missing, comment-only and unindented bodies, and colon-free inline/braced
++  suites, retain the inherited errors and source anchors. Failed direct
++  qualification consumes nothing and retains the original final-else parser.
++- Once qualified, ordinary expression/body errors propagate directly. No
++  speculative parse, catch, rewind, alternate success or runtime path is added.
++- Final `else`/`elif` retains its unconditional `Stmt::Block`. Every conditional
++  condition retains the complete existing `Stmt::If` and recursive association.
++- Preserve canonical generator rendering, graph keys and all node metadata,
++  ordered actual reads/dependencies, top-level statement positions, truthiness,
++  first-match and short-circuit order, independent per-instance rules, live and
++  frozen functions, caller/receiver scopes, returns, rollback and recovery.
++- Preserve parser nesting and chain bounds and inherited recursive-chain and
++  queued-method receiver behavior; no unrelated bug fix is implied.
++- The native CLI lexically recognizes an initial colon-free `if` header for
++  buffering and autoindent; explicit/direct alternatives only adjust indentation
++  inside that existing submission. Blank-line commit and EOF use the real parser;
++  errors remain visible and subsequent commands/submissions recover normally.
++- The production document/JSONL splitter already groups these complete chains.
++  Keep it unchanged and verify actual per-statement export execution.
++- Do not change `for`, class, definition, exception, anonymous-function or other
++  headers, project versions, release metadata, dependencies or ARC.
++
++- The existing `Nucleoid selects direct conditional alternatives` spec entry
++  contains this complete routing function, with its original protected checks
++  and expecte
+```
+
+**File**: `nucleoid.spec.md` (modified, +105/-38)
+```diff
+@@ -1496,10 +1496,10 @@ statement positions; caught values and transaction recovery are unchanged.
+   all statements, nested suites, optional final `Dedent`, and EOF handling.
+   Blank/comment lines create no indent; LF, CRLF and accepted tabs keep the
+   existing lexer rules. A semicolon on the header line never qualifies.
+-- Every `if` and `else if` condition retains its required colon. Other `for`,
+-  definition, class, try/catch and anonymous headers keep their accepted
+-  grammars. Colon-bearing indented, inline, semicolon-separated and braced
+-  alternatives remain valid, with unchanged dangling-else association.
++- Conditional headers follow the optional-colon rule below; `for`, definition,
++  class, try/catch and anonymous headers keep their accepted grammars.
++  Colon-bearing indented, inline, semicolon-separated and braced alternatives
++  remain valid, with unchanged dangling-else association.
+ - Strings, regexes, templates and comments containing `else:` are not headers.
+   No token, keyword, public AST/API, evaluation, scope, frame, graph, return,
+   throw, rollback or resource-limit behavior changes. Canonical rendering
+@@ -1527,9 +1527,10 @@ statement positions; caught values and transaction recovery are unchanged.
  
-@@ -36,6 +37,39 @@ Created: 31-Jul-2026
- - **Informational** -- a design issue, index, or guidelines. Revisions still undergo proposal evaluation. NUC 0.
- - **Process** -- a process around Nucleoid, or a change to one. This document.
- 
-+## Proposal Categories
-+
-+- This table is the authoritative category registry; `Category` labels one primary purpose, independently of `Type` and `Status`.
-+
-+| Category | Purpose | Eligible for automatic selection |
-+| --- | --- | --- |
-+| Syntax enhancement | Grammar, spellings, and source forms. | Yes |
-+| Runtime features | Core execution, data modeling, scope, control flow, and transactions. | Yes |
-+| Utility enhancement | Standard built-in helpers, including math, collections, and strings. | Yes |
-+| Reasoning enhancement | Logic rules, inference, graph queries, and explanations. | Yes |
-+| Documentation | Indexes, guidelines, reference documentation, and development processes. | No |
-+
-+- Every existing and future NUC must have exactly one registered `Category` header, including Draft, Accepted, Rejected, Active, and Superseded proposals.
-+- Classify the NUC's overall primary purpose, not merely its latest edit; a metadata-only revision does not make a language proposal Documentation.
-+- NUC 0 and NUC 1 use Documentation.
-+- Only the user may add categories and specify their automatic-selection eligibility; keep this registry, affected proposal headers, and both category and numerical indexes synchronized.
-+- Every category addition requires the coordinating caller to review all existing NUCs across every status and update proposals that fit the new category more accurately.
-+- Each NUC changed by that review requires its own revision under the ordinary independent proposal/evaluation process; preserve unaffected categories and every proposal's `Type`, `Status`, and historical evaluation outcomes.
-+- Use the user's confirmed classifications; preserve clear assignments unless the category-addition review warrants a more accurate fit.
-+- Whenever a category is added, selected, or updated, the coordinating caller must ask the user for confirmation before proceeding if anything is uncertain, including its meaning, automatic-selection eligibility, or proposal placement; workers return the question to the caller rather than guessing.
-+- This category-confirmation requirement is the explicit exception during otherwise non-confirming continuous proposal cycles; only the caller asks the user.
-+
-+### Selecting an Unspecified Enhancement
-+
-+- Explicit feature or category requests take precedence; documentation and process work are not randomly selected as language enhancements.
-+- When no feature or category is specified for a language enhancement, the caller reads the current registry and makes one tool-backed, unbiased random draw with equal probability across all currently eligible categories.
-+- Derive the eligible set and its size from the registry, without a hard-coded category count; future user-added eligible categories join the same uniform draw.
-+- With the current four eligible categories, each has a 25% chance; do not retain the former 50/50 syntax/runtime split.
-+- For example, populate `$categories` from the registry's Yes entries and select one index with `Get-Random -Minimum 0 -Maximum $categories.Count`.
-+- Draw before recording baselines or delegating preparation, then choose one bounded enhancement within the selected category; do not redraw to favor a category or substitute deterministic alternation for randomness.
-+- The caller supplies the selected category, requested change, and selection rationale to the proposal worker; the worker uses that selection without redrawing.
-+- All categories retain the same baseline, syntax-compatibility, development-check, and independent acceptance requirements; classification never bypasses a safeguard.
-+
- ## NUC Status
- 
- - **Draft** -- under development, subject to change.
-@@ -54,11 +88,13 @@ Created: 31-Jul-2026
- - Pin an accepted Git revision and record its immutable baseline before changing runtime behavior or executable cases. Do not assume a revision containing the candidate is an accepted baseline.
- - Prepare and evaluate each revision in an isolated candidate worktree. Dependencies must already be accepted; do not combine pending proposals. Concurrent revisions that rewrite shared files need separate worktrees.
- - The proposal agent drafts and prototypes one revision, implementing candidate runtime support and rewriting equivalent executable source cases where necessary. Process-only changes need no runtime or corpus rewrite or artificial new cases.
-+- Preserve previously accepted syntax and its parsing and runtime semantics; new forms are additive and optional, never replacements that break legacy programs.
-+- Verify unchanged accepted-sy
+ - Within an existing conditional chain, `else CONDITION:` and
+   `elif CONDITION:` optionally spell `else if CONDITION:` only when the
+-  complete condition header ends at a balanced top-level colon followed by
+-  a genuine indented suite. Both lower to the same complete nested `Stmt::If`,
+-  not an unconditional block or a new runtime operation.
++  complete balanced condition header precedes a genuine indented suite.
++  Their suite colon is optional under the conditional-header rule below.
++  Both lower to the same complete nested `Stmt::If`, not an unconditional
++  block or a new runtime operation.
+ - `elif` remains the existing lexical alias for `else`, not a new keyword.
+   Explicit `else if` and `elif if` keep priority and all their accepted bodies,
+   including inline, semicolon-separated and braced suites. Final `else:` and
+@@ -1538,18 +1539,20 @@ statement positions; caught values and transaction recovery are unchanged.
+ - After `Else`, a private, non-consuming token scan qualifies only a nonempty
+   balanced header. Match parentheses, brackets and braces; ignore their nested
+   colons, including slices, object fields, calls and parameter annotations.
+-  Stop on mismatched delimiters or top-level logical newline, semicolon,
+-  indent, dedent or EOF. Do not skip header separators, parse a speculative
+-  expression, catch/rewind an error or evaluate a condition during lookahead.
+-- The suite colon requires immediate `Newline` or `Indent`, then a real
+-  `Indent` after only the existing newline/semicolon layout. Blank/comment-only
+-  lines do not create an indent. LF, CRLF, tabs and delimited multiline
+-  expressions retain their existing lexer and suite behavior.
++  A top-level colon, newline or indent ends the scan and must qualify with the
++  existing real-indent predicate; mismatched delimiters, semicolons, dedents
++  and EOF fail. Do not skip header separators, parse a speculative expression,
++  catch/rewind an error or evaluate a condition during lookahead.
++- With a colon, require immediate `Newline` or `Indent` after it; without one,
++  require that same layout immediately after the balanced nonempty condition.
++  A real `Indent` must follow only the existing newline/semicolon layout.
++  Blank/comment-only lines do not create an indent. LF, CRLF, tabs and delimited
++  multiline expressions retain their existing lexer and suite behavior.
+ - Qualification does not validate an expression. Once qualified, the ordinary
+   condition and whole-suite parsers report their real errors. If it fails,
+   consume nothing and use the original final-else parser and its original
+   source positions and diagnostics. New direct conditions have no inline,
+-  braced or `:;` shortcut, and cannot omit their colon or stand alone.
++  braced or `:;` shortcut and cannot stand alone.
+ - Complete ASTs, canonical graph keys and top-level statement positions match
+   their explicit counterparts. Conditions still use existing truthiness,
+   first-match and short-circuit evaluation, actual reads and dependency
+@@ -1562,7 +1565,7 @@ statement positions; caught values and transaction recovery are unchanged.
+   `ReferenceError("this is not defined")`.
+ - Exact `if false: pass\nelse ready: pass`, `else ready: { pass }`,
+   `else ready:;\n    pass`, `else ready:\npass` and
+-  `else ready\n    pass` keep
++  `else ready\n    # no body` keep
+   `SyntaxError("Expected ':' but found identifier 'ready'")` at line 2,
+   column 6. The same `elif` prefixes retain the same diagnostics.
+ - Exact `if false: pass\nelse true +:\n    pass` qualifies, then raises
+@@ -1575,21 +1578,85 @@ statement positions; caught values and transaction recovery are unchanged.
+ - Expression/statement nesting remains bounded at 64 and op
 ```
 
 #### Recent Merged Pull Requests:
@@ -1529,40 +1437,44 @@ Introduce a proposal category registry and classify existing NUCs in their heade
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add NUC categories and selection policy
+## X. Accept NUC 49 colon-free conditional suites
 
 **RULE**:
-When implementing operations in `.github/agents/nuc-evaluate.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63ada8be`: Add NUC categories and selection policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd1f7fdb`: Accept NUC 49 colon-free conditional suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/agents/nuc-evaluate.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  and Git blob revision, confirmed category, accepted Git revision, immutable
-  baseline JSON artifact, candidate worktree, and a fresh report artifact path.
-- Verify the proposal's `Category` header against the handoff and registry.
-  Return uncertainty about category additions, selections, updates, or
-  assignments to the caller, who asks the user for confirmation; do not
-  assign or change a category during evaluation.
-  inputs; the caller owns category clarification with the user, outcome
-  recording, and continuation
-Return the proposal and baseline revisions, confirmed category, decision,
-report path, independent
+- This legacy control deliberately retains its condition colon.
+  [NUC 49](docs/nuc-0049.md) also permits omission for genuine-indented
+  `if`/`else if` suites; inline, semicolon-separated and braced alternatives
+  still require their accepted colons. A header-line semicolon cannot qualify.
+    if state == "done"
+    else state == "ready"
+  before a complete condition with a genuine indented body.
+- [NUC 49](docs/nuc-0049.md) additionally makes the header colon optional
+  for initial `if`, explicit `else if`/`elif if`, and these direct alternatives,
+  only before a genuine indented suite. The CLI recognizes initial colon-free
+  headers and autoindents without treating literal/comment punctuation as syntax.
+  See the [root contract](nucleoid.spec.md#colon-free-indented-conditional-suites).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  and Git blob revision, accepted Git revision, immutable baseline JSON
-  artifact, candidate worktree, and a fresh report artifact path.
-  inputs; the caller owns outcome recording and non-interactive continuation
-Return the proposal and baseline revisions, decision, report path, independent
+- `if` and `else if` keep their colons; inline, semicolon-separated and braced
+  alternatives still need `else:`. A same-line semicolon cannot enable omission.
+    if state == "done":
+    else state == "ready":
+  before a complete colon-bearing condition with a genuine indented body.
+  See the [root contract](nucleoid.spec.md#direct-conditional-alternatives).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63ada8be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd1f7fdb` are properly handled with clean fallback behavior.

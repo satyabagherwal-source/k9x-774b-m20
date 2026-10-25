@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `724e39f0`  
+> **Source Version**: `f25c7ebb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:51:53.875Z  
+> **Timestamp**: 2026-10-25T22:00:48.141Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:51:53.192Z  
+> **Harvest Timestamp**: 2026-10-25T22:00:48.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6242 stars
+- **Stars / Engagement**: 6243 stars
 
 ---
 
@@ -1626,757 +1626,137 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ad57da6` (2026-10-22)
-**Commit Message**: [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)
+### Incident Patch 1: `f25c7ebb` (2026-10-25)
+**Commit Message**: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990)
 
-* [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete
+* [MOD-20157] Skip the field-expiration bit lookup for blocks without a bitset
 
-* Assert hybrid shard profile invariants
+#10169 made every inverted-index record read look up its entry's bit in the
+block's expiration bitset. The lookup was an out-of-line call that read the
+bitset's ThinVec header even for blocks that never had a field-level TTL,
+which is every block of an index without HEXPIRE. Numeric range queries pay
+it on every decoded and seeked record.
 
-* Disable query timeout in hybrid profile structure test
-
-**File**: `src/coord/hybrid/dist_hybrid.c` (modified, +40/-23)
-```diff
-@@ -539,21 +539,35 @@ static void setupCoordinatorArrangeSteps(AREQ *searchRequest, AREQ *vectorReques
- 
- // Helper function to extract shard profile from a reply based on protocol version
- static MRReply *extractShardProfile(MRReply *current, bool resp3) {
-+  // RPNet collects complete shard profiles or errors; timeouts can shorten the list.
-+  RS_LOG_ASSERT(current, "Collected shard profile must not be NULL");
-   if (MRReply_Type(current) == MR_REPLY_ERROR) {
-     return current;
-   }
-+  MRReply *shards;
-   if (resp3) {
-     // RESP3: profile -> Shards -> [shard_profile]
--    MRReply *shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
--    return MRReply_ArrayElement(shards, 0);
-+    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_MAP && MRReply_Length(current) >= 2 &&
-+                      MRReply_Length(current) % 2 == 0,
-+                  "RESP3 profile must be a nonempty map");
-+    shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
-   } else {
--    // RESP2: [results, shards_array] -> shards_array[0] is the shard profile
--    MRReply *shards_array_profile = MRReply_ArrayElement(current, 1);
--    MRReply *profile = MRReply_ArrayElement(shards_array_profile, 0);
-+    // RESP2: ["Shards", shards_array, ...] -> shards_array[0] is the shard profile
-+    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_ARRAY && MRReply_Length(current) >= 2,
-+                  "RESP2 profile must contain the Shards key and array");
-+    shards = MRReply_ArrayElement(current, 1);
-+  }
-+  RS_LOG_ASSERT(shards && MRReply_Type(shards) == MR_REPLY_ARRAY && MRReply_Length(shards) > 0,
-+                "Shards must contain a shard profile");
-+  MRReply *profile = MRReply_ArrayElement(shards, 0);
-+  RS_LOG_ASSERT(profile && MRReply_Length(profile) >= 2 && MRReply_Length(profile) % 2 == 0,
-+                "Shard profile must contain key-value pairs");
-+  if (!resp3) {
-     // Convert to map for easier access (modifies in place)
-     MRReply_ArrayToMap(profile);
--    return profile;
-   }
-+  RS_LOG_ASSERT(MRReply_Type(profile) == MR_REPLY_MAP, "Shard profile must be a map");
-+  return profile;
- }
- 
- // Helper function to extract Shard ID MRReply from a shard profile
-@@ -567,7 +581,7 @@ static MRReply *extractShardIdReply(MRReply *shardProfile) {
- 
- // Helper function to print a profile map excluding the "Shard ID" field
- static void printProfileExcludingShardId(RedisModule_Reply *reply, MRReply *profile) {
--  if (!profile || MRReply_Type(profile) == MR_REPLY_ERROR) {
-+  if (MRReply_Type(profile) == MR_REPLY_ERROR) {
-     MR_ReplyWithMRReply(reply, profile);
-     return;
-   }
-@@ -595,7 +609,8 @@ static void printProfileExcludingShardId(RedisModule_Reply *reply, MRReply *prof
- void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx) {
-   HybridRequest *hreq = ctx;
-   // New format: group by shard with Shard ID printed once per shard
--  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)}, ...]
-+  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)},
-+  // ...]
- 
-   // Get RPNets for SEARCH and VSIM requests
-   AREQ *searchAreq = hreq->requests[SEARCH_INDEX];
-@@ -604,24 +619,26 @@ void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx) {
-   RPNet *vsimRpnet = (RPNet *)AREQ_QueryProcessingCtx(vsimAreq)->rootProc;
- 
-   size_t searchCount = array_len(searchRpnet->shardsProfile);
--
--  bool resp3 = reply->resp3;
--
--  // Iterate over shards and print both SEARCH and VSIM profiles for each shard
--  for (size_t i = 0; i < searchCount; i++) {
-+  size_t vsimCount = array_len(vsimRpnet->shardsProfile);
-+
-+  // The subqueries collect profiles independently; a timeout can leave either list shorter.
-+  // Decode using each shard command's protocol, which can differ from the client's protocol.
-+  for (size_t i = 0; i < MAX(searchCount, vsimCount); i++) {
-+    MRReply *searchProfile = i < searchCount ? extractShardProfile(searchRpnet->shardsProfile[i],
-+                                                                   searchRpnet->cmd.protocol == 3)
-+                                             : NULL;
-+    MRReply *vsimProfile = i < vsimCount ? extractShardProfile(vsimRpnet->shardsProfile[i],
-+                                                               vsimRpnet->cmd.protocol == 3)
-+                                         : NULL;
-     RedisModule_Reply_Map(reply);  // Start shard map
- 
--    // Extract shard profiles
--    MRReply *searchProfile = extractShardProfile(searchRpnet->shardsProfile[i], resp3);
--    MRReply *vsimProfile = extractShardProfile(vsimRpnet->shardsProfile[i], resp3);
--
--    // Extract and print Shard ID from SEARCH profile
--    MRReply *shardIdReply = NULL;
--    if (searchProfile) {
--      shardIdReply = extractShardIdReply(searchProfile);
--      RedisModule_Reply_SimpleString(reply, "Shard ID");
--      MR_ReplyWithMRReply(reply, shardIdReply);
-+    // Use the available profile when SEARCH is missing or c
-```
-
-**File**: `tests/cpptests/coord_tests/test_cpp_hybrid_profile.cpp` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+/*
-+ * Copyright (c) 2006-Present, Redis Ltd.
-+ * All rights reserved.
-+ *
-+ * Licensed under your choice of the Redis Source Available License 2.0
-+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
-+ * GNU Affero General Public License v3 (AGPLv3).
-+ */
-+
-+#include "gtest/gtest.h"
-+#include "redismock/redismock.h"
-+extern "C" {
-+#include "reply.h"
-+}
-+#include "hybrid/hybrid_request.h"
-+#include "hiredis/hiredis.h"
-+#include "coord/rpnet.h"
-+
-+#include <memory>
-+#include <string>
-+#include <tuple>
-+#include <vector>
-+
-+extern "C" void printShardsHybridProfile(RedisModule_Reply *reply, void *ctx);
-+
-+class HybridProfileTest : public ::testing::TestWithParam<std::tuple<bool, bool>> {
-+ protected:
-+  RedisModuleCtx *ctx = nullptr;
-+  std::vector<std::unique_ptr<MRReply, decltype(&MRReply_Free)>> replies;
-+
-+  bool shardResp3() const {
-+    return std::get<0>(GetParam());
-+  }
-+
-+  void SetUp() override {
-+    ctx = RedisModule_GetThreadSafeContext(nullptr);
-+  }
-+  void TearDown() override {
-+    RedisModule_FreeThreadSafeContext(ctx);
-+  }
-+
-+  MRReply *parse(const std::string &wire) {
-+    redisReader *reader = redisReaderCreate();
-+    EXPECT_EQ(redisReaderFeed(reader, wire.data(), wire.size()), REDIS_OK);
-+    void *reply = nullptr;
-+    EXPECT_EQ(redisReaderGetReply(reader, &reply), REDIS_OK);
-+    redisReaderFree(reader);
-+    EXPECT_NE(reply, nullptr);
-+    replies.emplace_back(static_cast<MRReply *>(reply), MRReply_Free);
-+    return replies.back().get();
-+  }
-+
-+  std::string wrap(const std::string &profile) {
-+    return (shardResp3() ? "%1\r\n+Shards\r\n*1\r\n" : "*2\r\n+Shards\r\n*1\r\n") + profile;
-+  }
-+
-+  MRReply *validProfile() {
-+    return parse(wrap(std::string(shardResp3() ? "%2" : "*4") +
-+                      "\r\n+Shard ID\r\n+shard-1\r\n+Warning\r\n+None\r\n"));
-+  }
-+
-+  void check(const std::vector<MRReply *> &search, const std::vector<MRReply *> &vsim, size_t count,
-+             const std::string &expected) {
-+    AREQ searchAreq = {}, vsimAreq = {};
-+    RPNet searchRpnet = {}, vsimRpnet = {};
-+    searchRpnet.cmd.protocol = vsimRpnet.cmd.protocol = shardResp3() ? 3 : 2;
-+    // Allocate exactly the collected count, so ASan catches reading past either list.
-+    if (!search.empty()) {
-+      searchRpnet.shardsProfile = array_new(MRReply *, search.size());
-+      for (auto *profile : search) array_append(searchRpnet.shardsProfile, profile);
-+    }
-+    if (!vsim.empty()) {
-+      vsimRpnet.shardsProfile = array_new(MRReply *, vsim.size());
-+      for (auto *profile : vsim) array_append(vsimRpnet.shardsProfile, profile);
-+    }
-+    AREQ_QueryProcessingCtx(&searchAreq)->rootProc = &searchRpnet.base;
-+    AREQ_QueryProcessingCtx(&vsimAreq)->rootProc = &vsimRpnet.base;
-+    AREQ *requests[] = {&searchAreq, &vsimAreq};
-+    HybridRequest hreq = {};
-+    hreq.requests = requests;
-+
-+    RMCK_GetReplyLog(ctx).clear();
-+    RedisModule_Reply reply = RedisModule_NewReply(ctx);
-+    reply.resp3 = std::get<1>(GetParam());
-+    RedisModule_Reply_Array(&reply);
-+    printShardsHybridProfile(&reply, &hreq);
-+    RedisModule_Reply_ArrayEnd(&reply);
-+#ifdef ENABLE_ASSERT
-+    EXPECT_EQ(std::string(reply.json), expected);
-+#endif
-+    RedisModule_EndReply(&reply);
-+    EXPECT_EQ(RMCK_GetReplyLog(ctx).back(), "setarray:" + std::to_string(count));
-+    array_free(searchRpnet.shardsProfile);
-+    array_free(vsimRpnet.shardsProfile);
-+  }
-+
-+  const std::string searchOnly =
-+      "{ \"Shard ID\": \"shard-1\", \"SEARCH\": { \"Warning\": \"None\" } }";
-+  const std::string vsimOnly = "{ \"Shard ID\": \"shard-1\", \"VSIM\": { \"Warning\": \"None\" } }";
-+  const std::string both =
-+      "{ \"Shard ID\": \"shard-1\", \"SEARCH\": { \"Warning\": \"None\" }, "
-+      "\"VSIM\": { \"Warning\": \"None\" } }";
-+};
-+
-+TEST_P(HybridProfileTest, NoProfiles) {
-+  check({}, {}, 0, "[  ]");
-+}
-+
-+TEST_P(HybridProfileTest, CompleteProfiles) {
-+  auto *search = validProfile();
-+  auto *vsim = validProfile();
-+  check({search}, {vsim}, 1, "[ " + both + " ]");
-+  // RESP2 profiles are converted to maps in place and must remain readable.
-+  check({search}, {vsim}, 1, "[ " + both + " ]");
-+}
-+
-+TEST_P(HybridProfileTest, MissingVsimProfiles) {
-+  check({validProfile()}, {}, 1, "[ " + searchOnly + " ]");
-+  check({validProfile(), validProfile(), validProfile()}, {validProfile()}, 3,
-+        "[ " + both + ", " + searchOnly + ", " + searchOnly + " ]");
-+}
-+
-+TEST_P(HybridProfileTest, MissingSearchProfiles) {
-+  check({}, {validProfile()}, 1, "[ " + vsimOnly + " ]");
-+  check({validProfile()}, {validProfile(), validProfile(), validProfile()}, 3,
-+        "[ " + both + ", " + vsimOnly + ", " + vsimOnly + " ]");
-+}
-+
-+TEST_P(HybridProfileTest, ErrorProfiles) {
-+  auto *error = parse("-timeout\r\n");
-+  check({error}, {validProfile()}, 1,
-+        "[ { \"Shard ID\": \"shard-1\", \"SEARCH\": \"ERR: timeout\", "
-+        "\"VSIM\": { \"Warning\": \"None\" } } ]");
-+  check({validProfi
-```
-
-**File**: `tests/pytests/test_hybrid_profile.py` (modified, +3/-1)
-```diff
-@@ -683,13 +683,15 @@ def test_profile_standalone_with_background_depletion():
- 
- @skip(cluster=False)
- def test_profile_cluster():
--    env = Env(moduleArgs='DEFAULT_DIALECT 2 _PRINT_PROFILE_CLOCK false')
-+    # This structure test requires complete profiles from every shard.
-+    env = Env(moduleArgs='DEFAULT_DIALECT 2 _PRINT_PROFILE_CLOCK false TIMEOUT 0')
-     _setup_index_and_data(env)
-     for query, _, _, _, expected_shard_profile, expected_coordinator_profile in query_and_profile:
-         actual_res = env.execute_command(*query)
-         _verify_profile_structure(env, env.protocol, actual_res)
- 
-         shard_profiles = actual_res[8][1]
-+        env.assertEqual(len(shard_profiles), env.shardsCount, message=f'query: {query}, reply: {actual_res}')
-         for i in range(len(shard_profiles)):
-             shard_profile = shard_profiles[i]
-             # Shard profile is a list of 6 items
-```
-
----
-
-### Incident Patch 2: `95a67995` (2026-10-22)
-**Commit Message**: [MOD-19932] Add FT.DEBUG DISK_STATS and the search-disk-statistics config (#11918)
-
-* [MOD-19932] Add FT.DEBUG DISK_STATS and the search-disk-statistics config
-
-FT.DEBUG DISK_STATS <index> [STATS] returns storage-engine diagnostics
-for a disk index as text: per-column-family level and block-cache stats
-and, with STATS, the sections shared by every index (block-cache entry
-stats and storage-engine statistics).
-
-Statistics add per-operation bookkeeping, so they are opt-in through the
-new hidden, immutable search-disk-statistics config (default no). It is
-load-time only because statistics must be attached before each index
-database opens; BasicDiskAPI.open gains an enableStatistics parameter to
-carry it. MetricsDiskAPI gains debugDiskStats for the report.
-
-On a non-disk index the command replies with an error.
+Gate the lookup on a pointer-only check that the bitset has an allocation,
+and force-inline it into the reader.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* [MOD-19932] Accept search-disk-statistics as a module argument
+* [MOD-20157] Track entry ordinals only in blocks with an expiration bitset
 
-Like search-disk-use-direct-reads, the config gets a legacy setter so it
-can be passed with the other module arguments at load time, not only
-through the Redis config file. It stays hidden and immutable.
+The reader kept a per-entry ordinal for every decoded and seeked record so it
+could look up the entry's field-expiration bit. In blocks without a bitset that
+bookkeeping is pure overhead.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Enter such blocks with the ordinal marked unknown and skip the bookkeeping
+there. A block gains its first bit only through an append, past every existing
+entry, while the reader is suspended; the first read that finds a bitset with an
+unknown ordinal recoun
 
-* [MO
-
-**File**: `src/config.c` (modified, +9/-0)
+**File**: `src/redisearch_rs/inverted_index/src/index/core.rs` (modified, +1/-0)
 ```diff
-@@ -2799,6 +2799,15 @@ int RegisterModuleConfig_Local(RedisModuleCtx *ctx) {
-     )
-   )
+@@ -126,6 +126,7 @@ impl IndexBlock {
+     }
  
-+  RM_TRY(
-+    RedisModule_RegisterBoolConfig(
-+      ctx, "search-_disk-statistics", 0,
-+      REDISMODULE_CONFIG_HIDDEN | REDISMODULE_CONFIG_IMMUTABLE | REDISMODULE_CONFIG_UNPREFIXED,
-+      get_bool_config, set_bool_config, NULL,
-+      (void *)&(RSGlobalConfig.diskStatistics)
-+    )
-+  )
-+
-   RM_TRY(
-     RedisModule_RegisterBoolConfig(
-       ctx, "search-_fallback-to-main-thread-when-block-client-unavailable", 1,
+     /// Whether the entry at `ordinal` belongs to a document with a field-level expiration.
++    #[inline(always)]
+     pub(crate) fn expiration_bit(&self, ordinal: u16) -> bool {
+         self.expiration_bits.contains(ordinal)
+     }
 ```
 
-**File**: `src/config.h` (modified, +4/-0)
+**File**: `src/redisearch_rs/inverted_index/src/index/expiration_bits.rs` (modified, +1/-0)
 ```diff
-@@ -248,6 +248,9 @@ typedef struct {
-   // are intentionally not coupled to any Flex bigredis-driver settings.
-   bool diskDropReadCache;
-   bool diskUseDirectReads;
-+  // Collect storage-engine statistics for disk indexes, reported by FT.DEBUG DISK_STATS.
-+  // Load-time only: statistics must be attached before each index database opens.
-+  bool diskStatistics;
-   // Per-DB SpeedB open-file cap, and the per-index cost charged against the process-wide file-descriptor reservation
-   // (see SearchDisk_CanCreateIndex). Immutable, so a deployment with few, very large indexes must set this at startup
-   // rather than raising it later.
-@@ -521,6 +524,7 @@ static_assert(DISK_ASYNC_READ_POOL_SIZE_MAX * DISK_ASYNC_READ_QUEUE_FACTOR_MAX <
-     .diskWbmBudgetPerIndexMB = DEFAULT_DISK_WBM_BUDGET_PER_INDEX_MB,           \
-     .diskDropReadCache = false,                                                \
-     .diskUseDirectReads = false,                                               \
-+    .diskStatistics = false,                                                   \
-     .diskMaxOpenFiles = DEFAULT_DISK_MAX_OPEN_FILES,                           \
-     .diskAsyncReadPoolSize = DEFAULT_DISK_ASYNC_READ_POOL_SIZE,                \
-     .diskAsyncReadQueueFactor = DEFAULT_DISK_ASYNC_READ_QUEUE_FACTOR,          \
+@@ -41,6 +41,7 @@ impl ExpirationBits {
+     }
+ 
+     /// Whether `ordinal` is in the set.
++    #[inline(always)]
+     pub(crate) fn contains(&self, ordinal: u16) -> bool {
+         self.0
+             .as_slice()
 ```
 
-**File**: `src/debug_commands.c` (modified, +37/-0)
+**File**: `src/redisearch_rs/inverted_index/src/tests/expiration_bit.rs` (modified, +65/-0)
 ```diff
-@@ -3845,6 +3845,42 @@ DEBUG_COMMAND(NumericBucketMap) {
-   return REDISMODULE_OK;
+@@ -239,3 +239,68 @@ fn expiration_bit_survives_gc() {
+     }
+     assert!(!reader.next_record(&mut result).unwrap());
  }
- 
-+// FT.DEBUG DISK_STATS <index> [VERBOSE]
-+// Storage-engine level and block-cache stats for every column family of a disk
-+// index. VERBOSE appends the sections shared by every index, so callers pass it
-+// for one index per shard.
-+DEBUG_COMMAND(DiskStats) {
-+  if (!debugCommandsEnabled(ctx)) {
-+    return RedisModule_ReplyWithError(ctx, NODEBUG_ERR);
-+  }
-+  if (argc != 3 && argc != 4) {
-+    return RedisModule_WrongArity(ctx);
-+  }
-+  bool withStatistics = false;
-+  if (argc == 4) {
-+    if (strcasecmp(RedisModule_StringPtrLen(argv[3], NULL), "VERBOSE")) {
-+      return RedisModule_ReplyWithError(ctx, "Expected VERBOSE");
-+    }
-+    withStatistics = true;
-+  }
-+  GET_SEARCH_CTX(argv[2])
 +
-+  if (!sctx->spec->diskSpec) {
-+    RedisModule_ReplyWithError(sctx->redisCtx, "DISK_STATS is only supported on disk indexes");
-+  } else {
-+    char *text = SearchDisk_DebugDiskStats(sctx->spec->diskSpec, withStatistics);
-+    if (!text) {
-+      RedisModule_ReplyWithError(sctx->redisCtx, "Disk stats are unavailable");
-+    } else {
-+      RedisModule_ReplyWithStringBuffer(sctx->redisCtx, text, sdslen(text));
-+      sdsfree(text);
-+    }
-+  }
-+
-+  SearchCtx_Free(sctx);
-+  return REDISMODULE_OK;
++/// Numeric record for `doc_id` with the given field-expiration bit.
++fn numeric(doc_id: DocId, has_exp: bool) -> RSIndexResult<'static> {
++    RSIndexResult::build_numeric(1.5)
++        .doc_id(doc_id)
++        .has_field_expiration(has_exp)
++        .build()
 +}
 +
- /**
-  * FT.DEBUG REGISTER_TEST_SCORERS
-  * Register the test scorers for testing purposes.
-@@ -3956,6 +3992,7 @@ DebugCommandType commands[] = {{"DUMP_INVIDX", DumpInvertedIndex}, // Print all
-                                {"GET_MAX_DOC_ID", GetMaxDocId},
-                                {"DUMP_DELETED_IDS", DumpDeletedIds},
-                                {"NUMERIC_BUCKET_MAP", NumericBucketMap},
-+                               {"DISK_STATS", DiskStats},
-                                {"DISK_IO_CONTROL", DiskIOControl},
-                                {"REGISTER_TEST_SCORERS", RegisterTestScorers},
-                                {"SET_MAX_INDEXES", SetMaxIndexes},
-```
-
-**File**: `src/search_disk.c` (modified, +7/-1)
-```diff
-@@ -201,7 +201,8 @@ bool SearchDisk_Initialize(RedisModuleCtx *ctx) {
-     .maxOpenFiles = RSGlobalConfig.diskMaxOpenFiles,
-   };
-   disk_db = disk->basic.open(ctx, &resource_config, RSGlobalConfig.hideUserDataFromLog,
--                             RSGlobalConfig.diskDropReadCache, RSGlobalConfig.diskUseDirectReads);
-+                             RSGlobalConfig.diskDropReadCache, RSGlobalConfig.diskUseDirectReads,
-+                             RSGlobalConfig.diskStatistics);
-   if (!disk_db) {
-     RedisModule_Log(ctx, "warning", "Search Disk is enabled but could not be initialized");
-     return false;
-@@ -538,6 +539,11 @@ size_t SearchDisk_GetDeletedIds(RedisSearchDiskIndexSpec *handle, t_docId *buffe
-     return disk->docTable.getDeletedIds(handle, buffer, buffer_size);
- }
- 
-+char *SearchDisk_DebugDiskStats(RedisSearchDiskIndexSpec *handle, bool withStatistics) {
-+    RS_ASSERT(disk && disk_db && handle);
-+    return disk->metrics.debugDiskStats(disk_db, handle, withStatistics, &sdsnewlen);
-+}
-+
- char *SearchDisk_DebugDumpNumericBucketMap(RedisSearchDiskIndexSpec *handle, t_fieldIndex fieldIndex) {
-     RS_ASSERT(disk && handle);
-     return disk->index.debugDumpNumericBucketMap(handle, fieldIndex, &sdsnewlen);
-```
-
-**File**: `src/search_disk.h` (modified, +9/-0)
-```diff
-@@ -532,6 +532,15 @@ size_t SearchDisk_GetDeletedIds(RedisSearchDiskIndexSpec *handle, t_docId *buffe
-  */
- char *SearchDisk_DebugDumpNumericBucketMap(RedisSearchDiskIndexSpec *handle, t_fieldIndex fieldIndex);
- 
-+/**
-+ * @brief Debug: storage-engine stats text of a disk index, for FT.DEBUG DISK_STATS.
-+ *
-+ * @param withStatistics Also append the sections shared by every index (block cache and
-+ *        statistics enabled by search-_disk-statistics)
-+ * @return sds text (release with sdsfree), or NULL if it could not be produced
-+ */
-+char *SearchDisk_DebugDiskStats(RedisSearchDiskIndexSpec *handle, bool withStatistics);
-+
- /**
-  * @brief Replace the key name in document metadata for a given document ID
-  *
-```
-
-**File**: `src/search_disk_api.h` (modified, +16/-1)
-```diff
-@@ -154,11 +154,14 @@ typedef struct BasicDiskAPI {
-    * @param logObfuscation true to enable obfuscation, false to disable
-    * @param dropReadCache When true, hints the OS to evict pages after reading
-    * @param useDirectReads When true, opens files with O_DIRECT to bypass the OS page cache
-+   * @param enableStatistics When true, every index database shares one storage-engine
-+   *        statistics object, reported by `MetricsDiskAPI::debugDiskStats`
-    * @return Pointer to the disk context, or NULL on error
-    */
-   RedisSearchDisk *(*open)(RedisModuleCtx *ctx,
-                            const SearchDiskResourceConfig *resourceConfig,
--                           bool logObfuscation, bool dropReadCache, bool useDirectReads);
-+                           bool logObfuscation, bool dropReadCache, bool useDirectReads,
-+                           bool enableStatistics);
-   void (*close)(RedisModuleCtx *ctx, RedisSearchDisk *disk);
- 
-   /**
-@@ -1164,6 +1167,18 @@ typedef struct MetricsDiskAPI {
-    */
-   PerFieldCfDiskMetrics (*getVectorFieldMetrics)(const RedisSearchDiskIndexSpec *index,
-                                                  const char *fieldName, size_t fieldNameLen);
-+
-+  /**
-+   * @brief Debug: storage-engine level and block-cache stats for every column family of
-+   *        `index`, as text.
-+   *
-+   * With `withStatistics`, also appends the shared block-cache and statistics sections,
-+   * which cover every index; statistics are reported as disabled unless enabled in `open`.
-+   *
-+   * @return Text allocated via `allocate`, or NULL if it could not be produced
-+   */
-+  char *(*debugDiskStats)(RedisSearchDisk *disk, RedisSearchDiskIndexSpec *index,
-+                          bool withStatistics, AllocateKeyCallback allocate);
- } MetricsDiskAPI;
- 
- typedef struct RedisSearchDiskAPI {
-```
-
-**File**: `tests/pytests/test_debug_commands.py` (modified, +13/-0)
-```diff
-@@ -54,6 +54,18 @@ def testDiskLiveSnapshotsIsZeroWithoutDisk(self):
-         self.env.expect(debug_cmd(), 'DISK_LIVE_SNAPSHOTS', 'extra').error().contains(
-             'wrong number of arguments')
- 
-+    def testDiskStatsRequiresDiskIndex(self):
-+        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx').error().contains(
-+            'only supported on disk indexes')
-+        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'verbose').error().contains(
-+            'only supported on disk indexes')
-+        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'other').error().contains('Expected VERBOSE')
-+        self.env.expect(debug_cmd(), 'DISK_STATS', 'invalid_idx').error().contains(
-+            'Can not create a search ctx')
-+        self.env.expect(debug_cmd(), 'DISK_STATS').error().contains('wrong number of arguments')
-+        self.env.expect(debug_cmd(), 'DISK_STATS', 'idx', 'VERBOSE', 'extra').error().contains(
-+            'wrong number of arguments')
-+
-     def testDebugHelp(self):
-         err_msg = 'wrong number of arguments'
-         help_list = [
-@@ -112,6 +124,7 @@ def testDebugHelp(self):
-             'GET_MAX_DOC_ID',
-             'DUMP_DELETED_IDS',
-             'NUMERIC_BUCKET_MAP',
-+            'DISK_STATS',
-             'DISK_IO_CONTROL',
-             'REGISTER_TEST_SCORERS',
-             'SET_MAX_INDEXES',
-```
-
-**File**: `tests/pytests/test_disk_config.py` (modified, +33/-1)
-```diff
-@@ -5,10 +5,14 @@
- # (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
- # GNU Affero General Public License v3 (AGPLv3).
- 
-+import os
-+import tempfile
-+
- from common import *
- 
- """
--Tests for search-disk-drop-read-cache and search-disk-use-direct-reads module configs.
-+Tests for the search-disk-drop-read-cache, search-disk-use-direct-reads and
-+search-_disk-statistics module configs.
- 
- These configs control SpeedB OS page-cache behaviour for disk indexes:
-   - search-disk-drop-read-cache: whether to drop the OS read cache after each read
-@@ -94,3 +98,31 @@ def test_disk_config_startup_both():
-     env.expect('CONFIG', 'GET', 'search-disk-use-direct-reads').equal(
-         ['search-disk-use-direct-reads', 'yes'])
-     env.stop()
-+
-+
-+@skip(cluster=True, redis_less_than="8.8")
-+def test_disk_statistics_config_defaults_to_no_and_is_hidden():
-+    env = Env(noDefaultModuleArgs=True)
-+    if env.env == 'existing-env':
-+        env.skip()
-+    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'no'])
-+    env.assertNotContains('search-_disk-statistics', env.cmd('CONFIG', 'GET', '*'))
-+
-+
-+@skip(cluster=True, redis_less_than="8.8")
-+def test_disk_statistics_config_is_immutable(env):
-+    env.expect('CONFIG', 'SET', 'search-_disk-statistics', 'yes').error()
-+    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'no'])
-+
-+
-+@skip(cluster=True, redis_less_than="8.8")
-+def test_disk_statistics_config_set_at_load_time():
-+    # No legacy module-argument alias; load-time values come from the config file.
-+    conf_path = os.path.join(tempfile.mkdtemp(), 'disk_statistics.conf')
-+    with open(conf_path, 'w') as f:
-+        f.write('search-_disk-statistics yes\n')
-+    env = Env(noDefaultModuleArgs=True, redisConfigFile=conf_path)
-+    if env.env == 'existing-env':
-+        env.skip()
-+    env.expect('CONFIG', 'GET', 'search-_disk-statistics').equal(['search-_disk-statistics', 'yes'])
-+    env.stop()
-```
-
----
-
-### Incident Patch 3: `724e39f0` (2026-10-22)
-**Commit Message**: [MOD-19631] Fix crash on default FT.SEARCH / LOAD * when a JSON index has a SORTABLE $ field (#11958)
-
-[MOD-19631] Force-load the JSON root key in load-all for SORTABLE `$` fields
-
-A SORTABLE schema field named `$` makes the root key value-available from
-the sorting vector, so `get_key_load` returned `None` and the `unwrap` in
-the JSON load-all path panicked across FFI, aborting Redis on
-`FT.SEARCH idx *` and `FT.AGGREGATE idx * LOAD *`.
-
-Pass `ForceLoad`, as the hash loader already does, and add a flow test.
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/redisearch_rs/rlookup/src/load_document/json.rs` (modified, +5/-2)
-```diff
-@@ -8,7 +8,7 @@
- */
- 
- use crate::{
--    RLookup, RLookupKey, RLookupKeyFlags, RLookupRow,
-+    RLookup, RLookupKey, RLookupKeyFlag, RLookupRow,
-     load_document::{
-         DOCUMENT_OPEN_KEY_QUERY_FLAGS, DocumentFormat, FieldLoader, LoadAllError, LoadFieldError,
-         UNDERSCORE_KEY,
-@@ -176,8 +176,11 @@ impl DocumentFormat for JsonDocumentFormat<'_> {
-         let rlk = if let Some(rlk) = rlookup.find_key_by_name(JSON_ROOT) {
-             rlk.into_current().unwrap()
-         } else {
-+            // A SORTABLE schema field on `$` makes the key value-available from
-+            // the sorting vector, in which case `get_key_load` returns `None`
-+            // unless forced.
-             rlookup
--                .get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlags::empty())
-+                .get_key_load(JSON_ROOT, JSON_ROOT, RLookupKeyFlag::ForceLoad.into())
-                 .unwrap()
-         };
- 
-```
-
-**File**: `src/redisearch_rs/rlookup/tests/load_document_json.rs` (modified, +51/-1)
-```diff
-@@ -22,12 +22,14 @@
- //! ([`redis_json_api::mock`]) whose vtable resolves JSONPath queries against a
- //! [`serde_json::Value`].
- 
-+use field_spec::FieldSpecOption;
- use proptest::prelude::{Just, Strategy, any, prop_oneof};
- use proptest::proptest;
- use redis_json_api::mock::{with_json_api, with_json_api_broken_handle};
- use redis_module::RedisString;
- use rlookup::{
--    DocumentFormat, FieldLoader, JsonDocumentFormat, JsonPathCache, LoadAllError, RLookup,
-+    DocumentFormat, FieldLoader, FieldSpecBuilder, FieldSpecType, IndexSpecCache,
-+    JsonDocumentFormat, JsonPathCache, LoadAllError, RLookup, RLookupKey, RLookupKeyFlag,
-     RLookupKeyFlags, RLookupRow,
- };
- use serde_json::json;
-@@ -208,6 +210,54 @@ fn load_all_writes_root_value() {
-     });
- }
- 
-+/// An [`RLookup`] whose schema declares `$` as a SORTABLE, un-normalized (UNF) text field.
-+///
-+/// Such a key is "value available" from the sorting vector, so creating it without
-+/// [`RLookupKeyFlag::ForceLoad`] yields no key to write into.
-+fn rlookup_with_sortable_root() -> RLookup<'static> {
-+    let mut rlookup = RLookup::new();
-+    rlookup.set_cache(Some(IndexSpecCache::from_fields([FieldSpecBuilder::new(
-+        c"$",
-+    )
-+    .with_types(FieldSpecType::Fulltext.into())
-+    .with_options(FieldSpecOption::Sortable | FieldSpecOption::Unf)
-+    .with_sort_idx(0)
-+    .finish()])));
-+    rlookup
-+}
-+
-+/// Assert that `load_all` loads the root from the document when the schema declares `$` as a
-+/// SORTABLE, un-normalized (UNF) field.
++/// Seeking within and across blocks reports each entry's bit whether or not its block has a
++/// bitset, including blocks entered without one.
 +#[test]
-+#[cfg_attr(miri, ignore)]
-+fn load_all_force_loads_sortable_root_key() {
-+    // Precondition: without forcing, the schema alone makes the key value-available and
-+    // `get_key_load` declines to hand it out, so the assertions below exercise the forced path.
-+    assert!(
-+        rlookup_with_sortable_root()
-+            .get_key_load(c"$", c"$", RLookupKeyFlags::empty())
-+            .is_none(),
-+        "a SORTABLE|UNF `$` must not be loadable without ForceLoad"
-+    );
++fn numeric_seek_reports_expiration_bit_across_blocks() {
++    let mut ii = InvertedIndex::<Numeric>::new(IndexFlags_Index_StoreNumeric);
++    // Six blocks' worth of docs, small enough for miri. Every third doc in the upper half has a
++    // TTL, so the lower three blocks have no bitset and the upper three do.
++    let per_block = DocId::from(<Numeric as crate::Encoder>::RECOMMENDED_BLOCK_ENTRIES);
++    let last = 6 * per_block;
++    let has_exp = |doc_id: DocId| doc_id > last / 2 && doc_id.is_multiple_of(3);
++    for doc_id in 1..=last {
++        ii.add_record(&numeric(doc_id, has_exp(doc_id))).unwrap();
++    }
++    assert_eq!(ii.number_of_blocks(), 6);
++    for (i, block) in ii.blocks.iter().enumerate() {
++        assert_eq!(
++            block.expiration_bits.mem_usage() > 0,
++            i >= 3,
++            "bitset presence of block {i}"
++        );
++    }
 +
-+    redis_mock::init_redis_module_mock();
-+    with_json_api(Some(json!("hello")), |japi, ctx| {
-+        // SAFETY: the root path is static.
-+        let cache = unsafe { JsonPathCache::new(&japi, [Some(c"$")].into_iter()) };
-+        let format = JsonDocumentFormat::new(ctx, &japi, PRE_MULTI, &cache);
-+        let key_name = make_redis_string(c"doc:1");
++    // Seeks within a block and into the next one, then the entry after each. The last doc is
++    // included so the end of the index is checked too.
++    let mut reader = ii.reader();
++    let mut result = numeric(0, false);
++    for target in (1..=last).step_by(7).chain([last]) {
++        assert!(reader.seek_record(target, &mut result).unwrap());
++        assert_eq!(
++            (result.doc_id, result.has_field_expiration),
++            (target, has_exp(target)),
++            "seek({target})"
++        );
++        if target < last {
++            assert!(reader.next_record(&mut result).unwrap());
++            assert_eq!(
++                (result.doc_id, result.has_field_expiration),
++                (target + 1, has_exp(target + 1)),
++                "next after {target}"
++            );
++        } else {
++            assert!(!reader.next_record(&mut result).unwrap(), "end of index");
++        }
++    }
 +
-+        let mut rlookup = rlookup_with_sortable_root();
-+        let mut row = RLookupRow::new();
-+        format.load_all(&mut rlookup, &mut row, &key_name).unwrap();
-+
-+        let cursor = rlookup.find_key_by_name(c"$").unwrap();
-+        let key: &RLookupKey = cursor.current().unwrap();
-+        assert!(key.flags.contains(RLookupKeyFlag::ValAvailable));
-+        assert_eq!(row.get(key).unwrap().as_str_bytes(), Some(&b"hello"[..]));
-+    });
++    // Seeks that skip several blocks at once, through the binary search over block bounds.
++    let mut reader = ii.reader();
++    for target in [1, 4 * per_block + per_block / 2, last - 1] {
++        assert!(reader.seek_record(target, &mut result).unwrap());
++        assert_eq!(
++            (result.doc_id, result.has_field_expiration),
++            (target, has_exp(target)),
++            "multi-block seek({target})"
++        );
++    }
 +}
-+
- /// Assert that `load_all` maps a missing key to `KeyNotFound`, and a present-but-empty
- /// root (`$` resolving to an empty array) to `JsonRootMissing`.
- #[test]
-```
-
-**File**: `tests/pytests/test_json_partial_load.py` (modified, +52/-0)
-```diff
-@@ -98,6 +98,58 @@ def test_doc_level_load_returns_root_for_matching_document(env):
-     env.assertEqual(res, [1, "doc:1", ["$", {"name": "carol"}]])
- 
- 
-+@skip(no_json=True)
-+def test_load_all_sortable_root_field(env):
-+    """MOD-19631: a SORTABLE schema field on the JSON root (`$`) makes the
-+    root key value-available from the sorting vector. Load-all must still
-+    populate it from the document instead of crashing the server. The
-+    non-SORTABLE case guards that the default path is unchanged."""
-+    cases = [
-+        # (field type, extra schema args, JSON document, expected loaded `$`).
-+        # A scalar root is loaded as its plain value, not as serialized JSON.
-+        ("TEXT", ["SORTABLE"], '"hello"', "hello"),
-+        ("TAG", ["SORTABLE"], '"hello"', "hello"),
-+        ("NUMERIC", ["SORTABLE"], "42", "42"),
-+        ("TEXT", ["SORTABLE", "NOINDEX"], '"hello"', "hello"),
-+        ("TEXT", [], '"hello"', "hello"),
-+    ]
-+    for field_type, extra, doc, expected in cases:
-+        env.flush()
-+        env.expect(
-+            "FT.CREATE", "idx", "ON", "JSON", "SCHEMA", "$", field_type, *extra
-+        ).ok()
-+        env.cmd("JSON.SET", "doc:1", "$", doc)
-+        waitForIndex(env, "idx")
-+        msg = f"{field_type} {extra}"
-+
-+        res = env.cmd("FT.SEARCH", "idx", "*")
-+        env.assertEqual(res[0], 1, message=msg)
-+        env.assertEqual(res[1], "doc:1", message=msg)
-+        env.assertEqual(to_dict(res[2])["$"], expected, message=msg)
-+
-+        res = env.cmd("FT.AGGREGATE", "idx", "*", "LOAD", "*")
-+        env.assertEqual(res[0], 1, message=msg)
-+        env.assertEqual(to_dict(res[1])["$"], expected, message=msg)
-+
-+
-+@skip(no_json=True)
-+def test_load_all_sortable_array_root_field(env):
-+    """MOD-19631: a SORTABLE `$` over an array root. The sorting vector and the loaded
-+    document may hold different values; load-all must return the whole root from the
-+    document, consistently for `FT.SEARCH` and `FT.AGGREGATE ... LOAD *`."""
-+    env.expect("FT.CREATE", "idx", "ON", "JSON", "SCHEMA", "$", "TEXT", "SORTABLE").ok()
-+    env.cmd("JSON.SET", "doc:1", "$", '["a", "b"]')
-+    waitForIndex(env, "idx")
-+
-+    res = env.cmd("FT.SEARCH", "idx", "*")
-+    env.assertEqual(res[0], 1)
-+    env.assertEqual(json.loads(to_dict(res[2])["$"]), ["a", "b"])
-+
-+    res = env.cmd("FT.AGGREGATE", "idx", "*", "LOAD", "*")
-+    env.assertEqual(res[0], 1)
-+    env.assertEqual(json.loads(to_dict(res[1])["$"]), ["a", "b"])
-+
-+
- @skip(cluster=True, no_json=True)
- def test_return_json_paths_across_documents(env):
-     """Explicit RETURN mixes compiled paths, multi-values, and the __key sentinel."""
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11994** (2026-10-25): [8.12] [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
+- **PR #11991** (closed): [MOD-19658] Add slot membership enumeration to the disk API (@kei-nan)
+- **PR #11990** (2026-10-25): [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
+- **PR #11976** (closed): Bound the fork GC child wait by wall clock instead of attempt count (@evazca)
 - **PR #11975** (2026-10-22): [8.6-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
 - **PR #11974** (2026-10-22): [8.8-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
-- **PR #11972** (2026-10-22): [8.12] [MOD-18503] Serialize background query replies without retaining result rows (@GuyAv46)
-- **PR #11967** (2026-10-22): [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (@lerman25)
-- **PR #11964** (2026-10-21): [MOD-19626] Prevent excessive memory allocation for large hybrid WINDOW values (@dor-forer)
-- **PR #11963** (closed): [MOD-19619] Prevent coordinator crashes when hybrid shard profiles are incomplete (@dor-forer)
 
 ---
 
@@ -2396,68 +1776,28 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967)
+## X. [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader 
 
 **RULE**:
-When implementing operations in `src/coord/hybrid/dist_hybrid.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/redisearch_rs/inverted_index/src/index/core.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ad57da6`: [MOD-19619] Prevent crashes when hybrid shard profiles are incomplete (#11967). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f25c7ebb`: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/coord/hybrid/dist_hybrid.c`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/inverted_index/src/index/core.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  // RPNet collects complete shard profiles or errors; timeouts can shorten the list.
-  RS_LOG_ASSERT(current, "Collected shard profile must not be NULL");
-  MRReply *shards;
-    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_MAP && MRReply_Length(current) >= 2 &&
-                      MRReply_Length(current) % 2 == 0,
-                  "RESP3 profile must be a nonempty map");
-    shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
-    // RESP2: ["Shards", shards_array, ...] -> shards_array[0] is the shard profile
-    RS_LOG_ASSERT(MRReply_Type(current) == MR_REPLY_ARRAY && MRReply_Length(current) >= 2,
-                  "RESP2 profile must contain the Shards key and array");
-    shards = MRReply_ArrayElement(current, 1);
-  }
-  RS_LOG_ASSERT(shards && MRReply_Type(shards) == MR_REPLY_ARRAY && MRReply_Length(shards) > 0,
-                "Shards must contain a shard profile");
-  MRReply *profile = MRReply_ArrayElement(shards, 0);
-  RS_LOG_ASSERT(profile && MRReply_Length(profile) >= 2 && MRReply_Length(profile) % 2 == 0,
-                "Shard profile must contain key-value pairs");
-  if (!resp3) {
-  RS_LOG_ASSERT(MRReply_Type(profile) == MR_REPLY_MAP, "Shard profile must be a
+    #[inline(always)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    MRReply *shards = MRReply_MapElement(current, PROFILE_SHARDS_STR);
-    return MRReply_ArrayElement(shards, 0);
-    // RESP2: [results, shards_array] -> shards_array[0] is the shard profile
-    MRReply *shards_array_profile = MRReply_ArrayElement(current, 1);
-    MRReply *profile = MRReply_ArrayElement(shards_array_profile, 0);
-    return profile;
-  if (!profile || MRReply_Type(profile) == MR_REPLY_ERROR) {
-  // [{"Shard ID": "id", "SEARCH": profile (without Shard ID), "VSIM": profile (without Shard ID)}, ...]
-
-  bool resp3 = reply->resp3;
-
-  // Iterate over shards and print both SEARCH and VSIM profiles for each shard
-  for (size_t i = 0; i < searchCount; i++) {
-    // Extract shard profiles
-    MRReply *searchProfile = extractShardProfile(searchRpnet->shardsProfile[i], resp3);
-    MRReply *vsimProfile = extractShardProfile(vsimRpnet->shardsProfile[i], resp3);
-
-    // Extract and print Shard ID from SEARCH profile
-    MRReply *shardIdReply = NULL;
-    if (searchProfile) {
-      shardIdReply = extractShardIdReply(searchProfile);
-      RedisModule_Reply_SimpleString(reply, "Shard ID");
-      MR_ReplyWithMRReply(reply, shardIdReply);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ad57da6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f25c7ebb` are properly handled with clean fallback behavior.

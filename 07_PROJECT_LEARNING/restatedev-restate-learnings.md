@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `4b2fb2ce`  
+> **Source Version**: `c57aa66f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:31:45.255Z  
+> **Timestamp**: 2026-10-25T22:00:37.938Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:31:44.170Z  
+> **Harvest Timestamp**: 2026-10-25T22:00:37.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4603 stars
+- **Stars / Engagement**: 4608 stars
 
 ---
 
@@ -1631,156 +1631,564 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb8b61b2` (2026-10-23)
-**Commit Message**: [UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.3/ui-v1.1.3.tar (#5636)
+### Incident Patch 1: `c57aa66f` (2026-10-25)
+**Commit Message**: [tests] Kill local cluster nodes when a test exits without cleanup
 
-**File**: `Cargo.lock` (modified, +2/-2)
+## Summary
+
+A failing `#[restate_core::test]` exits via `std::process::exit(1)`, so neither tokio's
+`kill_on_drop` nor `StartedNode`'s `Drop` runs. The test's restate-server nodes kept running as
+orphans, and since they kept writing into the cluster's temp dir, removing it at exit raced with
+them and could leave the dir behind.
+
+- Add `restate_test_util::kill_on_exit(pid)`, which SIGKILLs and reaps registered children from
+  the same `atexit` hook that removes the temp dirs, before removing them. The returned guard
+  unregisters the pid when dropped.
+- local-cluster-runner registers every node it spawns and drops the guard as soon as the node is
+  reaped, so a reused pid is never signalled.
+- Rename the `tempdir` module of restate-test-util to `on_exit` since it now covers both.
+
+## Validation
+
+- `cargo check`
+- `cargo nextest run --all-features --test-threads 8`: 1613 passed, 11 skipped
+- `cargo fmt --all -- --check`
+- `cargo clippy --all-features --all-targets --workspace -- -D warnings`
+- New regression test re-runs itself as a probe process that creates a temp dir, spawns a
+  child and exits with `std::process:
+
+**File**: `crates/local-cluster-runner/src/node/mod.rs` (modified, +10/-1)
 ```diff
-@@ -9179,8 +9179,8 @@ dependencies = [
+@@ -305,6 +305,9 @@ impl NodeSpec {
  
- [[package]]
- name = "restate-web-ui"
--version = "1.1.2"
--source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.2#634ec21fab1bdf6fd0b05429d7b1dc5d146bfb80"
-+version = "1.1.3"
-+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.3#87c6f2696f8c9e91290534cf94376b567e8acadb"
+         let mut child = cmd.spawn().map_err(NodeStartError::SpawnError)?;
+         let pid = child.id().expect("child to have a pid");
++        // `kill_on_drop` and our `Drop` don't run if the process exits without unwinding, e.g.
++        // when a `#[restate_core::test]` fails.
++        let kill_on_exit = restate_test_util::kill_on_exit(pid);
  
- [[package]]
- name = "restate-worker"
+         info!(
+             %fabric_advertised_address,
+@@ -373,7 +376,13 @@ impl NodeSpec {
+         };
+ 
+         let child_handle = tokio::spawn(async move {
+-            let (status, _) = tokio::join!(child.wait(), lines_fut);
++            let wait = async {
++                let status = child.wait().await;
++                // the pid may be reused once the child is reaped
++                drop(kill_on_exit);
++                status
++            };
++            let (status, _) = tokio::join!(wait, lines_fut);
+ 
+             match status {
+                 Ok(status) => {
 ```
 
-**File**: `crates/admin/Cargo.toml` (modified, +1/-1)
+**File**: `crates/test-util/src/lib.rs` (modified, +4/-2)
 ```diff
-@@ -39,7 +39,7 @@ restate-util-time = { workspace = true }
- restate-types = { workspace = true }
- restate-util-string = { workspace = true }
- restate-wal-protocol = { workspace = true }
--restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.2", tag = "v1.1.2" }
-+restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.3", tag = "v1.1.3" }
+@@ -32,7 +32,9 @@ pub use assert2::{assert, check};
+ pub use pretty_assertions::{assert_eq, assert_ne};
  
- ahash = { workspace = true }
- anyhow = { workspace = true }
+ pub mod matchers;
++mod on_exit;
+ pub mod rand;
+-mod tempdir;
+ 
+-pub use tempdir::tempdir;
++pub use on_exit::tempdir;
++#[cfg(unix)]
++pub use on_exit::{KillOnExit, kill_on_exit};
+```
+
+**File**: `crates/test-util/src/on_exit.rs` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++// Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
++// All rights reserved.
++//
++// Use of this software is governed by the Business Source License
++// included in the LICENSE file.
++//
++// As of the Change Date specified in that file, in accordance with
++// the Business Source License, use of this software will be governed
++// by the Apache License, Version 2.0.
++
++//! Cleanup that runs even when destructors don't: values held in statics are never dropped, and
++//! the `#[restate_core::test]` panic hook ends a failing test via [`std::process::exit`]. Both
++//! still run `atexit` handlers, which is where the cleanup happens. A process killed by a signal
++//! runs neither.
++
++use std::io;
++use std::path::PathBuf;
++#[cfg(unix)]
++use std::sync::{Mutex, PoisonError};
++use std::sync::{Once, OnceLock};
++
++use tempfile::TempDir;
++
++static TEMP_ROOT: OnceLock<PathBuf> = OnceLock::new();
++#[cfg(unix)]
++static CHILDREN: Mutex<Vec<libc::pid_t>> = Mutex::new(Vec::new());
++
++/// Creates a [`TempDir`] that is cleaned up even if its destructor never runs.
++///
++/// Directories created here live under a per-process root that is removed when the process
++/// exits, even if they were [`TempDir::keep`]-ed.
++pub fn tempdir() -> io::Result<TempDir> {
++    let root = match TEMP_ROOT.get() {
++        Some(root) => root,
++        None => {
++            let root = TempDir::new()?;
++            if TEMP_ROOT.set(root.path().to_path_buf()).is_ok() {
++                let _ = root.keep();
++                register_exit_hook();
++            }
++            // if a concurrent caller set the root first, ours is removed on drop
++            TEMP_ROOT.get().expect("root is set")
++        }
++    };
++    // Names only need to be unique within the root. Keep them short since unix socket paths
++    // are limited to ~100 bytes.
++    tempfile::Builder::new()
++        .prefix("")
++        .rand_bytes(4)
++        .tempdir_in(root)
++}
++
++/// Sends SIGKILL to the child process `pid` when this process exits, before the directories
++/// created by [`tempdir`] are removed, unless the returned guard was dropped by then.
++///
++/// Drop the guard as soon as the child has been reaped: its pid may be reused afterwards.
++#[cfg(unix)]
++pub fn kill_on_exit(pid: u32) -> KillOnExit {
++    let pid = libc::pid_t::try_from(pid).expect("pid to fit into pid_t");
++    register_exit_hook();
++    CHILDREN
++        .lock()
++        .unwrap_or_else(PoisonError::into_inner)
++        .push(pid);
++    KillOnExit(pid)
++}
++
++/// Guard returned by [`kill_on_exit`].
++#[cfg(unix)]
++#[must_use = "the child is not killed at exit once the guard is dropped"]
++pub struct KillOnExit(libc::pid_t);
++
++#[cfg(unix)]
++impl Drop for KillOnExit {
++    fn drop(&mut self) {
++        CHILDREN
++            .lock()
++            .unwrap_or_else(PoisonError::into_inner)
++            .retain(|pid| *pid != self.0);
++    }
++}
++
++fn register_exit_hook() {
++    static REGISTER: Once = Once::new();
++    // SAFETY: `on_exit` is a plain `extern "C" fn()` that does not unwind.
++    REGISTER.call_once(|| unsafe {
++        libc::atexit(on_exit);
++    });
++}
++
++extern "C" fn on_exit() {
++    // Children go first, they might still be writing into the temp dirs.
++    #[cfg(unix)]
++    {
++        let children = CHILDREN.lock().unwrap_or_else(PoisonError::into_inner);
++        for &pid in children.iter() {
++            // SAFETY: plain syscalls; `pid` belongs to a child that has not been reaped yet.
++            unsafe {
++                libc::kill(pid, libc::SIGKILL);
++                // fails with ECHILD if the runtime reaped it concurrently, which is fine too
++                libc::waitpid(pid, std::ptr::null_mut(), 0);
++            }
++        }
++    }
++    if let Some(root) = TEMP_ROOT.get() {
++        let _ = std::fs::remove_dir_all(root);
++    }
++}
++
++#[cfg(all(test, unix))]
++mod tests {
++    use std::process::Command;
++    use std::time::{Duration, Instant};
++
++    const PROBE_ENV: &str = "RESTATE_TEST_UTIL_ON_EXIT_PROBE";
++
++    /// Runs this test in a child process that exits like a failing `#[restate_core::test]` does,
++    /// and checks that its temp dir and its own child process are gone afterwards.
++    #[test]
++    fn cleans_up_on_process_exit() {
++        if std::env::var_os(PROBE_ENV).is_some() {
++            let dir = super::tempdir().unwrap().keep();
++            std::fs::write(dir.join("data"), b"x").unwrap();
++            let child = Command::new("sleep").arg("60").spawn().unwrap();
++            let _guard = super::kill_on_exit(child.id());
++            println!("PROBE {} {}", dir.display(), child.id());
++            std::process::exit(1);
++        }
++
++        let started = Instant::now();
++        let output = Command::new(std::env::current_exe().unwrap())
++            .args([
++                "--exact",
++                "on_exit::tests::cleans_up_on_process_exit",
++                "--nocapture",
++            ])
++            .env(PROBE_ENV, "1")
++            .
+```
+
+**File**: `crates/test-util/src/tempdir.rs` (removed, +0/-52)
+```diff
+@@ -1,52 +0,0 @@
+-// Copyright (c) 2023 - 2026 Restate Software, Inc., Restate GmbH.
+-// All rights reserved.
+-//
+-// Use of this software is governed by the Business Source License
+-// included in the LICENSE file.
+-//
+-// As of the Change Date specified in that file, in accordance with
+-// the Business Source License, use of this software will be governed
+-// by the Apache License, Version 2.0.
+-
+-use std::io;
+-use std::path::PathBuf;
+-use std::sync::OnceLock;
+-
+-use tempfile::TempDir;
+-
+-/// Creates a [`TempDir`] that is cleaned up even if its destructor never runs.
+-///
+-/// `TempDir` only removes its directory on drop, which never happens for values held in statics
+-/// or when the process exits via [`std::process::exit`] (the `#[restate_core::test]` panic hook
+-/// does this when a test fails). Directories created here live under a per-process root that is
+-/// removed when the process exits, even if they were [`TempDir::keep`]-ed. A process killed by a
+-/// signal still leaves the root behind.
+-pub fn tempdir() -> io::Result<TempDir> {
+-    static ROOT: OnceLock<PathBuf> = OnceLock::new();
+-
+-    extern "C" fn remove_root() {
+-        if let Some(root) = ROOT.get() {
+-            let _ = std::fs::remove_dir_all(root);
+-        }
+-    }
+-
+-    let root = match ROOT.get() {
+-        Some(root) => root,
+-        None => {
+-            let root = TempDir::new()?;
+-            if ROOT.set(root.path().to_path_buf()).is_ok() {
+-                let _ = root.keep();
+-                // SAFETY: `remove_root` is a plain `extern "C" fn()` that does not unwind.
+-                unsafe { libc::atexit(remove_root) };
+-            }
+-            // if a concurrent caller set the root first, ours is removed on drop
+-            ROOT.get().expect("root is set")
+-        }
+-    };
+-    // Names only need to be unique within the root. Keep them short since unix socket paths
+-    // are limited to ~100 bytes.
+-    tempfile::Builder::new()
+-        .prefix("")
+-        .rand_bytes(4)
+-        .tempdir_in(root)
+-}
 ```
 
 ---
 
-### Incident Patch 2: `e360422b` (2026-10-23)
-**Commit Message**: Remove all dependencies in restate-web-ui-crate (#5635)
+### Incident Patch 2: `126b9d43` (2026-10-25)
+**Commit Message**: [tests] Remove test temp dirs even when tests fail
 
-Signed-off-by: Nik Nasr <[REDACTED_EMAIL]>
+## Summary
 
-**File**: `Cargo.lock` (modified, +2/-26)
+Tests leaked temp dirs in two ways:
+
+- In test builds, `NODE_BASE_DIR` kept its `TempDir` in a static. Statics are never dropped, so
+  every test process that touched `node_dir()` left a dir behind, whether it passed or failed.
+- `#[restate_core::test]` ends a failing test with `std::process::exit(1)` from its panic hook,
+  which skips all destructors. Temp dirs owned by the test (cluster base dirs, snapshot dirs, ...)
+  leaked whenever a test failed.
+
+Add `restate_test_util::tempdir()`, which creates temp dirs under a per-process root that an
+`atexit` hook removes. `atexit` hooks run on normal exit and on `std::process::exit`, but not
+when the process is killed by a signal.
+
+- `NODE_BASE_DIR` uses it and only creates the dir on first use. Processes that set an explicit
+  base dir, like the restate-server nodes of integration tests (built with `test-util`), never
+  create one.
+- local-cluster-runner uses it for cluster base dirs. `LOCAL_CLUSTER_RUNNER_RETAIN_TEMPDIR` and
+  bifrost-benchpress' `--retain-test-dir` still keep their dirs.
+- partition-store, ingress-http and fabric TLS tests use it. The snapshot repository 
+
+**File**: `Cargo.lock` (modified, +4/-1)
 ```diff
-@@ -4625,25 +4625,6 @@ dependencies = [
-  "icu_properties",
+@@ -8036,7 +8036,6 @@ dependencies = [
+  "serde_json",
+  "serde_with",
+  "strum",
+- "tempfile",
+  "thiserror 2.0.20",
+  "tokio",
+  "tokio-stream",
+@@ -8202,6 +8201,7 @@ dependencies = [
+  "restate-metadata-providers",
+  "restate-metadata-server-grpc",
+  "restate-metadata-store",
++ "restate-test-util",
+  "restate-types",
+  "restate-workspace-hack",
+  "rev_lines",
+@@ -8644,6 +8644,7 @@ dependencies = [
+  "restate-node",
+  "restate-rocksdb",
+  "restate-service-client",
++ "restate-test-util",
+  "restate-tracing-instrumentation",
+  "restate-types",
+  "restate-util-time",
+@@ -8875,11 +8876,13 @@ dependencies = [
+  "bytes",
+  "bytestring",
+  "googletest",
++ "libc",
+  "pretty_assertions",
+  "prost",
+  "prost-types",
+  "rand 0.10.2",
+  "restate-workspace-hack",
++ "tempfile",
  ]
  
--[[package]]
--name = "include_dir"
--version = "0.7.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "923d117408f1e49d914f1a379a309cffe4f18c05cf4e3d12e613a15fc81bd0dd"
--dependencies = [
-- "include_dir_macros",
--]
--
--[[package]]
--name = "include_dir_macros"
--version = "0.7.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cab85a7ed0bd5f0e76d93846e0147172bed2e2d3f859bcc33a8d9699cad1a75"
--dependencies = [
-- "proc-macro2",
-- "quote",
--]
--
  [[package]]
- name = "indenter"
- version = "0.3.4"
-@@ -9198,13 +9179,8 @@ dependencies = [
- 
- [[package]]
- name = "restate-web-ui"
--version = "1.1.1"
--source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.1#9cc6814a92b06b2d2c61cdf80c88dc86e6de69a6"
--dependencies = [
-- "anyhow",
-- "include_dir",
-- "zip",
--]
-+version = "1.1.2"
-+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.2#634ec21fab1bdf6fd0b05429d7b1dc5d146bfb80"
- 
- [[package]]
- name = "restate-worker"
 ```
 
-**File**: `crates/admin/Cargo.toml` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -39,7 +39,7 @@ restate-util-time = { workspace = true }
- restate-types = { workspace = true }
- restate-util-string = { workspace = true }
- restate-wal-protocol = { workspace = true }
--restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.1", tag = "v1.1.1" }
-+restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.2", tag = "v1.1.2" }
- 
- ahash = { workspace = true }
- anyhow = { workspace = true }
+@@ -195,6 +195,7 @@ jiff = "0.2.17"
+ jsonptr = "0.8.2"
+ jsonschema = { version = "0.56.0", default-features = false }
+ jsonwebtoken = { version = "11.1.0", features = ["aws_lc_rs"] }
++libc = "0.2"
+ metrics = { version = "0.24" }
+ metrics-exporter-prometheus = { version = "0.18.1", default-features = false, features = [
+     "async-runtime",
 ```
 
----
-
-### Incident Patch 3: `4c1dc58b` (2026-10-23)
-**Commit Message**: ci: allow pullfrog to be able to run builds (#5630)
-
-**File**: `.github/workflows/pullfrog.yml` (modified, +22/-1)
+**File**: `crates/clock/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ permissions:
+@@ -19,7 +19,7 @@ restate-platform = { workspace = true }
  
- jobs:
-   pullfrog:
--    runs-on: ubuntu-latest
-+    runs-on: warp-ubuntu-latest-x64-8x
-     permissions:
-       id-token: write
-       contents: read
-@@ -25,6 +25,27 @@ jobs:
-         uses: actions/checkout@v6
-         with:
-           fetch-depth: 1
-+
-+      # Restate: give the agent a Rust build environment matching ci.yml
-+      - name: Install Rust toolchain
-+        uses: actions-rust-lang/setup-rust-toolchain@v1
-+        with:
-+          rustflags: ""
-+          cache: false
-+      - name: Setup Rust Caching
-+        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-+        with:
-+          prefix-key: "v1-rust"
-+          cache-on-failure: "true"
-+      - name: Install protoc
-+        uses: ./.github/actions/install-protoc
-+      - name: Install nextest
-+        uses: taiki-e/install-action@v2
-+        with:
-+          tool: nextest@0.9.98
-+      - name: Fetch dependencies
-+        run: cargo fetch --locked
-+
-       - name: Run agent
-         uses: pullfrog/pullfrog@v0
-         with:
+ bilrost = { workspace = true }
+ jiff = { workspace = true, optional = true }
+-libc = { version = "0.2" }
++libc = { workspace = true }
+ prost-types = { workspace = true, optional = true }
+ rand = { workspace = true }
+ schemars = { workspace = true, optional = true }
+```
+
+**File**: `crates/ingress-http/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -68,7 +68,6 @@ restate-types = { workspace = true, features = ["test-util"] }
+ hyper = { workspace = true, features = ["full"] }
+ hyper-util = { workspace = true, features = ["full"] }
+ mockall = { workspace = true }
+-tempfile = { workspace = true }
+ tokio-stream = { workspace = true }
+ tracing-test = { workspace = true }
+ 
+```
+
+**File**: `crates/ingress-http/src/server.rs` (modified, +2/-2)
+```diff
+@@ -540,7 +540,7 @@ mod tests {
+                 })))
+             });
+ 
+-        let socket_dir = tempfile::tempdir().unwrap();
++        let socket_dir = restate_test_util::tempdir().unwrap();
+         let socket_path = socket_dir.path().join("ingress.sock");
+         bootstrap_test(
+             Listeners::new_unix_listener(socket_path.clone()).unwrap(),
+@@ -599,7 +599,7 @@ mod tests {
+     /// have any effect at all.
+     #[restate_core::test(start_paused = false)]
+     async fn http2_keep_alive_closes_unresponsive_connection() {
+-        let socket_dir = tempfile::tempdir().unwrap();
++        let socket_dir = restate_test_util::tempdir().unwrap();
+         let socket_path = socket_dir.path().join("ingress.sock");
+ 
+         bootstrap_test(
+```
+
+**File**: `crates/local-cluster-runner/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ restate-clock = { workspace = true }
+ restate-metadata-store = { workspace = true }
+ restate-metadata-providers = { workspace = true, features = ["replicated"] }
+ restate-metadata-server-grpc = { workspace = true, features = ["grpc-client"] }
++restate-test-util = { workspace = true }
+ # nb features here will also affect the compiled restate-server binary in integration tests
+ restate-types = { workspace = true, features = ["unsafe-mutable-config"] }
+ 
+```
+
+**File**: `crates/local-cluster-runner/src/cluster/mod.rs` (modified, +4/-1)
+```diff
+@@ -319,7 +319,10 @@ impl MaybeTempDir {
+             );
+             Self::PathBuf(dir)
+         } else {
+-            Self::TempDir(Arc::new(tempfile::tempdir().expect("to create a tempdir")))
++            // removed on drop, or at process exit if a failing test skips the drop
++            Self::TempDir(Arc::new(
++                restate_test_util::tempdir().expect("to create a tempdir"),
++            ))
+         }
+     }
+ 
+```
+
+**File**: `crates/partition-store/src/snapshots/repository.rs` (modified, +23/-22)
+```diff
+@@ -1132,6 +1132,7 @@ mod tests {
+     use restate_clock::time::MillisSinceEpoch;
+     use restate_core::{Metadata, TestCoreEnv};
+     use restate_object_store_util::create_object_store_client;
++    use restate_test_util::tempdir;
+     use restate_types::config::{ObjectStoreOptions, SnapshotsOptions};
+     use restate_types::identifiers::{PartitionId, SnapshotId};
+     use restate_types::logs::{LogId, Lsn, SequenceNumber};
+@@ -1147,7 +1148,7 @@ mod tests {
+     async fn overwrite_unparsable_latest() -> anyhow::Result<()> {
+         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
+ 
+-        let snapshot_source = TempDir::new()?;
++        let snapshot_source = tempdir()?;
+         let source_dir = snapshot_source.path().to_path_buf();
+ 
+         let data = b"snapshot-data";
+@@ -1161,7 +1162,7 @@ mod tests {
+             data.len(),
+         );
+ 
+-        let snapshots_destination: TempDir = TempDir::new()?;
++        let snapshots_destination: TempDir = tempdir()?;
+         let destination_dir = snapshots_destination.path().to_owned();
+         let opts = SnapshotsOptions {
+             destination: Some(
+@@ -1171,7 +1172,7 @@ mod tests {
+             ),
+             ..SnapshotsOptions::default()
+         };
+-        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
++        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
+             .await?
+             .unwrap();
+ 
+@@ -1197,7 +1198,7 @@ mod tests {
+ 
+     #[restate_core::test]
+     async fn put_snapshot_local_filesystem() -> anyhow::Result<()> {
+-        let snapshots_destination = TempDir::new()?;
++        let snapshots_destination = tempdir()?;
+         test_put_snapshot(
+             Url::from_file_path(snapshots_destination.path())
+                 .unwrap()
+@@ -1218,7 +1219,7 @@ mod tests {
+     async fn test_put_snapshot(destination: String) -> anyhow::Result<()> {
+         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
+ 
+-        let snapshot_source = TempDir::new()?;
++        let snapshot_source = tempdir()?;
+         let source_dir = snapshot_source.path().to_path_buf();
+ 
+         let destination_url = Url::parse(destination.as_str())?;
+@@ -1256,7 +1257,7 @@ mod tests {
+             ..SnapshotsOptions::default()
+         };
+ 
+-        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
++        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
+             .await?
+             .unwrap();
+ 
+@@ -1291,7 +1292,7 @@ mod tests {
+         let (expected_latest, _) = repository.build_latest_v2(&snapshot1, None)?;
+         assert_eq!(expected_latest, latest);
+ 
+-        let snapshot_source = TempDir::new()?;
++        let snapshot_source = tempdir()?;
+         let source_dir = snapshot_source.path().to_path_buf();
+ 
+         let data = b"snapshot-data";
+@@ -1336,7 +1337,7 @@ mod tests {
+         data: &[u8],
+         lsn: Lsn,
+     ) -> anyhow::Result<(PartitionSnapshotMetadata, PathBuf)> {
+-        let snapshot_dir = TempDir::new()?.keep();
++        let snapshot_dir = tempdir()?.keep();
+ 
+         let mut data_file = tokio::fs::File::create(snapshot_dir.join("data.sst")).await?;
+         data_file.write_all(data).await?;
+@@ -1393,7 +1394,7 @@ mod tests {
+     async fn snapshot_retention_v2() -> anyhow::Result<()> {
+         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
+ 
+-        let snapshots_destination = TempDir::new()?;
++        let snapshots_destination = tempdir()?;
+         let destination = Url::from_file_path(snapshots_destination.path())
+             .unwrap()
+             .to_string();
+@@ -1404,12 +1405,12 @@ mod tests {
+             ..SnapshotsOptions::default()
+         };
+ 
+-        let repository = SnapshotRepository::new_from_config(&opts, TempDir::new().unwrap().keep())
++        let repository = SnapshotRepository::new_from_config(&opts, tempdir()?.keep())
+             .await?
+             .unwrap();
+ 
+         for i in 1..=4 {
+-            let snapshot_source = TempDir::new()?;
++            let snapshot_source = tempdir()?;
+             let source_dir = snapshot_source.path().to_path_buf();
+ 
+             let data = format!("snapshot-data-{}", i);
+@@ -1456,12 +1457,12 @@ mod tests {
+     async fn v1_to_v2_migration() -> anyhow::Result<()> {
+         let _env = TestCoreEnv::create_with_single_node(1, 1).await;
+ 
+-        let snapshots_destination = TempDir::new()?;
++        let snapshots_destination = tempdir()?;
+         let destination = Url::from_file_path(snapshots_destination.path())
+             .unwrap()
+             .to_string();
+ 
+-        let snapshot_source = TempDir::new()?;
++        let snapshot_source = tempdir()?;
+         let source_dir = snapshot_source.path().to_path_buf();
+         let data = b"snapshot-data-v1";
+         let mut data_file = tokio::fs::File::create(source_dir.join("data.sst")).await?;
+@@ -1488,7 +1489,7 @@ mod tests {
+      
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5642** (2026-10-25): [chore] upgrade deps for advisories (@AhmedSoliman)
+- **PR #5641** (2026-10-25): [tests] Kill local cluster nodes when a test exits without cleanup (@AhmedSoliman)
+- **PR #5640** (2026-10-25): [tests] Remove test temp dirs even when tests fail (@AhmedSoliman)
 - **PR #5636** (2026-10-23): [Restate UI] Update to v1.1.3 (@restatedev-ci)
 - **PR #5635** (2026-10-23): Remove all dependencies in `restate-web-ui-crate` (@nikrooz)
 - **PR #5634** (closed): [Restate UI] Update to v1.1.2 (@restatedev-ci)
-- **PR #5630** (2026-10-23): ci: allow pullfrog to be able to run builds (@MohamedBassem)
-- **PR #5625** (2026-10-22): [Restate UI] Update to v1.1.1 (@restatedev-ci)
-- **PR #5623** (2026-10-22): [Observability] Add location, and other node-related fields to /health (@AhmedSoliman)
 
 ---
 
@@ -1800,30 +2208,37 @@ Signed-off-by: Nik Nasr <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/re
+## X. [tests] Kill local cluster nodes when a test exits without cleanup
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/local-cluster-runner/src/node/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb8b61b2`: [UI] Updating Restate UI to v1.1.3 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.3/ui-v1.1.3.tar (#5636). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c57aa66f`: [tests] Kill local cluster nodes when a test exits without cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/local-cluster-runner/src/node/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.3"
-source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.3#87c6f2696f8c9e91290534cf94376b567e8acadb"
+        // `kill_on_drop` and our `Drop` don't run if the process exits without unwinding, e.g.
+        // when a `#[restate_core::test]` fails.
+        let kill_on_exit = restate_test_util::kill_on_exit(pid);
+            let wait = async {
+                let status = child.wait().await;
+                // the pid may be reused once the child is reaped
+                drop(kill_on_exit);
+                status
+            };
+            let (status, _) = tokio::join!(wait, lines_fut);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.2"
-source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.2#634ec21fab1bdf6fd0b05429d7b1dc5d146bfb80"
+            let (status, _) = tokio::join!(child.wait(), lines_fut);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb8b61b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c57aa66f` are properly handled with clean fallback behavior.

@@ -5015,3 +5015,9 @@ Every entry in this ledger must capture:
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `59ad3bc5` | Multi-dimensional audit evidence | 2026-10-25T21:46:49.692Z |
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-25T21:53:16.116Z |
 | `learn-github-callstack-react-native-builder-bob` | `https://github.com/callstack/react-native-builder-bob` | `a73fd95b` | Multi-dimensional audit evidence | 2026-10-25T21:53:22.207Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `21400fab` | Multi-dimensional audit evidence | 2026-10-25T22:00:36.304Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `c57aa66f` | Multi-dimensional audit evidence | 2026-10-25T22:00:38.277Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-25T22:00:41.869Z |
+| `learn-github-electron-electron` | `https://github.com/electron/electron` | `0240841b` | Multi-dimensional audit evidence | 2026-10-25T22:00:42.014Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `f25c7ebb` | Multi-dimensional audit evidence | 2026-10-25T22:00:48.469Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f6b18ba` | Multi-dimensional audit evidence | 2026-10-25T22:00:50.452Z |
