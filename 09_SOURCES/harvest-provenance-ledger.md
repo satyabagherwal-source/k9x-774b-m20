@@ -5007,3 +5007,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-25T21:15:24.022Z |
 | `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `56560d20` | Multi-dimensional audit evidence | 2026-10-25T21:25:38.037Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-25T21:27:18.756Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `8538e7cf` | Multi-dimensional audit evidence | 2026-10-25T21:33:46.247Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-25T21:33:47.212Z |

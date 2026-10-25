@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:27:18.761Z",
-  "total_cycles_completed": 4977,
-  "total_learnings_persisted": 4977,
-  "total_rules_promoted": 4340,
+  "last_updated": "2026-10-25T21:33:47.217Z",
+  "total_cycles_completed": 4979,
+  "total_learnings_persisted": 4979,
+  "total_rules_promoted": 4343,
   "history": [
-    {
-      "timestamp": "2026-10-25T12:06:04.375Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T12:10:54.397Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T12:17:00.824Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1403,6 +1389,20 @@
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:33:46.252Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:33:47.217Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

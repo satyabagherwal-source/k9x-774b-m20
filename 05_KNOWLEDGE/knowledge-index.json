@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:27:18.698Z",
+  "last_updated": "2026-10-25T21:33:47.155Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13149,14 +13149,19 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "9bd5ec92",
-      "content_hash": "004bd1e987eb0799063b0bcd92e5a56c7061997f517de8b7b1fef631919a472d",
+      "source_version": "8538e7cf",
+      "content_hash": "de93f8981e52714b203380cfb790e1bf5aa95aad2b0402748af4987beac14dfc",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
         {
           "number": 1749,
           "title": "prevent index file download redirects (#2706)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4455,
+          "title": "release): save the chart index before searching it (#2724)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13165,7 +13170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:52:07.031Z",
+      "verified_at": "2026-10-25T21:33:46.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25963,7 +25968,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "c4d05b1d37dbb9cca18a5fbe85e2eaa8f476d6ee6998076d9d9d6338f8040740",
+      "content_hash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -26011,6 +26016,16 @@
           "number": 1301,
           "title": "Turbo Distillation Step-Count Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4456,
+          "title": "Pixel-Space Memory Bandwidth vs. Latent Compression Trade-off",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4457,
+          "title": "Unified Prior for Generation and Dense Perception",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26021,7 +26036,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-21T01:42:57.957Z",
+      "verified_at": "2026-10-25T21:33:47.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126169,6 +126184,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T21:27:18.687Z"
+    },
+    "rule-4455": {
+      "learning_id": "rule-4455",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4455,
+      "title": "release): save the chart index before searching it (#2724)",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "8538e7cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:33:46.178Z"
+    },
+    "rule-4456": {
+      "learning_id": "rule-4456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4456,
+      "title": "Pixel-Space Memory Bandwidth vs. Latent Compression Trade-off",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:33:47.143Z"
+    },
+    "rule-4457": {
+      "learning_id": "rule-4457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4457,
+      "title": "Unified Prior for Generation and Dense Perception",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:33:47.143Z"
     }
   },
   "aliases": {

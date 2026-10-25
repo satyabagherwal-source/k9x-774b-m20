@@ -5000,3 +5000,5 @@
 | `CYCLE-20261025-TYB7` | `2026-10-25T21:15:24.019Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`dc847eb4...`) |
 | `CYCLE-20261025-7436` | `2026-10-25T21:25:38.034Z` | `touchlab/xcode-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4451` | Yes (`99a16c81...`) |
 | `CYCLE-20261025-99SX` | `2026-10-25T21:27:18.753Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4452, Rule 4453, Rule 4454` | Yes (`c6123873...`) |
+| `CYCLE-20261025-HKSK` | `2026-10-25T21:33:46.244Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4455` | Yes (`de93f898...`) |
+| `CYCLE-20261025-HLJD` | `2026-10-25T21:33:47.209Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4456, Rule 4457` | Yes (`9ee8f29e...`) |

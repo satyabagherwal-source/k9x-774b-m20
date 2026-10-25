@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T21:27:18.769Z",
+  "last_updated": "2026-10-25T21:33:47.226Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "c4d05b1d37dbb9cca18a5fbe85e2eaa8f476d6ee6998076d9d9d6338f8040740",
-      "verified_at": "2026-10-21T01:42:58.027Z",
+      "content_hash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
+      "verified_at": "2026-10-25T21:33:47.220Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:42:58.027Z"
+      "last_updated": "2026-10-25T21:33:47.220Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -4071,14 +4071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goodrain-rainbond",
-      "content_hash": "004bd1e987eb0799063b0bcd92e5a56c7061997f517de8b7b1fef631919a472d",
-      "verified_at": "2026-10-18T21:52:07.084Z",
+      "content_hash": "de93f8981e52714b203380cfb790e1bf5aa95aad2b0402748af4987beac14dfc",
+      "verified_at": "2026-10-25T21:33:46.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:52:07.084Z"
+      "last_updated": "2026-10-25T21:33:46.255Z"
     },
     "bee-san/Ciphey": {
       "repository": "bee-san/Ciphey",

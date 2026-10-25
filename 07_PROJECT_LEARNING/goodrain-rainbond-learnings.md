@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `9bd5ec92`  
+> **Source Version**: `8538e7cf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:52:06.877Z  
+> **Timestamp**: 2026-10-25T21:33:45.867Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:52:06.871Z  
+> **Harvest Timestamp**: 2026-10-25T21:33:45.766Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6274 stars
+- **Stars / Engagement**: 6280 stars
 
 ---
 
@@ -1237,585 +1237,44 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `448e057c` (2026-09-29)
-**Commit Message**: fix: prevent index file download redirects (#2706)
+### Incident Patch 1: `d4f7d5f4` (2026-10-25)
+**Commit Message**: fix(release): save the chart index before searching it (#2724)
 
-Signed-off-by: Qi Zhang <[REDACTED_EMAIL]>
+Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
-**File**: `api/controller/file_download.go` (added, +24/-0)
+**File**: `.github/workflows/release-publish.yml` (modified, +6/-2)
 ```diff
-@@ -0,0 +1,24 @@
-+package controller
-+
-+import (
-+	"net/http"
-+	"os"
-+)
-+
-+func serveDownloadedFile(w http.ResponseWriter, r *http.Request, fileName string) error {
-+	file, err := os.Open(fileName)
-+	if err != nil {
-+		return err
-+	}
-+	defer file.Close()
-+	info, err := file.Stat()
-+	if err != nil {
-+		return err
-+	}
-+
-+	w.Header().Set("status", "success")
-+	w.Header().Set("Content-Disposition", "attachment;filename="+info.Name())
-+	// ServeFile redirects /index.html to ./, which does not match the download route.
-+	http.ServeContent(w, r, info.Name(), info.ModTime(), file)
-+	return nil
-+}
-```
-
-**File**: `api/controller/file_download_test.go` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+package controller
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
-+	"os"
-+	"path/filepath"
-+	"strconv"
-+	"testing"
-+)
-+
-+func TestServeDownloadedFile(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		fileName     string
-+		content      string
-+		rangeHeader  string
-+		wantStatus   int
-+		wantBody     string
-+		contentRange string
-+	}{
-+		{
-+			name: "index HTML does not redirect", fileName: "index.html",
-+			content: "<html>download</html>", wantStatus: http.StatusOK, wantBody: "<html>download</html>",
-+		},
-+		{
-+			name: "ordinary file", fileName: "example.txt",
-+			content: "download", wantStatus: http.StatusOK, wantBody: "download",
-+		},
-+		{
-+			name: "empty index HTML", fileName: "index.html",
-+			wantStatus: http.StatusOK,
-+		},
-+		{
-+			name: "index HTML byte range", fileName: "index.html",
-+			content: "download", rangeHeader: "bytes=0-3",
-+			wantStatus: http.StatusPartialContent, wantBody: "down", contentRange: "bytes 0-3/8",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			fileName := filepath.Join(t.TempDir(), tt.fileName)
-+			if err := os.WriteFile(fileName, []byte(tt.content), 0600); err != nil {
-+				t.Fatal(err)
-+			}
-+			req := httptest.NewRequest(http.MethodGet, "/v2/file-operate/download/"+url.PathEscape(tt.fileName)+
-+				"?path=/usr/share/nginx/html/e%2Fxz&fileName="+url.QueryEscape(tt.fileName), nil)
-+			if tt.rangeHeader != "" {
-+				req.Header.Set("Range", tt.rangeHeader)
-+			}
-+			w := httptest.NewRecorder()
-+			w.Header().Set("Content-Type", "application/octet-stream")
-+			w.Header().Set("status", "failed")
-+			if err := serveDownloadedFile(w, req, fileName); err != nil {
-+				t.Fatalf("serve downloaded file: %v", err)
-+			}
-+			if w.Code != tt.wantStatus {
-+				t.Fatalf("status = %d, want %d; Location = %q", w.Code, tt.wantStatus, w.Header().Get("Location"))
-+			}
-+			if location := w.Header().Get("Location"); location != "" {
-+				t.Errorf("unexpected redirect to %q", location)
-+			}
-+			if got := w.Body.String(); got != tt.wantBody {
-+				t.Errorf("body = %q, want %q", got, tt.wantBody)
-+			}
-+			for name, want := range map[string]string{
-+				"Content-Type":        "application/octet-stream",
-+				"Content-Disposition": "attachment;filename=" + tt.fileName,
-+				"Content-Length":      strconv.Itoa(len(tt.wantBody)),
-+				"Content-Range":       tt.contentRange,
-+				"status":              "success",
-+			} {
-+				if got := w.Header().Get(name); got != want {
-+					t.Errorf("%s = %q, want %q", name, got, want)
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+func TestServeDownloadedFileMissingFile(t *testing.T) {
-+	req := httptest.NewRequest(http.MethodGet, "/v2/file-operate/download/index.html", nil)
-+	w := httptest.NewRecorder()
-+	w.Header().Set("status", "failed")
-+	err := serveDownloadedFile(w, req, filepath.Join(t.TempDir(), "index.html"))
-+	if !os.IsNotExist(err) {
-+		t.Fatalf("error = %v, want file-not-found error", err)
-+	}
-+	if w.Header().Get("status") != "failed" || w.Header().Get("Content-Disposition") != "" || w.Body.Len() != 0 {
-+		t.Fatal("missing file must leave the response uncommitted for the caller's error handler")
-+	}
-+}
-```
-
-**File**: `api/controller/service_monitor.go` (modified, +8/-5)
-```diff
-@@ -170,6 +170,7 @@ func (f FileManage) UploadEvent(w http.ResponseWriter, r *http.Request) {
- 	httputil.ReturnSuccess(r, w, nil)
- }
+@@ -346,7 +346,9 @@ jobs:
+           CHART_REPO_PASSWORD: ${{ secrets.CHART_REPO_PASSWORD }}
+         run: |
+           set -euo pipefail
+-          if curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"; then
++          # 先落盘再 grep：`curl | grep -q` 在 grep 提前退出时 curl 会报错（23），pipefail 下会被误判为「不存在」。
++          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
++          if grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"; then
+             echo "rainbond-${CHART_VERSION}.tgz is already on ${CHART_REPO_URL}, skip (never overwrite)"
+             exit 0
+           fi
+@@ -421,7 +423,9 @@ jobs:
+         if: env.CHART_UPLOAD == 'true' && needs.prepare.outputs.chart_main_version == needs.prepare.outputs.chart_version
+         env:
+           CHART_VERSION: ${{ needs.prepare.outputs.chart_version }}
+-        run: curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"
++        run: |
++          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
++          grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"
  
-+// UploadFile uploads files to a container in the selected pod.
- func (f FileManage) UploadFile(w http.ResponseWriter, r *http.Request) {
- 	// 设置 CORS 头
- 	origin := r.Header.Get("Origin")
-@@ -357,6 +358,7 @@ func resolveUploadRelativePath(fileHeader *multipart.FileHeader) (string, bool,
- 	return cleaned, strings.Contains(cleaned, "/"), nil
- }
- 
-+// DownloadFile serves a file downloaded from a container in the selected pod.
- func (f FileManage) DownloadFile(w http.ResponseWriter, r *http.Request) {
- 	logrus.Debugf("接收到文件下载请求: Method=%s, ContentType=%s", r.Method, r.Header.Get("Content-Type"))
- 
-@@ -400,14 +402,14 @@ func (f FileManage) DownloadFile(w http.ResponseWriter, r *http.Request) {
- 		}
- 	}()
- 
--	// 设置成功状态和文件下载头
--	w.Header().Set("status", "success")
--	w.Header().Set("Content-Disposition", "attachment;filename="+fileName)
--
- 	logrus.Debugf("开始传输文件: %s", fileName)
--	http.ServeFile(w, r, fileName)
-+	if err := serveDownloadedFile(w, r, fileName); err != nil {
-+		logrus.Errorf("读取下载文件失败: %v", err)
-+		httputil.ReturnError(r, w, 500, fmt.Sprintf("下载文件失败: %v", err))
-+	}
- }
- 
-+// AppFileDownload copies a file or directory from a container to local storage.
- func (f FileManage) AppFileDownload(containerName, podName, filePath, namespace string) error {
- 	// Check if the file exists first
- 	checkCmd := []string{"test", "-e", filePath}
-@@ -568,6 +570,7 @@ func (f FileManage) downloadUsingTar(containerName, podName, filePath, namespace
- 	return nil
- }
- 
-+// AppFileUpload copies a local file or directory into a container.
- func (f FileManage) AppFileUpload(containerName, podName, srcPath, destPath, namespace string) error {
- 	logrus.Debugf("开始上传目录/文件: 源路径=%s, 目标路径=%s", srcPath, destPath)
- 
-```
-
----
-
-### Incident Patch 2: `0384d977` (2026-09-20)
-**Commit Message**: fix: tolerate dedicated node taints in source builds (#2704)
-
-Signed-off-by: Qi Zhang <[REDACTED_EMAIL]>
-
-**File**: `builder/build/code_build.go` (modified, +41/-41)
-```diff
-@@ -22,7 +22,6 @@ import (
- 	"context"
- 	"encoding/json"
- 	"fmt"
--	"github.com/goodrain/rainbond/db"
- 	"io"
- 	"io/ioutil"
- 	"os"
-@@ -31,6 +30,8 @@ import (
- 	"strings"
- 	"time"
- 
-+	"github.com/goodrain/rainbond/db"
-+
- 	"github.com/eapache/channels"
- 	"github.com/goodrain/rainbond/builder"
- 	jobc "github.com/goodrain/rainbond/builder/job"
-@@ -317,6 +318,44 @@ func (s *slugBuild) createVolumeAndMount(re *Request, sourceTarFileName string,
- 	return volumes, volumeMounts
- }
- 
-+func newSlugBuildPodSpec(arch, hostIP, cacheMode string) corev1.PodSpec {
-+	podSpec := corev1.PodSpec{
-+		RestartPolicy: corev1.RestartPolicyOnFailure,
-+		Affinity: &corev1.Affinity{
-+			NodeAffinity: &corev1.NodeAffinity{
-+				RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
-+					NodeSelectorTerms: []corev1.NodeSelectorTerm{{
-+						MatchExpressions: []corev1.NodeSelectorRequirement{
-+							{
-+								Key:      "kubernetes.io/arch",
-+								Operator: corev1.NodeSelectorOpIn,
-+								Values:   []string{arch},
-+							},
-+							{
-+								Key:      "kubernetes.io/hostname",
-+								Operator: corev1.NodeSelectorOpIn,
-+								Values:   []string{hostIP},
-+							},
-+						},
-+					},
-+					},
-+				},
-+			},
-+		},
-+	}
-+	if hostIP != "" {
-+		// All cache modes use the current chaos node, including dedicated or cordoned nodes.
-+		podSpec.Tolerations = []corev1.Toleration{{Operator: corev1.TolerationOpExists}}
-+		if cacheMode == "hostpath" {
-+			logrus.Debugf("builder cache mode using hostpath, schedule job into current node")
-+			podSpec.NodeSelector = map[string]string{
-+				"kubernetes.io/hostname": hostIP,
-+			}
-+		}
-+	}
-+	return podSpec
-+}
-+
- func (s *slugBuild) runBuildJob(re *Request) error {
- 
- 	//prepare build code dir
-@@ -454,46 +493,7 @@ func (s *slugBuild) runBuildJob(re *Request) error {
- 		}
- 	}
- 
--	podSpec := corev1.PodSpec{
--		RestartPolicy: corev1.RestartPolicyOnFailure,
--		Affinity: &corev1.Affinity{
--			NodeAffinity: &corev1.NodeAffinity{
--				RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
--					NodeSelectorTerms: []corev1.NodeSelectorTerm{{
--						MatchExpressions: []corev1.NodeSelectorRequirement{
--							{
--								Key:      "kubernetes.io/arch",
--								Operator: corev1.NodeSelectorOpIn,
--								Values:   []string{re.Arch},
--							},
--							{
--								Key:      "kubernetes.io/hostname",
--								Operator: corev1.NodeSelectorOpIn,
--								Values:   []string{os.Getenv("HOST_IP")},
--							},
--						},
--					},
--					},
--				},
--			},
--		},
--	}
--	// only support never and onfailure
--	// schedule builder
--	if re.CacheMode == "hostpath" {
--		logrus.Debugf("builder cache mode using hostpath, schedule job into current node")
--		hostIP := os.Getenv("HOST_IP")
--		if hostIP != "" {
--			podSpec.NodeSelector = map[string]string{
--				"kubernetes.io/hostname": hostIP,
--			}
--			podSpec.Tolerations = []corev1.Toleration{
--				{
--					Operator: "Exists",
--				},
--			}
--		}
--	}
-+	podSpec := newSlugBuildPodSpec(re.Arch, os.Getenv("HOST_IP"), re.CacheMode)
- 	logrus.Debugf("request is: %+v", re)
- 
- 	volumes, mounts := s.createVolumeAndMount(re, sourceTarFileName, buildNoCache)
-```
-
-**File**: `builder/build/code_build_scheduling_test.go` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+package build
-+
-+import (
-+	"reflect"
-+	"testing"
-+
-+	corev1 "k8s.io/api/core/v1"
-+)
-+
-+func TestNewSlugBuildPodSpecToleratesDedicatedNode(t *testing.T) {
-+	for _, cacheMode := range []string{"", "sharefile", "hostpath"} {
-+		for _, arch := range []string{"amd64", "arm64"} {
-+			t.Run(cacheMode+"/"+arch, func(t *testing.T) {
-+				spec := newSlugBuildPodSpec(arch, "chaos-node", cacheMode)
-+				for _, taint := range []corev1.Taint{
-+					{Key: corev1.TaintNodeUnschedulable, Effect: corev1.TaintEffectNoSchedule},
-+					{Key: "dedicated", Value: "rbd-chaos", Effect: corev1.TaintEffectNoSchedule},
-+					{Key: "dedicated", Value: "rbd-chaos", Effect: corev1.TaintEffectNoExecute},
-+				} {
-+					tolerated := false
-+					for _, toleration := range spec.Tolerations {
-+						if toleration.ToleratesTaint(&taint) {
-+							tolerated = true
-+							break
-+						}
-+					}
-+					if !tolerated {
-+						t.Errorf("build pod does not tolerate dedicated node taint %v", taint)
-+					}
-+				}
-+
-+				if spec.Affinity == nil || spec.Affinity.NodeAffinity == nil {
-+					t.Fatal("build pod must remain restricted to the current chaos node and architecture")
-+				}
-+				want := &corev1.NodeSelector{
-+					NodeSelectorTerms: []corev1.NodeSelectorTerm{{
-+						MatchExpressions: []corev1.NodeSelectorRequirement{
-+							{Key: "kubernetes.io/arch", Operator: corev1.NodeSelectorOpIn, Values: []string{arch}},
-+							{Key: "kubernetes.io/hostname", Operator: corev1.NodeSelectorOpIn, Values: []string{"chaos-node"}},
-+						},
-+					}},
-+				}
-+				if got := spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution; !reflect.DeepEqual(got, want) {
-+					t.Errorf("required node affinity = %#v, want %#v", got, want)
-+				}
-+				if cacheMode == "hostpath" && spec.NodeSelector["kubernetes.io/hostname"] != "chaos-node" {
-+					t.Errorf("hostpath node selector = %v, want chaos-node", spec.NodeSelector)
-+				}
-+				if spec.RestartPolicy != corev1.RestartPolicyOnFailure {
-+					t.Errorf("restart policy = %q, want OnFailure", spec.RestartPolicy)
-+				}
-+			})
-+		}
-+	}
-+}
-+
-+func TestNewSlugBuildPodSpecWithoutHostDoesNotTolerateTaints(t *testing.T) {
-+	for _, cacheMode := range []string{"", "sharefile", "hostpath"} {
-+		t.Run(cacheMode, func(t *testing.T) {
-+			spec := newSlugBuildPodSpec("amd64", "", cacheMode)
-+			if len(spec.Tolerations) != 0 {
-+				t.Errorf("expected no taint tolerations without a target host, got %v", spec.Tolerations)
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `738c839f` (2026-09-20)
-**Commit Message**: fix: report Kubernetes errors when creating TCP routes (#2703)
-
-Signed-off-by: Qi Zhang <[REDACTED_EMAIL]>
-
-**File**: `api/controller/apigateway/api_gateway_route.go` (modified, +5/-1)
-```diff
-@@ -707,7 +707,11 @@ func (g Struct) CreateTCPRoute(w http.ResponseWriter, r *http.Request) {
- 				} else {
- 					// 其他错误，返回失败
- 					logrus.Errorf("create tcp rule func, create svc failure: %s", err.Error())
--					httputil.ReturnBcodeError(r, w, bcode.ErrServiceCreate)
-+					httputil.ReturnBcodeError(r, w, &bcode.Code{
-+						Status:  bcode.ErrServiceCreate.GetStatus(),
-+						Code:    bcode.ErrServiceCreate.GetCode(),
-+						Message: fmt.Sprintf("%s: %s", bcode.ErrServiceCreate.Error(), err.Error()),
-+					})
- 					return
- 				}
- 			}
-```
-
-**File**: `api/controller/apigateway/api_gateway_route_test.go` (modified, +78/-1)
-```diff
-@@ -12,6 +12,7 @@ import (
- 
- 	v2 "github.com/apache/apisix-ingress-controller/pkg/kube/apisix/apis/config/v2"
- 	"github.com/go-chi/chi"
-+	"github.com/goodrain/rainbond/api/util/bcode"
- 	ctxutil "github.com/goodrain/rainbond/api/util/ctx"
- 	"github.com/goodrain/rainbond/db"
- 	dbdao "github.com/goodrain/rainbond/db/dao"
-@@ -25,6 +26,7 @@ import (
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/runtime/serializer"
- 	"k8s.io/apimachinery/pkg/util/intstr"
-+	"k8s.io/apimachinery/pkg/util/validation/field"
- 	"k8s.io/client-go/kubernetes"
- 	"k8s.io/client-go/rest"
- )
-@@ -160,7 +162,7 @@ func (d *tcpRouteRuleDao) DeleteByRecordIDs(ids []uint) error {
- 	return nil
- }
- 
--func newTCPRouteTestClientset(t *testing.T, services map[string]*corev1.Service) (*kubernetes.Clientset, func()) {
-+func newTCPRouteTestClientset(t *testing.T, services map[string]*corev1.Service, createErrors ...*errors.StatusError) (*kubernetes.Clientset, func()) {
- 	t.Helper()
- 	scheme := runtime.NewScheme()
- 	if err := corev1.AddToScheme(scheme); err != nil {
-@@ -204,6 +206,13 @@ func newTCPRouteTestClientset(t *testing.T, services map[string]*corev1.Service)
- 			if err := json.NewDecoder(r.Body).Decode(&service); err != nil {
- 				t.Fatalf("decode service: %v", err)
- 			}
-+			if len(createErrors) > 0 {
-+				status := createErrors[0].ErrStatus
-+				status.TypeMeta = v1.TypeMeta{Kind: "Status", APIVersion: "v1"}
-+				w.WriteHeader(int(status.Code))
-+				_ = json.NewEncoder(w).Encode(status)
-+				return
-+			}
- 			for _, existing := range services {
- 				for _, existingPort := range existing.Spec.Ports {
- 					for _, requestedPort := range service.Spec.Ports {
-@@ -637,6 +646,74 @@ func TestCreateTCPRouteRejectsExplicitPortOwnedByAnotherService(t *testing.T) {
- 	}
- }
- 
-+// capability_id: rainbond.gateway.report-tcp-service-create-error-details
-+func TestCreateTCPRouteReportsServiceCreateErrorDetails(t *testing.T) {
-+	const (
-+		tenantID    = "tenant-id"
-+		serviceID   = "service-id"
-+		serviceName = "op-tspnetty-server"
-+	)
-+	tests := []struct {
-+		name       string
-+		port       int32
-+		validRange string
-+	}{
-+		{name: "below default range", port: 10007, validRange: "30000-32767"},
-+		{name: "above default range", port: 32768, validRange: "30000-32767"},
-+		{name: "custom cluster range", port: 30000, validRange: "10000-20000"},
-+		{name: "other creation failure", port: 30000},
-+	}
-+	for _, tt := range tests {
-+		for _, protocol := range []string{"tcp", "udp", "tcp+udp"} {
-+			t.Run(tt.name+"/"+protocol, func(t *testing.T) {
-+				createErr := errors.NewInternalError(fmt.Errorf("failed to allocate a service IP"))
-+				if tt.validRange != "" {
-+					createErr = errors.NewInvalid(schema.GroupKind{Kind: "Service"}, fmt.Sprintf("%s-%d", serviceName, tt.port), field.ErrorList{
-+						field.Invalid(field.NewPath("spec", "ports").Index(0).Child("nodePort"), tt.port,
-+							"provided port is not in the valid range. The range of valid ports is "+tt.validRange),
-+					})
-+				}
-+				services := map[string]*corev1.Service{}
-+				clientset, closeServer := newTCPRouteTestClientset(t, services, createErr)
-+				t.Cleanup(closeServer)
-+				k8s.New().Clientset = clientset
-+				ruleDao := &tcpRouteRuleDao{}
-+				db.SetTestManager(tcpRouteTestManager{
-+					tenantServiceDao: &tcpRouteTenantServiceDao{servicesByID: map[string]*dbmodel.TenantServices{
-+						serviceID: {ServiceID: serviceID, ServiceAlias: serviceName, TenantID: tenantID},
-+					}},
-+					tcpRuleDao: ruleDao,
-+				})
-+				t.Cleanup(func() { db.SetTestManager(nil) })
-+
-+				rr := createTCPRouteForTest(t, "default", tenantID, serviceID, serviceName, tt.port, protocol)
-+				if rr.Code != http.StatusBadRequest {
-+					t.Fatalf("expected status 400, got %d: %s", rr.Code, rr.Body.String())
-+				}
-+				var response struct {
-+					Code int    `json:"code"`
-+					Msg  string `json:"msg"`
-+				}
-+				if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
-+					t.Fatalf("decode creation error response: %v", err)
-+				}
-+				if response.Code != bcode.ServiceCreateError {
-+					t.Errorf("expected business code %d, got %d", bcode.ServiceCreateError, response.Code)
-+				}
-+				if !strings.Contains(response.Msg, createErr.Error()) {
-+					t.Errorf("expected Kubernetes error details %q in response, got %q", createErr.Error(), response.Msg)
-+				}
-+				if len(services) != 0 || ruleDao.replaced != nil || ruleDao.added != nil {
-+					t.Fatal("failed service creation must not persist a Service or TCP rule")
-+				}
-+				if bcode.ErrServiceCreate.Error() != "service create error" {
-+					t.Fatal("request-specific details must not modify the shared business error")
-+				}
-+			})
-+		}
-+	}
-+}
-+
- // capability_id: rainbond.gateway.protect-tcp-route-service-ownership
- func TestCreateTCPRouteRejectsExistingServiceWithoutMatchingOwner(t *testing.T) {
- 	const (
-```
-
-**File**: `test-manifest.json` (modified, +18/-0)
-```diff
-@@ -2951,6 +2951,24 @@
-       "test_type": "regression",
-       "status": "active"
-     },
-+    {
-+      "id": "rainbond.gateway.report-tcp-service-create-error-details",
-+      "title": "TCP route creation reports Kubernetes error details",
-+      "title_zh": "TCP route creation reports Kubernetes error details",
-+      "interface_type": "view_endpoint",
-+      "interface": "POST /api-gateway/v1/{tenant_name}/routes/tcp",
-+      "code_paths": [
-+        "api/controller/apigateway/api_gateway_route.go"
-+      ],
-+      "tests": [
-+        {
-+          "path": "api/controller/apigateway/api_gateway_route_test.go",
-+          "selector": "TestCreateTCPRouteReportsServiceCreateErrorDetails"
-+        }
-+      ],
-+      "test_type": "regression",
-+      "status": "active"
-+    },
-     {
-       "id": "rainbond.gateway.validate-tcp-nodeport-route-name",
-       "title": "Reject out-of-range TCP NodePorts parsed from route names",
-```
-
-**File**: `test-manifest.md` (modified, +11/-0)
-```diff
-@@ -161,6 +161,7 @@
- | rainbond.gateway.reject-duplicate-tcp-nodeport | Reject duplicate TCP NodePort bindings | active | regression | TCP NodePort binding | db/mysql/dao/gateway_test.go::TestTCPRuleDaoAddModelRejectsPortOwnedByAnotherRule<br>api/controller/apigateway/api_gateway_route_test.go::TestCreateTCPRouteRejectsExplicitPortOwnedByAnotherService |
- | rainbond.gateway.release-absent-tcp-nodeport-owner | Release only the requested owner when a TCP route Service is absent | active | regression | api/controller/apigateway.Struct.DeleteTCPRoute | api/controller/apigateway/api_gateway_route_test.go::TestDeleteTCPRouteAlreadyAbsentReleasesOnlyRequestedOwner |
- | rainbond.gateway.release-captured-tcp-nodeport-rules | Release only TCP NodePort rules captured before Service deletion | active | regression | api/controller/apigateway.Struct.DeleteTCPRoute | api/controller/apigateway/api_gateway_route_test.go::TestDeleteTCPRouteReleasesOnlyCapturedRuleIDs |
-+| rainbond.gateway.report-tcp-service-create-error-details | TCP route creation reports Kubernetes error details | active | regression | POST /api-gateway/v1/{tenant_name}/routes/tcp | api/controller/apigateway/api_gateway_route_test.go::TestCreateTCPRouteReportsServiceCreateErrorDetails |
- | rainbond.gateway.validate-tcp-nodeport-route-name | Reject out-of-range TCP NodePorts parsed from route names | active | regression | api/controller/apigateway.nodePortFromTCPRouteName | api/controller/apigateway/api_gateway_route_test.go::TestNodePortFromTCPRouteNameValidatesRange |
- | rainbond.helm-release.app-version-format | 为 Helm 历史输出格式化应用版本号 | active | regression | pkg/helm.formatAppVersion | pkg/helm/helm_release_test.go::TestGetReleaseHistory |
- | rainbond.helm-release.chart-name-format | 为历史和摘要输出格式化 Helm chart 名称 | active | regression | pkg/helm.formatChartName | pkg/helm/helm_release_test.go::TestGetReleaseHistory |
-@@ -2069,6 +2070,16 @@
- - 代码路径: `api/controller/apigateway/api_gateway_route.go`
- - 测试路径: `api/controller/apigateway/api_gateway_route_test.go::TestDeleteTCPRouteReleasesOnlyCapturedRuleIDs`
- 
-+### TCP route creation reports Kubernetes error details
-+
-+- Capability ID: `rainbond.gateway.report-tcp-service-create-error-details`
-+- 状态: `active`
-+- 测试类型: `regression`
-+- 接口类型: `view_endpoint`
-+- 业务入口: `POST /api-gateway/v1/{tenant_name}/routes/tcp`
-+- 代码路径: `api/controller/apigateway/api_gateway_route.go`
-+- 测试路径: `api/controller/apigateway/api_gateway_route_test.go::TestCreateTCPRouteReportsServiceCreateErrorDetails`
-+
- ### Reject out-of-range TCP NodePorts parsed from route names
- 
- - Capability ID: `rainbond.gateway.validate-tcp-nodeport-route-name`
+       - name: Notify done
+         env:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2725** (2026-10-25): ci(release): read E2E provenance from the job log as a fallback (@yangkaa)
+- **PR #2724** (2026-10-25): fix(release): save the chart index before searching it (@yangkaa)
+- **PR #2718** (2026-10-25): ci: automate releases with an E2E gate and two approvals (@yangkaa)
 - **PR #2717** (2026-10-12): fix: support service activation on sqlite (@ZhangSetSail)
 - **PR #2716** (2026-10-12): feat: v6.9.11 version (@ZhangSetSail)
 - **PR #2715** (2026-10-07): Feat/cleanup version images (@RainBondsongyg)
-- **PR #2714** (2026-10-07): Feat/cleanup version images (@RainBondsongyg)
-- **PR #2713** (2026-09-30): feat: inspect retired build versions (@RainBondsongyg)
-- **PR #2712** (2026-09-30): feat: mount runtime for node inventory (@RainBondsongyg)
 
 ---
 
@@ -1835,51 +1294,34 @@ Signed-off-by: Qi Zhang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prevent index file download redirects (#2706)
+## X. release): save the chart index before searching it (#2724)
 
 **RULE**:
-When implementing operations in `api/controller/file_download.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `448e057c`: prevent index file download redirects (#2706). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4f7d5f4`: release): save the chart index before searching it (#2724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/controller/file_download.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publish.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package controller
-
-import (
-	"net/http"
-	"os"
-)
-
-func serveDownloadedFile(w http.ResponseWriter, r *http.Request, fileName string) error {
-	file, err := os.Open(fileName)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	info, err := file.Stat()
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("status", "success")
-	w.Header().Set("Content-Disposition", "attachment;filename="+info.Name())
-	// ServeFile redirects /index.html to ./, which does not match the download route.
-	http.ServeContent(w, r, info.Name(), info.ModTime(), file)
-	return nil
-}
+          # 先落盘再 grep：`curl | grep -q` 在 grep 提前退出时 curl 会报错（23），pipefail 下会被误判为「不存在」。
+          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
+          if grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"; then
+        run: |
+          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
+          grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          if curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"; then
+        run: curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `448e057c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4f7d5f4` are properly handled with clean fallback behavior.
