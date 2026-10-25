@@ -4871,3 +4871,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-25T14:50:44.668Z |
 | `learn-github-orange-cyberdefense-goad` | `https://github.com/Orange-Cyberdefense/GOAD` | `74af01eb` | Multi-dimensional audit evidence | 2026-10-25T14:50:54.521Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `d6ef7fbb` | Multi-dimensional audit evidence | 2026-10-25T14:50:59.212Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-25T14:57:15.639Z |
+| `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `338cf2e1` | Multi-dimensional audit evidence | 2026-10-25T14:57:15.960Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `a459b5c4` | Multi-dimensional audit evidence | 2026-10-25T14:57:16.559Z |

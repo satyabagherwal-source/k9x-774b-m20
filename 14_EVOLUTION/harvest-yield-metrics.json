@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:50:59.217Z",
-  "total_cycles_completed": 4841,
-  "total_learnings_persisted": 4841,
-  "total_rules_promoted": 4234,
+  "last_updated": "2026-10-25T14:57:16.564Z",
+  "total_cycles_completed": 4844,
+  "total_learnings_persisted": 4844,
+  "total_rules_promoted": 4236,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:38:00.469Z",
-      "repository": "glincker/thesvg",
-      "learningId": "learn-github-glincker-thesvg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:38:03.838Z",
-      "repository": "killercup/cargo-edit",
-      "learningId": "learn-github-killercup-cargo-edit",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:38:12.553Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:44:16.374Z",
       "repository": "zai-org/GLM-5.3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T14:50:59.217Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:57:15.644Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:57:15.965Z",
+      "repository": "adobe/react-spectrum",
+      "learningId": "learn-github-adobe-react-spectrum",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T14:57:16.564Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
-> **Source Version**: `aeb7a35a`  
+> **Source Version**: `a459b5c4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:22:45.674Z  
+> **Timestamp**: 2026-10-25T14:57:16.174Z  
 > **Learning ID**: `learn-github-o2sh-onefetch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:22:45.293Z  
+> **Harvest Timestamp**: 2026-10-25T14:57:16.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12066 stars
+- **Stars / Engagement**: 12073 stars
 
 ---
 
@@ -457,6 +457,8 @@ impl Colors {
             }
             Style::LanguageChip(entry) => AnsiStyle::new().color(self.language_color(entry)),
             Style::LanguageBar(entry) => AnsiStyle::new().on_color(self.language_color(entry)),
+            // Green, like a contribution graph, whatever the language.
+            Style::Sparkline => AnsiStyle::new().color(DynColors::Ansi(AnsiColors::Green)),
             Style::Palette(index) => {
                 let color = COLOR_PALETTE
                     .get(index)
@@ -679,9 +681,87 @@ mod test {
 
     #[test]
     fn test_style() {
-        let colors = Colors::new(&RenderOptions::default(), Some(Language::Rust));
-        let red = DynColors::Ansi(AnsiColors::Red);
-        let default = DynColors:
+   
+```
+
+### Core Architecture Module: `src/render/fields/activity.rs`
+```
+use super::FieldView;
+use crate::data::fields::activity::Activity;
+use crate::render::RenderOptions;
+use crate::render::style::{Line, Segment, Style};
+
+const BARS: [char; 8] = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+
+impl FieldView for Activity {
+    fn value(&self, options: &RenderOptions) -> Vec<Line> {
+        let summary = match self.total() {
+            1 => "1 commit (1y)".to_string(),
+            n => format!("{} commits (1y)", options.number(&n)),
+        };
+        vec![Line::from(vec![
+            Segment::new(sparkline(&self.commits_by_month), Style::Sparkline),
+            Segment::value(format!(" {summary}")),
+        ])]
+    }
+
+    fn key(&self) -> String {
+        "Activity".into()
+    }
+}
+
+/// One bar per month, scaled to the busiest month. Months without commits get
+/// the lowest bar and any month with commits at least the second lowest, so a
+/// single commit still shows.
+fn sparkline(counts: &[usize]) -> String {
+    let max = counts.iter().copied().max().unwrap_or(0);
+    counts
+        .iter()
+        .map(|&count| {
+            if count == 0 {
+                return BARS[0];
+            }
+            let steps = BARS.len() - 1;
+            let level = (count * steps).div_ceil(max);
+            BARS[level]
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case(&[0, 0, 0], "▁▁▁")]
+    #[case(&[0, 1, 7], "▁▂█")]
+    #[case(&[1, 100, 50], "▂█▅")]
+    #[case(&[3, 3, 3], "███")]
+    fn test_sparkline(#[case] counts: &[usize], #[case] expected: &str) {
+        assert_eq!(sparkline(counts), expected);
+    }
+
+    #[rstest]
+    #[case(vec![0; 12], "▁▁▁▁▁▁▁▁▁▁▁▁", " 0 commits (1y)")]
+    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], "▁▁▁▁▁▁▁▁▁▁▁█", " 1 commit (1y)")]
+    #[case(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2], "▁▁▁▁▁▁▁▁▁▁▅█", " 3 commits (1y)")]
+    fn test_display_activity(
+        #[case] commits_by_month: Vec<usize>,
+        #[case] bars: &str,
+        #[case] summary: &str,
+    ) {
+        let activity = Activity { commits_by_month };
+        assert_eq!(
+            activity.value(&RenderOptions::default()),
+            vec![Line::from(vec![
+                Segment::new(bars, Style::Sparkline),
+                Segment::value(summary),
+            ])]
+        );
+    }
+}
+
 ```
 
 ### Core Architecture Module: `src/render/fields/authors.rs`
@@ -1063,76 +1143,6 @@ mod test {
 
 ```
 
-### Core Architecture Module: `src/render/fields/description.rs`
-```
-use super::FieldView;
-use crate::data::fields::description::Description;
-use crate::render::RenderOptions;
-use crate::render::style::Line;
-
-const NUMBER_OF_WORDS_PER_LINE: usize = 5;
-
-impl FieldView for Description {
-    fn value(&self, _options: &RenderOptions) -> Vec<Line> {
-        match &self.description {
-            Some(description) => break_sentence_into_lines(description)
-                .into_iter()
-                .map(Line::from)
-                .collect(),
-            None => Vec::new(),
-        }
-    }
-
-    fn key(&self) -> String {
-        "Description".into()
-    }
-}
-
-fn break_sentence_into_lines(sentence: &str) -> Vec<String> {
-    let words: Vec<&str> = sentence.split_whitespace().collect();
-    words
-        .chunks(NUMBER_OF_WORDS_PER_LINE)
-        .map(|chunk| chunk.join(" "))
-        .collect()
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use crate::data::manifest::{Manifest, ManifestType};
-    use rstest::rstest;
-
-    #[test]
-    fn should_display_description() {
-        let description = Description::new(Some(&Manifest {
-            manifest_type: ManifestType::Cargo,
-            name: None,
-            description: Some("test".into()),
-            number_of_dependencies: 0,
-            version: Some("0.1.0".into()),
-            license: None,
-        }));
-
-        assert_eq!(
-            description.value(&RenderOptions::default()),
-            vec![Line::from("test")]
-        );
-    }
-
-    #[rstest]
-    #[case("Hello", &["Hello"])]
-    #[case("Hello world, how are you doing?", &["Hello world, how are you", "doing?"])]
-    #[case(
-        "This is a long sentence that needs to be broken into multiple lines.",
-        &["This is a long sentence", "that needs to be broken", "into multiple lines."]
-    )]
-    fn test_break_sentence_into_lines(#[case] sentence: &str, #[case] expected_result: &[&str]) {
-        assert_eq!(break_sentence_into_lines(sentence), expected_result);
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1160,232 +1170,335 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `faaa8c5a` (2026-10-17)
-**Commit Message**: chore: deny deprecations via CI rustflags, lock release builds, publish only needed files (#1891)
+### Incident Patch 1: `a459b5c4` (2026-10-25)
+**Commit Message**: feat: add an Activity field with a commits-per-month sparkline (#1902)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +3/-1)
+**File**: `ARCHITECTURE.md` (modified, +10/-12)
 ```diff
-@@ -28,9 +28,11 @@ jobs:
+@@ -17,6 +17,7 @@ command line ──► cli ──► options ──┬── InfoOptions ──
+ | `cli`       | The clap definition of the command line.                                                   |
+ | `options`   | Turns `Cli` into `data::InfoOptions` (what to collect) and `render::RenderOptions` (how to print it). The only module that reads `Cli`, apart from `main`. |
+ | `data`      | Collects data. `build_info` returns an `Info`: a title and a list of `Field`s. `data::git` holds the repository queries shared by the fields, notably the single commit-graph traversal. |
++| `dates`     | Date helpers shared by `data` and `render`: the current time, RFC 3339 formatting, and how dates are written in JSON/YAML. |
+ | `language`  | The `Language` enum, generated by `build.rs` from `languages.yaml` and `src/language/language.tera`. |
+ | `render`    | Prints an `Info`: the info lines beside the ascii art or an image, or JSON/YAML.           |
  
-       - name: Setup Rust
-         uses: actions-rust-lang/setup-rust-toolchain@v2
-+        with:
-+          rustflags: "-D deprecated"
+@@ -25,8 +26,10 @@ Dependencies only go one way:
+ - `data` must not depend on `cli`, `options`, `render`, or colors.
+ - `render` must not depend on `cli` or `options`. (`cli` uses a few `render`
+   types as flag values, such as `SerializationFormat` and `ImageProtocol`.)
+-- `language` is shared by `data` and `render`: its enum carries both data
+-  (tokei mapping, language type) and display information (logo, colors, chip).
++- `dates` and `language` are shared by `data` and `render`, and depend on
++  neither. (`Language`
++  carries both data, such as its tokei mapping, and display information, such
++  as its logo and colors.)
  
-       - name: Build
--        run: cargo build --features=fail-on-deprecated
-+        run: cargo build --locked
+ Everything is one crate, so the compiler doesn't enforce these rules; keep
+ them in mind when reviewing imports in these modules.
+@@ -37,10 +40,10 @@ The parsed command line (`Cli`) is only read by `options.rs` (and by `main` for
+ `--languages`, `--package-managers` and `--generate`). It is split into two
+ structs, one per stage:
  
-       - name: Run tests
-         run: cargo test
+-| Struct          | Defined in      | Read by                    | Holds                                                                 |
+-| --------------- | --------------- | -------------------------- | --------------------------------------------------------------------- |
+-| `InfoOptions`   | `data/mod.rs`   | `data::build_info`         | What to collect: input path, disabled fields, how many authors, languages and file churns to keep, excluded globs, bot/merge filters, URL format, language types. |
+-| `RenderOptions` | `render/mod.rs` | everything in `render`     | How to print it: JSON/YAML or terminal, ascii art or image (and its protocol and color resolution), logo and text colors, bold, and how values look in the info lines (number separator, ISO dates, true colors and Nerd Font icons for language chips, color palette row). |
++| Struct          | Defined in      | Read by                | Holds            |
++| --------------- | --------------- | ---------------------- | ---------------- |
++| `InfoOptions`   | `data/mod.rs`   | `data::build_info`     | What to collect. |
++| `RenderOptions` | `render/mod.rs` | everything in `render` | How to print it. |
+ 
+ When adding a flag: if it changes what is collected, and therefore the
+ JSON/YAML output, it belongs in `InfoOptions` (like `--number-of-authors`);
+@@ -78,12 +81,7 @@ render/
+   colors.rs    Colors: what each Style looks like (color and bold)
+ ```
+ 
+-`Style` names everything that can be colored, as the command line names it:
+-the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
+-`Separator`, `Value`), the `{n}` parts of the ascii art (`AsciiArt(n)`, for
+-`--ascii-colors`), the language chips and the languages bar
+-(`LanguageChip`, `LanguageBar`), and the palette row (`Palette(n)`). It holds
+-no colors.
++`Style` (`style.rs`) names everything that can be colored. It holds no colors.
+ 
+ - Only `colors.rs` decides how each `Style` looks: its color, from the
+   language, `--ascii-language`, `--ascii-colors`, `--text-colors` and
 ```
 
-**File**: `Cargo.toml` (modified, +5/-3)
+**File**: `src/data/builder.rs` (modified, +10/-0)
 ```diff
-@@ -6,7 +6,7 @@ version = "3.0.0"
- repository = "https://github.com/o2sh/onefetch"
- categories = ["command-line-utilities"]
- description = "Command-line Git information tool"
--exclude = ["site/*"]
-+exclude = ["/site", "/assets/*.png"]
- keywords = ["git", "cli", "terminal"]
- name = "onefetch"
- homepage = "https://onefetch.dev"
-@@ -98,5 +98,7 @@ base64 = "0.23.1"
- color_quant = "1.1.0"
- rustix = { version = "1.1.5", features = ["termios", "event"] }
- 
--[features]
--fail-on-deprecated = []
-+[profile.release]
-+lto = true
-+codegen-units = 1
-+strip = true
-```
-
-**File**: `Makefile` (modified, +4/-4)
-```diff
-@@ -1,8 +1,10 @@
-+.PHONY: install build uninstall clean release-mac release-win release-linux release-deb
-+
- install:
--	cargo install --path "." --features=fail-on-deprecated
-+	cargo install --path . --locked
- 
- build:
--	cargo build --release --features=fail-on-deprecated
-+	cargo build --release --locked
- 
- uninstall:
- 	cargo uninstall onefetch
-@@ -11,7 +13,6 @@ clean:
- 	cargo clean
- 
- release-mac:
--	strip target/release/onefetch
- 	mkdir -p release
- 	tar -C ./target/release/ -czvf ./release/onefetch-mac.tar.gz ./onefetch
- 
-@@ -22,7 +23,6 @@ release-win:
- 	iscc.exe -DMyAppVersion=${TAG_NAME} ./.github/workflows/windows-installer.iss
- 
- release-linux:
--	strip target/release/onefetch
- 	mkdir -p release
- 	tar -C ./target/release/ -czvf ./release/onefetch-linux.tar.gz ./onefetch
- 
-```
-
-**File**: `src/main.rs` (modified, +0/-2)
-```diff
-@@ -1,5 +1,3 @@
--#![cfg_attr(feature = "fail-on-deprecated", deny(deprecated))]
--
+@@ -1,3 +1,4 @@
++use super::fields::activity::Activity;
+ use super::fields::authors::Authors;
+ use super::fields::churn::Churn;
+ use super::fields::commits::Commits;
+@@ -20,6 +21,7 @@ use super::manifest::Manifest;
+ use super::title::Title;
+ use super::{Info, InfoOptions};
+ use crate::data::git::metrics::GitMetrics;
++use crate::dates;
+ use crate::language::Language;
  use anyhow::Result;
- use clap::{CommandFactory, Parser};
- use clap_complete::{Generator, generate};
+ use gix::Repository;
+@@ -174,6 +176,14 @@ impl InfoBuilder {
+         self
+     }
+ 
++    pub fn activity(mut self, git_metrics: &GitMetrics) -> Self {
++        if !self.disabled_fields.contains(&FieldKind::Activity) {
++            let activity = Activity::new(&git_metrics.commit_times, dates::now());
++            self.info_fields.push(Field::Activity(activity));
++        }
++        self
++    }
++
+     pub fn contributors(mut self, git_metrics: &GitMetrics, number_of_authors: usize) -> Self {
+         if !self.disabled_fields.contains(&FieldKind::Contributors) {
+             let contributors =
 ```
 
----
-
-### Incident Patch 2: `ce2bc2b5` (2026-10-18)
-**Commit Message**: fix: don't panic on a blank --ascii-input (#1898)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/render/ascii.rs` (modified, +13/-0)
+**File**: `src/data/fields/activity.rs` (added, +77/-0)
 ```diff
-@@ -69,6 +69,9 @@ impl<'a> AsciiArt<'a> {
- }
- 
- fn get_min_start_max_end(lines: &[&str]) -> (usize, usize) {
-+    if lines.is_empty() {
-+        return (0, 0);
+@@ -0,0 +1,77 @@
++use serde::Serialize;
++
++/// How many months the activity field looks back.
++pub const ACTIVITY_MONTHS: usize = 12;
++
++/// A twelfth of a mean Gregorian year (365.2425 days).
++const SECONDS_PER_MONTH: i64 = 2_629_746;
++
++/// Commits per month over the last 12 months, to tell at a glance whether the
++/// repository is alive.
++#[derive(Serialize)]
++#[serde(rename_all = "camelCase")]
++pub struct Activity {
++    /// Commits in each of the last 12 months, oldest first. A month is a
++    /// twelfth of a year, counted back from now.
++    pub commits_by_month: Vec<usize>,
++}
++
++impl Activity {
++    /// `commit_times` and `now` are seconds since the Unix epoch. Commits older
++    /// than 12 months or in the future are left out.
++    pub fn new(commit_times: &[i64], now: i64) -> Self {
++        let mut commits_by_month = vec![0; ACTIVITY_MONTHS];
++        for &time in commit_times {
++            let Some(age) = now.checked_sub(time).filter(|age| *age >= 0) else {
++                continue;
++            };
++            let months_ago = (age / SECONDS_PER_MONTH) as usize;
++            if months_ago < ACTIVITY_MONTHS {
++                commits_by_month[ACTIVITY_MONTHS - 1 - months_ago] += 1;
++            }
++        }
++        Self { commits_by_month }
 +    }
-     lines
-         .iter()
-         .map(|line| {
-@@ -275,6 +278,16 @@ mod test {
-             "                           xx",
-         ];
-         assert_eq!(get_min_start_max_end(&lines), (3, 29));
-+        assert_eq!(get_min_start_max_end(&[]), (0, 0));
++
++    pub fn total(&self) -> usize {
++        self.commits_by_month.iter().sum()
++    }
++}
++
++#[cfg(test)]
++mod test {
++    use super::*;
++
++    const NOW: i64 = 1_700_000_000;
++    const DAY: i64 = 86_400;
++
++    #[test]
++    fn buckets_commits_by_month_oldest_first() {
++        let commit_times = [NOW, NOW - DAY, NOW - 40 * DAY, NOW - 360 * DAY];
++        let activity = Activity::new(&commit_times, NOW);
++
++        assert_eq!(
++            activity.commits_by_month,
++            vec![1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2]
++        );
++        assert_eq!(activity.total(), 4);
 +    }
 +
 +    #[test]
-+    fn blank_art_has_no_lines_and_zero_width() {
-+        for input in ["", "   ", "{0}", "\n\n", "  \n{1}  \n"] {
-+            let mut art = AsciiArt::new(input);
-+            assert_eq!(art.width(), 0, "input: {input:?}");
-+            assert!(art.next().is_none(), "input: {input:?}");
-+        }
-     }
- 
-     #[test]
++    fn leaves_out_old_and_future_commits() {
++        let commit_times = [NOW - 400 * DAY, NOW + DAY, i64::MIN, i64::MAX];
++        let activity = Activity::new(&commit_times, NOW);
++
++        assert_eq!(activity.commits_by_month, vec![0; ACTIVITY_MONTHS]);
++        assert_eq!(activity.total(), 0);
++    }
++
++    #[test]
++    fn serializes_commits_by_month() {
++        let activity = Activity::new(&[NOW], NOW);
++        assert_eq!(
++            serde_json::to_value(&activity).unwrap(),
++            serde_json::json!({ "commitsByMonth": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] })
++        );
++    }
++}
 ```
 
----
-
-### Incident Patch 3: `23ef0e33` (2026-10-17)
-**Commit Message**: fix: keep languages.yaml order in generated Language enum (#1890)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-0)
+**File**: `src/data/fields/created.rs` (modified, +1/-1)
 ```diff
-@@ -3132,6 +3132,7 @@ version = "1.0.151"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
- dependencies = [
-+ "indexmap",
-  "itoa",
-  "memchr",
-  "serde",
-@@ -3414,6 +3415,7 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "61e0cadeeb54426080b4c5395d59769ce8293f542cc25511c167c742b2175809"
- dependencies = [
-+ "indexmap",
-  "serde",
- ]
+@@ -1,5 +1,5 @@
+-use crate::data::dates::serialize_time;
+ use crate::data::git::metrics::GitMetrics;
++use crate::dates::serialize_time;
+ use gix::date::Time;
+ use serde::Serialize;
  
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `src/data/fields/last_change.rs` (modified, +1/-1)
 ```diff
-@@ -83,9 +83,9 @@ harness = false
+@@ -1,5 +1,5 @@
+-use crate::data::dates::serialize_time;
+ use crate::data::git::metrics::GitMetrics;
++use crate::dates::serialize_time;
+ use gix::date::Time;
+ use serde::Serialize;
  
- [build-dependencies]
- regex = "1.13.1"
--serde_json = "1.0.151"
-+serde_json = { version = "1.0.151", features = ["preserve_order"] }
- serde_yaml = "0.9.34"
--tera = { version = "2.4.0", default-features = false }
-+tera = { version = "2.4.0", default-features = false, features = ["preserve_order"] }
- 
- [target.'cfg(windows)'.build-dependencies]
- winres = "0.1.12"
 ```
 
-**File**: `languages.yaml` (modified, +16/-16)
+**File**: `src/data/fields/mod.rs` (modified, +5/-0)
 ```diff
-@@ -1534,22 +1534,6 @@ Julia:
-       - magenta
-     chip: "#A270BA"
-   icon: '\u{E624}'
--Just:
--  type: programming
--  ascii: |
--    {0}     db                    ,d
--    {0}     ""                    MM
--    {0} MMMMMM MM    MM ,pP"Ybd mmMMmm
--    {0}     MM MM    MM 8I   `"   MM
--    {0}     MM MM    MM `YMMMa.   MM
--    {0}     MM MM    MM L.   I8   MM,
--    {0}     MM `Mbod"YM M9mmmP'   "Mbmo
--    {0}M.  ,MM
--    {0}"MMMMM"
--  colors:
--    ansi:
--      - white
--    chip: "#384d54"
- Jupyter:
-   type: programming
-   ascii: |
-@@ -1588,6 +1572,22 @@ Jupyter:
-     chip: "#DA5B0B"
-   icon: '\u{E80F}'
-   serialization: jupyter-notebooks
-+Just:
-+  type: programming
-+  ascii: |
-+    {0}     db                    ,d
-+    {0}     ""                    MM
-+    {0} MMMMMM MM    MM ,pP"Ybd mmMMmm
-+    {0}     MM MM    MM 8I   `"   MM
-+    {0}     MM MM    MM `YMMMa.   MM
-+    {0}     MM MM    MM L.   I8   MM,
-+    {0}     MM `Mbod"YM M9mmmP'   "Mbmo
-+    {0}M.  ,MM
-+    {0}"MMMMM"
-+  colors:
-+    ansi:
-+      - white
-+    chip: "#384d54"
- Kotlin:
-   type: programming
-   ascii: |
+@@ -1,3 +1,4 @@
++pub mod activity;
+ pub mod authors;
+ pub mod churn;
+ pub mod commits;
+@@ -16,6 +17,7 @@ pub mod size;
+ pub mod url;
+ pub mod version;
+ 
++use self::activity::Activity;
+ use self::authors::Authors;
+ use self::churn::Churn;
+ use self::commits::Commits;
+@@ -48,6 +50,7 @@ pub enum FieldKind {
+     Dependencies,
+     Authors,
+     LastChange,
++    Activity,
+     Contributors,
+     Url,
+     Commits,
+@@ -69,6 +72,7 @@ pub enum Field {
+     Dependencies(Dependencies),
+     Authors(Authors),
+     LastChange(LastChange),
++    Activity(Activity),
+     Contributors(Contributors),
+     Url(Url),
+     Commits(Commits),
+@@ -95,6 +99,7 @@ impl Serialize for Field {
+             Self::Dependencies(f) => map.serialize_entry("DependenciesInfo", f)?,
+             Self::Authors(f) => map.serialize_entry("AuthorsInfo", f)?,
+             Self::LastChange(f) => map.serialize_entry("LastChangeInfo", f)?,
++            Self::Activity(f) => map.serialize_entry("ActivityInfo", f)?,
+             Self::Contributors(f) => map.serialize_entry("ContributorsInfo", f)?,
+             Self::Url(f) => map.serialize_entry("UrlInfo", f)?,
+             Self::Commits(f) => map.serialize_entry("CommitsInfo", f)?,
+```
+
+**File**: `src/data/git/churn.rs` (modified, +0/-20)
+```diff
+@@ -1,4 +1,3 @@
+-use super::bots::{BotRegex, is_bot};
+ use anyhow::Result;
+ use gix::bstr::BString;
+ use gix::diff::Options;
+@@ -16,26 +15,20 @@ type ChurnPair = (NumberOfCommitsByFilepath, usize);
+ 
+ pub(super) fn get_churn_channel(
+     repo: &gix::Repository,
+-    mailmap: &gix::mailmap::Snapshot,
+-    bot_regex: Option<BotRegex>,
+     is_traversal_complete: &Arc<AtomicBool>,
+     total_number_of_commits: &Arc<AtomicUsize>,
+     churn_pool_size: Option<usize>,
+ ) -> (JoinHandle<Result<ChurnPair>>, Sender<ObjectId>) {
+     let (tx, rx) = channel::<gix::hash::ObjectId>();
+     let thread = std::thread::spawn({
+         let repo = repo.clone();
+-        let mailmap = mailmap.clone();
+         let is_traversal_complete = is_traversal_complete.clone();
+         let total_number_of_commits = total_number_of_commits.clone();
+         move || -> Result<_> {
+             let mut number_of_commits_by_file_path = NumberOfCommitsByFilepath::new();
+             let mut diffs_computed = 0;
+             while let Ok(commit_id) = rx.recv() {
+                 let commit = repo.find_object(commit_id)?.into_commit();
+-                if is_bot_commit(&commit, &mailmap, bot_regex.as_ref())? {
+-                    continue;
+-                }
+                 if compute_diff_with_parent(&mut number_of_commits_by_file_path, &commit, &repo)? {
+                     diffs_computed += 1;
+                 }
+@@ -111,19 +104,6 @@ fn compute_diff_with_parent(
+     Ok(true)
+ }
+ 
+-fn is_bot_commit(
+-    commit: &Commit,
+-    mailmap: &gix::mailmap::Snapshot,
+-    bot_regex: Option<&BotRegex>,
+-) -> Result<bool> {
+-    if bot_regex.is_some() {
+-        let sig = mailmap.resolve(commit.author()?);
+-        Ok(is_bot(&sig.name, bot_regex))
+-    } else {
+-        Ok(false)
+-    }
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+```
+
+**File**: `src/data/git/metrics.rs` (modified, +5/-0)
+```diff
+@@ -9,6 +9,9 @@ pub struct GitMetrics {
+     pub total_number_of_authors: usize,
+     pub total_number_of_commits: usize,
+     pub churn_pool_size: usize,
++    /// The commit time of each counted commit (bots left out by `--no-bots`
++    /// aren't), newest first, in seconds since the Unix epoch.
++    pub commit_times: Vec<gix::date::SecondsSinceUnixEpoch>,
+     pub time_of_most_recent_commit: gix::date::Time,
+     pub time_of_first_commit: gix::date::Time,
+ }
+@@ -18,6 +21,7 @@ impl GitMetrics {
+         number_of_commits_by_identity: HashMap<Identity, usize>,
+         number_of_commits_by_file_path: HashMap<BString, usize>,
+         churn_pool_size: usize,
++        commit_times: Vec<gix::date::SecondsSinceUnixEpoch>,
+         time_of_first_commit: Option<Time>,
+         time_of_most_recent_commit: Option<Time>,
+     ) -> Self {
+@@ -35,6 +39,7 @@ impl GitMetrics {
+             total_number_of_authors,
+             total_number_of_commits,
+             churn_pool_size,
++            commit_times,
+             time_of_most_recent_commit,
+             time_of_first_commit,
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1902** (2026-10-25): feat: add an Activity field with a commits-per-month sparkline (@o2sh)
 - **PR #1900** (2026-10-18): ci: run the MSRV check manually and use the shields.io badge (@o2sh)
 - **PR #1899** (2026-10-18): ci: drop the setup-rust-toolchain steps (@o2sh)
 - **PR #1898** (2026-10-18): fix: don't panic on a blank --ascii-input (@o2sh)
 - **PR #1897** (closed): refactor: ascii art as Vec<Line>, fixes panic on blank --ascii-input (@o2sh)
 - **PR #1896** (2026-10-17): chore(deps): replace unmaintained winres with winresource (@o2sh)
-- **PR #1895** (2026-10-17): cd: publish crate with --locked, drop unused zip glob (@o2sh)
 
 ---
 
@@ -1405,30 +1518,45 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deny deprecations via CI rustflags, lock release builds, publish only needed fil
+## X. add an Activity field with a commits-per-month sparkline (#1902)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `faaa8c5a`: deny deprecations via CI rustflags, lock release builds, publish only needed files (#1891). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a459b5c4`: add an Activity field with a commits-per-month sparkline (#1902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        with:
-          rustflags: "-D deprecated"
-        run: cargo build --locked
+| `dates`     | Date helpers shared by `data` and `render`: the current time, RFC 3339 formatting, and how dates are written in JSON/YAML. |
+- `dates` and `language` are shared by `data` and `render`, and depend on
+  neither. (`Language`
+  carries both data, such as its tokei mapping, and display information, such
+  as its logo and colors.)
+| Struct          | Defined in      | Read by                | Holds            |
+| --------------- | --------------- | ---------------------- | ---------------- |
+| `InfoOptions`   | `data/mod.rs`   | `data::build_info`     | What to collect. |
+| `RenderOptions` | `render/mod.rs` | everything in `render` | How to print it. |
+`Style` (`style.rs`) names everything that can be colored. It holds no colors.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        run: cargo build --features=fail-on-deprecated
+- `language` is shared by `data` and `render`: its enum carries both data
+  (tokei mapping, language type) and display information (logo, colors, chip).
+| Struct          | Defined in      | Read by                    | Holds                                                                 |
+| --------------- | --------------- | -------------------------- | --------------------------------------------------------------------- |
+| `InfoOptions`   | `data/mod.rs`   | `data::build_info`         | What to collect: input path, disabled fields, how many authors, languages and file churns to keep, excluded globs, bot/merge filters, URL format, language types. |
+| `RenderOptions` | `render/mod.rs` | everything in `render`     | How to print it: JSON/YAML or terminal, ascii art or image (and its protocol and color resolution), logo and text colors, bold, and how values look in the info lines (number separator, ISO dates, true colors and Nerd Font icons for language chips, color palette row). |
+`Style` names everything that can be colored, as the command line names it:
+the six parts of `--text-colors` (`Title`, `Tilde`, `Underline`, `Key`,
+`Separator`, `Value`), the `{n}` parts of the ascii a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `faaa8c5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a459b5c4` are properly handled with clean fallback behavior.

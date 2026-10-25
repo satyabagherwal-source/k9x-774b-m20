@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:50:59.156Z",
+  "last_updated": "2026-10-25T14:57:16.500Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -480,8 +480,8 @@
       "slug": "adobe-react-spectrum",
       "platform": "github",
       "source_url": "https://github.com/adobe/react-spectrum",
-      "source_version": "d5fb723a",
-      "content_hash": "1c545c8b828c65b430113e9a3f924e5421cc921c5d073e251dd54cda1f051ea3",
+      "source_version": "338cf2e1",
+      "content_hash": "b51eb88cf62282faa17b79b474387ce48566865fa09bc475e38eb9475a82d24e",
       "dossier_path": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/adobe-react-spectrum-learnings.md",
       "promoted_rules": [
@@ -504,6 +504,11 @@
           "number": 3893,
           "title": "usePress): only skip Enter default prevention on macOS for Control + Enter (#108",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4356,
+          "title": "scroll anchoring improvements for chat (#10600)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -511,7 +516,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:05:28.154Z",
+      "verified_at": "2026-10-25T14:57:15.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26709,7 +26714,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
+      "content_hash": "5bf242d835e6e8ea42d7bd037464d7016e886a6ccb13a64c29906720ab1e8c31",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [
@@ -26757,7 +26762,7 @@
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
         "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
       ],
-      "verified_at": "2026-10-19T05:45:24.193Z",
+      "verified_at": "2026-10-25T14:57:15.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37931,14 +37936,19 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "aeb7a35a",
-      "content_hash": "ad5dfe0e568423b421d270981ba4a6d0c58f428f52ce20b291702d6ee25e56d1",
+      "source_version": "a459b5c4",
+      "content_hash": "b54e35e0949f0208e54e6133e60501904fc3584d1a013bd19901ffec5703fae7",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
         {
           "number": 1910,
           "title": "deny deprecations via CI rustflags, lock release builds, publish only needed fil",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4357,
+          "title": "add an Activity field with a commits-per-month sparkline (#1902)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37947,7 +37957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:22:45.864Z",
+      "verified_at": "2026-10-25T14:57:16.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124185,6 +124195,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:50:59.137Z"
+    },
+    "rule-4356": {
+      "learning_id": "rule-4356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4356,
+      "title": "scroll anchoring improvements for chat (#10600)",
+      "source_url": "https://github.com/adobe/react-spectrum",
+      "source_version": "338cf2e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:57:15.891Z"
+    },
+    "rule-4357": {
+      "learning_id": "rule-4357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4357,
+      "title": "add an Activity field with a commits-per-month sparkline (#1902)",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "a459b5c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T14:57:16.489Z"
     }
   },
   "aliases": {

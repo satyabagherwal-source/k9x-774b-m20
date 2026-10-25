@@ -4864,3 +4864,6 @@
 | `CYCLE-20261025-3A61` | `2026-10-25T14:50:44.665Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`51516e80...`) |
 | `CYCLE-20261025-3HRQ` | `2026-10-25T14:50:54.518Z` | `Orange-Cyberdefense/GOAD` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4354` | Yes (`ff9d41d3...`) |
 | `CYCLE-20261025-3LE2` | `2026-10-25T14:50:59.210Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4355` | Yes (`d159dfdb...`) |
+| `CYCLE-20261025-BNUC` | `2026-10-25T14:57:15.636Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`5bf242d8...`) |
+| `CYCLE-20261025-BO39` | `2026-10-25T14:57:15.957Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4356` | Yes (`b51eb88c...`) |
+| `CYCLE-20261025-BOJW` | `2026-10-25T14:57:16.556Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4357` | Yes (`b54e35e0...`) |
