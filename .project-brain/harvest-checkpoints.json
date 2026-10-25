@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T04:12:39.978Z",
+  "last_updated": "2026-10-25T04:19:00.909Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
-      "verified_at": "2026-10-20T12:18:32.665Z",
+      "content_hash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
+      "verified_at": "2026-10-25T04:18:44.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T12:18:32.665Z"
+      "last_updated": "2026-10-25T04:18:44.351Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -6546,14 +6546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingui-js-lingui",
-      "content_hash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
-      "verified_at": "2026-10-22T17:44:51.299Z",
+      "content_hash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
+      "verified_at": "2026-10-25T04:18:45.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:44:51.299Z"
+      "last_updated": "2026-10-25T04:18:45.480Z"
     },
     "Nasiko-Labs/nasiko": {
       "repository": "Nasiko-Labs/nasiko",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
-      "verified_at": "2026-10-22T16:32:30.427Z",
+      "content_hash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
+      "verified_at": "2026-10-25T04:19:00.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:32:30.427Z"
+      "last_updated": "2026-10-25T04:19:00.908Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
-      "verified_at": "2026-10-22T17:25:43.118Z",
+      "content_hash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
+      "verified_at": "2026-10-25T04:18:54.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:25:43.118Z"
+      "last_updated": "2026-10-25T04:18:54.245Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

@@ -4663,3 +4663,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T04:12:34.695Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `0073665a` | Multi-dimensional audit evidence | 2026-10-25T04:12:35.287Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `1c5d15fd` | Multi-dimensional audit evidence | 2026-10-25T04:12:39.965Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T04:18:44.344Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `460f89a4` | Multi-dimensional audit evidence | 2026-10-25T04:18:45.469Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `2b5efac9` | Multi-dimensional audit evidence | 2026-10-25T04:18:54.234Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `dd8250de` | Multi-dimensional audit evidence | 2026-10-25T04:19:00.897Z |

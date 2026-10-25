@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
-    "lastHarvestedAt": "2026-10-20T12:18:32.658Z",
+    "contentHash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
+    "lastHarvestedAt": "2026-10-25T04:18:44.344Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "ce5aa25b",
+    "sourceVersion": "460f89a4",
     "license": "MIT",
-    "contentHash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
-    "lastHarvestedAt": "2026-10-22T17:44:51.287Z",
+    "contentHash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
+    "lastHarvestedAt": "2026-10-25T04:18:45.469Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "0a8f26c4",
+    "sourceVersion": "dd8250de",
     "license": "Apache-2.0",
-    "contentHash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
-    "lastHarvestedAt": "2026-10-22T16:32:30.417Z",
+    "contentHash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
+    "lastHarvestedAt": "2026-10-25T04:19:00.897Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "54e7a937",
+    "sourceVersion": "2b5efac9",
     "license": "MIT",
-    "contentHash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
-    "lastHarvestedAt": "2026-10-22T17:25:43.106Z",
+    "contentHash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
+    "lastHarvestedAt": "2026-10-25T04:18:54.234Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

@@ -4656,3 +4656,7 @@
 | `CYCLE-20261025-ALFO` | `2026-10-25T04:12:34.692Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 4036` | Yes (`d0f5a3bf...`) |
 | `CYCLE-20261025-ALW4` | `2026-10-25T04:12:35.284Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4037` | Yes (`d382fe5c...`) |
 | `CYCLE-20261025-API2` | `2026-10-25T04:12:39.962Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4038` | Yes (`7612195c...`) |
+| `CYCLE-20261025-IINP` | `2026-10-25T04:18:44.341Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`737fcb88...`) |
+| `CYCLE-20261025-IJIX` | `2026-10-25T04:18:45.465Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4039` | Yes (`0303a814...`) |
+| `CYCLE-20261025-IQAF` | `2026-10-25T04:18:54.231Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4040` | Yes (`05f703e7...`) |
+| `CYCLE-20261025-IVFI` | `2026-10-25T04:19:00.894Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4041` | Yes (`a381baab...`) |

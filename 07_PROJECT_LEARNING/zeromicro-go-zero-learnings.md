@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `54e7a937`  
+> **Source Version**: `2b5efac9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:25:42.687Z  
+> **Timestamp**: 2026-10-25T04:18:53.920Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:25:42.522Z  
+> **Harvest Timestamp**: 2026-10-25T04:18:53.914Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33398 stars
+- **Stars / Engagement**: 33400 stars
 
 ---
 
@@ -476,9 +476,8 @@ func (ew *errorWindow) add(reason string) {
 }
 
 func (ew *errorWindow) String() string {
-	reasons := make([]string, 0, ew.count)
-
 	ew.lock.Lock()
+	reasons := make([]string, 0, ew.count)
 	// reverse order
 	for i := ew.index - 1; i >= ew.index-ew.count; i-- {
 		reasons = append(reasons, ew.reasons[(i+numHistoryReasons)%numHistoryReasons])
@@ -1306,24 +1305,23 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54e7a937` (2026-10-21)
-**Commit Message**: fix(filex): don't return EOF when last line exceeds chunk size (#5800)
+### Incident Patch 1: `2b5efac9` (2026-10-24)
+**Commit Message**: fix(filex): only trim trailing newline on tail block in LastLine (#5790)
 
-**File**: `core/filex/lookup.go` (modified, +2/-1)
+**File**: `core/filex/file.go` (modified, +1/-1)
 ```diff
-@@ -87,7 +87,8 @@ func skipPartialLine(file *os.File, offset int64) (int64, error) {
- 			return 0, err
- 		}
- 		if n == 0 {
--			return 0, io.EOF
-+			// Cut fell inside the last line: no following line to skip to.
-+			return offset, nil
+@@ -83,7 +83,7 @@ func lastLine(filename string, file *os.File) (string, error) {
+ 			break
  		}
  
- 		for i := 0; i < n; i++ {
+-		if buf[n-1] == '\n' {
++		if offset+int64(n) == info.Size() && buf[n-1] == '\n' {
+ 			buf = buf[:n-1]
+ 			n--
+ 		} else {
 ```
 
-**File**: `core/filex/lookup_test.go` (modified, +26/-0)
+**File**: `core/filex/file_test.go` (modified, +47/-0)
 ```diff
 @@ -2,6 +2,7 @@ package filex
  
@@ -1333,44 +1331,170 @@ Observed empirical fixes and code patches:
  	"testing"
  
  	"github.com/stretchr/testify/assert"
-@@ -65,3 +66,28 @@ sixth line
- 		assert.Equal(t, []byte(text), body[:n])
- 	}
+@@ -218,3 +219,49 @@ func TestLastLineLargeFile(t *testing.T) {
+ 	assert.Nil(t, err)
+ 	assert.Equal(t, "extra", val)
  }
 +
-+func TestSplitLineChunksLastLineLongerThanPreferSize(t *testing.T) {
-+	// preferSize ≈ size/chunks+1; with chunks=2 and a short first line
-+	// plus a long last line, the ideal cut lands inside the last line.
-+	content := "a\n" + strings.Repeat("b", 3000)
-+	fp, err := fs.TempFileWithText(content)
-+	assert.Nil(t, err)
-+	defer func() {
-+		fp.Close()
-+		os.Remove(fp.Name())
-+	}()
-+
-+	ranges, err := SplitLineChunks(fp.Name(), 2)
-+	assert.Nil(t, err)
-+	assert.NotEmpty(t, ranges)
-+
-+	var covered int64
-+	for _, r := range ranges {
-+		assert.GreaterOrEqual(t, r.Stop, r.Start)
-+		covered += r.Stop - r.Start
++func TestLastLineMultipleOfBufSizeAfterSeparator(t *testing.T) {
++	tests := []struct {
++		name     string
++		content  string
++		expected string
++	}{
++		{
++			name:     "single block multiple without trailing newline",
++			content:  "previous line\n" + strings.Repeat("C", bufSize),
++			expected: strings.Repeat("C", bufSize),
++		},
++		{
++			name:     "single block multiple with trailing newline",
++			content:  "previous line\n" + strings.Repeat("C", bufSize) + "\n",
++			expected: strings.Repeat("C", bufSize),
++		},
++		{
++			name:     "multi-block multiple without trailing newline",
++			content:  "line 1\nline 2\n" + strings.Repeat("D", 2*bufSize),
++			expected: strings.Repeat("D", 2*bufSize),
++		},
++		{
++			name:     "multi-block multiple with trailing newline",
++			content:  "line 1\nline 2\n" + strings.Repeat("D", 2*bufSize) + "\n",
++			expected: strings.Repeat("D", 2*bufSize),
++		},
++		{
++			name:     "empty line after multiple of bufSize",
++			content:  "previous line\n" + strings.Repeat("E", bufSize) + "\n\n",
++			expected: "",
++		},
 +	}
-+	assert.Equal(t, int64(len(content)), covered)
-+	assert.Equal(t, int64(0), ranges[0].Start)
-+	assert.Equal(t, int64(len(content)), ranges[len(ranges)-1].Stop)
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			filename, err := fs.TempFilenameWithText(tt.content)
++			assert.Nil(t, err)
++			defer os.Remove(filename)
++
++			val, err := LastLine(filename)
++			assert.Nil(t, err)
++			assert.Equal(t, tt.expected, val)
++		})
++	}
 +}
 ```
 
+---
+
+### Incident Patch 2: `db0138b4` (2026-10-24)
+**Commit Message**: fix: guard errorWindow count access in String (#5775)
+
+Co-authored-by: kevin <[REDACTED_EMAIL]>
+
+**File**: `core/breaker/breaker.go` (modified, +1/-2)
+```diff
+@@ -265,9 +265,8 @@ func (ew *errorWindow) add(reason string) {
+ }
+ 
+ func (ew *errorWindow) String() string {
+-	reasons := make([]string, 0, ew.count)
+-
+ 	ew.lock.Lock()
++	reasons := make([]string, 0, ew.count)
+ 	// reverse order
+ 	for i := ew.index - 1; i >= ew.index-ew.count; i-- {
+ 		reasons = append(reasons, ew.reasons[(i+numHistoryReasons)%numHistoryReasons])
+```
+
+**File**: `core/breaker/breaker_test.go` (modified, +34/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"fmt"
+ 	"strconv"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -346,6 +347,39 @@ func TestErrorWindow(t *testing.T) {
+ 	}
+ }
+ 
++// Run with -race to detect unsynchronized access between add and String.
++func TestErrorWindowConcurrentAddAndString(t *testing.T) {
++	const iterations = 1000
++	var ew errorWindow
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	wg.Add(2)
++	go func() {
++		defer wg.Done()
++		<-start
++		for i := 0; i < iterations; i++ {
++			ew.add(strconv.Itoa(i))
++		}
++	}()
++	go func() {
++		defer wg.Done()
++		<-start
++		for i := 0; i < iterations; i++ {
++			_ = ew.String()
++		}
++	}()
++	close(start)
++	wg.Wait()
++
++	reasons := strings.Split(ew.String(), "\n")
++	if assert.Len(t, reasons, numHistoryReasons) {
++		for i, reason := range reasons {
++			assert.True(t, strings.HasSuffix(reason, " "+strconv.Itoa(iterations-1-i)),
++				"unexpected reason at index %d: %q", i, reason)
++		}
++	}
++}
++
+ func TestPromiseWithReason(t *testing.T) {
+ 	tests := []struct {
+ 		name   string
+```
+
+---
+
+### Incident Patch 3: `8c6f70fb` (2026-10-24)
+**Commit Message**: fix(ci): run required workflows for merge queue (#5845)
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-0)
+```diff
+@@ -12,6 +12,8 @@
+ name: "CodeQL"
+ 
+ on:
++  merge_group:
++    types: [checks_requested]
+   push:
+     branches: [ master ]
+   pull_request:
+```
+
+**File**: `.github/workflows/go.yml` (modified, +2/-0)
+```diff
+@@ -1,6 +1,8 @@
+ name: Go
+ 
+ on:
++  merge_group:
++    types: [checks_requested]
+   push:
+     branches: [ master ]
+   pull_request:
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5846** (closed): ci: add merge_group trigger to CodeQL and Go workflows (@kevwan)
+- **PR #5845** (2026-10-24): fix(ci): run required workflows for merge queue (@kevwan)
 - **PR #5841** (closed): fix(discov): keep the newest state when a snapshot is applied (@FireChickenMP4)
 - **PR #5839** (2026-10-21): chore(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #5838** (2026-10-21): chore(deps): bump github.com/gookit/color from 1.6.2 to 1.6.3 in /tools/goctl (@dependabot[bot])
 - **PR #5836** (closed): chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace from 1.43.0 to 1.45.0 in /tools/goctl in the go_modules group across 1 directory (@dependabot[bot])
-- **PR #5835** (2026-10-18): chore(deps): bump github.com/gookit/color from 1.6.1 to 1.6.2 in /tools/goctl (@dependabot[bot])
-- **PR #5833** (2026-10-14): chore(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
 
 ---
 
@@ -1390,29 +1514,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filex): don't return EOF when last line exceeds chunk size (#5800)
+## X. filex): only trim trailing newline on tail block in LastLine (#5790)
 
 **RULE**:
-When implementing operations in `core/filex/lookup.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/filex/file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54e7a937`: filex): don't return EOF when last line exceeds chunk size (#5800). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b5efac9`: filex): only trim trailing newline on tail block in LastLine (#5790). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/lookup.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// Cut fell inside the last line: no following line to skip to.
-			return offset, nil
+		if offset+int64(n) == info.Size() && buf[n-1] == '\n' {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			return 0, io.EOF
+		if buf[n-1] == '\n' {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54e7a937` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b5efac9` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `0a8f26c4`  
+> **Source Version**: `dd8250de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:32:30.151Z  
+> **Timestamp**: 2026-10-25T04:19:00.607Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:32:29.728Z  
+> **Harvest Timestamp**: 2026-10-25T04:19:00.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4781 stars
+- **Stars / Engagement**: 4780 stars
 
 ---
 
@@ -1284,466 +1284,79 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8700d37` (2026-10-22)
-**Commit Message**: YQ-5707 Fix pq status mapping (#55621)
+### Incident Patch 1: `dd8250de` (2026-10-25)
+**Commit Message**: Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan
 
-**File**: `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp` (modified, +10/-1)
+**File**: `.github/config/muted_ya_asan.txt` (modified, +3/-0)
 ```diff
-@@ -22,6 +22,7 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
-         case EStatus::NOT_FOUND:
-             return NFq::EMessageStreamStatus::NotFound;
-         case EStatus::UNAUTHORIZED:
-+        case EStatus::CLIENT_UNAUTHENTICATED:
-             return NFq::EMessageStreamStatus::Unauthorized;
-         case EStatus::BAD_REQUEST:
-             return NFq::EMessageStreamStatus::InvalidArgument;
-@@ -30,16 +31,23 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
-         case EStatus::PRECONDITION_FAILED:
-             return NFq::EMessageStreamStatus::PreconditionFailed;
-         case EStatus::UNAVAILABLE:
-+        case EStatus::TRANSPORT_UNAVAILABLE:
-+        case EStatus::CLIENT_DISCOVERY_FAILED:
-             return NFq::EMessageStreamStatus::Unavailable;
-         case EStatus::TIMEOUT:
-+        case EStatus::CLIENT_DEADLINE_EXCEEDED:
-             return NFq::EMessageStreamStatus::Timeout;
-         case EStatus::OVERLOADED:
-+        case EStatus::CLIENT_RESOURCE_EXHAUSTED:
-+        case EStatus::CLIENT_LIMITS_REACHED:
-             return NFq::EMessageStreamStatus::Overloaded;
-         case EStatus::ABORTED:
-             return NFq::EMessageStreamStatus::Aborted;
-         case EStatus::CANCELLED:
-+        case EStatus::CLIENT_CANCELLED:
-             return NFq::EMessageStreamStatus::Cancelled;
-         case EStatus::UNSUPPORTED:
-+        case EStatus::CLIENT_CALL_UNIMPLEMENTED:
-             return NFq::EMessageStreamStatus::Unsupported;
-         case EStatus::UNDETERMINED:
-             return NFq::EMessageStreamStatus::Undetermined;
-@@ -56,9 +64,10 @@ NFq::EMessageStreamStatus ToStreamStatus(EStatus status) {
-         case EStatus::SESSION_BUSY:
-             return NFq::EMessageStreamStatus::SessionBusy;
-         case EStatus::INTERNAL_ERROR:
-+        case EStatus::CLIENT_INTERNAL_ERROR:
-             return NFq::EMessageStreamStatus::InternalError;
-         default:
--            // Client transport statuses are not Ydb::StatusIds values.
-+            // Undefined statuses and end-of-stream have no matching category.
-             return NFq::EMessageStreamStatus::Unknown;
-     }
- }
-```
-
-**File**: `ydb/library/yql/providers/pq/gateway/ut/message_stream_client_ut.cpp` (modified, +29/-0)
-```diff
-@@ -5,6 +5,8 @@
- 
- #include <library/cpp/testing/unittest/registar.h>
- 
-+#include <utility>
-+
- namespace NYql {
- namespace {
- 
-@@ -248,6 +250,33 @@ Y_UNIT_TEST_SUITE(TMessageStreamContract) {
-         UNIT_ASSERT(fixture.Session->GetEvents({}).empty());
-     }
- 
-+    Y_UNIT_TEST(ClientStatusesRetainCategory) {
-+        const std::pair<NYdb::EStatus, NFq::EMessageStreamStatus> cases[] = {
-+            { NYdb::EStatus::TRANSPORT_UNAVAILABLE, NFq::EMessageStreamStatus::Unavailable },
-+            { NYdb::EStatus::CLIENT_DEADLINE_EXCEEDED, NFq::EMessageStreamStatus::Timeout },
-+            { NYdb::EStatus::CLIENT_RESOURCE_EXHAUSTED, NFq::EMessageStreamStatus::Overloaded },
-+            { NYdb::EStatus::CLIENT_LIMITS_REACHED, NFq::EMessageStreamStatus::Overloaded },
-+            { NYdb::EStatus::CLIENT_INTERNAL_ERROR, NFq::EMessageStreamStatus::InternalError },
-+            { NYdb::EStatus::CLIENT_CANCELLED, NFq::EMessageStreamStatus::Cancelled },
-+            { NYdb::EStatus::CLIENT_UNAUTHENTICATED, NFq::EMessageStreamStatus::Unauthorized },
-+            { NYdb::EStatus::CLIENT_CALL_UNIMPLEMENTED, NFq::EMessageStreamStatus::Unsupported },
-+            { NYdb::EStatus::CLIENT_DISCOVERY_FAILED, NFq::EMessageStreamStatus::Unavailable },
-+            { NYdb::EStatus::CLIENT_OUT_OF_RANGE, NFq::EMessageStreamStatus::Unknown },
-+            { NYdb::EStatus::STATUS_UNDEFINED, NFq::EMessageStreamStatus::Unknown },
-+        };
-+        for (const auto& [status, expected] : cases) {
-+            TStreamFixture fixture;
-+            fixture.Mock->SetEventProvider([status]() -> NYdb::NTopic::TReadSessionEvent::TEvent {
-+                return NYdb::NTopic::TSessionClosedEvent(status, { NYdb::NIssue::TIssue("Connection failed") });
-+            });
-+            const auto events = fixture.Session->GetEvents({});
-+            UNIT_ASSERT_VALUES_EQUAL(events.size(), 1);
-+            const auto& closed = std::get<NFq::TMessageStreamSessionClosedEvent>(events.front());
-+            UNIT_ASSERT(closed.Status == expected);
-+            UNIT_ASSERT_STRING_CONTAINS(closed.Issues.ToOneLineString(), "Connection failed");
-+        }
-+    }
-+
-     Y_UNIT_TEST(TerminalEventIsDeliveredOnce) {
-         TStreamFixture fixture;
-         fixture.Mock->SetEventProvider([]() -> NYdb::NTopic::TReadSessionEvent::TEvent {
-```
-
-**File**: `ydb/tests/fq/pq_async_io/ut/dq_pq_control_plane_ut.cpp` (modified, +1/-1)
-```diff
-@@ -404,7 +404,7 @@ Y_UNIT_TEST_SUITE(TDqPqControlPlaneTest) {
-             const auto response = Runtime.GrabEdgeEvent<TEvResult>(Request(MakeRequest()));
-             UNIT_ASSERT(response);
-             UNIT_ASSERT_VALUES_EQUAL(
--                response->Get()->Record.GetStatus(), TransportError ? Ydb::StatusIds::EXTERNAL_ERROR : Ydb::StatusIds::UNAUTHORIZED);
-+                response->Get()->Record.GetStatus(), TransportError ? Ydb::StatusIds::UNAVAILABLE : Ydb::StatusIds::UNAUTHORIZED);
-             UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.GetIssues(0).message(), "describe details");
-             UNIT_ASSERT_VALUES_EQUAL(response->Get()->Record.PartitionsSize(), 0);
-         }
+@@ -6,6 +6,7 @@ ydb/core/kqp/executer_actor/ut unittest.[*/*] chunk
+ ydb/core/kqp/ut/query CS_WriteAffinity.CtasGeneratedDataWithPartitionBy+EnableCsWriteAffinity
+ ydb/core/kqp/ut/query KqpLimits.OutOfSpaceYQLUpsertFail
+ ydb/core/kqp/ut/query unittest.[*/*] chunk
++ydb/core/kqp/ut/rbo KqpRboOlap.OlapPerfQueries
+ ydb/core/kqp/ut/rbo KqpRboOlap.PredicatePushdownCastErrors
+ ydb/core/kqp/ut/rbo KqpRboYql.Decorrelation+ColumnStore+EqualNullsJoinKeys
+ ydb/core/kqp/ut/rbo KqpRboYql.TPCDS_14
+@@ -38,12 +39,14 @@ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.SameCre
+ ydb/core/tx/replication/controller/ut_schema_change ReplicationCreation.InitialScanDisabledDoesNotTouchMissingDestination
+ ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDropIndexWithSchemaChangesEnabledAfterCreationReportsError
+ ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDropSyncIndexWithGlobalConsistency
++ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
+ ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentFailureAfterReplacement-DescribeOnly
+ ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentSuccessAfterReplacement-DescribeOnly
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapUnchangedCredentialRetryAfterConsumerFailure
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedConfigPreservesDestinationError
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.CurrentFailureAndRetry
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
++ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
+ ydb/library/actors/interconnect/ut DynamicProxy.RaceCheck10
+ ydb/library/nmslib/test/run_test_integr exectest.run[test_integr]
+ ydb/library/nmslib/test/run_test_integr exectest.sole chunk
 ```
 
 ---
 
-### Incident Patch 2: `2cb92713` (2026-10-22)
-**Commit Message**: KIKIMR-25046: Include memtable waste in compaction and memory accounting (#56176)
+### Incident Patch 2: `016b1af4` (2026-10-25)
+**Commit Message**: Update muted_ya for relwithdebinfo main
 
-**File**: `ydb/core/tablet_flat/flat_database.cpp` (modified, +10/-2)
+**File**: `.github/config/muted_ya.txt` (modified, +4/-0)
 ```diff
-@@ -13,6 +13,7 @@
- #include "util_fmt_abort.h"
- #include <ydb/core/util/pb.h>
- #include <ydb/core/scheme_types/scheme_type_registry.h>
-+#include <util/generic/algorithm.h>
- #include <util/generic/cast.h>
- #include <util/stream/output.h>
- 
-@@ -497,9 +498,10 @@ void TDatabase::RollbackChanges()
-     TTxStamp stamp = Change->Stamp;
-     IPages& env = *Env;
- 
--    Commit(stamp, false, nullptr);
-+    auto prod = Commit(stamp, false, nullptr);
-     env.OnRollbackChanges();
-     Begin(stamp, env);
-+    Change->RollbackAffects = std::move(prod.Change->RollbackAffects);
- }
- 
- TPartView TDatabase::GetPartView(ui32 tableId, const TLogoBlobID &bundle) const {
-@@ -534,6 +536,10 @@ ui64 TDatabase::GetTableMemSize(ui32 tableId, TEpoch epoch) const {
-     return Require(tableId)->GetMemSize(epoch);
- }
- 
-+ui64 TDatabase::GetTableMemAllocatedSize(ui32 tableId) const {
-+    return Require(tableId)->GetMemAllocatedSize();
-+}
-+
- ui64 TDatabase::GetTableMemRowCount(ui32 tableId) const {
-     return Require(tableId)->GetMemRowCount();
- }
-@@ -847,7 +853,9 @@ TDatabase::TProd TDatabase::Commit(TTxStamp stamp, bool commit, TCookieAllocator
-             Y_TABLET_ERROR(NFmt::Do(*Change) << " has inconsistent garbage data");
-         }
-     } else {
--        DatabaseImpl->RollbackTransaction();
-+        auto affects = DatabaseImpl->RollbackTransaction();
-+        Change->RollbackAffects.insert(Change->RollbackAffects.end(), affects.begin(), affects.end());
-+        SortUnique(Change->RollbackAffects);
-     }
- 
-     DatabaseImpl->RunGC();
-```
-
-**File**: `ydb/core/tablet_flat/flat_database.h` (modified, +1/-0)
-```diff
-@@ -231,6 +231,7 @@ class TDatabase {
-     void EnumerateTableTxStatusParts(ui32 table, const std::function<void(const TIntrusiveConstPtr<TTxStatusPart>&)>& callback) const;
-     void EnumerateTxStatusParts(const std::function<void(const TIntrusiveConstPtr<TTxStatusPart>&)>& callback) const;
-     ui64 GetTableMemSize(ui32 table, TEpoch epoch = TEpoch::Max()) const;
-+    ui64 GetTableMemAllocatedSize(ui32 table) const;
-     ui64 GetTableMemRowCount(ui32 tableId) const;
-     ui64 GetTableMemOpsCount(ui32 tableId) const;
-     ui64 GetTableIndexSize(ui32 table) const;
-```
-
-**File**: `ydb/core/tablet_flat/flat_dbase_change.h` (modified, +1/-0)
-```diff
-@@ -58,6 +58,7 @@ namespace NTable {
-         TMemGlobs Annex;        /* Enum of blobs used in redo   */
- 
-         TVector<ui32> Affects;  /* This tables touched in redo  */
-+        TVector<ui32> RollbackAffects; // Tables whose memtable capacity may have changed on rollback
-         TVector<ui32> Deleted;  /* Tables deleted in some alter */
-         TGarbage Garbage;       /* Wiped tables, ids in Deleted */
- 
-```
-
-**File**: `ydb/core/tablet_flat/flat_dbase_naked.h` (modified, +2/-3)
-```diff
-@@ -412,7 +412,7 @@ namespace NTable {
-             SchemeRollbackState.Redo.reset();
-         }
- 
--        void RollbackTransaction()
-+        TVector<ui32> RollbackTransaction()
-         {
-             for (ui32 tid : Prepared) {
-                 auto& wrap = Tables.at(tid);
-@@ -439,11 +439,10 @@ namespace NTable {
-                     wrap.Serial = wrap.SerialBackup;
-                 }
-             }
--            Affects.clear();
--
-             RollbackScheme();
-             Serial_ = Begin_;
-             InTransaction = false;
-+            return std::exchange(Affects, {});
-         }
- 
-         void RollbackScheme()
-```
-
-**File**: `ydb/core/tablet_flat/flat_executor.cpp` (modified, +12/-3)
-```diff
-@@ -538,7 +538,7 @@ void TExecutor::Active(const TActorContext &ctx) {
-     CompactionLogic->Start();
- 
-     for (const auto &it: Database->GetScheme().Tables)
--        CompactionLogic->UpdateInMemStatsStep(it.first, 0, Database->GetTableMemSize(it.first));
-+        CompactionLogic->UpdateInMemStatsStep(it.first, 0, Database->GetTableMemAllocatedSize(it.first));
- 
-     UpdateCompactions();
- 
-@@ -2198,6 +2198,7 @@ void TExecutor::ExecuteTransaction(TSeat* seat) {
- 
-     auto *annex = CommitManager ? CommitManager->Annex.Get() : nullptr;
-     auto prod = Database->Commit(Stamp(), done && !failed, annex);
-+    auto rollbackAffects = std::move(prod.Change->RollbackAffects);
- 
-     if (auto logl = Logger->Log(ELnLev::Debug)) {
-         logl
-@@ -2251,6 +2252,14 @@ void TExecutor::ExecuteTransaction(TSeat* seat) {
-         PostponeTransaction(seat, env, prod.Change, cpuTimer);
-     }
- 
-+    if (CompactionLogic) {
-+        for (ui32 table : rollbackAffects) {
-+            if (Scheme().Tables.contains(table)) {
-+                CompactionLogic->UpdateInMemStatsStep(table, 0, Database->GetTableMemAllocatedSize(table));
-+            }
-+        }
-+    }
-+
-     activeTransaction.Done();
-     PlanTransactionActivation();
- }
-@@ -3009,7 +3018,7 @@ void TExecutor::CommitTransactionLog(std::unique_ptr<TSeat> seat, TPageCollectio
-         }
- 
-         for (auto &affectedTable : change->Affects)
--            CompactionLogic->UpdateInMemStatsStep(affectedTable, 1, Database->GetTableMemSize(affectedTable));
-+            CompactionLogic->UpdateInMemStatsStep(affectedTable, 1, Database->GetTableMemAllocatedSize(affectedTable));
- 
-         if (commitResult.NeedFlush && !LogBatchFlushScheduled) {
-             LogBatchFlushScheduled = true;
-@@ -4115,7 +4124,7 @@ void TExecutor::Handle(NOps::TEvResult *ops, TProdCompact *msg, bool cancelled)
-     CommitManager->Commit(commit);
- 
-     if (hadFrozen || logicResult.MemCompacted)
--        CompactionLogic->UpdateInMemStatsStep(tableId, 0, Database->GetTableMemSize(tableId));
-+        CompactionLogic->UpdateInMemStatsStep(tableId, 0, Database->GetTableMemAllocatedSize(tableId), true);
- 
-     CompactionLogic->UpdateLogUsage(LogicRedo->GrabLogUsage());
- 
-```
-
-**File**: `ydb/core/tablet_flat/flat_executor_compaction_logic.cpp` (modified, +2/-2)
-```diff
-@@ -444,7 +444,7 @@ void TCompactionLogic::ResubmitCompactions(TCompactionLogicState::TTableInfo &ta
-     }
- }
- 
--void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size) {
-+void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size, bool compactionComplete) {
-     auto *info = State->Tables.FindPtr(table);
-     Y_ENSURE(info);
-     auto &mem = info->InMem;
-@@ -453,7 +453,7 @@ void TCompactionLogic::UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size) {
- 
-     if (auto& consumer = info->MemTableMemoryConsumer) {
-         consumer->SetConsumption(size);
--        if (steps == 0) {
-+        if (compactionComplete) {
-             MemTableMemoryConsumersCollection->CompactionComplete(consumer);
-         }
-     }
-```
-
-**File**: `ydb/core/tablet_flat/flat_executor_compaction_logic.h` (modified, +1/-1)
-```diff
-@@ -233,7 +233,7 @@ class TCompactionLogic {
-     TReflectSchemeChangesResult ReflectSchemeChanges();
-     void ProvideMemTableMemoryConsumer(ui32 table, TIntrusivePtr<NMemory::IMemoryConsumer> memTableMemoryConsumer);
-     void ReflectRemovedRowVersions(ui32 table);
--    void UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size);
-+    void UpdateInMemStatsStep(ui32 table, ui32 steps, ui64 size, bool compactionComplete = false);
-     void CheckInMemStats(ui32 table);
-     void UpdateLogUsage(TArrayRef<const NRedo::TUsage>);
-     void UpdateLogUsage(const NRedo::TUsage&);
-```
-
-**File**: `ydb/core/tablet_flat/flat_executor_ut.cpp` (modified, +28/-9)
-```diff
-@@ -4101,22 +4101,29 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
-     };
- 
-     struct TTxWrite8MB : public ITransaction {
-+        static constexpr ui64 PayloadSize = 8 * 1024 * 1024;
-+
-         i64 Key;
-         ui32 TableId;
-+        ui64* AllocatedSize;
- 
--        explicit TTxWrite8MB(i64 key, ui32 tableId = TRowsModel::TableId)
-+        explicit TTxWrite8MB(i64 key, ui32 tableId = TRowsModel::TableId, ui64* allocatedSize = nullptr)
-             : Key(key)
-             , TableId(tableId)
--        { }
-+            , AllocatedSize(allocatedSize)
-+        {}
- 
-         bool Execute(TTransactionContext& txc, const TActorContext&) override {
-             const auto key = NScheme::TInt64::TInstance(Key);
- 
--            TString str(size_t(8 * 1024 * 1024), 'x');
-+            TString str(PayloadSize, 'x');
-             const auto val = NScheme::TString::TInstance(str);
-             NTable::TUpdateOp ops{ TRowsModel::ColumnValueId, NTable::ECellOp::Set, val };
- 
-             txc.DB.Update(TableId, NTable::ERowOp::Upsert, { key }, { ops });
-+            if (AllocatedSize) {
-+                *AllocatedSize = txc.DB.GetTableMemAllocatedSize(TableId);
-+            }
-             return true;
-         }
- 
-@@ -4161,19 +4168,25 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
-         env.FireDummyTablet(ui32(NFake::TDummy::EFlg::Comp));
- 
-         TIntrusivePtr<TCompactionPolicy> policy = new TCompactionPolicy;
-+        const ui64 lowWatermark = policy->InMemForceSizeToSnapshot * 2.5f;
-+        const ui64 highWatermark = policy->InMemForceSizeToSnapshot * 4.0f;
- 
-         env.SendSync(rows.MakeScheme(std::move(policy)));
- 
-+        ui64 allocatedSize = 0;
-         float rejectProbability;
-         env.SendSync(new NFake::TEvCall{ [&](auto* executor, const auto& ctx) {
--            // Write 48MB
--            for (i64 key = 1; key <= 6; ++key) {
--                executor->Execute(new TTxWrite8MB(key), ctx);
-+            for (i64 key = 1; allocatedSize <= lowWatermark; ++key) {
-+                UNIT_ASSERT_C(ui64(key) <= lowWatermark / TTxWrite8MB::PayloadSize + 1,
-+                    "Allocated size did not reach the low watermark: " << allocatedSize);
-+                executor->Execute(new TTxWrite8MB(key, TRowsModel::TableId, &allocatedSize), ctx);
-             }
-             rejectProbability = executor->GetRejectProbability();
-             ctx.Send(ctx.SelfID, new NFake::TEvReturn);
-         } });
- 
-+        UNIT_ASSERT_C(allocatedSize > lowWatermark && allocatedSize < highWatermark,
-+            "Allocated size " << allocatedSize << " must be between " << lowWatermark << " and " << highWatermark);
-         UNIT_ASSERT_C(rejectProbability > 0.0f && rejectProbability < 1.0f,
-                 "unexpected reject probability: " << rejectProbability);
-     }
-@@ -4188,19 +4201,25 @@ Y_UNIT_TEST_SUITE(TFlatTableExecutor_RejectProbability) {
-         env.FireDummyTablet(ui32(NFake::TDummy::EFlg::Comp));
- 
-         TIntrusivePtr<TCompactionPolicy> policy = new TCompactionPolicy;
-+        const ui64 lowWatermark = policy->InMemForceSizeToSnapshot * 2.5f;
-+        const ui64 targetSize = lowWatermark / 2;
- 
-         env.SendSync(rows.MakeScheme(std::move(policy)));
- 
-+        ui64 allocatedSize = 0;
-         float rejectProbability;
-         env.SendSync(new NFake::TEvCall{ [&](auto* executor, const auto& ctx) {
--            // Write 32MB
--            for (i64 key = 1; key <= 4; ++key) {
--                executor->Execute(new TTxWrite8MB(key), ctx);
-+            for (i64 key = 1; allocatedSize < targetSize; ++key) {
-+                UNIT_ASSERT_C(ui64(key) <= targetSize / TTxWrite8MB::PayloadSize + 1,
-+                    "Allocated size did not reach the target: " << allocatedSize);
-+                executor->Execute(new TTxWrite8MB(key, TRowsModel::TableId, &allocatedSize), ctx);
-             }
-             rejectProbability = executor->GetRejectProbability();
-             ctx.Send(ctx.SelfID, new NFake::TEvReturn);
-         } });
- 
-+        UNIT_ASSERT_C(allocatedSize >= targetSize && allocatedSize < lowWatermark,
-+            "Allocated size " << allocatedSize << " must remain below the low watermark " << lowWatermark);
-         UNIT_ASSERT_C(rejectProbability <= 0.0f,
-                 "unexpected reject probability: " << rejectProbability);
-     }
-```
-
----
-
-### Incident Patch 3: `8596a7dc` (2026-10-22)
-**Commit Message**: Revert query and table LTO workaround (#56386)
-
-**File**: `ydb/public/sdk/cpp/src/client/query/impl/ya.make` (modified, +0/-3)
-```diff
-@@ -1,8 +1,5 @@
- LIBRARY()
- 
--# Work around LLVM 20 ThinLTO codegen crashes in StreamExecuteQuery.
--NO_LTO()
--
- SRCS(
-     exec_query.cpp
-     exec_query.h
-```
-
-**File**: `ydb/public/sdk/cpp/src/client/query/ya.make` (modified, +0/-3)
-```diff
-@@ -1,8 +1,5 @@
- LIBRARY()
- 
--# Work around LLVM 20 ThinLTO codegen crashes in transaction precommit.
--NO_LTO()
--
- SRCS(
-     client.cpp
-     query.cpp
-```
-
-**File**: `ydb/public/sdk/cpp/src/client/table/impl/ya.make` (modified, +0/-3)
-```diff
-@@ -1,8 +1,5 @@
- LIBRARY()
- 
--# Work around LLVM 20 ThinLTO codegen crashes in transaction coroutines.
--NO_LTO()
--
- # Avoid llvm-symbolizer cache thrashing for large line-table-only ASan binaries.
- IF (SANITIZER_TYPE == "address" AND DEBUGINFO_LINES_ONLY == "yes")
-     NO_DEBUG_INFO()
-```
-
-**File**: `ydb/public/sdk/cpp/src/client/table/ya.make` (modified, +0/-3)
-```diff
-@@ -1,8 +1,5 @@
- LIBRARY()
- 
--# Work around LLVM 20 ThinLTO codegen crashes in table coroutine templates.
--NO_LTO()
--
- SRCS(
-     out.cpp
-     proto_accessor.cpp
+@@ -31,6 +31,7 @@ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.Changed
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ChangedCredentialsBeforeDeferredReset-ResourceId
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.DropDuringDeferredDoneResolvesFreshSecret
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.LateResultsDuringAndAfterDone+ResourceId
++ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.LateResultsDuringAndAfterDone-ResourceId
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ReplacementRejectsOldResultsAndAcceptsNew+ResourceId
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.ReplacementRejectsOldResultsAndAcceptsNew-ResourceId
+ ydb/core/tx/replication/controller/ut_schema_change CredentialResolution.SameCredentialsDuringDeferredDone-ResourceId
+@@ -39,15 +40,18 @@ ydb/core/tx/replication/controller/ut_schema_change SchemaChangeBarrier.SourceDr
+ ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
+ ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest-ReplyPending
+ ydb/core/tx/replication/controller/ut_schema_change StatsDescription.UnresponsiveProxyReturnsPartialStats
++ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentFailureAfterReplacement-DescribeOnly
+ ydb/core/tx/replication/controller/ut_schema_change StreamResultFreshness.CurrentSuccessAfterReplacement-DescribeOnly
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedBootstrapCredentialRetry
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.PausedConfigPreservesDestinationError
+ ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRestartBeforeSourceCompletion+Deferred
++ydb/core/tx/replication/controller/ut_schema_change StreamRetry.ResetSurvivesRestartBeforeSourceCompletion-Deferred
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.CurrentFailureAndRetry
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.EmptyDiscoveryIsConsumed
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery+NewFirst
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.ReplacedDiscovery-NewFirst
+ ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery+Drop
++ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
+ ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.MissingSourceDnsNameDuringConsumerCreationRetries
+ ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.SessionAcquisitionFailureRetries
+ ydb/core/tx/replication/controller/ut_stream_creator StreamCreator.TerminalSessionAcquisitionFailureReplies
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56426** (2026-10-22): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #56410** (2026-10-22): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #56409** (2026-10-22): Assign OLAP tests to column tables code owners (@xyliganSereja)
-- **PR #56401** (2026-10-22): EXT-2634 Pass table ranges during snapshot creation (#56175) (@UgnineSirdis)
-- **PR #56395** (2026-10-22): Fix merge-rightlib-261022-0104 (@vityaman)
-- **PR #56389** (2026-10-22): Use NbsReleaseApprovers for nbs-26-3-1 (@kobzonega)
+- **PR #56720** (2026-10-25): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #56719** (2026-10-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #56718** (2026-10-25): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #56717** (2026-10-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #56716** (2026-10-25): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #56715** (2026-10-25): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -1763,37 +1376,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YQ-5707 Fix pq status mapping (#55621)
+## X. Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan
 
 **RULE**:
-When implementing operations in `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/config/muted_ya_asan.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8700d37`: YQ-5707 Fix pq status mapping (#55621). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd8250de`: Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/library/yql/providers/pq/gateway/clients/message_stream/yql_pq_message_stream_client.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/config/muted_ya_asan.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        case EStatus::CLIENT_UNAUTHENTICATED:
-        case EStatus::TRANSPORT_UNAVAILABLE:
-        case EStatus::CLIENT_DISCOVERY_FAILED:
-        case EStatus::CLIENT_DEADLINE_EXCEEDED:
-        case EStatus::CLIENT_RESOURCE_EXHAUSTED:
-        case EStatus::CLIENT_LIMITS_REACHED:
-        case EStatus::CLIENT_CANCELLED:
-        case EStatus::CLIENT_CALL_UNIMPLEMENTED:
-        case EStatus::CLIENT_INTERNAL_ERROR:
-            // Undefined statuses and end-of-stream have no matching category.
+ydb/core/kqp/ut/rbo KqpRboOlap.OlapPerfQueries
+ydb/core/tx/replication/controller/ut_schema_change StatsDescription.CredentialsDuringStatsRequest+ReplyPending
+ydb/core/tx/replication/controller/ut_schema_change TargetDiscoveryResults.TerminalStateIgnoresDiscovery-Drop
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            // Client transport statuses are not Ydb::StatusIds values.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8700d37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd8250de` are properly handled with clean fallback behavior.

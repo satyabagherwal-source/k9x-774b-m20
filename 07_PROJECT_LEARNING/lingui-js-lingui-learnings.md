@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source**: github ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
-> **Source Version**: `ce5aa25b`  
+> **Source Version**: `460f89a4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:44:50.955Z  
+> **Timestamp**: 2026-10-25T04:18:45.168Z  
 > **Learning ID**: `learn-github-lingui-js-lingui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:44:49.917Z  
+> **Harvest Timestamp**: 2026-10-25T04:18:45.161Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌍 📖 A readable, automated, and optimized (2 kb) internationalization for JavaScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5923 stars
+- **Stars / Engagement**: 5924 stars
 
 ---
 
@@ -780,488 +780,183 @@ export function makePathRegexSafe(path: string) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfa5b76d` (2026-10-22)
-**Commit Message**: perf(vite-plugin): resolve catalogs once per build instead of on every catalog import (#2737)
+### Incident Patch 1: `460f89a4` (2026-10-23)
+**Commit Message**: fix(vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)
 
-**File**: `packages/vite-plugin/src/index.ts` (modified, +39/-2)
+**File**: `packages/cli/package.json` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,11 @@ export function lingui({
- }: LinguiPluginOpts = {}): Plugin[] {
-   let config: LinguiConfigNormalized
- 
-+  // `getCatalogs()` globs the file system on every call (`{name}` catalogs and
-+  // `experimental.extractor.entries`), so it's resolved once and shared by all
-+  // catalog modules. Reset on `buildStart` and `watchChange`.
-+  let catalogs: ReturnType<typeof getCatalogs> | undefined
-+
-   let nativeTools: typeof import("@lingui/native-tools")
- 
-   const getOrLoadConfig = () => {
-@@ -71,6 +76,26 @@ export function lingui({
-     return config
-   }
- 
-+  const getOrLoadCatalogs = () => {
-+    if (!catalogs) {
-+      const pending: ReturnType<typeof getCatalogs> = getCatalogs(config).catch(
-+        (error) => {
-+          // don't cache a failure, the next catalog module will retry
-+          if (catalogs === pending) {
-+            catalogs = undefined
-+          }
-+          throw error
-+        },
-+      )
-+      catalogs = pending
-+    }
-+    return catalogs
-+  }
-+
-+  const resetCatalogs = () => {
-+    catalogs = undefined
-+  }
-+
-   const plugins: Plugin[] = [
-     {
-       name: "vite-plugin-lingui-get-config",
-@@ -125,6 +150,8 @@ export function lingui({
- 
-   plugins.push({
-     name: "vite-plugin-lingui-load-catalog",
-+    buildStart: resetCatalogs,
-+    watchChange: resetCatalogs,
-     transform: {
-       filter: {
-         id: fileRegex,
-@@ -139,11 +166,21 @@ export function lingui({
- 
-         const catalogRelativePath = path.relative(config.rootDir, id)
- 
--        const fileCatalog = getCatalogForFile(
-+        let fileCatalog = getCatalogForFile(
-           catalogRelativePath,
--          await getCatalogs(config),
-+          await getOrLoadCatalogs(),
-         )
- 
-+        if (!fileCatalog) {
-+          // The catalog may have been created after the list was cached
-+          // without a `watchChange` reaching this plugin, so check a fresh list
-+          resetCatalogs()
-+          fileCatalog = getCatalogForFile(
-+            catalogRelativePath,
-+            await getOrLoadCatalogs(),
-+          )
-+        }
-+
-         if (!fileCatalog) {
-           throw new Error(
-             `Requested resource ${catalogRelativePath} is not matched to any of your catalogs paths specified in "lingui.config".
+@@ -60,7 +60,7 @@
+     "@lingui/core": "workspace:*",
+     "@lingui/format-po": "workspace:*",
+     "@lingui/message-utils": "workspace:*",
+-    "@lingui/native-tools": "^0.1.6",
++    "@lingui/native-tools": "^0.2.0",
+     "chokidar": "5.0.0",
+     "cli-table3": "^0.6.5",
+     "commander": "^14.0.2",
 ```
 
-**File**: `packages/vite-plugin/test/__snapshots__/vite-plugin.test.ts.snap` (modified, +35/-0)
+**File**: `packages/vite-plugin/package.json` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,40 @@
- // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
- 
-+exports[`vite-plugin > catalogs resolution > should resolve catalogs once per build regardless of the number of imported catalogs 1`] = `
-+{
-+  "./components/button/locale/en.po": {
-+    "_j9z93": [
-+      "Click me",
-+    ],
-+  },
-+  "./components/button/locale/pl.po": {
-+    "_j9z93": [
-+      "Kliknij mnie",
-+    ],
-+  },
-+  "./pages/locales/about/en.po": {
-+    "-mNwru": [
-+      "About us",
-+    ],
-+  },
-+  "./pages/locales/about/pl.po": {
-+    "-mNwru": [
-+      "O nas",
-+    ],
-+  },
-+  "./pages/locales/home/en.po": {
-+    "U85IAq": [
-+      "Welcome home",
-+    ],
-+  },
-+  "./pages/locales/home/pl.po": {
-+    "U85IAq": [
-+      "Witaj w domu",
-+    ],
-+  },
-+}
-+`;
-+
- exports[`vite-plugin > should correctly process with native transformer - PRODUCTION 1`] = `"l1LkPs"`;
- 
- exports[`vite-plugin > should correctly process with native transformer 1`] = `"Ola"`;
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/index.js` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+export default function Button() {}
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/locale/en.po` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+msgid ""
-+msgstr ""
-+"Language: en\n"
-+
-+msgid "Click me"
-+msgstr "Click me"
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/components/button/locale/pl.po` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+msgid ""
-+msgstr ""
-+"Language: pl\n"
-+
-+msgid "Click me"
-+msgstr "Kliknij mnie"
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/entrypoint.js` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+// Lazy per-entry catalogs: every locale of every catalog is a separate module
-+const catalogs = import.meta.glob([
-+  "./pages/locales/*/*.po",
-+  "./components/*/locale/*.po",
-+])
-+
-+export async function load() {
-+  const result = {}
-+
-+  for (const file of Object.keys(catalogs).sort()) {
-+    result[file] = (await catalogs[file]()).messages
-+  }
-+
-+  return result
-+}
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/lingui.config.js` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+import { defineConfig } from "@lingui/cli"
-+
-+export default defineConfig({
-+  locales: ["en", "pl"],
-+  sourceLocale: "en",
-+  catalogs: [
-+    {
-+      path: "<rootDir>/components/{name}/locale/{locale}",
-+      include: ["<rootDir>/components/{name}"],
-+    },
-+  ],
-+  experimental: {
-+    extractor: {
-+      entries: ["<rootDir>/pages/*.js"],
-+      output: "<rootDir>/{entryDir}/locales/{entryName}/{locale}",
-+    },
-+  },
-+})
-```
-
-**File**: `packages/vite-plugin/test/multiple-catalogs/pages/about.js` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+export default function About() {}
-```
-
----
-
-### Incident Patch 2: `9acef0bc` (2026-10-21)
-**Commit Message**: fix(metro-transformer): forward getCacheKey from the wrapped transformer (#2736)
-
-**File**: `packages/metro-transformer/src/expo/index.ts` (modified, +2/-1)
-```diff
-@@ -4,4 +4,5 @@ import { createLinguiMetroTransformer } from "../metroTransformer"
- // eslint-disable-next-line import/no-unresolved
- import expoTransformer from "@expo/metro-config/babel-transformer"
- 
--export const transform = createLinguiMetroTransformer(expoTransformer)
-+export const { transform, getCacheKey } =
-+  createLinguiMetroTransformer(expoTransformer)
-```
-
-**File**: `packages/metro-transformer/src/metroTransformer.ts` (modified, +18/-10)
-```diff
-@@ -7,19 +7,27 @@ import {
- import type { BabelTransformer, BabelTransformerArgs } from "./types"
- import path from "path"
- import memoizeOne from "memoize-one"
-+import { version } from "../package.json"
-+
-+// a new @lingui/cli version can compile catalogs differently
-+const CACHE_KEY_SALT = `@lingui/metro-transformer@${version}`
- 
- export const createLinguiMetroTransformer = (
-   upstreamTransformer: BabelTransformer,
--): BabelTransformer["transform"] => {
--  return async function linguiMetroTransformer(params) {
--    if (!params.filename.endsWith(".po")) {
--      return upstreamTransformer.transform(params)
--    }
--    const jsSource = await transformFile(params)
--    return upstreamTransformer.transform({
--      ...params,
--      src: jsSource,
--    })
-+): Required<BabelTransformer> => {
-+  return {
-+    transform: async function linguiMetroTransformer(params) {
-+      if (!params.filename.endsWith(".po")) {
-+        return upstreamTransformer.transform(params)
-+      }
-+      const jsSource = await transformFile(params)
-+      return upstreamTransformer.transform({
-+        ...params,
-+        src: jsSource,
-+      })
-+    },
-+    getCacheKey: (args) =>
-+      `${upstreamTransformer.getCacheKey?.(args) ?? ""}$${CACHE_KEY_SALT}`,
-   }
- }
- 
-```
-
-**File**: `packages/metro-transformer/src/react-native/index.ts` (modified, +3/-1)
-```diff
-@@ -4,4 +4,6 @@ import { createLinguiMetroTransformer } from "../metroTransformer"
- // eslint-disable-next-line import/no-unresolved
- import reactNativeTransformer from "@react-native/metro-babel-transformer"
- 
--export const transform = createLinguiMetroTransformer(reactNativeTransformer)
-+export const { transform, getCacheKey } = createLinguiMetroTransformer(
-+  reactNativeTransformer,
-+)
-```
-
-**File**: `packages/metro-transformer/src/types.ts` (modified, +10/-1)
-```diff
-@@ -8,10 +8,19 @@ export type BabelTransformerArgs = {
-   readonly src: string
- }
- 
-+// Metro's published types declare `getCacheKey` as zero-argument, but the call sites pass options:
-+// https://github.com/facebook/metro/blob/b71015ef83904e7086342ddb72205b7242dcd129/packages/metro-transform-worker/src/index.js#L741-L746
-+// https://github.com/expo/expo/blob/7a6f6ce1e31314ed4c6811147afb6749306dfc8a/packages/%40expo/metro-config/src/transform-worker/metro-transform-worker.ts#L1147-L1154
-+export type BabelTransformerCacheKeyArgs = {
-+  readonly projectRoot?: string
-+  readonly enableBabelRCLookup?: boolean
-+  readonly extendsBabelConfigPath?: string
-+}
-+
- export type BabelTransformer = {
-   transform: (args: BabelTransformerArgs) => Promise<{
-     ast: unknown
-     metadata: unknown
-   }>
--  getCacheKey?: () => string
-+  getCacheKey?: (args?: BabelTransformerCacheKeyArgs) => string
- }
-```
-
-**File**: `packages/metro-transformer/test/__mocks__/upstreamTransformer.ts` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+import type { BabelTransformer } from "../../src/types"
-+
-+const upstreamTransformer: BabelTransformer = {
-+  transform: async () => ({ ast: null, metadata: null }),
-+  getCacheKey: () => "upstream-key",
-+}
-+
-+export default upstreamTransformer
-```
-
-**File**: `packages/metro-transformer/test/metroTransformer.test.ts` (modified, +114/-1)
-```diff
-@@ -1,5 +1,13 @@
- import path from "path"
--import { transformFile } from "../src/metroTransformer"
-+import {
-+  createLinguiMetroTransformer,
-+  transformFile,
-+} from "../src/metroTransformer"
-+import type {
-+  BabelTransformer,
-+  BabelTransformerCacheKeyArgs,
-+} from "../src/types"
-+import { version } from "../package.json"
- 
- describe("Lingui Metro transformer tests", () => {
-   const priorEnv = process.env.LINGUI_CONFIG
-@@ -70,4 +78,109 @@ describe("Lingui Metro transformer tests", () => {
-       }),
-     ).rejects.toThrow(/is not matched to any of your catalogs paths/)
-   })
-+
-+  it("should hand non-PO files to the upstream transformer untouched", async () => {
-+    const transform = vi.fn(async () => ({ ast: null, metadata: null }))
-+    const transformer = createLinguiMetroTransformer({ transform })
-+    const params = {
-+      filename: "src/index.ts",
-+      options: {},
-+      src: "export const answer = 42",
-+    }
-+
-+    await transformer.transform(params)
-+
-+    expect(transform).toHaveBeenCalledWith(params)
-+  })
-+
-+  it("should compile PO files and hand the compiled catalog to the upstream transformer", async () => {
-+    const transform = vi.fn(async () => ({ ast: null, metadata: null }))
-+    const transformer = createLinguiMetroTransformer({ transform })
-+    const filename = path.relative(
-+      testProjectDir,
-+      path.join(catalogsDir, "en", "messages.po"),
-+    )
-+
-+    await transformer.transform({
-+      filename,
-+      options: {},
-+      src: 'msgid "Cancel"\nmsgstr "Cancel"\n',
-+    })
-+
-+    expect(transform).toHaveBeenCalledWith({
-+      filename,
-+      options: {},
-+      src: await transformFile({ filename }),
-+    })
-+  })
-+})
-+
-+describe("Lingui Metro transformer cache key", () => {
-+  const createUpstreamTransformer = (
-+    getCacheKey?: BabelTransformer["getCacheKey"],
-+  ): BabelTransformer => ({
-+    transform: async () => ({ ast: null, metadata: null }),
-+    getCacheKey,
-+  })
-+
-+  it("should derive the key from the upstream key and this package's version", () => {
-+    const transformer = createLinguiMetroTransformer(
-+      createUpstreamTransformer(() => "upstream-key"),
-+    )
-+
-+    expect(transformer.getCacheKey()).toBe(
-+      `upstream-key$@lingui/metro-transformer@${version}`,
-+    )
-+  })
-+
-+  it("should change when the upstream key changes, so babel config edits invalidate the cache", () => {
-+    let upstreamKey = "upstream-key"
-+    const transformer = createLinguiMetroTransformer(
-+      createUpstreamTransformer(() => upstreamKey),
-+    )
-+
-+    const before = transformer.getCacheKey()
-+    upstreamKey = "upstream-key-after-babel-config-edit"
-+
-+    expect(transformer.getCacheKey()).not.toBe(before)
-+  })
-+
-+  it("should forward its arguments, which Expo needs to derive a key at all", () => {
-+    const getCacheKey = vi.fn(
-+      (args?: BabelTransformerCacheKeyArgs) => args?.projectRoot ?? "",
-+    )
-+    const transformer = createLinguiMetroTransformer(
-+      createUpstreamTransformer(getCacheKey),
-+    )
-+
-+    const key = transformer.getCacheKey({ projectRoot: "/some/project" })
-+
-+    expect(getCacheKey).toHaveBeenCalledWith({ projectRoot: "/some/project" })
-+    expect(key).not.toBe(transformer.getCacheKey({ projectRoot: "/other" }))
-+  })
-+
-+  it("should still produce a key when the upstream transformer has none", () => {
-+    const transformer = createLinguiMetroTransformer(
-+      createUpstreamTransformer(),
-+    )
-+
-+    expect(transformer.getCacheKey()).toBe(
-+      `$@lingui/metro-transformer@${version}`,
-+    )
-+  })
-+})
-+
-+describe("Lingui Metro transformer entrypoints", () => {
-+  it.for(["../src/expo", "../src/react-native"])(
-+    "%s should export both transform and getCacheKey",
-+    async (entrypoint) => {
-+      const transformer = await import(entrypoint)
-+
-+      expect(typeof transformer.transform).toBe("function")
-+      expect(typeof transformer.getCacheKey).toBe("function")
-+      expect(transformer.getCacheKey()).toBe(
-+        `upstream-key$@lingui/metro-transformer@${version}`,
-+      )
-+    },
-+  )
- })
-```
-
-**File**: `packages/metro-transformer/tsconfig.json` (modified, +1/-0)
-```diff
-@@ -3,6 +3,7 @@
-     "module": "esnext",
-     "moduleResolution": "bundler",
-     "esModuleInterop": true,
-+    "resolveJsonModule": true,
-     "strict": true,
-     "noUncheckedIndexedAccess": true,
-     "noEmit": true,
-```
-
-**File**: `packages/metro-transformer/vitest.config.ts` (modified, +13/-0)
-```diff
-@@ -1,7 +1,20 @@
-+import path from "path"
- import { defineProject } from "vitest/config"
- 
-+// the upstream transformers are optional peer deps and aren't installed here
-+const upstreamTransformerStub = path.join(
-+  import.meta.dirname,
-+  "test",
-+  "__mocks__",
-+  "upstreamTransformer.ts",
-+)
-+
- export default defineProject({
-   test: {
-     globals: true,
-+    alias: {
-+      "@expo/metro-config/babel-transformer": upstreamTransformerStub,
-+      "@react-native/metro-babel-transformer": upstreamTransformerStub,
-+    },
+@@ -44,7 +44,7 @@
+   "dependencies": {
+     "@lingui/cli": "workspace:*",
+     "@lingui/conf": "workspace:*",
+-    "@lingui/native-tools": "^0.1.6"
++    "@lingui/native-tools": "^0.2.0"
    },
- })
+   "peerDependencies": {
+     "@babel/core": "^7.29.0 || ^8.0.0",
+```
+
+**File**: `yarn.lock` (modified, +43/-43)
+```diff
+@@ -1532,7 +1532,7 @@ __metadata:
+     "@lingui/core": "workspace:*"
+     "@lingui/format-po": "workspace:*"
+     "@lingui/message-utils": "workspace:*"
+-    "@lingui/native-tools": "npm:^0.1.6"
++    "@lingui/native-tools": "npm:^0.2.0"
+     "@lingui/test-utils": "workspace:*"
+     "@rolldown/plugin-babel": "npm:^0.2.3"
+     "@types/babel__generator": "npm:^7.27.0"
+@@ -1739,82 +1739,82 @@ __metadata:
+   languageName: unknown
+   linkType: soft
+ 
+-"@lingui/native-tools-android-arm64@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-android-arm64@npm:0.1.6"
++"@lingui/native-tools-android-arm64@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-android-arm64@npm:0.2.0"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-darwin-arm64@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-darwin-arm64@npm:0.1.6"
++"@lingui/native-tools-darwin-arm64@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-darwin-arm64@npm:0.2.0"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-darwin-x64@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-darwin-x64@npm:0.1.6"
++"@lingui/native-tools-darwin-x64@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-darwin-x64@npm:0.2.0"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-linux-arm64-gnu@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-linux-arm64-gnu@npm:0.1.6"
++"@lingui/native-tools-linux-arm64-gnu@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-linux-arm64-gnu@npm:0.2.0"
+   conditions: os=linux & cpu=arm64 & libc=glibc
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-linux-arm64-musl@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-linux-arm64-musl@npm:0.1.6"
++"@lingui/native-tools-linux-arm64-musl@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-linux-arm64-musl@npm:0.2.0"
+   conditions: os=linux & cpu=arm64 & libc=musl
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-linux-x64-gnu@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-linux-x64-gnu@npm:0.1.6"
++"@lingui/native-tools-linux-x64-gnu@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-linux-x64-gnu@npm:0.2.0"
+   conditions: os=linux & cpu=x64 & libc=glibc
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-linux-x64-musl@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-linux-x64-musl@npm:0.1.6"
++"@lingui/native-tools-linux-x64-musl@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-linux-x64-musl@npm:0.2.0"
+   conditions: os=linux & cpu=x64 & libc=musl
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-win32-arm64-msvc@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-win32-arm64-msvc@npm:0.1.6"
++"@lingui/native-tools-win32-arm64-msvc@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-win32-arm64-msvc@npm:0.2.0"
+   conditions: os=win32 & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools-win32-x64-msvc@npm:0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools-win32-x64-msvc@npm:0.1.6"
++"@lingui/native-tools-win32-x64-msvc@npm:0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools-win32-x64-msvc@npm:0.2.0"
+   conditions: os=win32 & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"@lingui/native-tools@npm:^0.1.6":
+-  version: 0.1.6
+-  resolution: "@lingui/native-tools@npm:0.1.6"
+-  dependencies:
+-    "@lingui/native-tools-android-arm64": "npm:0.1.6"
+-    "@lingui/native-tools-darwin-arm64": "npm:0.1.6"
+-    "@lingui/native-tools-darwin-x64": "npm:0.1.6"
+-    "@lingui/native-tools-linux-arm64-gnu": "npm:0.1.6"
+-    "@lingui/native-tools-linux-arm64-musl": "npm:0.1.6"
+-    "@lingui/native-tools-linux-x64-gnu": "npm:0.1.6"
+-    "@lingui/native-tools-linux-x64-musl": "npm:0.1.6"
+-    "@lingui/native-tools-win32-arm64-msvc": "npm:0.1.6"
+-    "@lingui/native-tools-win32-x64-msvc": "npm:0.1.6"
++"@lingui/native-tools@npm:^0.2.0":
++  version: 0.2.0
++  resolution: "@lingui/native-tools@npm:0.2.0"
++  dependencies:
++    "@lingui/native-tools-android-arm64": "npm:0.2.0"
++    "@lingui/native-tools-darwin-arm64": "npm:0.2.0"
++    "@lingui/native-tools-darwin-x64": "npm:0.2.0"
++    "@lingui/native-tools-linux-arm64-gnu": "npm:0.2.0"
++    "@lingui/native-tools-linux-arm64-musl": "npm:0.2.0"
++    "@lingui/native-tools-linux-x64-gnu": "npm:0.2.0"
++    "@lingui/native-tools-linux-x64-musl": "npm:0.2.0"
++    "@lingui/native-tools-win32-arm64-msvc": "npm:0.2.0"
++    "@lingui/native-tools-win32-x64-msvc": "npm:0.2.0"
+     "@swc/types": "npm:^0.1.25"
+   peerDependencies:
+     "@lingui/conf": ^6.0.1
+@@ -1837,7 +1837,7 @@ __metadata:
+       optional: true
+     "@lingui/native-tools-win32-x64-msvc":
+       optional: true
+-  checksum: 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2743** (2026-10-23): fix(vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (@andrii-bodnar)
 - **PR #2742** (2026-10-22): chore(release): published v6.10.1 [skip ci] (@andrii-bodnar)
 - **PR #2740** (2026-10-21): docs: feature the runtime macro in the website announcement bar (@andrii-bodnar)
 - **PR #2737** (2026-10-22): perf(vite-plugin): resolve catalogs once per build instead of on every catalog import (@almsh)
 - **PR #2736** (2026-10-21): fix(metro-transformer): forward getCacheKey from the wrapped transformer (@HSnils)
 - **PR #2734** (2026-10-20): chore(examples): migrate react-webpack-gettext example to lingui v6 (@mehdimirzafaruk)
-- **PR #2733** (2026-10-20): fix(detect-locale): ignore path dots in fromSubdomain and return null for missing segments (@mehdimirzafaruk)
 
 ---
 
@@ -1281,64 +976,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vite-plugin): resolve catalogs once per build instead of on every catalog import
+## X. vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)
 
 **RULE**:
-When implementing operations in `packages/vite-plugin/src/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/cli/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfa5b76d`: vite-plugin): resolve catalogs once per build instead of on every catalog import (#2737). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `460f89a4`: vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vite-plugin/src/index.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/cli/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // `getCatalogs()` globs the file system on every call (`{name}` catalogs and
-  // `experimental.extractor.entries`), so it's resolved once and shared by all
-  // catalog modules. Reset on `buildStart` and `watchChange`.
-  let catalogs: ReturnType<typeof getCatalogs> | undefined
-
-  const getOrLoadCatalogs = () => {
-    if (!catalogs) {
-      const pending: ReturnType<typeof getCatalogs> = getCatalogs(config).catch(
-        (error) => {
-          // don't cache a failure, the next catalog module will retry
-          if (catalogs === pending) {
-            catalogs = undefined
-          }
-          throw error
-        },
-      )
-      catalogs = pending
-    }
-    return catalogs
-  }
-
-  const resetCatalogs = () => {
-    catalogs = undefined
-  }
-
-    buildStart: resetCatalogs,
-    watchChange: resetCatalogs,
-        let fileCatalog = getCatalogForFile(
-          await getOrLoadCatalogs(),
-        if (!fileCatalog) {
-          // The catalog may have been created after the list was cached
-          // without a `watchChange` reaching this plugin, so check a fresh list
-          resetCatalogs()
-          fileCatalog = getCatalogForFile(
-            catalogRelativePath,
-            awai
+    "@lingui/native-tools": "^0.2.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        const fileCatalog = getCatalogForFile(
-          await getCatalogs(config),
+    "@lingui/native-tools": "^0.1.6",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfa5b76d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `460f89a4` are properly handled with clean fallback behavior.

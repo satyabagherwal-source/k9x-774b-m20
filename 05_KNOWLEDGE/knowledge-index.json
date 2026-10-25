@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:12:39.906Z",
+  "last_updated": "2026-10-25T04:19:00.852Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24845,7 +24845,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "aea93f3fa057853b921dc605ffe73f229d4b9fa42069cfb39e73c15fd89b1bbe",
+      "content_hash": "737fcb88ebcea4d946e0cd8a1538985e40b2e50d312446c7f68f9a259d57c54c",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -24896,7 +24896,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-20T12:18:32.595Z",
+      "verified_at": "2026-10-25T04:18:44.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31446,8 +31446,8 @@
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "ce5aa25b",
-      "content_hash": "24d0b56d8ed7aa5167900ef63e79cff13234bff195136303030ebee69ff8f777",
+      "source_version": "460f89a4",
+      "content_hash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "promoted_rules": [
@@ -31480,6 +31480,11 @@
           "number": 3671,
           "title": "vite-plugin): resolve catalogs once per build instead of on every catalog import",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4039,
+          "title": "vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31487,7 +31492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:44:51.224Z",
+      "verified_at": "2026-10-25T04:18:45.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50551,8 +50556,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "0a8f26c4",
-      "content_hash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
+      "source_version": "dd8250de",
+      "content_hash": "a381baabbf12294b13ba8f2ea984d33287e7be4c9c43d0dee63ca427c79e95b9",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -50580,6 +50585,11 @@
           "number": 3641,
           "title": "YQ-5707 Fix pq status mapping (#55621)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4041,
+          "title": "Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50587,7 +50597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:32:30.369Z",
+      "verified_at": "2026-10-25T04:19:00.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51206,8 +51216,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "54e7a937",
-      "content_hash": "a38351b21e172f2efbd64fd26e3758dc3b68b3c04b415e5b29a65d73698d2d92",
+      "source_version": "2b5efac9",
+      "content_hash": "05f703e70c2f76303c953f8674c150093d14b93d07ee086ed75e447c8d847fbb",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -51225,6 +51235,11 @@
           "number": 3660,
           "title": "filex): don't return EOF when last line exceeds chunk size (#5800)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4040,
+          "title": "filex): only trim trailing newline on tail block in LastLine (#5790)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51232,7 +51247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:25:42.982Z",
+      "verified_at": "2026-10-25T04:18:54.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117970,6 +117985,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:12:39.892Z"
+    },
+    "rule-4039": {
+      "learning_id": "rule-4039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4039,
+      "title": "vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "460f89a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:18:45.412Z"
+    },
+    "rule-4040": {
+      "learning_id": "rule-4040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4040,
+      "title": "filex): only trim trailing newline on tail block in LastLine (#5790)",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "2b5efac9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:18:54.178Z"
+    },
+    "rule-4041": {
+      "learning_id": "rule-4041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4041,
+      "title": "Merge pull request #56718 from ydb-platform/update-muted-ya_main_release-asan",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "dd8250de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:19:00.842Z"
     }
   },
   "aliases": {

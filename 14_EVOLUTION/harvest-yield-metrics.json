@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:12:39.974Z",
-  "total_cycles_completed": 4633,
-  "total_learnings_persisted": 4633,
-  "total_rules_promoted": 3901,
+  "last_updated": "2026-10-25T04:19:00.906Z",
+  "total_cycles_completed": 4637,
+  "total_learnings_persisted": 4637,
+  "total_rules_promoted": 3904,
   "history": [
-    {
-      "timestamp": "2026-10-23T05:30:32.056Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:33:17.381Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:41:36.958Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T05:44:01.775Z",
-      "repository": "NG-ZORRO/ng-zorro-antd",
-      "learningId": "learn-github-ng-zorro-ng-zorro-antd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T05:50:29.813Z",
       "repository": "krakend/krakend-ce",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T04:12:39.974Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:18:44.349Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:18:45.477Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:18:54.242Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T04:19:00.906Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
