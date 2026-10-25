@@ -5043,3 +5043,4 @@ Every entry in this ledger must capture:
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `9b1fcab1` | Multi-dimensional audit evidence | 2026-10-25T23:10:57.451Z |
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-25T23:17:15.702Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e6dbc624` | Multi-dimensional audit evidence | 2026-10-25T23:17:30.546Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-25T23:32:54.930Z |

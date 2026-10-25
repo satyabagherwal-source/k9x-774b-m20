@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T23:17:30.488Z",
+  "last_updated": "2026-10-25T23:32:54.868Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60862,7 +60862,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "d0f5772d1e23c6644bce2ae57040295b623a5840f7399df606a53cb3156b8bb7",
+      "content_hash": "23f8156f03c3b909af8e214a147a3a48c7d4e5350fa1fa30481a31e136aadd43",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -60905,6 +60905,16 @@
           "number": 3507,
           "title": "The Artifact Completeness Invariant (ACI)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4488,
+          "title": "Zero-State Model Repository Manifest Pre-Flight Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4489,
+          "title": "Guarded Sparse MoE Dispatch-Combine Routing with Numerical Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60912,7 +60922,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T03:24:27.791Z",
+      "verified_at": "2026-10-25T23:32:54.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126802,6 +126812,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:17:30.477Z"
+    },
+    "rule-4488": {
+      "learning_id": "rule-4488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4488,
+      "title": "Zero-State Model Repository Manifest Pre-Flight Verification",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:32:54.860Z"
+    },
+    "rule-4489": {
+      "learning_id": "rule-4489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4489,
+      "title": "Guarded Sparse MoE Dispatch-Combine Routing with Numerical Normalization",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T23:32:54.860Z"
     }
   },
   "aliases": {

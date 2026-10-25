@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-RLKE",
-    "timestamp": "2026-10-23T10:54:22.190Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "d7af5ecd62ce05243eb7b068fc3c367656365e83ce4498b035be7525820b8ae4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-RO2W",
     "timestamp": "2026-10-23T10:54:25.448Z",
     "repository": "diggerhq/digger",
@@ -7492,6 +7477,21 @@
     "contentHash": "16d526a0d6f9025582f1db4182c29a9341c016c256cc0e16594fbd5b78cda78f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-QSR3",
+    "timestamp": "2026-10-25T23:32:54.927Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "23f8156f03c3b909af8e214a147a3a48c7d4e5350fa1fa30481a31e136aadd43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
