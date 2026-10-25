@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
-    "lastHarvestedAt": "2026-10-20T14:38:26.649Z",
+    "contentHash": "5cb4356860441b2d273ea8b5a6d8c3294865c272afcb45803469cc38f7ca1f81",
+    "lastHarvestedAt": "2026-10-25T06:44:59.050Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "86c71b95",
+    "sourceVersion": "103984cd",
     "license": "Apache-2.0",
-    "contentHash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
-    "lastHarvestedAt": "2026-10-22T19:22:46.381Z",
+    "contentHash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
+    "lastHarvestedAt": "2026-10-25T06:44:56.569Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "5b6eae3d",
+    "sourceVersion": "0d632b1d",
     "license": "MIT",
-    "contentHash": "92219e9d7f5205453d06f32a4805b5c836f406ceeb580ddce226666ba12990f0",
-    "lastHarvestedAt": "2026-10-22T16:26:12.824Z",
+    "contentHash": "633b583c7961d0eef188a2c2d7ba9d1eae038a14d8e0b1a1f322b7b8de327240",
+    "lastHarvestedAt": "2026-10-25T06:44:48.566Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

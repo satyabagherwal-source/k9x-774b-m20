@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T06:38:30.940Z",
+  "last_updated": "2026-10-25T06:44:59.063Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -155,14 +155,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "content_hash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
-      "verified_at": "2026-10-20T14:38:26.655Z",
+      "content_hash": "5cb4356860441b2d273ea8b5a6d8c3294865c272afcb45803469cc38f7ca1f81",
+      "verified_at": "2026-10-25T06:44:59.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:38:26.655Z"
+      "last_updated": "2026-10-25T06:44:59.062Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
-      "verified_at": "2026-10-22T19:22:46.392Z",
+      "content_hash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
+      "verified_at": "2026-10-25T06:44:56.583Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:22:46.392Z"
+      "last_updated": "2026-10-25T06:44:56.583Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "92219e9d7f5205453d06f32a4805b5c836f406ceeb580ddce226666ba12990f0",
-      "verified_at": "2026-10-22T16:26:12.837Z",
+      "content_hash": "633b583c7961d0eef188a2c2d7ba9d1eae038a14d8e0b1a1f322b7b8de327240",
+      "verified_at": "2026-10-25T06:44:48.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:26:12.837Z"
+      "last_updated": "2026-10-25T06:44:48.578Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

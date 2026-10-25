@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T06:38:30.871Z",
+  "last_updated": "2026-10-25T06:44:58.994Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15749,7 +15749,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "09db5a5671a58acd96b57e15c9aac531a7a29e19761af92b754dcd440319ce14",
+      "content_hash": "5cb4356860441b2d273ea8b5a6d8c3294865c272afcb45803469cc38f7ca1f81",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [
@@ -15792,6 +15792,21 @@
           "number": 3229,
           "title": "Multi-Node MoE Deployment Requires Explicit NCCL Topology Configuration",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4118,
+          "title": "MoE Expert Pruning Must Preserve Routing Distribution Entropy",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4119,
+          "title": "NVFP4 Quantization Requires Per-Block Scaling Factor Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4120,
+          "title": "Dual-Node MoE Inference Requires NCCL All-Reduce Optimization for Expert Activation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15812,7 +15827,7 @@
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
       ],
-      "verified_at": "2026-10-20T14:38:26.598Z",
+      "verified_at": "2026-10-25T06:44:58.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29473,8 +29488,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "86c71b95",
-      "content_hash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
+      "source_version": "103984cd",
+      "content_hash": "7eb9bd7aa5503bd9f4ace65e9f968c77906907f45c84980684b1f3771620ae68",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -29492,6 +29507,11 @@
           "number": 3712,
           "title": "Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4117,
+          "title": "add priority based preemptive scheduling gate (#7966)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -29499,7 +29519,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:22:46.328Z",
+      "verified_at": "2026-10-25T06:44:56.503Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39732,8 +39752,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "5b6eae3d",
-      "content_hash": "92219e9d7f5205453d06f32a4805b5c836f406ceeb580ddce226666ba12990f0",
+      "source_version": "0d632b1d",
+      "content_hash": "633b583c7961d0eef188a2c2d7ba9d1eae038a14d8e0b1a1f322b7b8de327240",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -39766,6 +39786,11 @@
           "number": 3638,
           "title": "Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4116,
+          "title": "Do not read the values stored under null `Array` rows (#30286)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39773,7 +39798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:26:12.746Z",
+      "verified_at": "2026-10-25T06:44:48.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119543,6 +119568,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T06:38:30.861Z"
+    },
+    "rule-4116": {
+      "learning_id": "rule-4116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4116,
+      "title": "Do not read the values stored under null `Array` rows (#30286)",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "0d632b1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:44:48.499Z"
+    },
+    "rule-4117": {
+      "learning_id": "rule-4117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4117,
+      "title": "add priority based preemptive scheduling gate (#7966)",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "103984cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:44:56.503Z"
+    },
+    "rule-4118": {
+      "learning_id": "rule-4118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4118,
+      "title": "MoE Expert Pruning Must Preserve Routing Distribution Entropy",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:44:58.983Z"
+    },
+    "rule-4119": {
+      "learning_id": "rule-4119",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4119,
+      "title": "NVFP4 Quantization Requires Per-Block Scaling Factor Alignment",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:44:58.983Z"
+    },
+    "rule-4120": {
+      "learning_id": "rule-4120",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4120,
+      "title": "Dual-Node MoE Inference Requires NCCL All-Reduce Optimization for Expert Activation",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T06:44:58.983Z"
     }
   },
   "aliases": {

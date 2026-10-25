@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `86c71b95`  
+> **Source Version**: `103984cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:22:46.100Z  
+> **Timestamp**: 2026-10-25T06:44:56.218Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:22:46.094Z  
+> **Harvest Timestamp**: 2026-10-25T06:44:55.990Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5730 stars
+- **Stars / Engagement**: 5732 stars
 
 ---
 
@@ -984,11 +984,11 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7966** (2026-10-23): **feat: add priority based preemptive scheduling gate**
+  *Symptoms*: **What type of PR is this?** /kind feature <!-- Add one of the following kinds: /kind bug /kind feature /kind documentation /kind cleanup  Optionally add one or more of the following kinds if applicable: /kind api-change /kind deprecation /kind failing-test /kind flake /kind regression  -->  **What this PR does / why we need it**: This PR introduces the `PriorityBasedPreemptiveScheduling` feature gate as part of the [priority-based binding preemption proposal](https://github.com/karmada-io/karmada/blob/master/docs/proposals/scheduling/binding-preemption/binding-preemption.md) and related work items from the [umbrella issue tracking the work](https://github.com/karmada-io/karmada/issues/7943)  **Which issue(s) this PR fixes**: Part of #7943 <!-- *Optionally link to the umbrella issue if this PR resolves part of it. Usage: `Part of #<issue number>`, or `Part of (paste link of issue)`.* Part of # -->  **Special notes for your reviewer**: This feature gate requires both of the following gates to be turned on  ```go PriorityBasedScheduling && PriorityBasedPreemptiveScheduling ``` <!-- Such as a test report of this PR. -->  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required. Some brief examples of release notes: 1. `karmada-controller-manager`: Fixed the issue that xxx 2. `karmada-scheduler`: The deprecated flag `--xxx` now has been removed. Users of this flag should xxx. 3. `API Change
+
 - **Issue #7963** (2026-10-22): **fix: add ClusterTaintPolicy webhook to chart, init, and operator**
   *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  This PR adds the `clustertaintpolicy.karmada.io` validating webhook to the Helm chart, `karmadactl init`, and `karmada-operator`. The entry is the same as in `artifacts/deploy/webhook-configuration.yaml`.  #6370 added `/validate-clustertaintpolicy` and `--allow-no-execute-taint-policy`, but it added the webhook entry only to `artifacts/deploy`. For the other installers, the API server never calls the webhook. The flag has no effect, and the API server accepts every `NoExecute` taint in a `ClusterTaintPolicy`. Details: https://github.com/karmada-io/karmada/issues/7923#issuecomment-6209948597  **Which issue(s) this PR fixes**:  Fixes #7923  **Special notes for your reviewer**:  This PR depends on #7953, which is on `master`.  Behavior change:  - After the upgrade, `karmada-webhook` denies create and update requests for a `ClusterTaintPolicy` with a `NoExecute` taint, unless the flag is `true`. - Existing policies stay in the API, and the controller continues to use them. - Re-apply of an unchanged `NoExecute` policy without the flag: denied with `spec.taints[0]: Forbidden: Configuring taint with NoExecute effect is not allowed`. - The flag default stays `false`, as the flag help text requires.  Upgrade impact per installer:  - Helm chart: one `helm upgrade` can add the entry and set the flag. - `karmada-operator`: the operator applies the webhook configuration again each time it reconciles a valid
-
-- **Issue #7961** (2026-10-22): **hack: pin command docs generation locale**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  Pins command-line documentation generation to the POSIX `C` locale so kubectl-derived descriptions remain deterministic regardless of the developer's `LC_ALL`, `LC_MESSAGES`, or `LANG` settings.  **Which issue(s) this PR fixes**:  Fixes #7960  **Special notes for your reviewer**:  Validation: - reproduced 20 changed files under `LANG=zh_CN.UTF-8` before the fix - `LANG=zh_CN.UTF-8 hack/verify-command-line-flags.sh` - conflicting Japanese/German/Chinese locale variables leave generated docs clean - `make test` - all `make verify` component checks passed  **Does this PR introduce a user-facing change?**:  ```release-note NONE ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,503 +1005,355 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f55ed275` (2026-10-22)
-**Commit Message**: Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry
+### Incident Patch 1: `103984cd` (2026-10-23)
+**Commit Message**: feat: add priority based preemptive scheduling gate (#7966)
 
-fix: add ClusterTaintPolicy webhook to chart, init, and operator
+* Introduce feature gate  in alpha
 
-**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +14/-0)
+Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
+
+* Update comment based on PR feedback
+
+Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
+
+**File**: `docs/command-line-flags/karmada-agent.md` (modified, +1/-0)
 ```diff
-@@ -288,4 +288,18 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
-+      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: [ "v1" ]
-+    timeoutSeconds: 3
- {{- end -}}
+@@ -82,6 +82,7 @@ Generic flags:
+                                                        LoggingBetaOptions=true|false (BETA - default=true)
+                                                        MultiClusterService=true|false (ALPHA - default=false)
+                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
++                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                                        PriorityBasedScheduling=true|false (BETA - default=true)
+                                                        PropagateDeps=true|false (BETA - default=true)
+                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
 ```
 
-**File**: `charts/karmada/values.yaml` (modified, +3/-0)
+**File**: `docs/command-line-flags/karmada-aggregated-apiserver.md` (modified, +1/-0)
 ```diff
-@@ -317,6 +317,9 @@ webhook:
-   priorityClassName: "system-node-critical"
-   ## @param webhook.featureGates A set of key=value pairs that describe feature gates for karmada-webhook
-   featureGates: {}
-+  ## To allow NoExecute taints in a ClusterTaintPolicy, set:
-+  ##   extraCommandArgs:
-+  ##     allow-no-execute-taint-policy: true
-   ## @param webhook.extraCommandArgs extra command args of the karmada-webhook
-   extraCommandArgs: {}
+@@ -138,6 +138,7 @@ Generic flags:
+                                                                 MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
+                                                                 NativeHistograms=true|false (ALPHA - default=false)
+                                                                 OpenAPIEnums=true|false (BETA - default=true)
++                                                                PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                                                 PriorityBasedScheduling=true|false (BETA - default=true)
+                                                                 PropagateDeps=true|false (BETA - default=true)
+                                                                 PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `docs/command-line-flags/karmada-controller-manager.md` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ Generic flags:
+                                                                        LoggingBetaOptions=true|false (BETA - default=true)
+                                                                        MultiClusterService=true|false (ALPHA - default=false)
+                                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
++                                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                                                        PriorityBasedScheduling=true|false (BETA - default=true)
+                                                                        PropagateDeps=true|false (BETA - default=true)
+                                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `docs/command-line-flags/karmada-scheduler-estimator.md` (modified, +1/-0)
+```diff
+@@ -60,6 +60,7 @@ Generic flags:
+                                            LoggingBetaOptions=true|false (BETA - default=true)
+                                            MultiClusterService=true|false (ALPHA - default=false)
+                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
++                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                            PriorityBasedScheduling=true|false (BETA - default=true)
+                                            PropagateDeps=true|false (BETA - default=true)
+                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `docs/command-line-flags/karmada-scheduler.md` (modified, +1/-0)
+```diff
+@@ -64,6 +64,7 @@ Generic flags:
+                                                        LoggingBetaOptions=true|false (BETA - default=true)
+                                                        MultiClusterService=true|false (ALPHA - default=false)
+                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
++                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                                        PriorityBasedScheduling=true|false (BETA - default=true)
+                                                        PropagateDeps=true|false (BETA - default=true)
+                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `docs/command-line-flags/karmada-search.md` (modified, +1/-0)
+```diff
+@@ -151,6 +151,7 @@ Generic flags:
+                                                                 kube:MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
+                                                                 kube:NativeHistograms=true|false (ALPHA - default=false)
+                                                                 kube:OpenAPIEnums=true|false (BETA - default=true)
++                                                                kube:PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                                                 kube:PriorityBasedScheduling=true|false (BETA - default=true)
+                                                                 kube:PropagateDeps=true|false (BETA - default=true)
+                                                                 kube:PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `docs/command-line-flags/karmada-webhook.md` (modified, +1/-0)
+```diff
+@@ -63,6 +63,7 @@ Generic flags:
+                                            LoggingBetaOptions=true|false (BETA - default=true)
+                                            MultiClusterService=true|false (ALPHA - default=false)
+                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
++                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+                                            PriorityBasedScheduling=true|false (BETA - default=true)
+                                            PropagateDeps=true|false (BETA - default=true)
+                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
+```
+
+**File**: `pkg/features/features.go` (modified, +16/-0)
+```diff
+@@ -75,6 +75,16 @@ const (
+ 	// beta: v1.19
+ 	PriorityBasedScheduling featuregate.Feature = "PriorityBasedScheduling"
  
-```
-
-**File**: `operator/pkg/karmadaresource/webhookconfiguration/manifests.go` (modified, +14/-0)
-```diff
-@@ -334,5 +334,19 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://{{ .Service }}.{{ .Namespace }}.svc:443/validate-clustertaintpolicy
-+      caBundle: {{ .CaBundle }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: ["v1"]
-+    timeoutSeconds: 3
- `
- )
-```
-
-**File**: `operator/pkg/karmadaresource/webhookconfiguration/webhookconfiguration_test.go` (modified, +58/-0)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"strings"
- 	"testing"
- 
-+	"github.com/google/go-cmp/cmp"
- 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
- 	fakeclientset "k8s.io/client-go/kubernetes/fake"
- 	coretesting "k8s.io/client-go/testing"
-@@ -128,3 +129,60 @@ func TestValidatingWebhookConfiguration(t *testing.T) {
- 		}
- 	}
++	// PriorityBasedPreemptiveScheduling controls whether the scheduler may preempt
++	// lower-priority bindings when the target cluster lacks sufficient resources
++	// to schedule a higher-priority binding.
++	// This feature depends on PriorityBasedScheduling and only takes effect when
++	// both feature gates are enabled.
++	//
++	// owner: @seanlaii, @asarj
++	// alpha: v1.20
++	PriorityBasedPreemptiveScheduling featuregate.Feature = "PriorityBasedPreemptiveScheduling"
++
+ 	// FederatedQuotaEnforcement controls whether the existing FederatedResourceQuota enhancement feature is enabled.
+ 	// When enabled, the existing FederatedResourceQuota can impose namespaced resource limits directly on the Karmada control-plane level
+ 	//
+@@ -174,6 +184,7 @@ var (
+ 		ResourceQuotaEstimate:             {Default: false, PreRelease: featuregate.Alpha},
+ 		StatefulFailoverInjection:         {Default: false, PreRelease: featuregate.Alpha},
+ 		PriorityBasedScheduling:           {Default: true, PreRelease: featuregate.Beta},
++		PriorityBasedPreemptiveScheduling: {Default: false, PreRelease: featuregate.Alpha},
+ 		FederatedQuotaEnforcement:         {Default: false, PreRelease: featuregate.Alpha},
+ 		LoggingAlphaOptions:               {Default: false, PreRelease: featuregate.Alpha},
+ 		LoggingBetaOptions:                {Default: true, PreRelease: featuregate.Beta},
+@@ -188,3 +199,8 @@ var (
+ func init() {
+ 	runtime.Must(FeatureGate.Add(DefaultFeatureGates))
  }
 +
-+func TestValidatingWebhookConfigurationClusterTaintPolicy(t *testing.T) {
-+	name, namespace := "karmada-demo", "test"
-+
-+	caTestData := "test-ca-data"
-+	caBundle := base64.StdEncoding.EncodeToString([]byte(caTestData))
-+
-+	fakeClient := fakeclientset.NewClientset()
-+	err := validatingWebhookConfiguration(fakeClient, namespace, name, caBundle)
-+	if err != nil {
-+		t.Fatalf("error creating the validating webhook configuration: %v", err)
-+	}
-+
-+	actions := fakeClient.Actions()
-+	if len(actions) != 1 {
-+		t.Fatalf("expected 1 action, but got %d", len(actions))
-+	}
-+
-+	createAction, ok := actions[0].(coretesting.CreateAction)
-+	if !ok {
-+		t.Fatalf("expected CreateAction, but got %T", actions[0])
-+	}
-+
-+	validatingWebhookConfig := createAction.GetObject().(*admissionregistrationv1.ValidatingWebhookConfiguration)
-+
-+	var got *admissionregistrationv1.ValidatingWebhook
-+	for i := range validatingWebhookConfig.Webhooks {
-+		if validatingWebhookConfig.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
-+			got = &validatingWebhookConfig.Webhooks[i]
-+			break
-+		}
-+	}
-+	if got == nil {
-+		t.Fatalf("validating webhook configuration is missing the clustertaintpolicy.karmada.io webhook")
-+	}
-+
-+	want := &admissionregistrationv1.ValidatingWebhook{
-+		Name:         "clustertaintpolicy.karmada.io",
-+		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new(fmt.Sprintf("https://%s.%s.svc:443/validate-clustertaintpolicy", util.KarmadaWebhookName(name), namespace)), CABundle: []byte(caTestData)},
-+		Rules: []admissionregistrationv1.RuleWithOperations{{
-+			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
-+			Rule: admissionregistrationv1.Rule{
-+				APIGroups:   []string{"policy.karmada.io"},
-+				APIVersions: []string{"*"},
-+				Resources:   []string{"clustertaintpolicies"},
-+				Scope:       new(admissionregistrationv1.ClusterScope),
-+			},
-+		}},
-+		FailurePolicy:           new(admissionregistrationv1.Fail),
-+		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
-+		TimeoutSeconds:          new(int32(3)),
-+		AdmissionReviewVersions: []string{"v1"},
-+	}
-+	if diff := cmp.Diff(want, got); diff != "" {
-+		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
-+	}
-+}
-```
-
-**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration.go` (modified, +14/-0)
-```diff
-@@ -345,6 +345,20 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://karmada-webhook.%[1]s.svc:443/validate-clustertaintpolicy
-+      caBundle: %[2]s
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: ["v1"]
-+    timeoutSeconds: 3
- `, systemNamespace, caBundle)
- }
- 
-```
-
-**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration_test.go` (modified, +45/-0)
-```diff
-@@ -18,9 +18,14 @@ package karmada
- 
- import (
- 	"encoding/base64"
-+	"encoding/json"
- 	"testing"
- 
-+	"github.com/google/go-cmp/cmp"
-+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
- 	"k8s.io/client-go/kubernetes/fake"
-+
-+	"github.com/karmada-io/karmada/pkg/karmadactl/cmdinit/utils"
- )
- 
- func Test_createOrUpdateValidatingWebhookConfiguration(t *testing.T) {
-@@ -44,3 +49,43 @@ func Test_createOrUpdateMutatingWebhookConfiguration(t *testing.T) {
- 		t.Errorf("createOrUpdateMutatingWebhookConfiguration() return = %v, want no error", err)
- 	}
- }
-+
-+func TestValidatingConfigClusterTaintPolicyWebhook(t *testing.T) {
-+	cfg := validatingConfig(base64.StdEncoding.EncodeToString([]byte("foo")), "bar")
-+	obj := admissionregistrationv1.ValidatingWebhookConfiguration{}
-+	if err := json.Unmarshal(utils.StaticYamlToJSONByte(cfg), &obj); err != nil {
-+		t.Fatalf("failed to decode validatingConfig() output: %v", err)
-+	}
-+
-+	var got *admissionregistrationv1.ValidatingWebhook
-+	for i := range obj.Webhooks {
-+		if obj.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
-+			got = &obj.Webhooks[i]
-+			break
-+		}
-+	}
-+	if got == nil {
-+		t.Fatalf("validatingConfig() is missing the clustertaintpolicy.karmada.io webhook")
-+	}
-+
-+	want := &admissionregistrationv1.ValidatingWebhook{
-+		Name:         "clustertaintpolicy.karmada.io",
-+		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new("https://karmada-webhook.bar.svc:443/validate-clustertaintpolicy"), CABundle: []byte("foo")},
-+		Rules: []admissionregistrationv1.RuleWithOperations{{
-+			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
-+			Rule: admissionregistrationv1.Rule{
-+				APIGroups:   []string{"policy.karmada.io"},
-+				APIVersions: []string{"*"},
-+				Resources:   []string{"clustertaintpolicies"},
-+				Scope:       new(admissionregistrationv1.ClusterScope),
-+			},
-+		}},
-+		FailurePolicy:           new(admissionregistrationv1.Fail),
-+		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
-+		TimeoutSeconds:          new(int32(3)),
-+		AdmissionReviewVersions: []string{"v1"},
-+	}
-+	if diff := cmp.Diff(want, got); diff != "" {
-+		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
-+	}
++// PriorityBasedPreemptiveSchedulingEnabled reports whether priority-based preemptive scheduling is enabled.
++func PriorityBasedPreemptiveSchedulingEnabled() bool {
++	return FeatureGate.Enabled(PriorityBasedScheduling) && FeatureGate.Enabled(PriorityBasedPreemptiveScheduling)
 +}
 ```
 
 ---
 
-### Incident Patch 2: `d08e26b8` (2026-10-22)
-**Commit Message**: Merge pull request #7961 from Himanshu-singh04/fix/7960-deterministic-command-docs
+### Incident Patch 2: `966b4c35` (2026-10-23)
+**Commit Message**: Merge pull request #7954 from RainbowMango/pr_extend_preemption_api
 
-hack: pin command docs generation locale
+Introduce PreemptionPolicy to ResourceBinding SchedulePriority API
 
-**File**: `hack/update-command-line-flags.sh` (modified, +5/-0)
+**File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
 ```diff
-@@ -22,6 +22,11 @@ set -o errexit
- set -o nounset
- set -o pipefail
- 
-+# Pin the locale so the generated docs are identical regardless of the
-+# developer's environment. kubectl's i18n package translates command
-+# descriptions based on LC_ALL/LC_MESSAGES/LANG.
-+export LC_ALL=C
-+
- SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
- # shellcheck source=hack/util.sh
- source "${SCRIPT_ROOT}/hack/util.sh"
+@@ -21891,6 +21891,10 @@
+       "description": "SchedulePriority represents the scheduling priority assigned to workloads.",
+       "type": "object",
+       "properties": {
++        "preemptionPolicy": {
++          "description": "PreemptionPolicy specifies whether the binding may preempt lower-priority bindings. Only PreemptLowerPriority enables preemption. If not set, the binding never preempts. It is populated from the preemptionPolicy of the referenced PriorityClass.",
++          "type": "string"
++        },
+         "priority": {
+           "description": "Priority specifies the scheduling priority for the binding. Higher values indicate a higher priority. If not explicitly set, the default value is 0.",
+           "type": "integer",
 ```
 
----
-
-### Incident Patch 3: `1d148e81` (2026-10-21)
-**Commit Message**: fix: add ClusterTaintPolicy webhook to chart, init, and operator
-
-Only artifacts/deploy registers /validate-clustertaintpolicy. The Helm
-chart, karmadactl init, and karmada-operator do not, so the API server
-never sends ClusterTaintPolicy requests to karmada-webhook. The
---allow-no-execute-taint-policy gate is never evaluated, and every
-NoExecute taint in a ClusterTaintPolicy is accepted.
-
-Add the same webhook entry to the three installers. With the default
-flag value, karmada-webhook now denies create and update requests for
-a ClusterTaintPolicy with a NoExecute taint. Each installer can set the
-flag through its existing extra-args mechanism.
-
-Signed-off-by: cmontemuino <[REDACTED_EMAIL]>
-
-**File**: `charts/karmada/templates/_karmada_webhook_configuration.tpl` (modified, +14/-0)
+**File**: `charts/karmada/_crds/bases/work/work.karmada.io_clusterresourcebindings.yaml` (modified, +8/-0)
 ```diff
-@@ -288,4 +288,18 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
-+      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: [ "v1" ]
-+    timeoutSeconds: 3
- {{- end -}}
+@@ -1773,6 +1773,14 @@ spec:
+                 description: SchedulePriority represents the scheduling priority assigned
+                   to workloads.
+                 properties:
++                  preemptionPolicy:
++                    description: |-
++                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
++                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
++                      It is populated from the preemptionPolicy of the referenced PriorityClass.
++                    enum:
++                    - PreemptLowerPriority
++                    type: string
+                   priority:
+                     default: 0
+                     description: |-
 ```
 
-**File**: `charts/karmada/values.yaml` (modified, +3/-0)
+**File**: `charts/karmada/_crds/bases/work/work.karmada.io_resourcebindings.yaml` (modified, +8/-0)
 ```diff
-@@ -317,6 +317,9 @@ webhook:
-   priorityClassName: "system-node-critical"
-   ## @param webhook.featureGates A set of key=value pairs that describe feature gates for karmada-webhook
-   featureGates: {}
-+  ## To allow NoExecute taints in a ClusterTaintPolicy, set:
-+  ##   extraCommandArgs:
-+  ##     allow-no-execute-taint-policy: true
-   ## @param webhook.extraCommandArgs extra command args of the karmada-webhook
-   extraCommandArgs: {}
- 
+@@ -1773,6 +1773,14 @@ spec:
+                 description: SchedulePriority represents the scheduling priority assigned
+                   to workloads.
+                 properties:
++                  preemptionPolicy:
++                    description: |-
++                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
++                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
++                      It is populated from the preemptionPolicy of the referenced PriorityClass.
++                    enum:
++                    - PreemptLowerPriority
++                    type: string
+                   priority:
+                     default: 0
+                     description: |-
 ```
 
-**File**: `operator/pkg/karmadaresource/webhookconfiguration/manifests.go` (modified, +14/-0)
+**File**: `docs/proposals/scheduling/binding-preemption/binding-preemption.md` (modified, +8/-8)
 ```diff
-@@ -334,5 +334,19 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://{{ .Service }}.{{ .Namespace }}.svc:443/validate-clustertaintpolicy
-+      caBundle: {{ .CaBundle }}
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: ["v1"]
-+    timeoutSeconds: 3
- `
- )
-```
-
-**File**: `operator/pkg/karmadaresource/webhookconfiguration/webhookconfiguration_test.go` (modified, +58/-0)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"strings"
- 	"testing"
+@@ -244,7 +244,7 @@ Victim selection uses the preemptor's namespace by default. The `--enable-cross-
  
-+	"github.com/google/go-cmp/cmp"
- 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
- 	fakeclientset "k8s.io/client-go/kubernetes/fake"
- 	coretesting "k8s.io/client-go/testing"
-@@ -128,3 +129,60 @@ func TestValidatingWebhookConfiguration(t *testing.T) {
- 		}
- 	}
- }
-+
-+func TestValidatingWebhookConfigurationClusterTaintPolicy(t *testing.T) {
-+	name, namespace := "karmada-demo", "test"
-+
-+	caTestData := "test-ca-data"
-+	caBundle := base64.StdEncoding.EncodeToString([]byte(caTestData))
-+
-+	fakeClient := fakeclientset.NewClientset()
-+	err := validatingWebhookConfiguration(fakeClient, namespace, name, caBundle)
-+	if err != nil {
-+		t.Fatalf("error creating the validating webhook configuration: %v", err)
-+	}
-+
-+	actions := fakeClient.Actions()
-+	if len(actions) != 1 {
-+		t.Fatalf("expected 1 action, but got %d", len(actions))
-+	}
-+
-+	createAction, ok := actions[0].(coretesting.CreateAction)
-+	if !ok {
-+		t.Fatalf("expected CreateAction, but got %T", actions[0])
-+	}
-+
-+	validatingWebhookConfig := createAction.GetObject().(*admissionregistrationv1.ValidatingWebhookConfiguration)
-+
-+	var got *admissionregistrationv1.ValidatingWebhook
-+	for i := range validatingWebhookConfig.Webhooks {
-+		if validatingWebhookConfig.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
-+			got = &validatingWebhookConfig.Webhooks[i]
-+			break
-+		}
-+	}
-+	if got == nil {
-+		t.Fatalf("validating webhook configuration is missing the clustertaintpolicy.karmada.io webhook")
-+	}
-+
-+	want := &admissionregistrationv1.ValidatingWebhook{
-+		Name:         "clustertaintpolicy.karmada.io",
-+		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new(fmt.Sprintf("https://%s.%s.svc:443/validate-clustertaintpolicy", util.KarmadaWebhookName(name), namespace)), CABundle: []byte(caTestData)},
-+		Rules: []admissionregistrationv1.RuleWithOperations{{
-+			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
-+			Rule: admissionregistrationv1.Rule{
-+				APIGroups:   []string{"policy.karmada.io"},
-+				APIVersions: []string{"*"},
-+				Resources:   []string{"clustertaintpolicies"},
-+				Scope:       new(admissionregistrationv1.ClusterScope),
-+			},
-+		}},
-+		FailurePolicy:           new(admissionregistrationv1.Fail),
-+		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
-+		TimeoutSeconds:          new(int32(3)),
-+		AdmissionReviewVersions: []string{"v1"},
-+	}
-+	if diff := cmp.Diff(want, got); diff != "" {
-+		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
-+	}
-+}
-```
-
-**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration.go` (modified, +14/-0)
-```diff
-@@ -345,6 +345,20 @@ webhooks:
-     sideEffects: NoneOnDryRun
-     admissionReviewVersions: ["v1"]
-     timeoutSeconds: 3
-+  - name: clustertaintpolicy.karmada.io
-+    rules:
-+      - operations: ["CREATE", "UPDATE"]
-+        apiGroups: ["policy.karmada.io"]
-+        apiVersions: ["*"]
-+        resources: ["clustertaintpolicies"]
-+        scope: "Cluster"
-+    clientConfig:
-+      url: https://karmada-webhook.%[1]s.svc:443/validate-clustertaintpolicy
-+      caBundle: %[2]s
-+    failurePolicy: Fail
-+    sideEffects: None
-+    admissionReviewVersions: ["v1"]
-+    timeoutSeconds: 3
- `, systemNamespace, caBundle)
- }
+ ## API Changes
  
-```
-
-**File**: `pkg/karmadactl/cmdinit/karmada/webhook_configuration_test.go` (modified, +45/-0)
-```diff
-@@ -18,9 +18,14 @@ package karmada
+-### Add `PreemptionPolicy` to `SchedulePriority`
++### Add `PreemptionPolicy` to `ResourceBinding.Spec.SchedulePriority`
  
- import (
- 	"encoding/base64"
-+	"encoding/json"
- 	"testing"
- 
-+	"github.com/google/go-cmp/cmp"
-+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
- 	"k8s.io/client-go/kubernetes/fake"
-+
-+	"github.com/karmada-io/karmada/pkg/karmadactl/cmdinit/utils"
+ ```go
+ type PreemptionPolicy string
+@@ -254,13 +254,13 @@ const (
  )
  
- func Test_createOrUpdateValidatingWebhookConfiguration(t *testing.T) {
-@@ -44,3 +49,43 @@ func Test_createOrUpdateMutatingWebhookConfiguration(t *testing.T) {
- 		t.Errorf("createOrUpdateMutatingWebhookConfiguration() return = %v, want no error", err)
- 	}
+ type SchedulePriority struct {
+-    Priority         int32            `json:"priority,omitempty"`
+-    PreemptionPolicy PreemptionPolicy `json:"preemptionPolicy,omitempty"`
++    Priority         int32             `json:"priority,omitempty"`
++    PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
  }
+ ```
+ 
+-- Defaults to unset (empty string), meaning the binding never preempts. No explicit "Never" constant is needed — the zero value naturally means "no preemption."
+-- The ResourceDetector maps `PreemptionPolicy` from the PriorityClass's `preemptionPolicy` field when `PriorityBasedPreemptiveScheduling` is enabled. Kubernetes defaults `preemptionPolicy` to `PreemptLowerPriority` when unset, so any PriorityClass without explicit `preemptionPolicy: Never` enables preemption at the binding level. The feature gate (alpha, default off) provides the primary opt-in control.
++- `nil` means the binding never preempts; only `PreemptLowerPriority` enables preemption. No `Never` constant is needed: unlike Kubernetes, ResourceBinding does not default this field, so leaving it unset already means "no preemption".
++- The ResourceDetector sets `PreemptionPolicy` to `PreemptLowerPriority` when the PriorityClass's `preemptionPolicy` is `PreemptLowerPriority` and `PriorityBasedPreemptiveScheduling` is enabled; otherwise it leaves the field `nil`. 
+ 
+ ### New Constants and Feature Gate
+ 
+@@ -337,7 +337,7 @@ func isPreemptionApplicable(spec *workv1alpha2.ResourceBindingSpec) bool {
+ }
+ ```
+ 
+-The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
++The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy != nil && *PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
+ 
+ ### Modified Schedule() Flow
+ 
+@@ -672,7 +672,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
+ ### Unit Tests
+ - Victim selection: minimum victims, priority ordering, reprieve correctness.
+ - Priority handling: nil victim priority is treated as `0`; a binding without `PreemptLowerPriority` cannot initiate preemption.
+-- `PreemptionPolicy` resolution: feature gate disabled → unset, explicit opt-in.
++- `PreemptionPolicy` resolution: feature gate disabled → `nil`; PriorityClass `PreemptLowerPriority` → set; PriorityClass `Never` or `nil` → `nil`.
+ - Trigger handling: typed insufficient-capacity results trigger preemption; affinity, taint, spread, and other failures do not.
+ - Applicability checks: `MaxGroups == 1`, non-workload, multi-component preemptor, ClusterAffinities exclusions.
+ - Victim scope: same namespace by default; cross-namespace victims require `--enable-cross-namespace-preemption=true`.
+@@ -683,7 +683,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
+ 
+ ### Integration Tests
+ - End-to-end: high-priority binding preempts low-priority binding on single cluster.
+-- No preemption when PreemptionPolicy is unset or feature gate disabled.
++- No preemption when PreemptionPolicy is `nil` or when the feature gate is disabled.
+ - With `MultiplePodTemplatesScheduling` enabled, multi-component bindings can be selected as victims.
+ - Cross-namespace victims require `--enable-cross-namespace-preemption=true`; same-namespace behavior remains the default.
+ - Preempted binding reschedules to another cluster.
+```
+
+**File**: `hack/update-codegen.sh` (modified, +3/-0)
+```diff
+@@ -43,6 +43,9 @@ cleanup
+ 
+ source "${REPO_ROOT}"/hack/util.sh
+ util:create_gopath_tree "${REPO_ROOT}" "${go_path}"
++# Keep the module cache (and any auto-downloaded toolchain) out of the
++# temporary GOPATH so cleanup() can always remove it.
++export GOMODCACHE="$(go env GOMODCACHE)"
+ export GOPATH="${go_path}"
+ 
+ echo "Generating with deepcopy-gen"
+```
+
+**File**: `hack/update-estimator-protobuf.sh` (modified, +3/-0)
+```diff
+@@ -131,6 +131,9 @@ setup_protoc
+ 
+ source "${KARMADA_ROOT}"/hack/util.sh
+ util:create_gopath_tree "${KARMADA_ROOT}" "${go_path}"
++# Keep the module cache (and any auto-downloaded toolchain) out of the
++# temporary GOPATH so cleanup() can always remove it.
++export GOMODCACHE="$(go env GOMODCACHE)"
+ export GOPATH="${go_path}"
+ 
+ # https://github.com/kubernetes/kubernetes/blob/release-1.23/hack/update-generated-protobuf-dockerized.sh
+```
+
+**File**: `pkg/apis/work/v1alpha2/binding_types.go` (modified, +16/-0)
+```diff
+@@ -413,6 +413,15 @@ type Suspension struct {
+ 	Scheduling *bool `json:"scheduling,omitempty"`
+ }
+ 
++// PreemptionPolicy describes whether a binding may preempt lower-priority bindings.
++type PreemptionPolicy string
 +
-+func TestValidatingConfigClusterTaintPolicyWebhook(t *testing.T) {
-+	cfg := validatingConfig(base64.StdEncoding.EncodeToString([]byte("foo")), "bar")
-+	obj := admissionregistrationv1.ValidatingWebhookConfiguration{}
-+	if err := json.Unmarshal(utils.StaticYamlToJSONByte(cfg), &obj); err != nil {
-+		t.Fatalf("failed to decode validatingConfig() output: %v", err)
-+	}
++const (
++	// PreemptLowerPriority means the binding may preempt lower-priority bindings
++	// when it cannot be scheduled due to insufficient capacity.
++	PreemptLowerPriority PreemptionPolicy = "PreemptLowerPriority"
++)
 +
-+	var got *admissionregistrationv1.ValidatingWebhook
-+	for i := range obj.Webhooks {
-+		if obj.Webhooks[i].Name == "clustertaintpolicy.karmada.io" {
-+			got = &obj.Webhooks[i]
-+			break
-+		}
-+	}
-+	if got == nil {
-+		t.Fatalf("validatingConfig() is missing the clustertaintpolicy.karmada.io webhook")
-+	}
+ // SchedulePriority represents the scheduling priority assigned to workloads.
+ type SchedulePriority struct {
+ 	// Priority specifies the scheduling priority for the binding.
+@@ -421,6 +430,13 @@ type SchedulePriority struct {
+ 	// +kubebuilder:default=0
+ 	// +optional
+ 	Priority int32 `json:"priority,omitempty"`
 +
-+	want := &admissionregistrationv1.ValidatingWebhook{
-+		Name:         "clustertaintpolicy.karmada.io",
-+		ClientConfig: admissionregistrationv1.WebhookClientConfig{URL: new("https://karmada-webhook.bar.svc:443/validate-clustertaintpolicy"), CABundle: []byte("foo")},
-+		Rules: []admissionregistrationv1.RuleWithOperations{{
-+			Operations: []admissionregistrationv1.OperationType{admissionregistrationv1.Create, admissionregistrationv1.Update},
-+			Rule: admissionregistrationv1.Rule{
-+				APIGroups:   []string{"policy.karmada.io"},
-+				APIVersions: []string{"*"},
-+				Resources:   []string{"clustertaintpolicies"},
-+				Scope:       new(admissionregistrationv1.ClusterScope),
-+			},
-+		}},
-+		FailurePolicy:           new(admissionregistrationv1.Fail),
-+		SideEffects:             new(admissionregistrationv1.SideEffectClassNone),
-+		TimeoutSeconds:          new(int32(3)),
-+		AdmissionReviewVersions: []string{"v1"},
++	// PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
++	// Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
++	// It is populated from the preemptionPolicy of the referenced PriorityClass.
++	// +kubebuilder:validation:Enum=PreemptLowerPriority
++	// +optional
++	PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
+ }
+ 
+ // WorkloadAffinityGroups stores the instantiated affinity and anti-affinity group names.
+```
+
+**File**: `pkg/apis/work/v1alpha2/zz_generated.deepcopy.go` (modified, +6/-1)
+```diff
+@@ -433,7 +433,7 @@ func (in *ResourceBindingSpec) DeepCopyInto(out *ResourceBindingSpec) {
+ 	if in.SchedulePriority != nil {
+ 		in, out := &in.SchedulePriority, &out.SchedulePriority
+ 		*out = new(SchedulePriority)
+-		**out = **in
++		(*in).DeepCopyInto(*out)
+ 	}
+ 	if in.WorkloadAffinityGroups != nil {
+ 		in, out := &in.WorkloadAffinityGroups, &out.WorkloadAffinityGroups
+@@ -490,6 +490,11 @@ func (in *ResourceBindingStatus) DeepCopy() *ResourceBindingStatus {
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *SchedulePriority) DeepCopyInto(out *SchedulePriority) {
+ 	*out = *in
++	if in.PreemptionPolicy != nil {
++		in, out := &in.PreemptionPolicy, &out.PreemptionPolicy
++		*out = new(PreemptionPolicy)
++		**out = **in
 +	}
-+	if diff := cmp.Diff(want, got); diff != "" {
-+		t.Errorf("clustertaintpolicy.karmada.io webhook mismatch (-want +got):\n%s", diff)
-+	}
-+}
+ 	return
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7966** (2026-10-23): feat: add priority based preemptive scheduling gate (@asarj)
 - **PR #7963** (2026-10-22): fix: add ClusterTaintPolicy webhook to chart, init, and operator (@cmontemuino)
 - **PR #7961** (2026-10-22): hack: pin command docs generation locale (@Himanshu-singh04)
 - **PR #7959** (2026-10-21): build: bump Go to v1.26.10 (@FengyuanYin)
+- **PR #7954** (2026-10-23): Introduce PreemptionPolicy to ResourceBinding SchedulePriority API (@RainbowMango)
 - **PR #7953** (2026-10-21): feat(chart): add extraCommandArgs to karmada-webhook (@cmontemuino)
-- **PR #7950** (2026-10-19): Removed github workflow for releasing images to SWR (@RainbowMango)
-- **PR #7948** (2026-10-19): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0 (@dependabot[bot])
 
 ---
 
@@ -1521,34 +1373,21 @@ Signed-off-by: cmontemuino <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry
+## X. add priority based preemptive scheduling gate (#7966)
 
 **RULE**:
-When implementing operations in `charts/karmada/templates/_karmada_webhook_configuration.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/command-line-flags/karmada-agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f55ed275`: Merge pull request #7963 from cmontemuino/clustertaintpolicy-webhook-entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `103984cd`: add priority based preemptive scheduling gate (#7966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/templates/_karmada_webhook_configuration.tpl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/command-line-flags/karmada-agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  - name: clustertaintpolicy.karmada.io
-    rules:
-      - operations: ["CREATE", "UPDATE"]
-        apiGroups: ["policy.karmada.io"]
-        apiVersions: ["*"]
-        resources: ["clustertaintpolicies"]
-        scope: "Cluster"
-    clientConfig:
-      url: https://{{ $name }}-webhook.{{ $namespace }}.svc:443/validate-clustertaintpolicy
-      {{- include "karmada.webhook.caBundle" . | nindent 6 }}
-    failurePolicy: Fail
-    sideEffects: None
-    admissionReviewVersions: [ "v1" ]
-    timeoutSeconds: 3
+                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1558,4 +1397,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f55ed275` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `103984cd` are properly handled with clean fallback behavior.

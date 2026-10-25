@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `5b6eae3d`  
+> **Source Version**: `0d632b1d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:26:12.359Z  
+> **Timestamp**: 2026-10-25T06:44:48.211Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:26:01.650Z  
+> **Harvest Timestamp**: 2026-10-25T06:44:47.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40154 stars
+- **Stars / Engagement**: 40188 stars
 
 ---
 
@@ -1668,13 +1668,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30242** (2026-10-22): **`unique()` changes negative zero to positive zero in distinct rows while using the `streaming` engine**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  t0 = pl.DataFrame({"c0": [-0.0, -0.0], "c1": [0, 1]})  result = t0.unique().sort("c1")  print("Eager Result:") print(result)  t0 = t0.lazy()  result = t0.unique().sort("c1")  print("Lazy In-memory Result:") print(result.collect(engine="in-memory"))  print("Lazy Streaming Result:") print(result.collect(engine="streaming")) ```   ### Log output  ```shell Eager Result: shape: (2, 2) ┌──────┬─────┐ │ c0   ┆ c1  │ │ ---  ┆ --- │ │ f64  ┆ i64 │ ╞══════╪═════╡ │ -0.0 ┆ 0   │ │ -0.0 ┆ 1   │ └──────┴─────┘ Lazy In-memory Result: shape: (2, 2) ┌──────┬─────┐ │ c0   ┆ c1  │ │ ---  ┆ --- │ │ f64  ┆ i64 │ ╞══════╪═════╡ │ -0.0 ┆ 0   │ │ -0.0 ┆ 1   │ └──────┴─────┘ Lazy Streaming Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ f64 ┆ i64 │ ╞═════╪═════╡ │ 0.0 ┆ 0   │ │ 0.0 ┆ 1   │ └─────┴─────┘ ```  ### Issue description  The `streaming` engine changes the sign of a floating-point zero while executing a multi-column `unique()`.  The input rows are `(-0.0, 0)` and `(-0.0, 1)`. They are already distinct because their `c1` values differ, and both input values in `c0` are negative zero. Eager execution and lazy collection with `engine="in-memory"` preserve `-0.0`. The streaming engine returns `+0.0` in both rows. Sorting by `c1` remove
+- **Issue #30273** (2026-10-25): **`arr.first`/`arr.get`/`arr.max` etc return values for null `Array` rows**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  s = pl.Series([[1, 2], [3, 4]], dtype=pl.Array(pl.Int64, 2)).gather([0, None, 1]) print(s.to_list())          # [[1, 2], None, [3, 4]] print(s.arr.first().to_list())  # [1, 0, 3] print(s.arr.max().to_list())    # [2, 0, 4] print(s.reshape((-1,)).to_list())  # [1, 2, 0, 0, 3, 4] ```   ### Log output  ```shell [[1, 2], None, [3, 4]] [1, 0, 3] [2, 0, 4] [1, 2, 0, 0, 3, 4] ```  ### Issue description  For a null row of an `Array` column, `arr.first`, `arr.last`, `arr.get`, `arr.max`, `arr.min`, `to_numpy` and `reshape` read the values stored under the null row instead of returning null. Those values are arbitrary (here the zeros `gather` writes for a null index; with data from pyarrow they can be anything). `arr.sum`, `arr.contains`, `explode` and `cast(pl.List)` handle it correctly.  ### Expected behavior  `[1, None, 3]` for `arr.first()`, `[2, None, 4]` for `arr.max()`, and nulls for the null row in `reshape`.  ### Installed versions  Reproduces on 2.0
 
-- **Issue #30239** (2026-10-22): **Singleton-group covariance with `ddof=1` returns inconsistent results between `in-memory` and `streaming` engines**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  t0 = pl.DataFrame({"c0": [0, 1]})  result = t0.group_by("c0").agg(pl.cov("c0", "c0", ddof=1).alias("c1")).sort("c0")  print("Eager Result:") print(result)  t0 = t0.lazy()  result = t0.group_by("c0").agg(pl.cov("c0", "c0", ddof=1).alias("c1")).sort("c0")  print("Lazy In-memory Result:") print(result.collect(engine="in-memory"))  print("Lazy Streaming Result:") print(result.collect(engine="streaming")) ```   ### Log output  ```shell Eager Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ i64 ┆ f64 │ ╞═════╪═════╡ │ 0   ┆ 0.0 │ │ 1   ┆ 0.0 │ └─────┴─────┘ Lazy In-memory Result: shape: (2, 2) ┌─────┬─────┐ │ c0  ┆ c1  │ │ --- ┆ --- │ │ i64 ┆ f64 │ ╞═════╪═════╡ │ 0   ┆ 0.0 │ │ 1   ┆ 0.0 │ └─────┴─────┘ Lazy Streaming Result: shape: (2, 2) ┌─────┬──────┐ │ c0  ┆ c1   │ │ --- ┆ ---  │ │ i64 ┆ f64  │ ╞═════╪══════╡ │ 0   ┆ null │ │ 1   ┆ null │ └─────┴──────┘ ```  ### Issue description  The same grouped covariance produces different values depending on the execution engine. The input contains two distinct group keys, so each group contains exactly one valid observation. The aggregation computes `pl.cov("c0", "c0", ddof=1)` within each group.  Eager execution and lazy collection with `engine="in-memory"` both return `0.0` for 
-  **Post-Mortem & Fix Analysis**:
-  > Already fixed in #29754.
+- **Issue #30255** (2026-10-23): **`str.replace` returns wrong result for `(?:a+)?(b).*$` on main**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  pl.Series(["b-x"]).str.replace(r"(?:a+)?(b).*$", "<$1>") # main: ["b-x"]; expected (and 2.0.0): ["<b>"] ```   ### Log output  ```shell shape: (1,) Series: '' [str] [         "b-x" ] ```  ### Issue description  Regression from #29971: `MatchesToEnd` builds its head regex with `Hir::to_string()`, which doesn't round-trip nested repetitions (`(?:a+)?` prints as `a+?`).  ### Expected behavior  ``` shape: (1,) Series: '' [str] [         "<b>" ] ```  ### Installed versions  Reproduces on main only.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1691,477 +1689,1019 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b6eae3d` (2026-10-22)
-**Commit Message**: fix: Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194)
+### Incident Patch 1: `0d632b1d` (2026-10-25)
+**Commit Message**: fix: Do not read the values stored under null `Array` rows (#30286)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `py-polars/src/polars/io/delta/_utils.py` (modified, +38/-0)
+**File**: `crates/polars-compute/src/gather/sublist/fixed_size_list.rs` (modified, +7/-0)
 ```diff
-@@ -109,6 +109,40 @@ def _check_for_unsupported_types(dtypes: list[DataType]) -> None:
-         raise TypeError(msg)
+@@ -1,4 +1,5 @@
+ use polars_arrow::array::{ArrayRef, FixedSizeListArray, PrimitiveArray};
++use polars_arrow::compute::utils::combine_validities_and;
+ use polars_arrow::datatypes::IdxArr;
+ use polars_arrow::legacy::index::IndexToUsize;
+ use polars_arrow::legacy::utils::CustomIterTools;
+@@ -50,6 +51,9 @@ pub fn sub_fixed_size_list_get_literal(
+     if !null_on_oob && take_by.null_count() > 0 {
+         polars_bail!(ComputeError: "get index is out of bounds");
+     }
++    // Null rows may store any values, so don't read them.
++    let validity = combine_validities_and(take_by.validity(), arr.validity());
++    let take_by = take_by.with_validity(validity);
  
+     let values = arr.values();
+     // SAFETY:
+@@ -66,6 +70,9 @@ pub fn sub_fixed_size_list_get(
+     if !null_on_oob && take_by.null_count() > 0 {
+         polars_bail!(ComputeError: "get index is out of bounds");
+     }
++    // Null rows may store any values, so don't read them.
++    let validity = combine_validities_and(take_by.validity(), arr.validity());
++    let take_by = take_by.with_validity(validity);
  
-+def _widen_truncated_timestamp_max(s: Series) -> Series:
-+    """
-+    Widen the max statistics of timestamp columns (including struct fields) by 1ms.
-+
-+    The Delta protocol truncates timestamp min/max statistics down to milliseconds,
-+    so the real max of a file can lie up to (but excluding) 1ms above the recorded max.
-+    """
-+    import polars as pl
-+
-+    dtype = s.dtype
-+
-+    if isinstance(dtype, pl.Datetime):
-+        # Add in physical units to keep the time unit (adding a `timedelta` turns ns
-+        # into us) and map overflow to null (unknown) rather than wrapping around.
-+        one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[dtype.time_unit]
-+        phys = s.to_physical()
-+        return pl.select(
-+            pl.when(phys <= 2**63 - 1 - one_ms)
-+            .then(phys + one_ms)
-+            .cast(dtype)
-+            .alias(s.name)
-+        ).to_series()
-+
-+    if isinstance(dtype, pl.Struct) and dtype.fields:
-+        fields = [
-+            _widen_truncated_timestamp_max(f) for f in s.struct.unnest().iter_columns()
-+        ]
-+        return pl.select(
-+            pl.when(s.is_not_null()).then(pl.struct(fields)).alias(s.name)
-+        ).to_series()
-+
-+    return s
-+
-+
- def _extract_table_statistics_from_delta_add_actions(
-     add_actions_df: DataFrame,
-     *,
-@@ -184,6 +218,10 @@ def column_statistics(col_name: str) -> dict[str, Series]:
-                 col_max if col_max is not None else null_col(dtype)
-             )
- 
-+        stats[f"{col_name}_max"] = _widen_truncated_timestamp_max(
-+            stats[f"{col_name}_max"]
-+        )
-+
-         return stats
- 
-     def best_effort_column_statistics(col_name: str) -> dict[str, Series]:
+     let values = arr.values();
+     // SAFETY:
 ```
 
-**File**: `py-polars/tests/unit/io/test_delta.py` (modified, +62/-2)
+**File**: `crates/polars-core/src/series/ops/reshape.rs` (modified, +13/-6)
 ```diff
-@@ -28,13 +28,17 @@
-     _source_sizes,
-     _table_root,
- )
--from polars.io.delta._utils import _extract_table_statistics_from_delta_add_actions
-+from polars.io.delta._utils import (
-+    _extract_table_statistics_from_delta_add_actions,
-+    _widen_truncated_timestamp_max,
-+)
- from polars.meta import get_index_type
- from polars.testing import assert_frame_equal, assert_frame_not_equal
+@@ -109,12 +109,19 @@ impl Series {
+             InvalidOperation: "at least one dimension must be specified"
+         );
+ 
+-        let leaf_array = self
+-            .trim_lists_to_normalized_offsets()
+-            .as_ref()
+-            .unwrap_or(self)
+-            .get_leaf_array()
+-            .rechunk();
++        // Null rows may store any values: null them, then skip the values of null lists.
++        let mut leaf_array = self.propagate_nulls().unwrap_or_else(|| self.clone());
++        loop {
++            leaf_array = match leaf_array.dtype() {
++                DataType::Array(_, _) => leaf_array.array()?.get_inner(),
++                DataType::List(_) => leaf_array.explode(ExplodeOptions {
++                    empty_as_null: false,
++                    keep_nulls: false,
++                })?,
++                _ => break,
++            };
++        }
++        let leaf_array = leaf_array.rechunk();
+         let size = leaf_array.len();
+ 
+         let mut total_dim_size = 1;
+```
+
+**File**: `crates/polars-ops/src/chunked_array/array/min_max.rs` (modified, +15/-13)
+```diff
+@@ -1,4 +1,5 @@
+ use polars_arrow::array::{Array, PrimitiveArray};
++use polars_arrow::compute::utils::combine_validities_and;
+ use polars_compute::min_max::MinMaxKernel;
+ use polars_core::prelude::*;
+ use polars_core::with_match_physical_numeric_polars_type;
+@@ -67,20 +68,21 @@ where
+     )
+ }
+ 
+-pub(super) fn array_dispatch(
+-    name: PlSmallStr,
+-    values: &Series,
+-    width: usize,
+-    agg_type: AggType,
+-) -> Series {
++pub(super) fn array_dispatch(ca: &ArrayChunked, agg_type: AggType) -> Series {
++    let values = ca.get_inner();
++    let width = ca.width();
+     let chunks: Vec<ArrayRef> = with_match_physical_numeric_polars_type!(values.dtype(), |$T| {
+-        let ca: &ChunkedArray<$T> = values.as_ref().as_ref().as_ref();
+-        ca.downcast_iter().map(|arr| {
+-            match agg_type {
+-                AggType::Min => Box::new(agg_min(arr, width)) as ArrayRef,
+-                AggType::Max => Box::new(agg_max(arr, width)) as ArrayRef,
+-            }
++        let values: &ChunkedArray<$T> = values.as_ref().as_ref().as_ref();
++        // The inner chunks line up with the outer ones.
++        values.downcast_iter().zip(ca.downcast_iter()).map(|(arr, outer)| {
++            let out = match agg_type {
++                AggType::Min => agg_min(arr, width),
++                AggType::Max => agg_max(arr, width),
++            };
++            // Null rows may store any values.
++            let validity = combine_validities_and(out.validity(), outer.validity());
++            Box::new(out.with_validity(validity)) as ArrayRef
+         }).collect()
+     });
+-    Series::try_from((name, chunks)).unwrap()
++    Series::try_from((ca.name().clone(), chunks)).unwrap()
+ }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/array/namespace.rs` (modified, +1/-3)
+```diff
+@@ -26,9 +26,7 @@ pub fn has_inner_nulls(ca: &ArrayChunked) -> bool {
+ }
+ 
+ fn get_agg(ca: &ArrayChunked, agg_type: AggType) -> Series {
+-    let values = ca.get_inner();
+-    let width = ca.width();
+-    min_max::array_dispatch(ca.name().clone(), &values, width, agg_type)
++    min_max::array_dispatch(ca, agg_type)
+ }
+ 
+ pub trait ArrayNameSpace: AsArray {
+```
+
+**File**: `crates/polars-python/src/interop/numpy/to_numpy_series.rs` (modified, +2/-0)
+```diff
+@@ -492,6 +492,8 @@ fn list_series_to_numpy(py: Python<'_>, s: &Series, writable: bool) -> PyResult<
+ 
+ /// Convert arrays by flattening first, converting the flat Series, and then reshaping.
+ fn array_series_to_numpy(py: Python<'_>, s: &Series, writable: bool) -> PyResult<Py<PyAny>> {
++    // Null rows may store any values, so null them in the inner values.
++    let s = s.propagate_nulls().unwrap_or_else(|| s.clone());
+     let ca = s.array().unwrap();
+     let s_inner = ca.get_inner();
+     let np_array_flat = series_to_numpy_with_copy(py, &s_inner, writable)?;
+```
+
+**File**: `py-polars/tests/unit/interop/numpy/test_to_numpy_series.py` (modified, +16/-0)
+```diff
+@@ -7,6 +7,7 @@
+ from typing import TYPE_CHECKING, Any
+ 
+ import numpy as np
++import pyarrow as pa
+ import pytest
+ from hypothesis import given, settings
+ from numpy.testing import assert_array_equal
+@@ -280,6 +281,21 @@ def test_series_to_numpy_array_with_nested_nulls() -> None:
+     assert_allow_copy_false_raises(s)
+ 
+ 
++def test_series_to_numpy_array_null_row_stored_values_30273() -> None:
++    # The null row stores valid values, which must become NaN/None.
++    mask = pa.array([False, True, False])
++    ints = pa.array([1, 2, 9, 9, 3, 4])
++    s = pl.Series(pa.FixedSizeListArray.from_arrays(ints, 2, mask=mask))
++    result = s.to_numpy()
++    assert_array_equal(result, np.array([[1.0, 2.0], [np.nan, np.nan], [3.0, 4.0]]))
++    assert result.dtype == np.float64
++    assert_array_equal(s.to_frame().to_numpy()[1, 0], [np.nan, np.nan])
++
++    strs = pa.array(["a", "b", "z", "z", "c", "d"])
++    s = pl.Series(pa.FixedSizeListArray.from_arrays(strs, 2, mask=mask))
++    assert s.to_numpy().tolist() == [["a", "b"], [None, None], ["c", "d"]]
++
++
+ def test_series_to_numpy_array_of_arrays() -> None:
+     values = [[[None, 2], [3, 4]], [None, [7, 8]]]
+     s = pl.Series(values, dtype=pl.Array(pl.Array(pl.Int64, 2), 2))
+```
+
+**File**: `py-polars/tests/unit/operations/namespaces/array/test_array.py` (modified, +59/-0)
+```diff
+@@ -4,6 +4,7 @@
+ from typing import TYPE_CHECKING, Any
+ 
+ import numpy as np
++import pyarrow as pa
+ import pytest
+ 
+ import polars as pl
+@@ -13,6 +14,8 @@
+ from tests.unit.conftest import INTEGER_DTYPES
  
  if TYPE_CHECKING:
-     from collections.abc import Callable
- 
-+    from polars._typing import TimeUnit
++    from collections.abc import Callable
++
      from tests.conftest import PlMonkeyPatch
  
  
-@@ -1092,7 +1096,7 @@ def test_scan_delta_extract_table_statistics_df(tmp_path: Path) -> None:
-                 pl.Series('date_max', [datetime.date(2020, 1, 2), datetime.date(2020, 1, 6), datetime.date(2020, 1, 4)], dtype=pl.Date),
-                 pl.Series('datetime_nc', [0, 0, 0], dtype=get_index_type()),
-                 pl.Series('datetime_min', [datetime.datetime(2020, 1, 1, 0, 0), datetime.datetime(2020, 1, 5, 0, 0), datetime.datetime(2020, 1, 3, 0, 0)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
--                pl.Series('datetime_max', [datetime.datetime(2020, 1, 2, 0, 0), datetime.datetime(2020, 1, 6, 0, 0), datetime.datetime(2020, 1, 4, 0, 0)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
-+                pl.Series('datetime_max', [datetime.datetime(2020, 1, 2, 0, 0, 0, 1000), datetime.datetime(2020, 1, 6, 0, 0, 0, 1000), datetime.datetime(2020, 1, 4, 0, 0, 0, 1000)], dtype=pl.Datetime(time_unit='us', time_zone=None)),
-             ]
-         ),
-         check_row_order=False
-@@ -1465,6 +1469,62 @@ def test_scan_delta_predicate_pushdown_struct_column_27857(tmp_path: Path) -> No
-     assert_frame_equal(out, expected)
+@@ -829,6 +832,62 @@ def test_arr_first_last() -> None:
+     assert_series_equal(last, expected_last)
  
  
-+@pytest.mark.write_disk
-+def test_scan_delta_filter_truncated_timestamp_max_statistics_30147(
-+    tmp_path: Path,
-+) -> None:
-+    # The Delta protocol truncates timestamp min/max statistics to milliseconds, so
-+    # the max in the log can be below the real max of the file.
-+    first = datetime(2026, 1, 1, 0, 0, 0, 999)
-+    second = datetime(2026, 1, 1, 1, 0, 0)
-+
-+    pl.DataFrame({"ts": [first], "s": [{"ts": first}]}).write_delta(tmp_path)
-+    pl.DataFrame({"ts": [second], "s": [{"ts": second}]}).write_delta(
-+        tmp_path, mode="append"
-+    )
-+
-+    q = pl.scan_delta(tmp_path)
-+    ts = pl.col("ts")
-+    s_ts = pl.col("s").struct.field("ts")
-+
-+    assert q.filter(ts == first).collect().height == 1
-+    assert q.filter(ts >= first).collect().height == 2
-+    assert q.filter(ts > first).collect().height == 1
-+    assert q.filter(ts.is_in([first])).collect().height == 1
-+    assert q.filter(s_ts == first).collect().height == 1
-+    assert q.filter(s_ts >= first).collect().height == 2
-+
-+
-+@pytest.mark.parametrize("time_unit", ["ms", "us", "ns"])
-+def test_widen_truncated_timestamp_max(time_unit: TimeUnit) -> None:
-+    one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[time_unit]
-+    dtype = pl.Datetime(time_unit, "UTC")
-+    i64_max = 2**63 - 1
-+
-+    s = pl.Series("a", [0, i64_max - one_ms, i64_max, None]).cast(dtype)
-+    out = _widen_truncated_timestamp_max(s)
-+
-+    # Keeps the time unit and maps overflow to null (unknown) instead of wrapping.
-+    assert out.dtype == dtype
-+    assert out.to_physical().to_list() == [one_ms, i64_max, None, None]
-+
-+    struct_dtype = pl.Struct({"x": pl.Struct({"ts": dtype}), "y": pl.Int64})
-+    s = pl.Series(
-+        "s",
-+        [{"x": {"ts": 0}, "y": 0}, None, {"x": None, "y": None}],
-+        dtype=pl.Struct({"x": pl.Struct({"ts": pl.Int64}), "y": pl.Int64}),
-+    ).cast(struct_dtype)
-+    out = _widen_truncated_timestamp_max(s)
-+
-+    assert out.dtype == struct_dtype
-+    assert out.struct.field("x").struct.field("ts").to_physical().to_list() == [
-+        one_ms,
-+        None,
-+        None,
-+    ]
-+    assert out.is_null().to_list() == [False, True, False]
-+
-+
- @pytest.mark.write_disk
- def test_scan_delta_predicate_pushdown_struct_is_not_null(
-     tmp_path: Path,
-```
-
----
-
-### Incident Patch 2: `20ac2a85` (2026-10-22)
-**Commit Message**: fix: Fix wrong JSON output for `Struct` and `Array` inside list (#30200)
-
-**File**: `crates/polars-json/src/json/write/serialize.rs` (modified, +45/-45)
-```diff
-@@ -243,29 +243,29 @@ fn struct_serializer<'a>(
-         .map(|arr| new_serializer(arr, offset, take))
-         .collect::<Vec<_>>();
- 
--    Box::new(BufStreamingIterator::new(
--        ZipValidity::new_with_validity(0..array.len(), array.validity()),
--        move |maybe, buf| {
--            if maybe.is_some() {
--                let names = array.fields().iter().map(|f| f.name.as_str());
--                serialize_item(
--                    buf,
--                    names.zip(
--                        serializers
--                            .iter_mut()
--                            .map(|serializer| serializer.next().unwrap()),
--                    ),
--                    true,
--                );
--            } else {
--                serializers.iter_mut().for_each(|iter| {
--                    let _ = iter.next();
--                });
--                buf.extend(b"null");
--            }
--        },
--        vec![],
--    ))
-+    let f = move |maybe: Option<usize>, buf: &mut Vec<u8>| {
-+        if maybe.is_some() {
-+            let names = array.fields().iter().map(|f| f.name.as_str());
-+            serialize_item(
-+                buf,
-+                names.zip(
-+                    serializers
-+                        .iter_mut()
-+                        .map(|serializer| serializer.next().unwrap()),
-+                ),
-+                true,
-+            );
-+        } else {
-+            serializers.iter_mut().for_each(|iter| {
-+                let _ = iter.next();
-+            });
-+            buf.extend(b"null");
-+        }
-+    };
-+
-+    // The field serializers skip `offset` rows, so the validity must skip them too.
-+    let iter = ZipValidity::new_with_validity(0..array.len(), array.validity());
-+    materialize_serializer(f, iter, offset, take)
- }
- 
- fn list_serializer<'a, O: Offset>(
-@@ -378,30 +378,30 @@ fn fixed_size_list_serializer<'a>(
-         take.saturating_mul(array.size()),
-     );
- 
--    Box::new(BufStreamingIterator::new(
--        ZipValidity::new(0..array.len(), array.validity().map(|x| x.iter())),
--        move |ix, buf| {
--            let length = array.size();
--            if ix.is_some() {
--                buf.push(b'[');
--                let mut is_first_row = true;
--                for _ in 0..length {
--                    if !is_first_row {
--                        buf.push(b',');
--                    }
--                    is_first_row = false;
--                    buf.extend(serializer.next().unwrap());
--                }
--                buf.push(b']');
--            } else {
--                buf.extend(b"null");
--                for _ in 0..length {
--                    serializer.next();
-+    let f = move |ix: Option<usize>, buf: &mut Vec<u8>| {
-+        let length = array.size();
-+        if ix.is_some() {
-+            buf.push(b'[');
-+            let mut is_first_row = true;
-+            for _ in 0..length {
-+                if !is_first_row {
-+                    buf.push(b',');
-                 }
-+                is_first_row = false;
-+                buf.extend(serializer.next().unwrap());
-             }
--        },
--        vec![],
--    ))
-+            buf.push(b']');
-+        } else {
-+            buf.extend(b"null");
-+            for _ in 0..length {
-+                serializer.next();
-+            }
-+        }
-+    };
-+
-+    // The values serializer skips `offset` rows, so the validity must skip them too.
-+    let iter = ZipValidity::new_with_validity(0..array.len(), array.validity());
-+    materialize_serializer(f, iter, offset, take)
- }
- 
- fn date_serializer<'a, T, F>(
-```
-
-**File**: `py-polars/tests/unit/io/test_json.py` (modified, +102/-1)
-```diff
-@@ -10,7 +10,7 @@
- from datetime import UTC, datetime
- from decimal import Decimal as D
- from io import BytesIO
--from typing import TYPE_CHECKING
-+from typing import TYPE_CHECKING, Any
- 
- import zstandard
- from hypothesis import given
-@@ -21,6 +21,7 @@
-     from pathlib import Path
- 
-     from polars._typing import TimeUnit
-+    from tests.conftest import PlMonkeyPatch
- 
- import orjson
- import pytest
-@@ -327,6 +328,106 @@ def test_ndjson_sliced_list_serialization() -> None:
-     assert f.getvalue() == b'{"col1":2,"col2":[6,7,8]}\n'
- 
- 
-+def test_write_ndjson_sliced_list_of_structs_30178() -> None:
-+    df = pl.DataFrame(
-+        {"a": [[{"x": 1}, None], [None, {"x": 2}], [{"x": 3}]]},
-+        schema={"a": pl.List(pl.Struct({"x": pl.Int64}))},
-+    )
-+    assert df.tail(2).write_ndjson() == '{"a":[null,{"x":2}]}\n{"a":[{"x":3}]}\n'
-+
-+
 +@pytest.mark.parametrize(
-+    ("values", "dtype"),
++    ("rows", "stored"),
 +    [
-+        (
-+            [[{"x": 1}, None], [None, {"x": 2}], [{"x": 3}], None, [{"x": 4}, None]],
-+            pl.List(pl.Struct({"x": pl.Int64})),
-+        ),
-+        (
-+            [[{"x": 1}, {"x": 2}], [{"x": 3}], [], [{"x": 4}, {"x": 5}]],
-+            pl.List(pl.Struct({"x": pl.Int64})),
-+        ),
-+        (
-+            [[[1, 2], None], [None, [3, 4]], [[5, 6]], None, [[7, 8], None]],
-+            pl.List(pl.Array(pl.Int64, 2)),
-+        ),
-+        (
-+            [
-+                [{"y": {"x": 1}}, None],
-+                [None, {"y": None}],
-+                [{"y": {"x": 3}}],
-+                [{"y": {"x": 4}}, None],
-+            ],
-+            pl.List(pl.Struct({"y": pl.Struct({"x": pl.Int64})})),
-+        ),
-+        (
-+            [
-+                [[{"x": 1}, None], None],
-+                [None, [None, {"x": 2}]],
-+                [[{"x": 3}, None]],
-+                [[{"x": 4}, {"x": 5}], None],
-+            ],
-+            pl.List(pl.Array(pl.Struct({"x": pl.Int64}), 2)),
-+        ),
-+        (
-+            [
-+                [{"a": [1, 2]}, None],
-+                [None, {"a": None}],
-+                [{"a": [3, 4]}],
-+                [{"a": [5, 6]}, None],
-+            ],
-+            pl.List(pl.Struct({"a": pl.Array(pl.Int64, 2)})),
-+        ),
-+        (
-+            [
-+                [{"l": [1]}, None],
-+                [None, {"l": [2, 3]}],
-+                [{"l": None}],
-+                [{"l": [4]}, None],
-+            ],
-+            pl.List(pl.Struct({"l": pl.List(pl.Int64)})),
-+        ),
++        ([[1, 2], None, [3, 4]], [9, 9]),
++        ([[1.5, 2.5], None, [3.5, 4.5]], [9.0, 9.0]),
++        ([["a", "b"], None, ["c", "d"]], ["z", "z"]),
++        ([[True, False], None, [False, False]], [True, True]),
++        ([[[1], [2]], None, [[3], [4]]], [[9], [9]]),
++        ([[{"f": 1}, {"f": 2}], None, [{"f": 3}, {"f": 4}]], [{"f": 9}, {"f": 9}]),
 +    ],
 +)
-+@pytest.mark.parametrize(("offset", "length"), [(1, None), (1, 1), (2, None)])
-+def test_write_json_sliced_nested_30178(
-+    values: list[Any], dtype: pl.DataType, offset: int, length: int | None
++def test_arr_null_rows_ignore_stored_values_30273(
++    rows: list[list[Any] | None], stored: list[Any]
 +) -> None:
-+    df = pl.DataFrame({"a": values}, schema={"a": dtype}).slice(offset, length)
-+    rows = [json.dumps(row, separators=(",", ":")) for row in df.rows(named=True)]
++    # A null row stores valid values, which must not be read.
++    flat = [v for r in rows for v in (stored if r is None else r)]
++    mask = pa.array([r is None for r in rows])
++    s = pl.Series("a", pa.FixedSizeListArray.from_arrays(pa.array(flat), 2, mask=mask))
++    expected = pl.Series("a", rows, dtype=s.dtype)
 +
-+    assert df.write_ndjson() == "".join(f"{row}\n" for row in rows)
-+    assert df.write_json() == f"[{','.join(rows)}]"
-+    assert df.select(pl.struct("a").struct.json_encode())["a"].to_list() == rows
-+
-+
-+def test_sink_ndjson_nested_multiple_morsels_30178(
-+    plmonkeypatch: PlMonkeyPatch,
-+) -> None:
-+    # Every morsel after the first is a slice, so its lists start at an offset.
-+    plmonkeypatch.setenv("POLARS_IDEAL_SINK_MORSEL_SIZE_ROWS", "100")
-+    n = 1000
-+    df = pl.DataFrame(
-+        {
-+            "s": [[None, {"x": i}] if i % 3 == 0 else [{"x": i}] for i in range(n)],
-+            "a": [[None, [i, i]] if i % 3 == 0 else [[i, i]] for i in range(n)],
-+        },
-+        schema={
-+            "s": pl.List(pl.Struct({"x": pl.Int64})),
-+            "a": pl.List(pl.Array(pl.Int64, 2)),
-+        },
-+    )
-+    expected = "".join(
-+        f"{json.dumps(row, separators=(',', ':'))}\n" for row in df.rows(named=True)
-+    )
-+
-+    assert df.write_ndjson() == expected
-+
-+    f = io.BytesIO()
-+    df.lazy().sink_ndjson(f)
-+    assert f.getvalue().decode() == expected
++    ops: list[Callable[[pl.Series], pl.Series]] = [
++        lambda s: s.arr.first(),
++        lambda s: s.arr.last(),
++        lambda s: s.arr.get(1),
++        lambda s: s.arr.get(-1, null_on_oob=False),
++        lambda s: s.arr.get(pl.Series([i % 2 for i in range(s.len())])),
++    ]
++    if s.dtype.inner.is_numeric():  # type: ignore[attr-defined]
++        ops += [lambda s: s.arr.min(), lambda s: s.arr.max()]
++    two_chunks = pl.concat([s, s], rechunk=False).slice(1, 4)
++    two_expected = pl.concat([expected, expected]).slice(1, 4)
++    for op in ops:
++        assert_series_equal(op(s), op(expected))
++        assert_series_equal(op(s[1:]), op(expected[1:]))
++        assert_series_equal(op(two_chunks), op(two_expected))
 +
 +
- def test_json_deserialize_9687() -> None:
-     response = {
-         "volume": [0.0, 0.0, 0.0],
++def test_arr_get_null_rows_ignore_stored_values_nested_30273() -> None:
++    mask = pa.array([False, True, False])
++    inner = pa.FixedSizeListArray.from_arrays(pa.array([1, 2, 9, 9, 3, 4]), 2)
++    s = pl.Series(pa.FixedSizeListArray.from_arrays(inner, 1, mask=mask))
++    assert s.arr.first().to_list() == [[1, 2], None, [3, 4]]
++
++    cats = pa.array(["a", "z", "c"]).dictionary_encode()
++    s = pl.Series(pa.FixedSizeListArray.from_arrays(cats, 1, mask=mask))
++    assert s.dtype == pl.Array(pl.Categorical, 1)
++    assert s.arr.get(0).to_list() == ["a", None, "c"]
++
++
++def test_arr_first_max_after_null_gather_30273() -> None:
++    idx = pl.Series([0, None, 1], dtype=pl.get_index_type())
++    s = pl.Series([[1, 2], [3, 4]], dtype=pl.Array(pl.Int64, 2)).gather(idx)
++    assert s.arr.first().to_list() == [1, None, 3]
++    assert s.arr.max().to_list() == [2, None, 4]
++
++
+ @pytest.mark.parametrize(
+     ("data", "set", "dtype"),
+     [
+```
+
+**File**: `py-polars/tests/unit/operations/test_reshape.py` (modified, +32/-0)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ import re
+ 
++import pyarrow as pa
+ import pytest
+ 
+ import polars as pl
+@@ -176,3 +177,34 @@ def test_reshape_list_not_fitting(shape: tuple[int, ...]) -> None:
+         match=re.escape(f"cannot reshape array of size 12 into shape {shape}"),
+     ):
+         df.lazy().select(pl.col("a").reshape(shape)).collect()
++
++
++def test_reshape_array_null_row_stored_values_30273() -> None:
++    # The null row stores valid 9s, which must become nulls.
++    ints = pa.array([1, 2, 9, 9, 3, 4])
++    mask = pa.array([False, True, False])
++    s = pl.Series("a", pa.FixedSizeListArray.from_arrays(ints, 2, mask=mask))
++    assert s.reshape((-1,)).to_list() == [1, 2, None, None, 3, 4]
++    assert s.reshape((-1, 1, 2)).to_list() == [[[1, 2]], [[None, None]], [[3, 4]]]
++
++    values = pa.FixedSizeListArray.from_arrays(ints, 2)
++    nested = pl.Series("a", pa.FixedSizeListArray.from_arrays(values, 1, mask=mask))
++    assert nested.reshape((-1,)).to_list() == [1, 2, None, None, 3, 4]
++
++
++def test_reshape_list_null_row_stored_values_30273() -> None:
++    # The null list row stores a valid 9, which must be dropped.
++    offsets = pa.array([0, 2, 3, 5], pa.int32())
++    lists = pa.ListArray.from_arrays(offsets, pa.array([1, 2, 9, 3, 4]))
++    mask = pa.array([False, True, False])
++    s = pl.Series("a", pa.ListArray.from_arrays(offsets, lists.values, mask=mask))
++    assert s.reshape((-1,)).to_list() == [1, 2, 3, 4]
++    assert s[1:].reshape((-1,)).to_list() == [3, 4]
++
++    nested = pl.Series("a", pa.FixedSizeListArray.from_arrays(lists, 1, mask=mask))
++    assert nested.reshape((-1,)).to_list() == [1, 2, 3, 4]
++
++    keep = pl.Series([True, False, True])
++    s = pl.Series("a", [[{"x": 1}], [{"x": 2}], [{"x": 3}]])
++    hidden = pl.select(pl.when(keep).then(s)).to_series()
++    assert hidden.reshape((-1,)).to_list() == [{"x": 1}, {"x": 3}]
 ```
 
 ---
 
-### Incident Patch 3: `0e7104a7` (2026-10-22)
-**Commit Message**: build: Allow choosing the Python interpreter for the dev venv with `PYTHON` (#30142)
+### Incident Patch 2: `d02c6217` (2026-10-24)
+**Commit Message**: perf: Return freed memory to the OS right away while out-of-core data is spilled (#30280)
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +5/-4)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@ SHELL=bash
- ifeq ($(VENV),)
- VENV := .venv
- endif
-+PYTHON ?= python3
- 
- RUNTIME_CARGO_TOML=py-polars/runtime/polars-runtime-32/Cargo.toml
- 
-@@ -75,7 +76,7 @@ FILTER_PIP_WARNINGS=| grep -v "don't match your environment"; test $${PIPESTATUS
- # directory; checking bin/python allows Make to better-detect/rebuild a broken venv
- $(VENV_BIN)/python:
- 	@unset CONDA_PREFIX \
--	&& python3 -m venv $(VENV) \
-+	&& $(PYTHON) -m venv $(VENV) \
- 	&& $(MAKE) requirements
- 
- .PHONY: .venv
-@@ -86,7 +87,7 @@ $(VENV_BIN)/python:
- .PHONY: requirements
- requirements:  ## Install/refresh Python project requirements
- 	@unset CONDA_PREFIX \
--	&& python3 -m venv $(VENV) --clear \
-+	&& $(PYTHON) -m venv $(VENV) --clear \
- 	&& $(VENV_BIN)/python -m pip install --upgrade uv \
- 	$(if $(EXTRA_REQUIREMENTS),&& $(VENV_BIN)/uv pip install --upgrade --compile-bytecode -r $(EXTRA_REQUIREMENTS)) \
- 	&& $(VENV_BIN)/uv pip install --upgrade --compile-bytecode --no-build \
-@@ -164,11 +165,11 @@ check: update-cargo-env ## Run cargo check with all features
- 
- .PHONY: clippy
- clippy: update-cargo-env ## Run clippy with all features
--	python3 tools/cargo-fail-warning.py clippy --workspace --all-targets --all-features --locked -- -W clippy::dbg_macro
-+	$(PYTHON) tools/cargo-fail-warning.py clippy --workspace --all-targets --all-features --locked -- -W clippy::dbg_macro
- 
- .PHONY: clippy-default
- clippy-default: update-cargo-env ## Run clippy with default features
--	python3 tools/cargo-fail-warning.py clippy --all-targets --locked -- -W clippy::dbg_macro
-+	$(PYTHON) tools/cargo-fail-warning.py clippy --all-targets --locked -- -W clippy::dbg_macro
- 
- .PHONY: fmt
- fmt: update-cargo-env ## Run autoformatting and linting
+@@ -3534,6 +3534,7 @@ dependencies = [
+  "rand 0.10.2",
+  "rand_distr",
+  "thread_local",
++ "tikv-jemalloc-sys",
+  "tikv-jemallocator",
+  "tokio",
+  "uuid",
 ```
 
-**File**: `docs/source/development/contributing/index.md` (modified, +2/-1)
+**File**: `crates/polars-config/src/lib.rs` (modified, +34/-0)
 ```diff
-@@ -122,7 +122,8 @@ make test
+@@ -99,6 +99,12 @@ const DEFAULT_OOC_MAX_PARALLEL_PREFETCH_TASKS: u64 = 64;
+ const OOC_LOG_METRICS: &str = "POLARS_OOC_LOG_METRICS";
+ const DEFAULT_OOC_LOG_METRICS: bool = false;
  
- This will do a number of things:
++const OOC_PRESSURE_DECAY: &str = "POLARS_OOC_PRESSURE_DECAY";
++const DEFAULT_OOC_PRESSURE_DECAY: bool = true;
++
++const OOC_PRESSURE_DECAY_GRACE_MS: &str = "POLARS_OOC_PRESSURE_DECAY_GRACE_MS";
++const DEFAULT_OOC_PRESSURE_DECAY_GRACE_MS: u64 = 1000;
++
+ const OOMKILL_THRESHOLD_FRACTION: &str = "POLARS_OOMKILL_THRESHOLD_FRACTION";
+ const DEFAULT_OOMKILL_THRESHOLD_FRACTION: f64 = f64::INFINITY;
  
--- Use Python to create a virtual environment in the `.venv` folder.
-+- Use Python to create a virtual environment in the `.venv` folder. This uses `python3` from your
-+  `PATH`; set `PYTHON` to use another interpreter, e.g. `PYTHON=python3.13 make test`.
- - Use [pip](https://pip.pypa.io/) and [uv](https://github.com/astral-sh/uv) to install all Python
-   dependencies for development, linting, and building documentation.
- - Use Rust to compile and install Polars in your virtual environment. _At least 8GB of RAM is
+@@ -215,6 +221,8 @@ static KNOWN_OPTIONS: &[&str] = &[
+     OOC_MAX_PARALLEL_SPILL_TASKS,
+     OOC_MAX_PARALLEL_PREFETCH_TASKS,
+     OOC_LOG_METRICS,
++    OOC_PRESSURE_DECAY,
++    OOC_PRESSURE_DECAY_GRACE_MS,
+     OOMKILL_THRESHOLD_FRACTION,
+     OOMKILL_THRESHOLD_MB,
+     JOIN_SAMPLE_LIMIT,
+@@ -263,6 +271,8 @@ pub struct Config {
+     ooc_max_parallel_spill_tasks: AtomicU64,
+     ooc_max_parallel_prefetch_tasks: AtomicU64,
+     ooc_log_metrics: AtomicBool,
++    ooc_pressure_decay: AtomicBool,
++    ooc_pressure_decay_grace_ms: AtomicU64,
+     oomkill_threshold_fraction: AtomicU64,
+     oomkill_threshold_bytes: AtomicU64,
+     join_sample_limit: AtomicU64,
+@@ -328,6 +338,8 @@ impl Config {
+                 DEFAULT_OOC_MAX_PARALLEL_PREFETCH_TASKS,
+             ),
+             ooc_log_metrics: AtomicBool::new(false),
++            ooc_pressure_decay: AtomicBool::new(DEFAULT_OOC_PRESSURE_DECAY),
++            ooc_pressure_decay_grace_ms: AtomicU64::new(DEFAULT_OOC_PRESSURE_DECAY_GRACE_MS),
+             oomkill_threshold_fraction: AtomicU64::new(
+                 DEFAULT_OOMKILL_THRESHOLD_FRACTION.to_bits(),
+             ),
+@@ -554,6 +566,16 @@ impl Config {
+                     .unwrap_or(DEFAULT_OOC_LOG_METRICS),
+                 Ordering::Relaxed,
+             ),
++            OOC_PRESSURE_DECAY => self.ooc_pressure_decay.store(
++                val.and_then(|x| parse::parse_bool(var, x))
++                    .unwrap_or(DEFAULT_OOC_PRESSURE_DECAY),
++                Ordering::Relaxed,
++            ),
++            OOC_PRESSURE_DECAY_GRACE_MS => self.ooc_pressure_decay_grace_ms.store(
++                val.and_then(|x| parse::parse_u64(var, x))
++                    .unwrap_or(DEFAULT_OOC_PRESSURE_DECAY_GRACE_MS),
++                Ordering::Relaxed,
++            ),
+             OOMKILL_THRESHOLD_FRACTION => self.oomkill_threshold_fraction.store(
+                 val.and_then(|x| parse::parse_f64(var, x))
+                     .unwrap_or(DEFAULT_OOMKILL_THRESHOLD_FRACTION)
+@@ -811,6 +833,18 @@ impl Config {
+         self.ooc_log_metrics.load(Ordering::Relaxed)
+     }
+ 
++    /// Whether the allocator returns freed memory right away while out-of-core
++    /// data is being spilled or is spilled.
++    #[inline(always)]
++    pub fn ooc_pressure_decay(&self) -> bool {
++        self.ooc_pressure_decay.load(Ordering::Relaxed)
++    }
++
++    #[inline(always)]
++    pub fn ooc_pressure_decay_grace_ms(&self) -> u64 {
++        self.ooc_pressure_decay_grace_ms.load(Ordering::Relaxed)
++    }
++
+     pub fn ooc_spill_dir(&self) -> std::path::PathBuf {
+         if let Ok(dir) = std::env::var("POLARS_OOC_SPILL_DIR") {
+             std::path::PathBuf::from(dir)
+```
+
+**File**: `crates/polars-ooc/Cargo.toml` (modified, +3/-1)
+```diff
+@@ -30,13 +30,15 @@ mimalloc = { version = "0.1", default-features = false, optional = true }
+ # Feature background_threads is unsupported on MacOS (https://github.com/jemalloc/jemalloc/issues/843).
+ [target.'cfg(all(target_family = "unix", not(target_os = "macos"), not(target_os = "emscripten")))'.dependencies]
+ tikv-jemallocator = { version = "0.7.0", features = ["disable_initial_exec_tls", "background_threads"], optional = true }
++tikv-jemalloc-sys = { version = "0.7.1", optional = true }
+ 
+ [target.'cfg(all(target_family = "unix", target_os = "macos"))'.dependencies]
+ tikv-jemallocator = { version = "0.7.0", features = ["disable_initial_exec_tls"], optional = true }
++tikv-jemalloc-sys = { version = "0.7.1", optional = true }
+ 
+ [lints]
+ workspace = true
+ 
+ [features]
+ default = ["fast_alloc"]
+-fast_alloc = ["dep:mimalloc", "dep:tikv-jemallocator"]
++fast_alloc = ["dep:mimalloc", "dep:tikv-jemallocator", "dep:tikv-jemalloc-sys"]
+```
+
+**File**: `crates/polars-ooc/src/decay.rs` (added, +488/-0)
+```diff
+@@ -0,0 +1,488 @@
++//! While data is being spilled or is spilled, jemalloc returns freed memory to
++//! the OS right away (decay 0), so the process stays close to the memory
++//! budget. The old decay is restored once nothing is spilled for a while.
++
++#[cfg(all(
++    feature = "fast_alloc",
++    target_family = "unix",
++    not(target_os = "emscripten"),
++))]
++mod jemalloc {
++    use std::ffi::{CStr, c_void};
++    use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
++    use std::sync::{LazyLock, Mutex};
++    use std::time::{Duration, Instant};
++
++    use polars_config::config;
++    use tikv_jemalloc_sys as jemalloc_sys;
++
++    use crate::memory_manager::memory_manager;
++
++    const POLL_INTERVAL: Duration = Duration::from_millis(100);
++
++    // jemalloc uses at most MALLOCX_ARENA_LIMIT - 1 automatic arenas.
++    const MAX_AUTO_ARENAS: u32 = 4094;
++
++    static ACTIVE: AtomicBool = AtomicBool::new(false);
++    static LAST_SPILL_NS: AtomicU64 = AtomicU64::new(0);
++    static START: LazyLock<Instant> = LazyLock::new(Instant::now);
++    static STATE: Mutex<DecayState> = Mutex::new(DecayState {
++        saved: None,
++        timer_running: false,
++    });
++
++    struct DecayState {
++        // The default decay from before the first spill, while active.
++        saved: Option<Decay>,
++        timer_running: bool,
++    }
++
++    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
++    struct Decay {
++        dirty_ms: isize,
++        muzzy_ms: isize,
++    }
++
++    /// The decay while spilling. Freed pages become muzzy right away.
++    fn pressure_decay(saved: Decay) -> Decay {
++        Decay {
++            dirty_ms: 0,
++            muzzy_ms: saved.muzzy_ms,
++        }
++    }
++
++    fn now_ns() -> u64 {
++        START.elapsed().as_nanos() as u64
++    }
++
++    pub(crate) fn note_spill() {
++        LAST_SPILL_NS.store(now_ns(), Ordering::Relaxed);
++        // Pairs with the store to ACTIVE in `try_exit`: either the exit sees our
++        // activity guard, or we see ACTIVE == false and enter again.
++        if !ACTIVE.load(Ordering::SeqCst) {
++            enter();
++        }
++    }
++
++    #[cold]
++    #[inline(never)]
++    fn enter() {
++        if !config().ooc_pressure_decay() {
++            return;
++        }
++        let mut state = STATE.lock().unwrap();
++        if !enter_locked(&mut state) {
++            return;
++        }
++        if !state.timer_running {
++            let spawned = std::thread::Builder::new()
++                .name("polars-ooc-decay".into())
++                .spawn(run_timer);
++            if spawned.is_ok() {
++                state.timer_running = true;
++            } else {
++                // Without a timer the decay would never be restored.
++                let saved = state.saved.take().unwrap();
++                restore(saved);
++                ACTIVE.store(false, Ordering::SeqCst);
++            }
++        }
++    }
++
++    /// Returns false if the decay could not be read.
++    fn enter_locked(state: &mut DecayState) -> bool {
++        if state.saved.is_none() {
++            let Some(saved) = default_decay() else {
++                return false;
++            };
++            // Defaults first, so arenas created from now on start with it.
++            let pressure = pressure_decay(saved);
++            set_default_decay(pressure);
++            set_arena_decay(|_| pressure);
++            purge_all_arenas();
++            state.saved = Some(saved);
++            if config().verbose() {
++                eprintln!(
++                    "ooc: spilling, setting allocator dirty decay to 0 (was {} ms)",
++                    saved.dirty_ms
++                );
++            }
++        }
++        ACTIVE.store(true, Ordering::SeqCst);
++        true
++    }
++
++    fn run_timer() {
++        let mut restored = None;
++        loop {
++            std::thread::sleep(POLL_INTERVAL);
++            let mut state = STATE.lock().unwrap();
++            if let Some(saved) = state.saved {
++                restored = None;
++                let grace_ns = config().ooc_pressure_decay_grace_ms() * 1_000_000;
++                if try_exit(saved, grace_ns) {
++                    state.saved = None;
++                    restored = Some(saved);
++                }
++                continue;
++            }
++            // One more pass for arenas created while restoring.
++            if let Some(saved) = restored {
++                restore_arena_decay(saved);
++            }
++            state.timer_running = false;
++            return;
++        }
++    }
++
++    /// Must be called while holding STATE. Returns whether the decay was restored.
++    fn try_exit(saved: Decay, grace_ns: u64) -> bool {
++        ACTIVE.store(false, Ordering::SeqCst);
++        let idle_ns = now_ns().saturating_sub(LAST_SPILL_NS.load(Ordering::Relaxed));
++        let mm = memory_manager();
++        if idle_ns < grace_ns || mm.has_activity() || mm.should_spill() {
++            ACTIVE.store(true, Ordering::SeqCst);
++            return false;
++        }
++        
+```
+
+**File**: `crates/polars-ooc/src/lib.rs` (modified, +10/-0)
+```diff
+@@ -1,3 +1,4 @@
++mod decay;
+ mod global_alloc;
+ mod memory_manager;
+ mod spill_context;
+@@ -30,3 +31,12 @@ pub trait Spillable: Send + Sync + 'static {
+ }
+ 
+ static BYTES_SPILLED_TO_DISK: RelaxedCell<u64> = RelaxedCell::new_u64(0);
++
++// Tests that change global spill or allocator state run one at a time.
++#[cfg(test)]
++fn test_lock() -> std::sync::MutexGuard<'static, ()> {
++    static TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
++    TEST_LOCK
++        .lock()
++        .unwrap_or_else(std::sync::PoisonError::into_inner)
++}
+```
+
+**File**: `crates/polars-ooc/src/memory_manager.rs` (modified, +44/-7)
+```diff
+@@ -39,7 +39,8 @@ pub struct MemoryManager {
+     reserved: AtomicU64,
+     /// Notified when a spill finishes or is given up.
+     spill_done: Notify,
+-    spills_exist: AtomicBool,
++    // Number of live `OocActivity` guards.
++    activity: AtomicU64,
+ }
+ 
+ impl MemoryManager {
+@@ -59,11 +60,11 @@ impl MemoryManager {
+             est_prefetch_in_progress: AtomicU64::new(0),
+             reserved: AtomicU64::new(0),
+             spill_done: Notify::new(),
+-            spills_exist: AtomicBool::new(false),
++            activity: AtomicU64::new(0),
+         }
+     }
+ 
+-    fn should_spill(&self) -> bool {
++    pub(crate) fn should_spill(&self) -> bool {
+         let usage = crate::estimate_memory_usage();
+         let likely_dealt_with = self.est_spill_in_progress.load(Ordering::Relaxed);
+         let likely_incoming = self.est_prefetch_in_progress.load(Ordering::Relaxed)
+@@ -73,7 +74,7 @@ impl MemoryManager {
+     }
+ 
+     pub(crate) fn should_prefetch(&self) -> bool {
+-        if !self.spills_exist.load(Ordering::Acquire) {
++        if self.activity.load(Ordering::Relaxed) == 0 {
+             return false;
+         }
+ 
+@@ -83,6 +84,16 @@ impl MemoryManager {
+         (usage + likely_incoming) < config().ooc_memory_prefetch_bytes()
+     }
+ 
++    /// Whether a spill is running, selected or done and still on disk.
++    pub(crate) fn has_activity(&self) -> bool {
++        self.activity.load(Ordering::SeqCst) != 0
++    }
++
++    #[cfg(test)]
++    pub(crate) fn activity_count(&self) -> u64 {
++        self.activity.load(Ordering::SeqCst)
++    }
++
+     pub(crate) fn try_get_prefetch_permit(&self) -> Option<OwnedSemaphorePermit> {
+         self.prefetch_semaphore.clone().try_acquire_owned().ok()
+     }
+@@ -210,8 +221,6 @@ impl MemoryManager {
+                                         strong.stats().finish_spill_exploration_event(true);
+                                     }
+                                 }
+-
+-                                MEMORY_MANAGER.spills_exist.store(true, Ordering::Release);
+                             } else {
+                                 // A racy pin interrupted us, the value is still in memory.
+                                 spillable.cancel_spill_attempt_and_reinsert(
+@@ -332,6 +341,9 @@ impl MemoryManager {
+             RegisteredSpillToken,
+         )>,
+     )> {
++        let _activity = OocActivity::new();
++        crate::decay::note_spill();
++
+         // TODO: don't block here under a certain memory threshold.
+         let finding_spill_guard = self.finding_spill_lock.lock().await;
+ 
+@@ -439,17 +451,42 @@ impl Drop for MemoryReservation {
+     }
+ }
+ 
++/// Counted while alive, so the memory manager knows when no spill is running
++/// and nothing is spilled.
++///
++/// A guard for the next step of a spill is always created before the guard of
++/// the previous step is dropped, so the count never drops to zero in between.
++pub(crate) struct OocActivity(());
++
++impl OocActivity {
++    pub fn new() -> Self {
++        memory_manager().activity.fetch_add(1, Ordering::SeqCst);
++        Self(())
++    }
++}
++
++impl Drop for OocActivity {
++    fn drop(&mut self) {
++        let old = memory_manager().activity.fetch_sub(1, Ordering::Relaxed);
++        debug_assert!(old > 0);
++    }
++}
++
+ /// Used to update the total bytes of estimated spills in progress.
+ struct SpillInProgressTracker {
+     bytes: u64,
++    _activity: OocActivity,
+ }
+ 
+ impl SpillInProgressTracker {
+     pub fn new(bytes: u64) -> Self {
+         memory_manager()
+             .est_spill_in_progress
+             .fetch_add(bytes, Ordering::Relaxed);
+-        Self { bytes }
++        Self {
++            bytes,
++            _activity: OocActivity::new(),
++        }
+     }
+ }
+ 
+```
+
+**File**: `crates/polars-ooc/src/spill_context/mod.rs` (modified, +5/-0)
+```diff
+@@ -540,6 +540,11 @@ impl MostRecentSpillContext {
+             task_metrics,
+         ))
+     }
++
++    #[cfg(test)]
++    pub(crate) fn downgrade(&self) -> WeakSpillContext {
++        self.0.downgrade()
++    }
+ }
+ 
+ impl ParameterFreeSpillContext for MostRecentSpillContext {
+```
+
+**File**: `crates/polars-ooc/src/spill_token.rs` (modified, +122/-7)
+```diff
+@@ -10,7 +10,7 @@ use polars_async::ASYNC;
+ use polars_utils::UnitVec;
+ use polars_utils::with_drop::WithDrop;
+ 
+-use crate::memory_manager::{PrefetchInProgressTracker, memory_manager};
++use crate::memory_manager::{OocActivity, PrefetchInProgressTracker, memory_manager};
+ use crate::spill_context::InsertReason;
+ use crate::{SpillContextParam, Spillable, WeakSpillContext};
+ 
+@@ -29,6 +29,7 @@ enum ValueSlot<T> {
+         spill_ctx: WeakSpillContext,
+         spill_time_ns: u64,
+         spilled_start: Instant,
++        _activity: OocActivity,
+     },
+     Dropped,
+ }
+@@ -316,6 +317,7 @@ impl<T: Spillable> SpillTokenInner<T> {
+             spill_ctx,
+             spill_time_ns,
+             spilled_start,
++            ..
+         } = old_slot
+         else {
+             unreachable!()
+@@ -436,12 +438,7 @@ where
+                 slf.wake_waiters(slf.state.fetch_and(!LOCK_BIT, Ordering::AcqRel));
+             });
+ 
+-            let ValueSlot::Spilled {
+-                spill_ctx,
+-                spill_time_ns: _,
+-                spilled_start: _,
+-            } = &*lock_guard.value_slot.get()
+-            else {
++            let ValueSlot::Spilled { spill_ctx, .. } = &*lock_guard.value_slot.get() else {
+                 unreachable!()
+             };
+ 
+@@ -462,6 +459,7 @@ where
+                     spill_ctx: spill_ctx.clone(),
+                     spill_time_ns,
+                     spilled_start,
++                    _activity: OocActivity::new(),
+                 }),
+                 spilled_value: UnsafeCell::new(Some(spilled_value)),
+                 est_size: AtomicUsize::new(n_bytes),
+@@ -740,6 +738,7 @@ impl<T: Spillable> DynSpillToken for SpillTokenInner<T> {
+                         spill_ctx: stats_ctx.clone(),
+                         spill_time_ns,
+                         spilled_start,
++                        _activity: OocActivity::new(),
+                     })
+                 };
+ 
+@@ -926,3 +925,119 @@ impl<'a, T: Spillable> Drop for PinnedMut<'a, T> {
+         unsafe { SpillTokenInner::unpin_mut(self.inner) }
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::MostRecentSpillContext;
++
++    #[derive(Clone)]
++    struct Value(Vec<u8>);
++
++    impl Spillable for Value {
++        type Spilled = Vec<u8>;
++
++        fn estimate_byte_size(&self) -> usize {
++            self.0.len()
++        }
++
++        async fn spill(&self, _context_id: &str) -> Vec<u8> {
++            self.0.clone()
++        }
++
++        async fn unspill(location: &Vec<u8>) -> Self {
++            Value(location.clone())
++        }
++    }
++
++    fn activity() -> u64 {
++        memory_manager().activity_count()
++    }
++
++    fn spill(token: &SpillToken<Value>, ctx: &MostRecentSpillContext) {
++        let spill = token.upcast().try_spill(ctx.downgrade()).ok().unwrap();
++        assert!(ASYNC.block_in_place_on(spill));
++    }
++
++    #[test]
++    fn activity_follows_spilled_tokens() {
++        let _guard = crate::test_lock();
++        let ctx = MostRecentSpillContext::new("test".into(), None);
++        let start = activity();
++
++        // Spill, then unspill.
++        let token = SpillToken::new(Value(vec![1; 100]));
++        spill(&token, &ctx);
++        assert_eq!(activity(), start + 1);
++        assert_eq!(token.get_blocking().0.len(), 100);
++        assert_eq!(activity(), start);
++
++        // Spill, then drop.
++        spill(&token, &ctx);
++        assert_eq!(activity(), start + 1);
++        drop(token);
++        assert_eq!(activity(), start);
++
++        // A clone of a spilled token is spilled too.
++        let token = SpillToken::new(Value(vec![2; 100]));
++        spill(&token, &ctx);
++        let clone = token.clone();
++        assert_eq!(activity(), start + 2);
++        drop(clone);
++        assert_eq!(activity(), start + 1);
++        drop(token);
++        assert_eq!(activity(), start);
++    }
++
++    // Waits twice in `unspill`, so a test can act while an unspill holds the lock.
++    static UNSPILL_GATE: std::sync::Barrier = std::sync::Barrier::new(2);
++
++    #[derive(Clone)]
++    struct GatedValue(Vec<u8>);
++
++    impl Spillable for GatedValue {
++        type Spilled = Vec<u8>;
++
++        fn estimate_byte_size(&self) -> usize {
++            self.0.len()
++        }
++
++        async fn spill(&self, _context_id: &str) -> Vec<u8> {
++            self.0.clone()
++        }
++
++        async fn unspill(location: &Vec<u8>) -> Self {
++            UNSPILL_GATE.wait();
++            UNSPILL_GATE.wait();
++            GatedValue(location.clone())
++        }
++    }
++
++    #[test]
++    fn activity_with_drop_during_spill_and_prefetch() {
++        let _guard = crate::test_lock();
++        let ctx = MostRecentSpillContext::new("test".into(), None);
++        let start = activity();
++
++        // Dropped while being spilled.
++        let token = SpillToken::new(Value(vec![1; 100]));
++        let spill_fut = token.upcast().try_spill(ctx.downgrade()).ok().unwrap();
++        drop(token);
++        ASYNC.block_in_place_on(spi
+```
+
+---
+
+### Incident Patch 3: `294364c0` (2026-10-24)
+**Commit Message**: perf: Avoid deep copies when building a DataFrame from flat dataclasses (#30275)
+
+**File**: `py-polars/src/polars/_utils/construction/dataframe.py` (modified, +17/-3)
+```diff
+@@ -5,7 +5,7 @@
+ from datetime import date, datetime, time, timedelta
+ from functools import singledispatch
+ from itertools import islice, zip_longest
+-from operator import itemgetter
++from operator import attrgetter, itemgetter
+ from typing import (
+     TYPE_CHECKING,
+     Any,
+@@ -46,6 +46,7 @@
+     Categorical,
+     Duration,
+     Enum,
++    Object,
+     String,
+     Struct,
+     Unknown,
+@@ -822,7 +823,7 @@ def _sequence_of_dataclasses_to_pydf(
+     **kwargs: Any,  # noqa: ARG001
+ ) -> PyDataFrame:
+     """Initialize DataFrame from Python dataclasses."""
+-    from dataclasses import asdict, astuple
++    from dataclasses import asdict, astuple, fields
+ 
+     (
+         unpack_nested,
+@@ -842,7 +843,20 @@ def _sequence_of_dataclasses_to_pydf(
+             infer_schema_length=infer_schema_length,
+         )
+     else:
+-        rows = [astuple(dc) for dc in data]
++        names = [f.name for f in fields(first_element)]
++        cls = type(first_element)
++        if (
++            len(names) > 1
++            and all(
++                tp.base_type() not in (Unknown, Object) and not tp.is_nested()
++                for tp in overrides.values()
++            )
++            and all(type(dc) is cls for dc in data)
++        ):
++            # `astuple` deep copies all values, which is not needed for flat types.
++            rows = list(map(attrgetter(*names), data))
++        else:
++            rows = [astuple(dc) for dc in data]
+         pydf = PyDataFrame.from_rows(
+             rows,  # type: ignore[arg-type]
+             schema=overrides or None,
+```
+
+**File**: `py-polars/tests/unit/constructors/test_constructors.py` (modified, +50/-0)
+```diff
+@@ -461,6 +461,56 @@ class ABC:
+     assert dataclasses.asdict(abc) == df.rows(named=True)[0]
+ 
+ 
++def test_dataclasses_flat_and_nested_fields() -> None:
++    @dataclasses.dataclass
++    class One:
++        x: int
++
++    @dataclasses.dataclass
++    class Flat:
++        x: int
++        y: str | None
++
++    @dataclasses.dataclass
++    class Nested:
++        x: int
++        y: list[int]
++
++    assert pl.DataFrame([One(1), One(2)]).to_dict(as_series=False) == {"x": [1, 2]}
++    assert pl.DataFrame([Flat(1, "a"), Flat(2, None)]).to_dict(as_series=False) == {
++        "x": [1, 2],
++        "y": ["a", None],
++    }
++    assert pl.DataFrame([Nested(1, [1, 2]), Nested(2, [])]).to_dict(
++        as_series=False
++    ) == {"x": [1, 2], "y": [[1, 2], []]}
++
++    @dataclasses.dataclass
++    class Other:
++        z: int
++        w: str | None
++
++    # Rows of other dataclasses are read by position.
++    assert pl.DataFrame([Flat(1, "a"), Other(2, "b")]).to_dict(as_series=False) == {
++        "x": [1, 2],
++        "y": ["a", "b"],
++    }
++
++    @dataclasses.dataclass
++    class Empty:
++        pass
++
++    assert pl.DataFrame([Empty(), Empty()]).shape == (2, 0)
++
++    @dataclasses.dataclass
++    class WithObject:
++        x: int
++        y: object
++
++    df = pl.DataFrame([WithObject(1, One(2))], schema_overrides={"y": pl.Object})
++    assert df.item(0, "y") == [2]
++
++
+ @pytest.mark.parametrize(
+     "nt",
+     [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30231** (2026-10-22): perf: Remove repeated and scalar ordering keys before the sort rewrites (@dancsi)
-- **PR #30206** (2026-10-22): feat: Support SQL `JOIN ... ON` subqueries that read only one input (@ritchie46)
-- **PR #30201** (2026-10-22): chore: Fix Excel pyrefly lint (@orlp)
-- **PR #30200** (2026-10-22): fix: Fix wrong JSON output for `Struct` and `Array` inside list (@kdn36)
-- **PR #30198** (closed): fix: Handle additional NDJSON schema data types (@Wannn-Dev)
-- **PR #30196** (closed): fix: Fix pyrefly error in `write_excel` with xlsxwriter 3.3.0 (@gab23r)
+- **PR #30286** (2026-10-25): fix: Do not read the values stored under null `Array` rows (@kdn36)
+- **PR #30282** (2026-10-24): perf: Evaluate the streaming window node out of core (@ritchie46)
+- **PR #30281** (2026-10-25): perf: Aggregate unique and n_unique in the streaming group-by itself (@ritchie46)
+- **PR #30280** (2026-10-24): perf: Return freed memory to the OS right away while out-of-core data is spilled (@ritchie46)
+- **PR #30278** (2026-10-24): perf: Gather `List(Array)` and `Array` columns without per-row slices (@kdn36)
+- **PR #30277** (2026-10-24): perf: Sort the window partitions by each order key instead of their row encoding (@ritchie46)
 
 ---
 
@@ -2181,55 +2721,27 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194)
+## X. Do not read the values stored under null `Array` rows (#30286)
 
 **RULE**:
-When implementing operations in `py-polars/src/polars/io/delta/_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-compute/src/gather/sublist/fixed_size_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b6eae3d`: Widen truncated timestamp max statistics in `scan_delta` file skipping (#30194). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d632b1d`: Do not read the values stored under null `Array` rows (#30286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/io/delta/_utils.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-compute/src/gather/sublist/fixed_size_list.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-def _widen_truncated_timestamp_max(s: Series) -> Series:
-    """
-    Widen the max statistics of timestamp columns (including struct fields) by 1ms.
-
-    The Delta protocol truncates timestamp min/max statistics down to milliseconds,
-    so the real max of a file can lie up to (but excluding) 1ms above the recorded max.
-    """
-    import polars as pl
-
-    dtype = s.dtype
-
-    if isinstance(dtype, pl.Datetime):
-        # Add in physical units to keep the time unit (adding a `timedelta` turns ns
-        # into us) and map overflow to null (unknown) rather than wrapping around.
-        one_ms = {"ms": 1, "us": 1_000, "ns": 1_000_000}[dtype.time_unit]
-        phys = s.to_physical()
-        return pl.select(
-            pl.when(phys <= 2**63 - 1 - one_ms)
-            .then(phys + one_ms)
-            .cast(dtype)
-            .alias(s.name)
-        ).to_series()
-
-    if isinstance(dtype, pl.Struct) and dtype.fields:
-        fields = [
-            _widen_truncated_timestamp_max(f) for f in s.struct.unnest().iter_columns()
-        ]
-        return pl.select(
-            pl.when(s.is_not_null()).then(pl.struct(fields)).alias(s.name)
-        ).to_series()
-
-    return s
-
-
-        stats[f"{col
+use polars_arrow::compute::utils::combine_validities_and;
+    // Null rows may store any values, so don't read them.
+    let validity = combine_validities_and(take_by.validity(), arr.validity());
+    let take_by = take_by.with_validity(validity);
+    // Null rows may store any values, so don't read them.
+    let validity = combine_validities_and(take_by.validity(), arr.validity());
+    let take_by = take_by.with_validity(validity);
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2239,4 +2751,4 @@ def _widen_truncated_timestamp_max(s: Series) -> Series:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b6eae3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d632b1d` are properly handled with clean fallback behavior.

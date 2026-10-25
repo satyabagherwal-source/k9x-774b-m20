@@ -4720,3 +4720,6 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3493ce30` | Multi-dimensional audit evidence | 2026-10-25T06:38:17.810Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-25T06:38:24.062Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `09f919bc` | Multi-dimensional audit evidence | 2026-10-25T06:38:30.928Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `0d632b1d` | Multi-dimensional audit evidence | 2026-10-25T06:44:48.566Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `103984cd` | Multi-dimensional audit evidence | 2026-10-25T06:44:56.569Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T06:44:59.050Z |

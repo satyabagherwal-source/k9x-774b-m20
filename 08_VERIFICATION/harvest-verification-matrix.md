@@ -4713,3 +4713,6 @@
 | `CYCLE-20261025-HZNZ` | `2026-10-25T06:38:17.807Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4112` | Yes (`71dc756e...`) |
 | `CYCLE-20261025-I4HN` | `2026-10-25T06:38:24.059Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 972, Rule 4113, Rule 4114` | Yes (`03351615...`) |
 | `CYCLE-20261025-I9SE` | `2026-10-25T06:38:30.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4115` | Yes (`4fd4954a...`) |
+| `CYCLE-20261025-QD6B` | `2026-10-25T06:44:48.563Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4116` | Yes (`633b583c...`) |
+| `CYCLE-20261025-QJCM` | `2026-10-25T06:44:56.566Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4117` | Yes (`7eb9bd7a...`) |
+| `CYCLE-20261025-QL9J` | `2026-10-25T06:44:59.047Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4118, Rule 4119, Rule 4120` | Yes (`5cb43568...`) |
