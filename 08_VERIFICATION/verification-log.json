@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-QHVP",
-    "timestamp": "2026-10-21T18:46:03.781Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "da24f573c4ce2d19d137a54e7bb1194a37d1232afdf0bd702807479f09c1c3f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-QLZM",
-    "timestamp": "2026-10-21T18:46:09.106Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "df3e644f517054f6bfae3bf37450650e48293b5717f2dce5b3fb784f7e29d3b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-YZLP",
-    "timestamp": "2026-10-21T18:52:39.997Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "596faf010a757b37a1dfc6f41ba444d75ceba8ce356f47493b803a90d8562473",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-7DLJ",
-    "timestamp": "2026-10-21T18:59:11.383Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-7EY3",
     "timestamp": "2026-10-21T18:59:13.131Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7432,66 @@
     "contentHash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-021Q",
+    "timestamp": "2026-10-25T10:36:17.630Z",
+    "repository": "sqldelight/sqldelight",
+    "learningId": "learn-github-sqldelight-sqldelight",
+    "contentHash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-03VA",
+    "timestamp": "2026-10-25T10:36:19.990Z",
+    "repository": "ducaale/xh",
+    "learningId": "learn-github-ducaale-xh",
+    "contentHash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-07Y1",
+    "timestamp": "2026-10-25T10:36:25.273Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-0886",
+    "timestamp": "2026-10-25T10:36:25.638Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

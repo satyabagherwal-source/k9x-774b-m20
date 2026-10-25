@@ -4777,3 +4777,7 @@ Every entry in this ledger must capture:
 | `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `334c028c` | Multi-dimensional audit evidence | 2026-10-25T10:16:58.794Z |
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T10:17:01.845Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c11f9323` | Multi-dimensional audit evidence | 2026-10-25T10:17:02.311Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `78a3398e` | Multi-dimensional audit evidence | 2026-10-25T10:36:17.633Z |
+| `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `309b1359` | Multi-dimensional audit evidence | 2026-10-25T10:36:19.993Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `5f377584` | Multi-dimensional audit evidence | 2026-10-25T10:36:25.276Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-25T10:36:25.641Z |

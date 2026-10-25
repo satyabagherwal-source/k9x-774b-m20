@@ -4770,3 +4770,7 @@
 | `CYCLE-20261025-B7VR` | `2026-10-25T10:16:58.791Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4235` | Yes (`9820bd0d...`) |
 | `CYCLE-20261025-BA8I` | `2026-10-25T10:17:01.842Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4236, Rule 4237, Rule 4238` | Yes (`f6ede5f3...`) |
 | `CYCLE-20261025-BALG` | `2026-10-25T10:17:02.308Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4239` | Yes (`5e28044b...`) |
+| `CYCLE-20261025-021Q` | `2026-10-25T10:36:17.630Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4240` | Yes (`b8762224...`) |
+| `CYCLE-20261025-03VA` | `2026-10-25T10:36:19.990Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4241` | Yes (`dd4b014c...`) |
+| `CYCLE-20261025-07Y1` | `2026-10-25T10:36:25.273Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4115` | Yes (`2e9744e5...`) |
+| `CYCLE-20261025-0886` | `2026-10-25T10:36:25.638Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4242, Rule 4243, Rule 4244` | Yes (`0d3171e6...`) |

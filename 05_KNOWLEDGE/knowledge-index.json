@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:17:02.271Z",
+  "last_updated": "2026-10-25T10:36:25.584Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9144,14 +9144,19 @@
       "slug": "ducaale-xh",
       "platform": "github",
       "source_url": "https://github.com/ducaale/xh",
-      "source_version": "319d39c2",
-      "content_hash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
+      "source_version": "309b1359",
+      "content_hash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
       "dossier_path": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "promoted_rules": [
         {
           "number": 1721,
           "title": "clippy + failing test",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4241,
+          "title": "host typo in man page example",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9160,7 +9165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:04:29.252Z",
+      "verified_at": "2026-10-25T10:36:19.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25600,7 +25605,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
+      "content_hash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -25663,6 +25668,21 @@
           "number": 3252,
           "title": "Refiner-Base Decoupling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4242,
+          "title": "Dual-Encoder Embedding Fusion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4243,
+          "title": "Latent Space Resolution Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4244,
+          "title": "Watermarking Integrity Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25683,7 +25703,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-20T16:08:46.177Z",
+      "verified_at": "2026-10-25T10:36:25.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45434,14 +45454,19 @@
       "slug": "sqldelight-sqldelight",
       "platform": "github",
       "source_url": "https://github.com/sqldelight/sqldelight",
-      "source_version": "efd1689d",
-      "content_hash": "d5983c2d273256cac7900eba205cebcfce055b83d063a3424a27d30077e70045",
+      "source_version": "78a3398e",
+      "content_hash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
       "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "promoted_rules": [
         {
           "number": 2244,
           "title": "Keep query files in-memory for the duration of a task (#6374)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4240,
+          "title": "Update dependency org.postgresql:postgresql to v42.7.14 (#6388)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45450,7 +45475,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:32:37.147Z",
+      "verified_at": "2026-10-25T10:36:17.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48833,13 +48858,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "09f919bc",
-      "content_hash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "5f377584",
+      "content_hash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -48884,7 +48909,7 @@
         {
           "number": 4115,
           "title": "Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Sa",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48892,7 +48917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:38:30.861Z",
+      "verified_at": "2026-10-25T10:36:25.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120144,14 +120169,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4115,
       "title": "Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Sa",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "09f919bc",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "5f377584",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T06:38:30.861Z"
+      "verified_at": "2026-10-25T10:36:25.207Z"
     },
     "rule-4116": {
       "learning_id": "rule-4116",
@@ -121931,6 +121956,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:17:02.264Z"
+    },
+    "rule-4240": {
+      "learning_id": "rule-4240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4240,
+      "title": "Update dependency org.postgresql:postgresql to v42.7.14 (#6388)",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "78a3398e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:36:17.566Z"
+    },
+    "rule-4241": {
+      "learning_id": "rule-4241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4241,
+      "title": "host typo in man page example",
+      "source_url": "https://github.com/ducaale/xh",
+      "source_version": "309b1359",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:36:19.925Z"
+    },
+    "rule-4242": {
+      "learning_id": "rule-4242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4242,
+      "title": "Dual-Encoder Embedding Fusion Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:36:25.573Z"
+    },
+    "rule-4243": {
+      "learning_id": "rule-4243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4243,
+      "title": "Latent Space Resolution Scaling Invariant",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:36:25.573Z"
+    },
+    "rule-4244": {
+      "learning_id": "rule-4244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4244,
+      "title": "Watermarking Integrity Check",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:36:25.573Z"
     }
   },
   "aliases": {

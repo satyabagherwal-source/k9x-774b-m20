@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source**: github ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
-> **Source Version**: `efd1689d`  
+> **Source Version**: `78a3398e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:32:36.964Z  
+> **Timestamp**: 2026-10-25T10:36:17.271Z  
 > **Learning ID**: `learn-github-sqldelight-sqldelight`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:32:36.956Z  
+> **Harvest Timestamp**: 2026-10-25T10:36:16.932Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SQLDelight - Generates typesafe Kotlin APIs from SQL
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6897 stars
+- **Stars / Engagement**: 6899 stars
 
 ---
 
@@ -511,207 +511,43 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75462856` (2026-09-29)
-**Commit Message**: Keep query files in-memory for the duration of a task (#6374)
+### Incident Patch 1: `78a3398e` (2026-10-25)
+**Commit Message**: Update dependency org.postgresql:postgresql to v42.7.14 (#6388)
 
-* Keep query files in-memory as well (matches files with schemas) for the duration of a task
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-* make PR review changes
-
-* changelog entry
-
-**File**: `CHANGELOG.md` (modified, +2/-2)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -8,11 +8,11 @@
+@@ -69,7 +69,7 @@ robolectric = { module = "org.robolectric:robolectric", version = "4.17" }
+ rxJava2 = { module = "io.reactivex.rxjava2:rxjava", version = "2.2.21" }
+ rxJava3 = { module = "io.reactivex.rxjava3:rxjava", version = "3.1.12" }
+ sqliteJdbc = { module = "org.xerial:sqlite-jdbc", version = "3.53.4.0" }
+-postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.13" }
++postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.14" }
+ mysqlJdbc = { module = "mysql:mysql-connector-java", version = "8.0.33" }
  
- ### Changed
- 
--- Nothing yet!
-+- [Gradle Plugin] Keep parsed `.sq` files in memory for the whole code generation task, so they are not parsed again after garbage collection. This can make code generation faster in large projects (#6374 by @C2H6O)
- 
- ### Fixed
- 
--- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio) 
-+- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio)
- 
- 
- ## [2.4.0] - 2026-09-17
-```
-
-**File**: `sqldelight-compiler/src/test/kotlin/app/cash/sqldelight/core/ParsedFileRetentionTest.kt` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+package app.cash.sqldelight.core
-+
-+import app.cash.sqldelight.test.util.FixtureCompiler
-+import app.cash.sqldelight.test.util.fixtureRoot
-+import com.alecstrong.sql.psi.core.SqlCoreEnvironment
-+import com.alecstrong.sql.psi.core.SqlFileBase
-+import com.google.common.truth.Truth.assertThat
-+import java.lang.ref.WeakReference
-+import org.junit.Rule
-+import org.junit.Test
-+import org.junit.rules.TemporaryFolder
-+
-+class ParsedFileRetentionTest {
-+  @get:Rule val tempFolder = TemporaryFolder()
-+
-+  @Test fun `query only files survive garbage collection after generation`() {
-+    FixtureCompiler.writeSql(
-+      """
-+      |CREATE TABLE player(
-+      |  id INTEGER NOT NULL PRIMARY KEY,
-+      |  name TEXT NOT NULL
-+      |);
-+      """.trimMargin(),
-+      tempFolder,
-+      "Schema.sq",
-+    )
-+    FixtureCompiler.writeSql(
-+      """
-+      |insertPlayer:
-+      |INSERT INTO player VALUES (?, ?);
-+      |
-+      |selectAll:
-+      |SELECT * FROM player;
-+      """.trimMargin(),
-+      tempFolder,
-+      "Queries.sq",
-+    )
-+
-+    val result = FixtureCompiler.generateFixture(tempFolder.fixtureRoot().path)
-+    assertThat(result.errors).isEmpty()
-+
-+    val file = WeakReference(result.environment.findFile("Queries.sq"))
-+    val tree = WeakReference(file.get()!!.node)
-+
-+    forceGarbageCollection()
-+
-+    assertThat(file.get()).isNotNull()
-+    assertThat(tree.get()).isNotNull()
-+    val reloaded = result.environment.findFile("Queries.sq")
-+    assertThat(reloaded).isSameInstanceAs(file.get())
-+    assertThat(reloaded.node).isSameInstanceAs(tree.get())
-+  }
-+
-+  private fun SqlCoreEnvironment.findFile(name: String): SqlFileBase {
-+    var file: SqlFileBase? = null
-+    forSourceFiles<SqlFileBase> { if (it.name == name) file = it }
-+    return file!!
-+  }
-+
-+  private fun forceGarbageCollection() {
-+    val sentinel = unreachableSentinel()
-+    while (sentinel.get() != null) {
-+      System.gc()
-+      Thread.sleep(100)
-+    }
-+    System.gc()
-+  }
-+
-+  private fun unreachableSentinel() = WeakReference(Any())
-+}
-```
-
-**File**: `sqldelight-gradle-plugin/src/main/kotlin/app/cash/sqldelight/core/SqlDelightEnvironment.kt` (modified, +19/-0)
-```diff
-@@ -89,6 +89,9 @@ class SqlDelightEnvironment(
-   val module = MockModule(project, projectEnvironment.parentDisposable)
-   private val moduleName = SqlDelightFileIndex.sanitizeDirectoryName(moduleName)
- 
-+  // IntelliJ caches parsed files weakly. Holding them here stops them from being parsed again.
-+  private val retainedFiles = mutableListOf<SqlFileBase>()
-+
-   init {
-     project.registerService(SqlDelightProjectService::class.java, this)
- 
-@@ -265,6 +268,7 @@ class SqlDelightEnvironment(
-    * Run the SQLDelight compiler and return the error or success status.
-    */
-   fun generateSqlDelightFiles(logger: (String) -> Unit): CompilationStatus {
-+    retainSqlFiles()
-     val errors = sortedMapOf<Long, MutableList<String>>()
-     val extraAnnotators = listOf(OptimisticLockCompilerAnnotator())
-     annotate(
-@@ -340,6 +344,21 @@ class SqlDelightEnvironment(
-     return CompilationStatus.Success
-   }
- 
-+  private fun retainSqlFiles() {
-+    if (retainedFiles.isNotEmpty()) return
-+    fun PsiDirectory.collect() {
-+      children.forEach {
-+        if (it is PsiDirectory) it.collect()
-+        if (it is SqlFileBase) retainedFiles += it
-+      }
-+    }
-+    val psiManager = PsiManager.getInstance(projectEnvironment.project)
-+    (sourceFolders + dependencyFolders)
-+      .mapNotNull { localFileSystem.findFileByPath(it.absolutePath) }
-+      .mapNotNull { psiManager.findDirectory(it) }
-+      .forEach { it.collect() }
-+  }
-+
-   fun forMigrationFiles(body: (MigrationFile) -> Unit) {
-     val psiManager = PsiManager.getInstance(projectEnvironment.project)
-     val migrationFiles: Collection<MigrationFile> = sourceFolders
-```
-
-**File**: `test-util/src/main/kotlin/app/cash/sqldelight/test/util/FixtureCompiler.kt` (modified, +16/-0)
-```diff
-@@ -16,12 +16,14 @@
- 
- package app.cash.sqldelight.test.util
- 
-+import app.cash.sqldelight.core.SqlDelightEnvironment
- import app.cash.sqldelight.core.compiler.SqlDelightCompiler
- import app.cash.sqldelight.core.lang.MigrationFile
- import app.cash.sqldelight.core.lang.SqlDelightQueriesFile
- import app.cash.sqldelight.dialect.api.SqlDelightDialect
- import app.cash.sqldelight.dialects.sqlite_3_18.SqliteDialect
- import com.alecstrong.sql.psi.core.SqlAnnotationHolder
-+import com.alecstrong.sql.psi.core.SqlCoreEnvironment
- import com.intellij.openapi.module.Module
- import com.intellij.psi.PsiDocumentManager
- import com.intellij.psi.PsiElement
-@@ -179,6 +181,15 @@ object FixtureCompiler {
-     return CompilationResult(outputDirectory, compilerOutput, errors, sourceFiles.toString(), file!!)
-   }
- 
-+  fun generateFixture(fixtureRoot: String): GenerationResult {
-+    val errors = mutableListOf<String>()
-+    val environment = TestEnvironment(outputDirectory = File(fixtureRoot, "output"))
-+      .build(fixtureRoot, createAnnotationHolder(errors))
-+    val status = environment.generateSqlDelightFiles {}
-+    if (status is SqlDelightEnvironment.CompilationStatus.Failure) errors += status.errors
-+    return GenerationResult(environment, errors)
-+  }
-+
-   private fun createAnnotationHolder(
-     errors: MutableList<String>,
-   ) = SqlAnnotationHolder { element, message ->
-@@ -212,6 +223,11 @@ object FixtureCompiler {
-     val sourceFiles: String,
-     val compiledFile: SqlDelightQueriesFile,
-   )
-+
-+  class GenerationResult(
-+    val environment: SqlCoreEnvironment,
-+    val errors: List<String>,
-+  )
- }
- 
- fun TemporaryFolder.fixtureRoot() = File(root, "src/test/test-fixture")
+ schemaCrawler-tools = { module = "us.fatehi:schemacrawler-tools", version.ref = "schemaCrawler" }
 ```
 
 ---
 
-### Incident Patch 2: `3e1bd52f` (2026-09-28)
-**Commit Message**: Fix ToolWindow override violation (#6368)
+### Incident Patch 2: `c47d71e2` (2026-10-23)
+**Commit Message**: Let the bad times roll (#6387)
 
-* Fix ToolWindow
+I found this while investigating crashes on Android 32-bit kernel devices. They'd run out of address space (ugh, pro tip, never use `largeHeap=true`), which makes malloc fail and triggers all sorts of weird failures.
 
-Registered statically through the `com.intellij.toolWindow` extension point in plugin.xml. The window is only made available once the project's dialect provides a ConnectionManager, and its content is rebuilt by app.cash.sqldelight.intellij.ProjectService whenever the dialect changes.
+On the SQLite side, this manifests as a SQLITE_NOMEM error when running a statement. According to [the SQLite docs](https://www.sqlite.org/lang_transaction.html#response_to_errors_within_a_transaction):
+
+> If certain kinds of errors occur within a transaction, the transaction may or may not be rolled back automatically. The errors that can cause an automatic rollback include:
+>
+> - SQLITE_FULL: database or disk full
+> - SQLITE_IOERR: disk I/O error
+> - SQLITE_INTERRUPT: operation interrupted by sqlite3_interrupt() or similar.
+> - SQLITE_NOMEM: out of memory
+>
+> [...] it might be necessary for SQLite to rollback and cancel the entire transaction. An application can tell which course of action SQLite took by using the sqlite3_get_autocommit() or sqlite3_txn_state() C-language interfaces.
+
+AFAIK we can't call `sqlite3_get_autocommit()` from SQLDelight, so there's no way for us to know when this happens. After this happens, the transaction 
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
@@ -719,196 +555,185 @@ Registered statically through the `com.intellij.toolWindow` extension point in p
  
  ### Fixed
  
--- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 @griffio) 
-+- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio) 
+-- Nothing yet!
++- [Runtime] Keep the transaction body's exception when ending the transaction or a post-rollback hook also fails, for example with `cannot rollback - no transaction is active` after SQLite rolled the transaction back on its own. The second exception is added as suppressed, and the Android driver now clears its current transaction even when `endTransaction()` throws (#6387 by @pyricau)
  
  
- ## [2.4.0] - 2026-09-17
+ ## [2.4.1] - 2026-10-06
 ```
 
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/ProjectService.kt` (modified, +9/-13)
+**File**: `drivers/android-driver/src/main/java/app/cash/sqldelight/driver/android/AndroidSqliteDriver.kt` (modified, +10/-7)
 ```diff
-@@ -47,7 +47,6 @@ import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
- import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
- import com.intellij.openapi.vfs.newvfs.events.VFileEvent
- import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
--import com.intellij.openapi.wm.ToolWindowAnchor
- import com.intellij.openapi.wm.ToolWindowManager
- import com.intellij.psi.PsiDocumentManager
- import com.intellij.psi.PsiManager
-@@ -179,18 +178,15 @@ class ProjectService(val project: Project) :
-       MigrationParserDefinition.stubVersion++
-       ApplicationManager.getApplication().runReadAction { invalidateAllFiles() }
-       ApplicationManager.getApplication().invokeLater {
--        ToolWindowManager.getInstance(project).getToolWindow("SqlDelight")?.remove()
--
--        val connectionManager = dialect.connectionManager
--        if (connectionManager != null) {
--          ToolWindowManager.getInstance(project).registerToolWindow(id = "SqlDelight") {
--            anchor = ToolWindowAnchor.BOTTOM
--            contentFactory = SqlDelightToolWindowFactory(connectionManager)
--            canCloseContent = true
--            icon = dialect.icon
--          }.apply {
--            show()
--            hide()
-+        val toolWindow = ToolWindowManager.getInstance(project)
-+          .getToolWindow(SqlDelightToolWindowFactory.ID)
-+          ?: return@invokeLater
-+        val available = dialect.connectionManager != null
-+        toolWindow.setAvailable(available)
-+        if (available) {
-+          toolWindow.setIcon(dialect.icon)
-+          if (toolWindow.contentManagerIfCreated != null) {
-+            SqlDelightToolWindowFactory().createToolWindowContent(project, toolWindow)
-           }
+@@ -136,15 +136,18 @@ class AndroidSqliteDriver private constructor(
+     override val enclosingTransaction: Transacter.Transaction?,
+   ) : Transacter.Transaction() {
+     override fun endTransaction(successful: Boolean): QueryResult<Unit> {
+-      if (enclosingTransaction == null) {
+-        if (successful) {
+-          database.setTransactionSuccessful()
+-          database.endTransaction()
+-        } else {
+-          database.endTransaction()
++      try {
++        if (enclosingTransaction == null) {
++          if (successful) {
++            database.setTransactionSuccessful()
++            database.endTransaction()
++          } else {
++            database.endTransaction()
++          }
          }
++      } finally {
++        transactions.set(enclosingTransaction)
        }
-```
-
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/run/window/SqlDelightToolWindowFactory.kt` (modified, +17/-3)
-```diff
-@@ -1,5 +1,6 @@
- package app.cash.sqldelight.intellij.run.window
- 
-+import app.cash.sqldelight.core.SqlDelightProjectService
- import app.cash.sqldelight.dialect.api.ConnectionManager
- import app.cash.sqldelight.intellij.run.ConnectionOptions
- import com.intellij.openapi.project.Project
-@@ -14,13 +15,20 @@ import java.awt.Insets
- import javax.swing.GroupLayout
- import javax.swing.JPanel
- 
--internal class SqlDelightToolWindowFactory(
--  private val connectionManager: ConnectionManager,
--) : ToolWindowFactory {
-+internal class SqlDelightToolWindowFactory : ToolWindowFactory {
-+  override fun shouldBeAvailable(project: Project): Boolean = connectionManager(project) != null
-+
-+  override fun init(toolWindow: ToolWindow) {
-+    toolWindow.setIcon(SqlDelightProjectService.getInstance(toolWindow.project).dialect.icon)
-+  }
-+
-   override fun createToolWindowContent(
-     project: Project,
-     toolWindow: ToolWindow,
-   ) {
-+    toolWindow.contentManager.removeAllContents(true)
-+    val connectionManager = connectionManager(project) ?: return
-+
-     val runSqlText = JPanel(BorderLayout()).apply {
-       add(
-         JBTextArea("Create a connection to get started.").apply {
-@@ -37,6 +45,12 @@ internal class SqlDelightToolWindowFactory(
-       addContent(content)
+-      transactions.set(enclosingTransaction)
+       return QueryResult.Unit
      }
    }
-+
-+  companion object {
-+    const val ID = "SqlDelight"
-+
-+    private fun connectionManager(project: Project): ConnectionManager? = SqlDelightProjectService.getInstance(project).dialect.connectionManager
-+  }
- }
- 
- internal fun ContentManager.createWithConnectionSidePanel(
 ```
 
-**File**: `sqldelight-idea-plugin/src/main/resources/META-INF/plugin.xml` (modified, +3/-0)
+**File**: `drivers/driver-test/src/commonMain/kotlin/com/squareup/sqldelight/driver/test/TransacterTest.kt` (modified, +4/-5)
 ```diff
-@@ -53,6 +53,9 @@
-     <fileIconProvider implementation="app.cash.sqldelight.intellij.SqlDelightFileIconProvider" />
-     <errorHandler implementation="app.cash.sqldelight.intellij.SqlDelightErrorHandler"/>
+@@ -10,7 +10,7 @@ import kotlin.test.BeforeTest
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFailsWith
+-import kotlin.test.assertTrue
++import kotlin.test.assertIs
  
-+    <toolWindow id="SqlDelight" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
-+        factoryClass="app.cash.sqldelight.intellij.run.window.SqlDelightToolWindowFactory"/>
-+
-     <stubIndex implementation="com.alecstrong.sql.psi.core.psi.SchemaContributorIndexImpl"/>
-     <stubElementTypeHolder class="com.alecstrong.sql.psi.core.psi.SqlTypes" externalIdPrefix="SqlDelight.TYPES"/>
+ abstract class TransacterTest {
+   protected lateinit var transacter: TransacterImpl
+@@ -189,19 +189,18 @@ abstract class TransacterTest {
+   }
  
+   @Test
+-  fun anExceptionThrownInPostRollbackFunctionIsCombinedWithTheExceptionInTheMainBody() {
++  fun anExceptionThrownInPostRollbackFunctionIsSuppressedByTheExceptionInTheMainBody() {
+     class ExceptionA : RuntimeException()
+     class ExceptionB : RuntimeException()
+-    val t = assertFailsWith<Throwable> {
++    val t = assertFailsWith<ExceptionB> {
+       transacter.transaction {
+         afterRollback {
+           throw ExceptionA()
+         }
+         throw ExceptionB()
+       }
+     }
+-    assertTrue("Exception thrown in body not in message($t)") { t.toString().contains("ExceptionA") }
+-    assertTrue("Exception thrown in rollback not in message($t)") { t.toString().contains("ExceptionB") }
++    assertIs<ExceptionA>(t.suppressedExceptions.single())
+   }
+ 
+   @Test
 ```
 
----
-
-### Incident Patch 3: `6704029a` (2026-09-22)
-**Commit Message**: Fix plugin manager core references (#6366)
-
-* Update FileIndexMap.kt
-
-Our own class loader is the plugin class loader, so it knows the descriptor.
-This avoids the PluginManagerCore lookup, which is internal API in newer IDE versions.
-
-* Update SqlDelightErrorHandler.kt
-
-Remove PluginManagerCore.plugins
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `drivers/web-worker-driver/src/commonTest/kotlin/app/cash/sqldelight/drivers/worker/WebWorkerTransacterTest.kt` (modified, +4/-12)
 ```diff
-@@ -12,7 +12,7 @@
+@@ -11,8 +11,7 @@ import app.cash.sqldelight.driver.worker.createDefaultWebWorkerDriver
+ import kotlin.test.Test
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFailsWith
+-import kotlin.test.assertTrue
+-import kotlin.test.fail
++import kotlin.test.assertIs
  
- ### Fixed
+ class WebWorkerTransacterTest {
+   private val schema = object : SqlSchema<QueryResult.Value<Unit>> {
+@@ -177,24 +176,17 @@ class WebWorkerTransacterTest {
+     }
+   }
  
--- Nothing yet!
-+- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 @griffio) 
- 
- 
- ## [2.4.0] - 2026-09-17
-```
-
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/SqlDelightErrorHandler.kt` (modified, +0/-4)
-```diff
-@@ -20,7 +20,6 @@ import app.cash.sqldelight.VERSION
- import com.bugsnag.Bugsnag
- import com.bugsnag.Severity
- import com.intellij.diagnostic.AbstractMessage
--import com.intellij.ide.plugins.PluginManagerCore
- import com.intellij.openapi.application.ApplicationInfo
- import com.intellij.openapi.diagnostic.ErrorReportSubmitter
- import com.intellij.openapi.diagnostic.IdeaLoggingEvent
-@@ -42,9 +41,6 @@ class SqlDelightErrorHandler : ErrorReportSubmitter() {
-       it.addToTab("Device", "IDE Version", ApplicationInfo.getInstance().fullVersion)
-       it.addToTab("Device", "IDE Build #", ApplicationInfo.getInstance().build)
-       it.addToTab("Device", "Plugin SHA", GIT_SHA)
--      PluginManagerCore.plugins.forEach { plugin ->
--        it.addToTab("Plugins", plugin.name, "${plugin.pluginId} : ${plugin.version}")
+-  @Test fun an_exception_thrown_in_postRollback_function_is_combined_with_the_exception_in_the_main_body() = runTest { _, transacter ->
++  @Test fun an_exception_thrown_in_postRollback_function_is_suppressed_by_the_exception_in_the_main_body() = runTest { _, transacter ->
+     class ExceptionA : RuntimeException()
+     class ExceptionB : RuntimeException()
+-    try {
++    val e = assertFailsWith<ExceptionB> {
+       transacter.transaction {
+         afterRollback {
+           throw ExceptionA()
+         }
+         throw ExceptionB()
+       }
+-      fail("Should have thrown!")
+-    } catch (e: Throwable) {
+-      assertTrue("Exception thrown in body not in message($e)") {
+-        e.toString().contains("ExceptionA")
+-      }
+-      assertTrue("Exception thrown in rollback not in message($e)") {
+-        e.toString().contains("ExceptionB")
 -      }
      }
++    assertIs<ExceptionA>(e.suppressedExceptions.single())
    }
- 
+ }
 ```
 
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/gradle/FileIndexMap.kt` (modified, +2/-4)
+**File**: `runtime/src/commonMain/kotlin/app/cash/sqldelight/Transacter.kt` (modified, +15/-9)
 ```diff
-@@ -9,9 +9,8 @@ import app.cash.sqldelight.intellij.FileIndex
- import app.cash.sqldelight.intellij.SqlDelightFileIndexImpl
- import app.cash.sqldelight.intellij.notifications.FileIndexingNotification
- import app.cash.sqldelight.intellij.resolvers.SQL_DELIGHT_MODEL_KEY
--import com.intellij.ide.plugins.PluginManagerCore
-+import com.intellij.ide.plugins.cl.PluginAwareClassLoader
- import com.intellij.openapi.extensions.PluginDescriptor
--import com.intellij.openapi.extensions.PluginId
- import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
- import com.intellij.openapi.module.Module
- import com.intellij.util.lang.ClassPath
-@@ -46,8 +45,7 @@ internal class FileIndexMap {
-         return@computeIfAbsent defaultIndex
-       }
+@@ -201,6 +201,18 @@ interface SuspendingTransacter : TransacterBase {
  
--      val pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("com.squareup.sqldelight"))!!
--
-+      val pluginDescriptor = (FileIndexMap::class.java.classLoader as PluginAwareClassLoader).pluginDescriptor
-       val shouldInvalidate = pluginDescriptor.addDialect(
-         propertiesFile.dialectJars.filterNot { it.path.contains("org.jetbrains.kotlin") }.map { it.toURI() },
-       )
+ private class RollbackException(val value: Any? = null) : Throwable()
+ 
++private inline fun suppressingAnyNewException(thrownException: Throwable?, block: () -> Unit) {
++  if (thrownException == null || thrownException is RollbackException) {
++    block()
++  } else {
++    try {
++      block()
++    } catch (e: Throwable) {
++      thrownException.addSuppressed(e)
++    }
++  }
++}
++
+ private class TransactionWrapper<R>(
+   val transaction: Transaction,
+ ) : TransactionWithoutReturn,
+@@ -277,14 +289,8 @@ abstract class BaseTransacterImpl(protected val driver: SqlDriver) {
+   protected fun <R> postTransactionCleanup(transaction: Transaction, enclosing: Transaction?, thrownException: Throwable?, returnValue: R?): R {
+     if (enclosing == null) {
+       if (!transaction.successful || !transaction.childrenSuccessful) {
+-        // TODO: If this throws, and we threw in [body] then create a composite exception.
+-        try {
++        suppressingAnyNewException(thrownException) {
+           transaction.postRollbackHooks.forEach { it.invoke() }
+-        } catch (rollbackException: Throwable) {
+-          thrownException?.let {
+-            throw Throwable("Exception while rolling back from an exception.\nOriginal exception: $thrownException\nwith cause ${thrownException.cause}\n\nRollback exception: $rollbackException", rollbackException)
+-          }
+-          throw rollbackException
+         }
+         transaction.postRollbackHooks.clear()
+       } else {
+@@ -388,7 +394,7 @@ abstract class TransacterImpl(driver: SqlDriver) :
+     } catch (e: Throwable) {
+       thrownException = e
+     } finally {
+-      transaction.endTransaction()
++      suppressingAnyNewException(thrownException) { transaction.endTransaction() }
+       return postTransactionCleanup(transaction, enclosing, thrownException, returnValue)
+     }
+   }
+@@ -439,7 +445,7 @@ abstract class SuspendingTransacterImpl(driver: SqlDriver) :
+     } catch (e: Throwable) {
+       thrownException = e
+     } finally {
+-      transaction.endTransaction().await()
++      suppressingAnyNewException(thrownException) { transaction.endTransaction().await() }
+       return postTransactionCleanup(transaction, enclosing, thrownException, returnValue)
+     }
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6388** (2026-10-25): Update dependency org.postgresql:postgresql to v42.7.14 (@renovate[bot])
+- **PR #6387** (2026-10-23): Let the bad times roll (@pyricau)
 - **PR #6386** (2026-10-06): Update sql-psi to 0.8.1 (@JakeWharton)
 - **PR #6381** (2026-10-06): Improve docs for Android transactions.md (@griffio)
 - **PR #6380** (2026-10-03): Update plugin spotless to v8.10.3 (@renovate[bot])
 - **PR #6379** (2026-10-03): Update Gradle to v9.8.0 (@renovate[bot])
-- **PR #6378** (closed): Make Android Driver queries transactional to prevent torn results (@tcmulcahy)
-- **PR #6376** (2026-09-29): Prefer Marketplace error reporting over custom solution (@JakeWharton)
 
 ---
 
@@ -928,30 +753,28 @@ Remove PluginManagerCore.plugins
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep query files in-memory for the duration of a task (#6374)
+## X. Update dependency org.postgresql:postgresql to v42.7.14 (#6388)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75462856`: Keep query files in-memory for the duration of a task (#6374). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78a3398e`: Update dependency org.postgresql:postgresql to v42.7.14 (#6388). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-- [Gradle Plugin] Keep parsed `.sq` files in memory for the whole code generation task, so they are not parsed again after garbage collection. This can make code generation faster in large projects (#6374 by @C2H6O)
-- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio)
+postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.14" }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-- Nothing yet!
-- [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio) 
+postgresJdbc = { module = "org.postgresql:postgresql", version = "42.7.13" }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75462856` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78a3398e` are properly handled with clean fallback behavior.

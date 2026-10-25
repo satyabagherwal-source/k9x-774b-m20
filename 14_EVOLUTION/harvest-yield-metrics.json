@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:17:02.315Z",
-  "total_cycles_completed": 4747,
-  "total_learnings_persisted": 4747,
-  "total_rules_promoted": 4113,
+  "last_updated": "2026-10-25T10:36:25.645Z",
+  "total_cycles_completed": 4751,
+  "total_learnings_persisted": 4751,
+  "total_rules_promoted": 4119,
   "history": [
-    {
-      "timestamp": "2026-10-24T19:52:49.977Z",
-      "repository": "nezhahq/nezha",
-      "learningId": "learn-github-nezhahq-nezha",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:58:38.907Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:58:45.730Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:58:56.699Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T19:58:58.329Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1403,6 +1375,34 @@
       "repository": "koderover/zadig",
       "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:36:17.637Z",
+      "repository": "sqldelight/sqldelight",
+      "learningId": "learn-github-sqldelight-sqldelight",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:36:19.997Z",
+      "repository": "ducaale/xh",
+      "learningId": "learn-github-ducaale-xh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:36:25.281Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:36:25.645Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

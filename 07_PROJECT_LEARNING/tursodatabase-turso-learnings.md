@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `0687b18d`  
+> **Source Version**: `5f377584`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:37:02.524Z  
+> **Timestamp**: 2026-10-25T10:36:25.007Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:37:01.065Z  
+> **Harvest Timestamp**: 2026-10-25T10:36:24.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 24963 stars
+- **Stars / Engagement**: 25017 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10550** (2026-10-22): **postgres: expose dialect and types from turso_pg**
-  *Symptoms*: ## Description  Re-export `PostgresDialect` and the core `types` module from `turso_pg`.  ## Motivation and context  Allow callers to access the PostgreSQL dialect and value types through `turso_pg`. Existing connection and database exports remain available.  ## Description of AI Usage  Codex made the re-export changes and prepared this PR at the author's request. 
+- **Issue #10714** (2026-10-25): **postgres: keep mod() integer when both arguments are integers**
+  *Symptoms*: ## Description  `mod()` in tursopg always returned a float, while PostgreSQL keeps integer arguments integer:  ```sql SELECT mod(67, 100);  -- tursopg: 67.0   postgres: 67 ```  `mod` is SQLite's built-in math function, which always computes a float remainder and returns a REAL. That is right for SQLite but not for PostgreSQL.  A new `Dialect::mod_of_integers_is_integer()` (false by default, true in `PostgresDialect`) makes `mod` return the integer remainder when both arguments are integers (`mod(-9223372036854775808, -1)` is 0, as in PostgreSQL). Otherwise it returns the float remainder, so `mod(7.5, 2)` is still 1.5. This works like the existing `errors_on_zero_divisor()`, which already gives PostgreSQL's division by zero error for `mod`. `mod` still resolves to the same math function, so it keeps working in CHECK constraints on PostgreSQL's STRICT tables. SQLite's `mod` is unchanged.  ## Motivation and context  Fixes #10704  ## Description of AI Usage  Autofixer wrote this change with Claude Code in an isolated sandbox. A separate verifier agent tested and reviewed it in its own container before this PR was opened. A maintainer must review it before merge.  To have Autofixer address review feedback, leave your comments and then mention @turso-github-handyman; it handles all unanswered comments from maintainers in one round.
 
-- **Issue #10546** (2026-10-22): **postgres: run postgres mode on MVCC with BEGIN CONCURRENT**
-  *Symptoms*: ## Summary  - **core**: adds \`DatabaseOpts::with_mvcc(bool)\` — opens (and converts if needed) a database in MVCC mode at open time. A read-only open of a non-MVCC file keeps the current mode. - **postgres frontend**: \`open_database_with_io\` now calls \`opts.with_mvcc(true)\` unconditionally, so every postgres-mode database is MVCC. Callers no longer need to set this themselves — the CLI, the server, and embedded users all get it automatically. - **postgres parser**: \`BEGIN\` / \`START TRANSACTION\` translates to \`BEGIN CONCURRENT\` instead of plain \`BEGIN\`. - **postgres frontend**: COPY path issues \`BEGIN CONCURRENT\`. \`pg_get_tabledef\` now filters \`__turso_internal_*\` tables (they leaked into results once MVCC was always on). Dead \`enable_mvcc\` field and post-open pragma workaround removed from test helpers. - **postgres conformance**: four new DDL-transaction \`.sqltest\` cases (\`txn-ddl-commit-persists\`, \`txn-ddl-after-dml-commits\`, \`txn-ddl-rollback-discards\`, \`txn-drop-table-rollback-restores\`). - All matview CLI tests removed — matviews are rejected in MVCC mode.  This was unblocked by "core/mvcc: defer BEGIN CONCURRENT to the first statement" (now on main): read-only sessions no longer need special handling because the MVCC snapshot is deferred to the first statement.  ## Test plan  - [ ] \`cargo test -p turso_pg\` — 29 unit tests pass - [ ] \`make -C postgres/conformance run-postgres\` — conformance suite including 4 new DDL transaction tests - 
+- **Issue #10713** (2026-10-25): **postgres: expose empty pg_seclabels catalog**
+  *Symptoms*: pg_dump stops during security-label discovery because `pg_catalog.pg_seclabels` is missing. Expose its eight columns through the existing empty-catalog implementation, returning no rows because security labels are unsupported.  Register the catalog name so unqualified queries also resolve with an empty `search_path`, and document its availability. The column layout follows the [PostgreSQL documentation](https://www.postgresql.org/docs/17/view-pg-seclabels.html). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,300 +1397,783 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f5b651c` (2026-10-22)
-**Commit Message**: Merge 'fix Linux panics when opening connections during active reads' from Domen Kožar
+### Incident Patch 1: `09f919bc` (2026-10-25)
+**Commit Message**: Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Saurio
 
-Fix a Linux panic when an application opens another connection to a
-database while an existing connection is still reading. With shared WAL
-coordination enabled, ending the existing read transaction could panic
-with `reader slot released by non-owner`.
+Our Antithesis runs have found nothing lately. Part of the reason is
+that the stress tool could not notice many kinds of bugs, and rarely
+reached the states where bugs hide.
 
-For example, a server that opens a database connection for each request
-could crash when a new request arrived before another request finished
-reading. Opening the new connection now preserves the existing read
-transaction so it can finish normally.
+This PR has four commits.
 
-The fix also prevents the same panic when a new read transaction starts
-while Turso is cleaning up reader slots or checking active readers.
+---
 
-Reader cleanup could mistake a live reader in the same process for an
-abandoned reader and remove its slot. Preserve active readers and keep
-reader registration synchronized with cleanup in all three affected
-paths: connection-open repair, stale-slot reclamation, and active-reader
-scans.
+## 1. Fail the run when a statement returns an internal error
 
-## Tests
+**Before:** stress ignored every error except `Corrupt`, and never
+looked at the result of `BEGIN`, `COMMIT`, `ROLLBACK` or `SAVEPOINT`.
 
-Five regressions cover an existing reader surviving a connection open
-and a new reader starting during each cleanup path. The three new race
-regressions fail before t
+**Example:** if `COMMIT` fails with `Internal error: page not loaded`,
+the old stress logs it and keeps going. Antithesis reports nothing. Now
+the run fails.
 
-**File**: `core/storage/shared_wal_coordination.rs` (modified, +170/-15)
+**Checked:** I planted a fake bug in core (every 500th insert returns an
+internal error). The stress tool on `main` passed with the bug hit 3
+times. This branch fails on the first one. Busy, constraint, conflict
+and I/O errors still count as normal.
+
+---
+
+## 2. Random page size, cache size and checkpoint thresholds
+
+**Before:** every run used 4096-byte pages, a 2000 KiB cache and default
+checkpoint settings.
+
+**Example:** with 4096-byte pages and a few hundred small rows, a table
+is one or two B-tree levels deep and the cache never fills. Co
+
+**File**: `Dockerfile.antithesis` (modified, +2/-1)
 ```diff
-@@ -1302,6 +1302,11 @@ impl MappedSharedWalCoordination {
-     /// "reader slot released by non-owner" when they try to end their read
-     /// transactions, corrupting the shared WAL state.
-     ///
-+    /// Slots held by other connections in this process are skipped before
-+    /// probing. On Linux the byte lock belongs to the open file description
-+    /// that all connections in this process share, so probing it from here
-+    /// would succeed and clear a slot that a live reader still uses.
-+    ///
-     /// Probe the slot byte lock directly on every platform. That lock is the
-     /// authoritative liveness signal for this database file; relying on PID
-     /// probes here is weaker and can misclassify recycled PIDs as live.
-@@ -1316,11 +1321,13 @@ impl MappedSharedWalCoordination {
-         // clearing: another live process may hold a slot. Blindly clearing
-         // would cause that process to panic with "reader slot released by
-         // non-owner" and corrupt the shared WAL state.
-+        let local = self.local_lock_state.lock();
-+        let process_local = self.process_local_ownership.lock();
-         for slot_index in 0..header.reader_slot_count {
--            if !self.uses_linux_ofd_locking()
--                && self
--                    .with_process_local_ownership(|entry| entry.reader_owner(slot_index).is_some())
--            {
-+            if local.reader_locks[slot_index as usize] > 0 {
-+                continue;
-+            }
-+            if !self.uses_linux_ofd_locking() && process_local.reader_owner(slot_index).is_some() {
-                 continue;
-             }
-             let offset = Self::process_lock_offset_for_reader(slot_index);
-@@ -1928,14 +1935,12 @@ impl MappedSharedWalCoordination {
-     /// actually blocks checkpoints; shared owner metadata can be stale.
-     fn try_reclaim_stale_reader_slot(&self, slot_index: u32) -> bool {
-         if self.uses_linux_ofd_locking() {
--            let should_probe = self.with_local_lock_state(|entry| {
--                turso_assert!(
--                    (slot_index as usize) < entry.reader_locks.len(),
--                    "reader slot registry index out of range"
--                );
--                entry.reader_locks[slot_index as usize] == 0
--            });
--            if !should_probe {
-+            let local = self.local_lock_state.lock();
-+            turso_assert!(
-+                (slot_index as usize) < local.reader_locks.len(),
-+                "reader slot registry index out of range"
-+            );
-+            if local.reader_locks[slot_index as usize] > 0 {
-                 return false;
-             }
-             let offset = Self::process_lock_offset_for_reader(slot_index);
-@@ -2269,13 +2274,12 @@ impl MappedSharedWalCoordination {
-                     let _ = self.try_reclaim_dead_reader_owner(slot_index as u32, owner);
-                     return None;
-                 }
-+                let local = self.local_lock_state.lock();
-                 let frame = frame.load(Ordering::Acquire);
-                 if frame == UNUSED_READER_FRAME {
-                     return None;
-                 }
--                let local_lock_held =
--                    self.with_local_lock_state(|entry| entry.reader_locks[slot_index] > 0);
--                if local_lock_held {
-+                if local.reader_locks[slot_index] > 0 {
-                     return Some(frame);
-                 }
-                 let offset = Self::process_lock_offset_for_reader(slot_index as u32);
-@@ -3357,6 +3361,48 @@ mod tests {
-         assert_eq!(mapped_a.find_frame(9, 0, 4, None), Some(4));
-     }
+@@ -86,8 +86,9 @@ COPY ./testing/antithesis/stress-io_uring /opt/antithesis/test/v1/stress-io_urin
+ COPY ./testing/antithesis/stress-mvcc /opt/antithesis/test/v1/stress-mvcc
+ COPY ./testing/antithesis/stress-io_uring-mvcc /opt/antithesis/test/v1/stress-io_uring-mvcc
+ COPY ./testing/antithesis/stress-unreliable /opt/antithesis/test/v1/stress-unreliable
++COPY ./testing/antithesis/stress-crash /opt/antithesis/test/v1/stress-crash
+ RUN chmod 777 -R /opt/antithesis/test/v1
+-RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py
++RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py
  
-+    #[test]
-+    fn mapped_shared_wal_coordination_repair_preserves_reader_slots_held_by_sibling_connections() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("coordination.tshm");
-+        let mapped = create_mapping(&path);
-+
-+        let reader = mapped.register_reader(mapped.owner_record(), 4).unwrap();
-+
-+        mapped.repair_transient_state_for_exclusive_open();
-+
-+        assert_eq!(mapped.reader_owner(reader.slot_index), Some(reader.owner));
-+        assert_eq!(mapped.min_active_reader_frame(), Some(4));
-+
-+        mapped.unregister_reader(reader);
-+        assert_eq!(mapped.reader_owner(reader.slot_index), None);
-+        assert_eq!(mapped.min_active_reader_frame(), None);
-+    }
-+
-+    #[cfg(all(target_os = "linux", not(shuttle)))]
-+    #[test]
-+    fn reader_registered_during_repair_keeps_its_slot() {
-+        reader_registered_during_probe_keeps_its_slot(|mapped| {
-+            mapped.repair_transient_state_for_exclusive_open();
-+        });
-+    }
-+
-+    #[cfg(all(target_os = "linux", not(shuttle)))]
-+    #[test]
-+    fn reader_registered_during_stale_slot_reclamation_keeps_its_slot() {
-+        reader_registered_during_probe_keeps_its_slot(|mapped| {
-+            mapped.try_reclaim_stale_reader_slot(0);
-+        });
-+    }
-+
-+    #[cfg(all(target_os = "linux", not(shuttle)))]
-+    #[test]
-+    
+ RUN mkdir /opt/antithesis/catalog
+ RUN ln -s /opt/antithesis/test/v1/bank-test/*.py /opt/antithesis/catalog
 ```
 
-**File**: `core/storage/wal.rs` (modified, +56/-0)
+**File**: `testing/antithesis/stress-crash/helper_recovery_check.py` (added, +43/-0)
 ```diff
-@@ -8270,6 +8270,62 @@ pub mod test {
-         assert_eq!(active_shared_reader_slot_count(&authority), 0);
-     }
+@@ -0,0 +1,43 @@
++#!/usr/bin/env -S python3 -u
++
++import sqlite3
++import sys
++
++import turso
++from antithesis.assertions import always
++
++db_path = sys.argv[1]
++
++
++def turso_integrity_check():
++    # Opening the database makes Turso recover it from the WAL or the MVCC log.
++    con = turso.connect(db_path)
++    cur = con.cursor()
++    rows = [row[0] for row in cur.execute("PRAGMA integrity_check").fetchall()]
++    # SQLite cannot read MVCC databases. Switching to WAL moves the MVCC log
++    # into the database file, and is a no-op for databases already in WAL mode.
++    cur.execute("PRAGMA journal_mode = wal").fetchall()
++    con.close()
++    return rows
++
++
++def sqlite_integrity_check():
++    con = sqlite3.connect(db_path)
++    rows = con.execute("PRAGMA integrity_check").fetchall()
++    return [row[0] for row in rows]
++
++
++ok = True
++for engine, check in (("turso", turso_integrity_check), ("sqlite", sqlite_integrity_check)):
++    try:
++        rows = check()
++    except Exception as e:
++        always(False, f"[{engine}] database opens after the stress process is killed", {"error": str(e)})
++        ok = False
++        break
++    passed = rows == ["ok"]
++    always(passed, f"[{engine}] integrity check passes after the stress process is killed", {"rows": rows[:20]})
++    print(f"{engine} integrity check: {rows[:20]}")
++    ok = ok and passed
++
++sys.exit(0 if ok else 1)
+```
+
+**File**: `testing/antithesis/stress-crash/singleton_driver_stress.sh` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++#!/usr/bin/env bash
++
++# Kill the stress workload with SIGKILL at a random moment, then check that
++# Turso can open the database, recover it, and pass integrity checks.
++
++db_file=$(mktemp /tmp/stress-crash.XXXXXX.db)
++tx_mode=$(python3 -c 'from antithesis.random import random_choice; print(random_choice(["sqlite", "concurrent"]))')
++kill_after=$(python3 -c 'from antithesis.random import get_random; print(get_random() % 60 + 1)')
++
++/bin/turso_stress --nr-threads 2 --nr-iterations 100000 --tx-mode "$tx_mode" --db-file "$db_file" &
++stress_pid=$!
++sleep "$kill_after"
++kill -9 "$stress_pid"
++wait "$stress_pid"
++stress_status=$?
++
++# 137 means the process died from our SIGKILL. 0 means it finished before
++# the kill. Anything else is a failure inside the workload.
++if [ "$stress_status" -ne 0 ] && [ "$stress_status" -ne 137 ]; then
++    exit "$stress_status"
++fi
++
++exec python3 /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py "$db_file"
+```
+
+**File**: `testing/stress/checkpoint.rs` (modified, +3/-7)
+```diff
+@@ -5,7 +5,7 @@ use rand::Rng;
+ use turso::Value;
+ use turso_stress::ThreadId;
  
-+    #[cfg(host_shared_wal)]
-+    #[test]
-+    fn test_shm_coordination_open_keeps_sibling_read_tx_reader_slot_after_disk_scan() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let wal_path = dir.path().join("test-sibling-reader-repair.db-wal");
-+        let shm_path = dir.path().join("test-sibling-reader-repair.db-tshm");
-+        let io = shared_wal_test_io();
-+        let file = io
-+            .open_file(wal_path.to_str().unwrap(), crate::OpenFlags::Create, false)
-+            .unwrap();
-+        let shared = WalFileShared::new_shared(file).unwrap();
-+        let snapshot = WalSnapshot {
-+            max_frame: 5,
-+            nbackfills: 2,
-+            last_checksum: (31, 37),
-+            checkpoint_seq: 5,
-+            transaction_count: 9,
-+        };
-+        set_shared_snapshot(&shared, snapshot);
-+        {
-+            let shared = shared.write();
-+            let mut header = shared.metadata.wal_header.lock();
-+            header.page_size = 4096;
-+            header.salt_1 = 17;
-+            header.salt_2 = 23;
-+            header.checksum_1 = snapshot.last_checksum.0;
-+            header.checksum_2 = snapshot.last_checksum.1;
-+            shared
-+                .metadata
-+                .loaded_from_disk_scan
-+                .store(true, Ordering::Release);
+-use crate::conn::StressConn;
++use crate::conn::{assert_not_engine_bug, StressConn};
+ use crate::opts::TxMode;
+ use crate::sql_logging::SqlLogger;
+ use crate::ThreadRng;
+@@ -54,11 +54,9 @@ pub async fn run_wal_checkpoint(
+                 turso::Error::Busy(_) | turso::Error::BusySnapshot(_) => {
+                     sql_logger.log(thread, &sql, "SKIPPED: database busy");
+                 }
+-                turso::Error::Corrupt(e) => {
+-                    turso_macros::turso_assert_unreachable!("corrupt error running checkpoint", { "thread": thread, "mode": mode, "error": e });
+-                }
+                 e => {
+                     sql_logger.log(thread, &sql, &format!("ERROR: {e}"));
++                    assert_not_engine_bug(thread, &sql, &e);
+                 }
+             }
+             return;
+@@ -109,11 +107,9 @@ pub async fn run_wal_checkpoint(
+         Err(turso::Error::Busy(_) | turso::Error::BusySnapshot(_)) => {
+             sql_logger.log(thread, &sql, "SKIPPED: database busy");
+         }
+-        Err(turso::Error::Corrupt(e)) => {
+-            turso_macros::turso_assert_unreachable!("corrupt error reading checkpoint result", { "thread": thread, "mode": mode, "error": e });
+-        }
+         Err(e) => {
+             sql_logger.log(thread, &sql, &format!("ERROR: {e}"));
++            assert_not_engine_bug(thread, &sql, &e);
+         }
+     }
+ }
+```
+
+**File**: `testing/stress/conn.rs` (modified, +95/-0)
+```diff
+@@ -1,4 +1,6 @@
++use crate::opts::TxMode;
+ use crate::sql_logging::SqlLogger;
++use crate::ThreadRng;
+ use turso::{Builder, Connection, IntoParams, Row, Rows};
+ use turso_stress::sync::Arc;
+ use turso_stress::sync::AsyncMutex as Mutex;
+@@ -86,9 +88,52 @@ impl StressConn {
+     ) -> turso::connection::Result<u64> {
+         let result = self.conn.execute(sql, params).await;
+         self.sql_logger.log_result(&self.thread, sql, &result);
++        if let Err(error) = &result {
++            assert_not_engine_bug(&self.thread, sql, error);
 +        }
-+
-+        let authority =
-+            Arc::new(MappedSharedWalCoordination::create_or_open(&io, &shm_path, 64).unwrap());
-+        let first = ShmWalCoordination::new(shared.clone(), authority.clone());
-+        let guard = first.try_begin_read_tx(snapshot).unwrap();
-+        assert_eq!(
-+            authority.min_active_reader_frame(),
-+            Some(snapshot.max_frame)
-+        );
-+
-+        let second = ShmWalCoordination::new(shared, authority.clone());
-+        assert_eq!(
-+            authority.min_active_reader_frame(),
-+            Some(snapshot.max_frame),
-+            "opening another connection must keep the live reader slot"
-+        );
-+        assert_eq!(active_shared_reader_slot_count(&authority), 1);
-+
-+        first.end_read_tx(guard);
-+        assert_eq!(authority.min_active_reader_frame(), None);
-+        assert_eq!(active_shared_reader_slot_count(&authority), 0);
-+        drop(second);
++        result
 +    }
 +
-     #[cfg(host_shared_wal)]
-     #[test]
-     fn test_shm_coordination_uses_one_published_slot_per_active_snapshot_generation() {
-```
-
----
-
-### Incident Patch 2: `6e82d7f3` (2026-10-22)
-**Commit Message**: postgres: accept pg_dump 18's transaction_timeout and xmloption SETs
-
-pg_dump 18 emits SET transaction_timeout = 0 and SET xmloption = content in
-its preamble. Both describe what Turso already does: there is no
-transaction timeout, and content is PostgreSQL's default xmloption. main
-accepted them, so add them to the already-in-effect allowlist instead of
-rejecting them.
-
-Tests: test_postgres_rejects_unsupported_set_and_show.
-
-Part of #10420
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `postgres/frontend/session.rs` (modified, +2/-0)
-```diff
-@@ -484,6 +484,8 @@ fn set_value_already_in_effect(name: &str, values: &[PgSetValue]) -> bool {
-         "check_function_bodies" | "synchronize_seqscans" => is_on || is_off,
-         "default_tablespace" => value.is_empty(),
-         "default_table_access_method" => value == "heap",
-+        "transaction_timeout" => value == "0",
-+        "xmloption" => value == "content",
-         // These only label the session or filter notices.
-         "application_name" => true,
-         "client_min_messages" => matches!(
-```
-
-**File**: `postgres/tests/integration/postgres/dialect.rs` (modified, +2/-0)
-```diff
-@@ -166,6 +166,8 @@ fn test_postgres_rejects_unsupported_set_and_show(db: TempDatabase) {
-         "SET client_min_messages = warning",
-         "SET default_tablespace = ''",
-         "SET default_table_access_method = heap",
-+        "SET transaction_timeout = 0",
-+        "SET xmloption = content",
-     ] {
-         conn.execute(sql).unwrap_or_else(|e| panic!("{sql}: {e}"));
++    /// Run a query and read all of its rows, so that errors hit while
++    /// scanning are seen too.
++    pub async fn query_all(&self, sql: &str) -> turso::Result<()> {
++        let result = async {
++            let mut rows = self.conn.query(sql, ()).await?;
++            while rows.next().await?.is_some() {}
++            Ok(())
++        }
++        .await;
++        self.sql_logger.log_result(&self.thread, sql, &result);
++        if let Err(error) = &result {
++            assert_not_engine_bug(&self.thread, sql, error);
++        }
+         result
      }
+ 
++    /// Give this connection a random cache size and checkpoint threshold.
++    /// Small values make cache spills and checkpoints happen far more often
++    /// than the defaults would.
++    pub async fn apply_random_settings(
++        &self,
++        rng: &mut ThreadRng,
++        tx_mode: TxMode,
++    ) -> turso::Result<()> {
++        let cache_size = rng.choose(&[10, 100, 1000, -2000]);
++        self.pragma_update("cache_size", cache_size).await?;
++        match tx_mode {
++            TxMode::SQLite => {
++                let frames = rng.choose(&[0, 10, 100, 1000]);
++                self.pragma_update("wal_autocheckpoint", frames).await?;
++            }
++            TxMode::Concurrent => {
++                let bytes = rng.choose(&[0, 4096, 65536, 4_120_000]);
++                self.pragma_update("mvcc_checkpoint_threshold", bytes)
++                    .await?;
++            }
++        }
++        Ok(())
++    }
++
+     pub async fn rollback_if_open(&self) -> turso::Result<()> {
+         if !self.conn.is_autocommit()? {
+             self.execute("ROLLBACK", ()).await?;
+@@ -116,3 +161,53 @@ impl StressConn {
+         self.conn.query(sql, params).await
+     }
+ }
++
++/// Fail the run on errors that only a broken engine returns. Busy, constraint,
++/// conflict and I/O errors are normal under this workload and pass through.
++pub fn assert_not_engine_bug(thread: &ThreadId, sql: &str, error: &turso::Error) {
++    if is_engine_bug(error) {
++        turso_macros::turso_assert_unreachable!("statement failed with an engine bug error", { "thread": thread, "sql": sql, "error": error });
++    }
++}
++
++fn is_engine_bug(error: &turso::Error) -> bool {
++    match error {
++        turso::Error::Corrupt(_) | turso::Error::NotAdb(_) => true,
++        turso::Error::Error(message) => message.starts_with("Internal error:"),
++        _ => false,
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::is_engine_bug;
++
++    #[test]
++    fn internal_and_corruption_errors_are_engine_bugs() {
++        assert!(is_engine_bug(&turso::Error::Error(
++            "Internal error: page not loaded".into()
++        )));
++        assert!(is_engine_bug(&turso::Error::Corrupt(
++            "Invalid page type: 0".into()
++        )));
++        assert!(is_engine_bug(&turso::Error::NotAdb(
++            "file is not a database".into()
++        )));
++    }
++
++    #[test]
++    fn errors_the_workload_expects_are_not_engine_bugs() {
++        assert!(!is_engine_bug(&turso::Error::Busy(
++            "database is locked".into()
++        )));
++        assert!(!is_engine_bug(&turso::Error::Constraint(
++            "UNIQUE constraint failed".into()
++        )));
++        assert!(!is_engine_bug(&turso::Error::Error(
++            "Write-write conflict".into()
++        )));
++        assert!(!is_engine_bug(&turso::Error::Error(
++            "Transaction error: cannot start a transaction within a transaction".into()
++        )));
++    }
++}
+```
+
+**File**: `testing/stress/main.rs` (modified, +64/-19)
+```diff
+@@ -24,7 +24,7 @@ use turso_stress::sync::Arc;
+ use turso_stress::sync::AsyncBarrier as Barrier;
+ use turso_stress::sync::AsyncMutex as Mutex;
+ 
+-use crate::conn::StressDb;
++use crate::conn::{StressConn, StressDb};
+ use crate::counter::StressCounter;
+ use crate::logging::Tracer;
+ use crate::progress::ProgressBars;
+@@ -277,7 +277,16 @@ fn generate_random_value(rng: &mut ThreadRng, data_type: &DataType) -> String {
+     match data_type {
+         DataType::Integer => rng.random_range(0..1000).to_string(),
+         DataType::Real => format!("{:.2}", rng.random_range(0f32..100f32)),
+-        DataType::Text => format!("'{}'", generate_random_identifier(rng)),
++        DataType::Text => {
++            // 10% chance of a text value large enough to spill into overflow
++            // pages, also as a primary key or UNIQUE index key.
++            if rng.random_ratio(1, 10) {
++                let repeat = rng.random_range(20..400);
++                format!("'{}'", generate_random_identifier(rng).repeat(repeat))
++            } else {
++                format!("'{}'", generate_random_identifier(rng))
++            }
++        }
+         DataType::Blob => {
+             // 20% chance of generating a large blob via zeroblob() to trigger
+             // page allocation (the pattern that exposed the savepoint rollback
+@@ -399,13 +408,50 @@ fn generate_delete(rng: &mut ThreadRng, table: &Table) -> String {
+     format!("DELETE FROM {} WHERE {};", table.name, where_clause)
+ }
+ 
+-/// Generate a random SQL statement for a schema
+-fn generate_random_statement(rng: &mut ThreadRng, schema: &ArbitrarySchema) -> String {
++/// Run a random write or read against a random table. Errors are ignored
++/// here; `StressConn` fails the run on errors that point to an engine bug.
++async fn run_random_statement(conn: &StressConn, rng: &mut ThreadRng, schema: &ArbitrarySchema) {
+     let table = rng.choose(&schema.tables);
+-    match rng.random_range(0..=2) {
+-        0 => generate_insert(rng, table),
+-        1 => generate_update(rng, table),
+-        _ => generate_delete(rng, table),
++    let _ = match rng.random_range(0..=3) {
++        0 => conn
++            .execute(&generate_insert(rng, table), ())
++            .await
++            .map(|_| ()),
++        1 => conn
++            .execute(&generate_update(rng, table), ())
++            .await
++            .map(|_| ()),
++        2 => conn
++            .execute(&generate_delete(rng, table), ())
++            .await
++            .map(|_| ()),
++        _ => conn.query_all(&generate_read(rng, table)).await,
++    };
++}
++
++/// Generate a read that scans many rows of a table.
++fn generate_read(rng: &mut ThreadRng, table: &Table) -> String {
++    let column = rng.choose(&table.columns);
++    if rng.random_ratio(1, 2) {
++        format!(
++            "SELECT count(*), sum(length({})) FROM {};",
++            column.name, table.name
++        )
++    } else {
++        let pk_column = table
++            .columns
++            .iter()
++            .find(|col| col.constraints.contains(&Constraint::PrimaryKey))
++            .expect("Table should have a primary key");
++        format!(
++            "SELECT count(*), sum(length({})) FROM (SELECT * FROM {} WHERE {} >= {} ORDER BY {} LIMIT {});",
++            column.name,
++            table.name,
++            pk_column.name,
++            generate_random_value(rng, &pk_column.data_type),
++            pk_column.name,
++            rng.random_range(1..200)
++        )
+     }
+ }
+ 
+@@ -644,6 +690,11 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
+         .collect();
+ 
+     let conn = StressDb::connect(&db, ThreadId::new(usize::MAX), opts.busy_timeout).await?;
++    // The page size can only change while the database is empty.
++    if opts.db_ref.is_none() {
++        let page_size = main_rng.choose(&[512, 1024, 4096, 65536]);
++        conn.pragma_update("page_size", page_size).await?;
++    }
+     'stmts: for stmt in &ddl_statements {
+         let mut retry_counter = 0;
+         while retry_counter < 10 {
+@@ -707,12 +758,13 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
+             let stress_counter = stress_counter.clone();
+ 
+             let handle = turso_stress::future::spawn(async move {
+-                let mut conn = StressDb::connect(&db, thread.clone(), opts.busy_timeout).await?;
+                 let mut rng = ThreadRng::new(
+                     global_seed
+                         .wrapping_add(thread_idx as u64)
+                         .wrapping_add(batch_idx.wrapping_mul(1000)),
+                 );
++                let mut conn = StressDb::connect(&db, thread.clone(), opts.busy_timeout).await?;
++                conn.apply_random_settings(&mut rng, opts.tx_mode).await?;
+                 let mut iteration_count_this_batch = 0;
+ 
+                 all_threads_ready.wait().await;
+@@ -721,6 +773,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
+                 
 ```
 
 ---
 
-### Incident Patch 3: `23410c4f` (2026-10-22)
-**Commit Message**: postgres: require a one-byte COPY delimiter, not one character
+### Incident Patch 2: `f446d465` (2026-10-25)
+**Commit Message**: testing/stress: add reads and overflow-sized text values
 
-The delimiter check counted characters, so a single multi-byte character
-such as 'é' was accepted, though the error message (and PostgreSQL)
-require a single one-byte character. Check the byte length.
+The workload only ran INSERT, UPDATE and DELETE, so nothing scanned a
+table while other threads wrote to it and checkpoints ran. Text values
+were short identifiers, so text never reached overflow pages and index
+keys stayed small.
 
-Part of #10420
+A quarter of the random statements are now reads: a full table scan or a
+primary key range scan that sums the length of a random column, which
+reads overflow pages too. Reads go through StressConn::query_all, which
+reads every row and applies the same engine bug check as writes. One in
+ten text values is now large enough to spill into overflow pages,
+including when used as a primary key or UNIQUE index key.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Tests: stress sweep over WAL, memory_yield, MVCC and FTS modes; the SQL
+log shows reads succeed.
 
-**File**: `postgres/parser/translator.rs` (modified, +5/-1)
+**File**: `testing/stress/conn.rs` (modified, +16/-0)
 ```diff
-@@ -6419,7 +6419,7 @@ pub fn try_extract_copy_from(
-             }
-             "delimiter" => {
-                 let val = copy_string_option(def)?;
--                if val.chars().count() != 1 {
-+                if val.len() != 1 {
-                     return Err(ParseError::ParseError(
-                         "COPY delimiter must be a single one-byte character".into(),
-                     ));
-@@ -9641,6 +9641,10 @@ mod tests {
-                 "COPY t FROM '/tmp/d' WITH (DELIMITER '')",
-                 "single one-byte",
-             ),
-+            (
-+                "COPY t FROM '/tmp/d' WITH (DELIMITER 'é')",
-+                "single one-byte",
-+            ),
-         ] {
-             let parsed = crate::parse(sql).unwrap();
-             let err = try_extract_copy_from(&parsed).expect_err(sql).to_string();
+@@ -94,6 +94,22 @@ impl StressConn {
+         result
+     }
+ 
++    /// Run a query and read all of its rows, so that errors hit while
++    /// scanning are seen too.
++    pub async fn query_all(&self, sql: &str) -> turso::Result<()> {
++        let result = async {
++            let mut rows = self.conn.query(sql, ()).await?;
++            while rows.next().await?.is_some() {}
++            Ok(())
++        }
++        .await;
++        self.sql_logger.log_result(&self.thread, sql, &result);
++        if let Err(error) = &result {
++            assert_not_engine_bug(&self.thread, sql, error);
++        }
++        result
++    }
++
+     /// Give this connection a random cache size and checkpoint threshold.
+     /// Small values make cache spills and checkpoints happen far more often
+     /// than the defaults would.
+```
+
+**File**: `testing/stress/main.rs` (modified, +56/-12)
+```diff
+@@ -24,7 +24,7 @@ use turso_stress::sync::Arc;
+ use turso_stress::sync::AsyncBarrier as Barrier;
+ use turso_stress::sync::AsyncMutex as Mutex;
+ 
+-use crate::conn::StressDb;
++use crate::conn::{StressConn, StressDb};
+ use crate::counter::StressCounter;
+ use crate::logging::Tracer;
+ use crate::progress::ProgressBars;
+@@ -277,7 +277,16 @@ fn generate_random_value(rng: &mut ThreadRng, data_type: &DataType) -> String {
+     match data_type {
+         DataType::Integer => rng.random_range(0..1000).to_string(),
+         DataType::Real => format!("{:.2}", rng.random_range(0f32..100f32)),
+-        DataType::Text => format!("'{}'", generate_random_identifier(rng)),
++        DataType::Text => {
++            // 10% chance of a text value large enough to spill into overflow
++            // pages, also as a primary key or UNIQUE index key.
++            if rng.random_ratio(1, 10) {
++                let repeat = rng.random_range(20..400);
++                format!("'{}'", generate_random_identifier(rng).repeat(repeat))
++            } else {
++                format!("'{}'", generate_random_identifier(rng))
++            }
++        }
+         DataType::Blob => {
+             // 20% chance of generating a large blob via zeroblob() to trigger
+             // page allocation (the pattern that exposed the savepoint rollback
+@@ -399,13 +408,50 @@ fn generate_delete(rng: &mut ThreadRng, table: &Table) -> String {
+     format!("DELETE FROM {} WHERE {};", table.name, where_clause)
+ }
+ 
+-/// Generate a random SQL statement for a schema
+-fn generate_random_statement(rng: &mut ThreadRng, schema: &ArbitrarySchema) -> String {
++/// Run a random write or read against a random table. Errors are ignored
++/// here; `StressConn` fails the run on errors that point to an engine bug.
++async fn run_random_statement(conn: &StressConn, rng: &mut ThreadRng, schema: &ArbitrarySchema) {
+     let table = rng.choose(&schema.tables);
+-    match rng.random_range(0..=2) {
+-        0 => generate_insert(rng, table),
+-        1 => generate_update(rng, table),
+-        _ => generate_delete(rng, table),
++    let _ = match rng.random_range(0..=3) {
++        0 => conn
++            .execute(&generate_insert(rng, table), ())
++            .await
++            .map(|_| ()),
++        1 => conn
++            .execute(&generate_update(rng, table), ())
++            .await
++            .map(|_| ()),
++        2 => conn
++            .execute(&generate_delete(rng, table), ())
++            .await
++            .map(|_| ()),
++        _ => conn.query_all(&generate_read(rng, table)).await,
++    };
++}
++
++/// Generate a read that scans many rows of a table.
++fn generate_read(rng: &mut ThreadRng, table: &Table) -> String {
++    let column = rng.choose(&table.columns);
++    if rng.random_ratio(1, 2) {
++        format!(
++            "SELECT count(*), sum(length({})) FROM {};",
++            column.name, table.name
++        )
++    } else {
++        let pk_column = table
++            .columns
++            .iter()
++            .find(|col| col.constraints.contains(&Constraint::PrimaryKey))
++            .expect("Table should have a primary key");
++        format!(
++            "SELECT count(*), sum(length({})) FROM (SELECT * FROM {} WHERE {} >= {} ORDER BY {} LIMIT {});",
++            column.name,
++            table.name,
++            pk_column.name,
++            generate_random_value(rng, &pk_column.data_type),
++            pk_column.name,
++            rng.random_range(1..200)
++        )
+     }
+ }
+ 
+@@ -751,8 +797,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
+                         )
+                         .await;
+                     } else {
+-                        let sql = generate_random_statement(&mut rng, &schema_for_task);
+-                        let _ = conn.execute(&sql, ()).await;
++                        run_random_statement(&conn, &mut rng, &schema_for_task).await;
+                     }
+ 
+                     // When inside a transaction, 30% chance to exercise savepoints.
+@@ -777,8 +822,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
+                                 )
+                                 .await;
+                             } else {
+-                                let sp_sql = generate_random_statement(&mut rng, &schema_for_task);
+-                                let _ = conn.execute(&sp_sql, ()).await;
++                                run_random_statement(&conn, &mut rng, &schema_for_task).await;
+                             }
+                         }
+ 
+```
+
+---
+
+### Incident Patch 3: `95617d89` (2026-10-25)
+**Commit Message**: Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from app/turso-github-handyman
+
+For a STRICT table, INSERT reported a column type error before a NOT
+NULL error, unlike SQLite. Because `OR IGNORE` does not apply to type
+errors, a row that SQLite skips made the whole statement fail:
+
+```sql
+CREATE TABLE t(a INT, b REAL NOT NULL) STRICT;
+INSERT OR IGNORE INTO t(a) VALUES ('x');  -- turso: cannot store TEXT value in INT column t.a; sqlite: row skipped
+INSERT INTO t(a) VALUES ('x');            -- turso: cannot store TEXT value in INT column t.a; sqlite: NOT NULL constraint failed: t.b
+```
+
+`translate_insert` emitted the STRICT `TypeCheck` instructions and the
+custom-type encode step before the first `emit_notnulls`. SQLite checks
+NOT NULL first and type-checks the row later. The exception is a table
+with generated columns or BEFORE triggers: there SQLite type-checks the
+row first, before computing the generated columns or firing the
+triggers.
+
+The type checks now go after the NOT NULL checks of stored columns,
+except when the table has generated columns or BEFORE INSERT triggers.
+In those two cases the order stays as before, which already matches
+SQLite. Colu
+
+**File**: `core/schema.rs` (modified, +8/-2)
+```diff
+@@ -999,6 +999,12 @@ impl Schema {
+         self.type_registry.get(&type_registry_key(type_name))
+     }
+ 
++    /// Whether the column's values are encoded before they are stored: an array column, or a
++    /// column whose type is a custom type of a STRICT table.
++    pub fn column_has_custom_type(&self, column: &Column, is_strict: bool) -> bool {
++        column.is_array() || self.get_type_def(&column.ty_str, is_strict).is_some()
++    }
++
+     /// Look up a custom type definition by name without a strictness check.
+     /// Only use this for operations that aren't column-scoped (e.g. DROP TYPE,
+     /// CREATE TABLE validation, CAST).
+@@ -3871,7 +3877,7 @@ impl BTreeTable {
+         let has_custom = table
+             .columns
+             .iter()
+-            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
++            .any(|c| schema.column_has_custom_type(c, table.is_strict));
+         if !has_custom {
+             return Arc::clone(table);
+         }
+@@ -3901,7 +3907,7 @@ impl BTreeTable {
+         let has_custom = table
+             .columns
+             .iter()
+-            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
++            .any(|c| schema.column_has_custom_type(c, table.is_strict));
+         if !has_custom {
+             return Ok(Arc::clone(table));
+         }
+```
+
+**File**: `core/translate/insert.rs` (modified, +60/-38)
+```diff
+@@ -681,40 +681,6 @@ pub fn translate_insert(
+ 
+     program.preassign_label_to_next_insn(ctx.key_labels.key_ready_for_check);
+ 
+-    //TODO building the type-check table is expensive, we should cache it somehow.
+-    let maybe_type_check_table = ctx
+-        .table
+-        .is_strict
+-        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
+-    if let Some(type_check_table) = &maybe_type_check_table {
+-        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
+-        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
+-        program.emit_insn(Insn::TypeCheck {
+-            start_reg: insertion.first_col_register(),
+-            count: insertion.num_non_virtual_cols,
+-            check_generated: false,
+-            table_reference: BTreeTable::input_type_check_table_ref(
+-                ctx.table,
+-                resolver.schema(),
+-                None,
+-            )?,
+-        });
+-
+-        // Encode values for columns with custom types.
+-        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
+-
+-        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
+-        // We don't check generated columns in this initial pass because their dependencies could
+-        // still be REPLACEd.
+-        program.emit_insn(Insn::TypeCheck {
+-            start_reg: insertion.first_col_register(),
+-            count: insertion.num_non_virtual_cols,
+-            check_generated: false,
+-            table_reference: Arc::clone(type_check_table),
+-        });
+-    }
+-    // Non-STRICT tables: Affinity was already emitted earlier (before BEFORE triggers).
+-
+     // For AUTOINCREMENT tables with an explicit rowid, record it before CHECK
+     // constraints. SQLite advances sqlite_sequence even when INSERT OR IGNORE
+     // skips the row due to a CHECK failure.
+@@ -768,7 +734,57 @@ pub fn translate_insert(
+     //    1. replace `a` with 5 (the NOT NULL REPLACE action)
+     //    2. compute `b`
+     //    3. check that `b` isn't null (the NOT NULL constraint)
+-    emit_notnulls(program, &ctx, &insertion, resolver, false)?;
++    //
++    // SQLite checks NOT NULL before the STRICT types, unless the table has generated columns or
++    // BEFORE triggers: then the row is type checked first, before computing the generated
++    // columns or firing the triggers. Columns with a custom type are always checked for NOT NULL
++    // after encoding, because their NOT NULL check looks at the decoded value.
++    //TODO building the type-check table is expensive, we should cache it somehow.
++    let maybe_type_check_table = ctx
++        .table
++        .is_strict
++        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
++    let has_custom_type = |column: &Column| {
++        resolver
++            .schema()
++            .column_has_custom_type(column, ctx.table.is_strict)
++    };
++    let types_checked_first = has_before_triggers || insertion.has_virtual_columns();
++    if !types_checked_first {
++        emit_notnulls(program, &ctx, &insertion, resolver, |column| {
++            !column.is_virtual_generated() && !has_custom_type(column)
++        })?;
++    }
++    if let Some(type_check_table) = &maybe_type_check_table {
++        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
++        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
++        program.emit_insn(Insn::TypeCheck {
++            start_reg: insertion.first_col_register(),
++            count: insertion.num_non_virtual_cols,
++            check_generated: false,
++            table_reference: BTreeTable::input_type_check_table_ref(
++                ctx.table,
++                resolver.schema(),
++                None,
++            )?,
++        });
++
++        // Encode values for columns with custom types.
++        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
++
++        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
++        // We don't check generated columns in this initial pass because their dependencies could
++        // still be REPLACEd.
++        program.emit_insn(Insn::TypeCheck {
++            start_reg: insertion.first_col_register(),
++            count: insertion.num_non_virtual_cols,
++            check_generated: false,
++            table_reference: Arc::clone(type_check_table),
++        });
++    }
++    emit_notnulls(program, &ctx, &insertion, resolver, |column| {
++        !column.is_virtual_generated() && (types_checked_first || has_custom_type(column))
++    })?;
+ 
+     if insertion.has_virtual_columns() {
+         //TODO only compute the necessary virtual columns for CHECK and NOT NULL evaluation
+@@ -791,7 +807,13 @@ pub fn translate_insert(
+             });
+         }
+ 
+-        emit_notnulls(program, &ctx, &insertion, resolver, true)?;
++      
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/strict.sqltest` (modified, +35/-0)
+```diff
+@@ -99,3 +99,38 @@ test strict-primary-key-schema-sql-after-add-column {
+ expect {
+     CREATE TABLE pk1 (code TEXT PRIMARY KEY, n INT, z INT) STRICT
+ }
++
++@cross-check-integrity
++test strict-insert-or-ignore-not-null-checked-before-type {
++    CREATE TABLE t7 (a INT, b REAL NOT NULL) STRICT;
++    INSERT OR IGNORE INTO t7 (a) VALUES ('x');
++    SELECT count(*) FROM t7;
++}
++expect {
++    0
++}
++
++test strict-insert-not-null-error-before-type-error {
++    CREATE TABLE t8 (a INT, b REAL NOT NULL) STRICT;
++    INSERT INTO t8 (a) VALUES ('x');
++}
++expect error {
++    NOT NULL constraint failed: t8.b
++}
++
++test strict-insert-generated-column-type-error-before-not-null {
++    CREATE TABLE t9 (a INT, b TEXT NOT NULL, c INT AS (a + 1)) STRICT;
++    INSERT OR IGNORE INTO t9 (a) VALUES ('x');
++}
++expect error {
++    cannot store TEXT value in INT column t9.a
++}
++
++test strict-insert-before-trigger-type-error-before-not-null {
++    CREATE TABLE t10 (a INT, b TEXT NOT NULL) STRICT;
++    CREATE TRIGGER t10_before BEFORE INSERT ON t10 BEGIN SELECT 1; END;
++    INSERT OR IGNORE INTO t10 (a) VALUES ('x');
++}
++expect error {
++    cannot store TEXT value in INT column t10.a
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10550** (2026-10-22): postgres: expose dialect and types from turso_pg (@pedrocarlo)
-- **PR #10546** (2026-10-22): postgres: run postgres mode on MVCC with BEGIN CONCURRENT (@glommer)
-- **PR #10517** (2026-10-22): core/translate: bind schema.table.column to the same column expression as table.column (@turso-github-handyman[bot])
-- **PR #10510** (2026-10-22): postgres: run the statements embedded in CREATE SCHEMA (@turso-github-handyman[bot])
-- **PR #10508** (closed): postgres: support temporary tables and views (@jussisaurio)
-- **PR #10506** (closed): postgres: translate schema.table.* in select lists (@jussisaurio)
+- **PR #10714** (2026-10-25): postgres: keep mod() integer when both arguments are integers (@turso-github-handyman[bot])
+- **PR #10713** (2026-10-25): postgres: expose empty pg_seclabels catalog (@pedrocarlo)
+- **PR #10712** (2026-10-25): docs: replace absolute prohibitions in AGENTS.md with their reasons (@jussisaurio)
+- **PR #10708** (2026-10-25): antithesis: make the stress harness able to find more bugs (@jussisaurio)
+- **PR #10703** (2026-10-25): core/storage: step back past the divider when a backward index scan leaves a forward-seeked child (@turso-github-handyman[bot])
+- **PR #10694** (2026-10-25): postgres: defer prepare side effects until statement execution (@ryder777777)
 
 ---
 
@@ -1710,64 +2193,29 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'fix Linux panics when opening connections during active reads' from Domen
+## X. Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Sa
 
 **RULE**:
-When implementing operations in `core/storage/shared_wal_coordination.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile.antithesis`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f5b651c`: Merge 'fix Linux panics when opening connections during active reads' from Domen Kožar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09f919bc`: Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/shared_wal_coordination.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile.antithesis`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Slots held by other connections in this process are skipped before
-    /// probing. On Linux the byte lock belongs to the open file description
-    /// that all connections in this process share, so probing it from here
-    /// would succeed and clear a slot that a live reader still uses.
-    ///
-        let local = self.local_lock_state.lock();
-        let process_local = self.process_local_ownership.lock();
-            if local.reader_locks[slot_index as usize] > 0 {
-                continue;
-            }
-            if !self.uses_linux_ofd_locking() && process_local.reader_owner(slot_index).is_some() {
-            let local = self.local_lock_state.lock();
-            turso_assert!(
-                (slot_index as usize) < local.reader_locks.len(),
-                "reader slot registry index out of range"
-            );
-            if local.reader_locks[slot_index as usize] > 0 {
-                let local = self.local_lock_state.lock();
-                if local.reader_locks[slot_index] > 0 {
-    #[test]
-    fn mapped_shared_wal_coordination_repair_preserves_reader_slots_held_by_sibling_connections() {
-        let dir = tempfile::tempdir().unwrap();
-        let path = dir.
+COPY ./testing/antithesis/stress-crash /opt/antithesis/test/v1/stress-crash
+RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            if !self.uses_linux_ofd_locking()
-                && self
-                    .with_process_local_ownership(|entry| entry.reader_owner(slot_index).is_some())
-            {
-            let should_probe = self.with_local_lock_state(|entry| {
-                turso_assert!(
-                    (slot_index as usize) < entry.reader_locks.len(),
-                    "reader slot registry index out of range"
-                );
-                entry.reader_locks[slot_index as usize] == 0
-            });
-            if !should_probe {
-                let local_lock_held =
-                    self.with_local_lock_state(|entry| entry.reader_locks[slot_index] > 0);
-                if local_lock_held {
+RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f5b651c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09f919bc` are properly handled with clean fallback behavior.

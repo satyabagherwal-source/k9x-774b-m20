@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source**: github ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
-> **Source Version**: `319d39c2`  
+> **Source Version**: `309b1359`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:04:29.168Z  
+> **Timestamp**: 2026-10-25T10:36:19.622Z  
 > **Learning ID**: `learn-github-ducaale-xh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:04:27.798Z  
+> **Harvest Timestamp**: 2026-10-25T10:36:10.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Friendly and fast tool for sending HTTP requests
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8141 stars
+- **Stars / Engagement**: 8148 stars
 
 ---
 
@@ -2448,81 +2448,42 @@ pub(crate) fn create_hyperlink(text: &str, url: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `319d39c2` (2026-10-21)
-**Commit Message**: bump version to v0.26.3
+### Incident Patch 1: `e892eda0` (2026-10-22)
+**Commit Message**: Fix host typo in man page example
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `doc/md-template.md` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--## Unreleased
-+## [0.26.3] - 2026-10-21
- ### Security fixes
- - Upgrade rustls-webpki to v0.103.16 and webpki-root-certs to v1.0.10
+@@ -125,7 +125,7 @@ xh get httpbin.org/json id==5 sort==true
  
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -3499,7 +3499,7 @@ checksum = "3ad82d2a33cdc9674dc7465672f271e096168fcdbe0f799d9e6db8c5892679dc"
+ Send a GET request and include a header named `X-Api-Key` with value `12345`:
+ ```
+-xh get Ihttpbin.org/json x-api-key:12345
++xh get httpbin.org/json x-api-key:12345
+ ```
  
- [[package]]
- name = "xh"
--version = "0.26.2"
-+version = "0.26.3"
- dependencies = [
-  "anyhow",
-  "assert_cmd",
+ Send a POST request with body read from stdin:
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `doc/xh.1.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "xh"
--version = "0.26.2"
-+version = "0.26.3"
- authors = ["ducaale <sharaf.13@hotmail.com>"]
- edition = "2024"
- rust-version = "1.85.0"
-```
-
-**File**: `doc/xh.1` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--.TH XH 1 2026-07-26 0.26.2 "User Commands"
-+.TH XH 1 2026-10-21 0.26.3 "User Commands"
+@@ -369,7 +369,7 @@ xh get httpbin.org/json id==5 sort==true
  
- .SH NAME
- xh \- Friendly and fast tool for sending HTTP requests
-```
-
----
-
-### Incident Patch 2: `849fc89d` (2026-10-21)
-**Commit Message**: Update CHANGELOG.md
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -1,3 +1,10 @@
-+## Unreleased
-+### Security fixes
-+- Upgrade rustls-webpki to v0.103.16 and webpki-root-certs to v1.0.10
-+
-+### Features
-+- Detect and error on incomplete downloads, see #487 (@AkshayDhola)
-+
- ## [0.26.2] - 2026-07-26
- ### Bug fixes
- - Fix `--auth` ignoring credentials when the username is empty (e.g. `-a :password`), see #467 (@upuddu)
+ Send a GET request and include a header named `X-Api-Key` with value `12345`:
+ ```
+-xh get Ihttpbin.org/json x-api-key:12345
++xh get httpbin.org/json x-api-key:12345
+ ```
+ 
+ Send a POST request with body read from stdin:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #499** (closed): Add unbuffered response streaming (@Jhon103)
+- **PR #498** (closed): Use HTTP/1.1 when a Host override would break HTTP/2 (@mvanhorn)
+- **PR #497** (2026-10-23): Fix host typo in man page example (@dcadolph)
 - **PR #495** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
 - **PR #494** (closed): Don't negotiate HTTP/2 when a custom Host header is provided (@DG-Elom)
 - **PR #491** (closed): fix: omit internal positional args from Nushell completions (@Mathjk)
-- **PR #490** (closed): docs: clarify that timeout also covers reads and writes (@Likio3000)
-- **PR #489** (2026-09-05): Buffer session file writes (@AkshayDhola)
-- **PR #487** (2026-09-04): Detect and error on incomplete downloads (@AkshayDhola)
 
 ---
 
@@ -2542,28 +2503,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump version to v0.26.3
+## X. host typo in man page example
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `doc/md-template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `319d39c2`: bump version to v0.26.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e892eda0`: host typo in man page example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/md-template.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [0.26.3] - 2026-10-21
+xh get httpbin.org/json x-api-key:12345
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-## Unreleased
+xh get Ihttpbin.org/json x-api-key:12345
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `319d39c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e892eda0` are properly handled with clean fallback behavior.

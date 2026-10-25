@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
-    "lastHarvestedAt": "2026-10-20T16:08:46.229Z",
+    "contentHash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
+    "lastHarvestedAt": "2026-10-25T10:36:25.641Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -2383,10 +2383,10 @@
     "repository": "ducaale/xh",
     "platform": "github",
     "sourceUrl": "https://github.com/ducaale/xh",
-    "sourceVersion": "319d39c2",
+    "sourceVersion": "309b1359",
     "license": "MIT",
-    "contentHash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
-    "lastHarvestedAt": "2026-10-22T18:04:29.332Z",
+    "contentHash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
+    "lastHarvestedAt": "2026-10-25T10:36:19.993Z",
     "learningId": "learn-github-ducaale-xh"
   },
   "nervjs-taro": {
@@ -6693,10 +6693,10 @@
     "repository": "sqldelight/sqldelight",
     "platform": "github",
     "sourceUrl": "https://github.com/sqldelight/sqldelight",
-    "sourceVersion": "efd1689d",
+    "sourceVersion": "78a3398e",
     "license": "Apache-2.0",
-    "contentHash": "d5983c2d273256cac7900eba205cebcfce055b83d063a3424a27d30077e70045",
-    "lastHarvestedAt": "2026-10-19T06:32:37.199Z",
+    "contentHash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
+    "lastHarvestedAt": "2026-10-25T10:36:17.633Z",
     "learningId": "learn-github-sqldelight-sqldelight"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "0687b18d",
+    "sourceVersion": "5f377584",
     "license": "MIT",
-    "contentHash": "280f5c0db1199b1f2b36c4c70701d23accb689a22707d72b52aef46295432d00",
-    "lastHarvestedAt": "2026-10-22T20:37:02.790Z",
+    "contentHash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
+    "lastHarvestedAt": "2026-10-25T10:36:25.276Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

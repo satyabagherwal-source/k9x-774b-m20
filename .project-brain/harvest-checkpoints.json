@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:17:02.322Z",
+  "last_updated": "2026-10-25T10:36:25.654Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "6cb4355998b381a2da06777d6e8e5492eb824813a203ea62cc9667f06bb7f8b2",
-      "verified_at": "2026-10-20T16:08:46.237Z",
+      "content_hash": "0d3171e686841fd01d464dd9e1114ff656852a88070e72ee8c118ce616c7e9b8",
+      "verified_at": "2026-10-25T10:36:25.648Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:08:46.237Z"
+      "last_updated": "2026-10-25T10:36:25.648Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -3711,14 +3711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ducaale-xh",
-      "content_hash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
-      "verified_at": "2026-10-22T18:04:29.339Z",
+      "content_hash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
+      "verified_at": "2026-10-25T10:36:20.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:04:29.339Z"
+      "last_updated": "2026-10-25T10:36:20.000Z"
     },
     "NervJS/taro": {
       "repository": "NervJS/taro",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "4fd4954a0c9110eddea3c58590ef1b239481dd4409f42eac2c0143224daa9572",
-      "verified_at": "2026-10-25T06:38:30.939Z",
+      "content_hash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
+      "verified_at": "2026-10-25T10:36:25.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:38:30.939Z"
+      "last_updated": "2026-10-25T10:36:25.284Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10101,14 +10101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqldelight-sqldelight",
-      "content_hash": "d5983c2d273256cac7900eba205cebcfce055b83d063a3424a27d30077e70045",
-      "verified_at": "2026-10-19T06:32:37.204Z",
+      "content_hash": "b87622244e28bad37682da7949bfa3d4e0a46f31490325d1b33cc5a1bcc97a44",
+      "verified_at": "2026-10-25T10:36:17.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:32:37.204Z"
+      "last_updated": "2026-10-25T10:36:17.641Z"
     },
     "kubernetes-sigs/aws-load-balancer-controller": {
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
