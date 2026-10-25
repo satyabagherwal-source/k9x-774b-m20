@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "84bf9eaa",
+    "sourceVersion": "28ee6c68",
     "license": "NOASSERTION",
-    "contentHash": "7357303d71e2855e0dbecb841b9f3572d15fe5d31e3b4ac498881159f8c38a37",
-    "lastHarvestedAt": "2026-10-21T15:29:13.331Z",
+    "contentHash": "eccfab8c72409fcbbffd29960ec72df478f14366d37168cd4ce4edaf8099d6a2",
+    "lastHarvestedAt": "2026-10-25T03:22:07.163Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "023cfa46",
+    "sourceVersion": "91ffbe06",
     "license": "NOASSERTION",
-    "contentHash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
-    "lastHarvestedAt": "2026-10-22T15:47:01.711Z",
+    "contentHash": "9232c672923a83064f8bae492f2d936291506c062f4f8e49402eaf0a68cc662e",
+    "lastHarvestedAt": "2026-10-25T03:22:13.883Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

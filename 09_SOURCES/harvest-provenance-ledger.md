@@ -4635,3 +4635,5 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `e492e24c` | Multi-dimensional audit evidence | 2026-10-25T03:14:19.343Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `dbf079f5` | Multi-dimensional audit evidence | 2026-10-25T03:14:25.192Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `3ac379ef` | Multi-dimensional audit evidence | 2026-10-25T03:15:32.829Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `28ee6c68` | Multi-dimensional audit evidence | 2026-10-25T03:22:07.163Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `91ffbe06` | Multi-dimensional audit evidence | 2026-10-25T03:22:13.883Z |

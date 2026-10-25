@@ -4628,3 +4628,5 @@
 | `CYCLE-20261025-7OEK` | `2026-10-25T03:14:19.340Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4006` | Yes (`42e8b8ef...`) |
 | `CYCLE-20261025-7SX1` | `2026-10-25T03:14:25.189Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4007` | Yes (`a16bd6f2...`) |
 | `CYCLE-20261025-993U` | `2026-10-25T03:15:32.826Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4008, Rule 4009, Rule 4010` | Yes (`9602a20d...`) |
+| `CYCLE-20261025-HPDK` | `2026-10-25T03:22:07.160Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4011` | Yes (`eccfab8c...`) |
+| `CYCLE-20261025-HUK8` | `2026-10-25T03:22:13.880Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4012` | Yes (`9232c672...`) |

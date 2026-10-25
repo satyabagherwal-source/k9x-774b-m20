@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:15:32.782Z",
+  "last_updated": "2026-10-25T03:22:13.829Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2588,8 +2588,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "023cfa46",
-      "content_hash": "d006dca895782abe03f7a688851765d5bbe1b802c8c702a359a450913869ac12",
+      "source_version": "91ffbe06",
+      "content_hash": "9232c672923a83064f8bae492f2d936291506c062f4f8e49402eaf0a68cc662e",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2612,6 +2612,11 @@
           "number": 3615,
           "title": "Merge remote-tracking branch 'origin/devel' into bugfix/COR-1152-aql-in-range-ut",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4012,
+          "title": "Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expan",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2619,7 +2624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:47:01.641Z",
+      "verified_at": "2026-10-25T03:22:13.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41961,8 +41966,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "84bf9eaa",
-      "content_hash": "7357303d71e2855e0dbecb841b9f3572d15fe5d31e3b4ac498881159f8c38a37",
+      "source_version": "28ee6c68",
+      "content_hash": "eccfab8c72409fcbbffd29960ec72df478f14366d37168cd4ce4edaf8099d6a2",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -41980,6 +41985,11 @@
           "number": 3555,
           "title": "Use absolute link to PROVIDERS.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4011,
+          "title": "Avoid panic for error handling in `set_resumption_data()`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41987,7 +41997,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:29:13.257Z",
+      "verified_at": "2026-10-25T03:22:07.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117433,6 +117443,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:15:32.772Z"
+    },
+    "rule-4011": {
+      "learning_id": "rule-4011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4011,
+      "title": "Avoid panic for error handling in `set_resumption_data()`",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "28ee6c68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:22:07.095Z"
+    },
+    "rule-4012": {
+      "learning_id": "rule-4012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4012,
+      "title": "Merge pull request #23501 from arangodb/bug-fix/cor-1184-subquery-in-array-expan",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "91ffbe06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:22:13.817Z"
     }
   },
   "aliases": {

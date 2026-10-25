@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `84bf9eaa`  
+> **Source Version**: `28ee6c68`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:29:12.914Z  
+> **Timestamp**: 2026-10-25T03:22:06.811Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:29:12.637Z  
+> **Harvest Timestamp**: 2026-10-25T03:22:05.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7695 stars
+- **Stars / Engagement**: 7709 stars
 
 ---
 
@@ -2242,17 +2242,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3375** (2026-10-21): **Use absolute link to PROVIDERS.md**
-  *Symptoms*: The relative `./PROVIDERS.md` link in the crate docs breaks once built, failing the docs workflow's link check on main since 56a02126. Use the absolute GitHub URL and regenerate README.md.  Also fixes a "worthyness" typo in PROVIDERS.md. 
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client | 2392316 | 2382174 | ✅ [-10142](https://bench.rustls.dev/comparisons/73650cc7f7d8b280932f554c9032a14a8f9b71f5:c6b1199846107ef36dd7ddf2d339ea9bfea5b02a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client) (-0.42%) | 0.20% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server | 2268653 | 2275254 | ⚠️ [6601](https://bench.rustls.dev/comparisons/73650cc7f7d8b280932f554c9032a14a8f9b71f5:c6b1199846107ef36dd7ddf2d339ea9bfea5b02a/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | 
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3375?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`73650cc`](https://app.codecov.io/gh/rustls/rustls/commit/73650cc7f7d8b280932f554c9032a14a8f9b71f5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`c6b1199`](https://app.codecov.io/gh/rustls/rustls/commit/c6b1199846107ef36dd7ddf2d339ea9bfea5b02a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3375   +/-   ## ======================================= 
-
-- **Issue #3374** (2026-10-21): **Take dependency updates**
+- **Issue #3384** (2026-10-23): **Avoid panic for error handling in `set_resumption_data()`**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10973590 | 10939367 | [-34223](https://bench.rustls.dev/comparisons/56a02126e79afe260ffbdf306c44c9641437a5ed:89d1bfc7cb1c8bff7168e5e7ae7a12196022a888/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (-0.31%) | 1.06% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8806882 | 8780862 | [-26020](https://bench.rustls.dev/comparisons/56a02126e79afe260ffbdf306c44c9641437a5ed:89d1bfc7cb1c8bff7168e5e7ae7a12196022a888/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.30%) | 0.74% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8763323 | 8786072 | [2
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3374?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`56a0212`](https://app.codecov.io/gh/rustls/rustls/commit/56a02126e79afe260ffbdf306c44c9641437a5ed?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`89d1bfc`](https://app.codecov.io/gh/rustls/rustls/commit/89d1bfc7cb1c8bff7168e5e7ae7a12196022a888?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main    #3374      +/-   ## ==================================
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2272736 | 2279265 | ⚠️ [6529](https://bench.rustls.dev/comparisons/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9:326650bf951b696fe6238935a69b1fcb1e23ab33/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10430105 | 10450673 | [20568](https://bench.rustls.dev/comparisons/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9:326650bf951b696fe6238935a69b1fcb1e23ab33/cachegr
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3384?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.63%. Comparing base ([`90c65a7`](https://app.codecov.io/gh/rustls/rustls/commit/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`326650b`](https://app.codecov.io/gh/rustls/rustls/commit/326650bf951b696fe6238935a69b1fcb1e23ab33?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3384   +/-   ## ======================================= 
+
+- **Issue #3383** (2026-10-23): **Take semver-compatible updates**
+  *Symptoms*: Addresses https://github.com/rustls/rustls/actions/runs/39828352135/job/119997539946
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10470495 | 10409337 | [-61158](https://bench.rustls.dev/comparisons/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77:90eea320942f1d2cc40f47d86defce4fd5a49f65/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (-0.58%) | 0.88% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10924162 | 10958468 | [34306](https://bench.rustls.dev/comparisons/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77:90eea320942f1d2cc40f47d86defce4fd5a49f65/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.31%) | 1.22% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8767873 | 8782762 | [14889](
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3383?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`84bf9ea`](https://app.codecov.io/gh/rustls/rustls/commit/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`90eea32`](https://app.codecov.io/gh/rustls/rustls/commit/90eea320942f1d2cc40f47d86defce4fd5a49f65?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3383   +/-   ## ======================================= 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,257 +2269,64 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84bf9eaa` (2026-10-21)
-**Commit Message**: Use absolute link to PROVIDERS.md
+### Incident Patch 1: `28ee6c68` (2026-10-23)
+**Commit Message**: Avoid panic for error handling in `set_resumption_data()`
 
-The relative ./PROVIDERS.md link resolves on GitHub but not in the
-built docs, where it points at target/doc/rustls/PROVIDERS.md. The
-docs workflow's lychee step fails on it, and docs.rs serves a 404.
-
-Link to the file on GitHub instead, and regenerate README.md with
-admin/pull-readme. Also fix a "worthyness" typo in PROVIDERS.md.
-
-**File**: `PROVIDERS.md` (modified, +1/-1)
+**File**: `rustls-test/tests/api/resume.rs` (modified, +6/-0)
 ```diff
-@@ -6,7 +6,7 @@ of third-party cryptography providers available for Rustls.
- [README]: https://github.com/rustls/rustls#cryptography-providers
- 
- These projects have not been evaluated by the Rustls maintainers, and no claim
--is made to their production worthyness or overall quality.
-+is made to their production worthiness or overall quality.
- 
- | Repository | Description |
- | -- | -- |
+@@ -153,6 +153,12 @@ fn resumption_combinations() {
+         let mut server_output = Vec::new();
+         let (mut client, mut server) =
+             make_pair_for_arc_configs(&client_config, &server_config, &mut client_output);
++        assert_eq!(
++            server
++                .set_resumption_data(&[0u8; 0x8000])
++                .err(),
++            Some(ApiMisuse::ResumptionDataTooLarge.into())
++        );
+         server
+             .set_resumption_data(resumption_data.as_bytes())
+             .unwrap();
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `rustls/src/conn/mod.rs` (modified, +3/-1)
 ```diff
-@@ -115,7 +115,7 @@ See the [Making a custom CryptoProvider] section of the documentation for more i
- on this topic.
- 
- [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
--[PROVIDERS.md]: ./PROVIDERS.md
-+[PROVIDERS.md]: https://github.com/rustls/rustls/blob/main/PROVIDERS.md
- 
- # Example code
- 
+@@ -316,7 +316,9 @@ impl<T: Transport> Connection<ServerSide, T> {
+     /// Integrity will be assured by rustls, but the data will be visible to the client. If secrecy
+     /// from the client is desired, encrypt the data separately.
+     pub fn set_resumption_data(&mut self, data: &[u8]) -> Result<(), Error> {
+-        assert!(data.len() < 2usize.pow(15));
++        if data.len() >= (1 << 15) {
++            return Err(ApiMisuse::ResumptionDataTooLarge.into());
++        }
+         match &mut self.state {
+             Ok(st) => st.set_resumption_data(data),
+             Err(e) => Err(e.clone()),
 ```
 
-**File**: `rustls/src/lib.rs` (modified, +1/-1)
+**File**: `rustls/src/error/mod.rs` (modified, +5/-0)
 ```diff
-@@ -78,7 +78,7 @@
- //! on this topic.
- //!
- //! [Making a custom CryptoProvider]: https://docs.rs/rustls/latest/rustls/crypto/struct.CryptoProvider.html#making-a-custom-cryptoprovider
--//! [PROVIDERS.md]: ./PROVIDERS.md
-+//! [PROVIDERS.md]: https://github.com/rustls/rustls/blob/main/PROVIDERS.md
- //!
- //! ## Design overview
- //!
-```
-
----
-
-### Incident Patch 2: `73650cc7` (2026-10-21)
-**Commit Message**: Take semver-compatible updates
-
-**File**: `Cargo.lock` (modified, +118/-143)
-```diff
-@@ -132,7 +132,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "syn 2.0.119",
-- "synstructure",
-+ "synstructure 0.13.2",
- ]
+@@ -1699,6 +1699,11 @@ pub enum ApiMisuse {
+     /// [`Connection::set_resumption_data()`]: crate::Connection::set_resumption_data()
+     ResumptionDataProvidedTooLate,
  
- [[package]]
-@@ -165,7 +165,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.5",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -182,11 +182,11 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
- 
- [[package]]
- name = "aws-lc-fips-sys"
--version = "0.14.2"
-+version = "0.14.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "03367707e92796b190a4207d4d39b0a4271d574503d2969c2b0cfbf5c87658ee"
-+checksum = "d640b9b76a2ff1fcf2d615a6f912460dfb1613eaf6d4836b8539784f75e22d7f"
- dependencies = [
-- "bindgen 0.72.1",
-+ "bindgen",
-  "cc",
-  "cmake",
-  "dunce",
-@@ -197,9 +197,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-lc-rs"
--version = "1.18.1"
-+version = "1.18.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b281d307588d634de920874890732659e2e7672f72b5e10e81badc1a8a83621e"
-+checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
- dependencies = [
-  "aws-lc-fips-sys",
-  "aws-lc-sys",
-@@ -209,9 +209,9 @@ dependencies = [
- 
- [[package]]
- name = "aws-lc-sys"
--version = "0.45.0"
-+version = "0.46.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9bff6c3b54fad79a2e60b8102caf565819711497c1f5f092f49508e2f5c31b27"
-+checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
- dependencies = [
-  "cc",
-  "cmake",
-@@ -232,26 +232,6 @@ version = "0.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7dfdb4953a096c551ce9ace855a604d702e6e62d77fac690575ae347571717f5"
- 
--[[package]]
--name = "bindgen"
--version = "0.72.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
--dependencies = [
-- "bitflags",
-- "cexpr",
-- "clang-sys",
-- "itertools 0.13.0",
-- "log",
-- "prettyplease 0.2.37",
-- "proc-macro2",
-- "quote",
-- "regex",
-- "rustc-hash",
-- "shlex 1.3.0",
-- "syn 2.0.119",
--]
--
- [[package]]
- name = "bindgen"
- version = "0.73.2"
-@@ -262,13 +242,13 @@ dependencies = [
-  "cexpr",
-  "clang-sys",
-  "log",
-- "prettyplease 0.3.0",
-+ "prettyplease",
-  "proc-macro2",
-  "quote",
-  "regex",
-  "rustc-hash",
-- "shlex 2.0.1",
-- "syn 3.0.5",
-+ "shlex",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -312,9 +292,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli-decompressor"
--version = "6.0.0"
-+version = "6.0.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "46087801e40b785410c352bee60e9b6226312709cf52d5fff92776cdf5cf6490"
-+checksum = "941cd9bd4ddab83cb46fa5a2d428f1c857b24ac78cb876cf7beb710840934bd7"
- dependencies = [
-  "alloc-no-stdlib",
-  "alloc-stdlib",
-@@ -346,14 +326,14 @@ checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
- 
- [[package]]
- name = "cc"
--version = "1.4.6"
-+version = "1.9.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a3eb0f42d6c360dc3f8a821f6bf2fdea7f72bfd36b3076eb0e6d1e9e0752fff4"
-+checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-  "libc",
-- "shlex 2.0.1",
-+ "shlex",
- ]
- 
- [[package]]
-@@ -367,9 +347,9 @@ dependencies = [
- 
- [[package]]
- name = "cfg-if"
--version = "1.0.4"
-+version = "1.0.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
-+checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
- 
- [[package]]
- name = "cfg_aliases"
-@@ -457,7 +437,7 @@ dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.5",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
-@@ -483,9 +463,9 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
- 
- [[package]]
- name = "combine"
--version = "4.6.8"
-+version = "4.6.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cfc320937d09e6de266b31b9afb480f197d7a861be86be7cb2ea7e5d1bfffc5e"
-+checksum = "4356eba6976435498d05a311ee9fc486da3bc81c200d3f0d7dd9703b41913f92"
- dependencies = [
-  "bytes",
-  "memchr",
-@@ -522,7 +502,7 @@ version = "0.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "e3f4bc9b199b6cfdf87ef7960ac7be99306a1ad4d6c442b1c3701cddb22ea47d"
- dependencies = [
-- "bindgen 0.73.2",
-+ "bindgen",
-  "cc",
-  "pkg-config",
-  "rustversion",
-@@ -631,9 +611,9 @@ dependencies = [
- 
- [[package]]
- name = "deranged"
--version = "0.5.8"
-+version = "0.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
-+checksum = "9e9de72ce2ad1f90dc62fa25f0f430ef85eb4b0d8fa0be4f30373bc40a21d28e"
- 
- [[package]]
- name = "displaydoc"
-@@ -643,7 +623,7 @@ checksum = "c6232dd377dcc64799954cbd
++    /// [`Connection::set_resumption_data()`] is limited to 32KB of data.
++    ///
++    /// [`Connection::set_resumption_data()`]: crate::Connection::set_resumption_data()
++    ResumptionDataTooLarge,
++
+     /// [`KernelConnection::update_tx_secret()`] and associated are not available for TLS1.2 connections.
+     ///
+     /// [`KernelConnection::update_tx_secret()`]: crate::conn::kernel::KernelConnection::update_tx_secret()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3384** (2026-10-23): Avoid panic for error handling in `set_resumption_data()` (@ctz)
+- **PR #3383** (2026-10-23): Take semver-compatible updates (@ctz)
+- **PR #3382** (closed): Discard TLS 1.3 tickets with a zero lifetime (@6d7770)
+- **PR #3379** (2026-10-23): docs: add rustls-pure to the third-party providers (@Gilfeather)
+- **PR #3377** (2026-10-23): Map new rustls-webpki errors (@ctz)
 - **PR #3375** (2026-10-21): Use absolute link to PROVIDERS.md (@deadcaf3)
-- **PR #3374** (2026-10-21): Take dependency updates (@ctz)
-- **PR #3367** (2026-10-20): docs: simplify README.md providers list (@cpu)
-- **PR #3365** (2026-10-20): Document that PrfSecret::prf may receive an empty label (@6d7770)
-- **PR #3363** (2026-10-16): util: bump version to 0.24.0-dev.2 (@djc)
-- **PR #3362** (2026-10-16): Drop rustls-util dev-dependency from rustls-aws-lc-rs example (@djc)
 
 ---
 
@@ -2539,28 +2346,33 @@ admin/pull-readme. Also fix a "worthyness" typo in PROVIDERS.md.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use absolute link to PROVIDERS.md
+## X. Avoid panic for error handling in `set_resumption_data()`
 
 **RULE**:
-When implementing operations in `PROVIDERS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84bf9eaa`: Use absolute link to PROVIDERS.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28ee6c68`: Avoid panic for error handling in `set_resumption_data()`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `PROVIDERS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-is made to their production worthiness or overall quality.
+        assert_eq!(
+            server
+                .set_resumption_data(&[0u8; 0x8000])
+                .err(),
+            Some(ApiMisuse::ResumptionDataTooLarge.into())
+        );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-is made to their production worthyness or overall quality.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84bf9eaa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28ee6c68` are properly handled with clean fallback behavior.

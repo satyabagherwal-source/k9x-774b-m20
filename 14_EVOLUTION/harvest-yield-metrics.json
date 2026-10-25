@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:15:32.837Z",
-  "total_cycles_completed": 4605,
-  "total_learnings_persisted": 4605,
-  "total_rules_promoted": 3868,
+  "last_updated": "2026-10-25T03:22:13.892Z",
+  "total_cycles_completed": 4607,
+  "total_learnings_persisted": 4607,
+  "total_rules_promoted": 3870,
   "history": [
-    {
-      "timestamp": "2026-10-22T20:52:00.166Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:52:02.437Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T20:52:07.474Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1389,20 @@
       "repository": "topgrade-rs/topgrade",
       "learningId": "learn-github-topgrade-rs-topgrade",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:22:07.173Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:22:13.892Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
