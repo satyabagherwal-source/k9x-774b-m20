@@ -4985,3 +4985,5 @@
 | `CYCLE-20261025-7WB1` | `2026-10-25T20:30:15.373Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`87674dd7...`) |
 | `CYCLE-20261025-G6DZ` | `2026-10-25T20:36:41.687Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4443, Rule 416, Rule 4444` | Yes (`e488462a...`) |
 | `CYCLE-20261025-GA7R` | `2026-10-25T20:36:46.647Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4445` | Yes (`3227ba0c...`) |
+| `CYCLE-20261025-OEUL` | `2026-10-25T20:43:05.901Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`523f0f76...`) |
+| `CYCLE-20261025-OOH3` | `2026-10-25T20:43:18.375Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4446` | Yes (`0e52dc72...`) |

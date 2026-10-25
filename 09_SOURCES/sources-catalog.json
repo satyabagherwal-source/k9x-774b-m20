@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "9125647f",
+    "sourceVersion": "3f81168a",
     "license": "MIT",
-    "contentHash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
-    "lastHarvestedAt": "2026-10-25T17:42:47.047Z",
+    "contentHash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
+    "lastHarvestedAt": "2026-10-25T20:43:18.378Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -10415,8 +10415,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
     "license": "Open-Source",
-    "contentHash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
-    "lastHarvestedAt": "2026-10-21T01:04:30.699Z",
+    "contentHash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
+    "lastHarvestedAt": "2026-10-25T20:43:05.904Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   },
   "mrjackwills-oxker": {

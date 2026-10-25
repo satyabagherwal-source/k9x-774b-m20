@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T20:36:46.603Z",
+  "last_updated": "2026-10-25T20:43:18.320Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35749,8 +35749,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "9125647f",
-      "content_hash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
+      "source_version": "3f81168a",
+      "content_hash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -35823,6 +35823,11 @@
           "number": 4397,
           "title": "Require Brotli 1.2.1 for upstream decoder fix (#8514)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4446,
+          "title": "Preserve caller value lists in MultiDict.set_all (#8521)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35830,7 +35835,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:42:47.007Z",
+      "verified_at": "2026-10-25T20:43:18.308Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -111281,7 +111286,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
-      "content_hash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
+      "content_hash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "promoted_rules": [],
@@ -111290,7 +111295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T01:04:30.643Z",
+      "verified_at": "2026-10-25T20:43:05.835Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125998,6 +126003,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T20:36:46.592Z"
+    },
+    "rule-4446": {
+      "learning_id": "rule-4446",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4446,
+      "title": "Preserve caller value lists in MultiDict.set_all (#8521)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "3f81168a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T20:43:18.308Z"
     }
   },
   "aliases": {

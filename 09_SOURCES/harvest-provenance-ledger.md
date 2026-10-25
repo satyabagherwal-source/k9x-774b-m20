@@ -4992,3 +4992,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-25T20:30:15.377Z |
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T20:36:41.690Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `921b14bd` | Multi-dimensional audit evidence | 2026-10-25T20:36:46.650Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-25T20:43:05.904Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `3f81168a` | Multi-dimensional audit evidence | 2026-10-25T20:43:18.378Z |

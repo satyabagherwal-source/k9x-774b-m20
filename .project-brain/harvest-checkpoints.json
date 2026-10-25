@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T20:36:46.662Z",
+  "last_updated": "2026-10-25T20:43:18.392Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "51a007fe3f62facf98ed06d4bc83b1c392617c46691a7489178e046bd867519d",
-      "verified_at": "2026-10-25T17:42:47.053Z",
+      "content_hash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
+      "verified_at": "2026-10-25T20:43:18.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:42:47.053Z"
+      "last_updated": "2026-10-25T20:43:18.386Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -15651,14 +15651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "content_hash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
-      "verified_at": "2026-10-21T01:04:30.706Z",
+      "content_hash": "523f0f76dfa9f3d23b1e8a65c0f631bce43cb74c75c2bf87152ecd9f78b4c78c",
+      "verified_at": "2026-10-25T20:43:05.913Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:04:30.706Z"
+      "last_updated": "2026-10-25T20:43:05.913Z"
     },
     "mrjackwills/oxker": {
       "repository": "mrjackwills/oxker",
