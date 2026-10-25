@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T06:56:52.284Z",
+  "last_updated": "2026-10-25T07:06:22.132Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17206,7 +17206,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
+      "content_hash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -17269,6 +17269,21 @@
           "number": 1459,
           "title": "Two-Pass Consensus for Streaming ASR Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4128,
+          "title": "Zero-Allocation Laddered Sub-Model Stride Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4129,
+          "title": "Stream-Commit Double-Pass Window Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4130,
+          "title": "Hadamard-Quantized Block Group Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17289,7 +17304,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-20T14:51:02.583Z",
+      "verified_at": "2026-10-25T07:05:13.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41563,8 +41578,8 @@
       "slug": "reshaped-ui-reshaped",
       "platform": "github",
       "source_url": "https://github.com/reshaped-ui/reshaped",
-      "source_version": "bf8a1e44",
-      "content_hash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
+      "source_version": "de2c2493",
+      "content_hash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
       "dossier_path": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "promoted_rules": [
@@ -41587,6 +41602,21 @@
           "number": 3720,
           "title": "Non-Inherited Custom Property Containment for Main-Thread Animation Offloading",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4133,
+          "title": "Asymmetric Temporal Transition Easing for Collapsible Containers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4134,
+          "title": "Point-in-Triangle Barycentric Corridor for Transient Flyouts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4135,
+          "title": "Native Prototype Setter Hijacking for Synthetic Form Integration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41594,7 +41624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:15:50.541Z",
+      "verified_at": "2026-10-25T07:05:31.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43549,7 +43579,7 @@
       "platform": "github",
       "source_url": "https://github.com/shoutem/ui",
       "source_version": "92e3f530",
-      "content_hash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
+      "content_hash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
       "dossier_path": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "promoted_rules": [
@@ -43557,6 +43587,16 @@
           "number": 2160,
           "title": "Merge pull request #928 from shoutem/hotfix/9.1.1",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4131,
+          "title": "Lazy Native Bridge Inset Resolution Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4132,
+          "title": "Navigation Lifecycle Inverted Blur-Focus Cleanup Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43564,7 +43604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:10:26.063Z",
+      "verified_at": "2026-10-25T07:05:16.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51475,8 +51515,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "c18e71c7",
-      "content_hash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
+      "source_version": "347f171a",
+      "content_hash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -51499,6 +51539,21 @@
           "number": 3642,
           "title": "Update dependencies to address security vulnerabilities (#65956)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4136,
+          "title": "In-Flight Process Cancellation Queue Absorption",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4137,
+          "title": "Fallback-Preserving Toolchain Binary Reconciliation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4138,
+          "title": "Asymmetric Subagent Cardinality Mapping in Transcripts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51506,7 +51561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:38:41.641Z",
+      "verified_at": "2026-10-25T07:06:22.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -119772,6 +119827,160 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T06:56:52.274Z"
+    },
+    "rule-4128": {
+      "learning_id": "rule-4128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4128,
+      "title": "Zero-Allocation Laddered Sub-Model Stride Invariant",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:13.626Z"
+    },
+    "rule-4129": {
+      "learning_id": "rule-4129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4129,
+      "title": "Stream-Commit Double-Pass Window Invariant",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:13.626Z"
+    },
+    "rule-4130": {
+      "learning_id": "rule-4130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4130,
+      "title": "Hadamard-Quantized Block Group Invariant",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:13.626Z"
+    },
+    "rule-4131": {
+      "learning_id": "rule-4131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4131,
+      "title": "Lazy Native Bridge Inset Resolution Guard",
+      "source_url": "https://github.com/shoutem/ui",
+      "source_version": "92e3f530",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:16.600Z"
+    },
+    "rule-4132": {
+      "learning_id": "rule-4132",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4132,
+      "title": "Navigation Lifecycle Inverted Blur-Focus Cleanup Guard",
+      "source_url": "https://github.com/shoutem/ui",
+      "source_version": "92e3f530",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:16.600Z"
+    },
+    "rule-4133": {
+      "learning_id": "rule-4133",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4133,
+      "title": "Asymmetric Temporal Transition Easing for Collapsible Containers",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "de2c2493",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:31.417Z"
+    },
+    "rule-4134": {
+      "learning_id": "rule-4134",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4134,
+      "title": "Point-in-Triangle Barycentric Corridor for Transient Flyouts",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "de2c2493",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:31.417Z"
+    },
+    "rule-4135": {
+      "learning_id": "rule-4135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4135,
+      "title": "Native Prototype Setter Hijacking for Synthetic Form Integration",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "de2c2493",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:05:31.417Z"
+    },
+    "rule-4136": {
+      "learning_id": "rule-4136",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4136,
+      "title": "In-Flight Process Cancellation Queue Absorption",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "347f171a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:06:22.122Z"
+    },
+    "rule-4137": {
+      "learning_id": "rule-4137",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4137,
+      "title": "Fallback-Preserving Toolchain Binary Reconciliation",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "347f171a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:06:22.122Z"
+    },
+    "rule-4138": {
+      "learning_id": "rule-4138",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4138,
+      "title": "Asymmetric Subagent Cardinality Mapping in Transcripts",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "347f171a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:06:22.122Z"
     }
   },
   "aliases": {

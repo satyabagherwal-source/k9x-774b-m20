@@ -4720,3 +4720,7 @@
 | `CYCLE-20261025-4PE7` | `2026-10-25T06:55:57.583Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4121, Rule 4122, Rule 4123` | Yes (`c64aad70...`) |
 | `CYCLE-20261025-4Q8W` | `2026-10-25T06:55:58.688Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4124` | Yes (`4edc8929...`) |
 | `CYCLE-20261025-5VNE` | `2026-10-25T06:56:52.346Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4125, Rule 4126, Rule 4127` | Yes (`0dc2ffa1...`) |
+| `CYCLE-20261025-GMIN` | `2026-10-25T07:05:13.727Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4128, Rule 4129, Rule 4130` | Yes (`0a82625c...`) |
+| `CYCLE-20261025-GOS0` | `2026-10-25T07:05:16.656Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4131, Rule 4132` | Yes (`6a829046...`) |
+| `CYCLE-20261025-H082` | `2026-10-25T07:05:31.491Z` | `reshaped-ui/reshaped` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4133, Rule 4134, Rule 4135` | Yes (`987762af...`) |
+| `CYCLE-20261025-I3C7` | `2026-10-25T07:06:22.183Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4136, Rule 4137, Rule 4138` | Yes (`972ebfcd...`) |

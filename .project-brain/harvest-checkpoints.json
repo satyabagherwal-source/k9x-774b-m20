@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T06:56:52.360Z",
+  "last_updated": "2026-10-25T07:06:22.197Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -185,14 +185,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
-      "verified_at": "2026-10-20T14:51:02.638Z",
+      "content_hash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
+      "verified_at": "2026-10-25T07:05:13.740Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T14:51:02.638Z"
+      "last_updated": "2026-10-25T07:05:13.740Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -7896,14 +7896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-reshaped-ui-reshaped",
-      "content_hash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
-      "verified_at": "2026-10-22T20:15:50.620Z",
+      "content_hash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
+      "verified_at": "2026-10-25T07:05:31.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:15:50.620Z"
+      "last_updated": "2026-10-25T07:05:31.504Z"
     },
     "actix/actix-web": {
       "repository": "actix/actix-web",
@@ -9201,14 +9201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shoutem-ui",
-      "content_hash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
-      "verified_at": "2026-10-20T17:10:26.144Z",
+      "content_hash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
+      "verified_at": "2026-10-25T07:05:16.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T17:10:26.144Z"
+      "last_updated": "2026-10-25T07:05:16.671Z"
     },
     "databricks/click": {
       "repository": "databricks/click",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
-      "verified_at": "2026-10-22T16:38:41.706Z",
+      "content_hash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
+      "verified_at": "2026-10-25T07:06:22.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:38:41.706Z"
+      "last_updated": "2026-10-25T07:06:22.196Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

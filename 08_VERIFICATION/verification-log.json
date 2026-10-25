@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-O5LA",
-    "timestamp": "2026-10-21T05:40:25.294Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "bed6bcec9238e0f823df0f6145d0b2b8f9c595f8f7050c2882bb02ad7787cbdd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-O80M",
-    "timestamp": "2026-10-21T05:40:28.438Z",
-    "repository": "serpapi/google-search-results-python",
-    "learningId": "learn-github-serpapi-google-search-results-python",
-    "contentHash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-6K66",
-    "timestamp": "2026-10-21T05:54:43.998Z",
-    "repository": "vuetifyjs/vuetify",
-    "learningId": "learn-github-vuetifyjs-vuetify",
-    "contentHash": "da2caaebd5c189fd82e0fc6ad0df80e202cf1db5fdd303afe8fbc6980e2345a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-EKMM",
-    "timestamp": "2026-10-21T06:00:57.838Z",
-    "repository": "JeffLi1993/seo-audit-skill",
-    "learningId": "learn-github-jeffli1993-seo-audit-skill",
-    "contentHash": "a34599761919690ead621ce199babd7e6fb3d9be52571e71409d346d7b8143bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-EOEZ",
     "timestamp": "2026-10-21T06:01:02.747Z",
     "repository": "meshery/meshery",
@@ -7490,6 +7430,66 @@
     "repository": "primer/react",
     "learningId": "learn-github-primer-react",
     "contentHash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-GMIN",
+    "timestamp": "2026-10-25T07:05:13.727Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-GOS0",
+    "timestamp": "2026-10-25T07:05:16.656Z",
+    "repository": "shoutem/ui",
+    "learningId": "learn-github-shoutem-ui",
+    "contentHash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-H082",
+    "timestamp": "2026-10-25T07:05:31.491Z",
+    "repository": "reshaped-ui/reshaped",
+    "learningId": "learn-github-reshaped-ui-reshaped",
+    "contentHash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-I3C7",
+    "timestamp": "2026-10-25T07:06:22.183Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T06:56:52.353Z",
-  "total_cycles_completed": 4697,
-  "total_learnings_persisted": 4697,
-  "total_rules_promoted": 4001,
+  "last_updated": "2026-10-25T07:06:22.190Z",
+  "total_cycles_completed": 4701,
+  "total_learnings_persisted": 4701,
+  "total_rules_promoted": 4012,
   "history": [
-    {
-      "timestamp": "2026-10-23T09:58:08.110Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T10:09:34.211Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T10:09:36.620Z",
-      "repository": "faker-js/faker",
-      "learningId": "learn-github-faker-js-faker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T10:09:38.412Z",
-      "repository": "react-navigation/react-navigation",
-      "learningId": "learn-github-react-navigation-react-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T10:09:48.510Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T06:56:52.353Z",
       "repository": "primer/react",
       "learningId": "learn-github-primer-react",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:05:13.734Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:05:16.663Z",
+      "repository": "shoutem/ui",
+      "learningId": "learn-github-shoutem-ui",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:05:31.497Z",
+      "repository": "reshaped-ui/reshaped",
+      "learningId": "learn-github-reshaped-ui-reshaped",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T07:06:22.190Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "0b67074b063e0a5a11b18da482c707701d77fb87e18b659ed38f338cde872b38",
-    "lastHarvestedAt": "2026-10-20T14:51:02.632Z",
+    "contentHash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
+    "lastHarvestedAt": "2026-10-25T07:05:13.730Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -5183,10 +5183,10 @@
     "repository": "reshaped-ui/reshaped",
     "platform": "github",
     "sourceUrl": "https://github.com/reshaped-ui/reshaped",
-    "sourceVersion": "bf8a1e44",
+    "sourceVersion": "de2c2493",
     "license": "MIT",
-    "contentHash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
-    "lastHarvestedAt": "2026-10-22T20:15:50.608Z",
+    "contentHash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
+    "lastHarvestedAt": "2026-10-25T07:05:31.493Z",
     "learningId": "learn-github-reshaped-ui-reshaped"
   },
   "actix-actix-web": {
@@ -6055,8 +6055,8 @@
     "sourceUrl": "https://github.com/shoutem/ui",
     "sourceVersion": "92e3f530",
     "license": "NOASSERTION",
-    "contentHash": "d71b11a1ed87ea22e95263b963a48bad9fb9c0da34a723534091c05dfe4283d4",
-    "lastHarvestedAt": "2026-10-20T17:10:26.135Z",
+    "contentHash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
+    "lastHarvestedAt": "2026-10-25T07:05:16.659Z",
     "learningId": "learn-github-shoutem-ui"
   },
   "databricks-click": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "c18e71c7",
+    "sourceVersion": "347f171a",
     "license": "NOASSERTION",
-    "contentHash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
-    "lastHarvestedAt": "2026-10-22T16:38:41.695Z",
+    "contentHash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
+    "lastHarvestedAt": "2026-10-25T07:06:22.186Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

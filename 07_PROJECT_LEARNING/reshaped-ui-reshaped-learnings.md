@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md`  
 > **Source**: github ([https://github.com/reshaped-ui/reshaped](https://github.com/reshaped-ui/reshaped))  
-> **Source Version**: `bf8a1e44`  
+> **Source Version**: `de2c2493`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-22T20:15:49.891Z  
+> **Timestamp**: 2026-10-25T07:05:30.828Z  
 > **Learning ID**: `learn-github-reshaped-ui-reshaped`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,508 +18,471 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`reshaped-ui/reshaped` is a multi-tier design system architecture built for enterprise React applications. It decouples design primitives, headless layout state, coordinate geometry, and hardware-accelerated CSS mechanics across three monorepo packages:
-1. `reshaped`: High-level accessible React UI component library (compound architecture, CSS modules, design tokens).
-2. `@reshaped/headless`: Logic primitives managing DOM geometry, accessibility attributes (ARIA), and transient interactions.
-3. `@reshaped/utilities`: Pure TypeScript viewport calculations, scrolling physics, coordinate math, and DOM listener optimizations.
+`reshaped-ui/reshaped` is an enterprise-grade, design-token-driven React and headless UI component library architected to bridge high-fidelity Figma design tokens with deterministic, low-overhead browser runtimes. The system solves the dual challenge of multi-brand theming and complex headless interaction mechanics (such as roving tabindex focus, safe-polygon hover corridors, cursor-anchored dragging, and cross-platform hotkey event loops) without coupling components to proprietary styling runtimes or unconstrained JavaScript execution threads.
+
+### Architectural Boundaries & Subsystems
 
 ```
-+---------------------------------------------------------------------------------------+
-|                                    reshaped (UI)                                      |
-|  [ContextMenu]  [Modal]  [Select]  [Autocomplete]  [Flyout]  [Slider]  [Calendar]     |
-+-------------------------------------------+-------------------------------------------+
-                                            |
-       +------------------------------------+------------------------------------+
-       | Hook Abstractions & Physics Layer                                       |
-       | - useSingletonHotkeys (Global event dispatcher & Mac/Win normalization) |
-       | - useOnClickOutside (Capture-phase outside click & contextmenu sync)    |
-       | - useDrag (Pointer compensation, coordinate clamping, scroll locking)   |
-       | - useFadeSide (RTL-aware scroll boundary detection via rafThrottle)    |
-       +------------------------------------+------------------------------------+
-                                            |
-       +------------------------------------+------------------------------------+
-       | Headless Geometric Engines & Utilities                                  |
-       | - safeArea.ts (Barycentric coordinate point-in-triangle hit testing)    |
-       | - cooldown.ts (State machine: cold -> warming -> warm -> cooling)       |
-       | - Slider.utilities (Float epsilon precision & input property descriptor)|
-       | - Calendar.utils (Leap year, ISO dates, Tab focus roving indexing)      |
-       +------------------------------------+------------------------------------+
-                                            |
-       +------------------------------------+------------------------------------+
-       | Hardware Compositor & CSS Variable Engine                               |
-       | - Non-inherited CSS Custom Properties (@property)                       |
-       | - GPU Compositor Offloading (transform3d, opacity vs layout/paint)     |
-       +-------------------------------------------------------------------------+
+                                  +-----------------------------+
+                                  |   @reshaped/theming (CLI)   |
+                                  | Token Generation & PostCSS  |
+                                  +--------------+--------------+
+                                                 |
+                         +-----------------------+-----------------------+
+                         |                                               |
+                         v                                               v
+        +--------------------------------+              +--------------------------------+
+        |     @reshaped/utilities        |              |      @reshaped/headless        |
+        | Framework-agnostic math, DOM,  |              | Headless state, accessibility, |
+        | barycentric coords, geometry   |              | roving tabindex, focus engines |
+        +----------------+---------------+              +----------------+---------------+
+                         |                                               |
+                         +-----------------------+-----------------------+
+                                                 |
+                                                 v
+                                  +-----------------------------+
+                                  |      reshaped (React)       |
+                                  | CSS Modules + Token Bridge  |
+                                  | React 18/19 Hydration Layer |
+                                  +-----------------------------+
 ```
 
-### Critical Subsystem Abstractions:
-- **Geometry & Collision Detection Engine (`safeArea.ts`)**: Implements barycentric coordinates over triangles (`[origin, corner1, corner2]`) to create an invisible triangular safe corridor between cursor origin and floating popover menus, preventing flyouts from prematurely closing when cursors traverse diagonally over dead space.
-- **Global Event Dispatcher & Input Method Engine (`useSingletonHotkeys.tsx`)**: Replaces disparate DOM listeners with a single reference-counted window listener and `HotkeyStore`. Features modifier sorting, keyup normalization for macOS `Cmd` key masking, and early-exit filters for CJK Input Method Editor (IME) composition phases.
-- **Event Phase Coordination (`useOnClickOutside.ts`)**: Bypasses React's synthetic event bubbling phase by operating on native document capture-phase handlers (`{ capture: true }`), resolving race conditions where newly rendered menus receive their own triggers' bubbled events and instantly self-terminate.
-- **Hardware Compositor-Boundary Execution (`@property` + CSS Variables)**: Offloads high-frequency layout updates (modal swipe gestures, scroll thumbs) from React state renders to CSS custom properties marked `@property { inherits: false }`, preventing whole-tree style recalcs and paint invalidation on mobile viewports.
+1. **Token Compiler & Style Runtime Boundary (`@reshaped/theming`)**:
+   Instead of CSS-in-JS runtimes that incur JavaScript execution overhead and serialization penalties during render cycles, Reshaped compiles design primitives into pure CSS custom properties (`--rs-*`). CSS Modules handle scoped styling, while PostCSS plugins preprocess custom media queries and tokens. Runtime theming relies entirely on DOM scoping via `data-rs-root` and `data-rs-theme` attributes traversed via ancestor recursion.
+
+2. **Geometry & Motion Mechanics (`@reshaped/utilities`)**:
+   Complex interactive mechanics are isolated into framework-agnostic geometric utility modules. Flyout hover tolerance is computed via 2D barycentric coordinate queries over triangular bounding corridors. Roving scroll masks (`useFadeSide`) utilize `requestAnimationFrame`-throttled DOM measurements with bidirectional RTL normalization.
+
+3. **Input & Drag Surface Abstraction (`useDrag`, `useSingletonHotkeys`)**:
+   Normalizes pointer events across Mouse, Touch, and Keyboard (spatial arrow keys) surfaces. Manages global window listener attachment through reference-counted singleton stores to eliminate duplicate window listeners, while decoupling React re-render cycles from 60fps gesture loops via internal mutable ref tracking (`triggerCompensationRef`).
+
+4. **Synthetic Form Event Propagation**:
+   Overcomes React 16-19 synthetic event suppression on hidden/custom DOM nodes by accessing native prototype property setters (`HTMLInputElement.prototype`) and emitting bubbled `Event("change")` dispatches.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Capture-Phase Document Subscriptions for Transient Floating Overlays
+### 1. Asymmetric Temporal Transition Easing for Collapsible Containers
 **RULE**:
-Document-level dismissal handlers for context menus and transient overlays MUST attach during the native DOM capture phase (`{ capture: true }`) and MUST NOT rely on bubbling phase checks or `event.defaultPrevented` flags to discriminate ownership between competing menus.
+When transitioning spatial container dimensions (height, width) concurrently with visual transparency (`opacity`) during open and close lifecycles, you MUST NOT use a symmetric easing function (such as `cubic-bezier(0.2, 0, 0, 1)` or standard deceleration curves) across both directions. Opening transitions MUST use decelerating or standard easing (`--rs-easing-standard`), while closing transitions MUST use an accelerating easing curve (`--rs-easing-accelerate`).
 
 **WHY**:
-When a pointer action initiates a new context menu, React re-renders and attaches document listeners within the same microtask. If document dismissals are bound in the bubble phase, two defects occur:
-1. A newly mounted overlay attaches its bubbling document listener before the opening event finishes bubbling up to `document`, causing the new overlay to immediately close itself.
-2. If `event.defaultPrevented` is used as a workaround to ignore the trigger event, right-clicking *another* menu trigger calls `preventDefault()` on the event, which suppresses the dismissal check and leaves the previously open menu permanently stuck on screen. Capture-phase listeners fire top-down *before* local target handlers, dismissing any stale overlay before the new overlay registers its listeners.
+Standard UI easing curves (`cubic-bezier(0.2, 0, 0, 1)`) front-load the velocity profile: ~75% of the total interpolation delta occurs within the first 25% of the duration. While this produces a crisp, responsive entry during expansion, applying it to exit collapse results in immediate loss of visual mass and opacity within the first 30–50ms. The component appears to blink out or disappear instantaneously before the dimension transition completes, rendering the remaining 200ms of the collapse animation imperceptible to the human eye. Accelerating curves delay velocity until the end of the duration, maintaining textual legibility and structural presence before collapsing.
 
 **WHEN TO APPLY**:
-Context menus, cascading dropdowns, popovers, tooltips, and any floating layer dismissed via outside clicks where multiple distinct triggers exist simultaneously in the DOM.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-import React from "react";
-
-export const useOnClickOutside = (
-  refs: Array<React.RefObject<HTMLElement | null>>,
-  handler: (event: MouseEvent | TouchEvent) => void,
-  disabled: boolean = false
-) => {
-  const handlerRef = React.useRef(handler);
-  handlerRef.current = handler;
-
-  const checkInside = (event: Event): boolean => {
-    const path = event.composedPath();
-    return refs.some((ref) => {
-      const el = ref.current;
-      return el && (path.includes(el) || el.contains(event.target as Node));
-    });
-  };
-
-  React.useEffect(() => {
-    if (disabled) return;
-
-    // Capture phase guarantees the existing active menu closes BEFORE
-    // a competing trigger processes the event and mounts a new menu.
-    const handleContextMenu = (event: MouseEvent) => {
-      if (checkInside(event)) return;
-      handlerRef.current(event);
-    };
-
-    const handleClick = (event: MouseEvent | TouchEvent) => {
-      if (checkInside(event)) return;
-      handlerRef.current(event);
-    };
-
-    document.addEventListener("click", handleClick);
-    document.addEventListener("contextmenu", handleContextMenu, { capture: true });
-
-    return () => {
-      document.removeEventListener("click", handleClick);
-      document.removeEventListener("contextmenu", handleContextMenu, { capture: true });
-    };
-  }, [disabled, ...refs]);
-};
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Never swallow dismissals based on defaultPrevented in bubble phase!
-React.useEffect(() => {
-  const handleClick = (e: MouseEvent) => {
-    // BUG: If another trigger calls e.preventDefault() on right-click,
-    // this check aborts, leaving the current menu permanently orphaned.
-    if (e.defaultPrevented) return;
-    if (!containerRef.current?.contains(e.target as Node)) {
-      onClose();
-    }
-  };
-  document.addEventListener("contextmenu", handleClick); // Missing capture!
-  return () => document.removeEventListener("contextmenu", handleClick);
-}, []);
-```
-
-**VERIFICATION METHOD**:
-Automated integration test using Storybook Test Runner / Vitest Playwright:
-1. Render two sibling context menu triggers: `Trigger A` and `Trigger B`.
-2. Right-click `Trigger A`. Assert `Menu A` is visible.
-3. Without left-clicking, right-click `Trigger B`.
-4. Assert `Menu A` is detached from DOM and `Menu B` is visible.
-5. Right-click `Trigger B` again at a 100px offset. Assert `Menu B` repositioned, `onClose` fired with `{ reason: 'outside-click' }`, and `onOpen` fired.
-
----
-
-### 2. IME Composition Guard with Safari KeyCode 229 Trap
-**RULE**:
-Global hotkey, shortcut, and keydown handlers MUST abort execution whenever `e.isComposing === true` OR `e.keyCode === 229`.
-
-**WHY**:
-During CJK (Chinese, Japanese, Korean) text input via an Input Method Editor (IME), users hit `Enter`, `Space`, or numeric keys to select ideographic candidates from a floating composition window. Browsers emit standard `keydown` events for these strokes. 
-- In Chromium and Firefox, `event.isComposing` is `true`.
-- In WebKit (Safari), `compositionend` fires *before* the final confirmation `keydown`, meaning `isComposing` is already mutated to `false` when the confirming `Enter` keydown reaches the window. However, Safari sets `e.keyCode = 229` (the standard RFC 229 composite keycode sentinel). 
-Failing to test both flags causes input handlers (such as modal submission, autocomplete selection, or command palettes) to prematurely submit forms or select incomplete phonetic tokens.
-
-**WHEN TO APPLY**:
-All text inputs, autocomplete fields, command palettes (`Cmd+K`), custom hotkey managers, and form submission listeners.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-export const handleWindowKeyDown = (e: KeyboardEvent): boolean => {
-  // 1. Browsers trigger synthetic keyboard events without e.key during form autofill
-  if (!e.key) return false;
-
-  // 2. Full-spectrum IME composition guard:
-  // e.isComposing covers modern spec (Blink/Gecko)
-  // e.keyCode === 229 handles WebKit/Safari composition confirmation race conditions
-  if (e.isComposing || e.keyCode === 229) {
-    return false;
-  }
-
-  return true; // Safe to proceed to shortcut dispatcher
-};
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Checking only e.key === "Enter" or relying exclusively on e.isComposing
-const onKeyDown = (e: React.KeyboardEvent) => {
-  // BUG: In Safari, confirming Japanese Kanji conversion sets isComposing=false,
-  // firing Enter down and prematurely closing the modal / picking wrong candidate!
-  if (e.isComposing) return;
-  if (e.key === "Enter") {
-    selectOption();
-  }
-};
-```
-
-**VERIFICATION METHOD**:
-Simulate an IME synthetic sequence via Playwright / Vitest:
-```typescript
-const eventComposing = new KeyboardEvent("keydown", {
-  key: "Enter",
-  code: "Enter",
-  isComposing: true,
-  bubbles: true
-});
-const eventSafariIME = new KeyboardEvent("keydown", {
-  key: "Enter",
-  code: "Enter",
-  keyCode: 229,
-  isComposing: false,
-  bubbles: true
-});
-
-window.dispatchEvent(eventComposing);
-window.dispatchEvent(eventSafariIME);
-// Assert registered hotkey callback count === 0
-```
-
----
-
-### 3. Non-Inherited Custom Property Containment for Main-Thread Animation Offloading
-**RULE**:
-High-frequency gesture offsets, scroll tracking positions, or drag coordinates written to the DOM as CSS variables MUST be registered using `@property` with `inherits: false`, and animated elements MUST separate static layout properties from transformed compositor layers.
-
-**WHY**:
-When a CSS custom property (e.g., `--rs-drag-y`) is set on a root element during touch/pointer interactions, the browser default behavior is to cascade and inherit that variable across every child DOM node in the subtree. On mobile viewports with complex nested cards, setting a CSS variable on every `requestAnimationFrame` forces style recalculations and repaints over hundreds of nodes on the main thread. Registering `inherits: false` restricts style invalidation exclusively to the root boundary. Furthermore, transitioning static backgrounds (like modal backdrops) via `background-color` triggers full-screen rasterization on every frame; splitting the backdrop into an independent DOM layer and animating `opacity` allows the GPU compositor thread to execute animations at 120 FPS without waking the JavaScript thread.
-
-**WHEN TO APPLY**:
-Touch swipe gestures, sheet drawers, pull-to-refresh, custom scroll area thumbs, and range slider thumbs.
+Apply to all collapsible surfaces, accordions, flyouts, drawers, and popover dismissal transitions where size (`height`, `width`, `max-height`) and `opacity` animate concurrently.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```css
-/* packages/reshaped/src/components/Modal/Modal.module.css */
-@property --rs-modal-drag-offset {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+/* packages/reshaped/src/components/Expandable/Expandable.module.css */
+
+/* Closing accelerates: content remains readable during initial frames */
+.root.--animated {
+  transition: var(--rs-duration-medium) var(--rs-easing-accelerate);
+  transition-property: opacity;
 }
 
-.root {
-  transform: translateY(var(--rs-modal-drag-offset));
-  will-change: transform;
+.root.--animated.--orientation-vertical {
+  transition-property: height, opacity;
 }
 
-/* Backdrop separated into dedicated layer to avoid repainting viewport */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: var(--rs-color-overlay);
-  opacity: var(--rs-backdrop-opacity, 1);
-  will-change: opacity;
-  pointer-events: none;
+.root.--animated.--orientation-horizontal {
+  transition-property: width, opacity;
+}
+
+/* Opening decelerates: content enters rapidly, then gently settles */
+.root.--animated.--visible {
+  transition-timing-function: var(--rs-easing-standard);
 }
 ```
 
+**NEGATIVE CONSTRAINT**:
+```css
+/* ANTI-PATTERN: Symmetric easing front-loads the close animation */
+.root.--animated {
+  /* BAD: The container loses 90% opacity and size in the first 50ms */
+  transition: 
+    height var(--rs-duration-medium) cubic-bezier(0.2, 0, 0, 1),
+    opacity var(--rs-duration-medium) cubic-bezier(0.2, 0, 0, 1);
+}
+```
+
+**VERIFICATION METHOD**:
+Frame-by-frame visual regression testing via Playwright / Vitest browser runner measuring interpolated computed styles at `t = duration * 0.25`:
 ```typescript
-// DOM Mutation pattern: Single-node write, bypassing React reconciliation
-export const applyModalDragOffset = (element: HTMLElement, offsetPx: number) => {
-  element.style.setProperty("--rs-modal-drag-offset", `${offsetPx}px`);
+test("Expandable close retains readability at 25% duration", async ({ page }) => {
+  const el = page.locator(".root.--animated");
+  await page.locator("button.toggle").click(); // open
+  await page.waitForTimeout(300);
+  
+  await page.locator("button.toggle").click(); // close
+  await page.waitForTimeout(62); // ~25% of 250ms
+  
+  const opacity = await el.evaluate((node) => parseFloat(window.getComputedStyle(node).opacity));
+  const width = await el.evaluate((node) => parseFloat(window.getComputedStyle(node).width));
+  
+  // Under accelerating curve, opacity must stay >= 0.85; symmetric curves drop to <= 0.40
+  expect(opacity).toBeGreaterThanOrEqual(0.85);
+  expect(width).toBeGreaterThanOrEqual(75);
+});
+```
+
+---
+
+### 2. Point-in-Triangle Barycentric Corridor for Transient Flyouts
+**RULE**:
+When implementing delayed dismissal for transient flyouts, tooltips, or submenus triggered by cursor hover, you MUST NOT rely solely on spatial hit-testing bounding boxes, synthetic CSS pseudo-element bridges, or arbitrary fixed millisecond timeouts. You MUST construct a dynamic 2D triangular safe polygon anchored at the initial cursor exit coordinates and spanning across the two nearest vertices of the target popover content box, validating mouse trajectory via barycentric coordinate boundaries.
+
+**WHY**:
+Rectangular hit-boxes and fixed hover delays fail when users move their pointer diagonally across adjacent UI elements toward an offset flyout. If the cursor traverses intervening interactive DOM nodes, standard hit-tests trigger premature close events or misrouted focus shifts. A dynamic barycentric triangle creates an exact, mathematically bound corridor that keeps the flyout open during intentional diagonal traversal without trapping the cursor indefinitely.
+
+**WHEN TO APPLY**:
+All nested submenus, navigation dropdowns, mega-menus, and cursor-hover-triggered popovers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/reshaped/src/components/Flyout/utilities/safeArea.ts
+
+export type Coordinates = { x: number; y: number };
+
+export function isPointInTriangle(
+  point: Coordinates,
+  triangle: [Coordinates, Coordinates, Coordinates]
+): boolean {
+  const [p1, p2, p3] = triangle;
+  const denominator = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
+
+  // Avoid division-by-zero on degenerate triangles (collapsed points)
+  if (denominator === 0) return false;
+
+  const a = ((p2.y - p3.y) * (point.x - p3.x) + (p3.x - p2.x) * (point.y - p3.y)) / denominator;
+  const b = ((p3.y - p1.y) * (point.x - p3.x) + (p1.x - p3.x) * (point.y - p3.y)) / denominator;
+  const c = 1 - a - b;
+
+  return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1;
+}
+
+export function getContentCorners(
+  contentRect: DOMRect,
+  position: string | null | undefined
+): [Coordinates, Coordinates] {
+  const corners = {
+    topLeft: { x: contentRect.left, y: contentRect.top },
+    topRight: { x: contentRect.right, y: contentRect.top },
+    bottomLeft: { x: contentRect.left, y: contentRect.bottom },
+    bottomRight: { x: contentRect.right, y: contentRect.bottom },
+  };
+
+  if (position?.startsWith("bottom")) return [corners.topLeft, corners.topRight];
+  if (position?.startsWith("top")) return [corners.bottomLeft, corners.bottomRight];
+  if (position?.startsWith("start")) return [corners.topRight, corners.bottomRight];
+  return [corners.topLeft, corners.bottomLeft];
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Fixed rectangular hover bridging or arbitrary timeout delay
+function handleMouseLeave(event: React.MouseEvent) {
+  // BAD: Delays dismissal by fixed time; if cursor moves away completely, 
+  // the submenu hangs unresponsively in the UI for 500ms
+  timeoutId = setTimeout(() => {
+    closeMenu();
+  }, 500);
+}
+```
+
+**VERIFICATION METHOD**:
+Deterministic geometric unit testing checking interior, collinear, and exterior points:
+```typescript
+import { isPointInTriangle } from "./safeArea";
+
+describe("isPointInTriangle", () => {
+  const triangle: [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] = [
+    { x: 0, y: 0 },
+    { x: 100, y: 0 },
+    { x: 50, y: 100 },
+  ];
+
+  it("permits movement inside the trajectory corridor", () => {
+    expect(isPointInTriangle({ x: 50, y: 50 }, triangle)).toBe(true);
+    expect(isPointInTriangle({ x: 10, y: 5 }, triangle)).toBe(true);
+  });
+
+  it("immediately rejects pointer deviation outside the corridor", () => {
+    expect(isPointInTriangle({ x: -1, y: 0 }, triangle)).toBe(false);
+    expect(isPointInTriangle({ x: 150, y: 50 }, triangle)).toBe(false);
+  });
+});
+```
+
+---
+
+### 3. Native Prototype Setter Hijacking for Synthetic Form Integration
+**RULE**:
+When synchronizing custom or hidden `<input>` values with state in design system components (such as sliders, steppers, date pickers, or custom switches), you MUST NOT directly assign `input.value = nextVal` or dispatch isolated CustomEvents. You MUST acquire the prototype property setter via `Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set` and dispatch a native bubbling `Event("change", { bubbles: true })`.
+
+**WHY**:
+Modern front-end frameworks (specifically React 16, 17, 18, and 19) override the `value` property descriptor on `HTMLInputElement` to manage synthetic event batching. Directly mutating `el.value = val` updates the underlying DOM property without tripping React's internal value tracker (`_valueTracker`). React perceives the subsequent change as an identical value and swallows native form callbacks, resulting in desynchronized state and broken native `<form onReset>` / `<form onChange>` boundaries.
+
+**WHEN TO APPLY**:
+All compound form components that wrap native HTML inputs inside invisible proxy elements or custom interactive canvases.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// packages/reshaped/src/components/Slider/Slider.utilities.ts
+
+export const triggerChangeEvent = (el: HTMLInputElement, value: string) => {
+  const descriptor = Object.getOwnPropertyDescriptor(
+    window.HTMLInputElement.prototype,
+    "value"
+  );
+  
+  const nativeInputValueSetter = descriptor?.set;
+  if (!nativeInputValueSetter) {
+    el.value = value;
+    return;
+  }
+
+  // Invokes native C++ setter bypassing framework tracking overrides
+  nativeInputValueSetter.call(el, value);
+  
+  // Dispatches bubbling standard event that React wraps into SyntheticEvent
+  el.dispatchEvent(new Event("change", { bubbles: true }));
 };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Mutating React state during touchmove or driving viewport layout styles
-const [dragY, setDragY] = useState(0);
-
-const onTouchMove = (e: TouchEvent) => {
-  // BUG: Triggers full React reconciliation on every touch coordinate change!
-  setDragY(e.touches[0].clientY);
+// ANTI-PATTERN: Direct assignment breaks React tracker and fails form events
+export const buggyTriggerChange = (el: HTMLInputElement, value: string) => {
+  el.value = value; // React's internal tracker is unaware of this change!
+  el.dispatchEvent(new Event("change")); // Swallowed or skipped by React
 };
-
-return (
-  <div style={{ top: `${dragY}px`, backgroundColor: `rgba(0,0,0,${1 - dragY/500})` }}>
-    {/* Entire heavy children tree re-renders and forces GPU rasterization */}
-  </div>
-);
 ```
 
 **VERIFICATION METHOD**:
-Execute Chrome DevTools Performance Profiler (or Puppeteer trace inspection):
-1. Assert zero `Layout` and `Update Layer Tree` events during continuous touch-drag gestures.
-2. Verify in CSS Computed Style pane that `--rs-modal-drag-offset` does not invalidate children styles.
+React testing harness asserting form event trigger:
+```typescript
+it("triggers parent form onChange when proxy input changes", () => {
+  const formChangeSpy = vi.fn();
+  const { container } = render(
+    <form onChange={formChangeSpy}>
+      <Slider name="volume" defaultValue={20} />
+    </form>
+  );
+
+  const hiddenInput = container.querySelector('input[type="hidden"]') as HTMLInputElement;
+  triggerChangeEvent(hiddenInput, "45");
+
+  expect(formChangeSpy).toHaveBeenCalledTimes(1);
+  expect(hiddenInput.value).toBe("45");
+});
+```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Competing Context Menu Deadlock & Self-Termination (BUG-CONTEXTMENU-01)
-- **Context**: `packages/reshaped/src/hooks/useOnClickOutside.ts` & `packages/reshaped/src/components/ContextMenu`
-- **What Was Expected**: Right-clicking an active context menu trigger in a new location should reposition the menu. Right-clicking a *different* context menu trigger should immediately close the first menu and open the second.
-- **What Actually Happened**: Right-clicking a second trigger left the first menu rendered on screen, creating floating phantom overlays. Furthermore, right-clicking the same trigger at a new coordinate caused the menu to stay locked at the old coordinate.
-- **Evidence in Repo**: Commit `4d8b937f`, PR #678, Changeset `.changeset/context-menu-close-on-another-menu.md`.
-- **Root Cause**:
-  1. Commit `1060733` had previously introduced `if (event.defaultPrevented) return;` into `useOnClickOutside` to prevent freshly opened menus from closing themselves when the opening right-click event bubbled to `document`. However, all context menus call `e.preventDefault()` to stop native OS context menus. Thus, clicking another menu trigger tripped `event.defaultPrevented === true`, suppressing the outside-click callback and leaving the old menu open.
-  2. In `FlyoutControlled`, when right-clicking the same trigger, React batched the coordinate update within a single frame where `status` remained `"rendered"`. Because `status` didn't change from `"closed"` to `"rendered"`, the positioning effect was never re-triggered, leaving the flyout stranded at old coordinates.
+### Incident 1: Perceptual Collapse Blink Caused by Deceleration Curves on Container Close (BUG-EXPANDABLE-CLOSE-EASING)
+- **Context**: `packages/reshaped/src/components/Expandable/Expandable.module.css` (PR #680, Issue #679).
+- **What Was Expected**: When closing an `Expandable` element (horizontal or vertical), content dimensions (`width` or `height`) and `opacity` should collapse progressively over the 250ms duration (`--rs-duration-medium`), allowing users to perceive the element closing cleanly.
+- **What Actually Happened**: The transition appeared instantaneous, resembling a visual blink. In horizontal orientations, an 84px label lost 75% of its width (dropping to 31px) and 64% of its opacity within 105ms, rendering the content completely unreadable in the first ~100ms and leaving the remaining 150ms animating invisible empty whitespace.
+- **Evidence in Repo**: 
+  - Issue #679: *"Expandable: the close transition looks instant because it uses the decelerating easing"*.
+  - PR #680, commit `de2c2493`.
+  - Frame measurements documented in PR:
+    - *At 56ms*: `width = 60px`, `opacity = 0.71` (Before) vs `width = 81px`, `opacity = 0.97` (After).
+    - *At 105ms*: `width = 31px`, `opacity = 0.36` (Before) vs `width = 75px`, `opacity = 0.89` (After).
+- **Root Cause**: The CSS class `.root.--animated` applied `--rs-easing-standard` (`cubic-bezier(0.2, 0, 0, 1)`) symmetrically across expansion and collapse. This curve has a steep initial slope (rapid movement) and a flat end (gentle settling). On collapse, this front-loaded velocity caused the container to shed most of its volume and opacity in the opening frames.
 - **Remediation Code Diff**:
 ```diff
---- a/packages/reshaped/src/hooks/useOnClickOutside.ts
-+++ b/packages/reshaped/src/hooks/useOnClickOutside.ts
-@@ -58,26 +58,25 @@ const useOnClickOutside = (
- 		if (disabled) return;
+--- a/packages/reshaped/src/components/Expandable/Expandable.module.css
++++ b/packages/reshaped/src/components/Expandable/Expandable.module.css
+@@ -24,18 +24,24 @@
+ 	opacity: 1;
+ }
  
- 		const handleClick = (event: MouseEvent | TouchEvent) => {
--			if (event.type === "contextmenu") {
--				/**
--				 * Context menu events can be claimed by a handler that opens a menu of its own,
--				 * which prevents the default browser behavior. Such events open a new flyout
--				 * instead of dismissing the current one, so they're not outside clicks
--				 */
--				if (event.defaultPrevented) return;
--
--				isMouseDownInsideRef.current = checkEventInsideRefs(event);
--			}
--
- 			if (isMouseDownInsideRef.current) return;
- 			handlerRef.current?.(event);
- 		};
++/*
++ * Closing accelerates, so the content stays readable while it starts collapsing
++ * instead of losing most of its size and opacity in the first frames
++ */
+ .root.--animated {
+-	transition: opacity var(--rs-duration-medium) var(--rs-easing-standard);
++	transition: var(--rs-duration-medium) var(--rs-easing-accelerate);
++	transition-property: opacity;
+ }
  
-+		/**
-+		 * Capture phase closes the content before another context menu opens on the same event,
-+		 * while the content opened by this event subscribes too late to get closed by it.
-+		 * Target is checked directly since the context menu key doesn't trigger mousedown
-+		 */
-+		const handleContextMenu = (event: MouseEvent) => {
-+			if (checkEventInsideRefs(event)) return;
-+			handlerRef.current?.(event);
-+		};
+ .root.--animated.--orientation-vertical {
+-	transition:
+-		height var(--rs-duration-medium) var(--rs-easing-standard),
+-		opacity var(--rs-duration-medium) var(--rs-easing-standard);
++	transition-property: height, opacity;
+ }
+ 
+ .root.--animated.--orientation-horizontal {
+-	transition:
+-		width var(--rs-duration-medium) var(--rs-easing-standard),
+-		opacity var(--rs-duration-medium) var(--rs-easing-standard);
++	transition-property: width, opacity;
++}
 +
- 		document.addEventListener("click", handleClick);
--		document.addEventListener("contextmenu", handleClick);
-+		document.addEventListener("contextmenu", handleContextMenu, { capture: true });
- 		return () => {
- 			document.removeEventListener("click", handleClick);
--			document.removeEventListener("contextmenu", handleClick);
-+			document.removeEventListener("contextmenu", handleContextMenu, { capture: true });
- 		};
++/* Opening keeps the standard easing, so the content arrives quickly and then settles */
++.root.--animated.--visible {
++	transition-timing-function: var(--rs-easing-standard);
+ }
 ```
-```diff
---- a/packages/reshaped/src/components/Flyout/FlyoutControlled.tsx
-+++ b/packages/reshaped/src/components/Flyout/FlyoutControlled.tsx
-@@ -370,6 +370,13 @@ const FlyoutControlled: React.FC<T.ControlledProps & T.DefaultProps> = (props) =>
- 		if (status === "rendered") show();
- 	}, [status, show]);
- 
-+	// Content can be reopened at new coordinates without closing in between
-+	useIsomorphicLayoutEffect(() => {
-+		if (!originCoordinates || !isRendered) return;
-+		updatePosition();
-+		// oxlint-disable-next-line react-hooks/exhaustive-deps
-+	}, [originCoordinates?.x, originCoordinates?.y]);
-```
-- **Lesson**: Never use bubbling-phase `defaultPrevented` checks to manage modal lifecycle dismissal. Capture phase allows ancestral listeners to execute prior to consumer actions, cleanly serializing dismissal and mount operations.
+- **Lesson**: Directional motion symmetry is an anti-pattern. Entering components must arrive quickly and decelerate; exiting components must accelerate out to preserve readability until the collapse motion begins.
 
 ---
 
-### Incident 2: IME Composition Premature Form Submission in Safari (BUG-HOTKEYS-02)
-- **Context**: `packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx` & `Autocomplete`
-- **What Was Expected**: Pressing `Enter` to confirm a Japanese, Chinese, or Korean ideogram conversion should commit the characters to the input field and do nothing else.
-- **What Actually Happened**: Hitting `Enter` to confirm conversion in `Autocomplete` immediately triggered the hotkey listener, selecting whatever option was currently highlighted in the dropdown list or submitting the form with partial text.
-- **Evidence in Repo**: Commit `6150f4fc`, PR #676, Issue #671, Changeset `.changeset/hotkeys-ime-composition.md`.
-- **Root Cause**: WebKit (Safari) fires `compositionend` *prior* to emitting the `keydown` event for the confirming `Enter` key stroke. As a consequence, `e.isComposing` has already reverted to `false` when the event hits the window handler. The hotkey engine treated the keydown as a literal `Enter` command.
+### Incident 2: macOS Meta Key Release Desynchronization in Global Keyboard Event Store (BUG-HOTKEY-STALE-META)
+- **Context**: `packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx`.
+- **What Was Expected**: Releasing keys while holding the `Meta` (Command) key on macOS should maintain an accurate registry of currently held keys (`pressedMapRef`), properly handling subsequent key combinations.
+- **What Actually Happened**: The operating system's window server suppresses native `keyup` events for ordinary character keys while the `Meta` key is held. If a user pressed `Meta + K`, released `K`, and then pressed `P`, `K` remained permanently registered in `pressedMapRef`, causing invalid combinations (e.g., `Meta + K + P`) to trigger or blocking single-key shortcuts until focus was blurred.
+- **Evidence in Repo**: `.changeset/hotkeys-ime-composition.md` and `useSingletonHotkeys.tsx` lines 180–235.
+- **Root Cause**: macOS WebKit and Chromium engines do not dispatch `keyup` for regular alphanumeric keys if the Command key is depressed during the key release event.
 - **Remediation Code Diff**:
 ```diff
 --- a/packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx
 +++ b/packages/reshaped/src/hooks/_internal/useSingletonHotkeys.tsx
-@@ -216,6 +216,9 @@ const HotkeysProvider: React.FC<{ children: React.ReactNode }> = (props) => {
- 	const handleWindowKeyDown = React.useCallback(
- 		(e: KeyboardEvent) => {
- 			if (!e.key) return;
-+			// Keys handled by an IME are not hotkeys. Safari fires the Enter that confirms
-+			// a composition after compositionend, so only keyCode 229 marks it
-+			if (e.isComposing || e.keyCode === 229) return;
+@@ -190,6 +190,20 @@ const HotkeysProvider: React.FC<{ children: React.ReactNode }> = (props) => {
+ 			const nextPressedMap = { ...pressedMapRef.current };
+ 			nextPressedMap[eventKey] = e;
  
- 			const nextPressedMap = addPressedKey(e) ?? pressedMapRef.current;
- 			globalHotkeyStore.handleKeyDown(nextPressedMap, e);
++			if (nextPressedMap["meta"]) {
++				if (!MODIFIER_KEYS.includes(eventKey)) {
++					// Keys pressed while Meta was held might have been released already
++					// without us receiving their keyup events. If combination doesn't match, purge
++					const staleKeys = metaModifiedKeysRef.current.filter(
++						(key) => key !== eventKey && key in nextPressedMap
++					);
++					const pressedId = getHotkeyId(Object.keys(nextPressedMap).join(COMBINATION_DELIMETER));
++					if (staleKeys.length && !globalHotkeyStore.hasHandlers(pressedId)) {
++						staleKeys.forEach((key) => delete nextPressedMap[key]);
++					}
++				}
++				metaModifiedKeysRef.current = Object.keys(nextPressedMap).filter((key) => !MODIFIER_KEYS.includes(key));
++			}
 ```
-- **Lesson**: Cross-browser keyboard handling requires guarding against browser-specific event ordering quirks. Never rely solely on `e.isComposing`; test `e.keyCode === 229` to defend against WebKit's early `compositionend` dispatch.
+- **Lesson**: Hardware and platform-specific window events cannot be assumed to form symmetric `keydown`/`keyup` pairs. Global hotkey architectures must track platform-modified keys and prune stale state when combinations fail to match registered handlers.
 
 ---
 
-### Incident 3: Frozen Exit State Desynchronization during Flyout Unmount (BUG-FLYOUT-03)
-- **Context**: `packages/reshaped/src/components/Flyout` & `Select`
-- **What Was Expected**: When closing a `Select` or `Autocomplete` flyout with an exit animation, the popover should fade out smoothly displaying its last active state.
-- **What Actually Happened**: When a user selected a value, the component updated its state, causing the animating flyout to abruptly mutate its DOM contents, flicker, or shift layout mid-animation. If closed immediately after opening, the unmount transition failed to trigger, leaving the DOM node permanently mounted. Furthermore, pointer events on exit-animating menus allowed phantom double-clicks.
-- **Evidence in Repo**: PR #675, Commit `d9770c54`, Changeset `.changeset/flyout-frozen-exit-animation.md`.
-- **Root Cause**: The unmount pipeline did not snapshot/freeze the VNode render tree upon initiating the exit phase (`status === "cooling"`), allowing upstream re-renders to mutate child components during the CSS transition window. Additionally, canceling an opening transition did not invoke `transitionend`, hanging the unmount state machine.
-- **Remediation Architecture**:
-  1. Introduced a frozen render boundary: when closing starts, cache `props.children` in a ref and render the frozen cached tree until unmount.
-  2. Applied `pointer-events: none` via CSS when `status !== "entered"` to deactivate pointer collision during exit animations.
-  3. Added an explicit short-circuit in `FlyoutControlled`: closing before the opening transition begins immediately transitions `status` to unmounted without awaiting a non-existent `transitionend` event.
-- **Lesson**: Animated exits in React compound components require snapshotting the render tree and suppressing pointer events until DOM unmounting completes.
+### Incident 3: Floating Point Precision Drift in Slider Step Discretization (BUG-SLIDER-FLOAT-ROUNDING)
+- **Context**: `packages/reshaped/src/components/Slider/Slider.utilities.ts`.
+- **What Was Expected**: Incrementing a slider with floating-point steps (e.g., `step={0.1}` or `step={0.01}`) should yield clean values (e.g., `0.3`, `0.7`).
+- **What Actually Happened**: Binary floating point IEEE-754 arithmetic resulted in values like `0.30000000000000004` or `0.7000000000000001`, corrupting database payloads, causing layout shifts in number inputs, and failing equality checks.
+- **Evidence in Repo**: `packages/reshaped/src/components/Slider/Slider.utilities.ts` lines 1–17.
+- **Root Cause**: Direct mathematical operations (`Math.round(value / step) * step`) in JavaScript yield representation drift when `step` is a fractional float.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/reshaped/src/components/Slider/Slider.utilities.ts
++++ b/packages/reshaped/src/components/Slider/Slider.utilities.ts
+@@ -1,3 +1,17 @@
++export const getPrecision = (value: number) => {
++	const floatPart = value.toString().split(".")[1];
++	return floatPart?.length || 0;
++};
++
+ export const applyStepToValue = (value: number, step: number) => {
+-	return Math.round(value / step) * step;
++	const isStepFloat = step % 1 !== 0;
++	const result = Math.round(value / step) * step;
++
++	// Handle javascript floats manually with string conversion
++	if (isStepFloat) {
++		const precision = getPrecision(step);
++		return Number(result.toFixed(precision));
++	}
++
++	return result;
+ };
+```
+- **Lesson**: Step-quantization arithmetic involving floating-point numbers must inspect tokenized decimal precision and enforce boundary rounding via `toFixed(precision)` before numeric re-coercion.
 
 ---
 
-### Incident 4: Main-Thread Viewport Invalidation via CSS Custom Property Inheritance (BUG-MODAL-04)
-- **Context**: `packages/reshaped/src/components/Modal` & `packages/reshaped/src/components/Overlay`
-- **What Was Expected**: Modal swipe-to-close gestures on mobile devices should track finger movement at a sustained 60–120 FPS.
-- **What Actually Happened**: Significant frame drops, jank, and thermal throttling occurred on iOS Safari and mobile Chrome when dragging bottom-sheet modals.
-- **Evidence in Repo**: PR #667 (`3d94de2`), PR #669 (`9c58807`), Changesets `.changeset/modal-drag-property.md` and `.changeset/overlay-backdrop-compositor.md`.
-- **Root Cause**:
-  1. The drag translation variable `--rs-modal-drag-offset` was implicitly inherited. Updating `--rs-modal-drag-offset` on the root element on every touchmove event forced the CSS engine to recalculate computed styles across all child DOM elements in the modal tree on the main thread.
-  2. The backdrop was rendered on the modal root and animated via `background-color`. Every change in touch offset recomputed color interpolation and triggered a full-viewport paint.
-- **Remediation Architecture**:
-  1. Defined `@property --rs-modal-drag-offset { syntax: '<length>'; inherits: false; initial-value: 0px; }` to isolate style recalculations to the root element.
-  2. Decoupled the backdrop into a dedicated stacking layer (`position: fixed; inset: 0; will-change: opacity;`) transitioning exclusively via `opacity`, delegating the entire gesture composition to the GPU thread.
-- **Lesson**: High-frequency CSS custom properties must be scoped with `inherits: false`, and opacity transitions must be preferred over background-color mutations.
+### Incident 4: Initial Render Mask Calculation Under Complex Flexbox Layouts (BUG-USEFADESIDE-FLEX-LAYOUT)
+- **Context**: `packages/reshaped/src/hooks/_internal/useFadeSide.ts`.
+- **What Was Expected**: Roving scroll mask indicators should appear immediately on page mount when content overflows its container horizontally.
+- **What Actually Happened**: When placed inside multi-pass flexbox or CSS grid containers, `scrollWidth` and `clientWidth` evaluated to identical values on the initial paint pass, causing the scroll fade mask to fail to render until the user scrolled or resized the viewport.
+- **Evidence in Repo**: `packages/reshaped/src/hooks/_internal/useFadeSide.ts` lines 42–45:
+  ```typescript
+  // Use RaF when scroll to have scrollWidth calculated correctly on the first effect
+  // For example: An edge case inside the complex flexbox layout
+  requestAnimationFrame(() => updateFade());
+  ```
+- **Root Cause**: Synchronous execution of layout effects runs before the browser's style and layout recalculation passes complete for nested flex containers, causing premature sampling of layout metrics.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/reshaped/src/hooks/_internal/useFadeSide.ts
++++ b/packages/reshaped/src/hooks/_internal/useFadeSide.ts
+@@ -37,6 +37,10 @@ const useFadeSide = (
+ 		const debouncedUpdate = rafThrottle(updateFade);
+ 
++		// Use RaF when scroll to have scrollWidth calculated correctly on the first effect
++		// For example: An edge case inside the complex flexbox layout
++		requestAnimationFrame(() => updateFade());
++
+ 		window.addEventListener("resize", debouncedUpdate);
+ 		elScrollable.addEventListener("scroll", debouncedUpdate);
+```
+- **Lesson**: Initial DOM layout metrics inside dynamic flex/grid wrappers cannot be safely sampled synchronously in layout effects; schedule a `requestAnimationFrame` pass to query dimensions after the rendering engine settles.
 
 ---
 
-### Incident 5: ScrollArea RTL Layout Inversion and Reflow Thrashing (BUG-SCROLL-05)
-- **Context**: `packages/reshaped/src/components/ScrollArea`
-- **What Was Expected**: Custom scrollbar thumb tracks the scroll position accurately in both LTR and RTL reading directions without degrading scroll performance.
-- **What Actually Happened**: Horizontal scrollbar thumbs in RTL layouts detached from the track and moved beyond the visible scroll container. Rapid scrolling caused severe frame hitching.
-- **Evidence in Repo**: PR #668, Commit `3c21d21e`, Changeset `.changeset/scroll-area-thumb-compositor.md`.
-- **Root Cause**:
-  1. Scroll thumb positioning was managed by writing to `style.insetInlineStart` (or `left`/`top`), which forces the browser to execute synchronous layout calculations (reflow) on every scroll tick.
-  2. In RTL mode, browser implementations of `scrollLeft` vary (some return negative coordinates, others return inverted positive values starting at zero). Directly translating `scrollLeft` to `left` caused arithmetic overflow outside the track bounding box.
-- **Remediation Architecture**:
-  1. Replaced `inset` with hardware-accelerated `transform: translate3d(var(--rs-scroll-x), var(--rs-scroll-y), 0)`.
-  2. Bypassed React state by writing the calculated offset directly to the element's CSS custom properties within a `requestAnimationFrame` loop.
-  3. Integrated normalized RTL offsets: `scrollLeft * (rtl ? -1 : 1)` to handle browser coordinate variances.
-- **Lesson**: Never position custom scroll indicators using layout attributes (`top`/`left`/`inset`). Use `transform3d` coupled directly with direct-to-DOM CSS custom property mutations.
+### Incident 5: Drag Coordinate Snap Inversion on Non-Zero Thumb Offset (BUG-DRAG-COORDINATE-SNAP)
+- **Context**: `packages/reshaped/src/hooks/_internal/useDrag.ts`.
+- **What Was Expected**: Initiating a drag gesture on a slider thumb or dialog handle should smoothly track cursor deltas from the point of contact.
+- **What Actually Happened**: The target handle jumped its top-left coordinate to the mouse position instantly upon click, causing a jarring visual snap.
+- **Evidence in Repo**: `packages/reshaped/src/hooks/_internal/useDrag.ts` lines 30, 85–90, 131–138.
+- **Root Cause**: The drag event handler computed bounding offsets assuming the cursor was centered at `(0, 0)` within the thumb element, ignoring the cursor's initial intra-element contact coordinates.
+- **Remediation Code Diff**:
+```diff
+--- a/packages/reshaped/src/hooks/_internal/useDrag.ts
++++ b/packages/reshaped/src/hooks/_internal/useDrag.ts
+@@ -27,6 +27,7 @@ const useDrag = (
+ 	const internalContainerRef = React.useRef<ContainerElement>(null);
+ 	const containerRef = passedContainerRef || internalContainerRef;
++	const triggerCompensationRef = React.useRef({ x: 0, y: 0 });
+ 
+ 	React.useEffect(() => {
+ 		const handleDrag = (event: MouseEvent | TouchEvent) => {
+@@ -87,4 +88,4 @@ const useDrag = (
+ 			const triggerX = resolvedEvent.clientX - containerRect.x;
+ 			const triggerY = resolvedEvent.clientY - containerRect.y;
+ 
+-			const relativeX = triggerX;
+-			const relativeY = triggerY;
++			// Calculate position relative to container minus initial grab point
++			const relativeX = triggerX - triggerCompensationRef.current.x;
++			const relativeY = triggerY - triggerCompensationRef.current.y;
+@@ -131,4 +132,8 @@ const useDrag = (
+ 		const handleStart = (event: MouseEvent | TouchEvent) => {
+ 			const resolvedEvent = event instanceof MouseEvent ? event : event.changedTouches[0];
++			// Find the coordinate of the event inside the trigger
++			const triggerRect = triggerEl.getBoundingClientRect();
++			triggerCompensationRef.current = {
++				x: resolvedEvent.clientX - triggerRect.x,
++				y: resolvedEvent.clientY - triggerRect.y,
++			};
+```
+- **Lesson**: Interactive dragging systems must record an intra-element compensation offset at touchstart/mousedown and subtract it throughout subsequent coordinate calculations to prevent handle snapping.
 
 ---
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **IEEE 754 Floating-Point Clamping in Range Sliders**:
-  In `Slider.utilities.ts`, step calculation cannot use naive modulo arithmetic (`value % step === 0`) due to floating-point rounding errors (e.g., `0.3 - 0.2 = 0.09999999999999998`).
+- **RTL Scroll Offset Normalization**:
+  In right-to-left (RTL) mode, different browser engines represent `scrollLeft` differently (negative vs descending to zero). Reshaped normalizes this by applying a direction-aware multiplier:
   ```typescript
-  export const getPrecision = (value: number) => {
-    const floatPart = value.toString().split(".")[1];
-    return floatPart?.length || 0;
-  };
-
-  export const applyStepToValue = (value: number, step: number) => {
-    const isStepFloat = step % 1 !== 0;
-    const result = Math.round(value / step) * step;
-
-    if (isStepFloat) {
-      const precision = getPrecision(step);
-      // Number(val.toFixed(p)) eliminates precision drift without external big-number libs
-      return Number(result.toFixed(precision));
-    }
-    return result;
-  };
-  ```
-- **React Synthetic Prototype Value Setter Bypass**:
-  When synchronizing React state with a hidden native `<input type="range">`, assigning `el.value = nextVal` fails to trigger React's synthetic `onChange` because React overrides the property setter on `HTMLInputElement.prototype`. Reshaped extracts the original native descriptor:
-  ```typescript
-  export const triggerChangeEvent = (el: HTMLInputElement, value: string) => {
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      "value"
-    )?.set;
-
-    nativeInputValueSetter?.call(el, value);
-    el.dispatchEvent(new Event("change", { bubbles: true }));
-  };
-  ```
-
-### 2. Infinite Loop & Recursion Guards
-- **DOM Hierarchy Traversal Base Condition Proof**:
-  In `Theme.utilities.ts`, recursive upward DOM traversal to find the root theme boundary (`getRootThemeEl`) must enforce structural termination bounds:
-  ```typescript
-  export const getRootThemeEl = (scopeEl?: HTMLElement | null): HTMLElement => {
-    // 1. Guard against null, undefined, or detached nodes
-    if (!scopeEl) return document.documentElement;
-
-    // 2. Base case: target attribute found OR document boundary reached
-    if (
-      scopeEl.hasAttribute("data-rs-root") ||
-      scopeEl === document.documentElement ||
-      !scopeEl.parentElement // Handles Shadow DOM or unparented DocumentFragments
-    ) {
-      return scopeEl;
-    }
-
-    // 3. Inductive step: strictly moves up the DOM tree, guaranteeing termination
-    return getRootThemeEl(scopeEl.parentElement);
-  };
-  ```
-- **Key Normalization Sorting Proof**:
-  In `useSingletonHotkeys.tsx`, hotkeys can be registered in any arbitrary order (e.g., `"shift+cmd+k"` vs `"cmd+shift+k"`). Naive string matching leads to unbounded state divergence. Normalization sorts key fragments alphabetically:
-  ```typescript
-  const getHotkeyId = (hotkey: string) => {
-    return formatHotkey(hotkey)
-      .split(COMBINATION_DELIMETER) // "+"
-      .sort()                        // Canonical alphabetical sort guarantees bijection
-      .join(COMBINATION_DELIMETER);
-  };
-  ```
-
-### 3. UI & UX Micro-Mechanics
-- **Barycentric Coordinate Triangle Collision (`safeArea.ts`)**:
-  When a user moves the pointer from a trigger element toward a floating flyout, moving diagonally exits the trigger boundary before entering the content boundary. Reshaped constructs an invisible triangle connecting the cursor coordinates with the two closest bounding box vertices of the flyout:
-  ```typescript
-  function isPointInTriangle(
-    point: Coordinates,
-    triangle: [Coordinates, Coordinates, Coordinates]
-  ): boolean {
-    const [p1, p2, p3] = triangle;
-    const denominator = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
-
-    if (denominator === 0) return false; // Guard against collinear points/division by zero
-
-    const a = ((p2.y - p3.y) * (point.x - p3.x) + (p3.x - p2.x) * (point.y - p3.y)) / denominator;
-    const b = ((p3.y - p1.y) * (point.x - p3.x) + (p1.x - p3.x) * (point.y - p3.y)) / denominator;
-    const c = 1 - a - b;
-
-    return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1;
-  }
-  ```
-- **RTL-Aware Scroll Boundary Math (`useFadeSide.ts`)**:
-  Detecting whether a horizontal scroll container overflows at the start or end requires accounting for RTL mode, where `scrollLeft` is inverted:
-  ```typescript
+  // useFadeSide.ts
   const scrollLeft = elScrollable.scrollLeft * (rtl ? -1 : 1);
-  // Boundary delta > 1 compensates for sub-pixel fractional rounding on high-DPI displays
-  const cutOffStart = scrollLeft > 1;
+  const cutOffStart = scrollLeft > 1; // 1px threshold guards against subpixel rounding
   const cutOffEnd = scrollLeft + elScrollable.clientWidth < elScrollable.scrollWidth - 1;
-
-  if (cutOffEnd && cutOffStart) return setFadeSide("both");
-  if (cutOffStart) return setFadeSide("start");
-  if (cutOffEnd) return setFadeSide("end");
   ```
-
-### 4. Backend & Concurrency Micro-Mechanics (Client-Side Async
+- **ISO Date String Serialization Without Timezone Drift**:
+  Using `date.toISOString()` converts the date to UTC, which shifts the day backwards or forwards depending on the user's local timezone

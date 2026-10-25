@@ -4727,3 +4727,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-25T06:55:57.586Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `bef37c08` | Multi-dimensional audit evidence | 2026-10-25T06:55:58.691Z |
 | `learn-github-primer-react` | `https://github.com/primer/react` | `190fafd9` | Multi-dimensional audit evidence | 2026-10-25T06:56:52.349Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-25T07:05:13.730Z |
+| `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `92e3f530` | Multi-dimensional audit evidence | 2026-10-25T07:05:16.659Z |
+| `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `de2c2493` | Multi-dimensional audit evidence | 2026-10-25T07:05:31.493Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `347f171a` | Multi-dimensional audit evidence | 2026-10-25T07:06:22.186Z |
