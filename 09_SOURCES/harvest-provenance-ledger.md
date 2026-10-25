@@ -4677,3 +4677,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-25T04:44:16.366Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e21e6365` | Multi-dimensional audit evidence | 2026-10-25T04:44:18.177Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `e79b6a7c` | Multi-dimensional audit evidence | 2026-10-25T04:44:22.746Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `e702d7ba` | Multi-dimensional audit evidence | 2026-10-25T04:53:53.765Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `b51ddc0b` | Multi-dimensional audit evidence | 2026-10-25T04:53:57.782Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `c4e2dcf8` | Multi-dimensional audit evidence | 2026-10-25T04:56:59.302Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-25T04:57:21.235Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `3bf26499` | Multi-dimensional audit evidence | 2026-10-25T04:58:31.428Z |

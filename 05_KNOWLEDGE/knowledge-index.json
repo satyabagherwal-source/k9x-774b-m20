@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T04:44:22.712Z",
+  "last_updated": "2026-10-25T04:58:31.372Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -724,8 +724,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "4f72cb02",
-      "content_hash": "9d4db0f7119fbc768cef053a1c4e839bcc99f4ce100ec5705096de07a9ab5098",
+      "source_version": "3bf26499",
+      "content_hash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -748,6 +748,21 @@
           "number": 3593,
           "title": "daemon): retain runtime rows when profile enumeration fails (#4741)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4061,
+          "title": "Atomic Relative Pointer Canonicalization with Inverted Fallback on Filesystem Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4062,
+          "title": "Multi-Producer Epoch-CAS Gate for Terminal Event Publication",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4063,
+          "title": "POSIX File Lock Sanitization with Inode/Device Verification and O_NOFOLLOW",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -755,7 +770,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T19:05:39.364Z",
+      "verified_at": "2026-10-25T04:58:31.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7089,8 +7104,8 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "2165878d",
-      "content_hash": "e16e48404fca409b9a93b4c2a662c16b87be8459e402a0fcd39c750beb0b38d8",
+      "source_version": "c4e2dcf8",
+      "content_hash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
@@ -7103,6 +7118,21 @@
           "number": 3242,
           "title": "- [关联] 整理页面代码，修复关系图连线与焦点可能失效的问题",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4056,
+          "title": "Finite Numerical Validation for Animation Worklets",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4057,
+          "title": "Symmetrical Interrupt Protection for Reanimated-to-JS State Bridges",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4058,
+          "title": "Screen-Focused Global Hardware Back-Handler Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7110,7 +7140,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:30:08.979Z",
+      "verified_at": "2026-10-25T04:56:59.232Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22574,7 +22604,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "b210ba083d8bbe6363f86ae0ce7594b2119172f8ed6daaafad86d533430d4159",
+      "content_hash": "c67df6d3d4e7257aae1f5de0a97f5f59e7e078201895ec586a9e65744767c8e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -22627,6 +22657,16 @@
           "number": 3175,
           "title": "Selective Quantization for Geometric Precision",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4059,
+          "title": "Selective Quantization Boundary for Multimodal Spatial Grounding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4060,
+          "title": "Host-Read Tensor De-quantization & Cache-Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22646,7 +22686,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-20T12:58:44.776Z",
+      "verified_at": "2026-10-25T04:57:21.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31865,8 +31905,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "753b9357",
-      "content_hash": "57666b6032b18c7ca193ad988e88a76e15bdcd88b57d500971762a94d7d64da8",
+      "source_version": "e702d7ba",
+      "content_hash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -31894,6 +31934,11 @@
           "number": 3678,
           "title": "deps): bump go to 1.26.10 (#2610)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4054,
+          "title": "karpenter): reap nodes whose platform machine is gone (#2608)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31901,7 +31946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:58:19.073Z",
+      "verified_at": "2026-10-25T04:53:53.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44953,8 +44998,8 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "b415df84",
-      "content_hash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
+      "source_version": "b51ddc0b",
+      "content_hash": "8e5dd7f201e50d9974044e32c2736b8c2e9a9fb110201740d32082c8ce978b56",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
@@ -44972,6 +45017,11 @@
           "number": 3654,
           "title": "deps): pin pymupdf below 2.0 (#438)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4055,
+          "title": "chunking): keep first line of AST chunks that contains '|' (#444)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44979,7 +45029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:04:54.327Z",
+      "verified_at": "2026-10-25T04:53:57.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118283,6 +118333,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T04:44:22.705Z"
+    },
+    "rule-4054": {
+      "learning_id": "rule-4054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4054,
+      "title": "karpenter): reap nodes whose platform machine is gone (#2608)",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "e702d7ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:53:53.701Z"
+    },
+    "rule-4055": {
+      "learning_id": "rule-4055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4055,
+      "title": "chunking): keep first line of AST chunks that contains '|' (#444)",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "b51ddc0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:53:57.716Z"
+    },
+    "rule-4056": {
+      "learning_id": "rule-4056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4056,
+      "title": "Finite Numerical Validation for Animation Worklets",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "c4e2dcf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:56:59.232Z"
+    },
+    "rule-4057": {
+      "learning_id": "rule-4057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4057,
+      "title": "Symmetrical Interrupt Protection for Reanimated-to-JS State Bridges",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "c4e2dcf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:56:59.232Z"
+    },
+    "rule-4058": {
+      "learning_id": "rule-4058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4058,
+      "title": "Screen-Focused Global Hardware Back-Handler Isolation",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "c4e2dcf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:56:59.232Z"
+    },
+    "rule-4059": {
+      "learning_id": "rule-4059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4059,
+      "title": "Selective Quantization Boundary for Multimodal Spatial Grounding",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:57:21.149Z"
+    },
+    "rule-4060": {
+      "learning_id": "rule-4060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4060,
+      "title": "Host-Read Tensor De-quantization & Cache-Alignment Invariant",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:57:21.149Z"
+    },
+    "rule-4061": {
+      "learning_id": "rule-4061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4061,
+      "title": "Atomic Relative Pointer Canonicalization with Inverted Fallback on Filesystem Mutations",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "3bf26499",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:58:31.361Z"
+    },
+    "rule-4062": {
+      "learning_id": "rule-4062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4062,
+      "title": "Multi-Producer Epoch-CAS Gate for Terminal Event Publication",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "3bf26499",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:58:31.361Z"
+    },
+    "rule-4063": {
+      "learning_id": "rule-4063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4063,
+      "title": "POSIX File Lock Sanitization with Inode/Device Verification and O_NOFOLLOW",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "3bf26499",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T04:58:31.361Z"
     }
   },
   "aliases": {

@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "b210ba083d8bbe6363f86ae0ce7594b2119172f8ed6daaafad86d533430d4159",
-    "lastHarvestedAt": "2026-10-20T12:58:44.858Z",
+    "contentHash": "c67df6d3d4e7257aae1f5de0a97f5f59e7e078201895ec586a9e65744767c8e9",
+    "lastHarvestedAt": "2026-10-25T04:57:21.235Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "2165878d",
+    "sourceVersion": "c4e2dcf8",
     "license": "MIT",
-    "contentHash": "e16e48404fca409b9a93b4c2a662c16b87be8459e402a0fcd39c750beb0b38d8",
-    "lastHarvestedAt": "2026-10-20T15:30:09.059Z",
+    "contentHash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
+    "lastHarvestedAt": "2026-10-25T04:56:59.302Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -5673,10 +5673,10 @@
     "repository": "StarTrail-org/LEANN",
     "platform": "github",
     "sourceUrl": "https://github.com/StarTrail-org/LEANN",
-    "sourceVersion": "b415df84",
+    "sourceVersion": "b51ddc0b",
     "license": "MIT",
-    "contentHash": "86bb39620b96fbfef2cf2d203a2210bfe10dcb41e78c3fe072ad6b7ef112788a",
-    "lastHarvestedAt": "2026-10-22T17:04:54.368Z",
+    "contentHash": "8e5dd7f201e50d9974044e32c2736b8c2e9a9fb110201740d32082c8ce978b56",
+    "lastHarvestedAt": "2026-10-25T04:53:57.782Z",
     "learningId": "learn-github-startrail-org-leann"
   },
   "adonisjs-core": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "753b9357",
+    "sourceVersion": "e702d7ba",
     "license": "Apache-2.0",
-    "contentHash": "57666b6032b18c7ca193ad988e88a76e15bdcd88b57d500971762a94d7d64da8",
-    "lastHarvestedAt": "2026-10-22T17:58:19.148Z",
+    "contentHash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
+    "lastHarvestedAt": "2026-10-25T04:53:53.765Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "4f72cb02",
+    "sourceVersion": "3bf26499",
     "license": "MIT",
-    "contentHash": "9d4db0f7119fbc768cef053a1c4e839bcc99f4ce100ec5705096de07a9ab5098",
-    "lastHarvestedAt": "2026-10-21T19:05:39.426Z",
+    "contentHash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
+    "lastHarvestedAt": "2026-10-25T04:58:31.428Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

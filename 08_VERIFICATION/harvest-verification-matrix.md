@@ -4670,3 +4670,8 @@
 | `CYCLE-20261025-FCRW` | `2026-10-25T04:44:16.364Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4049, Rule 4050, Rule 4051` | Yes (`700603ba...`) |
 | `CYCLE-20261025-FE67` | `2026-10-25T04:44:18.175Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4052` | Yes (`6a4c7d2d...`) |
 | `CYCLE-20261025-FHP4` | `2026-10-25T04:44:22.744Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4053` | Yes (`36f1ac47...`) |
+| `CYCLE-20261025-RQAQ` | `2026-10-25T04:53:53.762Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4054` | Yes (`5b1cea13...`) |
+| `CYCLE-20261025-RTEB` | `2026-10-25T04:53:57.779Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4055` | Yes (`8e5dd7f2...`) |
+| `CYCLE-20261025-VPGI` | `2026-10-25T04:56:59.298Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4056, Rule 4057, Rule 4058` | Yes (`1e27c583...`) |
+| `CYCLE-20261025-W6DS` | `2026-10-25T04:57:21.232Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4059, Rule 4060` | Yes (`c67df6d3...`) |
+| `CYCLE-20261025-XOJL` | `2026-10-25T04:58:31.425Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4061, Rule 4062, Rule 4063` | Yes (`e8c977e2...`) |

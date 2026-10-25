@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:38:03.837Z",
+  "last_updated": "2026-10-25T04:57:21.241Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2609,6 +2609,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-killercup-cargo-edit"
+    },
+    {
+      "id": "CD-W6E1",
+      "directive_title": "Rule: Grounding Parity Preservation Law",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mudler/locate-anything.cpp-gguf",
+      "source_commit": "hf-mudler-lo",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf"
     }
   ]
 }

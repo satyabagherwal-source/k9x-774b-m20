@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `b415df84`  
+> **Source Version**: `b51ddc0b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:04:54.164Z  
+> **Timestamp**: 2026-10-25T04:53:57.431Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:04:53.407Z  
+> **Harvest Timestamp**: 2026-10-25T04:53:56.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13056 stars
+- **Stars / Engagement**: 13103 stars
 
 ---
 
@@ -1002,7 +1002,6 @@ Packaged within leann-core so installed wheels can import it reliably.
 """
 
 import logging
-import re
 from pathlib import Path
 from typing import Any, Optional
 
@@ -1260,7 +1259,7 @@ def create_ast_chunks(
                 "file_name": doc.metadata.get("file_name", ""),
                 "source": doc.metadata.get("source", ""),
                 "creation_date": doc.metadata.get("creation_date", ""),
-                "last_modified_date": doc.metadata.get(
+                "last_modified_date": doc.metadata.get("last_modi
 ```
 
 ### Core Architecture Module: `packages/leann-core/src/leann/cli.py`
@@ -2181,66 +2180,490 @@ __all__ = ["LeannHybridRetriever", "LeannRetriever"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0710a9e1` (2026-10-20)
-**Commit Message**: fix(deps): pin pymupdf below 2.0 (#438)
+### Incident Patch 1: `b51ddc0b` (2026-10-24)
+**Commit Message**: fix(chunking): keep first line of AST chunks that contains '|' (#444)
 
-`main` is red on the Intel macOS cells, and every open PR inherits it:
+Signed-off-by: ShryukGrandhi <[REDACTED_EMAIL]>
 
-    error: Failed to download and build `pymupdf==2.0`
-      cause: Package metadata name `pymupdf-lite` does not match given name `pymupdf`
-    hint: `pymupdf` (v2.0) was included because `leann-core` (v0.3.8) depends on `pymupdf`
-
-pymupdf 2.0 ships four wheels and none of them are macOS x86_64, so the Intel
-runners fall back to building the sdist -- whose metadata declares itself as
-`pymupdf-lite`, which uv rejects as a name mismatch. ARM macOS and Linux get a
-wheel and never hit it, which is why only `macos-15-intel` and `macos-14` fail.
-
-Retrying does not help; the install failed identically on all five attempts in
-the step's retry loop.
-
-Both specs were unbounded. Verified with uv:
-
-    pymupdf>=1.23.0       -> pymupdf==2.0      (broken)
-    pymupdf>=1.23.0,<2    -> pymupdf==1.28.2   (resolves)
-
-uv.lock already holds 1.26.4, so the lock is unaffected; this stops a fresh
-resolve from reaching 2.0.
-
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `packages/leann-core/pyproject.toml` (modified, +1/-1)
+**File**: `packages/leann-core/src/leann/chunking_utils.py` (modified, +1/-11)
 ```diff
-@@ -35,7 +35,7 @@ dependencies = [
-     "requests>=2.25.0",
-     "accelerate>=0.20.0",
-     "PyPDF2>=3.0.0",
--    "pymupdf>=1.23.0",
-+    "pymupdf>=1.23.0,<2",
-     "pdfplumber>=0.10.0",
-     "nbconvert>=7.0.0",  # For .ipynb file support
-     "gitignore-parser>=0.1.12",  # For proper .gitignore handling
+@@ -4,7 +4,6 @@
+ """
+ 
+ import logging
+-import re
+ from pathlib import Path
+ from typing import Any, Optional
+ 
+@@ -291,16 +290,7 @@ def create_ast_chunks(
+                     # Merge document metadata + astchunk metadata
+                     combined_metadata = {**doc_metadata, **astchunk_metadata}
+ 
+-                    # Trim partial first line left by overlap if using line numbers
+-                    # (a valid line starts with digits followed by '|')
+-                    stripped = chunk_text.strip()
+-                    if stripped:
+-                        first_line = stripped.split("\n", 1)[0]
+-                        if "|" in first_line and not re.match(r"^\s*\d+\|", first_line):
+-                            first_nl = stripped.find("\n")
+-                            if first_nl != -1:
+-                                stripped = stripped[first_nl + 1 :]
+-                    all_chunks.append({"text": stripped, "metadata": combined_metadata})
++                    all_chunks.append({"text": chunk_text.strip(), "metadata": combined_metadata})
+ 
+             logger.info(
+                 f"Created {len(chunks)} AST chunks from {language} file: {doc.metadata.get('file_name', 'unknown')}"
 ```
 
-**File**: `pyproject.toml` (modified, +1/-1)
+**File**: `tests/test_astchunk_integration.py` (modified, +16/-0)
 ```diff
-@@ -30,7 +30,7 @@ dependencies = [
-     # PDF parsing dependencies - essential for document processing
-     "PyPDF2>=3.0.0",
-     "pdfplumber>=0.11.0",
--    "pymupdf>=1.26.0",
-+    "pymupdf>=1.26.0,<2",
-     "pypdfium2>=4.30.0",
-     # LlamaIndex core and readers - updated versions
-     "llama-index>=0.12.44",
+@@ -625,6 +625,22 @@ def test_empty_content_value_handling(self):
+         # Should not have stringified the empty dict
+         assert "'content': ''" not in chunk["text"]
+ 
++    def test_first_line_containing_pipe_is_kept(self):
++        """A chunk whose first line contains '|' (e.g. a union type hint) must not lose it."""
++        code = "def merge(a: dict | None) -> dict:\n    return a or {}"
++        mock_builder = Mock()
++        mock_builder.chunkify.return_value = [
++            {"content": code, "metadata": {"start_line_no": 0, "end_line_no": 1}}
++        ]
++        mock_astchunk = Mock()
++        mock_astchunk.ASTChunkBuilder = Mock(return_value=mock_builder)
++
++        doc = MockDocument(code, "/test/merge.py", {"language": "python"})
++        with patch.dict("sys.modules", {"astchunk": mock_astchunk}):
++            chunks = create_ast_chunks([doc])
++
++        assert [c["text"] for c in chunks] == [code]
++
+ 
+ class TestASTMetadataPreservation:
+     """Test metadata preservation in AST chunk dictionaries.
+```
+
+---
+
+### Incident Patch 2: `db260981` (2026-10-24)
+**Commit Message**: fix(core): drop the build template from query embeddings on the fallback path (#442)
+
+* fix(core): drop the build template from query embeddings on the fallback path
+
+* test(core): cover templates sent to the provider on the fallback path
+
+**File**: `packages/leann-core/src/leann/searcher_base.py` (modified, +11/-9)
+```diff
+@@ -213,6 +213,15 @@ def __init__(self, index_path: str, backend_module_name: str, **kwargs):
+         self.zmq_connection = ReusableZMQConnection()
+         self._zmq_port: Optional[int] = None
+ 
++    def _search_provider_options(self) -> dict[str, Any]:
++        # compute_query_embedding applies the query template itself; a build template
++        # left in here would be prepended to the query by the provider as well.
++        return {
++            k: v
++            for k, v in self.embedding_options.items()
++            if k not in ("build_prompt_template", "query_prompt_template", "prompt_template")
++        }
++
+     def _load_meta(self) -> dict[str, Any]:
+         """Loads the metadata file associated with the index."""
+         # This is the corrected logic for finding the meta file.
+@@ -239,14 +248,7 @@ def _ensure_server_running(
+             or "mips"
+         )
+ 
+-        # Filter out ALL prompt templates from provider_options during search
+-        # Templates are applied in compute_query_embedding (line 109-110) BEFORE server call
+-        # The server should never apply templates during search to avoid double-templating
+-        search_provider_options = {
+-            k: v
+-            for k, v in self.embedding_options.items()
+-            if k not in ("build_prompt_template", "query_prompt_template", "prompt_template")
+-        }
++        search_provider_options = self._search_provider_options()
+ 
+         server_started, actual_port = self.embedding_server_manager.start_server(
+             port=port if port is not None else 5557,
+@@ -335,7 +337,7 @@ def compute_query_embedding(
+             [query],
+             self.embedding_model,
+             embedding_mode,
+-            provider_options=self.embedding_options,
++            provider_options=self._search_provider_options(),
+         )
+ 
+         # Cache the result (use original query before template)
+```
+
+**File**: `tests/test_prompt_template_persistence.py` (modified, +67/-0)
+```diff
+@@ -896,3 +896,70 @@ def mock_compute_embeddings(texts, model, mode, provider_options=None):
+ 
+         # Empty string is falsy, so no template should be applied
+         assert captured_queries[0] == "vector database"
++
++    @pytest.mark.parametrize(
++        "embedding_options, query_template",
++        [
++            (
++                {
++                    "build_prompt_template": "title: none | text: ",
++                    "query_prompt_template": "task: search result | query: ",
++                },
++                "task: search result | query: ",
++            ),
++            ({"prompt_template": "search_query: "}, "search_query: "),
++        ],
++    )
++    def test_fallback_path_does_not_add_build_template(
++        self, temp_index_with_template, embedding_options, query_template
++    ):
++        """The provider must see only the query template, not the build template on top."""
++        from leann.searcher_base import BaseSearcher
++
++        class TestSearcher(BaseSearcher):
++            def search(
++                self,
++                query,
++                top_k,
++                complexity=64,
++                beam_width=1,
++                prune_ratio=0.0,
++                recompute_embeddings=False,
++                pruning_strategy="global",
++                zmq_port=None,
++                **kwargs,
++            ):
++                return {"labels": [], "distances": []}
++
++        searcher = object.__new__(TestSearcher)
++        searcher.index_path = Path(temp_index_with_template)
++        searcher.index_dir = searcher.index_path.parent
++        with open(searcher.index_dir / f"{searcher.index_path.name}.meta.json") as f:
++            searcher.meta = json.load(f)
++        searcher.embedding_model = searcher.meta["embedding_model"]
++        searcher.embedding_mode = searcher.meta["embedding_mode"]
++        searcher.embedding_options = {"api_key": "test-key", **embedding_options}
++        searcher.meta["embedding_options"] = searcher.embedding_options
++        searcher.query_cache = Mock()
++        searcher.query_cache.get.return_value = None
++
++        sent_inputs = []
++
++        def create(model, input, **kwargs):
++            sent_inputs.extend(input)
++            return Mock(data=[Mock(embedding=[0.1] * 768) for _ in input])
++
++        client = Mock()
++        client.embeddings.create.side_effect = create
++
++        with (
++            patch("openai.OpenAI", return_value=client),
++            patch("leann.embedding_compute.get_model_token_limit", return_value=8192),
++        ):
++            searcher.compute_query_embedding(
++                query="vector database",
++                use_server_if_available=False,
++                query_template=query_template,
++            )
++
++        assert sent_inputs == [f"{query_template}vector database"]
+```
+
+---
+
+### Incident Patch 3: `287859de` (2026-10-24)
+**Commit Message**: Fix --use-ocr PDF loading (#440)
+
+* fix: honor --use-ocr for PDFs with text layers
+
+* fix: adapt OCR extraction to LlamaIndex reader API
+
+**File**: `apps/document_rag.py` (modified, +51/-34)
+```diff
+@@ -14,7 +14,8 @@
+ 
+ from base_rag_example import BaseRAGExample
+ from chunking import create_text_chunks
+-from llama_index.core import SimpleDirectoryReader
++from llama_index.core import Document, SimpleDirectoryReader
++from llama_index.core.readers.base import BaseReader
+ 
+ # MinerU powers OCR for scanned PDFs. Probe for it rather than importing it:
+ # the real import happens lazily in extract_pdf_with_ocr_fallback, so a run
+@@ -29,11 +30,22 @@ def extract_pdf_with_ocr_fallback(pdf_path: str, use_ocr: bool = False) -> str:
+ 
+     Args:
+         pdf_path: Path to PDF file
+-        use_ocr: Whether to try OCR if standard extraction fails
++        use_ocr: Whether to force MinerU OCR instead of trying text extraction
+ 
+     Returns:
+         Extracted text string
+     """
++    if use_ocr:
++        if not OCR_AVAILABLE:
++            return ""
++        try:
++            from mineru import parse
++
++            return parse(pdf_path, ocr_mode="ocr").markdown()
++        except Exception as e:
++            print(f"  OCR failed for {pdf_path}: {e}")
++            return ""
++
+     # Try PyMuPDF first
+     try:
+         import fitz  # PyMuPDF
+@@ -63,19 +75,39 @@ def extract_pdf_with_ocr_fallback(pdf_path: str, use_ocr: bool = False) -> str:
+     except Exception:
+         pass
+ 
+-    # Try OCR if enabled
+-    if use_ocr and OCR_AVAILABLE:
+-        try:
+-            from mineru import parse
++    return ""  # Return empty if all fail
+ 
+-            # ocr_mode="ocr" forces the OCR pipeline instead of letting MinerU
+-            # pick: we only get here once the text layer has already proven
+-            # unusable, so its "auto" heuristic has nothing left to decide.
+-            return parse(pdf_path, ocr_mode="ocr").markdown()
+-        except Exception as e:
+-            print(f"  OCR failed for {pdf_path}: {e}")
+ 
+-    return ""  # Return empty if all fail
++class OcrPDFReader(BaseReader):
++    def __init__(self, *, use_ocr: bool = False, auto_detect_scanned: bool = False):
++        self.use_ocr = use_ocr
++        self.auto_detect_scanned = auto_detect_scanned
++
++    def load_data(
++        self,
++        file: Path,
++        extra_info: dict[str, Any] | None = None,
++        **kwargs: Any,
++    ) -> list[Document]:
++        file_path = str(file)
++        used_ocr = self.use_ocr
++        text = extract_pdf_with_ocr_fallback(file_path, use_ocr=used_ocr)
++
++        if not used_ocr and self.auto_detect_scanned:
++            if len(text.strip()) < 100:
++                print(f"Detected scanned PDF: {Path(file_path).name}")
++                text = extract_pdf_with_ocr_fallback(file_path, use_ocr=True)
++                used_ocr = True
++
++        if used_ocr and text:
++            print(f"OCR complete: {Path(file_path).name}")
++        if not text.strip():
++            return []
++
++        metadata = {"file_name": Path(file_path).name}
++        if extra_info:
++            metadata.update(extra_info)
++        return [Document(text=text, metadata=metadata)]
+ 
+ 
+ class DocumentRAG(BaseRAGExample):
+@@ -151,26 +183,6 @@ async def load_data(self, args) -> list[dict[str, Any]]:
+         use_ocr_for_all = args.use_ocr
+         auto_detect_scanned = args.auto_detect_scanned and OCR_AVAILABLE
+ 
+-        # Create custom PDF extractor with OCR fallback
+-        def pdf_extractor(file_path: str) -> str:
+-            """Custom extractor for PDFs with OCR support."""
+-            # Check if we should try OCR
+-            try_ocr = use_ocr_for_all
+-
+-            if not try_ocr and auto_detect_scanned:
+-                # Quick check: try standard extraction first
+-                text = extract_pdf_with_ocr_fallback(file_path, use_ocr=False)
+-                # If we got very little text, it's likely scanned
+-                if len(text.strip()) < 100:
+-                    try_ocr = True
+-                    print(f"Detected scanned PDF: {Path(file_path).name}")
+-
+-            # Extract with OCR if needed
+-            text = extract_pdf_with_ocr_fallback(file_path, use_ocr=try_ocr)
+-            if try_ocr and text:
+-                print(f"OCR complete: {Path(file_path).name}")
+-            return text
+-
+         # Load documents with custom PDF extractor
+         reader_kwargs = {
+             "recursive": True,
+@@ -181,7 +193,12 @@ def pdf_extractor(file_path: str) -> str:
+ 
+         # Add custom PDF extractor if we need OCR
+         if use_ocr_for_all or auto_detect_scanned:
+-            reader_kwargs["file_extractor"] = {".pdf": pdf_extractor}
++            reader_kwargs["file_extractor"] = {
++                ".pdf": OcrPDFReader(
++                    use_ocr=use_ocr_for_all,
++                    auto_detect_scanned=auto_detect_scanned,
++                )
++            }
+ 
+         documents = SimpleDirectoryReader(args.data_dir, **reader_kwargs).load_data(
+             show_progress=True
+```
+
+**File**: `tests/test_document_rag_ocr.py` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++import importlib.util
++import sys
++import types
++from pathlib import Path
++
++REPO_ROOT = Path(__file__).resolve().parents[1]
++
++
++class _LlamaDocument:
++    def __init__(self, text, metadata=None):
++        self.text = text
++        self.metadata = metadata or {}
++
++
++def _load_document_rag(monkeypatch):
++    base_rag = types.SimpleNamespace(BaseRAGExample=type("BaseRAGExample", (), {}))
++    chunking = types.SimpleNamespace(create_text_chunks=lambda *args, **kwargs: [])
++    llama_index_core = types.SimpleNamespace(
++        Document=_LlamaDocument,
++        SimpleDirectoryReader=type("SimpleDirectoryReader", (), {}),
++    )
++    llama_index = types.SimpleNamespace(core=llama_index_core)
++    readers_base = types.SimpleNamespace(BaseReader=type("BaseReader", (), {}))
++
++    monkeypatch.setitem(sys.modules, "base_rag_example", base_rag)
++    monkeypatch.setitem(sys.modules, "chunking", chunking)
++    monkeypatch.setitem(sys.modules, "llama_index", llama_index)
++    monkeypatch.setitem(sys.modules, "llama_index.core", llama_index_core)
++    monkeypatch.setitem(sys.modules, "llama_index.core.readers", types.SimpleNamespace())
++    monkeypatch.setitem(sys.modules, "llama_index.core.readers.base", readers_base)
++
++    path = REPO_ROOT / "apps" / "document_rag.py"
++    spec = importlib.util.spec_from_file_location("document_rag_under_test", path)
++    assert spec is not None
++    assert spec.loader is not None
++    module = importlib.util.module_from_spec(spec)
++    monkeypatch.setitem(sys.modules, spec.name, module)
++    spec.loader.exec_module(module)
++    return module
++
++
++class _Page:
++    def __init__(self, text):
++        self._text = text
++
++    def get_text(self):
++        return self._text
++
++
++class _Document:
++    def __init__(self, text):
++        self._page = _Page(text)
++
++    def __iter__(self):
++        return iter([self._page])
++
++    def close(self):
++        pass
++
++
++def test_use_ocr_skips_text_extractors(monkeypatch):
++    module = _load_document_rag(monkeypatch)
++    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
++
++    fitz_calls = []
++    fitz = types.SimpleNamespace()
++
++    def open_pdf(path):
++        fitz_calls.append(path)
++        return _Document("text layer " * 20)
++
++    fitz.open = open_pdf
++    monkeypatch.setitem(sys.modules, "fitz", fitz)
++
++    parse_calls = []
++    mineru = types.SimpleNamespace()
++
++    class ParseResult:
++        def markdown(self):
++            return "ocr markdown"
++
++    def parse(path, **kwargs):
++        parse_calls.append((path, kwargs))
++        return ParseResult()
++
++    mineru.parse = parse
++    monkeypatch.setitem(sys.modules, "mineru", mineru)
++
++    assert module.extract_pdf_with_ocr_fallback("paper.pdf", use_ocr=True) == "ocr markdown"
++    assert fitz_calls == []
++    assert parse_calls == [("paper.pdf", {"ocr_mode": "ocr"})]
++
++
++def test_text_extraction_remains_the_default(monkeypatch):
++    module = _load_document_rag(monkeypatch)
++    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
++
++    text = "text layer " * 20
++    fitz = types.SimpleNamespace(open=lambda path: _Document(text))
++    monkeypatch.setitem(sys.modules, "fitz", fitz)
++
++    mineru = types.SimpleNamespace()
++
++    def unexpected_parse(*args, **kwargs):
++        raise AssertionError("MinerU should not run when use_ocr is false")
++
++    mineru.parse = unexpected_parse
++    monkeypatch.setitem(sys.modules, "mineru", mineru)
++
++    assert module.extract_pdf_with_ocr_fallback("paper.pdf") == text
++
++
++def test_ocr_reader_satisfies_simple_directory_reader_contract(monkeypatch):
++    module = _load_document_rag(monkeypatch)
++    monkeypatch.setattr(module, "OCR_AVAILABLE", True)
++
++    fitz_calls = []
++    fitz = types.SimpleNamespace()
++
++    def open_pdf(path):
++        fitz_calls.append(path)
++        return _Document("text layer " * 20)
++
++    fitz.open = open_pdf
++    monkeypatch.setitem(sys.modules, "fitz", fitz)
++
++    mineru = types.SimpleNamespace()
++
++    class ParseResult:
++        def markdown(self):
++            return "ocr markdown"
++
++    mineru.parse = lambda path, **kwargs: ParseResult()
++    monkeypatch.setitem(sys.modules, "mineru", mineru)
++
++    reader = module.OcrPDFReader(use_ocr=True)
++    documents = reader.load_data(Path("paper.pdf"), extra_info={"source": "test"})
++
++    assert len(documents) == 1
++    assert documents[0].text == "ocr markdown"
++    assert documents[0].metadata == {"file_name": "paper.pdf", "source": "test"}
++    assert fitz_calls == []
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #444** (2026-10-24): fix(chunking): keep first line of AST chunks that contains '|' (@ShryukGrandhi)
+- **PR #442** (2026-10-24): fix(core): drop the build template from query embeddings on the fallback path (@serhiizghama)
+- **PR #441** (2026-10-24): docs(search): restore ZMQ thread-safety warning (@andylizf)
+- **PR #440** (2026-10-24): Fix --use-ocr PDF loading (@andylizf)
 - **PR #439** (2026-10-21): chore: untrack the generated .leann index store (@ASuresh0524)
 - **PR #438** (2026-10-20): fix(deps): pin pymupdf below 2.0 (@ASuresh0524)
-- **PR #437** (2026-10-20): perf: lazy-load the public API so importing leann.mcp stays lightweight (@Samuelpedroso-dev)
-- **PR #436** (2026-10-20): feat(search): cache query embeddings per searcher (@ASuresh0524)
-- **PR #435** (closed): [diagnostic] #226 without the Linux native-backend stubs (@ASuresh0524)
-- **PR #434** (2026-10-12): fix(core): fit chunk sizes to the embedding model's sequence limit (@yichuan-w)
 
 ---
 
@@ -2260,28 +2683,38 @@ Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): pin pymupdf below 2.0 (#438)
+## X. chunking): keep first line of AST chunks that contains '|' (#444)
 
 **RULE**:
-When implementing operations in `packages/leann-core/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/leann-core/src/leann/chunking_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0710a9e1`: deps): pin pymupdf below 2.0 (#438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b51ddc0b`: chunking): keep first line of AST chunks that contains '|' (#444). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/leann-core/src/leann/chunking_utils.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "pymupdf>=1.23.0,<2",
+                    all_chunks.append({"text": chunk_text.strip(), "metadata": combined_metadata})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "pymupdf>=1.23.0",
+import re
+                    # Trim partial first line left by overlap if using line numbers
+                    # (a valid line starts with digits followed by '|')
+                    stripped = chunk_text.strip()
+                    if stripped:
+                        first_line = stripped.split("\n", 1)[0]
+                        if "|" in first_line and not re.match(r"^\s*\d+\|", first_line):
+                            first_nl = stripped.find("\n")
+                            if first_nl != -1:
+                                stripped = stripped[first_nl + 1 :]
+                    all_chunks.append({"text": stripped, "metadata": combined_metadata})
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0710a9e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b51ddc0b` are properly handled with clean fallback behavior.
