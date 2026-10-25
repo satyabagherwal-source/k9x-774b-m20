@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-6UPH",
-    "timestamp": "2026-10-22T19:42:26.549Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "27eaace4783e70b4bf4d7507af0d5974f7977507c7d3447b87f3c5f285b53708",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-DT1P",
-    "timestamp": "2026-10-22T20:15:50.605Z",
-    "repository": "reshaped-ui/reshaped",
-    "learningId": "learn-github-reshaped-ui-reshaped",
-    "contentHash": "d9de89ee8687ac2b7536cdaf284423111c8c463734fde00880bcb5ff5b9c73f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-LTDN",
-    "timestamp": "2026-10-22T20:22:04.283Z",
-    "repository": "lobehub/lobe-ui",
-    "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "cfe3386a310e3e959717c05f8aff3c776431de988557d3a8cbdc6056d3a4b75e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-LVNF",
     "timestamp": "2026-10-22T20:22:07.227Z",
     "repository": "Kuddev/pebrel",
@@ -7492,6 +7447,51 @@
     "contentHash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-83NT",
+    "timestamp": "2026-10-25T17:14:27.593Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-87XF",
+    "timestamp": "2026-10-25T17:14:33.123Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8F4G",
+    "timestamp": "2026-10-25T17:14:42.448Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

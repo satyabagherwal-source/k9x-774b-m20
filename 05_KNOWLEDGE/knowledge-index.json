@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T17:08:04.971Z",
+  "last_updated": "2026-10-25T17:14:42.391Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20663,7 +20663,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "7c6081f08b6234cb2b2457534d21c4a15430c44b0a846be7604d2bc989b1c291",
+      "content_hash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -20751,7 +20751,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-20T21:40:54.726Z",
+      "verified_at": "2026-10-25T17:14:27.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33674,8 +33674,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "15d89708",
-      "content_hash": "4659e826c027d0e83e369b8cedf5728cc252954c54cbab3d0d9d9d6ae95c0ff1",
+      "source_version": "cc54f798",
+      "content_hash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -33708,6 +33708,11 @@
           "number": 3915,
           "title": "agents: move task-specific guidance from AGENTS.md into skills (#40081)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4392,
+          "title": "adapter: reject sealed replacement targets at CREATE REPLACEMENT (#39594)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33715,7 +33720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:28:40.193Z",
+      "verified_at": "2026-10-25T17:14:42.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36158,8 +36163,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "9a846639",
-      "content_hash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
+      "source_version": "317f1bb1",
+      "content_hash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -36172,6 +36177,11 @@
           "number": 3447,
           "title": "refresh star history",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4391,
+          "title": "Release 3.2.0 with Apple feature guides and safer cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36179,7 +36189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T00:02:10.002Z",
+      "verified_at": "2026-10-25T17:14:33.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124915,6 +124925,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T17:08:04.954Z"
+    },
+    "rule-4391": {
+      "learning_id": "rule-4391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4391,
+      "title": "Release 3.2.0 with Apple feature guides and safer cleanup",
+      "source_url": "https://github.com/momenbasel/PureMac",
+      "source_version": "317f1bb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:14:33.053Z"
+    },
+    "rule-4392": {
+      "learning_id": "rule-4392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4392,
+      "title": "adapter: reject sealed replacement targets at CREATE REPLACEMENT (#39594)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "cc54f798",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T17:14:42.377Z"
     }
   },
   "aliases": {

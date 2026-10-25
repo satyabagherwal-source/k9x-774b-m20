@@ -4911,3 +4911,6 @@
 | `CYCLE-20261025-IU1G` | `2026-10-25T16:54:48.724Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4386` | Yes (`b08de740...`) |
 | `CYCLE-20261025-RHUN` | `2026-10-25T17:01:32.831Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4387, Rule 4388, Rule 4389` | Yes (`21a54f8f...`) |
 | `CYCLE-20261025-ZWGY` | `2026-10-25T17:08:05.026Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 4390` | Yes (`8da24840...`) |
+| `CYCLE-20261025-83NT` | `2026-10-25T17:14:27.593Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`27914035...`) |
+| `CYCLE-20261025-87XF` | `2026-10-25T17:14:33.123Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4391` | Yes (`13ee0bba...`) |
+| `CYCLE-20261025-8F4G` | `2026-10-25T17:14:42.448Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4392` | Yes (`ecbd96ce...`) |

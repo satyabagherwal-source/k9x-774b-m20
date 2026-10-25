@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
-> **Source Version**: `9a846639`  
+> **Source Version**: `317f1bb1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T00:02:09.656Z  
+> **Timestamp**: 2026-10-25T17:14:32.712Z  
 > **Learning ID**: `learn-github-momenbasel-puremac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T00:02:09.649Z  
+> **Harvest Timestamp**: 2026-10-25T17:14:32.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Native SwiftUI, scheduled auto-cleaning, Xcode/Homebrew/system cache cleanup. MIT licensed.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7258 stars
+- **Stars / Engagement**: 7402 stars
 
 ---
 
@@ -811,6 +811,11 @@ actor CleaningEngine {
                 continue
             }
 
+            if item.category == .aiApps, !isSupportedAIAppPath(item.path) {
+                result.errors.append("Unsupported AI app cleanup path: \(item.path)")
+                continue
+            }
+
             if item.category == .purgeableSpace {
                 let purged = await purgePurgeableSpace()
                 result.freedSpace += purged
@@ -960,10 +965,7 @@ actor CleaningEngine {
                                 lifecycleLock,
                                 fileManager: fileManager
                             )
-                        }
-                    }
-                    // PureMac's safety contract is Trash-only for recoverable
-                    // cleanup. XcodeBuildMCP DerivedData must not be unlin
+
 ```
 
 ### Core Architecture Module: `PureMac/Services/ScanEngine.swift`
@@ -1255,45 +1257,629 @@ actor ScanEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a846639` (2026-10-20)
-**Commit Message**: chore: refresh star history
+### Incident Patch 1: `b4e28d22` (2026-10-24)
+**Commit Message**: Release 3.2.0 with Apple feature guides and safer cleanup
 
-**File**: `assets/star-history-dark.svg` (modified, +11/-11)
+**File**: `.github/workflows/release.yml` (modified, +7/-0)
 ```diff
-@@ -10,7 +10,7 @@
-   <rect x="0.5" y="0.5" width="759" height="419" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
- 
-   <text x="24" y="32" fill="#e6edf3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600">momenbasel/PureMac</text>
--  <text x="736" y="32" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.2k stars</text>
-+  <text x="736" y="32" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.3k stars</text>
- 
-   <line x1="62" y1="368" x2="736" y2="368" stroke="#21262d" stroke-width="1"/>
-   <text x="52" y="372" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">0</text>
-@@ -23,17 +23,17 @@
-   <line x1="62" y1="58" x2="736" y2="58" stroke="#21262d" stroke-width="1"/>
-   <text x="52" y="62" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
- 
--  <path d="M62 367.96 L65.7 366.68 L67.55 365.4 L71.74 364.13 L74.32 362.85 L74.73 361.57 L75.15 360.29 L75.54 359.01 L75.87 357.73 L76.34 356.45 L77.01 355.17 L77.51 353.9 L78.23 352.62 L78.66 351.38 L78.86 350.1 L79.09 348.82 L79.29 347.54 L79.46 346.26 L79.65 344.98 L79.77 343.7 L79.88 342.43 L79.99 341.15 L80.14 339.87 L80.28 338.59 L80.43 337.31 L80.64 336.03 L80.83 334.75 L80.96 333.47 L81.07 332.2 L81.2 330.92 L81.3 329.64 L81.42 328.36 L81.53 327.08 L81.62 325.8 L81.73 324.52 L81.87 323.24 L82.05 321.97 L82.18 320.73 L82.31 319.45 L82.48 318.17 L82.69 316.89 L82.99 315.61 L83.29 314.33 L83.74 313.05 L84.21 311.77 L84.66 310.5 L85.12 309.22 L85.42 307.94 L85.75 306.66 L86.1 305.38 L86.45 304.1 L87.04 302.82 L88.03 301.54 L88.64 300.27 L88.88 298.99 L89.2 297.71 L89.76 296.43 L90.33 295.15 L91.19 293.87 L91.57 292.59 L91.74 291.31 L91.95 290.07 L92.07 288.8 L92.19 287.52 L92.27 286.24 L92.47 284.96 L92.63 283.68 L92.77 282.4 L92.9 281.12 L93.06 279.84 L93.25 278.57 L93.45 277.29 L93.67 276.01 L93.91 274.73 L94.15 273.45 L94.45 272.17 L94.9 270.89 L95.43 269.61 L95.91 268.33 L96.27 267.06 L96.79 265.78 L97.64 264.5 L99.36 263.22 L100.4 261.94 L101.92 260.66 L102.84 259.38 L103.9 258.14 L105.83 256.87 L107.27 255.59 L109.28 254.31 L109.99 253.03 L110.59 251.75 L111.46 250.47 L112.49 249.19 L113.18 247.91 L114 246.64 L114.95 245.36 L116.22 244.08 L118.11 242.8 L120.8 241.52 L122.22 240.24 L124.04 238.96 L126.2 237.68 L127.16 236.41 L128.95 235.13 L131.01 233.85 L134.62 232.57 L138.18 231.29 L142.23 230.01 L147.05 228.73 L152.13 227.49 L157.77 226.21 L161.22 224.94 L161.73 223.66 L162.85 222.38 L165.3 221.1 L168.11 219.82 L171.79 218.54 L173.28 217.26 L174.4 215.98 L175.47 214.71 L176.58 213.43 L177.99 212.15 L179.01 210.87 L179.96 209.59 L182.07 208.31 L187.64 207.03 L191.38 205.75 L196.65 204.48 L202.08 203.2 L205.72 201.92 L208.69 200.64 L216.8 199.36 L221.7 198.08 L229.05 196.84 L232.27 195.56 L236.7 194.28 L245.23 193.01 L254.61 191.73 L264.1 190.45 L275.46 189.17 L281.88 187.89 L289.55 186.61 L301.33 185.33 L309.18 184.05 L319.57 182.77 L329.29 181.5 L339.3 180.22 L349.51 178.94 L351.36 177.66 L358.15 176.38 L368.64 175.1 L376.07 173.82 L382.78 172.55 L395.59 171.27 L403.74 169.99 L412.68 168.71 L413.68 167.43 L415.61 166.15 L419.72 164.91 L422.68 163.63 L427.32 162.35 L435.76 161.08 L441.16 159.8 L449.19 158.52 L457.05 157.24 L466.03 155.96 L469.71 154.68 L475.71 153.4 L483.25 152.12 L489.05 150.85 L496.71 149.57 L503.32 148.29 L511.21 147.01 L517.66 145.73 L520.52 144.45 L524.26 143.17 L525.18 141.89 L526 140.61 L527.42 139.34 L530.98 138.06 L535.58 136.78 L541.36 135.5 L547.92 134.26 L554.83 132.98 L564.04 131.7 L573.26 130.42 L584.41 129.15 L586.62 127.87 L587.96 126.59 L593.05 125.31 L599.89 124.03 L605.98 122.75 L612.24 121.47 L615.11 120.19 L618.62 118.92 L622.21 117.64 L627.7 116.36 L633.07 115.08 L639.06 113.8 L643.58 112.52 L645.22 111.24 L647.71 109.96 L650.59 108.69 L653.49 107.41 L660.72 106.13 L666.81 104.85 L673.49 103.61 L682.09 102.33 L687.09 101.05 L691.91 99.77 L696.59 98.49 L702.06 97.21 L708.72 95.94 L712.86 94.66 L718.68 93.38 L724.63 92.1 L728.01 90.82 L731.65 89.54 L736 88.26 L736 368 L62 368 Z" fill="url(#fill-starhistorydarksvg)"/>
--  <path d="M62 367.96 L65.7 366.68 L67.55 365.4 L71.74 364.13 L74.32 362.85 L74.73 361.57 L75.15 360.29 L75.54 359.01 L75.87 357.73 L76.34 356.45 L77.01 355.17 L77.51 353.9 L78.23 352.62 L78.66 351.38 L78.86 350.1 L79.09 348.82 L79.29 347.54 L79.46 346.26 L79.65 344.98 L79.77 343.7 L79.88 342.43 L79.99 341.15 L80.14 339.87 L80.28 338.59 L80.43 337.31 L80.64 336.03 L80.83 334.75 L80.96 333.47 L81.07 332.2 L81.2 330.92 L81.3 329.64 L81.42 328.36 L81.53 327.08 L81.62 325.8 L81.73 324.52 L81.87 323.24 L82.05 321.97 L82.18 320.73 L82.31 319.45 L82.48 318.17 L82.69 316.89 L8
+@@ -350,6 +350,13 @@ jobs:
+                 echo "- XcodeBuildMCP and MobileBuildMCP DerivedData in Xcode Junk, opt-in and Trash-only (#162)."
+                 echo "- The Protection check recognizes the firewall's block-all mode (#183), and the Homebrew cask no longer warns about postflight (#182)."
+                 echo ""
++              elif [[ "${VERSION}" == "3.2.0" ]]; then
++                echo "- Added Apple Features with shortcuts and instructions for Siri, Apple Intelligence, image generation, Writing Tools, ChatGPT, summaries, and privacy settings. Changes are completed manually in macOS."
++                echo "- Inspect Apple model, screen saver, music content, and device backup storage. Protected models and system apps are not removed."
++                echo "- Review individual iPhone and iPad backups and move selected completed backups to Trash after confirmation and fresh checks."
++                echo "- Fixed Ollama and LM Studio cleanup with strict path checks and user-level removal; downloaded models remain excluded."
++                echo "- Simplified Overview and navigation, reduced decoration, and added full paths and removal methods to category cleanup confirmation."
++                echo ""
+               elif [[ "${VERSION}" == "2.9.8" ]]; then
+                 echo "### What changed"
+                 echo ""
 ```
 
-**File**: `assets/star-history.svg` (modified, +11/-11)
+**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +40/-4)
 ```diff
-@@ -10,7 +10,7 @@
-   <rect x="0.5" y="0.5" width="759" height="419" rx="8" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+@@ -19,6 +19,8 @@
+ 		27673871ECFD189E98548956 /* UpdateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D25BB11E61105B8764009E /* UpdateServiceTests.swift */; };
+ 		27F449EDD1B082FE11FEC9DF /* SchedulerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28181F034530331A550C6A3D /* SchedulerService.swift */; };
+ 		2BCDC53C5E3AB58442C8E4B0 /* CleaningEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B679C0120F1E3DDCB27FE2 /* CleaningEngineTests.swift */; };
++		2C3AD1E4511D0F07C8C7C9D1 /* DeviceBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7ABF3991A1C11BC5728FC6 /* DeviceBackupService.swift */; };
++		30D4A73B94B245DB4EB21B6B /* AppleStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9E767232924C819946DAAC /* AppleStorageService.swift */; };
+ 		340E424F759ACCDE7372F99F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADDC35F31E40780FB5D017 /* Theme.swift */; };
+ 		39BEE5E2BEC526CCADFC9DDD /* ServicesMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = 57FBBF8C7EF27C8E09126ED5 /* ServicesMenu.strings */; };
+ 		41B27CACD7C6C7471EFD03F9 /* UpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022D0EAEE2B6E54069FC2CBE /* UpdateService.swift */; };
+@@ -32,20 +34,25 @@
+ 		5882104828B9C5A5E06B2AFB /* PerformanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FB753A60BE6BF54D5126A /* PerformanceView.swift */; };
+ 		59B3096E2AE8ED0397B16798 /* AppLanguagePreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491771F923C93FD61A263893 /* AppLanguagePreferencesTests.swift */; };
+ 		5ED9C7AA76D850363CDC127C /* SimilarPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3C3342D6386FBB6DE3D18BC /* SimilarPhotosView.swift */; };
++		5FF5942BC279628276CF6543 /* DeviceBackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0D0E67A3C5B3740B858AD8 /* DeviceBackupServiceTests.swift */; };
+ 		61D285E96DED76FDCD54570F /* PermissionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069AAE87E3F9EDE5593AD8B3 /* PermissionSheet.swift */; };
++		668F6FC8967E338CC49D27D0 /* AppleFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DCCE76F044F71BCBD8CE0C /* AppleFeaturesView.swift */; };
+ 		6753946A301B2EB2FEF6998B /* SimulatorRuntimeSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74E66594478F53363BCB0F9 /* SimulatorRuntimeSupport.swift */; };
+ 		68F9CE5ED4908F674D673FB2 /* BinaryThinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B24B648B82186FC3B6EF2B /* BinaryThinner.swift */; };
+ 		6BCC5E3773DF2E9189F75A6B /* CleanupReviewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6116C5E9B68F439F6B2E42E5 /* CleanupReviewTests.swift */; };
+ 		6D36632DFF74F26035204CE2 /* PerformanceInspectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043F28E28FB7B2D9E39E5F70 /* PerformanceInspectorTests.swift */; };
+ 		6D449325D54B9850FC6C119F /* UniversalBinaryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EC878D25C244BF94D0094C /* UniversalBinaryScanner.swift */; };
+ 		6E296DC4405F5912A76EFF68 /* ProcessResourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F804C73B6DD4F8619B25B5 /* ProcessResourcesView.swift */; };
+ 		6E72022A661CBB41331A442C /* PermissionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DCBD97CC88D77AE8DB01A4 /* PermissionCoordinator.swift */; };
++		7026A36B071FDFE87CF5B1BD /* AppleFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98831CC736A3839B67CA47D1 /* AppleFeature.swift */; };
+ 		74175B10C464D245E99BA6DB /* DuplicateFinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1343918E4CD9C8DA99EFA588 /* DuplicateFinderView.swift */; };
+ 		75B5F0401D37F2872B1AD85A /* AppListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E6BC61614B27C065BB18C9 /* AppListView.swift */; };
+ 		76B132F9C499225D33E0D075 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424F7B28624C271620E13BBC /* EmptyStateView.swift */; };
+ 		7796BCD9AB92D1A644C28AF3 /* StorageExplorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF68B6BB9ED70387DF56728 /* StorageExplorer.swift */; };
++		7E881F4DEEE1E4B0FA44BEB2 /* AIAppsCleanupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1104B86347C5671A5FC64BA /* AIAppsCleanupTests.swift */; };
+ 		826A750D2D7EC14C2AE306A3 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3667D46D8E2004EB4D73835A /* Models.swift */; };
+ 		8947F0CE448791BD50EECF46 /* Conditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB94E06E145558123BB5BFB3 /* Conditions.swift */; };
++		89D5B9A5B4F25EA729B5B08B /* DeviceBackupCoordinationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA1FC37E3821117365707CD /* DeviceBackupCoordinationTests.swift */; };
+ 		8B541441926847072DC5B75B /* DashboardCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C60E04A0CA3F227816DB
+```
+
+**File**: `PureMac/Models/AppleFeature.swift` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++import Foundation
++
++struct AppleFeature: Identifiable {
++    let id: String
++    let title: String
++    let summary: String
++    let steps: String
++    let destination: String
++    let guide: URL
++    let minimumVersion: OperatingSystemVersion
++
++    func isAvailable(on version: OperatingSystemVersion) -> Bool {
++        let actual = [version.majorVersion, version.minorVersion, version.patchVersion]
++        let required = [minimumVersion.majorVersion, minimumVersion.minorVersion, minimumVersion.patchVersion]
++        return !actual.lexicographicallyPrecedes(required)
++    }
++}
++
++enum AppleFeatureCatalog {
++    static func features(for version: OperatingSystemVersion) -> [AppleFeature] {
++        let modern = version.majorVersion >= 27
++        let legacyGuideVersion = version.majorVersion < 26 ? "15.0/mac/15.0" : "26/mac/26"
++        let siriPane = "com.apple.Siri-Settings.extension"
++        let screenTime = "com.apple.Screen-Time-Settings.extension"
++        let restrictionsGuide = modern ? "z25xrnykpuln/mac" : "mchlb2e44f94/\(legacyGuideVersion)"
++        let restrictions = modern
++            ? "Open Screen Time > Content & Privacy Restrictions. Enable All Restrictions, then open Siri. These restrictions may apply across devices using your Apple Account."
++            : "Open Screen Time > Content & Privacy. Enable Content & Privacy restrictions, then open Intelligence & Siri."
++        func feature(_ id: String, _ title: String, _ summary: String, _ steps: String, _ destination: String, _ guide: String, _ major: Int = 13, _ minor: Int = 0) -> AppleFeature {
++            AppleFeature(id: id, title: title, summary: summary, steps: steps, destination: destination,
++                         guide: URL(string: "https://support.apple.com/guide/mac-help/\(guide)")!,
++                         minimumVersion: OperatingSystemVersion(majorVersion: major, minorVersion: minor, patchVersion: 0))
++        }
++        var items = [
++            feature("siri", "Siri", "Turn off the assistant and its activation controls.",
++                    modern ? "Open Siri and choose Turn Off Siri. Confirm the change. Screen Time also offers Don't Allow Siri."
++                        : "Open Siri or Apple Intelligence & Siri and turn off Ask Siri. On versions that show a Siri section, open it to find the control.",
++                    siriPane, modern ? "mchl3fd7fc15/mac" : "mchl3fd7fc15/26/mac/26"),
++            feature("intelligence", "Apple Intelligence", "Review Apple's writing, image and summary features.",
++                    modern ? "macOS 27 uses separate Siri, Screen Time and app controls. Review the individual features below. Turning off Siri does not establish that all Apple Intelligence features are off."
++                        : "Open Apple Intelligence & Siri, turn off Apple Intelligence and confirm. macOS manages downloaded models; PureMac does not promise that this immediately recovers their storage.",
++                    siriPane, modern ? "mchlb2e44f94/mac" : "mchl46361784/\(legacyGuideVersion)", 15, 1),
++            feature("images", "Image Playground & Genmoji", "Restrict image generation using Screen Time.",
++                    restrictions + (modern ? " Set Image Creation to Blocked where available." : " Turn off Image Creation." ) + " This restricts access; it does not uninstall the protected app or erase images you created.",
++                    screenTime, restrictionsGuide, 15, 2),
++            feature("writing", modern ? "Writing Assistance" : "Writing Tools", "Restrict Apple's generated writing features.",
++                    restrictions + (modern ? " Set Writing Assistance to Blocked where available." : " Turn off Writing Tools."),
++                    screenTime, restrictionsGuide, 15, 1),
++            feature("summaries", "Notification summaries", "Read original notification text without generated summaries.",
++                    "Open Notifications > Summarize Notifications and turn it off, or choose which apps can use summaries.",
++                    "com.apple.Notifications-Settings.extension", "mchlb2e44f94/mac", 15, 1),
++            feature("mail", "Mail summaries", "Turn off generated previews in Apple Mail.",
++                    "In Mail, choose Mail > Settings > Viewing, then turn off Summarize Message Previews. The button opens Mail; finish the change in its settings.",
++                    "application:com.apple.mail", "mchlb2e44f94/mac", 15, 1),
++            feature("predictions", "Inline text predictions", "Stop suggested completions appearing as you type.",
++                    "Open Keyboard > Text Input > Edit and turn off Show inline predictive text. This setting is separate from Apple Intelligence.",
++                    "com.apple.Keyboard-Settings.extension", "mchlp2299/mac", 14),
++            feature("analytics", "Analytics & Siri recordings", "Review diagnostic and voice-recording sharing with Apple.",
++                    "Open Privacy & Secur
+```
+
+**File**: `PureMac/Services/AppleStorageService.swift` (added, +205/-0)
+```diff
+@@ -0,0 +1,205 @@
++import Darwin
++import Foundation
++
++enum AppleStorageKind: String, Sendable {
++    case intelligenceModels
++    case screenSavers
++    case garageBand
++    case appleLoops
++    case deviceBackups
++
++    var title: String {
++        switch self {
++        case .intelligenceModels: return String(localized: "Apple Intelligence models")
++        case .screenSavers: return String(localized: "Downloaded screen savers")
++        case .garageBand: return String(localized: "GarageBand support files")
++        case .appleLoops: return String(localized: "Apple Loops")
++        case .deviceBackups: return String(localized: "iPhone and iPad backups")
++        }
++    }
++
++    var detail: String {
++        switch self {
++        case .intelligenceModels:
++            return String(localized: "The known generative-model folder. macOS manages these assets; this size is not a promise of space you can recover.")
++        case .screenSavers:
++            return String(localized: "Downloaded Apple aerial assets. Change the selected wallpaper or screen saver in System Settings.")
++        case .garageBand:
++            return String(localized: "Sound libraries and support files may be shared with music apps. Review Music Creation in Storage settings.")
++        case .appleLoops:
++            return String(localized: "Loops used by GarageBand and Logic Pro. Review Music Creation in Storage settings before removing sounds.")
++        case .deviceBackups:
++            return String(localized: "Local device backups can contain your only restore copy. Review individual backups below or use Finder's Manage Backups.")
++        }
++    }
++}
++
++struct AppleStorageLocation: Sendable {
++    let kind: AppleStorageKind
++    let url: URL
++}
++
++struct AppleStorageItem: Identifiable, Sendable {
++    enum Status: String, Sendable {
++        case complete
++        case partial
++        case unavailable
++        case notPresent
++    }
++
++    let kind: AppleStorageKind
++    let url: URL
++    let allocatedBytes: Int64?
++    let status: Status
++    let scannedCount: Int
++    let skippedCount: Int
++    let inaccessibleCount: Int
++    let reachedLimit: Bool
++
++    var id: URL { url }
++    var title: String { kind.title }
++    var detail: String { kind.detail }
++    var path: String { url.path }
++}
++
++enum AppleStorageService {
++    static func standardLocations(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) -> [AppleStorageLocation] {
++        [
++            AppleStorageLocation(kind: .intelligenceModels, url: URL(fileURLWithPath: "/System/Library/AssetsV2/com_apple_MobileAsset_UAF_FM_GenerativeModels")),
++            AppleStorageLocation(kind: .screenSavers, url: URL(fileURLWithPath: "/Library/Application Support/com.apple.idleassetsd")),
++            AppleStorageLocation(kind: .garageBand, url: URL(fileURLWithPath: "/Library/Application Support/GarageBand")),
++            AppleStorageLocation(kind: .appleLoops, url: URL(fileURLWithPath: "/Library/Audio/Apple Loops")),
++            AppleStorageLocation(kind: .deviceBackups, url: homeDirectory.appendingPathComponent("Library/Application Support/MobileSync/Backup", isDirectory: true))
++        ]
++    }
++
++    static func scan(
++        locations: [AppleStorageLocation] = standardLocations(),
++        maxEntriesPerLocation: Int = 100_000
++    ) async throws -> [AppleStorageItem] {
++        let task = Task.detached(priority: .utility) {
++            try locations.map { location in
++                try Task.checkCancellation()
++                return try measure(location, limit: max(1, min(maxEntriesPerLocation, 100_000)))
++            }
++        }
++        return try await withTaskCancellationHandler {
++            try Task.checkCancellation()
++            return try await task.value
++        } onCancel: {
++            task.cancel()
++        }
++    }
++
++    private struct Identity: Hashable {
++        let device: dev_t
++        let inode: ino_t
++    }
++
++    private static let resourceKeys: Set<URLResourceKey> = [
++        .isPackageKey, .isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey
++    ]
++
++    private static func measure(_ location: AppleStorageLocation, limit: Int) throws -> AppleStorageItem {
++        let root = location.url.standardizedFileURL
++        var bytes: Int64 = 0
++        var count = 0
++        var skipped = 0
++        var inaccessible = 0
++        var reachedLimit = false
++        var seen: Set<Identity> = []
++
++        func result(_ status: AppleStorageItem.Status, bytes: Int64?) -> AppleStorageItem {
++            AppleStorageItem(kind: location.kind, url: root, allocatedBytes: bytes, status: status,
++                             scannedCount: count, skippedCount: skipped, inaccessibleCount: inaccessible,
++                             reachedLimit: reachedLimit)
++        }
++
++        var ancestor = URL(fileURLWithPath: "/", isDirectory: true)
++        for component in root.pathComponents.dropFirst() {
++            try Task.checkCancell
+```
+
+**File**: `PureMac/Services/CleaningEngine.swift` (modified, +33/-0)
+```diff
+@@ -47,6 +47,11 @@ actor CleaningEngine {
+                 continue
+             }
  
-   <text x="24" y="32" fill="#1f2328" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600">momenbasel/PureMac</text>
--  <text x="736" y="32" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.2k stars</text>
-+  <text x="736" y="32" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.3k stars</text>
++            if item.category == .aiApps, !isSupportedAIAppPath(item.path) {
++                result.errors.append("Unsupported AI app cleanup path: \(item.path)")
++                continue
++            }
++
+             if item.category == .purgeableSpace {
+                 let purged = await purgePurgeableSpace()
+                 result.freedSpace += purged
+@@ -220,6 +225,12 @@ actor CleaningEngine {
+                     (nsError.domain == NSPOSIXErrorDomain &&
+                         (nsError.code == Int(EACCES) || nsError.code == Int(EPERM)))
+                 if isPermissionDenied {
++                    if item.category == .aiApps {
++                        let detail = "AI app cleanup requires access as the current user: \(item.path)"
++                        result.errors.append(detail)
++                        Logger.shared.log(detail, level: .warning)
++                        continue
++                    }
+                     if XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
+                         item.path,
+                         homeDirectory: homeDirectory
+@@ -274,6 +285,10 @@ actor CleaningEngine {
+         // refuses to escalate.
+         let exclusions = CleanupExclusions.paths()
+         let validated: [(item: CleanableItem, resolved: String)] = items.compactMap { item in
++            guard item.category != .aiApps else {
++                result.errors.append("Administrator cleanup is unavailable for AI app data: \(item.name)")
++                return nil
++            }
+             guard !CleanupExclusions.excludes(item.path, paths: exclusions) else { return nil }
+             guard !hasUnexpectedSymlink(in: item.path) else {
+                 Logger.shared.log("Refusing admin escalation for symlinked path: \(item.path)", level: .warning)
+@@ -562,6 +577,9 @@ actor CleaningEngine {
+         resolvedPath: String,
+         includeUninstallPaths: Bool = false
+     ) -> Bool {
++        if item.category == .aiApps {
++            return item.path == resolvedPath && isSupportedAIAppPath(resolvedPath)
++        }
+         let originalIsManaged = XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
+             item.path,
+             homeDirectory: homeDirectory
+@@ -586,6 +604,21 @@ actor CleaningEngine {
+             || (includeUninstallPaths && isSafeUninstallEscalationPath(resolvedPath))
+     }
  
-   <line x1="62" y1="368" x2="736" y2="368" stroke="#e6eaef" stroke-width="1"/>
-   <text x="52" y="372" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">0</text>
-@@ -23,17 +23,17 @@
-   <line x1="62" y1="58" x2="736" y2="58" stroke="#e6eaef" stroke-width="1"/>
-   <text x="52" y="62" fill="#59636e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" text-anchor="end">8k</text>
++    private func isSupportedAIAppPath(_ path: String) -> Bool {
++        guard !path.utf8.contains(0), path == (path as NSString).standardizingPath else { return false }
++        let home = homeDirectory.path
++        return [
++            "\(home)/.ollama/logs",
++            "\(home)/.ollama/history",
++            "\(home)/.lmstudio/server-logs",
++            "\(home)/.lmstudio/conversations",
++            "\(home)/Library/Caches/ollama",
++            "\(home)/Library/Caches/com.electron.ollama",
++            "\(home)/Library/WebKit/com.electron.ollama",
++            "\(home)/Library/Saved Application State/com.electron.ollama.savedState",
++        ].contains(path)
++    }
++
+     /// Validates that a resolved path is safe to delete.
+     /// Prevents symlink attacks where a link in ~/Library/Caches points to ~/.ssh.
+     /// Downloads, Documents, and Desktop are intentionally NOT whole-subtree
+```
+
+**File**: `PureMac/Services/DeviceBackupService.swift` (added, +281/-0)
+```diff
+@@ -0,0 +1,281 @@
++import CryptoKit
++import Darwin
++import Foundation
++
++struct DeviceBackup: Identifiable, Hashable, Sendable {
++    let url: URL
++    let allocatedSize: Int64
++    let modifiedAt: Date
++    fileprivate let fingerprint: String
++    fileprivate let ancestors: [UInt64]
++
++    var id: URL { url }
++    var name: String { url.lastPathComponent }
++}
++
++struct DeviceBackupScanResult: Sendable {
++    let backups: [DeviceBackup]
++    let issues: [String]
++}
++
++struct DeviceBackupRemovalResult: Sendable {
++    let removedPaths: [String]
++    let errors: [String]
++}
++
++actor DeviceBackupService {
++    private struct Measurement {
++        var hasher = SHA256()
++        var allocatedSize: Int64 = 0
++        var count = 0
++        var seenFiles: Set<String> = []
++        var rootIdentity = ""
++    }
++
++    private let root: URL
++    private let trashHandler: (URL) throws -> Void
++    private let exclusions: () -> [String]
++    private let maxEntries: Int
++
++    init(
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser,
++        trashHandler: ((URL) throws -> Void)? = nil,
++        exclusions: @escaping () -> [String] = { CleanupExclusions.paths() },
++        maxEntries: Int = 500_000
++    ) {
++        root = homeDirectory.appendingPathComponent("Library/Application Support/MobileSync/Backup", isDirectory: true)
++        self.trashHandler = trashHandler ?? { url in
++            var destination: NSURL?
++            try FileManager.default.trashItem(at: url, resultingItemURL: &destination)
++        }
++        self.exclusions = exclusions
++        self.maxEntries = max(1, min(maxEntries, 500_000))
++    }
++
++    func scan() throws -> DeviceBackupScanResult {
++        try Task.checkCancellation()
++        let opened: (descriptor: Int32, identities: [UInt64])
++        do {
++            opened = try openRoot()
++        } catch is CancellationError {
++            throw CancellationError()
++        } catch let error as POSIXError where error.code == .ENOENT {
++            return DeviceBackupScanResult(backups: [], issues: [])
++        } catch {
++            return DeviceBackupScanResult(backups: [], issues: [error.localizedDescription])
++        }
++        defer { close(opened.descriptor) }
++        var backups: [DeviceBackup] = []
++        var issues: [String] = []
++        for name in try names(in: opened.descriptor) {
++            try Task.checkCancellation()
++            let url = root.appendingPathComponent(name, isDirectory: true)
++            do {
++                let info = try metadata(name, in: opened.descriptor)
++                guard info.st_mode & S_IFMT != S_IFLNK else { throw failure("Symbolic links are excluded", url) }
++                guard info.st_mode & S_IFMT == S_IFDIR else { continue }
++                guard !CleanupExclusions.excludes(url.path, paths: exclusions()) else {
++                    throw failure("Excluded from cleanup", url)
++                }
++                let measure = try measureBackup(name, in: opened.descriptor)
++                backups.append(DeviceBackup(
++                    url: url,
++                    allocatedSize: measure.allocatedSize,
++                    modifiedAt: Date(timeIntervalSince1970: TimeInterval(info.st_mtimespec.tv_sec)),
++                    fingerprint: measure.hasher.finalize().map { String(format: "%02x", $0) }.joined(),
++                    ancestors: opened.identities
++                ))
++            } catch is CancellationError {
++                throw CancellationError()
++            } catch {
++                issues.append("\(name): \(error.localizedDescription)")
++            }
++        }
++        return DeviceBackupScanResult(
++            backups: backups.sorted { $0.allocatedSize > $1.allocatedSize },
++            issues: issues
++        )
++    }
++
++    func trash(_ backups: [DeviceBackup]) throws -> DeviceBackupRemovalResult {
++        var removed: [String] = []
++        var errors: [String] = []
++        var seen: Set<URL> = []
++        for backup in backups where seen.insert(backup.url).inserted {
++            do {
++                try Task.checkCancellation()
++                guard backup.url.deletingLastPathComponent().path == root.path,
++                      backup.url.standardizedFileURL.path == backup.url.path,
++                      !backup.url.path.utf8.contains(0),
++                      backup.url.path != root.path else {
++                    throw failure("Only individual device backup folders can be moved to Trash", backup.url)
++                }
++                guard !CleanupExclusions.excludes(backup.url.path, paths: exclusions()) else {
++                    throw failure("Excluded from cleanup", backup.url)
++                }
++                let opened = try openRoot()
++                defer { close(opened.descriptor) }
++                guard opened.identities == backup.ancestors else {
++                    throw failure("The backup location changed. Scan again", backup.url)
++             
+```
+
+**File**: `PureMac/ViewModels/AppState.swift` (modified, +15/-6)
+```diff
+@@ -13,6 +13,7 @@ enum AppSection: Hashable {
+     case similarPhotos
+     case protection
+     case performance
++    case appleFeatures
+     case appUpdates
+     case settings
+     case cleaning(CleaningCategory)
+@@ -51,6 +52,11 @@ final class AppState: ObservableObject {
+     let languageAtLaunch = AppLanguage.current
+     @Published var settingsNeedLanguageRestart = false
+     @Published var showUpdateSettings = false
++    @Published var deviceBackupRemovalInProgress = false
++    @Published var deviceBackupRemovalResult: DeviceBackupRemovalResult?
++    var canRemoveDeviceBackups: Bool {
++        !scanState.isActive && !deviceBackupRemovalInProgress
++    }
+     typealias AppFileScanner = @MainActor (
+         _ app: InstalledApp,
+         _ locations: Locations,
+@@ -808,7 +814,7 @@ final class AppState: ObservableObject {
+     }
  
--  <path d="M62 367.96 L65.7 366.68 L67.55 365.4 L71.74 364.13 L74.32 362.85 L74.73 361.57 L75.15 360.29 L75.54 359.01 L75.87 357.73 L76.34 356.45 L77.01 355.17 L77.51 353.9 L78.23 352.62 L78.66 351.38 L78.86 350.1 L79.09 348.82 L79.29 347.54 L79.46 346.26 L79.65 344.98 L79.77 343.7 L79.88 342.43 L79.99 341.15 L80.14 339.87 L80.28 338.59 L80.43 337.31 L80.64 336.03 L80.83 334.75 L80.96 333.47 L81.07 332.2 L81.2 330.92 L81.3 329.64 L81.42 328.36 L81.53 327.08 L81.62 325.8 L81.73 324.52 L81.87 323.24 L82.05 321.97 L82.18 320.73 L82.31 319.45 L82.48 318.17 L82.69 316.89 L82.99 315.61 L83.29 314.33 L83.74 313.05 L84.21 311.77 L84.66 310.5 L85.12 309.22 L85.42 307.94 L85.75 306.66 L86.1 305.38 L86.45 304.1 L87.04 302.82 L88.03 301.54 L88.64 300.27 L88.88 298.99 L89.2 297.71 L89.76 296.43 L90.33 295.15 L91.19 293.87 L91.57 292.59 L91.74 291.31 L91.95 290.07 L92.07 288.8 L92.19 287.52 L92.27 286.24 L92.47 284.96 L92.63 283.68 L92.77 282.4 L92.9 281.12 L93.06 279.84 L93.25 278.57 L93.45 277.29 L93.67 276.01 L93.91 274.73 L94.15 273.45 L94.45 272.17 L94.9 270.89 L95.43 269.61 L95.91 268.33 L96.27 267.06 L96.79 265.78 L97.64 264.5 L99.36 263.22 L100.4 261.94 L101.92 260.66 L102.84 259.38 L103.9 258.14 L105.83 256.87 L107.27 255.59 L109.28 254.31 L109.99 253.03 L110.59 251.75 L111.46 250.47 L112.49 249.19 L113.18 247.91 L114 246.64 L114.95 245.36 L116.22 244.08 L118.11 242.8 L120.8 241.52 L122.22 240.24 L124.04 238.96 L126.2 237.68 L127.16 236.41 L128.95 235.13 L131.01 233.85 L134.62 232.57 L138.18 231.29 L142.23 230.01 L147.05 228.73 L152.13 227.49 L157.77 226.21 L161.22 224.94 L161.73 223.66 L162.85 222.38 L165.3 221.1 L168.11 219.82 L171.79 218.54 L173.28 217.26 L174.4 215.98 L175.47 214.71 L176.58 213.43 L177.99 212.15 L179.01 210.87 L179.96 209.59 L182.07 208.31 L187.64 207.03 L191.38 205.75 L196.65 204.48 L202.08 203.2 L205.72 201.92 L208.69 200.64 L216.8 199.36 L221.7 198.08 L229.05 196.84 L232.27 195.56 L236.7 194.28 L245.23 193.01 L254.61 191.73 L264.1 190.45 L275.46 189.17 L281.88 187.89 L289.55 186.61 L301.33 185.33 L309.18 184.05 L319.57 182.77 L329.29 181.5 L339.3 180.22 L349.51 178.94 L351.36 177.66 L358.15 176.38 L368.64 175.1 L376.07 173.82 L382.78 172.55 L395.59 171.27 L403.74 169.99 L412.68 168.71 L413.68 167.43 L415.61 166.15 L419.72 164.91 L422.68 163.63 L427.32 162.35 L435.76 161.08 L441.16 159.8 L449.19 158.52 L457.05 157.24 L466.03 155.96 L469.71 154.68 L475.71 153.4 L483.25 152.12 L489.05 150.85 L496.71 149.57 L503.32 148.29 L511.21 147.01 L517.66 145.73 L520.52 144.45 L524.26 143.17 L525.18 141.89 L526 140.61 L527.42 139.34 L530.98 138.06 L535.58 136.78 L541.36 135.5 L547.92 134.26 L554.83 132.98 L564.04 131.7 L573.26 130.42 L584.41 129.15 L586.62 127.87 L587.96 126.59 L593.05 125.31 L599.89 124.03 L605.98 122.75 L612.24 121.47 L615.11 120.19 L618.62 118.92 L622.21 117.64 L627.7 116.36 L633.07 115.08 L639.06 113.8 L643.58 112.52 L645.22 111.24 L647.71 109.96 L650.59 108.69 L653.49 107.41 L660.72 106.13 L666.81 104.85 L673.49 103.61 L682.09 102.33 L687.09 101.05 L691.91 99.77 L696.59 98.49 L702.06 97.21 L708.72 95.94 L712.86 94.66 L718.68 93.38 L724.63 92.1 L728.01 90.82 L731.65 89.54 L736 88.26 L736 368 L62 368 Z" fill="url(#fill-starhistorysvg)"/>
--  <path d="M62 367.96 L65.7 366.68 L67.55 365.4 L71.74 364.13 L74.32 362.85 L74.73 361.57 L75.15 360.29 L75.54 359.01 L75.87 357.73 L76.34 356.45 L77.01 355.17 L77.51 353.9 L78.23 352.62 L78.66 351.38 L78.86 350.1 L79.09 348.82 L79.29 347.54 L79.46 346.26 L79.65 344.98 L79.77 343.7 L79.88 342.43 L79.99 341.15 L80.14 339.87 L80.28 338.59 L80.43 337.31 L80.64 336.03 L80.83 334.75 L80.96 333.47 L81.07 332.2 L81.2 330.92 L81.3 329.64 L81.42 328.36 L81.53 327.08 L81.62 325.8 L81.73 324.52 L81.87 323.24 L82.05 321.97 L82.18 320.73 L82.31 319.45 L82.48 318.17 L82.69 316.89 L82.99
+     private func retryCleanItems(_ items: [CleanableItem]) async {
+-        guard !scanState.isActive else { return }
++        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
+         let generation = UUID()
+         cleanupGeneration = generation
+         scanState = .cleaning(progress: 0)
+@@ -874,12 +880,13 @@ final class AppState: ObservableObject {
+     // MARK: - Scanning
+ 
+     func startSmartScan() {
+-        guard !scanState.isActive else { return }
++        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
+         beginScan(categories: CleaningCategory.scannable, replacingResults: true)
+     }
+ 
+     func scanSingleCategory(_ category: CleaningCategory) {
+-        guard !scanState.isActive, CleaningCategory.scannable.contains(category) else { return }
++        guard !scanState.isActive, !deviceBackupRemovalInProgress,
++              CleaningCategory.scannable.contains(category) else { return }
+         beginScan(categories: [category], replacingResults: false)
+     }
+ 
+@@ -935,7 +942,7 @@ final class AppState: ObservableObject {
+     // MARK: - Cleaning
+ 
+     func cleanAll(itemIDs: Set<UUID>? = nil, scheduled: Bool = false) {
+-        guard !scanState.isActive else { return }
++        guard !scanState.isActive, !deviceBackupRemovalInProgress else { return }
+ 
+         let itemsToClean = allResults.flatMap { $0.items }.filter { item in
+             guard itemIDs?.contains(item.id) ?? true else { return false }
+@@ -1007,7 +1014,8 @@ final class AppState: ObservableObject {
+     }
+ 
+     func cleanCategory(_ category: CleaningCategory, itemIDs: Set<UUID>? = nil) {
+-        guard let result = categoryResults[category], !scanState.isActive else { return }
++        guard let result = categoryResults[category], !scanState.isActive,
++              !deviceBackupRemovalInProgress else { return }
+ 
+         let selectedItems = result.items.filter { isItemSelected($0) && (itemIDs?.contains($0.id) ?? true) }
+         guard !selectedItems.isEmpty else { return }
+@@ -1131,7 +1139,8 @@ final class AppState: ObservableObject {
+     func canRunScheduledScan(isAppActive: Bool) -> Bool {
+         !scanState.isActive && !(scanState == .completed && isAppActive)
+             && !showCleanConfirmation && !isScanningAppFiles && !isRemovingAppFiles
+-            && !isSearchingOrphans && !PermissionCoordinator.shared.isRequesting
++            && !isSearchingOrphans && !deviceBackupRemovalInProgress
++            && !PermissionCoordinator.shared.isRequesting
+     }
+ 
+     func runScheduledScan() async {
+```
+
+**File**: `PureMac/Views/CategoryDetailView.swift` (modified, +90/-20)
+```diff
+@@ -1,13 +1,17 @@
+ import SwiftUI
+ 
+ struct CategoryDetailView: View {
++    private struct CleanupSelection: Identifiable {
++        let id = UUID()
++        let items: [CleanableItem]
++    }
++
+     @EnvironmentObject var appState: AppState
+     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+     let category: CleaningCategory
+ 
+     @State private var filter = CleanupReviewFilter()
+-    @State private var showConfirmation = false
+-    @State private var pendingItems: [CleanableItem] = []
++    @State private var pendingReview: CleanupSelection?
+ 
+     private var result: CategoryResult? { appState.categoryResults[category] }
+     private var visibleItems: [CleanableItem] { filter.apply(to: result?.items ?? []) }
+@@ -52,19 +56,12 @@ struct CategoryDetailView: View {
+             }
+         }
+         .navigationTitle(Text(LocalizedStringKey(category.rawValue)))
+-        .confirmationDialog("Remove selected files?", isPresented: $showConfirmation, titleVisibility: .visible) {
+-            Button("Permanently remove \(pendingItems.count) items", role: .destructive) {
+-                appState.cleanCategory(category, itemIDs: Set(pendingItems.map(\.id)))
+-                pendingItems = []
+-            }
+-            Button("Cancel", role: .cancel) { pendingItems = [] }
+-        } message: {
+-            Text(confirmationMessage)
++        .sheet(item: $pendingReview) { selection in
++            removalReview(items: selection.items)
+         }
+         .onChange(of: category) { _ in
+             filter = CleanupReviewFilter()
+-            pendingItems = []
+-            showConfirmation = false
++            pendingReview = nil
+         }
+     }
+ 
+@@ -154,9 +151,14 @@ struct CategoryDetailView: View {
+                 Text("\(selectedItems.count) selected · \(ByteCountFormatter.string(fromByteCount: selectedSize, countStyle: .file))")
+                     .font(.system(size: 13, weight: .semibold))
+                     .monospacedDigit()
+-                Text(hiddenCount > 0 ? "Includes \(hiddenCount) selected items hidden by filters." : "Selected cleanup items are permanently removed.")
++                Text("Cleanup permanently removes files unless marked Move to Trash.")
+                     .font(.caption)
+                     .foregroundStyle(.secondary)
++                if hiddenCount > 0 {
++                    Text("Includes \(hiddenCount) selected items hidden by filters.")
++                        .font(.caption)
++                        .foregroundStyle(.secondary)
++                }
+             }
+             Spacer(minLength: 8)
+             if !selectedItems.isEmpty {
+@@ -165,8 +167,7 @@ struct CategoryDetailView: View {
+                     .disabled(appState.scanState.isActive)
+             }
+             Button {
+-                pendingItems = selectedItems
+-                showConfirmation = true
++                pendingReview = CleanupSelection(items: selectedItems)
+             } label: {
+                 Label("Review removal", systemImage: "trash")
+                     .font(.system(size: 13, weight: .semibold))
+@@ -182,11 +183,80 @@ struct CategoryDetailView: View {
+         .overlay(alignment: .top) { Divider() }
+     }
+ 
+-    private var confirmationMessage: String {
+-        let size = ByteCountFormatter.string(fromByteCount: pendingItems.reduce(0) { $0 + $1.size }, countStyle: .file)
+-        let names = pendingItems.prefix(5).map(\.name).joined(separator: "\n")
+-        let more = pendingItems.count > 5 ? String(localized: "\nAnd \(pendingItems.count - 5) more.") : ""
+-        return String(localized: "\(size) selected. This permanently removes the selected files or runs the listed cleanup actions. It cannot be undone.") + "\n\n" + names + more
++    private func removalReview(items: [CleanableItem]) -> some View {
++        VStack(alignment: .leading, spacing: 16) {
++            VStack(alignment: .leading, spacing: 6) {
++                Text("Review removal")
++                    .font(.title2.weight(.semibold))
++                Text("\(items.count) items · \(ByteCountFormatter.string(fromByteCount: items.reduce(0) { $0 + $1.size }, countStyle: .file))")
++                    .monospacedDigit()
++                    .foregroundStyle(.secondary)
++                Text("Files and cleanup actions marked Permanent cannot be undone. Items marked Move to Trash can be recovered until the Trash is emptied.")
++                    .font(.callout)
++                    .foregroundStyle(.secondary)
++                    .fixedSize(horizontal: false, vertical: true)
++            }
++            Divider()
++            ScrollView {
++                LazyVStack(alignment: .leading, spacing: 0) {
++                    ForEach(items) { item in
++                        VStack(alignment: .leading, spacing: 5) {
++                            HStack(alignment: .firstTextBaseline, spacing: 12) {
++                                Text(item.name)
++                                    .font(.body.weight(
 ```
 
 #### Recent Merged Pull Requests:
@@ -1322,29 +1908,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refresh star history
+## X. Release 3.2.0 with Apple feature guides and safer cleanup
 
 **RULE**:
-When implementing operations in `assets/star-history-dark.svg`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a846639`: refresh star history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4e28d22`: Release 3.2.0 with Apple feature guides and safer cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/star-history-dark.svg`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  <text x="736" y="32" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.3k stars</text>
+              elif [[ "${VERSION}" == "3.2.0" ]]; then
+                echo "- Added Apple Features with shortcuts and instructions for Siri, Apple Intelligence, image generation, Writing Tools, ChatGPT, summaries, and privacy settings. Changes are completed manually in macOS."
+                echo "- Inspect Apple model, screen saver, music content, and device backup storage. Protected models and system apps are not removed."
+                echo "- Review individual iPhone and iPad backups and move selected completed backups to Trash after confirmation and fresh checks."
+                echo "- Fixed Ollama and LM Studio cleanup with strict path checks and user-level removal; downloaded models remain excluded."
+                echo "- Simplified Overview and navigation, reduced decoration, and added full paths and removal methods to category cleanup confirmation."
+                echo ""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-  <text x="736" y="32" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" text-anchor="end">7.2k stars</text>
-  <path d="M62 367.96 L65.7 366.68 L67.55 365.4 L71.74 364.13 L74.32 362.85 L74.73 361.57 L75.15 360.29 L75.54 359.01 L75.87 357.73 L76.34 356.45 L77.01 355.17 L77.51 353.9 L78.23 352.62 L78.66 351.38 L78.86 350.1 L79.09 348.82 L79.29 347.54 L79.46 346.26 L79.65 344.98 L79.77 343.7 L79.88 342.43 L79.99 341.15 L80.14 339.87 L80.28 338.59 L80.43 337.31 L80.64 336.03 L80.83 334.75 L80.96 333.47 L81.07 332.2 L81.2 330.92 L81.3 329.64 L81.42 328.36 L81.53 327.08 L81.62 325.8 L81.73 324.52 L81.87 323.24 L82.05 321.97 L82.18 320.73 L82.31 319.45 L82.48 318.17 L82.69 316.89 L82.99 315.61 L83.29 314.33 L83.74 313.05 L84.21 311.77 L84.66 310.5 L85.12 309.22 L85.42 307.94 L85.75 306.66 L86.1 305.38 L86.45 304.1 L87.04 302.82 L88.03 301.54 L88.64 300.27 L88.88 298.99 L89.2 297.71 L89.76 296.43 L90.33 295.15 L91.19 293.87 L91.57 292.59 L91.74 291.31 L91.95 290.07 L92.07 288.8 L92.19 287.52 L92.27 286.24 L92.47 284.96 L92.63 283.68 L92.77 282.4 L92.9 281.12 L93.06 279.84 L93.25 278.57 L93.45 277.29 L93.67 276.01 L93.91 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a846639` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4e28d22` are properly handled with clean fallback behavior.

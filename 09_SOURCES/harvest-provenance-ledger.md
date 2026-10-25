@@ -4918,3 +4918,6 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `204e2636` | Multi-dimensional audit evidence | 2026-10-25T16:54:48.728Z |
 | `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-25T17:01:32.834Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-25T17:08:05.029Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T17:14:27.597Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `317f1bb1` | Multi-dimensional audit evidence | 2026-10-25T17:14:33.127Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `cc54f798` | Multi-dimensional audit evidence | 2026-10-25T17:14:42.451Z |

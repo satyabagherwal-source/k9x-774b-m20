@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "7c6081f08b6234cb2b2457534d21c4a15430c44b0a846be7604d2bc989b1c291",
-    "lastHarvestedAt": "2026-10-20T21:40:54.802Z",
+    "contentHash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
+    "lastHarvestedAt": "2026-10-25T17:14:27.597Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "15d89708",
+    "sourceVersion": "cc54f798",
     "license": "NOASSERTION",
-    "contentHash": "4659e826c027d0e83e369b8cedf5728cc252954c54cbab3d0d9d9d6ae95c0ff1",
-    "lastHarvestedAt": "2026-10-24T19:28:40.233Z",
+    "contentHash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
+    "lastHarvestedAt": "2026-10-25T17:14:42.451Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "9a846639",
+    "sourceVersion": "317f1bb1",
     "license": "MIT",
-    "contentHash": "3b776c79f96e00dd98f68f2a48ba5ba764c9a782c5216a7e50c4284809b7f4a8",
-    "lastHarvestedAt": "2026-10-21T00:02:10.088Z",
+    "contentHash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
+    "lastHarvestedAt": "2026-10-25T17:14:33.127Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
