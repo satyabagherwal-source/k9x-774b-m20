@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `79657a17`  
+> **Source Version**: `c8601f8f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:59:10.922Z  
+> **Timestamp**: 2026-10-25T02:25:26.219Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:59:09.819Z  
+> **Harvest Timestamp**: 2026-10-25T02:25:26.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -787,666 +787,73 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79657a17` (2026-10-21)
-**Commit Message**: Merge pull request #1022 from tschm/deps/clickhouse-0.15
+### Incident Patch 1: `c8601f8f` (2026-10-23)
+**Commit Message**: Merge pull request #1028 from tschm/ci/import-test-macos
 
-build(rust): bump clickhouse to 0.15.3
+ci(import-test): replace retired macos-10.15 runner
 
-**File**: `Cargo.lock` (modified, +44/-31)
+**File**: `.github/workflows/import-test.yml` (modified, +1/-2)
 ```diff
-@@ -322,7 +322,7 @@ dependencies = [
-  "arrow-schema",
-  "arrow-select",
-  "flatbuffers",
-- "lz4_flex",
-+ "lz4_flex 0.11.6",
-  "zstd",
- ]
+@@ -17,7 +17,7 @@ jobs:
+     runs-on: ${{ matrix.os }}
+     strategy:
+       matrix:
+-        os: [ubuntu-latest, macos-10.15, windows-latest]
++        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
+         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
+     steps:
+       - uses: actions/checkout@v7
+@@ -26,7 +26,6 @@ jobs:
+         uses: actions/setup-python@v6
+         with:
+           python-version: ${{ matrix.python-version }}
+-          architecture: x64
  
-@@ -1267,6 +1267,12 @@ dependencies = [
-  "hybrid-array",
- ]
- 
-+[[package]]
-+name = "bnum"
-+version = "0.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
-+
- [[package]]
- name = "bollard"
- version = "0.18.1"
-@@ -1683,41 +1689,56 @@ checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
- 
- [[package]]
- name = "clickhouse"
--version = "0.13.3"
-+version = "0.15.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9a9a81a1dffadd762ee662635ce409232258ce9beebd7cc0fa227df0b5e7efc0"
-+checksum = "d6ad2112cf4ad543ceed12e48b779e82e8f3a8172374cac98d59e59feda35c69"
- dependencies = [
-+ "bnum",
-  "bstr",
-  "bytes",
-  "cityhash-rs",
-- "clickhouse-derive",
-- "futures",
-+ "clickhouse-macros",
-+ "clickhouse-types",
-  "futures-channel",
-+ "futures-util",
-+ "half",
-+ "hashbrown 0.17.1",
-  "http-body-util",
-  "hyper 1.11.1",
-  "hyper-util",
-- "lz4_flex",
-- "replace_with",
-- "sealed",
-+ "lz4_flex 0.14.0",
-+ "rand 0.9.5",
-  "serde",
-- "static_assertions",
-- "thiserror 1.0.69",
-+ "serde_json",
-+ "thiserror 2.0.20",
-  "tokio",
-+ "tracing",
-+ "twox-hash 2.1.4",
-  "url",
- ]
- 
- [[package]]
--name = "clickhouse-derive"
--version = "0.2.0"
-+name = "clickhouse-macros"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d70f3e2893f7d3e017eeacdc9a708fbc29a10488e3ebca21f9df6a5d2b616dbb"
-+checksum = "ff6669899e23cb87b43daf7996f0ea3b9c07d0fb933d745bb7b815b052515ae3"
- dependencies = [
-  "proc-macro2",
-  "quote",
-  "serde_derive_internals",
-  "syn 2.0.119",
- ]
- 
-+[[package]]
-+name = "clickhouse-types"
-+version = "0.1.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d7ddab58fabf3bdde7b6fa401f72b9abc7566ff015264c89aaaa71cf1d173d06"
-+dependencies = [
-+ "bytes",
-+ "thiserror 2.0.20",
-+]
-+
- [[package]]
- name = "cmake"
- version = "0.1.58"
-@@ -5000,6 +5021,12 @@ dependencies = [
-  "twox-hash 2.1.4",
- ]
- 
-+[[package]]
-+name = "lz4_flex"
-+version = "0.14.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ecbdfe44b1bd960b68170b417450a628c43f7cf56bb3c5317e61cb230ee7f226"
-+
- [[package]]
- name = "lzma-sys"
- version = "0.1.20"
-@@ -5813,7 +5840,7 @@ dependencies = [
-  "futures",
-  "half",
-  "hashbrown 0.16.1",
-- "lz4_flex",
-+ "lz4_flex 0.11.6",
-  "num",
-  "num-bigint",
-  "object_store 0.12.5",
-@@ -7521,12 +7548,6 @@ version = "0.8.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
- 
--[[package]]
--name = "replace_with"
--version = "0.1.8"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "51743d3e274e2b18df81c4dc6caf8a5b8e15dbe799e0dca05c7617380094e884"
--
- [[package]]
- name = "reqwest"
- version = "0.11.27"
-@@ -7971,17 +7992,6 @@ version = "4.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "1c107b6f4780854c8b126e228ea8869f4d7b71260f962fefb57b996b8959ba6b"
- 
--[[package]]
--name = "sealed"
--version = "0.6.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "22f968c5ea23d555e670b449c1c5e7b2fc399fdaec1d304a17cd48e288abc107"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 2.0.119",
--]
--
- [[package]]
- name = "sec1"
- version = "0.7.3"
-@@ -9316,6 +9326,9 @@ name = "twox-hash"
- version = "2.1.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5283634e518fe9e82c7b20520bb4bc209009fd16c82077c802f8111ecbb0117a"
-+dependencies = [
-+ "rand 0.10.2",
-+]
- 
- [[package]]
- name = "typenum"
-```
-
-**File**: `connectorx-python/Cargo.lock` (modified, +68/-42)
-```diff
-@@ -237,7 +237,7 @@ dependencies = [
-  "arrow-schema",
-  "arrow-select",
-  "flatbuffers",
-- "lz4_flex",
-+ "lz4_flex 0.11.5",
-  "zstd",
- ]
- 
-@@ -1086,6 +1086,12 @@ dependencies = [
-  "generic-array",
- ]
- 
-+[[package]]
-+name = "bnum"
-+version = "0.13.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
-+
- [[package]]
- name = "borsh"
- version = "1.5.7"
-@@ -1209,6 +1215,9 @@ name = "bytes"
- version = "1.12.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-+dependencies = [
-+ "serde",
-+]
- 
- [[package]]
- name = "bytes-utils"
-@@ -1402,41 +1411,56 @@ dependencies = [
- 
- [[package]]
- name = "clickhouse"
--version = "0.13.3"
-+version = "0.15.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9a9a81a1dffadd762ee662635ce409232258ce9beebd7cc0fa227df0b5e7efc0"
-+checksum = "d6ad2112cf4ad543ceed12e48b779e82e8f3a8172374cac98d59e59feda35c69"
- dependencies = [
-+ "bnum",
-  "bstr",
-  "bytes",
-  "cityhash-rs",
-- "clickhouse-derive",
-- "futures",
-+ "clickhouse-macros",
-+ "clickhouse-types",
-  "futures-channel",
-+ "futures-util",
-+ "half 2.7.1",
-+ "hashbrown 0.17.1",
-  "http-body-util",
-  "hyper 1.11.1",
-  "hyper-util",
-- "lz4_flex",
-- "replace_with",
-- "sealed",
-+ "lz4_flex 0.14.0",
-+ "rand 0.9.1",
-  "serde",
-- "static_assertions",
-- "thiserror 1.0.69",
-+ "serde_json",
-+ "thiserror 2.0.20",
-  "tokio",
-+ "tracing",
-+ "twox-hash 2.1.5",
-  "url",
- ]
- 
- [[package]]
--name = "clickhouse-derive"
--version = "0.2.0"
-+name = "clickhouse-macros"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d70f3e2893f7d3e017eeacdc9a708fbc29a10488e3ebca21f9df6a5d2b616dbb"
-+checksum = "ff6669899e23cb87b43daf7996f0ea3b9c07d0fb933d745bb7b815b052515ae3"
- dependencies = [
-  "proc-macro2",
-  "quote",
-  "serde_derive_internals",
-  "syn 2.0.119",
- ]
- 
-+[[package]]
-+name = "clickhouse-types"
-+version = "0.1.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d7ddab58fabf3bdde7b6fa401f72b9abc7566ff015264c89aaaa71cf1d173d06"
-+dependencies = [
-+ "bytes",
-+ "thiserror 2.0.20",
-+]
-+
- [[package]]
- name = "cmake"
- version = "0.1.54"
-@@ -2882,7 +2906,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "778e2ac28f6c47af28e4907f13ffd1e1ddbd400980a9abd7c8df189bf578a5ad"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2975,6 +2999,12 @@ version = "0.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
- 
-+[[package]]
-+name = "foldhash"
-+version = "0.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
-+
- [[package]]
- name = "foreign-types"
- version = "0.3.2"
-@@ -3353,7 +3383,7 @@ checksum = "5971ac85611da7067dbfcabef3c70ebb5606018acd9e2a3903a0da507521e0d5"
- dependencies = [
-  "allocator-api2",
-  "equivalent",
-- "foldhash",
-+ "foldhash 0.1.5",
- ]
- 
- [[package]]
-@@ -3367,6 +3397,11 @@ name = "hashbrown"
- version = "0.17.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
-+dependencies = [
-+ "allocator-api2",
-+ "equivalent",
-+ "foldhash 0.2.0",
-+]
- 
- [[package]]
- name = "hashlink"
-@@ -3916,17 +3951,16 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
- 
- [[package]]
- name = "j4rs"
--version = "0.22.0"
-+version = "0.25.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dacf87fdd07b36f3124894a5bf20c8d418aaa28d4974d717672507f6d05cd31c"
-+checksum = "c26fb1429997a5d8f98777df359f0132f62905ecce1d3bc2836372045c67de89"
- dependencies = [
-  "cesu8",
-  "dunce",
-  "fs_extra",
-  "futures",
-  "java-locator",
-  "jni-sys",
-- "lazy_static",
-  "libc",
-  "libloading",
-  "log",
-@@ -4200,9 +4234,15 @@ version = "0.11.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "08ab2867e3eeeca90e844d1940eab391c9dc5228783db2ed999acbc0a9ed375a"
- dependencies = [
-- "twox-hash 2.1.1",
-+ "twox-hash 2.1.5",
- ]
- 
-+[[package]]
-+name = "lz4_flex"
-+version = "0.14.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ecbdfe44b1bd960b68170b417450a628c43f7cf56bb3c5317e61cb230ee7f226"
-+
- [[package]]
- name = "lzma-sys"
- version = "0.1.20"
-@@ -4885,7 +4925,7 @@ dependencies = [
-  "futures",
-  "half 2.7.1",
-  "hashbrown 0.16.1",
-- "lz4_flex",
-+ "lz4_flex 0.11.5",
-  "num",
-  "num-bigint",
-  "object_store",
-@@ -4896,7 +4936,7 @@ dependencies = [
-  "snap",
-  "thrift",
-  "tokio",
-- "twox-hash 2.1.1",
-+ "twox-hash 2.1.5",
-  "zstd",
- ]
- 
-@@ -6005,12 +6045,6 @@ dependencies = [
-  "bytecheck",
- ]
- 
--[[package]]
--name = "replace_with"
--version = "0.1.8"
--sourc
-```
-
-**File**: `connectorx/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ j4rs = { version = "0.25", optional = true }
- datafusion = { version = "50.3", optional = true }
- prusto = { version = "0.5", optional = true }
- serde = { version = "1", features = ["derive"], optional = true }
--clickhouse = { version = "0.13", features = ["lz4"], optional = true }
-+clickhouse = { version = "0.15", features = ["lz4"], optional = true }
- cidr-02 = { version = "0.2", package = "cidr", optional = true }
- pgvector = { version = "0.4", features = [
-   "postgres",
-```
-
-**File**: `connectorx/src/sources/clickhouse/mod.rs` (modified, +3/-2)
-```diff
-@@ -57,10 +57,11 @@ impl ClickHouseSource {
-             url.port().unwrap_or(8123)
-         );
- 
--        // clickhouse 0.13 decodes LZ4 only; newer servers default to ZSTD.
-+        // Only the client's `lz4` feature is enabled, so it decodes LZ4 only;
-+        // newer servers default to ZSTD.
-         let mut client = Client::default()
-             .with_url(&base_url)
--            .with_option("network_compression_method", "lz4");
-+            .with_setting("network_compression_method", "lz4");
- 
-         let database = url.path().trim_start_matches('/');
-         if !database.is_empty() {
+       - name: Check which python we use
+         run: |
 ```
 
 ---
 
-### Incident Patch 2: `cb0bbe5b` (2026-10-20)
-**Commit Message**: Merge branch 'main' into deps/clickhouse-0.15
+### Incident Patch 2: `79abb07c` (2026-10-23)
+**Commit Message**: ci(import-test): replace retired macos-10.15 runner
 
-**File**: `.github/workflows/ci.yml` (modified, +39/-2)
+GitHub retired the macos-10.15 image, so that matrix leg could not be
+scheduled. Test on macos-15-intel and macos-latest instead, matching the
+x86_64 and arm64 macOS wheels release.yml builds. Drop the hard-coded
+x64 architecture so the arm64 runner tests the arm64 wheel instead of
+an x64 Python under Rosetta.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/import-test.yml` (modified, +1/-2)
 ```diff
-@@ -139,11 +139,11 @@ jobs:
-     runs-on: ubuntu-latest
-     env:
-       # Force disable the GIL on free-threading because of https://github.com/sqlalchemy/sqlalchemy/discussions/13256
--      PYTHON_GIL: ${{ matrix.python-version == '3.14t' && '0' || '1' }}
-+      PYTHON_GIL: ${{ (matrix.python-version == '3.14t' || matrix.python-version == '3.15t') && '0' || '1' }}
-     # Note: No 'container' - we run directly on the VM to access Docker for Testcontainers
+@@ -17,7 +17,7 @@ jobs:
+     runs-on: ${{ matrix.os }}
      strategy:
        matrix:
--        python-version: ["3.14", "3.14t"]
-+        python-version: ["3.14", "3.14t", "3.15", "3.15t"]
- 
+-        os: [ubuntu-latest, macos-10.15, windows-latest]
++        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
+         python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
      steps:
        - uses: actions/checkout@v7
-@@ -219,6 +219,21 @@ jobs:
-         working-directory: connectorx-python
-         run: poetry install --no-root
+@@ -26,7 +26,6 @@ jobs:
+         uses: actions/setup-python@v6
+         with:
+           python-version: ${{ matrix.python-version }}
+-          architecture: x64
  
-+      # Measure the Rust code the Python tests exercise (connectorx and the
-+      # connectorx-python bindings). Only on 3.14: one instrumented build is
-+      # enough, and 3.14t would just report the same lines again.
-+      - name: Install cargo-llvm-cov
-+        if: matrix.python-version == '3.14'
-+        uses: taiki-e/install-action@cargo-llvm-cov
-+
-+      - name: Instrument the extension build for coverage
-+        if: matrix.python-version == '3.14'
-+        working-directory: connectorx-python
-+        run: |
-+          # show-env single-quotes its values; $GITHUB_ENV wants them bare.
-+          cargo llvm-cov show-env | tr -d "'" >> "$GITHUB_ENV"
-+          cargo llvm-cov clean --workspace --profraw-only
-+
-       - name: Test python (mssql-tds)
-         run: just test-python --mssql-driver=mssql-tds --deselect=connectorx/tests/test_mssql.py::test_mssql_driver_switch
-         # Integration tests provision required services at test time via Testcontainers
-@@ -230,3 +245,25 @@ jobs:
-       - name: Test python MSSQL runtime switch
-         working-directory: connectorx-python
-         run: poetry run pytest connectorx/tests/test_mssql.py::test_mssql_driver_switch -v -s
-+
-+      - name: Generate python coverage
-+        if: matrix.python-version == '3.14'
-+        working-directory: connectorx-python
-+        run: |
-+          # `just setup-python` builds with maturin develop --release.
-+          cargo llvm-cov report --release --lcov --output-path lcov-python.info
-+          {
-+            echo "### Rust coverage from the Python tests"
-+            echo '```text'
-+            cargo llvm-cov report --release --summary-only
-+            echo '```'
-+          } >> "$GITHUB_STEP_SUMMARY"
-+
-+      - name: Upload python coverage to Codecov
-+        if: matrix.python-version == '3.14'
-+        uses: codecov/codecov-action@v7
-+        with:
-+          files: connectorx-python/lcov-python.info
-+          flags: python-tests
-+          fail_ci_if_error: false
-+          token: ${{ secrets.CODECOV_TOKEN }}
-```
-
-**File**: `.github/workflows/import-test.yml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ jobs:
-     strategy:
-       matrix:
-         os: [ubuntu-latest, macos-10.15, windows-latest]
--        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
-     steps:
-       - uses: actions/checkout@v7
- 
-```
-
-**File**: `.github/workflows/release.yml` (modified, +4/-4)
-```diff
-@@ -15,7 +15,7 @@ jobs:
-       matrix:
-         platform: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '[{"arch":"x86_64","runs-on":"ubuntu-latest"}]' || '[{"arch":"x86_64","runs-on":"ubuntu-latest"},{"arch":"aarch64","runs-on":"ubuntu-22.04-arm"}]') }}
-         python-version:
--          ${{ fromJSON(github.event_name == 'workflow_dispatch' && '[["cp312-cp312","3.12"]]' || '[["cp310-cp310","3.10"],["cp311-cp311","3.11"],["cp312-cp312","3.12"],["cp313-cp313","3.13"],["cp314-cp314","3.14"],["cp314-cp314t","3.14t"]]') }}
-+          ${{ fromJSON(github.event_name == 'workflow_dispatch' && '[["cp312-cp312","3.12"]]' || '[["cp311-cp311","3.11"],["cp312-cp312","3.12"],["cp313-cp313","3.13"],["cp314-cp314","3.14"],["cp314-cp314t","3.14t"],["cp315-cp315","3.15"],["cp315-cp315t","3.15t"]]') }}
-     steps:
-       - uses: actions/checkout@v7
- 
-@@ -95,7 +95,7 @@ jobs:
-     strategy:
-       matrix:
-         os: ["windows-latest", "macos-15-intel"]
--        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t"]
-+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.14t", "3.15", "3.15t"]
-         include:
-           - os: "macos-15-intel"
-             features: "--features integrated-auth-gssapi"
-@@ -146,7 +146,7 @@ jobs:
-     runs-on: macos-latest
-     strategy:
-       matrix:
--        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t"]
-+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.14t", "3.15", "3.15t"]
-     steps:
-       - uses: actions/checkout@v7
- 
-@@ -195,7 +195,7 @@ jobs:
-     needs: [win-and-mac, linux]
-     strategy:
-       matrix:
--        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t"]
-+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.14t", "3.15", "3.15t"]
-         os:
-           [
-             macos-15-intel,
-```
-
-**File**: `Justfile` (modified, +16/-0)
-```diff
-@@ -25,6 +25,12 @@ test-ci:
-     cargo test --features src_mssql_tds --features dst_arrow --test test_mssql
-     cargo test --features src_mssql_tds --features dst_arrow --test test_mssql_types
-     cargo test --features src_mssql_tiberius,src_mssql_tds,dst_arrow --test test_mssql_runtime_switch
-+    cargo test --features src_postgres --features src_dummy --features dst_arrow --test test_arrow
-+    cargo test --features src_dummy --features dst_arrow --test test_arrow_stream
-+    cargo test --features src_csv --features dst_arrow --test test_csv
-+    cargo test --features src_mysql --features dst_arrow --test test_mysql
-+    cargo test --features src_clickhouse --features dst_arrow --test test_clickhouse
-+    cargo test --features src_trino --features dst_arrow --test test_trino
- 
- # Coverage is split into a unit and an integration report so each shows up
- # separately in Codecov. Both stay under cargo-llvm-cov's instrumented build
-@@ -60,6 +66,16 @@ coverage-integration:
-     just _reap-test-containers
-     cargo llvm-cov --no-report --features src_mssql_tiberius,src_mssql_tds,dst_arrow --test test_mssql_runtime_switch
-     just _reap-test-containers
-+    cargo llvm-cov --no-report --features src_postgres --features src_dummy --features dst_arrow --test test_arrow
-+    just _reap-test-containers
-+    cargo llvm-cov --no-report --features src_dummy --features dst_arrow --test test_arrow_stream
-+    cargo llvm-cov --no-report --features src_csv --features dst_arrow --test test_csv
-+    cargo llvm-cov --no-report --features src_mysql --features dst_arrow --test test_mysql
-+    just _reap-test-containers
-+    cargo llvm-cov --no-report --features src_clickhouse --features dst_arrow --test test_clickhouse
-+    just _reap-test-containers
-+    cargo llvm-cov --no-report --features src_trino --features dst_arrow --test test_trino
-+    just _reap-test-containers
-     cargo llvm-cov report --lcov --output-path lcov-integration.info
- 
- test-feature-gate:
-```
-
-**File**: `codecov.yml` (modified, +5/-4)
-```diff
-@@ -1,8 +1,9 @@
- codecov:
-   notify:
--    # ci.yml uploads two reports per commit (unit-tests and integration-tests).
--    # Wait for both, so the project status is not computed from one of them.
--    after_n_builds: 2
-+    # ci.yml uploads three reports per commit (unit-tests, integration-tests
-+    # and python-tests). Wait for all, so the project status is not computed
-+    # from a subset of them.
-+    after_n_builds: 3
- 
- coverage:
-   status:
-@@ -18,4 +19,4 @@ coverage:
- 
- comment:
-   layout: "diff, files"
--  after_n_builds: 2
-+  after_n_builds: 3
-```
-
-**File**: `connectorx-python/poetry.lock` (modified, +1/-1)
-```diff
-@@ -3205,4 +3205,4 @@ pyarrow = ["pyarrow"]
- [metadata]
- lock-version = "2.1"
- python-versions = ">=3.11,<3.15"
--content-hash = "367521e10ef36021189626a8e56a86880e36fd2c9493d6aebbf936411546a7cf"
-+content-hash = "8b40a23f875431e9efea0b14bc512a61d293b911a0d5d4a70e171ba3dbfc7d84"
-```
-
-**File**: `connectorx-python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ version = "0.4.7-alpha.1"
- name = "connectorx" # Target file name of maturin build
- readme = "README.md"
- license = { text = "MIT" }
--requires-python = ">=3.10"
-+requires-python = ">=3.11"
- dynamic = ["version"]
- 
- [project.urls]
-```
-
-**File**: `connectorx/tests/test_csv.rs` (modified, +0/-5)
-```diff
-@@ -12,7 +12,6 @@ use connectorx::{
- 
- #[test]
- #[should_panic]
--#[ignore]
- fn no_file() {
-     let mut source = CSVSource::new(&[]);
-     source.set_queries(&[CXQuery::naked("./a_fake_file.csv")]);
-@@ -24,7 +23,6 @@ fn no_file() {
- 
- #[test]
- #[should_panic]
--#[ignore]
- fn empty_file() {
-     let mut source = CSVSource::new(&[]);
-     source.set_queries(&[CXQuery::naked("./tests/data/empty.csv")]);
-@@ -42,7 +40,6 @@ fn empty_file() {
- }
- 
- #[test]
--#[ignore]
- fn load_and_parse() {
-     #[derive(Debug, PartialEq)]
-     enum Value {
-@@ -110,7 +107,6 @@ fn load_and_parse() {
- }
- 
- #[test]
--#[ignore]
- fn test_csv() {
-     let schema = [CSVTypeSystem::I64(false); 5];
-     let files = [
-@@ -145,7 +141,6 @@ fn test_csv() {
- }
- 
- #[test]
--#[ignore]
- fn test_csv_infer_schema() {
-     let files = [CXQuery::naked("./tests/data/infer_0.csv")];
-     let source = CSVSource::new(&[]);
+       - name: Check which python we use
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1028** (2026-10-23): ci(import-test): replace retired macos-10.15 runner (@tschm)
 - **PR #1025** (2026-10-20): Measure more of the test suite in coverage (@tschm)
 - **PR #1024** (2026-10-20): Drop Python 3.10 wheels and support (@tschm)
 - **PR #1022** (2026-10-21): build(rust): bump clickhouse to 0.15.3 (@tschm)
 - **PR #1021** (closed): build(rust): bump arrow from 56.2.1 to 60.0.0 (@dependabot[bot])
 - **PR #1020** (closed): build(rust): bump clickhouse from 0.13.3 to 0.15.3 (@dependabot[bot])
-- **PR #1019** (2026-10-19): build(rust): bump tokio from 1.53.1 to 1.53.3 (@dependabot[bot])
 
 ---
 
@@ -1466,101 +873,29 @@ build(rust): bump clickhouse to 0.15.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1022 from tschm/deps/clickhouse-0.15
+## X. Merge pull request #1028 from tschm/ci/import-test-macos
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/import-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79657a17`: Merge pull request #1022 from tschm/deps/clickhouse-0.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8601f8f`: Merge pull request #1028 from tschm/ci/import-test-macos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/import-test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "lz4_flex 0.11.6",
-[[package]]
-name = "bnum"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "119771309b95163ec7aaf79810da82f7cd0599c19722d48b9c03894dca833966"
-
-version = "0.15.3"
-checksum = "d6ad2112cf4ad543ceed12e48b779e82e8f3a8172374cac98d59e59feda35c69"
- "bnum",
- "clickhouse-macros",
- "clickhouse-types",
- "futures-util",
- "half",
- "hashbrown 0.17.1",
- "lz4_flex 0.14.0",
- "rand 0.9.5",
- "serde_json",
- "thiserror 2.0.20",
- "tracing",
- "twox-hash 2.1.4",
-name = "clickhouse-macros"
-version = "0.3.0"
-checksum = "ff6669899e23cb87b43daf7996f0ea3b9c07d0fb933d745bb7b815b052515ae3"
-[[package]]
-name = "clickhouse-types"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7ddab58fabf3bdde7b6fa401f72b9abc7566ff015264c89aaaa71cf1d173d06"
-dependencies = [
- "bytes",
- "thiserror 2.0.20",
-]
-
-[[package]]
-name = "lz4_flex"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecbdfe44b1bd960b68170b417450a628c43f7cf56bb3c5317e61cb230ee7f226"
-
- "lz4_flex 0.11.6",
-dependencies = [
- "rand 0.10.2",
-]
+        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "lz4_flex",
-version = "0.13.3"
-checksum = "9a9a81a1dffadd762ee662635ce409232258ce9beebd7cc0fa227df0b5e7efc0"
- "clickhouse-derive",
- "futures",
- "lz4_flex",
- "replace_with",
- "sealed",
- "static_assertions",
- "thiserror 1.0.69",
-name = "clickhouse-derive"
-version = "0.2.0"
-checksum = "d70f3e2893f7d3e017eeacdc9a708fbc29a10488e3ebca21f9df6a5d2b616dbb"
- "lz4_flex",
-[[package]]
-name = "replace_with"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51743d3e274e2b18df81c4dc6caf8a5b8e15dbe799e0dca05c7617380094e884"
-
-[[package]]
-name = "sealed"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22f968c5ea23d555e670b449c1c5e7b2fc399fdaec1d304a17cd48e288abc107"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
+        os: [ubuntu-latest, macos-10.15, windows-latest]
+          architecture: x64
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79657a17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8601f8f` are properly handled with clean fallback behavior.

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T02:19:01.444Z",
-  "total_cycles_completed": 4583,
-  "total_learnings_persisted": 4583,
-  "total_rules_promoted": 3834,
+  "last_updated": "2026-10-25T02:27:22.999Z",
+  "total_cycles_completed": 4587,
+  "total_learnings_persisted": 4587,
+  "total_rules_promoted": 3842,
   "history": [
-    {
-      "timestamp": "2026-10-22T19:22:50.351Z",
-      "repository": "qdrant/qdrant",
-      "learningId": "learn-github-qdrant-qdrant",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:29:19.066Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:35:37.333Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T19:42:15.921Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T19:42:17.363Z",
       "repository": "flox/flox",
@@ -1403,6 +1375,34 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:25:23.235Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:25:26.583Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:26:47.974Z",
+      "repository": "chakra-ui/zag",
+      "learningId": "learn-github-chakra-ui-zag",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:27:22.999Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

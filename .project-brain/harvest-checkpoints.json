@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T02:19:01.449Z",
+  "last_updated": "2026-10-25T02:27:23.003Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5346,14 +5346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chakra-ui-zag",
-      "content_hash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
-      "verified_at": "2026-10-22T16:10:00.336Z",
+      "content_hash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
+      "verified_at": "2026-10-25T02:26:47.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:10:00.336Z"
+      "last_updated": "2026-10-25T02:26:47.977Z"
     },
     "sharkdp/hyperfine": {
       "repository": "sharkdp/hyperfine",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
-      "verified_at": "2026-10-21T18:59:11.395Z",
+      "content_hash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
+      "verified_at": "2026-10-25T02:25:26.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:59:11.395Z"
+      "last_updated": "2026-10-25T02:25:26.586Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
-      "verified_at": "2026-10-22T15:53:29.837Z",
+      "content_hash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
+      "verified_at": "2026-10-25T02:25:23.239Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:53:29.837Z"
+      "last_updated": "2026-10-25T02:25:23.239Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
-      "verified_at": "2026-10-20T10:23:07.472Z",
+      "content_hash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
+      "verified_at": "2026-10-25T02:27:23.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T10:23:07.472Z"
+      "last_updated": "2026-10-25T02:27:23.002Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

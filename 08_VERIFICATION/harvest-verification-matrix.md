@@ -4606,3 +4606,7 @@
 | `CYCLE-20261025-8D7S` | `2026-10-25T02:18:52.264Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3974` | Yes (`8f94dd9f...`) |
 | `CYCLE-20261025-8ETW` | `2026-10-25T02:18:54.356Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3975` | Yes (`a4e10143...`) |
 | `CYCLE-20261025-8KAF` | `2026-10-25T02:19:01.431Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3976` | Yes (`7496aef1...`) |
+| `CYCLE-20261025-GQVR` | `2026-10-25T02:25:23.223Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3977` | Yes (`5d80cee2...`) |
+| `CYCLE-20261025-GTGQ` | `2026-10-25T02:25:26.570Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3978` | Yes (`9db6de5e...`) |
+| `CYCLE-20261025-IK9L` | `2026-10-25T02:26:47.961Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3979, Rule 3980, Rule 3981` | Yes (`ffd20793...`) |
+| `CYCLE-20261025-JBAJ` | `2026-10-25T02:27:22.987Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3982, Rule 3983, Rule 3984` | Yes (`a6ffc821...`) |

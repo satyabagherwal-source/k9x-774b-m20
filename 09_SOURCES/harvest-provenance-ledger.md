@@ -4613,3 +4613,7 @@ Every entry in this ledger must capture:
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `6334056c` | Multi-dimensional audit evidence | 2026-10-25T02:18:52.267Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a2fda0ef` | Multi-dimensional audit evidence | 2026-10-25T02:18:54.359Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `fb781234` | Multi-dimensional audit evidence | 2026-10-25T02:19:01.435Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `1bcd8820` | Multi-dimensional audit evidence | 2026-10-25T02:25:23.226Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c8601f8f` | Multi-dimensional audit evidence | 2026-10-25T02:25:26.573Z |
+| `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `86add962` | Multi-dimensional audit evidence | 2026-10-25T02:26:47.964Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-25T02:27:22.990Z |

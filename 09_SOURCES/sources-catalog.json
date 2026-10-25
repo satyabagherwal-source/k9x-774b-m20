@@ -3483,10 +3483,10 @@
     "repository": "chakra-ui/zag",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/zag",
-    "sourceVersion": "b44a5dec",
+    "sourceVersion": "86add962",
     "license": "MIT",
-    "contentHash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
-    "lastHarvestedAt": "2026-10-22T16:10:00.324Z",
+    "contentHash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
+    "lastHarvestedAt": "2026-10-25T02:26:47.964Z",
     "learningId": "learn-github-chakra-ui-zag"
   },
   "sharkdp-hyperfine": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "79657a17",
+    "sourceVersion": "c8601f8f",
     "license": "MIT",
-    "contentHash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
-    "lastHarvestedAt": "2026-10-21T18:59:11.387Z",
+    "contentHash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
+    "lastHarvestedAt": "2026-10-25T02:25:26.573Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "e8ee6271",
+    "sourceVersion": "1bcd8820",
     "license": "MIT",
-    "contentHash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
-    "lastHarvestedAt": "2026-10-22T15:53:29.824Z",
+    "contentHash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
+    "lastHarvestedAt": "2026-10-25T02:25:23.226Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
-    "lastHarvestedAt": "2026-10-20T10:23:07.466Z",
+    "contentHash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
+    "lastHarvestedAt": "2026-10-25T02:27:22.990Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

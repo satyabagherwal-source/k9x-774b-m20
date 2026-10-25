@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:19:01.378Z",
+  "last_updated": "2026-10-25T02:27:22.934Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5334,8 +5334,8 @@
       "slug": "chakra-ui-zag",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/zag",
-      "source_version": "b44a5dec",
-      "content_hash": "e621f5677d6443ed875b5059055c60ef0f1fd06ca22d5af96fd6773bc12f68d4",
+      "source_version": "86add962",
+      "content_hash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "promoted_rules": [
@@ -5348,6 +5348,21 @@
           "number": 3625,
           "title": "combobox): scroll the list to the top when the input changes (#3482)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3979,
+          "title": "Conditional Return-Focus Suppression via Focus-Movement Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3980,
+          "title": "Relative Rank-Ordered Insertion for Batched Asynchronous DOM Measurements",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3981,
+          "title": "Cross-Browser RTL Scroll Coordinate System Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5355,7 +5370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:10:00.259Z",
+      "verified_at": "2026-10-25T02:26:47.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42653,8 +42668,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "79657a17",
-      "content_hash": "aaa3606246db50da38c9afb48923758bac9e7c9ca36aa9cd4d665ad616f62014",
+      "source_version": "c8601f8f",
+      "content_hash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -42682,6 +42697,11 @@
           "number": 3591,
           "title": "Merge pull request #1022 from tschm/deps/clickhouse-0.15",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3978,
+          "title": "Merge pull request #1028 from tschm/ci/import-test-macos",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42689,7 +42709,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:59:11.311Z",
+      "verified_at": "2026-10-25T02:25:26.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46311,8 +46331,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "e8ee6271",
-      "content_hash": "d8b9d93c92ab290105439a0df084de08e2a45b76c057d45405dbdd1e00f48b7f",
+      "source_version": "1bcd8820",
+      "content_hash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -46340,6 +46360,11 @@
           "number": 3618,
           "title": "Add temporal_minimal build tag to compile out GCS archival (#12593)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3977,
+          "title": "Prevent RPCFactory connection leaks after shutdown (#12658)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46347,7 +46372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:53:29.751Z",
+      "verified_at": "2026-10-25T02:25:23.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -104087,7 +104112,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "885543309b2b537e81f44091d645725f5371d660a8026192bf0316bc104c0ebc",
+      "content_hash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
@@ -104100,6 +104125,21 @@
           "number": 3131,
           "title": "Time-Embedding Bias-Coupling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3982,
+          "title": "Quantization Masking & Sub-ULP Delta Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3983,
+          "title": "Coupled Module Replacement and Parameter Folding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3984,
+          "title": "Iterative Data-Space Reconstruction Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -104107,7 +104147,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T10:23:07.412Z",
+      "verified_at": "2026-10-25T02:27:22.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -116806,6 +116846,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:19:01.366Z"
+    },
+    "rule-3977": {
+      "learning_id": "rule-3977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3977,
+      "title": "Prevent RPCFactory connection leaks after shutdown (#12658)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "1bcd8820",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:25:23.160Z"
+    },
+    "rule-3978": {
+      "learning_id": "rule-3978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3978,
+      "title": "Merge pull request #1028 from tschm/ci/import-test-macos",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "c8601f8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:25:26.505Z"
+    },
+    "rule-3979": {
+      "learning_id": "rule-3979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3979,
+      "title": "Conditional Return-Focus Suppression via Focus-Movement Verification",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "86add962",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:26:47.895Z"
+    },
+    "rule-3980": {
+      "learning_id": "rule-3980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3980,
+      "title": "Relative Rank-Ordered Insertion for Batched Asynchronous DOM Measurements",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "86add962",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:26:47.895Z"
+    },
+    "rule-3981": {
+      "learning_id": "rule-3981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3981,
+      "title": "Cross-Browser RTL Scroll Coordinate System Normalization",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "86add962",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:26:47.895Z"
+    },
+    "rule-3982": {
+      "learning_id": "rule-3982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3982,
+      "title": "Quantization Masking & Sub-ULP Delta Preservation Invariant",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:27:22.923Z"
+    },
+    "rule-3983": {
+      "learning_id": "rule-3983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3983,
+      "title": "Coupled Module Replacement and Parameter Folding Invariant",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:27:22.923Z"
+    },
+    "rule-3984": {
+      "learning_id": "rule-3984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3984,
+      "title": "Iterative Data-Space Reconstruction Contract",
+      "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:27:22.923Z"
     }
   },
   "aliases": {

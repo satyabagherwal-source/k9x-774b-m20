@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `e8ee6271`  
+> **Source Version**: `1bcd8820`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:53:29.405Z  
+> **Timestamp**: 2026-10-25T02:25:22.873Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:53:29.397Z  
+> **Harvest Timestamp**: 2026-10-25T02:25:22.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23918 stars
+- **Stars / Engagement**: 23965 stars
 
 ---
 
@@ -2121,827 +2121,669 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25e47f57` (2026-10-21)
-**Commit Message**: Add temporal_minimal build tag to compile out GCS archival (#12593)
+### Incident Patch 1: `67d8427b` (2026-10-22)
+**Commit Message**: Prevent RPCFactory connection leaks after shutdown (#12658)
 
 ## What changed?
-
-Added a `temporal_minimal` build tag.
-
-As the smallest possible example of the approach, it compiles out one
-integration: Google Cloud Storage archival. `temporal_with_gstorage`
-opts it back in.
-
-**The default build is unchanged.**
-
-CI tests both variants: `make unit-test-build-tags` re-runs the unit
-tests of every package with a `temporal_minimal`-constrained file (found
-automatically), and `make build-tags-check` compiles everything with
-`temporal_minimal` and checks which packages each `temporal_with_*` tag
-compiles out. See `docs/development/build-tags.md`.
+Use one mutex for both RPCFactory connection caches and prevent cache
+insertion after shutdown. Connections requested after `Close()` are
+returned closed.
 
 ## Why?
+A component still winding down can create a connection after the
+shutdown sweep, leaking its goroutines. Addresses the race described in
+#12642.
 
-Every server binary includes the Google Cloud Storage SDK, even when
-archival to GCS is never configured.
+## How did you test it?
+`go test -tags test_dep -race ./common/rpc/...` and `make lint-code-fast
+GOLANGCI_LINT_FIX=false` pass. New tests cover cached connections,
+requests after shutdown, and creation paused across `Close()`.
 
-|                    | default  | `temporal_minimal`          |
-| ------------------ | -------- | --------------------------- |
-| darwin/arm64       | 103.0 MB | 100.2 MB (−2.75 MB, −2.7%)  |
-| linux/amd64        | 107.7 MB | 105.0 MB (−2.76 MB, −2.6%)  |
-| packages compiled  | 1442     | 1407                        |
+## Potential risks
+Remote frontend cache hits now take the shared read lock; TLS
+configuration and dialing remain outside the lock.
 
-`cloud.google.com/go/storage` and `common/archiver/gcloud` leave the
-build entirely.
-
-**This might seem sma
-
-**File**: `.github/workflows/run-tests.yml` (modified, +7/-0)
+**File**: `common/rpc/connection_cache_test.go` (modified, +6/-6)
 ```diff
-@@ -284,6 +284,13 @@ jobs:
-           export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
-           ./develop/github/monitor_test.sh make unit-test-coverage
+@@ -24,16 +24,16 @@ func newCacheTestFactory() *RPCFactory {
+ }
  
-+      - name: Run unit tests with build tags
-+        if: ${{ !cancelled() }}
-+        timeout-minutes: ${{ fromJSON(env.GITHUB_TIMEOUT) }}
-+        run: |
-+          export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
-+          ./develop/github/monitor_test.sh make unit-test-build-tags
-+
-       - name: Post-test reporting
-         if: always()
-         uses: ./.github/actions/post-test-reporting
+ func cachedConn(f *RPCFactory, hostName string) (*grpc.ClientConn, bool) {
+-	f.internodeGRPCConnections.RLock()
+-	defer f.internodeGRPCConnections.RUnlock()
+-	c, ok := f.internodeGRPCConnections.conns[hostName]
++	f.connectionsMu.RLock()
++	defer f.connectionsMu.RUnlock()
++	c, ok := f.internodeGRPCConnections[hostName]
+ 	return c, ok
+ }
+ 
+ func cachedConnCount(f *RPCFactory) int {
+-	f.internodeGRPCConnections.RLock()
+-	defer f.internodeGRPCConnections.RUnlock()
+-	return len(f.internodeGRPCConnections.conns)
++	f.connectionsMu.RLock()
++	defer f.connectionsMu.RUnlock()
++	return len(f.internodeGRPCConnections)
+ }
+ 
+ // dial returns nil after logging Fatal, which a no-op logger does not act on.
 ```
 
-**File**: `Makefile` (modified, +58/-5)
+**File**: `common/rpc/rpc.go` (modified, +60/-43)
 ```diff
-@@ -18,6 +18,7 @@ ci-build-misc: \
- 	shell-check \
- 	goimports \
- 	gomodtidy \
-+	build-tags-check \
- 	ensure-no-changes
+@@ -61,19 +61,18 @@ type RPCFactory struct {
+ 	requireRemoteClusterAuth bool
+ 	monitor                  membership.Monitor
+ 	// A OnceValues wrapper for createLocalFrontendHTTPClient.
+-	localFrontendClient      func() (*common.FrontendHTTPClient, error)
+-	internodeGRPCConnections struct {
+-		sync.RWMutex
+-		conns map[string]*grpc.ClientConn
+-	}
++	localFrontendClient func() (*common.FrontendHTTPClient, error)
++
++	// Guards closed and both connection maps.
++	connectionsMu            sync.RWMutex
++	closed                   bool
++	internodeGRPCConnections map[string]*grpc.ClientConn
++	remoteFrontendGRPCConns  map[string]*grpc.ClientConn
++
+ 	internodeConnCleanupTicker *time.Ticker
+ 	// A OnceValue wrapper for createLocalFrontendGRPCConnection.
+ 	localFrontendGRPCConn func() *grpc.ClientConn
  
- # Delete all build artifacts
-@@ -49,9 +50,11 @@ VISIBILITY_DB ?= temporal_visibility
- # gRPC client (storage.NewGRPCClient). Related issue: https://github.com/googleapis/google-cloud-go/issues/12343
- ALL_BUILD_TAGS := disable_grpc_modules,$(BUILD_TAG)
- ALL_TEST_TAGS := $(ALL_BUILD_TAGS),test_dep,$(TEST_TAG)
-+MINIMAL_TEST_TAGS = $(ALL_TEST_TAGS),temporal_minimal
- BUILD_TAG_FLAG := -tags $(ALL_BUILD_TAGS)
- TEST_TAG_FLAG := -tags $(ALL_TEST_TAGS)
+-	// Remote frontend connections, keyed by rpcAddress. Dialing one address
+-	// must not block lookups for another.
+-	remoteFrontendGRPCConns sync.Map // map[string]*grpc.ClientConn
+-
+ 	// TODO: Remove these flags once the keepalive settings are rolled out
+ 	EnableInternodeServerKeepalive bool
+ 	EnableInternodeClientKeepalive bool
+@@ -122,7 +121,8 @@ func NewFactory(
+ 	}
+ 	f.grpcListener = sync.OnceValue(f.createGRPCListener)
+ 	f.localFrontendClient = sync.OnceValues(f.createLocalFrontendHTTPClient)
+-	f.internodeGRPCConnections.conns = make(map[string]*grpc.ClientConn)
++	f.internodeGRPCConnections = make(map[string]*grpc.ClientConn)
++	f.remoteFrontendGRPCConns = make(map[string]*grpc.ClientConn)
+ 	f.internodeConnCleanupTicker = time.NewTicker(internodeConnCleanupInterval)
+ 	f.localFrontendGRPCConn = sync.OnceValue(f.createLocalFrontendGRPCConnection)
+ 	return f
+@@ -239,22 +239,34 @@ func getListenIP(cfg *config.RPC, logger log.Logger) net.IP {
+ // CreateRemoteFrontendGRPCConnection returns the shared connection for cross-cluster
+ // calls to rpcAddress, dialing it on first use. Callers must not close it.
+ func (d *RPCFactory) CreateRemoteFrontendGRPCConnection(rpcAddress string) *grpc.ClientConn {
+-	if conn, ok := d.remoteFrontendGRPCConns.Load(rpcAddress); ok {
+-		return conn.(*grpc.ClientConn) //nolint:revive // unchecked-type-assertion
++	d.connectionsMu.RLock()
++	conn, ok := d.remoteFrontendGRPCConns[rpcAddress]
++	d.connectionsMu.RUnlock()
++	if ok {
++		return conn
+ 	}
  
-+
- # 20 minutes is the upper bound defined for all tests. (Tests in CI take up to about 14:30 now)
- # If you change this, also change .github/workflows/run-tests.yml!
- # The timeout in the GH workflow must be larger than this to avoid GH timing out the action,
-@@ -133,6 +136,11 @@ UNIT_TEST_DIRS := $(filter-out $(FUNCTIONAL_TEST_ROOT)% $(FUNCTIONAL_TEST_XDC_RO
- # Testcore unit tests are filtered out by the FUNCTIONAL_TEST_ROOT pattern, need to add them back manually.
- UNIT_TEST_DIRS += $(TESTCORE_UNITTESTS)
- endif
-+
-+# Packages with a file constrained by temporal_minimal.
-+MINIMAL_DIRS := $(sort $(addprefix ./,$(dir $(shell git grep -lE '^//go:build .*temporal_minimal([^a-z0-9_]|$$)' -- '*.go'))))
-+# The unit test packages among MINIMAL_DIRS.
-+MINIMAL_UNIT_TEST_DIRS := $(filter $(UNIT_TEST_DIRS),$(MINIMAL_DIRS))
- SYSTEM_WORKFLOWS_ROOT := ./service/worker
+-	conn := d.dialRemoteFrontendGRPCConnection(rpcAddress)
++	newConn := d.dialRemoteFrontendGRPCConnection(rpcAddress)
+ 	// Fatal may return under a non-fatal logger; caching nil would wedge this address.
+-	if conn == nil {
++	if newConn == nil {
+ 		return nil
+ 	}
  
- PINNED_DEPENDENCIES := \
-@@ -423,17 +431,24 @@ lint-code-fast:
- 		$(MAKE) GOLANGCI_LINT_BASE_REV="$$base" LINT_CODE_TARGETS="$$targets" lint-code; \
- 	fi
+-	// Dialed outside the lock, so concurrent callers can race; the loser closes its own.
+-	actual, loaded := d.remoteFrontendGRPCConns.LoadOrStore(rpcAddress, conn)
+-	if loaded {
+-		_ = conn.Close()
++	d.connectionsMu.Lock()
++	defer d.connectionsMu.Unlock()
++	if d.closed {
++		// Callers require a non-nil connection, even after shutdown.
++		_ = newConn.Close()
++		return newConn
++	}
++	// Connection creation runs unlocked. Recheck for a connection cached by another caller.
++	existing, ok := d.remoteFrontendGRPCConns[rpcAddress]
++	if ok {
++		_ = newConn.Close()
++		return existing
+ 	}
+-	return actual.(*grpc.ClientConn) //nolint:revive // unchecked-type-assertion
++	d.remoteFrontendGRPCConns[rpcAddress] = newConn
++	return newConn
+ }
  
--lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
--	@printf $(COLOR) "Linting code..."
-+# Lints the Go packages $(2) with the build tags $(1).
-+define lint-go
- 	@$(GOLANGCI_LINT) run \
- 		--verbose \
--		--build-tags $(ALL_TEST_TAGS) \
-+		--build-tags $(1) \
- 		--timeout 10m \
- 		--fix=$(GOLANGCI_LINT_FIX) \
- 		--new-from-rev=$(GOLANGCI_LINT_BASE_REV) \
- 		--config=.github/.golangci.yml \
--		$(LINT_CODE_TARGETS)
--	@go vet -tags $(ALL_TEST_TAGS) -vettool="$(ERRORTYPE)" -style-check=false $(LINT_CODE_TARGETS)
-+		$(2)
-+	@go vet -tags $(1) -vettool="$(ERRORTYPE)" -style-check=false $(2)
-+endef
-+
-+lint-code: $(GOLANGCI_LINT) $(ERRORTYPE)
-+	@printf $(COLOR) "Linting code..."
-+	$(call lint-go,$(ALL_TEST_TAGS),$(LINT_CODE_TARGETS))
-+	@printf $(COLOR) "Linting code with temporal_minimal..."
-+	$(call lint-go,$(MINIMAL_TEST_TAGS),$(MINIMAL_DIRS))
+ func (d *RPCFactory) dialRemoteFrontendGRPCConnection(rpcAddress string) *grpc.ClientConn {
+@@ -318,9 +330,9 @@ func (d *RPCFactory) createInternodeGRPCConnection(hostName string, serviceName
+ 	d.maybeCleanupInternodeConns()
  
- lint-yaml: $(YAMLFMT)
- 	@printf $(COLOR) "Checking YAML formatting..."
-@@ -522,6 +537,39 @@ workflowcheck: $(WORKFLOWCHECK)
- 		$(WORKFLOWCHECK) "$$dir" ; \
- 	done
+ 	// Reuse the cached connection unless it has been shut down, in which case re-dial.
+-	d.internodeGRPCConnections.RLock()
+-	conn, ok := d.internodeGRPCConnections.conns[hostName]
+-	d.internodeGRPCConnections.RUnlock()
++	d.connectionsMu.RLock()
++	conn, ok := d.internodeGRPCConnections[hostName]
++	d.connectionsMu.RUnlock()
+ 	if ok && conn.GetState() != connectivity.Shutdown {
+ 		return conn
+ 	}
+@@ -340,13 +352,20 @@ func (d *RPCFactory) createInternodeGRPCConnection(hostName string, serviceName
+ 		return nil
+ 	}
  
-+comma := ,
-+
-+# Packages that temporal_minimal compiles out of the server unless the temporal_with_* build tag at the
-+# end of the variable name is set. Each temporal_with_* tag needs one.
-+EXCLUDED_PACKAGES_temporal_with_gstorage := cloud.google.com/go/storage go.temporal.io/server/common/archiver/gcloud
-+
-+# $(call server-deps,<tags>): the packages the server depends on when built with <tags>.
-+server-deps = $(shell CGO_ENABLED=$(CGO_ENABLED) go list -tags $(ALL_BUILD_TAGS),$(1) -deps ./cmd/server)
-+
-+# $(call expect-deps,<tags>,<packages>): fails unless the server built with <tags> depends on all <packages>.
-+expect-deps = $(if $(filter-out $(call server-deps,$(1)),$(2)),\
-+	$(error Server built with tags "$(1)" doesn't depend on: $(filter-out $(call server-deps,$(1)),$(2))))
-+
-+# $(call reject-deps,<tags>,<packages>): fails if the server built with <tags> depends on any of <packages>.
-+reject-deps = $(if $(filter $(2),$(call server-deps,$(1))),\
-+	$(error Server built with tags "$(1)" depends on: $(filter $(2),$(call server-deps,$(1)))))
-+
-+# $(call check-build-tag,<tag>): temporal_minimal must compile the packages of <tag> out of the server,
-+# and adding <tag> must bring them back.
-+define check-build-tag
-+$(if $(EXCLUDED_PACKAGES_$(1)),,$(error EXCLUDED_PACKAGES_$(1) is not set))
-+$(call expect-deps,,$(EXCLUDED_PACKAGES_$(1)))
-+$(call reject-deps,temporal_minimal,$(EXCLUDED_PACKAGES_$(1)))
-+$(call expect-deps,temporal_minimal$(comma)$(1),$(EXCLUDED_PACKAGES_$(1)))
-+endef
-+
-+# Compiles every package with temporal_minimal, and checks the packages each temporal_with_* tag
-+# compiles out of the server.
-+build-tags-check:
-+	@printf $(COLOR) "Check build tags..."
-+	CGO_ENABLED=$(CGO_ENABLED) go build -tags $(ALL_BUILD_TAGS),temporal_minimal ./...
-+	$(foreach tag,$(sort $(shell git grep -ohE 'temporal_with_[a-z0-9_]+' -- '*.go')),$(call check-build-tag,$(tag)))
-+
- check: lint shell-check
+-	d.internodeGRPCConnections.Lock()
+-	defer d.internodeGRPCConnections.Unlock()
+-	if existing, ok := d.internodeGRPCConnections.conns[hostName]; ok && existing.GetState() != connectivity.Shutdown {
++	d.connectionsMu.Lock()
++	defer d.connectionsMu.Unlock()
++	if d.closed {
++		// Callers require a non-nil connection, even after shutdown.
++		_ = newConn.Close()
++		return newConn
++	}
++	// Connection creation runs unlocked. Recheck for a connection cached by another caller.
++	existing, ok := d.internodeGRPCConnections[hostName]
++	if ok && existing.GetState() != connectivity.Shutdown {
+ 		_ = newConn.Close()
+ 		return existing
+ 	}
+-	d.internodeGRPCConnections.conns[hostName] = newConn
++	d.internodeGRPCConnections[hostName] = newConn
+ 	return newConn
+ }
  
- ##### Tests #####
-@@ -597,6 +645,11 @@ unit-test-coverage: prepare-coverage-test
- 	go run ./cmd/tools/test-runner test --gotestsum-path=$(GOTESTSUM) --max-attempts=$(MAX_TEST_ATTEMPTS) $(TEST_RUNNER_TIMEOUT_ARG) --junitfile=$(NEW_REPORT) -- \
- 		$(COMPILED_TEST_ARGS) -coverprofile=$(NEW_COVER_PROFILE) $(UNIT_TEST_DIRS)
+@@ -361,11 +380,11 @@ func (d *RPCFactory) maybeCleanupInternodeConns() {
  
-+# Runs the unit tests of MINIMAL_UNIT_TEST_DIRS with temporal_minimal.
-+unit-test-build-tags:
-+	$(if $(MINIMAL_UNIT_TEST_DIRS),,$(error No pack
+ // Removes shut-down cached connections; never closes live ones.
+ func (d *RPCFactory) cleanupInternodeConns() {
+-	d.inte
 ```
 
-**File**: `common/archiver/constants.go` (modified, +7/-0)
+**File**: `common/rpc/rpc_test.go` (modified, +90/-0)
 ```diff
-@@ -22,6 +22,13 @@ const (
- 	ErrReasonHistoryMutated = "history was mutated"
+@@ -1,14 +1,18 @@
+ package rpc
+ 
+ import (
++	"crypto/tls"
+ 	"sync"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
+ 	"go.temporal.io/server/common/primitives"
++	"go.temporal.io/server/common/rpc/encryption"
++	"go.temporal.io/server/common/testing/await"
+ 	"google.golang.org/grpc"
++	"google.golang.org/grpc/connectivity"
  )
  
-+// URI schemes of the built-in archivers.
-+const (
-+	URISchemeFilestore = "file"
-+	URISchemeS3store   = "s3"
-+	URISchemeGstorage  = "gs"
-+)
+ func TestCreateLocalFrontendGRPCConnectionIsCached(t *testing.T) {
+@@ -63,3 +67,89 @@ func TestCreateRemoteFrontendGRPCConnection_ConcurrentSameAddressConverges(t *te
+ 	}
+ 	t.Cleanup(func() { _ = conns[0].Close() })
+ }
 +
- var (
- 	// ErrInvalidURI is the error for invalid URI
- 	ErrInvalidURI = errors.New("URI is invalid")
-```
-
-**File**: `common/archiver/filestore/history_archiver.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ import (
- 
- const (
- 	// URIScheme is the scheme for the filestore implementation
--	URIScheme = "file"
-+	URIScheme = archiver.URISchemeFilestore
- 
- 	errEncodeHistory = "failed to encode history batches"
- 	errMakeDirectory = "failed to make directory"
-```
-
-**File**: `common/archiver/gcloud/history_archiver.go` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ var (
- 
- const (
- 	// URIScheme is the scheme for the gcloud storage implementation
--	URIScheme = "gs"
-+	URIScheme = archiver.URISchemeGstorage
- 
- 	targetHistoryBlobSize = 2 * 1024 * 1024 // 2MB
- 	errEncodeHistory      = "failed to encode history batches"
-```
-
-**File**: `common/archiver/provider/provider.go` (modified, +8/-16)
-```diff
-@@ -8,7 +8,6 @@ import (
- 
- 	"go.temporal.io/server/common/archiver"
- 	"go.temporal.io/server/common/archiver/filestore"
--	"go.temporal.io/server/common/archiver/gcloud"
- 	"go.temporal.io/server/common/archiver/s3store"
- 	"go.temporal.io/server/common/config"
- 	"go.temporal.io/server/common/log"
-@@ -147,20 +146,16 @@ func (p *archiverProvider) GetHistoryArchiver(scheme string) (historyArchiver ar
- 
- 	if historyArchiver == nil {
- 		switch scheme {
--		case filestore.URIScheme:
-+		case archiver.URISchemeFilestore:
- 			if p.historyArchiverConfigs.Filestore == nil {
- 				return nil, ErrArchiverConfigNotFound
- 			}
- 			historyArchiver, err = filestore.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Filestore)
- 
--		case gcloud.URIScheme:
--			if p.historyArchiverConfigs.Gstorage == nil {
--				return nil, ErrArchiverConfigNotFound
--			}
--
--			historyArchiver, err = gcloud.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Gstorage)
-+		case archiver.URISchemeGstorage:
-+			historyArchiver, err = p.newGstorageHistoryArchiver()
- 
--		case s3store.URIScheme:
-+		case archiver.URISchemeS3store:
- 			if p.historyArchiverConfigs.S3store == nil {
- 				return nil, ErrArchiverConfigNotFound
- 			}
-@@ -212,21 +207,18 @@ func (p *archiverProvider) GetVisibilityArchiver(scheme string) (archiver.Visibi
- 
- 	if visibilityArchiver == nil {
- 		switch scheme {
--		case filestore.URIScheme:
-+		case archiver.URISchemeFilestore:
- 			if p.visibilityArchiverConfigs.Filestore == nil {
- 				return nil, ErrArchiverConfigNotFound
- 			}
- 			visibilityArchiver, err = filestore.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Filestore)
--		case s3store.URIScheme:
-+		case archiver.URISchemeS3store:
- 			if p.visibilityArchiverConfigs.S3store == nil {
- 				return nil, ErrArchiverConfigNotFound
- 			}
- 			visibilityArchiver, err = s3store.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.S3store)
--		case gcloud.URIScheme:
--			if p.visibilityArchiverConfigs.Gstorage == nil {
--				return nil, ErrArchiverConfigNotFound
--			}
--			visibilityArchiver, err = gcloud.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Gstorage)
-+		case archiver.URISchemeGstorage:
-+			visibilityArchiver, err = p.newGstorageVisibilityArchiver()
- 
- 		default:
- 			return nil, ErrUnknownScheme
-```
-
-**File**: `common/archiver/provider/provider_gstorage.go` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+//go:build !temporal_minimal || temporal_with_gstorage
++func TestRPCFactoryCloseConnections(t *testing.T) {
++	t.Parallel()
 +
-+package provider
++	for name, create := range map[string]func(*RPCFactory, string) *grpc.ClientConn{
++		"history":        (*RPCFactory).CreateHistoryGRPCConnection,
++		"matching":       (*RPCFactory).CreateMatchingGRPCConnection,
++		"remoteFrontend": (*RPCFactory).CreateRemoteFrontendGRPCConnection,
++		"localFrontend": func(f *RPCFactory, _ string) *grpc.ClientConn {
++			return f.CreateLocalFrontendGRPCConnection()
++		},
++	} {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
 +
-+import (
-+	"go.temporal.io/server/common/archiver"
-+	"go.temporal.io/server/common/archiver/gcloud"
-+)
++			f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
++				metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
++			t.Cleanup(f.Close)
++			cached := create(f, hostA)
++			require.NotNil(t, cached)
 +
-+func (p *archiverProvider) newGstorageHistoryArchiver() (archiver.HistoryArchiver, error) {
-+	if p.historyArchiverConfigs.Gstorage == nil {
-+		return nil, ErrArchiverConfigNotFound
++			f.Close()
++			require.Equal(t, connectivity.Shutdown, cached.GetState())
++
++			afterClose := create(f, hostB)
++			require.NotNil(t, afterClose)
++			t.Cleanup(func() { _ = afterClose.Close() })
++			require.Equal(t, connectivity.Shutdown, afterClose.GetState())
++		})
 +	}
-+	return gcloud.NewHistoryArchiver(p.executionManager, p.logger, p.metricsHandler, p.historyArchiverConfigs.Gstorage)
 +}
 +
-+func (p *archiverProvider) newGstorageVisibilityArchiver() (archiver.VisibilityArchiver, error) {
-+	if p.visibilityArchiverConfigs.Gstorage == nil {
-+		return nil, ErrArchiverConfigNotFound
++func TestRPCFactoryCloseDuringConnectionCreation(t *testing.T) {
++	t.Parallel()
++
++	for name, create := range map[string]func(*RPCFactory, string) *grpc.ClientConn{
++		"history":        (*RPCFactory).CreateHistoryGRPCConnection,
++		"matching":       (*RPCFactory).CreateMatchingGRPCConnection,
++		"remoteFrontend": (*RPCFactory).CreateRemoteFrontendGRPCConnection,
++	} {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			started := make(chan struct{})
++			release := make(chan struct{})
++			ctx := t.Context()
++			tlsProvider := &gatedTLSConfigProvider{
++				getClientConfig: func() (*tls.Config, error) {
++					close(started)
++					select {
++					case <-release:
++						return nil, nil
++					case <-ctx.Done():
++						return nil, ctx.Err()
++					}
++				},
++			}
++			f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
++				metrics.NoopMetricsHandler, tlsProvider, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
++			t.Cleanup(f.Close)
++			result := make(chan *grpc.ClientConn, 1)
++			go func() { result <- create(f, hostA) }()
++
++			await.Rcv(t, started)
++			f.Close()
++			close(release)
++			conn := await.Rcv(t, result)
++			require.NotNil(t, conn)
++			t.Cleanup(func() { _ = conn.Close() })
++			require.Equal(t, connectivity.Shutdown, conn.GetState())
++		})
 +	}
-+	return gcloud.NewVisibilityArchiver(p.logger, p.metricsHandler, p.visibilityArchiverConfigs.Gstorage)
-+}
-```
-
-**File**: `common/archiver/provider/provider_gstorage_excluded.go` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+//go:build temporal_minimal && !temporal_with_gstorage
-+
-+package provider
-+
-+import (
-+	"fmt"
-+
-+	"go.temporal.io/server/common/archiver"
-+)
-+
-+// errGstorageExcluded is returned for the gs scheme, whose archiver is excluded from this build.
-+// It doesn't mention the build tag because it can reach API clients.
-+// Operators get the build tag from the config validation error instead.
-+var errGstorageExcluded = fmt.Errorf("%w %q: Google Cloud Storage archival is not available on this server", ErrUnknownScheme, archiver.URISchemeGstorage)
-+
-+func (p *archiverProvider) newGstorageHistoryArchiver() (archiver.HistoryArchiver, error) {
-+	return nil, errGstorageExcluded
 +}
 +
-+func (p *archiverProvider) newGstorageVisibilityArchiver() (archiver.VisibilityArchiver, error) {
-+	return nil, errGstorageExcluded
++type gatedTLSConfigProvider struct {
++	encryption.FixedTLSConfigProvider
++	getClientConfig func() (*tls.Config, error)
++}
++
++func (p *gatedTLSConfigProvider) GetInternodeClientConfig() (*tls.Config, error) {
++	return p.getClientConfig()
++}
++
++func (p *gatedTLSConfigProvider) GetRemoteClusterClientConfig(string) (*tls.Config, error) {
++	return p.getClientConfig()
 +}
 ```
 
 ---
 
-### Incident Patch 2: `d1500492` (2026-10-21)
-**Commit Message**: Small fixes to backlog count tracking in fair backlog manager (#12566)
+### Incident Patch 2: `dd83fbdd` (2026-10-22)
+**Commit Message**: Fix data race in standalone activity start delay test (#12679)
 
 ## What changed?
-A few fixes to backlog count tracking in fairTaskReader:
-- Don't consider backlog count known after short read while there is a
-write pending, instead hold and re-check after the write completes
-(probably most important of the changes).
-- Track acksExcludedFromBacklog separately to handle out-of-order acks
-that race with backlog count switching to/from absolute to relative
-tracking.
-- testTaskManager checks context errors so it doesn't mess with backlog
-count after shutdown, and various places suppress logging context
-canceled errors.
+
+Updated the standalone activity start delay test to capture the context
+before polling and move assertions out of the require.Never callback.
 
 ## Why?
-Fix discrepancies in backlog count and make tests less flaky.
+
+require.Never can return while a Describe request is still outstanding.
+If that request later returns an error, the callback’s assertion
+accesses an already-finished test, causing a data race and potentially
+panicking the test binary. The callback now returns a boolean without
+accessing the test handle.
+
 
 ## How did you test it?
-- [ ] built
+- [X] built
 - [ ] run locally and tested manually
-- [x] covered by existing tests
-- [x] added new unit test(s)
+- [X] covered by existing tests
+- [ ] added new unit test(s)
 - [ ] added new functional test(s)
 
-## Potential risks
-The changes are just to backlog count, which isn't critical.
-
-**File**: `service/matching/db.go` (modified, +5/-2)
+**File**: `tests/activity_standalone_test.go` (modified, +29/-16)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/api/serviceerror"
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
-+	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/log/tag"
- 	"go.temporal.io/server/common/metrics"
-@@ -711,7 +712,8 @@ func (db *taskQueueDB) CompleteTasksLessThan(
- 		Subqueue:           int(subqueue),
- 		Limit:              limit,
- 	})
--	if err != nil {
-+	// Context canceled is expected if the task queue unloads during a GC.
-+	if err != nil && !common.IsContextCanceledErr(err) {
- 		db.logger.Error("Persistent store operation failure",
- 			tag.StoreOperationCompleteTasksLessThan,
- 			tag.Error(err),
-@@ -752,7 +754,8 @@ func (db *taskQueueDB) CompleteFairTasksLessThan(
- 		ConditionRangeID: db.rangeID,
- 	})
- 	// ConditionFailedError means we lost ownership: not a store failure, caller will unload.
--	if _, lostOwnership := errors.AsType[*persistence.ConditionFailedError](err); err != nil && !lostOwnership {
-+	// Context canceled is expected if the task queue unloads during a GC.
-+	if _, lostOwnership := errors.AsType[*persistence.ConditionFailedError](err); err != nil && !lostOwnership && !common.IsContextCanceledErr(err) {
- 		db.logger.Error("Persistent store operation failure",
- 			tag.StoreOperationCompleteTasksLessThan,
- 			tag.Error(err),
+@@ -6807,8 +6807,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 		require.True(t, startResp.Started)
+ 
+ 		// Verify activity stays in SCHEDULED state throughout the delay (not dispatched early).
++		ctx := s.Context()
+ 		require.Never(t, func() bool {
+-			describeResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++			describeResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.GetRunId(),
+@@ -6899,8 +6900,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 
+ 		// Activity should stay running (not timed out) throughout startDelay + most of scheduleToStartTimeout.
+ 		// The timeout should only fire after startDelay + scheduleToStartTimeout.
++		ctx := s.Context()
+ 		require.Never(t, func() bool {
+-			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.RunId,
+@@ -6955,8 +6957,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 
+ 		// Activity should stay running (not timed out) throughout startDelay + most of scheduleToCloseTimeout.
+ 		// The timeout should only fire after startDelay + scheduleToCloseTimeout.
++		ctx := s.Context()
+ 		require.Never(t, func() bool {
+-			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.RunId,
+@@ -7219,8 +7222,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 		require.NoError(t, err)
+ 
+ 		// Activity should stay SCHEDULED past the original 2s delay, since the new target is at T+5s.
++		ctx := s.Context()
+ 		require.Never(t, func() bool {
+-			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.RunId,
+@@ -7433,8 +7437,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 		require.Equal(t, expectedExpiration, descResp.GetInfo().GetExpirationTime().AsTime())
+ 
+ 		// Must not time out before startDelay + scheduleToClose elapses (would happen with the bug).
++		ctx := s.Context()
+ 		require.Never(t, func() bool {
+-			resp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++			resp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.RunId,
+@@ -8050,16 +8055,18 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 			StartDelay:             durationpb.New(originalStartDelay),
+ 		})
+ 		require.NoError(t, err)
+-		describe := func() *workflowservice.DescribeActivityExecutionResponse {
+-			resp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++
++		ctx := s.Context()
++		describe := func() (*workflowservice.DescribeActivityExecutionResponse, error) {
++			return env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
+ 				Namespace:  env.Namespace().String(),
+ 				ActivityId: activityID,
+ 				RunId:      startResp.RunId,
+ 			})
+-			require.NoError(t, err)
+-			return resp
+ 		}
+-		desc := describe()
++
++		desc, err := describe()
++		require.NoError(t, err)
+ 		require.Equal(t,
+ 			desc.Info.ScheduleTime.AsTime().Add(originalStartDelay+scheduleToCloseTimeout),
+ 			desc.Info.ExpirationTime.AsTime())
+@@ -8073,7 +8080,8 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 			UpdateMask:      &fieldmaskpb.FieldMask{Paths: []string{"start_delay"}},
+ 		})
+ 		require.NoError(t, err)
+-		desc = describe()
++		desc, err = describe()
++		require.NoError(t, err)
+ 		require.Equal(t,
+ 			desc.Info.ScheduleTime.AsTime().Add(0+scheduleToCloseTimeout),
+ 			desc.Info.ExpirationTime.AsTime())
+@@ -8086,13 +8094,15 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ 			RestoreOriginalOptions: true,
+ 		})
+ 		require.NoError(t, err)
+-		desc = describe()
++		desc, err = describe()
++		require.NoError(t, err)
+ 		require.Equal(t,
+ 			desc.Info.ScheduleTime.AsTime().Add(originalStartDelay+scheduleToClo
 ```
 
-**File**: `service/matching/fair_task_reader.go` (modified, +36/-7)
-```diff
-@@ -45,6 +45,10 @@ type (
- 		ackLevel         fairLevel                      // inclusive: task exactly at ackLevel _has_ been acked
- 		atEnd            bool                           // whether we believe outstandingTasks represents the entire queue right now
- 
-+		// Completed tasks already excluded by a backlog count reset. Consume these before
-+		// applying ack deltas to avoid subtracting the same completions twice.
-+		acksExcludedFromBacklog int64
-+
- 		// Small cache of acked task levels that were evicted from outstandingTasks. When tasks
- 		// are evicted from memory, we lose track of which ones were already acked. This cache
- 		// helps avoid reprocessing tasks that we know were already acked but whose ack was
-@@ -268,6 +272,7 @@ func (tr *fairTaskReader) readTasksImpl() {
- 		// ack level would have been pinned here, we may be able to advance it now (if it's not
- 		// explicitly pinned by another write)
- 		tr.advanceAckLevelLocked()
-+		tr.maybeResetBacklogCountLocked()
- 	}
- 
- 	// If a backoff timer fired while readPending was still true, its maybeReadTasksLocked call
-@@ -555,10 +560,8 @@ func (tr *fairTaskReader) mergeTasksLocked(tasks []*persistencespb.AllocatedTask
- 		tr.atEnd = true
- 	}
- 
--	// If we're at the end, then outstandingTasks is the whole queue so we can set count.
--	if count := tr.knownCountLocked(); count >= 0 {
--		tr.backlogMgr.db.setKnownFairBacklogCount(tr.subqueue, count)
--	}
-+	// If we're at the end and all writes are accounted for, we can set the count.
-+	tr.maybeResetBacklogCountLocked()
- 
- 	return created
- 
-@@ -602,6 +605,9 @@ func (tr *fairTaskReader) isDrained() bool {
- 	return tr.atEnd && tr.loadedTasks == 0
- }
- 
-+// Returns true if the ack level is pinned (which happens during the whole lifecycle of a
-+// write, so we ensure we don't delete just-written tasks), or if it's unpinned but we haven't
-+// merged the tasks that were just written into outstandingTasks yet.
- func (tr *fairTaskReader) ackLevelPinnedLocked() bool {
- 	return tr.ackLevelPinnedByWriter || len(tr.newlyWrittenTasks) > 0
- }
-@@ -629,8 +635,13 @@ func (tr *fairTaskReader) advanceAckLevelLocked() {
- 		tr.numToGC += int(numAcked)
- 		tr.maybeGCLocked()
- 
-+		// Apply the exclusions to the next acks. If these are different tasks,
-+		// the estimate remains conservative until the excluded tasks are acked.
-+		excluded := min(numAcked, tr.acksExcludedFromBacklog)
-+		tr.acksExcludedFromBacklog -= excluded
-+		countDelta := excluded - numAcked
- 		tr.backlogMgr.db.updateFairAckLevel(
--			tr.subqueue, tr.ackLevel, -numAcked, tr.knownCountLocked(), tr.backlogAge.oldestTime())
-+			tr.subqueue, tr.ackLevel, countDelta, tr.knownCountForResetLocked(), tr.backlogAge.oldestTime())
- 	}
- }
- 
-@@ -658,6 +669,7 @@ func (tr *fairTaskReader) unpinAckLevel(writeErr error) {
- 	softassert.That(tr.logger, tr.ackLevelPinnedByWriter, "ack level wasn't pinned")
- 	tr.ackLevelPinnedByWriter = false
- 	tr.advanceAckLevelLocked()
-+	tr.maybeResetBacklogCountLocked()
- }
- 
- func (tr *fairTaskReader) getLevels() (readLevel, ackLevel fairLevel) {
-@@ -666,13 +678,30 @@ func (tr *fairTaskReader) getLevels() (readLevel, ackLevel fairLevel) {
- 	return tr.readLevel, tr.ackLevel
- }
- 
--func (tr *fairTaskReader) knownCountLocked() int64 {
--	if tr.atEnd {
-+// knownCountForResetLocked returns the backlog count if we know it, or -1 if we don't. The
-+// caller must write a known count to the db: it excludes completed tasks above the ack level,
-+// so this also records those in acksExcludedFromBacklog.
-+func (tr *fairTaskReader) knownCountForResetLocked() int64 {
-+	// Pending writes may have incremented the backlog count without being merged into
-+	// outstandingTasks yet. Do not overwrite their increments with the reader's count.
-+	if tr.atEnd && !tr.ackLevelPinnedLocked() {
-+		tr.acksExcludedFromBacklog = tr.completedTaskCountLocked()
- 		return int64(tr.loadedTasks)
- 	}
- 	return -1
- }
- 
-+func (tr *fairTaskReader) maybeResetBacklogCountLocked() {
-+	if count := tr.knownCountForResetLocked(); count >= 0 {
-+		tr.backlogMgr.db.setKnownFairBacklogCount(tr.subqueue, count)
-+	}
-+}
-+
-+// completedTaskCountLocked counts known completions above the ack level, including evicted acks.
-+func (tr *fairTaskReader) completedTaskCountLocked() int64 {
-+	return int64(tr.outstandingTasks.Len() - tr.loadedTasks + tr.evictedAcks.Len())
-+}
-+
- // gc
- 
- func (tr *fairTaskReader) maybeGCLocked() {
-```
+---
 
-**File**: `service/matching/fair_task_reader_test.go` (added, +147/-0)
+### Incident Patch 3: `08f953e9` (2026-10-23)
+**Commit Message**: WCP: Fix tests dependent on history event batch splitting (#12678)
+
+## What changed?
+- Some tests (those that previously failed) now run with
+`history.maximumEventBatchSizeInBytes` at both 0 (single batch) and 1
+(every event in its own batch).
+- `executeHistoryReplicationTasksUntil` now executing replication tasks
+after the matching event until the rest of that event's transaction is
+applied (since it can be split across multiple batches).
+
+## Why?
+These were found by running all functional tests with
+`history.maximumEventBatchSizeInBytes = 1`. The tests assumed a
+transaction is a single history batch:
+- `TestStartedSpeculativeWorkflowTask_TerminateWorkflow` expected
+`completion_event_batch_id` to be the `WorkflowTaskFailed` event ID;
+with split batches `WorkflowExecutionTerminated` starts its own batch,
+so the correct value is its own event ID.
+- The conflict resolution tests stopped after the replication task
+holding the awaited event, but with split batches the rest of the
+transaction (e.g. `WorkflowTaskScheduled`) arrives in further tasks, so
+the cluster histories never matched.
+
+## How did you test it?
+- [x] built
+- [ ] run locally and tested manually
+- [x] covered by existing
+
+**File**: `tests/update_workflow_test.go` (modified, +104/-91)
 ```diff
-@@ -0,0 +1,147 @@
-+package matching
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	enumspb "go.temporal.io/api/enums/v1"
-+	persistencespb "go.temporal.io/server/api/persistence/v1"
-+	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/testing/testlogger"
-+	"go.uber.org/mock/gomock"
-+)
-+
-+func TestFairTaskReaderBacklogCountWithPendingWrite(t *testing.T) {
-+	t.Parallel()
-+
+@@ -2830,109 +2830,122 @@ func (s *WorkflowUpdateSuite) TestSpeculativeWorkflowTask_ScheduleToStartTimeout
+ }
+ 
+ func (s *WorkflowUpdateSuite) TestStartedSpeculativeWorkflowTask_TerminateWorkflow() {
+-	env := testcore.NewEnv(s.T())
+-	mustStartWorkflow(env, env.Tv())
 +	for _, tc := range []struct {
-+		name         string
-+		batchSize    int
-+		initialCount int64
-+		deferWrites  bool
-+		writerUnpins bool
++		name                           string
++		maxEventBatchSizeInBytes       int
++		expectedCompletionEventBatchID int64
 +	}{
-+		{name: "write awaiting notification across batch boundary", batchSize: 3, initialCount: 4},
-+		{name: "buffered write across batch boundary", batchSize: 3, initialCount: 4, deferWrites: true},
-+		{name: "unpinned buffered write across batch boundary", batchSize: 3, initialCount: 4, deferWrites: true, writerUnpins: true},
-+		{name: "write awaiting notification with count drift", batchSize: 5, initialCount: 6},
-+		{name: "buffered write with count drift", batchSize: 5, initialCount: 6, deferWrites: true},
-+		{name: "unpinned buffered write with count drift", batchSize: 5, initialCount: 6, deferWrites: true, writerUnpins: true},
++		// WorkflowTaskFailed and WorkflowTaskTerminated are written in one batch.
++		{name: "SingleBatch", maxEventBatchSizeInBytes: 0, expectedCompletionEventBatchID: 7},
++		// Every event is written in its own batch.
++		{name: "SplitBatches", maxEventBatchSizeInBytes: 1, expectedCompletionEventBatchID: 8},
++	} {
++		s.Run(tc.name, func(s *WorkflowUpdateSuite) {
++			env := testcore.NewEnv(s.T(), testcore.WithDynamicConfig(dynamicconfig.MaximumEventBatchSizeInBytes, tc.maxEventBatchSizeInBytes))
++			mustStartWorkflow(env, env.Tv())
+ 
+-	wtHandlerCalls := 0
+-	wtHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*commandpb.Command, error) {
+-		wtHandlerCalls++
+-		switch wtHandlerCalls {
+-		case 1:
+-			// Completes first WT with empty command list.
+-			return nil, nil
+-		case 2:
+-			// Terminate workflow while speculative WT is running.
+-			_, err := env.FrontendClient().TerminateWorkflowExecution(s.Context(), &workflowservice.TerminateWorkflowExecutionRequest{
+-				Namespace:         env.Namespace().String(),
+-				WorkflowExecution: env.Tv().WorkflowExecution(),
+-				Reason:            env.Tv().Any().String(),
+-			})
+-			s.NoError(err)
++			wtHandlerCalls := 0
++			wtHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*commandpb.Command, error) {
++				wtHandlerCalls++
++				switch wtHandlerCalls {
++				case 1:
++					// Completes first WT with empty command list.
++					return nil, nil
++				case 2:
++					// Terminate workflow while speculative WT is running.
++					_, err := env.FrontendClient().TerminateWorkflowExecution(s.Context(), &workflowservice.TerminateWorkflowExecutionRequest{
++						Namespace:         env.Namespace().String(),
++						WorkflowExecution: env.Tv().WorkflowExecution(),
++						Reason:            env.Tv().Any().String(),
++					})
++					s.NoError(err)
+ 
+-			s.EqualHistory(`
+-	  1 WorkflowExecutionStarted
+-	  2 WorkflowTaskScheduled
+-	  3 WorkflowTaskStarted
+-	  4 WorkflowTaskCompleted
+-	  5 WorkflowTaskScheduled // Speculative WT.
+-	  6 WorkflowTaskStarted`, task.History)
+-			return env.UpdateAcceptCompleteCommands(env.Tv()), nil
+-		default:
+-			s.Failf("wtHandler called too many times", "wtHandler shouldn't be called %d times", wtHandlerCalls)
+-			return nil, nil
+-		}
+-	}
++					s.EqualHistory(`
++			  1 WorkflowExecutionStarted
++			  2 WorkflowTaskScheduled
++			  3 WorkflowTaskStarted
++			  4 WorkflowTaskCompleted
++			  5 WorkflowTaskScheduled // Speculative WT.
++			  6 WorkflowTaskStarted`, task.History)
++					return env.UpdateAcceptCompleteCommands(env.Tv()), nil
++				default:
++					s.Failf("wtHandler called too many times", "wtHandler shouldn't be called %d times", wtHandlerCalls)
++					return nil, nil
++				}
++			}
+ 
+-	msgHandlerCalls := 0
+-	msgHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*protocolpb.Message, error) {
+-		msgHandlerCalls++
+-		switch msgHandlerCalls {
+-		case 1:
+-			return nil, nil
+-		case 2:
+-			updRequestMsg := task.Messages[0]
+-			return env.UpdateAcceptCompleteMessages(env.Tv(), updRequestMsg), nil
+-		default:
+-			s.Failf("msgHandler called too many times", "msgHandler shouldn't be called %d times", msgHandlerCalls)
+-			return nil, nil
+-		}
+-	}
++			msgHandlerCalls := 0
++			msgHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*protocolpb.Message, error) {
++				msgHandlerCalls++
++				switch msgHandlerCalls {
++				case 1:
++					return nil, nil
++				case 2:
++					updRequestMsg := task.Messages[0]
++					return env.UpdateAcceptCompleteMessages(env.Tv(), updRequestMsg), nil
++				default:
++					s.Failf("msgHandler called too many times", "msgHandler shouldn't be called %d times", msgHandlerCalls)
++					return nil, nil
++				}
++			}
+ 
+-	//nolint:staticcheck // SA1019 TaskPoller replacement needed
+-	poller := &testcore.TaskPoller{
+-		Client:              env.FrontendClient(),
+-		Namespace:           env.Namespace().String(),
+-		TaskQueue:           env.Tv().TaskQueue(),
+-		Identity:            env.Tv().WorkerIdentity(),
+-		WorkflowTaskHandler: wtHandler,
+-		MessageHandler:      msgHandler,
+-		Logger:              env.Logger,
+-		T:                   s.T(),
+-	}
++			//nolint:staticcheck // SA1019 TaskPoller replacement needed
++			poller := &testcore.TaskPoller{
++				Client:              env.FrontendClient(),
++				Namespace:           env.Namespace().String(),
++				TaskQueue:           env.Tv().TaskQueue(),
++				Identity:            env.Tv().WorkerIdentity(),
++				WorkflowTaskHandler: wtHandler,
++				MessageHandler:      msgHandler,
++				Logger:              env.Logger,
++				T:              
+```
+
+**File**: `tests/xdc/history_replication_signals_and_updates_test.go` (modified, +29/-3)
+```diff
+@@ -44,6 +44,7 @@ type (
+ 	// that push their tasks into test-specific (i.e. workflow-specific) buffers.
+ 	hrsuTestSuite struct {
+ 		xdcBaseSuite
++		maxEventBatchSizeInBytes int
+ 	}
+ 	// Each test starts its own workflow, in its own namespace.
+ 	hrsuTest struct {
+@@ -78,14 +79,32 @@ const (
+ 
+ func TestHistoryReplicationSignalsAndUpdatesTestSuite(t *testing.T) {
+ 	t.Parallel()
+-	suite.Run(t, new(hrsuTestSuite))
++	for _, tc := range []struct {
++		name                     string
++		maxEventBatchSizeInBytes int
++	}{
++		{
++			name:                     "SingleBatch",
++			maxEventBatchSizeInBytes: 0,
++		},
++		{
++			// Every event is written in its own batch, so one transaction spans several replication tasks.
++			name:                     "SplitBatches",
++			maxEventBatchSizeInBytes: 1,
++		},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			reader, blm := newBacklogCountTestReader(t, tc.batchSize, tc.initialCount)
-+			tasks := newBacklogCountTestTasks(4)
-+
-+			// The read fetched two tasks before a concurrent write persisted two more.
-+			// Hold notifications as the read loop does, without starting background goroutines.
-+			// Calling readTasksImpl directly below relies on it not starting another read: either
-+			// we're at the end, or loadedTasks exceeds GetTasksReloadAt (0). A real read would hit
-+			// the nil persistence store.
-+			reader.getAndPinAckLevel()
-+			reader.readPending = true
-+			if tc.deferWrites {
-+				reader.wroteNewTasks(tasks[2:])
-+			}
-+			if tc.writerUnpins {
-+				reader.unpinAckLevel(nil)
-+			}
-+
-+			reader.lock.Lock()
-+			reader.mergeTasksLocked(tasks[:2], mergeReadToEnd)
-+			reader.lock.Unlock()
-+			require.Equal(t, tc.initialCount, blm.db.getTotalApproximateBacklogCount(), "a short read must not overwrite the concurrent write's increment")
-+
-+			// Finish the write notification and merge any buffered tasks as the read loop does.
-+			if tc.deferWrites {
-+				reader.readTasksImpl()
-+			} else {
-+				reader.readPending = false
-+				reader.wroteNewTasks(tasks[2:])
-+			}
-+			if !tc.writerUnpins {
-+				reader.unpinAckLevel(nil)
-+			}
-+			require.Equal(t, min(4, tc.batchSize), reader.getLoadedTasks())
-+			require.Equal(t, tc.batchSize >= 4, reader.atEnd)
-+			require.EqualValues(t, 4, blm.db.getTotalApproximateBacklogCount())
++			suite.Run(t, &hrsuTestSuite{maxEventBatchSizeInBytes: tc.maxEventBatchSizeInBytes})
 +		})
 +	}
-+}
-+
-+func TestFairTaskReaderBacklogCountAfterOutOfOrderCompletion(t *testing.T) {
-+	t.Parallel()
-+
-+	reader, blm := newBacklogCountTestReader(t, 3, 3)
-+	tasks := newBacklogCountTestTasks(5)
-+	finish := func(id int64) {
-+		t.Helper()
-+		entry, ok := reader.outstandingTasks.Get(outstandingTask{level: fairLevel{pass: 1, id: id}})
-+		require.True(t, ok)
-+		require.NotNil(t, entry.task)
-+		entry.task.finish(taskFinishResult{consumedToken: true})
-+	}
-+	write := func(task *persistencespb.AllocatedTaskInfo) {
-+		reader.getAndPinAckLevel()
-+		updateBacklogStatsForTest(blm.db, 1, time.Time{})
-+		reader.wroteNewTasks([]*persistencespb.AllocatedTaskInfo{task})
-+		reader.unpinAckLevel(nil)
-+	}
-+
-+	reader.mergeTasks(tasks[:3], mergeReadToEnd)
-+	// Task 3 completes before tasks 1 and 2, so the ack level can't advance yet.
-+	finish(3)
-+	write(tasks[3])
-+	require.True(t, reader.atEnd)
-+	// The reset excludes completed task 3 from worker demand even though it remains in the DB.
-+	require.EqualValues(t, 3, blm.db.getTotalApproximateBacklogCount())
-+
-+	// Another write exceeds the batch capacity, so subsequent acknowledgements use deltas.
-+	write(tasks[4])
-+	require.False(t, reader.atEnd)
-+	finish(1)
-+	// Until the previously excluded ack advances the ack level, the estimate may be conservative.
-+	require.GreaterOrEqual(t, blm.db.getTotalApproximateBacklogCount(), int64(3))
-+	finish(2)
-+	// Tasks 4 and 5 are still pending. Task 3 must not be subtracted a second time.
-+	require.EqualValues(t, 2, blm.db.getTotalApproximateBacklogCount())
-+}
-+
-+// newBacklogCountTestReader returns a reader whose backlog manager has no persistence store, so
-+// tests must not trigger reads or GC. GC is configured to effectively never run.
-+func newBacklogCountTestReader(t *testing.T, batchSize int, initialCount int64) (*fairTaskReader, *fairBacklogManagerImpl) {
-+	t.Helper()
-+
-+	logger := testlogger.NewTestLogger(t, testlogger.FailOnAnyUnexpectedError)
-+	config := defaultTestConfig()
-+	config.GetTasksBatchSize = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(batchSize)
-+	config.GetTasksReloadAt = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(0)
-+	config.MaxTaskDeleteBatchSize = dynamicconfig.GetIntPropertyFnFilteredByTaskQueue(10
-```
-
-**File**: `service/matching/fair_task_writer.go` (modified, +4/-1)
-```diff
-@@ -245,7 +245,10 @@ func (w *fairTaskWriter) writeBatch(reqs []*writeTaskRequest) (retErr error) {
- 	if err == nil {
- 		w.backlogMgr.wroteNewTasks(resp) // must be called before unpin()
- 	} else {
--		w.logger.Error("Persistent store operation failure", tag.StoreOperationCreateTask, tag.Error(err))
-+		// Context canceled is expected if the task queue unloads during a write.
-+		if !common.IsContextCanceledErr(err) {
-+			w.logger.Error("Persistent store operation failure", tag.StoreOperationCreateTask, tag.Error(err))
+ }
+ 
+ func (s *hrsuTestSuite) SetupSuite() {
+ 	s.dynamicConfigOverrides = map[dynamicconfig.Key]any{
+ 		dynamicconfig.EnableReplicationStream.Key(): true,
+ 		// Use short interval to make long poll timeout
+ 		dynamicconfig.HistoryLongPollExpirationInterval.Key(): 100 * time.Millisecond,
++		dynamicconfig.MaximumEventBatchSizeInBytes.Key():      s.maxEventBatchSizeInBytes,
+ 	}
+ 	s.logger = log.NewTestLogger()
+ 	s.setupSuite()
+@@ -646,18 +665,25 @@ func (c *hrsuTestCluster) executeNamespaceReplicationTasksUntil(operation enumss
+ }
+ 
+ // executeHistoryReplicationTasksUntil executes buffered history event replication tasks until the specified
+-// event type is encountered.
++// event type is encountered, and then the rest of that transaction, which can span several tasks when
++// history.maximumEventBatchSizeInBytes splits it into several batches.
+ func (c *hrsuTestCluster) executeHistoryReplicationTasksUntil(
+ 	eventType enumspb.EventType,
+ ) {
++	found := false
+ 	for {
+ 		task := <-c.inboundHistoryReplicationTasks
+ 		events := c.t.s.executeHistoryReplicationTask(task)
+ 		for _, event := range events {
+ 			if event.GetEventType() == eventType {
+-				return
++				found = true
+ 			}
+ 		}
++		// The task version history ends at the last event of its transaction.
++		versionHistoryItems := task.replicationTask.GetHistoryTaskAttributes().GetVersionHistoryItems()
++		if found && events[len(events)-1].GetEventId() >= versionHistoryItems[len(versionHistoryItems)-1].GetEventId() {
++			return
 +		}
- 		w.backlogMgr.signalIfFatal(err)
- 	}
- 	return err
-```
-
-**File**: `service/matching/matching_engine_test.go` (modified, +57/-20)
-```diff
-@@ -3715,23 +3715,36 @@ func (s *matchingEngineSuite) concurrentPublishAndConsumeValidateBacklogCounter(
- 	wg.Wait()
- 
- 	ptqMgr := s.getPhysicalTaskQueueManagerImplFromKey(ptq)
--	backlogCount := totalApproximateBacklogCount(ptqMgr.backlogMgr)
--
--	// Only count tasks above the ack level: acked tasks may not have been gc'ed yet.
- 	db := ptqMgr.backlogMgr.getDB()
--	db.Lock()
--	ackLevel := fairLevel{id: db.subqueues[subqueueZero].AckLevel}
--	if s.fairness {
--		ackLevel = fairLevelFromProto(db.subqueues[subqueueZero].FairAckLevel)
--	}
--	db.Unlock()
--	dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
--
- 	if s.fairness {
--		// Relax this condition for fairBacklogManager: it can sometimes reset backlog count on
--		// read, making it more accurate in theory, but breaking this test's assumptions.
--		s.InDelta(dbTasks, backlogCount, 2)
-+		bm := ptqMgr.backlogMgr.(*fairBacklogManagerImpl)
-+		bm.subqueueLock.Lock()
-+		tr := bm.subqueues[subqueueZero]
-+		bm.subqueueLock.Unlock()
-+		tr.lock.Lock()
-+		defer tr.lock.Unlock()
-+
-+		db.Lock()
-+		backlogCount := db.subqueues[subqueueZero].ApproximateBacklogCount
-+		ackLevel := fairLevelFromProto(db.subqueues[subqueueZero].FairAckLevel)
-+		db.Unlock()
-+		dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
-+		completedTasks := tr.completedTaskCountLocked()
-+
-+		// Completed tasks above the ack level may already be excluded from the estimate.
-+		// Require enough backlog for the remaining dispatches, allowing a conservative overestimate.
-+		s.LessOrEqual(completedTasks, dbTasks)
-+		s.GreaterOrEqual(backlogCount, dbTasks-completedTasks)
-+		// This upper bound only holds because these tests don't inject CreateTasks faults.
-+		// A write that fails without definitely failing (e.g. Unavailable) leaves the count
-+		// incremented even if no task was written, so the count could legitimately exceed dbTasks.
-+		s.LessOrEqual(backlogCount, dbTasks)
- 	} else {
-+		backlogCount := totalApproximateBacklogCount(ptqMgr.backlogMgr)
-+		db.Lock()
-+		ackLevel := fairLevel{id: db.subqueues[subqueueZero].AckLevel}
-+		db.Unlock()
-+		dbTasks := int64(s.taskManager.getTaskCountAbove(ptq, ackLevel))
- 		s.LessOrEqual(dbTasks, backlogCount)
  	}
  }
-@@ -5138,12 +5151,16 @@ func (q *testQueueData) persistenceStats() testQueuePersistenceStats {
- }
- 
- func (m *testTaskManager) CreateTaskQueue(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.CreateTaskQueueRequest,
- ) (*persistence.CreateTaskQueueResponse, error) {
- 	tli := request.TaskQueueInfo
- 	tlm := m.getQueueData(tli.Name, tli.NamespaceId, tli.TaskType)
- 
-+	if ctx.Err() != nil {
-+		return nil, ctx.Err()
-+	}
-+
- 	m.delay()
- 	defer m.delay()
- 
-@@ -5163,12 +5180,16 @@ func (m *testTaskManager) CreateTaskQueue(
- }
- 
- func (m *testTaskManager) UpdateTaskQueue(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.UpdateTaskQueueRequest,
- ) (*persistence.UpdateTaskQueueResponse, error) {
- 	tli := request.TaskQueueInfo
- 	tlm := m.getQueueData(tli.Name, tli.NamespaceId, tli.TaskType)
- 
-+	if ctx.Err() != nil {
-+		return nil, ctx.Err()
-+	}
-+
- 	m.delay()
- 	defer m.delay()
- 
-@@ -5188,9 +5209,13 @@ func (m *testTaskManager) UpdateTaskQueue(
- }
- 
- func (m *testTaskManager) GetTaskQueue(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.GetTaskQueueRequest,
- ) (*persistence.GetTaskQueueResponse, error) {
-+	if ctx.Err() != nil {
-+		return nil, ctx.Err()
-+	}
-+
- 	tlm := m.getQueueData(request.TaskQueue, request.NamespaceID, request.TaskType)
- 	tlm.Lock()
- 	defer tlm.Unlock()
-@@ -5219,7 +5244,7 @@ func (m *testTaskManager) getTaskCountAbove(q *PhysicalTaskQueueKey, level fairL
- }
- 
- func (m *testTaskManager) CompleteTasksLessThan(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.CompleteTasksLessThanRequest,
- ) (int, error) {
- 	if m.fairness && request.ExclusiveMaxPass < 1 {
-@@ -5228,6 +5253,10 @@ func (m *testTaskManager) CompleteTasksLessThan(
- 		return 0, serviceerror.NewInternal("invalid CompleteTasksLessThan request on queue")
- 	}
- 
-+	if ctx.Err() != nil {
-+		return 0, ctx.Err()
-+	}
-+
- 	m.delay()
- 	defer m.delay()
- 
-@@ -5293,14 +5322,18 @@ func (m *testTaskManager) fault(method, err string) bool {
- }
- 
- func (m *testTaskManager) CreateTasks(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.CreateTasksRequest,
- ) (*persistence.CreateTasksResponse, error) {
- 	namespaceID := request.TaskQueueInfo.Data.GetNamespaceId()
- 	taskQueue := request.TaskQueueInfo.Data.Name
- 	taskType := request.TaskQueueInfo.Data.TaskType
- 	rangeID := request.TaskQueueInfo.RangeID
- 
-+	if ctx.Err() != nil {
-+		return nil, ctx.Err()
-+	}
-+
- 	m.delay()
- 	defer m.delay()
- 
-@@ -5366,7 +5399,7 @@ func (m *testTaskManager) CreateTasks(
- }
- 
- func (m *testTaskManager) GetTasks(
--	_ context.Context,
-+	ctx context.Context,
- 	request *persistence.GetTasksRequest,
- ) (*persistence.GetTasksResponse, error) {
- 	m.logger.Debug("testTaskManager.GetTasks", tag.Value(request))
-@@ -5377,6 +5410,10 @@ func (m 
-```
-
-**File**: `service/matching/pri_task_writer.go` (modified, +8/-5)
-```diff
-@@ -128,11 +128,14 @@ func (w *priTaskWriter) appendTasks(reqs []*writeTaskRequest) error {
- 	resp, err := w.db.CreateTasks(w.backlogMgr.tqCtx, reqs)
- 	if err != nil {
- 		w.backlogMgr.signalIfFatal(err)
--		w.logger.Error("Persistent store operation failure",
--			tag.StoreOperationCreateTask,
--			tag.Error(err),
--			tag.WorkflowTaskQueueName(w.backlogMgr.queueKey().PersistenceName()),
--			tag.WorkflowTaskQueueType(w.backlogMgr.queueKey().TaskType()))
-+		// Context canceled is expected if the task queue unloads during a write.
-+		if !common.IsContextCanceledErr(err) {
-+			w.logger.Error("Persistent store operation failure",
-+				tag.StoreOperationCreateTask,
-+				tag.Error(err),
-+				tag.WorkflowTaskQueueName(w.backlogMgr.queueKey().PersistenceName()),
-+				tag.WorkflowTaskQueueType(w.backlogMgr.queueKey().TaskType()))
-+		}
- 		return err
- 	}
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12674** (2026-10-22): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12668** (2026-10-22): WCP: Keep first transaction of a run in single batch (@simvlad)
-- **PR #12665** (closed):  Allow first transaction of workflow start to span multiple event batches (@simvlad)
-- **PR #12663** (2026-10-21): Log Nexus task queues with the generic task queue tag (@stephanos)
-- **PR #12660** (2026-10-21): Export callback validator provider (@rodrigozhou)
-- **PR #12653** (2026-10-21): Tag Nexus task queues with the Nexus task queue log tag (@stephanos)
+- **PR #12712** (2026-10-24): Cloud/v1.33.0-164: Merge revisioned task queue user data during replication (@rkannan82)
+- **PR #12709** (2026-10-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12700** (2026-10-24): WCP: Read multi batch event ranges from the XDC cache (@simvlad)
+- **PR #12695** (2026-10-23): Blacklist internal Nexus caller headers by default (@prathyushpv)
+- **PR #12693** (2026-10-23): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12692** (2026-10-23): Update test shard salt (@temporal-cicd[bot])
 
 ---
 
@@ -2961,34 +2803,38 @@ The changes are just to backlog count, which isn't critical.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add temporal_minimal build tag to compile out GCS archival (#12593)
+## X. Prevent RPCFactory connection leaks after shutdown (#12658)
 
 **RULE**:
-When implementing operations in `.github/workflows/run-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/rpc/connection_cache_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25e47f57`: Add temporal_minimal build tag to compile out GCS archival (#12593). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67d8427b`: Prevent RPCFactory connection leaks after shutdown (#12658). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/run-tests.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/rpc/connection_cache_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Run unit tests with build tags
-        if: ${{ !cancelled() }}
-        timeout-minutes: ${{ fromJSON(env.GITHUB_TIMEOUT) }}
-        run: |
-          export TEST_RUNNER_TIMEOUT="$(("$GITHUB_TIMEOUT" - 1))m"
-          ./develop/github/monitor_test.sh make unit-test-build-tags
-
+	f.connectionsMu.RLock()
+	defer f.connectionsMu.RUnlock()
+	c, ok := f.internodeGRPCConnections[hostName]
+	f.connectionsMu.RLock()
+	defer f.connectionsMu.RUnlock()
+	return len(f.internodeGRPCConnections)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	f.internodeGRPCConnections.RLock()
+	defer f.internodeGRPCConnections.RUnlock()
+	c, ok := f.internodeGRPCConnections.conns[hostName]
+	f.internodeGRPCConnections.RLock()
+	defer f.internodeGRPCConnections.RUnlock()
+	return len(f.internodeGRPCConnections.conns)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25e47f57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67d8427b` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-TM20",
-    "timestamp": "2026-10-21T00:08:44.520Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "1a20e6d5bb01a67f877865a1e3d443400205490fe7326efcb92f2b885518f720",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-1I0W",
-    "timestamp": "2026-10-21T00:14:52.544Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "acf2b121251abe0c60fe4cec6d66d5101421d09ab396cb60a6990ec22130d23c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-2GFG",
-    "timestamp": "2026-10-21T00:15:37.132Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "b7fe703b6a4948997054f5249f125394a5d7f529ddb277ba3878e27f82f895b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-AF7D",
-    "timestamp": "2026-10-21T00:21:48.793Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "dc6557cc2fe2e642379d599e255233296780de4686311084364b7cdbade2f9e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-AFYK",
     "timestamp": "2026-10-21T00:21:49.772Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7492,6 +7432,66 @@
     "contentHash": "7496aef1456fcdbde5ade24677b40fce4d35ad622ae7498676d9d0793bfa1652",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-GQVR",
+    "timestamp": "2026-10-25T02:25:23.223Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-GTGQ",
+    "timestamp": "2026-10-25T02:25:26.570Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-IK9L",
+    "timestamp": "2026-10-25T02:26:47.961Z",
+    "repository": "chakra-ui/zag",
+    "learningId": "learn-github-chakra-ui-zag",
+    "contentHash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JBAJ",
+    "timestamp": "2026-10-25T02:27:22.987Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
