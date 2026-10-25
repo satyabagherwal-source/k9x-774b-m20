@@ -4947,3 +4947,6 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fe883d1b` | Multi-dimensional audit evidence | 2026-10-25T18:15:32.845Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `796c21ca` | Multi-dimensional audit evidence | 2026-10-25T18:15:34.599Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-25T18:21:51.061Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-25T18:28:18.791Z |
+| `learn-github-react-bootstrap-react-bootstrap` | `https://github.com/react-bootstrap/react-bootstrap` | `6461dcd6` | Multi-dimensional audit evidence | 2026-10-25T18:28:18.822Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `0ecf9253` | Multi-dimensional audit evidence | 2026-10-25T18:28:20.540Z |

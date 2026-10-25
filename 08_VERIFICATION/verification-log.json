@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-R53L",
-    "timestamp": "2026-10-22T21:22:11.985Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "79ba0afde567b391b74778ba5651861852e83bf21ea6122724f5842aab0b6a9c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-RCEO",
-    "timestamp": "2026-10-22T21:22:21.456Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "4726ed226b5125ae462b4ebe9862ee76b43fb3ed6f7356b54492a84eb10ad3fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-RHB1",
-    "timestamp": "2026-10-22T21:22:27.805Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b6fd6d0bc02a0825dddb1a6000e2d89464573498a5f20fcba0f126ad8eef2a30",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-ZOAC",
     "timestamp": "2026-10-22T21:28:50.100Z",
     "repository": "RDFLib/rdflib",
@@ -7492,6 +7447,51 @@
     "contentHash": "002169a9cd395180798f6f56da30c4b5840a0db69b10e4e43b7c4337ff9d3c02",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V2SJ",
+    "timestamp": "2026-10-25T18:28:18.787Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "426983acbfdcd078d5d8af10154452daf70d1b5d7d3a7f7073f666838b50b56e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V2TF",
+    "timestamp": "2026-10-25T18:28:18.819Z",
+    "repository": "react-bootstrap/react-bootstrap",
+    "learningId": "learn-github-react-bootstrap-react-bootstrap",
+    "contentHash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-V455",
+    "timestamp": "2026-10-25T18:28:20.537Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

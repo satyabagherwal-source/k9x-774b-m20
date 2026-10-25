@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T18:21:51.004Z",
+  "last_updated": "2026-10-25T18:28:20.469Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13727,8 +13727,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "d22e8daf",
-      "content_hash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
+      "source_version": "0ecf9253",
+      "content_hash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -13771,6 +13771,11 @@
           "number": 3889,
           "title": "Reconciling Push-Gauges with Eviction Tombstoning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4412,
+          "title": "Upgrade to Protobuf 36.2 (#2956)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13778,7 +13783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:48:13.053Z",
+      "verified_at": "2026-10-25T18:28:20.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41963,8 +41968,8 @@
       "slug": "react-bootstrap-react-bootstrap",
       "platform": "github",
       "source_url": "https://github.com/react-bootstrap/react-bootstrap",
-      "source_version": "2926ad4e",
-      "content_hash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
+      "source_version": "6461dcd6",
+      "content_hash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
       "dossier_path": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "promoted_rules": [
@@ -41977,6 +41982,11 @@
           "number": 3647,
           "title": "Publish v3.0.0-beta.6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4411,
+          "title": "update to vitest v5 (#7051)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41984,7 +41994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:58:06.599Z",
+      "verified_at": "2026-10-25T18:28:18.748Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125300,6 +125310,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T18:15:34.530Z"
+    },
+    "rule-4411": {
+      "learning_id": "rule-4411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4411,
+      "title": "update to vitest v5 (#7051)",
+      "source_url": "https://github.com/react-bootstrap/react-bootstrap",
+      "source_version": "6461dcd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:28:18.748Z"
+    },
+    "rule-4412": {
+      "learning_id": "rule-4412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4412,
+      "title": "Upgrade to Protobuf 36.2 (#2956)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "0ecf9253",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T18:28:20.458Z"
     }
   },
   "aliases": {

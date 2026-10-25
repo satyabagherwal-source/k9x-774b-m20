@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
-    "lastHarvestedAt": "2026-10-20T22:45:40.304Z",
+    "contentHash": "426983acbfdcd078d5d8af10154452daf70d1b5d7d3a7f7073f666838b50b56e",
+    "lastHarvestedAt": "2026-10-25T18:28:18.791Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -3933,10 +3933,10 @@
     "repository": "react-bootstrap/react-bootstrap",
     "platform": "github",
     "sourceUrl": "https://github.com/react-bootstrap/react-bootstrap",
-    "sourceVersion": "2926ad4e",
+    "sourceVersion": "6461dcd6",
     "license": "MIT",
-    "contentHash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
-    "lastHarvestedAt": "2026-10-22T16:58:06.674Z",
+    "contentHash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
+    "lastHarvestedAt": "2026-10-25T18:28:18.822Z",
     "learningId": "learn-github-react-bootstrap-react-bootstrap"
   },
   "orf-gping": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "d22e8daf",
+    "sourceVersion": "0ecf9253",
     "license": "MIT",
-    "contentHash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
-    "lastHarvestedAt": "2026-10-23T10:48:13.119Z",
+    "contentHash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
+    "lastHarvestedAt": "2026-10-25T18:28:20.540Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {

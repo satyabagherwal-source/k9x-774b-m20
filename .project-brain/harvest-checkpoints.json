@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T18:21:51.076Z",
+  "last_updated": "2026-10-25T18:28:20.548Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1025,14 +1025,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "049f9d96a4070a605944f1df0b620ec3d1aa13c87d3c6426ffb7635d9262585f",
-      "verified_at": "2026-10-20T22:45:40.311Z",
+      "content_hash": "426983acbfdcd078d5d8af10154452daf70d1b5d7d3a7f7073f666838b50b56e",
+      "verified_at": "2026-10-25T18:28:18.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T22:45:40.311Z"
+      "last_updated": "2026-10-25T18:28:18.799Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -6021,14 +6021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-bootstrap-react-bootstrap",
-      "content_hash": "1ed64a392a1438a8e2aeb249c311dcaec323161f227e00012d93800f4f55adc1",
-      "verified_at": "2026-10-22T16:58:06.688Z",
+      "content_hash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
+      "verified_at": "2026-10-25T18:28:18.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:58:06.688Z"
+      "last_updated": "2026-10-25T18:28:18.830Z"
     },
     "orf/gping": {
       "repository": "orf/gping",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "abee897c1c8dd0ef0c5a533ee731407706627c412f3c83fbe9c8bcc25cce8df9",
-      "verified_at": "2026-10-23T10:48:13.131Z",
+      "content_hash": "66d6323c7237f376be7300f07de219871bdfe7a1f8ecc465a48989236056f21e",
+      "verified_at": "2026-10-25T18:28:20.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:48:13.131Z"
+      "last_updated": "2026-10-25T18:28:20.548Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",

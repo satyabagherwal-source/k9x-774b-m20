@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:21:51.066Z",
-  "total_cycles_completed": 4917,
-  "total_learnings_persisted": 4917,
-  "total_rules_promoted": 4293,
+  "last_updated": "2026-10-25T18:28:20.545Z",
+  "total_cycles_completed": 4920,
+  "total_learnings_persisted": 4920,
+  "total_rules_promoted": 4295,
   "history": [
-    {
-      "timestamp": "2026-10-25T08:24:09.850Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T08:24:37.815Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T08:39:34.173Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T08:44:00.582Z",
       "repository": "makecindy/cindy",
@@ -1403,6 +1382,27 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:28:18.796Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:28:18.827Z",
+      "repository": "react-bootstrap/react-bootstrap",
+      "learningId": "learn-github-react-bootstrap-react-bootstrap",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T18:28:20.545Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
