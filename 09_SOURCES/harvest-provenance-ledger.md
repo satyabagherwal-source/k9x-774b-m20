@@ -4966,3 +4966,4 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `2668d2ef` | Multi-dimensional audit evidence | 2026-10-25T19:19:06.122Z |
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `75099ba5` | Multi-dimensional audit evidence | 2026-10-25T19:19:10.405Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T19:19:13.331Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-25T19:25:30.968Z |

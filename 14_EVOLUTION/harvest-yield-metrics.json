@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:19:13.335Z",
-  "total_cycles_completed": 4936,
-  "total_learnings_persisted": 4936,
+  "last_updated": "2026-10-25T19:25:30.973Z",
+  "total_cycles_completed": 4937,
+  "total_learnings_persisted": 4937,
   "total_rules_promoted": 4308,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:01:30.979Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:10:49.327Z",
       "repository": "Automattic/harper",
@@ -1403,6 +1396,13 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:25:30.973Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

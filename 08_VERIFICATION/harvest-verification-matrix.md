@@ -4959,3 +4959,4 @@
 | `CYCLE-20261025-OE4N` | `2026-10-25T19:19:06.119Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4421` | Yes (`7abb2f2f...`) |
 | `CYCLE-20261025-OHFK` | `2026-10-25T19:19:10.400Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4422` | Yes (`acd78bf0...`) |
 | `CYCLE-20261025-OJOW` | `2026-10-25T19:19:13.329Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4423, Rule 4424` | Yes (`6ac38996...`) |
+| `CYCLE-20261025-WN2T` | `2026-10-25T19:25:30.965Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`3a3ebbaa...`) |

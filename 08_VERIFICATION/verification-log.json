@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-OHYB",
-    "timestamp": "2026-10-23T05:44:01.763Z",
-    "repository": "NG-ZORRO/ng-zorro-antd",
-    "learningId": "learn-github-ng-zorro-ng-zorro-antd",
-    "contentHash": "e90161ac8c6f3fd9d3a976f4a5cb329ca3537e21dbdab58aed41ca8e7f71aa7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-WTD5",
     "timestamp": "2026-10-23T05:50:29.801Z",
     "repository": "krakend/krakend-ce",
@@ -7492,6 +7477,21 @@
     "contentHash": "6ac389969203fb511de08e2beead758f9b0c76a5d91c277abae97cda01517ac6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-WN2T",
+    "timestamp": "2026-10-25T19:25:30.965Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

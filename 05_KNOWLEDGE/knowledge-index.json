@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T19:19:13.278Z",
+  "last_updated": "2026-10-25T19:25:30.911Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23195,7 +23195,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "ab9f523e350b0aecdc7e350a54e05bbf8f6a05321087b6e8ed535567289b5a2d",
+      "content_hash": "3a3ebbaa035e5ea99d8c446a967ded6d78e1477171d5cfe5380890845d5a55f6",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -23228,7 +23228,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-20T23:43:31.223Z",
+      "verified_at": "2026-10-25T19:25:30.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
