@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source**: github ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
-> **Source Version**: `c015c32a`  
+> **Source Version**: `da0c371b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:11:43.420Z  
+> **Timestamp**: 2026-10-25T15:03:18.298Z  
 > **Learning ID**: `learn-github-assistant-ui-assistant-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:11:41.995Z  
+> **Harvest Timestamp**: 2026-10-25T15:03:17.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Typescript/React Library for AI Chat 💬🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12691 stars
+- **Stars / Engagement**: 12736 stars
 
 ---
 
@@ -1409,11 +1409,14 @@ export function createAnonymousSessionFetch(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10045** (2026-10-23): **test(registry): chat route cancellation case times out on a cold route import under coverage**
-  *Symptoms*: the merge group run for #10037 (run 39899304391, base `a24d074aa`) failed Test Coverage in `apps/registry/app/api/chat/route.test.ts`, while the `main` push on the same commit passed. the change itself only touches `packages/react-mcp`, which `apps/registry` does not depend on.  - `registry chat route > forwards cancellation to the provider after the response starts` hit the 5000ms test timeout (5017ms). it is the first case, so it pays the dynamic `import()` of the route module (`loadRoute`, line 95) under coverage instrumentation. - `uses the same frontend tools for message conversion and streaming` then failed at line 147 after 204ms, reading `mocks.streamText.mock.calls[0]` while the timed out case was still running: a cascade, not a second bug.  none of the 25 previous failed Test Coverage runs show it, so it is rare. the fix is to take the cold import out of the first case (load the routes in a `beforeAll`) so no case measures module load time.  <!-- rupic:badge:start --> <a href="https://rupic.dev/s/s2.lhYZt-p72L_idwUTuDOwyKycsK2OZ73JdaCFi7dJ5BEnuqwbQYlG__Syso0?ref=github" target="_blank" rel="noopener noreferrer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://rupic.dev/badges/track-dark-v1.svg"><img alt="Track in Rupic" src="https://rupic.dev/badges/track-light-v1.svg"></picture></a> <!-- rupic:badge:end -->
+- **Issue #10084** (2026-10-23): **ci: version PR lockfile is taken whole from the version job**
+  *Symptoms*: Follow-up to #10083, part of #10055.  `Create Version PR` applies the patch from `Version packages` only after `scripts/check-version-patch.mjs` accepts it. The check limits `package.json` edits to versions and the dependency ranges `changeset version` rewrites, but it accepts `pnpm-lock.yaml` whole: on a real release `pnpm install --no-frozen-lockfile --lockfile-only` also re-resolves unrelated entries (`cf785a80e7` moves nuxt's peers), so the lockfile diff cannot be narrowed to the lines a version bump needs.  A package that runs in `Version packages` can therefore still put any lockfile content into the version PR, such as a tarball URL it controls or an extra dependency in another package's snapshot. Once the version PR merges, every `--frozen-lockfile` install from main installs it, and it stays after the upstream package is fixed. Every package in that job is also installed by the build jobs, so this adds persistence rather than reach, and reading the lockfile diff in the release PR is the only guard today.  The fix is to stop taking the lockfile from the version job:  - `Version packages` runs `changeset version` only and leaves `pnpm-lock.yaml` out of its patch, and the checker rejects a lockfile change. - `Create Version PR` regenerates the lockfile with `pnpm install --no-frozen-lockfile --lockfile-only --ignore-scripts` inside the `script` it passes to `changesets/action/version`. The sub-action resets the branch to the run's SHA before running `script` and commits
 
-- **Issue #10021** (2026-10-22): **cloud never reports persistence_error for a turn whose history write failed**
-  *Symptoms*: follows #4826.  `persistence_error` is in the run outcome vocabulary but nothing produces it. when an append or update to cloud history fails, `useExternalHistory` logs `Failed to persist message history` and the turn's run report either still goes out as a normal run or never goes out, depending on where the chain failed; `CloudRunReporter` also swallows send failures by design. a reviewer cannot tell a missing reply caused by storage from one caused by the model.  needs a decision on who reports the failure of a write (the history adapter after a failed append, with `outcome_type: "persistence_error"`) and how that interacts with the reporter's swallow and 429 retry rules.  <!-- rupic:badge:start --> <a href="https://rupic.dev/s/s2.rtGE7yifIUfskQC4_lMwRfOhKrxZC3Vq9QtICAckivH1kFYmETeNHazThmQ?ref=github" target="_blank" rel="noopener noreferrer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://rupic.dev/badges/track-dark-v1.svg"><img alt="Track in Rupic" src="https://rupic.dev/badges/track-light-v1.svg"></picture></a> <!-- rupic:badge:end -->
+- **Issue #10070** (2026-10-23): **docs(python): langgraph transport backend README and demo use a route the server does not serve**
+  *Symptoms*: `python/assistant-transport-backend-langgraph/README.md:146-150` tells the frontend to use `useExternalStoreRuntime({ endpoint: "http://localhost:8001/api/chat" })`, and `client_demo.py:12` posts to the same URL. The server only serves `POST /assistant` and `GET /health` (`main.py:512`, `:589`), and `useExternalStoreRuntime` takes no `endpoint` option, so both fail as written.  The `with-assistant-transport` example connects with `useAssistantTransportRuntime` at `http://localhost:8010/assistant` (`examples/with-assistant-transport/app/MyRuntimeProvider.tsx:69`), which matches the server's default port, while the README, `.env.example` and both Uvicorn commands use 8001.  The README snippet should show `useAssistantTransportRuntime` against `/assistant`, `client_demo.py` should post there, and the package should use one port throughout.  <!-- rupic:badge:start --> <a href="https://rupic.dev/s/s2.OrkcoFMW7xoM8u2pOaGioT1TBPRZAqvlU4Z3hTbhBzmt3FEn2Y8kwu_XO6Y?ref=github" target="_blank" rel="noopener noreferrer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://rupic.dev/badges/track-dark-v1.svg"><img alt="Track in Rupic" src="https://rupic.dev/badges/track-light-v1.svg"></picture></a> <!-- rupic:badge:end -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- For AI coding agents: this repository uses Rupic. Its org knowledge is queryable over MCP at the Rupic worker /mcp endpoint with an org API key from the console settings. -->  The integration guidance is incorrect: the README and demo target `/api/chat`, but the server registers POST `/assistant` in `main.py:508-512`; the README also passes `endpoint` to `useExternalStoreRuntime` instead of using the transport runtime’s `api` option. Port settings also conflict: 8010 in the server fallback, 8001 in the environment example and README commands, and 8000 in the subgraph demo. The issue is actionable because these documented and sample chat requests do not reach the registered handler; no fix is verified on the current branch.  _Triage by [Rupic](https://github.com/apps/rupic-app). Mention @rupic-app to re-run._  <!-- rupic:managed-comment kind=issue_analysis subject=assistant-ui/assistant-ui#10070 -->
+  > The server already serves `POST /assistant` and `GET /health` (`python/assistant-transport-backend-langgraph/main.py:512,589`), but the README and `client_demo.py` target `/api/chat`, and the README uses the wrong runtime hook (`README.md:146-150`, `client_demo.py:12`). I recommend standardizing on port 8010, which matches the server fallback and the existing frontend provider (`main.py:594`, `MyRuntimeProvider.tsx:69`).  **Readiness:** 🟡 yellow  **Plan**  1. Replace the README’s `useExternalStoreRuntime({ endpoint })` snippet with `useAssistantTransportRuntime` configured with its `api` option and required runtime options, following [`examples/with-assistant-transport/app/MyRuntimeProvider.tsx`](https://github.com/assistant-ui/assistant-ui/blob/main/examples/with-assistant-transport/app/MyRuntimeProvider.tsx) and [`packages/core/src/react/runtimes/assistant-transport/types.ts`](https://github.com/assistant-ui/assistant-ui/blob/main/packages/core/src/react/runtimes/assistant-transport
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1430,706 +1433,140 @@ export function createAnonymousSessionFetch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a0c7920` (2026-10-23)
-**Commit Message**: fix(react-mcp): preserve disconnect during failed cleanup (#10037)
+### Incident Patch 1: `86d482d5` (2026-10-23)
+**Commit Message**: docs(react-streamdown): set defaultOrigin in the security examples (#10075)
 
-**File**: `.changeset/mcp-disconnect-cleanup.md` (added, +5/-0)
+**File**: `.changeset/streamdown-security-default-origin.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@assistant-ui/react-mcp": patch
++"@assistant-ui/react-streamdown": patch
 +---
 +
-+fix: preserve a later disconnect while a failed connection or OAuth completion is cleaning up its transport.
++docs: set `defaultOrigin` in the security examples, which rehype-harden requires once a prefix list is specific.
 ```
 
-**File**: `packages/react-mcp/src/resources/McpServerResource.test.ts` (modified, +69/-0)
+**File**: `packages/react-streamdown/src/types.ts` (modified, +3/-1)
 ```diff
-@@ -203,6 +203,75 @@ const getOAuthProvider = (index: number) => {
-   };
- };
- 
-+describe("McpServerResource failed connection cleanup", () => {
-+  beforeEach(resetMocks);
-+
-+  it.each(["connect", "completeAuth"] as const)(
-+    "preserves a later disconnect while cleaning up a failed %s",
-+    async (operation) => {
-+      let finishClose!: () => void;
-+      const close = new Promise<void>((resolve) => {
-+        finishClose = resolve;
-+      });
-+      mocks.closeResults.push(() => close);
-+      const failure = new Error("connection failed");
-+      const results =
-+        operation === "connect"
-+          ? mocks.connectResults
-+          : mocks.finishAuthResults;
-+      results.push(() => Promise.reject(failure));
-+      const storage = createStorage();
-+      vi.mocked(storage.loadAuthState).mockResolvedValue({
-+        serverUrl: "https://example.com/mcp",
-+        state: "expected",
-+      });
-+      const root = mount({
-+        auth: { type: operation === "connect" ? "none" : "oauth" },
-+        storage,
-+      });
-+      const attempt = (
-+        operation === "connect"
-+          ? root.getValue().connect()
-+          : root
-+              .getValue()
-+              .completeAuth(
-+                "https://example.com/callback?code=abc&state=expected",
-+              )
-+      ).catch((error: unknown) => error);
-+
-+      try {
-+        await waitFor(() => mocks.transports[0]?.close.mock.calls.length === 1);
-+        const disconnect = root.getValue().disconnect();
-+        await waitForResourceUpdate(
-+          () => root.getValue().getState().connectionState === "disconnected",
-+        );
-+
-+        finishClose();
-+        await Promise.all([attempt, disconnect]);
-+        await flushMacrotask();
-+
-+        expect(root.getValue().getState()).toMatchObject({
-+          connectionState: "disconnected",
-+          lastError: null,
-+        });
-+        if (operation === "completeAuth") {
-+          await expect(attempt).resolves.toMatchObject({
-+            message:
-+              'MCP server "docs" authorization was interrupted before completion.',
-+            cause: failure,
-+          });
-+        } else {
-+          await expect(attempt).resolves.toBeUndefined();
-+        }
-+      } finally {
-+        finishClose();
-+        await attempt;
-+        root.unmount();
-+      }
-+    },
-+  );
-+});
-+
- describe("McpServerResource automatic authentication", () => {
-   beforeEach(resetMocks);
- 
-```
-
-**File**: `packages/react-mcp/src/resources/McpServerResource.ts` (modified, +3/-0)
-```diff
-@@ -413,6 +413,7 @@ const useMcpServerResourceInstance = (
-           pendingTransportRef.current = null;
-           await closeQueuedTransports([transport]);
-         }
-+        if (!isCurrentConnection(generation)) return;
-         setLastError({
-           message: err instanceof Error ? err.message : String(err),
-         });
-@@ -502,6 +503,8 @@ const useMcpServerResourceInstance = (
-         throw createInterruptedAuthError(error);
- 
-       await closeTransports();
-+      if (!isCurrentConnection(generation))
-+        throw createInterruptedAuthError(error);
-       setLastError({
-         message: error.message,
-       });
+@@ -159,6 +159,7 @@ export type AllowedTags = Record<string, string[]>;
+  *   allowedLinkPrefixes: ["https://example.com", "https://docs.example.com"],
+  *   allowedImagePrefixes: ["https://cdn.example.com"],
+  *   allowedProtocols: ["https", "mailto"],
++ *   defaultOrigin: "https://example.com",
+  * }}
+  */
+ export type SecurityConfig = {
+@@ -170,7 +171,7 @@ export type SecurityConfig = {
+   allowedProtocols?: string[];
+   /** Allow base64 data images. Default: true */
+   allowDataImages?: boolean;
+-  /** Default origin for relative URLs */
++  /** Origin that relative URLs resolve against. Required when `allowedLinkPrefixes` or `allowedImagePrefixes` lists anything other than `"*"`. */
+   defaultOrigin?: string;
+   /** CSS class for blocked links */
+   blockedLinkClass?: string;
+@@ -387,6 +388,7 @@ export type StreamdownTextPrimitiveProps = Omit<
+    *   allowedLinkPrefixes: ["https://trusted.com"],
+    *   allowedImagePrefixes: ["https://cdn.trusted.com"],
+    *   allowedProtocols: ["https"],
++   *   defaultOrigin: "https://trusted.com",
+    * }}
+    */
+   security?: SecurityConfig | undefined;
 ```
 
 ---
 
-### Incident Patch 2: `c015c32a` (2026-10-23)
-**Commit Message**: fix(diagrammatic): honor height on micro charts without a width (#10071)
+### Incident Patch 2: `c8d3bb55` (2026-10-24)
+**Commit Message**: fix(docs): improve thread-list error layout (#10102)
 
-**File**: `packages/diagrammatic/src/react/charts/sparkline.height.test.tsx` (added, +42/-0)
+**File**: `apps/docs/components/pages/home/demo/sidebar.tsx` (modified, +6/-5)
 ```diff
-@@ -0,0 +1,42 @@
-+import { renderToStaticMarkup } from "react-dom/server";
-+import { describe, expect, it } from "vitest";
-+import { Sparkbar } from "./sparkbar";
-+import { Sparkline } from "./sparkline";
-+
-+const rootStyle = (html: string) => html.match(/<svg[^>]*style="([^"]*)"/)![1]!;
-+
-+describe("micro chart height", () => {
-+  it("draws a block row at the height it is given", () => {
-+    const style = rootStyle(
-+      renderToStaticMarkup(<Sparkline block height={40} data={[1, 3, 2]} />),
-+    );
-+    expect(style).toContain("width:100%");
-+    expect(style).toContain("height:40px");
-+  });
-+
-+  it("draws an inline chart at the height it is given without a width", () => {
-+    const style = rootStyle(
-+      renderToStaticMarkup(<Sparkbar height={24} data={[1, 3, 2]} />),
-+    );
-+    expect(style).toContain("height:24px");
-+  });
-+
-+  it("keeps the 1em default for a height that is not a positive number", () => {
-+    for (const height of [0, -4, Number.NaN]) {
-+      const html = renderToStaticMarkup(
-+        <Sparkline block height={height} data={[1, 3, 2]} />,
-+      );
-+      expect(rootStyle(html)).toContain("height:1em");
-+      expect(html).not.toMatch(/<svg[^>]* height="/);
-+    }
-+  });
-+
-+  it("keeps the 1em default when no height is given", () => {
-+    expect(
-+      rootStyle(renderToStaticMarkup(<Sparkline block data={[1, 3, 2]} />)),
-+    ).toContain("height:1em");
-+    expect(
-+      rootStyle(renderToStaticMarkup(<Sparkline data={[1, 3, 2]} />)),
-+    ).toContain("height:1em");
-+  });
-+});
-```
-
-**File**: `packages/diagrammatic/src/react/svg.tsx` (modified, +4/-3)
-```diff
-@@ -382,6 +382,7 @@ export const MicroSvg = forwardRef<
-   ) => {
-     const label = title ?? rest["aria-label"];
-     const px = sized(width);
-+    const h = sized(height);
-     return (
-       <svg
-         ref={ref}
-@@ -394,7 +395,7 @@ export const MicroSvg = forwardRef<
-         {...rest}
-         width={px}
-         height={
--          height ??
-+          h ??
-           (px === undefined
-             ? undefined
-             : Math.round(((px * vh) / vw) * 100) / 100)
-@@ -404,14 +405,14 @@ export const MicroSvg = forwardRef<
-             ? {
-                 display: "block",
-                 width: "100%",
--                height: `${em}em`,
-+                height: h === undefined ? `${em}em` : `${h}px`,
-                 fontFamily: FONT,
-                 ...style,
-               }
-             : px === undefined
-               ? {
-                   display: "inline-block",
--                  height: `${em}em`,
-+                  height: h === undefined ? `${em}em` : `${h}px`,
-                   width: "auto",
-                   verticalAlign: "-0.125em",
-                   fontFamily: FONT,
+@@ -1,7 +1,7 @@
+ "use client";
+ 
+ import { ThreadListPrimitive, useAui, useAuiState } from "@assistant-ui/react";
+-import { ChevronDownIcon, PlusIcon } from "lucide-react";
++import { ChevronDownIcon, PlusIcon, RotateCcwIcon } from "lucide-react";
+ import { Fragment, useMemo, useState, type ReactNode } from "react";
+ import { ThreadListSearch } from "@/components/assistant-ui/elements/thread-list.aui";
+ import { useDemoThreadListGroups } from "./thread-list-groups";
+@@ -94,16 +94,17 @@ function ThreadList({ search }: { search: string }): ReactNode {
+       ) : showLoadError ? (
+         <div
+           role="alert"
+-          className="mt-1 flex h-8 shrink-0 items-center justify-between px-2 text-[13px]"
++          className="mt-4 flex flex-col items-start gap-2 px-2 text-[13px]"
+         >
+-          <span className="text-muted-foreground">
++          <p className="text-muted-foreground leading-5">
+             Threads could not be loaded
+-          </span>
++          </p>
+           <button
+             type="button"
+             onClick={() => void aui.threads.reload()}
+-            className="text-muted-foreground hover:text-foreground rounded-control -me-2 h-8 px-2 transition-colors"
++            className="border-foreground/10 bg-background hover:border-foreground/25 hover:bg-foreground/[0.04] focus-visible:outline-ring rounded-control inline-flex h-8 cursor-pointer items-center gap-1.5 border px-2.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+           >
++            <RotateCcwIcon aria-hidden className="size-3.5" />
+             Retry
+           </button>
+         </div>
 ```
 
 ---
 
-### Incident Patch 3: `bfd98a80` (2026-10-23)
-**Commit Message**: fix: bind setup-agent key redemption to the asking CLI (#10066)
+### Incident Patch 3: `16b59dfd` (2026-10-25)
+**Commit Message**: ci(expo): skip native bundles for web-only UI changes (#10099)
 
-**File**: `.changeset/setup-agent-redeem-key.md` (added, +5/-0)
+**File**: `.github/workflows/expo-native-bundle.yaml` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"setup-agent": patch
-+---
-+
-+fix: bind model key redemption to the asking CLI.
+@@ -14,6 +14,8 @@ on:
+       - packages/store/**
+       - packages/tap/**
+       - packages/ui/**
++      - "!packages/ui/src/components/react/**"
++      - "!packages/ui/src/components/vue/**"
+       - packages/x-buildutils/**
+       - packages/x-generative-compiler/**
+       - "!packages/**/*.test.ts"
+@@ -38,6 +40,8 @@ on:
+       - packages/store/**
+       - packages/tap/**
+       - packages/ui/**
++      - "!packages/ui/src/components/react/**"
++      - "!packages/ui/src/components/vue/**"
+       - packages/x-buildutils/**
+       - packages/x-generative-compiler/**
+       - "!packages/**/*.test.ts"
 ```
 
-**File**: `api-surface/setup-agent.ts` (modified, +2/-0)
+**File**: `scripts/deploy-examples-changes.test.mjs` (modified, +7/-0)
 ```diff
-@@ -69,6 +69,7 @@ declare namespace Checkout {
-     product?: string;
-     default?: string;
-     help?: InputHelp;
-+    redeemKeyHash?: string;
-     optional: boolean;
-     status: InputStatus;
-     answer?: string;
-@@ -135,6 +136,7 @@ declare namespace Checkout {
-     product?: string;
-     default?: string;
-     help?: InputHelp;
-+    redeemKeyHash?: string;
-     optional?: boolean;
-   };
-   type PlanDecision = {
-```
-
-**File**: `apps/checkout-worker/src/index.test.ts` (modified, +40/-0)
-```diff
-@@ -151,6 +151,46 @@ describe("secret lifecycle", () => {
- });
- 
- describe("CheckoutDO", () => {
-+  it("requires the model input's redeem key without consuming a deposit on failure", async () => {
-+    const snapshot = modelState();
-+    snapshot.inputs[0]!.redeemKeyHash =
-+      "3389fd9e8dac282ba9df440375f67fbe84dcd70f157d4adabbdd2fd56c7a8f08";
-+    const fixture = createInstance(snapshot);
-+    const client = await connect(fixture);
-+    expect(
-+      (
-+        await fixture.instance.fetch(
-+          secretRequest("setup-a", "PUT", "provider-key"),
-+        )
-+      ).status,
-+    ).toBe(204);
-+    await client.commands["checkout/answer"]({
-+      inputId: "q1",
-+      answer: modelAnswer,
-+    });
-+    expect((await fixture.instance.fetch(secretRequest())).status).toBe(403);
-+    expect(
-+      (
-+        await fixture.instance.fetch(
-+          new Request(secretRequest(), {
-+            headers: { "Setup-Agent-Redeem-Key": "wrong" },
-+          }),
-+        )
-+      ).status,
-+    ).toBe(403);
-+    expect(fixture.stored.get('secret:["setup-a","q1"]')).toEqual(
-+      expect.objectContaining({ secret: "provider-key" }),
-+    );
-+    const response = await fixture.instance.fetch(
-+      new Request(secretRequest(), {
-+        headers: { "Setup-Agent-Redeem-Key": "redeem-key" },
-+      }),
-+    );
-+    expect(response.status).toBe(200);
-+    expect(await response.text()).toBe("provider-key");
-+    expect(fixture.stored.has('secret:["setup-a","q1"]')).toBe(false);
-+  });
-+
-   it("keeps a key outside state and consumes it once only after its matching answer", async () => {
-     const fixture = createInstance(modelState());
-     const client = await connect(fixture);
-```
-
-**File**: `apps/checkout-worker/src/index.ts` (modified, +18/-0)
-```diff
-@@ -226,6 +226,24 @@ export class CheckoutDO extends StatewireDurableObject<Env>() {
-         await this.ctx.storage.delete(key);
-         return new Response("no secret", { status: 404 });
-       }
-+      if (input.redeemKeyHash !== undefined) {
-+        const redeemKey = request.headers.get("Setup-Agent-Redeem-Key");
-+        const digest = new Uint8Array(
-+          await crypto.subtle.digest(
-+            "SHA-256",
-+            new TextEncoder().encode(redeemKey ?? ""),
-+          ),
-+        );
-+        let difference = 0;
-+        for (let i = 0; i < digest.length; i++) {
-+          difference |=
-+            digest[i]! ^
-+            Number.parseInt(input.redeemKeyHash.slice(i * 2, i * 2 + 2), 16);
-+        }
-+        if (redeemKey === null || difference !== 0) {
-+          return new Response("invalid redeem key", { status: 403 });
-+        }
-+      }
-       await this.ctx.storage.delete(key);
-       return new Response(value.secret, {
-         headers: { "content-type": "text/plain" },
-```
-
-**File**: `packages/setup-agent/README.md` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ The URL is the browser's link to its agent, not one setup. A finished or cancell
- 
- ## Inputs
- 
--Inputs include `text`, `choice`, `model` and `entry-point`, plus the legacy `product` kind. A choice carries `options` (`id`, `label`, `description`, `icon`, `variants`), an optional `default` and a `help` note the browser renders as a "help me choose" disclosure. Option ids are unique, and neither option nor variant ids may contain `:`. The answer is the option id, `<option>:<variant>` when the option has variants (`langgraph:python`), or the user's own text when none of the options fit (including any text with more than one `:`); the stream marks that answer `custom`. An agent's own choice is multi-select unless asked with `--single`: the user checks any number of options (none may have variants), and the answer is a JSON array of those entries, which `wait` and the stream print as an array and `status` holds as text. `--single` is for options that exclude each other (one framework, one model, yes or no) and answers one id. Every one of the agent's own options must carry an `icon` from the pack `OPTION_ICONS` exports (`--icons "slack=message,email=mail"`); the CLI refuses the question otherwise. A preset option carries a brand mark instead. Every answer may carry a `note` from the user. A model input lists providers as its options; the browser collects the provider, its API key, the model and an optional reasoning effort, and the answer is that object as JSON (`{"provider","model","reasoningEffort"?}`); the API key is deposited separately and only ever reaches the env file the agent names through `env`.
-+Inputs include `text`, `choice`, `model` and `entry-point`, plus the legacy `product` kind. A choice carries `options` (`id`, `label`, `description`, `icon`, `variants`), an optional `default` and a `help` note the browser renders as a "help me choose" disclosure. Option ids are unique, and neither option nor variant ids may contain `:`. The answer is the option id, `<option>:<variant>` when the option has variants (`langgraph:python`), or the user's own text when none of the options fit (including any text with more than one `:`); the stream marks that answer `custom`. An agent's own choice is multi-select unless asked with `--single`: the user checks any number of options (none may have variants), and the answer is a JSON array of those entries, which `wait` and the stream print as an array and `status` holds as text. `--single` is for options that exclude each other (one framework, one model, yes or no) and answers one id. Every one of the agent's own options must carry an `icon` from the pack `OPTION_ICONS` exports (`--icons "slack=message,email=mail"`); the CLI refuses the question otherwise. A preset option carries a brand mark instead. Every answer may carry a `note` from the user. A model input lists providers as its options; the browser collects the provider, its API key, the model and an optional reasoning effort, and the answer is that object as JSON (`{"provider","model","reasoningEffort"?}`); the API key is deposited separately and only ever reaches the env file the agent names through `env`. Only the CLI that asked can take it: `ask` keeps a redeem key in a private file under the user's state directory, or a per-user directory under the temp directory, and refuses a model question when neither can hold it, so `env` runs as the same user on the same machine.
- 
- When the setup puts an assistant in the app, the agent asks for its entry point after discovering the app, with `ask "<prompt>" --entry-points '<JSON array>' [--default <id>]`. Each of 1–3 options includes a stable `id`, `label`, contextual `description`, and `entryPoint: { formFactor: "modal" | "sidebar" | "full-page", placement, trigger, recommended? }`. At most one option is recommended, and the agent marks it with `recommended` rather than `--default`, which would preselect it. Two alternatives can share a form factor when their placements differ. Entry-point questions accept exactly one option id, with an optional user note; variants, custom ids, a help note and multi-selection are refused. The agent describes the actual app's workflow, placement and opening action, then incorporates the user's selection into the approved plan.
- 
-```
-
-**File**: `packages/setup-agent/src/cli.test.ts` (modified, +370/-0)
-```diff
-@@ -1,19 +1,26 @@
-+import { createHash } from "node:crypto";
-+import type { connectCheckout } from "./client";
- import { initialCheckoutState, type Checkout } from "./protocol";
- import { describe, expect, it, onTestFinished, vi } from "vitest";
- import {
-   chmod,
-   mkdtemp,
-+  mkdir,
-+  readdir,
-   readFile,
-+  realpath,
-   rm,
-   stat,
-   symlink,
-+  unlink,
-   writeFile,
- } from "node:fs/promises";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- import {
-   HELP,
-   INSTRUCTIONS,
-+  main,
-   askSeed,
-   agentInstructions,
-   diffEvents,
-@@ -24,6 +31,15 @@ import {
-   writeEnvSecret,
- } from "./cli";
- 
-+const { connectCheckoutMock } = vi.hoisted(() => ({
-+  connectCheckoutMock: vi.fn<typeof connectCheckout>(),
-+}));
-+
-+vi.mock("./client", async (importOriginal) => ({
-+  ...(await importOriginal<typeof import("./client")>()),
-+  connectCheckout: connectCheckoutMock,
-+}));
-+
- describe("the agent's briefing", () => {
-   it("preserves the published instructions export and setup-created event wording", () => {
-     expect(INSTRUCTIONS).toBe(agentInstructions);
-@@ -646,3 +662,357 @@ describe("writeEnvSecret", () => {
+@@ -340,6 +340,13 @@ test("the Expo native bundle watches bundle inputs but skips isolated package te
+       ),
+       false,
      );
-   });
- });
-+
-+describe("model key handoff", () => {
-+  const fixture = async (stateHomePath?: (root: string) => Promise<string>) => {
-+    const root = await mkdtemp(join(tmpdir(), "setup-agent-state-"));
-+    const stateHome = stateHomePath
-+      ? await stateHomePath(root)
-+      : await realpath(root);
-+    const stateHomeVariable =
-+      process.platform === "win32" ? "LOCALAPPDATA" : "XDG_STATE_HOME";
-+    const prior = process.env[stateHomeVariable];
-+    process.env[stateHomeVariable] = stateHome;
-+    const state: Checkout.State = {
-+      ...initialCheckoutState(),
-+      id: "setup-a",
-+      createdAt: 1,
-+      status: "planning",
-+    };
-+    const ask = vi.fn(async (seed: Checkout.InputSeed) => {
-+      state.inputs.push({
-+        ...seed,
-+        id: "q1",
-+        phase: "planning",
-+        kind: "model",
-+        optional: false,
-+        status: "open",
-+        createdAt: 2,
-+      });
-+      return { inputId: "q1" };
-+    });
-+    const client = { state, commands: { "agent/ask": ask }, dispose: vi.fn() };
-+    connectCheckoutMock.mockResolvedValue(
-+      client as unknown as Awaited<ReturnType<typeof connectCheckout>>,
-+    );
-+    const stdout = vi.spyOn(process.stdout, "write").mockReturnValue(true);
-+    onTestFinished(async () => {
-+      stdout.mockRestore();
-+      connectCheckoutMock.mockReset();
-+      vi.unstubAllGlobals();
-+      vi.unstubAllEnvs();
-+      if (prior === undefined) delete process.env[stateHomeVariable];
-+      else process.env[stateHomeVariable] = prior;
-+      await rm(root, { recursive: true, force: true });
-+    });
-+    return { state, ask, stateHome, root };
-+  };
-+
-+  const setup = async (stateHomePath?: (root: string) => Promise<string>) => {
-+    const context = await fixture(stateHomePath);
-+    await main([
-+      "https://checkout.test/session",
-+      "ask",
-+      "--preset",
-+      "llm-provider",
-+    ]);
-+    const directory = join(context.stateHome, "setup-agent");
-+    const files = await readdir(directory);
-+    const keyFile = join(directory, files[0]!);
-+    const redeemKey = await readFile(keyFile, "utf8");
-+    return { ...context, directory, files, keyFile, redeemKey };
-+  };
-+
-+  const answerModel = (state: Checkout.State) => {
-+    state.inputs[0]!.status = "answered";
-+    state.inputs[0]!.answer = JSON.stringify({
-+      provider: "openai",
-+      model: "gpt-test",
-+    });
-+  };
-+
-+  const fallbackDirectory = async () => {
-+    const root = await mkdtemp(join(tmpdir(), "setup-agent-fallback-"));
-+    for (const variable of ["TMPDIR", "TMP", "TEMP"])
-+      vi.stubEnv(variable, root);
-+    onTestFinished(() => rm(root, { recursive: true, force: true }));
-+    return join(
-+      root,
-+      `setup-agent-${process.platform === "win32" ? (await import("node:os")).userInfo().username : process.getuid!()}`,
-+    );
-+  };
-+
-+  const redeem = async (state: Checkout.State, url: string) => {
-+    answerModel(state);
-+    const fetch = vi.fn(
-+      async (_input: string, _init?: RequestInit) =>
-+        new Response("provider-key"),
-+    );
-+    vi.stubGlobal("fetch", fetch);
-+    const directory = await mkdtemp(join(tmpdir(), "setup-agent-env-"));
-+    onTestFinished(() => rm(directory, { recursive: true, force: true }));
-+    const file = join(directory, ".env.local");
-+    await main([url, "env", "q1", "OPENAI_API_KEY", "--file", file]);
-+    expect(await readFile(file, "utf8")).toBe("OPENAI_API_KEY=provider-key\n");
-+    return fetch;
-+  };
-+
-+  it.skipIf(process.platform === "win32")(
-+    "stores the model redeem key privately under the user state home",
-+    async () => {
-+      const { ask, directory, files, keyFile, redeemKey } = await setup();
-+      expect(files).toHaveLength(1);
-+      expect((await stat(directory)).mode & 0o777).toBe(0o700);
-+      expect((await stat(keyFile)).mo
-```
-
-**File**: `packages/setup-agent/src/cli.ts` (modified, +163/-3)
-```diff
-@@ -2,10 +2,20 @@ import { connectCheckout } from "./client";
- import type { CheckoutClient } from "./client";
- import { INPUT_PRESETS, isPresetId, presetInput } from "./presets";
- import { spawn } from "node:child_process";
-+import { createHash, randomBytes } from "node:crypto";
- import { constants } from "node:fs";
--import { lstat, open, readFile, realpath } from "node:fs/promises";
-+import {
-+  chmod,
-+  lstat,
-+  mkdir,
-+  open,
-+  readFile,
-+  realpath,
-+  unlink,
-+} from "node:fs/promises";
-+import { homedir, tmpdir, userInfo } from "node:os";
- import { createInterface } from "node:readline/promises";
--import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
-+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
- import {
-   AGENT_HEARTBEAT_MS,
-   OPTION_ICONS,
-@@ -719,6 +729,109 @@ export const writeEnvSecret = async (
-   }
- };
- 
-+const redeemKeyDirectories = () => {
-+  const stateHome =
-+    process.platform === "win32"
-+      ? process.env.LOCALAPPDATA || join(homedir(), "AppData", "Local")
-+      : process.env.XDG_STATE_HOME || join(homedir(), ".local", "state");
-+  return [
-+    join(stateHome, "setup-agent"),
-+    join(
-+      tmpdir(),
-+      `setup-agent-${process.platform === "win32" ? userInfo().username : process.getuid!()}`,
-+    ),
-+  ];
-+};
-+
-+const checkRedeemKeyDirectory = async (directory: string) => {
-+  if (!isAbsolute(directory)) {
-+    throw new Error("state home must be an absolute path");
-+  }
-+  const info = await lstat(directory);
-+  if (!info.isDirectory() || info.isSymbolicLink()) {
-+    throw new Error(
-+      `redeem key directory must not be a symbolic link: ${directory}`,
-+    );
-+  }
-+  if (process.platform !== "win32") {
-+    if (info.uid !== process.getuid!()) {
-+      throw new Error(
-+        `redeem key directory must be owned by the user: ${directory}`,
-+      );
-+    }
-+    if ((info.mode & 0o077) !== 0) await chmod(directory, 0o700);
-+  }
-+};
-+
-+const prepareRedeemKeyDirectory = async (directory: string) => {
-+  if (isAbsolute(directory)) {
-+    await mkdir(directory, { recursive: true, mode: 0o700 });
-+  }
-+  await checkRedeemKeyDirectory(directory);
-+};
-+
-+const saveRedeemKey = async (hash: string, key: string) => {
-+  let lastError: unknown;
-+  for (const directory of redeemKeyDirectories()) {
-+    const file = join(directory, `${hash}.key`);
-+    let created = false;
-+    try {
-+      await prepareRedeemKeyDirectory(directory);
-+      const handle = await open(
-+        file,
-+        constants.O_WRONLY |
-+          constants.O_CREAT |
-+          constants.O_EXCL |
-+          constants.O_NOFOLLOW,
-+        0o600,
-+      );
-+      created = true;
-+      try {
-+        await handle.writeFile(key);
-+      } finally {
-+        await handle.close();
-+      }
-+      return file;
-+    } catch (error) {
-+      if (created) await unlink(file).catch(() => {});
-+      lastError = error;
-+    }
-+  }
-+  throw lastError;
-+};
-+
-+const readRedeemKey = async (hash: string) => {
-+  if (!/^[0-9a-f]{64}$/.test(hash)) return undefined;
-+  for (const directory of redeemKeyDirectories()) {
-+    try {
-+      await checkRedeemKeyDirectory(directory);
-+      const file = join(directory, `${hash}.key`);
-+      const handle = await open(
-+        file,
-+        constants.O_RDONLY | constants.O_NOFOLLOW,
-+      );
-+      try {
-+        const info = await handle.stat();
-+        if (
-+          !info.isFile() ||
-+          (process.platform !== "win32" && (info.mode & 0o077) !== 0)
-+        ) {
-+          throw new Error("redeem key file must be private and regular");
-+        }
-+        const key = await handle.readFile("utf8");
-+        if (createHash("sha256").update(key).digest("hex") === hash) {
-+          return { key, file };
-+        }
-+      } finally {
-+        await handle.close();
-+      }
-+    } catch {
-+      continue;
-+    }
-+  }
-+  return undefined;
-+};
-+
- const answerFields = (input: Checkout.Input, answer: string) => ({
-   answer: (input.multiple && parseMultipleAnswer(answer)) || answer,
-   ...(input.note !== undefined && { note: input.note }),
-@@ -816,7 +929,32 @@ export const main = async (argv: readonly string[]) => {
-         break;
-       }
-       case "ask": {
--        const { inputId } = await commands["agent/ask"](askSeed(rest, flags));
-+        const seed = askSeed(rest, flags);
-+        const redeemKey =
-+          seed.kind === "model" ? randomBytes(32).toString("hex") : undefined;
-+        const redeemKeyHash =
-+          redeemKey === undefined
-+            ? undefined
-+            : createHash("sha256").update(redeemKey).digest("hex");
-+        const keyFile =
-+          redeemKey === undefined || redeemKeyHash === undefined
-+            ? undefined
-+            : await saveRedeemKey(redeemKeyHash, redeemKey).catch(
-+                (error: unknown) =>
-+                  fail(
-+                    `could not store the model redeem key: ${error instanceof Error ? error.message : String(error)}`,
-+                  )
-```
-
-**File**: `packages/setup-agent/src/host.test.ts` (modified, +40/-0)
-```diff
-@@ -606,6 +606,46 @@ describe("inputs", () => {
- describe("model inputs", () => {
-   const answer = { provider: "openai", model: "gpt-test" };
- 
-+  it("stores a valid redeem hash only on model inputs", async () => {
-+    const host = mount();
-+    await host.commands["checkout/create"](seed);
-+    await host.commands["checkout/begin-plan"]();
-+    const hash = "a".repeat(64);
-+    const { inputId } = await host.commands["agent/ask"]({
-+      ...presetInput("llm-provider"),
-+      redeemKeyHash: hash,
-+    });
-+    expect(
-+      host.state.inputs.find((input) => input.id === inputId)?.redeemKeyHash,
-+    ).toBe(hash);
-+    await host.commands["checkout/answer"]({
-+      inputId,
-+      answer: JSON.stringify(answer),
-+    });
-+    expect(
-+      host.state.inputs.find((input) => input.id === inputId)?.redeemKeyHash,
-+    ).toBe(hash);
-+    for (const redeemKeyHash of [
-+      "A".repeat(64),
-+      "a".repeat(63),
-+      "not-a-hash",
++    for (const file of [
++      "packages/ui/src/components/react/assistant-ui/elements/thread.aui.tsx",
++      "packages/ui/src/components/react/ui/radix/button.tsx",
++      "packages/ui/src/components/vue/assistant-ui/thread.vue",
 +    ]) {
-+      expect(
-+        await reason(
-+          host.commands["agent/ask"]({
-+            ...presetInput("llm-provider"),
-+            redeemKeyHash,
-+          }),
-+        ),
-+      ).toEqual({ reason: "invalid-input" });
++      assert.equal(matches(file), false, file);
 +    }
-+    expect(
-+      await reason(
-+        host.commands["agent/ask"]({ prompt: "Name?", redeemKeyHash: hash }),
-+      ),
-+    ).toEqual({ reason: "invalid-input" });
-+  });
-+
-   it("parses a model answer and rejects malformed ones", () => {
-     expect(parseModelAnswer(JSON.stringify(answer))).toEqual(answer);
-     expect(
+     assert.equal(
+       matches(
+         "packages/ui/src/components/react-native/assistant-ui/thread.test.tsx",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10071** (2026-10-23): fix(diagrammatic): honor height on micro charts without a width (@okisdev)
-- **PR #10066** (2026-10-23): fix: bind setup-agent key redemption to the asking CLI (@okisdev)
-- **PR #10065** (2026-10-23): fix(docs): cap MCP tool input and key demo budgets on the client IP (@okisdev)
-- **PR #10064** (2026-10-23): fix: narrow starter proxies and guard local agent routes (@okisdev)
-- **PR #10063** (2026-10-23): fix: refuse symlinked destinations for project config and secrets (@okisdev)
-- **PR #10062** (2026-10-23): fix(variants): refuse non-loopback Vite clients by default (@okisdev)
+- **PR #10113** (2026-10-25): fix(docs): let Discord play the home link preview video (@Kinfe123)
+- **PR #10112** (2026-10-25): feat(docs): animate the home link preview with og:video (@Kinfe123)
+- **PR #10110** (2026-10-25): fix(docs): align setup wizard Cancel button to the left (@Kinfe123)
+- **PR #10102** (2026-10-24): fix(docs): improve thread-list error layout (@Kinfe123)
+- **PR #10101** (2026-10-25): fix(core): restore rejected edits without replacing newer drafts (@Kinfe123)
+- **PR #10099** (2026-10-25): ci(expo): skip native bundles for web-only UI changes (@Kinfe123)
 
 ---
 
@@ -2149,25 +1586,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react-mcp): preserve disconnect during failed cleanup (#10037)
+## X. docs(react-streamdown): set defaultOrigin in the security examples (#10075)
 
 **RULE**:
-When implementing operations in `.changeset/mcp-disconnect-cleanup.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/streamdown-security-default-origin.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a0c7920`: react-mcp): preserve disconnect during failed cleanup (#10037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86d482d5`: docs(react-streamdown): set defaultOrigin in the security examples (#10075). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/mcp-disconnect-cleanup.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/streamdown-security-default-origin.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"@assistant-ui/react-mcp": patch
+"@assistant-ui/react-streamdown": patch
 ---
 
-fix: preserve a later disconnect while a failed connection or OAuth completion is cleaning up its transport.
+docs: set `defaultOrigin` in the security examples, which rehype-harden requires once a prefix list is specific.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2177,4 +1614,4 @@ fix: preserve a later disconnect while a failed connection or OAuth completion i
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a0c7920` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86d482d5` are properly handled with clean fallback behavior.

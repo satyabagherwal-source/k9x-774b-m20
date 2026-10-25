@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T14:57:16.500Z",
+  "last_updated": "2026-10-25T15:03:27.159Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3191,8 +3191,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "c015c32a",
-      "content_hash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
+      "source_version": "da0c371b",
+      "content_hash": "91737705ccf88e51650bd0408c018aa3154a876592d91e8b90ea5d2a834f4c61",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -3240,6 +3240,11 @@
           "number": 3896,
           "title": "react-mcp): preserve disconnect during failed cleanup (#10037)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4358,
+          "title": "docs(react-streamdown): set defaultOrigin in the security examples (#10075)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3247,7 +3252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:11:43.661Z",
+      "verified_at": "2026-10-25T15:03:18.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12476,8 +12481,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "e87b6eef",
-      "content_hash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
+      "source_version": "d4db00df",
+      "content_hash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -12505,6 +12510,11 @@
           "number": 3760,
           "title": "Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1,",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4359,
+          "title": "honor init object-format defaults, context, and section filtering",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12512,7 +12522,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:48:00.823Z",
+      "verified_at": "2026-10-25T15:03:20.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12865,8 +12875,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "19181848",
-      "content_hash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
+      "source_version": "3c310992",
+      "content_hash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -12889,6 +12899,11 @@
           "number": 3880,
           "title": "build(deps-ui-dev): bump rspec_junit_formatter (#14678)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4360,
+          "title": "build(deps-ui-dev): bump webpack (#14695)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12896,7 +12911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:31:06.313Z",
+      "verified_at": "2026-10-25T15:03:27.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27185,7 +27200,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
+      "content_hash": "1546adfafea2c6a1b5c844bc3d9c45f01163374c5465dc334ddaa914b5ee0854",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -27267,7 +27282,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-20T19:36:53.046Z",
+      "verified_at": "2026-10-25T15:03:18.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -124223,6 +124238,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T14:57:16.489Z"
+    },
+    "rule-4358": {
+      "learning_id": "rule-4358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4358,
+      "title": "docs(react-streamdown): set defaultOrigin in the security examples (#10075)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "da0c371b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:03:18.510Z"
+    },
+    "rule-4359": {
+      "learning_id": "rule-4359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4359,
+      "title": "honor init object-format defaults, context, and section filtering",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "d4db00df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:03:20.123Z"
+    },
+    "rule-4360": {
+      "learning_id": "rule-4360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4360,
+      "title": "build(deps-ui-dev): bump webpack (#14695)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "3c310992",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:03:27.152Z"
     }
   },
   "aliases": {

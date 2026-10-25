@@ -4874,3 +4874,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-25T14:57:15.639Z |
 | `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `338cf2e1` | Multi-dimensional audit evidence | 2026-10-25T14:57:15.960Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `a459b5c4` | Multi-dimensional audit evidence | 2026-10-25T14:57:16.559Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-25T15:03:18.411Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `da0c371b` | Multi-dimensional audit evidence | 2026-10-25T15:03:18.556Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `d4db00df` | Multi-dimensional audit evidence | 2026-10-25T15:03:20.168Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `3c310992` | Multi-dimensional audit evidence | 2026-10-25T15:03:27.199Z |

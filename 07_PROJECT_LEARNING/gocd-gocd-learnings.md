@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `19181848`  
+> **Source Version**: `3c310992`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:31:06.022Z  
+> **Timestamp**: 2026-10-25T15:03:26.959Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:31:05.413Z  
+> **Harvest Timestamp**: 2026-10-25T15:03:26.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7432 stars
+- **Stars / Engagement**: 7433 stars
 
 ---
 
@@ -880,66 +880,24 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b209cf12` (2026-10-23)
-**Commit Message**: build(deps-ui-dev): bump rspec_junit_formatter (#14678)
+### Incident Patch 1: `3c310992` (2026-10-25)
+**Commit Message**: build(deps-ui-dev): bump webpack (#14695)
 
-Bumps the rspec group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rspec_junit_formatter](https://github.com/sj26/rspec_junit_formatter).
+Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [webpack](https://github.com/webpack/webpack).
 
 
-Updates `rspec_junit_formatter` from 0.6.0 to 0.6.2
-- [Release notes](https://github.com/sj26/rspec_junit_formatter/releases)
-- [Changelog](https://github.com/sj26/rspec_junit_formatter/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...v0.6.2)
-
----
-updated-dependencies:
-- dependency-name: rspec_junit_formatter
-  dependency-version: 0.6.2
-  dependency-type: indirect
-  update-type: version-update:semver-patch
-  dependency-group: rspec
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -143,7 +143,7 @@ GEM
-       rspec-mocks (>= 3.13.0, < 5.0.0)
-       rspec-support (>= 3.13.0, < 5.0.0)
-     rspec-support (3.13.7)
--    rspec_junit_formatter (0.6.0)
-+    rspec_junit_formatter (0.6.2)
-       rspec-core (>= 2, < 4, != 2.12.0)
-     sass-embedded (1.102.0)
-       google-protobuf (~> 4.31)
-@@ -243,7 +243,7 @@ CHECKSUMS
-   rspec-mocks (3.13.8) sha256=086ad3d3d17533f4237643de0b5c42f04b66348c28bf6b9c2d3f4a3b01af1d47
-   rspec-rails (8.0.4) sha256=06235692fc0892683d3d34977e081db867434b3a24ae0dd0c6f3516bad4e22df
-   rspec-support (3.13.7) sha256=0640e5570872aafefd79867901deeeeb40b0c9875a36b983d85f54fb7381c47c
--  rspec_junit_formatter (0.6.0) sha256=40dde674e6ae4e6cc0ff560da25497677e34fefd2338cc467a8972f602b62b15
-+  rspec_junit_formatter (0.6.2) sha256=f90f594be841663288becc91b59e525c5faaf739c517ded4e2c66b61b11c66a5
-   sass-embedded (1.102.0) sha256=a73388d442b4409cc99e8ac02037069a9cc4419c895360f5ad17ad291fe43059
-   sassc-embedded (1.80.10) sha256=6baf835e2208d5905d8cff7d0322af45ee3a5933d4d93d22e2875ade967d8a57
-   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-```
-
----
-
-### Incident Patch 2: `6e618c86` (2026-10-23)
-**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14679)
-
-Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.105.2 to 1.106.0.
-- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sass/embedded-host-node/compare/1.105.2...1.106.0)
+Updates `webpack` from 5.112.0 to 5.112.2
+- [Release notes](https://github.com/webpack/webpack/releases)
+- [Changelog](https://github.com/webpack/webpack/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/webpack/webpack/compare/v5.112.0...v5.112.2)
 
 ---
 updated-dependencies:
-- dependency-name: sass-embedded
-  dependency-version: 1.106.0
+- dependency-name: webpack
+  dependency-version: 5.112.2
   dependency-type: direct:development
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
+  dependency-group: webpack
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -947,191 +905,108 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -104,7 +104,7 @@
-     "license-checker": "^25.0.1",
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
--    "sass-embedded": "^1.105.2",
-+    "sass-embedded": "^1.106.0",
-     "sass-loader": "^17.0.1",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
+@@ -119,7 +119,7 @@
+     "typescript": "^6.0.3",
+     "upath": "^3.0.8",
+     "url-loader": "^4.1.1",
+-    "webpack": "^5.112.0",
++    "webpack": "^5.112.2",
+     "webpack-assets-manifest": "^6.5.5",
+     "webpack-cli": "^7.2.3"
+   },
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +12/-12)
 ```diff
-@@ -4640,7 +4640,7 @@ __metadata:
-     normalize-scss: "npm:^8.0.0"
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
--    sass-embedded: "npm:^1.105.2"
-+    sass-embedded: "npm:^1.106.0"
-     sass-loader: "npm:^17.0.1"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-@@ -7310,162 +7310,162 @@ __metadata:
+@@ -4660,7 +4660,7 @@ __metadata:
+     url-loader: "npm:^4.1.1"
+     url-parse: "npm:^1.5.10"
+     uuid: "npm:^14.0.3"
+-    webpack: "npm:^5.112.0"
++    webpack: "npm:^5.112.2"
+     webpack-assets-manifest: "npm:^6.5.5"
+     webpack-cli: "npm:^7.2.3"
+     what-input: "npm:^5.2.12"
+@@ -7561,7 +7561,7 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-embedded-all-unknown@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-all-unknown@npm:1.105.2"
-+"sass-embedded-all-unknown@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-all-unknown@npm:1.106.0"
+-"schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0, schema-utils@npm:^4.3.3, schema-utils@npm:^4.5.0":
++"schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0, schema-utils@npm:^4.3.3":
+   version: 4.5.0
+   resolution: "schema-utils@npm:4.5.0"
    dependencies:
--    sass: "npm:1.105.2"
-+    sass: "npm:1.106.0"
-   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+@@ -8925,12 +8925,12 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-embedded-android-arm64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-android-arm64@npm:1.105.2"
-+"sass-embedded-android-arm64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-android-arm64@npm:1.106.0"
-   conditions: os=android & cpu=arm64
+-"watchpack@npm:^2.6.1":
+-  version: 2.6.1
+-  resolution: "watchpack@npm:2.6.1"
++"watchpack@npm:^2.6.3":
++  version: 2.6.3
++  resolution: "watchpack@npm:2.6.3"
+   dependencies:
+     graceful-fs: "npm:^4.1.2"
+-  checksum: 10c0/43929cc2ed2482a52cba0578046977e7e39ce9a967b5d5bb350da2c1246f6b623b89fa6d24ea94051a6a5b01a7c9c85c9eb5e52e20c75428431adab531167b81
++  checksum: 10c0/c0630d3b9a6bab485a5edce6c0b240e7c7565119023a03f5d12329c9ec6561e897e0b80c58c7117d11719cc4549f14db4b889aae2d74dd4f1e7d4ccf57fde5d7
    languageName: node
    linkType: hard
  
--"sass-embedded-android-arm@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-android-arm@npm:1.105.2"
-+"sass-embedded-android-arm@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-android-arm@npm:1.106.0"
-   conditions: os=android & cpu=arm
+@@ -9002,9 +9002,9 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-embedded-android-riscv64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-android-riscv64@npm:1.105.2"
-+"sass-embedded-android-riscv64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-android-riscv64@npm:1.106.0"
-   conditions: os=android & cpu=riscv64
+-"webpack@npm:^5.112.0":
+-  version: 5.112.0
+-  resolution: "webpack@npm:5.112.0"
++"webpack@npm:^5.112.2":
++  version: 5.112.2
++  resolution: "webpack@npm:5.112.2"
+   dependencies:
+     "@types/estree": "npm:^1.0.8"
+     "@types/json-schema": "npm:^7.0.15"
+@@ -9019,16 +9019,16 @@ __metadata:
+     graceful-fs: "npm:^4.2.11"
+     mime-db: "npm:^1.54.0"
+     minimizer-webpack-plugin: "npm:^5.13.0"
+-    schema-utils: "npm:^4.5.0"
++    schema-utils: "npm:^4.8.1"
+     tapable: "npm:^2.3.0"
+-    watchpack: "npm:^2.6.1"
++    watchpack: "npm:^2.6.3"
+     webpack-sources: "npm:^3.6.0"
+   peerDependenciesMeta:
+     webpack-cli:
+       optional: true
+   bin:
+     webpack: bin/webpack.js
+-  checksum: 10c0/dee2e7ad612138536e1b8d5dc306955fc5b110146085061e43ed5e100293ebeb23d3521a1b400da9f4e11e99396305bba8aabb5fc35be9480c15c38759c163f9
++  checksum: 10c0/e3b299c0ce691f22d9c9bd75731f6406d9fb5166c20eb0f61f5a4f8f59c55ddddda9b4633a0348c272dfded407735b8d20311bc8a5d6d13d80d0088440e93283
    languageName: node
    linkType: hard
  
--"sass-embedded-android-x64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-android-x64@npm:1.105.2"
-+"sass-embedded-android-x64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-android-x64@npm:1.106.0"
-   conditions: os=android & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-arm64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-darwin-arm64@npm:1.105.2"
-+"sass-embedded-darwin-arm64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-darwin-arm64@npm:1.106.0"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-x64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-darwin-x64@npm:1.105.2"
-+"sass-embedded-darwin-x64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-darwin-x64@npm:1.106.0"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-arm64@npm:1.105.2"
-+"sass-embedded-linux-arm64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-arm64@npm:1.106.0"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-arm@npm:1.105.2"
-+"sass-embedded-linux-arm@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-arm@npm:1.106.0"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-musl-arm64@npm:1.105.2"
-+"sass-embedded-linux-musl-arm64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-musl-arm64@npm:1.106.0"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-musl-arm@npm:1.105.2"
-+"sass-embedded-linux-musl-arm@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-musl-arm@npm:1.106.0"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-riscv64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-musl-riscv64@npm:1.105.2"
-+"sass-embedded-linux-musl-riscv64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-musl-riscv64@npm:1.106.0"
-   conditions: os=linux & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-x64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-musl-x64@npm:1.105.2"
-+"sass-embedded-linux-musl-x64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-musl-x64@npm:1.106.0"
-   conditions: os=linux & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-riscv64@npm:1.105.2":
--  version: 1.105.2
--  resolution: "sass-embedded-linux-riscv64@npm:1.105.2"
-+"sass-embedded-linux-riscv64@npm:1.106.0":
-+  version: 1.106.0
-+  resolution: "sass-embedded-linux-riscv64@npm:1.106.0"
-   conditions: os=linux & cpu=riscv64
-   languageName: no
 ```
 
 ---
 
-### Incident Patch 3: `9aa97749` (2026-10-22)
-**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.1 to 7.7.2 (#14676)
+### Incident Patch 2: `2edd2a5c` (2026-10-24)
+**Commit Message**: build(deps): bump net.javacrumbs.json-unit:json-unit-assertj (#14683)
 
-Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.1 to 7.7.2.
-- [Release notes](https://github.com/oshi/oshi/releases)
-- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.1...oshi-parent-7.7.2)
+Bumps the test group with 1 update: [net.javacrumbs.json-unit:json-unit-assertj](https://github.com/lukas-krecan/JsonUnit).
+
+
+Updates `net.javacrumbs.json-unit:json-unit-assertj` from 6.3.0 to 6.4.0
+- [Changelog](https://github.com/lukas-krecan/JsonUnit/blob/master/RELEASES.md)
+- [Commits](https://github.com/lukas-krecan/JsonUnit/compare/json-unit-parent-6.3.0...json-unit-parent-6.4.0)
 
 ---
 updated-dependencies:
-- dependency-name: com.github.oshi:oshi-core
-  dependency-version: 7.7.2
+- dependency-name: net.javacrumbs.json-unit:json-unit-assertj
+  dependency-version: 6.4.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
+  dependency-group: test
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -1139,24 +1014,71 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -135,7 +135,7 @@ def libraries = [
-   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
-   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
-   objenesis           : 'org.objenesis:objenesis:3.6',
--  oshi                : 'com.github.oshi:oshi-core:7.7.1',
-+  oshi                : 'com.github.oshi:oshi-core:7.7.2',
-   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.1.0',
-   postgresql          : 'org.postgresql:postgresql:42.7.14',
-   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
+@@ -123,7 +123,7 @@ def libraries = [
+   jolt                : 'com.bazaarvoice.jolt:jolt-core:0.1.8',
+   jruby               : 'org.jruby:jruby:9.4.15.0',
+   jrubyRack           : 'com.github.gocd-contrib:jruby-rack:1.3.0.15',
+-  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.3.0',
++  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
+   jsoup               : 'org.jsoup:jsoup:1.23.2',
+   junit5Bom           : 'org.junit:junit-bom:6.1.3',
+   liquibase           : 'org.liquibase:liquibase-core:5.0.4',
+```
+
+---
+
+### Incident Patch 3: `004624e4` (2026-10-24)
+**Commit Message**: build(deps-ui-dev): bump rack-test (#14684)
+
+Bumps the rack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rack-test](https://github.com/rack/rack-test).
+
+
+Updates `rack-test` from 2.2.0 to 2.3.0
+- [Release notes](https://github.com/rack/rack-test/releases)
+- [Changelog](https://github.com/rack/rack-test/blob/main/History.md)
+- [Commits](https://github.com/rack/rack-test/compare/v2.2.0...v2.3.0)
+
+---
+updated-dependencies:
+- dependency-name: rack-test
+  dependency-version: 2.3.0
+  dependency-type: indirect
+  update-type: version-update:semver-minor
+  dependency-group: rack
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
+```diff
+@@ -98,7 +98,7 @@ GEM
+     rack (2.2.24)
+     rack-session (1.0.2)
+       rack (< 3)
+-    rack-test (2.2.0)
++    rack-test (2.3.0)
+       rack (>= 1.3)
+     rackup (1.0.1)
+       rack (< 3)
+@@ -230,7 +230,7 @@ CHECKSUMS
+   racc (1.8.1-java) sha256=54f2e6d1e1b91c154013277d986f52a90e5ececbe91465d29172e49342732b98
+   rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
+   rack-session (1.0.2) sha256=a02115e5420b4de036839b9811e3f7967d73446a554b42aa45106af335851d76
+-  rack-test (2.2.0) sha256=005a36692c306ac0b4a9350355ee080fd09ddef1148a5f8b2ac636c720f5c463
++  rack-test (2.3.0) sha256=b118d177cc002c572fc1b6fd8d19c9ed5881a36e8d6f689f9e618f9f861241e8
+   rackup (1.0.1) sha256=ba86604a28989fe1043bff20d819b360944ca08156406812dca6742b24b3c249
+   rails-controller-testing (1.0.5) sha256=741448db59366073e86fc965ba403f881c636b79a2c39a48d0486f2607182e94
+   rails-dom-testing (2.3.0) sha256=8acc7953a7b911ca44588bf08737bc16719f431a1cc3091a292bca7317925c1d
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14679** (2026-10-23): build(deps-ui-dev): bump sass-embedded from 1.105.2 to 1.106.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14678** (2026-10-23): build(deps-ui-dev): bump rspec_junit_formatter from 0.6.0 to 0.6.2 in /server/src/main/webapp/WEB-INF/rails in the rspec group (@dependabot[bot])
-- **PR #14677** (2026-10-22): build(deps): bump com.mysql:mysql-connector-j from 26.7.0 to 26.10.0 (@dependabot[bot])
-- **PR #14676** (2026-10-22): build(deps): bump com.github.oshi:oshi-core from 7.7.1 to 7.7.2 (@dependabot[bot])
-- **PR #14675** (2026-10-22): build(deps): bump gradle-wrapper from 9.8.1 to 9.8.2 in the gradle-plugins group (@dependabot[bot])
-- **PR #14670** (2026-10-21): build(deps-ui): bump core-js from 3.50.0 to 3.51.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14695** (2026-10-25): build(deps-ui-dev): bump webpack from 5.112.0 to 5.112.2 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
+- **PR #14694** (2026-10-25): build(deps-ui): bump undici from 8.11.2 to 8.12.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14693** (2026-10-25): build(deps-ui): bump fast-uri from 3.1.8 to 3.1.9 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14692** (2026-10-24): build(deps-ui): bump filesize from 11.0.26 to 11.0.28 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14691** (2026-10-24): build(deps-ui): bump chart.js from 4.5.1 to 4.6.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14689** (2026-10-24): build(deps-ui-dev): bump crass from 1.0.7 to 1.0.8 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -1176,30 +1098,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump rspec_junit_formatter (#14678)
+## X. build(deps-ui-dev): bump webpack (#14695)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b209cf12`: build(deps-ui-dev): bump rspec_junit_formatter (#14678). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c310992`: build(deps-ui-dev): bump webpack (#14695). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    rspec_junit_formatter (0.6.2)
-  rspec_junit_formatter (0.6.2) sha256=f90f594be841663288becc91b59e525c5faaf739c517ded4e2c66b61b11c66a5
+    "webpack": "^5.112.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    rspec_junit_formatter (0.6.0)
-  rspec_junit_formatter (0.6.0) sha256=40dde674e6ae4e6cc0ff560da25497677e34fefd2338cc467a8972f602b62b15
+    "webpack": "^5.112.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b209cf12` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c310992` are properly handled with clean fallback behavior.

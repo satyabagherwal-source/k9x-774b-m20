@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-GTTQ",
-    "timestamp": "2026-10-22T17:58:13.503Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-GY6H",
-    "timestamp": "2026-10-22T17:58:19.145Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "57666b6032b18c7ca193ad988e88a76e15bdcd88b57d500971762a94d7d64da8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-GZUQ",
-    "timestamp": "2026-10-22T17:58:21.314Z",
-    "repository": "reflection/Beam-1.0-501B-A23B",
-    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "eb70879f4fce90ee5e1e314b051f4cdd4f49c1cda2c6da53e3fd311f24f9b14d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-H0JI",
-    "timestamp": "2026-10-22T17:58:22.206Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "0421010b209e0ad47503fa0869becd004182720c13fc62c752417c5fc20b86da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-H359",
     "timestamp": "2026-10-22T17:58:25.581Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7430,66 @@
     "repository": "o2sh/onefetch",
     "learningId": "learn-github-o2sh-onefetch",
     "contentHash": "b54e35e0949f0208e54e6133e60501904fc3584d1a013bd19901ffec5703fae7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JFRD",
+    "timestamp": "2026-10-25T15:03:18.409Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "1546adfafea2c6a1b5c844bc3d9c45f01163374c5465dc334ddaa914b5ee0854",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JFVD",
+    "timestamp": "2026-10-25T15:03:18.553Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "91737705ccf88e51650bd0408c018aa3154a876592d91e8b90ea5d2a834f4c61",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JH46",
+    "timestamp": "2026-10-25T15:03:20.166Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-JMJH",
+    "timestamp": "2026-10-25T15:03:27.197Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

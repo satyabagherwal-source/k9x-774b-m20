@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
-    "lastHarvestedAt": "2026-10-20T19:36:53.095Z",
+    "contentHash": "1546adfafea2c6a1b5c844bc3d9c45f01163374c5465dc334ddaa914b5ee0854",
+    "lastHarvestedAt": "2026-10-25T15:03:18.411Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "c015c32a",
+    "sourceVersion": "da0c371b",
     "license": "MIT",
-    "contentHash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
-    "lastHarvestedAt": "2026-10-23T11:11:43.715Z",
+    "contentHash": "91737705ccf88e51650bd0408c018aa3154a876592d91e8b90ea5d2a834f4c61",
+    "lastHarvestedAt": "2026-10-25T15:03:18.556Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "e87b6eef",
+    "sourceVersion": "d4db00df",
     "license": "Apache-2.0",
-    "contentHash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
-    "lastHarvestedAt": "2026-10-22T21:48:00.862Z",
+    "contentHash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
+    "lastHarvestedAt": "2026-10-25T15:03:20.168Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "19181848",
+    "sourceVersion": "3c310992",
     "license": "Apache-2.0",
-    "contentHash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
-    "lastHarvestedAt": "2026-10-23T10:31:06.376Z",
+    "contentHash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
+    "lastHarvestedAt": "2026-10-25T15:03:27.199Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

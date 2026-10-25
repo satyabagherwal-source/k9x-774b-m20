@@ -4867,3 +4867,7 @@
 | `CYCLE-20261025-BNUC` | `2026-10-25T14:57:15.636Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`5bf242d8...`) |
 | `CYCLE-20261025-BO39` | `2026-10-25T14:57:15.957Z` | `adobe/react-spectrum` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4356` | Yes (`b51eb88c...`) |
 | `CYCLE-20261025-BOJW` | `2026-10-25T14:57:16.556Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4357` | Yes (`b54e35e0...`) |
+| `CYCLE-20261025-JFRD` | `2026-10-25T15:03:18.409Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`1546adfa...`) |
+| `CYCLE-20261025-JFVD` | `2026-10-25T15:03:18.553Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4358` | Yes (`91737705...`) |
+| `CYCLE-20261025-JH46` | `2026-10-25T15:03:20.166Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4359` | Yes (`3fb5e600...`) |
+| `CYCLE-20261025-JMJH` | `2026-10-25T15:03:27.197Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4360` | Yes (`c9e26af9...`) |

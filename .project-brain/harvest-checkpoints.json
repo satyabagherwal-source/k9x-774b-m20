@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T14:57:16.572Z",
+  "last_updated": "2026-10-25T15:03:27.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -680,14 +680,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "54738af2f572d157a0b4984f9949df81d261a4b53aadfde64f3904369526a49a",
-      "verified_at": "2026-10-20T19:36:53.101Z",
+      "content_hash": "1546adfafea2c6a1b5c844bc3d9c45f01163374c5465dc334ddaa914b5ee0854",
+      "verified_at": "2026-10-25T15:03:18.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T19:36:53.101Z"
+      "last_updated": "2026-10-25T15:03:18.418Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -3696,14 +3696,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-assistant-ui-assistant-ui",
-      "content_hash": "58b5006435fd0a308ff4b6641997ac9894af301a3a8a5f9abfabe734976070c7",
-      "verified_at": "2026-10-23T11:11:43.727Z",
+      "content_hash": "91737705ccf88e51650bd0408c018aa3154a876592d91e8b90ea5d2a834f4c61",
+      "verified_at": "2026-10-25T15:03:18.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:11:43.737Z"
+      "last_updated": "2026-10-25T15:03:18.562Z"
     },
     "ducaale/xh": {
       "repository": "ducaale/xh",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "a90bb24e21146663a25eebeba75df2934583765dd6e288274ff64c1c5c814c81",
-      "verified_at": "2026-10-22T21:48:00.867Z",
+      "content_hash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
+      "verified_at": "2026-10-25T15:03:20.175Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:48:00.867Z"
+      "last_updated": "2026-10-25T15:03:20.175Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "96b3002ffd02d76a5e17aaadf440781d59030d140db031dde9af8087d2a6575b",
-      "verified_at": "2026-10-23T10:31:06.384Z",
+      "content_hash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
+      "verified_at": "2026-10-25T15:03:27.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:31:06.384Z"
+      "last_updated": "2026-10-25T15:03:27.210Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",

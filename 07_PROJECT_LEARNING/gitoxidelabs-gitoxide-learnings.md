@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `e87b6eef`  
+> **Source Version**: `d4db00df`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:48:00.648Z  
+> **Timestamp**: 2026-10-25T15:03:19.924Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:48:00.404Z  
+> **Harvest Timestamp**: 2026-10-25T15:03:19.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An idiomatic, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12044 stars
+- **Stars / Engagement**: 12060 stars
 
 ---
 
@@ -1612,16 +1612,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3083** (2026-10-22): **Report October**
-  *Symptoms*: ### Tasks  * [x] outline * [x] draft * [x] polish with mild proof-read * [x] release crates * [x] publish advisories * [x] update timesheets and publish report 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"dd39fb66e3b1551c9fe849043e39b357a9799ca1","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-22T14:17:26.509137Z">2026-10-22T14:17:26.509137Z</relative-time> | `dd39fb6` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review". 
+- **Issue #3123** (2026-10-25): **[macOS] `getattrlistbulk` is used unconditionally but may not be available, which breaks linking**
+  *Symptoms*: ### Current behavior 😯  ``` Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 Process exited with non-zero exit status 1 FAILING COMMAND: /opt/local/libexec/mrustc/bin/mrustc /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/src/ein.rs -o /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein -C emit-depfile=/opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein.d --cfg debug_assertions -O -L /opt/local/libexec/mrustc/lib -L /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release --cfg feature="default" --cfg feature="max" --cfg feature="hashes" --cfg feature="max-control" --cfg feature="fast" --cfg feature="gitoxide-core-tools-query" --cfg feature="gitoxide-core-tools-corpus" --cfg feature="gitoxide-core-blocking-client" --cfg feature="http-client-curl-openssl" --cfg fe
 
-- **Issue #3082** (2026-10-22): **Fix 3 small sha256 test bugs**
-  *Symptoms*: Hello again,  Further testing sha256-only builds revealed 3 small bugs which this PR fixes: 1. A hardcoded sha1 fixture in the `Commit::short_id()` doctest. 2. The behavior of `object_hash: None`  in sha256-only builds. 3. Gix dev deps were enabling sha1 in sha256 only --lib tests.  More details in the respective commit messages, I tried to keep them small and easy to review.  Many thanks, Adrian
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"0a36a397bfc52f5393c551259af29cd7ee189eb0","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-21T14:38:54.619576Z">2026-10-21T14:38:54.619576Z</relative-time> | `0a36a39` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex re
-  > Thanks!  You can take a look at the `review` commit if you are interested.
+- **Issue #3122** (2026-10-25): **Give the Windows console editor test 2 minutes instead of 30 seconds**
+  *Symptoms*: This fixes the `gix-tix` flake that has been causing a number of recent CI failures that resolve when a job is rerun.  *The following description is written by Claude Opus 5.5, with corrections by Codex.*  > `edit::tests::editor_inherits_the_windows_console` in `gix-tix`, added in 28a32b5420a2c0594c35447958aa2fd206b285b8 (#2938), occasionally fails in both Windows `test-fast` jobs with: >  > > The console editor test did not finish within 30 seconds. >  > `with-console.ps1` reruns the test in a hidden console. It kills that run if it hasn't exited within 30 seconds. The limit keeps a hung editor from hanging CI, but slow runs on Windows sometimes exceed it. >  > - The first commit writes the limit only once, as a `TimeSpan` from which both the wait and the error message are derived. Behavior is unchanged except on PowerShell older than 7.3, which the script now refuses with `#Requires -Version 7.3`, since passing a `TimeSpan` to `WaitForExit` needs .NET 7 or later. Every supported `pwsh` release is 7.3 or later. > - The second commit raises the limit to 2 minutes, so the error message now says "within 120 seconds". `WaitForExit` returns as soon as the process exits, so runs that finish within 30 seconds are unaffected. Runs that finish within the 2-minute wait no longer fail because of this timeout; longer runs still time out. >  > ### Evidence >  > These are the available `nextest` timings examined from workflow runs created by 2026-10-25 00:40 UTC, including earlier ARM att
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1638,871 +1633,352 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd39fb66` (2026-10-22)
-**Commit Message**: Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1, gix-validate v0.13.1, gix-path v0.14.1, gix-quote v0.10.1, gix-command v0.12.1, gix-hash v0.28.1, gix-fs v0.24.1, gix-tempfile v26.0.1, gix-object v0.66.1, gix-glob v0.29.1, gix-attributes v0.37.1, gix-packetline v0.24.1, gix-filter v0.36.1, gix-chunk v0.10.1, gix-commitgraph v0.42.0, gix-revwalk v0.38.0, gix-traverse v0.64.0, gix-worktree-stream v0.39.0, gix-archive v0.39.0, gix-bitmap v0.6.1, gix-lock v26.0.1, gix-index v0.58.0, gix-config-value v0.21.1, gix-pathspec v0.22.1, gix-worktree v0.59.0, gix-imara-diff v0.3.2, gix-diff v0.70.0, gix-blame v0.20.0, gix-ref v0.69.1, gix-config v0.62.1, gix-prompt v0.19.1, gix-url v0.40.1, gix-credentials v0.42.1, gix-discover v0.57.1, gix-dir v0.32.0, gix-mailmap v0.36.1, gix-revision v0.52.0, gix-merge v0.23.0, gix-negotiate v0.38.0, gix-note v0.3.1, gix-zlib v0.4.0, gix-pack v0.77.0, gix-odb v0.87.0, gix-refspec v0.47.1, gix-shallow v0.15.1, gix-transport v0.62.0, gix-protocol v0.68.0, gix-status v0.37.0, gix-submodule v0.36.1, gix-worktree-state v0.37.0, gix v0.90.0, gix-fsck v0.27.1, gitoxide-core v0.64.0, gix-tix v0.6.0, gitoxide v0.61.0, safety bump 21 c
+### Incident Patch 1: `47a36514` (2026-10-24)
+**Commit Message**: fix: honor init object-format defaults, context, and section filtering
 
-**File**: `Cargo.lock` (modified, +58/-58)
+This is a typical review with quite a bunch of agent-enabled changes to
+avoid super-specific tests in favor of adjusting existing tests to capture
+what's now also interesting.
+
+Additionally, make it more Git-conform as Git picks up intial values from the
+global configuration.
+
+<!-- agent -->
+Keep `create::Options::default().object_hash` unspecified in every build;
+apply the build fallback only in repository creation. This lets configured
+and environment defaults be validated even in SHA-256-only builds while
+preserving explicit hash requests and clone behavior.
+
+Read `init.defaultObjectFormat` without a future Git directory, honor the
+opening options' section filter, and distinguish a valueless selected entry
+from an absent setting before creating anything.
+
+Regression tests reproduce all four init findings. They cover both repository
+kinds, available and unsupported environment requests, excluded API settings,
+and Git comparisons for conditional includes and valueless settings.
+Focused checks pass with SHA-1, SHA-256, and both hashes; the full `gix-init`
+integration target passes with default features plus SHA
+
+**File**: `gix/src/config/tree/sections/extensions.rs` (modified, +1/-2)
 ```diff
-@@ -1465,7 +1465,7 @@ dependencies = [
+@@ -10,8 +10,7 @@ impl Extensions {
+     pub const RELATIVE_WORKTREES: keys::Boolean =
+         keys::Boolean::new_boolean("relativeWorktrees", &config::Tree::EXTENSIONS);
+     /// The `extensions.objectFormat` key.
+-    pub const OBJECT_FORMAT: ObjectFormat =
+-        ObjectFormat::new_with_validate("objectFormat", &config::Tree::EXTENSIONS, validate::ObjectFormat);
++    pub const OBJECT_FORMAT: ObjectFormat = ObjectFormat::new_object_format("objectFormat", &config::Tree::EXTENSIONS);
+ }
  
- [[package]]
- name = "gitoxide"
--version = "0.60.0"
-+version = "0.61.0"
- dependencies = [
-  "anstream",
-  "clap",
-@@ -1485,7 +1485,7 @@ dependencies = [
- 
- [[package]]
- name = "gitoxide-core"
--version = "0.63.0"
-+version = "0.64.0"
- dependencies = [
-  "async-io",
-  "async-net",
-@@ -1525,7 +1525,7 @@ dependencies = [
- 
- [[package]]
- name = "gix"
--version = "0.89.0"
-+version = "0.90.0"
- dependencies = [
-  "async-std",
-  "document-features",
-@@ -1600,7 +1600,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-actor"
--version = "0.44.0"
-+version = "0.44.1"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -1615,7 +1615,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-archive"
--version = "0.38.0"
-+version = "0.39.0"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -1637,7 +1637,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-attributes"
--version = "0.37.0"
-+version = "0.37.1"
- dependencies = [
-  "bstr",
-  "criterion",
-@@ -1658,15 +1658,15 @@ dependencies = [
- 
- [[package]]
- name = "gix-bitmap"
--version = "0.6.0"
-+version = "0.6.1"
- dependencies = [
-  "gix-error",
-  "gix-testtools",
- ]
- 
- [[package]]
- name = "gix-blame"
--version = "0.19.0"
-+version = "0.20.0"
- dependencies = [
-  "gix-commitgraph",
-  "gix-date",
-@@ -1691,14 +1691,14 @@ dependencies = [
- 
- [[package]]
- name = "gix-chunk"
--version = "0.10.0"
-+version = "0.10.1"
- dependencies = [
-  "gix-error",
- ]
- 
- [[package]]
- name = "gix-command"
--version = "0.12.0"
-+version = "0.12.1"
- dependencies = [
-  "bstr",
-  "gix-error",
-@@ -1711,7 +1711,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-commitgraph"
--version = "0.41.0"
-+version = "0.42.0"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -1728,7 +1728,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-config"
--version = "0.62.0"
-+version = "0.62.1"
- dependencies = [
-  "bstr",
-  "bytesize",
-@@ -1755,7 +1755,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-config-value"
--version = "0.21.0"
-+version = "0.21.1"
- dependencies = [
-  "bitflags 2.13.0",
-  "bstr",
-@@ -1771,7 +1771,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-credentials"
--version = "0.42.0"
-+version = "0.42.1"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -1793,7 +1793,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-date"
--version = "0.18.0"
-+version = "0.18.1"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -1809,7 +1809,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-diff"
--version = "0.69.0"
-+version = "0.70.0"
- dependencies = [
-  "bstr",
-  "criterion",
-@@ -1839,7 +1839,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-dir"
--version = "0.31.0"
-+version = "0.32.0"
- dependencies = [
-  "bstr",
-  "gix-dir",
-@@ -1861,7 +1861,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-discover"
--version = "0.57.0"
-+version = "0.57.1"
- dependencies = [
-  "bstr",
-  "defer",
-@@ -1880,7 +1880,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-error"
--version = "0.5.1"
-+version = "0.5.2"
- dependencies = [
-  "anyhow",
-  "bstr",
-@@ -1896,7 +1896,7 @@ version = "0.0.0"
- 
- [[package]]
- name = "gix-filter"
--version = "0.36.0"
-+version = "0.36.1"
- dependencies = [
-  "bstr",
-  "encoding_rs",
-@@ -1920,7 +1920,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-fs"
--version = "0.24.0"
-+version = "0.24.1"
- dependencies = [
-  "bstr",
-  "crossbeam-channel",
-@@ -1940,7 +1940,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-fsck"
--version = "0.27.0"
-+version = "0.27.1"
- dependencies = [
-  "gix-error",
-  "gix-hash",
-@@ -1952,7 +1952,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-glob"
--version = "0.29.0"
-+version = "0.29.1"
- dependencies = [
-  "bitflags 2.13.0",
-  "bstr",
-@@ -1968,7 +1968,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-hash"
--version = "0.28.0"
-+version = "0.28.1"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -2009,7 +2009,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-imara-diff"
--version = "0.3.1"
-+version = "0.3.2"
- dependencies = [
-  "arbitrary",
-  "bstr",
-@@ -2024,7 +2024,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-index"
--version = "0.57.0"
-+version = "0.58.0"
- dependencies = [
-  "bitflags 2.13.0",
-  "bstr",
-@@ -2062,7 +2062,7 @@ version = "0.0.0"
- 
- [[package]]
- name = "gix-lock"
--version = "26.0.0"
-+version = "26.0.1"
- dependencies = [
-  "gix-error",
-  "gix-fs",
-@@ -2085,7 +2085,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-mailmap"
--version = "0.36.0"
-+version = "0.36.1"
- dependencies = [
-  "bstr",
-  "document-features",
-@@ -2099,7 +2099,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-merge"
--version = "0.22.0"
-+version = "0.23.0"
- dependencies = [
-  "arbitrary",
-  "bstr",
-@@ -2134,7 +2134,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-negotiate"
--version = "0.37.0"
-+version = "0.38.0"
- dependencies = [
-  "bitflags 2.13.0",
-  "gix-commitgraph",
-@@ -2150,7 +2150,7 @@ dependencies = [
- 
- [[package]]
- name = "gix-note"
--version = "0.3.0"
-+version = "0.3.1"
- dependencies = [
-  "criterion",
-  "gix-error",
-@@ -2164,7 +2164,7 @@ dependencies = [
- 
- [[packag
+ /// The `extensions.objectFormat` key.
 ```
 
-**File**: `Cargo.toml` (modified, +4/-4)
+**File**: `gix/src/create.rs` (modified, +3/-13)
 ```diff
-@@ -7,7 +7,7 @@ repository = "https://github.com/GitoxideLabs/gitoxide"
- authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
- edition = "2024"
- license = "MIT OR Apache-2.0"
--version = "0.60.0"
-+version = "0.61.0"
- # Rust 1.88 is required by `dua-core` 4.0, used for worktree removal.
- rust-version = "1.88"
- default-run = "gix"
-@@ -169,9 +169,9 @@ http-client-reqwest = ["gix/blocking-http-transport-reqwest-rust-tls"]
- gitoxide-core-async-client = ["gitoxide-core/async-client", "futures-lite"]
+@@ -88,7 +88,7 @@ fn create_dir(p: &Path) -> Result<()> {
+ }
  
- [dependencies]
--gitoxide-core = { version = "^0.63.0", path = "gitoxide-core" }
--gix = { version = "^0.89.0", path = "gix", default-features = false, features = ["error-print-location"] }
--gix-tix = { version = "^0.5.0", path = "gix-tix", default-features = false, optional = true }
-+gitoxide-core = { version = "^0.64.0", path = "gitoxide-core" }
-+gix = { version = "^0.90.0", path = "gix", default-features = false, features = ["error-print-location"] }
-+gix-tix = { version = "^0.6.0", path = "gix-tix", default-features = false, optional = true }
- 
- clap = { version = "4.5.42", features = ["derive", "cargo"] }
- clap_complete = "4.5.55"
-```
-
-**File**: `gitoxide-core/Cargo.toml` (modified, +9/-9)
-```diff
-@@ -4,7 +4,7 @@ lints.workspace = true
- name = "gitoxide-core"
- description = "The library implementing all capabilities of the gitoxide CLI"
- repository = "https://github.com/GitoxideLabs/gitoxide"
--version = "0.63.0"
-+version = "0.64.0"
- authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
- license = "MIT OR Apache-2.0"
- edition = "2024"
-@@ -55,12 +55,12 @@ serde = ["gix/serde", "dep:serde_json", "dep:serde", "bytesize/serde"]
- 
- [dependencies]
- # deselect everything else (like "performance") as this should be controllable by the parent application.
--gix = { version = "^0.89.0", path = "../gix", default-features = false, features = ["merge", "blob-diff", "blame", "revision", "mailmap", "excludes", "attributes", "worktree-mutation", "credentials", "interrupt", "status", "dirwalk", "command"] }
--gix-pack-for-configuration-only = { package = "gix-pack", version = "^0.76.0", path = "../gix-pack", default-features = false, features = ["pack-cache-lru-dynamic", "pack-cache-lru-static", "generate", "streaming-input"] }
--gix-transport-configuration-only = { package = "gix-transport", version = "^0.61.0", path = "../gix-transport", default-features = false }
--gix-archive-for-configuration-only = { package = "gix-archive", version = "^0.38.0", path = "../gix-archive", optional = true, features = ["tar", "tar_gz"] }
--gix-status = { version = "^0.36.0", path = "../gix-status" }
--gix-fsck = { version = "^0.27.0", path = "../gix-fsck" }
-+gix = { version = "^0.90.0", path = "../gix", default-features = false, features = ["merge", "blob-diff", "blame", "revision", "mailmap", "excludes", "attributes", "worktree-mutation", "credentials", "interrupt", "status", "dirwalk", "command"] }
-+gix-pack-for-configuration-only = { package = "gix-pack", version = "^0.77.0", path = "../gix-pack", default-features = false, features = ["pack-cache-lru-dynamic", "pack-cache-lru-static", "generate", "streaming-input"] }
-+gix-transport-configuration-only = { package = "gix-transport", version = "^0.62.0", path = "../gix-transport", default-features = false }
-+gix-archive-for-configuration-only = { package = "gix-archive", version = "^0.39.0", path = "../gix-archive", optional = true, features = ["tar", "tar_gz"] }
-+gix-status = { version = "^0.37.0", path = "../gix-status" }
-+gix-fsck = { version = "^0.27.1", path = "../gix-fsck" }
- serde = { version = "1.0.114", optional = true, default-features = false, features = ["derive"] }
- bytesize = "2.3.1"
- tempfile = "3.26.0"
-@@ -76,7 +76,7 @@ blocking = { version = "1.6.2", optional = true }
- 
- # for 'organize' functionality
- dua-core = { version = "4.1.0", optional = true }
--gix-url = { version = "^0.40.0", path = "../gix-url", optional = true }
-+gix-url = { version = "^0.40.1", path = "../gix-url", optional = true }
- 
- # for 'hours'
- fs-err = { version = "3.3.0", optional = true }
-@@ -94,7 +94,7 @@ sysinfo = { version = "0.38.3", optional = true, default-features = false, featu
- serde_json = { version = "1.0.150", optional = true }
- 
- # for 'tracing'
--gix-trace = { version = "^0.3.0", path = "../gix-trace", features = ["forest-ansi"], optional = true }
-+gix-trace = { version = "^0.3.1", path = "../gix-trace", features = ["forest-ansi"], optional = true }
- tracing-subscriber = { version = "0.3.22", optional = true }
- tracing = { version = "0.1.43", optional = true }
- 
-```
-
-**File**: `gix-actor/CHANGELOG.md` (modified, +25/-1)
-```diff
-@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## 0.44.1 (2026-10-22)
-+
-+### Commit Statistics
-+
-+<csr-read-only-do-not-edit/>
-+
-+ - 3 commits contributed to the release over the course of 14 calendar days.
-+ - 14 days passed between releases.
-+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-+ - 0 issues like '(#ID)' were seen in commit messages
-+
-+### Commit Details
-+
-+<csr-read-only-do-not-edit/>
-+
-+<details><summary>view details</summary>
-+
-+ * **Uncategorized**
-+    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
-+    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
-+    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
-+</details>
-+
- ## 0.44.0 (2026-10-08)
- 
- ### Commit Statistics
- 
- <csr-read-only-do-not-edit/>
- 
-- - 6 commits contributed to the release over the course of 13 calendar days.
-+ - 7 commits contributed to the release over the course of 13 calendar days.
-  - 13 days passed between releases.
-  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-  - 0 issues like '(#ID)' were seen in commit messages
-@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- <details><summary>view details</summary>
- 
-  * **Uncategorized**
-+    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
-     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
-     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
-     - Merge pull request #3046 from GitoxideLabs/gix-error-optional-bstr ([`9272d45`](https://github.com/GitoxideLabs/gitoxide/commit/9272d45a1b08ca6f26779389954bd718f8308a80))
-```
-
-**File**: `gix-actor/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -2,7 +2,7 @@ lints.workspace = true
- 
- [package]
- name = "gix-actor"
--version = "0.44.0"
-+version = "0.44.1"
- description = "A way to identify git actors"
- authors = ["Sebastian Thiel <sebastian.thiel@icloud.com>"]
- repository = "https://github.com/GitoxideLabs/gitoxide"
-@@ -19,8 +19,8 @@ doctest = true
- serde = ["dep:serde", "bstr/serde", "gix-date/serde"]
- 
- [dependencies]
--gix-date = { version = "^0.18.0", path = "../gix-date" }
--gix-error = { version = "^0.5.1", path = "../gix-error", features = ["bstr"] }
-+gix-date = { version = "^0.18.1", path = "../gix-date" }
-+gix-error = { version = "^0.5.2", path = "../gix-error", features = ["bstr"] }
- 
- bstr = { version = "1.12.0", default-features = false, features = [
-     "std",
-```
-
-**File**: `gix-archive/CHANGELOG.md` (modified, +25/-1)
-```diff
-@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## 0.39.0 (2026-10-22)
-+
-+### Commit Statistics
-+
-+<csr-read-only-do-not-edit/>
-+
-+ - 3 commits contributed to the release over the course of 14 calendar days.
-+ - 14 days passed between releases.
-+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-+ - 0 issues like '(#ID)' were seen in commit messages
-+
-+### Commit Details
-+
-+<csr-read-only-do-not-edit/>
-+
-+<details><summary>view details</summary>
-+
-+ * **Uncategorized**
-+    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
-+    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
-+    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
-+</details>
-+
- ## 0.38.0 (2026-10-08)
- 
- ### Commit Statistics
- 
- <csr-read-only-do-not-edit/>
- 
-- - 6 commits contributed to the release over the course of 13 calendar days.
-+ - 7 commits contributed to the release over the course of 13 calendar days.
-  - 13 days passed between releases.
-  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-  - 0 issues like '(#ID)' were seen in commit messages
-@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- <details><summary>view details</summary>
- 
-  * **Uncategorized**
-+    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
-     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
-     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
-     - Merge pull request #3033 from GitoxideLabs/gix-cli-progress-cleanup ([`80f4b03`](https://github.com/GitoxideLabs/gitoxide/commit/80f4b03257da9a664468e7b75247023187565a34))
-```
-
-**File**: `gix-archive/Cargo.toml` (modified, +6/-6)
-```diff
-@@ -2,7 +2,7 @@ lints.workspace = true
- 
- [package]
- name = "gix-archive"
--version = "0.38.0"
-+version = "0.39.0"
- repository = "https://github.com/GitoxideLabs/gitoxide"
- license = "MIT OR Apache-2.0"
- description = "archive generation from of a worktree stream"
-@@ -31,15 +31,15 @@ zip = ["dep:rawzip", "dep:flate2"]
- 
- 
- [dependencies]
--gix-worktree-stream = { version = "^0.38.0", path = "../gix-worktree-stream" }
--gix-object = { version = "^0.66.0", path = "../gix-object" }
--gix-path = { version = "^0.14.0", path = "../gix-path", optional = true }
--gix-date = { version = "^0.18.0", path = "../gix-date" }
-+gix-worktree-stream = { version = "^0.39.0", path = "../gix-worktree-stream" }
-+gix-object = { version = "^0.66.1", path = "../gix-object" }
-+gix-path = { version = "^0.14.1", path = "../gix-path", optional = true }
-+gix-date = { version = "^0.18.1", path = "../gix-date" }
- 
- flate2 = { version = "1.1.9", optional = true, default-features = false, features = ["zlib-rs"] }
- rawzip = { version = "0.4.3", optional = true }
- 
--gix-error = { version = "^0.5.1", path = "../gix-error" }
-+gix-error = { version = "^0.5.2", path = "../gix-error" }
- bstr = { version = "1.12.0", default-features = false }
- 
- tar = { version = "0.4.46", optional = true }
-```
-
-**File**: `gix-attributes/CHANGELOG.md` (modified, +25/-1)
-```diff
-@@ -5,13 +5,36 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
- 
-+## 0.37.1 (2026-10-22)
-+
-+### Commit Statistics
-+
-+<csr-read-only-do-not-edit/>
-+
-+ - 3 commits contributed to the release over the course of 14 calendar days.
-+ - 14 days passed between releases.
-+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-+ - 0 issues like '(#ID)' were seen in commit messages
-+
-+### Commit Details
-+
-+<csr-read-only-do-not-edit/>
-+
-+<details><summary>view details</summary>
-+
-+ * **Uncategorized**
-+    - Merge pull request #3053 from GitoxideLabs/various-improvements ([`2d8dcc4`](https://github.com/GitoxideLabs/gitoxide/commit/2d8dcc466750e474e6c51ac636c24259563a26cf))
-+    - Release gix-error v0.5.1, gix-utils v0.5.1 ([`6d1b686`](https://github.com/GitoxideLabs/gitoxide/commit/6d1b68632cec55fa5d3f752ca97daca4e5485b6c))
-+    - Merge pull request #3048 from GitoxideLabs/new-release ([`5fccccf`](https://github.com/GitoxideLabs/gitoxide/commit/5fccccfdedd17f7d4b0cc57039d118a3496aa8aa))
-+</details>
-+
- ## 0.37.0 (2026-10-08)
- 
- ### Commit Statistics
- 
- <csr-read-only-do-not-edit/>
- 
-- - 8 commits contributed to the release over the course of 13 calendar days.
-+ - 9 commits contributed to the release over the course of 13 calendar days.
-  - 13 days passed between releases.
-  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
-  - 0 issues like '(#ID)' were seen in commit messages
-@@ -23,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- <details><summary>view details</summary>
- 
-  * **Uncategorized**
-+    - Release gix-error v0.5.0, gix-date v0.18.0, gix-actor v0.44.0, gix-trace v0.3.0, gix-validate v0.13.0, gix-path v0.14.0, gix-utils v0.5.0, gix-quote v0.10.0, gix-command v0.12.0, gix-hash v0.28.0, gix-hashtable v0.18.0, gix-parallel v0.50.0, gix-fs v0.24.0, gix-tempfile v26.0.0, gix-object v0.66.0, gix-glob v0.29.0, gix-attributes v0.37.0, gix-packetline v0.24.0, gix-filter v0.36.0, gix-chunk v0.10.0, gix-commitgraph v0.41.0, gix-revwalk v0.37.0, gix-traverse v0.63.0, gix-worktree-stream v0.38.0, gix-archive v0.38.0, gix-bitmap v0.6.0, gix-lock v26.0.0, gix-index v0.57.0, gix-config-value v0.21.0, gix-pathspec v0.22.0, gix-ignore v0.24.0, gix-worktree v0.58.0, gix-imara-diff v0.3.1, gix-diff v0.69.0, gix-blame v0.19.0, gix-ref v0.69.0, gix-sec v0.16.0, gix-config v0.62.0, gix-prompt v0.19.0, gix-url v0.40.0, gix-credentials v0.42.0, gix-discover v0.57.0, gix-dir v0.31.0, gix-mailmap v0.36.0, gix-revision v0.51.0, gix-merge v0.22.0, gix-negotiate v0.37.0, gix-note v0.3.0, gix-zlib v0.3.0, gix-pack v0.76.0, gix-odb v0.86.0, gix-refspec v0.47.0, gix-shallow v0.15.0, gix-transport v0.61.0, gix-protocol v0.67.0, gix-status v0.36.0, gix-submodule v0.36.0, gix-worktree-state v0.36.0, gix v0.89.0, gix-fsck v0.27.0, gitoxide-core v0.63.0, gix-tix v0.5.0, gitoxide v0.60.0, safety bump 62 crates ([`0115e90`](https://github.com/GitoxideLabs/gitoxide/commit/0115e902fd0334b8f370766993eb17babed3157f))
-     - Prepare changelogs prior to release ([`794eeef`](https://github.com/GitoxideLabs/gitoxide/commit/794eeef835f8dde0fc8f4fd1d215f304d28d7f77))
-     - Merge pull request #3032 from GitoxideLabs/sec-audit ([`1d7bac7`](https://github.com/GitoxideLabs/gitoxide/commit/1d7bac742f70b72ddda0c7294f4a97566b8db596))
-     - Merge pull request #3046 from GitoxideLabs/gix-error-optional-bstr ([`9272d45`](https://github.com/GitoxideLabs/gitoxide/commit/9272d45a1b08ca6f26779389954bd718f8308a80))
-```
-
----
-
-### Incident Patch 2: `b8ef9ea9` (2026-10-22)
-**Commit Message**: Merge pull request #3082 from 10ne1/sha256-ci-fixes
-
-Fix 3 small sha256 test bugs
-
-**File**: `AGENTS.md` (modified, +5/-0)
-```diff
-@@ -137,6 +137,11 @@ Follow "purposeful conventional commits" style:
- 
- ### Test Best Practices
- 
-+- Test public APIs in the crate's integration tests under `tests/`, using only
-+  public interfaces. Reserve in-source unit tests (`#[cfg(test)]` modules) for
-+  private or `pub(crate)` functionality that integration tests cannot access.
-+  Extend an existing integration test with additional assertions when it already
-+  exercises the relevant behavior.
- - Tests must be isolated from the developer's checkout, other worktrees, shared
-   Git metadata, and user configuration. Use fixtures provided by `gix-testtools`;
-   never use the source checkout as a test repository.
-```
-
-**File**: `etc/scripts/cargo-check-all.sh` (modified, +14/-14)
-```diff
-@@ -113,20 +113,20 @@ cargo check -p gix --no-default-features --features sha1,async-network-client-as
- cargo check -p gix --no-default-features --features sha1,blocking-network-client
- cargo check -p gix --no-default-features --features sha1,blocking-http-transport-curl
- cargo check -p gix --no-default-features --features sha1,blocking-http-transport-reqwest
--cargo check -p gix --no-default-features --features max-performance --tests
--cargo check -p gix --no-default-features --features max-performance --tests
--cargo check -p gix --no-default-features --features progress-tree --tests
--cargo check -p gix --no-default-features --features blob-diff --tests
--cargo check -p gix --no-default-features --features revision --tests
--cargo check -p gix --no-default-features --features revparse-regex --tests
--cargo check -p gix --no-default-features --features mailmap --tests
--cargo check -p gix --no-default-features --features excludes --tests
--cargo check -p gix --no-default-features --features attributes --tests
--cargo check -p gix --no-default-features --features worktree-mutation --tests
--cargo check -p gix --no-default-features --features credentials --tests
--cargo check -p gix --no-default-features --features index --tests
--cargo check -p gix --no-default-features --features interrupt --tests
--cargo check -p gix --no-default-features --features blame --tests
-+cargo check -p gix --no-default-features --features max-performance,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features max-performance,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features progress-tree,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features blob-diff,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features revision,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features revparse-regex,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features mailmap,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features excludes,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features attributes,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features worktree-mutation,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features credentials,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features index,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features interrupt,sha1,sha256 --tests
-+cargo check -p gix --no-default-features --features blame,sha1,sha256 --tests
- cargo check -p gix --no-default-features --features sha1
- cargo check -p gix --no-default-features --features sha1,sha256
- cargo check -p gix --no-default-features --features sha256
-```
-
-**File**: `gix/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -428,7 +428,7 @@ document-features = { version = "0.2.0", optional = true }
- 
- [dev-dependencies]
- gix = { path = ".", default-features = false, features = [
--    "merge", "tree-error", "sha1", "sha256"
-+    "merge", "tree-error"
- ] }
- gix-hash = { version = "^0.28.0", path = "../gix-hash" }
- gix-pack = { version = "^0.76.0", path = "../gix-pack", default-features = false, features = [
-```
-
-**File**: `gix/src/create.rs` (modified, +2/-0)
-```diff
-@@ -111,6 +111,7 @@ pub struct Options {
-     /// If set to `Some(Sha256)`, write `extensions.objectFormat=sha256`.
-     /// Otherwise, create a repository without an explicit object-format extension,
+ /// Options for use in [`into()`];
+-#[derive(Copy, Clone)]
++#[derive(Copy, Clone, Default)]
+ pub struct Options {
+     /// Control whether the destination directory must be empty when creating a repository with a worktree.
+     ///
+@@ -113,21 +113,11 @@ pub struct Options {
      /// which is interpreted as legacy SHA-1.
-+    /// In builds without SHA-1 support, `None` means SHA-256.
+     /// In builds without SHA-1 support, `None` means SHA-256.
+     ///
+-    /// If `None`, [`ThreadSafeRepository::init_opts()`][crate::ThreadSafeRepository::init_opts()]
++    /// If `None` (the default), [`ThreadSafeRepository::init_opts()`][crate::ThreadSafeRepository::init_opts()]
+     /// will apply `init.defaultObjectFormat` or `GIT_DEFAULT_HASH` if set.
      pub object_hash: Option<gix_hash::Kind>,
  }
  
-@@ -162,6 +163,7 @@ pub(crate) fn into_with_capabilities(
- ) -> Result<(gix_discover::repository::Path, gix_fs::Capabilities)> {
-     let mut dot_git = directory.into();
-     let bare = matches!(kind, Kind::Bare);
-+    let object_hash = object_hash.or_else(default_object_hash);
+-impl Default for Options {
+-    fn default() -> Self {
+-        Options {
+-            destination_must_be_empty: None,
+-            fs_capabilities: None,
+-            object_hash: default_object_hash(),
+-        }
+-    }
+-}
+-
+ fn default_object_hash() -> Option<gix_hash::Kind> {
+     #[cfg(feature = "sha1")]
+     {
+@@ -310,7 +300,7 @@ fn bool(v: bool) -> &'static str {
+ mod tests {
+     #[test]
+     fn default_object_hash_matches_available_hash_support() {
+-        let object_hash = super::Options::default().object_hash;
++        let object_hash = super::default_object_hash();
+         #[cfg(feature = "sha1")]
+         assert_eq!(
+             object_hash, None,
+```
+
+**File**: `gix/src/init.rs` (modified, +14/-15)
+```diff
+@@ -48,7 +48,7 @@ impl ThreadSafeRepository {
+     ) -> Result<Self> {
+         let directory = directory.as_ref();
+         if create_options.object_hash.is_none() {
+-            create_options.object_hash = default_object_format(directory, kind, &open_options)?;
++            create_options.object_hash = default_object_format(&open_options)?;
+         }
+         Self::create_and_open(directory, kind, create_options, open_options)
+     }
+@@ -101,20 +101,19 @@ impl ThreadSafeRepository {
+     }
+ }
  
-     if bare || destination_must_be_empty.unwrap_or(false) {
-         let num_entries_in_dot_git = fs::read_dir(&dot_git)
+-/// Read `init.defaultObjectFormat` from the configuration that a new repository in `directory` would see.
+-fn default_object_format(
+-    directory: &Path,
+-    kind: crate::create::Kind,
+-    options: &crate::open::Options,
+-) -> Result<Option<gix_hash::Kind>> {
+-    let git_dir = match kind {
+-        crate::create::Kind::Bare => directory.to_owned(),
+-        crate::create::Kind::WithWorktree => directory.join(gix_discover::DOT_GIT_DIR),
+-    };
+-    let config = crate::config(Some(&git_dir), options)?;
++/// Read `init.defaultObjectFormat` without repository context, like Git's format selection.
++fn default_object_format(options: &crate::open::Options) -> Result<Option<gix_hash::Kind>> {
++    let config = crate::config(None, options)?;
+     let key = &Init::DEFAULT_OBJECT_FORMAT;
+-    config
+-        .string(key)
+-        .map(|value| key.try_into_object_format(value.as_bstr()))
++    let filter = options
++        .filter_config_section
++        .unwrap_or(crate::config::section::is_trusted);
++    let value = config.string_implicit_filter(key, filter);
++    value
++        .map(|value| {
++            let value = value
++                .ok_or_else(|| crate::config::key::error(key, "Missing configuration value").validation_error())?;
++            key.try_into_object_format(value.as_bstr())
++        })
+         .transpose()
+ }
 ```
 
-**File**: `gix/src/object/commit.rs` (modified, +1/-1)
+**File**: `gix/tests/gix/clone.rs` (modified, +2/-2)
 ```diff
-@@ -38,7 +38,7 @@ impl<'repo> Commit<'repo> {
-     /// let short_id = commit.short_id()?;
-     ///
-     /// assert_eq!(short_id.cmp_oid(&commit.id), Ordering::Equal);
--    /// assert_eq!(short_id.to_string(), "3189cd3");
-+    /// assert_eq!(short_id.to_string(), &commit.id.to_string()[..7]);
-     /// # Ok(()) }
-     /// ```
-     pub fn short_id(&self) -> Result<gix_hash::Prefix> {
+@@ -1608,12 +1608,12 @@ fn clone_ignores_default_object_format() -> TestResult {
+         tmp.path(),
+         gix::create::Kind::Bare,
+         Default::default(),
+-        restricted().config_overrides(["init.defaultObjectFormat=sha256"]),
++        restricted().config_overrides(["init.defaultObjectFormat=invalid-will-not-be-read"]),
+     )?
+     .persist();
+     assert_eq!(
+         repo.object_hash(),
+-        gix::create::Options::default().object_hash.unwrap_or_default(),
++        gix::hash::Kind::default(),
+         "clones adopt the remote's object format later, so the default for new repositories doesn't apply"
+     );
+     Ok(())
 ```
 
-**File**: `gix/tests/gix/init.rs` (modified, +36/-13)
+**File**: `gix/tests/gix/init.rs` (modified, +121/-152)
 ```diff
-@@ -27,19 +27,42 @@ mod bare {
+@@ -27,49 +27,7 @@ mod bare {
      #[serial_test::serial]
      fn init_into_empty_directory_uses_it_directly() -> TestResult {
          let _environment = gix_testtools::isolate_git_environment()?;
--        let tmp = tempfile::tempdir()?;
--        let repo = gix::init_bare(tmp.path())?;
--        assert_eq!(repo.kind(), gix::repository::Kind::Common);
--        assert!(
--            repo.workdir().is_none(),
--            "a worktree isn't present in bare repositories"
--        );
--        assert_eq!(
--            repo.git_dir(),
--            tmp.path(),
--            "the repository is placed into the directory itself"
--        );
--        assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
-+        #[cfg(feature = "sha1")]
-+        let expected = gix_hash::Kind::Sha1;
-+        #[cfg(not(feature = "sha1"))]
-+        let expected = gix_hash::Kind::Sha256;
-+        for options in [
-+            gix::create::Options::default(),
-+            gix::create::Options {
-+                object_hash: None,
-+                ..Default::default()
-+            },
-+        ] {
-+            let tmp = tempfile::tempdir()?;
-+            let repo = gix::ThreadSafeRepository::init_opts(
-+                tmp.path(),
-+                gix::create::Kind::Bare,
-+                options,
-+                gix::open::Options::isolated(),
-+            )?
-+            .to_thread_local();
-+            assert_eq!(repo.kind(), gix::repository::Kind::Common);
-+            assert!(
-+                repo.workdir().is_none(),
-+                "a worktree isn't present in bare repositories"
-+            );
-+            assert_eq!(
-+                repo.git_dir(),
-+                tmp.path(),
-+                "the repository is placed into the directory itself"
-+            );
-+            assert_eq!(
-+                repo.object_hash(),
-+                expected,
-+                "initialization uses a supported object hash"
-+            );
-+            assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
-+        }
-         Ok(())
+-        #[cfg(feature = "sha1")]
+-        let (expected, version, object_format) = (gix_hash::Kind::Sha1, 0, None);
+-        #[cfg(not(feature = "sha1"))]
+-        let (expected, version, object_format) = (gix_hash::Kind::Sha256, 1, Some("sha256"));
+-        for options in [
+-            gix::create::Options::default(),
+-            gix::create::Options {
+-                object_hash: None,
+-                ..Default::default()
+-            },
+-        ] {
+-            let tmp = tempfile::tempdir()?;
+-            let repo = gix::ThreadSafeRepository::init_opts(
+-                tmp.path(),
+-                gix::create::Kind::Bare,
+-                options,
+-                gix::open::Options::isolated(),
+-            )?
+-            .to_thread_local();
+-            assert_eq!(repo.kind(), gix::repository::Kind::Common);
+-            assert!(
+-                repo.workdir().is_none(),
+-                "a worktree isn't present in bare repositories"
+-            );
+-            assert_eq!(
+-                repo.git_dir(),
+-                tmp.path(),
+-                "the repository is placed into the directory itself"
+-            );
+-            assert_eq!(
+-                repo.object_hash(),
+-                expected,
+-                "initialization uses a supported object hash"
+-            );
+-            super::object_format::assert_on_disk_format(&repo, version, object_format)?;
+-            assert_eq!(
+-                gix_testtools::git(repo.git_dir(), "rev-parse --show-object-format")?.trim(),
+-                expected.to_string(),
+-                "git agrees on the object format"
+-            );
+-            assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
+-        }
+-        Ok(())
++        super::assert_init_into_empty_directory(gix::create::Kind::Bare)
      }
  
-```
-
-**File**: `justfile` (modified, +11/-10)
-```diff
-@@ -156,13 +156,13 @@ unit-tests:
-     env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix-revision --features sha256 --no-fail-fast
-     env GIX_TEST_FIXTURE_HASH=sha1 cargo nextest run -p gix-worktree-stream --no-fail-fast
-     env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix-worktree-stream --features sha256 --no-fail-fast
--    cargo nextest run -p gix --no-default-features --features basic,comfort,max-performance --no-fail-fast
--    cargo nextest run -p gix --no-default-features --features basic,extras,comfort --no-fail-fast
--    cargo nextest run -p gix --features async-network-client --no-fail-fast
--    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features async-network-client --no-fail-fast
--    cargo nextest run -p gix --features blocking-network-client --no-fail-fast
--    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features blocking-network-client --no-fail-fast
--    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --no-fail-fast
-+    cargo nextest run -p gix --no-default-features --features basic,comfort,max-performance,sha1,sha256 --no-fail-fast
-+    cargo nextest run -p gix --no-default-features --features basic,extras,comfort,sha1,sha256 --no-fail-fast
-+    cargo nextest run -p gix --features async-network-client,sha256 --no-fail-fast
-+    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features async-network-client,sha256 --no-fail-fast
-+    cargo nextest run -p gix --features blocking-network-client,sha256 --no-fail-fast
-+    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features blocking-network-client,sha256 --no-fail-fast
-+    env GIX_TEST_FIXTURE_HASH=sha256 cargo nextest run -p gix --features sha256 --no-fail-fast
-     cargo nextest run -p gix --no-default-features --features sha256 --lib --no-fail-fast
-     cargo nextest run -p gitoxide-core --no-fail-fast
+     #[test]
+@@ -206,7 +164,7 @@ mod non_bare {
+             gix::open_opts(repo.workdir().as_ref().expect("non-bare repo"), crate::restricted())?,
+             repo
+         );
+-        Ok(())
++        super::assert_init_into_empty_directory(gix::create::Kind::WithWorktree)
+     }
  
-@@ -174,13 +174,14 @@ doc-tests:
-     cargo test -p gix-packetline --doc --features blocking-io --no-fail-fast
-     cargo test -p gix-trace --doc --no-default-features --features forest --no-fail-fast
-     cargo test -p gix-trace --doc --no-default-features --features forest-ansi,tracing-detail --no-fail-fast
--    cargo test -p gix --doc --no-default-features --no-fail-fast
--    cargo test -p gix --doc --no-default-features --features revision --no-fail-fast
-+    cargo test -p gix --doc --no-default-features --features sha1,sha256 --no-fail-fast
-+    cargo test -p gix --doc --no-default-features --features revision,sha1,sha256 --no-fail-fast
-+    env GIX_TEST_FIXTURE_HASH=sha256 cargo test -p gix --doc --features sha256 --no-fail-fast
+     #[test]
+@@ -254,126 +212,137 @@ mod non_bare {
+     }
+ }
  
- # Run optional flaky async tests
- [group('Tests')]
- unit-tests-flaky:
--    cargo test -p gix --features async-network-client-async-std
-+    cargo test -p gix --features async-network-client-async-std,sha256
- 
- # Extract cargo metadata, excluding dependencies, and query it
- [private]
+-mod object_format {
+-    use gix_testtools::{TestResult, tempfile};
+-
+-    fn init(
+-        kind: gix::create::Kind,
+-        object_hash: Option<gix_hash::Kind>,
+-        default_object_format: Option<&str>,
+-    ) -> TestResult<(tempfile::TempDir, gix::Repository)> {
+-        let tmp = tempfile::tempdir()?;
+-        let overrides = default_object_format.map(|format| format!("init.defaultObjectFormat={format}"));
+-        let repo: gix::Repository = gix::ThreadSafeRepository::init_opts(
+-            tmp.path(),
+-            kind,
+-            gix::create::Options {
+-                object_hash,
+-                ..Default::default()
+-            },
+-            crate::restricted().config_overrides(overrides),
+-        )?
+-        .into();
+-        Ok((tmp, repo))
+-    }
+-
+-    pub(super) fn assert_on_disk_format(
+-        repo: &gix::Repository,
+-        version: i64,
+-        object_format: Option<&str>,
+-    ) -> TestResult {
+-        let config =
+-            gix::config::File::from_path_no_includes(repo.git_dir().join("config"), gix::config::Source::Local)?;
+-        assert_eq!(
+-            config.integer("core.repositoryFormatVersion")?,
+-            Some(version),
+-            "the repository format version matches what git writes for this object format"
+-        );
+-        assert_eq!(
+-            config.string("extensions.objectFormat"),
+-            object_format.map(Into::into),
+-            "only non-SHA-1 object formats are written as extension"
+-        );
+-        Ok(())
++#[test]
++fn invalid_default_object_format_is_an_error_unless_explicitly_overridden() -> gix_testtools::TestResult {
++    for repo_kind in [gix::create::Kind::Bare, gix::create::Kind::WithWorktree] {
++        for &requested_object_hash in OBJECT_FORMATS {
++            let tmp = gix_testtools::tempfile::tempdir()?;
++            let result = gix::ThreadSafeRepository::init_opts(
++                tmp.path(),
++                repo_kind,
++                gix::create::Options {
++                    object_hash: requested_object_hash,
++                    ..Default::default()
++                },
++                crate::restricted().config_overrides(["init.defaultObjectFormat=invalid"]),
++            );
++            if let Some(expected_object_hash) = requested_object_hash {
++                assert_eq!(
++                    result?.to_thread_local().object_hash(),
++                    expected_object_hash,
++                    "an explicit hash bypasses an invalid configured default for {repo_kind:?}"
++                );
++            } else {
++                let err = result.expect_err("an unknown 
 ```
 
 ---
 
-### Incident Patch 3: `521b3b29` (2026-10-21)
-**Commit Message**: fix: create SHA-256 repositories for `object_hash: None` in SHA-256-only builds
+### Incident Patch 2: `500cdc55` (2026-10-25)
+**Commit Message**: Merge pull request #3122 from EliahKagan/claude/run-ci/console-editor-test-timeout
 
-Previously a SHA-1 repository was created that the same build couldn't open.
-Now `None` falls back to the build's default object format.
+Give the Windows console editor test 2 minutes instead of 30 seconds
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `gix/src/create.rs` (modified, +2/-0)
+**File**: `gix-tix/tests/fixtures/with-console.ps1` (modified, +4/-2)
 ```diff
-@@ -111,6 +111,7 @@ pub struct Options {
-     /// If set to `Some(Sha256)`, write `extensions.objectFormat=sha256`.
-     /// Otherwise, create a repository without an explicit object-format extension,
-     /// which is interpreted as legacy SHA-1.
-+    /// In builds without SHA-1 support, `None` means SHA-256.
-     pub object_hash: Option<gix_hash::Kind>,
+@@ -1,3 +1,4 @@
++#Requires -Version 7.3
+ param(
+     [Parameter(Mandatory = $true)][string]$Executable,
+     [Parameter(Mandatory = $true)][string]$TestName,
+@@ -15,9 +16,10 @@ $process = Start-Process -FilePath $Executable `
+     -ArgumentList @('--exact', $TestName, '--nocapture', '--test-threads=1') `
+     -WorkingDirectory (Get-Location).Path -WindowStyle Hidden `
+     -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
+-if (-not $process.WaitForExit(30000)) {
++$limit = [TimeSpan]::FromMinutes(2)
++if (-not $process.WaitForExit($limit)) {
+     Stop-Process -Id $process.Id -Force
+-    throw 'The console editor test did not finish within 30 seconds.'
++    throw "The console editor test did not finish within $($limit.TotalSeconds) seconds."
  }
- 
-@@ -162,6 +163,7 @@ pub(crate) fn into_with_capabilities(
- ) -> Result<(gix_discover::repository::Path, gix_fs::Capabilities)> {
-     let mut dot_git = directory.into();
-     let bare = matches!(kind, Kind::Bare);
-+    let object_hash = object_hash.or_else(default_object_hash);
- 
-     if bare || destination_must_be_empty.unwrap_or(false) {
-         let num_entries_in_dot_git = fs::read_dir(&dot_git)
+ # Wait for redirected output to drain as well as for the process to exit.
+ $process.WaitForExit()
 ```
 
-**File**: `gix/src/init.rs` (modified, +37/-0)
-```diff
-@@ -86,3 +86,40 @@ impl ThreadSafeRepository {
-         Ok(repo)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use gix_testtools::TestResult;
-+
-+    #[test]
-+    fn unspecified_object_hash_creates_a_repository_this_build_can_open() -> TestResult {
-+        #[cfg(feature = "sha1")]
-+        let expected = gix_hash::Kind::Sha1;
-+        #[cfg(not(feature = "sha1"))]
-+        let expected = gix_hash::Kind::Sha256;
-+        for options in [
-+            crate::create::Options::default(),
-+            crate::create::Options {
-+                object_hash: None,
-+                ..Default::default()
-+            },
-+        ] {
-+            let tmp = gix_testtools::tempfile::tempdir()?;
-+            let repo = crate::ThreadSafeRepository::init_opts(
-+                tmp.path(),
-+                crate::create::Kind::Bare,
-+                options,
-+                crate::open::Options::isolated(),
-+            )?;
-+            assert_eq!(repo.config.object_hash, expected);
-+            assert_eq!(
-+                crate::ThreadSafeRepository::open_opts(tmp.path(), crate::open::Options::isolated())?
-+                    .config
-+                    .object_hash,
-+                expected,
-+                "the repository can be reopened"
-+            );
-+        }
-+        Ok(())
-+    }
-+}
-```
+---
+
+### Incident Patch 3: `61bb08f6` (2026-10-24)
+**Commit Message**: Remove two fixture archives left over from replaced fixture scripts
+
+No test has used these archives since before they reached `main`, yet
+as tracked files they pass for archives that tests depend on. Each
+outlived the script that produced it, which was replaced while its PR
+was being revised. Both began as `.tar.xz` files stored in Git LFS:
+
+- `single_parent_huge_dates.tar` in `gix-commitgraph` began as
+  `single_parent_huge_dates.tar.xz`, generated from
+  `single_parent_huge_dates.sh`, which the ignored test
+  `single_parent_huge_dates_v2` in `tests/access/mod.rs` used in
+  earlier versions of #892, such as 73ed70fd9. The archive's stored
+  identity (in `__gitoxide_meta__/identity`), 2584929091, is that
+  script's CRC-32/CKSUM as `gix-testtools` computes it, and its
+  commits carry the committer date the script sets. A force-push
+  replaced 73ed70fd9 with 1694bfab5, which dropped the script and that
+  test in favor of `single_commit_huge_dates.sh`, but kept the
+  `.tar.xz`. It reached `main` unchanged in 101dec0ad (#892).
+
+- `match_baseline.tar` in `gix-pathspec` began as a
+  `match_baseline.tar.xz` generated by a version of `match_baseline.sh`,
+  the script that the test `direct
+
+
 
 #### Recent Merged Pull Requests:
-- **PR #3083** (2026-10-22): Report October (@Byron)
-- **PR #3082** (2026-10-22): Fix 3 small sha256 test bugs (@10ne1)
-- **PR #3081** (2026-10-21): Update `webpki-root-certs` and `rustls-webpki` for eMudhra compromise (@EliahKagan)
-- **PR #3080** (2026-10-21): Skip occurrence counting for trivial Myers diffs (@cruessler)
-- **PR #3079** (2026-10-20): perf(gix): don't look for new packs before writing an object (@krlvi)
-- **PR #3078** (2026-10-20): perf(gix-filter): only read the index object when there is a CRLF to convert (@krlvi)
+- **PR #3122** (2026-10-25): Give the Windows console editor test 2 minutes instead of 30 seconds (@EliahKagan)
+- **PR #3121** (2026-10-25): Build `gix-glob`'s `glob` integration tests again (@EliahKagan)
+- **PR #3120** (2026-10-25): Remove two fixture archives left over from replaced fixture scripts (@EliahKagan)
+- **PR #3119** (2026-10-25): fix: apply `gitoxide.core.defaultPackCacheMemoryLimit` to the default pack cache (@castrog)
+- **PR #3118** (2026-10-24): Pin `test-32bit (i386)` to `ubuntu-24.04` (@EliahKagan)
+- **PR #3117** (2026-10-24): release testtools (@Byron)
 
 ---
 
@@ -2522,88 +1998,29 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1,
+## X. honor init object-format defaults, context, and section filtering
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix/src/config/tree/sections/extensions.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd39fb66`: Release gix-error v0.5.2, gix-date v0.18.1, gix-actor v0.44.1, gix-trace v0.3.1, gix-validate v0.13.1, gix-path v0.14.1, gix-quote v0.10.1, gix-command v0.12.1, gix-hash v0.28.1, gix-fs v0.24.1, gix-tempfile v26.0.1, gix-object v0.66.1, gix-glob v0.29.1, gix-attributes v0.37.1, gix-packetline v0.24.1, gix-filter v0.36.1, gix-chunk v0.10.1, gix-commitgraph v0.42.0, gix-revwalk v0.38.0, gix-traverse v0.64.0, gix-worktree-stream v0.39.0, gix-archive v0.39.0, gix-bitmap v0.6.1, gix-lock v26.0.1, gix-index v0.58.0, gix-config-value v0.21.1, gix-pathspec v0.22.1, gix-worktree v0.59.0, gix-imara-diff v0.3.2, gix-diff v0.70.0, gix-blame v0.20.0, gix-ref v0.69.1, gix-config v0.62.1, gix-prompt v0.19.1, gix-url v0.40.1, gix-credentials v0.42.1, gix-discover v0.57.1, gix-dir v0.32.0, gix-mailmap v0.36.1, gix-revision v0.52.0, gix-merge v0.23.0, gix-negotiate v0.38.0, gix-note v0.3.1, gix-zlib v0.4.0, gix-pack v0.77.0, gix-odb v0.87.0, gix-refspec v0.47.1, gix-shallow v0.15.1, gix-transport v0.62.0, gix-protocol v0.68.0, gix-status v0.37.0, gix-submodule v0.36.1, gix-worktree-state v0.37.0, gix v0.90.0, gix-fsck v0.27.1, gitoxide-core v0.64.0, gix-tix v0.6.0, gitoxide v0.61.0, safety bump 21 c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47a36514`: honor init object-format defaults, context, and section filtering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix/src/config/tree/sections/extensions.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.61.0"
-version = "0.64.0"
-version = "0.90.0"
-version = "0.44.1"
-version = "0.39.0"
-version = "0.37.1"
-version = "0.6.1"
-version = "0.20.0"
-version = "0.10.1"
-version = "0.12.1"
-version = "0.42.0"
-version = "0.62.1"
-version = "0.21.1"
-version = "0.42.1"
-version = "0.18.1"
-version = "0.70.0"
-version = "0.32.0"
-version = "0.57.1"
-version = "0.5.2"
-version = "0.36.1"
-version = "0.24.1"
-version = "0.27.1"
-version = "0.29.1"
-version = "0.28.1"
-version = "0.3.2"
-version = "0.58.0"
-version = "26.0.1"
-version = "0.36.1"
-version = "0.23.0"
-version = "0.38.0"
-version = "0.3.1"
+    pub const OBJECT_FORMAT: ObjectFormat = ObjectFormat::new_object_format("objectFormat", &config::Tree::EXTENSIONS);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.60.0"
-version = "0.63.0"
-version = "0.89.0"
-version = "0.44.0"
-version = "0.38.0"
-version = "0.37.0"
-version = "0.6.0"
-version = "0.19.0"
-version = "0.10.0"
-version = "0.12.0"
-version = "0.41.0"
-version = "0.62.0"
-version = "0.21.0"
-version = "0.42.0"
-version = "0.18.0"
-version = "0.69.0"
-version = "0.31.0"
-version = "0.57.0"
-version = "0.5.1"
-version = "0.36.0"
-version = "0.24.0"
-version = "0.27.0"
-version = "0.29.0"
-version = "0.28.0"
-version = "0.3.1"
-version = "0.57.0"
-version = "26.0.0"
-version = "0.36.0"
-version = "0.22.0"
-version = "0.37.0"
-version = "0.3.0"
+    pub const OBJECT_FORMAT: ObjectFormat =
+        ObjectFormat::new_with_validate("objectFormat", &config::Tree::EXTENSIONS, validate::ObjectFormat);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd39fb66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47a36514` are properly handled with clean fallback behavior.

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T14:57:16.564Z",
-  "total_cycles_completed": 4844,
-  "total_learnings_persisted": 4844,
-  "total_rules_promoted": 4236,
+  "last_updated": "2026-10-25T15:03:27.206Z",
+  "total_cycles_completed": 4848,
+  "total_learnings_persisted": 4848,
+  "total_rules_promoted": 4239,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:44:16.374Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:44:18.180Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:44:22.753Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:53:53.774Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:53:57.791Z",
       "repository": "StarTrail-org/LEANN",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-25T14:57:16.564Z",
       "repository": "o2sh/onefetch",
       "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:03:18.415Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:03:18.560Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:03:20.172Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:03:27.206Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
