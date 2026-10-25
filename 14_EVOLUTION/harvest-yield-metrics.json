@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T02:36:21.640Z",
-  "total_cycles_completed": 4591,
-  "total_learnings_persisted": 4591,
-  "total_rules_promoted": 3848,
+  "last_updated": "2026-10-25T02:44:02.498Z",
+  "total_cycles_completed": 4596,
+  "total_learnings_persisted": 4596,
+  "total_rules_promoted": 3854,
   "history": [
-    {
-      "timestamp": "2026-10-22T20:22:07.237Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:30:15.782Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:30:17.148Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:30:27.289Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:30:28.081Z",
-      "repository": "chroma-core/chroma",
-      "learningId": "learn-github-chroma-core-chroma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T20:37:02.803Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1368,41 @@
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:42:37.001Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:42:37.068Z",
+      "repository": "bitnami/sealed-secrets",
+      "learningId": "learn-github-bitnami-sealed-secrets",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:42:40.092Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:42:42.665Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T02:44:02.498Z",
+      "repository": "ynqa/jnv",
+      "learningId": "learn-github-ynqa-jnv",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

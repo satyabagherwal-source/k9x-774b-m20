@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source**: github ([https://github.com/keybase/client](https://github.com/keybase/client))  
-> **Source Version**: `594ed87e`  
+> **Source Version**: `20c651e0`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:27:32.036Z  
+> **Timestamp**: 2026-10-25T02:42:36.652Z  
 > **Learning ID**: `learn-github-keybase-client`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:27:31.830Z  
+> **Harvest Timestamp**: 2026-10-25T02:42:35.682Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Keybase Go Library, Client, Service, OS X, iOS, Android, Electron
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9258 stars
+- **Stars / Engagement**: 9260 stars
 
 ---
 
@@ -1764,6 +1764,7 @@ package unfurl
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"net/url"
 	"strings"
@@ -1806,6 +1807,8 @@ func GetDomain(uri string) (res string, err error) {
 	if err != nil {
 		return res, err
 	}
+	// hostnames are case-insensitive and the allow and block lists store lowercase
+	hostname = strings.ToLower(hostname)
 	if len(hostname) == 0 {
 		return res, errors.New("no hostname")
 	}
@@ -1814,10 +1817,46 @@ func GetDomain(uri string) (res string, err error) {
 	}
 	// Check if hostname is an IP address. If so, return it directly
 	// since publicsuffix.EffectiveTLDPlusOne doesn't work with IPs.
-	if net.ParseIP(hostname) != nil {
-		return hostname, nil
+	if ip := net.ParseIP(hostname); ip != nil {
+		return ip.String(), nil
 	}
 	return publicsuffix.EffectiveTLDPlusOne(hostname)
+}
+
+// isAutoAllowedDomain reports domains that always unfurl, in every mode, and
+// so can never be stored on either list.
+func isAutoAllowedDomain(domain string) bool {
+	switch domain {
+	case "giphy.com", types.MapsDomain:
+		return true
+	}
+	return false
+}
+
+var errAutoAllowed = errors.New("is always allowed and cannot be listed")
+
+// NormalizeDomain turns user input (a bare domain or a URL) into the domain
+// form stored on the allow and block lists.
+func NormalizeDomain(input string) (string, error) {
+	uri := strings.ToLower(strings.TrimSpace(input))
+	// a bare IPv6 address only parses as a URL host inside brackets
+	if ip := net.ParseIP(uri); ip != nil {
+		return ip.String(), nil
+	}
+	if !strings.Contains(uri, "://") {
+		uri = "http://" + uri
+	}
+	domain, err := GetDomain(uri)
+	if err != nil {
+		return "", fmt.Errorf("invalid domain %q: %w", input, err)
+	}
+	if isAutoAllowedDomain(domain) {
+		return "", fmt.Errorf("%s %w", domain, errAutoAllowed)
+	}
+	if !strings.Contains(domain, ".") && net.ParseIP(domain) == nil {
+		return "", fmt.Errorf("invalid domain %q", input)
+	}
+	return domain, nil
 }
 
 func IsDomain(domain, target string) bool {
@@ -1869,1288 +1908,945 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f18ea4d` (2026-10-19)
-**Commit Message**: fix(share): make sharing into chat reliable on iOS and Android (#29789)
+### Incident Patch 1: `7874b7f1` (2026-10-20)
+**Commit Message**: include uid on all local rpcs (#29708)
 
-* fix(chat): don't silently drop a share to a suggested conversation before its meta loads
+* test(chat): every chat notification names the account it is for
 
-* fix(chat): keep the drag-and-drop upload path and explain a disabled Send
+Goal: every NotifyChat notification the service sends carries, as uid,
+the account it was generated for.
 
-* fix(ios-share): give each shared file its own subdirectory so same-named photos don't collide
+Why: login and logout are not serialized against chat notifications, so
+during an account switch the GUI can receive the previous account's chat
+notifications after the switch. Today the GUI guards against that with a
+uid-keyed thread provider, store retirement and a gate on every action.
+With the account on every notification it can drop the stale ones instead.
 
-* fix(ios-share): stop decoding images in the share extension; transcode them in the app
+Six of the 29 notifications carry no uid today: ChatIdentifyUpdate,
+ChatTypingUpdate, ChatArchiveProgress, ChatArchiveComplete,
+ChatWelcomeMessageLoaded and ChatParticipantsInfo. The other 23 do.
 
-Image types the app couldn't take as-is (TIFF, RAW, webp, avif) were loaded
-into Data, fully decoded by UIImage and re-encoded inside the share extension,
-several at once. A 48MP decode alone is past the extension's memory limit,
-and no downsample cap avoids a full decode for sources under twice the cap.
+The test registers a GUI-like connection on the NotifyRouter, sends every
+notification in the NotifyChat protocol for a known account and checks the
+uid each one carries. It also fails if a NotifyChat notification is added
+without an entry. It needs no server and runs locally:
 
-The extension now copies those files as-is, keeping their real name and
-extension, and the Safari path writes downloaded webp/avif bytes unchanged.
-Only a provider that vends nothing but an in-memory UIImage is still encoded
-there, with ImageIO and no resize.
+  cd go && go test ./libkb -run TestChatNotificationsNameTheirAccount
 
-The app now does the transcode. With compression on, the new extensions
-are handled like heic. With compression off they still go out as
-full-size JPEGs at the quality the extension used, 0.85, so recipi
+It fails today for exactly the six notifications above. Making it pass
+nee
 
-**File**: `go/chat/attachments/preprocess.go` (modified, +4/-4)
+**File**: `go/chat/activitynotifier.go` (modified, +2/-2)
 ```diff
-@@ -194,16 +194,16 @@ func processCallerPreview(ctx context.Context, g *globals.Context, callerPreview
- 
- func DetectMIMEType(ctx context.Context, src ReadResetter, filename string) (res string, err error) {
- 	head := make([]byte, 512)
--	_, err = io.ReadFull(src, head)
-+	n, err := io.ReadFull(src, head)
- 	switch {
--	case err == nil:
--	case errors.Is(err, io.EOF), errors.Is(err, io.ErrUnexpectedEOF):
-+	case err == nil, errors.Is(err, io.ErrUnexpectedEOF):
-+	case errors.Is(err, io.EOF):
- 		return "", nil
- 	default:
- 		return res, err
+@@ -91,10 +91,10 @@ func (n *NotifyRouterActivityRouter) Activity(ctx context.Context, uid gregor1.U
  	}
- 
--	res = http.DetectContentType(head)
-+	res = http.DetectContentType(head[:n])
- 	if err = src.Reset(); err != nil {
- 		return res, err
- 	}
-```
-
-**File**: `go/chat/attachments/preprocess_test.go` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+package attachments
-+
-+import (
-+	"bytes"
-+	"context"
-+	"image"
-+	"image/color"
-+	"image/png"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestDetectMIMETypeSmallFile(t *testing.T) {
-+	img := image.NewRGBA(image.Rect(0, 0, 4, 4))
-+	for x := 0; x < 4; x++ {
-+		for y := 0; y < 4; y++ {
-+			img.Set(x, y, color.RGBA{R: 200, G: 30, B: 30, A: 255})
-+		}
-+	}
-+	var buf bytes.Buffer
-+	require.NoError(t, png.Encode(&buf, img))
-+	require.Less(t, buf.Len(), 512)
-+
-+	typ, err := DetectMIMEType(context.Background(), NewBufReadResetter(buf.Bytes()), "testuser.png")
-+	require.NoError(t, err)
-+	require.Equal(t, "image/png", typ)
-+}
-+
-+func TestDetectMIMETypeEmptyFile(t *testing.T) {
-+	typ, err := DetectMIMEType(context.Background(), NewBufReadResetter(nil), "testuser.png")
-+	require.NoError(t, err)
-+	require.Empty(t, typ)
-+}
-```
-
-**File**: `go/kbfs/libkbfs/subscription_manager.go` (modified, +175/-110)
-```diff
-@@ -129,13 +129,21 @@ type nonPathSubscription struct {
- // This is per client. For example, if we have multiple GUI instances, each of
- // them get their own client ID and their subscriptions won't affect each
- // other.
-+//
-+// lock is never held while calling into a folder (getFolderBranch,
-+// RegisterForChanges, UnregisterFromChanges): folders call back into the
-+// subscription manager (LocalChange, BatchChanges) while holding their own
-+// locks. subscribeLock, taken before lock, serializes subscribing,
-+// unsubscribing and polling instead, so the registration made after
-+// releasing lock matches the count change made under it.
- type subscriptionManager struct {
- 	clientID SubscriptionManagerClientID
- 	config   Config
- 	log      logger.Logger
- 	notifier SubscriptionNotifier
- 
- 	onlineStatusTracker *onlineStatusTracker
-+	subscribeLock       sync.Mutex
- 	lock                sync.RWMutex
- 	// TODO HOTPOT-416: add another layer here to reference by topics, and
- 	// actually check topics in LocalChange and BatchChanges.
-@@ -179,55 +187,76 @@ func newSubscriptionManager(clientID SubscriptionManagerClientID, config Config,
- 
- func (sm *subscriptionManager) Shutdown(ctx context.Context) {
- 	sm.onlineStatusTracker.shutdown()
-+	sm.subscribeLock.Lock()
-+	defer sm.subscribeLock.Unlock()
- 	sm.lock.Lock()
--	defer sm.lock.Unlock()
- 	pathSids := make([]SubscriptionID, 0, len(sm.pathSubscriptionIDToRef))
- 	nonPathSids := make([]SubscriptionID, 0, len(sm.nonPathSubscriptionIDToTopic))
- 	for sid := range sm.pathSubscriptionIDToRef {
- 		pathSids = append(pathSids, sid)
- 	}
-+	for sid := range sm.folderBranchPollerCancelers {
-+		pathSids = append(pathSids, sid)
-+	}
- 	for sid := range sm.nonPathSubscriptionIDToTopic {
- 		nonPathSids = append(nonPathSids, sid)
- 	}
-+	var unregister []data.FolderBranch
- 	for _, sid := range pathSids {
--		sm.unsubscribePathLocked(ctx, sid)
-+		if fb, last := sm.unsubscribePathLocked(ctx, sid); last {
-+			unregister = append(unregister, fb)
-+		}
- 	}
- 	for _, sid := range nonPathSids {
- 		sm.unsubscribeNonPathLocked(ctx, sid)
- 	}
-+	sm.lock.Unlock()
-+	for _, fb := range unregister {
-+		sm.unregisterFromChanges(ctx, fb)
-+	}
-+}
-+
-+// registerForChanges and unregisterFromChanges call into the folder, so they
-+// run under subscribeLock with lock released.
-+//
-+// registerForChanges registers for fb's first subscription, sid. If that
-+// fails it removes sid, so the next subscription to fb tries again.
-+func (sm *subscriptionManager) registerForChanges(
-+	ctx context.Context, sid SubscriptionID, fb data.FolderBranch,
-+) error {
-+	err := sm.config.Notifier().RegisterForChanges([]data.FolderBranch{fb}, sm)
-+	if err != nil {
-+		sm.log.CWarningf(ctx, "RegisterForChanges fb=%s err=%v", fb, err)
-+		sm.lock.Lock()
-+		_, _ = sm.unsubscribePathLocked(ctx, sid)
-+		sm.lock.Unlock()
-+	}
-+	return err
-+}
-+
-+func (sm *subscriptionManager) unregisterFromChanges(
-+	ctx context.Context, fb data.FolderBranch,
-+) {
-+	err := sm.config.Notifier().UnregisterFromChanges(
-+		[]data.FolderBranch{fb}, sm)
-+	if err != nil {
-+		sm.log.CWarningf(ctx, "UnregisterFromChanges fb=%s err=%v", fb, err)
-+	}
  }
  
- func (sm *subscriptionManager) OnlineStatusTracker() OnlineStatusTracker {
- 	return sm.onlineStatusTracker
+-func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate) {
++func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate) {
+ 	ctx = globals.BackgroundChatCtx(ctx, n.G())
+ 	n.notifyCh <- func() {
+-		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, updates)
++		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, n.kuid(uid), updates)
+ 	}
  }
  
- func (sm *subscriptionManager) checkSubscriptionIDLocked(sid SubscriptionID) (setter func(), err error) {
--	if sm.subscriptionIDs[sid] {
-+	if sm.subscriptionIDs[sid] || sm.folderBranchPollerCancelers[sid] != nil {
- 		return nil, errors.Errorf("duplicate subscription ID %q", sid)
+```
+
+**File**: `go/chat/archive.go` (modified, +2/-2)
+```diff
+@@ -522,7 +522,7 @@ func NewChatArchiver(g *globals.Context, uid gregor1.UID, remoteClient func() ch
+ 
+ func (c *ChatArchiver) notifyProgress(ctx context.Context, jobID chat1.ArchiveJobID, msgsComplete, msgsTotal int64) {
+ 	c.Debug(ctx, "notifyProgress(%s) %d/%d", jobID, msgsComplete, msgsTotal)
+-	c.G().NotifyRouter.HandleChatArchiveProgress(ctx, jobID, msgsComplete, msgsTotal)
++	c.G().NotifyRouter.HandleChatArchiveProgress(ctx, keybase1.UID(c.uid.String()), jobID, msgsComplete, msgsTotal)
+ }
+ 
+ func (c *ChatArchiver) archiveName(conv chat1.ConversationLocal) string {
+@@ -746,7 +746,7 @@ func (c *ChatArchiver) ArchiveChat(ctx context.Context, arg chat1.ArchiveChatJob
+ 		}
+ 
+ 		// Alert the UI
+-		c.G().NotifyRouter.HandleChatArchiveComplete(ctx, arg.JobID)
++		c.G().NotifyRouter.HandleChatArchiveComplete(ctx, keybase1.UID(c.uid.String()), arg.JobID)
+ 	}()
+ 
+ 	// Presume to resume
+```
+
+**File**: `go/chat/identify.go` (modified, +8/-8)
+```diff
+@@ -20,7 +20,7 @@ type DummyIdentifyNotifier struct{}
+ 
+ func (d DummyIdentifyNotifier) Reset()             {}
+ func (d DummyIdentifyNotifier) ResetOnGUIConnect() {}
+-func (d DummyIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
++func (d DummyIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
+ }
+ 
+ type SimpleIdentifyNotifier struct {
+@@ -40,12 +40,12 @@ func NewSimpleIdentifyNotifier(g *globals.Context) *SimpleIdentifyNotifier {
+ func (d *SimpleIdentifyNotifier) Reset()             {}
+ func (d *SimpleIdentifyNotifier) ResetOnGUIConnect() {}
+ 
+-func (d *SimpleIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
++func (d *SimpleIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
+ 	// Send to storage as well (charge forward on error)
+ 	if err := d.storage.UpdateTLFIdentifyBreak(ctx, update.TlfID.ToBytes(), update.Breaks.Breaks); err != nil {
+ 		d.Debug(ctx, "failed to update storage with TLF identify info: %s", err.Error())
  	}
- 	return func() {
- 		sm.subscriptionIDs[sid] = true
+-	d.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, update)
++	d.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, uid, update)
+ }
+ 
+ type CachingIdentifyNotifier struct {
+@@ -81,7 +81,7 @@ func (i *CachingIdentifyNotifier) Reset() {
+ 	i.identCache = make(map[string]keybase1.CanonicalTLFNameAndIDWithBreaks)
+ }
+ 
+-func (i *CachingIdentifyNotifier) Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
++func (i *CachingIdentifyNotifier) Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks) {
+ 	// Send to storage as well (charge forward on error)
+ 	if err := i.storage.UpdateTLFIdentifyBreak(ctx, update.TlfID.ToBytes(), update.Breaks.Breaks); err != nil {
+ 		i.Debug(ctx, "failed to update storage with TLF identify info: %s", err.Error())
+@@ -104,7 +104,7 @@ func (i *CachingIdentifyNotifier) Send(ctx context.Context, update keybase1.Cano
+ 	i.Unlock()
+ 
+ 	i.Debug(ctx, "cache miss, sending notify: %s dat: %v", tlfName, update)
+-	i.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, update)
++	i.G().NotifyRouter.HandleChatIdentifyUpdate(ctx, uid, update)
+ }
+ 
+ type IdentifyChangedHandler struct {
+@@ -141,7 +141,7 @@ func (h *IdentifyChangedHandler) HandleUserChanged(uid keybase1.UID) (err error)
+ 	if err != nil {
+ 		return err
+ 	}
+-	if _, err := NewNameIdentifier(h.G()).Identify(ctx, []string{username}, true, func() keybase1.TLFID {
++	if _, err := NewNameIdentifier(h.G()).Identify(ctx, me, []string{username}, true, func() keybase1.TLFID {
+ 		return ""
+ 	}, func() keybase1.CanonicalTlfName {
+ 		return keybase1.CanonicalTlfName(username)
+@@ -163,7 +163,7 @@ func NewNameIdentifier(g *globals.Context) *NameIdentifier {
+ 	}
+ }
+ 
+-func (t *NameIdentifier) Identify(ctx context.Context, names []string, private bool,
++func (t *NameIdentifier) Identify(ctx context.Context, uid keybase1.UID, names []string, private bool,
+ 	getTLFID func() keybase1.TLFID, getCanonicalName func() keybase1.CanonicalTlfName,
+ ) (res []keybase1.TLFIdentifyFailure, err error) {
+ 	idNotifier := globals.CtxIdentifyNotifier(ctx)
+@@ -232,7 +232,7 @@ func (t *NameIdentifier) Identify(ctx context.Context, names []string, private b
+ 	// Run the updates through the identify notifier
+ 	if idNotifier != nil {
+ 		t.Debug(ctx, "sending update through ident notifier: %d breaks", len(res))
+-		idNotifier.Send(ctx, keybase1.CanonicalTLFNameAndIDWithBreaks{
++		idNotifier.Send(ctx, uid, keybase1.CanonicalTLFNameAndIDWithBreaks{
+ 			Breaks: keybase1.TLFBreak{
+ 				Breaks: res,
+ 			},
+```
+
+**File**: `go/chat/participantsource.go` (modified, +21/-8)
+```diff
+@@ -17,6 +17,11 @@ import (
+ 	"golang.org/x/sync/semaphore"
+ )
+ 
++type participantNotify struct {
++	uid   keybase1.UID
++	parts map[chat1.ConvIDStr][]chat1.UIParticipant
++}
++
+ type partDiskStorage struct {
+ 	Uids []gregor1.UID
+ 	Hash string
+@@ -43,15 +48,20 @@ func NewCachingParticipantSource(g *globals.Context, ri func() chat1.RemoteInter
+ 		return g.LocalChatDb
+ 	}
+ 	notify, notifyCancel := libkb.ThrottleBatch(func(batchedInt any) {
+-		batched, _ := batchedInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
+-		g.NotifyRouter.HandleChatParticipantsInfo(context.Background(), batched)
++		batched, _ := batchedInt.(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
++		for uid, parts := range batched {
++			g.NotifyRouter.HandleChatParticipantsInfo(context.Background(), uid, parts)
++		}
+ 	}, func(batchedInt, singleInt any) any {
+-		batched, _ := batchedInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
+-		single, _ := singleInt.(map[chat1.ConvIDStr][]chat1.UIParticipant)
+-		maps.Copy(batched, single)
++		batched, _ := batchedInt.(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
++		single, _ := singleInt.(participantNotify)
++		if batched[single.uid] == nil {
++			batched[single.uid] = make(map[chat1.ConvIDStr][]chat1.UIParticipant)
++		}
++		maps.Copy(batched[single.uid], single.parts)
+ 		return batched
+ 	}, func() any {
+-		return make(map[chat1.ConvIDStr][]chat1.UIParticipant)
++		return make(map[keybase1.UID]map[chat1.ConvIDStr][]chat1.UIParticipant)
+ 	},
+ 		200*time.Millisecond, true)
+ 	g.PushShutdownHook(func(_ libkb.MetaContext) error {
+@@ -177,8 +187,11 @@ func (s *CachingParticipantSource) GetWithNotifyNonblock(ctx context.Context, ui
+ 				s.Debug(ctx, "GetWithNotifyNonblock: failed to map uids: %s", err)
+ 				continue
+ 			}
+-			s.notify(map[chat1.ConvIDStr][]chat1.UIParticipant{
+-				convIDStr: utils.PresentConversationParticipantsLocal(ctx, participants),
++			s.notify(participantNotify{
++				uid: keybase1.UID(uid.String()),
++				parts: map[chat1.ConvIDStr][]chat1.UIParticipant{
++					convIDStr: utils.PresentConversationParticipantsLocal(ctx, participants),
++				},
+ 			})
+ 		}
+ 	}(globals.BackgroundChatCtx(ctx, s.G()))
+```
+
+**File**: `go/chat/push.go` (modified, +6/-4)
+```diff
+@@ -153,7 +153,9 @@ func (g *gregorMessageOrderer) WaitForTurn(ctx context.Context, uid gregor1.UID,
+ 			//
+ 			//nolint:gosec // G115: Version difference for delay calculation, safe to convert
+ 			max(
+-				time.Duration(newVers-vers-1)*time.Second, 0), time.Minute)
++				time.Duration(newVers-vers-1)*time.Second, 0,
++			), time.Minute,
++		)
+ 
+ 		deadline = deadline.Add(dur)
+ 		waiters := g.addToWaitersLocked(ctx, uid, vers, newVers)
+@@ -614,7 +616,7 @@ func (g *PushHandler) Activity(ctx context.Context, m gregor.OutOfBandMessage) (
+ 			}
+ 
+ 			// Update typing status to stopped
+-			g.typingMonitor.Update(ctx, chat1.TyperInfo{
++			g.typingMonitor.Update(ctx, gregor1.UID(uid), chat1.TyperInfo{
+ 				Uid:      keybase1.UID(nm.Message.ClientHeader.Sender.String()),
+ 				DeviceID: keybase1.DeviceID(nm.Message.ClientHeader.SenderDevice.String()),
+ 			}, convID, chat1.TeamType_NONE, false)
+@@ -996,8 +998,8 @@ func (g *PushHandler) Typing(ctx context.Context, m gregor.OutOfBandMessage) (er
+ 		return err
+ 	}
+ 
+-	// Fire off update with all relevant info
+-	g.typingMonitor.Update(ctx, chat1.TyperInfo{
++	// The account is the gregor recipient, not the person who is typing.
++	g.typingMonitor.Update(ctx, gregor1.UID(m.UID().Bytes()), chat1.TyperInfo{
+ 		Uid:      kuid,
+ 		DeviceID: kdid,
+ 		Username: user.String(),
+```
+
+**File**: `go/chat/teams.go` (modified, +4/-2)
+```diff
+@@ -57,7 +57,8 @@ func getTeamCryptKey(mctx libkb.MetaContext, team *teams.Team, generation keybas
+ 	// Need to convert this key in to a TeambotKey
+ 	if botUID != nil {
+ 		res, _, err = mctx.G().GetTeambotMemberKeyer().GetOrCreateTeambotKey(
+-			mctx, team.ID, *botUID, appKey)
++			mctx, team.ID, *botUID, appKey,
++		)
+ 		return res, err
+ 	}
+ 	return appKey, nil
+@@ -576,9 +577,10 @@ func (t *ImplicitTeamsNameInfoSource) identify(ctx context.Context, team *teams.
+ 		return errors.New("invalid context with no chat metadata")
+ 	}
+ 	cb := make(chan struct{})
++	accountUID := t.G().Env.GetUID()
+ 	go func(ctx context.Context) {
+ 		var idFails []keybase1.TLFIdentifyFailure
+-		idFails, err = t.Identify(ctx, names, true,
++		idFails, err = t.Identify(ctx, accountUID, names, true,
+ 			func() keybase1.TLFID {
+ 				return keybase1.TLFID(team.ID.String())
+ 			},
+```
+
+**File**: `go/chat/tlf.go` (modified, +8/-3)
+```diff
+@@ -45,7 +45,8 @@ func (t *KBFSNameInfoSource) tlfKeysClient() (*keybase1.TlfKeysClient, error) {
+ 	}
+ 	return &keybase1.TlfKeysClient{
+ 		Cli: rpc.NewClient(
+-			xp, libkb.NewContextifiedErrorUnwrapper(t.G().ExternalG()), libkb.LogTagsFromContext),
++			xp, libkb.NewContextifiedErrorUnwrapper(t.G().ExternalG()), libkb.LogTagsFromContext,
++		),
  	}, nil
  }
  
--func (sm *subscriptionManager) registerForChangesLocked(fb data.FolderBranch) {
--	if sm.subscriptionCountByFolderBranch[fb] == 0 {
--		_ = sm.config.Notifier().RegisterForChanges(
--			[]data.FolderBranch{fb}, sm)
--	}
--	sm.subscriptionCountByFolderBranch[fb]++
--}
--
--func (sm *subscriptionManager) unregisterForChangesLocked(fb data.FolderBranch) {
--	if sm.subscriptionCountByFolderBranch[fb] == 1 {
--		_ = sm.config.Notifier().UnregisterFromChanges(
--			[]data.FolderBranch{fb}, sm)
--		delete(sm.subscriptionCountByFolderBranch, fb)
--		return
--	}
--	sm.subscriptionCountByFolderBranch[fb]--
--}
--
- func (sm *subscriptionManager) preparePathNotification(
- 	ref pathSubscriptionRef) (sids []SubscriptionID,
- 	paths []string, topics []keybase1.PathSubscriptionTopic,
-@@ -300,10 +329,12 @@ type subscribePathRequest struct {
- 	deduplicateInterval *time.Duration
- }
+@@ -192,6 +193,7 @@ func (t *KBFSNameInfoSource) CryptKeys(ctx context.Context, tlfName string) (res
+ 		"CryptKeys(tlf=%s,mode=%v)", tlfName, identBehavior)()
  
-+// subscribePathWithFolderBranchLocked reports whether this is fb's first
-+// subscription; the caller must then RegisterForChanges after unlocking.
- func (sm *subscriptionManager) subscribePathWithFolderBranchLocked(
- 	req subscribePathRequest,
- 	parsedPath *parsedPath, fb data.FolderBranch,
--) error {
-+) (first bool, err error) {
- 	nitp := getCleanInTlfPath(parsedPath)
- 	ref := pathSubscriptionRef{
- 		folderBranch: fb,
-@@ -312,9 +343,10 @@ func (sm *subscriptionManager) subscribePathWithFolderBranchLocked(
- 
- 	subscriptionIDS
-```
-
-**File**: `go/kbfs/libkbfs/subscription_manager_test.go` (modified, +497/-0)
-```diff
-@@ -6,8 +6,10 @@ package libkbfs
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"reflect"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -16,6 +18,7 @@ import (
- 	"github.com/keybase/client/go/kbfs/favorites"
- 	"github.com/keybase/client/go/kbfs/libcontext"
- 	"github.com/keybase/client/go/kbfs/tlf"
-+	"github.com/keybase/client/go/kbfs/tlfhandle"
- 	keybase1 "github.com/keybase/client/go/protocol/keybase1"
- 	"github.com/stretchr/testify/require"
- )
-@@ -47,6 +50,10 @@ func initSubscriptionManagerTest(t *testing.T) (config Config,
- 	sm = config.SubscriptionManager(
- 		testSubscriptionManagerClientID, false, notifier)
- 	return config, sm, notifier, func() {
-+		if t.Failed() {
-+			// A failed test may leave a goroutine blocked in a gate.
-+			return
-+		}
- 		err := config.Shutdown(context.Background())
- 		require.NoError(t, err)
- 		ctl.Finish()
-@@ -272,3 +279,493 @@ func TestSubscriptionManagerSubscribePathNoFolderBranch(t *testing.T) {
- 
- 	waiter0()
- }
-+
-+// gatedRootNodeOps holds a found root node until release is closed, standing
-+// in for a folder whose head lock is held by an in-progress write. Lookups
-+// that find nothing pass straight through.
-+type gatedRootNodeOps struct {
-+	KBFSOps
-+	enteredOnce sync.Once
-+	entered     chan struct{}
-+	release     chan struct{}
-+}
-+
-+func (o *gatedRootNodeOps) GetRootNode(
-+	ctx context.Context, h *tlfhandle.Handle, branch data.BranchName) (
-+	Node, data.EntryInfo, error,
-+) {
-+	node, ei, err := o.KBFSOps.GetRootNode(ctx, h, branch)
-+	if node == nil {
-+		return node, ei, err
-+	}
-+	o.enteredOnce.Do(func() { close(o.entered) })
-+	<-o.release
-+	return node, ei, err
-+}
-+
-+// gatedObserver blocks in BatchChanges once armed, holding the folder's
-+// observer-list lock the way a notification in progress does.
-+type gatedObserver struct {
-+	entered chan struct{}
-+	release chan struct{}
-+}
-+
-+func (o *gatedObserver) LocalChange(context.Context, Node, WriteRange) {}
-+func (o *gatedObserver) BatchChanges(context.Context, []NodeChange, []NodeID) {
-+	close(o.entered)
-+	<-o.release
-+}
-+func (o *gatedObserver) TlfHandleChange(context.Context, *tlfhandle.Handle) {}
-+
-+func recvWithin[T any](t *testing.T, ch <-chan T, what string) T {
-+	select {
-+	case v := <-ch:
-+		return v
-+	case <-time.After(5 * time.Second):
-+		require.FailNow(t, what+" timed out")
-+	}
-+	var zero T
-+	return zero
-+}
-+
-+func runWithin(t *testing.T, timeout time.Duration, what string, f func()) {
-+	done := make(chan struct{})
-+	go func() {
-+		f()
-+		close(done)
-+	}()
-+	select {
-+	case <-done:
-+	case <-time.After(timeout):
-+		require.FailNow(t, what+" deadlocked")
-+	}
-+}
-+
-+func TestSubscriptionManagerNotifyDuringSubscribeLookup(t *testing.T) {
-+	config, smi, _, finish := initSubscriptionManagerTest(t)
-+	defer finish()
-+	sm := smi.(*subscriptionManager)
-+	ctx := t.Context()
-+
-+	tlfHandle, err := GetHandleFromFolderNameAndType(
-+		ctx, config.KBPKI(), config.MDOps(), config, "jdoe", tlf.Private)
-+	require.NoError(t, err)
-+	_, _, err = config.KBFSOps().GetOrCreateRootNode(
-+		ctx, tlfHandle, data.MasterBranch)
-+	require.NoError(t, err)
-+
-+	realOps := config.KBFSOps()
-+	gated := &gatedRootNodeOps{
-+		KBFSOps: realOps,
-+		entered: make(chan struct{}),
-+		release: make(chan struct{}),
-+	}
-+	config.(*ConfigLocal).SetKBFSOps(gated)
-+	defer config.(*ConfigLocal).SetKBFSOps(realOps)
-+
-+	subscribed := make(chan error, 1)
-+	go func() {
-+		subscribed <- sm.SubscribePath(ctx, "sid1", "/keybase/private/jdoe",
-+			keybase1.PathSubscriptionTopic_CHILDREN, nil)
-+	}()
-+	recvWithin(t, gated.entered, "root node lookup")
-+
-+	// The folder can't finish the lookup until its own change notification
-+	// returns, so that notification must not wait on the subscribe.
-+	runWithin(t, 5*time.Second, "change notification", func() {
-+		sm.BatchChanges(ctx, nil, nil)
-+	})
-+	close(gated.release)
-+	require.NoError(t, recvWithin(t, subscribed, "subscribe"))
-+}
-+
-+// testStopDuringSubscribeLookup stops a subscription while SubscribePath is
-+// still looking up its folderBranch, and checks it leaves nothing behind.
-+func testStopDuringSubscribeLookup(
-+	t *testing.T, stop func(context.Context, *subscriptionManager),
-+) {
-+	config, smi, _, finish := initSubscriptionManagerTest(t)
-+	defer finish()
-+	sm := smi.(*subscriptionManager)
-+	ctx := t.Context()
-+
-+	tlfHandle, err := GetHandleFromFolderNameAndType(
-+		ctx, config.KBPKI(), config.MDOps(), config, "jdoe", tlf.Private)
-+	require.NoError(t, err)
-+	rootNode, _, err := config.KBFSOps().GetOrCreateRootNode(
-+		ctx, tlfHandle, data.MasterBranch)
-+	require.NoError(t, err)
-+	fb := rootNode.GetFolderBranch()
-+	fbo := config.KBFSOps().(*KBFSOpsStandard).getOpsNoAdd(ctx, fb)
-+
-+	realOps := config.KBFSOps()
-+	gated := &gatedRootNodeOps{
-+		KBFSOps: realOps,
-+		entered: make(chan struct{}),
-+		release: make(chan struct{}),
-+	}
-+	config.(*ConfigLocal).SetKBFSOps(gated)
-+
-+	subscribed := make(chan error, 1)
-+	go func() {
-+		subscribed <- sm.SubscribePath(ctx, "sid1", "/keybase/private/jdoe",
-+			keybase1.PathSubscriptionTopic_CHILDRE
-```
-
-**File**: `go/protocol/keybase1/incoming-share.go` (modified, +26/-2)
-```diff
-@@ -101,6 +101,30 @@ func (o IncomingShareItem) DeepCopy() IncomingShareItem {
+ 	username := t.G().Env.GetUsername()
++	accountUID := t.G().Env.GetUID()
+ 	if len(username) == 0 {
+ 		return res, libkb.LoginRequiredError{}
  	}
- }
+@@ -209,7 +211,8 @@ func (t *KBFSNameInfoSource) CryptKeys(ctx context.Context, tlfName string) (res
+ 		t.Debug(ectx, "CryptKeys: running identify")
+ 		var err error
+ 		names := utils.SplitTLFName(tlfName)
+-		ib, err = t.Identify(ectx, names, true,
++		ib, err = t.Identify(
++			ectx, accountUID, names, true,
+ 			func() keybase1.TLFID {
+ 				<-doneCh
+ 				return res.NameIDBreaks.TlfID
+@@ -258,6 +261,7 @@ func (t *KBFSNameInfoSource) PublicCanonicalTLFNameAndID(ctx context.Context, tl
+ 	}
+ 	defer t.Trace(ctx, &err,
+ 		"PublicCanonicalTLFNameAndID(tlf=%s,mode=%v)", tlfName, identBehavior)()
++	accountUID := t.G().Env.GetUID()
  
-+type IncomingShareItems struct {
-+	Items        []IncomingShareItem `codec:"items" json:"items"`
-+	DroppedCount int                 `codec:"droppedCount" json:"droppedCount"`
-+	Id           string              `codec:"id" json:"id"`
-+}
-+
-+func (o IncomingShareItems) DeepCopy() IncomingShareItems {
-+	return IncomingShareItems{
-+		Items: (func(x []IncomingShareItem) []IncomingShareItem {
-+			if x == nil {
-+				return nil
-+			}
-+			ret := make([]IncomingShareItem, len(x))
-+			for i, v := range x {
-+				vCopy := v.DeepCopy()
-+				ret[i] = vCopy
-+			}
-+			return ret
-+		})(o.Items),
-+		DroppedCount: o.DroppedCount,
-+		Id:           o.Id,
-+	}
-+}
-+
- type IncomingShareCompressPreference int
- 
- const (
-@@ -148,7 +172,7 @@ type SetPreferenceArg struct {
- }
- 
- type IncomingShareInterface interface {
--	GetIncomingShareItems(context.Context) ([]IncomingShareItem, error)
-+	GetIncomingShareItems(context.Context) (IncomingShareItems, error)
- 	GetPreference(context.Context) (IncomingSharePreference, error)
- 	SetPreference(context.Context, IncomingSharePreference) error
- }
-@@ -200,7 +224,7 @@ type IncomingShareClient struct {
- 	Cli rpc.GenericClient
- }
- 
--func (c IncomingShareClient) GetIncomingShareItems(ctx context.Context) (res []IncomingShareItem, err error) {
-+func (c IncomingShareClient) GetIncomingShareItems(ctx context.Context) (res IncomingShareItems, err error) {
- 	err = c.Cli.Call(ctx, "keybase.1.incomingShare.getIncomingShareItems", []any{GetIncomingShareItemsArg{}}, &res, 0*time.Millisecond)
- 	return
- }
+ 	// call Identify and CanonicalTLFNameAndIDWithBreaks concurrently:
+ 	group, ectx := errgroup.WithContext(globals.BackgroundChatCtx(ctx, t.G()))
+@@ -268,7 +272,8 @@ func (t *KBFSNameInfoSource) PublicCanonicalTLFNameAndID(ctx context.Context, tl
+ 		group.Go(func() error {
+ 			var err error
+ 			names := utils.SplitTLFName(tlfName)
+-			ib, err = t.Identify(ectx, names, false,
++			ib, err = t.Identify(
++				ectx, accountUID, names, false,
+ 				func() keybase1.TLFID {
+ 					<-doneCh
+ 					return res.TlfID
 ```
 
-**File**: `go/service/incoming-share.go` (modified, +125/-14)
+**File**: `go/chat/types/interfaces.go` (modified, +4/-4)
 ```diff
-@@ -6,9 +6,10 @@ package service
- import (
- 	"context"
- 	"encoding/json"
--	"errors"
- 	"os"
- 	"path/filepath"
-+	"sync"
-+	"time"
- 
- 	"github.com/keybase/client/go/libkb"
- 	keybase1 "github.com/keybase/client/go/protocol/keybase1"
-@@ -60,25 +61,135 @@ func IncomingShareFolder(mobileSharedHome string) string {
- 	return filepath.Join(mobileSharedHome, "Library", "Caches", "incoming-shares")
+@@ -315,7 +315,7 @@ type TeamChannelSource interface {
+ type ActivityNotifier interface {
+ 	Activity(ctx context.Context, uid gregor1.UID, topicType chat1.TopicType, activity *chat1.ChatActivity,
+ 		source chat1.ChatActivitySource)
+-	TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate)
++	TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate)
+ 	JoinedConversation(ctx context.Context, uid gregor1.UID, convID chat1.ConversationID,
+ 		topicType chat1.TopicType, conv *chat1.InboxUIItem)
+ 	LeftConversation(ctx context.Context, uid gregor1.UID, convID chat1.ConversationID,
+@@ -357,7 +357,7 @@ type ActivityNotifier interface {
+ type IdentifyNotifier interface {
+ 	Reset()
+ 	ResetOnGUIConnect()
+-	Send(ctx context.Context, update keybase1.CanonicalTLFNameAndIDWithBreaks)
++	Send(ctx context.Context, uid keybase1.UID, update keybase1.CanonicalTLFNameAndIDWithBreaks)
  }
  
--func (h *IncomingShareHandler) GetIncomingShareItems(ctx context.Context) (items []keybase1.IncomingShareItem, err error) {
-+const (
-+	incomingShareManifest = "manifest.json"
-+	// A manifest being read is moved here first. Reads are serialized by
-+	// lastIncomingShare; one a crash left behind is replaced by the next read,
-+	// or purged.
-+	incomingShareClaimedManifest = "manifest.claimed"
-+)
-+
-+// How long a claimed share is still handed out again. The app can throw an
-+// answer away (a newer load superseded it, a disconnect cancelled it) and load
-+// again; that reload has to get the share, not nothing.
-+const incomingShareRepeatWindow = 30 * time.Second
-+
-+// The last share claimed, and the user it was handed to, guarded by its mutex,
-+// which also serializes reads.
-+var lastIncomingShare struct {
-+	sync.Mutex
-+	folder string
-+	uid    keybase1.UID
-+	at     time.Time
-+	res    keybase1.IncomingShareItems
-+}
-+
-+// GetIncomingShareItems hands out each share once. The manifest is moved aside
-+// before it is read and removed after; a repeat call within
-+// incomingShareRepeatWindow, by the same user, gets the same share again, and
-+// any other (a stale or replayed keybase://incoming-share link, or another
-+// account after a switch) gets no items and no error.
-+// The payload files stay until they are sent or purged.
-+// A repeat carries the share's id, and only the app knows whether it already
-+// acted on that share, so keeping a share from being acted on twice is up to it.
-+func (h *IncomingShareHandler) GetIncomingShareItems(ctx context.Context) (res keybase1.IncomingShareItems, err error) {
- 	mctx := libkb.NewMetaContext(ctx, h.G())
--	manifestPath := filepath.Join(IncomingShareFolder(h.G().Env.GetMobileSharedHome()), "manifest.json")
--	f, err := os.Open(manifestPath)
-+	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
-+	if folder == "" {
-+		return res, nil
-+	}
-+	last := &lastIncomingShare
-+	last.Lock()
-+	defer last.Unlock()
-+	now := h.G().Clock().Now()
-+	uid := mctx.CurrentUID()
-+	res, claimed, err := h.claimIncomingShare(mctx, folder)
-+	switch {
-+	case err != nil:
-+		// a newer share that can't be read still replaces the last one
-+		last.folder = ""
-+		return res, err
-+	case claimed:
-+		last.folder, last.uid, last.at, last.res = folder, uid, now, res
-+		return res, nil
-+	case last.folder == folder && last.uid.Equal(uid) &&
-+		now.Sub(last.at) < incomingShareRepeatWindow:
-+		mctx.Debug("incoming-share: handing out the share claimed %v ago again", now.Sub(last.at))
-+		return stillPresentIncomingShare(last.res), nil
-+	default:
-+		return keybase1.IncomingShareItems{}, nil
-+	}
-+}
-+
-+// stillPresentIncomingShare is the share as handed out again: an item whose
-+// file is gone was sent or exported since, so it is left out, and a share with
-+// nothing left is nothing to share.
-+// A share that had no items to begin with (every one dropped) is handed out
-+// as it was, so its notice survives a reload.
-+func stillPresentIncomingShare(share keybase1.IncomingShareItems) (res keybase1.IncomingShareItems) {
-+	if len(share.Items) == 0 {
-+		return share
-+	}
-+	for _, item := range share.Items {
-+		if item.OriginalPath != nil {
-+			if _, err := os.Stat(*item.OriginalPath); err != nil {
-+				continue
-+			}
-+		}
-+		res.Items = append(res.Items, item)
-+	}
-+	if len(res.Items) == 0 {
-+		return keybase1.IncomingShareItems{}
-+	}
-+	res.DroppedCount = share.DroppedCount
-+	res.Id = share.Id
-+	return res
-+}
-+
-+// claimIncomingShare reads and removes the manifest; claimed is false when
-+// there is none.
-+func (h *IncomingShareHandler) claimIncomingShare(mctx libkb.MetaContext, folder string) (
-+	res keybase1.IncomingShareItems, claimed bool, err error,
-+) {
-+	id, err := libkb.RandHexString("", 8)
-+	if err != nil {
-+		return res, false, err
-+	}
-+	claimedPath := filepath.Join(folder, incomingShareClaimedManifest)
-+	// A rename is atomic, so of two calls racing for one manifest only one gets it.
-+	if err := os.Rename(filepath.Join(folder, incomingShareManifest), claimedPath); err != nil {
-+		if os.IsNotExist(err) {
-+			mctx.Debug("incoming-share: no manifest, nothing to share")
-+			return res, false, nil
-+		}
-+		mctx.Debug("incoming-share: claim manifest.json error: %v", err)
-+		return res, false, err
-+	}
-+	defer func() {
-+		if err := os.Remove(claimedPath); err != nil {
-+			mctx.Debug("incoming-share: remove claimed manifest error: %v", err)
-+		}
-+	}()
-+	f, err := os.Open(claimedPath)
- 	if err != nil {
- 		mctx.Debug("incoming-share: open manifest.json error: %v", err)
--		return nil, err
-+		return res, true, err
- 	}
- 	defer f.Clos
-```
-
-**File**: `go/service/incoming-share_test.go` (added, +337/-0)
-```diff
-@@ -0,0 +1,337 @@
-+// Copyright 2026 Keybase, Inc. All rights reserved. Use of
-+// this source code is governed by the included BSD license.
-+
-+package service
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/keybase/client/go/libkb"
-+	keybase1 "github.com/keybase/client/go/protocol/keybase1"
-+	clockwork "github.com/keybase/clockwork"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// Writes the manifest that makeManifest builds from the share folder and
-+// returns a handler that reads it.
-+func setupIncomingShare(t *testing.T, makeManifest func(folder string) []map[string]string) (*IncomingShareHandler, func()) {
-+	tc := libkb.SetupTest(t, "incoming-share", 1)
-+	tc.G.Env.Test.MobileSharedHome = t.TempDir()
-+	folder := IncomingShareFolder(tc.G.Env.GetMobileSharedHome())
-+	require.NoError(t, os.MkdirAll(folder, 0o700))
-+	b, err := json.Marshal(makeManifest(folder))
-+	require.NoError(t, err)
-+	require.NoError(t, os.WriteFile(filepath.Join(folder, "manifest.json"), b, 0o600))
-+	return NewIncomingShareHandler(nil, tc.G), tc.Cleanup
-+}
-+
-+func TestIncomingShareCountsDroppedItems(t *testing.T) {
-+	var good string
-+	h, cleanup := setupIncomingShare(t, func(folder string) []map[string]string {
-+		good = filepath.Join(folder, "guid", "photo.jpg")
-+		require.NoError(t, os.MkdirAll(filepath.Dir(good), 0o700))
-+		require.NoError(t, os.WriteFile(good, []byte("jpeg"), 0o600))
-+		return []map[string]string{
-+			{"type": "image", "originalPath": good},
-+			{"type": "error", "error": "loadImage: failed"},
-+			{"type": "image", "originalPath": filepath.Join(folder, "guid2", "gone.jpg")},
-+			{"type": "text", "content": "hello"},
-+		}
-+	})
-+	defer cleanup()
-+
-+	res, err := h.GetIncomingShareItems(context.Background())
-+	require.NoError(t, err)
-+	require.Equal(t, 2, res.DroppedCount)
-+	require.Len(t, res.Items, 2)
-+	require.Equal(t, keybase1.IncomingShareType_IMAGE, res.Items[0].Type)
-+	require.Equal(t, good, *res.Items[0].OriginalPath)
-+	require.Equal(t, 4, *res.Items[0].OriginalSize)
-+	require.Equal(t, keybase1.IncomingShareType_TEXT, res.Items[1].Type)
-+	require.Equal(t, "hello", *res.Items[1].Content)
-+}
-+
-+func TestIncomingShareAllDroppedIsNotAnError(t *testing.T) {
-+	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
-+		return []map[string]string{{"type": "error", "error": "loadImage: failed"}}
-+	})
-+	defer cleanup()
-+
-+	res, err := h.GetIncomingShareItems(context.Background())
-+	require.NoError(t, err)
-+	require.Empty(t, res.Items)
-+	require.Equal(t, 1, res.DroppedCount)
-+}
-+
-+// The extension writes an empty manifest when the user cancels the share.
-+func TestIncomingShareEmptyManifestIsNothingToShare(t *testing.T) {
-+	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
-+		return []map[string]string{}
-+	})
-+	defer cleanup()
-+
-+	res, err := h.GetIncomingShareItems(context.Background())
-+	require.NoError(t, err)
-+	require.Empty(t, res.Items)
-+	require.Zero(t, res.DroppedCount)
-+}
-+
-+func writeIncomingShareManifest(t *testing.T, h *IncomingShareHandler, items []map[string]string) {
-+	b, err := json.Marshal(items)
-+	require.NoError(t, err)
-+	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
-+	require.NoError(t, os.WriteFile(filepath.Join(folder, "manifest.json"), b, 0o600))
-+}
-+
-+func incomingShareText(t *testing.T, h *IncomingShareHandler) string {
-+	res, err := h.GetIncomingShareItems(context.Background())
-+	require.NoError(t, err)
-+	require.Zero(t, res.DroppedCount)
-+	if len(res.Items) == 0 {
-+		return ""
-+	}
-+	require.Len(t, res.Items, 1)
-+	return *res.Items[0].Content
-+}
-+
-+func TestIncomingShareIsReadOnce(t *testing.T) {
-+	h, cleanup := setupIncomingShare(t, func(string) []map[string]string {
-+		return []map[string]string{{"type": "text", "content": "hello"}}
-+	})
-+	defer cleanup()
-+	clock := clockwork.NewFakeClock()
-+	h.G().SetClock(clock)
-+	folder := IncomingShareFolder(h.G().Env.GetMobileSharedHome())
-+
-+	require.Equal(t, "hello", incomingShareText(t, h))
-+
-+	// Neither the manifest nor the claimed copy is left behind.
-+	entries, err := os.ReadDir(folder)
-+	require.NoError(t, err)
-+	require.Empty(t, entries)
-+
-+	// A reload of an answer the app threw away gets the share again.
-+	clock.Advance(incomingShareRepeatWindow - time.Second)
-+	require.Equal(t, "hello", incomingShareText(t, h))
-+
-+	// A replayed incoming-share link later on gets nothing, without an error.
-+	clock.Advance(2 * time.Second)
-+	require.Empty(t, incomingShareText(t, h))
-+}
-+
-+func TestIncomingShareRepeatLeavesOutFilesSinceRemoved(t *testing.T) {
-+	var sent, kept string
-+	h, cleanup := setupIncomingShare(t, func(folder string) []map[string]string {
-+		sent = filepath.Join(folder, "guid", "sent.jpg")
-+		kept = filepath.Join(folder, "guid2", "kept.jpg")
-+		for _, p := range []string{sent, kept} {
-+			require.NoError(t, os.MkdirAll(filepath.Dir(p), 0o700))
-+			require.NoError(t, os.WriteFile(p, []byte("jpeg"), 0o600))
-+		}
-+		return []map[string]
-```
-
-**File**: `go/service/main.go` (modified, +22/-2)
-```diff
-@@ -441,6 +441,7 @@ func (d *Service) purgeOldIncomingShareData() {
- 		return
- 	}
- 	cutoff := time.Now().Add(-incomingShareMaxAge)
-+	d.purgeOldClaimedIncomingShareManifest(dir, cutoff)
- 	for _, entry := range entries {
- 		// manifest.json lives alongside the payload dirs and is the live handoff
- 		// to the app; only the directories are ours to remove.
-@@ -451,8 +452,10 @@ func (d *Service) purgeOldIncomingShareData() {
- 		if err != nil {
- 			continue
- 		}
--		// Writing the processed copy into the payload dir bumps its mtime, so a
--		// share still being worked on keeps renewing its lease.
-+		// The payload dir's mtime is when the extension last added an item to
-+		// it. Each item lives in its own subdirectory, so the app's processed
-+		// copies land there and don't renew it: a share left unsent past the
-+		// cutoff is removed.
- 		if info.ModTime().After(cutoff) {
- 			continue
- 		}
-@@ -463,6 +466,23 @@ func (d *Service) purgeOldIncomingShareData() {
- 	}
+ type KeyFinder interface {
+@@ -470,8 +470,8 @@ type ShareIntentDonator interface {
  }
  
-+// purgeOldClaimedIncomingShareManifest removes a claimed manifest that a crash
-+// left mid-read. A read holds lastIncomingShare while it uses the claimed
-+// manifest, which keeps the manifest's old mtime, so this must not run during
-+// one.
-+func (d *Service) purgeOldClaimedIncomingShareManifest(dir string, cutoff time.Time) {
-+	lastIncomingShare.Lock()
-+	defer lastIncomingShare.Unlock()
-+	p := filepath.Join(dir, incomingShareClaimedManifest)
-+	info, err := os.Stat(p)
-+	if err != nil || info.ModTime().After(cutoff) {
-+		return
-+	}
-+	if err := os.Remove(p); err != nil {
-+		d.G().Log.Debug("purgeOldIncomingShareData: failed to remove %s: %s", p, err)
-+	}
-+}
-+
- func (d *Service) startChatModules() {
- 	kuid := d.G().Env.GetUID()
- 	if !kuid.IsNil() {
+ type StellarLoader interface {
+-	LoadPayment(ctx context.Context, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, paymentID stellar1.PaymentID) *chat1.UIPaymentInfo
+-	LoadRequest(ctx context.Context, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, requestID stellar1.KeybaseRequestID) *chat1.UIRequestInfo
++	LoadPayment(ctx context.Context, uid keybase1.UID, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, paymentID stellar1.PaymentID) *chat1.UIPaymentInfo
++	LoadRequest(ctx context.Context, uid keybase1.UID, convID chat1.ConversationID, msgID chat1.MessageID, senderUsername string, requestID stellar1.KeybaseRequestID) *chat1.UIRequestInfo
+ }
+ 
+ type StellarSender interface {
 ```
 
 ---
 
-### Incident Patch 2: `594ed87e` (2026-10-19)
-**Commit Message**: perf(rpc): cache typed-array probe names, drop incoming rest-spread copy; fix JSI test/bench scripts (#29799)
+### Incident Patch 2: `ded1e2dd` (2026-10-23)
+**Commit Message**: deps: webdriverio 10, immer, zustand, builder-bob; drop two security resolutions (#29829)
 
-* fix(rn-kb): add cxxstableapi include path to the JSI test and bench scripts
+* deps: bump immer, zustand, builder-bob; refresh ip-address and serialize-javascript
 
-RN 0.88's CallInvoker.h includes react/cxxstableapi/UmbrellaGuard.h, so both
-scripts failed to compile against the current pods.
+* deps: webdriverio 10; drop serialize-javascript and basic-ftp resolutions
 
-* fix(rn-kb): build the JSI bench baseline against the current bridge API
+* engine test: cancel a prompt with no event-loop turn after its push
 
-The baseline still targeted master's pre-hardening install/onDataFromGo
-signatures and skipped frame-parser.cpp, so it no longer compiled. Copy the
-base ref's whole cpp/ directory instead, and let KB_BENCH_BASE pick the ref.
-
-* perf(rn-kb): cache the typed-array probe PropNameIDs
-
-tryPackTypedArray looked up byteLength (and buffer/byteOffset for views) by
-C string, interning a fresh PropNameID on every outgoing plain object. Cache
-them like rpcOnJs, released with the rest of the JSI state.
-
-Bench on the real-traffic corpus: encode 507 -> 501 ms best of 7.
-
-* perf(engine): index incoming messages instead of rest-spreading them
-
-dispatchDecodedMessage copied every incoming message array with
-[type, ...rest]. Read the fields by index; validation is unchanged and now
-covered per message type.
-
-* fi
-
-**File**: `rnmodules/react-native-kb/cpp/react-native-kb.cpp` (modified, +24/-9)
+**File**: `rnmodules/react-native-kb/package.json` (modified, +1/-1)
 ```diff
-@@ -67,6 +67,9 @@ void KBBridge::releaseJSIState() {
-   cachedUint8ArrayCtor_.reset();
-   cachedIsView_.reset();
-   cachedRpcOnJsName_.reset();
-+  cachedByteLengthName_.reset();
-+  cachedBufferName_.reset();
-+  cachedByteOffsetName_.reset();
-   cachedPropNames_.clear();
-   cachedRuntime_ = nullptr;
- }
-@@ -97,6 +100,16 @@ void KBBridge::resetRecvLocked() {
-   }
- }
+@@ -32,7 +32,7 @@
+     "react-native": "file:../../shared/node_modules/react-native",
+     "@types/react": "file:../../shared/node_modules/@types/react",
+     "typescript": "file:../../shared/node_modules/typescript",
+-    "react-native-builder-bob": "0.43.2"
++    "react-native-builder-bob": "0.44.1"
+   },
+   "peerDependencies": {
+     "react": "*",
+```
+
+**File**: `rnmodules/react-native-kb/yarn.lock` (modified, +365/-411)
+```diff
+@@ -2,17 +2,17 @@
+ # yarn lockfile v1
  
-+const PropNameID &KBBridge::cachedName(Runtime &runtime,
-+                                       std::unique_ptr<PropNameID> &slot,
-+                                       const char *name) {
-+  resetCaches(runtime);
-+  if (!slot) {
-+    slot = std::make_unique<PropNameID>(PropNameID::forAscii(runtime, name));
-+  }
-+  return *slot;
-+}
-+
- Function &KBBridge::uint8ArrayCtor(Runtime &runtime) {
-   resetCaches(runtime);
-   if (!cachedUint8ArrayCtor_) {
-@@ -360,6 +373,11 @@ Value KBBridge::convertMPToJSI(Runtime &runtime, void *mpObj) {
- void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
-                               void *packer) {
-   auto &pk = *static_cast<msgpack::packer<msgpack::sbuffer> *>(packer);
-+  const auto &byteLengthName =
-+      cachedName(runtime, cachedByteLengthName_, "byteLength");
-+  const auto &bufferName = cachedName(runtime, cachedBufferName_, "buffer");
-+  const auto &byteOffsetName =
-+      cachedName(runtime, cachedByteOffsetName_, "byteOffset");
-   std::vector<PackFrame> stack;
-   stack.reserve(16);
  
-@@ -388,14 +406,14 @@ void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
-   // byteLength/buffer fields is never mistaken for binary. The range is
-   // always bounds-checked against the backing buffer.
-   auto tryPackTypedArray = [&](Object &obj) -> bool {
--    auto byteLengthProp = obj.getProperty(runtime, "byteLength");
-+    auto byteLengthProp = obj.getProperty(runtime, byteLengthName);
-     if (!byteLengthProp.isNumber()) {
-       return false;
-     }
-     if (!isArrayBufferView(runtime, obj)) {
-       return false;
-     }
--    auto bufferProp = obj.getProperty(runtime, "buffer");
-+    auto bufferProp = obj.getProperty(runtime, bufferName);
-     if (!bufferProp.isObject()) {
-       return false;
-     }
-@@ -404,7 +422,7 @@ void KBBridge::convertJSIToMP(Runtime &runtime, const Value &value,
-       return false;
-     }
-     auto arrayBuf = bufferObj.getArrayBuffer(runtime);
--    auto byteOffsetProp = obj.getProperty(runtime, "byteOffset");
-+    auto byteOffsetProp = obj.getProperty(runtime, byteOffsetName);
-     packArrayBufferRange(
-         arrayBuf, byteOffsetProp.isNumber() ? byteOffsetProp.getNumber() : 0,
-         byteLengthProp.getNumber());
-@@ -716,15 +734,12 @@ void KBBridge::onDataFromGo(uint8_t *data, int size, int64_t epoch) {
+-"@ark/schema@0.56.2":
+-  version "0.56.2"
+-  resolved "https://registry.yarnpkg.com/@ark/schema/-/schema-0.56.2.tgz#204292862d1b87a08975f66c498b6e0e138126cf"
+-  integrity sha512-Qx4D2JFbBWpntiHZaTv7bGG4H/M2rigiknezKg/WVyDSaLdE4YCcWAOoFB7pjjDqHbbV2OqRfntm1nnXvwMexg==
++"@ark/schema@0.56.8":
++  version "0.56.8"
++  resolved "https://registry.yarnpkg.com/@ark/schema/-/schema-0.56.8.tgz#7d2a9c226bc4613a1ca0f7a1496153227d5374f3"
++  integrity sha512-R05TOe85oQBGFFw2zKMuZpqkXibLKuC/aJt6VwFn5Cjc4x3NkWfhvGRpRDycNkj3ddcHnOPtIsmjVowJO9Yxdw==
+   dependencies:
+-    "@ark/util" "0.56.2"
++    "@ark/util" "0.56.8"
+ 
+-"@ark/util@0.56.2":
+-  version "0.56.2"
+-  resolved "https://registry.yarnpkg.com/@ark/util/-/util-0.56.2.tgz#c6c09b48ce242c5b8527a273d2413a372e6e517a"
+-  integrity sha512-9kU2sUE38FZEGG7l3hamYMBieLYEJh2L1mrYD2eXpT+78EnQSV1bhjxJhnxGBMSTbtwpBSDNSK+K60WvaI/DTQ==
++"@ark/util@0.56.8":
++  version "0.56.8"
++  resolved "https://registry.yarnpkg.com/@ark/util/-/util-0.56.8.tgz#b9bc33d60875de9aeede7d2a2672ea6b6197a05f"
++  integrity sha512-XLiQyGfpJcws1zCtp2Cva8s1oheCdFn1Rt6JSyC4NnkDrpwCJnlaiawuuOc1Z97vMH+jEzW5vyyf0xOju5wUQA==
+ 
+ "@babel/code-frame@^7.29.0", "@babel/code-frame@^7.29.7":
+   version "7.29.7"
+@@ -28,7 +28,7 @@
+   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
+   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
+ 
+-"@babel/core@^7.25.2", "@babel/core@^7.29.0":
++"@babel/core@^7.25.2", "@babel/core@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
+   integrity sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==
+@@ -479,7 +479,7 @@
+   dependencies:
+     "@babel/helper-plugin-utils" "^7.29.7"
+ 
+-"@babel/plugin-transform-flow-strip-types@^7.27.1":
++"@babel/plugin-transform-flow-strip-types@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.29.7.tgz#911bcb31608c3576510d7e0c95ccf64f9e1812d0"
+   integrity sha512-wRHeUjUjCZnMHmiO5bRgjFLcoEh7JyTdByOW11ahhwNa4V0bmeGEaIvt51yq0zQp2yWIpqfxXXPyUP6GFJZHOQ==
+@@ -737,7 +737,7 @@
+   dependencies:
+     "@babel/helper-plugin-utils" "^7.29.7"
+ 
+-"@babel/plugin-transform-strict-mode@^7.27.1":
++"@babel/plugin-transform-strict-mode@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-strict-mode/-/plugin-transform-strict-mode-7.29.7.tgz#81a223852970e697a93e11932a5f809f0e0ec373"
+   integrity sha512-YjFcy7S8kEndK6dsK4UBISrMZa2MHiitApdZ7hTxAyQpX+Ct+aKgKOZoTx/Kcz6drgKxe50TIPUvZq7V4HGGKg==
+@@ -800,7 +800,7 @@
+     "@babel/helper-create-regexp-features-plugin" "^7.29.7"
+     "@babel/helper-plugin-utils" "^7.29.7"
+ 
+-"@babel/preset-env@^7.29.2":
++"@babel/preset-env@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.29.7.tgz#5e2ab5e764b493fdefc99c43aeaa70a9533a37fd"
+   integrity sha512-GYzX36n1nsciIb0uyH0GHwxwtNwPQIcpxSeiVLDtG/B7jB5xXgchnmL1f/jCX5o+pwnaDBtO60ONSJhEBJfxYA==
+@@ -886,7 +886,7 @@
+     "@babel/types" "^7.4.4"
+     esutils "^2.0.2"
+ 
+-"@babel/preset-react@^7.28.5":
++"@babel/preset-react@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.29.7.tgz#2ed18366e38c2081bbf1760dc01e88fa5674eb17"
+   integrity sha512-C+PV1TFUPTmBQGoPBL8j2QmLpZ117YTCwxIZeJOM96GbYMFSc7/pOXU5lVykwnZxyTqQxRsvoRk6f2FktZgGHA==
+@@ -898,7 +898,7 @@
+     "@babel/plugin-transform-react-jsx-development" "^7.29.7"
+     "@babel/plugin-transform-react-pure-annotations" "^7.29.7"
+ 
+-"@babel/preset-typescript@^7.28.5":
++"@babel/preset-typescript@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.29.7.tgz#de9be1f47b785c979ec7b3a71f4cd8bae5267b62"
+   integrity sha512-/Foi8vKY2EVbed/1eZx0gJEEwHAIxogrySI7rULcRIvhZzbvoE/b5qG5Ghc0WKAFKOHA9SD1x7RsFlOYdutIiQ==
+@@ -1044,11 +1044,16 @@
+   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
+   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
+ 
+-"@jridgewell/sourcemap-codec@^1.5.0", "@jridgewell/sourcemap-codec@^1.5.5":
++"@jridgewell/sourcemap-codec@^1.5.0":
+   version "1.5.5"
+   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz#6912b00d2c631c0d15ce1a7ab57cd657f2a8f8ba"
+   integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
+ 
++"@jridgewell/sourcemap-codec@^1.6.0":
++  version "1.6.0"
++  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz#f4c663e862f06dc98ca4d453862c46902789a18d"
++ 
+```
+
+**File**: `shared/engine/session-cancel.test.ts` (modified, +2/-1)
+```diff
+@@ -228,8 +228,9 @@ describe('a service cancel of one prompt', () => {
+   // The GUI owes the service only once the handler has run and left the prompt unanswered
+   test("still on the listener's timer, keeps its waiting on and never reaches the handler", async () => {
+     const {ended, fake, held, onPrompt, sessionID} = await start()
++    // The push arms the listener's timer before it returns, so cancel with no await in between:
++    // any event-loop turn here lets a 0ms timer come due on a slow machine and run the handler
+     void fake.push(prompt, {kind: 0}, {sessionID})
+-    await tick()
+     expect(waitingCount(fake)).toBe(1)
+     fake.cancelPush(prompt)
+     expect(waitingCount(fake)).toBe(1)
+```
+
+**File**: `shared/package.json` (modified, +9/-11)
+```diff
+@@ -134,7 +134,7 @@
+     "expo-task-manager": "58.0.12",
+     "expo-video": "58.0.12",
+     "google-libphonenumber": "3.2.47",
+-    "immer": "11.2.7",
++    "immer": "11.2.9",
+     "lodash": "4.18.1",
+     "lottie-react-native": "7.5.0",
+     "lottie-web": "5.13.0",
+@@ -151,7 +151,7 @@
+     "react-native-web": "0.21.4",
+     "react-native-webview": "16.0.0",
+     "react-native-worklets": "0.13.0",
+-    "zustand": "5.0.15"
++    "zustand": "5.0.16"
+   },
+   "devDependencies": {
+     "@babel/core": "7.29.7",
+@@ -179,12 +179,12 @@
+     "@types/react": "19.3.0",
+     "@types/react-dom": "19.3.0",
+     "@vitejs/plugin-react": "6.1.2",
+-    "@wdio/appium-service": "9.32.0",
+-    "@wdio/cli": "9.32.0",
+-    "@wdio/globals": "9.31.3",
+-    "@wdio/local-runner": "9.32.0",
+-    "@wdio/mocha-framework": "9.32.0",
+-    "@wdio/spec-reporter": "9.32.0",
++    "@wdio/appium-service": "10.1.0",
++    "@wdio/cli": "10.1.0",
++    "@wdio/globals": "10.1.0",
++    "@wdio/local-runner": "10.1.0",
++    "@wdio/mocha-framework": "10.1.0",
++    "@wdio/spec-reporter": "10.1.0",
+     "appium": "3.8.0",
+     "babel-jest": "30.5.2",
+     "babel-plugin-module-resolver": "5.0.3",
+@@ -206,12 +206,10 @@
+     "typescript-eslint": "8.72.0",
+     "typescript-native": "npm:typescript@7.0.2",
+     "vite": "8.3.5",
+-    "webdriverio": "9.32.0"
++    "webdriverio": "10.1.0"
+   },
+   "resolutions": {
+     "**/@types/react": "19.3.0",
+-    "**/basic-ftp": "6.2.3",
+-    "**/serialize-javascript": "7.1.2",
+     "**/shell-quote": "1.12.0"
+   },
+   "typecoverage": {
+```
+
+**File**: `shared/tests/e2e/ios-appium/wdio.android.conf.ts` (modified, +2/-0)
+```diff
+@@ -30,6 +30,8 @@ export const config: WebdriverIO.Config = {
+   },
+   capabilities: [androidCapabilities(serial)],
+   logLevel: 'warn',
++  // Shares the iOS helpers, which rely on $() taking the first match.
++  strictSelectors: false,
+   framework: 'mocha',
+   // Mirrors the iOS config: the one-session suite accumulates load over many
+   // flows; retries: 2 (each with a fresh escapeToTabs reset) absorbs transient
+```
+
+**File**: `shared/tests/e2e/ios-appium/wdio.conf.ts` (modified, +3/-0)
+```diff
+@@ -48,6 +48,9 @@ export const config: WebdriverIO.Config = {
+   },
+   capabilities: [iosCapabilities(udid, {wdaLocalPort, prebuilt: !isOld, derivedDataPath})],
+   logLevel: 'warn',
++  // Selectors and helpers rely on $() taking the first match (e.g. `~More` matches several
++  // elements), so don't throw on multiple matches.
++  strictSelectors: false,
+   framework: 'mocha',
+   // 120s: the tablet settings-subpages flow can run long; phone tests finish well
+   // under this. retries: 2 — the one-session suite accumulates load over 16 flows
+```
+
+**File**: `shared/tests/e2e/visual/driver-ios.mts` (modified, +2/-0)
+```diff
+@@ -363,6 +363,8 @@ export async function openIos(opts: {device: string}): Promise<IosSession> {
+         logLevel: 'error',
+         path: '/',
+         port,
++        // Helpers rely on $() taking the first match.
++        strictSelectors: false,
+       }),
+       SESSION_MS,
+       'starting the Appium session'
+```
+
+**File**: `shared/tests/e2e/visual/wdio.visual.conf.ts` (modified, +1/-0)
+```diff
+@@ -12,4 +12,5 @@ export const config: Options.Testrunner & Capabilities.WithRequestedTestrunnerCa
+   port: appiumPort(),
+   runner: 'local',
+   specs: [],
++  strictSelectors: false,
+ }
+```
+
+---
+
+### Incident Patch 3: `c8109b9c` (2026-10-21)
+**Commit Message**: desktop: OS window controls overlay on Windows and Linux (#29814)
+
+* desktop: use the OS window controls overlay on Windows and Linux
+
+Without the native frame, Windows and Linux now get the OS's own minimize,
+maximize and close buttons through Electron's title bar overlay, colored
+from the current theme and updated when it changes. The header reserves
+the overlay's width (env(titlebar-area-*)) instead of drawing its own
+buttons. macOS is unchanged.
+
+The hand-drawn buttons go, with the minimize and maximize calls and the
+maximized state they used.
+
+* desktop: size the window controls space from the live overlay, and let the header color show under it
+
+The header now reserves the width the OS window controls actually cover, read from
+navigator.windowControlsOverlay and updated on geometry changes, instead of guessing from the
+native frame setting (which only takes effect after a restart). With no visible overlay, such as
+in full screen or with the native frame, nothing is reserved.
+
+The overlay background is transparent, keeping the theme background's RGB for Linux's hover
+blending, so colored headers run under the controls.
+
+* desktop: transparent overlay color in Electron's format
+
+**File**: `shared/constants/remote-actions.tsx` (modified, +0/-5)
+```diff
+@@ -27,7 +27,6 @@ export const trackerIgnore = 'remote:trackerIgnore'
+ export const trackerLoad = 'remote:trackerLoad'
+ export const unlockFoldersSubmitPaperKey = 'remote:unlockFoldersSubmitPaperKey'
+ export const updateNow = 'remote:updateNow'
+-export const updateWindowMaxState = 'remote:updateWindowMaxState'
+ export const updateWindowShown = 'remote:updateWindowShown'
+ export const updateWindowState = 'remote:updateWindowState'
+ 
+@@ -95,8 +94,6 @@ export const createTrackerLoad = (payload: {
+ export const createUnlockFoldersSubmitPaperKey = (payload: {readonly paperKey: string}) =>
+   ({payload, type: unlockFoldersSubmitPaperKey}) as const
+ export const createUpdateNow = (payload?: undefined) => ({payload, type: updateNow}) as const
+-export const createUpdateWindowMaxState = (payload: {readonly max: boolean}) =>
+-  ({payload, type: updateWindowMaxState}) as const
+ export const createUpdateWindowShown = (payload: {readonly component: string}) =>
+   ({payload, type: updateWindowShown}) as const
+ 
+@@ -124,7 +121,6 @@ export type TrackerIgnorePayload = ReturnType<typeof createTrackerIgnore>
+ export type TrackerLoadPayload = ReturnType<typeof createTrackerLoad>
+ type UnlockFoldersSubmitPaperKeyPayload = ReturnType<typeof createUnlockFoldersSubmitPaperKey>
+ type UpdateNowPayload = ReturnType<typeof createUpdateNow>
+-type UpdateWindowMaxStatePayload = ReturnType<typeof createUpdateWindowMaxState>
+ type UpdateWindowShownPayload = ReturnType<typeof createUpdateWindowShown>
+ type UpdateWindowStatePayload = ReturnType<typeof createUpdateWindowState>
+ 
+@@ -154,7 +150,6 @@ export type Actions =
+   | TrackerLoadPayload
+   | UnlockFoldersSubmitPaperKeyPayload
+   | UpdateNowPayload
+-  | UpdateWindowMaxStatePayload
+   | UpdateWindowShownPayload
+   | UpdateWindowStatePayload
+   | {readonly payload: undefined; readonly type: 'common:resetStore'}
+```
+
+**File**: `shared/desktop/app/bridge-rules.desktop.tsx` (modified, +2/-2)
+```diff
+@@ -125,11 +125,11 @@ const knownActions: {[K in Action['type']]: true} = {
+   closeWindows: true, copyToClipboard: true, ctlQuit: true, darwinCopyToChatTempUploadFile: true,
+   darwinCopyToKBFSTempUploadFile: true, dumpNodeLogger: true, exitApp: true, getPathType: true,
+   getRemoteProps: true, hideWindow: true, installCachedDokan: true, isDirectory: true, makeRenderer: true,
+-  minimizeWindow: true, openPathInFinder: true, openURL: true, quitApp: true, readImageFromClipboard: true,
++  openPathInFinder: true, openURL: true, quitApp: true, readImageFromClipboard: true,
+   relaunchApp: true, rendererNewProps: true, requestWindowsStartService: true,
+   selectFilesToUploadDialog: true, setNativeTheme: true, setOpenAtLogin: true, showContextMenu: true,
+   showInactive: true, showMainWindow: true, showNotification: true, showOpenDialog: true, showSaveDialog: true,
+-  toggleMaximizeWindow: true, uninstallDokan: true, uninstallDokanDialog: true, uninstallKBFSDialog: true,
++  uninstallDokan: true, uninstallDokanDialog: true, uninstallKBFSDialog: true,
+   winCheckRPCOwnership: true, windowsCheckMountFromOtherDokanInstall: true,
+ }
+ const knownForwards: ReadonlySet<unknown> = new Set(Object.values(RemoteGen).filter(v => typeof v === 'string'))
+```
+
+**File**: `shared/desktop/app/ipc-handlers.desktop.tsx` (modified, +0/-15)
+```diff
+@@ -495,21 +495,6 @@ export const setupIPCHandlers = (deps: {
+         Electron.BrowserWindow.fromWebContents(event.sender)?.close()
+         return
        }
- 
-       self->resetCaches(runtime);
--      if (!self->cachedRpcOnJsName_) {
--        self->cachedRpcOnJsName_ = std::make_unique<PropNameID>(
--            PropNameID::forAscii(runtime, "rpcOnJs"));
+-      case 'minimizeWindow': {
+-        Electron.BrowserWindow.getFocusedWindow()?.minimize()
+-        return
 -      }
-       // Deliberately re-read the global each batch instead of caching the
-       // function: JS installs a fresh rpcOnJs whenever the engine client is
-       // recreated, and a cached handle would keep feeding the dead one.
--      auto onJsValue =
--          runtime.global().getProperty(runtime, *self->cachedRpcOnJsName_);
-+      auto onJsValue = runtime.global().getProperty(
-+          runtime,
-+          self->cachedName(runtime, self->cachedRpcOnJsName_, "rpcOnJs"));
-       if (!onJsValue.isObject() ||
-           !onJsValue.getObject(runtime).isFunction(runtime)) {
-         // These messages are already consumed from the unpacker and cannot be
+-      case 'toggleMaximizeWindow': {
+-        const win = Electron.BrowserWindow.getFocusedWindow()
+-        if (win) {
+-          if (win.isMaximized()) {
+-            win.unmaximize()
+-          } else {
+-            win.maximize()
+-          }
+-        }
+-        return
+-      }
+       case 'darwinCopyToChatTempUploadFile': {
+         try {
+           return await darwinCopyToChatTempUploadFile(action.payload)
 ```
 
-**File**: `rnmodules/react-native-kb/cpp/react-native-kb.h` (modified, +8/-0)
+**File**: `shared/desktop/app/ipctypes.tsx` (modified, +0/-2)
 ```diff
-@@ -90,6 +90,10 @@ class KBBridge : public std::enable_shared_from_this<KBBridge> {
-   std::unique_ptr<facebook::jsi::Function> cachedUint8ArrayCtor_;
-   std::unique_ptr<facebook::jsi::Function> cachedIsView_;
-   std::unique_ptr<facebook::jsi::PropNameID> cachedRpcOnJsName_;
-+  // Typed-array probe names, looked up on every outgoing plain object.
-+  std::unique_ptr<facebook::jsi::PropNameID> cachedByteLengthName_;
-+  std::unique_ptr<facebook::jsi::PropNameID> cachedBufferName_;
-+  std::unique_ptr<facebook::jsi::PropNameID> cachedByteOffsetName_;
-   std::unordered_map<std::string, facebook::jsi::PropNameID> cachedPropNames_;
-   std::string propNameScratch_;
-   facebook::jsi::Runtime *cachedRuntime_ = nullptr;
-@@ -104,6 +108,10 @@ class KBBridge : public std::enable_shared_from_this<KBBridge> {
-   void setObjectKey(facebook::jsi::Runtime &runtime,
-                     facebook::jsi::Object &obj, const char *ptr, size_t size,
-                     const facebook::jsi::Value &value);
-+  const facebook::jsi::PropNameID &
-+  cachedName(facebook::jsi::Runtime &runtime,
-+             std::unique_ptr<facebook::jsi::PropNameID> &slot,
-+             const char *name);
-   facebook::jsi::Function &uint8ArrayCtor(facebook::jsi::Runtime &runtime);
-   facebook::jsi::Function &arrayBufferIsView(facebook::jsi::Runtime &runtime);
-   bool isArrayBufferView(facebook::jsi::Runtime &runtime,
+@@ -56,8 +56,6 @@ export type Action =
+   | {type: 'darwinCopyToKBFSTempUploadFile'; payload: {originalFilePath: string; dir: string}}
+   | {type: 'darwinCopyToChatTempUploadFile'; payload: {originalFilePath: string; dst: string}}
+   | {type: 'closeWindow'}
+-  | {type: 'minimizeWindow'}
+-  | {type: 'toggleMaximizeWindow'}
+   | {type: 'openURL'; payload: {url: string}}
+   | {type: 'showInactive'}
+   | {type: 'showNotification'; payload: DesktopNotification}
 ```
 
-**File**: `rnmodules/react-native-kb/cpp/tests/jsi-convert-bench.cpp` (modified, +2/-15)
+**File**: `shared/desktop/app/main-window.desktop.tsx` (modified, +26/-11)
 ```diff
-@@ -2,7 +2,7 @@
- // Hermes runtime against a corpus of real RPC payloads.
- //
- // The corpus comes from an actual mobile session's Metro log; see
--// scripts/make-bench-corpus.mjs. Build and run both this and the master
-+// scripts/make-bench-corpus.mjs. Build and run both this and the
- // baseline with scripts/bench-jsi-convert.sh.
- //
- // Decode direction (msgpack -> JSI): frames are handed to onDataFromGo exactly
-@@ -82,20 +82,13 @@ int main(int argc, char **argv) {
-     }
-   };
+@@ -107,15 +107,6 @@ const setupWindowEvents = (win: Electron.BrowserWindow) => {
+   }
  
--#ifdef KB_BASELINE
--  bridge->install(
--      rt, invoker,
--      [&](void *, size_t size) { bytesWritten += size; },
--      onError);
--#else
-   bridge->install(
-       rt, invoker,
-       [&](void *, size_t size) {
-         bytesWritten += size;
-         return true;
-       },
-       onError, [&](int64_t) { fprintf(stderr, "fatal\n"); });
--#endif
- 
-   // Collects everything the decode pass produced so the encode pass has real
-   // JSI values to pack. Held in JS so the values stay exactly what rpcOnJs got.
-@@ -138,7 +131,7 @@ int main(int argc, char **argv) {
-   printf("corpus %s: %zu frames, %.2f MB\n", corpusPath, frames,
-          double(corpus.size()) / (1024 * 1024));
- #ifdef KB_BASELINE
--  printf("build: baseline (origin/master)\n");
-+  printf("build: baseline\n");
- #else
-   printf("build: branch\n");
- #endif
-@@ -151,17 +144,11 @@ int main(int argc, char **argv) {
-     // way they do on device rather than as one impossible 10MB read.
-     constexpr size_t kReadSize = 300 * 1024;
-     rt.global().setProperty(rt, "received", jsi::Array(rt, 0));
--#ifndef KB_BASELINE
-     bridge->resetRecv();
--#endif
-     auto t0 = std::chrono::steady_clock::now();
-     for (size_t off = 0; off < corpus.size(); off += kReadSize) {
-       const size_t n = std::min(kReadSize, corpus.size() - off);
--#ifdef KB_BASELINE
--      bridge->onDataFromGo(corpus.data() + off, int(n));
--#else
-       bridge->onDataFromGo(corpus.data() + off, int(n), 1);
--#endif
-     }
-     double decodeMs = msSince(t0);
- 
-```
-
-**File**: `rnmodules/react-native-kb/cpp/tests/jsi-convert-test.cpp` (modified, +63/-0)
-```diff
-@@ -820,6 +820,65 @@ void testEncodeTypedArrayViews() {
-             "ArrayBuffer packed the wrong bytes");
+   win.on('close', hideInsteadOfClose)
+-
+-  if (!isDarwin) {
+-    const emitMaxChange = () => {
+-      R.remoteDispatch(RemoteGen.createUpdateWindowMaxState({max: win.isMaximized()}))
+-    }
+-
+-    win.on('maximize', emitMaxChange)
+-    win.on('unmaximize', emitMaxChange)
+-  }
  }
  
-+// The typed-array probe names are cached on the bridge, so repeated sends on
-+// one runtime must keep telling views from look-alike plain objects.
-+void testEncodeTypedArrayProbeRepeats() {
-+  Harness h;
-+  for (int i = 0; i < 3; ++i) {
-+    h.send("{bin: new Uint8Array([1, 2, 3]).subarray(1),"
-+           " fake: {byteLength: 2, buffer: new ArrayBuffer(2), byteOffset: 0}}");
-+    auto oh = h.lastPayload();
-+    const auto &o = oh.get();
-+    CHECK(o.type == msgpack::type::MAP);
-+    CHECK_EQ(o.via.map.size, uint32_t(2));
-+    CHECK_MSG(mpBinToString(o.via.map.ptr[0].val) == std::string("\x02\x03", 2),
-+              "subarray view packed the wrong bytes on send " +
-+                  std::to_string(i));
-+    CHECK_MSG(o.via.map.ptr[1].val.type == msgpack::type::MAP,
-+              "look-alike object packed as binary on send " + std::to_string(i));
-+    CHECK_EQ(o.via.map.ptr[1].val.via.map.size, uint32_t(3));
-+  }
+ const changeDock = (show: boolean) => {
+@@ -144,10 +135,31 @@ export const isScreenshotDisabled = () => disableScreenshot
+ 
+ const themeBackgroundColor = () => (Electron.nativeTheme.shouldUseDarkColors ? '#191919' : '#ffffff')
+ 
++// Without the native frame, Windows and Linux draw their own window controls over the top of the page
++// (right, left or both, by the OS button layout), at the height of the header's top row. The overlay is
++// see-through so the header's own color shows under the controls; it keeps the theme background's RGB
++// because Linux blends the button hover against the overlay color with its alpha dropped. Spelled as
++// rgba() since Electron reads 8-digit hex as #AARRGGBB. The symbols use the header's black_50_on_white.
++let windowControlsOverlay = false
++const transparentThemeBackground = () => {
++  const hex = themeBackgroundColor()
++  const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
++  return `rgba(${r}, ${g}, ${b}, 0)`
 +}
-+
-+// The cached probe names follow whichever runtime is converting, so sends that
-+// alternate between two runtimes sharing one bridge all pack views correctly.
-+void testEncodeTypedArrayProbeAcrossRuntimes() {
-+  Harness h;
-+  auto other = facebook::hermes::makeHermesRuntime();
-+  auto sendOn = [&](jsi::Runtime &rt, const char *src) {
-+    auto value = rt.evaluateJavaScript(
-+        std::make_shared<jsi::StringBuffer>(std::string("(") + src + ")"),
-+        "test.js");
-+    rt.global().getPropertyAsFunction(rt, "rpcOnGo").call(rt, value);
-+  };
-+  auto checkBin = [&](const std::string &want, const std::string &label) {
-+    auto oh = h.lastPayload();
-+    CHECK_MSG(oh.get().type == msgpack::type::BIN, label + ": not BIN");
-+    CHECK_MSG(mpBinToString(oh.get()) == want, label + ": wrong bytes");
-+  };
-+
-+  try {
-+    sendOn(h.rt(), "new Uint8Array([1, 2])");
-+    checkBin(std::string("\x01\x02", 2), "first runtime");
-+
-+    h.bridge->install(
-+        *other, std::make_shared<InlineCallInvoker>(*other),
-+        [&h](void *ptr, size_t size) {
-+          const auto *p = static_cast<const uint8_t *>(ptr);
-+          h.writes.emplace_back(p, p + size);
-+          return true;
-+        },
-+        [](const std::string &) {}, [](int64_t) {});
-+    sendOn(*other, "new Uint8Array([3, 4, 5]).subarray(1)");
-+    checkBin(std::string("\x04\x05", 2), "second runtime");
-+
-+    sendOn(h.rt(), "new Uint8Array([6])");
-+    checkBin(std::string("\x06", 1), "back on the first runtime");
-+  } catch (const jsi::JSError &e) {
-+    throw kbtest::CheckFailed("JS threw: " + e.getMessage());
-+  }
-+}
-+
- void testEncodeEmptyContainers() {
-   Harness h;
-   h.send("{arr: [], map: {}, str: '', bin: new Uint8Array(0)}");
-@@ -1204,6 +1263,10 @@ int main() {
-              testEncodeIsViewNotDigitHeuristic);
-   runner.add("encode: typed array byteOffset/byteLength bounds",
-              testEncodeTypedArrayViews);
-+  runner.add("encode: cached probe names across repeated sends",
-+             testEncodeTypedArrayProbeRepeats);
-+  runner.add("encode: cached probe names across a runtime switch",
-+             testEncodeTypedArrayProbeAcrossRuntimes);
-   runner.add("encode: empty containers", testEncodeEmptyContainers);
-   runner.add("encode: UTF-8, multibyte, embedded NUL", testEncodeUtf8Strings);
-   runner.add("encode: kMaxDepth", testEncodeDepthLimit);
-```
-
-**File**: `rnmodules/react-native-kb/scripts/bench-jsi-convert.sh` (modified, +14/-13)
-```diff
-@@ -1,8 +1,9 @@
- #!/usr/bin/env bash
- # Builds and runs cpp/tests/jsi-convert-bench.cpp twice -- once against this
--# branch's bridge, once against origin/master's -- on a real Hermes runtime,
--# replaying the corpus built by make-bench-corpus.mjs from a real mobile
--# session's RPC traffic.
-+# branch's bridge, once against KB_BENCH_BASE's (default origin/master) -- on
-+# a real Hermes runtime, replaying the corpus built by make-bench-corpus.mjs
-+# from a real mobile session's RPC traffic. KB_BENCH_BASE must already have the
-+# current bridge API (frame-parser.cpp, epoch-taking onDataFromGo).
- #
- # Hermes comes from the already-installed iOS pod, which ships a macOS slice, so
- # nothing has to be built from source. Development-only; not part of the shipped
-@@ -16,13 +17,15 @@ PODS="$ROOT/shared/ios/Pods"
- HERMES="$PODS/hermes-engine/destroot"
- CORPUS="${1:-/tmp/kb-bench-corpus.bin}"
- ITERS="${2:-5}"
-+BASE="${KB_BENCH_BASE:-origin/master}"
- 
- # Sets MSGPACK_INCLUDE, fetching the headers if yarn hasn't unpacked them.
- # shellcheck source=./msgpack-include.sh
- source "$(dirname "${BASH_SOURCE[0]}")/msgpack-include.sh"
- 
- for p in "$HERMES/include" \
--         "$PODS/Headers/Public/React-callinvoker"; do
-+         "$PODS/Headers/Public/React-callinvoker" \
-+         "$PODS/Headers/Public/React-cxxstableapi"; do
-   test -d "$p" || { echo "missing $p -- run yarn and yarn ios:pod:install first" >&2; exit 1; }
- done
- test -f "$CORPUS" || {
-@@ -37,33 +40,31 @@ test -f "$CORPUS" || {
- WORK="$(mktemp -d /tmp/kb-bench.XXXXXX)"
- trap 'rm -rf "$WORK"' EXIT
- 
--# The baseline is master's bridge, checked out to its own directory so the two
--# builds each see their own react-native-kb.h.
-+# The baseline is BASE's bridge (origin/master unless overridden), checked out
-+# to its own directory so the two builds each see their own headers.
- mkdir -p "$WORK/baseline"
--for f in react-native-kb.cpp react-native-kb.h msgpack-safe.hpp; do
--  git -C "$ROOT" show "origin/master:rnmodules/react-native-kb/cpp/$f" > "$WORK/baseline/$f"
--done
-+git -C "$ROOT" archive "$BASE" rnmodules/react-native-kb/cpp |
-+  tar -x -C "$WORK/baseline" --strip-components=3 --exclude='*/tests/*'
- 
- FRAMEWORKS="$HERMES/Library/Frameworks/macosx"
- COMMON=(
-   -std=c++20 -O2 -DNDEBUG -DMSGPACK_NO_BOOST
-   -I "$MSGPACK_INCLUDE"
-   -I "$HERMES/include"
-   -I "$PODS/Headers/Public/React-callinvoker"
-+  -I "$PODS/Headers/Public/React-cxxstableapi"
-   -F "$FRAMEWORKS" -framework hermesvm
-   -Wl,-rpath,"$FRAMEWORKS"
- )
- 
- build() { # build <outfile> <src-dir> [extra flags...]
-   local out="$1" dir="$2"; shift 2
--  local srcs=("$dir/react-native-kb.cpp")
--  # frame-parser.cpp only exists on the branch.
--  [ -f "$dir/frame-parser.cpp" ] && srcs+=("$dir/frame-parser.cpp")
-+  local srcs=("$dir/react-native-kb.cpp" "$dir/frame-parser.cpp")
-   clang++ "${COMMON[@]}" "$@" -I "$dir" \
-     "${srcs[@]}" "$CPP_DIR/tests/jsi-convert-bench.cpp" -o "$out"
- }
- 
--echo "building baseline (origin/master)..."
-+echo "building baseline ($BASE)..."
- build "$WORK/bench-baseline" "$WORK/baseline" -DKB_BASELINE=1
- echo "building branch..."
- build "$WORK/bench-branch" "$CPP_DIR"
-```
-
-**File**: `rnmodules/react-native-kb/scripts/test-jsi-convert.sh` (modified, +3/-1)
-```diff
-@@ -24,7 +24,8 @@ HERMES="$PODS/hermes-engine/destroot"
- source "$(dirname "${BASH_SOURCE[0]}")/msgpack-include.sh"
- 
- for p in "$MSGPACK_INCLUDE" "$HERMES/include" \
--         "$PODS/Headers/Public/React-callinvoker"; do
-+         "$PODS/Headers/Public/React-callinvoker" \
-+         "$PODS/Headers/Public/React-cxxstableapi"; do
-   test -d "$p" || {
-     echo "missing $p -- run yarn and yarn ios:pod:install first" >&2
-     exit 1
-@@ -55,6 +56,7 @@ clang++ -std=c++20 -O1 -g -DMSGPACK_NO_BOOST \
-   -I "$MSGPACK_INCLUDE" \
-   -I "$HERMES/include" \
-   -I "$PODS/Headers/Public/React-callinvoker" \
-+  -I "$PODS/Headers/Public/React-cxxstableapi" \
-   -I "$CPP_DIR" \
-   -F "$FRAMEWORKS" -framework hermesvm \
-   -Wl,-rpath,"$FRAMEWORKS" \
-```
-
-**File**: `shared/engine/rpc-transport.test.ts` (modified, +49/-0)
-```diff
-@@ -729,6 +729,55 @@ test('cancel packets surface a cancelled response payload', () => {
-   )
- })
- 
-+test('notify packets dispatch method and params with no response handlers', () => {
-+  const incoming = jest.fn()
-+  const transport = new TestTransport({incomingRPCCallback: incoming})
-+
-+  transport.dispatchDecodedMessage([2, 'keybase.1.test.notify', [{sessionID: 3}]])
-+
-+  expect(incoming).toHaveBeenCalledTimes(1)
-+  expect(incoming).toHaveBeenCalledWith({method: 'keybase.1.test.notify', param: [{sessionID: 3}]})
-+  expect(transport.sent).toEqual([])
++const titleBarOverlay = () => ({
++  color: transparentThemeBackground(),
++  height: 40,
++  symbolColor: Electron.nativeTheme.shouldUseDarkColors ? '#808080' : '#7f7f7f',
 +})
 +
-+test('malformed packets of every type are dropped without dispatching or answering', () => {
-+  const incoming = jest.fn()
-+  const transport = new TestTransport({incomingRPCCallback: incoming})
-+  const cb = jest.fn()
-+  transport.invoke('keybase.1.test.pending', [{}], cb)
-+  const [, seqid] = transport.sent[0]!
-+  transport.sent.length = 0
-+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
-+
-+  const malformed: Array<unknown> = [
-+    [0],
-+    ['0', 1, 'keybase.1.test.hello', [{}]],
-+    [0, 'x', 'keybase.1.test.hello', [{}]],
-+    [0, 1, 5, [{}]],
-+    [0, 1, 'keybase.1.test.hello', {}],
-+    [2, 5, [{}]],
-+    [2, 'keybase.1.test.notify', {}],
-+    [1, String(seqid), null, {ok: true}],
-+    [3, 'x'],
-+    [9, 1],
-+  ]
-+  try {
-+    for (const m of malformed) {
-+      transport.dispatchDecodedMessage(m)
+ // only the main window uses themeBackgroundColor; the others (menubar, tracker) are transparent
+ export const registerThemeBackgrounds = () => {
+   Electron.nativeTheme.on('updated', () => {
+-    getMainWindow()?.setBackgroundColor(themeBackgroundColor())
++    const win = getMainWindow()
++    win?.setBackgroundColor(themeBackgroundColor())
++    if (windowControlsOverlay) {
++      win?.setTitleBarOverlay(titleBarOverlay())
 +    }
-+    expect(warn).toHaveBeenCalledTimes(malformed.length)
-+  } finally {
-+    warn.mockRestore()
-+  }
-+  expect(incoming).not.toHaveBeenCalled()
-+  expect(cb).not.toHaveBeenCalled()
-+  expect(transport.sent).toEqual([])
-+
-+  // The pending invoke was untouched by the bad response and still settles.
-+  transport.dispatchDecodedMessage([1, seqid, null, {ok: true}])
-+  expect(cb).toHaveBeenCalledTimes(1)
-+})
-+
- test('close settles every queued invoke exactly once with EOF and drops queued sends', () => {
-   const transport = new TestTransport({connected: false})
-   const calls: Array<Array<unknown>> = []
+   })
+ }
+ 
+@@ -330,9 +342,12 @@ const MainWindow = () => {
+   setupDefaultSession()
+   loadWindowState()
+ 
++  windowControlsOverlay = !isDarwin && !useNativeFrame
+   const win = new Electron.BrowserWindow({
+     backgroundColor: themeBackgroundColor(),
+-    frame: useNativeFrame,
++    ...(windowControlsOverlay
++      ? {titleBarOverlay: titleBarOverlay(), titleBarStyle: 'hidden' as const}
++      : {frame: useNativeFrame}),
+     height: visualContentSize?.height ?? windowState.height,
+     minHeight: 600,
+     minWidth: 740,
 ```
 
-**File**: `shared/engine/rpc-transport.tsx` (modified, +10/-5)
+**File**: `shared/desktop/renderer/preload.desktop.tsx` (modified, +0/-6)
 ```diff
-@@ -401,10 +401,12 @@ export abstract class RPCTransport {
-       return
-     }
+@@ -154,9 +154,6 @@ if (isRenderer) {
+         })
+       )
+     },
+-    minimizeWindow: () => {
+-      ignorePromise(invoke({type: 'minimizeWindow'}))
+-    },
+     openPathInFinder: async (path: string, isFolder: boolean) => {
+       const res = await invoke({
+         payload: {isFolder, path},
+@@ -240,9 +237,6 @@ if (isRenderer) {
+         })
+       )
+     },
+-    toggleMaximizeWindow: () => {
+-      ignorePromise(invoke({type: 'toggleMaximizeWindow'}))
+-    },
+     uninstallDokan: async (execPath: string) => {
+       return invoke({payload: {execPath}, type: 'uninstallDokan'})
+     },
+```
+
+**File**: `shared/desktop/renderer/remote-event-handler.desktop.tsx` (modified, +0/-3)
+```diff
+@@ -193,9 +193,6 @@ export const eventFromRemoteWindows = (action: RemoteGen.Actions) => {
+     case RemoteGen.dumpLogs:
+       ignorePromise(dumpLogs(action.payload.reason))
+       break
+-    case RemoteGen.updateWindowMaxState:
+-      useShellState.getState().dispatch.setWindowMaximized(action.payload.max)
+-      break
+     case RemoteGen.updateWindowState:
+       useShellState.getState().dispatch.updateWindowState(action.payload.windowState)
+       break
+```
+
+**File**: `shared/router-v2/header/index.desktop.tsx` (modified, +21/-90)
+```diff
+@@ -2,14 +2,11 @@ import type * as React from 'react'
+ import * as Kb from '@/common-adapters'
+ import * as Platform from '@/constants/platform'
+ import SyncingFolders from './syncing-folders'
+-import KB2 from '@/util/electron'
+ import {useLoggedInScreens} from '../logged-in-screens'
+-import {useShellState} from '@/stores/shell'
++import {useWindowControlsInsets, type WindowControlsInsets} from '@/util/window-controls-overlay.desktop'
+ import type {HeaderBackButtonProps} from '@react-navigation/elements'
+ import type {NativeStackHeaderProps} from '@react-navigation/native-stack'
  
--    const [type, ...rest] = message
-+    const type = message[0]
-     switch (type) {
-       case MESSAGE_TYPE_INVOKE: {
--        const [seqid, method, param] = rest
-+        const seqid = message[1]
-+        const method = message[2]
-+        const param = message[3]
-         if (typeof seqid !== 'number' || typeof method !== 'string' || !Array.isArray(param)) {
-           console.warn('Invalid invoke packet received')
-           return
-@@ -435,7 +437,8 @@ export abstract class RPCTransport {
-         return
-       }
-       case MESSAGE_TYPE_NOTIFY: {
--        const [method, param] = rest
-+        const method = message[1]
-+        const param = message[2]
-         if (typeof method !== 'string' || !Array.isArray(param)) {
-           console.warn('Invalid notify packet received')
-           return
-@@ -447,7 +450,9 @@ export abstract class RPCTransport {
-         return
-       }
-       case MESSAGE_TYPE_RESPONSE: {
--        const [seqid, error, result] = rest
-+        const seqid = message[1]
-+        const error = message[2]
-+        const result = message[3]
-         if (typeof seqid !== 'number') {
-           console.warn('Invalid response packet received')
-           return
-@@ -461,7 +466,7 @@ export abstract class RPCTransport {
-         return
-       }
-       case MESSAGE_TYPE_CANCEL: {
--        const [seqid] = rest
-+        const seqid = message[1]
-         if (typeof seqid !== 'number') {
-           console.warn('Invalid cancel packet received')
-           return
+-const {closeWindow, minimizeWindow, toggleMaximizeWindow} = KB2.functions
+-
+ type HeaderTitleProps = {
+   children: React.ReactNode
+   tintColor?: string
+@@ -44,8 +41,8 @@ type Props = {
+   options: Options
+   back?: boolean
+   style?: Kb.Styles._StylesCrossPlatform
+-  useNativeFrame: boolean
+-  isMaximized: boolean
++  // space the OS window controls cover at the top, all zeros when there are none
++  windowControls: WindowControlsInsets
+   navigation: {
+     pop: () => void
+   }
+@@ -62,56 +59,16 @@ const PlainTitle = ({title}: {title: React.ReactNode}) => {
+   )
+ }
+ 
+-const SystemButtons = ({isMaximized}: {isMaximized: boolean}) => {
+-  const styles = useStyles()
+-  const onMinimize = () => {
+-    minimizeWindow?.()
+-  }
+-  const onToggleMaximizeWindow = () => {
+-    toggleMaximizeWindow?.()
+-  }
+-  const onCloseWindow = () => {
+-    closeWindow?.()
+-  }
+-  return (
+-    <Kb.Box2 alignSelf="center" direction="horizontal">
+-      <Kb.ClickableBox alignSelf="center"
+-        className="hover_background_color_black_05  color_black_50 hover_color_black"
+-        onClick={onMinimize}
+-        style={styles.appIconBox}
+-        direction="vertical"
+-      >
+-        <Kb.Icon color="inherit" onClick={onMinimize} style={styles.appIcon} type="iconfont-app-minimize" />
+-      </Kb.ClickableBox>
+-      <Kb.ClickableBox alignSelf="center"
+-        className="hover_background_color_black_05 color_black_50 hover_color_black"
+-        onClick={onToggleMaximizeWindow}
+-        style={styles.appIconBox}
+-        direction="vertical"
+-      >
+-        <Kb.Icon
+-          color="inherit"
+-          onClick={onToggleMaximizeWindow}
+-          style={styles.appIcon}
+-          type={isMaximized ? 'iconfont-app-un-maximize' : 'iconfont-app-maximize'}
+-        />
+-      </Kb.ClickableBox>
+-      <Kb.ClickableBox alignSelf="center"
+-        className="hover_background_color_red hover_color_white color_black_50"
+-        onClick={onCloseWindow}
+-        style={styles.appIconBox}
+-        direction="vertical"
+-      >
+-        <Kb.Icon color="inherit" onClick={onCloseWindow} style={styles.appIcon} type="iconfont-app-close" />
+-      </Kb.ClickableBox>
+-    </Kb.Box2>
+-  )
+-}
++// The OS draws the window controls over the top corners of the page (Windows and Linux without the
++// native frame); keep the header's own controls out from under them
++const WindowControlsSpace = ({width}: {width: number}) => (
++  <Kb.Box2 direction="horizontal" style={{flexShrink: 0, width}} />
++)
+ 
+ function DesktopHeader(p: Props) {
+   const styles = useStyles()
+   const theme = Kb.Styles.useTheme()
+-  const {back, navigation, options, loggedIn, useNativeFrame, isMaximized} = p
++  const {back, navigation, options, loggedIn, windowControls} = p
+   const {headerMode, title, headerTitle, headerRight, headerRightActions, subHeader} = options
+   const {headerTransparent, headerShadowVisible, headerBottomStyle, headerStyle, headerLeft} = options
+ 
+@@ -151,7 +108,7 @@ function DesktopHeader(p: Props) {
+   }
+ 
+   const showDivider = headerShadowVisible !== false
+-  const windowDecorationsAreNeeded = !Platform.isMac && !useNativeFrame
++  const windowControlsOverlay = windowControls.left > 0 || windowControls.right > 0
+ 
+   // The whole header normally clears the system icons (traffic lights on Mac) because the left nav
+   // bar pushes it down/right -- unless you're logged out, in which case there's no nav bar and the
+@@ -200,13 +157,13 @@ function DesktopHeader(p: Props) {
+     backButton = defaultBackButton
+   }
+ 
+-  // Logged out: a top strip that holds only the system buttons (or, on Mac, just reserves space so the
+-  // OS traffic lights have nothing beside them), then a row below with back on the left, title centered,
++  // Logged out: a top strip that only reserves space for the OS window controls (the traffic lights on
++  // Mac, the controls overlay elsewhere), then a row below with back on the left, title centered,
+   // actions on the right. The side sections share the same flex so the title stays centered regardless
+   // of their widths. Keeping the back/title/actions row in a fixed spot below the strip stops it from
+   // jumping between screens.
+   if (!loggedIn) {
+-    const showTopStrip = loggedOutDarwin || windowDecorationsAreNeeded
++    const showTopStrip = loggedOutDarwin || windowControlsOverlay
+     return (
+       <Kb.Box2
+         noShrink={true}
+@@ -223,12 +180,8
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29799** (2026-10-19): perf(rpc): cache typed-array probe names, drop incoming rest-spread copy; fix JSI test/bench scripts (@chrisnojima)
-- **PR #29798** (2026-10-19): update deps: expo 58.0.15, expo-* patch bumps, keyboard-controller 1.22.8 (@chrisnojima)
-- **PR #29797** (2026-10-18): update deps: react-native 0.88.0, expo 58.0.14, electron 44.9.0 (@chrisnojima)
-- **PR #29794** (2026-10-17): fix(desktop): build and lint after the Expo 58 upgrade (@chrisnojima)
-- **PR #29793** (2026-10-16): fix background goroutine leaks (@zoom-ua)
-- **PR #29791** (2026-10-16): drop unusable data helper (@zoom-ua)
+- **PR #29831** (2026-10-24): ios: fix crash when pasting large photos into chat (@chrisnojima)
+- **PR #29830** (2026-10-23): Bump version to 6.7.1 (@chrisnojima)
+- **PR #29829** (2026-10-23): deps: webdriverio 10, immer, zustand, builder-bob; drop two security resolutions (@chrisnojima)
+- **PR #29827** (2026-10-23): markdown: stop nesting em, strong and del past 16 levels (@chrisnojima)
+- **PR #29826** (2026-10-23): markdown: unclosable fences no longer rescan the rest of the message (@chrisnojima)
+- **PR #29825** (2026-10-23): markdown: text stops and url starts found once per string (@chrisnojima)
 
 ---
 
@@ -3170,34 +2866,30 @@ covered per message type.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. share): make sharing into chat reliable on iOS and Android (#29789)
+## X. include uid on all local rpcs (#29708)
 
 **RULE**:
-When implementing operations in `go/chat/attachments/preprocess.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/chat/activitynotifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f18ea4d`: share): make sharing into chat reliable on iOS and Android (#29789). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7874b7f1`: include uid on all local rpcs (#29708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/chat/attachments/preprocess.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/chat/activitynotifier.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	n, err := io.ReadFull(src, head)
-	case err == nil, errors.Is(err, io.ErrUnexpectedEOF):
-	case errors.Is(err, io.EOF):
-	res = http.DetectContentType(head[:n])
+func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, uid gregor1.UID, updates []chat1.ConvTypingUpdate) {
+		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, n.kuid(uid), updates)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	_, err = io.ReadFull(src, head)
-	case err == nil:
-	case errors.Is(err, io.EOF), errors.Is(err, io.ErrUnexpectedEOF):
-	res = http.DetectContentType(head)
+func (n *NotifyRouterActivityRouter) TypingUpdate(ctx context.Context, updates []chat1.ConvTypingUpdate) {
+		n.G().NotifyRouter.HandleChatTypingUpdate(ctx, updates)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f18ea4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7874b7f1` are properly handled with clean fallback behavior.

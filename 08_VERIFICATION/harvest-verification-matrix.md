@@ -4614,3 +4614,8 @@
 | `CYCLE-20261025-URT9` | `2026-10-25T02:36:17.613Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3986, Rule 3987, Rule 3988` | Yes (`2110765d...`) |
 | `CYCLE-20261025-USZW` | `2026-10-25T02:36:19.148Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3989` | Yes (`b8ecfd55...`) |
 | `CYCLE-20261025-UUWR` | `2026-10-25T02:36:21.627Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3990` | Yes (`6b0e7b8b...`) |
+| `CYCLE-20261025-2WJB` | `2026-10-25T02:42:36.983Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3991` | Yes (`9099a9c8...`) |
+| `CYCLE-20261025-2WLG` | `2026-10-25T02:42:37.060Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md` | Yes (`4690cae9...`) |
+| `CYCLE-20261025-2YXD` | `2026-10-25T02:42:40.081Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`a843d372...`) |
+| `CYCLE-20261025-30UU` | `2026-10-25T02:42:42.582Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3993` | Yes (`b7a43655...`) |
+| `CYCLE-20261025-4QIF` | `2026-10-25T02:44:02.487Z` | `ynqa/jnv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3994, Rule 3995, Rule 3996` | Yes (`d956b5fa...`) |

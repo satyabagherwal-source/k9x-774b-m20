@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source**: github ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
-> **Source Version**: `41e2c244`  
+> **Source Version**: `f845e8f8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:03:31.363Z  
+> **Timestamp**: 2026-10-25T02:42:36.864Z  
 > **Learning ID**: `learn-github-bitnami-sealed-secrets`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:03:31.356Z  
+> **Harvest Timestamp**: 2026-10-25T02:42:36.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller and tool for one-way encrypted Secrets
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9311 stars
+- **Stars / Engagement**: 9317 stars
 
 ---
 
@@ -1475,143 +1475,71 @@ func (c *Clientset) BitnamiV1alpha1() bitnamiv1alpha1.BitnamiV1alpha1Interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b8c749e` (2026-10-22)
-**Commit Message**: fix(multidocyaml): do not panic on malformed YAML (#2074)
+### Incident Patch 1: `f845e8f8` (2026-10-23)
+**Commit Message**: Release notes 0.41.1 (#2079)
 
-**Description of the change**
+Signed-off-by: Alvaro Neira <[REDACTED_EMAIL]>
 
-`multidocyaml.isMultiDocumentYAML` decodes the input once, ignores the
-error, and then calls `Decode` a second time to see whether another
-document follows. When the first call fails with a YAML syntax error,
-`gopkg.in/yaml.v2` panics on the second call with:
-
-```
-panic: attempted to parse unknown event: none
-```
-
-This is the panic reported in #857. The kubeseal sealing path no longer
-goes through this package, but `Controller.AttemptUnseal` (the
-`/v1/verify` handler) still calls `multidocyaml.EnsureNotMultiDoc`. A
-malformed request body therefore panics the handler instead of getting
-the usual `500` response.
-
-This change stops after the first `Decode` when it returns anything
-other than a `*yaml.TypeError` and reports the input as not
-multi-document. The caller's own decoder then returns the parse error. A
-`*yaml.TypeError` only means the document didn't fit the dummy value, so
-it keeps the current behaviour for inputs like `foo\n---\n`.
-
-**Benefits**
-
-Malformed YAML now produces an error instead of a panic.
-
-**Possible drawbacks**
-
-None expected. Valid inputs take the same path as before.
-
-
-
-**File**: `pkg/controller/controller_test.go` (modified, +23/-0)
+**File**: `RELEASE-NOTES.md` (modified, +3/-0)
 ```diff
-@@ -476,6 +476,29 @@ func TestAttemptUnsealIgnoresTemplate(t *testing.T) {
- 	}
- }
+@@ -4,6 +4,9 @@ Latest release:
  
-+// TestAttemptUnsealMalformedYAML checks that malformed input is reported as an error instead of panicking (#857).
-+func TestAttemptUnsealMalformedYAML(t *testing.T) {
-+	ns := "some-namespace"
-+	keyNs := "some-key-namespace"
-+	var tweakopts func(*metav1.ListOptions)
-+	clientset := fake.NewClientset()
-+	ssc := ssfake.NewSimpleClientset()
-+	keyRegistry := testKeyRegister(t, context.Background(), clientset, ns)
+ [![](https://img.shields.io/github/release/bitnami/sealed-secrets.svg)](https://github.com/bitnami/sealed-secrets/releases/latest)
+ 
++## v0.41.1
++- Failing pipelines during release
 +
-+	controller, err := prepareController(clientset, ns, keyNs, tweakopts, &Flags{SkipRecreate: false}, ssc, keyRegistry)
-+	if err != nil {
-+		t.Fatalf("err %v want %v", err, nil)
-+	}
-+
-+	valid, err := controller.AttemptUnseal([]byte("apiVersion: v1\nkind: Secret\nmetadata: name: foo\n"))
-+	if err == nil {
-+		t.Errorf("AttemptUnseal returned no error for malformed YAML")
-+	}
-+	if valid {
-+		t.Errorf("AttemptUnseal reported malformed YAML as valid")
-+	}
-+}
-+
- // TestRotateIgnoresTemplate checks that Rotate never executes spec.template.data as a template.
- func TestRotateIgnoresTemplate(t *testing.T) {
- 	ns := "some-namespace"
+ ## v0.41.0
+ 
+ - Heal manually modified Secrets ([#2073](https://github.com/bitnami/sealed-secrets/pull/2073))
 ```
 
-**File**: `pkg/multidocyaml/multidocyaml.go` (modified, +12/-1)
-```diff
-@@ -2,6 +2,7 @@ package multidocyaml
- 
- import (
- 	"bytes"
-+	"errors"
- 	"fmt"
- 
- 	"gopkg.in/yaml.v2"
-@@ -10,7 +11,17 @@ import (
- func isMultiDocumentYAML(src []byte) bool {
- 	dec := yaml.NewDecoder(bytes.NewReader(src))
- 	var dummy struct{}
--	_ = dec.Decode(&dummy)
-+	if err := dec.Decode(&dummy); err != nil {
-+		// A *yaml.TypeError only means the document doesn't fit the dummy
-+		// value; the decoder can still move on to the next document.
-+		// Any other error leaves the yaml.v2 decoder in a state where calling
-+		// Decode again panics, so stop here and let the caller's own parsing
-+		// report the malformed input.
-+		var typeErr *yaml.TypeError
-+		if !errors.As(err, &typeErr) {
-+			return false
-+		}
-+	}
- 	return dec.Decode(&dummy) == nil
- }
- 
-```
+---
 
-**File**: `pkg/multidocyaml/multidocyaml_test.go` (modified, +14/-0)
+### Incident Patch 2: `6772bee5` (2026-10-23)
+**Commit Message**: Release notes 0.41.0 (#2078)
+
+Signed-off-by: Alvaro Neira <[REDACTED_EMAIL]>
+
+**File**: `RELEASE-NOTES.md` (modified, +21/-0)
 ```diff
-@@ -13,6 +13,14 @@ func TestIsMultiDocumentYAML(t *testing.T) {
- 		{"foo\n---\n", true},
- 		{"foo\n ---\n", false},
- 		{"---\nfoo\n---\n", true},
-+		{"", false},
-+		// Malformed YAML must not panic (see #857).
-+		{"a: b: c\n", false},
-+		{"key:\n\t- x\n", false},
-+		{"foo: [\n", false},
-+		{"a: 1\n  b: 2\n", false},
-+		{"\"unterminated\n", false},
-+		{"{a: 1\n---\nb: 2\n", false},
- 	}
+@@ -4,6 +4,27 @@ Latest release:
  
- 	for _, tc := range testCases {
-@@ -21,3 +29,9 @@ func TestIsMultiDocumentYAML(t *testing.T) {
- 		}
- 	}
- }
+ [![](https://img.shields.io/github/release/bitnami/sealed-secrets.svg)](https://github.com/bitnami/sealed-secrets/releases/latest)
+ 
++## v0.41.0
 +
-+func TestEnsureNotMultiDocMalformedYAML(t *testing.T) {
-+	if err := EnsureNotMultiDoc([]byte("a: b: c\n")); err != nil {
-+		t.Errorf("unexpected error: %v", err)
-+	}
-+}
++- Heal manually modified Secrets ([#2073](https://github.com/bitnami/sealed-secrets/pull/2073))
++- fix(controller): remove redundant scheme registration from NewController, fixing a startup abort ("concurrent map read and map write") with `--additional-namespaces` introduced in v0.39.0 ([#2046](https://github.com/bitnami/sealed-secrets/pull/2046))
++- fix(multidocyaml): do not panic on malformed YAML in /v1/verify ([#2074](https://github.com/bitnami/sealed-secrets/pull/2074))
++- controller: with `--watch-for-secrets`, dynamically detect new, updated, and deleted sealing key secrets without a restart ([#2034](https://github.com/bitnami/sealed-secrets/pull/2034))
++- Add terminating newline to end of prometheusrule.yaml ([#2055](https://github.com/bitnami/sealed-secrets/pull/2055))
++- Bump Golang to 1.27.3 ([#2077](https://github.com/bitnami/sealed-secrets/pull/2077))
++- Bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 ([#2075](https://github.com/bitnami/sealed-secrets/pull/2075))
++- Bump distroless/static from `5813399` to `9e0130b` in /docker ([#2076](https://github.com/bitnami/sealed-secrets/pull/2076))
++- Bump github.com/prometheus/client_golang from 1.24.1 to 1.25.0 ([#2071](https://github.com/bitnami/sealed-secrets/pull/2071))
++- Bump golang.org/x/crypto from 0.57.0 to 0.58.0 ([#2072](https://github.com/bitnami/sealed-secrets/pull/2072))
++- Bump github.com/onsi/gomega from 1.43.1 to 1.44.0 ([#2065](https://github.com/bitnami/sealed-secrets/pull/2065))
++- Bump k8s.io/code-generator from 0.37.0 to 0.37.1 ([#2064](https://github.com/bitnami/sealed-secrets/pull/2064))
++- Bump k8s.io/client-go from 0.37.0 to 0.37.1 ([#2067](https://github.com/bitnami/sealed-secrets/pull/2067))
++- Bump github.com/onsi/gomega from 1.43.0 to 1.43.1 ([#2062](https://github.com/bitnami/sealed-secrets/pull/2062))
++- Bump github.com/onsi/ginkgo/v2 from 2.32.2 to 2.33.0 ([#2061](https://github.com/bitnami/sealed-secrets/pull/2061))
++- Bump golang.org/x/crypto from 0.56.0 to 0.57.0 ([#2057](https://github.com/bitnami/sealed-secrets/pull/2057))
++- Bump distroless/static from `f2ea270` to `5813399` in /docker ([#2056](https://github.com/bitnami/sealed-secrets/pull/2056))
++- Bump github.com/onsi/ginkgo/v2 from 2.32.1 to 2.32.2 ([#2058](https://github.com/bitnami/sealed-secrets/pull/2058))
++
+ ## v0.40.0
+ 
+ - Bump Golang to 1.26.8 ([#2050](https://github.com/bitnami/sealed-secrets/pull/2050))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2079** (2026-10-23): Release notes 0.41.1 (@alvneiayu)
+- **PR #2078** (2026-10-23): Release notes 0.41.0 (@alvneiayu)
 - **PR #2077** (2026-10-22): Bump go to 1.27.3 (@agarcia-oss)
 - **PR #2076** (2026-10-21): Bump distroless/static from `5813399` to `9e0130b` in /docker (@dependabot[bot])
 - **PR #2075** (2026-10-21): Bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (@dependabot[bot])
 - **PR #2074** (2026-10-22): fix(multidocyaml): do not panic on malformed YAML (@cvas22)
-- **PR #2073** (2026-10-22): feat(controller): heal manually modified Secrets (@mikidax)
-- **PR #2072** (2026-10-15): Bump golang.org/x/crypto from 0.57.0 to 0.58.0 (@dependabot[bot])
 
 ---
 
@@ -1631,42 +1559,22 @@ None expected. Valid inputs take the same path as before.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. multidocyaml): do not panic on malformed YAML (#2074)
+## X. Release notes 0.41.1 (#2079)
 
 **RULE**:
-When implementing operations in `pkg/controller/controller_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b8c749e`: multidocyaml): do not panic on malformed YAML (#2074). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f845e8f8`: Release notes 0.41.1 (#2079). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controller/controller_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// TestAttemptUnsealMalformedYAML checks that malformed input is reported as an error instead of panicking (#857).
-func TestAttemptUnsealMalformedYAML(t *testing.T) {
-	ns := "some-namespace"
-	keyNs := "some-key-namespace"
-	var tweakopts func(*metav1.ListOptions)
-	clientset := fake.NewClientset()
-	ssc := ssfake.NewSimpleClientset()
-	keyRegistry := testKeyRegister(t, context.Background(), clientset, ns)
-
-	controller, err := prepareController(clientset, ns, keyNs, tweakopts, &Flags{SkipRecreate: false}, ssc, keyRegistry)
-	if err != nil {
-		t.Fatalf("err %v want %v", err, nil)
-	}
-
-	valid, err := controller.AttemptUnseal([]byte("apiVersion: v1\nkind: Secret\nmetadata: name: foo\n"))
-	if err == nil {
-		t.Errorf("AttemptUnseal returned no error for malformed YAML")
-	}
-	if valid {
-		t.Errorf("AttemptUnseal reported malformed YAML as valid")
-	}
-}
+## v0.41.1
+- Failing pipelines during release
 
 ```
 
@@ -1677,4 +1585,4 @@ func TestAttemptUnsealMalformedYAML(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b8c749e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f845e8f8` are properly handled with clean fallback behavior.

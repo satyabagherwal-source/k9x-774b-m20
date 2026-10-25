@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-24T20:55:00.225Z",
+  "last_updated": "2026-10-25T02:42:37.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2576,6 +2576,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-i18next-react-i18next"
+    },
+    {
+      "id": "CD-2WLN",
+      "directive_title": "Release notes 0.41.1 (#2079)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "bitnami/sealed-secrets",
+      "source_commit": "f845e8f8",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitnami-sealed-secrets"
     }
   ]
 }

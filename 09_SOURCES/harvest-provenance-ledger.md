@@ -4621,3 +4621,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-25T02:36:17.616Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `11d9e6b8` | Multi-dimensional audit evidence | 2026-10-25T02:36:19.151Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `24a991fd` | Multi-dimensional audit evidence | 2026-10-25T02:36:21.630Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `20c651e0` | Multi-dimensional audit evidence | 2026-10-25T02:42:36.986Z |
+| `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `f845e8f8` | Multi-dimensional audit evidence | 2026-10-25T02:42:37.062Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `21c27035` | Multi-dimensional audit evidence | 2026-10-25T02:42:40.084Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f3221acd` | Multi-dimensional audit evidence | 2026-10-25T02:42:42.655Z |
+| `learn-github-ynqa-jnv` | `https://github.com/ynqa/jnv` | `9871ba34` | Multi-dimensional audit evidence | 2026-10-25T02:44:02.490Z |

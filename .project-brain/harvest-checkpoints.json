@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T02:36:21.644Z",
+  "last_updated": "2026-10-25T02:44:02.502Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
-      "verified_at": "2026-10-22T16:22:26.535Z",
+      "content_hash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
+      "verified_at": "2026-10-25T02:42:40.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:22:26.535Z"
+      "last_updated": "2026-10-25T02:42:40.095Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
-      "verified_at": "2026-10-20T13:27:32.362Z",
+      "content_hash": "9099a9c80f78c37470884b278c2e449cadb258754b6c6b4d508fddea11e69990",
+      "verified_at": "2026-10-25T02:42:37.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T13:27:32.362Z"
+      "last_updated": "2026-10-25T02:42:37.004Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
-      "verified_at": "2026-10-21T19:12:25.510Z",
+      "content_hash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
+      "verified_at": "2026-10-25T02:42:42.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T19:12:25.510Z"
+      "last_updated": "2026-10-25T02:42:42.668Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -9891,14 +9891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitnami-sealed-secrets",
-      "content_hash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
-      "verified_at": "2026-10-22T16:03:31.695Z",
+      "content_hash": "4690cae9b4e358957cc7583d8531e2a391c0098968c4dd80c43a4ea5467c216f",
+      "verified_at": "2026-10-25T02:42:37.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:03:31.695Z"
+      "last_updated": "2026-10-25T02:42:37.071Z"
     },
     "run-llama/llama_index": {
       "repository": "run-llama/llama_index",
@@ -10086,14 +10086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ynqa-jnv",
-      "content_hash": "519a6d1db62f93aeba433c07e2edb5c21796db0f294ff86acf5722e819a0288c",
-      "verified_at": "2026-10-19T06:32:32.021Z",
+      "content_hash": "d956b5fad29243fdbbceefe2f361d6f129edcac1aaf22b6d95577f4529d6ff93",
+      "verified_at": "2026-10-25T02:44:02.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:32:32.021Z"
+      "last_updated": "2026-10-25T02:44:02.501Z"
     },
     "sqldelight/sqldelight": {
       "repository": "sqldelight/sqldelight",

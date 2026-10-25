@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T02:36:21.577Z",
+  "last_updated": "2026-10-25T02:44:02.425Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4121,8 +4121,8 @@
       "slug": "bitnami-sealed-secrets",
       "platform": "github",
       "source_url": "https://github.com/bitnami/sealed-secrets",
-      "source_version": "41e2c244",
-      "content_hash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
+      "source_version": "f845e8f8",
+      "content_hash": "4690cae9b4e358957cc7583d8531e2a391c0098968c4dd80c43a4ea5467c216f",
       "dossier_path": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "promoted_rules": [
@@ -4137,7 +4137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:03:31.621Z",
+      "verified_at": "2026-10-25T02:42:36.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10266,8 +10266,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "bf9cadf0",
-      "content_hash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
+      "source_version": "f3221acd",
+      "content_hash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -10285,6 +10285,11 @@
           "number": 3597,
           "title": "Build with Go 1.27.3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3993,
+          "title": "CHANGELOG(3.5): add mvcc hash/restore race fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10292,7 +10297,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T19:12:25.422Z",
+      "verified_at": "2026-10-25T02:42:42.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50474,14 +50479,29 @@
       "slug": "ynqa-jnv",
       "platform": "github",
       "source_url": "https://github.com/ynqa/jnv",
-      "source_version": "76bbf857",
-      "content_hash": "519a6d1db62f93aeba433c07e2edb5c21796db0f294ff86acf5722e819a0288c",
+      "source_version": "9871ba34",
+      "content_hash": "d956b5fad29243fdbbceefe2f361d6f129edcac1aaf22b6d95577f4529d6ff93",
       "dossier_path": "07_PROJECT_LEARNING/ynqa-jnv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ynqa-jnv-learnings.md",
       "promoted_rules": [
         {
           "number": 2243,
           "title": "Merge pull request #125 from VXNCXNX/fix/config-error-not-silent",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3994,
+          "title": "Cooperative Cancellation Before Spawn for Debounced Computations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3995,
+          "title": "Event-Set Comparison Normalization for Multi-Attribute Events",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3996,
+          "title": "Chunk-Buffered Batch Insertion Under Short-Lived Locks",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -50490,7 +50510,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:32:31.965Z",
+      "verified_at": "2026-10-25T02:44:02.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59433,13 +59453,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "a7796e20",
-      "content_hash": "8e885ab0268bc697e3d3e86b5b9769d4add02e7fccd277e43cbf5f9749962cce",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "21c27035",
+      "content_hash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -59475,6 +59495,11 @@
           "number": 3634,
           "title": "Merge pull request #4562 from aleo-labs-protocol/ci/merge-fixup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3992,
+          "title": "Bump crates with security advisories",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59482,7 +59507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:22:26.451Z",
+      "verified_at": "2026-10-25T02:42:40.027Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117072,6 +117097,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T02:36:21.565Z"
+    },
+    "rule-3992": {
+      "learning_id": "rule-3992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3992,
+      "title": "Bump crates with security advisories",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "21c27035",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:42:40.027Z"
+    },
+    "rule-3993": {
+      "learning_id": "rule-3993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3993,
+      "title": "CHANGELOG(3.5): add mvcc hash/restore race fix",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "f3221acd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:42:42.528Z"
+    },
+    "rule-3994": {
+      "learning_id": "rule-3994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3994,
+      "title": "Cooperative Cancellation Before Spawn for Debounced Computations",
+      "source_url": "https://github.com/ynqa/jnv",
+      "source_version": "9871ba34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:44:02.415Z"
+    },
+    "rule-3995": {
+      "learning_id": "rule-3995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3995,
+      "title": "Event-Set Comparison Normalization for Multi-Attribute Events",
+      "source_url": "https://github.com/ynqa/jnv",
+      "source_version": "9871ba34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:44:02.415Z"
+    },
+    "rule-3996": {
+      "learning_id": "rule-3996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 3996,
+      "title": "Chunk-Buffered Batch Insertion Under Short-Lived Locks",
+      "source_url": "https://github.com/ynqa/jnv",
+      "source_version": "9871ba34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T02:44:02.415Z"
     }
   },
   "aliases": {

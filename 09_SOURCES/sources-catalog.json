@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "a7796e20",
+    "sourceVersion": "21c27035",
     "license": "Apache-2.0",
-    "contentHash": "b3e275ff6266e4bd2f7a17b6076850bcaff2ff8b1d70bd277539884be5297163",
-    "lastHarvestedAt": "2026-10-22T15:35:34.062Z",
+    "contentHash": "a843d372ac399a592871f731bdc387d6314b7c4c4716cad185066db67f384094",
+    "lastHarvestedAt": "2026-10-25T02:42:40.084Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "594ed87e",
+    "sourceVersion": "20c651e0",
     "license": "BSD-3-Clause",
-    "contentHash": "0f0c66d324a752e56ee280a9e9fc73aec64fd70f193578f0f2074695d8f5d156",
-    "lastHarvestedAt": "2026-10-20T13:27:32.354Z",
+    "contentHash": "9099a9c80f78c37470884b278c2e449cadb258754b6c6b4d508fddea11e69990",
+    "lastHarvestedAt": "2026-10-25T02:42:36.986Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "bf9cadf0",
+    "sourceVersion": "f3221acd",
     "license": "Apache-2.0",
-    "contentHash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
-    "lastHarvestedAt": "2026-10-21T19:12:25.496Z",
+    "contentHash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
+    "lastHarvestedAt": "2026-10-25T02:42:42.655Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -6543,10 +6543,10 @@
     "repository": "bitnami/sealed-secrets",
     "platform": "github",
     "sourceUrl": "https://github.com/bitnami/sealed-secrets",
-    "sourceVersion": "41e2c244",
+    "sourceVersion": "f845e8f8",
     "license": "Apache-2.0",
-    "contentHash": "ef006d5c9fea3a0f38b13ed8e0e7b67ba87cc55dc358d853cfa6364eea348c06",
-    "lastHarvestedAt": "2026-10-22T16:03:31.682Z",
+    "contentHash": "4690cae9b4e358957cc7583d8531e2a391c0098968c4dd80c43a4ea5467c216f",
+    "lastHarvestedAt": "2026-10-25T02:42:37.062Z",
     "learningId": "learn-github-bitnami-sealed-secrets"
   },
   "run-llama-llama_index": {
@@ -6683,10 +6683,10 @@
     "repository": "ynqa/jnv",
     "platform": "github",
     "sourceUrl": "https://github.com/ynqa/jnv",
-    "sourceVersion": "76bbf857",
+    "sourceVersion": "9871ba34",
     "license": "MIT",
-    "contentHash": "519a6d1db62f93aeba433c07e2edb5c21796db0f294ff86acf5722e819a0288c",
-    "lastHarvestedAt": "2026-10-19T06:32:32.015Z",
+    "contentHash": "d956b5fad29243fdbbceefe2f361d6f129edcac1aaf22b6d95577f4529d6ff93",
+    "lastHarvestedAt": "2026-10-25T02:44:02.490Z",
     "learningId": "learn-github-ynqa-jnv"
   },
   "sqldelight-sqldelight": {
