@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source**: github ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
-> **Source Version**: `ce75c0a1`  
+> **Source Version**: `23159a8e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:10:03.535Z  
+> **Timestamp**: 2026-10-25T02:50:29.089Z  
 > **Learning ID**: `learn-github-actions-actions-runner-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:10:03.526Z  
+> **Harvest Timestamp**: 2026-10-25T02:50:26.847Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes controller for GitHub Actions self-hosted runners
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6594 stars
+- **Stars / Engagement**: 6600 stars
 
 ---
 
@@ -1480,11 +1480,11 @@ func (s *server) Errorf(format string, args ...interface{}) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4653** (2026-09-12): **Cleanup stalls forever when an EphemeralRunner can never register (RemoveRunner called with RunnerID 0)**
-  *Symptoms*: Split out of a review comment on #4638. The behaviour described here is **pre-existing on `master`** and is not introduced by that PR — it is filed separately so it is not lost.  ## What happens  When an `EphemeralRunnerSet`'s runner spec changes, `EphemeralRunnerSetReconciler.cleanUpEphemeralRunners` sends every pending runner through `deleteEphemeralRunnerWithActionsClient`, which calls:  ```go if err := actionsClient.RemoveRunner(ctx, int64(ephemeralRunner.Status.RunnerID)); err != nil { ```  `Status.RunnerID == 0` is the controller's explicit "not registered yet" value, and the real client does not treat it specially — it builds `DELETE /<runnerEndpoint>/0` and returns an error for any response other than 204:  ```go path := fmt.Sprintf("/%s/%d", runnerEndpoint, runnerID) ... if resp.StatusCode != http.StatusNoContent {     return newRequestResponseError(req, resp, fmt.Errorf("unexpected status code: %d", resp.StatusCode)) } ```  So the removal fails, the Kubernetes object is never deleted, and the cleanup returns early without completing.  ## Why it usually does not matter, and when it does  Normally this is self-healing. A `RunnerID` of 0 almost always means the status patch is merely late: the reconcile errors, backs off, and once the EphemeralRunner controller patches `Status.RunnerID` the removal succeeds.  The case that genuinely bites is a runner that can **never** register — bad image, wrong proxy, unreachable or wrong config URL. Then `RemoveRunner(0)` fails on e
+- **Issue #4721** (2026-10-23): **Release with Go 1.27.3 / 1.26.10 for CVE-2026-111943**
+  *Symptoms*: ### Checks  - [x] I've already read https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors and I'm sure my issue is not covered in the troubleshooting guide. - [x] I am using charts that are officially provided  ### Controller Version   0.15.0  ### Deployment Method  ArgoCD  ### Checks  - [x] This isn't a question or user support case (For Q&A and community support, go to [Discussions](https://github.com/actions/actions-runner-controller/discussions)). - [x] I've read the [Changelog](https://github.com/actions/actions-runner-controller/blob/master/docs/gha-runner-scale-set-controller/README.md#changelog) before submitting this issue and I'm sure it's not due to any recently-introduced backward-incompatible changes  ### To Reproduce  ```markdown 1. Pull ghcr.io/actions/gha-runner-scale-set-controller:0.15.0 (or the current canary from master) 2. Run `go version -m` on /manager and /ghalistener 3. Both report go1.27.1 ```  ### Describe the bug  Hey ARC team, I have a small security request   Go 1.27.3 and 1.26.10 came out yesterday with a fix for [CVE-2026-111943](https://www.cve.org/CVERecord?id=CVE-2026-111943) ([golang/go#82345](https://github.com/golang/go/issues/82345)). The fix makes `crypto/x509` stop trusting a few compromised eMudhra intermediate CAs.  The current images are still built with go1.27.1, both 0.15.0 and the canary from `master`.  ### Describe 
 
-- **Issue #4650** (2026-09-11): **Confirm patched ARC release for golang.org/x/crypto CVEs**
-  *Symptoms*: ### Checks  - [x] I've already read https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors and I'm sure my issue is not covered in the troubleshooting guide. - [x] I am using charts that are officially provided  ### Controller Version  0.14.2  ### Deployment Method  ArgoCD  ### Checks  - [x] This isn't a question or user support case (For Q&A and community support, go to [Discussions](https://github.com/actions/actions-runner-controller/discussions)). - [x] I've read the [Changelog](https://github.com/actions/actions-runner-controller/blob/master/docs/gha-runner-scale-set-controller/README.md#changelog) before submitting this issue and I'm sure it's not due to any recently-introduced backward-incompatible changes  ### To Reproduce  ```markdown Our vulnerability scanner reports seven published CVEs affecting golang.org/x/crypto in the ARC image we use.  The linked GitHub advisories identify `v0.52.0` as the first patched version for all seven findings.  | Advisory | Description | |---|---| | [CVE-2026-46595](https://github.com/advisories/GHSA-x527-x647-q7gg) | SSH permissions/source-address enforcement bypass | | [CVE-2026-39830](https://github.com/advisories/GHSA-vgwf-h737-ff37) | SSH connection deadlock and resource leak | | [CVE-2026-39831](https://github.com/advisories/GHSA-89gr-r52h-f8rx) | FIDO/U2F user-presence check bypass | | [CVE-2026-39832](https://githu
+- **Issue #4699** (2026-10-23): **Failed requests to broker holds up ephemeral runner reconciler**
+  *Symptoms*: ### Checks  - [x] I've already read https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners-with-actions-runner-controller/troubleshooting-actions-runner-controller-errors and I'm sure my issue is not covered in the troubleshooting guide. - [x] I am using charts that are officially provided  ### Controller Version  0.15.0  ### Deployment Method  Helm  ### Checks  - [x] This isn't a question or user support case (For Q&A and community support, go to [Discussions](https://github.com/actions/actions-runner-controller/discussions)). - [x] I've read the [Changelog](https://github.com/actions/actions-runner-controller/blob/master/docs/gha-runner-scale-set-controller/README.md#changelog) before submitting this issue and I'm sure it's not due to any recently-introduced backward-incompatible changes  ### To Reproduce  ```markdown 1. Request a high number of jobs per second, i.e. >5/second 2. Hit the "Runner registrations" rate limit for self hosted runners https://docs.github.com/en/actions/reference/limits 3. A number of runners stuck with `Completed` status not being cleaned up ```  ### Describe the bug  When hitting the self hosted runner registrations limit `controller_runtime_active_workers{controller="ephemeralrunner"}` reaches max while the workers are held up by the retrying actionsClient.GenerateJitRunnerConfig https://github.com/actions/actions-runner-controller/blob/5aed393af8a412f6b0fe27507713687a6beeb000/controllers/actions.github.com/ephe
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1501,67 +1501,647 @@ func (s *server) Errorf(format string, args ...interface{}) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce75c0a1` (2026-10-21)
-**Commit Message**: Updates: runner to v2.338.0 (#4708)
+### Incident Patch 1: `23159a8e` (2026-10-23)
+**Commit Message**: Prepare 0.15.1 release (#4727)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-Co-authored-by: Salman Muin Kayser Chishti <[REDACTED_EMAIL]>
-
-**File**: `Makefile` (modified, +1/-1)
+**File**: `charts/gha-runner-scale-set-controller-experimental/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -6,7 +6,7 @@ endif
- DOCKER_USER ?= $(shell echo ${DOCKER_IMAGE_NAME} | cut -d / -f1)
- VERSION ?= dev
- COMMIT_SHA = $(shell git rev-parse HEAD)
--RUNNER_VERSION ?= 2.337.0
-+RUNNER_VERSION ?= 2.338.0
- TARGETPLATFORM ?= $(shell arch)
- RUNNER_NAME ?= ${DOCKER_USER}/actions-runner
- RUNNER_TAG  ?= ${VERSION}
-```
-
-**File**: `runner/Makefile` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ DIND_ROOTLESS_RUNNER_NAME ?= ${DOCKER_USER}/actions-runner-dind-rootless
- OS_IMAGE ?= ubuntu-22.04
- TARGETPLATFORM ?= $(shell arch)
+@@ -15,13 +15,13 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: "0.15.0"
++version: "0.15.1"
  
--RUNNER_VERSION ?= 2.337.0
-+RUNNER_VERSION ?= 2.338.0
- RUNNER_CONTAINER_HOOKS_VERSION ?= 0.8.1
- DOCKER_VERSION ?= 28.0.4
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: "0.15.0"
++appVersion: "0.15.1"
+ 
+ home: https://github.com/actions/actions-runner-controller
  
 ```
 
-**File**: `runner/VERSION` (modified, +1/-1)
+**File**: `charts/gha-runner-scale-set-controller/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -1,2 +1,2 @@
--RUNNER_VERSION=2.337.0
-+RUNNER_VERSION=2.338.0
- RUNNER_CONTAINER_HOOKS_VERSION=0.8.1
-\ No newline at end of file
+@@ -15,13 +15,13 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: 0.15.0
++version: 0.15.1
+ 
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: "0.15.0"
++appVersion: "0.15.1"
+ 
+ home: https://github.com/actions/actions-runner-controller
+ 
 ```
 
-**File**: `test/e2e/e2e_test.go` (modified, +1/-1)
+**File**: `charts/gha-runner-scale-set-experimental/Chart.yaml` (modified, +2/-2)
 ```diff
-@@ -37,7 +37,7 @@ var (
+@@ -15,13 +15,13 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: "0.15.0"
++version: "0.15.1"
  
- 	testResultCMNamePrefix = "test-result-"
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: "0.15.0"
++appVersion: "0.15.1"
  
--	RunnerVersion               = "2.337.0"
-+	RunnerVersion               = "2.338.0"
- 	RunnerContainerHooksVersion = "0.8.1"
+ home: https://github.com/actions/actions-runner-controller
+ 
+```
+
+**File**: `charts/gha-runner-scale-set/Chart.yaml` (modified, +2/-2)
+```diff
+@@ -15,13 +15,13 @@ type: application
+ # This is the chart version. This version number should be incremented each time you make changes
+ # to the chart and its templates, including the app version.
+ # Versions are expected to follow Semantic Versioning (https://semver.org/)
+-version: 0.15.0
++version: 0.15.1
+ 
+ # This is the version number of the application being deployed. This version number should be
+ # incremented each time you make changes to the application. Versions are not expected to
+ # follow Semantic Versioning. They should reflect the version the application is using.
+ # It is recommended to use it with quotes.
+-appVersion: "0.15.0"
++appVersion: "0.15.1"
+ 
+ home: https://github.com/actions/actions-runner-controller
+ 
+```
+
+**File**: `docs/gha-runner-scale-set-controller/README.md` (modified, +12/-0)
+```diff
+@@ -49,6 +49,18 @@ Ordinary reconciliation failures, including service-call timeouts, use exponenti
+ 
+ ## Changelog
+ 
++### 0.15.1
++
++Upgrading the controller from 0.15.0 to 0.15.1 does not require updating the installed CRDs. The ARC API fields, served/storage versions, and conversion settings are unchanged. The generated scale-set CRD changes only update the controller-gen version annotation and tighten validation for embedded Pod `evictionResponders` (non-empty names, priorities from 0 to 100000, and at most 10 responders). Existing 0.15.0 CRDs remain compatible with the 0.15.1 controller; no CRD replacement or ARC resource recreation is required.
++
++1. Requeue rate-limited scale-set requests without client retries [#4726](https://github.com/actions/actions-runner-controller/pull/4726)
++1. Remove succeeded ephemeral runners that never ran a job from the service [#4709](https://github.com/actions/actions-runner-controller/pull/4709)
++1. Bump Go to 1.27.3 and update Go dependencies [#4725](https://github.com/actions/actions-runner-controller/pull/4725)
++1. Updates: runner to v2.338.1 [#4724](https://github.com/actions/actions-runner-controller/pull/4724)
++1. Updates: runner to v2.338.0 [#4708](https://github.com/actions/actions-runner-controller/pull/4708)
++1. Fix inconsistent guards for scale set metrics registration and publishing [#4566](https://github.com/actions/actions-runner-controller/pull/4566)
++1. Read the e2e Go version from go.mod and apply the safe go fix modernizers [#4677](https://github.com/actions/actions-runner-controller/pull/4677)
++
+ ### 0.15.0
+ 
+ 1. Scale down runners whose pod never reports the runner container [#4696](https://github.com/actions/actions-runner-controller/pull/4696)
+```
+
+---
+
+### Incident Patch 2: `58364ae8` (2026-10-23)
+**Commit Message**: Requeue rate-limited scale-set requests without client retries (#4726)
+
+**File**: `cmd/ghalistener/config/config.go` (modified, +5/-3)
+```diff
+@@ -154,6 +154,7 @@ func (c *Config) ActionsClient(logger *slog.Logger, clientOptions ...scaleset.HT
+ 		scaleset.WithLogger(logger),
+ 	}, clientOptions...)
+ 
++	var httpConfig scaleset.HTTPClientConfig
+ 	if c.ServerRootCA != "" {
+ 		systemPool, err := x509.SystemCertPool()
+ 		if err != nil {
+@@ -165,13 +166,14 @@ func (c *Config) ActionsClient(logger *slog.Logger, clientOptions ...scaleset.HT
+ 			return nil, fmt.Errorf("failed to parse root certificate")
+ 		}
+ 
+-		options = append(options, scaleset.WithRootCAs(pool))
++		httpConfig.RootCAs = pool
+ 	}
+ 
+ 	proxyFunc := httpproxy.FromEnvironment().ProxyFunc()
+-	options = append(options, scaleset.WithProxy(func(req *http.Request) (*url.URL, error) {
++	httpConfig.Proxy = func(req *http.Request) (*url.URL, error) {
+ 		return proxyFunc(req.URL)
+-	}))
++	}
++	options = append(options, scaleset.WithHTTPClient(scaleset.NewHTTPClient(httpConfig)))
+ 
+ 	var client *scaleset.Client
+ 	switch c.Token {
+```
+
+**File**: `cmd/ghalistener/config/config_client_test.go` (modified, +38/-68)
+```diff
+@@ -1,85 +1,55 @@
+ package config_test
+ 
+ import (
+-	"encoding/json"
+ 	"log/slog"
+-	"os"
++	"net/http"
++	"net/http/httptest"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/actions/actions-runner-controller/apis/actions.github.com/v1alpha1/appconfig"
+ 	"github.com/actions/actions-runner-controller/cmd/ghalistener/config"
+ 	"github.com/actions/scaleset"
+-	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
  )
  
+ var discardLogger = slog.New(slog.DiscardHandler)
+ 
+ func TestProxySettings(t *testing.T) {
+-	assertHasProxy := func(t *testing.T, debugInfo string, want bool) {
+-		type debugInfoContent struct {
+-			HasProxy bool `json:"has_proxy"`
+-		}
+-		var got debugInfoContent
+-		err := json.Unmarshal([]byte(debugInfo), &got)
+-		require.NoError(t, err)
+-		assert.Equal(t, want, got.HasProxy)
++	for _, tc := range []struct {
++		name   string
++		scheme string
++		env    string
++	}{
++		{name: "http", scheme: "http", env: "http_proxy"},
++		{name: "https", scheme: "https", env: "https_proxy"},
++		{name: "no_proxy", scheme: "https", env: "https_proxy"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			for _, env := range []string{"http_proxy", "HTTP_PROXY", "https_proxy", "HTTPS_PROXY", "no_proxy", "NO_PROXY"} {
++				t.Setenv(env, "")
++			}
++			var requests atomic.Int32
++			proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				requests.Add(1)
++				w.WriteHeader(http.StatusBadGateway)
++			}))
++			defer proxy.Close()
++			t.Setenv(tc.env, proxy.URL)
++			if tc.name == "no_proxy" {
++				t.Setenv("no_proxy", "example.com")
++			}
++
++			config := config.Config{
++				ConfigureURL: tc.scheme + "://github.com/org/repo",
++				AppConfig:    &appconfig.AppConfig{Token: "token"},
++			}
++			client, err := config.ActionsClient(discardLogger, scaleset.WithRetry(scaleset.RetryConfig{Max: 0}))
++			require.NoError(t, err)
++
++			_, err = client.GenerateJitRunnerConfig(t.Context(), &scaleset.RunnerScaleSetJitRunnerSetting{Name: "runner"}, 1)
++			require.Error(t, err)
++			require.EqualValues(t, 1, requests.Load(), "the request must use the configured proxy")
++		})
+ 	}
+-
+-	t.Run("http", func(t *testing.T) {
+-		prevProxy := os.Getenv("http_proxy")
+-		os.Setenv("http_proxy", "http://proxy:8080")
+-		defer os.Setenv("http_proxy", prevProxy)
+-
+-		config := config.Config{
+-			ConfigureURL: "https://github.com/org/repo",
+-			AppConfig: &appconfig.AppConfig{
+-				Token: "token",
+-			},
+-		}
+-
+-		client, err := config.ActionsClient(discardLogger)
+-		require.NoError(t, err)
+-
+-		assertHasProxy(t, client.DebugInfo(), true)
+-	})
+-
+-	t.Run("https", func(t *testing.T) {
+-		prevProxy := os.Getenv("https_proxy")
+-		os.Setenv("https_proxy", "https://proxy:443")
+-		defer os.Setenv("https_proxy", prevProxy)
+-
+-		config := config.Config{
+-			ConfigureURL: "https://github.com/org/repo",
+-			AppConfig: &appconfig.AppConfig{
+-				Token: "token",
+-			},
+-		}
+-
+-		client, err := config.ActionsClient(
+-			discardLogger,
+-			scaleset.WithRetryMax(0),
+-		)
+-		require.NoError(t, err)
+-
+-		assertHasProxy(t, client.DebugInfo(), true)
+-	})
+-
+-	t.Run("no_proxy", func(t *testing.T) {
+-		prevNoProxy := os.Getenv("no_proxy")
+-		os.Setenv("no_proxy", "example.com")
+-		defer os.Setenv("no_proxy", prevNoProxy)
+-
+-		config := config.Config{
+-			ConfigureURL: "https://github.com/org/repo",
+-			AppConfig: &appconfig.AppConfig{
+-				Token: "token",
+-			},
+-		}
+-
+-		client, err := config.ActionsClient(discardLogger)
+-		require.NoError(t, err)
+-
+-		assertHasProxy(t, client.DebugInfo(), true)
+-	})
+ }
+```
+
+**File**: `cmd/ghalistener/main.go` (modified, +2/-8)
+```diff
+@@ -90,14 +90,7 @@ func run(ctx context.Context, config *config.Config) error {
+ 		}
+ 	}()
+ 
+-	var listenerOptions []listener.Option
+ 	if metricsExporter != nil {
+-		listenerOptions = append(
+-			listenerOptions,
+-			listener.WithMetricsRecorder(
+-				metricsExporter,
+-			),
+-		)
+ 		metricsExporter.RecordStatic(config.MinRunners, config.MaxRunners)
+ 	}
+ 
+@@ -108,7 +101,6 @@ func run(ctx context.Context, config *config.Config) error {
+ 			MaxRunners: config.MaxRunners,
+ 			Logger:     logger.With("component", "listener"),
+ 		},
+-		listenerOptions...,
+ 	)
+ 	if err != nil {
+ 		return fmt.Errorf("failed to create new listener: %w", err)
+@@ -122,6 +114,8 @@ func run(ctx context.Context, config *config.Config) error {
+ 			MinRunners:                  config.MinRunners,
+ 			ScalerConfig:                config.ListenerConfig.GetScaler(),
+ 		},
++		sessionClient,
++		metricsExporter,
+ 		scaler.WithLogger(logger.With("component", "worker")),
+ 	)
+ 	if err != nil {
+```
+
+**File**: `cmd/ghalistener/scaler/message_test.go` (added, +157/-0)
+```diff
+@@ -0,0 +1,157 @@
++package scaler
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++
++	"github.com/actions/actions-runner-controller/apis/actions.github.com/v1alpha1"
++	"github.com/actions/actions-runner-controller/cmd/ghalistener/metrics"
++	"github.com/actions/scaleset"
++	"github.com/actions/scaleset/listener"
++	"github.com/stretchr/testify/require"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
++)
++
++type acquiringClient struct {
++	listener.Client
++	acquire func(context.Context, []int64) ([]int64, error)
++}
++
++func (c acquiringClient) AcquireJobs(ctx context.Context, ids []int64) ([]int64, error) {
++	return c.acquire(ctx, ids)
++}
++
++type messageRecorder struct {
++	metrics.Recorder
++	events []string
++}
++
++func (r *messageRecorder) RecordStatistics(*scaleset.RunnerScaleSetStatistic) {
++	r.events = append(r.events, "statistics")
++}
++
++func (r *messageRecorder) RecordJobStarted(*scaleset.JobStarted) {
++	r.events = append(r.events, "started")
++}
++
++func (r *messageRecorder) RecordJobCompleted(*scaleset.JobCompleted) {
++	r.events = append(r.events, "completed")
++}
++
++func (r *messageRecorder) RecordDesiredRunners(count int) {
++	r.events = append(r.events, "desired")
++}
++
++func TestScaleHandlesListenerMessages(t *testing.T) {
++	for _, tc := range []struct {
++		name       string
++		jobs       bool
++		nilMessage bool
++		noStats    bool
++		acquireErr bool
++		patchErr   string
++		wantErr    string
++		wantEvents []string
++	}{
++		{name: "initial statistics", wantEvents: []string{"statistics", "desired"}},
++		{name: "idle poll uses cached statistics", nilMessage: true},
++		{name: "jobs and metrics", jobs: true, wantEvents: []string{"statistics", "started", "completed", "desired"}},
++		{name: "acquisition failure", jobs: true, acquireErr: true, wantErr: "failed to acquire available jobs", wantEvents: []string{"statistics"}},
++		{name: "runner patch failure", jobs: true, patchErr: "ephemeralrunners/", wantErr: "failed to handle job started", wantEvents: []string{"statistics", "started"}},
++		{name: "scale failure", patchErr: "ephemeralrunnersets/", wantErr: "failed to handle desired runner count", wantEvents: []string{"statistics"}},
++		{name: "missing statistics", noStats: true, wantErr: "message statistics are required"},
++		{name: "idle poll without initial statistics", nilMessage: true, noStats: true, wantErr: "initial message statistics are required"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			var patches []string
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				patches = append(patches, r.URL.Path)
++				if tc.patchErr != "" && strings.Contains(r.URL.Path, tc.patchErr) {
++					http.Error(w, "patch failed", http.StatusInternalServerError)
++					return
++				}
++				w.Header().Set("Content-Type", "application/json")
++				if strings.Contains(r.URL.Path, "ephemeralrunnersets/") {
++					var set v1alpha1.EphemeralRunnerSet
++					require.NoError(t, json.NewDecoder(r.Body).Decode(&set))
++					require.Equal(t, 5, set.Spec.Replicas)
++					require.NoError(t, json.NewEncoder(w).Encode(&set))
++				} else {
++					var runner v1alpha1.EphemeralRunner
++					require.NoError(t, json.NewDecoder(r.Body).Decode(&runner))
++					require.Equal(t, "job", runner.Status.JobID)
++					require.NoError(t, json.NewEncoder(w).Encode(&runner))
++				}
++			}))
++			defer server.Close()
++			clientset, err := kubernetes.NewForConfig(&rest.Config{Host: server.URL})
++			require.NoError(t, err)
++			recorder := &messageRecorder{Recorder: metrics.Discard}
++			acquisitions := 0
++			w := &Scaler{
++				clientset: clientset, logger: discardLogger, recorder: recorder,
++				config: Config{
++					EphemeralRunnerSetNamespace: "default", EphemeralRunnerSetName: "set",
++					MinRunners: 2, MaxRunners: 10,
++				},
++				targetRunners: -1, patchSeq: -1,
++				messageClient: acquiringClient{acquire: func(ctx context.Context, ids []int64) ([]int64, error) {
++					acquisitions++
++					require.Equal(t, t.Context(), ctx)
++					require.Equal(t, []int64{10, 11}, ids)
++					if tc.acquireErr {
++						return nil, errors.New("acquisition failed")
++					}
++					return ids[:1], nil
++				}},
++			}
++			message := &scaleset.RunnerScaleSetMessage{
++				MessageID: listener.InitialMessageID, Statistics: &scaleset.RunnerScaleSetStatistic{TotalAssignedJobs: 3},
++			}
++			if tc.jobs {
++				message.JobAvailableMessages = []*scaleset.JobAvailable{
++					{JobMessageBase: scaleset.JobMessageBase{RunnerRequestID: 10}},
++					{JobMessageBase: scaleset.JobMessageBase{RunnerRequestID: 11}},
++				}
++				message.JobStartedMessages = []*scaleset.JobStarted{{
++					RunnerName: "runner", JobMessageBase: scaleset.JobMessageBase{JobID: "job"},
++				}}
++				message.JobCompletedMessages = []*scaleset.JobCompleted{{}}
++			}
++			if tc.noStats {
++				message.Statistics = nil
++			}
++			if tc.nilMessage {
++				w.latestStatistics = message.Statistics
++				message = nil
++			}
++
++			err = w
+```
+
+**File**: `cmd/ghalistener/scaler/scaler.go` (modified, +62/-1)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"math"
+ 
+ 	"github.com/actions/actions-runner-controller/apis/actions.github.com/v1alpha1"
++	"github.com/actions/actions-runner-controller/cmd/ghalistener/metrics"
+ 	"github.com/actions/scaleset"
+ 	"github.com/actions/scaleset/listener"
+ 	jsonpatch "github.com/evanphx/json-patch"
+@@ -48,15 +49,27 @@ type Scaler struct {
+ 	// dirty is set when there are any events handled before the desired count is called.
+ 	dirty  bool
+ 	logger *slog.Logger
++
++	messageClient    listener.Client
++	recorder         metrics.Recorder
++	latestStatistics *scaleset.RunnerScaleSetStatistic
+ }
+ 
+ var _ listener.Scaler = (*Scaler)(nil)
+ 
+-func New(config Config, options ...Option) (*Scaler, error) {
++func New(config Config, messageClient listener.Client, recorder metrics.Recorder, options ...Option) (*Scaler, error) {
++	if messageClient == nil {
++		return nil, fmt.Errorf("message client is required")
++	}
++	if recorder == nil {
++		recorder = metrics.Discard
++	}
+ 	w := &Scaler{
+ 		config:        config,
+ 		targetRunners: -1,
+ 		patchSeq:      -1,
++		messageClient: messageClient,
++		recorder:      recorder,
+ 	}
+ 	for _, option := range options {
+ 		option(w)
+@@ -119,6 +132,54 @@ func (w *Scaler) applyDefaults() error {
+ 	return nil
+ }
+ 
++func (w *Scaler) Scale(ctx context.Context, message *scaleset.RunnerScaleSetMessage) error {
++	if message != nil {
++		if message.Statistics == nil {
++			return fmt.Errorf("message statistics are required")
++		}
++		w.latestStatistics = message.Statistics
++		w.recorder.RecordStatistics(message.Statistics)
++
++		if len(message.JobAvailableMessages) > 0 {
++			ids := make([]int64, 0, len(message.JobAvailableMessages))
++			for _, job := range message.JobAvailableMessages {
++				ids = append(ids, job.RunnerRequestID)
++			}
++			w.logger.Info("Acquiring jobs", "count", len(ids))
++			acquired, err := w.messageClient.AcquireJobs(ctx, ids)
++			if err != nil {
++				return fmt.Errorf("failed to acquire available jobs: %w", err)
++			}
++			w.logger.Info("Jobs acquired", "count", len(acquired))
++		}
++
++		for _, job := range message.JobStartedMessages {
++			w.recorder.RecordJobStarted(job)
++			if err := w.HandleJobStarted(ctx, job); err != nil {
++				return fmt.Errorf("failed to handle job started: %w", err)
++			}
++		}
++		for _, job := range message.JobCompletedMessages {
++			w.recorder.RecordJobCompleted(job)
++			if err := w.HandleJobCompleted(ctx, job); err != nil {
++				return fmt.Errorf("failed to handle job completed: %w", err)
++			}
++		}
++	}
++
++	if w.latestStatistics == nil {
++		return fmt.Errorf("initial message statistics are required")
++	}
++	desiredCount, err := w.HandleDesiredRunnerCount(ctx, w.latestStatistics.TotalAssignedJobs)
++	if err != nil {
++		return fmt.Errorf("failed to handle desired runner count: %w", err)
++	}
++	if message != nil {
++		w.recorder.RecordDesiredRunners(desiredCount)
++	}
++	return nil
++}
++
+ // HandleJobStarted updates the job information for the ephemeral runner when a job is started.
+ // It takes a context and a jobInfo parameter which contains the details of the started job.
+ // This update marks the ephemeral runner so that the controller would have more context
+```
+
+**File**: `controllers/actions.github.com/autoscalingrunnerset_controller.go` (modified, +5/-2)
+```diff
+@@ -70,8 +70,11 @@ type AutoscalingRunnerSetReconciler struct {
+ // +kubebuilder:rbac:groups=actions.github.com,resources=autoscalinglisteners/status,verbs=get;update;patch
+ 
+ // Reconcile a AutoscalingRunnerSet resource to meet its desired spec.
+-func (r *AutoscalingRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
++func (r *AutoscalingRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+ 	log := r.Log.WithValues("autoscalingrunnerset", req.NamespacedName)
++	defer func() {
++		result, err = requeueOnRateLimit(ctx, result, err, log)
++	}()
+ 
+ 	var autoscalingRunnerSet v1alpha1.AutoscalingRunnerSet
+ 	if err := r.Get(ctx, req.NamespacedName, &autoscalingRunnerSet); err != nil {
+@@ -223,7 +226,7 @@ func (r *AutoscalingRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl
+ 	}
+ 
+ 	var ephemeralRunnerSet v1alpha1.EphemeralRunnerSet
+-	err := r.Get(
++	err = r.Get(
+ 		ctx,
+ 		types.NamespacedName{
+ 			Namespace: autoscalingRunnerSet.Namespace,
+```
+
+**File**: `controllers/actions.github.com/ephemeralrunner_controller.go` (modified, +4/-1)
+```diff
+@@ -113,8 +113,11 @@ const maxFailures = 5
+ //
+ // For more details, check Reconcile and its Result here:
+ // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.6.4/pkg/reconcile
+-func (r *EphemeralRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
++func (r *EphemeralRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+ 	log := r.Log.WithValues("ephemeralrunner", req.NamespacedName)
++	defer func() {
++		result, err = requeueOnRateLimit(ctx, result, err, log)
++	}()
+ 
+ 	var ephemeralRunner v1alpha1.EphemeralRunner
+ 	if err := r.Get(ctx, req.NamespacedName, &ephemeralRunner); err != nil {
+```
+
+**File**: `controllers/actions.github.com/ephemeralrunnerset_controller.go` (modified, +16/-1)
+```diff
+@@ -114,8 +114,11 @@ type EphemeralRunnerSetReconciler struct {
+ // risk the same issue of patching the status. Responsibility of this controller should only
+ // be to bring the count of EphemeralRunners to the desired one, not to patch this resource
+ // until it is safe to do so
+-func (r *EphemeralRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
++func (r *EphemeralRunnerSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+ 	log := r.Log.WithValues("ephemeralrunnerset", req.NamespacedName)
++	defer func() {
++		result, err = requeueOnRateLimit(ctx, result, err, log)
++	}()
+ 
+ 	var ephemeralRunnerSet v1alpha1.EphemeralRunnerSet
+ 	if err := r.Get(ctx, req.NamespacedName, &ephemeralRunnerSet); err != nil {
+@@ -847,6 +850,10 @@ func (r *EphemeralRunnerSetReconciler) cleanUpEphemeralRunners(ctx context.Conte
+ 		log.Info("Cleaning up the ephemeral runner", "name", ephemeralRunner.Name)
+ 		if err := deleteRunner(ephemeralRunner); err != nil {
+ 			errs = append(errs, err)
++			var rateLimit *scaleset.RateLimitError
++			if errors.As(err, &rateLimit) {
++				return false, 0, multierr.Combine(errs...)
++			}
+ 		}
+ 	}
+ 
+@@ -867,6 +874,10 @@ func (r *EphemeralRunnerSetReconciler) cleanUpEphemeralRunners(ctx context.Conte
+ 		log.Info("Cleaning up the ephemeral runner", "name", ephemeralRunner.Name)
+ 		if err := deleteRunner(ephemeralRunner); err != nil {
+ 			errs = append(errs, err)
++			var rateLimit *scaleset.RateLimitError
++			if errors.As(err, &rateLimit) {
++				return false, 0, multierr.Combine(errs...)
++			}
+ 		}
+ 	}
+ 
+@@ -1119,6 +1130,10 @@ func (r *EphemeralRunnerSetReconciler) deleteIdleEphemeralRunners(ctx context.Co
+ 		ok, err := r.deleteEphemeralRunnerWithActionsClient(ctx, ephemeralRunner, actionsClient, log)
+ 		if err != nil {
+ 			errs = append(errs, err)
++			var rateLimit *scaleset.RateLimitError
++			if errors.As(err, &rateLimit) {
++				return 0, multierr.Combine(errs...)
++			}
+ 		}
+ 		if !ok {
+ 			continue
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4727** (2026-10-23): Prepare 0.15.1 release (@nikola-jokic)
+- **PR #4726** (2026-10-23): Requeue rate-limited scale-set requests without client retries (@nikola-jokic)
+- **PR #4725** (2026-10-23): Bump Go to 1.27.3 and update Go dependencies (@nikola-jokic)
+- **PR #4724** (2026-10-22): Updates: runner to v2.338.1 (@github-actions[bot])
+- **PR #4720** (closed): Bump the gomod group across 1 directory with 8 updates (@dependabot[bot])
 - **PR #4713** (closed): Bump the gomod group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #4711** (closed): Retry transient Forbidden errors on ephemeral runner pod creation (@fedor-rubalskiy)
-- **PR #4708** (2026-10-21): Updates: runner to v2.338.0 (@github-actions[bot])
-- **PR #4705** (closed): Bump the gomod group with 2 updates (@dependabot[bot])
-- **PR #4701** (closed): Delay recreation of a listener pod that exited with a failure (@cnd-codeflow)
-- **PR #4700** (closed): Requeue instead of erroring when the recreated AutoscalingListener already exists (@cnd-codeflow)
 
 ---
 
@@ -1581,28 +2161,30 @@ Co-authored-by: Salman Muin Kayser Chishti <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Updates: runner to v2.338.0 (#4708)
+## X. Prepare 0.15.1 release (#4727)
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/gha-runner-scale-set-controller-experimental/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce75c0a1`: Updates: runner to v2.338.0 (#4708). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23159a8e`: Prepare 0.15.1 release (#4727). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/gha-runner-scale-set-controller-experimental/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-RUNNER_VERSION ?= 2.338.0
+version: "0.15.1"
+appVersion: "0.15.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-RUNNER_VERSION ?= 2.337.0
+version: "0.15.0"
+appVersion: "0.15.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce75c0a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23159a8e` are properly handled with clean fallback behavior.

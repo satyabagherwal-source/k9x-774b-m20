@@ -4626,3 +4626,4 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `21c27035` | Multi-dimensional audit evidence | 2026-10-25T02:42:40.084Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f3221acd` | Multi-dimensional audit evidence | 2026-10-25T02:42:42.655Z |
 | `learn-github-ynqa-jnv` | `https://github.com/ynqa/jnv` | `9871ba34` | Multi-dimensional audit evidence | 2026-10-25T02:44:02.490Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `23159a8e` | Multi-dimensional audit evidence | 2026-10-25T02:50:29.534Z |

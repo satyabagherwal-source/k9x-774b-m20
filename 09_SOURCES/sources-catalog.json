@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "ce75c0a1",
+    "sourceVersion": "23159a8e",
     "license": "Apache-2.0",
-    "contentHash": "9b296cb345141b6d1b974c1ae927613630eaae147067e712a7f9fc52eda0437e",
-    "lastHarvestedAt": "2026-10-22T16:10:03.903Z",
+    "contentHash": "6b36cfa9aa1f9a5b0a68784a77bb33e543a103713600e6c3bb884f924d588a92",
+    "lastHarvestedAt": "2026-10-25T02:50:29.534Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
