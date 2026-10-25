@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "75f26e3b1a9ef3f240ee8c3c5d4736e1740426bd2eccc249c7d079657bf9943b",
-    "lastHarvestedAt": "2026-10-20T15:30:45.793Z",
+    "contentHash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
+    "lastHarvestedAt": "2026-10-25T08:39:34.168Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -6353,10 +6353,10 @@
     "repository": "komi-store/komi-store",
     "platform": "github",
     "sourceUrl": "https://github.com/komi-store/komi-store",
-    "sourceVersion": "9b8f899f",
+    "sourceVersion": "fc65863b",
     "license": "Apache-2.0",
-    "contentHash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
-    "lastHarvestedAt": "2026-10-20T17:55:42.054Z",
+    "contentHash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
+    "lastHarvestedAt": "2026-10-25T08:44:18.827Z",
     "learningId": "learn-github-komi-store-komi-store"
   },
   "opentofu-opentofu": {
@@ -10678,5 +10678,15 @@
     "contentHash": "d43e03a6b461a048966d3005217c353fe2b415025a704db8c352e772f7b364b9",
     "lastHarvestedAt": "2026-10-25T05:58:58.283Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
+  },
+  "makecindy-cindy": {
+    "repository": "makecindy/cindy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/makecindy/cindy",
+    "sourceVersion": "65288cb1",
+    "license": "Apache-2.0",
+    "contentHash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
+    "lastHarvestedAt": "2026-10-25T08:44:00.577Z",
+    "learningId": "learn-github-makecindy-cindy"
   }
 }

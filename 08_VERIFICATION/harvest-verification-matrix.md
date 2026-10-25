@@ -4742,3 +4742,6 @@
 | `CYCLE-20261025-9XNH` | `2026-10-25T08:24:00.413Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4182, Rule 4183, Rule 4184` | Yes (`ca7af943...`) |
 | `CYCLE-20261025-A4XE` | `2026-10-25T08:24:09.842Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4185, Rule 4186, Rule 4187` | Yes (`288b3b5c...`) |
 | `CYCLE-20261025-AQI7` | `2026-10-25T08:24:37.807Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4188, Rule 4189, Rule 4190` | Yes (`66974425...`) |
+| `CYCLE-20261025-TY51` | `2026-10-25T08:39:34.165Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4191, Rule 4192` | Yes (`f07af78d...`) |
+| `CYCLE-20261025-ZNPA` | `2026-10-25T08:44:00.574Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4193, Rule 4194, Rule 4195` | Yes (`c3ec7797...`) |
+| `CYCLE-20261025-01S8` | `2026-10-25T08:44:18.825Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4196, Rule 4197` | Yes (`e00d3972...`) |

@@ -4749,3 +4749,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T08:24:00.417Z |
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `2f2c4d63` | Multi-dimensional audit evidence | 2026-10-25T08:24:09.845Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `78f1a7a6` | Multi-dimensional audit evidence | 2026-10-25T08:24:37.810Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-25T08:39:34.168Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `65288cb1` | Multi-dimensional audit evidence | 2026-10-25T08:44:00.577Z |
+| `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `fc65863b` | Multi-dimensional audit evidence | 2026-10-25T08:44:18.827Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T08:24:37.815Z",
-  "total_cycles_completed": 4719,
-  "total_learnings_persisted": 4719,
-  "total_rules_promoted": 4064,
+  "last_updated": "2026-10-25T08:44:18.832Z",
+  "total_cycles_completed": 4722,
+  "total_learnings_persisted": 4722,
+  "total_rules_promoted": 4071,
   "history": [
-    {
-      "timestamp": "2026-10-23T11:11:43.723Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:11:48.175Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:11:57.011Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T11:17:53.276Z",
       "repository": "tamagui/tamagui",
@@ -1403,6 +1382,27 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:39:34.173Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:44:00.582Z",
+      "repository": "makecindy/cindy",
+      "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T08:44:18.832Z",
+      "repository": "komi-store/komi-store",
+      "learningId": "learn-github-komi-store-komi-store",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

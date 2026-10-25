@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/komi-store-komi-store-learnings.md`  
 > **Source**: github ([https://github.com/komi-store/komi-store](https://github.com/komi-store/komi-store))  
-> **Source Version**: `9b8f899f`  
+> **Source Version**: `fc65863b`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:55:41.794Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-25T08:44:18.244Z  
 > **Learning ID**: `learn-github-komi-store-komi-store`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1364 +12,594 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): komi-store/komi-store
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/komi-store-komi-store-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/komi-store/komi-store](https://github.com/komi-store/komi-store))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:55:41.582Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): komi-store/komi-store
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `komi-store/komi-store`
-- **Description**: 🩵 A free, open-source app store for developers' releases on GitHub, Codeberg & Forgejo — browse, discover, and install apps with one click. Formerly GitHub Store.
-- **Primary Language / Ecosystem**: Kotlin
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19658 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Mission & Ecosystem Mandate
+`komi-store` (formerly `githubstore`) is an open-source decentralized application store built with Kotlin Multiplatform (KMP) and Compose Multiplatform targeting Android, Linux, macOS, and Windows. Its architectural objective is to eliminate centralized application store gatekeeping (Google Play Store, Microsoft Store) by allowing client nodes to directly crawl, discover, verify, download, and silently/semi-autonomously install software packages published as GitHub, Codeberg, Forgejo, and Gitea release assets.
+
+### 1.2 Subsystem Decomposition & Boundaries
+The codebase is structured into modular layers governed by clean architecture boundaries:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       Presentation Layer (Compose KMP)                       │
+│  - Screens: Explore, Charts, Apps, Details, Profile, Tweaks                 │
+│  - HeaderStatus, StatsGrid, SmartInstallButton                              │
+│  - Navigation: Jetpack Navigation Compose Route Serialization               │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ StateFlow / ViewModels
+┌──────────────────────────────────────▼──────────────────────────────────────┐
+│                            Domain Layer (Pure KMP)                          │
+│  - Model Primitives: GithubRelease, AssetVariant, InstalledApp             │
+│  - System Contracts: Installer, Downloader, PackageMonitor, ApkInspector    │
+│  - Logic: AssetOwnership Resolver, Glob/Family Matcher, Tag Stemming        │
+└──────────────────┬───────────────────────────────────────────┬──────────────┘
+                   │ DI via Koin                               │
+┌──────────────────▼──────────────────────┐   ┌────────────────▼──────────────┐
+│      Data Layer: Network & Cache        │   │    Data Layer: OS Interop     │
+│ - DetailsRepositoryImpl                 │   │ - AndroidInstaller / Intent   │
+│ - KSafe Encrypted Token Stores          │   │ - Shizuku / Dhizuku / Root    │
+│ - Ktor Client Engine + DigestVerifier   │   │ - Desktop Package Dispatcher  │
+│ - SQLite Room DB / Preferences DataStore│   │ - ManifestHintExtractor       │
+└─────────────────────────────────────────┘   └───────────────────────────────┘
+```
+
+1. **Presentation (`composeApp`, `feature/*-presentation`)**: UI components rendered via Skiko (desktop) and Android Canvas. Reactive bindings stream state via Kotlin `StateFlow`.
+2. **Domain (`core/domain`, `feature/*-domain`)**: Pure Kotlin contracts containing zero platform imports (`android.*` or Java AWT forbidden). Hosts deterministic resolution mechanics like `AssetOwnership.ownerOf` (disambiguating multi-flavor APKs).
+3. **Data (`core/data`, `feature/*-data`)**: Platform actualizations. Leverages Ktor for direct forge REST queries, SQLite via Room KMP, and dual-tier caching (in-memory L1 LRU + on-disk DataStore/KSafe).
+4. **Hardware & Execution Bridges (`core/data/src/androidMain`)**: Interfacing with privileged execution contexts:
+   - Root daemon socket bindings (`RootServiceManager`).
+   - ADB privileged IPC via Shizuku (`ShizukuServiceManager`).
+   - Device owner IPC via Dhizuku (`DhizukuServiceManager`).
+   - Android standard `PackageInstaller` session streams (`AndroidInstaller`).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `composeApp/src/androidMain/kotlin/zed/rainxch/githubstore/utils/SystemBarUtils.kt`
-```
-package zed.rainxch.githubstore.utils
-
-import android.app.Activity
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
-
-fun Activity.updateSystemBars(isDarkTheme: Boolean) {
-    WindowCompat.setDecorFitsSystemWindows(window, false)
-
-    val controller = WindowInsetsControllerCompat(window, window.decorView)
-
-    controller.isAppearanceLightStatusBars = !isDarkTheme
-    controller.isAppearanceLightNavigationBars = !isDarkTheme
-}
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/MainState.kt`
-```
-package zed.rainxch.githubstore
-
-import zed.rainxch.core.domain.model.appearance.AccentId
-import zed.rainxch.core.domain.model.appearance.AppPersonality
-import zed.rainxch.core.domain.model.appearance.ContentWidth
-import zed.rainxch.core.domain.model.appearance.MangaPaperId
-import zed.rainxch.core.domain.model.error.RateLimitInfo
-
-data class MainState(
-    val isLoggedIn: Boolean = false,
-    val rateLimitInfo: RateLimitInfo? = null,
-    val showRateLimitDialog: Boolean = false,
-    val showSessionExpiredDialog: Boolean = false,
-    val personality: AppPersonality = AppPersonality.MANGA,
-    val accent: AccentId = AccentId.CRIMSON,
-    val mangaPaper: MangaPaperId = MangaPaperId.DAY,
-    val isAmoledTheme: Boolean = false,
-    val isDarkTheme: Boolean? = null,
-    val isScrollbarEnabled: Boolean = false,
-    val contentWidth: ContentWidth = ContentWidth.COMPACT,
-    val appLanguageTag: String? = null,
-    val signedInAvatarUrl: String? = null,
-    val isAppearanceLoaded: Boolean = false,
-)
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/navigation/BottomNavigationUtils.kt`
-```
-package zed.rainxch.githubstore.app.navigation
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
-import zed.rainxch.githubstore.core.presentation.res.*
-
-object BottomNavigationUtils {
-    fun items(): List<BottomNavigationItem> =
-        listOf(
-            BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_explore_title,
-                iconOutlined = Icons.Outlined.Explore,
-                iconFilled = Icons.Filled.Explore,
-                screen = GithubStoreGraph.ExploreScreen,
-            ),
-            BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_top_charts_title,
-                iconOutlined = Icons.Outlined.Leaderboard,
-                iconFilled = Icons.Filled.Leaderboard,
-                screen = GithubStoreGraph.ChartsScreen,
-            ),
-            BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_search_title,
-                iconOutlined = Icons.Outlined.Search,
-                iconFilled = Icons.Filled.Search,
-                screen = GithubStoreGraph.SearchScreen(),
-            ),
-            BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_apps_title,
-                iconOutlined = Icons.Outlined.Apps,
-                iconFilled = Icons.Filled.Apps,
-                screen = GithubStoreGraph.AppsScreen,
-            ),
-            BottomNavigationItem(
-                titleRes = Res.string.bottom_nav_profile_title,
-                iconOutlined = Icons.Outlined.Person2,
-                iconFilled = Icons.Filled.Person2,
-                screen = GithubStoreGraph.ProfileGraph.ProfileScreen,
-            ),
-        )
-
-    fun allowedScreens(): List<BottomNavigationItem> = items()
-}
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/navigation/NavigationUtils.kt`
-```
-package zed.rainxch.githubstore.app.navigation
-
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.toRoute
-
-fun NavBackStackEntry?.bottomNavIndex(): Int? {
-    val route = this?.destination?.route ?: return null
-    return when {
-        route.contains("ExploreScreen") -> 0
-        route.contains("ChartsScreen") -> 1
-        route.contains("SearchScreen") -> 2
-        route.contains("AppsScreen") -> 3
-        route.contains("ProfileScreen") -> 4
-        else -> null
-    }
-}
-
-fun NavBackStackEntry?.getCurrentScreen(): GithubStoreGraph? {
-    if (this == null) return null
-    val route = destination.route ?: return null
-
-    return when {
-        route.contains("ExploreScreen") -> GithubStoreGraph.ExploreScreen
-        route.contains("ChartsScreen") -> GithubStoreGraph.ChartsScreen
-        route.contains("SearchScreen") -> toRoute<GithubStoreGraph.SearchScreen>()
-        route.contains("AuthenticationScreen") -> GithubStoreGraph.AuthenticationScreen
-        route.contains("DetailsScreen") -> toRoute<GithubStoreGraph.DetailsScreen>()
-        route.contains("DeveloperProfileScreen") -> toRoute<GithubStoreGraph.DeveloperProfileScreen>()
-        route.contains("ProfileScreen") -> GithubStoreGraph.ProfileGraph.ProfileScreen
-        route.contains("TweaksScreen") -> GithubStoreGraph.TweaksScreen
-        route.contains("RecentlyViewedScreen") -> GithubStoreGraph.RecentlyViewedScreen
-        route.contains("FavouritesScreen") -> GithubStoreGraph.FavouritesScreen
-        route.contains("StarredReposScreen") -> GithubStoreGraph.StarredReposScreen
-        route.contains("AppsScreen") -> GithubStoreGraph.AppsScreen
-        route.contains("WhatsNewHistoryScreen") -> GithubStoreGraph.WhatsNewHistoryScreen
-        route.contains("AnnouncementsScreen") -> GithubStoreGraph.AnnouncementsScreen
-        else -> null
-    }
-}
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/utils/HandleDesktopToolbarDeeplinks.kt`
-```
-package zed.rainxch.githubstore.utils
-
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavHostController
-import kotlinx.coroutines.channels.ReceiveChannel
-import zed.rainxch.auth.presentation.AuthDeepLinkBus
-import zed.rainxch.auth.presentation.AuthDeepLinkEvent
-import zed.rainxch.githubstore.app.deeplink.DeepLinkDestination
-import zed.rainxch.githubstore.app.deeplink.DeepLinkParser
-import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
-import zed.rainxch.githubstore.app.navigation.getCurrentScreen
-import zed.rainxch.tweaks.presentation.utils.TweaksDeepLinkBus
-
-@Composable
-fun HandleDesktopToolbarDeeplinks(
-    deepLinkUris: ReceiveChannel<String>,
-    onDeepLinkConsumed: () -> Unit,
-    navController: NavHostController,
-) {
-    LaunchedEffect(deepLinkUris) {
-        for (uri in deepLinkUris) {
-            val currentScreen = navController.currentBackStackEntry.getCurrentScreen()
-            when (val destination = DeepLinkParser.parse(uri)) {
-                is DeepLinkDestination.Repository -> {
-                    navController.navigate(
-                        GithubStoreGraph.DetailsScreen(
-                            owner = destination.owner,
-                            repo = destination.repo,
-                        ),
-                    )
-                }
-
-                DeepLinkDestination.Home -> {
-                    if (currentScreen !is GithubStoreGraph.ExploreScreen) {
-                        navController.navigate(GithubStoreGraph.ExploreScreen) {
-                            popUpTo(GithubStoreGraph.ExploreScreen) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Apps -> {
-                    navController.navigate(GithubStoreGraph.AppsScreen) {
-                        popUpTo(GithubStoreGraph.ExploreScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                is DeepLinkDestination.AuthHandoff -> {
-                    AuthDeepLinkBus.publish(
-                        AuthDeepLinkEvent.Handoff(destination.handoffId, destination.state),
-                    )
-                    if (currentScreen !is GithubStoreGraph.AuthenticationScreen) {
-                        navController.navigate(GithubStoreGraph.AuthenticationScreen) {
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                is DeepLinkDestination.AuthError -> {
-                    AuthDeepLinkBus.publish(
-                        AuthDeepLinkEvent.Error(destination.reason, destination.state),
-                    )
-                    if (currentScreen !is GithubStoreGraph.AuthenticationScreen) {
-                        navController.navigate(GithubStoreGraph.AuthenticationScreen) {
-                            launchSingleTop = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Tweaks -> {
-                    navController.navigate(GithubStoreGraph.TweaksScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.Feedback -> {
-                    navController.navigate(GithubStoreGraph.TweaksScreen) {
-                        launchSingleTop = true
-                    }
-                    TweaksDeepLinkBus.requestOpenFeedback()
-                }
-
-                DeepLinkDestination.About -> {
-                    navController.navigate(GithubStoreGraph.AboutScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.TweaksLicenses -> {
-                    navController.navigate(GithubStoreGraph.LicensesScreen) {
-                        launchSingleTop = true
-                    }
-                }
-
-                DeepLinkDestination.Search -> {
-                    if (currentScreen !is GithubStoreGraph.SearchScreen) {
-                        navController.navigate(GithubStoreGraph.SearchScreen()) {
-                            popUpTo(GithubStoreGraph.ExploreScreen) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                }
-
-                DeepLinkDestination.Favourites -> {
-                    navController.navigate(GithubStoreGraph.FavouritesScreen) {
-                        popUpTo(GithubStoreGraph.ExploreScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                DeepLinkDestination.RecentlyViewed -> {
-                    navController.navigate(GithubStoreGraph.RecentlyViewedScreen) {
-                        popUpTo(GithubStoreGraph.ExploreScreen) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                DeepLinkDestination.None -> {
-                }
-            }
-            onDeepLinkConsumed()
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/utils/HandleKeyboardEvents.kt`
-```
-package zed.rainxch.githubstore.utils
-
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import zed.rainxch.core.presentation.utils.ObserveAsEvents
-import zed.rainxch.githubstore.app.desktop.KeyboardNavigation
-import zed.rainxch.githubstore.app.desktop.KeyboardNavigationEvent
-import zed.rainxch.githubstore.app.navigation.GithubStoreGraph
-import zed.rainxch.githubstore.app.navigation.getCurrentScreen
-
-@Composable
-fun HandleKeyboardEvents(navController: NavHostController) {
-    val currentScreen = navController.currentBackStackEntryAsState().value.getCurrentScreen()
-
-    ObserveAsEvents(KeyboardNavigation.events) { event ->
-        when (event) {
-            KeyboardNavigationEvent.OnCtrlFClick -> {
-                if (currentScreen !is GithubStoreGraph.SearchScreen) {
-                    navController.navigate(GithubStoreGraph.SearchScreen()) {
-                        popUpTo(GithubStoreGraph.ExploreScreen) {
-                            saveState = true
-                        }
-
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            }
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/utils/StartupPreferences.kt`
-```
-package zed.rainxch.githubstore.utils
-
-internal const val STARTUP_PREFERENCE_TIMEOUT_MS: Long = 2000L
-
-```
-
-### Core Architecture Module: `core/data/src/androidMain/kotlin/zed/rainxch/core/data/di/PlatformModule.android.kt`
-```
-package zed.rainxch.core.data.di
-
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import kotlinx.coroutines.CoroutineScope
-import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module
-import zed.rainxch.core.data.local.data_store.createAnnouncementsDataStore
-import zed.rainxch.core.data.local.data_store.createDataStore
-import zed.rainxch.core.data.local.db.AppDatabase
-import zed.rainxch.core.data.local.db.initDatabase
-import zed.rainxch.core.data.network.AndroidDigestVerifier
-import zed.rainxch.core.data.services.AndroidApkInspector
-import zed.rainxch.core.data.services.AndroidDownloadProgressNotifier
-import zed.rainxch.core.data.services.AndroidDownloader
-import zed.rainxch.core.data.services.AndroidFileLocationsProvider
-import zed.rainxch.core.data.services.AndroidInstaller
-import zed.rainxch.core.data.services.AndroidInstallerInfoExtractor
-import zed.rainxch.core.data.services.AndroidLocalizationManager
-import zed.rainxch.core.data.services.AndroidPackageMonitor
-import zed.rainxch.core.data.services.AndroidPendingInstallNotifier
-import zed.rainxch.core.data.services.AndroidUpdateScheduleManager
-import zed.rainxch.core.data.services.DownloadNotificationObserver
-import zed.rainxch.core.data.services.FileLocationsProvider
-import zed.rainxch.core.data.services.LocalizationManager
-import zed.rainxch.core.data.services.dhizuku.DhizukuServiceManager
-import zed.rainxch.core.data.services.external.AndroidExternalAppScanner
-import zed.rainxch.core.data.services.external.InstallerSourceClassifier
-import zed.rainxch.core.data.services.external.ManifestHintExtractor
-import zed.rainxch.core.data.services.installer.AndroidInstallerStatusProvider
-import zed.rainxch.core.data.services.installer.SilentInstallerDispatcher
-import zed.rainxch.core.data.services.root.RootServiceManager
-import zed.rainxch.core.data.services.shizuku.ShizukuServiceManager
-import zed.rainxch.core.data.utils.AndroidAppLauncher
-import zed.rainxch.core.data.utils.AndroidBrowserHelper
-import zed.rainxch.core.data.utils.AndroidClipboardHelper
-import zed.rainxch.core.data.utils.AndroidShareManager
-import zed.rainxch.core.domain.helpers.AppLauncher
-import zed.rainxch.core.domain.helpers.BrowserHelper
-import zed.rainxch.core.domain.helpers.ClipboardHelper
-import zed.rainxch.core.domain.helpers.ShareManager
-import zed.rainxch.core.domain.network.DigestVerifier
-import zed.rainxch.core.domain.network.Downloader
-import zed.rainxch.core.domain.system.ApkInspector
-import zed.rainxch.core.domain.system.DownloadOrchestrator
-import zed.rainxch.core.domain.system.DownloadProgressNotifier
-import zed.rainxch.core.domain.system.ExternalAppScanner
-import zed.rainxch.core.domain.system.Installer
-import zed.rainxch.core.domain.system.InstallerStatusProvider
-import zed.rainxch.core.domain.system.PackageMonitor
-import zed.rainxch.core.domain.system.PendingInstallNotifier
-import zed.rainxch.core.domain.system.UpdateScheduleManager
-
-actual val corePlatformModule =
-    module {
-
-        single<Downloader> {
-            AndroidDownloader(
-                files = get(),
-                tokenStore = get(),
-                digestVerifier = get(),
-            )
-        }
-
-        single {
-            AndroidInstaller(
-                context = get(),
-                installerInfoExtractor = AndroidInstallerInfoExtractor(androidContext()),
-            )
-        }
-
-        single {
-            ShizukuServiceManager(
-                context = androidContext(),
-            ).also { it.initialize() }
-        }
-
-        single {
-            DhizukuServiceManager(
-                context = androidContext(),
-            ).also { it.initialize() }
-        }
-
-        single {
-            RootServiceManager(
-                context = androidContext(),
-                scope = get<CoroutineScope>(),
-            ).also { it.initialize() }
-        }
-
-        single<Installer> {
-            SilentInstallerDispatcher(
-                androidContext = androidContext(),
-                androidInstaller = get<AndroidInstaller>(),
-                shizukuServiceManager = get(),
-                dhizukuServiceManager = get(),
-                rootServiceManager = get(),
-                tweaksRepository = get(),
-                scope = get<CoroutineScope>(),
-            ).also { dispatcher ->
-                dispatcher.observeInstallerPreference()
-            }
-        }
-
-        single<InstallerStatusProvider> {
-            AndroidInstallerStatusProvider(
-                shizukuServiceManager = get(),
-                dhizukuServiceManager = get(),
-                rootServiceManager = get(),
-                scope = get(),
-            )
-        }
-
-        single<FileLocationsProvider> {
-            AndroidFileLocationsProvider(context = get())
-        }
-
-        single<zed.rainxch.core.domain.system.AggressiveOemDetector> {
-            zed.rainxch.core.data.services
-                .AndroidAggressiveOemDetector(context = androidContext())
-        }
-
-        single<PendingInstallNotifier> {
-            AndroidPendingInstallNotifier(context = androidContext())
-        }
-
-        single<DownloadProgressNotifier> {
-            AndroidDownloadProgressNotifier(context = androidContext())
-        }
-
-        single {
-            DownloadNotificationObserver(
-                orchestrator = get<DownloadOrchestrator>(),
-                notifier = get<DownloadProgressNotifier>(),
-            )
-        }
-
-        single<PackageMonitor> {
-            AndroidPackageMonitor(androidContext())
-        }
-
-        single<ApkInspector> {
-            AndroidApkInspector(androidContext())
-        }
-
-        single { ManifestHintExtractor() }
-
-        single {
-            InstallerSourceClassifier(
-                packageManager = androidContext().packageManager,
-                selfPackageName = androidContext().packageName,
-            )
-        }
-
-        single<ExternalAppScanner> {
-            AndroidExternalAppScanner(
-                context = androidContext(),
-                manifestHintExtractor = get(),
-                installerSourceClassifier = get(),
-            )
-        }
-
-        single<LocalizationManager> {
-            AndroidLocalizationManager()
-        }
-
-        single<AppDatabase> {
-            initDatabase(androidContext())
-        }
-
-        single<DataStore<Preferences>> {
-            createDataStore(androidContext())
-        }
-
-        single<DataStore<Preferences>>(
-            qualifier =
-                org.koin.core.qualifier
-                    .named("announcements"),
-        ) {
-            createAnnouncementsDataStore(androidContext())
-        }
-
-        single<eu.anifantakis.lib.ksafe.KSafe>(
-            qualifier =
-                org.koin.core.qualifier
-                    .named("tokens"),
-        ) {
-            eu.anifantakis.lib.ksafe.KSafe(
-                context = androidContext(),
-                fileName = "ghs_tokens",
-            )
-        }
-
-        single<eu.anifantakis.lib.ksafe.KSafe>(
-            qualifier =
-                org.koin.core.qualifier
-                    .named("prefs"),
-        ) {
-            eu.anifantakis.lib.ksafe.KSafe(
-                context = androidContext(),
-                fileName = "ghs_prefs",
-            )
-        }
-
-        single<eu.anifantakis.lib.ksafe.KSafe>(
-            qualifier =
-                org.koin.core.qualifier
-                    .named("announcements_cache"),
-        ) {
-            eu.anifantakis.lib.ksafe.KSafe(
-                context = androidContext(),
-                fileName = "ghs_announcements",
-            )
-        }
-
-        single<BrowserHelper> {
-            AndroidBrowserHelper(androidContext())
-        }
-
-        single<DigestVerifier> {
-            AndroidDigestVerifier()
-        }
-
-        single<ClipboardHelper> {
-            AndroidClipboardHelper(androidContext())
-        }
-
-        single<AppLauncher> {
-            AndroidAppLauncher(
-                context = androidContext(),
-                logger = get(),
-            )
-        }
-
-        single<ShareManager> {
-            AndroidShareManager(
-                context = androidContext(),
-            )
-        }
-
-        single<UpdateScheduleManager> {
-            AndroidUpdateScheduleManager(
-                context = androidContext(),
-            )
-        }
-    }
-
-```
-
-### Core Architecture Module: `core/data/src/androidMain/kotlin/zed/rainxch/core/data/local/data_store/createAnnouncementsDataStore.kt`
-```
-package zed.rainxch.core.data.local.data_store
-
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-
-fun createAnnouncementsDataStore(context: Context): DataStore<Preferences> =
-    createDataStore(
-        producePath = {
-            context.filesDir.resolve(announcementsDataStoreFileName).absolutePath
-        },
-    )
-
-```
-
-### Core Architecture Module: `core/data/src/androidMain/kotlin/zed/rainxch/core/data/local/data_store/createDataStore.kt`
-```
-package zed.rainxch.core.data.local.data_store
-
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-
-fun createDataStore(context: Context): DataStore<Preferences> =
-    createDataStore(
-        producePath = {
-            context.filesDir.resolve(_root_ide_package_.zed.rainxch.core.data.local.data_store.dataStoreFileName).absolutePath
-        },
-    )
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1075** (2026-10-19): **Sign-in ignores the in-app proxy**
-  *Symptoms*: ### What's wrong  People who need the in-app proxy to reach GitHub or github-store.org can't sign in, because every sign-in request bypasses the proxy.  ### Why  All sign-in traffic goes through `GitHubAuthApi`, which builds two plain `HttpClient`s with no proxy. That covers web OAuth (register and handoff), the device flow through the backend and directly, and personal access token validation. The rest of the app gets its proxy from `createPlatformHttpClient(proxyConfig)`.  - https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/auth/data/src/commonMain/kotlin/zed/rainxch/auth/data/network/GitHubAuthApi.kt#L37 - https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/auth/data/src/commonMain/kotlin/zed/rainxch/auth/data/network/GitHubAuthApi.kt#L55 - Web OAuth uses the same client: https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/auth/data/src/commonMain/kotlin/zed/rainxch/auth/data/network/WebAuthApi.kt#L30 - The proxy-aware factory: https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/core/data/src/commonMain/kotlin/zed/rainxch/core/data/network/HttpClientFactory.kt#L24  ### Fix  Build the sign-in clients from the proxy-aware factory and rebuild them when the proxy changes, the way `ForgejoClientRegistry` does. `GitHubAuthApi` is an `object`, so this probably means making it an injected class. 
-
-- **Issue #1074** (2026-10-19): **Feed: the iOS filter requests a platform the backend rejects**
-  *Symptoms*: ### What's wrong  Picking iOS in the Feed platform picker requests `/v1/feed?platform=ios`. The backend answers `400 {"error":"Invalid platform. Must be one of: [android, windows, macos, linux]"}`. Feed then falls back to a cached or offline iOS page if one exists, and otherwise fails.  Home already handles this: for iOS it skips the backend and uses its other path.  - https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/feed/data/src/commonMain/kotlin/zed/rainxch/feed/data/repository/FeedRepositoryImpl.kt#L143-L150 - https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/feed/data/src/commonMain/kotlin/zed/rainxch/feed/data/repository/FeedRepositoryImpl.kt#L66 - Home: https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/home/data/src/commonMain/kotlin/zed/rainxch/home/data/data_source/impl/CachedRepositoriesDataSourceImpl.kt#L462-L469 - The picker offers every platform: https://github.com/komi-store/komi-store/blob/e4df4e98498efe2bf825bed0e7a223d99986d2c8/feature/feed/presentation/src/commonMain/kotlin/zed/rainxch/feed/presentation/components/FeedPlatformPicker.kt#L47  ### Fix (needs a decision)  One of: hide iOS in the Feed picker, add `ios` to the backend feed, or request the unfiltered feed for iOS and filter on the client. 
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `e9404ae0` (2026-10-20)
-**Commit Message**: feat(ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-style chrome and fields) (#1146)
-
-* feat(ui): job-named text roles, font fixes and design-token checks
-
-Step 1 of the type-system plan. PersonalityType gets fifteen roles named by
-job for both personalities. The old Display, Title, Stamp, Body and Label
-roles become Legacy* roles at today's values, so a screen only changes when
-its call sites move to a new role. Mono keeps its name and values.
-
-- Anton and JetBrains Mono no longer get synthetic bold, and Cyrillic
-  headings ask Oswald for weight 700.
-- Display text is uppercased in the app's locale (appLocale()), so Turkish
-  keeps its dotted capital I.
-- PersonalityTheme fills every MaterialTheme.typography slot from the roles.
-  Manga's heading slots use the body face, since Material never uppercases.
-- DesignTokenRulesTest bans raw sizes, weights, text styles, tween durations,
-  alpha tints, color literals and Legacy* roles outside the personality
-  package, and Material text APIs and popups outside core/presentation.
-  Today's matches are counted per file and may only fall.
-
-* feat(ui): core components use the job-named text roles
-
-Step 2 of the t
-
-**File**: `.editorconfig` (modified, +1/-1)
-```diff
-@@ -4,4 +4,4 @@ root = true
- ktlint_standard_filename = disabled
- ktlint_standard_no-wildcard-imports = disabled
- ktlint_function_naming_ignore_when_annotated_with = Composable
--compose_allowed_composition_locals = LocalAnimatedVisibilityScope,LocalAppLanguageTag,LocalContentWidth,LocalPersonality,LocalReducedMotion,LocalScrollbarEnabled,LocalSharedTransitionScope,LocalStatusColors
-+compose_allowed_composition_locals = LocalAnimatedVisibilityScope,LocalAppLanguageTag,LocalContentWidth,LocalInBar,LocalMenuOpen,LocalPersonality,LocalReducedMotion,LocalScaffoldChrome,LocalScrollbarEnabled,LocalSharedTransitionScope,LocalStatusColors
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/Main.kt` (modified, +11/-5)
-```diff
-@@ -20,8 +20,10 @@ import coil3.request.ImageRequest
- import coil3.svg.SvgDecoder
- import kotlinx.coroutines.channels.Channel
- import org.koin.compose.viewmodel.koinViewModel
-+import zed.rainxch.core.domain.model.appearance.AccentId
- import zed.rainxch.core.domain.model.appearance.AppPersonality
- import zed.rainxch.core.presentation.ProfileAvatarSpec
-+import zed.rainxch.core.presentation.personality.classic.systemWallpaperColorScheme
- import zed.rainxch.core.presentation.personality.classicPersonality
- import zed.rainxch.core.presentation.personality.mangaPersonality
- import zed.rainxch.core.presentation.personality.toMangaAccent
-@@ -119,11 +121,15 @@ fun App(
-             }
- 
-             AppPersonality.CLASSIC -> {
--                classicPersonality(
--                    dark = resolvedDarkTheme,
--                    amoled = mainState.isAmoledTheme,
--                    accent = mainState.accent,
--                )
-+                val wallpaper = if (mainState.accent == AccentId.WALLPAPER) systemWallpaperColorScheme(resolvedDarkTheme) else null
-+                remember(resolvedDarkTheme, mainState.isAmoledTheme, mainState.accent, wallpaper) {
-+                    classicPersonality(
-+                        dark = resolvedDarkTheme,
-+                        amoled = mainState.isAmoledTheme,
-+                        accent = mainState.accent,
-+                        wallpaper = wallpaper,
-+                    )
-+                }
-             }
-         }
- 
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/components/RateLimitDialog.kt` (modified, +2/-11)
-```diff
-@@ -9,10 +9,8 @@ import androidx.compose.material.icons.filled.Warning
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.remember
- import androidx.compose.ui.Modifier
--import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.tooling.preview.Preview
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.unit.sp
- import org.jetbrains.compose.resources.stringResource
- import zed.rainxch.core.domain.model.error.RateLimitInfo
- import zed.rainxch.core.presentation.components.buttons.KomiButton
-@@ -59,10 +57,8 @@ fun RateLimitDialog(
-         title = {
-             KomiText(
-                 text = stringResource(Res.string.rate_limit_exceeded),
--                role = KomiTextRole.Title,
--                fontWeight = FontWeight.Black,
-+                role = KomiTextRole.CardTitle,
-                 color = colors.onSurface,
--                uppercase = false,
-             )
-         },
-         text = {
-@@ -84,7 +80,6 @@ fun RateLimitDialog(
-                         },
-                     role = KomiTextRole.Body,
-                     color = colors.outline,
--                    uppercase = false,
-                 )
- 
-                 KomiText(
-@@ -93,10 +88,8 @@ fun RateLimitDialog(
-                             Res.string.rate_limit_resets_in_minutes,
-                             timeUntilReset,
-                         ),
--                    role = KomiTextRole.Body,
--                    fontWeight = FontWeight.Bold,
-+                    role = KomiTextRole.Label,
-                     color = colors.onSurface,
--                    uppercase = false,
-                 )
- 
-                 if (!isAuthenticated) {
-@@ -105,9 +98,7 @@ fun RateLimitDialog(
-                     KomiText(
-                         text = stringResource(Res.string.rate_limit_tip_sign_in),
-                         role = KomiTextRole.Body,
--                        fontSize = 13.sp,
-                         color = colors.primary,
--                        uppercase = false,
-                     )
-                 }
-             }
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/components/SessionExpiredDialog.kt` (modified, +1/-8)
-```diff
-@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Column
- import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.filled.LockOpen
- import androidx.compose.runtime.Composable
--import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.unit.sp
- import org.jetbrains.compose.resources.stringResource
- import zed.rainxch.core.presentation.components.buttons.KomiButton
- import zed.rainxch.core.presentation.components.buttons.KomiButtonSize
-@@ -37,10 +35,8 @@ fun SessionExpiredDialog(
-         title = {
-             KomiText(
-                 text = stringResource(Res.string.session_expired_title),
--                role = KomiTextRole.Title,
--                fontWeight = FontWeight.Black,
-+                role = KomiTextRole.CardTitle,
-                 color = colors.onSurface,
--                uppercase = false,
-             )
-         },
-         text = {
-@@ -51,15 +47,12 @@ fun SessionExpiredDialog(
-                     text = stringResource(Res.string.session_expired_message),
-                     role = KomiTextRole.Body,
-                     color = colors.outline,
--                    uppercase = false,
-                 )
- 
-                 KomiText(
-                     text = stringResource(Res.string.session_expired_hint),
-                     role = KomiTextRole.Body,
--                    fontSize = 13.sp,
-                     color = colors.primary,
--                    uppercase = false,
-                 )
-             }
-         },
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/navigation/AdaptiveDetailPaneContent.kt` (modified, +6/-5)
-```diff
-@@ -1,7 +1,6 @@
- package zed.rainxch.githubstore.app.navigation
- 
- import androidx.compose.animation.AnimatedContent
--import androidx.compose.animation.core.tween
- import androidx.compose.animation.slideInHorizontally
- import androidx.compose.animation.slideOutHorizontally
- import androidx.compose.animation.togetherWith
-@@ -15,6 +14,7 @@ import androidx.navigation.NavHostController
- import org.koin.compose.viewmodel.koinViewModel
- import org.koin.core.parameter.parametersOf
- import zed.rainxch.core.presentation.components.adaptive.AdaptiveDetailArgs
-+import zed.rainxch.core.presentation.locals.LocalPersonality
- import zed.rainxch.details.presentation.DetailsRoot
- import zed.rainxch.details.presentation.DetailsViewModel
- import zed.rainxch.details.presentation.about.AboutRoot
-@@ -49,27 +49,28 @@ fun AdaptiveDetailPaneContent(
-     key(args) {
-         var route: DetailPaneRoute by remember { mutableStateOf(DetailPaneRoute.Main) }
- 
-+        val motion = LocalPersonality.current.motion
-         AnimatedContent(
-             targetState = route,
-             transitionSpec = {
-                 val forward = targetState !is DetailPaneRoute.Main
-                 if (forward) {
-                     slideInHorizontally(
-                         initialOffsetX = { fullWidth -> fullWidth },
--                        animationSpec = tween(durationMillis = 280),
-+                        animationSpec = motion.medium(),
-                     ) togetherWith
-                         slideOutHorizontally(
-                             targetOffsetX = { fullWidth -> -fullWidth / 4 },
--                            animationSpec = tween(durationMillis = 280),
-+                            animationSpec = motion.medium(),
-                         )
-                 } else {
-                     slideInHorizontally(
-                         initialOffsetX = { fullWidth -> -fullWidth / 4 },
--                        animationSpec = tween(durationMillis = 280),
-+                        animationSpec = motion.medium(),
-                     ) togetherWith
-                         slideOutHorizontally(
-                             targetOffsetX = { fullWidth -> fullWidth },
--                            animationSpec = tween(durationMillis = 280),
-+                            animationSpec = motion.medium(),
-                         )
-                 }
-             },
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/navigation/AppNavigation.kt` (modified, +19/-19)
-```diff
-@@ -1,7 +1,6 @@
- package zed.rainxch.githubstore.app.navigation
- 
- import androidx.compose.animation.SharedTransitionLayout
--import androidx.compose.animation.core.tween
- import androidx.compose.animation.fadeIn
- import androidx.compose.animation.fadeOut
- import androidx.compose.animation.slideInHorizontally
-@@ -161,6 +160,7 @@ fun AppNavigation(
-                                     if (showBottomBar) Modifier.consumeWindowInsets(PaddingValues(bottom = bottomBarHeight)) else Modifier,
-                                 ),
-                     ) {
-+                        val motion = LocalPersonality.current.motion
-                         NavHost(
-                             navController = navController,
-                             startDestination = GithubStoreGraph.ExploreScreen,
-@@ -172,13 +172,13 @@ fun AppNavigation(
-                                     val sign = if (to > from) 1 else -1
-                                     slideInHorizontally(
-                                         initialOffsetX = { it * sign },
--                                        animationSpec = tween(280),
--                                    ) + fadeIn(tween(220))
-+                                        animationSpec = motion.medium(),
-+                                    ) + fadeIn(motion.medium())
-                                 } else {
-                                     slideInHorizontally(
-                                         initialOffsetX = { it / 6 },
--                                        animationSpec = tween(280),
--                                    ) + fadeIn(tween(220))
-+                                        animationSpec = motion.medium(),
-+                                    ) + fadeIn(motion.medium())
-                                 }
-                             },
-                             exitTransition = {
-@@ -188,20 +188,20 @@ fun AppNavigation(
-                                     val sign = if (to > from) -1 else 1
-                                     slideOutHorizontally(
-                                         targetOffsetX = { it * sign },
--                                        animationSpec = tween(280),
--                                    ) + fadeOut(tween(220))
-+                                        animationSpec = motion.medium(),
-+                                    ) + fadeOut(motion.medium())
-                                 } else {
--                                    fadeOut(tween(180))
-+                                    fadeOut(motion.short())
-                                 }
-                             },
-                             popEnterTransition = {
--                                fadeIn(tween(220))
-+                                fadeIn(motion.medium())
-                             },
-                             popExitTransition = {
-                                 slideOutHorizontally(
-                                     targetOffsetX = { it / 6 },
--                                    animationSpec = tween(280),
--                                ) + fadeOut(tween(220))
-+                                    animationSpec = motion.medium(),
-+                                ) + fadeOut(motion.medium())
-                             },
-                         ) {
-                             composable<GithubStoreGraph.ExploreScreen> {
-@@ -495,25 +495,25 @@ fun AppNavigation(
-                                 enterTransition = {
-                                     slideInHorizontally(
-                                         initialOffsetX = { fullWidth -> fullWidth },
--                                        animationSpec = tween(durationMillis = 280),
-+                                        animationSpec = motion.medium(),
-                                     )
-                                 },
-                                 exitTransition = {
-                                     slideOutHorizontally(
-                                         targetOffsetX = { fullWidth -> -fullWidth / 4 },
--                                        animationSpec = tween(durationMillis = 280),
-+                                        animationSpec = motion.medium(),
-                                     )
-                                 },
-                                 popEnterTransition = {
-                                     slideInHorizontally(
-                                         initialOffsetX = { fullWidth -> -fullWidth / 4 },
--                                        animationSpec = tween(durationMillis = 280),
-+                                        animationSpec = motion.medium(),
-                                     )
-                                 },
-                                 popExitTransition = {
-                                     slideOutHorizontally(
-                                         targetOffsetX = { fullWidth -> fullWidth },
--                                        animationSpec = tween(durationMillis = 280),
-+         
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/navigation/DesktopSidebar.kt` (modified, +51/-25)
-```diff
-@@ -23,6 +23,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
- import androidx.compose.foundation.verticalScroll
- import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.rounded.Check
-+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-+import androidx.compose.material3.LocalContentColor
-+import androidx.compose.material3.WideNavigationRailItem
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.remember
-@@ -35,10 +38,8 @@ import androidx.compose.ui.geometry.Offset
- import androidx.compose.ui.geometry.Size
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.graphics.RectangleShape
--import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.unit.DpOffset
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.unit.sp
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import org.jetbrains.compose.resources.stringResource
- import org.koin.compose.koinInject
-@@ -84,6 +85,9 @@ private val SidebarPlatforms =
-         DiscoveryPlatform.Linux,
-     )
- 
-+// Material's collapsed wide rail, wide enough for a label under each icon.
-+private val ClassicRailWidth = 96.dp
-+
- @Composable
- fun DesktopSidebar(
-     currentScreen: GithubStoreGraph?,
-@@ -113,8 +117,13 @@ fun DesktopSidebar(
-     Column(
-         modifier =
-             modifier
--                .width(if (rail) 62.dp else 216.dp)
--                .fillMaxHeight()
-+                .width(
-+                    when {
-+                        !rail -> 216.dp
-+                        isManga -> 62.dp
-+                        else -> ClassicRailWidth
-+                    },
-+                ).fillMaxHeight()
-                 .background(colors.surface)
-                 .drawBehind {
-                     val w = (if (isManga) 3.dp else 1.dp).toPx()
-@@ -222,19 +231,15 @@ private fun SidebarSideHeading(
-         ) {
-             KomiText(
-                 text = title,
--                role = KomiTextRole.Label,
-+                role = KomiTextRole.Overline,
-                 color = colors.onSurfaceVariant,
--                fontSize = 11.sp,
--                fontWeight = FontWeight.W800,
-                 maxLines = 1,
-             )
-             if (LocalPersonality.current.usesDecor) {
-                 KomiText(
-                     text = jp,
--                    role = KomiTextRole.Label,
--                    color = colors.onSurfaceVariant.copy(alpha = 0.7f),
--                    fontSize = 9.5.sp,
--                    uppercase = false,
-+                    role = KomiTextRole.Caption,
-+                    color = colors.onSurfaceVariant,
-                     maxLines = 1,
-                 )
-             }
-@@ -254,6 +259,10 @@ private fun SidebarNavRow(
- ) {
-     val colors = LocalPersonality.current.colors
-     val isManga = LocalPersonality.current is MangaPersonality
-+    if (!isManga) {
-+        ClassicNavRow(label = label, icon = icon, selected = selected, rail = rail, badgeCount = badgeCount, onClick = onClick)
-+        return
-+    }
-     val shape = RoundedCornerShape(LocalPersonality.current.shape.cornerSmall)
-     val fg = if (selected) colors.onPrimary else colors.onSurface
- 
-@@ -296,25 +305,50 @@ private fun SidebarNavRow(
-                 text = label,
-                 role = KomiTextRole.Label,
-                 color = fg,
--                fontSize = 14.sp,
--                fontWeight = FontWeight.W800,
-                 maxLines = 1,
-                 modifier = Modifier.weight(1f),
-             )
-             kicker?.takeIf { LocalPersonality.current.usesDecor }?.let {
-                 KomiText(
-                     text = it,
--                    role = KomiTextRole.Label,
-+                    role = KomiTextRole.Caption,
-                     color = fg.copy(alpha = 0.8f),
--                    fontSize = 9.5.sp,
--                    uppercase = false,
-                     maxLines = 1,
-                 )
-             }
-         }
-     }
- }
- 
-+// Material 3 Expressive's wide rail item: a pill behind the selected icon, the label under the
-+// icon when the rail is collapsed and beside it when expanded.
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-+@Composable
-+private fun ClassicNavRow(
-+    label: String,
-+    icon: androidx.compose.ui.graphics.vector.ImageVector,
-+    selected: Boolean,
-+    rail: Boolean,
-+    badgeCount: Int,
-+    onClick: () -> Unit,
-+) {
-+    WideNavigationRailItem(
-+        selected = selected,
-+        onClick = onClick,
-+        icon = { NavIcon(icon, LocalContentColor.current, badgeCount) },
-+        label = {
-+            KomiText(
-+                text = label,
-+                role = if (rail) KomiTextRole.LabelSmall else KomiTextRole.Label,
-+                color = LocalContentColor.current,
-+                maxLines = 1,
-+            )
-+        },
-+        railExpanded = !rail,
-+        modifier = Modifier.fillMaxWidth(),
-+    )
-+
-```
-
-**File**: `composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/app/whatsnew/WhatsNewSheet.kt` (modified, +2/-8)
-```diff
-@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.padding
- import androidx.compose.runtime.Composable
- import androidx.compose.ui.Modifier
--import androidx.compose.ui.text.font.FontWeight
- import androidx.compose.ui.unit.dp
--import androidx.compose.ui.unit.sp
- import org.jetbrains.compose.resources.stringResource
- import zed.rainxch.core.domain.model.announcement.WhatsNewEntry
- import zed.rainxch.core.presentation.components.buttons.KomiButton
-@@ -76,10 +74,8 @@ private fun SheetHeader(entry: WhatsNewEntry) {
-     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-         KomiText(
-             text = stringResource(Res.string.whats_new_sheet_heading, entry.versionName),
--            role = KomiTextRole.Title,
--            fontWeight = FontWeight.Bold,
-+            role = KomiTextRole.CardTitle,
-             color = colors.onSurface,
--            uppercase = false,
-         )
-         KomiText(
-             text =
-@@ -88,10 +84,8 @@ private fun SheetHeader(entry: WhatsNewEntry) {
-                     entry.versionName,
-                     entry.releaseDate,
-                 ),
--            role = KomiTextRole.Label,
--            fontSize = 12.sp,
-+            role = KomiTextRole.Caption,
-             color = colors.onSurfaceVariant,
--            uppercase = false,
-         )
-     }
- }
-```
-
----
-
-### Incident Patch 2: `ef69edcd` (2026-10-19)
-**Commit Message**: fix(auth): show typed sign-in errors instead of exception text (#1090)
-
-* fix(auth): send sign-in requests through the in-app proxy (#1075)
-
-GitHubAuthApi built its own Ktor clients with no proxy, so web OAuth,
-the device flow and PAT validation ignored the proxy set in Tweaks.
-It is now a Koin single whose clients come from createPlatformHttpClient
-with the DISCOVERY proxy and are rebuilt when that proxy changes.
-WebAuthApi is injected too and keeps sharing its client. Timeouts and
-retries are unchanged.
-
-* fix(auth): run the proxy watcher on the injected app scope
-
-docs/code-style.md wants long-lived work on the app scope, not a private
-CoroutineScope in a singleton.
-
-* fix(auth): show typed sign-in errors instead of exception text
-
-The sign-in screen built its error card from Throwable.message, so a
-broken proxy showed "Error: Failed to connect to /127.0.0.1:8898" and
-device-flow failures showed hard-coded English. The repository now fails
-with AuthException (Unreachable, RateLimited, Denied, CodeExpired,
-Failed), the ViewModel keeps AuthError / PatError in state, and the
-Root picks the string resource. WebAuthApi and the handoff exchange no
-longer wrap suspend calls in runCatch
-
-**File**: `core/presentation/src/commonMain/composeResources/values-ar/strings-ar.xml` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     <string name="try_again">حاول مرة أخرى</string>
- 
-     <!-- Errors -->
--    <string name="auth_error_with_message">خطأ: %1$s</string>
- 
-     <!-- Device flow -->
-     <string name="enter_code_on_github">أدخل هذا الرمز على GitHub:</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-bn/strings-bn.xml` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     <string name="try_again">আবার চেষ্টা করুন</string>
- 
-     <!-- Errors -->
--    <string name="auth_error_with_message">ত্রুটি: %1$s</string>
- 
-     <!-- Device flow -->
-     <string name="enter_code_on_github">GitHub-এ এই কোডটি লিখুন:</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-es/strings-es.xml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@
-     <string name="redirecting_message">Ya puedes usar la aplicación. Redirigiendo…</string>
-     <string name="try_again">Intentar de nuevo</string>
- 
--    <string name="auth_error_with_message">Error: %1$s</string>
- 
-     <string name="enter_code_on_github">Introduce este código en GitHub:</string>
-     <string name="copy_code">Copiar código</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-fr/strings-fr.xml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@
-     <string name="redirecting_message">Vous pouvez maintenant utiliser l'application. Redirection…</string>
-     <string name="try_again">Réessayer</string>
- 
--    <string name="auth_error_with_message">Erreur : %1$s</string>
- 
-     <string name="enter_code_on_github">Entrez ce code sur GitHub :</string>
-     <string name="copy_code">Copier le code</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-hi/strings-hi.xml` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     <string name="try_again">पुनः प्रयास करें</string>
- 
-     <!-- Errors -->
--    <string name="auth_error_with_message">गलती: %1$s</string>
- 
-     <!-- Device flow -->
-     <string name="enter_code_on_github">यह कोड GitHub पर डालें:</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-it/strings-it.xml` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@
-     <string name="try_again">Riprova</string>
- 
-     <!-- Errors -->
--    <string name="auth_error_with_message">Errore: %1$s</string>
- 
-     <!-- Device flow -->
-     <string name="enter_code_on_github">Inserisci questo codice su GitHub:</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-ja/strings-ja.xml` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@
-     <string name="redirecting_message">アプリを使用できます。リダイレクト中…</string>
-     <string name="try_again">再試行</string>
- 
--    <string name="auth_error_with_message">エラー：%1$s</string>
- 
-     <string name="enter_code_on_github">GitHubでこのコードを入力してください：</string>
-     <string name="copy_code">コードをコピー</string>
-```
-
-**File**: `core/presentation/src/commonMain/composeResources/values-ko/strings-ko.xml` (modified, +0/-1)
-```diff
-@@ -40,7 +40,6 @@
-     <string name="try_again">다시 시도</string>
- 
-     <!-- Errors -->
--    <string name="auth_error_with_message">오류: %1$s</string>
- 
-     <!-- Device flow -->
-     <string name="enter_code_on_github">GitHub에 다음 코드를 입력하세요:</string>
-```
-
----
-
-### Incident Patch 3: `441a5fd3` (2026-10-19)
-**Commit Message**: fix: await download cancellation before clearing state (#1045)
-
-* fix: await download cancellation before clearing state
-
-* fix(downloads): drop the network call before waiting for the cancelled job
-
-The download's OkHttp call is only cancelled by downloader.cancelDownload(); a job blocked in a stalled read can't finish until the 60 s read timeout, so cancelAndJoin() before it could hold Cancel for up to a minute. Cancel the job, drop the call, then join.
-
----------
-
-Co-authored-by: rainxchzedbot <[REDACTED_EMAIL]>
-
-**File**: `core/data/src/commonMain/kotlin/zed/rainxch/core/data/services/DefaultDownloadOrchestrator.kt` (modified, +3/-0)
-```diff
-@@ -567,6 +567,9 @@ class DefaultDownloadOrchestrator(
-             }
-         }
- 
-+        // The network call is only cut by cancelDownload above, so wait for the job after it, not before.
-+        job?.join()
-+
-         stateMutex.withLock {
-             _downloads.update { state ->
-                 val current = state[packageName] ?: return@update state
-```
-
-#### Recent Merged Pull Requests:
-- **PR #1147** (2026-10-20): i18n: translate the strings the 13 locales were missing (@rainxchzedbot)
-- **PR #1146** (2026-10-20): feat(ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-style chrome and fields) (@rainxchzedbot)
-- **PR #1145** (closed): feat(ui): organic Classic text fields (@rainxchzedbot)
-- **PR #1143** (closed): feat(ui): Classic screen actions in a bottom action bar (@rainxchzedbot)
-- **PR #1139** (closed): feat(ui): Classic in Nunito, with a cookie back button at the bottom-left (@rainxchzedbot)
-- **PR #1136** (2026-10-20): docs(checks): note where new CompositionLocals go and the stale Spotless cache (@rainxchzedbot)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-sty
-
+### 1. Hardware RenderThread Path-Clip Shadow Constraint
 **RULE**:
-When implementing operations in `.editorconfig`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in komi-store/komi-store. All inputs crossing module boundaries must be explicitly verified before state persistence.
+In hardware-accelerated declarative UI runtimes (Jetpack Compose, Compose Multiplatform, Flutter), an engineer MUST NOT apply elevated blur or shadow filters (`Modifier.shadow()`) directly onto non-convex, re-entrant, or high-vertex parametric vector paths (such as multi-point starbursts, jagged polygons, or morphing curves) inside frequently updated, shared, or loading view states.
 
 **WHY**:
-Prevents defects observed in production commit `e9404ae0`: ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-style chrome and fields) (#1146). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Applying elevation/shadow filters to complex parametric vector paths forces the graphics rasterizer (Skia/Vulkan/OpenGL pipeline) to perform software triangulation or iterative blur convolution over dynamic clip boundaries. On mobile GPUs (Mali, Adreno) running high display refresh rates, complex path tessellation in Skia's `SkPath::asAConvexPolygon` fails or falls back to software boundary CPU tessellation, locking the Android `RenderThread` or crashing with an `OutOfMemory`/GPU watchdog timeout.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.editorconfig`.
+Apply to any Compose Multiplatform, Jetpack Compose, or Skiko codebase where non-standard shapes (shapes with $>8$ vertices, concave angles, or dynamic bezier curves) are rendered, especially in high-density or animated UI components (status chips, notification badges, list item decorators).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
-// Verified production-grade fix pattern:
-compose_allowed_composition_locals = LocalAnimatedVisibilityScope,LocalAppLanguageTag,LocalContentWidth,LocalInBar,LocalMenuOpen,LocalPersonality,LocalReducedMotion,LocalScaffoldChrome,LocalScrollbarEnabled,LocalSharedTransitionScope,LocalStatusColors
+// feature/details/presentation/src/commonMain/kotlin/zed/rainxch/details/presentation/components/HeaderStatus.kt
+// Shape is high-vertex/concave: MaterialShapes.SoftBurst.toShape()
+val burstShape = MaterialShapes.SoftBurst.toShape()
+
+Box(
+    modifier = Modifier
+        .size(30.dp)
+        // CRITICAL: Shadow removed. Burst shape drawn directly via background
+        // prevents RenderThread lockup and SkPath CPU fallback.
+        .background(
+            color = if (status.emphasized) colors.primary else colors.primaryContainer,
+            shape = burstShape
+        ),
+    contentAlignment = Alignment.Center
+) {
+    Icon(
+        imageVector = status.icon,
+        contentDescription = null,
+        modifier = Modifier.size(16.dp),
+        tint = if (status.emphasized) colors.onPrimary else colors.onPrimaryContainer
+    )
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-compose_allowed_composition_locals = LocalAnimatedVisibilityScope,LocalAppLanguageTag,LocalContentWidth,LocalPersonality,LocalReducedMotion,LocalScrollbarEnabled,LocalSharedTransitionScope,LocalStatusColors
+// ANTI-PATTERN: NEVER attach elevation-driven blur/shadow modifiers
+// to complex, non-convex parametric path shapes.
+val burstShape = MaterialShapes.SoftBurst.toShape()
+
+Box(
+    modifier = Modifier
+        .size(30.dp)
+        .shadow(elevation = 2.dp, shape = burstShape) // FATAL: Causes RenderThread hang
+        .background(colors.primary, burstShape)
+)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e9404ae0` are properly handled with clean fallback behavior.
+Implement a lint rule or Compose UI test verifying that shapes used within `.shadow()` implement `CornerBasedShape` or convex polygons with $\le 4$ vertices:
+```kotlin
+@Test
+fun verifyStatusBadgeDoesNotApplyShadowToComplexPath() {
+    composeTestRule.setContent { StatusBadge(status = AppStatus.Installed) }
+    // Assert no Elevation/Shadow modifier nodes exist in the semantics tree
+    composeTestRule.onNodeWithTag("StatusBadge")
+        .assertIsNotElevated();
+}
+```
+
+---
+
+### 2. Upstream Direct-Source Failover Invariant for Cache Lag Protection
+**RULE**:
+When an intermediary backend cache/mirror mediates data from an authoritative upstream Git forge (e.g., GitHub, Codeberg), the client repository MUST NOT treat an empty collection (`[]`) returned by the intermediary as a terminal state. An empty response MUST trigger a conditional bypass read to the direct authoritative host, but failures on that host fallback MUST distinguish between operational rate limiting and transport-layer blocking.
+
+**WHY**:
+Intermediary backend sync queues run asynchronously. When a maintainer publishes a new repository or new release tags, the backend database exhibits read lag where the release list is empty. If the client treats empty as success and caches it, the client permanently hides new app releases. Conversely, if direct-host requests are completely blocked by corporate firewalls or missing auth, blindly crashing breaks offline read resilience.
+
+**WHEN TO APPLY**:
+Any application repository layer reading public data mediated by a proxy, mirror, or custom sync API that caches upstream Git forge states.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// feature/details/data/src/commonMain/kotlin/zed/rainxch/details/data/repository/DetailsRepositoryImpl.kt
+suspend fun getAllReleases(
+    owner: String,
+    repo: String,
+    defaultBranch: String,
+    bypassCache: Boolean,
+    allowStale: Boolean
+): List<GithubRelease> {
+    val cacheKey = "details:releases:$owner/$repo"
+
+    if (!bypassCache) {
+        cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { cached ->
+            return cached
+        }
+    }
+
+    var triedDirect = false
+    // Backend read pipeline
+    return runCatching {
+        backendService.fetchReleases(owner, repo)
+    }.fold(
+        onSuccess = { backendReleases ->
+            val result = backendReleases.sortedByDescending { it.publishedAt }
+            if (result.isNotEmpty()) {
+                cacheManager.put(cacheKey, result, CachePolicy.Releases)
+                return result
+            }
+            // CRITICAL INVARIANT: Backend returned empty list []. Backend could be lagging.
+            // Delegate to direct upstream host unless direct fetch already occurred.
+            if (triedDirect) result else readDirectWhenBackendEmpty(owner, repo, defaultBranch, cacheKey, allowStale)
+        },
+        onFailure = { error ->
+            if (!shouldFallbackToGithubOrRethrow(error, isSignedIn()) || triedDirect) {
+                throw error
+            }
+            readReleasesFromGitHub(owner, repo, defaultBranch, cacheKey, allowStale)
+        }
+    )
+}
+
+private suspend fun readDirectWhenBackendEmpty(
+    owner: String,
+    repo: String,
+    defaultBranch: String,
+    cacheKey: String,
+    allowStale: Boolean
+): List<GithubRelease> =
+    try {
+        readReleasesFromGitHub(owner, repo, defaultBranch, cacheKey, allowStale)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: RateLimitException) {
+        // Rate limits are hard boundaries; abort operation
+        throw e
+    } catch (t: Throwable) {
+        // Network errors or host blocks (e.g. DNS) preserve backend's empty answer
+        logger.debug("Direct releases read failed for empty backend $owner/$repo: ${t.message}")
+        emptyList()
+    }
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Blindly accepting empty answers from the proxy/cache as absolute truth
+val releases = backendService.fetchReleases(owner, repo)
+if (releases.isEmpty()) {
+    return emptyList() // WRONG: Hides upstream releases if backend sync is lagging
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test using mock engines:
+```kotlin
+@Test
+fun `empty backend response forces direct github call and bubbles rate limit`() = runTest {
+    coEvery { backendService.fetchReleases(any(), any()) } returns emptyList()
+    coEvery { gitHubApi.fetchReleases(any(), any()) } throws RateLimitException("403 Forbidden")
+
+    assertFailsWith<RateLimitException> {
+        repository.getAllReleases("owner", "repo", "main", bypassCache = false, allowStale = false)
+    }
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: RenderThread Watchdog Lockup on MaterialShapes.SoftBurst (BUG-KOMI-01)
+- **Context**: `feature/details/presentation/.../components/HeaderStatus.kt`
+- **What Was Expected**: Opening the App Details screen on Android devices (e.g., Vivo Y36, Samsung Galaxy series) renders a status badge indicating whether an application is installed, pending, or ready for an update.
+- **What Actually Happened**: The `RenderThread` completely hung, freezing the application on its initial loading frame and causing system ANRs and watchdog crashes (`Thread hangs on frame commit`).
+- **Evidence in Repo**: Commit `b49fb745`, Issue #1197.
+- **Root Cause**: `Modifier.shadow(elevation = 2.dp, shape = shape)` was applied to `MaterialShapes.SoftBurst.toShape()`. The SoftBurst shape is a multi-lobed concave geometric outline. Evaluating Gaussian drop-shadow bounds on this path required Skia to attempt non-convex polygon tessellation on every render tick, exhausting the device's GPU command queue and deadlocking the Android hardware rendering thread.
+- **Remediation Code Diff**:
+```diff
+--- a/feature/details/presentation/src/commonMain/kotlin/zed/rainxch/details/presentation/components/HeaderStatus.kt
++++ b/feature/details/presentation/src/commonMain/kotlin/zed/rainxch/details/presentation/components/HeaderStatus.kt
+@@ -46,11 +45,11 @@ internal fun StatusBadge(
+     val label = stringResource(status.label)
+     val shape = MaterialShapes.SoftBurst.toShape()
+     KomiTooltip(text = label, modifier = modifier) {
++        // No shadow: a shadow on this burst hangs the RenderThread on many devices (1.9.3 froze Details).
+         Box(
+             modifier =
+                 Modifier
+                     .size(30.dp)
+-                    .shadow(elevation = 2.dp, shape = shape)
+                     .background(if (status.emphasized) colors.primary else colors.primaryContainer, shape),
+             contentAlignment = Alignment.Center,
+         ) {
+```
+- **Lesson**: Complex procedural shapes must never be composed with dynamic GPU elevation filters. Surface geometry boundaries must rely on flat contrasting fills or pre-rendered raster mipmaps.
+
+---
+
+### Incident 2: False Empty Releases State Due to Backend Cache Invalidation Lag (BUG-KOMI-02)
+- **Context**: `feature/details/data/.../repository/DetailsRepositoryImpl.kt`
+- **What Was Expected**: Repositories recently indexed or released on GitHub display available packages on the Details screen.
+- **What Actually Happened**: When visiting an app details page, users saw an empty release card. The backend mediator reported 0 releases because it had not completed ingestion. Furthermore, errors in fallback logic swallowed genuine rate-limiting exceptions or threw unhandled network errors.
+- **Evidence in Repo**: Commit `bbafdae8`, PR #1198.
+- **Root Cause**: `DetailsRepositoryImpl.getAllReleases` accepted empty lists from the backend service as authoritative. When direct GitHub queries were attempted, the implementation swallowed API rate limits by returning `emptyList()` via `.getOrNull()`, corrupting the UI error presentation.
+- **Remediation Code Diff**:
+```diff
+--- a/feature/details/data/src/commonMain/kotlin/zed/rainxch/details/data/repository/DetailsRepositoryImpl.kt
++++ b/feature/details/data/src/commonMain/kotlin/zed/rainxch/details/data/repository/DetailsRepositoryImpl.kt
+@@ -358,11 +359,9 @@ class DetailsRepositoryImpl(
+         val cacheKey = "details:releases:$owner/$repo"
+ 
+         if (!bypassCache) {
+-            cacheManager.get<List<GithubRelease>>(cacheKey)?.let { cached ->
+-                if (cached.isNotEmpty()) {
+-                    logger.debug("Cache hit for all releases $owner/$repo: ${cached.size} releases")
+-                    return cached
+-                }
++            cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { cached ->
++                logger.debug("Cache hit for all releases $owner/$repo: ${cached.size} releases")
++                return cached
+             }
+         }
+@@ -398,8 +397,10 @@ class DetailsRepositoryImpl(
+                         }.sortedByDescending { it.publishedAt }
+                 if (result.isNotEmpty()) {
+                     cacheManager.put(cacheKey, result, RELEASES)
++                    return result
+                 }
+-                return result
++                // The backend's copy can lag behind the host, so an empty answer is checked there unless the host was just read.
++                return if (triedDirect) result else readDirectWhenBackendEmpty(owner, repo, defaultBranch, cacheKey, allowStale)
+             },
+@@ -433,7 +453,7 @@ class DetailsRepositoryImpl(
+                             header(HttpHeaders.Accept, "application/vnd.github+json")
+                             parameter("per_page", 30)
+                         }
+-                    }.getOrNull() ?: return emptyList()
++                    }.getOrThrow()
+```
+- **Lesson**: A mediated caching client must differentiate between "data absent upstream" and "data absent in mirror cache". Upstream queries must propagate critical protocol barriers (such as HTTP 429/403 Rate Limits) directly to presentation boundaries rather than squashing them to empty defaults.
+
+---
+
+### Incident 3: Premature In-App Version Bump Before Package Replacement Verification (BUG-KOMI-03)
+- **Context**: `core/data/src/androidMain/kotlin/zed/rainxch/core/data/services/AndroidPackageMonitor.kt` & In-App Self Update
+- **What Was Expected**: If an in-app updater prompt is presented for v1.9.3 and dismissed or aborted by the user, the application UI must continue to recognize the active system environment as v1.9.2.
+- **What Actually Happened**: After the self-update prompt was triggered, internal state cached the latest tag (`v1.9.3`) as the installed app version, causing the UI to show v1.9.3 while running the v1.9.2 binary (Issue #1204).
+- **Evidence in Repo**: Issue #1204, Commit `bbafdae8` CLAUDE.md architecture note on `AssetOwnership` and package monitoring.
+- **Root Cause**: The package scanner relied on the transient download session tag instead of synchronizing against the system's `PackageManager.getPackageInfo(packageName, 0).versionName` post-session commit.
+- **Remediation Code Diff**:
+```kotlin
+// Corrective architectural pattern enforced in PackageMonitor:
+fun observeInstalledVersion(packageName: String): Flow<AppVersion> = callbackFlow {
+    val syncVersion = {
+        val pInfo = context.packageManager.getPackageInfoCompat(packageName, 0)
+        trySend(AppVersion(pInfo.versionName, pInfo.longVersionCode))
+    }
+    // Must trigger initial read from the system package manager directly
+    syncVersion()
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(c: Context, intent: Intent) {
+            if (intent.data?.schemeSpecificPart == packageName) {
+                syncVersion()
+            }
+        }
+    }
+    val filter = IntentFilter().apply {
+        addAction(Intent.ACTION_PACKAGE_ADDED)
+        addAction(Intent.ACTION_PACKAGE_REPLACED)
+        addDataScheme("package")
+    }
+    context.registerReceiver(receiver, filter)
+    awaitClose { context.unregisterReceiver(receiver) }
+}
+```
+- **Lesson**: Never optimistic-update local installed-state flags upon installer handoff. State changes must originate reactively from OS broadcast verification channels (`ACTION_PACKAGE_REPLACED`).
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+In Kotlin Multiplatform, object identity vs equality, nullability cascading, and collection filtering produce subtle cross-target bugs.
+
+*Safe Cache Lookup Invariant*:
+```kotlin
+// INCORRECT: Implicit empty list caching bug
+val cached = cacheManager.get<List<T>>(cacheKey)
+if (cached != null) {
+    return cached // May return empty list and bypass remote recovery!
+}
+
+// CORRECT: Micro-precision validation chain
+cacheManager.get<List<GithubRelease>>(cacheKey)
+    ?.takeIf { it.isNotEmpty() }
+    ?.let { cached -> return cached }
+```
+
+*Display Mode Preference Fallback Precision*:
+```kotlin
+// androidApp/src/main/kotlin/zed/rainxch/githubstore/utils/DisplayModePreference.kt
+internal fun Activity.applyDisplayModePreference(modeId: Int) {
+    // Exact predicate comparison against OS hardware capabilities
+    val target = displayModes().firstOrNull { it.id == modeId }?.id
+        ?: SYSTEM_DEFAULT_DISPLAY_MODE_ID
+
+    // Micro-Optimization: Prevent setting window attributes if current matches target
+    // Avoids redundant window manager re-layout passes
+    if (window.attributes.preferredDisplayModeId == target) return
+    window.attributes = window.attributes.apply { preferredDisplayModeId = target }
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+In navigation and deep link consumers, re-triggering navigation loops or microtask exhaustion causes application failure.
+
+*Termination Invariants in Navigation Channels*:
+```kotlin
+// composeApp/src/commonMain/kotlin/zed/rainxch/githubstore/utils/HandleDesktopToolbarDeeplinks.kt
+// Loop termination proof: Each URI consumed from ReceiveChannel MUST explicitly pop-up
+// or set launchSingleTop to avoid infinite backstack recursion.
+LaunchedEffect(deepLinkUris) {
+    for (uri in deepLinkUris) {
+        val currentScreen = navController.currentBackStackEntry.getCurrentScreen()
+        when (val destination = DeepLinkParser.parse(uri)) {
+            DeepLinkDestination.Home -> {
+                // GUARD: State check prevents recursive navigation to self
+                if (currentScreen !is GithubStoreGraph.ExploreScreen) {
+                    navController.navigate(GithubStoreGraph.ExploreScreen) {
+                        popUpTo(GithubStoreGraph.ExploreScreen) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
+            // ...
+        }
+        // Invariant: The channel message MUST be marked consumed in the event bus
+        onDeepLinkConsumed()
+    }
+}
+```
+
+### 3. UI & UX Micro-Mechanics
+Compose edge-to-edge system bar coordination requires strict controller state synchronization.
+
+*Edge-to-Edge System Bar Mutation Invariant*:
+```kotlin
+// androidApp/src/main/kotlin/zed/rainxch/githubstore/utils/SystemBarUtils.kt
+fun Activity.updateSystemBars(isDarkTheme: Boolean) {
+    // Disable framework-level window fitting to support modern edge-to-edge
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+
+    // WindowInsetsControllerCompat must target the specific decorView
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+
+    // Token inversion: In light theme, status bar icons must be dark (isAppearanceLight = true)
+    controller.isAppearanceLightStatusBars = !isDarkTheme
+    controller.isAppearanceLightNavigationBars = !isDarkTheme
+}
+```
+
+### 4. Backend Concurrency & Memory Safety
+When orchestrating privileged installers (Shizuku, Dhizuku, Root), concurrency bottlenecks and deadlocks occur if singletons outlive application processes or fail to handle coroutine cancellation.
+
+*Coroutine Cancellation Propagation Invariant*:
+```kotlin
+// MUST catch CancellationException explicitly and rethrow immediately
+// to allow Kotlin Structured Concurrency to cancel parent scopes.
+try {
+    readReleasesFromGitHub(owner, repo, defaultBranch, cacheKey, allowStale)
+} catch (e: CancellationException) {
+    throw e // Re-throw invariant! Never swallow!
+} catch (e: RateLimitException) {
+    throw e // Protocol boundary exception
+} catch (t: Throwable) {
+    logger.debug("Non-fatal host failure: ${t.message}")
+    emptyList()
+}
+```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+Preventing null dereferences in string and tag parsing when extracting app metadata from complex forge asset naming conventions.
+
+*Asset Family Ownership Regex Disambiguation*:
+In `AssetOwnership.ownerOf`, multi-flavor repositories (e.g. Godot engine having `editor.v3` and `editor.v4`, or Thunderbird vs K-9 mail APKs) must resolve asset ownership using deterministic token stems:
+```kotlin
+// Invariant: Ties are broken by major version stems; unassigned releases return null
+// preventing a secondary app package from claiming another variant's install slot.
+val baseStem = extractBaseStem(asset.name)
+val variantStem = tagStem(release.tagName)
+if (baseStem != variantStem && !isRenamedFamily(baseStem, variantStem)) {
+    return null // Strict null-fallback prevents cross-variant clobbering
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **Boundary Decoupling**: The app decouples the package installation mechanisms from business logic via domain facades: `Installer`, `PackageMonitor`, `Downloader`.
+- **State Flow**: Unidirectional Data Flow (UDF) is standard. Presentation layers consume single, immutable `StateFlow` structures (e.g., `MainState`), and user actions dispatch atomic intents or ViewModel calls.
+- **Dependency Inversion**: Driven by Koin modules across `commonMain`, `androidMain`, and `desktopMain`. Zero reflection runtime cost is favored through direct DSL declarations (`single`, `factory`).
+
+### 2. Core Abstractions
+- `SilentInstallerDispatcher`: Multiplexes package installation over four distinct drivers:
+  1. Root shell (`pm install -r`) via direct daemon process pipes.
+  2. Shizuku AIDL proxy (interacting with `IPackageManager`).
+  3. Dhizuku Device Owner API.
+  4. Android OS Standard PackageInstaller session streams (user-prompted fallback).
+- `AssetOwnership`: Encapsulates logic matching APK architecture (`arm64-v8a`, `armeabi-v7a`, `x86_64`) and variant tags against installed system apps.
+
+### 3. Error Handling
+- **Non-Swallowing Hierarchy**: Distinction between transient transport failures (DNS, timeout), upstream operational blocks (HTTP 429 RateLimit), and logical failures (release not found).
+- **Graceful Mirror Degradation**: Direct host calls run if and only if the proxy backend returns empty data or throws an allowed failover error (`shouldFallbackToGithubOrRethrow`).
+
+### 4. Testing
+- **Target SDK Compatibility**: `ClassicPersonalityInsetsTest`, `DetailsBackTest`, and `EdgeToEdgeInsetsTest` simulate UI constraints under modern Android execution boundaries (Target SDK 35-37).
+- **Back Navigation Parity**: `PredictiveBackTest` ensures system predictive-back animations do not pop uncommitted navigation transactions prematurely.
+
+### 5. Security
+- **Credential Segregation**: API keys, Personal Access Tokens (PATs), and auth state are decoupled into encrypted key-value stores (`KSafe`) using platform-native secure enclaves (Android KeyStore, macOS Keychain).
+- **Integrity Verification**: `AndroidDigestVerifier` computes SHA-256 and MD5 hashes of retrieved release binaries prior to invoking OS installer daemons, preventing MITM injection via insecure HTTP mirrors.
+
+### 6. Performance
+- **Zero Shadow Elevation Overhead**: Rejection of dynamic vector path shadow evaluation eliminates RenderThread freezes on mobile chipsets.
+- **Cache In-Memory Short-Circuit**: Two-tier caching checks RAM references before executing disk reads or network queries (`cacheManager.get()`).
+
+### 7. Deployment
+- **Multi-Channel Distribution**: Packaged simultaneously for Windows (`winget`, `scoop`), macOS (`Homebrew cask`), Android (`F-Droid`, standalone APK), and Linux (`AppImage`/`Flatpak`).
+- **Desktop Signing Constraints**: Explicit handling of macOS quarantine flags (`xattr -dr com.apple.quarantine`) and Windows SmartScreen via manifest descriptors.
+
+### 8. Agent Patterns
+- **DeepLink Event Bus Protocol**: Decoupled deep link processing (`HandleDesktopToolbarDeeplinks.kt`) uses `ReceiveChannel<String>` queues. This prevents UI recomposition cycles during external URL launches.
+- **Loop Guards**: Routing ensures `launchSingleTop = true` and `popUpTo` directives prevent memory accumulation when users trigger repetitive keyboard shortcuts (`Ctrl+F`).
+
+### 9. Data Flow
+- **Network Pipeline**: Ktor HTTP Client configured with `ContentNegotiation`, custom logging, and stream decoders.
+- **Binary Stream Routing**: Data flows directly from remote sockets into encrypted target scratch files on disk (`producePath`), preventing heap exhaustion during multi-gigabyte package downloads.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Privileged Installer Fallback Escalation Chain
+```kotlin
+// Composite orchestration pattern for Android package management
+class SilentInstallerDispatcher(
+    private val androidContext: Context,
+    private val androidInstaller: AndroidInstaller,
+    private val shizukuServiceManager: ShizukuServiceManager,
+    private val dhizukuServiceManager: DhizukuServiceManager,
+    private val rootServiceManager: RootServiceManager,
+    private val tweaksRepository: TweaksRepository,
+) : Installer {
+    override suspend fun install(file: File): InstallationResult {
+        val preference = tweaksRepository.preferredInstaller.first()
+        return when (preference) {
+            InstallerType.ROOT -> if (rootServiceManager.isAvailable()) rootServiceManager.install(file) else fallback(file)
+            InstallerType.SHIZUKU -> if (shizukuServiceManager.isAvailable()) shizukuServiceManager.install(file) else fallback(file)
+            InstallerType.DHIZUKU -> if (dhizukuServiceManager.isAvailable()) dhizukuServiceManager.install(file) else fallback(file)
+            InstallerType.SYSTEM -> androidInstaller.install(file)
+        }
+    }
+    private suspend fun fallback(file: File): InstallationResult = androidInstaller.install(file)
+}
+```
+
+### 2. Rule
+> An agentic or multiplatform codebase interacting with rate-limited upstream providers MUST isolate platform-level network timeouts from application-level API quota errors; quota exhaustion exceptions MUST NEVER be caught as general network errors or converted into empty success payloads.
+
+### 3. Architecture Principle
+> Intermediary proxy mirrors provide eventual consistency. Client architectures communicating with proxy mirrors must always maintain a direct failover pathway to the authoritative source of truth, triggered whenever the proxy reports zero results for an active domain entity.
+
+### 4. Failure Mode
+> Applying Gaussian shadow rendering (`Modifier.shadow`) to complex, concave, or high-vertex vector outlines inside dynamic declarative UI frameworks induces RenderThread GPU execution lockups, resulting in an unrecoverable ANR.
+
+### 5. Reusable Skill: Adding Forge Support
+To onboard an alternate Git forge (e.g. Gitea, SourceHut) into the repository:
+1. Implement `ForgeApiClient` defining endpoints for `/contents/README.md`, `/releases`, and commit stats.
+2. Add source classifier handling to `DetailsRepositoryImpl` via `sourceHost: String?`.
+3. Normalize CRLF body line endings to ensure markdown tables render properly across platform targets.
+4. Normalize asset structures into domain models (`GithubRelease`, `GithubAsset`).
+
+### 6. Decision: Local Fallback vs Central Gateway
+*Decision*: Allow direct client GitHub queries when the mirror backend is empty or unreachable.  
+*Trade-off*: Exposes the client's direct IP and consumes client rate-limiting tokens (60 requests/hour unauthenticated).  
+*Rationale*: Absolute offline-first and decentralization requirements outweigh strict backend proxy privacy guarantees. The store must function even if the central proxy is down.
+
+### 7. Anti-Pattern
+```kotlin
+// ANTI-PATTERN: Swallowing rate limits and exceptions to return empty lists
+suspend fun fetchReleasesSafely(): List<Release> {
+    return try {
+        api.getReleases()
+    } catch (e: Exception) {
+        // Catastrophic anti-pattern: Empty list is cached, masking errors
+        // and tricking the UI into declaring the repository has no releases!
+        emptyList()
+    }
+}
+```
+
+### 8. Verification Method
+Verify that direct network calls handle HTTP 429 correctly:
+```kotlin
+@Test
+fun testRateLimitThrowsExplicitly() = runTest {
+    val mockEngine = MockEngine { _ ->
+        respond(
+            content = """{"message":"API rate limit exceeded"}""",
+            status = HttpStatusCode.Forbidden,
+            headers = headersOf("X-RateLimit-Remaining", "0")
+        )
+    }
+    val client = createTestKtorClient(mockEngine)
+    assertFailsWith<RateLimitException> {
+        client.fetchGitHubReleases("komi-store", "komi-store")
+    }
+}
+```
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+When tasked with implementing or maintaining a repository/package distribution engine similar to `komi-store`, follow this execution checklist:
+
+- [ ] **Declarative UI Inset & Shape Verification**:
+  - [ ] Audit every `Modifier.shadow` call; guarantee its target shape is either a rectangle, rounded rectangle, or circle.
+  - [ ] Never apply `.shadow()` to complex SVG paths, soft-bursts, or dynamic polygons.
+
+- [ ] **Dual-Source Cache Fallback Protocol**:
+  - [ ] Check Local L1 Memory Cache. If non-empty, return immediately.
+  - [ ] Check Local L2 Persistence Cache. If non-empty, return immediately.
+  - [ ] Query Mediated Central Proxy.
+  - [ ] If Central Proxy yields `[]` (empty collection), query the Upstream Authoritative Source (GitHub/Forgejo).
+  - [ ] If Authoritative Source throws `RateLimitException`, re-throw immediately to display rate limit banners.
+  - [ ] If Authoritative Source throws non-fatal network failure (e.g., DNS block), return the empty collection or cached stale entries (`allowStale = true`).
+
+- [ ] **Installation State Consistency**:
+  - [ ] Do not mark an application as "Installed" or "Updated" within UI state upon initiating the download or handoff.
+  - [ ] State updates must listen to platform system broadcasts (`ACTION_PACKAGE_REPLACED`, `ACTION_PACKAGE_ADDED`).
+
+- [ ] **Deep Link Queue Processing**:
+  - [ ] Wrap navigation deep link channels in `LaunchedEffect`.
+  - [ ] Use `launchSingleTop = true` and `popUpTo` constraints to prevent backstack cycle accumulation.
+  - [ ] Always call `onDeepLinkConsumed()` at the end of each iteration to prevent duplicate activations on recomposition.

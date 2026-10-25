@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T08:24:37.752Z",
-  "total_verified_learnings": 1084,
+  "last_updated": "2026-10-25T08:44:18.754Z",
+  "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -24659,7 +24659,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "75f26e3b1a9ef3f240ee8c3c5d4736e1740426bd2eccc249c7d079657bf9943b",
+      "content_hash": "f07af78d3b11f21fc062ab95f283d1bf74829336c76a3ef425df48c217aa807a",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -24678,6 +24678,16 @@
         {
           "number": 1991,
           "title": "Alignment-Preserving Stream Offset Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4191,
+          "title": "Cryptographic Isolation Invariant for Binary Tensor Transplantation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4192,
+          "title": "Quantization Type Assignment and Scale Matrix Preservation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -24699,7 +24709,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-20T15:30:45.712Z",
+      "verified_at": "2026-10-25T08:39:34.081Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30308,8 +30318,8 @@
       "slug": "komi-store-komi-store",
       "platform": "github",
       "source_url": "https://github.com/komi-store/komi-store",
-      "source_version": "9b8f899f",
-      "content_hash": "7ed7192f57f03c16dca4f65f714f900f6a5da04accdab1fcc07517064d7865b4",
+      "source_version": "fc65863b",
+      "content_hash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
       "dossier_path": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "promoted_rules": [
@@ -30322,6 +30332,16 @@
           "number": 3303,
           "title": "ui): UI overhaul (type roles, tokens, Material 3 Expressive Classic, Chocola-sty",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4196,
+          "title": "Hardware RenderThread Path-Clip Shadow Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4197,
+          "title": "Upstream Direct-Source Failover Invariant for Cache Lag Protection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30329,7 +30349,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T17:55:42.000Z",
+      "verified_at": "2026-10-25T08:44:18.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120969,6 +120989,147 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T08:24:37.740Z"
+    },
+    "rule-4191": {
+      "learning_id": "rule-4191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4191,
+      "title": "Cryptographic Isolation Invariant for Binary Tensor Transplantation",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:39:34.081Z"
+    },
+    "rule-4192": {
+      "learning_id": "rule-4192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4192,
+      "title": "Quantization Type Assignment and Scale Matrix Preservation Invariant",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:39:34.081Z"
+    },
+    "learn-github-makecindy-cindy": {
+      "learning_id": "learn-github-makecindy-cindy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "makecindy/cindy",
+      "repository": "makecindy/cindy",
+      "slug": "makecindy-cindy",
+      "platform": "github",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "65288cb1",
+      "content_hash": "c3ec7797c0670ea6d6e960e981b450d7bd5840fc05014713426e8007af6d1216",
+      "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4193,
+          "title": "Invariant Decoupling of AsyncLocalStorage Across Event-Driven Host Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4194,
+          "title": "Dual-State Optimistic Draft Pairing with Compare-And-Swap (CAS) Protection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4195,
+          "title": "Fail-Fast Entity Verification on Deletion Operations",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-25T08:44:00.510Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4193": {
+      "learning_id": "rule-4193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4193,
+      "title": "Invariant Decoupling of AsyncLocalStorage Across Event-Driven Host Boundaries",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "65288cb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:44:00.510Z"
+    },
+    "rule-4194": {
+      "learning_id": "rule-4194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4194,
+      "title": "Dual-State Optimistic Draft Pairing with Compare-And-Swap (CAS) Protection",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "65288cb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:44:00.510Z"
+    },
+    "rule-4195": {
+      "learning_id": "rule-4195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4195,
+      "title": "Fail-Fast Entity Verification on Deletion Operations",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "65288cb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:44:00.510Z"
+    },
+    "rule-4196": {
+      "learning_id": "rule-4196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4196,
+      "title": "Hardware RenderThread Path-Clip Shadow Constraint",
+      "source_url": "https://github.com/komi-store/komi-store",
+      "source_version": "fc65863b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:44:18.743Z"
+    },
+    "rule-4197": {
+      "learning_id": "rule-4197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4197,
+      "title": "Upstream Direct-Source Failover Invariant for Cache Lag Protection",
+      "source_url": "https://github.com/komi-store/komi-store",
+      "source_version": "fc65863b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T08:44:18.743Z"
     }
   },
   "aliases": {

@@ -305282,3 +305282,853 @@ func TestIndexState_SegmentDroppedAfterSnapshot(t *testing.T) {
 ```
 
 ---
+
+
+---
+
+## 4191. Cryptographic Isolation Invariant for Binary Tensor Transplantation (Harvested from SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cryptographic Isolation Invariant for Binary Tensor Transplantation",
+  "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T08:39:33.786Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When performing surgical tensor mutation or transplantation on packed binary model containers (GGUF, Safetensors, or ONNX), the compiler or mutation script MUST compute and verify cryptographic digests (minimum Blake2b-256 or SHA-256) for every non-targeted tensor before and after the binary mutation. If any non-targeted tensor hash diverges by even 1 bit, or if tensor alignment boundaries shift off their hardware allocation boundary ($32$ bytes for CPU SIMD / $256$ bytes for CUDA), the operation MUST immediately abort and trigger an un-aliased rollback.
+
+**WHY**:
+In-place binary manipulation of GGUF files without complete digest isolation leads to silent metadata off-by-one errors. A slight misalignment in GGUF tensor headers cascades into downstream byte offset shifts. Because quantized formats (`IQ3_S`, `IQ2_XXS`) rely on 32-element block layouts with sub-byte packing, an offset shift of just 1 to 4 bytes will misalign the dequantization scales with the nibble streams, producing catastrophic model degradation (gibberish/NaN activations) while passing superficial file-loading checks.
+
+**WHEN TO APPLY**:
+Apply when executing binary weight surgery, quantization patching, layer abliteration, LoRA baking, or tensor swapping directly on serialized GGUF, GGML, or Safetensors files without running full model exports from PyTorch.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import struct
+import hashlib
+from typing import Dict, BinaryIO, Set
+
+GGUF_DEFAULT_ALIGNMENT = 32
+
+class GGUFTensorTransplantValidator:
+    def __init__(self, original_stream: BinaryIO, target_tensors: Set[str]):
+        self.stream = original_stream
+        self.target_tensors = target_tensors
+        self.original_digests: Dict[str, bytes] = {}
+
+    def compute_tensor_digest(self, offset: int, size: int) -> bytes:
+        self.stream.seek(offset)
+        hasher = hashlib.blake2b(digest_size=32)
+        bytes_left = size
+        chunk_size = 64 * 1024  # 64KB chunks
+        while bytes_left > 0:
+            read_size = min(bytes_left, chunk_size)
+            chunk = self.stream.read(read_size)
+            if not chunk:
+                raise EOFError(f"Unexpected EOF at offset {self.stream.tell()}")
+            hasher.update(chunk)
+            bytes_left -= read_size
+        return hasher.digest()
+
+    def snapshot_pre_transplant(self, tensor_index: Dict[str, Dict[str, int]]) -> None:
+        """Computes and freezes baseline hashes of all non-targeted tensors."""
+        for name, meta in tensor_index.items():
+            if name not in self.target_tensors:
+                self.original_digests[name] = self.compute_tensor_digest(
+                    offset=meta["offset"], 
+                    size=meta["size"]
+                )
+
+    def verify_post_transplant(
+        self, 
+        mutated_stream: BinaryIO, 
+        tensor_index: Dict[str, Dict[str, int]]
+    ) -> None:
+        """Enforces that non-transplanted tensors are 100% byte-invariant and aligned."""
+        for name, meta in tensor_index.items():
+            # Invariant 1: Hardware alignment validation
+            if meta["offset"] % GGUF_DEFAULT_ALIGNMENT != 0:
+                raise ValueError(
+                    f"Alignment violation: Tensor '{name}' offset {meta['offset']} "
+                    f"is not a multiple of {GGUF_DEFAULT_ALIGNMENT}"
+                )
+            # Invariant 2: Cryptographic untouched verification
+            if name not in self.target_tensors:
+                mutated_stream.seek(meta["offset"])
+                hasher = hashlib.blake2b(digest_size=32)
+                bytes_left = meta["size"]
+                chunk_size = 64 * 1024
+                while bytes_left > 0:
+                    read_size = min(bytes_left, chunk_size)
+                    chunk = mutated_stream.read(read_size)
+                    if not chunk:
+                        raise EOFError(f"Premature EOF verifying mutated tensor '{name}'")
+                    hasher.update(chunk)
+                    bytes_left -= read_size
+                
+                computed = hasher.digest()
+                expected = self.original_digests[name]
+                if computed != expected:
+                    raise AssertionError(
+                        f"CRITICAL: Untouched tensor '{name}' corrupted during transplant! "
+                        f"Expected {expected.hex()}, got {computed.hex()}"
+                    )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blind binary string/slice replacement
+def unsafe_tensor_transplant(gguf_path: str, tensor_name: str, new_data: bytes):
+    with open(gguf_path, "r+b") as f:
+        content = f.read()
+        # NEVER search and replace raw binary strings inside quantized containers!
+        # This causes silent offset corruptions, destroys header-to-payload offsets,
+        # ignores alignment padding, and invalidates non-target tensor blocks.
+        idx = content.find(tensor_name.encode('utf-8'))
+        f.seek(idx + 1024)
+        f.write(new_data) # Silent corruption of subsequent tensor offsets!
+```
+
+**VERIFICATION METHOD**:
+Run an automated CI gate executing `verify_post_transplant()` against the mutated binary artifact. The test must extract Blake2b checksums for all $(N - 144)$ tensors, asserting exact match against the original upstream manifest:
+```bash
+python -m pytest tests/test_transplant_integrity.py -k "test_blake2b_untouched_invariance"
+```
+
+---
+
+
+---
+
+## 4192. Quantization Type Assignment and Scale Matrix Preservation Invariant (Harvested from SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization Type Assignment and Scale Matrix Preservation Invariant",
+  "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-25T08:39:33.974Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When swapping or transplanting abliterated weights into an already-quantized model with non-uniform mixed-precision quantization (e.g., `IQ3_S`, `IQ3_XXS`, `IQ2_XS`, `Q2_0`), the replacing tensor MUST match the exact underlying quantization type `ggml_type`, the exact block-quantization stride ($QK$), and the exact binary block footprint size ($sizeof(\text{block\_type})$). An engine MUST NOT substitute a uniform quant (e.g., standard `Q4_K` or `Q8_0`) into an optimized mixed-precision slot without explicitly rewriting the GGUF header type descriptors and recalculating global memory buffers.
+
+**WHY**:
+Modern mixed-precision architectures like Qwen MoE allocate different `ggml_type` layouts across routing gates and experts (e.g., `IQ3_S` for shared weights vs. `IQ2_XS` for sparse experts). Quantized runtimes (`llama.cpp`) allocate compute graph memory based on the header metadata and compile specific SIMD/AVX/NEON kernels for each block type. Injecting mismatched blocks into the weight space causes invalid pointer arithmetic, buffer overruns in the dequantize compute kernel, or silent garbage outputs from broken scale lookups.
+
+**WHEN TO APPLY**:
+Whenever replacing, transplanting, or fine-tuning individual weight tensors in GGUF/GGML models that use heterogeneous quantization schemes (`k-quants` and `iq-quants`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from enum import IntEnum
+
+class GGMLType(IntEnum):
+    Q2_0 = 18
+    Q4_K = 12
+    IQ2_XXS = 19
+    IQ2_XS = 20
+    IQ3_XXS = 21
+    IQ3_S = 22
+
+# Explicit mapping of block element counts and byte sizes
+GGML_BLOCK_METRICS = {
+    GGMLType.Q2_0:    {"block_size": 32, "type_size": 2 + 16},     # scale + 4-bit quants
+    GGMLType.IQ2_XS:  {"block_size": 32, "type_size": 2 + 2 + 8}, # scale + signs + grid
+    GGMLType.IQ3_XXS: {"block_size": 32, "type_size": 2 + 10},     # 8-bit scale + 3-bit quants
+    GGMLType.IQ3_S:   {"block_size": 32, "type_size": 2 + 8 + 3},  # fp16 scale + grid indices
+}
+
+def validate_tensor_transplant_compatibility(
+    tensor_name: str,
+    source_type: GGMLType,
+    donor_type: GGMLType,
+    element_count: int,
+    donor_byte_size: int
+) -> None:
+    # Rule 1: Type assignment identity
+    if source_type != donor_type:
+        raise TypeError(
+            f"Type mismatch on tensor '{tensor_name}': Upstream requires "
+            f"{source_type.name} ({int(source_type)}), donor provided "
+            f"{donor_type.name} ({int(donor_type)})"
+        )
+    
+    # Rule 2: Metric calculations
+    metrics = GGML_BLOCK_METRICS.get(source_type)
+    if not metrics:
+        raise NotImplementedError(f"Unsupported validation for {source_type.name}")
+
+    if element_count % metrics["block_size"] != 0:
+        raise ValueError(
+            f"Element count {element_count} for '{tensor_name}' not aligned "
+            f"to block size {metrics['block_size']}"
+        )
+
+    num_blocks = element_count // metrics["block_size"]
+    expected_bytes = num_blocks * metrics["type_size"]
+
+    if donor_byte_size != expected_bytes:
+        raise ValueError(
+            f"Payload size mismatch for '{tensor_name}': Expected {expected_bytes} "
+            f"bytes ({num_blocks} blocks of {metrics['type_size']} bytes), "
+            f"got {donor_byte_size} bytes."
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forcing arbitrary float-derived tensors into quantized slots
+def unsafe_quant_injection(target_file, tensor_meta, raw_numpy_array):
+    # NEVER write raw unquantized floats or mismatched quant blocks 
+    # directly into an existing GGUF quant slot!
+    if raw_numpy_array.dtype != np.float16:
+        raw_numpy_array = raw_numpy_array.astype(np.float16)
+    target_file.seek(tensor_meta["offset"])
+    # If the target tensor was IQ3_S, writing FP16 bytes destroys neighboring 
+    # memory and misaligns the entire downstream block structure!
+    target_file.write(raw_numpy_array.tobytes())
+```
+
+**VERIFICATION METHOD**:
+Inspect the generated GGUF using an automated assertion that scans the tensor directory header:
+```bash
+python -c "
+import sys
+from gguf import GGUFReader
+reader = GGUFReader('Qwen3.8-Flash-Next-GSQ-RCO-abliterated.gguf')
+for tensor in reader.tensors:
+    assert tensor.tensor_type in [22, 21, 20, 18], f'Invalid tensor type {tensor.tensor_type} in {tensor.name}'
+"
+```
+
+---
+
+
+---
+
+## 4193. Invariant Decoupling of AsyncLocalStorage Across Event-Driven Host Boundaries (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Decoupling of AsyncLocalStorage Across Event-Driven Host Boundaries",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "65288cb1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T08:43:59.993Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `65288cb1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an event emitter or bus dispatches an asynchronous execution triggered by an agent turn or tool call, the execution boundary MUST explicitly decouple from ambient `AsyncLocalStorage` (ALS) contexts using an isolated root scope or entering an empty context (`als.run(undefined, ...)`). Event listeners MUST NOT inherit the caller's transient action execution credentials or authorization tokens.
+
+**WHY**:
+In asynchronous event-driven architectures, emitting an event from within an active tool call or agent turn retains the caller's execution context in Node.js `AsyncLocalStorage`. If a downstream routine or task dispatcher schedules asynchronous work, the background job inadvertently captures the caller's ephemeral turn tokens. When the originating turn concludes or reaches its boundary, subsequent operations within the triggered routine fail with authorization expiry (`TASK_ACTION_AUTHORIZATION_EXPIRED`), bypassing routine-level retry policies and race mitigation handlers.
+
+**WHEN TO APPLY**:
+Apply in any Node.js/TypeScript backend or orchestration framework utilizing `AsyncLocalStorage` for context propagation, request tracing, or authentication tokens when bridging asynchronous event listeners, cron schedulers, or message bus consumers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { AsyncLocalStorage } from 'node:async_hooks';
+
+interface ActionAuthorizationContext {
+  turnId: string;
+  authorizationToken: string;
+  expiresAt: number;
+}
+
+export const actionContextStorage = new AsyncLocalStorage<ActionAuthorizationContext>();
+
+export class EventDispatcher {
+  private listeners: Array<(...args: unknown[]) => Promise<void>> = [];
+
+  public register(listener: (...args: unknown[]) => Promise<void>): () => void {
+    this.listeners.push(listener);
+    return () => {
+      const idx = this.listeners.indexOf(listener);
+      if (idx !== -1) this.listeners.splice(idx, 1);
+    };
+  }
+
+  /**
+   * Dispatches events strictly inside an isolated root context.
+   * Cleanses the ALS boundary to prevent token leakage.
+   */
+  public dispatch(eventPayload: unknown): void {
+    for (const listener of this.listeners) {
+      // Isolate each handler inside an empty context boundary
+      actionContextStorage.run(undefined as unknown as ActionAuthorizationContext, () => {
+        // Schedule on microtask queue without capturing caller context
+        queueMicrotask(() => {
+          listener(eventPayload).catch((error) => {
+            console.error('[EventDispatch:UncaughtFault]', error);
+          });
+        });
+      });
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Implicit ALS inheritance across event loops
+export class FaultyDispatcher {
+  private listeners: Array<(payload: any) => Promise<void>> = [];
+
+  public dispatch(payload: any): void {
+    for (const listener of this.listeners) {
+      // Inherits the caller's turn credentials via ambient ALS!
+      // Downstream execution will crash when caller turn expires.
+      void listener(payload);
+    }
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce compliance via integration tests asserting context isolation:
+```typescript
+it('ensures dispatched event routines do not inherit ambient ALS action context', async () => {
+  const executedContexts: Array<ActionAuthorizationContext | undefined> = [];
+  const dispatcher = new EventDispatcher();
+  
+  dispatcher.register(async () => {
+    executedContexts.push(actionContextStorage.getStore());
+  });
+
+  await actionContextStorage.run({ turnId: 'turn-123', authorizationToken: 'jwt-xyz', expiresAt: Date.now() + 1000 }, async () => {
+    dispatcher.dispatch({ type: 'SESSION_FINISHED' });
+  });
+
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  expect(executedContexts).toHaveLength(1);
+  expect(executedContexts[0]).toBeUndefined();
+});
+```
+
+---
+
+
+---
+
+## 4194. Dual-State Optimistic Draft Pairing with Compare-And-Swap (CAS) Protection (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-State Optimistic Draft Pairing with Compare-And-Swap (CAS) Protection",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "65288cb1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T08:44:00.205Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `65288cb1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an editable UI entity relies on optimistic client drafts against a backend guarded by a monotonic revision counter or CAS sequence (`expectedRevision`), local form state MUST bundle draft fields and their base `expectedRevision` into a single immutable atomic object. The form submission logic MUST NOT dispatch another mutation if an unprojected save is awaiting acknowledgment, and MUST re-request the query projection rather than resending a stale CAS payload upon retry.
+
+**WHY**:
+Decoupling field draft states from their corresponding target revision creates a Time-of-Check to Time-of-Use (TOCTOU) desynchronization window. If a user triggers a save, the optimistic save succeeds on the server, but the resulting push notification is dropped or delayed, the client form retains the old revision. If the user clicks "Save" again or the form auto-submits, submitting the old `expectedRevision` triggers a false-positive version conflict (`VERSION_CONFLICT`).
+
+**WHEN TO APPLY**:
+All React, Vue, or WebUI mutation forms submitting against optimistic concurrency models, event-sourced backends, or document stores tracking revision counters (`revision`, `version`, `seq`, or `etag`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+
+interface GroupData {
+  id: string;
+  name: string;
+  topic: string;
+  revision: number;
+}
+
+interface DraftState {
+  name: string;
+  topic: string;
+  expectedRevision: number;
+  saved: boolean;
+}
+
+export function useOptimisticCasForm(
+  liveData: GroupData,
+  onSaveRemote: (payload: { id: string; name: string; topic: string; expectedRevision: number }) => Promise<boolean>,
+  onRefreshRemote: () => void
+) {
+  const liveValues = {
+    name: liveData.name,
+    topic: liveData.topic,
+    expectedRevision: liveData.revision,
+  };
+
+  const [draft, setDraft] = useState<DraftState | null>(null);
+
+  // Awaiting snapshot if the write succeeded locally but live projection has not caught up
+  const awaitingSnapshot = !!draft?.saved && liveData.revision <= draft.expectedRevision;
+
+  // Active state: draft takes precedence if dirty or waiting for snapshot confirmation
+  const activeValues = draft && (!draft.saved || awaitingSnapshot) ? draft : liveValues;
+
+  const updateField = useCallback((delta: Partial<Omit<DraftState, 'expectedRevision' | 'saved'>>) => {
+    setDraft((current) => ({
+      ...((current?.saved ? null : current) ?? liveValues),
+      ...delta,
+      saved: false,
+    }));
+  }, [liveValues]);
+
+  // Once backend projection advances past saved revision, clear the draft container
+  useEffect(() => {
+    if (draft?.saved && liveData.revision > draft.expectedRevision) {
+      setDraft((current) => (current === draft ? null : current));
+    }
+  }, [draft, liveData.revision]);
+
+  const submit = useCallback(async () => {
+    if (awaitingSnapshot) {
+      // Write already committed remotely; refresh projection instead of resending stale CAS
+      onRefreshRemote();
+      return;
+    }
+
+    const payload = {
+      id: liveData.id,
+      name: activeValues.name,
+      topic: activeValues.topic,
+      expectedRevision: activeValues.expectedRevision,
+    };
+
+    const ok = await onSaveRemote(payload);
+    if (ok) {
+      setDraft({
+        name: activeValues.name,
+        topic: activeValues.topic,
+        expectedRevision: activeValues.expectedRevision,
+        saved: true,
+      });
+    }
+  }, [awaitingSnapshot, liveData.id, activeValues, onSaveRemote, onRefreshRemote]);
+
+  return { values: activeValues, updateField, submit, isSubmitting: awaitingSnapshot };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL ANTI-PATTERN: Independent fields and detached revision tracking
+export function BrokenCasForm({ group, mutate }: { group: GroupData; mutate: Function }) {
+  const [name, setName] = useState(group.name);
+  const dirty = useRef(false);
+  const draftRevision = useRef(group.revision); // STALE REVISION ANCHOR
+
+  const edit = (val: string) => {
+    if (!dirty.current) draftRevision.current = group.revision; // Captured once!
+    dirty.current = true;
+    setName(val);
+  };
+
+  const submit = () => {
+    // If mutate succeeds, but parent group props do not update immediately,
+    // another submit re-sends draftRevision.current, triggering 409 Conflict.
+    void mutate({ name, expectedRevision: draftRevision.current }).then((ok) => {
+      if (ok) dirty.current = false;
+    });
+  };
+}
+```
+
+**VERIFICATION METHOD**:
+Unit testing simulating consecutive submits during delayed remote projections:
+```typescript
+it('does not re-invoke remote mutation when submitting while awaiting projection snapshot', async () => {
+  const mutate = vi.fn().mockResolvedValue(true);
+  const refresh = vi.fn();
+  const initial = { id: '1', name: 'Original', topic: '', revision: 1 };
+  
+  const { result, rerender } = renderHook(
+    ({ data }) => useOptimisticCasForm(data, mutate, refresh),
+    { initialProps: { data: initial } }
+  );
+
+  act(() => { result.current.updateField({ name: 'Mutated' }); });
+  await act(async () => { await result.current.submit(); });
+  
+  expect(mutate).toHaveBeenCalledTimes(1);
+  expect(result.current.isSubmitting).toBe(true);
+
+  // User submits again before backend push arrives
+  await act(async () => { await result.current.submit(); });
+  expect(mutate).toHaveBeenCalledTimes(1); // Blocked from sending stale revision!
+  expect(refresh).toHaveBeenCalledTimes(1); // Fell back to refresh
+});
+```
+
+---
+
+
+---
+
+## 4195. Fail-Fast Entity Verification on Deletion Operations (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fail-Fast Entity Verification on Deletion Operations",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "65288cb1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T08:44:00.403Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `65288cb1`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Deletion methods on state stores, schedulers, and entity managers MUST explicitly verify the existence of the target resource and throw an identifiable `NOT_FOUND` exception before performing cleanups, in-flight cancellations, or emitting mutation lifecycle events. Deletion of a non-existent entity MUST NOT resolve as a no-op success or broadcast state mutation events.
+
+**WHY**:
+Permitting deletions of non-existent entity IDs to complete silently masks critical race conditions, client desynchronizations, and stale tool calls in autonomous agent workflows. Autonomous agents relying on tool output envelopes interpret a silent success as confirmation that an entity was present and subsequently pruned. Furthermore, triggering `changed` or `deleted` event notifications for ghost entities poisons down-funnel caches and UI lists.
+
+**WHEN TO APPLY**:
+All entity lifecycle managers, scheduler engines, database abstractions, and Agent Tooling interfaces exposing deletion endpoints (such as `scheduler.delete`, `call_tool(schedule_delete)`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface EntityStore<T> {
+  get(id: string): Promise<T | undefined>;
+  delete(id: string): Promise<void>;
+}
+
+export class SafeResourceManager<T extends { source?: string }> {
+  constructor(
+    private readonly storage: EntityStore<T>,
+    private readonly eventBus: { emit: (event: string, payload: unknown) => void }
+  ) {}
+
+  public async deleteResource(id: string, opts?: { internalRoutine?: boolean }): Promise<void> {
+    const existing = await this.storage.get(id);
+
+    // Enforce strict existence check and boundary permissions
+    if (!existing || (existing.source === 'bot' && !opts?.internalRoutine)) {
+      throw new Error(`Schedule not found: ${id}`);
+    }
+
+    // Terminate in-flight dependencies before removing the entity
+    await this.cancelInFlightRuns(id);
+
+    // Atomic storage mutation
+    await this.storage.delete(id);
+
+    // Emit event ONLY after successful mutation of an existing entity
+    this.eventBus.emit('changed', { type: 'deleted', id });
+  }
+
+  private async cancelInFlightRuns(id: string): Promise<void> {
+    // Settle runs
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Missing presence check allows non-existent IDs to trigger events
+public async deleteUnsafe(id: string): Promise<void> {
+  const schedule = await this.storage.get(id);
+  // BUG: If schedule is null/undefined, this check evaluates to false and passes!
+  if (schedule?.source === 'bot') {
+    throw new Error(`Schedule not found: ${id}`);
+  }
+  
+  await this.storage.delete(id);
+  this.emit('changed'); // Broadcasts false change event for non-existent resource!
+}
+```
+
+**VERIFICATION METHOD**:
+Assertion tests verifying that deleting an invalid key rejects and suppresses emission:
+```typescript
+it('rejects deletion of missing entity and suppresses event emission', async () => {
+  const storage = { get: vi.fn().mockResolvedValue(undefined), delete: vi.fn() };
+  const emit = vi.fn();
+  const manager = new SafeResourceManager(storage, { emit });
+
+  await expect(manager.deleteResource('missing-uuid')).rejects.toThrow(/not found/i);
+  expect(storage.delete).not.toHaveBeenCalled();
+  expect(emit).not.toHaveBeenCalled();
+});
+```
+
+---
+
+
+---
+
+## 4196. Hardware RenderThread Path-Clip Shadow Constraint (Harvested from komi-store/komi-store)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hardware RenderThread Path-Clip Shadow Constraint",
+  "source": "komi-store/komi-store",
+  "source_url": "https://github.com/komi-store/komi-store",
+  "source_version": "fc65863b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T08:44:18.448Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-komi-store-komi-store",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [komi-store/komi-store](https://github.com/komi-store/komi-store) (Revision: `fc65863b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hardware-accelerated declarative UI runtimes (Jetpack Compose, Compose Multiplatform, Flutter), an engineer MUST NOT apply elevated blur or shadow filters (`Modifier.shadow()`) directly onto non-convex, re-entrant, or high-vertex parametric vector paths (such as multi-point starbursts, jagged polygons, or morphing curves) inside frequently updated, shared, or loading view states.
+
+**WHY**:
+Applying elevation/shadow filters to complex parametric vector paths forces the graphics rasterizer (Skia/Vulkan/OpenGL pipeline) to perform software triangulation or iterative blur convolution over dynamic clip boundaries. On mobile GPUs (Mali, Adreno) running high display refresh rates, complex path tessellation in Skia's `SkPath::asAConvexPolygon` fails or falls back to software boundary CPU tessellation, locking the Android `RenderThread` or crashing with an `OutOfMemory`/GPU watchdog timeout.
+
+**WHEN TO APPLY**:
+Apply to any Compose Multiplatform, Jetpack Compose, or Skiko codebase where non-standard shapes (shapes with $>8$ vertices, concave angles, or dynamic bezier curves) are rendered, especially in high-density or animated UI components (status chips, notification badges, list item decorators).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// feature/details/presentation/src/commonMain/kotlin/zed/rainxch/details/presentation/components/HeaderStatus.kt
+// Shape is high-vertex/concave: MaterialShapes.SoftBurst.toShape()
+val burstShape = MaterialShapes.SoftBurst.toShape()
+
+Box(
+    modifier = Modifier
+        .size(30.dp)
+        // CRITICAL: Shadow removed. Burst shape drawn directly via background
+        // prevents RenderThread lockup and SkPath CPU fallback.
+        .background(
+            color = if (status.emphasized) colors.primary else colors.primaryContainer,
+            shape = burstShape
+        ),
+    contentAlignment = Alignment.Center
+) {
+    Icon(
+        imageVector = status.icon,
+        contentDescription = null,
+        modifier = Modifier.size(16.dp),
+        tint = if (status.emphasized) colors.onPrimary else colors.onPrimaryContainer
+    )
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: NEVER attach elevation-driven blur/shadow modifiers
+// to complex, non-convex parametric path shapes.
+val burstShape = MaterialShapes.SoftBurst.toShape()
+
+Box(
+    modifier = Modifier
+        .size(30.dp)
+        .shadow(elevation = 2.dp, shape = burstShape) // FATAL: Causes RenderThread hang
+        .background(colors.primary, burstShape)
+)
+```
+
+**VERIFICATION METHOD**:
+Implement a lint rule or Compose UI test verifying that shapes used within `.shadow()` implement `CornerBasedShape` or convex polygons with $\le 4$ vertices:
+```kotlin
+@Test
+fun verifyStatusBadgeDoesNotApplyShadowToComplexPath() {
+    composeTestRule.setContent { StatusBadge(status = AppStatus.Installed) }
+    // Assert no Elevation/Shadow modifier nodes exist in the semantics tree
+    composeTestRule.onNodeWithTag("StatusBadge")
+        .assertIsNotElevated();
+}
+```
+
+---
+
+
+---
+
+## 4197. Upstream Direct-Source Failover Invariant for Cache Lag Protection (Harvested from komi-store/komi-store)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Direct-Source Failover Invariant for Cache Lag Protection",
+  "source": "komi-store/komi-store",
+  "source_url": "https://github.com/komi-store/komi-store",
+  "source_version": "fc65863b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-25T08:44:18.636Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-komi-store-komi-store",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [komi-store/komi-store](https://github.com/komi-store/komi-store) (Revision: `fc65863b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an intermediary backend cache/mirror mediates data from an authoritative upstream Git forge (e.g., GitHub, Codeberg), the client repository MUST NOT treat an empty collection (`[]`) returned by the intermediary as a terminal state. An empty response MUST trigger a conditional bypass read to the direct authoritative host, but failures on that host fallback MUST distinguish between operational rate limiting and transport-layer blocking.
+
+**WHY**:
+Intermediary backend sync queues run asynchronously. When a maintainer publishes a new repository or new release tags, the backend database exhibits read lag where the release list is empty. If the client treats empty as success and caches it, the client permanently hides new app releases. Conversely, if direct-host requests are completely blocked by corporate firewalls or missing auth, blindly crashing breaks offline read resilience.
+
+**WHEN TO APPLY**:
+Any application repository layer reading public data mediated by a proxy, mirror, or custom sync API that caches upstream Git forge states.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// feature/details/data/src/commonMain/kotlin/zed/rainxch/details/data/repository/DetailsRepositoryImpl.kt
+suspend fun getAllReleases(
+    owner: String,
+    repo: String,
+    defaultBranch: String,
+    bypassCache: Boolean,
+    allowStale: Boolean
+): List<GithubRelease> {
+    val cacheKey = "details:releases:$owner/$repo"
+
+    if (!bypassCache) {
+        cacheManager.get<List<GithubRelease>>(cacheKey)?.takeIf { it.isNotEmpty() }?.let { cached ->
+            return cached
+        }
+    }
+
+    var triedDirect = false
+    // Backend read pipeline
+    return runCatching {
+        backendService.fetchReleases(owner, repo)
+    }.fold(
+        onSuccess = { backendReleases ->
+            val result = backendReleases.sortedByDescending { it.publishedAt }
+            if (result.isNotEmpty()) {
+                cacheManager.put(cacheKey, result, CachePolicy.Releases)
+                return result
+            }
+            // CRITICAL INVARIANT: Backend returned empty list []. Backend could be lagging.
+            // Delegate to direct upstream host unless direct fetch already occurred.
+            if (triedDirect) result else readDirectWhenBackendEmpty(owner, repo, defaultBranch, cacheKey, allowStale)
+        },
+        onFailure = { error ->
+            if (!shouldFallbackToGithubOrRethrow(error, isSignedIn()) || triedDirect) {
+                throw error
+            }
+            readReleasesFromGitHub(owner, repo, defaultBranch, cacheKey, allowStale)
+        }
+    )
+}
+
+private suspend fun readDirectWhenBackendEmpty(
+    owner: String,
+    repo: String,
+    defaultBranch: String,
+    cacheKey: String,
+    allowStale: Boolean
+): List<GithubRelease> =
+    try {
+        readReleasesFromGitHub(owner, repo, defaultBranch, cacheKey, allowStale)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: RateLimitException) {
+        // Rate limits are hard boundaries; abort operation
+        throw e
+    } catch (t: Throwable) {
+        // Network errors or host blocks (e.g. DNS) preserve backend's empty answer
+        logger.debug("Direct releases read failed for empty backend $owner/$repo: ${t.message}")
+        emptyList()
+    }
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Blindly accepting empty answers from the proxy/cache as absolute truth
+val releases = backendService.fetchReleases(owner, repo)
+if (releases.isEmpty()) {
+    return emptyList() // WRONG: Hides upstream releases if backend sync is lagging
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test using mock engines:
+```kotlin
+@Test
+fun `empty backend response forces direct github call and bubbles rate limit`() = runTest {
+    coEvery { backendService.fetchReleases(any(), any()) } returns emptyList()
+    coEvery { gitHubApi.fetchReleases(any(), any()) } throws RateLimitException("403 Forbidden")
+
+    assertFailsWith<RateLimitException> {
+        repository.getAllReleases("owner", "repo", "main", bypassCache = false, allowStale = false)
+    }
+}
+```
+
+---

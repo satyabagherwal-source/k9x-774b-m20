@@ -18601,5 +18601,20 @@
     "downloads": 570,
     "qualityScore": 2090,
     "discoveredAt": "2026-10-25T05:56:26.300Z"
+  },
+  {
+    "name": "cindy",
+    "fullName": "makecindy/cindy",
+    "url": "https://github.com/makecindy/cindy",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。",
+    "stars": 4321,
+    "forks": 618,
+    "openIssues": 1900,
+    "language": "TypeScript",
+    "qualityScore": 2796,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-25T08:33:52.879Z"
   }
 ]

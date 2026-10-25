@@ -4438,3 +4438,7 @@ https://github.com/glincker/thesvg
 https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF
 # [HUGGINGFACE-AI-MODELS] HuggingFaceBio/Carbon-X (2090 score) - Verified Hugging Face Model: HuggingFaceBio/Carbon-X (152 likes, 570 downloads)
 https://huggingface.co/HuggingFaceBio/Carbon-X
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-25T08:35:48.379Z] ---
+# [MOBILE-CROSS-PLATFORM] makecindy/cindy (2796 score) - Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开
+https://github.com/makecindy/cindy
