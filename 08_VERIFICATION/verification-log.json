@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-HELD",
-    "timestamp": "2026-10-21T03:43:11.905Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "d95db9a59f57b96fa38c519eb2742e9d6b814b6337e5187f5c0592017282e760",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-PBR8",
-    "timestamp": "2026-10-21T03:49:21.476Z",
-    "repository": "tencent/Hy-Memory-30B-A3B",
-    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "d8e8e356c3bdd6a0e1c15d88f8798d9f856da9783a1d529d09f7e0509e3c4759",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-YT4L",
-    "timestamp": "2026-10-21T03:56:43.893Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "a6069f167dacb2751d9d8f21b480c7633df185bd22db062d3a0ef577c37b6f00",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-Z0RS",
     "timestamp": "2026-10-21T03:56:53.800Z",
     "repository": "clastix/kamaji",
@@ -7490,6 +7445,51 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "907d3ccf5933241d59b09456489399828165c4b36e81b80859140701a44468c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Z6K8",
+    "timestamp": "2026-10-25T05:27:41.048Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "920185e17a6b56bfc634fc9d2fdd127599ddfb5f377feaebac67fe5c5ee2bd8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Z9XJ",
+    "timestamp": "2026-10-25T05:27:45.415Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-ZCS9",
+    "timestamp": "2026-10-25T05:27:49.113Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

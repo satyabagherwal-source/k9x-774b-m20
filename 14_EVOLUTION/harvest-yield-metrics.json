@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T05:21:20.621Z",
-  "total_cycles_completed": 4660,
-  "total_learnings_persisted": 4660,
-  "total_rules_promoted": 3943,
+  "last_updated": "2026-10-25T05:27:49.127Z",
+  "total_cycles_completed": 4663,
+  "total_learnings_persisted": 4663,
+  "total_rules_promoted": 3948,
   "history": [
-    {
-      "timestamp": "2026-10-23T06:49:55.065Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T06:49:58.591Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T07:05:10.317Z",
-      "repository": "mantinedev/mantine",
-      "learningId": "learn-github-mantinedev-mantine",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T07:06:48.057Z",
       "repository": "preactjs/preact",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-25T05:21:20.621Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:27:41.061Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:27:45.430Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T05:27:49.127Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

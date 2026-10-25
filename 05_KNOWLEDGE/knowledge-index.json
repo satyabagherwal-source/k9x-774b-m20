@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T05:21:20.548Z",
+  "last_updated": "2026-10-25T05:27:49.060Z",
   "total_verified_learnings": 1082,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15537,7 +15537,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
+      "content_hash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [
@@ -15557,6 +15557,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1131,
+          "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 3195,
           "title": "Strict Schema-Driven Output for Decision Models",
           "status": "PROMOTED_AND_VERIFIED"
@@ -15564,6 +15569,16 @@
         {
           "number": 3196,
           "title": "Adaptive Cognitive Load Allocation (System 1 vs. System 2)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4077,
+          "title": "Structured Output Schema Enforcement via Tokenizer Special Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4078,
+          "title": "MoE Expert Routing Sparsity for Inference Latency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15584,7 +15599,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-20T13:33:40.382Z",
+      "verified_at": "2026-10-25T05:27:45.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40767,8 +40782,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "e1dfb482",
-      "content_hash": "6d08ce967ce9bd8b075304f2d2b83a697ee5861db354cc6487882464c9adc9d5",
+      "source_version": "5cfcfe21",
+      "content_hash": "920185e17a6b56bfc634fc9d2fdd127599ddfb5f377feaebac67fe5c5ee2bd8b",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -40781,6 +40796,11 @@
           "number": 3248,
           "title": "Resolver: Resolve the package of a directory once for all extension candidates (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4076,
+          "title": "Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40788,7 +40808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:56:30.272Z",
+      "verified_at": "2026-10-25T05:27:40.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49107,8 +49127,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "503b816e",
-      "content_hash": "7f9107d1153d0c76a230080ece54096b44141beacbe7a4cd8896c76d87c3049c",
+      "source_version": "5f8ed384",
+      "content_hash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -49136,6 +49156,11 @@
           "number": 3666,
           "title": "Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4079,
+          "title": "Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49143,7 +49168,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:32:00.957Z",
+      "verified_at": "2026-10-25T05:27:49.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75671,14 +75696,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1131,
       "title": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
-      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
-      "source_version": "hf-jialinyyzz-humanizer",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T05:14:47.016Z"
+      "verified_at": "2026-10-25T05:27:45.350Z"
     },
     "rule-1132": {
       "learning_id": "rule-1132",
@@ -118706,6 +118731,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T05:21:20.526Z"
+    },
+    "rule-4076": {
+      "learning_id": "rule-4076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4076,
+      "title": "Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, s",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "5cfcfe21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:27:40.983Z"
+    },
+    "rule-4077": {
+      "learning_id": "rule-4077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4077,
+      "title": "Structured Output Schema Enforcement via Tokenizer Special Tokens",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:27:45.350Z"
+    },
+    "rule-4078": {
+      "learning_id": "rule-4078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4078,
+      "title": "MoE Expert Routing Sparsity for Inference Latency",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:27:45.350Z"
+    },
+    "rule-4079": {
+      "learning_id": "rule-4079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4079,
+      "title": "Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-s",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "5f8ed384",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T05:27:49.048Z"
     }
   },
   "aliases": {

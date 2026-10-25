@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `e1dfb482`  
+> **Source Version**: `5cfcfe21`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T15:56:29.948Z  
+> **Timestamp**: 2026-10-25T05:27:40.692Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T15:56:29.941Z  
+> **Harvest Timestamp**: 2026-10-25T05:27:40.538Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5650 stars
+- **Stars / Engagement**: 5653 stars
 
 ---
 
@@ -1046,6 +1046,13 @@ export default class NetworkError extends Error {
 
 import os from 'node:os';
 
+/**
+ * Returns the number of transform workers to use.
+ *
+ * An integer `workers` is clamped to [1, available cores]. Otherwise, the
+ * default is about `cores - 1` on small machines, approaching half the cores
+ * on large ones (e.g. 2 -> 1, 8 -> 6, 64 -> 32), and at least 1.
+ */
 export default function getMaxWorkers(workers: ?number): number {
   const cores = os.availableParallelism();
   return typeof workers === 'number' && Number.isInteger(workers)
@@ -1462,613 +1469,930 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1dfb482` (2026-10-20)
-**Commit Message**: Resolver: Resolve the package of a directory once for all extension candidates (#1945)
+### Incident Patch 1: `85585223` (2026-10-23)
+**Commit Message**: Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate)
 
-## Summary
-`resolveFile` tries each candidate extension in turn, and for each one `resolveSourceFileForExt` calls `redirectModulePath`, which asks `context.getPackageForModule` for the package scope of the candidate path. Every candidate in a directory belongs to the same package, so that's the same question asked once per extension - and because Metro's `PackageCache` memoises by module path, each distinct candidate string misses the first time it's seen, mostly for files that don't exist.
+Summary:
+Replaces three sketchy-null suppressions in Metro with explicit checks that keep the exact runtime behavior.
 
-This asks once, up front, for the package of the files in the directory, and shares it with every candidate via the source file context, applying each candidate's `mainFields` redirections with `redirectPackageSubpath`.
+- `metro-transform-plugins/src/constant-folding-plugin.js`: removes `$FlowFixMe[sketchy-null-mixed]` on `path.replaceWith(result.value ? node.consequent : node.alternate)`. `result.value` is `unknown`, so the test becomes `Boolean(result.value)`. That is the same truthiness test the ternary did implicitly, for every value. It is read into `const valueIsTruthy` first because Metro's ESLint `no-extra-boolean-cast` flags `Boolean()` directly in a ternary test. The existing `$FlowFixMe[incompatible-type]` on the call is unchanged.
+- `metro/src/DeltaBundler/Serializers/getRamBundleInfo.js`: removes `$FlowFixMe[sketchy-null-bool]` on `preloadedModules || {}`. `preloadedModules` is typed `?Readonly<{[path: string]: true}> | false`. An object is always truthy, so `||` falls back exactly for `null`, `undefined` and `false`; the new check is `preloadedModules != null && preloadedModules !== false ? preloadedModules : {}`.
+- `metro-symbolicate/src/symbolicate.js` (`readAll`): removes 
 
-The package of the files in a directory isn't always the package of the directory itself - a `node_modules` directory belongs to whatever contains it while the files in it belong to none, and a symlink can change which directory along the way is named `node_modules`. So `getCandidatePackageScope` asks about the directory's `package.json`, which every lookup for a file there checks, so it get
-
-**File**: `packages/metro-resolver/src/__tests__/package-scope-test.js` (added, +222/-0)
+**File**: `packages/metro-symbolicate/src/symbolicate.js` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,222 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @flow strict-local
-+ * @format
-+ * @oncall react_native
-+ */
-+
-+import type {PackageForModule, ResolutionContext} from '../types';
-+
-+import * as Resolver from '../index';
-+import {
-+  createPackageAccessors,
-+  createResolutionContext,
-+  posixToSystemPath as p,
-+} from './utils';
-+
-+// These pin the paths the resolver passes to `getPackageForModule` for each
-+// kind of specifier, so that a change in lookups per resolution is deliberate.
-+describe('package scope lookups', () => {
-+  // The path the resolver asks about for the files in a directory
-+  const filesIn = (dirPath: string) => p(dirPath + '/package.json');
-+
-+  const fileMap = {
-+    [p('/root/package.json')]: JSON.stringify({name: 'root'}),
-+    [p('/root/src/main.js')]: '',
-+    [p('/root/src/foo.js')]: '',
-+    [p('/root/src/lib/index.js')]: '',
-+    [p('/root/node_modules/pkg/package.json')]: JSON.stringify({
-+      name: 'pkg',
-+      main: 'lib/index',
-+      browser: {'./lib/redirected.js': './lib/other.js'},
-+    }),
-+    [p('/root/node_modules/pkg/lib/index.js')]: '',
-+    [p('/root/node_modules/pkg/lib/sub.js')]: '',
-+    [p('/root/node_modules/pkg/lib/other.js')]: '',
-+    [p('/root/node_modules/nopkg/index.js')]: '',
-+  };
-+
-+  let getPackageForModule: JestMockFn<[string], ?PackageForModule>;
-+  let context: ResolutionContext;
-+
-+  function useFileMap(files: typeof fileMap) {
-+    const accessors = createPackageAccessors(files);
-+    getPackageForModule = jest.fn(accessors.getPackageForModule);
-+    context = {
-+      ...createResolutionContext(files),
-+      ...accessors,
-+      getPackageForModule,
-+      originModulePath: p('/root/src/main.js'),
-+    };
-+  }
-+
-+  beforeEach(() => {
-+    useFileMap(fileMap);
-+  });
-+
-+  const lookedUpPaths = () =>
-+    getPackageForModule.mock.calls.map(([modulePath]) => modulePath);
-+
-+  test('relative file, found after trying several extensions', () => {
-+    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/root/src/foo.js'),
-+    });
-+    expect(lookedUpPaths()).toEqual([p('/root/src/foo'), filesIn('/root/src')]);
-+  });
-+
-+  test('relative file, when its package.json is a package root', () => {
-+    useFileMap({
-+      ...fileMap,
-+      // A package whose "browser" field must not apply to the files beside it
-+      [p('/root/src/package.json/package.json')]: JSON.stringify({
-+        name: 'stand-in',
-+        browser: {'./foo.js': false},
-+      }),
-+    });
-+    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/root/src/foo.js'),
-+    });
-+    // The stand-in is retried with another name
-+    expect(lookedUpPaths()).toEqual([
-+      p('/root/src/foo'),
-+      filesIn('/root/src'),
-+      filesIn('/root/src') + '_',
-+    ]);
-+  });
-+
-+  test('throws if the scope is never that of the stand-in file', () => {
-+    getPackageForModule = jest.fn(() => ({
-+      rootPath: p('/root'),
-+      packageJson: {name: 'root'},
-+      packageRelativePath: '',
-+    }));
-+    context = {...context, getPackageForModule};
-+    expect(() => Resolver.resolve(context, './foo', 'ios')).toThrow(
-+      `getPackageForModule(${JSON.stringify(filesIn('/root/src') + '__')}) ` +
-+        'returned packageRelativePath "", which should end in ' +
-+        '"package.json__".',
-+    );
-+    expect(lookedUpPaths()).toEqual([
-+      p('/root/src/foo'),
-+      filesIn('/root/src'),
-+      filesIn('/root/src') + '_',
-+      filesIn('/root/src') + '__',
-+    ]);
-+  });
-+
-+  test('relative file in the file system root', () => {
-+    useFileMap({[p('/main.js')]: '', [p('/foo.js')]: ''});
-+    context = {...context, originModulePath: p('/main.js')};
-+    expect(Resolver.resolve(context, './foo', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/foo.js'),
-+    });
-+    expect(lookedUpPaths()).toEqual([p('/foo'), filesIn('')]);
-+  });
-+
-+  test('relative file with an explicit extension', () => {
-+    expect(Resolver.resolve(context, './foo.js', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/root/src/foo.js'),
-+    });
-+    expect(lookedUpPaths()).toEqual([
-+      p('/root/src/foo.js'),
-+      filesIn('/root/src'),
-+    ]);
-+  });
-+
-+  test('relative directory, resolved to its index', () => {
-+    expect(Resolver.resolve(context, './lib', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/root/src/lib/index.js'),
-+    });
-+    expect(lookedUpPaths()).toEqual([
-+      p('/root/src/lib'),
-+      filesIn('/root/src'),
-+      filesIn('/root/src/lib'),
-+    ]);
-+  });
-+
-+  test('package entry point', () => {
-+    expect(Resolver.resolve(context, 'pkg', 'ios')).toEqual({
-+      type: 'sourceFile',
-+      filePath: p('/root/node_modules/pkg/lib/index.js'),
-+    });
-
-```
-
-**File**: `packages/metro-resolver/src/resolve.js` (modified, +73/-2)
-```diff
-@@ -12,6 +12,7 @@
- import type {
-   FileAndDirCandidates,
-   FileCandidates,
-+  PackageForModule,
-   Resolution,
-   ResolutionContext,
-   Result,
-@@ -31,6 +32,7 @@ import {
-   getPackageEntryPoint,
-   matchSubpathFromMainFields,
-   redirectModulePath,
-+  redirectPackageSubpath,
- } from './PackageResolve';
- import resolveAsset from './resolveAsset';
- import isAssetFile from './utils/isAssetFile';
-@@ -743,7 +745,12 @@ function resolveFile(
+@@ -243,10 +243,10 @@ function readAll(stream: Readable | ReadStream) {
  
-   const candidateExts: Array<string> = [];
-   const filePathPrefix = path.join(dirPath, fileName);
--  const sfContext = {...context, candidateExts, filePathPrefix};
-+  const sfContext = {
-+    ...context,
-+    candidateExts,
-+    filePathPrefix,
-+    candidatePackageScope: getCandidatePackageScope(context, dirPath, fileName),
-+  };
-   const sourceFileResolution = resolveSourceFile(sfContext, platform);
-   if (sourceFileResolution != null) {
-     if (typeof sourceFileResolution === 'string') {
-@@ -758,6 +765,9 @@ type SourceFileContext = Readonly<{
-   ...ResolutionContext,
-   candidateExts: Array<string>,
-   filePathPrefix: string,
-+  // The package scope of all candidates, with `packageRelativePath` that of
-+  // `filePathPrefix`, or null if they have none.
-+  candidatePackageScope: ?PackageForModule,
- }>;
- 
- // Either a full path, or a restricted subset of Resolution.
-@@ -829,9 +839,17 @@ function resolveSourceFileForExt(
-   extension: string,
- ): SourceFileResolution {
-   const filePath = `${context.filePathPrefix}${extension}`;
-+  const {candidatePackageScope} = context;
-   const redirectedPath =
-     // Any redirections for the bare path have already happened
--    extension !== '' ? redirectModulePath(context, filePath) : filePath;
-+    extension !== '' && candidatePackageScope != null
-+      ? redirectPackageSubpath(
-+          context,
-+          filePath,
-+          candidatePackageScope,
-+          candidatePackageScope.packageRelativePath + extension,
-+        )
-+      : filePath;
-   if (redirectedPath === false) {
-     return {type: 'empty'};
-   }
-@@ -843,6 +861,59 @@ function resolveSourceFileForExt(
-   return null;
- }
- 
-+// Stands in for every file in a directory when looking up their package scope.
-+// Edge case: if `package.json` is itself a directory that is a package root,
-+// we append `_` and try again, up to MAX_ANY_FILE_NAME_ATTEMPTS names.
-+const ANY_FILE_NAME = 'package.json';
-+const MAX_ANY_FILE_NAME_ATTEMPTS = 3;
-+
-+/**
-+ * The package scope shared by the candidates `fileName` + extension in
-+ * `dirPath`, with `packageRelativePath` that of `fileName`.
-+ *
-+ * Note that this can differ from the scope of `dirPath` itself, or of a
-+ * directory named `fileName` - a package root is its own scope, and files
-+ * directly in `node_modules` have none.
-+ */
-+function getCandidatePackageScope(
-+  context: ResolutionContext,
-+  dirPath: string,
-+  fileName: string,
-+): ?PackageForModule {
-+  const dirPrefix = dirPath.endsWith(path.sep) ? dirPath : dirPath + path.sep;
-+  let name = ANY_FILE_NAME;
-+  for (let attempt = 1; ; attempt++) {
-+    const modulePath = dirPrefix + name;
-+    const pkg = context.getPackageForModule(modulePath);
-+    if (pkg == null) {
-+      return null;
-+    }
-+    const {packageRelativePath} = pkg;
-+    const dirRelativeLength = packageRelativePath.length - name.length;
-+    if (
-+      packageRelativePath.endsWith(name) &&
-+      (dirRelativeLength === 0 ||
-+        packageRelativePath[dirRelativeLength - 1] === path.sep)
-+    ) {
-+      return {
-+        ...pkg,
-+        packageRelativePath:
-+          packageRelativePath.slice(0, dirRelativeLength) + fileName,
-+      };
-+    }
-+    // Otherwise this is the scope of something other than the files here,
-+    // usually a package root named `name`.
-+    if (attempt === MAX_ANY_FILE_NAME_ATTEMPTS) {
-+      throw new Error(
-+        `getPackageForModule(${JSON.stringify(modulePath)}) returned ` +
-+          `packageRelativePath ${JSON.stringify(packageRelativePath)}, ` +
-+          `which should end in ${JSON.stringify(name)}.`,
-+      );
-+    }
-+    name += '_';
-+  }
-+}
-+
- function isRelativeImport(filePath: string) {
-   return /^[.][.]?(?:[/]|$)/.test(filePath);
- }
-```
-
-**File**: `packages/metro-resolver/src/types.js` (modified, +12/-0)
-```diff
-@@ -167,6 +167,18 @@ export type ResolutionContext = Readonly<{
-    * for a given absolute candidate path (which need not exist), or null if
-    * there is no package.json closer than the nearest node_modules directory.
-    *
-+   * A path through a symlinked directory checks the link's target, then
-+   * continues up from the link's parent. A symlinked file is scoped by where
-+   * the link is.
-+   *
-+   * A missing path takes the scope of its deepest existing ancestor, or null
-+   * if the first missing segment is `node_modules`.
-+   *
-+   * For the scope of every file in a directory, the resolver asks about its
-+   * `package.json` (which needn't exist).
-+   *
-+   * The resolver calls this a few times per resolution, so it should be cheap.
-+   *
-    * @deprecated See https://github.com/react/metro/commit/29c77bff31e2475a086bc3f04073f485da8f9ff0
-    */
-   getPackageForModule: (absoluteModulePath: string) => ?PackageForModule,
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +110/-0)
-```diff
-@@ -1377,6 +1377,116 @@ function dep(name: string): TransformResultDependency {
-           filePath: p('/root/node_modules/aPackage/main-custom.js'),
-         });
-       });
-+
-+      // These pin which package's "browser" field applies to files reached
-+      // through a symlink. A symlinked directory's target is checked before
-+      // continuing up from the link's parent, and a symlinked file is scoped
-+      // by where the link is. This behavior isn't covered by any spec.
-+      //
-+      // The tests map `.ios.js` files because a "browser" key for a `.js` or
-+      // `.json` file also matches the extensionless path, which is redirected
-+      // separately. Platform-specific keys are only matched per candidate
-+      // extension.
-+      describe('package scope of files reached through a symlink', () => {
-+        test('a node_modules symlink to a package root', async () => {
-+          setMockFileSystem({
-+            'index.js': '',
-+            store: {
-+              deps: {
-+                'package.json': JSON.stringify({
-+                  name: 'deps',
-+                  browser: {'./foo.ios.js': './foo-browser.js'},
-+                }),
-+                'foo.ios.js': '',
-+                'foo-browser.js': '',
-+              },
-+            },
-+          });
-+          fs.symlinkSync(p('/root/store/deps'), p('/root/node_modules'));
-+
-+          resolver = await createResolver({}, 'ios');
-+          expect(resolver.resolve(p('/root/index.js'), dep('foo'))).toEqual({
-+            type: 'sourceFile',
-+            filePath: p('/root/store/deps/foo-browser.js'),
-+          });
-+        });
-+
-+        test('a symlink to a node_modules directory', async () => {
-+          setMockFileSystem({
-+            'package.json': JSON.stringify({
-+              name: 'app',
-+              browser: {'./vendor/bar.ios.js': false},
-+            }),
-+            'index.js': '',
-+            other: {node_modules: {'bar.ios.js': ''}},
-+          });
-+          fs.symlinkSync(p('/root/other/node_modules'), p('/root/vendor'));
-+
-+          resolver = await createResolver({}, 'ios');
-+          expect(
-+            resolver.resolve(p('/root/index.js'), dep('./vendor/bar')),
-+          ).toEqual({
-+            type: 'sourceFile',
-+            filePath: p('/root/other/node_modules/bar.ios.js'),
-+          });
-+        });
-+
-+        test('a file symlink into another package, mapped by its target package', async () => {
-+          setMockFileSystem({
-+            'package.json': JSON.stringify({name: 'app'}),
-+            'index.js': '',
-+            other: {
-+              pkg: {
-+                'package.json': JSON.stringify({
-+                  name: 'pkg',
-+                  browser: {'./lib/foo.ios.js': './lib/foo-browser.js'},
-+                }),
-+                lib: {'foo.ios.js': '', 'foo-browser.js': ''},
-+              },
-+            },
-+          });
-+          fs.symlinkSync(
-+            p('/root/other/pkg/lib/foo.ios.js'),
-+            p('/root/foo.ios.js'),
-+          );
-+
-+          resolver = await createResolver({}, 'ios');
-+          expect(resolver.resolve(p('/root/index.js'), dep('./foo'))).toEqual({
-+            type: 'sourceFile',
-+            filePath: p('/root/other/pkg/lib/foo.ios.js'),
-+          });
-+        });
-+
-+        test('a file symlink into another package, mapped by the package of the link', async () => {
-+          setMockFileSystem({
-+            'package.json': JSON.stringify({
-+              name: 'app',
-+              browser: {'./foo.ios.js': false},
-+            }),
-+            'index.js': '',
-+            'empty.js': '',
-+            other: {
-+              pkg: {
-+                'package.json': JSON.stringify({name: 'pkg'}),
-+                lib: {'foo.ios.js': ''},
-+              },
-+            },
-+          });
-+          fs.symlinkSync(
-+            p('/root/other/pkg/lib/foo.ios.js'),
-+            p('/root/foo.ios.js'),
-+          );
-+
-+          resolver = await createResolver(
-+            {resolver: {emptyModulePath: p('/root/empty.js')}},
-+            'ios',
-+          );
-+          expect(resolver.resolve(p('/root/index.js'), dep('./foo'))).toEqual({
-+            type: 'sourceFile',
-+            filePath: p('/root/empty.js'),
-+          });
-+        });
-+      });
+     stream.setEncoding('utf8');
+     stream.on('readable', () => {
+-      let chunk;
+-      // flowlint-next-line sketchy-null-string:off
+-      while ((chunk = stream.read())) {
++      let chunk = stream.read();
++      while (chunk != null && chunk !== '') {
+         data += chunk.toString();
++        chunk = stream.read();
+       }
      });
+     stream.on('end', () => {
+```
+
+**File**: `packages/metro-transform-plugins/src/constant-folding-plugin.js` (modified, +2/-2)
+```diff
+@@ -142,9 +142,9 @@ export default function constantFoldingPlugin(context: {
+           state.stripped = true;
  
-     describe('platforms', () => {
+           if (result.value || node.alternate) {
++            const valueIsTruthy = Boolean(result.value);
+             // $FlowFixMe[incompatible-type]
+-            // $FlowFixMe[sketchy-null-mixed] Flow error uncovered by typing Babel more strictly
+-            path.replaceWith(result.value ? node.consequent : node.alternate);
++            path.replaceWith(valueIsTruthy ? node.consequent : node.alternate);
+           } else if (!result.value) {
+             path.remove();
+           }
+```
+
+**File**: `packages/metro/src/DeltaBundler/Serializers/getRamBundleInfo.js` (modified, +4/-2)
+```diff
+@@ -161,8 +161,10 @@ async function _getRamOptions(
+   );
+ 
+   return {
+-    // $FlowFixMe[sketchy-null-bool]
+-    preloadedModules: preloadedModules || {},
++    preloadedModules:
++      preloadedModules != null && preloadedModules !== false
++        ? preloadedModules
++        : {},
+     ramGroups: ramGroups || [],
+   };
+ }
 ```
 
 ---
 
-### Incident Patch 2: `52b20bb0` (2026-10-20)
-**Commit Message**: Tooling 0.336.0 (#2075)
+### Incident Patch 2: `104590ad` (2026-10-23)
+**Commit Message**: Inline destructured requires (#2087)
 
-Summary:
-X-link: https://github.com/react/react-native/pull/59164
+`inlineRequires` only inlined requires assigned to an identifier, so `const {foo} = require('foo')` stayed eager at module scope unless a Babel preset had lowered the destructuring first. `@react-native/babel-preset` stopped lowering destructuring for Hermes profiles in react/react-native#58965.
 
+This inlines top-level object patterns with plain, renamed or string keys directly: each reference becomes `require('foo').foo`, matching the lowered form. With `memoizeCalls`, a module's properties share one memoized module. Defaults, rest elements, nesting and computed keys are left alone, as are reassigned bindings and properties assigned on the module.
 
-Upgrade `flow-parser`, `flow-estree`, `flow-eslint`, `flow-transform`, and `flow-api-translator` across the xplat and AR/VR JavaScript tooling consumers. Refresh dependency locks, installed runtime payloads, and shared offline archives while preserving the independently pinned Fox toolchains and locally maintained type shims.
+Changelog: [Performance] Inline destructured CommonJS requires (`const {foo} = require('foo')`) under `inlineRequires`
 
-Build on D125751591's `flow-remove-types` upgrade. Keep Gauntlet in its own child because it has an independent release boundary.
-
-Support reviewed, exact-root Yarn installation options in the upgrade policy. Recharts' forced macOS `fsevents` resolution needs platform checking disabled and optional packages omitted on Linux; no other installation roots or dependency-verification checks are exempted.
-
-The installation-policy correction is an intentional prerequisite for executing the supplied playbook on Linux, not a separate feature rollout. The unchanged 0.335 Recharts dependency installation reproduced the forced macOS fsevents failure, including with --ignore-optional alone; the exact-root --ignore-platform/--ignore-optional combination passes without changing the 
-
-**File**: `package.json` (modified, +3/-3)
+**File**: `packages/metro-transform-plugins/src/__tests__/__snapshots__/inline-requires-plugin-test.js.snap` (modified, +141/-0)
 ```diff
-@@ -29,10 +29,10 @@
-     "eslint-plugin-lint": "^1.0.0",
-     "eslint-plugin-react": "^7.37.5",
-     "eslint-plugin-relay": "^1.8.3",
--    "flow-api-translator": "0.335.0",
-+    "flow-api-translator": "0.336.0",
-     "flow-bin": "^0.336.0",
--    "flow-eslint": "0.335.0",
--    "flow-parser": "0.335.0",
-+    "flow-eslint": "0.336.0",
-+    "flow-parser": "0.336.0",
-     "invariant": "^2.2.4",
-     "istanbul-lib-coverage": "3.0.0",
-     "istanbul-lib-report": "3.0.0",
+@@ -7,6 +7,16 @@ var foo = require(\\"foo\\");
+       ↓ ↓ ↓ ↓ ↓ ↓
+ 
+ 
++"
++`;
++
++exports[`memoizeCalls=false: inline-requires deletes unused destructured requires: deletes unused destructured requires 1`] = `
++"
++const {a} = require(\\"foo\\");
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++
+ "
+ `;
+ 
+@@ -91,6 +101,25 @@ function test() {
+ "
+ `;
+ 
++exports[`memoizeCalls=false: inline-requires ignores destructured properties that are re-assigned: ignores destructured properties that are re-assigned 1`] = `
++"
++var X = require(\\"X\\");
++const {a} = require(\\"X\\");
++X.a = function() {
++  a();
++};
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++const {
++  a
++} = require(\\"X\\");
++require(\\"X\\").a = function () {
++  a();
++};
++"
++`;
++
+ exports[`memoizeCalls=false: inline-requires ignores require properties (as identifiers) that are re-assigned: ignores require properties (as identifiers) that are re-assigned 1`] = `
+ "
+ var X = require(\\"X\\");
+@@ -137,6 +166,46 @@ require(\\"foo\\").method();
+ "
+ `;
+ 
++exports[`memoizeCalls=false: inline-requires inlines destructured requires referenced across scopes: inlines destructured requires referenced across scopes 1`] = `
++"
++const {a, b} = require(\\"foo\\");
++function f() {
++  return a() + b();
++}
++function g() {
++  if (b()) {
++    a();
++  }
++}
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++function f() {
++  return require(\\"foo\\").a() + require(\\"foo\\").b();
++}
++function g() {
++  if (require(\\"foo\\").b()) {
++    require(\\"foo\\").a();
++  }
++}
++"
++`;
++
++exports[`memoizeCalls=false: inline-requires inlines destructured requires: inlines destructured requires 1`] = `
++"
++const {a, b: c, \\"d-e\\": de} = require(\\"foo\\");
++a();
++c.x();
++de();
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++require(\\"foo\\").a();
++require(\\"foo\\").b.x();
++require(\\"foo\\")[\\"d-e\\"]();
++"
++`;
++
+ exports[`memoizeCalls=false: inline-requires inlines functions provided via \`inlineableCalls\`: inlines functions provided via \`inlineableCalls\` 1`] = `
+ "
+ const inlinedCustom = customStuff(\\"foo\\");
+@@ -244,6 +313,16 @@ var foo = require(\\"foo\\");
+       ↓ ↓ ↓ ↓ ↓ ↓
+ 
+ 
++"
++`;
++
++exports[`memoizeCalls=true: inline-requires deletes unused destructured requires: deletes unused destructured requires 1`] = `
++"
++const {a} = require(\\"foo\\");
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++
+ "
+ `;
+ 
+@@ -331,6 +410,26 @@ function test() {
+ "
+ `;
+ 
++exports[`memoizeCalls=true: inline-requires ignores destructured properties that are re-assigned: ignores destructured properties that are re-assigned 1`] = `
++"
++var X = require(\\"X\\");
++const {a} = require(\\"X\\");
++X.a = function() {
++  a();
++};
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++var X;
++const {
++  a
++} = require(\\"X\\");
++(X || (X = require(\\"X\\"))).a = function () {
++  a();
++};
++"
++`;
++
+ exports[`memoizeCalls=true: inline-requires ignores require properties (as identifiers) that are re-assigned: ignores require properties (as identifiers) that are re-assigned 1`] = `
+ "
+ var X = require(\\"X\\");
+@@ -380,6 +479,48 @@ var baz = 4;
+ "
+ `;
+ 
++exports[`memoizeCalls=true: inline-requires inlines destructured requires referenced across scopes: inlines destructured requires referenced across scopes 1`] = `
++"
++const {a, b} = require(\\"foo\\");
++function f() {
++  return a() + b();
++}
++function g() {
++  if (b()) {
++    a();
++  }
++}
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++var _foo;
++function f() {
++  return (_foo || (_foo = require(\\"foo\\"))).a() + _foo.b();
++}
++function g() {
++  if ((_foo || (_foo = require(\\"foo\\"))).b()) {
++    (_foo || (_foo = require(\\"foo\\"))).a();
++  }
++}
++"
++`;
++
++exports[`memoizeCalls=true: inline-requires inlines destructured requires: inlines destructured requires 1`] = `
++"
++const {a, b: c, \\"d-e\\": de} = require(\\"foo\\");
++a();
++c.x();
++de();
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++var _foo;
++(_foo || (_foo = require(\\"foo\\"))).a();
++_foo.b.x();
++_foo[\\"d-e\\"]();
++"
++`;
++
+ exports[`memoizeCalls=true: inline-requires inlines functions provided via \`inlineableCalls\`: inlines functions provided via \`inlineableCalls\` 1`] = `
+ "
+ const inlinedCustom = customStuff(\\"foo\\");
 ```
 
-**File**: `packages/metro-babel-register/package.json` (modified, +1/-1)
+**File**: `packages/metro-transform-plugins/src/__tests__/inline-requires-plugin-test.js` (modified, +91/-0)
 ```diff
-@@ -21,7 +21,7 @@
-     "@babel/preset-typescript": "^7.24.7",
-     "@babel/register": "^7.24.6",
-     "babel-plugin-replace-ts-export-assignment": "^0.0.2",
--    "flow-parser": "0.335.0",
-+    "flow-parser": "0.336.0",
-     "babel-plugin-transform-flow-enums": "^0.0.2",
-     "escape-string-regexp": "^1.0.5",
-     "flow-enums-runtime": "^0.0.6"
-```
-
-**File**: `packages/metro-babel-transformer/package.json` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@
-   "dependencies": {
-     "@babel/core": "^7.25.2",
-     "flow-enums-runtime": "^0.0.6",
--    "flow-parser": "0.335.0",
-+    "flow-parser": "0.336.0",
-     "metro-cache-key": "0.87.1",
-     "nullthrows": "^1.1.1"
+@@ -238,6 +238,97 @@ const TEST_CASES: TestCases = {
+     code: ['const a = require("Foo", "Bar", 47);', '', 'a();'].join('\n'),
+     snapshot: true,
    },
++
++  'inlines destructured requires': {
++    code: [
++      'const {a, b: c, "d-e": de} = require("foo");',
++      'a();',
++      'c.x();',
++      'de();',
++    ].join('\n'),
++    snapshot: true,
++  },
++
++  'inlines destructured requires referenced across scopes': {
++    code: [
++      'const {a, b} = require("foo");',
++      'function f() {',
++      '  return a() + b();',
++      '}',
++      'function g() {',
++      '  if (b()) {',
++      '    a();',
++      '  }',
++      '}',
++    ].join('\n'),
++    snapshot: true,
++  },
++
++  'deletes unused destructured requires': {
++    code: ['const {a} = require("foo");'].join('\n'),
++    snapshot: true,
++  },
++
++  'ignores destructured requires with defaults': {
++    code: ['const {', '  a = 1', '} = require("foo");', 'a();'].join('\n'),
++    snapshot: false,
++  },
++
++  'ignores destructured requires with rest elements': {
++    code: [
++      'const {',
++      '  a,',
++      '  ...rest',
++      '} = require("foo");',
++      'a(rest);',
++    ].join('\n'),
++    snapshot: false,
++  },
++
++  'ignores nested destructured requires': {
++    code: [
++      'const {',
++      '  a: {',
++      '    b',
++      '  }',
++      '} = require("foo");',
++      'b();',
++    ].join('\n'),
++    snapshot: false,
++  },
++
++  'ignores destructured requires with computed keys': {
++    code: ['const {', '  [key]: a', '} = require("foo");', 'a();'].join('\n'),
++    snapshot: false,
++  },
++
++  'ignores destructured requires that are re-assigned': {
++    code: [
++      'let {',
++      '  a,',
++      '  b',
++      '} = require("foo");',
++      'b = 1;',
++      'a(b);',
++    ].join('\n'),
++    snapshot: false,
++  },
++
++  'ignores destructured properties that are re-assigned': {
++    code: [
++      'var X = require("X");',
++      'const {a} = require("X");',
++      'X.a = function() {',
++      '  a();',
++      '};',
++    ].join('\n'),
++    snapshot: true,
++  },
++
++  'ignores destructured requires in `ignoredRequires`': {
++    code: ['const {', '  a', '} = require("CommonFoo");', 'a();'].join('\n'),
++    snapshot: false,
++  },
+ };
+ 
+ describe.each([true, false])('memoizeCalls=%s:', memoizeCalls => {
 ```
 
-**File**: `packages/metro/package.json` (modified, +1/-1)
+**File**: `packages/metro-transform-plugins/src/inline-requires-plugin.js` (modified, +199/-3)
 ```diff
-@@ -31,7 +31,7 @@
-     "debug": "^4.4.0",
-     "error-stack-parser": "^2.0.6",
-     "flow-enums-runtime": "^0.0.6",
--    "flow-parser": "0.335.0",
-+    "flow-parser": "0.336.0",
-     "invariant": "^2.2.4",
-     "jest-worker": "^29.7.0",
-     "jsc-safe-url": "^0.2.2",
+@@ -58,11 +58,15 @@ export type State = {
+  *     g(require('foo').bar);
+  *
+  * Destructuring also works the same way. For instance:
+- *     const {Baz} = require('foo');
+- *     h(Baz);
++ *     const {Baz, qux: Qux} = require('foo');
++ *     h(Baz, Qux);
+  *
+  * Is also successfully inlined into:
+- *     g(require('foo').Baz);
++ *     h(require('foo').Baz, require('foo').qux);
++ *
++ * With `memoizeCalls`, destructured properties share one memoized module.
++ * Destructuring with defaults, rest elements, nesting or computed keys is not
++ * inlined.
+  */
+ export default ({types: t, traverse}: Babel): PluginObj<State> => ({
+   name: 'inline-requires',
+@@ -89,10 +93,146 @@ export default ({types: t, traverse}: Babel): PluginObj<State> => ({
+         if (programNode.type !== 'Program') {
+           return;
+         }
++        const program: Program = programNode;
++
++        // Inlines `const {a, b: c} = require('m')` by replacing each reference
++        // to `a` or `c` with `require('m').a` or `require('m').b`. When calls
++        // are memoized, all properties share one memoized module, so each
++        // scope requires `m` at most once.
++        function inlineDestructuredRequire(
++          {
++            declarationPath,
++            moduleName,
++            requireFnName,
++            properties,
++          }: InlineableDestructuring,
++          state: State,
++        ): void {
++          const references: Array<{key: string, referencePath: NodePath<>}> =
++            [];
++          for (const {key, localName} of properties) {
++            const binding = declarationPath.scope.getBinding(localName);
++            if (
++              binding == null ||
++              binding.constantViolations.length > 0 ||
++              isExcludedMemberAssignment(moduleName, key, state)
++            ) {
++              return;
++            }
++            for (const referencePath of binding.referencePaths) {
++              references.push({key, referencePath});
++            }
++          }
++          // A memoized require is only assigned by the first reference in a
++          // scope, so references are replaced in source order.
++          references.sort(
++            (a, b) =>
++              (a.referencePath.node.start ?? 0) -
++              (b.referencePath.node.start ?? 0),
++          );
++
++          const declarator = declarationPath.node;
++          const initPath = declarationPath.get('init');
++          if (
++            declarator.type !== 'VariableDeclarator' ||
++            declarator.init == null ||
++            Array.isArray(initPath)
++          ) {
++            return;
++          }
++          const init: Expression = declarator.init;
++          const initLoc = getNearestLocFromPath(initPath);
++          deleteLocation(init);
++          traverse(init, {
++            noScope: true,
++            enter: path => deleteLocation(path.node),
++          });
++
++          const getRequireExpr = () => {
++            const refExpr = t.cloneDeep(init);
++            // $FlowFixMe[prop-missing]
++            refExpr.METRO_INLINE_REQUIRES_INIT_LOC = initLoc;
++            return refExpr;
++          };
++          const getMember = (object: Expression, key: string) =>
++            t.isValidIdentifier(key)
++              ? t.memberExpression(object, t.identifier(key))
++              : t.memberExpression(object, t.stringLiteral(key), true);
++
++          let memoVarName: ?string = null;
++          if (
++            memoizeCalls &&
++            references.length > 0 &&
++            !nonMemoizedModules.has(moduleName)
++          ) {
++            const name = path.scope.generateUid(moduleName);
++            declarationPath.remove();
++            if (
++              addStmtToBlock(
++                program,
++                t.variableDeclaration('var', [
++                  t.variableDeclarator(t.identifier(name)),
++                ]),
++                0,
++              )
++            ) {
++              memoVarName = name;
++            }
++          }
++
++          let thrown = false;
++          const scopesWithInlinedRequire = new Set<Scope>();
++          for (const {key, referencePath} of references) {
++            try {
++              referencePath.scope.rename(requireFnName);
++              if (memoVarName == null) {
++                referencePath.replaceWith(getMember(getRequireExpr(), key));
++                continue;
++              }
++              referencePath.scope.rename(memoVarName);
++              const memoOrCall = t.logicalExpression(
++                '||',
++                t.identifier(memoVarName),
++                t.assignmentExpression(
++                  '=',
++                  t.identifier(memoVarName),
++                  getRequireExpr(),
++                ),
++              );
++              // Reuse the memoized module directly once this scope has
++              // assigned it, as for identifier aliases above.
++              if (!isDirectlyEnclosedByBlock(t, referencePath)) {
++                referencePath.replaceWit
 ```
 
-**File**: `yarn.lock` (modified, +30/-30)
+---
+
+### Incident Patch 3: `b9a150f4` (2026-10-21)
+**Commit Message**: Docs: Fix inaccurate and outdated documentation (#2077) (#2077)
+
+**File**: `docs/API.md` (modified, +32/-12)
 ```diff
-@@ -3292,19 +3292,19 @@ flatted@^3.1.0:
-   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
-   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
+@@ -44,31 +44,37 @@ title: Bundling API
  
--flow-api-translator@0.335.0:
--  version "0.335.0"
--  resolved "https://registry.yarnpkg.com/flow-api-translator/-/flow-api-translator-0.335.0.tgz#62bd5c7d3494c67226f41022febb820e59437486"
--  integrity sha512-APzyBFsT9x22NlBEYHi/ru++y4Yglx1pwwII9vLXg816ggoVxF5bSmcUxy1B+3Axj+pU5hYGWtJ7z24c5U9cLg==
-+flow-api-translator@0.336.0:
-+  version "0.336.0"
-+  resolved "https://registry.yarnpkg.com/flow-api-translator/-/flow-api-translator-0.336.0.tgz#588c4672c6a32f7fcb00064314b7ad1551e728a5"
-+  integrity sha512-0odorqlErVwnXLuFpQdpRwlUNaqklR2H2tN8uRmlV/Usb82k0S++ReH3afKL7BhUevi4xMsBa02vd38Lf8RznQ==
-   dependencies:
-     "@babel/code-frame" "^7.16.0"
-     "@typescript-eslint/parser" "8.38.0"
-     "@typescript-eslint/visitor-keys" "8.38.0"
-     flow-enums-runtime "^0.0.6"
--    flow-eslint "0.335.0"
--    flow-estree "0.335.0"
--    flow-parser "0.335.0"
--    flow-transform "0.335.0"
-+    flow-eslint "0.336.0"
-+    flow-estree "0.336.0"
-+    flow-parser "0.336.0"
-+    flow-transform "0.336.0"
-     typescript "5.3.2"
+ ## Reference
  
- flow-bin@^0.336.0:
-@@ -3317,38 +3317,38 @@ flow-enums-runtime@^0.0.6:
-   resolved "https://registry.yarnpkg.com/flow-enums-runtime/-/flow-enums-runtime-0.0.6.tgz#5bb0cd1b0a3e471330f4d109039b7eba5cb3e787"
-   integrity sha512-3PYnM29RFXwvAN6Pc/scUfkI7RwhQ/xqyLUyPNlXUp9S40zI8nup9tUSrTLSVnWGBN38FNiGWbwZOB6uR4OGdw==
+-All functions exposed below accept an additional `config` option. This object should be the [Metro configuration](CLI.md) exposed by your `metro.config.js` file - you can obtain it using `Metro.loadConfig`.
++The `config` object accepted by the functions below is the [Metro configuration](./Configuration.md) exported by your `metro.config.js` file, which you can obtain with `Metro.loadConfig`.
  
--flow-eslint@0.335.0:
--  version "0.335.0"
--  resolved "https://registry.yarnpkg.com/flow-eslint/-/flow-eslint-0.335.0.tgz#a8383914568f16475ef5cd62c157843b62e52910"
--  integrity sha512-G/6qz7O1Otv3/fhZBvVyBQFvDihHZnRIXhJAwQ2HjWhurszVDHSrO4ZOEdCdZTMRtLmCltfPOBTMJRDaKERNCA==
-+flow-eslint@0.336.0:
-+  version "0.336.0"
-+  resolved "https://registry.yarnpkg.com/flow-eslint/-/flow-eslint-0.336.0.tgz#2a9e807c85f41f8ba2329e787fd84bc67c411f6d"
-+  integrity sha512-HWsiMD2mC3HbVwPKX74BxyX+ZjgiJi3BYDOG/FofbpLce/Eg1wftSuGEyvWprYpgKOnTEe/7o32IdLdTv25LaQ==
-   dependencies:
-     esrecurse "^4.3.0"
--    flow-estree "0.335.0"
--    flow-parser "0.335.0"
-+    flow-estree "0.336.0"
-+    flow-parser "0.336.0"
+-### `loadConfig(<options>)`
++### `loadConfig(<options>, <defaultConfigOverrides>)`
  
--flow-estree@0.335.0:
--  version "0.335.0"
--  resolved "https://registry.yarnpkg.com/flow-estree/-/flow-estree-0.335.0.tgz#6867e678070b0edb13ff37636d8aaf4b444516bb"
--  integrity sha512-sfJYlOSnrbBI4ruZ7UG5OJLz16E1hs+Kkt/De8F7vm6UafLfvZIWjkoBmZtKoN6EIOa3zgGkVczt0xpmmQixGA==
-+flow-estree@0.336.0:
-+  version "0.336.0"
-+  resolved "https://registry.yarnpkg.com/flow-estree/-/flow-estree-0.336.0.tgz#e9e90c68ac69b078b2d167588e47a11e5d240d86"
-+  integrity sha512-0VaGWHJourzh88otU5bVJ4Z/oIsD+R6yaeR0Q8t8dezsKQI/RLi5m3fNzkiLYLhJ+YwM3JRSKlOqGplOI5Yo3w==
+ **Basic options:** `config`, `cwd`
  
--flow-parser@0.*, flow-parser@0.335.0:
--  version "0.335.0"
--  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.335.0.tgz#27c879530fd7fe9521129b15e6d9cedd9860c645"
--  integrity sha512-TpG7cWiAAh5EoOjaGuzggks8HOM6DJhey1RmMmnzGUd+AYmsl77S5EXvb6gxAEGX40FyfkXEwsvQcuI6Knkm7g==
-+flow-parser@0.*, flow-parser@0.336.0:
-+  version "0.336.0"
-+  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.336.0.tgz#5c34f8a97edfa241d3e71c7a1dcd99a56b1cc2bc"
-+  integrity sha512-O8QvQf/B3rBF+eagcc9/WMAjfJoaKckdgSd8PT/qvMIIe4ZjVKrSqV5SDnRFAKY0VrE8r5C4ADYgvYhmwkWADA==
-   dependencies:
--    flow-estree "0.335.0"
-+    flow-estree "0.336.0"
+-Load the Metro configuration, either from `config` in options if specified, or by traversing the directory hierarchy from `cwd` to the root until it finds a file (by default `metro.config.js`). The returned configuration will have been normalized and merged with Metro's default values.
++Load the Metro configuration, either from the path given in `config` if specified, or by traversing the directory hierarchy from `cwd` up to the user's home directory until it finds a [config file](./Configuration.md). The returned configuration will have been normalized and merged with Metro's default values, after applying `defaultConfigOverrides` to the defaults.
  
--flow-transform@0.335.0:
--  version "0.335.0"
--  resolved "https://registry.yarnpkg.com/flow-transform/-/flow-transform-0.335.0.tgz#ec49dedfd5507da0228f715ad20315c6ebf6ae75"
--  integrity sha512-TUBmPSufhaWaD0Amw/wR8v6+F+CLbnY8aHoUyb3hykEp6kDiPrCvem96uhN/uJ8CnjO2OODxxsisa0ikYaBt5w==
-+flow-transform@0.336.0:
-+  version "0.336.0"
-+  resolved "https://registry.yarnpkg.com/flow-transform/-/flow-transform-0.336.0.tgz#61fd6c761b63c412b67c707dcd81333d24e5fa8d"
-+  integrity sha512-KQEt9y581jhxaUOM80sPbssa/t6bEnwGz0x/xfwmxXv8a69bs6wW83/1Roq1h9qoJfwvSTncWk3IlrpdBVBXXQ==
-   dependencies:
-     "@babel/code-frame" "^7.16.0"
-     esquery "^1.4.0"
-     flow-enums-runtime "^0.0.6"
--    flow-eslint "0.335.0"
--    flow-estree "0.335.0"
--    flow-parser "0.335.0"
-+    flow-eslint "0.336.0"
-+    flow-estree "0.336.0"
-+    flow-parser "0.336.0"
-     string-width "4.2.3"
+-### `async runMetro(config)`
++`loadConfig` also accepts the options of the [CLI](./CLI.md), which override the corresponding config values: `port` ([`server.port`](./Configuration.md#port)), `projectRoot`, `watchFolders`, `assetExts`, `sourceExts` and `platforms` (the `resolver` options of the same names), [`maxWorkers`](./Configuration.md#maxworkers) (which defaults to a number based on `os.availableParallelism()`), `transformer` ([`transformer.babelTransformerPath`](./Configuration.md#babeltransformerpath)), `resetCache`, and `verbose` (`false` silences Metro's terminal output).
  
- for-each@^0.3.3, for-each@^0.3.5:
+-Creates a Metro server based on the config and returns it. You can use this as a middleware in your existing server.
++### `async runMetro(config, <options>)`
++
++**Basic options:** `waitForBundler`, `watch`, `onBundleBuilt`, `hasReducedPerformance`
++
++Creates a Metro server based on the config and returns it. Its `processRequest` method can be used as a middleware in your existing server. `hasReducedPerformance` only makes Metro's terminal output warn that Metro is operating with reduced performance.
+ 
+ ### `async runBuild(config, <options>)`
+ 
+-**Required options:** `entry`, `out`
++**Required options:** `entry`
++
++**Basic options:** `out`, `bundleOut`, `sourceMapOut`, `dev`, `minify`, `platform`, `sourceMap`, `sourceMapUrl`, `assets`, `onBegin`, `onProgress`, `onComplete`, `customResolverOptions`, `customTransformOptions`, `output`
+ 
+-**Basic options:** `dev`, `minify`, `platform`, `sourceMap`, `sourceMapUrl`, `assets`
++Bundles `entry` for the given `platform` (defaults to `'web'`). If `out` or `bundleOut` is given, saves the bundle to `bundleOut`, or to `out` with a `.js` extension. If `sourceMap` is set, also generates a source map. The source map will be inlined, unless `sourceMapUrl` is also defined, in which case `sourceMapUrl` is used as the bundle's `sourceMappingURL`. When saving to disk, the source map is also written to `sourceMapOut`, or to `out` with a `.map` extension. If `assets` is `true`, an array of `AssetData` will be generated and returned in the `assets` property of the result object.
+ 
+-Bundles `entry` for the given `platform`, and saves it to location `out`. If `sourceMap` is set, also generates a source map. The source map will be inlined, unless `sourceMapUrl` is also defined. In the latter case, a new file will be generated with the basename of the `sourceMapUrl` parameter. If `assets` is `true`, an array of `AssetData` will be generated and returned in the `assets` property of the result object.
++`output` replaces how the bundle is built and written to disk. It is an object with two functions: `build(server, requestOptions, buildOptions)`, whose result `runBuild` resolves to and passes to `save`, and `save(bundle, outputOptions, log)`, which is only called if `out` or `bundleOut` is given. Defaults to Metro's plain bundle output, `metro/private/shared/output/bundle`. For example, `require('metro/private/shared/output/RamBundle')` writes a [RAM bundle](./Bundling.md#indexed-ram-bundle) instead.
+ 
+ ### `async runServer(config, <options>)`
+ 
+-**Basic options:** `host`, `port`, `secureServerOptions`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`, `secure (DEPRECATED)`, `secureKey (DEPRECATED)`, `secureCert (DEPRECATED)`
++**Basic options:** `host`, `onReady`, `onClose`, `onError`, `waitForBundler`, `watch`, `hasReducedPerformance`, `websocketEndpoints`, `secureServerOptions`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`, `secure (DEPRECATED)`, `secureKey (DEPRECATED)`, `secureCert (DEPRECATED)`
+ 
+-Starts a full Metro HTTP server. It will listen on the specified `host:port`, and can then be queried to retrieve bundles fo
+```
+
+**File**: `docs/Bundling.md` (modified, +12/-10)
+```diff
+@@ -7,23 +7,25 @@ When bundling, each of the modules gets assigned a numeric id, meaning no dynami
+ 
+ ## Plain bundle
+ 
+-This is the standard bundling format. In this format, all files are wrapped with a function call, then added to the global file. This is useful for environments that expect a JS only bundle (e.g. a browser). Just requiring the entry point with the `.bundle` extension should trigger a build of it.
++This is the standard bundling format. In this format, all files are wrapped with a function call (`__d()`, which registers the module with Metro's module system), then concatenated into a single file. This is useful for environments that expect a JS only bundle (e.g. a browser). Just requiring the entry point with the `.bundle` extension should trigger a build of it.
+ 
+ ## Indexed RAM bundle
+ 
++RAM (Random Access Modules) bundles store each module separately, so the app can load a module's code only when it is first required.
++
+ This format composes the bundle as a binary file, which format has the following parts (all numbers are expressed in Little Endian):
+ 
+ * A magic number: a `uint32` must be located at the beginning of the file, with the value `0xFB0BD1E5`. This is used to verify the file.
+ * An offset table: the table is a sequence of `uint32` pairs, with a header
+-    * For the header, two `uint32`s can be found: the length of the table, and the length of the startup code.
+-    * For the pairs, they represent the offset in the file and the length of code module, in bytes.
+-* Each of the modules, finished by a null byte (`\0`).
++    * For the header, two `uint32`s can be found: the number of table entries (highest module id + 1), and the length of the startup code, in bytes.
++    * For the pairs, they represent the offset of the module code relative to the start of the startup code, and the length of the module code, in bytes.
++* The startup code, followed by each of the modules, each finished by a null byte (`\0`). The startup code runs when the bundle loads: polyfills, Metro's module system, [`preloadedModules`](./Configuration.md#gettransformoptions), and the call that runs the entry point.
+ 
+ ```
+ ` 0                   1                   2                   3                   4                   5                   6
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-|                          Magic number                         |                          Header size                          |
++|                          Magic number                         |                       Number of entries                       |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                       Startup code size                       |                        Module 0 offset                        |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+@@ -35,9 +37,9 @@ This format composes the bundle as a binary file, which format has the following
+ +                                                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                                                               |                        Module n offset                        |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-|                        Module n length                        | Module 0 code | Module 0 code |      ...      |       \0      |
++|                        Module n length                        | Startup code  | Startup code  |      ...      |       \0      |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-| Module 1 code | Module 1 code |      ...      |       \0      |                                                               |
++| Module 0 code | Module 0 code |      ...      |       \0      |                                                               |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                                                               +
+ |                                                                                                                               |
+ +                                                              ...                                                              +
+@@ -49,12 +51,12 @@ This format composes the bundle as a binary file, which format has the following
+ 
+ This structure is optimal for an environment that is able to load all code in memory at once:
+ 
+-* By using the offset table, one can load any module in cons
+```
+
+**File**: `docs/CLI.md` (modified, +32/-12)
+```diff
+@@ -14,25 +14,45 @@ Generates a JavaScript bundle containing the specified entrypoint and its descen
+ 
+ | Option   | Alias    | Description    | Value |
+ |----------|----------|----------|----------|
+-| `out`    | `O` | File name where to store the output | String |
+-| `platform` | `p` | Which platform to bundle for | `web`, `android`, `ios` |
++| `out`    | `O` | File name where to store the output (required) | String |
++| `platform` | `p` | Which platform to bundle for (e.g. `web`, `android`, `ios`) | String |
+ | `minify` | `z` | Whether Metro should minify the bundle | Boolean |
+-| `dev` | `g` | Create a development version of the build (`process.env.NODE_ENV = 'development'`) | Boolean |
++| `dev` | `g` | Create a development build, in which `__DEV__` is `true` | Boolean |
+ | `config` | `c` | Location of the `metro.config.js` to use | String |
+-| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on | Number |
+-| `project-roots` | `P` | The root folder of your project | Array |
++| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()` | Number |
++| `project-roots` | `P` | Accepted, but has no effect | Array |
+ | `source-map` |  | Whether Metro should generate source maps | Boolean |
+ | `source-map-url` |  | URL where the source map can be found | String |
+-| `legacy-bundler` |  | Whether Metro should use the legacy bundler | Boolean |
++| `legacy-bundler` |  | Accepted, but has no effect | Boolean |
+ | `resolver-option` |  | [Custom resolver options](./Resolution.md#customresolveroptions-string-mixed) of the form `key=value` | Array |
+-| `transform-option` |  | Custom transform options of the form `key=value` | Array |
++| `transform-option` | `transformer-option` | Custom transform options of the form `key=value` | Array |
++| `reset-cache` |  | **Deprecated.** Clears Metro's caches before building, like [`resetCache`](./Configuration.md#resetcache) | Boolean |
++| `output-type` | `t` | Accepted, but has no effect | String |
+ 
+ 
+ ## `serve`
+ 
+-Starts Metro on the given port, building bundles on the fly.
++Alias: `start`
+ 
+-## `get-dependencies <entryFile>`
++Starts Metro on the given port, building bundles on the fly. Restarts the server when the config file changes.
++
++### Options
++
++| Option   | Alias    | Description    | Value |
++|----------|----------|----------|----------|
++| `host` | `h` | Host to listen on. Defaults to `localhost` | String |
++| `port` | `p` | Port to listen on. Defaults to `8081`, overriding [`server.port`](./Configuration.md#port) | Number |
++| `config` | `c` | Location of the `metro.config.js` to use | String |
++| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()` | Number |
++| `secure-server-options` | `s` | Options for the HTTPS server, using dot notation (e.g. `-s.cert="$(cat path/to/cert)" -s.key="$(cat path/to/key)"`) | Object |
++| `secure` |  | **Deprecated.** Serve over HTTPS. Use `secure-server-options` instead | Boolean |
++| `secure-key` |  | **Deprecated.** Path to the key file for HTTPS when `secure` is set | String |
++| `secure-cert` |  | **Deprecated.** Path to the cert file for HTTPS when `secure` is set | String |
++| `reset-cache` |  | **Deprecated.** Clears Metro's caches on startup, like [`resetCache`](./Configuration.md#resetcache) | Boolean |
++| `project-roots` | `P` | Accepted, but has no effect | Array |
++| `hmr-enabled` | `hmr` | Accepted, but has no effect | Boolean |
++
++## `get-dependencies [entryFile]`
+ 
+ List all dependencies that will be bundled for a given entry point.
+ 
+@@ -44,6 +64,6 @@ List all dependencies that will be bundled for a given entry point.
+ | `output` | File name where to store the output, ex. /tmp/dependencies.txt |
+ | `platform` | The platform extension used for selecting modules |
+ | `transformer` | Specify a custom transformer to be used |
+-| `max-workers` | Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine. |
+-| `dev` | If false, skip all dev-only code path |
+-| `verbose` | Enables logging |
++| `max-workers` | Specifies the maximum number of workers the worker-pool will spawn for transforming files. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()`. |
++| `dev` | If false, skip all dev-only code path. Defaults to `true` |
++| `verbose` | Enables logging. Defaults to `false` |
+```
+
+**File**: `docs/Caching.md` (modified, +17/-4)
+```diff
+@@ -13,22 +13,32 @@ A typical setup for a remote cache involves:
+ 2. Running [`metro build`](./CLI.md#build-entry) periodically (e.g. in a CI job) to populate the cache, using `HttpStore` (or a custom read/write cache store) in your Metro config.
+ 3. Configuring Metro on your development machines to read from the cache, using `HttpGetStore` (or a custom read-only cache store) in your Metro config.
+ 
+-The main option for configuring the Metro cache is [`cacheStores`](./Configuration.md#cachestores). Typically, the local cache (e.g. `FileStore`) should be listed first, followed by the remote cache (e.g. `HttpCache`).
++The main option for configuring the Metro cache is [`cacheStores`](./Configuration.md#cachestores). Typically, the local cache (e.g. `FileStore`) should be listed first, followed by the remote cache (e.g. `HttpStore` or `HttpGetStore`).
+ 
+ ## Built-in cache stores
+ 
+ Metro provides a number of built-in cache store implementations for use with the [`cacheStores`](./Configuration.md#cachestores) config option:
+ 
+ * **`FileStore({root: string})`** will store cache entries as files under the directory specified by `root`.
+-* **`AutoCleanFileStore()`** <div class="label deprecated">Deprecated</div> is a `FileStore` that periodically cleans up old entries. It accepts the same options as `FileStore` plus the following:
++* **`AutoCleanFileStore(options)`** <div class="label deprecated">Deprecated</div> is a `FileStore` that periodically cleans up old entries. It accepts the same options as `FileStore` plus the following:
+   * **`options.intervalMs: number`** is the time in milliseconds between cleanup attempts. Defaults to 10 minutes.
+   * **`options.cleanupThresholdMs: number`** is the minimum time in milliseconds since the last modification of an entry before it can be deleted. Defaults to 3 days.
+ * **`HttpStore(options)`** is a bare-bones remote cache client that reads (`GET`) and writes (`PUT`) compressed cache artifacts over HTTP or HTTPS.
+-  * **`options.endpoint: string`** is the base URL for the cache server. For example, an `HttpStore` with `'http://www.example.com/endpoint'` as the endpoint would issue requests to URLs such as `http://www.example.com/endpoint/c083bff944879d9f528cf185eba0f496bc10a47d`.
++  * **`options.endpoint: string`** is the base URL for the cache server. For example, an `HttpStore` with `'http://www.example.com/endpoint'` as the endpoint would issue requests to URLs such as `http://www.example.com/endpoint/c083bff944879d9f528cf185eba0f4962fd4e5b1a6a7d2a1c0bd42c3c0d5f0e1b6a9e7c8` (the hex-encoded cache key).
+   * **`options.timeout: number`** is the timeout for requests to the cache server, in milliseconds. Defaults to 5000.
+   * **`options.family: 4 | 6`** is the same as the `family` parameter to Node's [`http.request`](https://nodejs.org/api/http.html#httprequesturl-options-callback).
+   * **`options.cert`, `options.ca`, `options.key`**: HTTPS options passed directly to [Node's built-in HTTPS client](https://nodejs.org/api/https.html).
+-* **`HttpGetStore(options)`** is a read-only version of `HttpStore`.
++  * **`options.headers: {[string]: string}`**: HTTP headers sent with every request.
++  * **`options.params: URLSearchParams`**: Query parameters appended to every request URL.
++  * **`options.additionalSuccessStatuses: Array<number>`**: Additional HTTP status codes treated as success.
++  * **`options.maxAttempts: number`**: The maximum number of attempts per request, with exponential backoff. Defaults to 1 (no retries).
++  * **`options.retryStatuses: Set<number>`**: HTTP status codes that trigger a retry.
++  * **`options.retryNetworkErrors: boolean`**: Whether to retry on network errors. Defaults to `false`.
++  * **`options.debug: boolean`**: Whether to include the response body in HTTP error messages. Defaults to `false`.
++  * **`options.socketPath: string`**: A Unix domain socket to connect through.
++  * **`options.proxy: string`**: A proxy URL to connect through.
++  * Alternatively, `options` may be `{getOptions, setOptions}`, each an object with the options above, to use different settings for reads and writes.
++* **`HttpGetStore(options)`** is a read-only version of `HttpStore`. HTTP and network errors on read are treated as cache misses (with a one-time warning) rather than failing the build.
+ 
+ You can import these classes from the `metro-cache` package or get them through the function form of `cacheStores`:
+ 
+@@ -53,6 +63,9 @@ To implement a custom cache store, pass an instance of a class with the followin
+ 
+ ```flow
+ interface CacheStore<T: Buffer | JsonSerializable> {
++  // Optional name used in Metro's cache logs. Defaults to the class name.
++  name?: string;
++
+   // Read an entry from the cache. Returns `null` if not found.
+   get(key: Buffer): ?T | Promise<?T>;
+ 
+```
+
+**File**: `docs/Configuration.md` (modified, +116/-31)
+```diff
+@@ -6,16 +6,16 @@ title: Configuring Metro
+ A Metro config can be created in the following file formats (ordered by priority):
+ 
+ 1.  `metro.config.js` / `metro.config.cjs` / `metro.config.mjs` (CommonJS or ESM)
+-2.  `metro.config.ts` / `metro.config.cts` / `metro.config.mts` (TypeScript)
+-3.  `metro.config.json`
+-4.  `.config/metro.js` / `.config/metro.cjs` / `.config/metro.mjs` / `.config/metro.ts` / `.config/metro.cts` / `.config/metro.mts` / `.config/metro.json`
++2.  `metro.config.json`
++3.  `metro.config.ts` / `metro.config.cts` / `metro.config.mts` (TypeScript)
++4.  `.config/metro.js` / `.config/metro.cjs` / `.config/metro.mjs` / `.config/metro.json` / `.config/metro.ts` / `.config/metro.cts` / `.config/metro.mts`
+ 5.  The `metro` field in `package.json`
+ 
+ You can also give a custom file to the configuration by specifying `--config <path/to/config>` when calling the CLI.
+ 
+ :::info TypeScript Config Support
+ 
+-Metro uses Node.js native TypeScript support to load `.*ts` config files. For Node.js 22.18.0 and later or 24.0.0 later, _erasable_ TypeScript is supported out of the box. For Node.js < 22.18.0, use the `--experimental-strip-types` flag. See https://nodejs.org/learn/typescript/run-natively.
++Metro uses Node.js native TypeScript support to load `.*ts` config files. For Node.js 22.18.0 and later or 24.0.0 and later, _erasable_ TypeScript is supported out of the box. For Node.js 22.6.0 to 22.17.x, use the `--experimental-strip-types` flag. See https://nodejs.org/learn/typescript/run-natively.
+ 
+ :::
+ 
+@@ -49,6 +49,9 @@ const config: MetroConfig = {
+   server: {
+     /* server options */
+   },
++  symbolicator: {
++    /* symbolicator options */
++  },
+   watcher: {
+     /* watcher options */
+     watchman: {
+@@ -161,12 +164,11 @@ If `true`, Metro will use a stable mapping from files to transformer workers, so
+ 
+ Type: `number`
+ 
+-The number of workers to use for parallel processing in Metro. Defaults to approximately half of the number of cores available on the machine, as reported by [`os.availableParallelism()`](https://nodejs.org/api/os.html#osavailableparallelism).
++The number of workers to use for parallel processing in Metro. Defaults to roughly 75% of the cores available on the machine (as reported by [`os.availableParallelism()`](https://nodejs.org/api/os.html#osavailableparallelism)) for up to 8 cores, falling to 50% for 48 or more, e.g. 6 workers on 8 cores, 10 on 16 and 32 on 64.
+ 
+ :::note
+-1. Values exceeding the number of available cores have no effect.
+-2. If `maxWorkers` is set to 1 or lower, worker code will run in the main Metro process instead of concurrently.
+-3. Metro has two separate worker pools - one for transformation and one for building the file map. Each pool has its worker count set to `maxWorkers` independently.
++1. If `maxWorkers` is set to 1 or lower, worker code will run in the main Metro process instead of concurrently.
++2. Metro has two separate worker pools - one for transformation and one for building the file map. Each pool has its worker count set to `maxWorkers` independently.
+ :::
+ 
+ #### `fileMapCacheDirectory`
+@@ -189,16 +191,16 @@ A logger factory function that can be used to get insights about Metro performan
+ 
+ ```flow
+ function unstable_perfLoggerFactory(
+-  type: string,
+-  opts: $ReadOnly<{
+-    key?: string
++  type: 'START_UP' | 'BUNDLING_REQUEST' | 'HMR',
++  opts?: $ReadOnly<{
++    key?: number
+   }>,
+ ): RootPerfLogger {
+   // ...
+ };
+ ```
+ 
+-* **`type`** Type of event being logged, e.g. `'STARTUP'`, `'BUNDLING_REQUEST'`, `'HMR'`. See type definition of [PerfLoggerFactory](https://github.com/react/metro/blob/main/packages/metro-config/src/types.js) for a full list of event types.
++* **`type`** Type of event being logged, e.g. `'START_UP'`, `'BUNDLING_REQUEST'`, `'HMR'`. See type definition of [PerfLoggerFactory](https://github.com/react/metro/blob/main/packages/metro-config/src/types.js) for a full list of event types.
+ * **`opts`**
+   * **`key`**: An opaque identifier to distinguish between instances of an event type (e.g. multiple, possibly concurrent, HMR requests).
+ 
+@@ -318,7 +320,7 @@ For more information on customizing the resolver, see [Module Resolution](https:
+ 
+ #### `schemeResolvers`
+ 
+-Type: `?{[scheme: string]: `[`CustomResolver`](./Resolution.md#resolverequest-customresolver)`}`
++Type: `{[scheme: string]: `[`CustomResolver`](./Resolution.md#resolverequest-customresolver)`}`
+ 
+ An object of custom resolvers for import specifiers prefixed with a URI scheme, keyed by lowercase scheme name (the prefix before the first `:`, without the colon). When Metro's default resolution encounters a specifier whose scheme matches a registered key (for example `my-scheme:foo` matching `'my-scheme'`), the corresponding resolver is invoked with the full specifier.
+ 
+@@ -366,6 +368,8 @@ Type: `RegExp` or `Array<RegExp>`
+ 
+ A regular expression (or list of regular expressions) defining which paths to exclude from Metro's file map. Files whose absolute path
+```
+
+**File**: `docs/GettingStarted.md` (modified, +39/-22)
+```diff
+@@ -77,28 +77,32 @@ app.listen(8081);
+ ### Method `runServer(config, options)`
+ 
+ Starts a development server based on the given configuration and options. Returns an object with `httpServer`, the Node.js HTTP(S) server.
+-We recommend using `runMetro` instead of `runServer`, `runMetro` calls this function.
++`runServer` calls `runMetro` internally. Use `runMetro` instead to attach Metro to your own HTTP server.
+ 
+ #### Options
+ 
+ * `host (string)`: Where to host the server on.
+-* `onReady (Function)`: Called when the server is ready to serve requests.
++* `onReady (Function)`: Called with the HTTP(S) server when it is ready to serve requests.
++* `onError (Function)`: Called with the error if the HTTP(S) server fails.
+ * `onClose (Function)`: Called when the server and all other Metro processes are closed. You can also observe the server close event directly using `httpServer.on('close', () => {});`.
+ 
+ ```js
+ const config = await Metro.loadConfig();
+ 
+-await Metro.runServer(config, {
++const {httpServer} = await Metro.runServer(config, {
+   onClose: () => {console.log('metro server and all associated processes are closed')}
+ });
+ 
+ httpServer.on('close', () => {console.log('metro server is closed')});
+ ```
+ * `secure (boolean)`: **DEPRECATED** Whether the server should run on `https` instead of `http`.
+-* `secureKey (string)`: **DEPRECATED** The key to use for `https` when `secure` is on.
+-* `secureCert (string)`: **DEPRECATED** The cert to use for `https` when `secure` is on.
++* `secureKey (string)`: **DEPRECATED** Path to the key file to use for `https` when `secure` is on.
++* `secureCert (string)`: **DEPRECATED** Path to the cert file to use for `https` when `secure` is on.
+ * `secureServerOptions (Object)`: The options object to pass to Metro's HTTPS server. The presence of this object will make Metro's server run on `https`. Refer to the [Node docs](https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener) for valid options.
+ * `waitForBundler (boolean)`: Whether to wait for the bundler to finish initializing before returning the server instance.
++* `watch (boolean)`: Whether to watch the filesystem for changes.
++* `websocketEndpoints (Object)`: Map of URL paths to [`ws`](https://github.com/websockets/ws) `WebSocketServer` instances that handle upgrade requests on those paths.
++* `hasReducedPerformance`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`: See [Bundling API](./API.md).
+ 
+ ```js
+ const config = await Metro.loadConfig();
+@@ -126,21 +130,21 @@ Given a configuration and a set of options that you would typically pass to a se
+ 
+ #### Options
+ 
+-<!-- TODO(ives): Decide whether we need to show this to the user  * `output (boolean)` -->
+-
+ * `assets (boolean)`: Whether to include the assets in the result.
+ * `bundleOut (string)`: Path to save the bundle. No extension will be added.
+-* `dev (boolean)`: Create a development version of the build (`process.env.NODE_ENV = 'development'`).
++* `customResolverOptions (Object)`, `customTransformOptions (Object)`: Custom options passed to the resolver and transformer.
++* `dev (boolean)`: Create a development build, in which `__DEV__` is `true`. Otherwise, `__DEV__` and `process.env.NODE_ENV` are inlined as `false` and `'production'`.
+ * `entry (string)`: Pointing to the entry file to bundle.
+ * `onBegin (Function)`: Called when the bundling starts.
+ * `onComplete (Function)`: Called when the bundling finishes.
+ * `onProgress (Function)`: Called during the bundle, every time there's new information available about the module count/progress.
+ * `minify (boolean)`: Whether Metro should minify the bundle.
+ * `out (string)`: Shorthand path to the output bundle and source map. A `.js` extension will be added (if not given) for the bundle and `.map` for the source map. Customize with `bundleOut` / `sourceMapOut`.
+-* `platform ('web' | 'android' | 'ios')`: Which platform to bundle for if a list of platforms is provided.
++* `output (Object)`: Replaces how the bundle is built and saved. See [Bundling API](./API.md).
++* `platform (string)`: Which platform to bundle for (e.g. `'web'`, `'android'`, `'ios'`). Defaults to `'web'`.
+ * `sourceMap (boolean)`: Whether Metro should generate source maps.
+ * `sourceMapOut (string)`: Where to save the source map, if `sourceMap == true`. No extension will be added.
+-* `sourceMapUrl (string)`: URL where the source map can be found. It defaults to the same URL as the bundle, but changing the extension from `.bundle` to `.map`. When `inlineSourceMap` is `true`, this property has no effect.
++* `sourceMapUrl (string)`: URL where the source map can be found, written as the bundle's `sourceMappingURL`. If `sourceMap` is `true` and `sourceMapUrl` is not set, the source map is inlined into the bundle.
+ 
+ ```js
+ const config = await Metro.loadConfig();
+@@ -153,13 +157,16 @@ await Metro.runBuild(config, {
+ });
+ ```
+ 
+-### Method `createConnectMiddleware(config)`
++### Method `createConnec
+```
+
+**File**: `docs/LocalDevelopment.md` (modified, +2/-2)
+```diff
+@@ -9,7 +9,7 @@ This page includes tips for developers working on Metro itself, including how to
+ 
+ When developing Metro, running your iterations against a local target project can be a great way to test the impact of your changes end-to-end.
+ 
+-Our recommended workflow is to use [`yarn link`][1] to register local `metro` packages within your development clone and then hot-switch to these versions in the consuming project. These instructions cover linking a local Metro clone with a bare workflow React Native app (i.e. having run `npx react-native init MetroTestApp`).
++Our recommended workflow is to use [`yarn link`][1] to register local `metro` packages within your development clone and then hot-switch to these versions in the consuming project. These instructions cover linking a local Metro clone with a bare workflow React Native app (i.e. having run `npx @react-native-community/cli init MetroTestApp`).
+ 
+ ```sh
+ .
+@@ -39,7 +39,7 @@ Our recommended workflow is to use [`yarn link`][1] to register local `metro` pa
+ 
+ 3. **Configure Metro `watchFolders` to work with our linked packages**
+ 
+-    Because `yarn link` has included files outside of the immediate React Native project folder, we need to inform Metro that this set of files exists (as it will not automatically follow the symlinks). Add the following to your `metro.config.js`:
++    Because `yarn link` has included files outside of the immediate React Native project folder, we need to inform Metro that this set of files exists (Metro follows symlinks, but their targets must be within `watchFolders`). Add the following to your `metro.config.js`:
+ 
+     ```diff
+     + const path = require('path');
+```
+
+**File**: `docs/ModuleAPI.md` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ const jsonData = require('./path/data.json');
+ const {View} = require('react-native');
+ ```
+ 
+-The argument to `require()` must be a compile-time constant. The [`dynamicDepsInPackages`](./Configuration.md#dynamicdepsinpackages) config option controls whether calling `require()` with a non-constant argument will fail at build time or at runtime.
++The argument to `require()` must be a compile-time constant. Calling `require()` with a non-constant argument fails at build time, except in files inside `node_modules`, where the [`dynamicDepsInPackages`](./Configuration.md#dynamicdepsinpackages) config option controls whether it fails at build time or at runtime.
+ 
+ ### Advanced usage: `require` at runtime
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2079** (2026-10-19): Avoid duplicate `Buffer.byteLength` call on bundle string (@kitten)
-- **PR #2075** (2026-10-20): Tooling 0.336.0 (#2075) (@gkz)
-- **PR #2074** (2026-10-17): Resolver: Fall through unmatched nested conditions (@maximilliangrand)
-- **PR #2073** (2026-10-16): Deploy 0.336.0 to xplat (#2073) (@gkz)
-- **PR #2071** (2026-10-15): metro-file-map: Let plugin filters decide on node_modules files (@robhogan)
-- **PR #2069** (2026-10-14): Use `any` for untyped `Object`/`Function` in flow-typed and debugger-shell (@SamChou19815)
+- **PR #2099** (closed): Tolerate configs without the newer server middleware options (fix accidental breaking change) (@robhogan)
+- **PR #2091** (2026-10-23): Remove the server.enhanceMiddleware deprecation warning (@robhogan)
+- **PR #2090** (2026-10-23): Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate) (@jcperez-ch)
+- **PR #2087** (2026-10-23): Inline destructured requires (@robhogan)
+- **PR #2086** (2026-10-23): Upgrade Flow to 0.337.0 (#2086) (@panagosg7)
+- **PR #2084** (2026-10-23): Docs: Document the `unstable_*` options users would set (@vzaidman)
 
 ---
 
@@ -2088,64 +2412,32 @@ The installation-policy correction is an intentional prerequisite for executing 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Resolver: Resolve the package of a directory once for all extension candidates (
+## X. Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, s
 
 **RULE**:
-When implementing operations in `packages/metro-resolver/src/__tests__/package-scope-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-symbolicate/src/symbolicate.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1dfb482`: Resolver: Resolve the package of a directory once for all extension candidates (#1945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85585223`: Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-resolver/src/__tests__/package-scope-test.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-symbolicate/src/symbolicate.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow strict-local
- * @format
- * @oncall react_native
- */
-
-import type {PackageForModule, ResolutionContext} from '../types';
-
-import * as Resolver from '../index';
-import {
-  createPackageAccessors,
-  createResolutionContext,
-  posixToSystemPath as p,
-} from './utils';
-
-// These pin the paths the resolver passes to `getPackageForModule` for each
-// kind of specifier, so that a change in lookups per resolution is deliberate.
-describe('package scope lookups', () => {
-  // The path the resolver asks about for the files in a directory
-  const filesIn = (dirPath: string) => p(dirPath + '/package.json');
-
-  const fileMap = {
-    [p('/root/package.json')]: JSON.stringify({name: 'root'}),
-    [p('/root/src/main.js')]: '',
-    [p('/root/src/foo.js')]: '',
-    [p('/root/src/lib/index.js')]: '',
-    [p('/root/node_modules/pkg/package.json')]: JSON.stringify({
-      name: 'pkg',
-      main: 'lib/index',
-      browser: {'./lib/redirected.js': './lib/other.js'},
-    }),
-    [p('/root/node_modules/pkg/lib/
+      let chunk = stream.read();
+      while (chunk != null && chunk !== '') {
+        chunk = stream.read();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      let chunk;
+      // flowlint-next-line sketchy-null-string:off
+      while ((chunk = stream.read())) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1dfb482` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85585223` are properly handled with clean fallback behavior.

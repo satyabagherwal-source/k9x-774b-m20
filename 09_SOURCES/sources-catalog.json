@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "71fc0470685bd50480430ff0a71e2b13b80c09b7bb5da41a0a74219b289a1d88",
-    "lastHarvestedAt": "2026-10-20T13:33:40.424Z",
+    "contentHash": "3834786f33d4ea38ff0848523c1c9dd97ed62f34f22088dc507a795821837465",
+    "lastHarvestedAt": "2026-10-25T05:27:45.419Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "e1dfb482",
+    "sourceVersion": "5cfcfe21",
     "license": "MIT",
-    "contentHash": "6d08ce967ce9bd8b075304f2d2b83a697ee5861db354cc6487882464c9adc9d5",
-    "lastHarvestedAt": "2026-10-20T15:56:30.345Z",
+    "contentHash": "920185e17a6b56bfc634fc9d2fdd127599ddfb5f377feaebac67fe5c5ee2bd8b",
+    "lastHarvestedAt": "2026-10-25T05:27:41.051Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "503b816e",
+    "sourceVersion": "5f8ed384",
     "license": "Apache-2.0",
-    "contentHash": "7f9107d1153d0c76a230080ece54096b44141beacbe7a4cd8896c76d87c3049c",
-    "lastHarvestedAt": "2026-10-22T17:32:00.996Z",
+    "contentHash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
+    "lastHarvestedAt": "2026-10-25T05:27:49.116Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

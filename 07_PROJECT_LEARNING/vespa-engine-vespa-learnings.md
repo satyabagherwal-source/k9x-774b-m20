@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `503b816e`  
+> **Source Version**: `5f8ed384`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:32:00.792Z  
+> **Timestamp**: 2026-10-25T05:27:48.750Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:31:59.229Z  
+> **Harvest Timestamp**: 2026-10-25T05:27:48.517Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7141 stars
+- **Stars / Engagement**: 7144 stars
 
 ---
 
@@ -1065,1202 +1065,494 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `503b816e` (2026-10-22)
-**Commit Message**: Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-searchcore-unit-tests
+### Incident Patch 1: `3c518c36` (2026-10-23)
+**Commit Message**: Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-startup
 
-Use config set builders for searchcore unit test.
+Emit trace span for proton startup.
 
-**File**: `searchcore/src/apps/tests/persistenceconformance_test.cpp` (modified, +27/-59)
+**File**: `opentelemetry/CMakeLists.txt` (modified, +2/-0)
 ```diff
-@@ -1,13 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+@@ -1,7 +1,9 @@
+ # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+ vespa_define_module(
+     DEPENDS
++    vespa_configdefinitions
+     vespalib
++    vespalog
  
- #include <vespa/check_require.h>
--#include <vespa/config-attributes.h>
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-imported-fields.h>
--#include <vespa/config-indexschema.h>
--#include <vespa/config-rank-profiles.h>
--#include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
- #include <vespa/document/base/testdocman.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
-@@ -27,14 +20,15 @@
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
- #include <vespa/searchcore/proton/server/persistencehandlerproxy.h>
- #include <vespa/searchcore/proton/server/threading_service_config.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
-+#include <vespa/searchcore/proton/test/document_db_config_set_builder.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
- #include <vespa/searchcore/proton/test/port_numbers.h>
- #include <vespa/searchcore/proton/test/resource_usage_notifier.h>
- #include <vespa/searchlib/attribute/interlock.h>
- #include <vespa/searchlib/index/dummyfileheadercontext.h>
- #include <vespa/searchlib/transactionlog/translogserver.h>
--#include <vespa/searchsummary/config/config-juniperrc.h>
- #include <vespa/vespalib/util/hw_info.h>
- #include <vespa/vespalib/util/stringfmt.h>
+     LIBS
+     src/vespa/opentelemetry
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +54/-0)
+```diff
+@@ -2,7 +2,10 @@
  
-@@ -51,14 +45,14 @@ using namespace vespa::config::search::core;
- using namespace vespa::config::search::summary;
- using namespace vespa::config::search;
- using namespace std::chrono_literals;
--using ai::vespa::telemetry::TelemetryConfig;
--using vespa::config::content::core::BucketspacesConfig;
+ #include "opentelemetry_tracer_providers.h"
  
- using document::BucketSpace;
- using document::DocumentType;
- using document::DocumentTypeRepo;
- using document::TestDocMan;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
-+using proton::test::DocumentDBConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::index::DummyFileHeaderContext;
- using search::index::Schema;
-@@ -94,34 +88,21 @@ void storeDocType(DocTypeVector* types, const DocumentType& type) {
-     types->push_back(DocTypeName(type.getName()));
++#include <vespa/config-telemetry.h>
++#include <vespa/defaults.h>
+ #include <vespa/vespalib/component/vtag.h>
++#include <vespa/vespalib/net/tls/transport_security_options_reading.h>
+ 
+ #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
+ #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
+@@ -12,6 +15,14 @@
+ #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
+ #include <opentelemetry/trace/provider.h>
+ 
++#include <format>
++#include <fstream>
++#include <iomanip>
++#include <sstream>
++
++#include <vespa/log/log.h>
++LOG_SETUP(".opentelemetry.opentelemetry_tracer_providers");
++
+ namespace vespa_opentelemetry {
+ 
+ const std::string OpenTelemetryTracerProviders::vespa_tls_config_file("VESPA_TLS_CONFIG_FILE");
+@@ -48,6 +59,25 @@ opentelemetry::sdk::resource::Resource OpenTelemetryTracerProviders::make_resour
+     return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
  }
  
--struct SchemaConfigFactory {
-+struct SchemaConfigFactory : public DocumentDBConfigSetBuilder {
-     using CS = DocumentDBConfig;
--    using SP = std::shared_ptr<SchemaConfigFactory>;
-     virtual ~SchemaConfigFactory() = default;
--    static SchemaConfigFactory::SP get() { return std::make_shared<SchemaConfigFactory>(); }
--    virtual CS::IndexschemaConfigSP createIndexSchema(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<IndexschemaConfig>();
--    }
--    virtual CS::AttributesConfigSP createAttributes(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<AttributesConfig>();
--    }
--    virtual CS::SummaryConfigSP createSummary(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<SummaryConfig>();
--    }
-+    static std::shared_ptr<SchemaConfigFactory> get() { return std::make_shared<SchemaConfigFactory>(); }
- };
- 
- class ConfigFactory {
- private:
-     std::shared_ptr<const DocumentTypeRepo> _repo;
-     DocumenttypesConfigSP                   _typeCfg;
--    SchemaConfigFactory::SP                 _schemaFactory;
-+    std::shared_ptr<SchemaConfigFactory>    _schemaFactory;
- 
- public:
-     ConfigFactory(std::shared_ptr<const DocumentTypeRepo> repo, DocumenttypesConfigSP typeCfg,
--                  SchemaConfigFactory::SP schemaFactory);
-+                  std::shared_ptr<SchemaConfigFactory> schemaFactory);
-     ~ConfigFactory();
-     std::shared_ptr<const DocumentTypeRepo> getTypeRepo() const { return _repo; }
-     DocumenttypesConfigSP getTypeCfg() const { return _typeCfg; }
-@@ -136,24 +117,12 @@ class ConfigFactory {
-         if (docType == nullptr) {
-             return DocumentDBConfig::SP();
-         }
--        using CS = DocumentDBConfig;
--        CS::IndexschemaConfigSP indexschema = _schemaFactory->createIndexSchema(*docType);
--        CS::AttributesConfigSP  attributes = _schemaFactory->createAttributes(*docType);
--        CS::SummaryConfigSP     summary = _schemaFactory->createSummary(*docType);
--        auto                    schema = DocumentDBConfig::build_schema(*attributes, *indexschema);
--        return std::make_shared<DocumentDBConfig>(
--            1, std::make_shared<RankProfilesConfig>(), std::make_shared<search::fef::RankingConstants>(),
--            std::make_shared<search::fef::RankingExpressions>(), std::make_shared<search::fef::OnnxModels>(),
--            indexschema, attributes, summary, std::make_shared<JuniperrcConfig>(), _typeCfg, _repo,
--            std::make_shared<ImportedFieldsConfig>(), std::make_shared<TuneFileDocumentDB>(), schema,
--            std::make_shared<Do
-```
-
-**File**: `searchcore/src/tests/proton/common/proton_config_fetcher_test.cpp` (modified, +24/-31)
-```diff
-@@ -29,11 +29,9 @@ using namespace vespa::config::search;
- using namespace cloud::config::filedistribution;
- using namespace std::chrono_literals;
- using ai::vespa::telemetry::TelemetryConfig;
--using ai::vespa::telemetry::TelemetryConfigBuilder;
- using proton::test::BootstrapConfigSetBuilder;
- using proton::test::DocumentDBConfigSetBuilder;
- using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::content::core::BucketspacesConfigBuilder;
- 
- using config::ConfigUri;
- using document::DocumentTypeRepo;
-@@ -52,7 +50,7 @@ struct DoctypeFixture : public DocumentDBConfigSetBuilder {};
- struct ConfigTestFixture {
-     const std::string                                 configId;
-     Transport                                         transport;
--    BootstrapConfigSetBuilder                         bootstrap_builder;
-+    BootstrapConfigSetBuilder                         bootstrap_config_builder;
-     map<std::string, std::unique_ptr<DoctypeFixture>> dbConfig;
-     ConfigSet                                         set;
-     std::shared_ptr<IConfigContext>                   context;
-@@ -62,12 +60,12 @@ struct ConfigTestFixture {
-     ConfigTestFixture(const std::string& id, bool add_alwaysthere)
-         : configId(id),
-           transport(),
--          bootstrap_builder(),
-+          bootstrap_config_builder(),
-           dbConfig(),
-           set(),
-           context(std::make_shared<ConfigContext>(set)),
-           idcounter(-1) {
--        bootstrap_builder.add_builders(set, configId);
-+        bootstrap_config_builder.add_builders(set, configId);
-         if (add_alwaysthere) {
-             addDocType("_alwaysthere_");
-         }
-@@ -90,22 +88,22 @@ struct ConfigTestFixture {
-         dt.id = idcounter--;
-         dt.name = name;
-         dt.version = 0;
--        bootstrap_builder.documenttypes.documenttype.push_back(dt);
-+        bootstrap_config_builder.documenttypes.documenttype.push_back(dt);
- 
-         ProtonConfigBuilder::Documentdb db;
-         db.inputdoctypename = name;
-         db.configid = configId + "/" + name;
-         db.global = isGlobal;
-         db.mode = mode;
--        bootstrap_builder.proton.documentdb.push_back(db);
-+        bootstrap_config_builder.proton.documentdb.push_back(db);
- 
-         auto fixture = std::make_unique<DoctypeFixture>();
-         fixture->add_builders(set, db.configid);
-         return dbConfig.emplace(name, std::move(fixture)).first->second.get();
-     }
- 
-     void removeDocType(const std::string& name) {
--        auto& documenttypesBuilder = bootstrap_builder.documenttypes;
-+        auto& documenttypesBuilder = bootstrap_config_builder.documenttypes;
-         for (auto it(documenttypesBuilder.documenttype.begin()), mt(documenttypesBuilder.documenttype.end());
-              it != mt; it++)
-         {
-@@ -115,11 +113,12 @@ struct ConfigTestFixture {
-             }
-         }
- 
--        for (auto it(bootstrap_builder.proton.documentdb.begin()), mt(bootstrap_builder.proton.documentdb.end());
-+        for (auto it(bootstrap_config_builder.proton.documentdb.begin()),
-+             mt(bootstrap_config_builder.proton.documentdb.end());
-              it != mt; it++)
-         {
-             if ((*it).inputdoctypename.compare(name) == 0) {
--                bootstrap_builder.proton.documentdb.erase(it);
-+                bootstrap_config_builder.proton.documentdb.erase(it);
-                 break;
-             }
-         }
-@@ -138,18 +137,12 @@ struct ConfigTestFixture {
-     }
- 
-     bool configEqual(const BootstrapConfig& bootstrapConfig) const {
--        return (bootstrap_builder.proton == bootstrapConfig.getProtonConfig() &&
--                bootstrap_builder.documenttypes == bootstrapConfig.getDocumenttypesConfig());
-+        return (bootstrap_config_builder.proton == bootstrapConfig.getProtonConfig() &&
-+                bootstrap_config_builder.documenttypes == bootstrapConfig.getDocumenttypesConfig());
-     }
- 
--    BootstrapConfig::SP getBootstrapConfig(int64_t generation, const HwInfo& hwInfo) const {
--        return std::make_shared<BootstrapConfig>(
--            generation, std::make_shared<DocumenttypesConfig>(bootstrap_builder.documenttypes),
--            std::make_shared<DocumentTypeRepo>(bootstrap_builder.documenttypes),
--            std::make_shared<ProtonConfig>(bootstrap_builder.proton), std::make_shared<FiledistributorrpcConfig>(),
--            std::make_shared<BucketspacesConfig>(bootstrap_builder.bucketspaces),
--            std::make_shared<TelemetryConfig>(bootstrap_builder.telemetry), std::make_shared<TuneFileDocumentDB>(),
--            hwInfo);
-+    std::shared_ptr<BootstrapConfig> getBootstrapConfig(int64_t generation, const HwInfo& hwInfo) const {
-+        return bootstrap_config_builder.build(generation, hwInfo);
-     }
- 
-     void reload() { context->reload(); }
-@@ -223,7 +216,7 @@ TEST(ProtonConfigFetcherTest, require_that_bootstrap_config_manager_updates_conf
-     ConfigRetriever        f3(f2.createConfigKeySet(), f1.context);
-
-```
-
-**File**: `searchcore/src/tests/proton/docsummary/docsummary_test.cpp` (modified, +5/-11)
-```diff
-@@ -1,8 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
- #include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/document/annotation/annotation.h>
- #include <vespa/document/annotation/span.h>
- #include <vespa/document/annotation/spanlist.h>
-@@ -46,6 +44,7 @@
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
- #include <vespa/searchcore/proton/server/searchview.h>
- #include <vespa/searchcore/proton/server/summaryadapter.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/bucketfactory.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
-@@ -92,16 +91,14 @@ using namespace search::transactionlog;
- using namespace search;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::common::ElementIds;
- using search::index::DummyFileHeaderContext;
- using search::linguistics::SPANTREE_NAME;
- using search::test::DocBuilder;
- using storage::spi::Timestamp;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::GateCallback;
- using vespalib::HwInfo;
- using vespalib::IDestructorCallback;
-@@ -231,7 +228,6 @@ class DBContext : public DummyDBOwner {
-     DocumentDBConfigHelper                        _configMgr;
-     DocumentDBConfig::DocumenttypesConfigSP       _documenttypesConfig;
-     const std::shared_ptr<const DocumentTypeRepo> _repo;
--    TuneFileDocumentDB::SP                        _tuneFileDocumentDB;
-     HwInfo                                        _hwInfo;
-     std::shared_ptr<DocumentDB>                   _ddb;
-     AttributeWriter::UP                           _aw;
-@@ -250,16 +246,14 @@ class DBContext : public DummyDBOwner {
-           _configMgr(_spec, getDocTypeName()),
-           _documenttypesConfig(std::make_shared<DocumenttypesConfig>()),
-           _repo(std::move(repo)),
--          _tuneFileDocumentDB(std::make_shared<TuneFileDocumentDB>()),
-           _hwInfo(),
-           _ddb(),
-           _aw(),
-           _sa() {
-         (void)_made_dir;
--        auto b = std::make_shared<BootstrapConfig>(1, _documenttypesConfig, _repo, std::make_shared<ProtonConfig>(),
--                                                   std::make_shared<FiledistributorrpcConfig>(),
--                                                   std::make_shared<BucketspacesConfig>(),
--                                                   std::make_shared<TelemetryConfig>(), _tuneFileDocumentDB, _hwInfo);
-+        BootstrapConfigSetBuilder bootstrap_config_builder;
-+        bootstrap_config_builder.documenttypes = *_documenttypesConfig;
-+        auto b = bootstrap_config_builder.build(1, _repo, _hwInfo);
-         _configMgr.forwardConfig(b);
-         _configMgr.nextGeneration(_shared_service.transport(), 0ms);
-         std::filesystem::create_directory(std::filesystem::path(std::string("tmpdb/") + docTypeName));
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/document_subdbs_test.cpp` (modified, +6/-12)
-```diff
-@@ -1,7 +1,5 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
- #include <vespa/document/datatype/datatype.h>
- #include <vespa/document/fieldvalue/intfieldvalue.h>
-@@ -32,6 +30,7 @@
- #include <vespa/searchcore/proton/server/minimal_document_retriever.h>
- #include <vespa/searchcore/proton/server/reconfig_params.h>
- #include <vespa/searchcore/proton/server/searchabledocsubdb.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/test.h>
- #include <vespa/searchcore/proton/test/thread_utils.h>
- #include <vespa/searchcore/proton/test/transport_helper.h>
-@@ -62,20 +61,18 @@ using namespace searchcorespi;
- using namespace vespalib;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::test::makeBucketSpace;
- using proton::bucketdb::BucketDBHandler;
- using proton::bucketdb::IBucketDBHandler;
- using proton::bucketdb::IBucketDBHandlerInitializer;
- using proton::index::IndexConfig;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::test::DirectoryHandler;
- using search::test::DocBuilder;
- using search::test::SchemaBuilder;
- using searchcorespi::IFlushTarget;
- using searchcorespi::index::IThreadingService;
- using storage::spi::Timestamp;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::HwInfo;
- using vespalib::IDestructorCallback;
- using vespalib::datastore::CompactionStrategy;
-@@ -280,13 +277,10 @@ MyConfigSnapshot::MyConfigSnapshot(FNET_Transport& transport, Schema schema, con
-       _builder(get_add_fields(_schema.getNumAttributeFields() > 1)),
-       _cfg(),
-       _bootstrap() {
--    auto documenttypesConfig = std::make_shared<DocumenttypesConfig>(_builder.get_documenttypes_config());
--    auto tuneFileDocumentDB = std::make_shared<TuneFileDocumentDB>();
--    _bootstrap = std::make_shared<BootstrapConfig>(
--        1, documenttypesConfig, _builder.get_repo_sp(), std::make_shared<ProtonConfig>(),
--        std::make_shared<FiledistributorrpcConfig>(), std::make_shared<BucketspacesConfig>(),
--        std::make_shared<TelemetryConfig>(), tuneFileDocumentDB,
--        HwInfo(HwInfo::Disk(128_Gi, false, false), HwInfo::Memory(16_Gi), HwInfo::Cpu(8)));
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    bootstrap_config_builder.documenttypes = _builder.get_documenttypes_config();
-+    HwInfo hw_info(HwInfo::Disk(128_Gi, false, false), HwInfo::Memory(16_Gi), HwInfo::Cpu(8));
-+    _bootstrap = bootstrap_config_builder.build(1, hw_info);
-     ::config::DirSpec      spec(cfgDir);
-     DocumentDBConfigHelper mgr(spec, "searchdocument");
-     mgr.forwardConfig(_bootstrap);
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/documentdb_test.cpp` (modified, +9/-16)
-```diff
-@@ -1,9 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
--#include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/datatype/documenttype.h>
- #include <vespa/document/repo/documenttyperepo.h>
- #include <vespa/document/test/make_bucket_space.h>
-@@ -26,6 +23,7 @@
- #include <vespa/searchcore/proton/server/feedhandler.h>
- #include <vespa/searchcore/proton/server/fileconfigmanager.h>
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
- #include <vespa/searchcore/proton/test/port_numbers.h>
-@@ -44,24 +42,21 @@
- #include <filesystem>
- #include <iostream>
- 
--using namespace cloud::config::filedistribution;
- using namespace proton;
- using namespace vespalib::slime;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::DocumentType;
- using document::DocumentTypeRepo;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::SerialNum;
- using search::TuneFileDocumentDB;
- using search::index::DummyFileHeaderContext;
- using search::index::Schema;
- using search::transactionlog::TransLogServer;
- using searchcorespi::IFlushTarget;
- using searchcorespi::index::IndexFlushTarget;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::HwInfo;
- using vespalib::Slime;
- 
-@@ -135,15 +130,13 @@ Fixture::Fixture(bool file_config)
-       _fileHeaderContext(),
-       _tls(_shared_service.transport(), "tmp", tls_port, ".", _fileHeaderContext),
-       _queryLimiter() {
--    auto                   documenttypesConfig = std::make_shared<DocumenttypesConfig>();
--    DocumentType           docType("typea", 0);
--    auto                   repo = std::make_shared<DocumentTypeRepo>(docType);
--    auto                   tuneFileDocumentDB = std::make_shared<TuneFileDocumentDB>();
--    config::DirSpec        spec(TEST_PATH("cfg"));
--    DocumentDBConfigHelper mgr(spec, "typea");
--    auto                   b = std::make_shared<BootstrapConfig>(
--        1, documenttypesConfig, repo, std::make_shared<ProtonConfig>(), std::make_shared<FiledistributorrpcConfig>(),
--        std::make_shared<BucketspacesConfig>(), std::make_shared<TelemetryConfig>(), tuneFileDocumentDB, HwInfo());
-+    DocumentType docType("typea", 0);
-+    auto         repo = std::make_shared<DocumentTypeRepo>(docType);
++opentelemetry::sdk::resource::Resource
++OpenTelemetryTracerProviders::make_resource(const std::string& service_name, TelemetryConfig& telemetry_config) {
++    opentelemetry::sdk::resource::ResourceAttributes resource_attributes;
++    for (const auto& resource : telemetry_config.resourceAttribute) {
++        resource_attributes.SetAttribute(resource.first, resource.second);
++    }
++    resource_attributes.SetAttribute("realservice.name", service_name);
++    resource_attributes.SetAttribute("realservice.version", vespalib::VersionTag);
++    return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
++}
 +
-+    config::DirSpec           spec(TEST_PATH("cfg"));
-+    DocumentDBConfigHelper    mgr(spec, "typea");
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    auto                      b = bootstrap_config_builder.build(1, repo, _hwInfo);
-     mgr.forwardConfig(b);
-     mgr.nextGeneration(_shared_service.transport(), 0ms);
-     _db = DocumentDB::create(".", mgr.getConfig(), tls_port_spec(), _queryLimiter, DocTypeName("typea"),
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/fileconfigmanager/fileconfigmanager_test.cpp` (modified, +6/-8)
-```diff
-@@ -8,12 +8,12 @@
- #include <vespa/config-indexschema.h>
- #include <vespa/config-rank-profiles.h>
- #include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/repo/documenttyperepo.h>
- #include <vespa/searchcore/proton/server/bootstrapconfig.h>
- #include <vespa/searchcore/proton/server/documentdbconfigmanager.h>
- #include <vespa/searchcore/proton/server/fileconfigmanager.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/documentdb_config_builder.h>
- #include <vespa/searchcore/proton/test/transport_helper.h>
- #include <vespa/searchsummary/config/config-juniperrc.h>
-@@ -33,7 +33,7 @@ using namespace search;
- using namespace vespa::config::search::core;
- using namespace vespa::config::search;
- using namespace std::chrono_literals;
--using ai::vespa::telemetry::TelemetryConfig;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::fef::OnnxModels;
- using search::fef::RankingConstants;
- using search::fef::RankingExpressions;
-@@ -52,12 +52,10 @@ std::string placeholder_document_type_name("test");
- DocumentDBConfig::SP makeBaseConfigSnapshot(FNET_Transport& transport) {
-     ::config::DirSpec spec(TEST_PATH("cfg"));
++void OpenTelemetryTracerProviders::adjust_otlp_grpc_exporter_options(
++    opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts, TelemetryConfig& cfg) {
++    auto          host_name_file_name = vespa::Defaults::underVespaHome(cfg.endpointHostnameFile.c_str());
++    std::ifstream host_name_file(host_name_file_name);
++    std::string   host_name((std::istreambuf_iterator<char>(host_name_file)), std::istreambuf_iterator<char>());
++    opts.endpoint = std::format("https://{}:4317", host_name);
++}
++
+ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
+     const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
+     const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
+@@ -60,6 +90,30 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
+     opentelemetry::trace::Provider::SetTracerProvider(provider);
+ }
  
--    DBCM                  dbcm(spec, placeholder_document_type_name);
--    DocumenttypesConfigSP dtcfg(::config::ConfigGetter<DocumenttypesConfig>::getConfig("", spec).release());
--    auto                  b = std::make_shared<BootstrapConfig>(
--        1, dtcfg, std::make_shared<DocumentTypeRepo>(*dtcfg), std::make_shared<ProtonConfig>(),
--        std::make_shared<FiledistributorrpcConfig>(), std::make_shared<BucketspacesConfig>(),
--        std::make_shared<TelemetryConfig>(), std::make_shared<TuneFileDocumentDB>(), HwInfo());
-+    DBCM                      dbcm(spec, placeholder_document_type_name);
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    bootstrap_config_builder.documenttypes = *::config::ConfigGetter<DocumenttypesConfig>::getConfig("", spec);
-+    auto b = bootstrap_config_builder.build(1, HwInfo());
-     dbcm.forwardConfig(b);
-     dbcm.nextGeneration(transport, 0ms);
-     DocumentDBConfig::SP snap = dbcm.getConfig();
++void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
++                                                             TelemetryConfig&   telemetry_config) {
++    if (!telemetry_config.enabled) {
++        return;
++    }
++    const char* tls_config_file = getenv(vespa_tls_config_file.c_str());
++    if (tls_config_file == nullptr) {
++        LOG(warning, "environment variable '%s' not set, telemetry is disabled", vespa_tls_config_file.c_str());
++        return;
++    }
++    auto vespa_tls_config = vespalib::net::tls::read_options_from_json_file(tls_config_file);
++    if (!vespa_tls_config) {
++        std::stringstream ss;
++        ss << "bad vespa tls config file " << std::quoted(tls_config_file) << ", telemetry is disabled";
++        LOG(warning, "%s", ss.str().c_str());
++        return;
++    }
++    auto otlp_grpc_exporter_options = setup_otlp_grpc_exporter_options(*vespa_tls_config);
++    adjust_otlp_grpc_exporter_options(otlp_grpc_exporter_options, telemetry_config);
++    auto batch_span_processor_options = setup_batch_span_processor_options(false);
++    auto resource = make_resource(service_name, telemetry_config);
++    init_grpc_tracer_provider(otlp_grpc_exporter_options, batch_span_processor_options, resource);
++}
++
+ std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
+ OpenTelemetryTracerProviders::init_memory_tracer_provider() {
+     std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> data;
 ```
 
-**File**: `searchcore/src/tests/proton/proton_configurer/CMakeLists.txt` (modified, +1/-0)
+**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.h` (modified, +10/-0)
 ```diff
-@@ -4,6 +4,7 @@ vespa_add_executable(searchcore_proton_configurer_test_app TEST
-     proton_configurer_test.cpp
-     DEPENDS
-     searchcore_server
-+    searchcore_test
-     GTest::gtest
+@@ -11,13 +11,18 @@
+ 
+ #include <memory>
+ 
++namespace ai::vespa::telemetry::internal {
++class InternalTelemetryType;
++}
++
+ namespace vespa_opentelemetry {
+ 
+ /*
+  * Functions for setting up open telemetry trace providers to an ostream, to a memory buffer or to grpc.
+  */
+ class OpenTelemetryTracerProviders {
+ public:
++    using TelemetryConfig = const ai::vespa::telemetry::internal::InternalTelemetryType;
+     static const std::string vespa_tls_config_file;
+ 
+     static void cleanup_tracer_provider();
+@@ -27,10 +32,15 @@ class OpenTelemetryTracerProviders {
+     [[nodiscard]] static opentelemetry::sdk::trace::BatchSpanProcessorOptions
+     setup_batch_span_processor_options(bool test);
+     [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource();
++    [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource(const std::string& service_name,
++                                                                              TelemetryConfig&   telemetry_config);
++    static void adjust_otlp_grpc_exporter_options(opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts,
++                                                  TelemetryConfig&                                        cfg);
+     static void init_grpc_tracer_provider(
+         const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
+         const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
+         const opentelemetry::sdk::resource::Resource&                 resource);
++    static void init_grpc_tracer_provider(const std::string& service_name, TelemetryConfig& telemetry_config);
+ 
+     [[nodiscard]] static std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
+     init_memory_tracer_provider();
+```
+
+**File**: `searchcore/src/apps/proton/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -23,6 +23,8 @@ vespa_add_executable(searchcore_proton_app
+     searchcore_grouping
+     searchcore_proton_metrics
+     storageserver_storageapp
++    vespa_opentelemetry
++    gRPC::grpc
+     absl::failure_signal_handler
+     absl::symbolize
  )
- vespa_add_test(NAME searchcore_proton_configurer_test_app COMMAND searchcore_proton_configurer_test_app)
 ```
 
-**File**: `searchcore/src/tests/proton/proton_configurer/proton_configurer_test.cpp` (modified, +23/-69)
+**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +25/-2)
 ```diff
-@@ -1,16 +1,8 @@
+@@ -1,10 +1,12 @@
  // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
  
--#include <vespa/config-attributes.h>
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-imported-fields.h>
--#include <vespa/config-indexschema.h>
--#include <vespa/config-rank-profiles.h>
--#include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/configuri.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/repo/documenttyperepo.h>
--#include <vespa/fileacquirer/config-filedistributorrpc.h>
- #include <vespa/searchcore/proton/common/alloc_config.h>
- #include <vespa/searchcore/proton/server/bootstrapconfig.h>
- #include <vespa/searchcore/proton/server/document_db_config_owner.h>
-@@ -20,7 +12,8 @@
- #include <vespa/searchcore/proton/server/proton_config_snapshot.h>
- #include <vespa/searchcore/proton/server/proton_configurer.h>
- #include <vespa/searchcore/proton/server/threading_service_config.h>
--#include <vespa/searchsummary/config/config-juniperrc.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
-+#include <vespa/searchcore/proton/test/document_db_config_set_builder.h>
- #include <vespa/vespalib/gtest/gtest.h>
- #include <vespa/vespalib/util/threadstackexecutor.h>
++#include <vespa/config-telemetry.h>
+ #include <vespa/config/common/configcontext.h>
+ #include <vespa/config/common/exceptions.h>
+ #include <vespa/fastos/file_interface.h>
+ #include <vespa/fnet/transport.h>
+ #include <vespa/metrics/metricmanager.h>
++#include <vespa/opentelemetry/opentelemetry_tracer_providers.h>
+ #include <vespa/searchcore/proton/server/proton.h>
+ #include <vespa/searchvisitor/searchvisitor.h>
+ #include <vespa/storage/storageserver/storagenode.h>
+@@ -16,6 +18,9 @@
+ #include <absl/debugging/failure_signal_handler.h>
+ #include <absl/debugging/symbolize.h>
+ #include <fcntl.h>
++#include <google/protobuf/message_lite.h>
++#include <grpc/grpc.h>
++#include <opentelemetry/trace/provider.h>
  
-@@ -32,14 +25,13 @@ using namespace vespa::config::search::core;
- using namespace vespa::config::search::summary;
- using namespace vespa::config::search;
- using namespace cloud::config::filedistribution;
--using ai::vespa::telemetry::TelemetryConfig;
--using ai::vespa::telemetry::TelemetryConfigBuilder;
--using vespa::config::content::core::BucketspacesConfig;
- using vespa::config::content::core::BucketspacesConfigBuilder;
+ #include <cstdlib>
+ #include <cstring>
+@@ -28,6 +33,7 @@ LOG_SETUP("proton");
  
- using InitializeThreads = std::shared_ptr<vespalib::ThreadStackExecutorBase>;
- using config::ConfigUri;
- using document::DocumentTypeRepo;
-+using proton::test::BootstrapConfigSetBuilder;
-+using proton::test::DocumentDBConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::fef::OnnxModels;
- using search::fef::RankingConstants;
-@@ -48,63 +40,26 @@ using search::index::Schema;
- using std::map;
- using vespalib::HwInfo;
+ using SIG = vespalib::SignalHandler;
+ using vespa::config::search::core::ProtonConfig;
++using vespa_opentelemetry::OpenTelemetryTracerProviders;
  
--struct DBConfigFixture {
-+struct DBConfigFixture : public DocumentDBConfigSetBuilder {
-     using UP = std::unique_ptr<DBConfigFixture>;
--    AttributesConfigBuilder     _attributesBuilder;
--    RankProfilesConfigBuilder   _rankProfilesBuilder;
--    IndexschemaConfigBuilder    _indexschemaBuilder;
--    SummaryConfigBuilder        _summaryBuilder;
--    JuniperrcConfigBuilder      _juniperrcBuilder;
--    ImportedFieldsConfigBuilder _importedFieldsBuilder;
--
--    std::shared_ptr<const Schema> buildSchema() {
--        return DocumentDBConfig::build_schema(_attributesBuilder, _indexschemaBuilder);
--    }
--
--    static std::shared_ptr<const RankingConstants> buildRankingConstants() {
--        return std::make_shared<RankingConstants>();
--    }
--
--    static std::shared_ptr<const RankingExpressions> buildRankingExpressions() {
--        return std::make_shared<RankingExpressions>();
--    }
--
--    static std::shared_ptr<const OnnxModels> buildOnnxModels() { return std::make_shared<OnnxModels>(); }
+ struct Params {
+     std::string identity;
+@@ -264,27 +270,36 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+     if (proton.hasAbortedInit()) {
+         EV_STOPPING("proton", "shutdown after aborted init");
+     } else {
++        OpenTelemetryTracerProviders::init_grpc_tracer_provider("proton-service",
++                                                                *configSnapshot->get_telemetry_config_sp());
++        auto tracer = ::opentelemetry::trace::Provider::GetTracerProvider()->GetTracer("proton-tracer");
++        auto span = tracer->StartSpan("Proton process starting");
+         const ProtonConfig& protonConfig = configSnapshot->getProtonConfig();
+         std::string         basedir = protonConfig.basedir;
+         std::filesystem::create_directories(std::filesystem::path(basedir));
+         {
+             ExitOnSignal exit_on_signal;
++            span->AddEvent("Starting proton");
+             proton.init(configSnapshot);
+         }
+         std::string file_distributor_connection_spec = configSnapshot->getFiledistributorrpcConfig().connectionspec;
+         std::unique_ptr<ProtonServiceLayerProcess> spiProton;
  
-     DocumentDBConfig::SP getConfig(int64_t generation, std::shared_ptr<DocumenttypesConfig> documentTypes,
--                                   std::shared_ptr<const DocumentTypeRepo> repo, const std::string& configId,
--                                   const std::string& docTypeName) {
--        return std::make_shared<DocumentDBConfig>(
--            generation, std::make_shared<RankProfilesConfig>(_rankProfilesBuilder), buildRankingConstants(),
--            buildRankingExpressions(), buildOnnxModels(), std::make_shared<IndexschemaConfig>(_indexschemaBuilder),
--            std::make_shared<AttributesConfig>(_attributesBuilder), std::make_shared<SummaryConfig>(_summaryBuilder),
--            std::make_shared<JuniperrcConfig>(_juniperrcBuilder), std::move(documentTypes), std::move(repo),
--            std::make_shared<ImportedFieldsConfig>(_importedFieldsBuilder), std::make_shared<TuneFileDocumentDB>(),
--            buildSchema(), std::make_shared<DocumentDBMaintenanceConfig>(), search::LogDocumentStore::Config(),
--            ThreadingServiceConfig::make(), AllocConfig::makeDefault(), DocumentMetaStoreConfig::make(), configId,
--            docTypeName);
-+                                   const std::string& configId, const std::string& docTypeName) {
-+        return build(generation, *documentTypes, docTypeName, configId);
-     }
- };
+         if (!params.serviceidentity.empty()) {
++            span->AddEvent("Starting service layer");
+             spiProton = std::make_unique<ProtonServiceLayerProcess>(
+                 identityUri.createWithNewId(params.serviceidentity), proton, transport,
+                 file_distributor_connection_spec, configSnapshot->getHwInfo());
+             spiProton->setupConfig(subscribeTimeout);
+             spiProton->createNode();
++            span->AddEvent("Started service layer");
+             EV_STARTED("servicelayer");
+         } else {
+             proton.getMetricManager().init(identityUri);
+         }
+         configSnapshot.reset();
++        span->AddEvent("Started proton");
++        span->End();
+         EV_STARTED("proton");
+         while (!(SIG::INT.check() || SIG::TERM.check() || (spiProton && spiProton->getNode().attemptedStopped()))) {
+             std::this_thread::sleep_for(1000ms);
+@@ -338,6 +353,14 @@ int App::main(int argc, char** argv) {
+ }
  
- struct ConfigFixture {
-     const std::string                     _configId;
--    ProtonConfigBuilder                   _protonBuilder;
--    DocumenttypesConfigBuilder            _documenttypesBuilder;
--    FiledistributorrpcConfigBuilder       _filedistBuilder;
--    BucketspacesConfigBuilder             _bucketspacesBuilder;
--    TelemetryConfigBuilder                _telemetry_builder;
-+    BootstrapConfigSetBuilder             _bootstrap
+ int main(int argc, char** argv) {
+-    App app;
+-    return app.main(argc, argv);
++    int result = 0;
++    grpc_init();
++    {
++        App app;
++        result = app.main(argc, argv);
++    }
++    OpenTelemetryTracerProviders::cleanup_tracer_provider();
++    grpc_shutdown_blocking();
++    google::protobuf::ShutdownProtobufLibrary();
++    return result;
+ }
 ```
 
 ---
 
-### Incident Patch 2: `487643d1` (2026-10-22)
-**Commit Message**: Use config set builders in one more searchcore unit test.
+### Incident Patch 2: `a60202eb` (2026-10-23)
+**Commit Message**: Emit trace span for proton startup.
 
-**File**: `searchcore/src/tests/proton/documentdb/documentdb_test.cpp` (modified, +9/-16)
+**File**: `opentelemetry/CMakeLists.txt` (modified, +2/-0)
 ```diff
-@@ -1,9 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
--#include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/datatype/documenttype.h>
- #include <vespa/document/repo/documenttyperepo.h>
- #include <vespa/document/test/make_bucket_space.h>
-@@ -26,6 +23,7 @@
- #include <vespa/searchcore/proton/server/feedhandler.h>
- #include <vespa/searchcore/proton/server/fileconfigmanager.h>
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
- #include <vespa/searchcore/proton/test/port_numbers.h>
-@@ -44,24 +42,21 @@
- #include <filesystem>
- #include <iostream>
- 
--using namespace cloud::config::filedistribution;
- using namespace proton;
- using namespace vespalib::slime;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::DocumentType;
- using document::DocumentTypeRepo;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::SerialNum;
- using search::TuneFileDocumentDB;
- using search::index::DummyFileHeaderContext;
- using search::index::Schema;
- using search::transactionlog::TransLogServer;
- using searchcorespi::IFlushTarget;
- using searchcorespi::index::IndexFlushTarget;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::HwInfo;
- using vespalib::Slime;
- 
-@@ -135,15 +130,13 @@ Fixture::Fixture(bool file_config)
-       _fileHeaderContext(),
-       _tls(_shared_service.transport(), "tmp", tls_port, ".", _fileHeaderContext),
-       _queryLimiter() {
--    auto                   documenttypesConfig = std::make_shared<DocumenttypesConfig>();
--    DocumentType           docType("typea", 0);
--    auto                   repo = std::make_shared<DocumentTypeRepo>(docType);
--    auto                   tuneFileDocumentDB = std::make_shared<TuneFileDocumentDB>();
--    config::DirSpec        spec(TEST_PATH("cfg"));
--    DocumentDBConfigHelper mgr(spec, "typea");
--    auto                   b = std::make_shared<BootstrapConfig>(
--        1, documenttypesConfig, repo, std::make_shared<ProtonConfig>(), std::make_shared<FiledistributorrpcConfig>(),
--        std::make_shared<BucketspacesConfig>(), std::make_shared<TelemetryConfig>(), tuneFileDocumentDB, HwInfo());
-+    DocumentType docType("typea", 0);
-+    auto         repo = std::make_shared<DocumentTypeRepo>(docType);
-+
-+    config::DirSpec           spec(TEST_PATH("cfg"));
-+    DocumentDBConfigHelper    mgr(spec, "typea");
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    auto                      b = bootstrap_config_builder.build(1, repo, _hwInfo);
-     mgr.forwardConfig(b);
-     mgr.nextGeneration(_shared_service.transport(), 0ms);
-     _db = DocumentDB::create(".", mgr.getConfig(), tls_port_spec(), _queryLimiter, DocTypeName("typea"),
-```
-
----
-
-### Incident Patch 3: `56d6967f` (2026-10-22)
-**Commit Message**: Use config set builders for searchcore unit test.
-
-**File**: `searchcore/src/apps/tests/persistenceconformance_test.cpp` (modified, +27/-59)
-```diff
-@@ -1,13 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
- #include <vespa/check_require.h>
--#include <vespa/config-attributes.h>
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-imported-fields.h>
--#include <vespa/config-indexschema.h>
--#include <vespa/config-rank-profiles.h>
--#include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
- #include <vespa/document/base/testdocman.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
-@@ -27,14 +20,15 @@
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
- #include <vespa/searchcore/proton/server/persistencehandlerproxy.h>
- #include <vespa/searchcore/proton/server/threading_service_config.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
-+#include <vespa/searchcore/proton/test/document_db_config_set_builder.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
- #include <vespa/searchcore/proton/test/port_numbers.h>
- #include <vespa/searchcore/proton/test/resource_usage_notifier.h>
- #include <vespa/searchlib/attribute/interlock.h>
- #include <vespa/searchlib/index/dummyfileheadercontext.h>
- #include <vespa/searchlib/transactionlog/translogserver.h>
--#include <vespa/searchsummary/config/config-juniperrc.h>
- #include <vespa/vespalib/util/hw_info.h>
- #include <vespa/vespalib/util/stringfmt.h>
- 
-@@ -51,14 +45,14 @@ using namespace vespa::config::search::core;
- using namespace vespa::config::search::summary;
- using namespace vespa::config::search;
- using namespace std::chrono_literals;
--using ai::vespa::telemetry::TelemetryConfig;
--using vespa::config::content::core::BucketspacesConfig;
- 
- using document::BucketSpace;
- using document::DocumentType;
- using document::DocumentTypeRepo;
- using document::TestDocMan;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
-+using proton::test::DocumentDBConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::index::DummyFileHeaderContext;
- using search::index::Schema;
-@@ -94,34 +88,21 @@ void storeDocType(DocTypeVector* types, const DocumentType& type) {
-     types->push_back(DocTypeName(type.getName()));
- }
- 
--struct SchemaConfigFactory {
-+struct SchemaConfigFactory : public DocumentDBConfigSetBuilder {
-     using CS = DocumentDBConfig;
--    using SP = std::shared_ptr<SchemaConfigFactory>;
-     virtual ~SchemaConfigFactory() = default;
--    static SchemaConfigFactory::SP get() { return std::make_shared<SchemaConfigFactory>(); }
--    virtual CS::IndexschemaConfigSP createIndexSchema(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<IndexschemaConfig>();
--    }
--    virtual CS::AttributesConfigSP createAttributes(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<AttributesConfig>();
--    }
--    virtual CS::SummaryConfigSP createSummary(const DocumentType& docType) {
--        (void)docType;
--        return std::make_shared<SummaryConfig>();
--    }
-+    static std::shared_ptr<SchemaConfigFactory> get() { return std::make_shared<SchemaConfigFactory>(); }
- };
- 
- class ConfigFactory {
- private:
-     std::shared_ptr<const DocumentTypeRepo> _repo;
-     DocumenttypesConfigSP                   _typeCfg;
--    SchemaConfigFactory::SP                 _schemaFactory;
-+    std::shared_ptr<SchemaConfigFactory>    _schemaFactory;
- 
- public:
-     ConfigFactory(std::shared_ptr<const DocumentTypeRepo> repo, DocumenttypesConfigSP typeCfg,
--                  SchemaConfigFactory::SP schemaFactory);
-+                  std::shared_ptr<SchemaConfigFactory> schemaFactory);
-     ~ConfigFactory();
-     std::shared_ptr<const DocumentTypeRepo> getTypeRepo() const { return _repo; }
-     DocumenttypesConfigSP getTypeCfg() const { return _typeCfg; }
-@@ -136,24 +117,12 @@ class ConfigFactory {
-         if (docType == nullptr) {
-             return DocumentDBConfig::SP();
-         }
--        using CS = DocumentDBConfig;
--        CS::IndexschemaConfigSP indexschema = _schemaFactory->createIndexSchema(*docType);
--        CS::AttributesConfigSP  attributes = _schemaFactory->createAttributes(*docType);
--        CS::SummaryConfigSP     summary = _schemaFactory->createSummary(*docType);
--        auto                    schema = DocumentDBConfig::build_schema(*attributes, *indexschema);
--        return std::make_shared<DocumentDBConfig>(
--            1, std::make_shared<RankProfilesConfig>(), std::make_shared<search::fef::RankingConstants>(),
--            std::make_shared<search::fef::RankingExpressions>(), std::make_shared<search::fef::OnnxModels>(),
--            indexschema, attributes, summary, std::make_shared<JuniperrcConfig>(), _typeCfg, _repo,
--            std::make_shared<ImportedFieldsConfig>(), std::make_shared<TuneFileDocumentDB>(), schema,
--            std::make_shared<Do
-```
-
-**File**: `searchcore/src/tests/proton/common/proton_config_fetcher_test.cpp` (modified, +24/-31)
-```diff
-@@ -29,11 +29,9 @@ using namespace vespa::config::search;
- using namespace cloud::config::filedistribution;
- using namespace std::chrono_literals;
- using ai::vespa::telemetry::TelemetryConfig;
--using ai::vespa::telemetry::TelemetryConfigBuilder;
- using proton::test::BootstrapConfigSetBuilder;
- using proton::test::DocumentDBConfigSetBuilder;
- using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::content::core::BucketspacesConfigBuilder;
- 
- using config::ConfigUri;
- using document::DocumentTypeRepo;
-@@ -52,7 +50,7 @@ struct DoctypeFixture : public DocumentDBConfigSetBuilder {};
- struct ConfigTestFixture {
-     const std::string                                 configId;
-     Transport                                         transport;
--    BootstrapConfigSetBuilder                         bootstrap_builder;
-+    BootstrapConfigSetBuilder                         bootstrap_config_builder;
-     map<std::string, std::unique_ptr<DoctypeFixture>> dbConfig;
-     ConfigSet                                         set;
-     std::shared_ptr<IConfigContext>                   context;
-@@ -62,12 +60,12 @@ struct ConfigTestFixture {
-     ConfigTestFixture(const std::string& id, bool add_alwaysthere)
-         : configId(id),
-           transport(),
--          bootstrap_builder(),
-+          bootstrap_config_builder(),
-           dbConfig(),
-           set(),
-           context(std::make_shared<ConfigContext>(set)),
-           idcounter(-1) {
--        bootstrap_builder.add_builders(set, configId);
-+        bootstrap_config_builder.add_builders(set, configId);
-         if (add_alwaysthere) {
-             addDocType("_alwaysthere_");
-         }
-@@ -90,22 +88,22 @@ struct ConfigTestFixture {
-         dt.id = idcounter--;
-         dt.name = name;
-         dt.version = 0;
--        bootstrap_builder.documenttypes.documenttype.push_back(dt);
-+        bootstrap_config_builder.documenttypes.documenttype.push_back(dt);
- 
-         ProtonConfigBuilder::Documentdb db;
-         db.inputdoctypename = name;
-         db.configid = configId + "/" + name;
-         db.global = isGlobal;
-         db.mode = mode;
--        bootstrap_builder.proton.documentdb.push_back(db);
-+        bootstrap_config_builder.proton.documentdb.push_back(db);
- 
-         auto fixture = std::make_unique<DoctypeFixture>();
-         fixture->add_builders(set, db.configid);
-         return dbConfig.emplace(name, std::move(fixture)).first->second.get();
-     }
- 
-     void removeDocType(const std::string& name) {
--        auto& documenttypesBuilder = bootstrap_builder.documenttypes;
-+        auto& documenttypesBuilder = bootstrap_config_builder.documenttypes;
-         for (auto it(documenttypesBuilder.documenttype.begin()), mt(documenttypesBuilder.documenttype.end());
-              it != mt; it++)
-         {
-@@ -115,11 +113,12 @@ struct ConfigTestFixture {
-             }
-         }
- 
--        for (auto it(bootstrap_builder.proton.documentdb.begin()), mt(bootstrap_builder.proton.documentdb.end());
-+        for (auto it(bootstrap_config_builder.proton.documentdb.begin()),
-+             mt(bootstrap_config_builder.proton.documentdb.end());
-              it != mt; it++)
-         {
-             if ((*it).inputdoctypename.compare(name) == 0) {
--                bootstrap_builder.proton.documentdb.erase(it);
-+                bootstrap_config_builder.proton.documentdb.erase(it);
-                 break;
-             }
-         }
-@@ -138,18 +137,12 @@ struct ConfigTestFixture {
-     }
- 
-     bool configEqual(const BootstrapConfig& bootstrapConfig) const {
--        return (bootstrap_builder.proton == bootstrapConfig.getProtonConfig() &&
--                bootstrap_builder.documenttypes == bootstrapConfig.getDocumenttypesConfig());
-+        return (bootstrap_config_builder.proton == bootstrapConfig.getProtonConfig() &&
-+                bootstrap_config_builder.documenttypes == bootstrapConfig.getDocumenttypesConfig());
-     }
- 
--    BootstrapConfig::SP getBootstrapConfig(int64_t generation, const HwInfo& hwInfo) const {
--        return std::make_shared<BootstrapConfig>(
--            generation, std::make_shared<DocumenttypesConfig>(bootstrap_builder.documenttypes),
--            std::make_shared<DocumentTypeRepo>(bootstrap_builder.documenttypes),
--            std::make_shared<ProtonConfig>(bootstrap_builder.proton), std::make_shared<FiledistributorrpcConfig>(),
--            std::make_shared<BucketspacesConfig>(bootstrap_builder.bucketspaces),
--            std::make_shared<TelemetryConfig>(bootstrap_builder.telemetry), std::make_shared<TuneFileDocumentDB>(),
--            hwInfo);
-+    std::shared_ptr<BootstrapConfig> getBootstrapConfig(int64_t generation, const HwInfo& hwInfo) const {
-+        return bootstrap_config_builder.build(generation, hwInfo);
-     }
- 
-     void reload() { context->reload(); }
-@@ -223,7 +216,7 @@ TEST(ProtonConfigFetcherTest, require_that_bootstrap_config_manager_updates_conf
-     ConfigRetriever        f3(f2.createConfigKeySet(), f1.context);
-
-```
-
-**File**: `searchcore/src/tests/proton/docsummary/docsummary_test.cpp` (modified, +5/-11)
-```diff
-@@ -1,8 +1,6 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
- #include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/document/annotation/annotation.h>
- #include <vespa/document/annotation/span.h>
- #include <vespa/document/annotation/spanlist.h>
-@@ -46,6 +44,7 @@
- #include <vespa/searchcore/proton/server/memoryconfigstore.h>
- #include <vespa/searchcore/proton/server/searchview.h>
- #include <vespa/searchcore/proton/server/summaryadapter.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/bucketfactory.h>
- #include <vespa/searchcore/proton/test/dummydbowner.h>
- #include <vespa/searchcore/proton/test/mock_shared_threading_service.h>
-@@ -92,16 +91,14 @@ using namespace search::transactionlog;
- using namespace search;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::test::makeBucketSpace;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::common::ElementIds;
- using search::index::DummyFileHeaderContext;
- using search::linguistics::SPANTREE_NAME;
- using search::test::DocBuilder;
- using storage::spi::Timestamp;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::GateCallback;
- using vespalib::HwInfo;
- using vespalib::IDestructorCallback;
-@@ -231,7 +228,6 @@ class DBContext : public DummyDBOwner {
-     DocumentDBConfigHelper                        _configMgr;
-     DocumentDBConfig::DocumenttypesConfigSP       _documenttypesConfig;
-     const std::shared_ptr<const DocumentTypeRepo> _repo;
--    TuneFileDocumentDB::SP                        _tuneFileDocumentDB;
-     HwInfo                                        _hwInfo;
-     std::shared_ptr<DocumentDB>                   _ddb;
-     AttributeWriter::UP                           _aw;
-@@ -250,16 +246,14 @@ class DBContext : public DummyDBOwner {
-           _configMgr(_spec, getDocTypeName()),
-           _documenttypesConfig(std::make_shared<DocumenttypesConfig>()),
-           _repo(std::move(repo)),
--          _tuneFileDocumentDB(std::make_shared<TuneFileDocumentDB>()),
-           _hwInfo(),
-           _ddb(),
-           _aw(),
-           _sa() {
-         (void)_made_dir;
--        auto b = std::make_shared<BootstrapConfig>(1, _documenttypesConfig, _repo, std::make_shared<ProtonConfig>(),
--                                                   std::make_shared<FiledistributorrpcConfig>(),
--                                                   std::make_shared<BucketspacesConfig>(),
--                                                   std::make_shared<TelemetryConfig>(), _tuneFileDocumentDB, _hwInfo);
-+        BootstrapConfigSetBuilder bootstrap_config_builder;
-+        bootstrap_config_builder.documenttypes = *_documenttypesConfig;
-+        auto b = bootstrap_config_builder.build(1, _repo, _hwInfo);
-         _configMgr.forwardConfig(b);
-         _configMgr.nextGeneration(_shared_service.transport(), 0ms);
-         std::filesystem::create_directory(std::filesystem::path(std::string("tmpdb/") + docTypeName));
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/document_subdbs_test.cpp` (modified, +6/-12)
-```diff
-@@ -1,7 +1,5 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/sourcespec.h>
- #include <vespa/document/datatype/datatype.h>
- #include <vespa/document/fieldvalue/intfieldvalue.h>
-@@ -32,6 +30,7 @@
- #include <vespa/searchcore/proton/server/minimal_document_retriever.h>
- #include <vespa/searchcore/proton/server/reconfig_params.h>
- #include <vespa/searchcore/proton/server/searchabledocsubdb.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/test.h>
- #include <vespa/searchcore/proton/test/thread_utils.h>
- #include <vespa/searchcore/proton/test/transport_helper.h>
-@@ -62,20 +61,18 @@ using namespace searchcorespi;
- using namespace vespalib;
- using namespace std::chrono_literals;
- 
--using ai::vespa::telemetry::TelemetryConfig;
- using document::test::makeBucketSpace;
- using proton::bucketdb::BucketDBHandler;
- using proton::bucketdb::IBucketDBHandler;
- using proton::bucketdb::IBucketDBHandlerInitializer;
- using proton::index::IndexConfig;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::test::DirectoryHandler;
- using search::test::DocBuilder;
- using search::test::SchemaBuilder;
- using searchcorespi::IFlushTarget;
- using searchcorespi::index::IThreadingService;
- using storage::spi::Timestamp;
--using vespa::config::content::core::BucketspacesConfig;
--using vespa::config::search::core::ProtonConfig;
- using vespalib::HwInfo;
- using vespalib::IDestructorCallback;
- using vespalib::datastore::CompactionStrategy;
-@@ -280,13 +277,10 @@ MyConfigSnapshot::MyConfigSnapshot(FNET_Transport& transport, Schema schema, con
-       _builder(get_add_fields(_schema.getNumAttributeFields() > 1)),
-       _cfg(),
-       _bootstrap() {
--    auto documenttypesConfig = std::make_shared<DocumenttypesConfig>(_builder.get_documenttypes_config());
--    auto tuneFileDocumentDB = std::make_shared<TuneFileDocumentDB>();
--    _bootstrap = std::make_shared<BootstrapConfig>(
--        1, documenttypesConfig, _builder.get_repo_sp(), std::make_shared<ProtonConfig>(),
--        std::make_shared<FiledistributorrpcConfig>(), std::make_shared<BucketspacesConfig>(),
--        std::make_shared<TelemetryConfig>(), tuneFileDocumentDB,
--        HwInfo(HwInfo::Disk(128_Gi, false, false), HwInfo::Memory(16_Gi), HwInfo::Cpu(8)));
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    bootstrap_config_builder.documenttypes = _builder.get_documenttypes_config();
-+    HwInfo hw_info(HwInfo::Disk(128_Gi, false, false), HwInfo::Memory(16_Gi), HwInfo::Cpu(8));
-+    _bootstrap = bootstrap_config_builder.build(1, hw_info);
-     ::config::DirSpec      spec(cfgDir);
-     DocumentDBConfigHelper mgr(spec, "searchdocument");
-     mgr.forwardConfig(_bootstrap);
-```
-
-**File**: `searchcore/src/tests/proton/documentdb/fileconfigmanager/fileconfigmanager_test.cpp` (modified, +6/-8)
-```diff
-@@ -8,12 +8,12 @@
- #include <vespa/config-indexschema.h>
- #include <vespa/config-rank-profiles.h>
- #include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/repo/documenttyperepo.h>
- #include <vespa/searchcore/proton/server/bootstrapconfig.h>
- #include <vespa/searchcore/proton/server/documentdbconfigmanager.h>
- #include <vespa/searchcore/proton/server/fileconfigmanager.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
- #include <vespa/searchcore/proton/test/documentdb_config_builder.h>
- #include <vespa/searchcore/proton/test/transport_helper.h>
- #include <vespa/searchsummary/config/config-juniperrc.h>
-@@ -33,7 +33,7 @@ using namespace search;
- using namespace vespa::config::search::core;
- using namespace vespa::config::search;
- using namespace std::chrono_literals;
--using ai::vespa::telemetry::TelemetryConfig;
-+using proton::test::BootstrapConfigSetBuilder;
- using search::fef::OnnxModels;
- using search::fef::RankingConstants;
- using search::fef::RankingExpressions;
-@@ -52,12 +52,10 @@ std::string placeholder_document_type_name("test");
- DocumentDBConfig::SP makeBaseConfigSnapshot(FNET_Transport& transport) {
-     ::config::DirSpec spec(TEST_PATH("cfg"));
- 
--    DBCM                  dbcm(spec, placeholder_document_type_name);
--    DocumenttypesConfigSP dtcfg(::config::ConfigGetter<DocumenttypesConfig>::getConfig("", spec).release());
--    auto                  b = std::make_shared<BootstrapConfig>(
--        1, dtcfg, std::make_shared<DocumentTypeRepo>(*dtcfg), std::make_shared<ProtonConfig>(),
--        std::make_shared<FiledistributorrpcConfig>(), std::make_shared<BucketspacesConfig>(),
--        std::make_shared<TelemetryConfig>(), std::make_shared<TuneFileDocumentDB>(), HwInfo());
-+    DBCM                      dbcm(spec, placeholder_document_type_name);
-+    BootstrapConfigSetBuilder bootstrap_config_builder;
-+    bootstrap_config_builder.documenttypes = *::config::ConfigGetter<DocumenttypesConfig>::getConfig("", spec);
-+    auto b = bootstrap_config_builder.build(1, HwInfo());
-     dbcm.forwardConfig(b);
-     dbcm.nextGeneration(transport, 0ms);
-     DocumentDBConfig::SP snap = dbcm.getConfig();
-```
-
-**File**: `searchcore/src/tests/proton/proton_configurer/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ vespa_add_executable(searchcore_proton_configurer_test_app TEST
-     proton_configurer_test.cpp
+@@ -1,7 +1,9 @@
+ # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+ vespa_define_module(
      DEPENDS
-     searchcore_server
-+    searchcore_test
-     GTest::gtest
- )
- vespa_add_test(NAME searchcore_proton_configurer_test_app COMMAND searchcore_proton_configurer_test_app)
++    vespa_configdefinitions
+     vespalib
++    vespalog
+ 
+     LIBS
+     src/vespa/opentelemetry
 ```
 
-**File**: `searchcore/src/tests/proton/proton_configurer/proton_configurer_test.cpp` (modified, +23/-69)
+**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +54/-0)
 ```diff
-@@ -1,16 +1,8 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+@@ -2,7 +2,10 @@
  
--#include <vespa/config-attributes.h>
--#include <vespa/config-bucketspaces.h>
--#include <vespa/config-imported-fields.h>
--#include <vespa/config-indexschema.h>
--#include <vespa/config-rank-profiles.h>
--#include <vespa/config-summary.h>
--#include <vespa/config-telemetry.h>
- #include <vespa/config/subscription/configuri.h>
- #include <vespa/document/config/documenttypes_config_fwd.h>
- #include <vespa/document/repo/documenttyperepo.h>
--#include <vespa/fileacquirer/config-filedistributorrpc.h>
- #include <vespa/searchcore/proton/common/alloc_config.h>
- #include <vespa/searchcore/proton/server/bootstrapconfig.h>
- #include <vespa/searchcore/proton/server/document_db_config_owner.h>
-@@ -20,7 +12,8 @@
- #include <vespa/searchcore/proton/server/proton_config_snapshot.h>
- #include <vespa/searchcore/proton/server/proton_configurer.h>
- #include <vespa/searchcore/proton/server/threading_service_config.h>
--#include <vespa/searchsummary/config/config-juniperrc.h>
-+#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
-+#include <vespa/searchcore/proton/test/document_db_config_set_builder.h>
- #include <vespa/vespalib/gtest/gtest.h>
- #include <vespa/vespalib/util/threadstackexecutor.h>
+ #include "opentelemetry_tracer_providers.h"
  
-@@ -32,14 +25,13 @@ using namespace vespa::config::search::core;
- using namespace vespa::config::search::summary;
- using namespace vespa::config::search;
- using namespace cloud::config::filedistribution;
--using ai::vespa::telemetry::TelemetryConfig;
--using ai::vespa::telemetry::TelemetryConfigBuilder;
--using vespa::config::content::core::BucketspacesConfig;
- using vespa::config::content::core::BucketspacesConfigBuilder;
++#include <vespa/config-telemetry.h>
++#include <vespa/defaults.h>
+ #include <vespa/vespalib/component/vtag.h>
++#include <vespa/vespalib/net/tls/transport_security_options_reading.h>
  
- using InitializeThreads = std::shared_ptr<vespalib::ThreadStackExecutorBase>;
- using config::ConfigUri;
- using document::DocumentTypeRepo;
-+using proton::test::BootstrapConfigSetBuilder;
-+using proton::test::DocumentDBConfigSetBuilder;
- using search::TuneFileDocumentDB;
- using search::fef::OnnxModels;
- using search::fef::RankingConstants;
-@@ -48,63 +40,26 @@ using search::index::Schema;
- using std::map;
- using vespalib::HwInfo;
+ #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
+ #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
+@@ -12,6 +15,14 @@
+ #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
+ #include <opentelemetry/trace/provider.h>
  
--struct DBConfigFixture {
-+struct DBConfigFixture : public DocumentDBConfigSetBuilder {
-     using UP = std::unique_ptr<DBConfigFixture>;
--    AttributesConfigBuilder     _attributesBuilder;
--    RankProfilesConfigBuilder   _rankProfilesBuilder;
--    IndexschemaConfigBuilder    _indexschemaBuilder;
--    SummaryConfigBuilder        _summaryBuilder;
--    JuniperrcConfigBuilder      _juniperrcBuilder;
--    ImportedFieldsConfigBuilder _importedFieldsBuilder;
--
--    std::shared_ptr<const Schema> buildSchema() {
--        return DocumentDBConfig::build_schema(_attributesBuilder, _indexschemaBuilder);
--    }
--
--    static std::shared_ptr<const RankingConstants> buildRankingConstants() {
--        return std::make_shared<RankingConstants>();
--    }
--
--    static std::shared_ptr<const RankingExpressions> buildRankingExpressions() {
--        return std::make_shared<RankingExpressions>();
--    }
--
--    static std::shared_ptr<const OnnxModels> buildOnnxModels() { return std::make_shared<OnnxModels>(); }
- 
-     DocumentDBConfig::SP getConfig(int64_t generation, std::shared_ptr<DocumenttypesConfig> documentTypes,
--                                   std::shared_ptr<const DocumentTypeRepo> repo, const std::string& configId,
--                                   const std::string& docTypeName) {
--        return std::make_shared<DocumentDBConfig>(
--            generation, std::make_shared<RankProfilesConfig>(_rankProfilesBuilder), buildRankingConstants(),
--            buildRankingExpressions(), buildOnnxModels(), std::make_shared<IndexschemaConfig>(_indexschemaBuilder),
--            std::make_shared<AttributesConfig>(_attributesBuilder), std::make_shared<SummaryConfig>(_summaryBuilder),
--            std::make_shared<JuniperrcConfig>(_juniperrcBuilder), std::move(documentTypes), std::move(repo),
--            std::make_shared<ImportedFieldsConfig>(_importedFieldsBuilder), std::make_shared<TuneFileDocumentDB>(),
--            buildSchema(), std::make_shared<DocumentDBMaintenanceConfig>(), search::LogDocumentStore::Config(),
--            ThreadingServiceConfig::make(), AllocConfig::makeDefault(), DocumentMetaStoreConfig::make(), configId,
--            docTypeName);
-+                                   const std::string& configId, const std::string& docTypeName) {
-+        return build(generation, *documentTypes, docTypeName, configId);
-     }
- };
- 
- struct ConfigFixture {
-     const std::string                     _configId;
--    ProtonConfigBuilder                   _protonBuilder;
--    DocumenttypesConfigBuilder            _documenttypesBuilder;
--    FiledistributorrpcConfigBuilder       _filedistBuilder;
--    BucketspacesConfigBuilder             _bucketspacesBuilder;
--    TelemetryConfigBuilder                _telemetry_builder;
-+    BootstrapConfigSetBuilder             _bootstrap
-```
-
-**File**: `searchcore/src/vespa/searchcore/proton/test/bootstrap_config_set_builder.cpp` (modified, +22/-0)
-```diff
-@@ -2,6 +2,14 @@
- 
- #include "bootstrap_config_set_builder.h"
- 
-+#include <vespa/document/repo/document_type_repo_factory.h>
-+#include <vespa/searchcore/proton/server/bootstrapconfig.h>
++#include <format>
++#include <fstream>
++#include <iomanip>
++#include <sstream>
 +
-+using document::DocumentTypeRepo;
-+using document::DocumentTypeRepoFactory;
-+using search::TuneFileDocumentDB;
-+using vespalib::HwInfo;
++#include <vespa/log/log.h>
++LOG_SETUP(".opentelemetry.opentelemetry_tracer_providers");
 +
- namespace proton::test {
+ namespace vespa_opentelemetry {
  
- BootstrapConfigSetBuilder::BootstrapConfigSetBuilder()
-@@ -18,4 +26,18 @@ void BootstrapConfigSetBuilder::add_builders(config::ConfigSet& set, const std::
-     set.addBuilder(config_id, &telemetry);
+ const std::string OpenTelemetryTracerProviders::vespa_tls_config_file("VESPA_TLS_CONFIG_FILE");
+@@ -48,6 +59,25 @@ opentelemetry::sdk::resource::Resource OpenTelemetryTracerProviders::make_resour
+     return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
  }
  
-+std::shared_ptr<BootstrapConfig> BootstrapConfigSetBuilder::build(int64_t                                 generation,
-+                                                                  std::shared_ptr<const DocumentTypeRepo> repo,
-+                                                                  const HwInfo& hwInfo) const {
-+    return std::make_shared<BootstrapConfig>(
-+        generation, std::make_shared<DocumenttypesConfig>(documenttypes), std::move(repo),
-+        std::make_shared<ProtonConfig>(proton), std::make_shared<FiledistributorrpcConfig>(filedistributorrpc),
-+        std::make_shared<BucketspacesConfig>(bucketspaces), std::make_shared<TelemetryConfig>(telemetry),
-+        std::make_shared<TuneFileDocumentDB>(), hwInfo);
++opentelemetry::sdk::resource::Resource
++OpenTelemetryTracerProviders::make_resource(const std::string& service_name, TelemetryConfig& telemetry_config) {
++    opentelemetry::sdk::resource::ResourceAttributes resource_attributes;
++    for (const auto& resource : telemetry_config.resourceAttribute) {
++        resource_attributes.SetAttribute(resource.first, resource.second);
++    }
++    resource_attributes.SetAttribute("realservice.name", service_name);
++    resource_attributes.SetAttribute("realservice.version", vespalib::VersionTag);
++    return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
 +}
 +
-+std::shared_ptr<BootstrapConfig> BootstrapConfigSetBuilder::build(int64_t generation, const HwInfo& hwInfo) const {
-+    return build(generation, DocumentTypeRepoFactory::make(documenttypes), hwInfo);
++void OpenTelemetryTracerProviders::adjust_otlp_grpc_exporter_options(
++    opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts, TelemetryConfig& cfg) {
++    auto          host_name_file_name = vespa::Defaults::underVespaHome(cfg.endpointHostnameFile.c_str());
++    std::ifstream host_name_file(host_name_file_name);
++    std::string   host_name((std::istreambuf_iterator<char>(host_name_file)), std::istreambuf_iterator<char>());
++    opts.endpoint = std::format("https://{}:4317", host_name);
 +}
 +
- } // namespace proton::test
+ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
+     const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
+     const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
+@@ -60,6 +90,30 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
+     opentelemetry::trace::Provider::SetTracerProvider(provider);
+ }
+ 
++void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
++                                                             TelemetryConfig&   telemetry_config) {
++    if (!telemetry_config.enabled) {
++        return;
++    }
++    const char* tls_config_file = getenv(vespa_tls_config_file.c_str());
++    if (tls_config_file == nullptr) {
++        LOG(warning, "environment variable '%s' not set, telemetry is disabled", vespa_tls_config_file.c_str());
++        return;
++    }
++    auto vespa_tls_config = vespalib::net::tls::read_options_from_json_file(tls_config_file);
++    if (!vespa_tls_config) {
++        std::stringstream ss;
++        ss << "bad vespa tls config file " << std::quoted(tls_config_file) << ", telemetry is disabled";
++        LOG(warning, "%s", ss.str().c_str());
++        return;
++    }
++    auto otlp_grpc_exporter_options = setup_otlp_grpc_exporter_options(*vespa_tls_config);
++    adjust_otlp_grpc_exporter_options(otlp_grpc_exporter_options, telemetry_config);
++    auto batch_span_processor_options = setup_batch_span_processor_options(false);
++    auto resource = make_resource(service_name, telemetry_config);
++    init_grpc_tracer_provider(otlp_grpc_exporter_options, batch_span_processor_options, resource);
++}
++
+ std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
+ OpenTelemetryTracerProviders::init_memory_tracer_provider() {
+     std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> data;
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.h` (modified, +10/-0)
+```diff
+@@ -11,13 +11,18 @@
+ 
+ #include <memory>
+ 
++namespace ai::vespa::telemetry::internal {
++class InternalTelemetryType;
++}
++
+ namespace vespa_opentelemetry {
+ 
+ /*
+  * Functions for setting up open telemetry trace providers to an ostream, to a memory buffer or to grpc.
+  */
+ class OpenTelemetryTracerProviders {
+ public:
++    using TelemetryConfig = const ai::vespa::telemetry::internal::InternalTelemetryType;
+     static const std::string vespa_tls_config_file;
+ 
+     static void cleanup_tracer_provider();
+@@ -27,10 +32,15 @@ class OpenTelemetryTracerProviders {
+     [[nodiscard]] static opentelemetry::sdk::trace::BatchSpanProcessorOptions
+     setup_batch_span_processor_options(bool test);
+     [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource();
++    [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource(const std::string& service_name,
++                                                                              TelemetryConfig&   telemetry_config);
++    static void adjust_otlp_grpc_exporter_options(opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts,
++                                                  TelemetryConfig&                                        cfg);
+     static void init_grpc_tracer_provider(
+         const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
+         const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
+         const opentelemetry::sdk::resource::Resource&                 resource);
++    static void init_grpc_tracer_provider(const std::string& service_name, TelemetryConfig& telemetry_config);
+ 
+     [[nodiscard]] static std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
+     init_memory_tracer_provider();
+```
+
+**File**: `searchcore/src/apps/proton/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -23,6 +23,8 @@ vespa_add_executable(searchcore_proton_app
+     searchcore_grouping
+     searchcore_proton_metrics
+     storageserver_storageapp
++    vespa_opentelemetry
++    gRPC::grpc
+     absl::failure_signal_handler
+     absl::symbolize
+ )
+```
+
+**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +26/-2)
+```diff
+@@ -1,10 +1,12 @@
+ // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+ 
++#include <vespa/config-telemetry.h>
+ #include <vespa/config/common/configcontext.h>
+ #include <vespa/config/common/exceptions.h>
+ #include <vespa/fastos/file_interface.h>
+ #include <vespa/fnet/transport.h>
+ #include <vespa/metrics/metricmanager.h>
++#include <vespa/opentelemetry/opentelemetry_tracer_providers.h>
+ #include <vespa/searchcore/proton/server/proton.h>
+ #include <vespa/searchvisitor/searchvisitor.h>
+ #include <vespa/storage/storageserver/storagenode.h>
+@@ -16,6 +18,9 @@
+ #include <absl/debugging/failure_signal_handler.h>
+ #include <absl/debugging/symbolize.h>
+ #include <fcntl.h>
++#include <google/protobuf/message_lite.h>
++#include <grpc/grpc.h>
++#include <opentelemetry/trace/provider.h>
+ 
+ #include <cstdlib>
+ #include <cstring>
+@@ -28,6 +33,7 @@ LOG_SETUP("proton");
+ 
+ using SIG = vespalib::SignalHandler;
+ using vespa::config::search::core::ProtonConfig;
++using vespa_opentelemetry::OpenTelemetryTracerProviders;
+ 
+ struct Params {
+     std::string identity;
+@@ -246,6 +252,13 @@ class Transport {
+     FNET_Transport _transport;
+ };
+ 
++void emit_proton_starting_span() {
++    auto tracer = ::opentelemetry::trace::Provider::GetTracerProvider()->GetTracer("proton-tracer");
++    auto span = tracer->StartSpan("Proton process starting");
++    span->AddEvent("first event");
++    span->End();
++}
++
+ } // namespace
+ 
+ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+@@ -264,6 +277,9 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+     if (proton.hasAbortedInit()) {
+         EV_STOPPING("proton", "shutdown after aborted init");
+     } else {
++        OpenTelemetryTracerProviders::init_grpc_tracer_provider("proton-service",
++                                                                *configSnapshot->get_telemetry_config_sp());
++        emit_proton_starting_span();
+         const ProtonConfig& protonConfig = configSnapshot->getProtonConfig();
+         std::string         basedir = protonConfig.basedir;
+         std::filesystem::create_directories(std::filesystem::path(basedir));
+@@ -338,6 +354,14 @@ int App::main(int argc, char** argv) {
+ }
+ 
+ int main(int argc, char** argv) {
+-    App app;
+-    return app.main(argc, argv);
++    int result = 0;
++    grpc_init();
++    {
++        App app;
++        result = app.main(argc, argv);
++    }
++    OpenTelemetryTracerProviders::cleanup_tracer_provider();
++    grpc_shutdown_blocking();
++    google::protobuf::ShutdownProtobufLibrary();
++    return result;
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38295** (2026-10-22): Use config set builders for searchcore unit test. (@toregge)
-- **PR #38294** (2026-10-22): Parse large ranking expressions only for the profile using them (@sochotnicky)
-- **PR #38293** (2026-10-22): chore: update third-party attributions (@github-actions[bot])
-- **PR #38292** (2026-10-22): Catch the parent of UnsatisfiedLinkError (@bratseth)
-- **PR #38291** (2026-10-22): Factor out config set builders. (@toregge)
-- **PR #38289** (2026-10-21): Document the unusedSince removal rule for config model flags (@johansolbakken)
+- **PR #38314** (2026-10-24): Follow-up to streaming sparseTensorWand review (@arnej27959)
+- **PR #38312** (2026-10-24): Support sparseTensorWand in streaming search (@arnej27959)
+- **PR #38311** (2026-10-24): Add SparseTensorWandTerm query term (@arnej27959)
+- **PR #38306** (2026-10-23): Template WeakAndHeap classes on score type (@arnej27959)
+- **PR #38305** (2026-10-24): Bratseth/cloud account (@bratseth)
+- **PR #38304** (2026-10-23): Use std::span for WeakAndHeap::adjust() (@arnej27959)
 
 ---
 
@@ -2280,61 +1572,29 @@ Use config set builders for searchcore unit test.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-
+## X. Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-s
 
 **RULE**:
-When implementing operations in `searchcore/src/apps/tests/persistenceconformance_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `opentelemetry/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `503b816e`: Merge pull request #38295 from vespa-engine/toregge/use-config-set-builders-for-searchcore-unit-tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c518c36`: Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchcore/src/apps/tests/persistenceconformance_test.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `opentelemetry/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-#include <vespa/searchcore/proton/test/bootstrap_config_set_builder.h>
-#include <vespa/searchcore/proton/test/document_db_config_set_builder.h>
-using proton::test::BootstrapConfigSetBuilder;
-using proton::test::DocumentDBConfigSetBuilder;
-struct SchemaConfigFactory : public DocumentDBConfigSetBuilder {
-    static std::shared_ptr<SchemaConfigFactory> get() { return std::make_shared<SchemaConfigFactory>(); }
-    std::shared_ptr<SchemaConfigFactory>    _schemaFactory;
-                  std::shared_ptr<SchemaConfigFactory> schemaFactory);
+    vespa_configdefinitions
+    vespalog
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-#include <vespa/config-attributes.h>
-#include <vespa/config-bucketspaces.h>
-#include <vespa/config-imported-fields.h>
-#include <vespa/config-indexschema.h>
-#include <vespa/config-rank-profiles.h>
-#include <vespa/config-summary.h>
-#include <vespa/config-telemetry.h>
-#include <vespa/searchsummary/config/config-juniperrc.h>
-using ai::vespa::telemetry::TelemetryConfig;
-using vespa::config::content::core::BucketspacesConfig;
-struct SchemaConfigFactory {
-    using SP = std::shared_ptr<SchemaConfigFactory>;
-    static SchemaConfigFactory::SP get() { return std::make_shared<SchemaConfigFactory>(); }
-    virtual CS::IndexschemaConfigSP createIndexSchema(const DocumentType& docType) {
-        (void)docType;
-        return std::make_shared<IndexschemaConfig>();
-    }
-    virtual CS::AttributesConfigSP createAttributes(const DocumentType& docType) {
-        (void)docType;
-        return std::make_shared<AttributesConfig>();
-    }
-    virtual CS::SummaryConfigSP createSummary(const DocumentType& docType) {
-        (void)docType;
-        return std::make_shared<SummaryConfig>();
-    }
-    SchemaConfigFactory::SP                 _schemaFactory;
-                  SchemaConfigFactory::SP schemaFact
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `503b816e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c518c36` are properly handled with clean fallback behavior.

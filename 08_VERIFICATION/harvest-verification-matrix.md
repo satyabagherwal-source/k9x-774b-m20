@@ -4683,3 +4683,6 @@
 | `CYCLE-20261025-ILDI` | `2026-10-25T05:14:47.094Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4071, Rule 4072` | Yes (`4e641fef...`) |
 | `CYCLE-20261025-QUA3` | `2026-10-25T05:21:11.883Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4073, Rule 4074` | Yes (`066ff796...`) |
 | `CYCLE-20261025-R10G` | `2026-10-25T05:21:20.608Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4075` | Yes (`907d3ccf...`) |
+| `CYCLE-20261025-Z6K8` | `2026-10-25T05:27:41.048Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4076` | Yes (`920185e1...`) |
+| `CYCLE-20261025-Z9XJ` | `2026-10-25T05:27:45.415Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1131, Rule 4077, Rule 4078` | Yes (`3834786f...`) |
+| `CYCLE-20261025-ZCS9` | `2026-10-25T05:27:49.113Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4079` | Yes (`12c3551f...`) |

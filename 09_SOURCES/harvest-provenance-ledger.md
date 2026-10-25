@@ -4690,3 +4690,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-25T05:14:47.098Z |
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T05:21:11.915Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `c894d977` | Multi-dimensional audit evidence | 2026-10-25T05:21:20.611Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `5cfcfe21` | Multi-dimensional audit evidence | 2026-10-25T05:27:41.051Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T05:27:45.419Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `5f8ed384` | Multi-dimensional audit evidence | 2026-10-25T05:27:49.116Z |
