@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-GVAU",
-    "timestamp": "2026-10-21T15:22:37.302Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "53ac14ae6e865e29e98a2e9c3a2cd5aa73b17b5e7332ae90890ad9abb33570b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-GXHQ",
-    "timestamp": "2026-10-21T15:22:40.142Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "a7d29b8b2ae09a892d882314c1eb029067a4eaf7f74c4e2aba4f8b87b44a3e27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-H1UL",
     "timestamp": "2026-10-21T15:22:45.789Z",
     "repository": "risingwavelabs/risingwave",
@@ -7492,6 +7462,36 @@
     "contentHash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-561G",
+    "timestamp": "2026-10-25T07:52:18.388Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "c68dfdd9ce246ee138482d19c91dcc950e6c73e6c4e2368302e5066e7dff47a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-6UTS",
+    "timestamp": "2026-10-25T07:53:37.168Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

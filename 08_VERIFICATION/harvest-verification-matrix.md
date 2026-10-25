@@ -4733,3 +4733,5 @@
 | `CYCLE-20261025-NTC0` | `2026-10-25T07:38:48.768Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4157, Rule 4158, Rule 4159` | Yes (`429b6c32...`) |
 | `CYCLE-20261025-NZ79` | `2026-10-25T07:38:56.373Z` | `bergside/typeui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4160, Rule 4161, Rule 4162` | Yes (`5bde2361...`) |
 | `CYCLE-20261025-ORL7` | `2026-10-25T07:39:33.163Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4163, Rule 4164, Rule 4165` | Yes (`3e22f0a1...`) |
+| `CYCLE-20261025-561G` | `2026-10-25T07:52:18.388Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4166, Rule 4167, Rule 4168` | Yes (`c68dfdd9...`) |
+| `CYCLE-20261025-6UTS` | `2026-10-25T07:53:37.168Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4169, Rule 4170` | Yes (`920e39ec...`) |

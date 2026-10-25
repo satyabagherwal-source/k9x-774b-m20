@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "32dbef542dea7951e071f1de459ea78e838e556043a948d3fe11b7be36618bab",
-    "lastHarvestedAt": "2026-10-20T15:10:20.487Z",
+    "contentHash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
+    "lastHarvestedAt": "2026-10-25T07:53:37.171Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "5ab62913",
+    "sourceVersion": "32b2ec43",
     "license": "Apache-2.0",
-    "contentHash": "4d6310865c76a361439c89f1fb191a9e58ce3a6f93d3c4c77fdbe61c75d1157c",
-    "lastHarvestedAt": "2026-10-22T16:58:08.162Z",
+    "contentHash": "c68dfdd9ce246ee138482d19c91dcc950e6c73e6c4e2368302e5066e7dff47a6",
+    "lastHarvestedAt": "2026-10-25T07:52:18.390Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

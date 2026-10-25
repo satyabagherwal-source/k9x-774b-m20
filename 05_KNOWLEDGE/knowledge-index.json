@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T07:39:33.106Z",
+  "last_updated": "2026-10-25T07:53:37.127Z",
   "total_verified_learnings": 1084,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20262,7 +20262,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "32dbef542dea7951e071f1de459ea78e838e556043a948d3fe11b7be36618bab",
+      "content_hash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -20289,6 +20289,16 @@
           "number": 1536,
           "title": "Prefix Conditioning Temporal Drift Barrier",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4169,
+          "title": "Sequence-Parallel Spatial-Temporal Block Realignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4170,
+          "title": "Multi-Modal Cross-Attention KV-Norm Numerical Clamp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20305,7 +20315,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-20T15:10:20.426Z",
+      "verified_at": "2026-10-25T07:53:37.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42348,8 +42358,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "5ab62913",
-      "content_hash": "4d6310865c76a361439c89f1fb191a9e58ce3a6f93d3c4c77fdbe61c75d1157c",
+      "source_version": "32b2ec43",
+      "content_hash": "c68dfdd9ce246ee138482d19c91dcc950e6c73e6c4e2368302e5066e7dff47a6",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -42367,6 +42377,21 @@
           "number": 3648,
           "title": "json): quote --keys-only schema keys that read as syntax",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4166,
+          "title": "Zero-Trust Cross-Grammar Delegation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4167,
+          "title": "Guarded Non-Inflationary Transformation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4168,
+          "title": "State-Aware Non-Destructive Workspace Config Migration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42374,7 +42399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:58:08.086Z",
+      "verified_at": "2026-10-25T07:52:18.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120494,6 +120519,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T07:39:33.095Z"
+    },
+    "rule-4166": {
+      "learning_id": "rule-4166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4166,
+      "title": "Zero-Trust Cross-Grammar Delegation Invariant",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "32b2ec43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:52:18.331Z"
+    },
+    "rule-4167": {
+      "learning_id": "rule-4167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4167,
+      "title": "Guarded Non-Inflationary Transformation Invariant",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "32b2ec43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:52:18.331Z"
+    },
+    "rule-4168": {
+      "learning_id": "rule-4168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4168,
+      "title": "State-Aware Non-Destructive Workspace Config Migration Invariant",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "32b2ec43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:52:18.331Z"
+    },
+    "rule-4169": {
+      "learning_id": "rule-4169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4169,
+      "title": "Sequence-Parallel Spatial-Temporal Block Realignment",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:53:37.120Z"
+    },
+    "rule-4170": {
+      "learning_id": "rule-4170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4170,
+      "title": "Multi-Modal Cross-Attention KV-Norm Numerical Clamp",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T07:53:37.120Z"
     }
   },
   "aliases": {

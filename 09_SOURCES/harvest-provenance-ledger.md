@@ -4740,3 +4740,5 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `6fe4f0f5` | Multi-dimensional audit evidence | 2026-10-25T07:38:48.771Z |
 | `learn-github-bergside-typeui` | `https://github.com/bergside/typeui` | `efc5f21d` | Multi-dimensional audit evidence | 2026-10-25T07:38:56.376Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-25T07:39:33.166Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `32b2ec43` | Multi-dimensional audit evidence | 2026-10-25T07:52:18.390Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-25T07:53:37.171Z |
