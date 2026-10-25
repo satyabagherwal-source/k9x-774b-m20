@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T15:03:27.206Z",
-  "total_cycles_completed": 4848,
-  "total_learnings_persisted": 4848,
-  "total_rules_promoted": 4239,
+  "last_updated": "2026-10-25T15:09:59.206Z",
+  "total_cycles_completed": 4851,
+  "total_learnings_persisted": 4851,
+  "total_rules_promoted": 4243,
   "history": [
-    {
-      "timestamp": "2026-10-25T04:53:57.791Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:56:59.312Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T04:57:21.242Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T04:58:31.438Z",
       "repository": "agent-of-empires/agent-of-empires",
@@ -1403,6 +1382,27 @@
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:09:45.740Z",
+      "repository": "tamagui/tamagui",
+      "learningId": "learn-github-tamagui-tamagui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:09:53.921Z",
+      "repository": "goss-org/goss",
+      "learningId": "learn-github-goss-org-goss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T15:09:59.206Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-H359",
-    "timestamp": "2026-10-22T17:58:25.581Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "c5dbbdf58d8c91ea6191198bfb16b0f4af0c3a38fe57a668a4b70c470922a6b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-OVTE",
-    "timestamp": "2026-10-22T18:04:29.330Z",
-    "repository": "ducaale/xh",
-    "learningId": "learn-github-ducaale-xh",
-    "contentHash": "f27d21dfcdc5dda56462cba262169c2c9b668686033ec6b08104370f72bca307",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-P2JU",
-    "timestamp": "2026-10-22T18:04:38.058Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "746cdf66cd13e771179f93ddb08251eacc1b473b50e2c37569fd55813ce07ce8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-P5OV",
     "timestamp": "2026-10-22T18:04:42.127Z",
     "repository": "dragonflydb/dragonfly",
@@ -7492,6 +7447,51 @@
     "contentHash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RQMA",
+    "timestamp": "2026-10-25T15:09:45.730Z",
+    "repository": "tamagui/tamagui",
+    "learningId": "learn-github-tamagui-tamagui",
+    "contentHash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-RWXL",
+    "timestamp": "2026-10-25T15:09:53.913Z",
+    "repository": "goss-org/goss",
+    "learningId": "learn-github-goss-org-goss",
+    "contentHash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-S10E",
+    "timestamp": "2026-10-25T15:09:59.198Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

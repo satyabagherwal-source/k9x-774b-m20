@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
-    "lastHarvestedAt": "2026-10-20T19:43:27.917Z",
+    "contentHash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
+    "lastHarvestedAt": "2026-10-25T15:09:59.202Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "c95f4998",
+    "sourceVersion": "32f3ba8b",
     "license": "MIT",
-    "contentHash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
-    "lastHarvestedAt": "2026-10-23T11:17:53.273Z",
+    "contentHash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
+    "lastHarvestedAt": "2026-10-25T15:09:45.735Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {
@@ -5213,10 +5213,10 @@
     "repository": "goss-org/goss",
     "platform": "github",
     "sourceUrl": "https://github.com/goss-org/goss",
-    "sourceVersion": "26d35a47",
+    "sourceVersion": "e1210076",
     "license": "Apache-2.0",
-    "contentHash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
-    "lastHarvestedAt": "2026-10-19T03:13:59.286Z",
+    "contentHash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
+    "lastHarvestedAt": "2026-10-25T15:09:53.916Z",
     "learningId": "learn-github-goss-org-goss"
   },
   "starrocks-starrocks": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T15:03:27.159Z",
+  "last_updated": "2026-10-25T15:09:59.144Z",
   "total_verified_learnings": 1086,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13361,14 +13361,19 @@
       "slug": "goss-org-goss",
       "platform": "github",
       "source_url": "https://github.com/goss-org/goss",
-      "source_version": "26d35a47",
-      "content_hash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
+      "source_version": "e1210076",
+      "content_hash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
       "dossier_path": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
       "promoted_rules": [
         {
           "number": 2061,
           "title": "serve): dedupe concurrent validation runs on a cold cache (#1110)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4361,
+          "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13377,7 +13382,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:13:59.232Z",
+      "verified_at": "2026-10-25T15:09:53.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23817,7 +23822,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "2c00e102288ea34cfa7cb4c812a6290799fbf82b9c4b953f835770bbbb6af9fc",
+      "content_hash": "c9835d77ccf4ae974762b1586e0f7950f88836a8ad6d6a2176eb28ca60e31e53",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -23848,6 +23853,11 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh",
           "verified_at": "2026-10-12T01:18:46.028Z"
+        },
+        {
+          "number": 767,
+          "title": "Binary Artifact Integrity & Schema Validation",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1033,
@@ -23923,6 +23933,16 @@
           "number": 3350,
           "title": "Quantization Precision Loss & Context Window Degradation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4362,
+          "title": "Quantization-Aware Memory Budgeting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4363,
+          "title": "Uncensored Model Safety Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -23943,7 +23963,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-20T19:43:27.848Z",
+      "verified_at": "2026-10-25T15:09:59.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47518,8 +47538,8 @@
       "slug": "tamagui-tamagui",
       "platform": "github",
       "source_url": "https://github.com/tamagui/tamagui",
-      "source_version": "c95f4998",
-      "content_hash": "b3b002662a588bd70a315211aa6b6d439461bc2848406622bc4c11769cb2acf4",
+      "source_version": "32f3ba8b",
+      "content_hash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
       "dossier_path": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tamagui-tamagui-learnings.md",
       "promoted_rules": [
@@ -47564,7 +47584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:17:53.238Z",
+      "verified_at": "2026-10-25T15:09:45.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71970,15 +71990,15 @@
       "learning_id": "rule-767",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 767,
-      "title": "Binary Artifact Integrity & Schema Validation (Harvested from orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Binary Artifact Integrity & Schema Validation",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-25T15:09:59.132Z"
     },
     "rule-768": {
       "learning_id": "rule-768",
@@ -124280,6 +124300,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T15:03:27.152Z"
+    },
+    "rule-4361": {
+      "learning_id": "rule-4361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4361,
+      "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)",
+      "source_url": "https://github.com/goss-org/goss",
+      "source_version": "e1210076",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:09:53.832Z"
+    },
+    "rule-4362": {
+      "learning_id": "rule-4362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4362,
+      "title": "Quantization-Aware Memory Budgeting",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:09:59.132Z"
+    },
+    "rule-4363": {
+      "learning_id": "rule-4363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4363,
+      "title": "Uncensored Model Safety Boundary Enforcement",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T15:09:59.132Z"
     }
   },
   "aliases": {

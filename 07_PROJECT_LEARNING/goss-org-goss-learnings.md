@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
 > **Source**: github ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
-> **Source Version**: `26d35a47`  
+> **Source Version**: `e1210076`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:13:59.029Z  
+> **Timestamp**: 2026-10-25T15:09:53.520Z  
 > **Learning ID**: `learn-github-goss-org-goss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:13:59.021Z  
+> **Harvest Timestamp**: 2026-10-25T15:09:53.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Quick and Easy server testing/validation
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5990 stars
+- **Stars / Engagement**: 5996 stars
 
 ---
 
@@ -1539,272 +1539,83 @@ func (m *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a79c8fbe` (2026-08-15)
-**Commit Message**: fix(serve): dedupe concurrent validation runs on a cold cache (#1110)
+### Incident Patch 1: `e1210076` (2026-10-25)
+**Commit Message**: build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)
 
-Every request that arrived before the first result was cached ran its own
-full validation, so N probes executed every check N times against the
-machine. gossMu already existed on the handler but was never locked.
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.3 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1)
 
-**File**: `serve.go` (modified, +6/-2)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/docker-goss.yaml` (modified, +1/-1)
 ```diff
-@@ -104,8 +104,10 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
- func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
- 	var tra [][]resource.TestResult
- 	cacheKey := "res"
--	tmp, found := h.cache.Get(cacheKey)
--	if found {
-+	// Held across the lookup so a miss does not let a second request start its
-+	// own validate() before the first one has filled the cache.
-+	h.gossMu.Lock()
-+	if tmp, found := h.cache.Get(cacheKey); found {
- 		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
- 		tra = tmp.([][]resource.TestResult)
- 	} else {
-@@ -114,6 +116,8 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
- 		tra = h.validate()
- 		h.cache.SetDefault(cacheKey, tra)
- 	}
-+	h.gossMu.Unlock()
-+
- 	trc := testResultArrayToChan(tra)
- 	return h.output(trc, outputer)
- }
+@@ -88,6 +88,6 @@ jobs:
+           output: "trivy-results.sarif"
+ 
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.38.3
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         with:
+           sarif_file: "trivy-results.sarif"
 ```
 
-**File**: `serve_concurrency_test.go` (modified, +36/-0)
+**File**: `.github/workflows/trivy-schedule.yaml` (modified, +1/-1)
 ```diff
-@@ -1,9 +1,12 @@
- package goss
+@@ -22,6 +22,6 @@ jobs:
+           output: "trivy-results.sarif"
  
- import (
-+	"log"
- 	"net/http"
- 	"net/http/httptest"
-+	"os"
- 	"path/filepath"
-+	"strings"
- 	"sync"
- 	"testing"
- 
-@@ -45,3 +48,36 @@ func TestServeHandlesConcurrentRequests(t *testing.T) {
- 	}
- 	wg.Wait()
- }
-+
-+// TestServeDeduplicatesConcurrentCacheMisses covers the cold window: when many
-+// probes arrive before any result is cached, they must share one validation
-+// run rather than each executing every check against the machine.
-+func TestServeDeduplicatesConcurrentCacheMisses(t *testing.T) {
-+	var logOutput syncBuffer
-+	log.SetOutput(&logOutput)
-+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
-+
-+	config, err := util.NewConfig(
-+		util.WithSpecFile(filepath.Join("testdata", "matching_basic.yaml")),
-+		util.WithOutputFormat("json"),
-+	)
-+	require.NoError(t, err)
-+
-+	handler, err := newHealthHandler(config)
-+	require.NoError(t, err)
-+
-+	const n = 16
-+	var wg sync.WaitGroup
-+	wg.Add(n)
-+	for range n {
-+		go func() {
-+			defer wg.Done()
-+			rr := httptest.NewRecorder()
-+			handler.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/healthz", nil))
-+		}()
-+	}
-+	wg.Wait()
-+
-+	runs := strings.Count(logOutput.String(), "running tests")
-+	require.Equal(t, 1, runs, "%d concurrent requests caused %d validation runs, want 1", n, runs)
-+}
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.38.3
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         with:
+           sarif_file: "trivy-results.sarif"
 ```
 
 ---
 
-### Incident Patch 2: `f4523ad5` (2026-09-02)
-**Commit Message**: fix(matchers): an empty map matcher panics instead of reporting a syntax error (#1118)
+### Incident Patch 2: `b05640f1` (2026-10-25)
+**Commit Message**: build(deps): bump zensical from 0.0.70 to 0.0.71 in /docs (#1147)
 
-Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
-
-**File**: `resource/gomega.go` (modified, +7/-1)
-```diff
-@@ -8,7 +8,10 @@ import (
- 	"github.com/samber/lo"
- )
- 
--var errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
-+var (
-+	errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
-+	errEmptyMatcher             = errors.New("Syntax Error: Invalid matcher configuration. An empty map asserts nothing, exactly one matcher is required")
-+)
- 
- func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 	// Default matchers
-@@ -39,6 +42,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 		//panic(fmt.Sprintf("Syntax Error: Unexpected matcher type: %T\n\n", matcher))
- 	}
- 	keys := lo.Keys(matcherMap)
-+	if len(keys) == 0 {
-+		return nil, errEmptyMatcher
-+	}
- 	if len(keys) > 1 {
- 		return nil, fmt.Errorf("Syntax Error: Invalid matcher configuration. At a given nesting level, only one matcher is allowed. Found multiple matchers: %q", keys)
- 	}
-```
-
-**File**: `resource/gomega_test.go` (modified, +26/-0)
-```diff
-@@ -162,3 +162,29 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
- func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
- 	assert.Equal(t, got, want)
- }
-+
-+// An empty matcher map used to panic with an index out of range instead of
-+// being reported as a syntax error.
-+func TestMatcherToGomegaMatcherEmptyMap(t *testing.T) {
-+	cases := []struct {
-+		name string
-+		in   string
-+	}{
-+		{name: "top level", in: `{}`},
-+		{name: "nested in and", in: `{"and": [{}]}`},
-+		{name: "nested in not", in: `{"not": {}}`},
-+	}
-+
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			var dat any
-+			if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			got, err := matcherToGomegaMatcher(dat)
-+			assert.Nil(t, got)
-+			assert.ErrorIs(t, err, errEmptyMatcher)
-+		})
-+	}
-+}
-```
+Bumps [zensical](https://github.com/zensical/zensical) from 0.0.70 to 0.0.71.
+- [Release notes](https://github.com/zensical/zensical/releases)
+- [Commits](https://github.com/zensical/zensical/compare/v0.0.70...v0.0.71)
 
 ---
+updated-dependencies:
+- dependency-name: zensical
+  dependency-version: 0.0.71
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-### Incident Patch 3: `ad2b9f53` (2026-09-02)
-**Commit Message**: fix(http): stop a request-header without a space after the colon panicking (#1115)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `resource/file_test.go` (modified, +3/-4)
+**File**: `docs/requirements.txt` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,6 @@
- package resource
- 
- import (
--	"context"
- 	"strings"
- 	"testing"
- 
-@@ -11,10 +10,10 @@ import (
- 	"gopkg.in/yaml.v3"
- )
- 
--// NewFile used to set Contents to an empty list, so every generated gossfile
--// warned about asserting nothing. It must stay unset and marshal away.
-+// Contents must stay unset and marshal away: an empty list asserts nothing, so
-+// every generated gossfile would warn about it.
- func TestNewFileLeavesContentsUnset(t *testing.T) {
--	sysFile := system.NewDefFile(context.Background(), "/etc/hostname", nil, util.Config{})
-+	sysFile := system.NewDefFile(t.Context(), "/etc/hostname", nil, util.Config{})
- 	f, err := NewFile(sysFile, util.Config{})
- 	if err != nil {
- 		t.Fatal(err)
-```
-
-**File**: `system/http.go` (modified, +7/-2)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"crypto/x509"
- 	"fmt"
- 	"io"
-+	"log"
- 	"net/http"
- 	"net/url"
- 	"os"
-@@ -57,8 +58,12 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
- 	}
- 
- 	for _, r := range config.RequestHeader {
--		str := strings.SplitN(r, ": ", 2)
--		headers.Add(str[0], str[1])
-+		name, value, found := strings.Cut(r, ":")
-+		if !found {
-+			log.Printf("[WARNING] ignoring malformed request header %q, expected \"Name: value\"", r)
-+			continue
-+		}
-+		headers.Add(strings.TrimSpace(name), strings.TrimSpace(value))
- 	}
- 	return &DefHTTP{
- 		http:              httpStr,
-```
-
-**File**: `system/http_test.go` (modified, +32/-0)
-```diff
-@@ -5,6 +5,8 @@ import (
- 	"net/http"
- 	"strings"
- 	"testing"
-+
-+	"github.com/goss-org/goss/util"
- )
- 
- type trackingReadCloser struct {
-@@ -40,3 +42,33 @@ func TestDefHTTPCloseClosesBodyAfterBodyRead(t *testing.T) {
- 		t.Fatal("Close() did not close the response body")
- 	}
- }
-+
-+// TestNewDefHTTPRequestHeaderParsing pins that request-headers entries are
-+// parsed on the first colon, so the HTTP wire form "Name:value" works, and
-+// that an entry with no colon is skipped instead of panicking.
-+func TestNewDefHTTPRequestHeaderParsing(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		header string
-+		want   string
-+	}{
-+		{"colon and space", "X-Foo: bar", "bar"},
-+		{"colon no space", "X-Foo:bar", "bar"},
-+		{"no colon", "X-Foo", ""},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			h := NewDefHTTP(t.Context(), "http://example.com", nil, util.Config{
-+				RequestHeader: []string{tc.header},
-+			})
-+			def, ok := h.(*DefHTTP)
-+			if !ok {
-+				t.Fatalf("NewDefHTTP returned %T, want *DefHTTP", h)
-+			}
-+			if got := def.RequestHeader.Get("X-Foo"); got != tc.want {
-+				t.Errorf("RequestHeader.Get(%q) = %q, want %q", "X-Foo", got, tc.want)
-+			}
-+		})
-+	}
-+}
+@@ -1 +1 @@
+-zensical==0.0.70
++zensical==0.0.71
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1148** (2026-10-25): build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (@dependabot[bot])
+- **PR #1147** (2026-10-25): build(deps): bump zensical from 0.0.70 to 0.0.71 in /docs (@dependabot[bot])
 - **PR #1145** (2026-10-18): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
 - **PR #1144** (2026-10-18): build(deps): bump zensical from 0.0.68 to 0.0.70 in /docs (@dependabot[bot])
 - **PR #1140** (2026-10-11): build(deps): bump zensical from 0.0.67 to 0.0.68 in /docs (@dependabot[bot])
 - **PR #1138** (2026-10-04): build(deps): bump github/codeql-action from 4.38.1 to 4.38.2 (@dependabot[bot])
-- **PR #1137** (2026-10-04): build(deps): bump zensical from 0.0.64 to 0.0.67 in /docs (@dependabot[bot])
-- **PR #1135** (2026-09-26): build(deps): bump github/codeql-action from 4.38.0 to 4.38.1 (@dependabot[bot])
 
 ---
 
@@ -1824,34 +1635,28 @@ Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serve): dedupe concurrent validation runs on a cold cache (#1110)
+## X. build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)
 
 **RULE**:
-When implementing operations in `serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goss-org/goss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docker-goss.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goss-org/goss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a79c8fbe`: serve): dedupe concurrent validation runs on a cold cache (#1110). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1210076`: build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serve.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docker-goss.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Held across the lookup so a miss does not let a second request start its
-	// own validate() before the first one has filled the cache.
-	h.gossMu.Lock()
-	if tmp, found := h.cache.Get(cacheKey); found {
-	h.gossMu.Unlock()
-
+        uses: github/codeql-action/upload-sarif@v4.39.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tmp, found := h.cache.Get(cacheKey)
-	if found {
+        uses: github/codeql-action/upload-sarif@v4.38.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a79c8fbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1210076` are properly handled with clean fallback behavior.

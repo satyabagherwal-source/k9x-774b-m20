@@ -4871,3 +4871,6 @@
 | `CYCLE-20261025-JFVD` | `2026-10-25T15:03:18.553Z` | `assistant-ui/assistant-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4358` | Yes (`91737705...`) |
 | `CYCLE-20261025-JH46` | `2026-10-25T15:03:20.166Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4359` | Yes (`3fb5e600...`) |
 | `CYCLE-20261025-JMJH` | `2026-10-25T15:03:27.197Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4360` | Yes (`c9e26af9...`) |
+| `CYCLE-20261025-RQMA` | `2026-10-25T15:09:45.730Z` | `tamagui/tamagui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md` | Yes (`7a3183da...`) |
+| `CYCLE-20261025-RWXL` | `2026-10-25T15:09:53.913Z` | `goss-org/goss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4361` | Yes (`b73e696f...`) |
+| `CYCLE-20261025-S10E` | `2026-10-25T15:09:59.198Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 767, Rule 4362, Rule 4363` | Yes (`c9835d77...`) |

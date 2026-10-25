@@ -4878,3 +4878,6 @@ Every entry in this ledger must capture:
 | `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `da0c371b` | Multi-dimensional audit evidence | 2026-10-25T15:03:18.556Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `d4db00df` | Multi-dimensional audit evidence | 2026-10-25T15:03:20.168Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `3c310992` | Multi-dimensional audit evidence | 2026-10-25T15:03:27.199Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `32f3ba8b` | Multi-dimensional audit evidence | 2026-10-25T15:09:45.735Z |
+| `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `e1210076` | Multi-dimensional audit evidence | 2026-10-25T15:09:53.916Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-25T15:09:59.202Z |
