@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:53:10.008Z",
-  "total_cycles_completed": 4756,
-  "total_learnings_persisted": 4756,
-  "total_rules_promoted": 4126,
+  "last_updated": "2026-10-25T11:14:37.956Z",
+  "total_cycles_completed": 4759,
+  "total_learnings_persisted": 4759,
+  "total_rules_promoted": 4132,
   "history": [
-    {
-      "timestamp": "2026-10-24T20:05:08.204Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:11:11.086Z",
-      "repository": "Megabit/Blazorise",
-      "learningId": "learn-github-megabit-blazorise",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T20:11:11.283Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T20:11:17.038Z",
       "repository": "autogluon/chronos-2",
@@ -1403,6 +1382,27 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:11:17.450Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:12:02.940Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T11:14:37.956Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

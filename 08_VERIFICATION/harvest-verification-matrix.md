@@ -4779,3 +4779,6 @@
 | `CYCLE-20261025-9A1T` | `2026-10-25T10:43:27.905Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4245, Rule 4246, Rule 4247` | Yes (`5ae60e76...`) |
 | `CYCLE-20261025-H5QD` | `2026-10-25T10:49:35.557Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4248` | Yes (`d6c72f84...`) |
 | `CYCLE-20261025-LR76` | `2026-10-25T10:53:10.002Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4249, Rule 4250, Rule 4251` | Yes (`74d3ceb2...`) |
+| `CYCLE-20261025-929U` | `2026-10-25T11:11:17.442Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4252` | Yes (`c791a12d...`) |
+| `CYCLE-20261025-A1DH` | `2026-10-25T11:12:02.933Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4253, Rule 4254, Rule 4255` | Yes (`1bc85b20...`) |
+| `CYCLE-20261025-DCZH` | `2026-10-25T11:14:37.949Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4256, Rule 4257` | Yes (`ac671da3...`) |

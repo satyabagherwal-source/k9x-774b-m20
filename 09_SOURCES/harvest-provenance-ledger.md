@@ -4786,3 +4786,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-25T10:43:27.908Z |
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `cde3ab9c` | Multi-dimensional audit evidence | 2026-10-25T10:49:35.562Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-25T10:53:10.005Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `827d551c` | Multi-dimensional audit evidence | 2026-10-25T11:11:17.445Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-25T11:12:02.936Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `c44735ec` | Multi-dimensional audit evidence | 2026-10-25T11:14:37.952Z |

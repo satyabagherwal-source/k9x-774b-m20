@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `eb234637`  
+> **Source Version**: `827d551c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:01:39.465Z  
+> **Timestamp**: 2026-10-25T11:11:17.074Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:01:39.456Z  
+> **Harvest Timestamp**: 2026-10-25T11:11:15.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27557 stars
+- **Stars / Engagement**: 27714 stars
 
 ---
 
@@ -2063,11 +2063,17 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13183** (2026-10-22): **[Bug] 数据结果表格区域的边框颜色很突兀，不美观，希望改为与SQL编辑器的边框风格一致，统一且美观**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  所有  ### 问题描述 / Problem description  数据结果表格区域的边框颜色很突兀，不美观，希望改为与SQL编辑器的边框风格一致，统一且美观  <img width="1781" height="1041" alt="Image" src="https://github.com/user-attachments/assets/1dab126f-cc8a-43be-bef0-35d5177b9dfd" />  ### 支持信息 / Support information  DBX 版本: v0.6.51 运行环境: 桌面端 操作系统: Windows 11 (10.0.26300.9711) 系统架构: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0 数据库类型: iris/cache 本地驱动版本: cache 0.1.30, iris 0.1.78  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #13382** (2026-10-25): **[Bug] kafka消费者组加载不出来，主题也无法看到对应的消费者信息**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  kafka  ### 问题描述 / Problem description  > 还是之前的问题，我让ai 分析了下，给你下结果， #13252  197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。   ### 支持信息 / Support information  DBX 版本/ Version: v0.6.53 运行环境/Runtime: Desktop 操作系统/OS: macOS tahoe26.0 系统架构 / Architecture: aarch64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #13252  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
+  > 最终让ai,完全分析下，找到了原因，看能不能修复下 197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。
 
-- **Issue #13178** (2026-10-22): **fix(grid): 刷新/自动刷新保持当前结果标签页**
-  *Symptoms*: Closes #13043  ## 现象  开启「自动保留查询结果」后，点结果工具栏的「刷新」会让结果多出一个标签页；打开「自动刷新」后每个 interval 都多一个，标签页会不断堆积。翻页、数据库排序这些“重新取数”的操作同理。  用户的心智模型是：「自动保留查询结果」作用于**执行 SQL**；刷新/自动刷新只是把当前结果重新取一遍数据，应该在原标签页里更新。  ## 根因  `DataGrid` 的刷新/自动刷新 → `useDataGridActions.onReloadData` → `queryStore.executeTabSql`。`executeTabSql` 里：  ```ts const captureAutoSavedResultRun = tab.mode === "query" && tab.resultAutoSave === true && (!!tab.activeResultRunId || ...) ```  它只看 tab 是否开启「自动保留」，不区分这次调用是执行、刷新、自动刷新还是翻页/排序，所以刷新也会 capture 一个新的 result run。  ## 改动  - `executeTabSql` 新增 `refreshActiveResultRun` 选项：结果视图操作（刷新/自动刷新/翻页/数据库排序）在开启自动保留时**原地更新当前 result run**，保留结果页签、序号、pin 状态、分页与排序状态；显式执行 SQL（Run / Cmd+Enter）仍然 capture 新 run； - `useDataGridActions` 的 reload / paginate / database sort 路径传入该选项；数据表 tab（mode === "data"）不受影响； - 不改变默认用户（未开启自动保留）的任何行为。  ## 实测  用本分支构建的 web 前端 + 本地 `dbx-web`（seed 的 SQLite 数据）在浏览器里跑了一遍：  1. 打开 SQL 查询 → 开启「自动保留查询结果」→ 执行两次：结果标签页 = 3（原有语义）； 2. 点结果工具栏「刷新」：仍为 3 个，当前页签原地刷新； 3. 打开「自动刷新」等 2 个 tick：仍为 3 个； 4. 再点「执行全部 SQL」：变为 4 个 —— 显式执行仍会新增结果标签页。  实测截图（本分支前端 + 本地 dbx-web + seed 的 SQLite 数据；中间刷新、自动刷新各 2 次没有新增，最后再执行一次后共 4 个结果标签页）：  ![自动保留结果下刷新原地更新](https://raw.githubusercontent.com/zipg/dbx/d320df8863944ce2c1b611563974c501d74c2a29/docs/assets/pr-screenshots/13043-auto-keep-in-place.png)  自动化用例同步覆盖：  - `queryStore.refreshActiveResultRun.spec.ts`：刷新原地更新、显式执行新增 run、未开启自动保留、执行中保持网格、pin 的结果原地刷新后 pin 不丢； - `useDataGridActions.refreshActiveResultRun.spec.ts`：真实 `useDataGridActions` + 真实 `queryStore`（仅 mock 后端 SQL）串起 执
+- **Issue #13374** (2026-10-24): **[Bug] 「执行 SQL 文件」弹窗执行时进度区被挤到折叠线以下，不手动下翻看不到执行进度**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用  ### 问题描述 / Problem description  1. 复现步骤 / Steps:    打开「执行 SQL 文件」对话框 → 选择一个 SQL 文件（预览区显示文件内容）→ 点击「执行」。全程不做滚动操作。  2. 期望结果 / Expected:    点击执行后，进度区（进度条、已处理字节数、逐文件汇总）应立即出现在可视区域内；执行过程中进度持续可见；失败时失败原因也在可视区域内。  3. 实际结果 / Actual:    进度区完全落在弹窗滚动区的折叠线以下。点击「执行」后界面没有任何可见反馈，必须手动向下滚动才能看到进度条和字节计数；执行失败时失败原因同样要再往下翻才能读到。文件越大、预览区越高，问题越明显。  4. 附上截图和错误日志 / Attach screenshots and logs:    本地开发版（v0.6.53，Windows x64）可稳定复现，无错误日志。 https://github.com/user-attachments/assets/cf3baf18-ff8c-4143-b9aa-a381ad53d33a  ### 支持信息 / Support information  DBX 版本 / Version: v0.6.53（本地开发版，基于 upstream/main 8cdfb8929） 运行环境 / Runtime: 桌面端 / Desktop 操作系统 / OS: Windows 10 (10.0.19045) 系统架构 / Architecture: x86_64  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  - 根因：该弹窗的滚动区把「文件选择 → SQL 预览 → 执行进度」自上而下排列，而进度区是滚动区的最后一个子元素。预览区高度上限是 min(46vh, 420px)，选中文件后进度区必然落在折叠线以下。 - 与 #11350 的区别：#11350 说的是后台任务详情的入口路径（要回到原入口才能进详情页）；本 issue 说的是弹窗内进度区本身的可见性。两者诉求不同，即使 #11350 被解决，本 issue 仍然存在。 - 已实现并验证的方案：执行开始时自动把滚动区滚到底，使进度区立即可见；进度区在执行中变高时跟随滚动；用户主动向上滚动后立即交还滚动位置，不再把视图拉回底部。改动仅涉及前端，不新增任何用户可见文案。 - 已准备好对应的 PR，认领后即可提交。
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @Gaiokane 已认领 #13374，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2084,1131 +2090,673 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc0734ab` (2026-10-22)
-**Commit Message**: fix(windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)
+### Incident Patch 1: `403e4fe8` (2026-10-25)
+**Commit Message**: fix(kafka): parallelize legacy group queries and recover failed agents
 
-* fix(windows): diagnose WebView2 runtime failures and recover startup
-
-On Windows the "main window never appears" failure has three very different
-causes that used to share one misleading "enterprise compatibility mode"
-retry: WebView2 runtime missing, WebView2 runtime registered but damaged, and
-a security product blocking WebView2. This change separates them before Tauri
-creates a window and turns the single retry into a bounded recovery ladder.
-
-- webview2_preflight: three-state runtime health (available / missing /
-  registered_but_damaged), runtime version and install kind, installed security
-  products, msedgewebview2 process count, Zone.Identifier and integrity level,
-  plus an STA environment-creation probe with a hard timeout and HRESULT capture
-- startup_recovery: 11-profile bounded compatibility ladder (isolated user data,
-  sandbox/GPU off, RendererCodeIntegrity off for old runtimes, in-process GPU,
-  temp data, scan delay, warm-up child, AppCompat Windows 8 layer, elevated
-  relaunch, relocated copy, single-process experiment) with per-profile user data
-  folders, fast-fail window probing, chain handoff throu
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java` (modified, +68/-36)
 ```diff
-@@ -2203,6 +2203,7 @@ dependencies = [
-  "tokio-util",
-  "uuid",
-  "webview2-com",
-+ "windows 0.61.3",
-  "windows-core 0.61.2",
-  "windows-sys 0.61.2",
-  "wry",
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +6/-2)
-```diff
-@@ -98,9 +98,13 @@ gtk = "0.18"
+@@ -41,6 +41,8 @@ public final class KafkaAgent {
+     private static final PrintStream JSON_RPC_OUT = System.out;
+     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
+     private static final int DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
++    private static final int MAX_GROUP_QUERY_ADMINS = 12;
++    private static final int GROUPS_PER_QUERY_ADMIN = 16;
+     private static final int MAX_PEEK_MESSAGE_COUNT = 100;
+     private static final int MAX_PEEK_SCAN_RECORDS = 1_000;
+     private static final int DEFAULT_SESSION_TIMEOUT_MS = 30_000;
+@@ -66,6 +68,7 @@ public final class KafkaAgent {
+     ));
  
- [target.'cfg(target_os = "windows")'.dependencies]
- # 与 vendored wry / tauri-runtime-wry 同版本（Cargo.lock 只有一份 0.38.x），用于在
--# 快捷键录入态运行时切换 WebView2 的浏览器加速键开关（见 commands/shortcut_recording.rs）。
-+# 快捷键录入态运行时切换 WebView2 的浏览器加速键开关（见 commands/shortcut_recording.rs），
-+# 以及启动兼容模式下直接探测 WebView2 环境能否创建（见 webview2_preflight.rs）。
- webview2-com = "0.38"
-+# `windows` crate 与 wry/webview2-com 使用同一份 0.61，仅用其 core 类型
-+# （HSTRING/PCWSTR/PWSTR/Interface），供 WebView2 预检调用 COM 接口时构造参数。
-+windows = { version = "0.61", default-features = false }
- # `cast`（Settings → Settings3 的 QueryInterface）来自 windows-core 的 Interface trait，
- # 版本与 vendored wry / webview2-com-sys 一致。
- windows-core = "0.61"
--windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
-+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Com", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Registry", "Win32_System_Threading", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging"] }
-```
-
-**File**: `src-tauri/src/lib.rs` (modified, +95/-0)
-```diff
-@@ -11,15 +11,26 @@ mod migration_gate;
- mod models;
- mod plugin_ui_protocol;
- #[cfg(any(target_os = "windows", test))]
-+mod startup_messages;
-+#[cfg(any(target_os = "windows", test))]
- mod startup_recovery;
- #[cfg(all(not(target_os = "windows"), not(test)))]
- #[path = "startup_recovery_noop.rs"]
- mod startup_recovery;
- #[cfg(any(target_os = "windows", test))]
- mod webview2_legacy_css;
-+#[cfg(target_os = "windows")]
-+mod webview2_preflight;
- #[cfg(any(target_os = "windows", test))]
- mod webview2_recovery;
- mod window_state_guard;
-+#[cfg(target_os = "windows")]
-+mod windows_appcompat;
-+#[cfg(not(target_os = "windows"))]
-+#[path = "windows_appcompat_noop.rs"]
-+mod windows_appcompat;
-+#[cfg(any(target_os = "windows", test))]
-+mod windows_appcompat_state;
+     private static AdminClient adminClient;
++    private static final List<AdminClient> groupQueryAdmins = new ArrayList<>();
+     private static KafkaProducer<String, byte[]> producer;
+     private static JsonObject activeConnection;
+     private static volatile boolean shutdownRequested;
+@@ -160,8 +163,8 @@ private static Object dispatch(String method, JsonObject params) throws Exceptio
+             case "mq_get_topic_config" -> getTopicConfig(params);
+             case "mq_alter_topic_config" -> alterTopicConfig(params);
+             // Consumer groups
+-            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin());
+-            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin());
++            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
++            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
+             case "mq_describe_consumer_group" -> describeConsumerGroup(params);
+             case "mq_delete_consumer_group" -> deleteConsumerGroup(params);
+             case "mq_reset_consumer_group_offsets" -> resetConsumerGroupOffsets(params);
+@@ -283,6 +286,10 @@ static boolean isAclDisabledError(Throwable error) {
+     }
  
- use commands::connection::AppState;
- use dbx_core::persistence::secret_codec::SecretKeyPolicy;
-@@ -641,21 +652,26 @@ fn apply_linux_webkit_rendering_workarounds() {
- fn show_main_window<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> bool {
-     let Some(window) = app.get_webview_window("main") else {
-         eprintln!("[WINDOW] show_main_window: no \"main\" webview window to reveal");
-+        startup_recovery::record("show_main_window: main webview window is missing");
-         return false;
-     };
-     if let Err(err) = window.show() {
-         eprintln!("[WINDOW] show_main_window: show() failed: {err}");
-+        startup_recovery::record(format!("show_main_window: show() failed: {err}"));
+     private static void closeClients() {
++        for (AdminClient groupAdmin : groupQueryAdmins) {
++            groupAdmin.close(Duration.ZERO);
++        }
++        groupQueryAdmins.clear();
+         if (adminClient != null) {
+             adminClient.close(Duration.ofSeconds(5));
+             adminClient = null;
+@@ -1035,7 +1042,56 @@ static Map<String, ConsumerGroupDescription> awaitGroupDescriptions(
+         return descriptions;
      }
-     if let Err(err) = window.unminimize() {
-         eprintln!("[WINDOW] show_main_window: unminimize() failed: {err}");
-+        startup_recovery::record(format!("show_main_window: unminimize() failed: {err}"));
-     }
-     if let Err(err) = window.set_focus() {
-         eprintln!("[WINDOW] show_main_window: set_focus() failed: {err}");
-+        startup_recovery::record(format!("show_main_window: set_focus() failed: {err}"));
-     }
-     match window.is_visible() {
-         Ok(visible) => visible,
-         Err(err) => {
-             eprintln!("[WINDOW] show_main_window: is_visible() failed: {err}");
-+            startup_recovery::record(format!("show_main_window: is_visible() failed: {err}"));
-             false
-         }
-     }
-@@ -1729,6 +1745,17 @@ fn route_external_commands(
  
- #[cfg_attr(mobile, tauri::mobile_entry_point)]
- pub fn run() {
-+    // WebView2 warm-up child mode: when a compatibility profile asks for a
-+    // preflight, the parent re-launches this executable with
-+    // DBX_WEBVIEW2_PREFLIGHT_CHILD=1. The child only creates and releases a
-+    // WebView2 environment (forcing AV products to scan/trust msedgewebview2.exe)
-+    // and exits before any Tauri/window setup. Doing this in a separate process
-+    // isolates a hanging environment creation from the real startup attempt.
-+    #[cfg(target_os = "windows")]
-+    if webview2_preflight::run_child_if_requested() {
-+        return;
++    private static List<Admin> consumerGroupAdmins(int groupCount) {
++        int count = Math.min(MAX_GROUP_QUERY_ADMINS, (groupCount + GROUPS_PER_QUERY_ADMIN - 1) / GROUPS_PER_QUERY_ADMIN);
++        while (groupQueryAdmins.size() < count - 1) {
++            groupQueryAdmins.add(buildAdminClient(activeConnection));
++        }
++        List<Admin> admins = new ArrayList<>();
++        admins.add(adminClient);
++        admins.addAll(groupQueryAdmins.subList(0, count - 1));
++        return admins;
 +    }
 +
-     // Metadata/completion command chains nest very large async futures and can
-     // exhaust tokio's default 2 MiB worker stack, which aborts the process with
-     // STATUS_STACK_OVERFLOW. Share the roomier stack the backup worker and Web
-@@ -1741,6 +1768,68 @@ pub fn run() {
-     startup_recovery::initialize();
-     rustls::crypto::aws_lc_rs::default_provider().install_default().expect("Failed to install rustls crypto provider");
-     append_startup_probe("runtime prerequisites configured");
-+    // Record the WebView2 / security-software environment before any window is
-+    // created. This is the first thing to look at when a startup recovery chain
-+    // fails: it distinguishes a missing/hooked WebView2 runtime from an AV
-+    // product that blocks the child browser process.
-+    #[cfg(target_os = "windows")]
-+    let webview2_runtime_health = webview2_preflight::runtime_health();
-+    #[cfg(target_os = "windows")]
-+    append_startup_probe(format!("webview2 runtime_health={}", webview2_runtime_health.as_str()));
++    private record ConsumerGroupQueries(
++        DescribeConsumerGroupsResult descriptions,
++        Map<String, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> offsets
++    ) {}
 +
-+    #[cfg(target_os = "windows")]
-+    {
-+        // Collect WebView2/AV diagnostics on a worker thread with a hard deadline:
-+        // on machines where a security product hooks the WebView2 loader (the very
-+        // machines this diagnostics targets) the version query must never be able
-+        // to delay the real startup path. A timed-out worker is abandoned and dies
-+        // with the process.
-+        let (diagnostics_tx, diagnostics_rx) = std::sync::mpsc::channel();
-+        std::thread::spawn(move || {
-+            let diagnostics = webview2_preflight::collect_diagnostics();
-+            let _ = diagnostics_tx.send(webview2_preflight::format_diagnostics(&diagnostics));
-+        });
-+        match diagnostics_rx.recv_timeout(std::time::Duration::from_secs(3)) {
-+            Ok(lines) => {
-+                for line in lines {
-+                    append_startup_probe(line);
-+                }
++    private static ConsumerGroupQueries startConsumerGroupQueries(List<String> groupIds, List<Admin> admins, long deadline) {
++        Map<String, KafkaFuture<ConsumerGroupDescription>> descriptions = new LinkedHashMap<>();
++        Map<String, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> offsets = new LinkedHashMap<>();
++        // Older brokers cannot batch coordinator lookups or offset fetches, and
++        // Kafka Admin allows one in-flight request per connection. Independent
++        // clients bound that otherwise sequential work for large group lists.
++        for (int index = 0; index < admins.size(); index++) {
++            List<String> shard = new ArrayList<>();
++            Map<String, ListConsumerGroupOffsetsSpec> specs = new LinkedHashMap<>();
++            for (int groupIndex = index; groupIndex < groupIds.size(); groupIndex += admins.size()) {
++                String groupId = groupIds.get(groupIndex);
++                shard.add(groupId);
++                specs.put(groupId, new ListConsumerGroupOffsetsSpec());
 +            }
-+            Err(_) => append_startup_probe("webview2 diagnostics timed out after 3s; continuing startup")
-```
-
-**File**: `src-tauri/src/startup_messages.rs` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+//! Native-dialog messages for Windows startup failures, centralized for i18n.
-+//!
-+//! Startup-failure dialogs are shown before the webview exists (a missing or
-+//! damaged WebView2 runtime, or a window that never appears), so they cannot use
-+//! the frontend i18n resources. The Rust side keeps a small catalog here instead
-+//! of hard-coding `if locale.starts_with("zh")` branches at every call site.
-+//!
-+//! Coverage follows the existing native-UI precedent (`tray_menu_labels_for_locale`
-+//! in `lib.rs`): Simplified Chinese, Traditional Chinese and English are
-+//! translated; every other locale falls back to English. The frontend locales
-+//! remain the authoritative translation source for in-app text.
-+//!
-+//! Placeholders in templates:
-+//! - `{{log}}`  — full path of `startup.log`
-+//! - `{{url}}`  — direct download URL of the Windows 10 offline package
-+
-+/// Messages for one language. Templates contain `{{log}}` / `{{url}}` placeholders.
-+pub(crate) struct StartupMessages {
-+    pub title: &'static str,
-+    pub missing_runtime: &'static str,
-+    pub damaged_runtime: &'static str,
-+    pub compatibility_failed: &'static str,
-+    pub recovery_disabled: &'static str,
-+}
-+
-+impl StartupMessages {
-+    /// Fills the template placeholders. Unknown placeholders are left untouched
-+    /// so a translation mistake is visible instead of silently producing an empty
-+    /// dialog.
-+    pub(crate) fn render(&self, template: &'static str, log_path: &str, offline_url: &str) -> String {
-+        template.replace("{{log}}", log_path).replace("{{url}}", offline_url)
-+    }
-+}
-+
-+const EN: StartupMessages = StartupMessages {
-+    title: "DBX could not start",
-+    missing_runtime: "【DBX could not start】\nWebView2 is missing, so DBX cannot show its window.\n\nDownload the Windows 10 offline package from the DBX website and install it (the offline package bundles WebView2, no internet required). Click Yes to open the download page:\n{{url}}\n\nIf it still fails, send this log to the maintainer:\n{{log}}",
-+    damaged_runtime: "【DBX could not start】\nThe WebView2 runtime is damaged, so DBX cannot show its window.\n\nDownload the Windows 10 offline package from the DBX website and install it (it bundles WebView2 and repairs it during setup). Click Yes to open the download page:\n{{url}}\n\nIf it still fails, send this log to the maintainer:\n{{log}}",
-+    compatibility_failed: "【DBX could not start】\nDBX tried several startup compatibility methods, but the main window still did not appear.\n\nSend this log to the maintainer for diagnosis. Click Yes to open the log folder:\n{{log}}",
-+    recovery_disabled: "【DBX could not start】\nThe main window did not appear and automatic compatibility retries are disabled in this environment.\n\nSend this log to the maintainer for diagnosis. Click Yes to open the log folder:\n{{log}}",
-+};
-+
-+const ZH_CN: StartupMessages = StartupMessages {
-+    title: "DBX 无法启动",
-+    missing_runtime: "【DBX 无法启动】\n缺少 WebView2 运行时，DBX 无法显示主界面。\n\n请到 DBX 官网下载「Windows 10 离线版」安装（离线版自带 WebView2，无需联网），点“是”打开下载页：\n{{url}}\n\n如仍有问题，请把启动日志发给维护者：\n{{log}}",
-+    damaged_runtime: "【DBX 无法启动】\nWebView2 运行时已损坏，DBX 无法显示主界面。\n\n请到 DBX 官网下载「Windows 10 离线版」重新安装（安装时会自动修复），点“是”打开下载页：\n{{url}}\n\n如仍有问题，请把启动日志发给维护者：\n{{log}}",
-+    compatibility_failed: "【DBX 无法启动】\nDBX 已自动尝试多种兼容启动方式，主窗口仍未显示。\n\n请把启动日志发给维护者排查，点“是”打开日志所在文件夹：\n{{log}}",
-+    recovery_disabled: "【DBX 无法启动】\n主窗口没有显示，且当前环境没有继续自动尝试兼容启动方式。\n\n请把启动日志发给维护者排查，点“是”打开日志所在文件夹：\n{{log}}",
-+};
-+
-+const ZH_TW: StartupMessages = StartupMessages {
-+    title: "DBX 無法啟動",
-+    missing_runtime: "【DBX 無法啟動】\n缺少 WebView2 執行階段，DBX 無法顯示主視窗。\n\n請到 DBX 官網下載「Windows 10 離線版」安裝（離線版自帶 WebView2，無需連網），點「是」開啟下載頁：\n{{url}}\n\n若仍有問題，請把啟動日誌寄給維護者：\n{{log}}",
-+    damaged_runtime: "【DBX 無法啟動】\nWebView2 執行階段已損壞，DBX 無法顯示主視窗。\n\n請到 DBX 官網下載「Windows 10 離線版」重新安裝（安裝時會自動修復），點「是」開啟下載頁：\n{{url}}\n\n若仍有問題，請把啟動日誌寄給維護者：\n{{log}}",
-+    compatibility_failed: "【DBX 無法啟動】\nDBX 已自動嘗試多種相容啟動方式，主視窗仍未顯示。\n\n請把啟動日誌寄給維護者排查，點「是」開啟日誌所在資料夾：\n{{log}}",
-+    recovery_disabled: "【DBX 無法啟動】\n主視窗沒有顯示，且目前環境沒有繼續自動嘗試相容啟動方式。\n\n請把啟動日誌寄給維護者排查，點「是」開啟日誌所在資料夾：\n{{log}}",
-+};
-+
-+/// Normalize a BCP-47-ish locale tag and pick a catalog. Unknown locales fall
-+/// back to English, matching the existing native-UI behaviour.
-+pub(crate) fn messages_for_locale(locale: &str) -> &'static StartupMessages {
-+    let normalized = locale.trim().to_ascii_lowercase().replace('_', "-");
-+    if normalized.starts_with("zh") {
-+        // Traditional Chinese for Taiwan/Hong Kong/Macau and explicit Hant tags;
-+        // everything else Chinese is Simplified.
-+        if normalized.contains("-tw")
-+            || normalized.contains("-hk")
-+            || normalized.contains("-mo")
-+            || normalized.contains("hant")
-+        {
-+            return &ZH_TW;
++            if (shard.isEmpty()) continue;
++            Admin admin = admins.get(index);
++            ListConsumerGroupOffsetsResult result = admin.listConsumerGroupOffsets(
++                specs, new ListConsumerGroupOffsetsOptions().timeoutMs((int) remainingMillis(deadline))
++            );
++            descriptions.putAll(admin.describeConsumerGroups(
++                shard, new DescribeConsumerGroupsOptions().timeoutMs((int) remainingMillis(deadline))
++            ).describedGroups());
++            for (String groupId : shard) {
++                offsets.put(groupId, result.partitionsToOffsetAndMetadata(groupId));
++            }
 +        }
-+        return &ZH_CN;
++        return new ConsumerGroupQueries(new DescribeConsumerGroupsResult(descriptions), offsets);
 +    }
-+    &EN
-+}
 +
-+/// Catalog for the current system locale.
-+#[cfg_attr(not(target_os = "windows"), allow(dead_code
+     static Object listConsumerGroups(JsonObje
 ```
 
-**File**: `src-tauri/src/startup_recovery.rs` (modified, +1229/-289)
+**File**: `agents/drivers/kafka/src/test/java/com/dbx/agent/kafka/KafkaAgentTest.java` (modified, +125/-18)
 ```diff
-@@ -1,31 +1,317 @@
-+//! Windows startup diagnostics and the ordered startup-compatibility ladder.
-+//!
-+//! Some Windows 10 enterprise machines (360 安全卫士 / 奇安信 / 卡巴斯基 and other
-+//! security products) block WebView2 from creating its browser process. The Tauri
-+//! event loop then never runs (or starts but the main window stays invisible with
-+//! `Runtime(FailedToReceiveMessage)` window queries) and the user sees nothing.
-+//!
-+//! The previous behaviour was a single retry with one "enterprise compatibility"
-+//! profile. Norton worked with it; 360 / QiAnXin / Kaspersky still did not. This
-+//! module now owns a deterministic *ladder* of startup profiles: every profile is
-+//! a set of WebView2 environment overrides (user data folder, browser arguments,
-+//! warm-up preflight, scan delay, elevation, relocated executable), and a failed
-+//! attempt relaunches the executable with the next profile through environment
-+//! variables (see [`CompatProfile`]). The last successful profile is recorded so
-+//! a later launch can go straight to it (after asking the user once), and every
-+//! attempt appends structured evidence to `startup.log` — the file users send to
-+//! the maintainer.
-+//!
-+//! Design constraints:
-+//! - The standard startup path must stay byte-for-byte equivalent in behaviour:
-+//!   no environment overrides, no dialogs, no retries unless the main window
-+//!   never becomes visible.
-+//! - A profile only changes WebView2 environment variables *before* Tauri builds
-+//!   the webview, because wry reads them at environment-creation time. The
-+//!   vendored wry patch makes `WEBVIEW2_USER_DATA_FOLDER` and
-+//!   `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS` effective (upstream wry always set
-+//!   explicit options, which made the variables no-ops).
-+//! - The chain must be bounded: a hard cap on attempts, and a one-shot guard for
-+//!   the elevated profile so UAC cannot loop.
-+//! - Diagnostics in `startup.log` are deliberately path-class only (no usernames,
-+//!   no full user-profile paths) because users email the file.
-+
- use std::collections::VecDeque;
- use std::ffi::OsString;
- use std::io::Write;
- use std::path::{Path, PathBuf};
--use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+use std::sync::atomic::{AtomicBool, AtomicU8, AtomicUsize, Ordering};
- use std::sync::{Condvar, LazyLock, Mutex};
--use std::time::Duration;
-+use std::time::{Duration, Instant};
- use tauri::Manager;
+@@ -187,8 +187,21 @@ void groupDescriptionsShareOneDeadlineInsteadOfOneTimeoutPerGroup() {
  
- const STARTUP_LOG_FILE: &str = "startup.log";
- #[cfg(target_os = "windows")]
- const RUNTIME_RECOVERY_LOG_FILE: &str = "webview2-recovery.log";
- const STARTUP_LOG_DIR_ENV: &str = "DBX_STARTUP_LOG_DIR";
- const KEEP_STARTUP_LOG_ENV: &str = "DBX_KEEP_STARTUP_LOG";
--#[cfg(target_os = "windows")]
- const NO_SANDBOX_ENV: &str = "DBX_WEBVIEW2_NO_SANDBOX";
--#[cfg(target_os = "windows")]
-+/// Set on every compatibility child: legacy token for "this is a recovery attempt".
-+// Kept unconditional: the shared browser-argument preparation code (also built
-+// for host-side unit tests) reads it; it is only meaningful for Win7 targets.
- const DISABLE_WIN7_CSS_COLOR4_ENV: &str = "DBX_DISABLE_WIN7_CSS_COLOR4";
- const RECOVERY_ATTEMPT_ENV: &str = "DBX_STARTUP_COMPAT_RECOVERY";
-+/// Parent process id, used to wait for the single-instance mutex handoff.
- const RECOVERY_PARENT_PID_ENV: &str = "DBX_STARTUP_COMPAT_PARENT_PID";
-+/// The profile index executed by this process. `0`/unset = standard startup.
-+const COMPAT_PROFILE_ENV: &str = "DBX_STARTUP_COMPAT_PROFILE";
-+/// Comma separated profile indexes already attempted in this chain.
-+const COMPAT_HISTORY_ENV: &str = "DBX_STARTUP_COMPAT_HISTORY";
-+/// Set once the elevated profile has been attempted, so UAC cannot loop.
-+const COMPAT_ELEVATED_ENV: &str = "DBX_STARTUP_COMPAT_ELEVATED";
-+/// Captured once per chain: the user's original WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS.
-+/// Each profile rebuilds the effective argument list from this base instead of
-+/// accumulating flags from the previous attempt.
-+const COMPAT_BASE_ARGS_ENV: &str = "DBX_STARTUP_COMPAT_BASE_ARGS";
- const DISABLE_ENTERPRISE_COMPAT_ENV: &str = "DBX_DISABLE_ENTERPRISE_COMPAT";
-+const DISABLE_STARTUP_COMPAT_ENV: &str = "DBX_DISABLE_STARTUP_COMPAT";
-+/// Optional test hook: overrides the standard-mode watchdog delay in seconds.
-+const WATCHDOG_SECS_ENV: &str = "DBX_STARTUP_WATCHDOG_SECS";
-+/// Optional test hook: how long to keep waiting after a failed window probe
-+/// before escalating (gives a slow WebView2 creation a last chance).
-+const FAST_FAIL_GRACE_MS_ENV: &str = "DBX_STARTUP_COMPAT_FAST_FAIL_GRACE_MS";
-+
- const WINDOWS_APP_DATA_DIR_NAME: &str = "com.dbx.app";
- const COMPATIBILITY_MARKER_FILE: &str = "webview2-enterprise-compat.enabled";
- const COMPATIBILITY_PROFILE_DIR: &str = "webview2-enterprise-compat";
--const STARTUP_LOG_BUFFER_CAPACITY: usize = 256;
-+const COMPATIBILITY_TEMP_PROFILE_DIR: &str = "dbx-webview2-compat";
-+const STARTUP_LOG_BUFFER_CAPACITY: usize = 512;
-+/// Standard startup: the app may legiti
-```
-
-**File**: `src-tauri/src/startup_recovery_noop.rs` (modified, +14/-0)
-```diff
-@@ -6,4 +6,18 @@ pub(crate) fn mark_frontend_ready(_main_window_visible: bool) {}
- 
- pub(crate) fn record_run_event() {}
- 
-+pub(crate) fn run_profile_pre_tauri_hooks() {}
-+
-+pub(crate) fn report_window_visibility_probe(_main_window_visible: bool) {}
-+
-+pub(crate) fn probe_main_window_visible<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) -> bool {
-+    false
-+}
-+
- pub(crate) fn start_watchdog<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) {}
-+
-+#[allow(dead_code)]
-+pub(crate) fn handle_missing_webview2_runtime() {}
-+
-+#[allow(dead_code)]
-+pub(crate) fn handle_damaged_webview2_runtime(_runtime_version: Option<&str>) {}
-```
-
-**File**: `src-tauri/src/webview2_preflight.rs` (added, +1476/-0)
-```diff
-@@ -0,0 +1,1476 @@
-+//! Windows WebView2 startup preflight and diagnostics.
-+//!
-+//! WHY THIS MODULE EXISTS
-+//!
-+//! On some Windows 10 machines (notably those running 360 安全卫士 / 奇安信天擎 /
-+//! Kaspersky), `CreateCoreWebView2EnvironmentWithOptions` stalls for ~35 s and the
-+//! Tauri main window never becomes visible. The leading theory is that the
-+//! security product intercepts (scans, sandboxes or blocks) the
-+//! `msedgewebview2.exe` child processes that WebView2 spawns on environment
-+//! creation, so the ready callback never arrives or arrives far too late. DBX
-+//! therefore needs two independent capabilities:
-+//!
-+//! 1. **Diagnostics** ([`collect_diagnostics`] / [`format_diagnostics`]): capture
-+//!    the facts that distinguish the failure modes (installed WebView2 runtime and
-+//!    how it is located, user-data-folder class, additional browser arguments,
-+//!    live `msedgewebview2.exe` process count, installed security products, Mark
-+//!    of the Web (Zone.Identifier), process integrity level and Windows build) and
-+//!    emit them as privacy-safe log lines that a client can email to us.
-+//!
-+//! 2. **Environment probe** ([`probe_environment`]): re-run exactly the WebView2
-+//!    environment creation that wry performs, but on a throwaway STA thread with a
-+//!    hard deadline. This turns "the window never appears" into a structured
-+//!    result (success / HRESULT / elapsed ms / timeout) without blocking or
-+//!    crashing the app.
-+//!
-+//! 3. **Child-process warm-up** ([`spawn_preflight_child`] /
-+//!    [`run_child_if_requested`]): spawn a copy of the DBX executable in a
-+//!    diagnostics-only mode *before* the real Tauri window exists. On affected
-+//!    machines the first WebView2 start is the slow one; letting a disposable child
-+//!    absorb that cost makes the AV/EDR product scan and trust `msedgewebview2.exe`
-+//!    while the user is still looking at the splash, so the real window creation
-+//!    afterwards can succeed quickly. This is a known workaround for 360-style
-+//!    startup blockers.
-+//!
-+//! PRIVACY CONTRACT
-+//!
-+//! `startup.log` is emailed to the maintainer, so it must never contain a user
-+//! name or a full user-profile path. [`format_diagnostics`] therefore only emits
-+//! path *classes* ("local_appdata", "appdata", "temp", "custom"), counts, version
-+//! numbers and product display names. Free-form values that may embed a profile
-+//! path (additional browser arguments) are scrubbed through [`sanitize_for_log`].
-+//!
-+//! PLATFORM SCOPE
-+//!
-+//! This module is declared only under `#[cfg(target_os = "windows")]`; the body
-+//! below is Windows-only on purpose. The pure helpers at the bottom (path
-+//! classification, product matching, integrity mapping and result-file parsing)
-+//! are kept free of Win32 calls so they can be unit-tested on Windows CI.
-+//!
-+//! This file is the whole surface of the module: it does not call back into the
-+//! rest of the crate, which keeps it usable from both `run()` (child mode) and the
-+//! startup-recovery ladder.
-+
-+use std::collections::BTreeSet;
-+use std::fmt::Write as _;
-+use std::path::{Path, PathBuf};
-+use std::sync::mpsc;
-+use std::time::{Duration, Instant};
-+
-+use webview2_com::Microsoft::Web::WebView2::Win32::{
-+    CreateCoreWebView2EnvironmentWithOptions, GetAvailableCoreWebView2BrowserVersionString, ICoreWebView2Environment,
-+    ICoreWebView2EnvironmentOptions,
-+};
-+use webview2_com::{CoreWebView2EnvironmentOptions, CreateCoreWebView2EnvironmentCompletedHandler};
-+use windows::core::{Error as WinError, HRESULT, HSTRING, PCWSTR, PWSTR};
-+use windows_sys::Win32::Foundation::{CloseHandle, ERROR_NO_MORE_ITEMS, ERROR_SUCCESS, INVALID_HANDLE_VALUE};
-+use windows_sys::Win32::Security::{
-+    GetSidSubAuthority, GetSidSubAuthorityCount, GetTokenInformation, TokenIntegrityLevel, TOKEN_MANDATORY_LABEL,
-+    TOKEN_QUERY,
-+};
-+use windows_sys::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_APARTMENTTHREADED};
-+use windows_sys::Win32::System::Diagnostics::ToolHelp::{
-+    CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
-+};
-+use windows_sys::Win32::System::Registry::{
-+    RegCloseKey, RegEnumKeyExW, RegOpenKeyExW, RegQueryValueExW, HKEY, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, KEY_READ,
-+    KEY_WOW64_64KEY, REG_DWORD, REG_EXPAND_SZ, REG_SZ, REG_VALUE_TYPE,
-+};
-+use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
-+use windows_sys::Win32::UI::WindowsAndMessaging::{DispatchMessageW, PeekMessageW, TranslateMessage, MSG, PM_REMOVE};
-+
-+// ---------------------------------------------------------------------------
-+// Environment contract shared with lib.rs / startup_recovery.rs
-+// ---------------------------------------------------------------------------
-+
-+/// Set to `1` in the spawned diagnostics child; makes `run()` perform the
-+/// WebView2 probe and exit before any Tauri/window code runs.
-+pub(crate) const PREFLIGHT_CHILD_E
-```
-
-**File**: `src-tauri/src/windows_appcompat.rs` (added, +473/-0)
-```diff
-@@ -0,0 +1,473 @@
-+//! Windows AppCompat "Windows 8" layer helper for the WebView2 browser process.
-+//!
-+//! WHY: field evidence in `docs/win-av-compat-research.md` (P4, WebView2Feedback #4094):
-+//! Windows 8 compatibility mode for `msedgewebview2.exe` unblocks WebView2 environment
-+//! creation where 360 安全卫士 / 奇安信天擎 / Kaspersky intercept the browser process,
-+//! because the shim engine pushes WebView2 onto legacy API branches that AV hooks only
-+//! attach to on "modern Windows" code paths.
-+//!
-+//! The layer is the per-user value
-+//! `HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers` =
-+//! full path to `msedgewebview2.exe` -> `~ WIN8RTM`: no admin rights, applied at the next
-+//! process creation, reversible. Evergreen updates change the version directory, so the
-+//! ladder rewrites it on every startup ([`set_win8_compat_layer`] resolves the newest
-+//! runtime). Log-safe strings only carry a source class + version (`startup.log` is emailed
-+//! to the maintainer). Windows-only module; the pure helpers are Win32-free and testable.
-+
-+use std::cmp::Ordering;
-+use std::path::{Path, PathBuf};
-+
-+use windows_sys::Win32::Foundation::{
-+    CloseHandle, ERROR_FILE_NOT_FOUND, ERROR_INVALID_PARAMETER, ERROR_MORE_DATA, ERROR_NO_MORE_ITEMS, ERROR_SUCCESS,
-+};
-+use windows_sys::Win32::Security::{GetTokenInformation, TokenElevation, TOKEN_ELEVATION, TOKEN_QUERY};
-+use windows_sys::Win32::System::Registry::{
-+    RegCloseKey, RegCreateKeyExW, RegDeleteValueW, RegEnumValueW, RegOpenKeyExW, RegQueryValueExW, RegSetValueExW,
-+    HKEY, HKEY_CURRENT_USER, KEY_QUERY_VALUE, KEY_SET_VALUE, REG_OPTION_NON_VOLATILE, REG_SZ, REG_VALUE_TYPE,
-+};
-+use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
-+
-+use crate::windows_appcompat_state::{self, LayerRegistry, LayerValue};
-+
-+/// Per-user AppCompat layer store; the shim engine reads it when a process with a
-+/// matching full path starts.
-+const LAYERS_KEY: &str = r"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
-+/// Separate DBX-owned key records the exact values created by the recovery
-+/// chain. Never enumerate the shared Layers key to decide what to remove.
-+const OWNED_LAYERS_KEY: &str = r"Software\com.dbx.app\StartupCompat\OwnedWebView2Layers";
-+/// "Windows 8" mode token; `~` marks the data as a compatibility-layer token list.
-+const WIN8_LAYER_DATA: &str = "~ WIN8RTM";
-+/// `KEY_QUERY_VALUE` keeps `RegCreateKeyExW` working on an already existing key;
-+/// `KEY_SET_VALUE` is needed to write/delete the layer value.
-+const LAYERS_KEY_ACCESS: u32 = KEY_QUERY_VALUE | KEY_SET_VALUE;
-+
-+/// Evergreen runtime locations and their log-safe source classes, in search order:
-+/// per-machine 32-bit install, per-machine 64-bit install, then per-user install.
-+const RUNTIME_LOCATIONS: [(&str, &str); 3] =
-+    [("ProgramFiles(x86)", "program_files_x86"), ("ProgramFiles", "program_files"), ("LOCALAPPDATA", "local_appdata")];
-+
-+/// Enumeration buffer bounds: real layer values are tiny, but a corrupt/foreign value
-+/// must not be allowed to allocate without limit.
-+const MAX_VALUE_NAME_CHARS: usize = 16_384;
-+const MAX_VALUE_DATA_BYTES: usize = 1 << 20;
-+const INITIAL_VALUE_NAME_CHARS: usize = 256;
-+const INITIAL_VALUE_DATA_BYTES: usize = 2_048;
-+
-+/// Newest installed Evergreen `msedgewebview2.exe` for the current user: the AppCompat
-+/// layer value name must be the exact path Windows launches, and Evergreen installs one
-+/// version directory per update. Search order: %ProgramFiles(x86)%, %ProgramFiles%,
-+/// %LOCALAPPDATA%; highest numeric version wins inside a location; None if absent.
-+pub(crate) fn find_runtime_browser_executable() -> Option<PathBuf> {
-+    for (environment_variable, _) in RUNTIME_LOCATIONS {
-+        let Some(base) = std::env::var_os(environment_variable).filter(|value| !value.is_empty()) else {
-+            continue;
-+        };
-+        if let Some(executable) = newest_browser_executable_in(&webview_application_directory(&PathBuf::from(base))) {
-+            return Some(executable);
+     @ParameterizedTest
+     @ValueSource(booleans = {true, false})
+-    void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snapshot) throws Exception {
++    void consumerGroupQueriesKeepCommittedTopicsWhenManyDescriptionsTimeOut(boolean snapshot) throws Exception {
+         TopicPartition partition = new TopicPartition("orders", 0);
++        List<ConsumerGroupListing> listings = new ArrayList<>();
++        Map<String, KafkaFuture<ConsumerGroupDescription>> descriptions = new LinkedHashMap<>();
++        for (int index = 0; index < 197; index++) {
++            String groupId = index == 0 ? "orders-service" : String.format("slow-group-%03d", index);
++            listings.add(new ConsumerGroupListing(groupId, false));
++            descriptions.put(groupId, index == 0
++                ? KafkaFuture.completedFuture(new ConsumerGroupDescription(
++                    groupId, false, List.of(), "", ConsumerGroupState.EMPTY, Node.noNode()
++                ))
++                : new KafkaFutureImpl<>());
 +        }
-+    }
-+    None
-+}
-+
-+/// Sets the Windows 8 layer only when no user/application layer exists.
-+/// Ownership is persisted separately for cleanup across recovery processes.
-+pub(crate) fn set_win8_compat_layer() -> Result<String, String> {
-+    let Some(executable) = find_runtime_browser_executable() else {
-+        return Err("appcompat win8 layer not set: no WebView2 runtime msedgewebview2.exe found".to_string());
-+    };
-+    let registry = WindowsLayerRegistry::open(true)
-+        .map_err(|code| format!("appcompat win8 layer not set: registry open failed (Win32 error {code})"))?;
-+    let value =
-+        LayerValue { value_type: REG_SZ, data: wide(WIN8_LAYER_DATA).into_iter().flat_map(u16::to_le_bytes).collect() };
-+    let created = windows_appcompat_state::set_if_unconfigured(&registry, &executable.to_string_lossy(), &value)
-+        .map_err(|code| format!("appcompat win8 layer not 
-```
-
----
-
-### Incident Patch 2: `b111c6ac` (2026-10-22)
-**Commit Message**: fix(mysql): honor the configured budget for remaining infrastructure timeouts (#13100)
-
-* fix(mysql): derive remaining driver timeouts from the pool checkout budget
-
-#12924 moved MySQL metadata/DDL checkouts onto MySqlPool::checkout_timeout,
-but query cancellation and the auxiliary MySQL profiles still used the
-compile-time 5 s budget:
-
-- kill_query_with_opts opens a fresh physical connection for KILL QUERY;
-  pass the caller's DbOperationBudget checkout budget through the query,
-  SQL-file import and result export paths.
-- Dolt, StarRocks, MySQL-compatible and OceanBase-MySQL metadata helpers
-  and mysql_object_source now use pool.checkout_timeout().
-
-On a slow link those paths failed after 5 s even with a 300 s connect budget.
-
-* fix(core): scale metadata gate and skip empty stale-pool probes
-
-The metadata gate waited a fixed 5 s, so on slow links queued metadata
-requests reported "DBX metadata pool is busy" while the permitted ones were
-still progressing. Derive the wait budget from the connection's configured
-connect timeout, keeping the old 5 s floor and the 300 s config cap.
-
-The MySQL stale-pool probe also started a new physical connection when the
-pool had no idle connectio
-
-**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +107/-34)
-```diff
-@@ -518,6 +518,32 @@ pub(crate) fn uses_metadata_gate(db_type: DatabaseType) -> bool {
-     matches!(db_type, DatabaseType::Mysql | DatabaseType::Postgres | DatabaseType::SqlServer)
- }
- 
-+/// Wait budget for the metadata gate.
-+///
-+/// The gate serializes metadata work against a connection's pool. On a slow
-+/// link each in-flight operation can spend the connection's configured connect
-+/// timeout, so the previous fixed 5 s wait reported "DBX metadata pool is busy"
-+/// while useful work was still making progress. Honor the configured connect
-+/// timeout (already clamped to 1-300 s by `effective_connect_timeout_secs`)
-+/// without going below the old 5 s floor, so fast links keep today's behavior.
-+fn metadata_pool_acquire_timeout(config: Option<&ConnectionConfig>) -> Duration {
-+    let configured = config.map(ConnectionConfig::effective_connect_timeout_secs);
-+    Duration::from_secs(
-+        configured
-+            .map_or(METADATA_POOL_ACQUIRE_TIMEOUT.as_secs(), |secs| secs.max(METADATA_POOL_ACQUIRE_TIMEOUT.as_secs())),
-+    )
-+}
-+
-+/// Whether the MySQL stale-pool probe has an idle connection to validate.
-+///
-+/// With zero idle connections the probe would start a fresh physical connection
-+/// just to abandon it at the short probe budget; on a slow link that is one
-+/// wasted handshake per metadata request. In that case keep the pool and let the
-+/// real checkout report any failure.
-+fn mysql_probe_has_idle_connection(connections_in_pool: usize) -> bool {
-+    connections_in_pool > 0
-+}
-+
- /// Session-scoped metadata gate allowance for a database type.
- ///
- /// A non-empty `client_session_id` normally means the caller opened a
-@@ -1820,17 +1846,22 @@ impl AppState {
-             let mut gates = self.metadata_gates.lock().await;
-             gates.entry(key.clone()).or_insert_with(|| Arc::new(Semaphore::new(limit))).clone()
-         };
-+        let acquire_timeout = {
-+            let configs = self.configs.read().await;
-+            metadata_pool_acquire_timeout(configs.get(connection_id))
-+        };
-         let started = Instant::now();
-         let queued = gate.available_permits() == 0;
--        let permit = match tokio::time::timeout(METADATA_POOL_ACQUIRE_TIMEOUT, gate.acquire_owned()).await {
-+        let permit = match tokio::time::timeout(acquire_timeout, gate.acquire_owned()).await {
-             Ok(Ok(permit)) => permit,
-             Ok(Err(_)) => return Err(crate::query::METADATA_POOL_BUSY_ERROR.to_string()),
-             Err(_) => {
-                 log::warn!(
--                    "[metadata:pool:busy] connection_id={} database={} wait_ms={} limit={}",
-+                    "[metadata:pool:busy] connection_id={} database={} wait_ms={} timeout_ms={} limit={}",
-                     connection_id,
-                     database.unwrap_or_default(),
-                     started.elapsed().as_millis(),
-+                    acquire_timeout.as_millis(),
-                     limit
-                 );
-                 return Err(crate::query::METADATA_POOL_BUSY_ERROR.to_string());
-@@ -4500,38 +4531,50 @@ impl AppState {
-             match &checked.pool {
-                 PoolKind::Mysql(pool, _) => {
-                     let pool = pool.clone();
--                    match db::mysql::checkout_mysql_conn(&pool, HEALTH_CHECK_POOL_ACQUIRE_TIMEOUT).await {
--                        // The 500 ms probe budget is intentionally shorter than a foreground checkout. A timeout
--                        // while waiting, creating, or recycling is inconclusive: slow remote handshakes and active
--                        // metadata exports can legitimately exceed it. Removing the pool here would start competing
--                        // reconnects while useful work is still running.
--                        Err(err @ db::PoolCheckoutError::Timeout { .. }) => {
--                            log::debug!(
-+                    let connections_in_pool = pool.metrics().connections_in_pool.load(Ordering::Relaxed);
-+                    if !mysql_probe_has_idle_connection(connections_in_pool) {
-+                        log::debug!(
-+                            "MySQL connection pool '{pool_key}' has no idle connection; skipping the stale-pool probe"
-+                        );
-+                        false
-+                    } else {
-+                        match db::mysql::checkout_mysql_conn(&pool, HEALTH_CHECK_POOL_ACQUIRE_TIMEOUT).await {
-+                            // The 500 ms probe budget is intentionally shorter than a foreground checkout. A timeout
-+                            // while waiting, creating, or recycling is inconclusive: slow remote handshakes and active
-+                            // metadata exports can legitimately exceed it. Removing the pool here would start competing
-+                            // reconnects while useful work is still running.
-+                            Err(err @ db::PoolCheckoutError::Timeout { .. }) => {
-+                                log::debug!(
-         
-```
-
-**File**: `crates/dbx-core/src/data/query_result_export.rs` (modified, +7/-2)
-```diff
-@@ -1623,10 +1623,13 @@ async fn try_export_mysql_query_result_stream(
-     let kill_opts = conn.opts().clone();
-     if let Some(execution_id) = request.execution_id.clone() {
-         let interrupt_kill_opts = kill_opts.clone();
-+        let kill_timeout = operation_budget.checkout_timeout;
-         state.running_queries.register_interrupt(&execution_id, move || {
-             let kill_opts = interrupt_kill_opts.clone();
-             tokio::spawn(async move {
--                if let Err(error) = crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id).await {
-+                if let Err(error) =
-+                    crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id, kill_timeout).await
-+                {
-                     log::warn!("Failed to cancel MySQL export query {mysql_connection_id}: {error}");
-                 }
-             });
-@@ -1760,7 +1763,9 @@ async fn try_export_mysql_query_result_stream(
-     )
-     .await;
-     if stream_result.as_ref().is_err_and(|error| error == &timeout_error) {
--        let _ = crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id).await;
-+        let _ =
-+            crate::db::mysql::kill_query_with_opts(kill_opts, mysql_connection_id, operation_budget.checkout_timeout)
-+                .await;
-     }
-     watcher_done.cancel();
- 
-```
-
-**File**: `crates/dbx-core/src/data/sql_file_import.rs` (modified, +2/-1)
-```diff
-@@ -364,10 +364,11 @@ impl MySqlSqlFileExecutor {
-             let conn = self.conn.as_mut().ok_or("MySQL SQL file executor is missing a connection".to_string())?;
-             let connection_id = conn.id();
-             let kill_opts = conn.opts().clone();
-+            let kill_timeout = self.budget.checkout_timeout;
-             state.running_queries.register_interrupt(execution_id, move || {
-                 let kill_opts = kill_opts.clone();
-                 tokio::spawn(async move {
--                    if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id).await {
-+                    if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id, kill_timeout).await {
-                         log::warn!("Failed to cancel MySQL SQL file import query {connection_id}: {error}");
-                     }
-                 });
-```
-
-**File**: `crates/dbx-core/src/query/mod.rs` (modified, +7/-1)
-```diff
-@@ -1839,10 +1839,16 @@ async fn do_execute_typed(
-             let connection_id = conn.id();
-             if let Some(ref execution_id) = options.execution_id {
-                 let kill_opts = conn.opts().clone();
-+                // The interrupt runs after the user asked to cancel; give the
-+                // dedicated kill connection the same infrastructure budget as
-+                // the query path instead of the old compile-time 5 s.
-+                let kill_timeout = operation_budget.checkout_timeout;
-                 state.running_queries.register_interrupt(execution_id, move || {
-                     let kill_opts = kill_opts.clone();
-                     tokio::spawn(async move {
--                        if let Err(error) = db::mysql::kill_query_with_opts(kill_opts, connection_id).await {
-+                        if let Err(error) =
-+                            db::mysql::kill_query_with_opts(kill_opts, connection_id, kill_timeout).await
-+                        {
-                             log::warn!("Failed to cancel MySQL query {connection_id}: {error}");
++        AtomicInteger descriptionRequests = new AtomicInteger();
++        AtomicInteger offsetRequests = new AtomicInteger();
+         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+         try {
+             Admin admin = (Admin) Proxy.newProxyInstance(Admin.class.getClassLoader(), new Class<?>[] {Admin.class},
+@@ -197,18 +210,16 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
+                         case "listConsumerGroups" -> {
+                             var constructor = ListConsumerGroupsResult.class.getDeclaredConstructor(KafkaFuture.class);
+                             constructor.setAccessible(true);
+-                            yield constructor.newInstance(KafkaFuture.completedFuture(List.of(
+-                                new ConsumerGroupListing("orders-service", false),
+-                                new ConsumerGroupListing("slow-group", false)
+-                            )));
++                            yield constructor.newInstance(KafkaFuture.completedFuture(listings));
++                        }
++                        case "describeConsumerGroups" -> {
++                            descriptionRequests.incrementAndGet();
++                            assertEquals(197, ((java.util.Collection<?>) args[0]).size());
++                            yield new DescribeConsumerGroupsResult(descriptions);
                          }
-                     });
+-                        case "describeConsumerGroups" -> new DescribeConsumerGroupsResult(Map.of(
+-                            "orders-service", KafkaFuture.completedFuture(new ConsumerGroupDescription(
+-                                "orders-service", false, List.of(), "", ConsumerGroupState.EMPTY, Node.noNode()
+-                            )),
+-                            "slow-group", new KafkaFutureImpl<>()
+-                        ));
+                         case "listConsumerGroupOffsets" -> {
++                            offsetRequests.incrementAndGet();
++                            assertEquals(197, ((Map<?, ?>) args[0]).size());
+                             // Model an offsets response that needs a small amount of network time.
+                             // If descriptions consumed the deadline before this request was sent,
+                             // the broker cannot return even these independently available offsets.
+@@ -223,10 +234,11 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
+                             }, Math.min(50, timeout), TimeUnit.MILLISECONDS);
+                             var constructor = ListConsumerGroupOffsetsResult.class.getDeclaredConstructor(Map.class);
+                             constructor.setAccessible(true);
+-                            yield constructor.newInstance(Map.of(
+-                                CoordinatorKey.byGroupId("orders-service"), offsets,
+-                                CoordinatorKey.byGroupId("slow-group"), offsets
+-                            ));
++                            Map<CoordinatorKey, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> groupOffsets = new LinkedHashMap<>();
++                            for (ConsumerGroupListing listing : listings) {
++                                groupOffsets.put(CoordinatorKey.byGroupId(listing.groupId()), offsets);
++                            }
++                            yield constructor.newInstance(groupOffsets);
+                         }
+                         case "listOffsets" -> new ListOffsetsResult(Map.of(
+                             partition, KafkaFuture.completedFuture(new ListOffsetsResult.ListOffsetsResultInfo(5, -1, Optional.empty()))
+@@ -237,23 +249,28 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
+             JsonObject params = new JsonObject();
+             par
 ```
 
-**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +1/-1)
+**File**: `crates/dbx-core/src/admin/mq/adapters/kafka.rs` (modified, +162/-35)
 ```diff
-@@ -11234,7 +11234,7 @@ async fn mysql_object_source(
- ) -> Result<String, String> {
-     let primary_sql = mysql_object_source_sql(database, name, kind);
-     let primary_column_index = mysql_object_source_ddl_column_index(kind);
--    let mut conn = db::mysql::get_conn_with_timeout(pool, db::connection_timeout()).await?;
-+    let mut conn = db::mysql::get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
+@@ -10,12 +10,13 @@
  
-     match read_mysql_object_source_row(&mut conn, &primary_sql, primary_column_index).await {
-         Ok(source) => Ok(source),
-```
-
-**File**: `crates/dbx-core/tests/live_mysql57.rs` (modified, +3/-1)
-```diff
-@@ -955,7 +955,9 @@ async fn live_mysql_query_cancel_kills_running_sleep() {
-     });
+ use std::collections::HashMap;
+ use std::sync::Arc;
++use std::time::Duration;
  
-     tokio::time::sleep(std::time::Duration::from_millis(500)).await;
--    dbx_core::db::mysql::kill_query_with_opts(kill_opts, connection_id).await.unwrap();
-+    dbx_core::db::mysql::kill_query_with_opts(kill_opts, connection_id, dbx_core::db::connection_timeout())
-+        .await
-+        .unwrap();
+ use async_trait::async_trait;
+ use serde::de::DeserializeOwned;
+ use tokio::sync::Mutex;
  
-     let started = std::time::Instant::now();
-     let result = query.await.unwrap();
-```
-
-**File**: `crates/dbx-driver-mysql/src/dolt.rs` (modified, +2/-2)
-```diff
-@@ -40,7 +40,7 @@ fn is_profile(db_type: &DatabaseType, driver_profile: Option<&str>) -> bool {
+-use crate::db::agent_driver::{AgentDriverClient, AgentLaunchSpec};
++use crate::db::agent_driver::{AgentCallError, AgentDriverClient, AgentLaunchSpec};
+ use crate::mq::auth::MqAuth;
+ use crate::mq::config::MqAdminConfig;
+ use crate::mq::port::MessageQueueAdmin;
+@@ -59,27 +60,26 @@ const KAFKA_CAPABILITIES: MqCapabilities = MqCapabilities {
+ };
+ 
+ pub struct KafkaAdmin {
+-    client: Arc<Mutex<AgentDriverClient>>,
++    client: Arc<Mutex<Option<AgentDriverClient>>>,
+     config: MqAdminConfig,
++    launch: AgentLaunchSpec,
  }
  
- pub async fn list_databases(pool: &MySqlPool) -> Result<Vec<DatabaseInfo>, String> {
--    let mut conn = get_conn_with_timeout(pool, super::connection_timeout()).await?;
-+    let mut conn = get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
-     if let Err(error) = conn.query_drop(ENABLE_BRANCH_DATABASES_SQL).await {
-         log::debug!("Dolt branch database system variable is unavailable; falling back to dolt_branches: {error}");
-         return list_databases_from_branches(&mut conn).await;
-@@ -61,7 +61,7 @@ pub async fn list_system_tables(
- ) -> Result<Vec<TableInfo>, String> {
-     // The visibility flag is session-scoped, so setup, metadata lookup, and
-     // cleanup must use the same pooled connection.
--    let mut conn = get_conn_with_timeout(pool, super::connection_timeout()).await?;
-+    let mut conn = get_conn_with_timeout(pool, pool.checkout_timeout()).await?;
-     conn.query_drop(ENABLE_SYSTEM_TABLES_SQL).await.map_err(|error| error.to_string())?;
-     let server_filter = filter.map(str::trim).filter(|filter| !filter.is_empty()).unwrap_or(SYSTEM_TABLE_PREFIX);
-     let tables = list_table_names_show_filtered_with_conn(&mut conn, database, Some(server_filter), &[])
-```
-
-**File**: `crates/dbx-driver-mysql/src/mysql.rs` (modified, +11/-2)
-```diff
-@@ -6335,9 +6335,18 @@ pub async fn kill_query(pool: &MySqlPool, connection_id: u32) -> Result<(), Stri
-     Ok(())
- }
+ impl KafkaAdmin {
+     /// Spawn the Kafka Java agent, perform handshake, and connect.
+     pub async fn new(cfg: MqAdminConfig, launch: AgentLaunchSpec) -> Result<Self, String> {
+-        let mut client = AgentDriverClient::spawn(launch).await?;
++        let client = Self::spawn_connected_client(&cfg, launch.clone()).await?;
++        log::info!("Kafka admin connected via agent (bootstrap servers: {})", bootstrap_servers(&cfg));
++        Ok(Self { client: Arc::new(Mutex::new(Some(client))), config: cfg, launch })
++    }
  
--pub async fn kill_query_with_opts(opts: mysql_async::Opts, connection_id: u32) -> Result<(), String> {
-+/// Kills a query through a dedicated connection rebuilt from its `Opts`.
-+///
-+/// Cancel paths run while the original pool may be busy, so this opens a new
-+/// physical connection. `timeout` is the caller's infrastructure budget (the
-+/// connection's configured connect/checkout timeout), not the old compile-time
-+/// 5 s: on a slow link a hardcoded budget turns cancellation into a failure.
-+pub async fn kill_query_with_opts(
-+    opts: mysql_async::Opts,
-+    connection_id: u32,
-+    timeout: Duration,
-+) -> Result<(), String> {
-     let start = Instant::now();
--    let timeout = super::connection_timeout();
-     let mut conn = tokio::time::timeout(timeout, mysql_async::Conn::new(opts))
-         .await
-         .map_err(|_| {
+-        // Handshake
++    async fn spawn_connected_client(cfg: &MqAdminConfig, launch: AgentLaunchSpec) -> Result<AgentDriverClient, String> {
++        let mut client = AgentDriverClient::spawn(launch).await?;
+         let _: serde_json::Value =
+             client.call_with_timeout("handshake", serde_json::json!({}), cfg.rpc_timeout()).await?;
+-
+-        // Build the connection params from MqAdminConfig
+-        let conn_params = build_connection_params(&cfg);
+-        let connect_params = serde_json::json!({ "connection": conn_params });
++        let connect_params = serde_json::json!({ "connection": build_connection_params(cfg) });
+         let _: serde_json::Value = client.call_with_timeout("connect", connect_params, cfg.rpc_timeout()).await?;
+-
+-        log::info!("Kafka admin connected via agent (bootstrap servers: {})", bootstrap_servers(&cfg));
+-
+-        Ok(Self { client: Arc::new(Mutex::new(client)), config: cfg })
++        Ok(client)
+     }
+ 
+     /// Send a JSON-RPC call to the Kafka agent and deserialize the result.
+@@ -88,19 +88,42 @@ impl KafkaAdmin {
+         method: &str,
+         params: serde_json::Value,
+     ) -> Result<T, String> {
+-        let mut client = self.client.lock().await;
+-        client.call_with_timeout(method, params, self.config.rpc_timeout()).await
++        self.call_with_rpc_timeout(method, params, self.config.rpc_timeout()).await
+     }
+ 
+-    /// The Kafka agent bounds these operations with its configured request timeout.
+-    /// Do not preempt that with the driver's generic RPC timeout.
+-    async fn call_with_agent_timeout<T: DeserializeOwned + Send + 'static>(
++    /// Consumer-group RPCs share one agent deadline. Allow time to serialize
++    /// partial results, while still bounding an unresponsive agent process.
++    async fn call_with_consumer_group_timeout<T: DeserializeOwned + Send + 'static>(
++        &self,
++        method: &str,
++        mut params: serde_json::Value,
++    ) -> Result<T, String> {
++        let request_timeout_ms = self.config.request_timeout_ms();
++        params["timeout_ms"] = serde_json::json!(request_timeout_ms);
++        let timeout = Duration::from_millis(request_timeout_ms).saturating_add(Duration::from_secs(5));
++        self.call_with_rpc_timeout(method, params, Some(timeout)).await
++    }
++
++    async fn call_with_rpc_timeout<T: DeserializeOwned + Send + 'static>(
+         &self,
+         method: &str,
+         params: serde_json::Value,
++        timeout: Option<Duration>,
+     ) -> Result<T, String> {
+         let mut client = self.client.lock().await;
+-        client.call_with_timeout(method, params, None).await
++        if client.is_none() {
++            *client = Some(Self::spawn_connected_client(&self.config, self.launch.clone()).await?);
++        }
++        let result = client.as_mut().unwrap().call_typed_with_timeout(method, params, timeout).await;
++        if matches!(
++            &result,
++            Err(AgentCallError::Transport { .. } | AgentCallError::Timeout { .. } | AgentCallError::Canceled { .. })
++        ) {
++            // Reconnect before the next operation. Never replay a request whose
++            // outcome is unknown, especially topic/offset mutations or sends.
++            client.take();
++        }
++        result.map_err(AgentCallError::into_legacy_string)
+     }
+ 
+     /// Send a JSON-RPC call that returns `{ok: true}` on success.
+@@ -192,7 +215,8 @@ impl MessageQueueAdmin for KafkaAdmin {
+     // ---- Topics ----
+ 
+     async fn list_topics(&self, _ns: &NamespaceRef, _opts: ListTopicsOpts) -> Result<Vec<TopicInfo>, String> {
+-        let result: serde_json::Value = self.call_with_agent_timeout("mq_list_topics", serde_json::json!({})).await?;
++        let result: serde
 ```
 
 ---
 
-### Incident Patch 3: `f4cb9f14` (2026-10-22)
-**Commit Message**: fix(sqlserver): stop reading the result stream after the row limit (#13101)
+### Incident Patch 2: `827d551c` (2026-10-25)
+**Commit Message**: fix(mongodb): connect the legacy driver to old TLS servers
 
-* fix(sqlserver): stop reading after the result row limit
-
-The SQL Server driver kept consuming the whole TDS result stream after the
-requested row limit was reached and only flagged the surplus rows as
-truncated. A query whose full result set is large therefore spent seconds
-draining rows that the caller had already discarded: on a 1.29M-row result
-a row-limited execution took 12.8s while the same bounded SQL returned in
-about 60ms. Other clients look fast because they stop at the first page.
-
-Stop the stream as soon as the limit is hit, send a best-effort ATTENTION
-and mark the connection as abandoned so the pool replaces it instead of
-reusing a client that still has unread tokens on the wire. Only executions
-that asked for a row limit and are not session-pinned take this path;
-multi-statement batches, transactions and pinned sessions keep draining so
-later statements and session state stay intact.
-
-* fix(sqlserver): limit stream abandonment to parsed read queries
-
----------
-
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-
-**File**: `crates/dbx-core/src/query/mod.rs` (modified, +32/-0)
+**File**: `agents/drivers/mongodb/src/main/java/com/dbx/agent/mongodb/MongoAgent.java` (modified, +235/-9)
 ```diff
-@@ -2042,11 +2042,20 @@ async fn do_execute_typed(
-                     Ok(value) => value,
-                     Err(err) => return Err(err.into()),
-                 };
-+            // A display-bound execution must not pay for the rows the caller
-+            // discards: the driver stops the TDS stream at `max_rows` and marks
-+            // the connection as abandoned, which then gets dropped instead of
-+            // returned to the pool. Session-pinned executions keep the old
-+            // draining path because the connection carries user state.
-+            let stop_at_row_limit =
-+                max_rows.is_some() && options.client_session_id.is_none() && !options.use_transaction.unwrap_or(false);
-             let execution = async {
-                 if execution_mode == QueryExecutionMode::Simple {
-                     let mut results =
-                         db::sqlserver::execute_simple_batch_with_max_rows(&mut client, &sql, max_rows).await?;
-                     Ok(results.remove(0))
-+                } else if stop_at_row_limit {
-+                    db::sqlserver::execute_query_with_max_rows_stopping(&mut client, &sql, max_rows).await
-                 } else {
-                     db::sqlserver::execute_query_with_max_rows(&mut client, &sql, max_rows).await
-                 }
-@@ -2058,7 +2067,11 @@ async fn do_execute_typed(
-                     result.execution_time_ms += lock_wait_ms;
-                     result
-                 });
-+            let abandoned = client.take_abandoned_after_row_limit();
-             drop(client);
-+            if abandoned {
-+                state.remove_pool_by_key(pool_key).await;
-+            }
-             if matches!(result.as_ref(), Err(err) if should_discard_pool_after_error(pool_db_type, err)) {
-                 state.remove_pool_by_key(pool_key).await;
-             }
-@@ -4626,16 +4639,35 @@ async fn execute_multi_sqlserver(
- 
-         let execution_sql =
-             sql_for_execution_context_with_identifier_quote(Some(DatabaseType::SqlServer), batch, schema, Some("["));
-+        // Only a single-statement batch can abandon its stream early: a real
-+        // multi-statement script must keep draining so the later statements
-+        // still produce their own results. Session-pinned tabs keep draining
-+        // because the pooled connection carries their temporary objects.
-+        let stop_at_row_limit = batches.len() == 1
-+            && max_rows.is_some()
-+            && options.client_session_id.is_none()
-+            && !options.use_transaction.unwrap_or(false);
-         let execution = async {
-             if execution_mode == QueryExecutionMode::Simple {
-                 db::sqlserver::execute_simple_batch_with_max_rows_metadata(&mut client_guard, &execution_sql, max_rows)
-                     .await
-+            } else if stop_at_row_limit {
-+                db::sqlserver::execute_batch_with_max_rows_metadata_stopping(
-+                    &mut client_guard,
-+                    &execution_sql,
-+                    max_rows,
-+                )
-+                .await
-             } else {
-                 db::sqlserver::execute_batch_with_max_rows_metadata(&mut client_guard, &execution_sql, max_rows).await
-             }
-         };
-         let result = wait_for_result_opt(cancel_token.clone(), query_timeout, execution).await;
-+        let abandoned = client_guard.take_abandoned_after_row_limit();
-         drop(client_guard);
-+        if abandoned {
-+            state.remove_pool_by_key(pool_key).await;
-+        }
- 
-         match result {
-             Ok(results) => all_results.extend(sqlserver_batch_results(results).into_iter().map(|mut item| {
-```
-
-**File**: `crates/dbx-core/tests/sqlserver_batch_results.rs` (modified, +73/-0)
-```diff
-@@ -236,3 +236,76 @@ async fn sqlserver_duplicate_join_columns_page_without_leaking_rowcount() {
-             .expect("execute query after ROWCOUNT page");
-     assert_eq!(follow_up.rows.len(), 2);
- }
-+
-+/// The desktop grid only ever shows `max_rows` rows. Reading the rest of the
-+/// TDS stream costs ~10-15us per discarded row, which is what turns a
-+/// few-hundred-ms query into a 10s+ stall when the executed SQL is unbounded.
-+/// The stopping path must return the same bounded result but leave the client
-+/// flagged for pool replacement instead of draining the whole result.
-+#[tokio::test]
-+#[ignore = "requires DBX_TEST_SQLSERVER_HOST and DBX_TEST_SQLSERVER_PASSWORD"]
-+async fn sqlserver_stops_reading_after_row_limit_and_flags_the_connection() {
-+    let mut client = connect_sqlserver().await;
-+
-+    // A huge streaming result that needs no fixture tables: every SQL Server
-+    // has sys.all_columns, and the cross join keeps producing rows forever.
-+    let sql = "SELECT a.object_id, b.object_id FROM sys.all_columns a CROSS JOIN sys.all_columns b";
-+
-+    let started = std::time::Instant::now();
-+    let result = sqlserver::execute_query_with_max_rows_stopping(&mut client, sql, Some(100))
-+        .await
-+        .expect("execute stopping query");
-+    let elapsed = started.elapsed();
-+
-+    assert_eq!(result.rows.len(), 100);
-+    assert!(result.truncated, "the row limit must still be reported as truncation");
-+    assert!(client.take_abandoned_after_row_limit(), "the client must be flagged for pool replacement");
-+    assert!(!client.take_abandoned_after_row_limit(), "the flag must be one-shot");
-+    assert!(elapsed < Duration::from_secs(30), "stopping must not drain the result: {elapsed:?}");
-+
-+    // The abandoned client is never reused. A replacement connection (what the
-+    // pool creates after removing the abandoned one) must work normally.
-+    let mut replacement = connect_sqlserver().await;
-+    let health = sqlserver::execute_query_with_max_rows(&mut replacement, "SELECT 1 AS ok", Some(10))
-+        .await
-+        .expect("replacement connection query");
-+    assert_eq!(health.rows.len(), 1);
-+
-+    // A result that fits under the limit keeps the connection usable.
-+    let mut small = connect_sqlserver().await;
-+    let small_result = sqlserver::execute_query_with_max_rows_stopping(&mut small, "SELECT 1 AS ok", Some(10))
-+        .await
-+        .expect("execute small stopping query");
-+    assert_eq!(small_result.rows.len(), 1);
-+    assert!(!small_result.truncated);
-+    assert!(!small.take_abandoned_after_row_limit());
-+}
-+
-+#[tokio::test]
-+#[ignore = "requires DBX_TEST_SQLSERVER_HOST and DBX_TEST_SQLSERVER_PASSWORD"]
-+async fn sqlserver_stopping_path_finishes_stored_procedure_side_effects() {
-+    let mut client = connect_sqlserver().await;
-+    sqlserver::execute_query(
-+        &mut client,
-+        "CREATE TABLE #dbx_row_limit_marker (value INT); INSERT INTO #dbx_row_limit_marker VALUES (0);",
-+    )
-+    .await
-+    .unwrap();
-+    sqlserver::execute_query(
-+        &mut client,
-+        "CREATE PROCEDURE #dbx_row_limit_proc AS BEGIN SET NOCOUNT ON; \
-+         SELECT TOP (100000) a.object_id FROM sys.all_columns a CROSS JOIN sys.all_columns b; \
-+         UPDATE #dbx_row_limit_marker SET value = 1; END;",
-+    )
-+    .await
-+    .unwrap();
-+
-+    let result = sqlserver::execute_query_with_max_rows_stopping(&mut client, "EXEC #dbx_row_limit_proc", Some(1))
-+        .await
-+        .unwrap();
-+    assert_eq!(result.rows.len(), 1);
-+    assert!(result.truncated);
-+    assert!(!client.take_abandoned_after_row_limit(), "a procedure must finish before returning");
-+    let marker = sqlserver::execute_query(&mut client, "SELECT value FROM #dbx_row_limit_marker").await.unwrap();
-+    assert_eq!(marker.rows[0][0].as_i64(), Some(1));
-+}
-```
-
-**File**: `crates/dbx-driver-sqlserver/src/sqlserver.rs` (modified, +204/-36)
-```diff
-@@ -41,11 +41,30 @@ pub struct SqlServerClient {
-     inner: SqlServerTdsClient,
-     query_transport: SqlServerQueryTransport,
-     server_major_version: Option<u32>,
-+    /// Set when a result stream was abandoned mid-flight because the caller's
-+    /// row limit was reached. The connection still has unread TDS tokens on
-+    /// the wire, so it must be discarded instead of returned to the pool.
-+    abandoned_after_row_limit: bool,
- }
- 
- impl SqlServerClient {
-     fn new(inner: SqlServerTdsClient) -> Self {
--        Self { inner, query_transport: SqlServerQueryTransport::Unknown, server_major_version: None }
-+        Self {
-+            inner,
-+            query_transport: SqlServerQueryTransport::Unknown,
-+            server_major_version: None,
-+            abandoned_after_row_limit: false,
-+        }
-+    }
-+
-+    fn mark_abandoned_after_row_limit(&mut self) {
-+        self.abandoned_after_row_limit = true;
-+    }
-+
-+    /// Returns whether the last result stream was abandoned after the row limit
-+    /// and resets the flag. Callers must discard (never reuse) such a client.
-+    pub fn take_abandoned_after_row_limit(&mut self) -> bool {
-+        std::mem::take(&mut self.abandoned_after_row_limit)
-     }
- 
-     async fn ensure_query_transport(&mut self) -> SqlServerQueryTransport {
-@@ -894,7 +913,8 @@ async fn collect_first_result_limited(
-     sql: &str,
-     query: &SqlServerUnsafeTypeQuery,
-     progress_clock: Option<&crate::execution::StreamProgressClock>,
--) -> Result<QueryResult, String> {
-+    stop_at_row_limit: bool,
-+) -> Result<(QueryResult, bool), String> {
-     let row_limit = query_result_row_limit(max_rows);
-     let mut remaining_offset = result_offset;
-     let mut columns: Vec<String> = vec![];
-@@ -930,33 +950,82 @@ async fn collect_first_result_limited(
-                     spatial_values.push(srids);
-                 } else {
-                     truncated = true;
-+                    if stop_at_row_limit {
-+                        // The caller only asked for `row_limit` rows. Reading the
-+                        // rest of a large result set costs ~10-15us per row on
-+                        // the TDS side (a 1M-row query then keeps the UI busy
-+                        // for 10s+ while the grid shows 100 rows), so abandon
-+                        // the stream and let the caller reset the connection.
-+                        return collect_first_result_finish(
-+                            columns,
-+                            column_types,
-+                            rows,
-+                            spatial_values,
-+                            spatial_values_builder,
-+                            query,
-+                            sql,
-+                            start,
-+                            true,
-+                            true,
-+                        );
-+                    }
-                 }
-             }
-             QueryItem::Row(_) => {}
+@@ -60,8 +60,10 @@
+ import java.security.KeyStore;
+ import java.security.PrivateKey;
+ import java.security.SecureRandom;
++import java.security.Security;
+ import java.security.cert.Certificate;
+ import java.security.cert.CertificateFactory;
++import java.security.cert.X509Certificate;
+ import java.security.spec.PKCS8EncodedKeySpec;
+ import java.time.Instant;
+ import java.time.ZoneOffset;
+@@ -74,7 +76,9 @@
+ import java.util.HashSet;
+ import java.util.LinkedHashMap;
+ import java.util.List;
++import java.util.Locale;
+ import java.util.Map;
++import java.util.Objects;
+ import java.util.Set;
+ import java.util.TreeSet;
+ import java.util.UUID;
+@@ -88,6 +92,7 @@
+ import javax.net.ssl.SSLContext;
+ import javax.net.ssl.TrustManager;
+ import javax.net.ssl.TrustManagerFactory;
++import javax.net.ssl.X509TrustManager;
+ import org.bson.Document;
+ import org.bson.json.JsonMode;
+ import org.bson.json.JsonWriterSettings;
+@@ -115,6 +120,23 @@ public final class MongoAgent {
+     private static final int MAX_SESSIONS = 256;
+     /** MongoDB error code 13 (Unauthorized), returned when the account may not run listDatabases. */
+     private static final int LIST_DATABASES_UNAUTHORIZED_CODE = 13;
++    private static final int MAX_SERVER_SELECTION_TIMEOUT_SECS = 20;
++    private static final String TLS_DISABLED_ALGORITHMS_KEY = "jdk.tls.disabledAlgorithms";
++    private static final String TLS_LEGACY_ALGORITHMS_KEY = "jdk.tls.legacyAlgorithms";
++    // MongoDB 3.x servers built against older OpenSSL only offer static RSA key exchange
++    // (and the oldest only TLS 1.0), which current JREs disable by default.
++    private static final Set<String> LEGACY_TLS_ALGORITHMS_TO_ALLOW = Set.of(
++        "TLSV1",
++        "TLSV1.1",
++        "TLS_RSA_*",
++        "RSA_PKCS1_SHA1 USAGE HANDSHAKESIGNATURE");
++    // The static-RSA entries are demoted into jdk.tls.legacyAlgorithms instead of silently
++    // vanishing. JSSE consults that property only when it picks cipher suites as a TLS
++    // server (sun.security.ssl.ServerHello), never on the client side and never for
++    // protocol versions, so TLSv1/TLSv1.1 can only leave the disabled list outright.
++    private static final Set<String> LEGACY_TLS_ALGORITHMS_TO_DEMOTE = Set.of(
++        "TLS_RSA_*",
++        "RSA_PKCS1_SHA1 USAGE HANDSHAKESIGNATURE");
+     private static final ThreadLocal<MongoClient> CURRENT_CLIENT = new ThreadLocal<>();
+     private static final ThreadLocal<Set<String>> CURRENT_FIND_CURSOR_OWNER = new ThreadLocal<>();
+     private static final ConcurrentHashMap<String, MongoCursor<Document>> FIND_CURSORS = new ConcurrentHashMap<>();
+@@ -152,9 +174,24 @@ static MongoClientSettings.Builder configureBuilder(JsonObject connObj) {
+             throw new IllegalArgumentException("Client certificate and key must be provided together");
          }
+ 
++        Map<String, String> params = new LinkedHashMap<>();
++        if (connectionString != null && !connectionString.isBlank()) {
++            params.putAll(parseQueryParams(connectionString));
++        }
++        String urlParams = stringOrNull(connObj, "url_params");
++        if (urlParams != null && !urlParams.isBlank()) {
++            params.putAll(parseQueryParams(urlParams));
++        }
++
++        boolean allowInvalidCertificates = hasAllowInvalidCertificates(params);
++        // Per the connection-string spec only tlsInsecure relaxes both checks;
++        // tlsAllowInvalidCertificates on its own must keep hostname verification.
++        boolean allowInvalidHostnames = isTruthy(params.get("tlsinsecure")) || hasAllowInvalidHostnames(params);
++
+         MongoClientSettings.Builder builder = MongoClientSettings.builder();
++        ConnectionString cs = null;
+         if (connectionString != null && !connectionString.isBlank()) {
+-            ConnectionString cs = new ConnectionString(connectionString);
++            cs = new ConnectionString(connectionString);
+             builder.applyConnectionString(cs);
+             // Driver 3.12 predates the directConnection URI option (introduced in driver 4.x)
+             // and silently ignores it. When directConnection=true is present in the query of a
+@@ -173,8 +210,39 @@ static MongoClientSettings.Builder configureBuilder(JsonObject connObj) {
+             }
+         }
+ 
+-        if (ssl) {
+-            applyTlsSettings(builder, caCertPath, clientCertPath, clientKeyPath);
++        // Driver 3.12 has no tlsAllowInvalidCertificates option and form mode never parsed the URL
++        // params, so the "skip certificate verification" setting has to be applied here.
++        boolean enableTls = ssl
++            || (cs != null && Boolean.TRUE.equals(cs.getSslEnabled()))
++            || isTruthy(params.get("ssl"))
++            || isTruthy(params.get("tls"));
++        if (enableTls) {
++            // Old MongoDB TLS servers need policy entries that current JREs disable. The
++            // relaxation cannot be scoped per connection (JSSE caches the policy once
++            // initialized),
+```
+
+**File**: `agents/drivers/mongodb/src/test/java/com/dbx/agent/mongodb/MongoAgentTest.java` (modified, +388/-0)
+```diff
+@@ -1,9 +1,12 @@
+ package com.dbx.agent.mongodb;
+ 
+ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
++import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+ import static org.junit.jupiter.api.Assertions.assertNotNull;
++import static org.junit.jupiter.api.Assertions.assertNull;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+@@ -43,18 +46,32 @@
+ import com.mongodb.client.model.WriteModel;
+ import com.mongodb.client.result.UpdateResult;
+ import java.io.FileInputStream;
++import java.io.InputStream;
+ import java.lang.reflect.Proxy;
++import java.net.InetAddress;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.security.KeyStore;
+ import java.security.PrivateKey;
++import java.security.Security;
++import java.security.cert.CertificateFactory;
++import java.security.cert.X509Certificate;
+ import java.util.ArrayList;
+ import java.util.Base64;
+ import java.util.Collections;
+ import java.util.Date;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Locale;
+ import java.util.Map;
++import java.util.Set;
+ import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicReference;
++import javax.net.ssl.SSLContext;
++import javax.net.ssl.SSLServerSocket;
++import javax.net.ssl.SSLSocket;
++import javax.net.ssl.TrustManager;
++import javax.net.ssl.X509TrustManager;
+ import org.bson.BsonDocument;
+ import org.bson.BsonRegularExpression;
+ import org.bson.Document;
+@@ -1739,6 +1756,377 @@ void createsSslContextWithAllCertPaths() throws Exception {
+         assertNotNull(ctx);
      }
  
--    restore_sqlserver_blank_column_names(&mut columns, sql);
--    restore_sqlserver_unsafe_column_types(&mut column_types, query);
--
--    let (spatial_columns, spatial_values) = spatial_values_builder.finish_with_values(spatial_values);
--    Ok(QueryResult {
-+    collect_first_result_finish(
-         columns,
-         column_types,
--        column_sortables: vec![],
--        spatial_columns,
--        spatial_values,
-         rows,
--        affected_rows: 0,
--        execution_time_ms: start.elapsed().as_millis(),
--        server_execute_time_us: None,
--        query_timings_ms: None,
-+        spatial_values,
-+        spatial_values_builder,
-+        query,
-+        sql,
-+        start,
-         truncated,
--        session_id: None,
--        has_more: false,
--        elasticsearch_raw_body: None,
--        messages: Vec::new(),
--    })
-+        false,
-+    )
-+}
++    // ─── TLS: URL params and timeouts (issue #10657) ───
 +
-+#[allow(clippy::too_many_arguments)]
-+fn collect_first_result_finish(
-+    mut columns: Vec<String>,
-+    mut column_types: Vec<String>,
-+    rows: Vec<Vec<serde_json::Value>>,
-+    spatial_values: Vec<Vec<Option<u32>>>,
-+    spatial_values_builder: SpatialColumnBuilder,
-+    query: &SqlServerUnsafeTypeQuery,
-+    sql: &str,
-+    start: Instant,
-+    truncated: bool,
-+    stopped_early: bool,
-+) -> Result<(QueryResult, bool), String> {
-+    restore_sqlserver_blank_column_names(&mut columns, sql);
-+    restore_sqlserver_unsafe_column_types(&mut column_types, query);
++    @Test
++    void formModeWithTlsAllowInvalidCertificatesEnablesSslAndTrustsSelfSignedCert() throws Exception {
++        JsonObject connection = minimalConnection();
++        connection.addProperty("ssl", true);
++        connection.addProperty("url_params", "tlsAllowInvalidCertificates=true");
 +
-+    let (spatial_columns, spatial_values) = spatial_values_builder.finish_with_values(spatial_values);
-+    Ok((
-+        QueryResult {
-+            columns,
-+            column_types,
-+            column_sortables: vec![],
-+            spatial_columns,
-+            spatial_values,
-+            rows,
-+            affected_rows: 0,
-+            execution_time_ms: start.elapsed().as_millis(),
-+            server_execute_time_us: None,
-+            query_timings_ms: None,
-+            truncated,
-+            session_id: None,
-+            has_more: false,
-+            elasticsea
++        MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
++
++        assertTrue(settings.getSslSettings().isEnabled());
++        // Only tlsInsecure skips hostname verification; cert-only skips just the chain check.
++        assertFalse(settings.getSslSettings().isInvalidHostNameAllowed());
++        assertNotNull(settings.getSslSettings().getContext());
++
++        CertificateFactory cf = CertificateFactory.getInstance("X.509");
++        X509Certificate selfSignedCert;
++        try (InputStream is = new FileInputStream(caPemPath.toFile())) {
++            selfSignedCert = (X509Certificate) cf.generateCertificate(is);
++        }
++        TrustManager[] trustManagers = MongoAgent.createTrustAllTrustManagers();
++        assertNotNull(trustManagers);
++        assertTrue(trustManagers.length > 0);
++        assertInstanceOf(X509TrustManager.class, trustManagers[0]);
++        X509TrustManager tm = (X509TrustManager) trustManagers[0];
++        assertDoesNotThrow(() -> tm.checkServerTrusted(new X509Certificate[] {selfSignedCert}, "RSA"));
++        assertDoesNotThrow(() -> tm.checkClientTrusted(new X509Certificate[] {selfSignedCert}, "RSA"));
++        assertEquals(0, tm.getAcceptedIssuers().length);
++    }
++
++    @Test
++    void formModeWithoutInvalidCertParamKeepsDefaultVerification() {
++        JsonObject connection = minimalConnection();
++        connection.addProperty("ssl", true);
++
++        MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
++
++        assertTrue(settings.getSslSettings().isEnabled());
++        assertFalse(settings.getSslSettings().isInvalidHostNameAllowed());
++        assertNull(settings.getSslSettings().getContext());
++    }
++
++    @Test
++    void formModeWithTruthyUrlParamVariants() {
++        for (String param : List.of(
++            "tlsAllowInvalidCertificates=1",
++            "sslAllowInvalidCertificates=yes",
++            "TLSALLOWINVALIDCERTIFICATES=TRUE")) {
++            JsonObject connection = minimalConnection();
++            connection.addProperty("ssl", true);
++            connection.addProperty("url_params", "retryWrites=false&" + param);
++
++            MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
++            assertTrue(settings.getSslSettings().isEnabled(), "Failed for " + param);
++            assertFalse(settings.getSslSettings().isInvalidHostNameAllowed(), "Failed for " + param);
++            assertNotNull(settings.getSslSettings().getContext(), "Failed for " + param);
++        }
++    }
++
++    @Test
++    void formModeWithTlsInsecureSkipsCertificateAndHostnameChecks() {
++        JsonObject connection = minimalConnection();
++        connection.addProperty("ssl", true);
++        connection.addProperty("url_params", "tlsInsecure=true");
+
+```
+
+---
+
+### Incident Patch 3: `e053f1b4` (2026-10-25)
+**Commit Message**: fix(oracle): include triggers in transfer object listing
+
+**File**: `agents/drivers/oracle-go/main.go` (modified, +2/-2)
+```diff
+@@ -186,7 +186,7 @@ FROM ALL_OBJECTS o
+ LEFT JOIN ALL_INDEXES i
+   ON o.OBJECT_TYPE = 'INDEX' AND i.OWNER = o.OWNER AND i.INDEX_NAME = o.OBJECT_NAME
+ WHERE o.OWNER = :2
+-  AND o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')
++  AND o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')
+ UNION ALL
+ SELECT s.SYNONYM_NAME AS OBJECT_NAME,
+        'SYNONYM' AS OBJECT_TYPE,
+@@ -225,7 +225,7 @@ SELECT o.OBJECT_NAME,
+        i.TABLE_NAME AS PARENT_NAME
+ FROM USER_OBJECTS o
+ LEFT JOIN USER_INDEXES i ON o.OBJECT_TYPE = 'INDEX' AND i.INDEX_NAME = o.OBJECT_NAME
+-WHERE o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX', 'TYPE', 'TYPE BODY')
++WHERE o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX', 'TYPE', 'TYPE BODY')
+ UNION ALL
+ SELECT s.SYNONYM_NAME AS OBJECT_NAME,
+        'SYNONYM' AS OBJECT_TYPE,
+```
+
+**File**: `agents/drivers/oracle-go/main_test.go` (modified, +7/-1)
+```diff
+@@ -2365,6 +2365,9 @@ func TestListObjectsSQLUsesSplitDictionaryQuery(t *testing.T) {
+ 	if !strings.Contains(sqlText, "'SEQUENCE'") {
+ 		t.Fatalf("object listing should include sequences, got: %s", query.SQL)
+ 	}
++	if !strings.Contains(sqlText, "'TRIGGER'") {
++		t.Fatalf("object listing must expose triggers for data transfer selection, got: %s", query.SQL)
++	}
+ 	if !strings.Contains(sqlText, "'TYPE BODY'") || !strings.Contains(sqlText, "TYPE_BODY") || !strings.Contains(sqlText, "'TYPE'") {
+ 		t.Fatalf("object listing should include TYPE and normalize TYPE BODY, got: %s", query.SQL)
+ 	}
+@@ -2462,11 +2465,14 @@ func TestExactTableDDLDoesNotBuildAnotherTargetAfterMetadataFailure(t *testing.T
+ 	}
+ }
+ 
+-func TestListSessionUserObjectsSQLIncludesSequences(t *testing.T) {
++func TestListSessionUserObjectsSQLIncludesSequencesAndTriggers(t *testing.T) {
+ 	sqlText := strings.ToUpper(oracleListObjectsSessionUserBaseSQL)
+ 	if !strings.Contains(sqlText, "FROM USER_OBJECTS") || !strings.Contains(sqlText, "'SEQUENCE'") || !strings.Contains(sqlText, "'TYPE BODY'") || !strings.Contains(sqlText, "'TYPE'") {
+ 		t.Fatalf("session-user object listing should include sequences, got: %s", oracleListObjectsSessionUserBaseSQL)
+ 	}
++	if !strings.Contains(sqlText, "'TRIGGER'") {
++		t.Fatalf("session-user object listing must expose triggers for data transfer selection, got: %s", oracleListObjectsSessionUserBaseSQL)
++	}
+ }
+ 
+ func TestGetOracleTypeSourceUsesExactIdentityAndCollectionDDLFallback(t *testing.T) {
+```
+
+**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +32/-1)
+```diff
+@@ -12611,7 +12611,7 @@ fn oracle_list_objects_sql_for_owner(owner: &str, type_owner: &str) -> String {
+         "SELECT o.object_name, CASE o.object_type WHEN 'PACKAGE BODY' THEN 'PACKAGE_BODY' WHEN 'TYPE BODY' THEN 'TYPE_BODY' ELSE o.object_type END AS object_type, o.owner, \
+          i.table_owner AS parent_schema, i.table_name AS parent_name \
+          FROM all_objects o LEFT JOIN all_indexes i ON o.object_type = 'INDEX' AND i.owner = o.owner AND i.index_name = o.object_name \
+-         WHERE ((o.owner = {owner} AND o.object_type IN ('TABLE', 'VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')) \
++         WHERE ((o.owner = {owner} AND o.object_type IN ('TABLE', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')) \
+             OR (o.owner = {type_owner} AND o.object_type IN ('TYPE', 'TYPE BODY'))) \
+          AND (o.object_type <> 'INDEX' OR i.generated = 'N' OR i.generated IS NULL) \
+          ORDER BY CASE o.object_type WHEN 'TABLE' THEN 0 WHEN 'VIEW' THEN 1 WHEN 'PROCEDURE' THEN 2 WHEN 'FUNCTION' THEN 3 WHEN 'SEQUENCE' THEN 4 WHEN 'PACKAGE' THEN 5 WHEN 'PACKAGE BODY' THEN 6 ELSE 7 END, o.object_name, o.object_type"
+@@ -13852,6 +13852,37 @@ mod object_source_tests {
+         assert!(sql.contains("i.table_owner AS parent_schema, i.table_name AS parent_name"));
+     }
+ 
++    #[test]
++    fn oracle_object_list_returns_triggers_only_from_the_selected_owner() {
++        // Execute the dictionary query against fixture rows so a missing object
++        // kind or a widened owner predicate cannot silently empty the transfer list.
++        let conn = rusqlite::Connection::open_in_memory().unwrap();
++        conn.execute_batch(
++            "CREATE TABLE all_objects (owner TEXT, object_name TEXT, object_type TEXT);
++             CREATE TABLE all_indexes (owner TEXT, index_name TEXT, table_owner TEXT, table_name TEXT, generated TEXT);
++             INSERT INTO all_objects VALUES
++               ('APP', 'QR_CODE_MAIL_TEMPLATE', 'TABLE'),
++               ('APP', 'SEQ_QR_CODE_MAIL_TEMPLATE', 'SEQUENCE'),
++               ('APP', 'TRIGGER_QR_CODE_MAIL_TEMPLATE', 'TRIGGER'),
++               ('OTHER', 'TRIGGER_QR_CODE_MAIL_TEMPLATE', 'TRIGGER');",
++        )
++        .unwrap();
++
++        for owner in ["APP", "OTHER"] {
++            let sql = format!(
++                "SELECT object_name, owner FROM ({}) WHERE object_type = 'TRIGGER'",
++                oracle_list_objects_sql(owner)
++            );
++            let mut statement = conn.prepare(&sql).unwrap();
++            let triggers = statement
++                .query_map([], |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)))
++                .unwrap()
++                .collect::<Result<Vec<_>, _>>()
++                .unwrap();
++            assert_eq!(triggers, vec![("TRIGGER_QR_CODE_MAIL_TEMPLATE".to_string(), owner.to_string())]);
++        }
++    }
++
+     #[test]
+     fn appends_oracle_table_and_column_comments_to_ddl() {
+         let column = db::ColumnInfo {
+```
+
+**File**: `crates/dbx-core/tests/live_oracle_transfer.rs` (modified, +26/-4)
+```diff
+@@ -92,6 +92,31 @@ async fn live_oracle_transfer_creates_table_with_index_comment_and_trigger() {
+         source(sql).await.expect("source setup");
+     }
+ 
++    // Match the transfer dialog: selections must come from list_objects, rather
++    // than supplying known trigger names and bypassing metadata discovery.
++    let mut selections = Vec::new();
++    for (kind, object_type, expected_name) in
++        [(TransferObjectKind::Sequence, "SEQUENCE", &sequence), (TransferObjectKind::Trigger, "TRIGGER", &trigger)]
++    {
++        let objects = dbx_core::schema::list_objects_core(
++            &state,
++            &source_id,
++            &service,
++            &source_schema,
++            None,
++            None,
++            None,
++            Some(&[object_type.to_string()]),
++            None,
++        )
++        .await
++        .expect("discover transferable objects");
++        let names: Vec<_> =
++            objects.into_iter().filter(|object| &object.name == expected_name).map(|object| object.name).collect();
++        assert_eq!(names, vec![expected_name.clone()], "missing {object_type} in transfer selection");
++        selections.push(TransferObjectSelection { object_type: kind, names });
++    }
++
+     let request = TransferRequest {
+         table_filters: Default::default(),
+         transfer_id: format!("live-oracle-transfer-{suffix}"),
+@@ -109,10 +134,7 @@ async fn live_oracle_transfer_creates_table_with_index_comment_and_trigger() {
+         drop_target_confirmed: false,
+         oracle_packages: None,
+         content: TransferContent::StructureAndData,
+-        objects: Some(vec![
+-            TransferObjectSelection { object_type: TransferObjectKind::Sequence, names: vec![sequence.clone()] },
+-            TransferObjectSelection { object_type: TransferObjectKind::Trigger, names: vec![trigger.clone()] },
+-        ]),
++        objects: Some(selections),
+         mode: TransferMode::Append,
+         target_table_name_case: TransferTableNameCase::Preserve,
+         target_column_name_case: TransferColumnNameCase::Preserve,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13198** (2026-10-22): Fix MCP shell probes suspending Tauri development on Linux (@hoangph-34)
-- **PR #13197** (closed): fix(mcp): isolate shell probes from terminal job control (@hoangph-34)
-- **PR #13196** (2026-10-22): fix(tabs): use one group-colored accent for grouped tabs (@zipg)
-- **PR #13195** (2026-10-22): fix(query): remove result surface border (@eryajf)
-- **PR #13193** (closed): feat(sidebar): 展示数据库服务端版本 (@Acd-kk)
-- **PR #13188** (2026-10-22): fix(editor): make execution summary fill the results pane (@eryajf)
+- **PR #13417** (closed): feat(editor): persist sql file and library search modes and add locate file in library (@lxk955)
+- **PR #13416** (2026-10-25): feat(sql): remember search scope and locate active library file (@heeeex100)
+- **PR #13415** (2026-10-25): fix(grid): scale canvas scroll height beyond browser element layout limit (@lxk955)
+- **PR #13413** (2026-10-25): fix(mongodb): connect the legacy driver to old TLS servers (@thailoc-dev)
+- **PR #13410** (2026-10-25): fix(kafka): parallelize legacy group queries and recover failed agents (@lcq928)
+- **PR #13409** (2026-10-25): fix(oracle): 修复数据迁移时触发器列表缺失的问题 (@Acd-kk)
 
 ---
 
@@ -3228,28 +2776,51 @@ Co-authored-by: zipg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)
+## X. kafka): parallelize legacy group queries and recover failed agents
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc0734ab`: windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `403e4fe8`: kafka): parallelize legacy group queries and recover failed agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows 0.61.3",
+    private static final int MAX_GROUP_QUERY_ADMINS = 12;
+    private static final int GROUPS_PER_QUERY_ADMIN = 16;
+    private static final List<AdminClient> groupQueryAdmins = new ArrayList<>();
+            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
+            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
+        for (AdminClient groupAdmin : groupQueryAdmins) {
+            groupAdmin.close(Duration.ZERO);
+        }
+        groupQueryAdmins.clear();
+    private static List<Admin> consumerGroupAdmins(int groupCount) {
+        int count = Math.min(MAX_GROUP_QUERY_ADMINS, (groupCount + GROUPS_PER_QUERY_ADMIN - 1) / GROUPS_PER_QUERY_ADMIN);
+        while (groupQueryAdmins.size() < count - 1) {
+            groupQueryAdmins.add(buildAdminClient(activeConnection));
+        }
+        List<Admin> admins = new ArrayList<>();
+        admins.add(adminClient);
+        admins.addAll(groupQueryAdmins.subList(0, count - 1));
+        return admins;
+    }
+
+    private record ConsumerGroupQueries(
+        DescribeConsumerGroupsResult descriptions,
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin());
+            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc0734ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `403e4fe8` are properly handled with clean fallback behavior.

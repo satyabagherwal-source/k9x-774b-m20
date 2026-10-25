@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:53:10.050Z",
+  "last_updated": "2026-10-25T11:14:37.960Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "4ff6ce5a2a1102ec4a949b77339d284be2e07636c31143e9d3bfdec71d15a566",
-      "verified_at": "2026-10-20T16:27:43.473Z",
+      "content_hash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
+      "verified_at": "2026-10-25T11:12:02.943Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:27:43.473Z"
+      "last_updated": "2026-10-25T11:12:02.943Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -3951,14 +3951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-fd",
-      "content_hash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
-      "verified_at": "2026-10-22T18:24:09.508Z",
+      "content_hash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
+      "verified_at": "2026-10-25T11:14:37.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:24:09.508Z"
+      "last_updated": "2026-10-25T11:14:37.959Z"
     },
     "maotoumao/MusicFree": {
       "repository": "maotoumao/MusicFree",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "5860bc466398763b15910144d145dba7f40755d5733cf45b59d222026e46fc41",
-      "verified_at": "2026-10-22T21:01:39.806Z",
+      "content_hash": "c791a12dbdba80724c4a8503b7adf9b0873a646ddf953cdc9582291a58dbcffb",
+      "verified_at": "2026-10-25T11:11:17.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:01:39.806Z"
+      "last_updated": "2026-10-25T11:11:17.453Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

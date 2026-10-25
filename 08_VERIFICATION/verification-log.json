@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-O9ZX",
-    "timestamp": "2026-10-21T19:12:19.869Z",
-    "repository": "kubeshark/kubeshark",
-    "learningId": "learn-github-kubeshark-kubeshark",
-    "contentHash": "4b914d679a06e192a8bdae16aacfc02558f1e79709bc3a1b9994b030e1dea932",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-OEC4",
-    "timestamp": "2026-10-21T19:12:25.492Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "6367251ce3eda44fb2f2d75791285213f961bad3588d038f1eb2a63eb804d95a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-W6DL",
-    "timestamp": "2026-10-22T15:22:11.913Z",
-    "repository": "SolaceLabs/solace-agent-mesh",
-    "learningId": "learn-github-solacelabs-solace-agent-mesh",
-    "contentHash": "c48d40c54ce644bf0da8b11efb692ff180ed98d8fc6f8b242aeef16926b2811c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-4N5V",
     "timestamp": "2026-10-22T15:28:46.915Z",
     "repository": "sandbox-quantum/switch",
@@ -7492,6 +7447,51 @@
     "contentHash": "74d3ceb26ae2fc6486b330d81216cfdeaf887fb65fe9b7564c46357ce4baa7a0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-929U",
+    "timestamp": "2026-10-25T11:11:17.442Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "c791a12dbdba80724c4a8503b7adf9b0873a646ddf953cdc9582291a58dbcffb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-A1DH",
+    "timestamp": "2026-10-25T11:12:02.933Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DCZH",
+    "timestamp": "2026-10-25T11:14:37.949Z",
+    "repository": "sharkdp/fd",
+    "learningId": "learn-github-sharkdp-fd",
+    "contentHash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

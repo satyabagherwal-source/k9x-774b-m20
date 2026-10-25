@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:53:09.950Z",
+  "last_updated": "2026-10-25T11:14:37.879Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26958,7 +26958,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "4ff6ce5a2a1102ec4a949b77339d284be2e07636c31143e9d3bfdec71d15a566",
+      "content_hash": "1bc85b2012862b883d21d4f1bbf8404db963c0be30217f80661df3c7f81bc414",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -26990,6 +26990,21 @@
           "number": 1472,
           "title": "Curvature-Bounded Geometric Polygon Simplification (CGDP Invariant)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4253,
+          "title": "Unified Modality Token Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4254,
+          "title": "Geometry-Aware Preprocessing for Camera-Captured Documents",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4255,
+          "title": "Consensus Voting for Pseudo-Label Generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27010,7 +27025,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-20T16:27:43.385Z",
+      "verified_at": "2026-10-25T11:12:02.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43848,8 +43863,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "9e904639",
-      "content_hash": "cdd5ba1b886baf9fd33ed1f896cc8f523b2ae3840ef64127e72e5e7385ba603c",
+      "source_version": "c44735ec",
+      "content_hash": "ac671da348afaab40eb960e0540018643b7dd08d4f7e8b5436d5ef93085e6924",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -43867,6 +43882,16 @@
           "number": 3689,
           "title": "Merge pull request #2187 from ump45nose/docs/threads-default-cap",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4256,
+          "title": "Pre-Expansion AST Inspection for Semantic Pattern Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4257,
+          "title": "Hyphen-Prefixed Dynamic Path Sanitization for External Process Invocation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43874,7 +43899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:24:09.422Z",
+      "verified_at": "2026-10-25T11:14:37.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46600,8 +46625,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "eb234637",
-      "content_hash": "5860bc466398763b15910144d145dba7f40755d5733cf45b59d222026e46fc41",
+      "source_version": "827d551c",
+      "content_hash": "c791a12dbdba80724c4a8503b7adf9b0873a646ddf953cdc9582291a58dbcffb",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -46639,6 +46664,11 @@
           "number": 3741,
           "title": "windows): 区分 WebView2 运行时问题与安全软件拦截，新增有界兼容启动阶梯 (#13036)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4252,
+          "title": "kafka): parallelize legacy group queries and recover failed agents",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46646,7 +46676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:01:39.731Z",
+      "verified_at": "2026-10-25T11:11:17.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122159,6 +122189,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:53:09.943Z"
+    },
+    "rule-4252": {
+      "learning_id": "rule-4252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4252,
+      "title": "kafka): parallelize legacy group queries and recover failed agents",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "827d551c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:11:17.376Z"
+    },
+    "rule-4253": {
+      "learning_id": "rule-4253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4253,
+      "title": "Unified Modality Token Alignment Invariant",
+      "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:12:02.867Z"
+    },
+    "rule-4254": {
+      "learning_id": "rule-4254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4254,
+      "title": "Geometry-Aware Preprocessing for Camera-Captured Documents",
+      "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:12:02.867Z"
+    },
+    "rule-4255": {
+      "learning_id": "rule-4255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4255,
+      "title": "Consensus Voting for Pseudo-Label Generation",
+      "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:12:02.867Z"
+    },
+    "rule-4256": {
+      "learning_id": "rule-4256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4256,
+      "title": "Pre-Expansion AST Inspection for Semantic Pattern Classification",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "c44735ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:14:37.867Z"
+    },
+    "rule-4257": {
+      "learning_id": "rule-4257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4257,
+      "title": "Hyphen-Prefixed Dynamic Path Sanitization for External Process Invocation",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "c44735ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T11:14:37.867Z"
     }
   },
   "aliases": {
