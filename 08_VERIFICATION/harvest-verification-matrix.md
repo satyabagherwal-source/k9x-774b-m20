@@ -4962,3 +4962,5 @@
 | `CYCLE-20261025-WN2T` | `2026-10-25T19:25:30.965Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`3a3ebbaa...`) |
 | `CYCLE-20261025-4XHI` | `2026-10-25T19:31:57.702Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`860f81ab...`) |
 | `CYCLE-20261025-51YY` | `2026-10-25T19:32:03.514Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4425` | Yes (`78d75c28...`) |
+| `CYCLE-20261025-DBL7` | `2026-10-25T19:38:29.227Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`8d38b9a6...`) |
+| `CYCLE-20261025-DH0B` | `2026-10-25T19:38:36.251Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4426` | Yes (`93da8a4c...`) |

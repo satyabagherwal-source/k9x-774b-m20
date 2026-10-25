@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-25T19:32:01.055Z",
+  "lastUpdated": "2026-10-25T19:38:35.026Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:31:51.192Z",
+        "lastActiveAt": "2026-10-25T19:38:22.858Z",
         "lastHarvestedAt": "2026-10-25T15:43:09.413Z",
         "totalHarvested": 1106,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:31:51.375Z",
+        "lastActiveAt": "2026-10-25T19:38:22.951Z",
         "lastHarvestedAt": "2026-10-25T19:06:30.151Z",
         "totalHarvested": 1374,
         "lastError": null
@@ -208,7 +208,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:31:53.874Z",
+        "lastActiveAt": "2026-10-25T19:38:25.497Z",
         "lastHarvestedAt": "2026-10-25T19:19:08.653Z",
         "totalHarvested": 1453,
         "lastError": null
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:00.244Z",
-        "lastHarvestedAt": "2026-10-25T19:32:00.244Z",
-        "totalHarvested": 5094,
+        "lastActiveAt": "2026-10-25T19:38:31.771Z",
+        "lastHarvestedAt": "2026-10-25T19:38:31.771Z",
+        "totalHarvested": 5095,
         "lastError": null
       },
       {
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:06.057Z",
+        "lastActiveAt": "2026-10-25T19:38:30.493Z",
         "lastHarvestedAt": "2026-10-25T19:32:06.057Z",
         "totalHarvested": 1499,
         "lastError": null
@@ -238,9 +238,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:01.490Z",
-        "lastHarvestedAt": "2026-10-25T19:13:01.431Z",
-        "totalHarvested": 1423,
+        "lastActiveAt": "2026-10-25T19:38:38.795Z",
+        "lastHarvestedAt": "2026-10-25T19:38:38.795Z",
+        "totalHarvested": 1424,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:03.989Z",
+        "lastActiveAt": "2026-10-25T19:38:35.511Z",
         "lastHarvestedAt": "2026-10-25T18:09:03.149Z",
         "totalHarvested": 1261,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:06.422Z",
+        "lastActiveAt": "2026-10-25T19:38:38.132Z",
         "lastHarvestedAt": "2026-10-25T18:15:35.378Z",
         "totalHarvested": 1450,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-25T19:32:08.896Z",
+        "lastActiveAt": "2026-10-25T19:38:40.497Z",
         "lastHarvestedAt": "2026-10-25T18:15:37.138Z",
         "totalHarvested": 1172,
         "lastError": null
@@ -294,7 +294,7 @@
     "GITHUB_REST_API": {
       "service": "GITHUB_REST_API",
       "status": "HEALTHY",
-      "remaining": 4921,
+      "remaining": 4992,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T19:32:03.522Z",
-  "total_cycles_completed": 4939,
-  "total_learnings_persisted": 4939,
-  "total_rules_promoted": 4309,
+  "last_updated": "2026-10-25T19:38:36.259Z",
+  "total_cycles_completed": 4941,
+  "total_learnings_persisted": 4941,
+  "total_rules_promoted": 4310,
   "history": [
-    {
-      "timestamp": "2026-10-25T10:10:53.083Z",
-      "repository": "InsertKoinIO/koin",
-      "learningId": "learn-github-insertkoinio-koin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T10:10:53.545Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T10:10:58.473Z",
       "repository": "influxdata/influxdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-25T19:32:03.522Z",
       "repository": "modelcontextprotocol/kotlin-sdk",
       "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:38:29.236Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T19:38:36.259Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

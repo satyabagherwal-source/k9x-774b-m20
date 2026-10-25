@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-WYPY",
-    "timestamp": "2026-10-23T05:50:36.742Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5fcd1f947b9a293fe9058843229c632d202e489ff612be59f4fbda1471ccf42f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-4KPU",
-    "timestamp": "2026-10-23T05:56:31.842Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "d668d6a9b504220af26a3bc75d6be1802815ca3189eb97e80d74614fc7fab5b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-CL32",
     "timestamp": "2026-10-23T06:02:45.566Z",
     "repository": "guokaigdg/animal-island-ui",
@@ -7490,6 +7460,36 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
     "contentHash": "78d75c280b29e172b239f3c776898f0df8ba88f558deb8a042d834a9a4b74e1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DBL7",
+    "timestamp": "2026-10-25T19:38:29.227Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "8d38b9a656e6d1ca27ef6e6154c3f4fcb9ba6a668130e10cb2b4124801be9c47",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-DH0B",
+    "timestamp": "2026-10-25T19:38:36.251Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "93da8a4c6fbe8fadccd4cb3b19004f8526822ef848974583c98f9debcc5260a6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

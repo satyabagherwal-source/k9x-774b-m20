@@ -4969,3 +4969,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-25T19:25:30.968Z |
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T19:31:57.706Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `a3909eff` | Multi-dimensional audit evidence | 2026-10-25T19:32:03.517Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-25T19:38:29.231Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `65460492` | Multi-dimensional audit evidence | 2026-10-25T19:38:36.254Z |
