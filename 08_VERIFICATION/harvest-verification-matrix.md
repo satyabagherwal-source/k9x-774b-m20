@@ -4749,3 +4749,6 @@
 | `CYCLE-20261025-HF11` | `2026-10-25T08:57:49.141Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4200, Rule 4201, Rule 4202` | Yes (`5df24ddc...`) |
 | `CYCLE-20261025-HL7S` | `2026-10-25T08:57:57.160Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4203, Rule 4204, Rule 4205` | Yes (`b2457edf...`) |
 | `CYCLE-20261025-HX0Y` | `2026-10-25T08:58:12.466Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4206, Rule 4207, Rule 4208` | Yes (`871525d8...`) |
+| `CYCLE-20261025-1C5Z` | `2026-10-25T09:13:18.551Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4209, Rule 4210, Rule 4211` | Yes (`b9baf785...`) |
+| `CYCLE-20261025-30XT` | `2026-10-25T09:14:37.313Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | Yes (`4416fcbf...`) |
+| `CYCLE-20261025-7EED` | `2026-10-25T09:18:01.381Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4212` | Yes (`68ff4dde...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T08:58:12.473Z",
-  "total_cycles_completed": 4726,
-  "total_learnings_persisted": 4726,
-  "total_rules_promoted": 4082,
+  "last_updated": "2026-10-25T09:18:01.389Z",
+  "total_cycles_completed": 4729,
+  "total_learnings_persisted": 4729,
+  "total_rules_promoted": 4086,
   "history": [
-    {
-      "timestamp": "2026-10-23T11:30:55.188Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:37:41.775Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-23T11:37:46.084Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-23T11:37:54.163Z",
       "repository": "risingwavelabs/risingwave",
@@ -1403,6 +1382,27 @@
       "repository": "nguyenphutrong/quotio",
       "learningId": "learn-github-nguyenphutrong-quotio",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:13:18.558Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:14:37.321Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T09:18:01.389Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "28d84ab5df0060278c48fa5c0ce59773713ed895984f00d32a5e21846ee4de26",
-    "lastHarvestedAt": "2026-10-20T15:43:49.076Z",
+    "contentHash": "b9baf785805d73c20af2e0f83c4386672115e4cb823d49b90bdf2575567980e8",
+    "lastHarvestedAt": "2026-10-25T09:13:18.554Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "557ef7a2",
+    "sourceVersion": "2ddb246a",
     "license": "GPL-3.0",
-    "contentHash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
-    "lastHarvestedAt": "2026-10-22T17:31:47.493Z",
+    "contentHash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
+    "lastHarvestedAt": "2026-10-25T09:18:01.384Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "c532d985",
+    "sourceVersion": "0173895f",
     "license": "Apache-2.0",
-    "contentHash": "1e26b4c2ea1121172317aa54f58f3e87f60d1544744ef298302eda71fb6c8ddf",
-    "lastHarvestedAt": "2026-10-22T21:01:34.648Z",
+    "contentHash": "4416fcbf42adb2e559c176d237c24d979ff19b146df546858245a911dfe8dd4d",
+    "lastHarvestedAt": "2026-10-25T09:14:37.316Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

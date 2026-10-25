@@ -4756,3 +4756,6 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `4de2f318` | Multi-dimensional audit evidence | 2026-10-25T08:57:49.144Z |
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-25T08:57:57.163Z |
 | `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `210cdb00` | Multi-dimensional audit evidence | 2026-10-25T08:58:12.469Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-25T09:13:18.554Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `0173895f` | Multi-dimensional audit evidence | 2026-10-25T09:14:37.316Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `2ddb246a` | Multi-dimensional audit evidence | 2026-10-25T09:18:01.384Z |

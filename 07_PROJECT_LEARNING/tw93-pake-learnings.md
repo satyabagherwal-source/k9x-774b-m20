@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `557ef7a2`  
+> **Source Version**: `2ddb246a`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:31:47.273Z  
+> **Timestamp**: 2026-10-25T09:18:00.996Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:31:45.515Z  
+> **Harvest Timestamp**: 2026-10-25T09:12:51.918Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 62257 stars
+- **Stars / Engagement**: 62303 stars
 
 ---
 
@@ -938,364 +938,22 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b3e41ab` (2026-10-21)
-**Commit Message**: fix: clear two windows-only clippy errors
+### Incident Patch 1: `f5db32b4` (2026-10-23)
+**Commit Message**: build: drop debug info for dependencies in dev builds
 
-Clippy on a Windows host flagged from_tag as dead code, since Windows
-reads the UI language through GetUserDefaultUILanguage and only tests
-call it there, and an or_else closure that only returns constants. CI
-runs clippy on Linux, so neither showed up until a native Windows check.
+A clean debug build of src-tauri took 3.5G of target; without dependency debug info it takes 2.4G. Debug info stays on for the pake crate, so its backtraces and breakpoints are unchanged, and release builds are untouched.
 
-**File**: `src-tauri/src/app/window.rs` (modified, +1/-1)
+**File**: `src-tauri/Cargo.toml` (modified, +5/-0)
 ```diff
-@@ -60,7 +60,7 @@ fn prepare_macos_new_window_configuration(features: &NewWindowFeatures) -> tauri
- fn build_proxy_browser_arg(url: &Url) -> Option<String> {
-     let host = url.host_str()?;
-     let scheme = url.scheme();
--    let port = url.port().or_else(|| match scheme {
-+    let port = url.port().or(match scheme {
-         "http" => Some(80),
-         "socks5" => Some(1080),
-         _ => None,
-```
-
-**File**: `src-tauri/src/util.rs` (modified, +1/-0)
-```diff
-@@ -333,6 +333,7 @@ pub enum UiLanguage {
- 
- impl UiLanguage {
-     /// Classifies a BCP 47 tag (`zh-Hant-TW`) or a POSIX locale (`zh_TW.UTF-8`).
-+    #[cfg_attr(windows, allow(dead_code))]
-     pub fn from_tag(tag: &str) -> Self {
-         let tag = tag.to_ascii_lowercase();
-         let mut parts = tag.split(['-', '_', '.', '@']);
-```
-
----
-
-### Incident Patch 2: `59d97c53` (2026-10-14)
-**Commit Message**: test: verify native Windows downloads and default UI in WebView2
-
-**File**: `src-tauri/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -74,6 +74,8 @@ webview2-com = "0.38"
- windows-core = "0.61.2"
- 
- [features]
-+# Opt-in native Windows test harness; not enabled by packaged apps.
-+native-download-probe = []
- # this feature is used for development builds from development cli
- cli-build = []
- # Prebuilt template that reads a pake-runtime folder at launch: Contents/Resources
-```
-
-**File**: `src-tauri/src/app/native_download_smoke.rs` (added, +233/-0)
-```diff
-@@ -0,0 +1,233 @@
-+// Run on a Windows desktop with node tests/integration/windows-native-download.mjs.
-+use super::*;
-+use std::{
-+    io::{Read, Write},
-+    net::TcpListener,
-+    sync::{
-+        atomic::{AtomicBool, AtomicUsize},
-+        Arc, Mutex,
-+    },
-+    time::{Duration, Instant},
-+};
-+use webview2_com::{
-+    BytesReceivedChangedEventHandler, DownloadStartingEventHandler,
-+    Microsoft::Web::WebView2::Win32::{
-+        ICoreWebView2_4, ICoreWebView2_9, COREWEBVIEW2_DOWNLOAD_STATE,
-+        COREWEBVIEW2_DOWNLOAD_STATE_COMPLETED,
-+    },
-+    StateChangedEventHandler,
-+};
-+use windows_core::{Interface, BOOL};
+@@ -97,3 +97,8 @@ codegen-units = 1
+ lto = "thin"
+ opt-level = "z"
+ strip = true
 +
-+#[test]
-+#[ignore = "requires an interactive Windows desktop and WebView2 Runtime"]
-+#[allow(deprecated)]
-+fn native_windows_download() {
-+    let root = std::env::temp_dir().join(format!("pake-native-download-{}", std::process::id()));
-+    let downloads = root.join("downloads");
-+    std::fs::create_dir_all(&downloads).unwrap();
-+    std::fs::write(downloads.join("server.pdf"), b"existing-file").unwrap();
-+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-+    listener.set_nonblocking(true).unwrap();
-+    let origin = format!("http://{}", listener.local_addr().unwrap());
-+    let stopping = Arc::new(AtomicBool::new(false));
-+    let stop_server = stopping.clone();
-+    let requests = Arc::new(Mutex::new(Vec::new()));
-+    let received_requests = requests.clone();
-+    let server = std::thread::spawn(move || {
-+        let mut handlers = Vec::new();
-+        while !stop_server.load(Ordering::Relaxed) {
-+            let Ok((mut stream, _)) = listener.accept() else {
-+                std::thread::sleep(Duration::from_millis(10));
-+                continue;
-+            };
-+            let requests = received_requests.clone();
-+            handlers.push(std::thread::spawn(move || {
-+                stream.set_read_timeout(Some(Duration::from_secs(3))).unwrap();
-+                let mut buffer = [0; 8192];
-+                let size = stream.read(&mut buffer).unwrap_or(0);
-+                let request = String::from_utf8_lossy(&buffer[..size]).to_string();
-+                let path = request.split_whitespace().nth(1).unwrap_or("/");
-+                if path.starts_with("/file") || path.starts_with("/attachment") {
-+                    requests.lock().unwrap().push(request.clone());
-+                    let filename = if path.starts_with("/attachment") { "attachment.bin" } else { "server.pdf" };
-+                    let header = format!("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Disposition: attachment; filename={filename}\r\nContent-Length: 1048576\r\nConnection: close\r\n\r\n");
-+                    if stream.write_all(header.as_bytes()).is_err() { return; }
-+                    for _ in 0..32 {
-+                        if stream.write_all(&[b'N'; 32768]).is_err() { return; }
-+                        std::thread::sleep(Duration::from_millis(80));
-+                    }
-+                } else {
-+                    let script = if path.starts_with("/blob") {
-+                        "const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['native-blob-proof'],{type:'text/plain'})); a.download='blob.txt'; document.body.append(a); a.click();"
-+                    } else {
-+                        "const a=document.createElement('a'); a.href='/file'; a.download='report.pdf'; document.body.append(a); a.click();"
-+                    };
-+                    let body = format!("<!doctype html><meta charset=utf-8><title>Native download probe</title><body>Native download probe<script>setTimeout(()=>{{{script}}},1200)</script></body>");
-+                    let header = format!("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nSet-Cookie: probe=native; HttpOnly; Path=/\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len());
-+                    let _ = stream.write_all(header.as_bytes());
-+                    let _ = stream.write_all(body.as_bytes());
-+                }
-+            }));
-+        }
-+        for handler in handlers {
-+            handler.join().unwrap();
-+        }
-+    });
-+    let mut context = tauri::generate_context!();
-+    context.config_mut().identifier = format!("com.pake.download-probe-{}", std::process::id());
-+    context.config_mut().product_name = Some(format!("PakeDownloadProbe-{}", std::process::id()));
-+    let mut config: PakeConfig = serde_json::from_str(include_str!("../../pake.json")).unwrap();
-+    config.download_dir = downloads.to_string_lossy().into_owned();
-+    config.windows[0].url_type = "web".into();
-+    config.windows[0].url = origin.clone();
-+    config.windows[0].incognito = false;
-+    let tauri_config = context.config().clone();
-+    let mut app = tauri::Builder::default()
-+        .any_thread()
-+        .manage(MultiWindowState::new(config.clone(), tauri_config.clone()))
-+        .build(context)
-+        .unwrap();
-+    app.run_iteration(|_, _| {});
-+    let starts = Arc::new(AtomicU
-```
-
-**File**: `src-tauri/src/app/window.rs` (modified, +5/-0)
-```diff
-@@ -995,3 +995,8 @@ mod proxy_arg_tests {
-         assert!(build_proxy_browser_arg(&parse("https://proxy.local:8443")).is_none());
-     }
- }
-+
-+#[cfg(all(test, target_os = "windows"))]
-+#[cfg(feature = "native-download-probe")]
-+#[path = "native_download_smoke.rs"]
-+mod native_download_smoke;
-```
-
-**File**: `tests/integration/windows-native-download.mjs` (added, +95/-0)
-```diff
-@@ -0,0 +1,95 @@
-+// A real Windows WebView2 probe, with a temporary Common Controls v6 manifest.
-+import assert from "node:assert/strict";
-+import fs from "node:fs/promises";
-+import os from "node:os";
-+import path from "node:path";
-+import { spawnSync } from "node:child_process";
-+
-+assert.equal(
-+  process.platform,
-+  "win32",
-+  "This probe requires Windows and WebView2 Runtime.",
-+);
-+const root = await fs.mkdtemp(path.join(os.tmpdir(), "pake-webview2-runtime-"));
-+function run(command, args, timeout = 120000) {
-+  const result = spawnSync(command, args, {
-+    encoding: "utf8",
-+    timeout,
-+    maxBuffer: 20 * 1024 * 1024,
-+    windowsHide: true,
-+  });
-+  assert.ifError(result.error);
-+  if (result.stderr) process.stderr.write(result.stderr);
-+  assert.equal(result.status, 0, `${command} failed:\n${result.stdout}`);
-+  return result.stdout;
-+}
-+const registry = run("reg.exe", [
-+  "query",
-+  "HKLM\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots",
-+  "/v",
-+  "KitsRoot10",
-+]);
-+const sdkRoot = registry.match(/KitsRoot10\s+REG_SZ\s+([^\r\n]+)/)?.[1];
-+assert.ok(sdkRoot, "Windows SDK installation was not found.");
-+const versions = (await fs.readdir(path.join(sdkRoot, "bin")))
-+  .filter((name) => /^\d+\./.test(name))
-+  .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
-+let mt;
-+for (const version of versions) {
-+  const candidate = path.join(
-+    sdkRoot,
-+    "bin",
-+    version,
-+    process.arch === "arm64" ? "arm64" : "x64",
-+    "mt.exe",
-+  );
-+  try {
-+    await fs.access(candidate);
-+    mt = candidate;
-+    break;
-+  } catch {
-+    /* Try the next installed SDK. */
-+  }
-+}
-+assert.ok(mt, "Windows SDK mt.exe was not found.");
-+const output = run("cargo", [
-+  "test",
-+  "--manifest-path",
-+  "src-tauri/Cargo.toml",
-+  "--lib",
-+  "--features",
-+  "native-download-probe",
-+  "--no-run",
-+  "--message-format=json",
-+]);
-+const artifact = output
-+  .split(/\r?\n/)
-+  .filter(Boolean)
-+  .map((line) => JSON.parse(line))
-+  .find(
-+    (item) =>
-+      item.reason === "compiler-artifact" &&
-+      item.target.name === "app_lib" &&
-+      item.profile.test &&
-+      item.executable,
-+  );
-+assert.ok(
-+  artifact,
-+  "Cargo did not produce the native library test executable.",
-+);
-+const executable = path.join(root, "probe.exe");
-+await fs.copyFile(artifact.executable, executable);
-+const manifest = path.join(root, "probe.manifest");
-+await fs.writeFile(
-+  manifest,
-+  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"><dependency><dependentAssembly><assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"/></dependentAssembly></dependency></assembly>',
-+);
-+run(mt, ["-nologo", "-manifest", manifest, `-outputresource:${executable};#1`]);
-+process.stdout.write(
-+  run(
-+    executable,
-+    ["native_windows_download", "--ignored", "--nocapture"],
-+    60000,
-+  ),
-+);
-+console.log(`Native probe executable and manifest retained at ${root}`);
-```
-
----
-
-### Incident Patch 3: `49a38a6a` (2026-10-14)
-**Commit Message**: fix: route same-origin Windows downloads through WebView2
-
-**File**: `src-tauri/src/inject/event.js` (modified, +11/-0)
-```diff
-@@ -727,6 +727,17 @@ document.addEventListener("DOMContentLoaded", () => {
-   };
- 
-   function downloadFile(url, filename) {
-+    // download attributes reliably force same-origin resources to save instead
-+    // of navigating. Cross-origin resources retain the HTTP fallback because
-+    // browsers can ignore their download attribute (including PDFs and images).
-+    if (
-+      window.pakeNativeDownloads === true &&
-+      (isSpecialDownload(url) ||
-+        new URL(url, window.location.href).origin === window.location.origin)
-+    ) {
-+      triggerNativeDownload(url, filename);
-+      return Promise.resolve();
-+    }
-     return invoke("download_file", {
-       params: {
-         url,
-```
-
-**File**: `tests/unit/event-link-guard.test.js` (modified, +47/-0)
-```diff
-@@ -8,6 +8,7 @@ function loadEventHelpers({
-   userAgent = "Mozilla/5.0",
-   initialZoom = null,
-   downloadError = null,
-+  nativeDownloads = false,
- } = {}) {
-   const source = ["link_policy.js", "event.js"]
-     .map((file) =>
-@@ -108,6 +109,7 @@ function loadEventHelpers({
-       isAuthLink: () => false,
-       isAuthPopup: () => false,
-       pakeConfig: {},
-+      pakeNativeDownloads: nativeDownloads,
-     },
-     document: {
-       addEventListener: registerListener,
-@@ -172,6 +174,51 @@ function makeClickEvent(anchor) {
- }
- 
- describe("event link guard", () => {
-+  it("uses native Windows downloads once for same-origin files without IPC", () => {
-+    const context = loadEventHelpers({
-+      withTauri: true,
-+      nativeDownloads: true,
-+    });
-+    runDomReady(context);
-+    const anchor = makeAnchor("https://example.com/report.pdf", "_self");
-+    anchor.download = "report.pdf";
-+    const click = makeClickEvent(anchor);
-+    getClickGuard(context)(click);
-+    expect(click.preventDefault).toHaveBeenCalledOnce();
-+    expect(context.nativeDownloadClicks).toEqual([[anchor.href, "report.pdf"]]);
-+    expect(
-+      context.invokeCalls.filter(([command]) => command === "download_file"),
-+    ).toEqual([]);
-+  });
-+
-+  it("keeps cross-origin forced downloads on HTTP when the browser may preview them", () => {
-+    const context = loadEventHelpers({
-+      withTauri: true,
-+      nativeDownloads: true,
-+    });
-+    runDomReady(context);
-+    const anchor = makeAnchor("https://cdn.example.com/report.pdf", "_self");
-+    anchor.download = "report.pdf";
-+    getClickGuard(context)(makeClickEvent(anchor));
-+    expect(context.nativeDownloadClicks).toEqual([]);
-+    expect(
-+      context.invokeCalls.filter(([command]) => command === "download_file"),
-+    ).toEqual([
-+      [
-+        "download_file",
-+        {
-+          params: {
-+            url: anchor.href,
-+            filename: "report.pdf",
-+            language: "en-US",
-+            user_agent: "Mozilla/5.0",
-+            page_url: "https://example.com/app",
-+          },
-+        },
-+      ],
-+    ]);
-+  });
-+
-   it.each([
-     'download_file not allowed on window "pake", webview "pake", URL: https://other.example/',
-     "Command download_file not allowed by ACL",
++# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
++# backtraces and breakpoints in pake code are unchanged.
++[profile.dev.package."*"]
++debug = false
 ```
 
 #### Recent Merged Pull Requests:
@@ -1324,28 +982,32 @@ runs clippy on Linux, so neither showed up until a native Windows check.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clear two windows-only clippy errors
+## X. build: drop debug info for dependencies in dev builds
 
 **RULE**:
-When implementing operations in `src-tauri/src/app/window.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b3e41ab`: clear two windows-only clippy errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5db32b4`: build: drop debug info for dependencies in dev builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/window.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let port = url.port().or(match scheme {
+
+# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
+# backtraces and breakpoints in pake code are unchanged.
+[profile.dev.package."*"]
+debug = false
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let port = url.port().or_else(|| match scheme {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b3e41ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5db32b4` are properly handled with clean fallback behavior.

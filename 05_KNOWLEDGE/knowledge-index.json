@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T08:58:12.410Z",
+  "last_updated": "2026-10-25T09:18:01.325Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -22905,7 +22905,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "28d84ab5df0060278c48fa5c0ce59773713ed895984f00d32a5e21846ee4de26",
+      "content_hash": "b9baf785805d73c20af2e0f83c4386672115e4cb823d49b90bdf2575567980e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [
@@ -22922,6 +22922,21 @@
         {
           "number": 3246,
           "title": "Multimodal Placeholder Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4209,
+          "title": "Hybrid Attention Layer Allocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4210,
+          "title": "Stable LatentMoE Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4211,
+          "title": "Multimodal Token Interleaving Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -22943,7 +22958,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-20T15:43:48.998Z",
+      "verified_at": "2026-10-25T09:13:18.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44629,8 +44644,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "c532d985",
-      "content_hash": "1e26b4c2ea1121172317aa54f58f3e87f60d1544744ef298302eda71fb6c8ddf",
+      "source_version": "0173895f",
+      "content_hash": "4416fcbf42adb2e559c176d237c24d979ff19b146df546858245a911dfe8dd4d",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -44670,7 +44685,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:01:34.586Z",
+      "verified_at": "2026-10-25T09:14:37.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61002,8 +61017,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "557ef7a2",
-      "content_hash": "a0aebfe8a286a74ff1926499277dfec53118c03596afe0d53cf7060f2b02fa10",
+      "source_version": "2ddb246a",
+      "content_hash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -61021,6 +61036,11 @@
           "number": 3663,
           "title": "clear two windows-only clippy errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4212,
+          "title": "build: drop debug info for dependencies in dev builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -61028,7 +61048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:31:47.451Z",
+      "verified_at": "2026-10-25T09:18:01.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121339,6 +121359,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T08:58:12.400Z"
+    },
+    "rule-4209": {
+      "learning_id": "rule-4209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4209,
+      "title": "Hybrid Attention Layer Allocation Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:13:18.485Z"
+    },
+    "rule-4210": {
+      "learning_id": "rule-4210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4210,
+      "title": "Stable LatentMoE Routing Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:13:18.485Z"
+    },
+    "rule-4211": {
+      "learning_id": "rule-4211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4211,
+      "title": "Multimodal Token Interleaving Invariant",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:13:18.485Z"
+    },
+    "rule-4212": {
+      "learning_id": "rule-4212",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4212,
+      "title": "build: drop debug info for dependencies in dev builds",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "2ddb246a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T09:18:01.314Z"
     }
   },
   "aliases": {

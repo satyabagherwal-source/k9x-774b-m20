@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `c532d985`  
+> **Source Version**: `0173895f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:01:34.317Z  
+> **Timestamp**: 2026-10-25T09:14:37.119Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:01:34.143Z  
+> **Harvest Timestamp**: 2026-10-25T09:13:00.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3893 stars
+- **Stars / Engagement**: 3908 stars
 
 ---
 
@@ -2207,13 +2207,11 @@ export function AWSMachineRenderer({ data }: Props) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2236** (2026-10-25): **Live Traffic Source Selection**
+  *Symptoms*: ## Describe the bug and snapshot  Try the radar both v1.16 and v1.17 and face below issues. I have istio and hubble for my live traffic. If I select to Istio, then I could not choose back to hubble anymore.  ##   <img width="342" height="129" alt="Image" src="https://github.com/user-attachments/assets/a90bbf4c-d2c2-4814-8361-6dfb0e09e068" /> <img width="267" height="50" alt="Image" src="https://github.com/user-attachments/assets/36bbb5ef-63f3-4985-bb8b-ec2651ea569f" /> <img width="116" height="46" alt="Image" src="https://github.com/user-attachments/assets/cead954c-f945-46d0-bb47-47586dc16818" />  Can you guide how to do the selection. If this is a bug, can you help fix it.  Thanks a lot! 
+
 - **Issue #2158** (2026-10-21): **While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal**
   *Symptoms*: ## Describe the bug  While streaming a pod's logs, Radar stops receiving lines and prints `failed to create fsnotify watcher: too many open files` into the log pane / terminal.  The error is emitted by the Radar client process, not by the workload: the pod's own container logs are ECS JSON and contain no occurrence of `fsnotify` (checked across the last 5,000 lines).  It is not environmental resource exhaustion: at the moment of the failure Radar holds ~20 file descriptors and **zero** inotify file descriptors, against very high limits (details below), and creating inotify watchers succeeds from the same shell.  It has recurred across separate Radar process starts (i.e. it is not a one-off after a very long session).  ## To reproduce  1. On WSL2 (Ubuntu), with a kubeconfig pointing at a k3s cluster, start Radar:    `radar -prometheus-url https://<redacted>/api/prom -prometheus-header-from-env Authorization=RADAR_PROMETHEUS_AUTHORIZATION`    (the working directory is a Docker Desktop bind mount, i.e. a 9p filesystem) 2. Open a workload's **Logs** pane and stream a pod's logs (e.g. a Deployment's pod). 3. Log lines arrive normally for a while, then the pane stops updating and    `failed to create fsnotify watcher: too many open files` is printed.  ## Expected behavior  The log stream keeps following the pod without emitting a filesystem-watcher error, and opening/switching log streams does not consume or leak inotify watchers.  ## Screenshots  <!-- optional: the log pane showin
-
-- **Issue #2029** (2026-10-15): **AI panel scroll bug**
-  *Symptoms*: ## Describe the bug  The AI panel will not scroll to the end in the macOS 1.16.0 desktop app.  ## To reproduce  1. Open an AI investigation  2. Go to the Findings tab 3. Scroll to the bottom of the investigation text  ## Expected behavior  The entire context of the text is able to be scrolled.  ## Screenshots  https://github.com/user-attachments/assets/a20ccf83-efcd-4864-86a1-e0d18267cd5f  ## Additional context  Appears to be the same behavior as #1940 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for reporting and for the video - will review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2230,517 +2228,715 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b60573e` (2026-10-22)
-**Commit Message**: Enforce --disable-exec on the exec, debug and pod-file routes (#2269)
+### Incident Patch 1: `8c0cd526` (2026-10-22)
+**Commit Message**: get_runtime_versions: classify Node fixes by major, Rust as one line
 
-## Description
+ClassifyFix took every fixed version minus its last component as its
+release line. Node.js lines are majors with semver minors, so with
+fixed_in 22.23.4,24.22.1,26.12.1 a declared 22.12.0, 24.11.0 or 26.3.0
+came back branch_not_listed instead of declared_below_fix. Rust has a
+single release train, so 1.80.0 against a 1.82.0 fix had the same gap.
 
-`--disable-exec` hid the terminal and debug controls but didn't block
-them. The flag set the exec capability to `false`, so the UI stopped
-offering them, but no handler checked it. A direct request still opened
-a shell in a Pod, created a debug container or a privileged node debug
-Pod, or read files through exec.
+Release lines are now per runtime: Node uses the major, Rust one line,
+every other curated runtime is unchanged. Semver prereleases such as
+22.23.4-rc.1 parse and sit below their release; a prerelease of a later
+Node minor or Rust release is unparsed, since it may predate the fix.
 
-That matters most on a shared Radar without auth, where the flag is the
-only gate. There, anyone who can reach the UI could get a shell while
-the operator believed exec was off. With auth on, each user's Kubernetes
-RBAC still applied, but the operator's choice to turn exec off was
-ignored.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-With the flag set, these routes now return 403 `exec is disabled on this
-Radar instance (--disable-exec)`:
-
-- Pod terminal: `GET /api/pods/{ns}/{name}/exec`
-- Debug container: `POST /api/pods/{ns}/{name}/debug`
-- Node debug Pod: `POST /api/nodes/{name}/debug`. Cleanup (`DELETE`)
-stays available so an existing debug Pod can still be removed.
-- Pod file browser, which runs `ls`/`find`/`cat`/`tar` through exec:
-`GET .../files`, `GET .../file`, `GET .../files/download`, `POST
-.../files/save`
-
-The `create
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `docs/mcp.md` (modified, +1/-1)
 ```diff
-@@ -192,7 +192,7 @@ The table below covers common startup flags. See the [full CLI reference](https:
- | `--timeline-db` | `~/.radar/timeline.db` | Path to SQLite database (when using sqlite storage) |
- | `--timeline-max-size` | `1Gi` | Maximum SQLite DB + WAL size before pruning oldest events (e.g. `800Mi`, `8Gi`; `0` disables) |
- | `--history-limit` | `10000` | Maximum events to retain in timeline (memory only) |
--| `--disable-exec` | `false` | Disable terminal and debug shell |
-+| `--disable-exec` | `false` | Disable pod terminal, debug shells and pod file browsing |
- | `--disable-helm-write` | `false` | Disable Helm write operations |
- | `--disable-local-terminal` | `false` | Disable the host local terminal |
- | `--debug-image` | `busybox:latest` | Image for ephemeral debug containers and node debug pods. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
+@@ -567,7 +567,7 @@ For `get_cost` and `get_rightsizing`, see [Cost and rightsizing evidence limits]
+ | `get_workload_logs` | Aggregated logs from all pods of a workload (Deployment, StatefulSet, DaemonSet, Job, Argo Workflow). Without `grep`, auto-filters for diagnostic relevance; with `grep`, returns only matching timestamp-prefixed lines. | `kind` (required), `namespace` (required), `name` (required), `container` (optional), `tail_lines` (optional, default 100 per pod), `grep` (optional) |
+ | `get_cluster_audit` | `missingInputs`, when present, names unavailable inputs in the scan; zero findings do not establish that all checks passed. Static config posture — best-practice findings (Security / Reliability / Efficiency) with remediation. INDEPENDENT of operational health. Finding severity and the explicit `summary.critical`/`high`/`medium`/`low` counts are posture remediation priority; current built-in checks emit `high` or `medium`. For "what's broken right now?" use `issues`. | `namespace` (optional), `category` (optional), `severity` (optional: `critical`, `high`, `medium`, or `low`) |
+ | `get_cluster_upgrade_readiness` | Upgrade impact analysis for a target Kubernetes minor — the evidenced check catalog (version skew, removed/deprecated API usage across live manifests / Helm sources / API-server metrics, node runtime + cgroup evidence, drain feasibility, webhook readiness, release-specific config checks). The verdict is not a readiness guarantee: `unknown` checks had incomplete evidence, `coverage` states what the caller's RBAC could actually inspect, and `no_access` returns no verdict at all. Tier 1 is one row per check; `check=<id>` expands into findings with evidence + remediation, paged 25 at a time (`offset` + `scan_id` bind pages to one scan snapshot). Results are memoized ~60s per caller; `refresh=true` re-scans after a fix. Fix findings at the source `evidence.source` names — live objects via `patch_resource`/`apply_resource`, Helm findings in the chart, GitOps-managed resources in Git. | `target` (optional, default next minor), `check` (optional), `level` (optional: `blocker`, `warning`, `review`), `offset` (optional), `scan_id` (required when `offset` > 0), `refresh` (optional) |
+-| `get_runtime_versions` | Which running workloads use which runtime version, for runtime CVEs (PHP2Shell and the like). For each image a visible Pod runs, Radar reads the image config for the digest the Pod reports and the node's platform (manifest and config only, never layers) and returns the versions it declares: curated keys Docker official images set and images built `FROM` them inherit (`PHP_VERSION`, `NODE_VERSION`, `PYTHON_VERSION`, `GOLANG_VERSION`, `RUBY_VERSION`, `JAVA_VERSION`, `HTTPD_VERSION`, `NGINX_VERSION`, `TOMCAT_VERSION`, `PG_VERSION`, `REDIS_VERSION`, `MONGO_VERSION`, `MARIADB_VERSION`, `MYSQL_VERSION`, `RUST_VERSION`) plus the OCI `version` and `base.name` labels; no other env value is ever read. A declared version is what the image says, not proof of the binary, and runtimes installed from distro packages declare nothing here (Trivy reports cover those; use `search`). `fixed_in` classifies each version against the first fix on its branch (`8.3.36` covers 8.3.x, `17.6` covers 17.x): `declared_below_fix`, `declared_at_or_above_fix`, `branch_not_listed`, `unparsed`. An image `status` other than `ok` (`no_declaration`, `auth_required`, `not_found`, `rate_limited`, `blocked`, `error`, `not_checked`) means unknown, not absent. `resolvedFrom: spec` or `tag` means the kubelet reported no registry digest, so the image named in the Pod spec is shown without a fix verdict; `platformAssumed` means the node's platform wasn't readable and linux/amd64 was used, so no fix verdict is emitted. Missing runtime declarations stay visible as `no_declaration`, counted as unknown; unsupported or distro version formats remain `unparsed`. Only Pods the caller may list are read. Each image is looked up with its Pods' own pull secrets one at a time, then anonymously; node registry credentials are not used, so images pulled only with node identity may remain unreadable; Radar's own registry credentials are used only when Radar runs locally with auth off. A result read with a credential is cached for that credential only, an anonymous one for everyone. Credentialed lookups require HTTPS, including token exchanges and redirects. The call returns within a 40-second lookup budget. Registry use is bounded: at most 4 lookups run at once across callers and 200 attempts per call, 429s are not retried and pause that registry for 5 minutes, configs over 1 MiB are refused, and only the registry a Pod names may sit on a private or (outside the cluster) loopback address; link-local addresses, and redirects or token endpoints elsewhere on internal addresses, are refused. Behind an HTTP proxy, HTTPS goes through a CONNECT tunnel to the checked address; requests that can't be pinned that way are refused when Radar runs in-cluster. `fixe
 ```
 
-**File**: `cmd/desktop/main.go` (modified, +1/-1)
+**File**: `internal/images/runtime_inventory.go` (modified, +1/-1)
 ```diff
-@@ -65,7 +65,7 @@ func main() {
- 	debugEvents := flag.Bool("debug-events", false, "Enable verbose event debugging")
- 	fakeInCluster := flag.Bool("fake-in-cluster", false, "Simulate in-cluster mode for testing")
- 	disableHelmWrite := flag.Bool("disable-helm-write", false, "Simulate restricted Helm permissions")
--	disableExec := flag.Bool("disable-exec", false, "Simulate restricted exec permissions")
-+	disableExec := flag.Bool("disable-exec", false, "Disable pod exec: terminal, debug shells and pod file browsing")
- 	podShellDefault := flag.String("pod-shell-default", "", "Override the default pod exec shell command (runs as 'sh -c <value>'; empty = built-in bash -il → ash → sh cascade)")
- 	timelineStorage := flag.String("timeline-storage", fileCfg.TimelineStorageOr("memory"), "Timeline storage backend: memory, sqlite, or postgres")
- 	timelineDBPath := flag.String("timeline-db", fileCfg.TimelineDBPath, "Path to timeline database file (default: ~/.radar/timeline.db)")
+@@ -760,7 +760,7 @@ func shapeInventory(items []*work, results []configResult, opts InventoryOptions
+ 				// A tag resolved now may not be what runs: report what it
+ 				// declares, but don't call the workload fixed or not.
+ 				if runtime != "" && len(opts.FixedIn) > 0 && d.Runtime != "image" && w.resolvedFrom == "digest" && !w.platformAssumed {
+-					d.Fix, d.FixedIn = ClassifyFix(d.Version, opts.FixedIn)
++					d.Fix, d.FixedIn = ClassifyFix(d.Runtime, d.Version, opts.FixedIn)
+ 					if d.Fix == FixBelow {
+ 						rank = 0
+ 					}
 ```
 
-**File**: `cmd/explorer/main.go` (modified, +1/-1)
+**File**: `internal/images/runtime_inventory_test.go` (modified, +26/-0)
 ```diff
-@@ -118,7 +118,7 @@ func main() {
- 	debugEvents := flag.Bool("debug-events", false, "Enable verbose event debugging (logs all event drops)")
- 	fakeInCluster := flag.Bool("fake-in-cluster", false, "Simulate in-cluster mode for testing (shows kubectl copy buttons instead of port-forward)")
- 	disableHelmWrite := flag.Bool("disable-helm-write", false, "Simulate restricted Helm permissions (disables install/upgrade/rollback/uninstall)")
--	disableExec := flag.Bool("disable-exec", false, "Simulate restricted exec permissions (disables terminal, debug shell)")
-+	disableExec := flag.Bool("disable-exec", false, "Disable pod exec: terminal, debug shells and pod file browsing")
- 	disableLocalTerminal := flag.Bool("disable-local-terminal", false, "Disable the host local terminal")
- 	podShellDefault := flag.String("pod-shell-default", "", "Override the default pod exec shell command (runs as 'sh -c <value>'; empty = built-in bash -il → ash → sh cascade)")
- 	debugImage := flag.String("debug-image", fileCfg.DebugImage, "Image for ephemeral debug containers and node debug pods (empty = busybox:latest; point at a mirror for air-gapped/private-registry clusters)")
-```
-
-**File**: `internal/k8s/capabilities.go` (modified, +5/-1)
-```diff
-@@ -246,7 +246,8 @@ var (
- 
- 	// ForceDisableHelmWrite overrides the helmWrite capability to false (for dev testing)
- 	ForceDisableHelmWrite bool
--	// ForceDisableExec overrides the exec capability to false (for dev testing)
-+	// ForceDisableExec turns off exec (--disable-exec): the capability reports false
-+	// and the exec, debug and pod-file routes refuse requests.
- 	ForceDisableExec bool
- 	// ForceDisableLocalTerminal turns the local terminal off (--disable-local-terminal)
- 	ForceDisableLocalTerminal bool
-@@ -607,6 +608,9 @@ func CheckCapabilitiesForUser(ctx context.Context, username string, groups []str
- 	if ForceDisableHelmWrite {
- 		caps.HelmWrite = false
+@@ -169,6 +169,32 @@ func TestInventory_GroupsByRunningDigestAndClassifies(t *testing.T) {
  	}
-+	if ForceDisableExec {
-+		caps.Exec = false
-+	}
- 
- 	// Cache result
- 	userCapabilitiesCache.Store(identityKey, &userCapEntry{
-```
-
-**File**: `internal/server/actions.go` (modified, +5/-0)
-```diff
-@@ -142,6 +142,11 @@ func (s *Server) grantPermission(r *http.Request, g Grant) string {
- // grantDecision asks for g as the caller. Subresource answers are memoized on
- // the same per-user cache as canRead, keyed resource/subresource.
- func (s *Server) grantDecision(r *http.Request, g Grant) (bool, bool) {
-+	// --disable-exec is a definite no for every feature that runs commands in
-+	// Pods through this grant (database sessions and inspection, for example).
-+	if k8s.ForceDisableExec && g.Group == "" && g.Resource == "pods" && g.Subresource == "exec" {
-+		return false, true
-+	}
- 	if auth.UserFromContext(r.Context()) == nil {
- 		return localCanI(r.Context(), g)
- 	}
-```
-
-**File**: `internal/server/cnpg_service.go` (modified, +7/-0)
-```diff
-@@ -89,6 +89,13 @@ func (s *Server) cnpgReader(r *http.Request) *cnpgReadAdapter {
- 	}
- 	adapter.Clients.Proxy = cnpgRuntimeClient(adapter.config)
- 	adapter.Clients.Exec = cnpgsvc.NewExec(adapter.Clients.Typed, adapter.config)
-+	if k8s.ForceDisableExec {
-+		// Session reads and cancel/terminate actions run psql through this
-+		// client; a forbidden error surfaces as "exec denied" in both.
-+		adapter.Clients.Exec = func(context.Context, string, string, string, []string, string) ([]byte, error) {
-+			return nil, errExecDisabled
-+		}
-+	}
- 	current := func() bool { return operation != nil && operation.Err() == nil }
- 	boundBudget := func(ctx context.Context) *syncBudget {
- 		budget := newSyncBudget(ctx)
-```
-
-**File**: `internal/server/copy.go` (modified, +12/-0)
-```diff
-@@ -43,6 +43,9 @@ type PodFilesystem struct {
- // handlePodFileList lists files at a given path inside a pod container.
- // GET /api/pods/{ns}/{name}/files?container=X&path=/
- func (s *Server) handlePodFileList(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	if !s.requireConnected(w) {
- 		return
- 	}
-@@ -163,6 +166,9 @@ func (s *Server) listFilesWithLS(r *http.Request, namespace, podName, container,
- // handlePodFileDownload downloads a single file from a pod container.
- // GET /api/pods/{ns}/{name}/files/download?container=X&path=/some/file
- func (s *Server) handlePodFileDownload(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	src := s.openPodFileForRequest(w, r)
- 	if src == nil {
- 		return
-@@ -198,6 +204,9 @@ func (s *Server) handlePodFileDownload(w http.ResponseWriter, r *http.Request) {
- // fails, so the desktop app asks the backend to do the whole thing.
- // POST /api/pods/{ns}/{name}/files/save?container=X&path=/some/file
- func (s *Server) handlePodFileSave(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	if s.saveFileStreamFunc == nil {
- 		s.writeError(w, http.StatusNotFound, "not available")
- 		return
-@@ -1228,6 +1237,9 @@ func classifyOpenErrorForPreview(openErr *podFileOpenError) (int, string) {
- // and returns it in a JSON envelope for the inline viewer.
- // GET /api/pods/{ns}/{name}/file?container=X&path=/some/file
- func (s *Server) handlePodFilePreview(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	if !s.requireConnected(w) {
- 		return
- 	}
-```
-
-**File**: `internal/server/exec.go` (modified, +24/-0)
-```diff
-@@ -3,6 +3,7 @@ package server
- import (
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"log"
-@@ -276,8 +277,25 @@ func (t *terminalSizeQueue) Next() *remotecommand.TerminalSize {
- 	return &size
  }
  
-+// errExecDisabled reads as a Kubernetes "forbidden" so callers that classify
-+// exec failures treat it as a permission denial.
-+var errExecDisabled = errors.New("forbidden: exec is disabled on this Radar instance (--disable-exec)")
++func TestInventory_ClassifiesNodeByMajorLine(t *testing.T) {
++	const (
++		node22 = "docker.io/library/node@sha256:2222222222222222222222222222222222222222222222222222222222222222"
++		node25 = "docker.io/library/node@sha256:2525252525252525252525252525252525252525252525252525252525252525"
++	)
++	f := &fakeLookup{configs: map[string]*v1.ConfigFile{
++		refKey(t, node22): {Config: v1.Config{Env: []string{"NODE_VERSION=22.12.0"}}},
++		refKey(t, node25): {Config: v1.Config{Env: []string{"NODE_VERSION=25.1.0"}}},
++	}}
++	src := podSource(
++		runningPod("shop", "eol-1", "x86-node", "eol", map[string][2]string{"node": {"node:25", node25}}),
++		runningPod("shop", "api-1", "x86-node", "api", map[string][2]string{"node": {"node:22", node22}}),
++	)
++	got := fakeInventory(f).Inventory(context.Background(), src, InventoryOptions{Runtime: "node", FixedIn: []string{"22.23.4", "24.22.1", "26.12.1"}})
 +
-+// requireExecEnabled rejects routes that run commands in Pods or start debug
-+// shells when the operator started Radar with --disable-exec.
-+func (s *Server) requireExecEnabled(w http.ResponseWriter) bool {
-+	if k8s.ForceDisableExec {
-+		s.writeError(w, http.StatusForbidden, "exec is disabled on this Radar instance (--disable-exec)")
-+		return false
++	if got.Totals.BelowFix != 1 || len(got.Images) != 2 {
++		t.Fatalf("totals = %+v, images = %+v", got.Totals, got.Images)
 +	}
-+	return true
++	if d := got.Images[0].Declared; len(d) != 1 || d[0].Version != "22.12.0" || d[0].Fix != FixBelow || d[0].FixedIn != "22.23.4" {
++		t.Fatalf("first image must be the one below its major's fix: %+v", d)
++	}
++	if d := got.Images[1].Declared; len(d) != 1 || d[0].Version != "25.1.0" || d[0].Fix != FixBranchUnknown {
++		t.Fatalf("an unfixed end-of-life major stays unlisted: %+v", d)
++	}
 +}
 +
- // handlePodExec handles WebSocket connections for pod exec
- func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	namespace := chi.URLParam(r, "namespace")
- 	podName := chi.URLParam(r, "name")
- 	container := r.URL.Query().Get("container")
-@@ -601,6 +619,9 @@ type NodeDebugResponse struct {
- 
- // handleNodeDebug creates a privileged debug pod on a node
- func (s *Server) handleNodeDebug(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	if !s.requireConnected(w) {
- 		return
- 	}
-@@ -711,6 +732,9 @@ type DebugContainerResponse struct {
- 
- // handleCreateDebugContainer creates an ephemeral debug container in a pod
- func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Request) {
-+	if !s.requireExecEnabled(w) {
-+		return
-+	}
- 	namespace := chi.URLParam(r, "namespace")
- 	podName := chi.URLParam(r, "name")
- 
+ func TestInventory_SpecDigestIsNotProofOfWhatRuns(t *testing.T) {
+ 	f := &fakeLookup{configs: map[string]*v1.ConfigFile{refKey(t, phpDigest): phpConfig("8.3.36")}}
+ 	got := fakeInventory(f).Inventory(context.Background(), podSource(
 ```
 
----
-
-### Incident Patch 2: `a734d72d` (2026-10-22)
-**Commit Message**: Image inspection: require a Pod when auth is on (#2270)
-
-## Description
-
-With auth on, the image inspection routes (`/api/images/metadata`,
-`/api/images/inspect`, `/api/images/file`) still accepted requests that
-named no Pod. These ran anonymously, but Radar still connected to
-whatever host the `image` parameter named, from inside the cluster
-network. For example, `image=10.0.0.5:8080/x` made Radar send `GET /v2/`
-to that internal address, and the returned status (404, 401 or 500)
-showed whether something listens there. Any signed-in user could use
-Radar to probe internal hosts and ports.
-
-With auth on, the routes now require `pod` and `namespace` and return
-400 otherwise. The existing rule then applies: the caller must be able
-to `get` that Pod, and the image must be one it runs. So the registry
-host is always one the cluster already pulls from.
-
-**UI:** the Pod view always passes its Pod, so it's unchanged. The
-batch-execution view browses a template's image with no Pod; with auth
-on it no longer offers the image browser, since the request would be
-refused. With auth off, nothing changes.
-
-## Type of change
-
-- [x] Bug fix (non-breaking change that fixes an issue)
-
-## How has this
-
-**File**: `docs/authentication.md` (modified, +3/-3)
+**File**: `internal/images/runtimes.go` (modified, +27/-11)
 ```diff
-@@ -37,9 +37,9 @@ Deletion-impact previews require read access to the root resource and use the ca
- ### Image inspection
+@@ -105,13 +105,20 @@ const (
+ var (
+ 	leadingVersion = regexp.MustCompile(`(?i)^(?:v|jdk-)?(\d+(?:\.\d+)*)(.*)$`)
+ 	// prerelease marks a version that comes before its numeric release
+-	// (8.3.36RC1, 8.3.36-dev, 8.3.36~rc1, 21.0.5-ea+7), so it lacks that
+-	// release's fix.
+-	prerelease = regexp.MustCompile(`(?i)^[-~._]?(rc|alpha|beta|dev|pre|ea|nightly|snapshot|canary|internal|a|b)\d*(\+[0-9A-Za-z.-]+)?$`)
++	// (8.3.36RC1, 8.3.36-dev, 8.3.36~rc1, 21.0.5-ea+7, 22.23.4-rc.1), so it
++	// lacks that release's fix.
++	prerelease = regexp.MustCompile(`(?i)^[-~._]?(rc|alpha|beta|dev|pre|ea|nightly|snapshot|canary|internal|a|b)(\.?\d+)?(\+[0-9A-Za-z.-]+)?$`)
+ 	// Distro revisions require package-specific comparison and backport data.
+ 	finalSuffix = regexp.MustCompile(`^(\+[0-9A-Za-z.-]+)?$`)
+ )
  
- Authenticated requests (proxy, OIDC, or Radar Cloud) to `/api/images/metadata`,
--`/api/images/inspect`, and `/api/images/file` without a `pod` use anonymous-only
--registry access. If a `pod` is given, `namespace` is required, the caller must
--have `get pods` in that namespace, and the image must match a
-+`/api/images/inspect`, and `/api/images/file` must name a `pod` and `namespace`
-+(400 otherwise), so Radar only contacts the registry of an image a Pod runs. The
-+caller must have `get pods` in that namespace, and the image must match a
- regular, init, or ephemeral container's spec image or status imageID digest reference.
- Authorization failures deny access; an unavailable authorization check returns 503.
- Registry credentials come from that Pod's `spec.imagePullSecrets`, each used only
-```
-
-**File**: `internal/images/handlers.go` (modified, +7/-8)
-```diff
-@@ -156,8 +156,8 @@ func (h *Handlers) handleGetFile(w http.ResponseWriter, r *http.Request) {
- 	}
++// releaseLineLength sets how many leading components of a fixed version name
++// its branch, for runtimes whose release lines aren't "all but the last
++// component". A Node.js line is a major with semver minors, so 22.23.4 fixes
++// 22.x; Rust ships one stable train with no maintained older lines, so 1.82.0
++// fixes every earlier version.
++var releaseLineLength = map[string]int{"node": 1, "rust": 0}
++
+ func ValidateRuntimeQuery(runtime string, fixedIn []string) error {
+ 	if runtime == "image" && len(fixedIn) > 0 {
+ 		return fmt.Errorf("fixed_in requires a runtime such as php or node; image labels are not runtime fix evidence")
+@@ -139,14 +146,15 @@ func ValidateRuntimeQuery(runtime string, fixedIn []string) error {
+ 	return nil
  }
  
--// inspectionRequest limits authenticated inspection to anonymous access or
--// authorized pull secrets from a readable Pod that uses the requested image.
-+// inspectionRequest limits authenticated inspection to an image a readable Pod
-+// runs, with only the credentials that caller may use.
- func (h *Handlers) inspectionRequest(w http.ResponseWriter, r *http.Request, image string) (InspectRequest, bool) {
- 	req := InspectRequest{
- 		Image:     image,
-@@ -174,12 +174,11 @@ func (h *Handlers) inspectionRequest(w http.ResponseWriter, r *http.Request, ima
- 		return req, true
+-// ClassifyFix compares a declared version against fixed releases. A fixed
+-// version's branch is everything but its last component (8.3.36 → 8.3,
+-// 17.6 → 17; a one-part fix is its own branch); a declared version is
+-// compared with the earliest fix on the longest branch it falls in. Only
+-// upstream versions with up to three numeric components, known prereleases
+-// and build metadata are supported; distro revisions stay unparsed.
++// ClassifyFix compares a declared version of runtime against fixed releases.
++// A fixed version's branch is everything but its last component (8.3.36 →
++// 8.3, 17.6 → 17; a one-part fix is its own branch) unless releaseLineLength
++// says otherwise for the runtime; a declared version is compared with the
++// earliest fix on the longest branch it falls in. Only upstream versions with
++// up to three numeric components, known prereleases and build metadata are
++// supported; distro revisions stay unparsed.
+ // It returns the classification and the fixed version used.
+-func ClassifyFix(version string, fixedIn []string) (string, string) {
++func ClassifyFix(runtime, version string, fixedIn []string) (string, string) {
+ 	got, rest := parseVersionRest(version)
+ 	if got == nil || len(got) > 3 || (!finalSuffix.MatchString(rest) && !prerelease.MatchString(rest)) {
+ 		return FixUnparsed, ""
+@@ -160,7 +168,11 @@ func ClassifyFix(version string, fixedIn []string) (string, string) {
+ 			return FixUnparsed, ""
+ 		}
+ 		// A one-part fix ("17") covers its own major.
+-		branch := fixed[:max(len(fixed)-1, 1)]
++		line := max(len(fixed)-1, 1)
++		if n, ok := releaseLineLength[runtime]; ok {
++			line = n
++		}
++		branch := fixed[:line]
+ 		if len(got) < len(branch) || !hasPrefix(got, branch) {
+ 			continue
+ 		}
+@@ -182,6 +194,10 @@ func ClassifyFix(version string, fixedIn []string) (string, string) {
+ 		// The fixed version with a suffix this can't read: it may be a
+ 		// pre-release build without the fix.
+ 		return FixUnparsed, bestRaw
++	case prerelease.MatchString(rest) && !hasPrefix(got, best[:max(len(best)-1, 1)]):
++		// Past the fix's own patch line (a later Node minor, a later Rust
++		// release), a prerelease may have been cut before the fix landed.
++		return FixUnparsed, bestRaw
  	}
- 
--	if req.PodName == "" {
--		req.keychain = &pullSecretKeychain{}
--		return req, true
--	}
--	if req.Namespace == "" {
--		writeError(w, http.StatusBadRequest, "namespace parameter is required when pod is given")
-+	// Without a Pod the caller could name any host and have Radar connect to
-+	// it from inside the cluster network. Binding every authenticated request
-+	// to a Pod they can read limits the registry host to that Pod's image.
-+	if req.PodName == "" || req.Namespace == "" {
-+		writeError(w, http.StatusBadRequest, "pod and namespace are required when authentication is enabled")
- 		return req, false
- 	}
- 	if h.authorize == nil {
+ 	return FixAtOrAbove, bestRaw
+ }
 ```
 
-**File**: `internal/images/handlers_test.go` (modified, +15/-30)
+**File**: `internal/images/runtimes_test.go` (modified, +47/-1)
 ```diff
-@@ -110,7 +110,7 @@ func TestImageRoutesAuthenticatedGuard(t *testing.T) {
- 			want                        int
- 			message                     string
- 		}{
--			{"missing namespace", "", "app", "gcr.io/project/app:v1", true, true, 400, "namespace parameter is required"},
-+			{"missing namespace", "", "app", "gcr.io/project/app:v1", true, true, 400, "pod and namespace are required"},
- 			{"denied", "team", "app", "gcr.io/project/app:v1", false, true, 403, "rbac_denied: requires get pods in namespace team"},
- 			{"check failed", "team", "app", "gcr.io/project/app:v1", false, false, 503, "Could not authorize"},
- 			{"non-authoritative allow", "team", "app", "gcr.io/project/app:v1", true, false, 503, "Could not authorize"},
-@@ -394,37 +394,22 @@ func TestImageRoutesExecHolderUsesAmbientCredentials(t *testing.T) {
+@@ -105,9 +105,55 @@ func TestClassifyFix(t *testing.T) {
+ 		{"8.3.38", []string{"8.3.36", "8.3.40"}, FixAtOrAbove, "8.3.36"},
  	}
- }
- 
--func TestImageRoutesAuthenticatedWithoutPodAnonymousOnly(t *testing.T) {
--	imageTestCache(t, imageTestPod(), imageTestSecret("team", "pod-secret", "gcr.io", "pod-user"))
--	dockerDir := t.TempDir()
--	t.Setenv("DOCKER_CONFIG", dockerDir)
--	if err := os.WriteFile(filepath.Join(dockerDir, "config.json"), []byte(`{"auths":{"gcr.io":{"auth":"YW1iaWVudDpzZWNyZXQ="}}}`), 0600); err != nil {
--		t.Fatal(err)
--	}
--	previousGoogle := google.Keychain
--	google.Keychain = rejectingImageKeychain{t}
--	t.Cleanup(func() { google.Keychain = previousGoogle })
-+func TestImageRoutesAuthenticatedRequirePod(t *testing.T) {
- 	for _, route := range []string{"metadata", "inspect", "file"} {
--		for _, namespace := range []string{"", "team"} {
--			f := &fakeImageInspector{check: func(req InspectRequest) {
--				if req.keychain == nil || len(req.PullSecretNames) != 0 {
--					t.Fatalf("expected explicit anonymous-only keychain: %+v", req)
--				}
--				assertImageCredentials(t, req.keychain, "gcr.io/project/app:v1", "")
-+		for _, q := range []url.Values{
-+			{"image": {"10.0.0.5:8080/x:1"}},
-+			{"image": {"10.0.0.5:8080/x:1"}, "namespace": {"team"}, "pullSecrets": {"pod-secret"}},
-+			{"image": {"10.0.0.5:8080/x:1"}, "pod": {"app"}},
-+		} {
-+			q.Set("path", "/file.txt")
-+			f := &fakeImageInspector{}
-+			h := &Handlers{inspector: f, authorize: func(*http.Request, string) (bool, bool) {
-+				t.Fatal("Pod authorization called without a Pod and namespace")
-+				return false, false
- 			}}
--			h := &Handlers{inspector: f,
--				authorize: func(*http.Request, string) (bool, bool) {
--					t.Fatal("Pod authorization called without Pod")
--					return false, false
--				},
--				authorizeSecret: func(*http.Request, string, string) (bool, bool) {
--					t.Fatal("Secret authorization called without Pod")
--					return false, false
--				},
--			}
--			w := serveImageTest(h, route, url.Values{"image": {"gcr.io/project/app:v1"}, "namespace": {namespace}, "pullSecrets": {"pod-secret"}, "path": {"/file.txt"}}, true)
--			if w.Code != 200 || f.calls != 1 {
--				t.Fatalf("got %d %s, calls=%d", w.Code, w.Body.String(), f.calls)
-+			w := serveImageTest(h, route, q, true)
-+			if w.Code != http.StatusBadRequest || f.calls != 0 {
-+				t.Fatalf("%s %v: got %d %s, calls=%d", route, q, w.Code, w.Body.String(), f.calls)
- 			}
+ 	for _, tc := range cases {
+-		got, against := ClassifyFix(tc.version, tc.fixedIn)
++		got, against := ClassifyFix("php", tc.version, tc.fixedIn)
+ 		if got != tc.want || against != tc.against {
+ 			t.Errorf("ClassifyFix(%q, %v) = %s against %q, want %s against %q", tc.version, tc.fixedIn, got, against, tc.want, tc.against)
  		}
  	}
+ }
++
++func TestClassifyFix_ReleaseLines(t *testing.T) {
++	node := []string{"22.23.4", "24.22.1", "26.12.1"}
++	cases := []struct {
++		runtime string
++		version string
++		fixedIn []string
++		want    string
++		against string
++	}{
++		{"node", "22.12.0", node, FixBelow, "22.23.4"},
++		{"node", "24.11.0", node, FixBelow, "24.22.1"},
++		{"node", "26.3.0", node, FixBelow, "26.12.1"},
++		{"node", "22.23.3", node, FixBelow, "22.23.4"},
++		{"node", "22.23.4-rc.1", node, FixBelow, "22.23.4"},
++		{"node", "v22.12.0", node, FixBelow, "22.23.4"},
++		{"node", "22.23.4", node, FixAtOrAbove, "22.23.4"},
++		{"node", "22.24.0", node, FixAtOrAbove, "22.23.4"},
++		{"node", "22.23.5-rc.1", node, FixAtOrAbove, "22.23.4"},
++		{"node", "22.24.0-rc.1", node, FixUnparsed, "22.23.4"},
++		{"node", "26.12.1", node, FixAtOrAbove, "26.12.1"},
++		{"node", "20.18.0", node, FixBranchUnknown, ""},
++		{"node", "25.1.0", node, FixBranchUnknown, ""},
++		{"node", "22", node, FixUnparsed, "22.23.4"},
++		{"rust", "1.80.0", []string{"1.82.0"}, FixBelow, "1.82.0"},
++		{"rust", "1.82.0-beta.3", []string{"1.82.0"}, FixBelow, "1.82.0"},
++		{"rust", "1.82.0", []string{"1.82.0"}, FixAtOrAbove, "1.82.0"},
++		{"rust", "1.83.1", []string{"1.82.0"}, FixAtOrAbove, "1.82.0"},
++		{"rust", "1.83.0-beta.1", []string{"1.82.0"}, FixUnparsed, "1.82.0"},
++		{"rust", "1.83.0-nightly", []string{"1.82.0"}, FixUnparsed, "1.82.0"},
++		{"rust", "1.77.1", []string{"1.78.0", "1.77.2"}, FixBelow, "1.77.2"},
++		{"rust", "1.77.2", []string{"1.78.0", "1.77.2"}, FixAtOrAbove, "1.77.2"},
++		// Every other runtime keeps all-but-last-component branches.
++		{"python", "3.12.4", []string{"3.12.7", "3.13.1"}, FixBelow, "3.12.7"},
++		{"python", "3.11.9", []string{"3.12.7", "3.13.1"}, FixBranchUnknown, ""},
++		{"go", "1.22.5", []string{"1.23.4"}, FixBranchUnknown, ""},
++		{"php", "8.3.36-rc.1", []string{"8.3.36"}, FixBelow, "8.3.36"},
++		{"postgres", "16.4", []string{"17.6"}, FixBranchUnknown, ""},
++	}
++	for _, tc := range cases {
++		got, against := ClassifyFix(tc.runtime, tc.version, tc.fixedIn)
++		if got != tc.want || against != tc.against {
++			t.Errorf("ClassifyFix(%q, %q, %v) = %s against %q, want %s against %q", tc.runtime, tc.version, tc.fixedIn, got, against, tc.want, tc.against)
++		}
++	}
++}
 ```
 
-**File**: `internal/server/image_routes_test.go` (modified, +1/-1)
+**File**: `internal/mcp/tools_runtimes.go` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,7 @@ func TestImageRoutesPodAuthorization(t *testing.T) {
- 			name, query, user, message string
- 			status                     int
- 		}{
--			{"missing namespace", "&pod=app", "denied", "namespace parameter is required", 400},
-+			{"missing namespace", "&pod=app", "denied", "pod and namespace are required", 400},
- 			{"get denied despite list allowed", "&namespace=team&pod=app", "denied", "rbac_denied: requires get pods in namespace team", 403},
- 			{"check failed", "&namespace=team&pod=app", "check-error", "Could not authorize get pods", 503},
- 		} {
-```
-
-**File**: `web/src/components/execution/BatchExecutionView.tsx` (modified, +6/-2)
-```diff
-@@ -26,6 +26,7 @@ import type { WorkloadPodInfo } from '../../types'
- import { getScaledJobStatus } from '../resources/resource-utils-keda'
- import { Tooltip } from '../ui/Tooltip'
- import { ImageFilesystemModal } from '../resources/ImageFilesystemModal'
-+import { useIsAuthEnabled } from '../../contexts/CapabilitiesContext'
- import { executionDefinitionDiffers, executionDefinitionSummary, type ExecutionDefinitionSummary, type ExecutionUnitSummary } from './execution-definition'
- import { batchRunHasContainerOutcome, batchRunNextStep, isFailedRunPhase, type BatchRunNextStep } from './batch-run-actions'
- import { JobSetAdmission } from './JobSetAdmission'
-@@ -731,18 +732,21 @@ function ExecutionDefinitionDetails({ summary, namespace, compact = false }: { s
- 
- function ExecutionUnitDetails({ unit, namespace, pullSecrets, compact }: { unit: ExecutionUnitSummary; namespace: string; pullSecrets: string[]; compact: boolean }) {
-   const [browseImage, setBrowseImage] = useState(false)
-+  const authEnabled = useIsAuthEnabled()
-+  // With auth on, images are browsed through a Pod; a template has none.
-+  const canBrowseImage = !authEnabled
-   return (
-     <>
-       <div className={clsx(!compact && 'rounded-md bg-theme-elevated/40 px-3 py-2')}>
-         {!compact && <div className="mb-1 flex items-center justify-between gap-3"><span className="truncate text-xs font-medium text-theme-text-primary">{unit.name}</span><span className="text-[10px] uppercase tracking-wide text-theme-text-tertiary">{unit.type}</span></div>}
-         <div className="space-y-1">
--          {unit.image && <DefinitionFact label="Image" value={unit.image} mono onClick={() => setBrowseImage(true)} tooltip="Browse image filesystem from registry" />}
-+          {unit.image && <DefinitionFact label="Image" value={unit.image} mono onClick={canBrowseImage ? () => setBrowseImage(true) : undefined} tooltip={canBrowseImage ? 'Browse image filesystem from registry' : undefined} />}
-           {unit.command && <DefinitionFact label="Command" value={unit.command} mono />}
-           {!compact && unit.requests && <DefinitionFact label="Requests" value={unit.requests} />}
-           {!compact && unit.limits && <DefinitionFact label="Limits" value={unit.limits} />}
-         </div>
-       </div>
--      {unit.image && (
-+      {unit.image && canBrowseImage && (
-         <ImageFilesystemModal
-           open={browseImage}
-           onClose={() => setBrowseImage(false)}
-```
-
-**File**: `web/src/components/resources/ImageFilesystemModal.test.tsx` (modified, +0/-12)
-```diff
-@@ -47,18 +47,6 @@ it.each([true, false])('shows private-image guidance for authEnabled=%s', async
-   }
- })
- 
--it('shows anonymous-only guidance in auth mode without a Pod', async () => {
--  state.authEnabled = true
--  root = createRoot(document.createElement('div'))
--  await act(async () => {
--    root.render(<ImageFilesystemModal open onClose={() => {}} image="gcr.io/project/app:v1" namespace="team" podName="" pullSecrets={[]} />)
--  })
--  const text = document.body.textContent || ''
--  expect(text).toContain("This view reads images anonymously. Open the image from its Pod to use the Pod's pull secrets.")
--  expect(text).not.toContain("Private images are read with the Pod's imagePullSecrets")
--  expect(text).not.toContain('gcloud')
--})
--
- it.each([true, false])('shows download confirmation for authEnabled=%s', async (authEnabled) => {
-   state.authEnabled = authEnabled
-   state.showMetadata = true
-```
-
-**File**: `web/src/components/resources/ImageFilesystemModal.tsx` (modified, +2/-8)
-```diff
-@@ -204,7 +204,6 @@ export function ImageFilesystemModal({
-             <AuthenticationHelp
-               image={image}
-               registryType={registryType}
--              hasPod={!!podName}
-               onRetry={() => refetchMetadata()}
-             />
-           )}
-@@ -416,11 +415,10 @@ function DownloadConfirmation({ metadata, onConfirm, onCancel }: DownloadConfirm
- interface AuthenticationHelpProps {
-   image: string
-   registryType?: string
--  hasPod: boolean
-   onRetry: () => void
+@@ -18,7 +18,7 @@ import (
+ type runtimeVersionsInput struct {
+ 	Namespace string `json:"namespace,omitempty" jsonschema:"limit to one namespace; omit for every namespace you can list Pods in"`
+ 	Runtime   string `json:"runtime,omitempty" jsonschema:"keep images declaring this runtime (php, node, python, go, ruby, java, nginx, postgres, …) plus unreadable ones"`
+-	FixedIn   string `json:"fixed_in,omitempty" jsonschema:"first fixed release per branch, comma-separated, e.g. 8.2.35,8.3.36"`
++	FixedIn   string `json:"fixed_in,omitempty" jsonschema:"first fix per branch (node: per major), comma-separated, e.g. 8.2.35,8.3.36"`
+ 	Limit     int    `json:"limit,omitempty" jsonschema:"max images (default 50, max 200); below-fix first"`
  }
  
--function AuthenticationHelp({ image, registryType, hasPod, onRetry }: AuthenticationHelpProps) {
-+function AuthenticationHelp({ image, registryType, onRetry }: AuthenticationHelpProps) {
-   const authEnabled = useIsAuthEnabled()
-   const [copied, setCopied] = useState(false)
-   const [retrying, setRetrying] = useState(false)
-@@ -495,11 +493,7 @@ function AuthenticationHelp({ image, registryType, hasPod, onRetry }: Authentica
-       {/* Explanation */}
-       <p className="text-xs text-theme-text-tertiary text-center max-w-md mb-6">
-         {authEnabled ? (
--          hasPod ? (
--            <>Private images need exec access to the Pod, or read access to its imagePullSecrets. Exec access also lets Radar use its own registry credentials.</>
--          ) : (
--            <>This view reads images anonymously. Open the image from its Pod to use the Pod's pull secrets.</>
--          )
-+          <>Private images need exec access to the Pod, or read access to its imagePullSecrets. Exec access also lets Radar use its own registry credentials.</>
-         ) : (
-           <>Radar uses your local Docker credentials (<span className="font-mono">~/.docker/config.json</span>).
-           Run the command above in your terminal, then click Retry.</>
 ```
 
 ---
 
-### Incident Patch 3: `c532d985` (2026-10-22)
-**Commit Message**: Use the resource response envelope in the Argo browser fixture
+### Incident Patch 2: `d5f37ac9` (2026-10-25)
+**Commit Message**: fix(traffic): keep source picker available when connection fails
 
-**File**: `web/e2e/settings-connections.spec.ts` (modified, +1/-1)
+Keep traffic source switching available after connection failures, alongside retry.
+
+**File**: `web/src/components/traffic/TrafficSourcePill.test.tsx` (added, +110/-0)
 ```diff
-@@ -1531,7 +1531,7 @@ test('contextual Argo health and diff preserve benefits and open Argo settings',
-   const state = await contextualFixture(page)
-   const resource = { apiVersion: 'argoproj.io/v1alpha1', kind: 'Application', metadata: { name: 'storefront', namespace: 'argocd' }, spec: { destination: { namespace: 'default' } }, status: { health: { status: 'Degraded' }, sync: { status: 'OutOfSync' } } }
-   const root = { id: 'app/storefront', ref: { kind: 'Application', namespace: 'argocd', name: 'storefront' }, role: 'root', tool: 'argocd', resource }
--  await page.route('**/api/resources/applications/argocd/storefront*', route => route.fulfill({ json: resource }))
-+  await page.route('**/api/resources/applications/argocd/storefront*', route => route.fulfill({ json: { resource, relationships: {} } }))
-   await page.route('**/api/gitops/tree/applications/argocd/storefront*', route => route.fulfill({ json: { root, nodes: [root], edges: [] } }))
-   await page.route('**/api/gitops/insights/applications/argocd/storefront*', route => route.fulfill({ json: {
-     summary: { tool: 'argocd', kind: 'Application', namespace: 'argocd', name: 'storefront', health: 'Degraded', resourceHealthMode: 'appTree' },
+@@ -0,0 +1,110 @@
++// @vitest-environment jsdom
++import { act, type ComponentProps } from 'react'
++import { createRoot, type Root } from 'react-dom/client'
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
++import { TrafficSourcePill } from './TrafficSourcePill'
++
++Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
++
++type Props = ComponentProps<typeof TrafficSourcePill>
++
++const props = (overrides: Partial<Props>): Props => ({
++  sources: ['hubble', 'istio'],
++  active: 'istio',
++  connection: 'connected',
++  onSwitch: vi.fn(),
++  onRetry: vi.fn(),
++  ...overrides,
++})
++
++let container: HTMLDivElement
++let root: Root
++
++beforeEach(() => {
++  container = document.createElement('div')
++  document.body.appendChild(container)
++  root = createRoot(container)
++})
++
++afterEach(() => {
++  act(() => root.unmount())
++  container.remove()
++})
++
++const render = (p: Props) => act(() => root.render(<TrafficSourcePill {...p} />))
++
++const button = (label: string) =>
++  Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.trim() === label)
++
++const open = () => act(() => button('istio')!.click())
++
++describe('TrafficSourcePill', () => {
++  it('switches source from the picker when connected', () => {
++    const p = props({})
++    render(p)
++    open()
++    act(() => button('hubble')!.click())
++    expect(p.onSwitch).toHaveBeenCalledWith('hubble')
++  })
++
++  it('keeps the picker available when the active source failed to connect', () => {
++    const p = props({ connection: 'error' })
++    render(p)
++    open()
++    act(() => button('hubble')!.click())
++    expect(p.onSwitch).toHaveBeenCalledWith('hubble')
++  })
++
++  it('offers retry next to the picker on error', () => {
++    const p = props({ connection: 'error' })
++    render(p)
++    act(() => button('retry')!.click())
++    expect(p.onRetry).toHaveBeenCalledTimes(1)
++    expect(button('istio')).toBeDefined()
++  })
++
++  it('does not switch when the active source is picked again', () => {
++    const p = props({})
++    render(p)
++    open()
++    act(() => container.querySelector<HTMLButtonElement>('[role="option"][aria-selected="true"]')!.click())
++    expect(p.onSwitch).not.toHaveBeenCalled()
++  })
++
++  it('shows no picker with a single available source', () => {
++    render(props({ sources: ['istio'] }))
++    expect(container.querySelector('button[aria-haspopup]')).toBeNull()
++    expect(container.textContent).toContain('istio')
++  })
++
++  it('shows no picker or retry while connecting', () => {
++    render(props({ connection: 'connecting' }))
++    expect(container.textContent).toContain('Connecting...')
++    expect(container.querySelector('button')).toBeNull()
++  })
++
++  it('does not reopen the menu after a retry made without a mouse', () => {
++    const p = props({ connection: 'error' })
++    render(p)
++    open()
++    expect(container.querySelector('[role="listbox"]')).not.toBeNull()
++    act(() => button('retry')!.click())
++    render({ ...p, connection: 'connecting' })
++    render({ ...p, connection: 'connected' })
++    const menu = container.querySelector('[role="listbox"]')
++    expect(menu === null || menu.hasAttribute('inert')).toBe(true)
++    expect(button('istio')!.getAttribute('aria-expanded')).toBe('false')
++  })
++
++  it('makes the menu inert while it animates closed, so its options cannot be activated', () => {
++    const p = props({})
++    render(p)
++    open()
++    expect(container.querySelector('[role="listbox"]')!.hasAttribute('inert')).toBe(false)
++    act(() => {
++      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
++    })
++    const closing = container.querySelector('[role="listbox"]')
++    expect(closing === null || closing.hasAttribute('inert')).toBe(true)
++  })
++})
+```
+
+**File**: `web/src/components/traffic/TrafficSourcePill.tsx` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++import { useEffect, useRef, useState } from 'react'
++import { clsx } from 'clsx'
++import { ChevronDown, Loader2 } from 'lucide-react'
++import { StatusDot, toneTextClass } from '@skyhook-io/k8s-ui'
++import { useAnimatedUnmount } from '../../hooks/useAnimatedUnmount'
++import { TRANSITION_MENU, overlayExitMs, overlayTransitionStyle } from '../../utils/animation'
++
++export type TrafficSourceConnectionState = 'connecting' | 'error' | 'connected'
++
++interface TrafficSourcePillProps {
++  sources: string[]
++  active: string
++  connection: TrafficSourceConnectionState
++  onSwitch: (name: string) => void
++  onRetry: () => void
++}
++
++// The picker is shown for every connection state except connecting: a source
++// that cannot connect is the case where the user most needs to pick another.
++export function TrafficSourcePill({ sources, active, connection, onSwitch, onRetry }: TrafficSourcePillProps) {
++  const [open, setOpen] = useState(false)
++  const pickerRef = useRef<HTMLDivElement>(null)
++  const canPick = sources.length > 1
++  const menuOpen = open && canPick && connection !== 'connecting'
++  const { shouldRender, isOpen } = useAnimatedUnmount(menuOpen, overlayExitMs('menu'))
++
++  // Capture phase so the handler runs before ReactFlow swallows the event.
++  useEffect(() => {
++    if (!open) return
++    const handler = (e: MouseEvent) => {
++      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
++        setOpen(false)
++      }
++    }
++    document.addEventListener('mousedown', handler, true)
++    return () => document.removeEventListener('mousedown', handler, true)
++  }, [open])
++
++  const choose = (name: string) => {
++    setOpen(false)
++    if (name !== active) onSwitch(name)
++  }
++
++  // Keyboard activation of retry fires no outside mousedown, so the menu has to
++  // be closed here or it would reappear once the attempt finishes.
++  const retry = () => {
++    setOpen(false)
++    onRetry()
++  }
++
++  return (
++    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-theme-surface/90 backdrop-blur border border-theme-border text-[11px]">
++      {connection === 'connecting' ? (
++        <>
++          <Loader2 className="h-3 w-3 animate-spin text-accent" />
++          <span className="text-accent">Connecting...</span>
++        </>
++      ) : (
++        <>
++          <StatusDot tone={connection === 'error' ? 'degraded' : 'healthy'} size="md" />
++          {canPick ? (
++            <div className="relative" ref={pickerRef}>
++              <button
++                type="button"
++                onClick={() => setOpen(!open)}
++                aria-haspopup="listbox"
++                aria-expanded={menuOpen}
++                className="flex items-center gap-1 text-theme-text-secondary hover:text-theme-text-primary"
++              >
++                {active} <ChevronDown className="h-3 w-3" />
++              </button>
++              {shouldRender && (
++                <div
++                  role="listbox"
++                  inert={!menuOpen || undefined}
++                  className={clsx(
++                    'absolute top-full left-0 mt-1 z-50 bg-theme-surface border border-theme-border rounded-md shadow-theme-lg py-1 min-w-[120px] origin-top-left',
++                    TRANSITION_MENU,
++                    isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.97]',
++                    !menuOpen && 'pointer-events-none',
++                  )}
++                  style={overlayTransitionStyle(isOpen, 'menu')}
++                >
++                  {sources.map(name => (
++                    <button
++                      key={name}
++                      type="button"
++                      role="option"
++                      aria-selected={name === active}
++                      onClick={() => choose(name)}
++                      className={clsx('w-full text-left px-3 py-1 text-xs hover:bg-theme-hover capitalize', name === active && 'text-accent')}
++                    >
++                      {name}
++                    </button>
++                  ))}
++                </div>
++              )}
++            </div>
++          ) : (
++            <span className="text-theme-text-secondary">{active}</span>
++          )}
++          {connection === 'error' && (
++            <button type="button" onClick={retry} className={clsx('font-medium hover:underline', toneTextClass('degraded'))}>
++              retry
++            </button>
++          )}
++        </>
++      )}
++    </div>
++  )
++}
+```
+
+**File**: `web/src/components/traffic/TrafficView.tsx` (modified, +9/-55)
+```diff
+@@ -7,10 +7,10 @@ import { TrafficWizard } from './TrafficWizard'
+ import { TrafficGraph, type TrafficGraphSelection } from './TrafficGraph'
+ import { TrafficFilterSidebar } from './TrafficFilterSidebar'
+ import { TrafficFlowListProvider } from './TrafficFlowListContext'
+-import { Loader2, Filter, Plug, ChevronDown, List, Activity, AlertTriangle, Clock, Crosshair, X } from 'lucide-react'
++import { Filter, Plug, List, Activity, AlertTriangle, Clock, Crosshair, X } from 'lucide-react'
+ import { TrafficFocusSearch } from './TrafficFocusSearch'
++import { TrafficSourcePill } from './TrafficSourcePill'
+ import { TrafficGraphTooLarge } from './TrafficGraphTooLarge'
+-import { clsx } from 'clsx'
+ import { useQueryClient } from '@tanstack/react-query'
+ import { useDock } from '../dock'
+ import { AlertBanner, EmptyState, PaneLoader, FreshnessControl } from '@skyhook-io/k8s-ui'
+@@ -457,8 +457,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
+   const connectMutation = useTrafficConnect()
+   const setSourceMutation = useSetTrafficSource()
+   const hasAutoConnectedRef = useRef(false)
+-  const [sourcePickerOpen, setSourcePickerOpen] = useState(false)
+-  const sourcePickerRef = useRef<HTMLDivElement>(null)
+ 
+   // Track cluster context to reset state on cluster change
+   const { data: clusterInfo } = useClusterInfo()
+@@ -479,18 +477,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
+     lastClusterRef.current = currentCluster
+   }, [clusterInfo?.context, queryClient])
+ 
+-  // Close source picker on outside click (capture phase to beat ReactFlow)
+-  useEffect(() => {
+-    if (!sourcePickerOpen) return
+-    const handler = (e: MouseEvent) => {
+-      if (sourcePickerRef.current && !sourcePickerRef.current.contains(e.target as Node)) {
+-        setSourcePickerOpen(false)
+-      }
+-    }
+-    document.addEventListener('mousedown', handler, true)
+-    return () => document.removeEventListener('mousedown', handler, true)
+-  }, [sourcePickerOpen])
+-
+   const {
+     data: sourcesData,
+     isLoading: sourcesLoading,
+@@ -1449,8 +1435,6 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
+             const activeSource = availableSources.find(s => s.name === activeName) || availableSources[0]
+ 
+             const handleSwitchSource = (name: string) => {
+-              if (name === activeSource?.name) { setSourcePickerOpen(false); return }
+-              setSourcePickerOpen(false)
+               setIsConnecting(true)
+               setConnectionError(null)
+               hasAutoConnectedRef.current = true
+@@ -1509,43 +1493,13 @@ export function TrafficView({ namespaces, onSetNamespaces }: TrafficViewProps) {
+                     />
+                   )}
+                   {activeSource && (
+-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-theme-surface/90 backdrop-blur border border-theme-border text-[11px]">
+-                      {isConnecting ? (
+-                        <>
+-                          <Loader2 className="h-3 w-3 animate-spin text-blue-400" />
+-                          <span className="text-blue-400">Connecting...</span>
+-                        </>
+-                      ) : connectionError ? (
+-                        <>
+-                          <span className="w-2 h-2 rounded-full bg-yellow-500" />
+-                          <span className="text-theme-text-secondary">{activeSource.name}</span>
+-                          <button onClick={() => handleConnect(true)} className="text-yellow-500 hover:text-yellow-400 font-medium">retry</button>
+-                        </>
+-                      ) : (
+-                        <>
+-                          <span className="w-2 h-2 rounded-full bg-green-500" />
+-                          {availableSources.length > 1 ? (
+-                            <div className="relative" ref={sourcePickerRef}>
+-                              <button onClick={() => setSourcePickerOpen(!sourcePickerOpen)} className="flex items-center gap-1 text-theme-text-secondary hover:text-theme-text-primary">
+-                                {activeSource.name} <ChevronDown className="h-3 w-3" />
+-                              </button>
+-                              {sourcePickerOpen && (
+-                                <div className="absolute top-full left-0 mt-1 z-50 bg-theme-surface border border-theme-border rounded-md shadow-lg py-1 min-w-[120px]">
+-                                  {availableSources.map(source => (
+-                                    <button key={source.name} onClick={() => handleSwitchSource(source.name)}
+-                                      className={clsx('w-full text-left px-3 py-1 text-xs hover:bg-theme-hover capitalize', source.name === activeSource.name && 'text-blue-400')}>
+-                                      {source.name}
+-                                    </button>
+-                                  ))}
+-        
+```
+
+---
+
+### Incident Patch 3: `0200075d` (2026-10-23)
+**Commit Message**: Reject blank advertised checksums and correct retry guidance
+
+**File**: `internal/helm/chart_digest.go` (modified, +15/-3)
+```diff
+@@ -18,23 +18,23 @@ var errChartDigest = errors.New("chart digest validation failed")
+ // Legacy repositories may omit a digest. An advertised digest must be valid
+ // and match the exact archive consumed, before Helm loads or renders it.
+ func verifyChartDigest(data []byte, digest string) error {
+-	digest = strings.TrimSpace(strings.ToLower(digest))
+ 	if digest == "" {
+ 		return nil
+ 	}
++	digest = strings.TrimSpace(strings.ToLower(digest))
+ 	want, err := hex.DecodeString(strings.TrimPrefix(digest, "sha256:"))
+ 	if err != nil || len(want) != sha256.Size {
+ 		return fmt.Errorf("%w: invalid SHA-256 digest in repository index", errChartDigest)
+ 	}
+ 	actual := sha256.Sum256(data)
+ 	if !bytes.Equal(actual[:], want) {
+-		return fmt.Errorf("%w: chart digest does not match repository index; refresh the repository and retry. If it still fails, contact the repository maintainer", errChartDigest)
++		return fmt.Errorf("%w: chart digest does not match repository index", errChartDigest)
+ 	}
+ 	return nil
+ }
+ 
+ func loadChartWithDigest(path, digest string) (*chart.Chart, error) {
+-	if strings.TrimSpace(digest) == "" {
++	if digest == "" {
+ 		return loader.Load(path)
+ 	}
+ 	data, err := os.ReadFile(path)
+@@ -46,3 +46,15 @@ func loadChartWithDigest(path, digest string) (*chart.Chart, error) {
+ 	}
+ 	return loader.LoadArchive(bytes.NewReader(data))
+ }
++
++// The source loader refreshes its index itself; cached-index consumers can
++// recover from a republished archive by refreshing before retrying.
++func withChartDigestGuidance(err error, freshIndex bool) error {
++	if !errors.Is(err, errChartDigest) {
++		return err
++	}
++	if freshIndex {
++		return fmt.Errorf("%w. Radar just downloaded the repository index. Contact the repository maintainer", err)
++	}
++	return fmt.Errorf("%w. Refresh the repository and retry. If it still fails, contact the repository maintainer", err)
++}
+```
+
+**File**: `internal/helm/client.go` (modified, +4/-4)
+```diff
+@@ -3376,7 +3376,7 @@ func (c *Client) GetChartDetail(repoName, chartName, version string) (*ChartDeta
+ 	chart, err := loadChartWithDigest(cp, chartVersion.Digest)
+ 	if err != nil {
+ 		if errors.Is(err, errChartDigest) {
+-			return nil, fmt.Errorf("chart %s version %s: %w", chartName, chartVersion.Version, err)
++			return nil, fmt.Errorf("chart %s version %s: %w", chartName, chartVersion.Version, withChartDigestGuidance(err, false))
+ 		}
+ 		return &ChartDetail{
+ 			ChartInfo: chartVersionToInfo(chartVersion, repoName),
+@@ -3605,7 +3605,7 @@ func (c *Client) installWith(actionConfig *action.Configuration, req *InstallReq
+ 	}
+ 	chart, err := loadChartWithDigest(cp, indexDigest)
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
++		return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
+ 	}
+ 
+ 	if mode != installFresh {
+@@ -3810,7 +3810,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
+ 		sendProgress("loading", "Loading chart...", chartPath)
+ 		loadedChart, err = loadChartWithDigest(chartPath, indexDigest)
+ 		if err != nil {
+-			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
++			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
+ 		}
+ 	} else {
+ 		// Preserve the existing direct HTTP path. Helm's ChartDownloader loads all
+@@ -3840,7 +3840,7 @@ func (c *Client) installWithProgressUsing(actionConfig *action.Configuration, re
+ 		sendProgress("loading", "Loading chart...", tmpChart.Name())
+ 		loadedChart, err = loadChartWithDigest(tmpChart.Name(), indexDigest)
+ 		if err != nil {
+-			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, err)
++			return nil, fmt.Errorf("failed to load chart %s version %s: %w", req.ChartName, resolvedVersion, withChartDigestGuidance(err, isRepoURL))
+ 		}
+ 	}
+ 
+```
+
+**File**: `internal/helm/download_checksum_test.go` (modified, +12/-3)
+```diff
+@@ -18,7 +18,7 @@ import (
+ )
+ 
+ func TestRepositoryChartChecksum(t *testing.T) {
+-	for _, digest := range []string{"wrong", "malformed", "valid", "absent"} {
++	for _, digest := range []string{"wrong", "malformed", "whitespace", "valid", "absent"} {
+ 		for _, consumer := range []string{"source", "install", "progress", "detail", "direct-install", "direct-progress"} {
+ 			t.Run(digest+"/"+consumer, func(t *testing.T) {
+ 				c := newChartSourceTestClient(t)
+@@ -36,12 +36,14 @@ func TestRepositoryChartChecksum(t *testing.T) {
+ 					advertised = strings.Repeat("0", 64)
+ 				case "malformed":
+ 					advertised = "not-sha256"
++				case "whitespace":
++					advertised = "   "
+ 				case "valid":
+ 					advertised = fmt.Sprintf("%x", sha256.Sum256(body))
+ 				}
+ 				srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 					if r.URL.Path == "/index.yaml" {
+-						fmt.Fprintf(w, "apiVersion: v1\nentries:\n  radar:\n  - apiVersion: v2\n    name: radar\n    version: 1.0.0\n    urls: [radar.tgz]\n    digest: %s\n", advertised)
++						fmt.Fprintf(w, "apiVersion: v1\nentries:\n  radar:\n  - apiVersion: v2\n    name: radar\n    version: 1.0.0\n    urls: [radar.tgz]\n    digest: %q\n", advertised)
+ 					} else {
+ 						w.Write(body)
+ 					}
+@@ -70,10 +72,17 @@ func TestRepositoryChartChecksum(t *testing.T) {
+ 				case "detail":
+ 					_, err = c.GetChartDetail("probe", "radar", "1.0.0")
+ 				}
+-				if digest == "wrong" || digest == "malformed" {
++				if digest == "wrong" || digest == "malformed" || digest == "whitespace" {
+ 					if err == nil || !strings.Contains(err.Error(), "digest") {
+ 						t.Fatalf("expected digest rejection, got %v", err)
+ 					}
++					if consumer == "source" || strings.HasPrefix(consumer, "direct-") {
++						if strings.Contains(strings.ToLower(err.Error()), "refresh the repository") {
++							t.Fatalf("fresh index must not recommend another refresh: %v", err)
++						}
++					} else if !strings.Contains(strings.ToLower(err.Error()), "refresh the repository") {
++						t.Fatalf("cached index needs actionable refresh guidance: %v", err)
++					}
+ 					if consumer == "install" || consumer == "progress" {
+ 						if _, e := cfg.Releases.Last(req.ReleaseName); e == nil {
+ 							t.Fatal("rejected chart created release")
+```
+
+**File**: `internal/helm/source_upgrade.go` (modified, +1/-1)
+```diff
+@@ -125,7 +125,7 @@ func (c *Client) loadSourceChart(cfg *action.Configuration, source ChartSourceCa
+ 		}
+ 	}
+ 	if err := verifyChartDigest(data, indexDigest); err != nil {
+-		return nil, "", fmt.Errorf("chart %s version %s: %w", name, version, err)
++		return nil, "", fmt.Errorf("chart %s version %s: %w", name, version, withChartDigestGuidance(err, true))
+ 	}
+ 	sum := sha256.Sum256(data)
+ 	ch, err := loader.LoadArchive(bytes.NewReader(data))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2275** (2026-10-22): Match controller UI and GitOps detection by exact API group (@hisco)
-- **PR #2272** (2026-10-22): Expand v1.18 CVE highlight with runtime version inventory (@nadaverell)
-- **PR #2271** (2026-10-22): What's New: Radar v1.18.0 release notes (@nadaverell)
-- **PR #2270** (2026-10-22): Image inspection: require a Pod when auth is on (@nadaverell)
-- **PR #2269** (2026-10-22): Enforce --disable-exec on the exec, debug and pod-file routes (@nadaverell)
-- **PR #2268** (2026-10-22): Search: keep Trivy findings search cheap on large clusters (@hisco)
+- **PR #2296** (2026-10-24): Document audit resource budgets, drain completion and Trivy search (@nadaverell)
+- **PR #2295** (2026-10-24): Add a discoverable What's New skill with companion-repo workflows (@nadaverell)
+- **PR #2294** (2026-10-24): Show v1.18 What's New automatically after upgrades (@nadaverell)
+- **PR #2292** (2026-10-25): sec(install): verify SHA-256 checksums before archive extraction (@AbdullahNM)
+- **PR #2284** (2026-10-25): Verify advertised Helm chart checksums before use (@hisco)
+- **PR #2281** (2026-10-23): Gate Trivy reports on report RBAC on every read surface (@hisco)
 
 ---
 
@@ -2754,34 +2950,3 @@ refused. With auth off, nothing changes.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Enforce --disable-exec on the exec, debug and pod-file routes (#2269)
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `3b60573e`: Enforce --disable-exec on the exec, debug and pod-file routes (#2269). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-| `--disable-exec` | `false` | Disable pod terminal, debug shells and pod file browsing |
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-| `--disable-exec` | `false` | Disable terminal and debug shell |
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b60573e` are properly handled with clean fallback behavior.
