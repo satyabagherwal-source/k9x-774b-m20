@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-TBZC",
-    "timestamp": "2026-10-21T01:04:30.696Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "527a3a05fb8e005b83b979d320f0fc529fbec340c540b02ae935a15ff3c64d64",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-TEXV",
-    "timestamp": "2026-10-21T01:04:34.531Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "66bd19b3354d82ea8e1caa806e51ec95b3084745507b285774b7556a993e66bf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-15RX",
-    "timestamp": "2026-10-21T01:10:35.901Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-    "contentHash": "c5eac56138ad90b935c1295e3169ab049f536ee6ed820a84fa6ebfe23cad22a3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-1I7L",
     "timestamp": "2026-10-21T01:10:52.017Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7492,6 +7447,51 @@
     "contentHash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7OEK",
+    "timestamp": "2026-10-25T03:14:19.340Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-7SX1",
+    "timestamp": "2026-10-25T03:14:25.189Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-993U",
+    "timestamp": "2026-10-25T03:15:32.826Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "9602a20d31adb0bd95ee1b8730a20bf71946031e75467c813efd558b68679d8d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

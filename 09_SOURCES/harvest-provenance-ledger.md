@@ -4632,3 +4632,6 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `0144a88d` | Multi-dimensional audit evidence | 2026-10-25T03:06:07.341Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `d19307cc` | Multi-dimensional audit evidence | 2026-10-25T03:06:14.153Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `b84d5f97` | Multi-dimensional audit evidence | 2026-10-25T03:06:18.998Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `e492e24c` | Multi-dimensional audit evidence | 2026-10-25T03:14:19.343Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `dbf079f5` | Multi-dimensional audit evidence | 2026-10-25T03:14:25.192Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `3ac379ef` | Multi-dimensional audit evidence | 2026-10-25T03:15:32.829Z |

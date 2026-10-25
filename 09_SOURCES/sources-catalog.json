@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "37683a22",
+    "sourceVersion": "dbf079f5",
     "license": "Apache-2.0",
-    "contentHash": "a52dc629b26e0d06ddfec5e81d2cf07cd8952aa9d09d98bb328103a68f259e05",
-    "lastHarvestedAt": "2026-10-22T15:42:08.174Z",
+    "contentHash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
+    "lastHarvestedAt": "2026-10-25T03:14:25.192Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "c691e1b3",
+    "sourceVersion": "e492e24c",
     "license": "Apache-2.0",
-    "contentHash": "077d972e06d00ac5a9a6689865f9cbd28b88625029b4423cfe2f2dd9baca9b5a",
-    "lastHarvestedAt": "2026-10-22T16:26:10.770Z",
+    "contentHash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
+    "lastHarvestedAt": "2026-10-25T03:14:19.343Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "4336b7e2",
+    "sourceVersion": "3ac379ef",
     "license": "GPL-3.0",
-    "contentHash": "2361fc95be3a95f0a1dd56a700f41830af2a01128d8b65c013b1d763e55dcef9",
-    "lastHarvestedAt": "2026-10-21T16:32:03.401Z",
+    "contentHash": "9602a20d31adb0bd95ee1b8730a20bf71946031e75467c813efd558b68679d8d",
+    "lastHarvestedAt": "2026-10-25T03:15:32.829Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

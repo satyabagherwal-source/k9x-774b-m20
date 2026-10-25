@@ -4625,3 +4625,6 @@
 | `CYCLE-20261025-X4RU` | `2026-10-25T03:06:07.338Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4004` | Yes (`36c7f923...`) |
 | `CYCLE-20261025-XA12` | `2026-10-25T03:06:14.150Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4005` | Yes (`e71325c1...`) |
 | `CYCLE-20261025-XDRN` | `2026-10-25T03:06:18.995Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | Yes (`1f005ead...`) |
+| `CYCLE-20261025-7OEK` | `2026-10-25T03:14:19.340Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4006` | Yes (`42e8b8ef...`) |
+| `CYCLE-20261025-7SX1` | `2026-10-25T03:14:25.189Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4007` | Yes (`a16bd6f2...`) |
+| `CYCLE-20261025-993U` | `2026-10-25T03:15:32.826Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4008, Rule 4009, Rule 4010` | Yes (`9602a20d...`) |

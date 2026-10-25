@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T03:06:18.952Z",
+  "last_updated": "2026-10-25T03:15:32.782Z",
   "total_verified_learnings": 1081,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2286,8 +2286,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "37683a22",
-      "content_hash": "a52dc629b26e0d06ddfec5e81d2cf07cd8952aa9d09d98bb328103a68f259e05",
+      "source_version": "dbf079f5",
+      "content_hash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2310,6 +2310,11 @@
           "number": 3610,
           "title": "Merge pull request #14297 from akshay-v-kaushik/LogFailedRecruitment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4007,
+          "title": "Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2317,7 +2322,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:42:08.121Z",
+      "verified_at": "2026-10-25T03:14:25.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37437,8 +37442,8 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "c691e1b3",
-      "content_hash": "077d972e06d00ac5a9a6689865f9cbd28b88625029b4423cfe2f2dd9baca9b5a",
+      "source_version": "e492e24c",
+      "content_hash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
@@ -37451,6 +37456,11 @@
           "number": 3637,
           "title": "reject path integers that overflow int64 and wrap to a positive value (#4873)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4006,
+          "title": "separate Config process exclusions from validation data sync (#4784)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37458,7 +37468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:26:10.696Z",
+      "verified_at": "2026-10-25T03:14:19.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47174,8 +47184,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "4336b7e2",
-      "content_hash": "2361fc95be3a95f0a1dd56a700f41830af2a01128d8b65c013b1d763e55dcef9",
+      "source_version": "3ac379ef",
+      "content_hash": "9602a20d31adb0bd95ee1b8730a20bf71946031e75467c813efd558b68679d8d",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -47193,6 +47203,21 @@
           "number": 3258,
           "title": "deps): update swatinem/rust-cache action to v2.9.3 (#2444)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4008,
+          "title": "Multi-Environment Subprocess Path Resolution Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4009,
+          "title": "SemVer Keep-File Notification Barrier for Breaking Changes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4010,
+          "title": "Subprocess Execution Failure-Context Enrichment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47200,7 +47225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:32:03.358Z",
+      "verified_at": "2026-10-25T03:15:32.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117338,6 +117363,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T03:06:14.098Z"
+    },
+    "rule-4006": {
+      "learning_id": "rule-4006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4006,
+      "title": "separate Config process exclusions from validation data sync (#4784)",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "e492e24c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:14:19.279Z"
+    },
+    "rule-4007": {
+      "learning_id": "rule-4007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4007,
+      "title": "Add key-range, prefix and derived-lock options to SubmitBackup and RestoreBackup",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "dbf079f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:14:25.118Z"
+    },
+    "rule-4008": {
+      "learning_id": "rule-4008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4008,
+      "title": "Multi-Environment Subprocess Path Resolution Guard",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "3ac379ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:15:32.772Z"
+    },
+    "rule-4009": {
+      "learning_id": "rule-4009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4009,
+      "title": "SemVer Keep-File Notification Barrier for Breaking Changes",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "3ac379ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:15:32.772Z"
+    },
+    "rule-4010": {
+      "learning_id": "rule-4010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4010,
+      "title": "Subprocess Execution Failure-Context Enrichment",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "3ac379ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T03:15:32.772Z"
     }
   },
   "aliases": {

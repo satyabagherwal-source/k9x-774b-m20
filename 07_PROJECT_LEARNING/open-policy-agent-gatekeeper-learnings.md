@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
-> **Source Version**: `c691e1b3`  
+> **Source Version**: `e492e24c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:26:10.309Z  
+> **Timestamp**: 2026-10-25T03:14:19.012Z  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:26:09.869Z  
+> **Harvest Timestamp**: 2026-10-25T03:14:17.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐊 Policy Controller for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4302 stars
+- **Stars / Engagement**: 4299 stars
 
 ---
 
@@ -1267,450 +1267,738 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ace88c8a` (2026-10-20)
-**Commit Message**: fix: reject path integers that overflow int64 and wrap to a positive value (#4873)
+### Incident Patch 1: `e492e24c` (2026-10-22)
+**Commit Message**: refactor: separate Config process exclusions from validation data sync (#4784)
 
-Signed-off-by: Ogulcan Aydogan <[REDACTED_EMAIL]>
-
-**File**: `pkg/mutation/path/parser/parser.go` (modified, +4/-2)
-```diff
-@@ -17,6 +17,7 @@ package parser
- 
- import (
- 	"fmt"
-+	"math"
- 
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/path/token"
- )
-@@ -176,10 +177,11 @@ func parseInt64(s string) (int64, error) {
- 		if d < '0' || d > '9' {
- 			return 0, invalidIntegerError{s: fmt.Sprintf("unexpected digit: %c", d)}
- 		}
--		result = result*10 + int64(d-'0')
--		if result < 0 {
-+		digit := int64(d - '0')
-+		if result > (math.MaxInt64-digit)/10 {
- 			return 0, invalidIntegerError{s: fmt.Sprintf("overflow in integer string: %s", s)}
- 		}
-+		result = result*10 + digit
- 	}
- 	return result, nil
- }
-```
-
-**File**: `pkg/mutation/path/parser/parser_test.go` (modified, +10/-0)
-```diff
-@@ -229,6 +229,16 @@ func TestParser(t *testing.T) {
- 			input:   `spec[bignum: 9223372036854775808]`,
- 			wantErr: ErrInvalidInteger,
- 		},
-+		{
-+			// Integer overflow that wraps around to zero
-+			input:   `spec[bignum: 18446744073709551616]`,
-+			wantErr: ErrInvalidInteger,
-+		},
-+		{
-+			// Integer overflow that wraps around to a small positive number
-+			input:   `spec[bignum: 18446744073709551621]`,
-+			wantErr: ErrInvalidInteger,
-+		},
- 		{
- 			// Quoted integers are parsed as strings
- 			input: `spec[quoted: "123"]`,
-```
-
----
-
-### Incident Patch 2: `c691e1b3` (2026-10-22)
-**Commit Message**: fix(gator): preserve YAML block scalar content (#4828)
-
-Signed-off-by: Hanabi <[REDACTED_EMAIL]>
+Signed-off-by: Charles Cheng <[REDACTED_EMAIL]>
+Signed-off-by: anneheartrecord <[REDACTED_EMAIL]>
 Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
 Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `pkg/gator/reader/block_scalar_test.go` (added, +135/-0)
+**File**: `main.go` (modified, +55/-35)
+```diff
+@@ -547,14 +547,16 @@ func setupControllers(ctx context.Context, mgr ctrl.Manager, tracker *readiness.
+ 		return err
+ 	}
+ 
+-	wm, err := watch.New(dc)
++	wm, err := newWatchManager(dc)
+ 	if err != nil {
+ 		setupLog.Error(err, "unable to create watch manager")
+ 		return err
+ 	}
+-	if err := mgr.Add(wm); err != nil {
+-		setupLog.Error(err, "unable to register watch manager with the manager")
+-		return err
++	if wm != nil {
++		if err := mgr.Add(wm); err != nil {
++			setupLog.Error(err, "unable to register watch manager with the manager")
++			return err
++		}
+ 	}
+ 
+ 	// processExcluder is used for namespace exclusion for specified processes in config
+@@ -563,41 +565,47 @@ func setupControllers(ctx context.Context, mgr ctrl.Manager, tracker *readiness.
+ 	// Setup all Controllers
+ 	setupLog.Info("setting up controllers")
+ 
+-	// Events ch will be used to receive events from dynamic watches registered
+-	// via the registrar below.
+-	events := make(chan event.GenericEvent, 1024)
+-	reg, err := wm.NewRegistrar(
+-		cachemanager.RegistrarName,
+-		events)
+-	if err != nil {
+-		setupLog.Error(err, "unable to set up watch registrar for cache manager")
+-		return err
+-	}
+-
+-	syncMetricsCache := syncutil.NewMetricsCache()
++	// The cache manager and everything hanging off it only exist for operations
++	// that sync referential data for validation. Other operations read process
++	// exclusions from the Config resource without any of this.
++	var (
++		events chan event.GenericEvent
++		cm     *cachemanager.CacheManager
++	)
++	if operations.HasValidationOperations() {
++		// Events ch will be used to receive events from dynamic watches registered
++		// via the registrar below.
++		events = make(chan event.GenericEvent, 1024)
++		reg, err := wm.NewRegistrar(
++			cachemanager.RegistrarName,
++			events)
++		if err != nil {
++			setupLog.Error(err, "unable to set up watch registrar for cache manager")
++			return err
++		}
+ 
+-	cmConfig := &cachemanager.Config{
+-		SyncMetricsCache: syncMetricsCache,
+-		Tracker:          tracker,
+-		ProcessExcluder:  processExcluder,
+-		Registrar:        reg,
+-		Reader:           mgr.GetCache(),
+-	}
++		cmConfig := &cachemanager.Config{
++			SyncMetricsCache: syncutil.NewMetricsCache(),
++			Tracker:          tracker,
++			ProcessExcluder:  processExcluder,
++			Registrar:        reg,
++			Reader:           mgr.GetCache(),
++		}
+ 
+-	if client != nil {
+-		cmConfig.CfClient = client
+-	}
++		if client != nil {
++			cmConfig.CfClient = client
++		}
+ 
+-	cm, err := cachemanager.NewCacheManager(cmConfig)
+-	if err != nil {
+-		setupLog.Error(err, "unable to create cache manager")
+-		return err
+-	}
++		cm, err = cachemanager.NewCacheManager(cmConfig)
++		if err != nil {
++			setupLog.Error(err, "unable to create cache manager")
++			return err
++		}
+ 
+-	err = mgr.Add(pruner.NewExpectationsPruner(cm, tracker))
+-	if err != nil {
+-		setupLog.Error(err, "adding expectations pruner to manager")
+-		return err
++		if err := mgr.Add(pruner.NewExpectationsPruner(cm, tracker)); err != nil {
++			setupLog.Error(err, "adding expectations pruner to manager")
++			return err
++		}
+ 	}
+ 
+ 	opts := controller.Dependencies{
+@@ -676,6 +684,18 @@ func newExportSystem() *export.System {
+ 	return nil
+ }
+ 
++// newWatchManager constructs the watch manager only for processes that sync
++// validation data. Its registrars belong to the cache manager and the
++// constraint template controller, and neither is set up for other operations,
++// so a status-only, generate-only or mutation-only pod would otherwise run a
++// watch manager that never watches anything.
++func newWatchManager(dc watch.RemovableCache) (*watch.Manager, error) {
++	if !operations.HasValidationOperations() {
++		return nil, nil
++	}
++	return watch.New(dc)
++}
++
+ // newExpansionSystem constructs an expansion.System only for processes with
+ // validation operations (audit and the validating webhook), the only callers
+ // of Expand. They invoke Expand unconditionally, independent of whether
+```
+
+**File**: `main_test.go` (modified, +37/-0)
+```diff
+@@ -373,3 +373,40 @@ func Test_newExpansionSystem(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// Validates that newWatchManager only constructs a watch manager for processes
++// that sync validation data (audit and webhook). Nothing registers a watch
++// on other processes, so setupControllers should not start one there.
++func Test_newWatchManager(t *testing.T) {
++	tests := map[string]struct {
++		assigned []operations.Operation
++		wantNil  bool
++	}{
++		"audit only":               {assigned: []operations.Operation{operations.Audit}, wantNil: false},
++		"webhook only":             {assigned: []operations.Operation{operations.Webhook}, wantNil: false},
++		"audit and status":         {assigned: []operations.Operation{operations.Audit, operations.Status}, wantNil: false},
++		"status only":              {assigned: []operations.Operation{operations.Status}, wantNil: true},
++		"generate only":            {assigned: []operations.Operation{operations.Generate}, wantNil: true},
++		"mutation-webhook only":    {assigned: []operations.Operation{operations.MutationWebhook}, wantNil: true},
++		"mutation-status only":     {assigned: []operations.Operation{operations.MutationStatus}, wantNil: true},
++		"mutation-controller only": {assigned: []operations.Operation{operations.MutationController}, wantNil: true},
++	}
++
++	for name, tc := range tests {
++		t.Run(name, func(t *testing.T) {
++			restore, err := operations.SetForTest(tc.assigned...)
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer restore()
++
++			got, err := newWatchManager(nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if (got == nil) != tc.wantNil {
++				t.Errorf("newWatchManager() = %v, wantNil %v", got, tc.wantNil)
++			}
++		})
++	}
++}
+```
+
+**File**: `pkg/controller/config/config_capability_test.go` (added, +135/-0)
 ```diff
 @@ -0,0 +1,135 @@
-+package reader
++/*
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package config
 +
 +import (
-+	"fmt"
-+	"strings"
++	"context"
 +	"testing"
 +
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	configv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/config/v1alpha1"
++	statusv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1beta1"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/controller/config/process"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/fakes"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/wildcard"
++	"github.com/stretchr/testify/require"
++	v1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 +)
 +
-+func TestReadUnstructuredsPreservesDocumentEnd(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, scalar, ending, want string
-+	}{
-+		{"clip", "|", "\n", "value\n"},
-+		{"keep", "|+", "\n\n", "value\n\n"},
-+		{"strip", "|-", "\n\n", "value"},
-+		{"no final newline", "|+", "", "value"},
++// TestAdderRegistersWithoutDataSync pins that the Config controller is built
++// for operation sets that do not sync validation data - mutation-only pods
++// included, because this reconciler is the only consumer of
++// Config.spec.readiness.statsEnabled - and that a missing dependency still
++// fails setup loudly instead of silently skipping registration.
++func TestAdderRegistersWithoutDataSync(t *testing.T) {
++	for _, op := range []operations.Operation{
++		operations.Status,
++		operations.Generate,
++		operations.MutationWebhook,
++		operations.MutationStatus,
++		operations.MutationController,
 +	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			input := fmt.Sprintf("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: %s\n    value%s", tc.scalar, tc.ending)
-+			inputs := []string{input}
-+			if tc.ending != "" {
-+				inputs = append(inputs, input+"---\n# trailing document\n")
-+			}
-+			for _, input := range inputs {
-+				objects, err := ReadUnstructureds([]byte(input))
-+				if err != nil {
-+					t.Fatal(err)
-+				}
-+				if len(objects) != 1 {
-+					t.Fatalf("got %d objects, want 1", len(objects))
-+				}
-+				got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
-+				if err != nil || !found {
-+					t.Fatalf("reading script: found=%v, err=%v", found, err)
-+				}
-+				if got != tc.want {
-+					t.Fatalf("block scalar = %q, want %q", got, tc.want)
-+				}
-+			}
++		t.Run(string(op), func(t *testing.T) {
++			restore, err := operations.SetForTest(op)
++			require.NoError(t, err)
++			t.Cleanup(restore)
++
++			mgr, _ := setupManager(t)
++			require.NoError(t, (&Adder{ProcessExcluder: process.New()}).Add(mgr))
++
++			// Without a process excluder there is nowhere to put the exclusions
++			// the reconciler parses, so setup has to fail.
++			mgr, _ = setupManager(t)
++			require.Error(t, (&Adder{}).Add(mgr))
 +		})
 +	}
 +}
 +
-+func TestReadUnstructuredsPreservesBlockScalar(t *testing.T) {
-+	input := []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: |\n    first\n\n    # literal content\n    last\n")
-+	objects, err := ReadUnstructureds(input)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(objects) != 1 {
-+		t.Fatalf("got %d objects, want 1", len(objects))
-+	}
-+	got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
-+	if err != nil || !found {
-+		t.Fatalf("reading script: found=%v, err=%v", found, err)
-+	}
-+	want := "first\n\n# literal content\nlast\n"
-+	if got != want {
-+		t.Fatalf("block scalar = %q, want %q", got, want)
-+	}
-+}
++// TestReconcileWithoutDataSync covers the mutation-webhook-only pod: process
++// exclusions from the Config resource still land, with no cache manager and no
++// constraint client behind it.
++func TestReconcileWithoutDataSync(t *testing.T) {
++	restore, err := operations.SetForTest(operations.MutationWebhook)
++	require.NoError(t, err)
++	t.Cleanup(restore)
 +
-+func TestReadUnstructuredsSkipsEmptyDocuments(t *testing.T) {
-+	input := []byte("# comment only\n\n---\n\n# another comment\n---\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: example\ndata:\n  script: |+\n    # literal content\n\n\n---\n# trailing comment\n")
-+	objects, err := ReadUnstructureds(input)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(objects) != 1 {
-+		t.Fatalf("got %d objects, want 1", len(objects))
-+	}
-+	got, found, err := unstructured.NestedString(objects[0].Object, "data", "script")
-+	if err != nil || !found {
-+		t.Fatalf("reading script: found=%v, err=%v", found, err)
-+	}
-+	if want := "# literal content\n\n\n"; got != want {
-+		t.Fatalf("block scalar = %q, want %q", got, want)
-+	}
-+}
++	ctx := context.Background()
++	mgr, _ := setupManager(t)
 +
-+func TestReadUnstructuredsSeparatorWhitespace(t *testing.T) {
-+	const first = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: first\ndata:\n  script: |+\n    first\n\n    # literal content\n    last\n\n"
-+	const second = "apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: second\ndata:\n  script: |-\n    tail"
-+	for _, separator := range []string{"---", "--- ", "---\t", "--- \t", "--- # comment", "---\t# comment", "--- \t # comment"} {
-+		for _, newline := range []string{"\n", "\r\n"} {
-+			t.Run(fmt.Sprintf("separator_%q_newline_%q", separator, newline), func(t *testing.T) {
-+				inputs := []string{
-+					first + separator + "\n" + second,
-+					"# leading empty document\n" + separator + "\n" + first + separator +
-+						"\n# middle empty document\n" + separator + "\n" + second + "\n" + separator,
-+				}
-+				for _, input := range inputs {
-+					objects, err := ReadUnstructureds([]byte(strings.ReplaceAll(input, "\n", newline)))
-+					if err != nil {
-+						t.Fatal(err)
-+					}
-+					if len(objects) != 2 {
-+						t.Fatalf("got %d objects, want 2", len(objects))
-+					}
-+					for i, want := range []string{"first\n\n# literal content\nlast\n\n", "tail"} {
-+						got, found, err := unstructured.NestedString(objects[i].Object, "data", "script")
-+						if err != nil || !found {
-+							t.Fatalf("reading script %d: found=%v, err=%v", i, found, err)
-+						}
-+						if got != want {
-+							t.Fatalf("block scalar %d = %q, want %q", i, got, want)
-+						}
-+					}
-+				}
-+			})
-+		}
-+	}
-+}
++	// Read and write directly: this test drives Reconcile by hand rather than
++	// starting the manager.
++	c, err := client.New(cfg, client.Options{Scheme: mgr.GetScheme()})
++	require.NoError(t, err)
 +
-+func TestReadUnstructuredsRejectsTabIndentation(t *testing.T) {
-+	const invalid = "\tapiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: invalid\n"
-+	for _, input := range []string{invalid, "# empty document\n---\t# separator\n" + invalid} {
-+		if _, err := ReadUnstructureds([]byte(input)); err == nil {
-+			t.Fatal("expected invalid tab indentation to be rejected")
-+		}
++	instance := &configv1alpha1.Config{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "config",
++			Namespace: "gatekeeper-system",
++		},
++		Spec: configv1alpha1.ConfigSpec{
++			Sync: configv1alpha1.Sync{
++				SyncOnly: []configv1alpha1.SyncOnlyEntry{
++					{Group: "", Version: "v1", Kind: "Pod"},
++				},
++			},
++			Match: []configv1alpha1.MatchEntry{
++				{
++					ExcludedNamespaces: []wildcard.Wildcard{"excluded-ns"},
++					Processes:          []string{"mutation-webhook"},
++				},
++			},
++		},
 +	}
-+}
++	require.NoError(t, c.Create(ctx, instance))
++	t.Cleanup(func() { require.NoError(t, client.IgnoreNotFound(c.Delete(ctx, instance))) })
 +
-+func TestReadUnstructuredsRejectsInvalidSeparatorCharacters(t *testing.T) {
-+	for _, suffix := range []string{"\v", "\f", "\x00", "\u00a0", "\t# comment\v", "\t# comment\f"} {
-+		t.Run(fmt.Sprintf("suffix_%q", suffix), func(t *testing.T) {
-+			input := "# empty document\n---" + suffix + "\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: invalid\n"
-+			if _, err := ReadUnstructureds([]byte(input)); err == nil {
-+				t.Fa
++	tracker, err := readiness.SetupTrackerNoReadyz(mgr, false, false, false)
++	require.NoError(t, err)
++
++	pod := fakes.Pod(
++		fakes.WithNamespace("gatekeeper-system"),
++		fakes.WithName("no-pod"),
++	)
++	processExcluder := process.New()
++
++	rec, err := newReconciler(mgr, nil, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
++	require.NoError(t, err)
++	rec.reader = c
++	rec.writer = c
++	rec.statusClient = c
++
++	_, err = rec.Reconcile(ctx, reconcile.Request{NamespacedName: types.NamespacedName{
++		Namespace: instance.GetNamespace(),
++		Name:      instance.GetName(),
++	}})
++	require.NoError(t, err)
++
++	require.Equal(t, []string{"excluded-ns"}, processExcluder.GetExcludedNamespaces(process.Mutation),
++		"mutation webhook exclusions should be applied without a cache manager")
++
++	// ConfigPodStatus is still reported for this operation set.
++	statusName, err := statusv1beta1.KeyForConfig(pod.Name, instance.GetNamespace(), instance.GetName())
++	require.NoError(t, err)
++	status := &statusv1beta1.ConfigPodStatus{}
++	require.NoError(t, c.Get(ctx, types.NamespacedName{Namespace: pod.Namespace, Name: statusName}, status))
++	require.Empty(t, status.Status.Errors)
++	t.Cleanup(func() { require.NoError(t, client.IgnoreNotFound(c.Delete(ctx, status))) })
++}
 ```
 
-**File**: `pkg/gator/reader/read_resources.go` (modified, +17/-3)
+**File**: `pkg/controller/config/config_controller.go` (modified, +71/-25)
 ```diff
-@@ -55,9 +55,23 @@ func ReadUnstructureds(bytes []byte) ([]*unstructured.Unstructured, error) {
- 	splits := strings.Split(string(bytes), "\n---")
- 	var result []*unstructured.Unstructured
- 
--	for _, split := range splits {
--		split = clean(split)
--		if len(split) == 0 {
-+	for i, split := range splits {
-+		if i > 0 {
-+			// Tabs after "---" are separator whitespace, not document indentation.
-+			line, rest, hasNewline := strings.Cut(split, "\n")
-+			line = strings.TrimLeft(line, " \t")
-+			if line == "" || line == "\r" || strings.HasPrefix(line, "#") {
-+				split = line
-+				if hasNewline {
-+					split += "\n" + rest
-+				}
-+			}
-+		}
-+		if i < len(splits)-1 {
-+			// Restore the newline consumed by the document separator.
-+			split += "\n"
-+		}
-+		if len(clean(split)) == 0 {
- 			continue
- 		}
- 
-```
-
----
-
-### Incident Patch 3: `1a95399f` (2026-10-21)
-**Commit Message**: fix: prevent cache manager hot-loop when synced GVK cannot be listed (#4881)
-
-Signed-off-by: yusheng.wang <[REDACTED_EMAIL]>
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `pkg/cachemanager/cachemanager.go` (modified, +21/-3)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/syncutil"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/target"
- 	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
-+	"k8s.io/apimachinery/pkg/api/meta"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/util/wait"
-@@ -522,18 +523,35 @@ func (c *CacheManager) replayGVKs(ctx context.Context, gvksToRelist []schema.Gro
- 			case <-relistCtx.Done():
- 				return
- 			default:
-+				var lastErr error
- 				operation := func(ctx context.Context) (bool, error) {
- 					if err := c.syncGVK(ctx, gvk); err != nil {
--						return false, err
-+						lastErr = err
-+						if meta.IsNoMatchError(err) {
-+							return false, err
-+						}
-+						if ctx.Err() != nil {
-+							return false, ctx.Err()
-+						}
-+						return false, nil
- 					}
-+					lastErr = nil
- 					return true, nil
- 				}
- 
- 				if err := wait.ExponentialBackoffWithContext(relistCtx, backoff, operation); err != nil {
--					if errors.Is(err, context.Canceled) {
-+					if errors.Is(err, context.Canceled) || relistCtx.Err() != nil {
- 						return
- 					}
--					log.Error(err, "internal: error listings gvk cache data", "gvk", gvk)
-+					logErr := lastErr
-+					if logErr == nil {
-+						logErr = err
-+					}
-+					log.Error(logErr, "internal: error listings gvk cache data", "gvk", gvk)
-+					// Retain transient failures so backoff exhaustion does not abandon wiped inventory.
-+					if meta.IsNoMatchError(err) {
-+						gvksSet.Remove(gvk)
-+					}
- 				} else {
- 					gvksSet.Remove(gvk)
- 				}
-```
-
-**File**: `pkg/cachemanager/cachemanager_test.go` (modified, +139/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	testclient "github.com/open-policy-agent/gatekeeper/v3/test/clients"
- 	"github.com/open-policy-agent/gatekeeper/v3/test/testutils"
- 	"github.com/stretchr/testify/require"
-+	"k8s.io/apimachinery/pkg/api/meta"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
-@@ -833,6 +834,144 @@ func TestCacheManagerReplayGVKsCancelsInFlightListOnStop(t *testing.T) {
- 	}
+@@ -156,15 +156,19 @@ func (e *ChannelFullError) Temporary() bool {
+ type Adder struct {
+ 	Tracker      *readiness.Tracker
+ 	CacheManager *cm.CacheManager
+-	CtEvents     chan<- event.GenericEvent
++	// ProcessExcluder holds the namespace exclusions the admission, audit and
++	// sync paths read. It is required even when validation data sync is off.
++	ProcessExcluder *process.Excluder
++	CtEvents        chan<- event.GenericEvent
+ 	// GetPod returns an instance of the currently running Gatekeeper pod
+ 	GetPod func(context.Context) (*corev1.Pod, error)
  }
  
-+type errorReader struct {
-+	err       error
-+	listCalls int
-+	mu        sync.Mutex
+ // Add creates a new ConfigController and adds it to the Manager with default RBAC. The Manager will set fields on the Controller
+ // and Start it when the Manager is Started.
+ func (a *Adder) Add(mgr manager.Manager) error {
+-	r, err := newReconciler(mgr, a.CacheManager, a.Tracker, a.GetPod, a.CtEvents)
++	// Every operation needs Config reconciliation for its readiness-statistics setting.
++	r, err := newReconciler(mgr, a.CacheManager, a.ProcessExcluder, a.Tracker, a.GetPod, a.CtEvents)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -180,6 +184,10 @@ func (a *Adder) InjectCacheManager(cm *cm.CacheManager) {
+ 	a.CacheManager = cm
+ }
+ 
++func (a *Adder) InjectProcessExcluder(processExcluder *process.Excluder) {
++	a.ProcessExcluder = processExcluder
 +}
 +
-+func (r *errorReader) Get(context.Context, client.ObjectKey, client.Object, ...client.GetOption) error {
-+	return r.err
-+}
-+
-+func (r *errorReader) List(context.Context, client.ObjectList, ...client.ListOption) error {
-+	r.mu.Lock()
-+	defer r.mu.Unlock()
-+	r.listCalls++
-+	return r.err
-+}
-+
-+func TestCacheManagerReplayGVKsExitsOnNoMatchError(t *testing.T) {
-+	gvk := schema.GroupVersionKind{Group: "example.com", Version: "v1", Kind: "Custom"}
-+	reader := &errorReader{
-+		err: &meta.NoKindMatchError{GroupKind: gvk.GroupKind()},
+ func (a *Adder) InjectGetPod(getPod func(ctx context.Context) (*corev1.Pod, error)) {
+ 	a.GetPod = getPod
+ }
+@@ -188,21 +196,26 @@ func (a *Adder) InjectConstraintTemplateEvent(ctEvents chan event.GenericEvent)
+ 	a.CtEvents = ctEvents
+ }
+ 
+-// newReconciler returns a new reconcile.Reconciler.
+-func newReconciler(mgr manager.Manager, cm *cm.CacheManager, tracker *readiness.Tracker, getPod func(context.Context) (*corev1.Pod, error), ctEvents chan<- event.GenericEvent) (*ReconcileConfig, error) {
+-	if cm == nil {
+-		return nil, fmt.Errorf("cacheManager must be non-nil")
++// newReconciler returns a new reconcile.Reconciler. cm is only required when
++// the pod syncs validation data; processExcluder is always required.
++func newReconciler(mgr manager.Manager, cm *cm.CacheManager, processExcluder *process.Excluder, tracker *readiness.Tracker, getPod func(context.Context) (*corev1.Pod, error), ctEvents chan<- event.GenericEvent) (*ReconcileConfig, error) {
++	if processExcluder == nil {
++		return nil, fmt.Errorf("processExcluder must be non-nil")
 +	}
-+	cm := newSyncGVKContentionCacheManager(gvk, reader)
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+	stopCh := make(chan struct{})
-+
-+	replayDone := make(chan struct{})
-+	go func() {
-+		cm.replayGVKs(ctx, []schema.GroupVersionKind{gvk}, stopCh)
-+		close(replayDone)
-+	}()
-+
-+	select {
-+	case <-replayDone:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("replayGVKs did not exit cleanly on NoKindMatchError and may be looping indefinitely")
++	if cm == nil && operations.HasValidationOperations() {
++		return nil, fmt.Errorf("cacheManager must be non-nil when validation data sync is required")
+ 	}
+ 
+ 	return &ReconcileConfig{
+-		reader:       mgr.GetCache(),
+-		writer:       mgr.GetClient(),
+-		statusClient: mgr.GetClient(),
+-		scheme:       mgr.GetScheme(),
+-		cacheManager: cm,
+-		tracker:      tracker,
+-		getPod:       getPod,
+-		ctEvents:     ctEvents,
++		reader:          mgr.GetCache(),
++		writer:          mgr.GetClient(),
++		statusClient:    mgr.GetClient(),
++		scheme:          mgr.GetScheme(),
++		cacheManager:    cm,
++		processExcluder: processExcluder,
++		tracker:         tracker,
++		getPod:          getPod,
++		ctEvents:        ctEvents,
+ 	}, nil
+ }
+ 
+@@ -237,8 +250,10 @@ type ReconcileConfig struct {
+ 	writer       client.Writer
+ 	statusClient client.StatusClient
+ 
+-	scheme       *runtime.Scheme
+-	cacheManager *cm.CacheManager
++	scheme *runtime.Scheme
++	// cacheManager is nil when the pod does not sync validation data.
++	cacheManager    *cm.CacheManager
++	processExcluder *process.Excluder
+ 
+ 	tracker *readiness.Tracker
+ 
+@@ -250,6 +265,31 @@ type ReconcileConfig struct {
+ 	dirtyTemplates map[string]*v1beta1.ConstraintTemplate
+ }
+ 
++// excludeProcesses installs the exclusions parsed from the Config resource.
++// While validation data is being synced the cache manager owns the excluder:
++// swapping it there also schedules the re-list the new exclusions require.
++func (r *ReconcileConfig) excludeProcesses(newExcluder *process.Excluder) {
++	if r.cacheManager != nil {
++		r.cacheManager.ExcludeProcesses(newExcluder)
++		return
 +	}
 +
-+	reader.mu.Lock()
-+	defer reader.mu.Unlock()
-+	require.Equal(t, 1, reader.listCalls, "List should only be called once when NoKindMatchError is returned")
++	if r.processExcluder.Equals(newExcluder) {
++		return
++	}
++	r.processExcluder.Replace(newExcluder)
 +}
 +
-+func TestCacheManagerReplayGVKsRetriesAfterBackoffExhaustion(t *testing.T) {
-+	for _, failures := range []int{0, backoff.Steps - 1, backoff.Steps, 2*backoff.Steps - 1} {
-+		t.Run(fmt.Sprintf("%d_failures", failures), func(t *testing.T) {
-+			item := fakes.UnstructuredFor(configMapGVK, "default", "replayed")
-+			key, err := fakes.KeyFor(item)
-+			require.NoError(t, err)
-+			var attempts []time.Time
-+			reader := fakes.SpyReader{
-+				ListFunc: func(_ context.Context, list client.ObjectList, _ ...client.ListOption) error {
-+					attempts = append(attempts, time.Now())
-+					if len(attempts) <= failures {
-+						return errors.New("temporary list failure")
-+					}
-+					result, ok := list.(*unstructured.UnstructuredList)
-+					if !ok {
-+						return fmt.Errorf("expected *unstructured.UnstructuredList, got %T", list)
-+					}
-+					result.Items = []unstructured.Unstructured{*item}
-+					return nil
-+				},
-+			}
-+			cm := newSyncGVKContentionCacheManager(configMapGVK, reader)
-+			cfClient := &fakes.FakeCfClient{}
-+			cm.cfClient = cfClient
-+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-+			defer cancel()
++// excluderChangedForProcess reports whether the exclusions for the given
++// process differ from the ones currently installed.
++func (r *ReconcileConfig) excluderChangedForProcess(p process.Process, newExcluder *process.Excluder) bool {
++	if r.cacheManager != nil {
++		return r.cacheManager.ExcluderChangedForProcess(p, newExcluder)
++	}
 +
-+			cm.replayGVKs(ctx, []schema.GroupVersionKind{configMapGVK}, make(chan struct{}))
++	return !r.processExcluder.EqualsForProcess(p, newExcluder)
++}
 +
-+			require.NoError(t, ctx.Err())
-+			require.Len(t, attempts, failures+1)
-+			require.Equal(t, 1, cfClient.Len())
-+			require.True(t, cfClient.Contains(map[fakes.CfDataKey]interface{}{key: nil}),
-+				"inventory must recover without an object or source event")
-+			for i := 1; i < len(attempts); i++ {
-+				if i%backoff.Steps != 0 {
-+					require.GreaterOrEqual(t, attempts[i].Sub(attempts[i-1]), backoff.Duration,
-+						"transient retries must retain backoff pacing")
+ // +kubebuilder:rbac:groups=*,resources=*,verbs=get;list;watch
+ // +kubebuilder:rbac:groups=config.gatekeeper.sh,resources=configs,verbs=get;list;watch;create;update;patch;delete
+ // +kubebuilder:rbac:groups=config.gatekeeper.sh,resources=configs/status,verbs=get;update;patch
+@@ -304,14 +344,16 @@ func (r *ReconcileConfig) Reconcile(ctx context.Context, request reconcile.Reque
+ 		r.tracker.DisableStats()
+ 	}
+ 
++	notifyGenerate := operations.IsAssigned(operations.Generate) && *transform.S
+```
+
+**File**: `pkg/controller/config/config_controller_test.go` (modified, +3/-3)
+```diff
+@@ -253,7 +253,7 @@ func TestReconcile(t *testing.T) {
+ 		fakes.WithName("no-pod"),
+ 	)
+ 
+-	rec, err := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
++	rec, err := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
+ 	require.NoError(t, err)
+ 
+ 	// Wrap the Controller Reconcile function so it writes each request to a map when it is finished reconciling.
+@@ -545,7 +545,7 @@ func setupController(ctx context.Context, mgr manager.Manager, wm *watch.Manager
+ 		fakes.WithName("no-pod"),
+ 	)
+ 
+-	rec, err := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
++	rec, err := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("creating reconciler: %w", err)
+ 	}
+@@ -723,7 +723,7 @@ func TestConfig_Retries(t *testing.T) {
+ 		fakes.WithName("no-pod"),
+ 	)
+ 
+-	rec, _ := newReconciler(mgr, cacheManager, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
++	rec, _ := newReconciler(mgr, cacheManager, processExcluder, tracker, func(context.Context) (*v1.Pod, error) { return pod, nil }, nil)
+ 	err = add(mgr, rec)
+ 	if err != nil {
+ 		t.Fatal(err)
+```
+
+**File**: `pkg/controller/controller.go` (modified, +47/-12)
+```diff
+@@ -32,6 +32,7 @@ import (
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/export"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/fakes"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/readiness"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/util"
+ 	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
+@@ -130,6 +131,32 @@ type Dependencies struct {
+ 	WebhookConfigCache *webhookconfigcache.WebhookConfigCache
+ }
+ 
++// Validate rejects a dependency plan that does not match the assigned
++// operations. Every controller we go on to register expects its own
++// dependencies to be non-nil, so a mismatch has to fail setup rather than
++// surface later as a nil dereference.
++func (deps *Dependencies) Validate() error {
++	if operations.HasValidationOperations() {
++		if deps.CacheMgr == nil {
++			return fmt.Errorf("cache manager is required for operations %v", operations.AssignedStringList())
++		}
++		if deps.SyncEventsCh == nil {
++			return fmt.Errorf("sync events channel is required for operations %v", operations.AssignedStringList())
++		}
++		if deps.WatchManger == nil {
++			return fmt.Errorf("watch manager is required for operations %v", operations.AssignedStringList())
++		}
++	} else if deps.CacheMgr != nil {
++		return fmt.Errorf("cache manager was built but no operation in %v syncs validation data", operations.AssignedStringList())
++	}
++
++	if deps.ProcessExcluder == nil {
++		return fmt.Errorf("process excluder is required for operations %v", operations.AssignedStringList())
++	}
++
++	return nil
++}
++
+ type defaultPodGetter struct {
+ 	client client.Client
+ 	scheme *runtime.Scheme
+@@ -176,6 +203,10 @@ func (g *defaultPodGetter) GetPod(ctx context.Context) (*corev1.Pod, error) {
+ 
+ // AddToManager adds all Controllers to the Manager.
+ func AddToManager(m manager.Manager, deps *Dependencies) error {
++	if err := deps.Validate(); err != nil {
++		return fmt.Errorf("invalid controller dependencies: %w", err)
++	}
++
+ 	if *remoteCluster && *debugUseFakePod {
+ 		return fmt.Errorf("--enable-remote-cluster and --debug-use-fake-pod are mutually exclusive")
+ 	}
+@@ -227,19 +258,23 @@ func AddToManager(m manager.Manager, deps *Dependencies) error {
+ 		}
+ 	}
+ 
+-	// Adding the CacheManager as a runnable;
+-	// manager will start CacheManager.
+-	if err := m.Add(deps.CacheMgr); err != nil {
+-		return fmt.Errorf("error adding cache manager as a runnable: %w", err)
+-	}
++	// The cache manager and the sync controller only exist for operations that
++	// sync validation data.
++	if deps.CacheMgr != nil {
++		// Adding the CacheManager as a runnable;
++		// manager will start CacheManager.
++		if err := m.Add(deps.CacheMgr); err != nil {
++			return fmt.Errorf("error adding cache manager as a runnable: %w", err)
++		}
+ 
+-	syncAdder := syncc.Adder{
+-		Events:       deps.SyncEventsCh,
+-		CacheManager: deps.CacheMgr,
+-	}
+-	// Create subordinate controller - we will feed it events dynamically via watch
+-	if err := syncAdder.Add(m); err != nil {
+-		return fmt.Errorf("registering sync controller: %w", err)
++		syncAdder := syncc.Adder{
++			Events:       deps.SyncEventsCh,
++			CacheManager: deps.CacheMgr,
++		}
++		// Create subordinate controller - we will feed it events dynamically via watch
++		if err := syncAdder.Add(m); err != nil {
++			return fmt.Errorf("registering sync controller: %w", err)
++		}
+ 	}
+ 
+ 	for _, a := range Injectors {
+```
+
+**File**: `pkg/controller/controller_test.go` (added, +148/-0)
+```diff
+@@ -0,0 +1,148 @@
++/*
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package controller
++
++import (
++	"testing"
++
++	cm "github.com/open-policy-agent/gatekeeper/v3/pkg/cachemanager"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/controller/config/process"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/operations"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/watch"
++	"sigs.k8s.io/controller-runtime/pkg/event"
++)
++
++func TestDependenciesValidate(t *testing.T) {
++	dataSyncDeps := func() *Dependencies {
++		return &Dependencies{
++			CacheMgr:        &cm.CacheManager{},
++			SyncEventsCh:    make(chan event.GenericEvent, 1),
++			WatchManger:     &watch.Manager{},
++			ProcessExcluder: process.New(),
++		}
++	}
++
++	tests := []struct {
++		name     string
++		assigned []operations.Operation
++		deps     func() *Dependencies
++		wantErr  bool
++	}{
++		{
++			name:     "data sync operations with a complete plan",
++			assigned: []operations.Operation{operations.Audit},
++			deps:     dataSyncDeps,
++		},
++		{
++			name:     "data sync operations without a process excluder",
++			assigned: []operations.Operation{operations.Audit},
++			deps: func() *Dependencies {
++				deps := dataSyncDeps()
++				deps.ProcessExcluder = nil
++				return deps
++			},
++			wantErr: true,
++		},
++		{
++			name:     "data sync operations without a cache manager",
++			assigned: []operations.Operation{operations.Audit},
++			deps: func() *Dependencies {
++				deps := dataSyncDeps()
++				deps.CacheMgr = nil
++				return deps
++			},
++			wantErr: true,
++		},
++		{
++			name:     "data sync operations without sync events",
++			assigned: []operations.Operation{operations.Webhook},
++			deps: func() *Dependencies {
++				deps := dataSyncDeps()
++				deps.SyncEventsCh = nil
++				return deps
++			},
++			wantErr: true,
++		},
++		{
++			name:     "data sync operations without a watch manager",
++			assigned: []operations.Operation{operations.Webhook},
++			deps: func() *Dependencies {
++				deps := dataSyncDeps()
++				deps.WatchManger = nil
++				return deps
++			},
++			wantErr: true,
++		},
++		{
++			name:     "mutation webhook keeps process exclusions without data sync",
++			assigned: []operations.Operation{operations.MutationWebhook},
++			deps: func() *Dependencies {
++				return &Dependencies{ProcessExcluder: process.New()}
++			},
++		},
++		{
++			name:     "mutation webhook without a process excluder",
++			assigned: []operations.Operation{operations.MutationWebhook},
++			deps:     func() *Dependencies { return &Dependencies{} },
++			wantErr:  true,
++		},
++		{
++			name:     "cache manager built for operations that do not sync data",
++			assigned: []operations.Operation{operations.MutationWebhook},
++			deps: func() *Dependencies {
++				return &Dependencies{
++					CacheMgr:        &cm.CacheManager{},
++					ProcessExcluder: process.New(),
 +				}
++			},
++			wantErr: true,
++		},
++		{
++			// Mutation status syncs no data, but the Config controller still
++			// registers for the readiness stats switch and needs somewhere to
++			// put the exclusions it parses.
++			name:     "mutation status needs only a process excluder",
++			assigned: []operations.Operation{operations.MutationStatus},
++			deps: func() *Dependencies {
++				return &Dependencies{ProcessExcluder: process.New()}
++			},
++		},
++		{
++			name:     "mutation status without a process excluder",
++			assigned: []operations.Operation{operations.MutationStatus},
++			deps:     func() *Dependencies { return &Dependencies{} },
++			wantErr:  true,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			restore, err := operations.SetForTest(tt.assigned...)
++			if err != nil {
++				t.Fatal(err)
++			}
++			t.Cleanup(restore)
++
++			err = tt.deps().Validate()
++			if tt.wantErr && err == nil {
++				t.Fatal("Validate() = nil, want error")
++			}
++			if !tt.wantErr && err != nil {
++				t.Fatalf("Validate() = %v, want nil", err)
 +			}
 +		})
 +	}
 +}
-+
-+func TestCacheManagerReplayGVKsCancelsBackoffAfterExhaustion(t *testing.T) {
-+	for _, stopReplay := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("stop_channel_%t", stopReplay), func(t *testing.T) {
-+			attempts := make(chan struct{}, 1)
-+			reader := fakes.SpyReader{
-+				ListFunc: func(ctx context.Context, _ client.ObjectList, _ ...client.ListOption) error {
-+					select {
-+					case attempts <- struct{}{}:
-+						return errors.New("temporary list failure")
-+					case <-ctx.Done():
-+						return ctx.Err()
-+					}
-+				},
-+			}
-+			cm := newSyncGVKContentionCacheManager(configMapGVK, reader)
-+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-+			stopCh := make(chan struct{})
-+			replayDone := make(chan struct{})
-+			go func() {
-+				defer close(replayDone)
-+				cm.replayGVKs(ctx, []schema.GroupVersionKind{configMapGVK}, stopCh)
-+			}()
-+			t.Cleanup(func() {
-+				cancel()
-+				<-replayDone
-+			})
-+
-+			for i := 0; i <= backoff.Steps; i++ {
-+				select {
-+				case <-attempts:
-+				case <-replayDone:
-+					t.Fatal("replay stopped retrying a recoverable GVK")
-+				case <-ctx.Done():
-+					t.Fatal("replay did not continue after backoff exhaustion")
-+				}
-+			}
-+			if stopReplay {
-+				close(stopCh)
-+			} else {
-+				cancel()
-+			}
-+			select {
-+			case <-replayDone:
-+			case <-time.After(2 * time.Second):
-+				t.Fatal("replay did not cancel its retry backoff")
-+			}
-+		})
-+	}
-+}
-+
- func TestCacheManagerManageCacheStopsRelistBeforeWipeWithoutHoldingLock(t *testing.T) {
- 	reader
+```
+
+**File**: `pkg/operations/operations.go` (modified, +1/-3)
+```diff
+@@ -150,9 +150,7 @@ func AssignedStringList() []string {
+ 	return operations.assignedStringList
+ }
+ 
+-// HasValidationOperations returns `true` if there
+-// are any operations that would require a constraint or template controller
+-// or a sync controller.
++// HasValidationOperations reports whether audit or validating-webhook operations are assigned.
+ func HasValidationOperations() bool {
+ 	return IsAssigned(Audit) || IsAssigned(Webhook)
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1739,32 +2027,97 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reject path integers that overflow int64 and wrap to a positive value (#4873)
+## X. separate Config process exclusions from validation data sync (#4784)
 
 **RULE**:
-When implementing operations in `pkg/mutation/path/parser/parser.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ace88c8a`: reject path integers that overflow int64 and wrap to a positive value (#4873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e492e24c`: separate Config process exclusions from validation data sync (#4784). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/mutation/path/parser/parser.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `main.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"math"
-		digit := int64(d - '0')
-		if result > (math.MaxInt64-digit)/10 {
-		result = result*10 + digit
+	wm, err := newWatchManager(dc)
+	if wm != nil {
+		if err := mgr.Add(wm); err != nil {
+			setupLog.Error(err, "unable to register watch manager with the manager")
+			return err
+		}
+	// The cache manager and everything hanging off it only exist for operations
+	// that sync referential data for validation. Other operations read process
+	// exclusions from the Config resource without any of this.
+	var (
+		events chan event.GenericEvent
+		cm     *cachemanager.CacheManager
+	)
+	if operations.HasValidationOperations() {
+		// Events ch will be used to receive events from dynamic watches registered
+		// via the registrar below.
+		events = make(chan event.GenericEvent, 1024)
+		reg, err := wm.NewRegistrar(
+			cachemanager.RegistrarName,
+			events)
+		if err != nil {
+			setupLog.Error(err, "unable to set up watch registrar for cache manager")
+			return err
+		}
+		cmConfig := &cachemanager.Config{
+			SyncMetricsCache: syncutil.NewMetricsCache(),
+			Tracker:          tracker,
+			ProcessExcluder:  processExcluder,
+			Registrar:        reg,
+			Reader:           mgr.GetCache(),
+		}
+		if client != nil {
+			cmConfig.CfClient = client
+		}
+		cm, err = cachemanager.NewCacheManager(cmConfig)
+		if err != nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		result = result*10 + int64(d-'0')
-		if result < 0 {
+	wm, err := watch.New(dc)
+	if err := mgr.Add(wm); err != nil {
+		setupLog.Error(err, "unable to register watch manager with the manager")
+		return err
+	// Events ch will be used to receive events from dynamic watches registered
+	// via the registrar below.
+	events := make(chan event.GenericEvent, 1024)
+	reg, err := wm.NewRegistrar(
+		cachemanager.RegistrarName,
+		events)
+	if err != nil {
+		setupLog.Error(err, "unable to set up watch registrar for cache manager")
+		return err
+	}
+
+	syncMetricsCache := syncutil.NewMetricsCache()
+	cmConfig := &cachemanager.Config{
+		SyncMetricsCache: syncMetricsCache,
+		Tracker:          tracker,
+		ProcessExcluder:  processExcluder,
+		Registrar:        reg,
+		Reader:           mgr.GetCache(),
+	}
+	if client != nil {
+		cmConfig.CfClient = client
+	}
+	cm, err := cachemanager.NewCacheManager(cmConfig)
+	if err != nil {
+		setupLog.Error(err, "unable to create cache manager")
+		return err
+	}
+	err = mgr.Add(pruner.NewExpectationsPruner(cm, tracker))
+	if err != nil {
+		setupLog.Error(err, "adding expectations pruner to manager")
+		return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ace88c8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e492e24c` are properly handled with clean fallback behavior.

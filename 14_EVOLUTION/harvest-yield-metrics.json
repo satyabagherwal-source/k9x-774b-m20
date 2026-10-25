@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T03:06:19.003Z",
-  "total_cycles_completed": 4602,
-  "total_learnings_persisted": 4602,
-  "total_rules_promoted": 3863,
+  "last_updated": "2026-10-25T03:15:32.837Z",
+  "total_cycles_completed": 4605,
+  "total_learnings_persisted": 4605,
+  "total_rules_promoted": 3868,
   "history": [
-    {
-      "timestamp": "2026-10-22T20:51:52.076Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:51:55.588Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-22T20:51:57.375Z",
-      "repository": "KeyboardKit/KeyboardKit",
-      "learningId": "learn-github-keyboardkit-keyboardkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-22T20:52:00.166Z",
       "repository": "kumahq/kuma",
@@ -1403,6 +1382,27 @@
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:14:19.348Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:14:25.200Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T03:15:32.837Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
