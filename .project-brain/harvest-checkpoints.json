@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T16:41:25.988Z",
+  "last_updated": "2026-10-25T16:48:19.170Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "9560027c7312e86b1281107b15daa5e83f7824a13547be6527bcb4557a8d92b6",
-      "verified_at": "2026-10-20T21:15:00.850Z",
+      "content_hash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
+      "verified_at": "2026-10-25T16:48:05.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T21:15:00.850Z"
+      "last_updated": "2026-10-25T16:48:05.904Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "592052b7d52064ed304a0cab8259a4d5f4613198a0ffad5bcfed9ef98f864a6b",
-      "verified_at": "2026-10-25T15:56:07.682Z",
+      "content_hash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
+      "verified_at": "2026-10-25T16:48:17.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:56:07.682Z"
+      "last_updated": "2026-10-25T16:48:17.048Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
-      "verified_at": "2026-10-23T11:30:55.190Z",
+      "content_hash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
+      "verified_at": "2026-10-25T16:48:19.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T11:30:55.190Z"
+      "last_updated": "2026-10-25T16:48:19.166Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

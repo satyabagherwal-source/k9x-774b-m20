@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `929648f4`  
+> **Source Version**: `181d6814`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:08:21.090Z  
+> **Timestamp**: 2026-10-25T16:48:16.860Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:08:19.934Z  
+> **Harvest Timestamp**: 2026-10-25T16:48:16.853Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1969,122 +1969,181 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `929648f4` (2026-10-25)
-**Commit Message**: Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7
+### Incident Patch 1: `181d6814` (2026-10-25)
+**Commit Message**: Merge pull request #4576 from aleo-labs-protocol/deps/relax-exact-pins
 
-**File**: `Cargo.lock` (modified, +2/-3)
+Drop the elliptic-curve pin and the no-op tokio-stream =
+
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -1166,9 +1166,9 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
- 
- [[package]]
- name = "crypto-bigint"
--version = "0.7.5"
-+version = "0.7.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
-+checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
- dependencies = [
-  "cpubits",
-  "ctutils",
 @@ -4938,7 +4938,6 @@ version = "4.12.0"
  dependencies = [
   "built",
   "clap",
-- "crypto-bigint",
-  "elliptic-curve",
+- "elliptic-curve",
   "locktick",
   "rusty-hook",
+  "snarkos-account",
 ```
 
-**File**: `Cargo.toml` (modified, +0/-7)
+**File**: `Cargo.toml` (modified, +0/-9)
 ```diff
-@@ -383,12 +383,6 @@ workspace = true
- version = "=0.14.1"
- default-features = false
+@@ -118,7 +118,6 @@ version = "1"
+ version = "0.57.2"
  
--# Pinned alongside elliptic-curve to avoid resolving yanked crypto-bigint releases.
--[dependencies.crypto-bigint]
--version = "=0.7.5"
+ [workspace.dependencies.proptest]
+-# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
+ version = "1.6"
+ 
+ [workspace.dependencies.rayon]
+@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
+ [dependencies.tracing]
+ workspace = true
+ 
+-# Pinned to =0.14.1 because k256 v0.14.0 requires it.
+-# Adding this as a direct dependency forces cargo to resolve the exact version
+-# and prevents automatic upgrades to incompatible releases.
+-[dependencies.elliptic-curve]
+-version = "=0.14.1"
 -default-features = false
--features = ["hybrid-array", "rand_core", "subtle", "zeroize"]
 -
  [dev-dependencies.rusty-hook]
  version = "0.11.2"
  
-@@ -421,7 +415,6 @@ opt-level = 2
+@@ -414,7 +406,6 @@ opt-level = 2
+ 
  [package.metadata.cargo-machete]
  ignored = [
-   "elliptic-curve", # Needed to pin the crate to a specific version
--  "crypto-bigint", # Needed to pin the crate to a specific version
+-  "elliptic-curve", # Needed to pin the crate to a specific version
    "snarkos-account", # Needed for cuda feature
    "snarkos-node", # Needed for metrics feature
    "snarkos-node-bft", # Needed for cuda and locktick features
+```
+
+**File**: `node/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ workspace = true
+ features = [ "rt", "signal" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tokio-util]
+ workspace = true
+```
+
+**File**: `node/router/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ workspace = true
+ features = [ "codec" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tracing]
+ workspace = true
 ```
 
 ---
 
-### Incident Patch 2: `b6f92a00` (2026-10-24)
-**Commit Message**: Remove the crypto-bigint pin to move past RUSTSEC-2026-0387
+### Incident Patch 2: `8fd2c276` (2026-10-25)
+**Commit Message**: Drop the elliptic-curve pin and the no-op tokio-stream =
+
+elliptic-curve was pinned for k256 release candidates. k256 0.14.0
+requires elliptic-curve ^0.14.1 itself, so the =0.14.1 pin only blocks
+patch releases. No snarkos code uses the crate; it was a direct
+dependency only to carry the pin, so it goes, with its cargo-machete
+exemption. The resolved version and its enabled features are unchanged.
+
+tokio-stream's "=0.1" means any 0.1.x, the same as "0.1".
+
+The proptest comment said snarkVM uses 1.6; it uses 1.12 now. The "1.6"
+requirement admits that, so only the comment goes.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01Cn39yVeJuiYjCFxEwQU5F2
+Claude-Session: https://claude.ai/code/session_01WknVbv96cQthGZ7Ztp2dEQ
 
-**File**: `Cargo.lock` (modified, +2/-3)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -1166,9 +1166,9 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
- 
- [[package]]
- name = "crypto-bigint"
--version = "0.7.5"
-+version = "0.7.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
-+checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
- dependencies = [
-  "cpubits",
-  "ctutils",
 @@ -4938,7 +4938,6 @@ version = "4.12.0"
  dependencies = [
   "built",
   "clap",
-- "crypto-bigint",
-  "elliptic-curve",
+- "elliptic-curve",
   "locktick",
   "rusty-hook",
+  "snarkos-account",
 ```
 
-**File**: `Cargo.toml` (modified, +0/-7)
+**File**: `Cargo.toml` (modified, +0/-9)
 ```diff
-@@ -383,12 +383,6 @@ workspace = true
- version = "=0.14.1"
- default-features = false
+@@ -118,7 +118,6 @@ version = "1"
+ version = "0.57.2"
  
--# Pinned alongside elliptic-curve to avoid resolving yanked crypto-bigint releases.
--[dependencies.crypto-bigint]
--version = "=0.7.5"
+ [workspace.dependencies.proptest]
+-# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
+ version = "1.6"
+ 
+ [workspace.dependencies.rayon]
+@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
+ [dependencies.tracing]
+ workspace = true
+ 
+-# Pinned to =0.14.1 because k256 v0.14.0 requires it.
+-# Adding this as a direct dependency forces cargo to resolve the exact version
+-# and prevents automatic upgrades to incompatible releases.
+-[dependencies.elliptic-curve]
+-version = "=0.14.1"
 -default-features = false
--features = ["hybrid-array", "rand_core", "subtle", "zeroize"]
 -
  [dev-dependencies.rusty-hook]
  version = "0.11.2"
  
-@@ -421,7 +415,6 @@ opt-level = 2
+@@ -414,7 +406,6 @@ opt-level = 2
+ 
  [package.metadata.cargo-machete]
  ignored = [
-   "elliptic-curve", # Needed to pin the crate to a specific version
--  "crypto-bigint", # Needed to pin the crate to a specific version
+-  "elliptic-curve", # Needed to pin the crate to a specific version
    "snarkos-account", # Needed for cuda feature
    "snarkos-node", # Needed for metrics feature
    "snarkos-node-bft", # Needed for cuda and locktick features
 ```
 
+**File**: `node/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ workspace = true
+ features = [ "rt", "signal" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tokio-util]
+ workspace = true
+```
+
+**File**: `node/router/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ workspace = true
+ features = [ "codec" ]
+ 
+ [dependencies.tokio-stream]
+-version = "=0.1"
++version = "0.1"
+ 
+ [dependencies.tracing]
+ workspace = true
+```
+
 #### Recent Merged Pull Requests:
+- **PR #4576** (2026-10-25): Drop the elliptic-curve pin and the no-op tokio-stream = (@cbeck88)
 - **PR #4575** (2026-10-25): Remove the crypto-bigint pin to move past RUSTSEC-2026-0387 (@cbeck88)
 - **PR #4573** (2026-10-24): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
 - **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
-- **PR #4568** (2026-10-21): [Release] Testnet v4.12.1 (@vicsn)
 
 ---
 
@@ -2098,37 +2157,3 @@ Claude-Session: https://claude.ai/code/session_01Cn39yVeJuiYjCFxEwQU5F2
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `929648f4`: Merge pull request #4575 from aleo-labs-protocol/deps/crypto-bigint-0.7.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "0.7.7"
-checksum = "cc907c45bb7e9ef8fc3778defd0f3cd8c81288f1b4e748eba064948f20c47122"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "0.7.5"
-checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
- "crypto-bigint",
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `929648f4` are properly handled with clean fallback behavior.

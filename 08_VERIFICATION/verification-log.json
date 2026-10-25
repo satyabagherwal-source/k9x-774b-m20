@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-HDB7",
-    "timestamp": "2026-10-22T19:22:37.603Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "556ee34f14b01975edb18df61568e000ea7ca890081f83bbefb71e7ccb9e1f51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-HG64",
-    "timestamp": "2026-10-22T19:22:41.308Z",
-    "repository": "wzh4869/AppPorts",
-    "learningId": "learn-github-wzh4869-appports",
-    "contentHash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-HK2Y",
-    "timestamp": "2026-10-22T19:22:46.378Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "1c1b56827e3264267ca11f1995264c6994aeb485156ddcd98a35825176be7550",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-HN50",
     "timestamp": "2026-10-22T19:22:50.340Z",
     "repository": "qdrant/qdrant",
@@ -7492,6 +7447,51 @@
     "contentHash": "3b7dbbbc83389e02441406dbc9473eebfdcc13c676b51f6a5abb93285c09256f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-A77P",
+    "timestamp": "2026-10-25T16:48:05.893Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-AFT9",
+    "timestamp": "2026-10-25T16:48:17.037Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-AHG3",
+    "timestamp": "2026-10-25T16:48:19.155Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

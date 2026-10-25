@@ -4903,3 +4903,6 @@
 | `CYCLE-20261025-T2TC` | `2026-10-25T16:34:47.040Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4380, Rule 4381` | Yes (`6cfd82cf...`) |
 | `CYCLE-20261025-1EQ3` | `2026-10-25T16:41:15.723Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`bdf99c8b...`) |
 | `CYCLE-20261025-1MMR` | `2026-10-25T16:41:25.971Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4382` | Yes (`3b7dbbbc...`) |
+| `CYCLE-20261025-A77P` | `2026-10-25T16:48:05.893Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`1a65e25c...`) |
+| `CYCLE-20261025-AFT9` | `2026-10-25T16:48:17.037Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md` | Yes (`567332b1...`) |
+| `CYCLE-20261025-AHG3` | `2026-10-25T16:48:19.155Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`fef38ac3...`) |

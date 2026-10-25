@@ -4910,3 +4910,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-25T16:34:47.043Z |
 | `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-25T16:41:15.727Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `883413ab` | Multi-dimensional audit evidence | 2026-10-25T16:41:25.974Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-25T16:48:05.896Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `181d6814` | Multi-dimensional audit evidence | 2026-10-25T16:48:17.040Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `b10e5045` | Multi-dimensional audit evidence | 2026-10-25T16:48:19.158Z |

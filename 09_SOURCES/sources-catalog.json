@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "9560027c7312e86b1281107b15daa5e83f7824a13547be6527bcb4557a8d92b6",
-    "lastHarvestedAt": "2026-10-20T21:15:00.842Z",
+    "contentHash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
+    "lastHarvestedAt": "2026-10-25T16:48:05.896Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "929648f4",
+    "sourceVersion": "181d6814",
     "license": "Apache-2.0",
-    "contentHash": "3d99c9eb02761202d2baf5dd014e1f7eaf4aaf3dc1f94e192faa48a1bfa336e6",
-    "lastHarvestedAt": "2026-10-25T13:08:21.459Z",
+    "contentHash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
+    "lastHarvestedAt": "2026-10-25T16:48:17.040Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "8edc2431",
+    "sourceVersion": "b10e5045",
     "license": "Apache-2.0",
-    "contentHash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
-    "lastHarvestedAt": "2026-10-23T11:30:55.180Z",
+    "contentHash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
+    "lastHarvestedAt": "2026-10-25T16:48:19.158Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {

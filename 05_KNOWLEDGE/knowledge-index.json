@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T16:41:25.915Z",
+  "last_updated": "2026-10-25T16:48:19.098Z",
   "total_verified_learnings": 1088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26688,7 +26688,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "9560027c7312e86b1281107b15daa5e83f7824a13547be6527bcb4557a8d92b6",
+      "content_hash": "1a65e25c534faaf0ae2145e1ced297c26955d7d99ba8f14dea538bc08a491a01",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -26771,7 +26771,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-20T21:15:00.777Z",
+      "verified_at": "2026-10-25T16:48:05.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40551,8 +40551,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "8edc2431",
-      "content_hash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
+      "source_version": "b10e5045",
+      "content_hash": "fef38ac3f29fd6114d436625aafe4d66571b12b72da542925547eb497baed028",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -40577,7 +40577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T11:30:55.123Z",
+      "verified_at": "2026-10-25T16:48:19.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -61289,13 +61289,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "181d6814",
-      "content_hash": "592052b7d52064ed304a0cab8259a4d5f4613198a0ffad5bcfed9ef98f864a6b",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "567332b1052ee215263fb9631f48101fb093314dfeaa3c860c0495ea0e0ac4c5",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -61348,7 +61348,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:56:07.611Z",
+      "verified_at": "2026-10-25T16:48:16.966Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
