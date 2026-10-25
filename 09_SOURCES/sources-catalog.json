@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
-    "lastHarvestedAt": "2026-10-21T01:49:24.737Z",
+    "contentHash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
+    "lastHarvestedAt": "2026-10-25T21:40:07.549Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "5f8ed384",
+    "sourceVersion": "7cd4e5e1",
     "license": "Apache-2.0",
-    "contentHash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
-    "lastHarvestedAt": "2026-10-25T05:27:49.116Z",
+    "contentHash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
+    "lastHarvestedAt": "2026-10-25T21:40:25.193Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

@@ -5002,3 +5002,5 @@
 | `CYCLE-20261025-99SX` | `2026-10-25T21:27:18.753Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4452, Rule 4453, Rule 4454` | Yes (`c6123873...`) |
 | `CYCLE-20261025-HKSK` | `2026-10-25T21:33:46.244Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4455` | Yes (`de93f898...`) |
 | `CYCLE-20261025-HLJD` | `2026-10-25T21:33:47.209Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4456, Rule 4457` | Yes (`9ee8f29e...`) |
+| `CYCLE-20261025-PR0A` | `2026-10-25T21:40:07.546Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`d3737401...`) |
+| `CYCLE-20261025-Q4MD` | `2026-10-25T21:40:25.189Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4458` | Yes (`f601101d...`) |

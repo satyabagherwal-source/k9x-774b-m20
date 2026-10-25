@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T21:33:47.155Z",
+  "last_updated": "2026-10-25T21:40:25.133Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -24979,7 +24979,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "8336330e9f86d39072ed2b4a105a0fbd0e19c1e7442660ba3578bc727050e3a2",
+      "content_hash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [
@@ -25016,7 +25016,7 @@
         "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
         "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
       ],
-      "verified_at": "2026-10-21T01:49:24.678Z",
+      "verified_at": "2026-10-25T21:40:07.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50792,8 +50792,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "5f8ed384",
-      "content_hash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
+      "source_version": "7cd4e5e1",
+      "content_hash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -50826,6 +50826,11 @@
           "number": 4079,
           "title": "Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-s",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4458,
+          "title": "deps): update dependency io.projectreactor:reactor-core to v3.8.8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50833,7 +50838,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:27:49.048Z",
+      "verified_at": "2026-10-25T21:40:25.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126226,6 +126231,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T21:33:47.143Z"
+    },
+    "rule-4458": {
+      "learning_id": "rule-4458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4458,
+      "title": "deps): update dependency io.projectreactor:reactor-core to v3.8.8",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "7cd4e5e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T21:40:25.121Z"
     }
   },
   "aliases": {

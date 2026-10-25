@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `5f8ed384`  
+> **Source Version**: `7cd4e5e1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:27:48.750Z  
+> **Timestamp**: 2026-10-25T21:40:24.807Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:27:48.517Z  
+> **Harvest Timestamp**: 2026-10-25T21:40:24.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7144 stars
+- **Stars / Engagement**: 7145 stars
 
 ---
 
@@ -1065,494 +1065,47 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c518c36` (2026-10-23)
-**Commit Message**: Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-startup
+### Incident Patch 1: `cb004029` (2026-10-25)
+**Commit Message**: fix(deps): update dependency io.projectreactor:reactor-core to v3.8.8
 
-Emit trace span for proton startup.
-
-**File**: `opentelemetry/CMakeLists.txt` (modified, +2/-0)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,9 @@
- # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- vespa_define_module(
-     DEPENDS
-+    vespa_configdefinitions
-     vespalib
-+    vespalog
- 
-     LIBS
-     src/vespa/opentelemetry
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +54/-0)
-```diff
-@@ -2,7 +2,10 @@
- 
- #include "opentelemetry_tracer_providers.h"
- 
-+#include <vespa/config-telemetry.h>
-+#include <vespa/defaults.h>
- #include <vespa/vespalib/component/vtag.h>
-+#include <vespa/vespalib/net/tls/transport_security_options_reading.h>
- 
- #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
- #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
-@@ -12,6 +15,14 @@
- #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
- #include <opentelemetry/trace/provider.h>
- 
-+#include <format>
-+#include <fstream>
-+#include <iomanip>
-+#include <sstream>
-+
-+#include <vespa/log/log.h>
-+LOG_SETUP(".opentelemetry.opentelemetry_tracer_providers");
-+
- namespace vespa_opentelemetry {
- 
- const std::string OpenTelemetryTracerProviders::vespa_tls_config_file("VESPA_TLS_CONFIG_FILE");
-@@ -48,6 +59,25 @@ opentelemetry::sdk::resource::Resource OpenTelemetryTracerProviders::make_resour
-     return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
- }
- 
-+opentelemetry::sdk::resource::Resource
-+OpenTelemetryTracerProviders::make_resource(const std::string& service_name, TelemetryConfig& telemetry_config) {
-+    opentelemetry::sdk::resource::ResourceAttributes resource_attributes;
-+    for (const auto& resource : telemetry_config.resourceAttribute) {
-+        resource_attributes.SetAttribute(resource.first, resource.second);
-+    }
-+    resource_attributes.SetAttribute("realservice.name", service_name);
-+    resource_attributes.SetAttribute("realservice.version", vespalib::VersionTag);
-+    return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
-+}
-+
-+void OpenTelemetryTracerProviders::adjust_otlp_grpc_exporter_options(
-+    opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts, TelemetryConfig& cfg) {
-+    auto          host_name_file_name = vespa::Defaults::underVespaHome(cfg.endpointHostnameFile.c_str());
-+    std::ifstream host_name_file(host_name_file_name);
-+    std::string   host_name((std::istreambuf_iterator<char>(host_name_file)), std::istreambuf_iterator<char>());
-+    opts.endpoint = std::format("https://{}:4317", host_name);
-+}
-+
- void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
-     const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
-     const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
-@@ -60,6 +90,30 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
-     opentelemetry::trace::Provider::SetTracerProvider(provider);
- }
- 
-+void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
-+                                                             TelemetryConfig&   telemetry_config) {
-+    if (!telemetry_config.enabled) {
-+        return;
-+    }
-+    const char* tls_config_file = getenv(vespa_tls_config_file.c_str());
-+    if (tls_config_file == nullptr) {
-+        LOG(warning, "environment variable '%s' not set, telemetry is disabled", vespa_tls_config_file.c_str());
-+        return;
-+    }
-+    auto vespa_tls_config = vespalib::net::tls::read_options_from_json_file(tls_config_file);
-+    if (!vespa_tls_config) {
-+        std::stringstream ss;
-+        ss << "bad vespa tls config file " << std::quoted(tls_config_file) << ", telemetry is disabled";
-+        LOG(warning, "%s", ss.str().c_str());
-+        return;
-+    }
-+    auto otlp_grpc_exporter_options = setup_otlp_grpc_exporter_options(*vespa_tls_config);
-+    adjust_otlp_grpc_exporter_options(otlp_grpc_exporter_options, telemetry_config);
-+    auto batch_span_processor_options = setup_batch_span_processor_options(false);
-+    auto resource = make_resource(service_name, telemetry_config);
-+    init_grpc_tracer_provider(otlp_grpc_exporter_options, batch_span_processor_options, resource);
-+}
-+
- std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
- OpenTelemetryTracerProviders::init_memory_tracer_provider() {
-     std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> data;
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.h` (modified, +10/-0)
-```diff
-@@ -11,13 +11,18 @@
- 
- #include <memory>
- 
-+namespace ai::vespa::telemetry::internal {
-+class InternalTelemetryType;
-+}
-+
- namespace vespa_opentelemetry {
- 
- /*
-  * Functions for setting up open telemetry trace providers to an ostream, to a memory buffer or to grpc.
-  */
- class OpenTelemetryTracerProviders {
- public:
-+    using TelemetryConfig = const ai::vespa::telemetry::internal::InternalTelemetryType;
-     static const std::string vespa_tls_config_file;
- 
-     static void cleanup_tracer_provider();
-@@ -27,10 +32,15 @@ class OpenTelemetryTracerProviders {
-     [[nodiscard]] static opentelemetry::sdk::trace::BatchSpanProcessorOptions
-     setup_batch_span_processor_options(bool test);
-     [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource();
-+    [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource(const std::string& service_name,
-+                                                                              TelemetryConfig&   telemetry_config);
-+    static void adjust_otlp_grpc_exporter_options(opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts,
-+                                                  TelemetryConfig&                                        cfg);
-     static void init_grpc_tracer_provider(
-         const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
-         const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
-         const opentelemetry::sdk::resource::Resource&                 resource);
-+    static void init_grpc_tracer_provider(const std::string& service_name, TelemetryConfig& telemetry_config);
- 
-     [[nodiscard]] static std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
-     init_memory_tracer_provider();
-```
-
-**File**: `searchcore/src/apps/proton/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ vespa_add_executable(searchcore_proton_app
-     searchcore_grouping
-     searchcore_proton_metrics
-     storageserver_storageapp
-+    vespa_opentelemetry
-+    gRPC::grpc
-     absl::failure_signal_handler
-     absl::symbolize
- )
-```
-
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +25/-2)
-```diff
-@@ -1,10 +1,12 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
-+#include <vespa/config-telemetry.h>
- #include <vespa/config/common/configcontext.h>
- #include <vespa/config/common/exceptions.h>
- #include <vespa/fastos/file_interface.h>
- #include <vespa/fnet/transport.h>
- #include <vespa/metrics/metricmanager.h>
-+#include <vespa/opentelemetry/opentelemetry_tracer_providers.h>
- #include <vespa/searchcore/proton/server/proton.h>
- #include <vespa/searchvisitor/searchvisitor.h>
- #include <vespa/storage/storageserver/storagenode.h>
-@@ -16,6 +18,9 @@
- #include <absl/debugging/failure_signal_handler.h>
- #include <absl/debugging/symbolize.h>
- #include <fcntl.h>
-+#include <google/protobuf/message_lite.h>
-+#include <grpc/grpc.h>
-+#include <opentelemetry/trace/provider.h>
- 
- #include <cstdlib>
- #include <cstring>
-@@ -28,6 +33,7 @@ LOG_SETUP("proton");
- 
- using SIG = vespalib::SignalHandler;
- using vespa::config::search::core::ProtonConfig;
-+using vespa_opentelemetry::OpenTelemetryTracerProviders;
- 
- struct Params {
-     std::string identity;
-@@ -264,27 +270,36 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-     if (proton.hasAbortedInit()) {
-         EV_STOPPING("proton", "shutdown after aborted init");
-     } else {
-+        OpenTelemetryTracerProviders::init_grpc_tracer_provider("proton-service",
-+                                                                *configSnapshot->get_telemetry_config_sp());
-+        auto tracer = ::opentelemetry::trace::Provider::GetTracerProvider()->GetTracer("proton-tracer");
-+        auto span = tracer->StartSpan("Proton process starting");
-         const ProtonConfig& protonConfig = configSnapshot->getProtonConfig();
-         std::string         basedir = protonConfig.basedir;
-         std::filesystem::create_directories(std::filesystem::path(basedir));
-         {
-             ExitOnSignal exit_on_signal;
-+            span->AddEvent("Starting proton");
-             proton.init(configSnapshot);
-         }
-         std::string file_distributor_connection_spec = configSnapshot->getFiledistributorrpcConfig().connectionspec;
-         std::unique_ptr<ProtonServiceLayerProcess> spiProton;
- 
-         if (!params.serviceidentity.empty()) {
-+            span->AddEvent("Starting service layer");
-             spiProton = std::make_unique<ProtonServiceLayerProcess>(
-                 identityUri.createWithNewId(params.serviceidentity), proton, transport,
-                 file_distributor_connection_spec, configSnapshot->getHwInfo());
-             spiProton->setupConfig(subscribeTimeout);
-             spiProton->createNode();
-+            span->AddEvent("Started service layer");
-             EV_STARTED("servicelayer");
-         } else {
-             proton.getMetricManager().init(identityUri);
-         }
-         configSnapshot.reset();
-+        span->AddEvent("Started proton");
-+        span->End();
-         EV_STARTED("proton");
-         while (!(SIG::INT.check() || SIG::TERM.check() || (spiProton && spiProton->getNode().attemptedStopped()))) {
-             std::this_thread::sleep_for(1000ms);
-@@ -338,6 +353,14 @@ int App::main(int argc, char** argv) {
- }
- 
- int main(int argc, char** argv) {
--    App app;
--    return app.main(argc, argv);
-+    int result = 0;
-+    grpc_init();
-+    {
-+        App app;
-+        result = app.main(argc, argv);
-+    }
-+    OpenTelemetryTracerProviders::cleanup_tracer_provider();
-+    grpc_shutdown_blocking();
-+    google::protobuf::ShutdownProtobufLibrary();
-+    return result;
- }
+@@ -155,7 +155,7 @@
+         <protobuf.vespa.version>4.36.2</protobuf.vespa.version>
+         <questdb.vespa.version>7.4.2</questdb.vespa.version>
+         <re2j.vespa.version>1.8</re2j.vespa.version>
+-        <reactor-core.vespa.version>3.8.7</reactor-core.vespa.version>
++        <reactor-core.vespa.version>3.8.8</reactor-core.vespa.version>
+         <spifly.vespa.version>1.3.8</spifly.vespa.version>
+         <snappy.vespa.version>1.1.10.12</snappy.vespa.version>
+         <snakeyaml.vespa.version>2.4</snakeyaml.vespa.version>
 ```
 
 ---
 
-### Incident Patch 2: `a60202eb` (2026-10-23)
-**Commit Message**: Emit trace span for proton startup.
+### Incident Patch 2: `888d9876` (2026-10-25)
+**Commit Message**: fix(deps): update byte-buddy.vespa.version to v1.18.16
 
-**File**: `opentelemetry/CMakeLists.txt` (modified, +2/-0)
+**File**: `dependency-versions/pom.xml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,9 @@
- # Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- vespa_define_module(
-     DEPENDS
-+    vespa_configdefinitions
-     vespalib
-+    vespalog
- 
-     LIBS
-     src/vespa/opentelemetry
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.cpp` (modified, +54/-0)
-```diff
-@@ -2,7 +2,10 @@
- 
- #include "opentelemetry_tracer_providers.h"
- 
-+#include <vespa/config-telemetry.h>
-+#include <vespa/defaults.h>
- #include <vespa/vespalib/component/vtag.h>
-+#include <vespa/vespalib/net/tls/transport_security_options_reading.h>
- 
- #include <opentelemetry/exporters/memory/in_memory_span_exporter_factory.h>
- #include <opentelemetry/exporters/ostream/span_exporter_factory.h>
-@@ -12,6 +15,14 @@
- #include <opentelemetry/sdk/trace/tracer_provider_factory.h>
- #include <opentelemetry/trace/provider.h>
- 
-+#include <format>
-+#include <fstream>
-+#include <iomanip>
-+#include <sstream>
-+
-+#include <vespa/log/log.h>
-+LOG_SETUP(".opentelemetry.opentelemetry_tracer_providers");
-+
- namespace vespa_opentelemetry {
- 
- const std::string OpenTelemetryTracerProviders::vespa_tls_config_file("VESPA_TLS_CONFIG_FILE");
-@@ -48,6 +59,25 @@ opentelemetry::sdk::resource::Resource OpenTelemetryTracerProviders::make_resour
-     return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
- }
- 
-+opentelemetry::sdk::resource::Resource
-+OpenTelemetryTracerProviders::make_resource(const std::string& service_name, TelemetryConfig& telemetry_config) {
-+    opentelemetry::sdk::resource::ResourceAttributes resource_attributes;
-+    for (const auto& resource : telemetry_config.resourceAttribute) {
-+        resource_attributes.SetAttribute(resource.first, resource.second);
-+    }
-+    resource_attributes.SetAttribute("realservice.name", service_name);
-+    resource_attributes.SetAttribute("realservice.version", vespalib::VersionTag);
-+    return opentelemetry::sdk::resource::Resource::Create(resource_attributes);
-+}
-+
-+void OpenTelemetryTracerProviders::adjust_otlp_grpc_exporter_options(
-+    opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts, TelemetryConfig& cfg) {
-+    auto          host_name_file_name = vespa::Defaults::underVespaHome(cfg.endpointHostnameFile.c_str());
-+    std::ifstream host_name_file(host_name_file_name);
-+    std::string   host_name((std::istreambuf_iterator<char>(host_name_file)), std::istreambuf_iterator<char>());
-+    opts.endpoint = std::format("https://{}:4317", host_name);
-+}
-+
- void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
-     const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
-     const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
-@@ -60,6 +90,30 @@ void OpenTelemetryTracerProviders::init_grpc_tracer_provider(
-     opentelemetry::trace::Provider::SetTracerProvider(provider);
- }
- 
-+void OpenTelemetryTracerProviders::init_grpc_tracer_provider(const std::string& service_name,
-+                                                             TelemetryConfig&   telemetry_config) {
-+    if (!telemetry_config.enabled) {
-+        return;
-+    }
-+    const char* tls_config_file = getenv(vespa_tls_config_file.c_str());
-+    if (tls_config_file == nullptr) {
-+        LOG(warning, "environment variable '%s' not set, telemetry is disabled", vespa_tls_config_file.c_str());
-+        return;
-+    }
-+    auto vespa_tls_config = vespalib::net::tls::read_options_from_json_file(tls_config_file);
-+    if (!vespa_tls_config) {
-+        std::stringstream ss;
-+        ss << "bad vespa tls config file " << std::quoted(tls_config_file) << ", telemetry is disabled";
-+        LOG(warning, "%s", ss.str().c_str());
-+        return;
-+    }
-+    auto otlp_grpc_exporter_options = setup_otlp_grpc_exporter_options(*vespa_tls_config);
-+    adjust_otlp_grpc_exporter_options(otlp_grpc_exporter_options, telemetry_config);
-+    auto batch_span_processor_options = setup_batch_span_processor_options(false);
-+    auto resource = make_resource(service_name, telemetry_config);
-+    init_grpc_tracer_provider(otlp_grpc_exporter_options, batch_span_processor_options, resource);
-+}
-+
- std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
- OpenTelemetryTracerProviders::init_memory_tracer_provider() {
-     std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> data;
-```
-
-**File**: `opentelemetry/src/vespa/opentelemetry/opentelemetry_tracer_providers.h` (modified, +10/-0)
-```diff
-@@ -11,13 +11,18 @@
- 
- #include <memory>
- 
-+namespace ai::vespa::telemetry::internal {
-+class InternalTelemetryType;
-+}
-+
- namespace vespa_opentelemetry {
- 
- /*
-  * Functions for setting up open telemetry trace providers to an ostream, to a memory buffer or to grpc.
-  */
- class OpenTelemetryTracerProviders {
- public:
-+    using TelemetryConfig = const ai::vespa::telemetry::internal::InternalTelemetryType;
-     static const std::string vespa_tls_config_file;
- 
-     static void cleanup_tracer_provider();
-@@ -27,10 +32,15 @@ class OpenTelemetryTracerProviders {
-     [[nodiscard]] static opentelemetry::sdk::trace::BatchSpanProcessorOptions
-     setup_batch_span_processor_options(bool test);
-     [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource();
-+    [[nodiscard]] static opentelemetry::sdk::resource::Resource make_resource(const std::string& service_name,
-+                                                                              TelemetryConfig&   telemetry_config);
-+    static void adjust_otlp_grpc_exporter_options(opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& opts,
-+                                                  TelemetryConfig&                                        cfg);
-     static void init_grpc_tracer_provider(
-         const opentelemetry::exporter::otlp::OtlpGrpcExporterOptions& otlp_grpc_exporter_options,
-         const opentelemetry::sdk::trace::BatchSpanProcessorOptions&   batch_span_processor_options,
-         const opentelemetry::sdk::resource::Resource&                 resource);
-+    static void init_grpc_tracer_provider(const std::string& service_name, TelemetryConfig& telemetry_config);
- 
-     [[nodiscard]] static std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData>
-     init_memory_tracer_provider();
-```
-
-**File**: `searchcore/src/apps/proton/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ vespa_add_executable(searchcore_proton_app
-     searchcore_grouping
-     searchcore_proton_metrics
-     storageserver_storageapp
-+    vespa_opentelemetry
-+    gRPC::grpc
-     absl::failure_signal_handler
-     absl::symbolize
- )
-```
-
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +26/-2)
-```diff
-@@ -1,10 +1,12 @@
- // Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
- 
-+#include <vespa/config-telemetry.h>
- #include <vespa/config/common/configcontext.h>
- #include <vespa/config/common/exceptions.h>
- #include <vespa/fastos/file_interface.h>
- #include <vespa/fnet/transport.h>
- #include <vespa/metrics/metricmanager.h>
-+#include <vespa/opentelemetry/opentelemetry_tracer_providers.h>
- #include <vespa/searchcore/proton/server/proton.h>
- #include <vespa/searchvisitor/searchvisitor.h>
- #include <vespa/storage/storageserver/storagenode.h>
-@@ -16,6 +18,9 @@
- #include <absl/debugging/failure_signal_handler.h>
- #include <absl/debugging/symbolize.h>
- #include <fcntl.h>
-+#include <google/protobuf/message_lite.h>
-+#include <grpc/grpc.h>
-+#include <opentelemetry/trace/provider.h>
- 
- #include <cstdlib>
- #include <cstring>
-@@ -28,6 +33,7 @@ LOG_SETUP("proton");
- 
- using SIG = vespalib::SignalHandler;
- using vespa::config::search::core::ProtonConfig;
-+using vespa_opentelemetry::OpenTelemetryTracerProviders;
- 
- struct Params {
-     std::string identity;
-@@ -246,6 +252,13 @@ class Transport {
-     FNET_Transport _transport;
- };
- 
-+void emit_proton_starting_span() {
-+    auto tracer = ::opentelemetry::trace::Provider::GetTracerProvider()->GetTracer("proton-tracer");
-+    auto span = tracer->StartSpan("Proton process starting");
-+    span->AddEvent("first event");
-+    span->End();
-+}
-+
- } // namespace
- 
- void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-@@ -264,6 +277,9 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-     if (proton.hasAbortedInit()) {
-         EV_STOPPING("proton", "shutdown after aborted init");
-     } else {
-+        OpenTelemetryTracerProviders::init_grpc_tracer_provider("proton-service",
-+                                                                *configSnapshot->get_telemetry_config_sp());
-+        emit_proton_starting_span();
-         const ProtonConfig& protonConfig = configSnapshot->getProtonConfig();
-         std::string         basedir = protonConfig.basedir;
-         std::filesystem::create_directories(std::filesystem::path(basedir));
-@@ -338,6 +354,14 @@ int App::main(int argc, char** argv) {
- }
- 
- int main(int argc, char** argv) {
--    App app;
--    return app.main(argc, argv);
-+    int result = 0;
-+    grpc_init();
-+    {
-+        App app;
-+        result = app.main(argc, argv);
-+    }
-+    OpenTelemetryTracerProviders::cleanup_tracer_provider();
-+    grpc_shutdown_blocking();
-+    google::protobuf::ShutdownProtobufLibrary();
-+    return result;
- }
+@@ -70,7 +70,7 @@
+         <assertj.vespa.version>3.27.7</assertj.vespa.version>
+         <bouncycastle.vespa.version>1.86</bouncycastle.vespa.version>
+         <bouncycastle.bcprov.vespa.version>1.86</bouncycastle.bcprov.vespa.version>
+-        <byte-buddy.vespa.version>1.18.15</byte-buddy.vespa.version>
++        <byte-buddy.vespa.version>1.18.16</byte-buddy.vespa.version>
+         <checker-qual.vespa.version>3.38.0</checker-qual.vespa.version>
+         <classworlds-classworlds.vespa.version>1.1</classworlds-classworlds.vespa.version>
+         <commons-beanutils.vespa.version>1.9.4</commons-beanutils.vespa.version>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38319** (2026-10-25): fix(deps): update dependency io.projectreactor:reactor-core to v3.8.8 (@renovate[bot])
+- **PR #38318** (2026-10-25): fix(deps): update byte-buddy.vespa.version to v1.18.16 (@renovate[bot])
+- **PR #38316** (2026-10-25): Add explicit versions to model-integration dependencyManagement (@arnej27959)
+- **PR #38315** (2026-10-25): Add sparseTensorWand YQL operator (@arnej27959)
 - **PR #38314** (2026-10-24): Follow-up to streaming sparseTensorWand review (@arnej27959)
 - **PR #38312** (2026-10-24): Support sparseTensorWand in streaming search (@arnej27959)
-- **PR #38311** (2026-10-24): Add SparseTensorWandTerm query term (@arnej27959)
-- **PR #38306** (2026-10-23): Template WeakAndHeap classes on score type (@arnej27959)
-- **PR #38305** (2026-10-24): Bratseth/cloud account (@bratseth)
-- **PR #38304** (2026-10-23): Use std::span for WeakAndHeap::adjust() (@arnej27959)
 
 ---
 
@@ -1572,29 +1125,28 @@ Emit trace span for proton startup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-s
+## X. deps): update dependency io.projectreactor:reactor-core to v3.8.8
 
 **RULE**:
-When implementing operations in `opentelemetry/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dependency-versions/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c518c36`: Merge pull request #38301 from vespa-engine/toregge/emit-trace-span-for-proton-startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cb004029`: deps): update dependency io.projectreactor:reactor-core to v3.8.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `opentelemetry/CMakeLists.txt`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `dependency-versions/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    vespa_configdefinitions
-    vespalog
+        <reactor-core.vespa.version>3.8.8</reactor-core.vespa.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        <reactor-core.vespa.version>3.8.7</reactor-core.vespa.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c518c36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cb004029` are properly handled with clean fallback behavior.

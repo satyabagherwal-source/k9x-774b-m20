@@ -5009,3 +5009,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-25T21:27:18.756Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `8538e7cf` | Multi-dimensional audit evidence | 2026-10-25T21:33:46.247Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-25T21:33:47.212Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T21:40:07.549Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `7cd4e5e1` | Multi-dimensional audit evidence | 2026-10-25T21:40:25.193Z |

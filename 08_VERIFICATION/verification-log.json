@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-1FYH",
-    "timestamp": "2026-10-23T08:42:03.401Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-4ML5",
-    "timestamp": "2026-10-23T08:44:31.961Z",
-    "repository": "ionic-team/ionic-framework",
-    "learningId": "learn-github-ionic-team-ionic-framework",
-    "contentHash": "17d76fe9ccb83f3c2dc138d9720bb2b52a4f5177edab21f4b55b7396e10129c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-4RH9",
     "timestamp": "2026-10-23T08:44:38.301Z",
     "repository": "kucherenko/jscpd",
@@ -7492,6 +7462,36 @@
     "contentHash": "9ee8f29ea13fd25f550ffd87c3706e23d13cfd5da7ae8c587f80a0357cc6cd0c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-PR0A",
+    "timestamp": "2026-10-25T21:40:07.546Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "d3737401be70c47b9b1185f57354f3b83d612d4031ba7a19f5ddc503f0e27bea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-Q4MD",
+    "timestamp": "2026-10-25T21:40:25.189Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "f601101d9b371aedc80636428d4211c268b0c888c73d9838bbe3a97c015e073e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

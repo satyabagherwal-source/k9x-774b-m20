@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T21:33:47.217Z",
-  "total_cycles_completed": 4979,
-  "total_learnings_persisted": 4979,
-  "total_rules_promoted": 4343,
+  "last_updated": "2026-10-25T21:40:25.198Z",
+  "total_cycles_completed": 4981,
+  "total_learnings_persisted": 4981,
+  "total_rules_promoted": 4344,
   "history": [
-    {
-      "timestamp": "2026-10-25T12:17:00.824Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T12:17:04.759Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T12:23:01.104Z",
       "repository": "fastapi/fastapi",
@@ -1403,6 +1389,20 @@
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-speridlabs-iris-3b",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:40:07.554Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T21:40:25.198Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
