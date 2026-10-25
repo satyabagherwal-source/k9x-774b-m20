@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T13:24:08.969Z",
+  "last_updated": "2026-10-25T13:30:59.853Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
-      "verified_at": "2026-10-20T18:20:46.939Z",
+      "content_hash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
+      "verified_at": "2026-10-25T13:30:53.736Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T18:20:46.939Z"
+      "last_updated": "2026-10-25T13:30:53.736Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
-      "verified_at": "2026-10-23T08:59:45.505Z",
+      "content_hash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
+      "verified_at": "2026-10-25T13:30:47.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:59:45.505Z"
+      "last_updated": "2026-10-25T13:30:47.757Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
-      "verified_at": "2026-10-23T06:23:57.110Z",
+      "content_hash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
+      "verified_at": "2026-10-25T13:30:59.852Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:23:57.110Z"
+      "last_updated": "2026-10-25T13:30:59.852Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
-      "verified_at": "2026-10-22T20:30:15.784Z",
+      "content_hash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
+      "verified_at": "2026-10-25T13:30:49.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T20:30:15.784Z"
+      "last_updated": "2026-10-25T13:30:49.941Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
-      "verified_at": "2026-10-23T07:39:26.223Z",
+      "content_hash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
+      "verified_at": "2026-10-25T13:30:56.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:39:26.223Z"
+      "last_updated": "2026-10-25T13:30:56.424Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
-      "verified_at": "2026-10-19T09:06:40.274Z",
+      "content_hash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
+      "verified_at": "2026-10-25T13:30:54.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:06:40.274Z"
+      "last_updated": "2026-10-25T13:30:54.183Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",

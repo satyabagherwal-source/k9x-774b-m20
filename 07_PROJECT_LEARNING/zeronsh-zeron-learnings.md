@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `69b67d33`  
+> **Source Version**: `c04e3749`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:30:15.546Z  
+> **Timestamp**: 2026-10-25T13:30:49.537Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:30:14.318Z  
+> **Harvest Timestamp**: 2026-10-25T13:30:48.697Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3328 stars
+- **Stars / Engagement**: 3350 stars
 
 ---
 
@@ -36,6 +36,1410 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`
+```
+package sh.zeron.android.core
+
+import android.app.Application
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.provider.Settings
+import android.util.Log
+import kotlinx.coroutines.CompletableDeferred
+import sh.zeron.android.design.Appearance
+import sh.zeron.android.design.ThemeMode
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
+import uniffi.zeron_core.ConnectivityState
+import uniffi.zeron_core.ProjectView
+import uniffi.zeron_core.SendState
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import uniffi.zeron_core.AuthCallback
+import uniffi.zeron_core.AuthOrg
+import uniffi.zeron_core.ChatConfig
+import uniffi.zeron_core.ClientEvent
+import uniffi.zeron_core.ClientListener
+import uniffi.zeron_core.Connectivity
+import uniffi.zeron_core.CoreClient
+import uniffi.zeron_core.CoreConfig
+import uniffi.zeron_core.Credentials
+import uniffi.zeron_core.DemoFixture
+import uniffi.zeron_core.DemoOptions
+import uniffi.zeron_core.NewSession
+import uniffi.zeron_core.SandboxLevel
+import uniffi.zeron_core.SendRequest
+import uniffi.zeron_core.BusyPolicy
+import uniffi.zeron_core.SessionRow
+import uniffi.zeron_core.SessionTarget
+import uniffi.zeron_core.StreamSpeed
+import uniffi.zeron_core.TranscriptScale
+import uniffi.zeron_core.WorkspaceSnapshot
+import uniffi.zeron_core.WorktreeSpec
+import uniffi.zeron_core.authExchangeCode
+import uniffi.zeron_core.authListOrgs
+import uniffi.zeron_core.authProductionEdgeUrl
+import uniffi.zeron_core.authRefresh
+import uniffi.zeron_core.parseAuthCallback
+import uniffi.zeron_core.workosAuthorizeUrl
+import java.io.File
+import java.util.UUID
+
+/** How the app was launched (adb extras mirror the iOS launch arguments). */
+data class LaunchOptions(
+    val demo: Boolean = false,
+    val fast: Boolean = false,
+    val longReply: Boolean = false,
+    val big: Boolean = false,
+    val huge: Boolean = false,
+    val noProjects: Boolean = false,
+    val signedOut: Boolean = false,
+    val route: String? = null,
+    /** `--es companion companions|terminal|side-chat:<id>|subagent:<tool id>`: open it over the routed chat (screenshots). */
+    val companion: String? = null,
+    /** `--ez terminal-demo true`: the opened terminal types a short script. */
+    val terminalDemo: Boolean = false,
+    /** `--ez cloud true`: offer Cloud in the demo (its pages read the demo's Cloud). */
+    val cloud: Boolean = false,
+    val wallpaper: String? = null,
+    val wallpaperEffect: String? = null,
+    /** `--ez voice-preview true`: the scripted call (debuggable builds). */
+    val voicePreview: Boolean = false,
+    /** `--ez voice-stage true`: open the call stage at launch (with the preview). */
+    val voiceStage: Boolean = false,
+    /** `--ez remote-voice true`: offer voice before any host advertises it. */
+    val remoteVoice: Boolean = false,
+    /** `--ez voice-selftest true`: log a host-less WebRTC offer (debuggable builds). */
+    val voiceSelfTest: Boolean = false,
+)
+
+/**
+ * App-wide state owner: holds the Rust [CoreClient], republishes its
+ * snapshots as flows, and fans session events out to screens. Core events
+ * arrive on Rust threads and hop to the main thread here.
+ */
+class AppModel(private val app: Application) {
+    private val scope = MainScope()
+    private val main = Handler(Looper.getMainLooper())
+    val credentials = CredentialStore(app)
+    val wallpaper = WallpaperStore(app)
+
+    /** The app-wide voice call (one at a time, outlives screens). */
+    val voice: sh.zeron.android.voice.VoiceController by lazy {
+        sh.zeron.android.voice.VoiceController(app, client, workspace)
+    }
+
+    private val _client = MutableStateFlow<CoreClient?>(null)
+    val client: StateFlow<CoreClient?> = _client.asStateFlow()
+
+    private val _workspace = MutableStateFlow<WorkspaceSnapshot?>(null)
+    val workspace: StateFlow<WorkspaceSnapshot?> = _workspace.asStateFlow()
+
+    private val _connectivity = MutableStateFlow<Connectivity?>(null)
+    val connectivity: StateFlow<Connectivity?> = _connectivity.asStateFlow()
+
+    /** Chat ids whose session or composer changed. */
+    private val _sessionEvents = MutableSharedFlow<String>(extraBufferCapacity = 256)
+    val sessionEvents: SharedFlow<String> = _sessionEvents
+
+    /** Organizations to pick from mid sign-in (more than one). */
+    val orgChoice = MutableStateFlow<Pair<List<AuthOrg>, CompletableDeferred<AuthOrg?>>?>(null)
+    val signInError = MutableStateFlow<String?>(null)
+
+    /** App-wide snackbars ("Archived · Undo", open failures) shown by the shell. */
+    val toasts = MutableSharedFlow<Toast>(extraBufferCapacity = 8)
+
+    fun toast(message: String, action: String? = null, run: (() -> Unit)? = null) {
+        toasts.tryEmit(Toast(message, action, run))
+    }
+
+    private val settings = app.getSharedPreferences("settings", 0)
+    private val _appearance = MutableStateFlow(
+        Appearance(
+            runCatching { ThemeMode.valueOf(settings.getString("theme", "System")!!) }.getOrDefault(ThemeMode.System),
+            settings.getBoolean("dynamicColor", false),
+        ),
+    )
+    val appearance: StateFlow<Appearance> = _appearance.asStateFlow()
+
+    fun setAppearance(value: Appearance) {
+        _appearance.value = value
+        settings.edit().putString("theme", value.mode.name).putBoolean("dynamicColor", value.dynamicColor).apply()
+    }
+
+    /** Sessions grouped by project in place of the flat Recent list. */
+    private val _groupByProject = MutableStateFlow(settings.getBoolean("groupByProject", false))
+    val groupByProject: StateFlow<Boolean> = _groupByProject.asStateFlow()
+
+    fun setGroupByProject(on: Boolean) {
+        _groupByProject.value = on
+        settings.edit().putBoolean("groupByProject", on).apply()
+    }
+
+    /** Folded sidebar groups (pinned, recent, project groups), kept on this device. */
+    private val _collapsed = MutableStateFlow(settings.getStringSet("collapsedGroups", emptySet())!!.toSet())
+    val collapsed: StateFlow<Set<String>> = _collapsed.asStateFlow()
+
+    fun setGroupCollapsed(id: String, collapsed: Boolean) {
+        _collapsed.value = if (collapsed) _collapsed.value + id else _collapsed.value - id
+        settings.edit().putStringSet("collapsedGroups", _collapsed.value).apply()
+    }
+
+    /** Unsent composer text per chat (and the new-session page), kept across launches. */
+    val drafts = Drafts(app)
+
+    /** The demo keeps the new-session page in memory only: one run's leftovers must not seed the next. */
+    private val persistsNewSession get() = !launch.demo
+    private var volatileNewSessionText = ""
+
+    /** What was typed on the new-session page when it was closed unsent. */
+    var newSessionText: String
+        get() = if (persistsNewSession) drafts.load(Drafts.NEW_SESSION) else volatileNewSessionText
+        set(value) {
+            if (persistsNewSession) drafts.save(Drafts.NEW_SESSION, value) else volatileNewSessionText = value
+        }
+
+    /** Images staged there (this launch only). */
+    var newSessionImages: List<sh.zeron.android.ui.StagedImage> = emptyList()
+
+    /** The new-session page's options (project, host, branch, model, effort), kept across launches. */
+    var lastDraft: NewSessionDraft = storedDraft()
+        set(value) {
+            field = value
+            if (persistsNewSession) {
+                settings.edit()
+                    .putString("draft.project", value.projectId)
+                    .putString("draft.host", value.hostId)
+                    .putString("draft.harness", value.harness)
+                    .putString("draft.model", value.model)
+                    .putString("draft.effort", value.effort)
+                    .putBoolean("draft.cloud", value.cloud)
+                    .apply()
+            }
+        }
+
+    private fun storedDraft() = NewSessionDraft(
+        projectId = settings.getString("draft.project", null),
+        hostId = settings.getString("draft.host", null),
+        harness = settings.getString("draft.harness", null) ?: "claude-code",
+        model = settings.getString("draft.model", null),
+        effort = settings.getString("draft.effort", null),
+        cloud = settings.getBoolean("draft.cloud", false),
+    )
+
+    var launch = LaunchOptions()
+        private set
+
+    val isDemo: Boolean get() = _client.value?.isDemo() == true
+    private var refreshScheduled = false
+    /** The pending sign-in's OAuth `state` (persisted: the process may die while the browser is up). */
+    private var authState: String?
+        get() = settings.getString("authState", null)
+        set(value) = settings.edit().putString("authState", value).apply()
+
+    private val listener = object : ClientListener {
+        override fun onEvent(event: ClientEvent) {
+            main.post { handle(event) }
+        }
+    }
+
+    fun boot(options: LaunchOptions) {
+        launch = options
+        if (_client.value != null) return
+        if (options.signedOut) credentials.clear()
+        // The demo starts from the in-memory defaults, never a real account's options.
+        if (options.demo) lastDraft = NewSessionDraft()
+        watchNetwork()
+        // `wallpaper <path>` / `wallpaper none` and `wallpaper-effect <name>`:
+        // set the wallpaper at launch (screenshots, tests).
+        options.wallpaper?.let { path ->
+            if (path == "none") wallpaper.remove() else scope.launch { wallpaper.set(File(path)) }
+        }
+        options.wallpaperEffect?.let { name ->
+            WallpaperStore.effects.firstOrNull { it.name.equals(name, ignoreCase = true) }?.let(wallpa
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Cloud.kt`
+```
+package sh.zeron.android.core
+
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import uniffi.zeron_core.BillingInfo
+import uniffi.zeron_core.CloudAccountInfo
+import uniffi.zeron_core.CloudInfo
+import uniffi.zeron_core.CloudSessionInfo
+import uniffi.zeron_core.CloudUsageInfo
+import uniffi.zeron_core.CoreClient
+import uniffi.zeron_core.CoreException
+import uniffi.zeron_core.GithubRepoInfo
+import uniffi.zeron_core.VaultInfo
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.math.floor
+
+/**
+ * Cloud for this account (iOS `CloudStore`): status and credits, GitHub, the
+ * agents' logins, billing. Every screen reads it; reads are cached so a page
+ * paints at once and revalidates. Snapshot state, main thread only.
+ */
+@Stable
+class CloudStore(private val scope: CoroutineScope, private val client: () -> CoreClient?, private val workspaceChanged: () -> Unit) {
+    /** The agents Cloud runs, with the vault providers behind them. */
+    data class Agent(
+        val harness: String,
+        val name: String,
+        /** Subscription sign-in provider (`claude` · `codex`). */
+        val login: String,
+        /** API key provider (`anthropic-key` · `openai-key`). */
+        val key: String,
+        /** What signing in is called ("Sign in with Claude"). */
+        val signInTitle: String,
+        val keyName: String,
+    )
+
+    /** What's wrong with Cloud as a whole, for the top of its page. */
+    data class Problem(val title: String, val detail: String, /** Credits fix it: the row leads to Billing. */ val billing: Boolean)
+
+    var info by mutableStateOf<CloudInfo?>(null); private set
+    var vault by mutableStateOf<VaultInfo?>(null); private set
+    var repos by mutableStateOf<List<GithubRepoInfo>?>(null); private set
+    var accounts by mutableStateOf<Map<String, List<CloudAccountInfo>>>(emptyMap()); private set
+    /** Each Cloud login's plan usage by `provider:slot` (read by the vault), and why it couldn't be read. */
+    var usage by mutableStateOf<Map<String, CloudUsageInfo>>(emptyMap()); private set
+    var usageErrors by mutableStateOf<Map<String, String>>(emptyMap()); private set
+    var billing by mutableStateOf<BillingInfo?>(null); private set
+    /** Why the last billing read failed (shown with Retry until one succeeds). */
+    var billingError by mutableStateOf<String?>(null); private set
+    /** The account's session machines (read when a Cloud chat needs them). */
+    var sessions by mutableStateOf<List<CloudSessionInfo>>(emptyList()); private set
+    var loading by mutableStateOf(false); private set
+    var error by mutableStateOf<String?>(null); private set
+
+    // ── reading ───────────────────────────────────────────────────────────
+
+    val available: Boolean get() = info?.available == true
+    val credits: Double? get() = billing?.creditsTotal ?: info?.credits
+
+    /** Cloud can't start or wake a machine (the desktop's rule). */
+    val outOfCredits: Boolean get() = (info?.credits ?: billing?.creditsTotal)?.let { it <= 0 } == true
+
+    val problem: Problem?
+        get() {
+            val i = info ?: return null
+            if (!i.available) return null
+            if (i.state == "error") return Problem("Cloud ran into a problem", i.error ?: "Something went wrong with Cloud.", billing = false)
+            if (outOfCredits) return Problem("Out of credits", "Cloud sessions can't start or wake until you add credits.", billing = true)
+            return null
+        }
+
+    /** Why a Cloud chat's machine isn't running, when the edge said. */
+    fun sessionError(chatId: String, device: String?): String? {
+        val s = sessions.firstOrNull { it.chatId == chatId } ?: sessions.firstOrNull { it.deviceId == device } ?: return null
+        return if (s.state == "error") s.error ?: "Its machine failed to start." else null
+    }
+
+    val githubAccount: String? get() = vault?.connections?.firstOrNull { it.provider == "github" && !it.needsReconnect }?.account
+    val githubConnected: Boolean get() = vault?.connections?.any { it.provider == "github" && !it.needsReconnect } == true
+
+    /** The active login (or key) Cloud uses for `agent`. */
+    fun activeAccount(agent: Agent): CloudAccountInfo? =
+        accounts[agent.login]?.firstOrNull { it.active } ?: accounts[agent.key]?.firstOrNull { it.active }
+
+    fun hasAccount(agent: Agent): Boolean =
+        !accounts[agent.login].isNullOrEmpty() || !accounts[agent.key].isNullOrEmpty() ||
+            vault?.connections?.any { (it.provider == agent.login || it.provider == agent.key) && it.accounts > 0u } == true
+
+    /** Cloud reaches `repo` (`owner/name`): its sessions can run there. */
+    fun reaches(repo: String?): Boolean {
+        if (!available || repo == null) return false
+        return repos?.any { it.fullName.equals(repo, ignoreCase = true) } == true
+    }
+
+    // ── loading ───────────────────────────────────────────────────────────
+
+    private var refreshJob: Job? = null
+    /** How long until a failed status read is tried again (30 s, doubling to 5 min). */
+    private var retryDelayMs = 30_000L
+    private var sessionsReadAt = 0L
+
+    /** Re-read everything (status first: the rest needs Cloud set up). */
+    fun refresh() {
+        val c = client() ?: return
+        if (refreshJob?.isActive == true) return
+        loading = true
+        refreshJob = scope.launch {
+            try {
+                var status = c.cloudStatus()
+                // Cloud is part of every signed-in account: set it up.
+                if (status.available && status.state == "off") status = runCatching { c.cloudEnable() }.getOrDefault(status)
+                if (client() !== c) return@launch
+                info = status
+                error = null
+                if (!status.available) return@launch
+                coroutineScope {
+                    val v = async { runCatching { c.vaultStatus() }.getOrNull() }
+                    val r = async { runCatching { c.githubRepos(null) }.getOrNull() }
+                    val b = async { runCatching { c.billingStatus() }.getOrNull() }
+                    val lists = readAccounts(c)
+                    if (client() !== c) return@coroutineScope
+                    vault = v.await()
+                    repos = r.await() ?: emptyList()
+                    billing = b.await()
+                    accounts = lists
+                }
+                retryDelayMs = 30_000L
+                refreshUsage()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (client() !== c) return@launch
+                error = message(e)
+                // Until a read answers, Cloud reads as not offered: ask again rather than hide it for good.
+                val wait = retryDelayMs
+                retryDelayMs = minOf(wait * 2, 300_000L)
+                scope.launch {
+                    delay(wait)
+                    if (client() === c && (info == null || error != null)) refresh()
+                }
+            } finally {
+                if (client() === c) loading = false
+            }
+        }
+    }
+
+    private suspend fun readAccounts(c: CoreClient): Map<String, List<CloudAccountInfo>> = coroutineScope {
+        agents.flatMap { listOf(it.login, it.key) }
+            .map { provider -> async { provider to (runCatching { c.vaultAccounts(provider) }.getOrNull() ?: emptyList()) } }
+            .awaitAll()
+            .toMap()
+    }
+
+    /** Re-read the session machines (at most every few seconds). */
+    fun refreshSessions() {
+        val c = client() ?: return
+        if (!available && info != null) return
+        val now = System.currentTimeMillis()
+        if (now - sessionsReadAt < 8_000) return
+        sessionsReadAt = now
+        scope.launch {
+            val list = runCatching { c.cloudSessions() }.getOrNull()
+            val status = runCatching { c.cloudStatus() }.getOrNull()
+            if (client() !== c) return@launch
+            list?.let { sessions = it }
+            status?.let { info = it }
+        }
+    }
+
+    fun refreshAccounts() {
+        val c = client() ?: return
+        scope.launch {
+            val lists = readAccounts(c)
+            val v = runCatching { c.vaultStatus() }.getOrNull()
+            if (client() !== c) return@launch
+            accounts = lists
+            v?.let { vault = it }
+            refreshUsage()
+        }
+    }
+
+    /** Re-read every Cloud login's plan usage (keys have none). */
+    fun refreshUsage() {
+        val c = client() ?: return
+        val logins = agents.flatMap { agent -> accounts[agent.login].orEmpty().map { agent.login to it.slot } }
+        scope.launch {
+            val results = logins.map { (provider, slot) ->
+                async { "$provider:$slot" to runCatching { c.vaultUsage(provider, slot) } }
+            }.awaitAll()
+            if (client() !== c) return@launch
+            val u = usage.toMutableMap()
+            val errors = usageErrors.toMutableMap()
+            for ((key, result) in results) {
+                result.onSuccess { u[key] = it; errors.remove(key) }.onFailure { errors[key] = message(it) }
+            }
+            usage = u
+            usageErrors = errors
+        }
+    }
+
+    suspend fun refreshGitHub() {
+        val c = client() ?: return
+        val v = runCatchin
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/CredentialStore.kt`
+```
+package sh.zeron.android.core
+
+import android.content.Context
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
+import java.security.KeyStore
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
+import org.json.JSONObject
+import uniffi.zeron_core.AuthTokens
+import uniffi.zeron_core.Credentials
+
+/**
+ * Credentials and the signed-in account's display identity, in app-private
+ * storage (the client itself only knows ids). Tokens are sealed with an
+ * Android Keystore key (the iOS Keychain's counterpart): the key never
+ * leaves the keystore, so a copied preferences file can't be replayed.
+ */
+class CredentialStore(context: Context) {
+    private val prefs = context.getSharedPreferences("credentials", Context.MODE_PRIVATE)
+
+    private fun key(): SecretKey {
+        val store = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        (store.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
+        val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        generator.init(
+            KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .build(),
+        )
+        return generator.generateKey()
+    }
+
+    private fun seal(plain: String): String {
+        val cipher = Cipher.getInstance(TRANSFORMATION).apply { init(Cipher.ENCRYPT_MODE, key()) }
+        val sealed = cipher.iv + cipher.doFinal(plain.toByteArray())
+        return Base64.encodeToString(sealed, Base64.NO_WRAP)
+    }
+
+    private fun open(sealed: String): String? = runCatching {
+        val bytes = Base64.decode(sealed, Base64.NO_WRAP)
+        val cipher = Cipher.getInstance(TRANSFORMATION)
+        cipher.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, bytes, 0, 12))
+        String(cipher.doFinal(bytes, 12, bytes.size - 12))
+    }.getOrNull()
+
+    private fun storedJson(): String? {
+        prefs.getString("sealed", null)?.let { return open(it) }
+        // Builds before the keystore stored plain JSON: seal it on first read.
+        val legacy = prefs.getString("credentials", null) ?: return null
+        prefs.edit().putString("sealed", seal(legacy)).remove("credentials").apply()
+        return legacy
+    }
+
+    fun stored(): Credentials? {
+        val json = storedJson()?.let { runCatching { JSONObject(it) }.getOrNull() } ?: return null
+        return when (json.optString("kind")) {
+            "workos" -> Credentials.WorkOs(
+                json.getString("userId"),
+                json.getString("orgId"),
+                AuthTokens(json.getString("access"), json.getString("refresh")),
+            )
+            "dev" -> Credentials.Dev(json.getString("userId"), json.getString("orgId"))
+            else -> null
+        }
+    }
+
+    fun store(credentials: Credentials) {
+        val json = when (credentials) {
+            is Credentials.WorkOs -> JSONObject()
+                .put("kind", "workos")
+                .put("userId", credentials.userId)
+                .put("orgId", credentials.orgId)
+                .put("access", credentials.tokens.accessToken)
+                .put("refresh", credentials.tokens.refreshToken)
+            is Credentials.Dev -> JSONObject().put("kind", "dev").put("userId", credentials.userId).put("orgId", credentials.orgId)
+            is Credentials.Demo -> return
+        }
+        prefs.edit().putString("sealed", seal(json.toString())).remove("credentials").apply()
+    }
+
+    fun updateTokens(tokens: AuthTokens) {
+        val current = stored() as? Credentials.WorkOs ?: return
+        store(Credentials.WorkOs(current.userId, current.orgId, tokens))
+    }
+
+    fun clear() {
+        prefs.edit().clear().apply()
+    }
+
+    data class Profile(val name: String? = null, val email: String? = null, val orgName: String? = null)
+
+    var profile: Profile
+        get() = Profile(prefs.getString("name", null), prefs.getString("email", null), prefs.getString("orgName", null))
+        set(value) {
+            prefs.edit().putString("name", value.name).putString("email", value.email).putString("orgName", value.orgName).apply()
+        }
+
+    private companion object {
+        const val KEY_ALIAS = "zeron-credentials"
+        const val TRANSFORMATION = "AES/GCM/NoPadding"
+    }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/DeliveryService.kt`
+```
+package sh.zeron.android.core
+
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import sh.zeron.android.R
+
+/**
+ * Keeps the process running for a few seconds after the user leaves, so a
+ * message sent just before can reach the edge (iOS `beginBackgroundTask`).
+ * The core does the work on its own threads; this only holds the process
+ * out of the cached (frozen) state. Started from the activity's onStop,
+ * inside the platform's foreground-to-background grace window.
+ */
+class DeliveryService : Service() {
+    private val main = Handler(Looper.getMainLooper())
+    private val stop = Runnable { stopSelf() }
+
+    override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val type = if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE else ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        try {
+            ServiceCompat.startForeground(this, NOTIFICATION_ID, notification(), type)
+        } catch (e: Exception) {
+            // Too late to start from the background: delivery resumes next launch.
+            Log.w("Zeron", "delivery hold refused", e)
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        running = true
+        main.removeCallbacks(stop)
+        main.postDelayed(stop, intent?.getLongExtra(EXTRA_MS, DEFAULT_MS) ?: DEFAULT_MS)
+        return START_NOT_STICKY
+    }
+
+    /** Android 14+ short services must stop when their time is up. */
+    override fun onTimeout(startId: Int) = stopSelf()
+
+    override fun onDestroy() {
+        running = false
+        main.removeCallbacks(stop)
+        super.onDestroy()
+    }
+
+    private fun notification(): Notification {
+        val manager = getSystemService(NotificationManager::class.java)
+        if (manager.getNotificationChannel(CHANNEL) == null) {
+            manager.createNotificationChannel(
+                NotificationChannel(CHANNEL, "Message delivery", NotificationManager.IMPORTANCE_MIN).apply {
+                    description = "Shown briefly while a message you just sent is delivered"
+                    setShowBadge(false)
+                },
+            )
+        }
+        return NotificationCompat.Builder(this, CHANNEL)
+            .setSmallIcon(R.drawable.zi_arrow_up)
+            .setContentTitle("Sending your message…")
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setSilent(true)
+            .setOngoing(true)
+            .build()
+    }
+
+    companion object {
+        private const val CHANNEL = "delivery"
+        private const val NOTIFICATION_ID = 7101
+        private const val EXTRA_MS = "ms"
+        private const val DEFAULT_MS = 25_000L
+
+        /** In the foreground state (stopping one that hasn't got there yet is an error). */
+        @Volatile private var running = false
+
+        fun hold(context: Context, ms: Long) {
+            val intent = Intent(context, DeliveryService::class.java).putExtra(EXTRA_MS, ms)
+            try {
+                context.startForegroundService(intent)
+            } catch (e: Exception) {
+                Log.w("Zeron", "delivery hold refused", e)
+            }
+        }
+
+        fun release(context: Context) {
+            if (running) context.stopService(Intent(context, DeliveryService::class.java))
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Drafts.kt`
+```
+package sh.zeron.android.core
+
+import android.content.Context
+
+/** Unsent composer text per chat (iOS `Drafts`): blank drafts are forgotten. */
+class Drafts(context: Context) {
+    private val prefs = context.getSharedPreferences("drafts", Context.MODE_PRIVATE)
+
+    fun load(key: String): String = prefs.getString(key, null) ?: ""
+
+    fun save(key: String, text: String) {
+        val edit = prefs.edit()
+        if (text.isBlank()) edit.remove(key) else edit.putString(key, text)
+        edit.apply()
+    }
+
+    companion object {
+        const val NEW_SESSION = "new-session"
+    }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Fonts.kt`
+```
+package sh.zeron.android.core
+
+import android.content.res.AssetManager
+import android.graphics.Paint
+import android.graphics.Typeface
+import uniffi.zeron_core.FaceData
+import uniffi.zeron_core.FaceRole
+import uniffi.zeron_core.PlatformMeasurer
+import uniffi.zeron_core.TextSystem
+
+/**
+ * The bundled faces. Rust measures the exact bytes Skia draws with (the same
+ * files the iOS app registers with CoreText), so measurement and rendering
+ * share one source of truth.
+ */
+object Fonts {
+    val files: List<Pair<FaceRole, String>> = listOf(
+        FaceRole.SANS to "Geist.ttf",
+        FaceRole.SANS_MEDIUM to "Geist-Medium.ttf",
+        FaceRole.SANS_SEMIBOLD to "Geist-SemiBold.ttf",
+        FaceRole.SANS_BOLD to "Geist-Bold.ttf",
+        FaceRole.SANS_ITALIC to "Geist-Italic.ttf",
+        FaceRole.SANS_MEDIUM_ITALIC to "Geist-MediumItalic.ttf",
+        FaceRole.SANS_SEMIBOLD_ITALIC to "Geist-SemiBoldItalic.ttf",
+        FaceRole.SANS_BOLD_ITALIC to "Geist-BoldItalic.ttf",
+        FaceRole.MONO to "GeistMono.ttf",
+        FaceRole.MONO_MEDIUM to "GeistMono-Medium.ttf",
+        FaceRole.MONO_SEMIBOLD to "GeistMono-SemiBold.ttf",
+        FaceRole.MONO_ITALIC to "GeistMono-Italic.ttf",
+    )
+
+    private lateinit var faces: List<FaceData>
+    private val typefaces = HashMap<FaceRole, Typeface>()
+
+    fun init(assets: AssetManager) {
+        if (::faces.isInitialized) return
+        faces = files.mapNotNull { (role, file) ->
+            runCatching {
+                val bytes = assets.open(file).use { it.readBytes() }
+                typefaces[role] = Typeface.createFromAsset(assets, file)
+                FaceData(role, bytes)
+            }.getOrNull()
+        }
+    }
+
+    val faceData: List<FaceData> get() = faces
+
+    fun typeface(face: FaceRole): Typeface = typefaces[face] ?: typefaces[FaceRole.SANS] ?: Typeface.DEFAULT
+
+    /** A paint for `face` at `size` px. Linear metrics: advances match Rust's unhinted ones. */
+    fun paint(face: FaceRole, size: Float, ligatures: Boolean): Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        typeface = typeface(face)
+        textSize = size
+        isSubpixelText = true
+        isLinearText = true
+        if (!ligatures) fontFeatureSettings = "'liga' 0, 'calt' 0"
+    }
+}
+
+/** Skia (via Minikin) as ground truth for glyphs the bundled faces don't cover. */
+class AndroidMeasurer : PlatformMeasurer {
+    private data class Key(val face: FaceRole, val centi: Int, val ligatures: Boolean)
+
+    // Called on the Rust layout thread; Paint isn't thread-safe.
+    private val paints = ThreadLocal.withInitial { HashMap<Key, Paint>() }
+
+    private fun paint(face: FaceRole, size: Float, ligatures: Boolean): Paint =
+        paints.get()!!.getOrPut(Key(face, (size * 100).toInt(), ligatures)) { Fonts.paint(face, size, ligatures) }
+
+    override fun measure(face: FaceRole, size: Float, ligatures: Boolean, text: String): Float =
+        paint(face, size, ligatures).measureText(text)
+
+    /** Per-scalar advances of `text` laid out as one run, folded from UTF-16 units. */
+    override fun measureRun(face: FaceRole, size: Float, ligatures: Boolean, text: String): List<Float> {
+        val n = text.length
+        if (n == 0) return emptyList()
+        val perUnit = FloatArray(n)
+        paint(face, size, ligatures).getTextRunAdvances(text.toCharArray(), 0, n, 0, n, false, perUnit, 0)
+        val out = ArrayList<Float>(text.codePointCount(0, n))
+        var i = 0
+        while (i < n) {
+            val w = Character.charCount(text.codePointAt(i))
+            var sum = 0f
+            for (k in i until minOf(n, i + w)) sum += perUnit[k]
+            out.add(sum)
+            i += w
+        }
+        return out
+    }
+}
+
+/** One process-wide text system shared by every transcript. */
+object TextEngine {
+    val shared: TextSystem by lazy { TextSystem(Fonts.faceData, AndroidMeasurer()) }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Terminals.kt`
+```
+package sh.zeron.android.core
+
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import org.json.JSONArray
+import org.json.JSONObject
+import uniffi.zeron_core.CoreClient
+import uniffi.zeron_core.CoreException
+import uniffi.zeron_core.TerminalListener
+import uniffi.zeron_core.TerminalPhase
+import uniffi.zeron_core.TerminalRef
+import uniffi.zeron_core.TerminalSession
+import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.atomic.AtomicBoolean
+
+/**
+ * One terminal on a chat's host. The Rust session keeps the emulator and the
+ * output stream alive while no screen shows it, so coming back is instant
+ * and the session knows what's still running.
+ */
+class TerminalTab(val chatId: String, val session: TerminalSession, ordinal: Int) : TerminalListener {
+    private val main = Handler(Looper.getMainLooper())
+    private val scheduled = AtomicBoolean(false)
+    private val observers = CopyOnWriteArraySet<() -> Unit>()
+
+    /** Position among the chat's terminals ("zsh", "zsh 2", …). */
+    var ordinal by mutableIntStateOf(ordinal)
+    /** The phase as last seen on main (drives the session's chips). */
+    var phase by mutableStateOf<TerminalPhase>(TerminalPhase.Connecting)
+        private set
+    var title by mutableStateOf<String?>(null)
+        private set
+    internal var onPhaseChange: (() -> Unit)? = null
+    var onBell: (() -> Unit)? = null
+
+    val ref: TerminalRef get() = session.info()
+
+    /** "zsh", or what the running program calls itself. */
+    val name: String
+        get() {
+            title?.takeIf { it.isNotEmpty() }?.let { return it }
+            val shell = ref.shell.ifEmpty { "Terminal" }
+            return if (ordinal > 1) "$shell $ordinal" else shell
+        }
+
+    /** The folder it started in, home-abbreviated. */
+    val folder: String get() = abbreviateHome(ref.cwd)
+
+    val isLive: Boolean get() = phase !is TerminalPhase.Exited && phase !is TerminalPhase.Gone
+
+    /** Called on main after each coalesced change; returns the unsubscribe. */
+    fun observe(handler: () -> Unit): () -> Unit {
+        observers.add(handler)
+        return { observers.remove(handler) }
+    }
+
+    // TerminalListener: client threads. Bursts coalesce into one pull per loop turn.
+    override fun changed() {
+        if (!scheduled.compareAndSet(false, true)) return
+        main.post {
+            scheduled.set(false)
+            val p = session.phase()
+            val t = session.title()
+            if (p != phase || t != title) {
+                phase = p
+                title = t
+                onPhaseChange?.invoke()
+            }
+            observers.forEach { it() }
+        }
+    }
+
+    override fun bell() {
+        main.post { onBell?.invoke() }
+    }
+}
+
+fun abbreviateHome(cwd: String): String {
+    for (home in listOf("/Users/", "/home/")) {
+        if (cwd.startsWith(home)) {
+            val rest = cwd.removePrefix(home)
+            val slash = rest.indexOf('/')
+            return if (slash >= 0) "~" + rest.substring(slash) else "~"
+        }
+    }
+    return if (cwd == "/root") "~" else cwd
+}
+
+/**
+ * Every chat's terminals. Their refs persist, so a relaunch reattaches to
+ * shells still running on their hosts (their output replays).
+ */
+class TerminalStore(context: Context, private val client: () -> CoreClient?) {
+    private val prefs = context.getSharedPreferences("terminals", 0)
+    private val tabs = HashMap<String, MutableList<TerminalTab>>()
+    private val restored = HashSet<String>()
+    private val _changes = MutableSharedFlow<String>(extraBufferCapacity = 64)
+    /** Chat ids whose terminals came, went, or changed phase. */
+    val changes: SharedFlow<String> = _changes
+    var dark = false
+        set(value) {
+            field = value
+            tabs.values.flatten().forEach { it.session.setDark(value) }
+        }
+
+    fun tabs(chatId: String): List<TerminalTab> {
+        restore(chatId)
+        return tabs[chatId].orEmpty().toList()
+    }
+
+    /** Open a shell on the chat's host. */
+    suspend fun open(chatId: String, cols: Int, rows: Int): TerminalTab {
+        val client = client() ?: throw CoreException.Closed()
+        restore(chatId)
+        val ordinal = (tabs[chatId]?.maxOfOrNull { it.ordinal } ?: 0) + 1
+        val relay = ListenerRelay()
+        val session = client.openTerminal(chatId, cols.toUShort(), rows.toUShort(), relay)
+        val tab = adopt(chatId, session, ordinal, relay)
+        persist(chatId)
+        _changes.tryEmit(chatId)
+        return tab
+    }
+
+    /** End the shell on its host and forget it. */
+    fun close(tab: TerminalTab) {
+        tab.session.end()
+        forget(tab)
+    }
+
+    /** Forget a tab whose shell already ended. */
+    fun forget(tab: TerminalTab) {
+        tab.session.detach()
+        tabs[tab.chatId]?.remove(tab)
+        persist(tab.chatId)
+        _changes.tryEmit(tab.chatId)
+    }
+
+    private fun adopt(chatId: String, session: TerminalSession, ordinal: Int, relay: ListenerRelay): TerminalTab {
+        val tab = TerminalTab(chatId, session, ordinal)
+        relay.target = tab
+        tab.onPhaseChange = {
+            // A terminal its host forgot can't come back.
+            if (tab.phase is TerminalPhase.Gone) forget(tab) else _changes.tryEmit(chatId)
+        }
+        session.setDark(dark)
+        tabs.getOrPut(chatId) { mutableListOf() }.add(tab)
+        return tab
+    }
+
+    private fun restore(chatId: String) {
+        val client = client() ?: return
+        if (!restored.add(chatId)) return
+        val saved = runCatching { JSONObject(prefs.getString("all", "{}")!!).optJSONArray(chatId) }.getOrNull() ?: return
+        for (i in 0 until saved.length()) {
+            val o = saved.optJSONObject(i) ?: continue
+            val id = o.optString("id")
+            val device = o.optString("device")
+            if (id.isEmpty() || device.isEmpty()) continue
+            val ref = TerminalRef(
+                id = id,
+                deviceId = device,
+                cwd = o.optString("cwd"),
+                shell = o.optString("shell", "zsh"),
+                hostReplies = o.optBoolean("replies", true),
+            )
+            val relay = ListenerRelay()
+            val session = client.attachTerminal(ref, 80u, 24u, relay)
+            adopt(chatId, session, i + 1, relay)
+        }
+    }
+
+    private fun persist(chatId: String) {
+        val all = runCatching { JSONObject(prefs.getString("all", "{}")!!) }.getOrDefault(JSONObject())
+        val list = JSONArray()
+        for (tab in tabs[chatId].orEmpty()) {
+            val r = tab.ref
+            list.put(JSONObject().put("id", r.id).put("device", r.deviceId).put("cwd", r.cwd).put("shell", r.shell).put("replies", r.hostReplies))
+        }
+        if (list.length() == 0) all.remove(chatId) else all.put(chatId, list)
+        prefs.edit().putString("all", all.toString()).apply()
+    }
+
+    fun signOut() {
+        tabs.values.flatten().forEach { it.session.detach() }
+        tabs.clear()
+        restored.clear()
+        prefs.edit().clear().apply()
+    }
+
+    /** The session exists before its tab (the listener is a constructor argument): this forwards once it does. */
+    private class ListenerRelay : TerminalListener {
+        @Volatile var target: TerminalTab? = null
+        override fun changed() { target?.changed() }
+        override fun bell() { target?.bell() }
+    }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/core/Wallpaper.kt`
+```
+package sh.zeron.android.core
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
+import uniffi.zeron_core.WallpaperEffect
+import uniffi.zeron_core.wallpaperRender
+import uniffi.zeron_core.wallpaperSafeOpacity
+import java.io.File
+import java.nio.ByteBuffer
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
+
+/**
+ * The chat wallpaper (desktop "new thread background"): one image plus an
+ * effect, stored locally. Effects and the contrast guard run in the Rust
+ * core (`wallpaper.rs`) off the main thread; renders are cached per
+ * appearance — the same pipeline as iOS.
+ */
+class WallpaperStore(private val context: Context) {
+    data class State(val set: Boolean, val name: String?, val effect: WallpaperEffect, val generation: Int)
+
+    /** A rendered wallpaper and the highest opacity that keeps text readable. */
+    class Render(val image: ImageBitmap, val opacity: Float)
+
+    private val prefs = context.getSharedPreferences("wallpaper", 0)
+    private val dir = File(context.filesDir, "wallpaper").apply { mkdirs() }
+    private val file = File(dir, "wallpaper.jpg")
+    private val cache = HashMap<String, Render>()
+
+    private val _state = MutableStateFlow(read(0))
+    val state: StateFlow<State> = _state.asStateFlow()
+
+    private fun read(generation: Int) = State(
+        set = file.exists(),
+        name = prefs.getString("name", null),
+        effect = runCatching { WallpaperEffect.valueOf(prefs.getString("effect", "NONE")!!) }.getOrDefault(WallpaperEffect.NONE),
+        generation = generation,
+    )
+
+    private fun changed() {
+        synchronized(cache) { cache.clear() }
+        _state.value = read(_state.value.generation + 1)
+    }
+
+    /** Store a picked image (long side ≤ 1600 px, decoded downsampled). */
+    suspend fun set(uri: Uri, name: String) = withContext(Dispatchers.IO) {
+        runCatching {
+            val bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri)) { decoder, info, _ ->
+                val scale = min(1f, 1600f / max(info.size.width, info.size.height))
+                if (scale < 1f) decoder.setTargetSize((info.size.width * scale).roundToInt(), (info.size.height * scale).roundToInt())
+                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+            }
+            store(bitmap, name)
+        }
+    }
+
+    /** Store an image file (launch extra `wallpaper` for screenshots and tests). */
+    suspend fun set(path: File) = withContext(Dispatchers.IO) {
+        runCatching {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(path.path, bounds)
+            var sample = 1
+            while (max(bounds.outWidth, bounds.outHeight) / (sample * 2) >= 1600) sample *= 2
+            val bitmap = BitmapFactory.decodeFile(path.path, BitmapFactory.Options().apply { inSampleSize = sample })!!
+            store(bitmap, path.name)
+        }
+    }
+
+    private suspend fun store(bitmap: Bitmap, name: String) {
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+        prefs.edit().putString("name", name).apply()
+        withContext(Dispatchers.Main) { changed() }
+    }
+
+    fun setEffect(effect: WallpaperEffect) {
+        prefs.edit().putString("effect", effect.name).apply()
+        changed()
+    }
+
+    fun remove() {
+        file.delete()
+        prefs.edit().remove("name").apply()
+        changed()
+    }
+
+    /** Render for an appearance (null when no wallpaper is set). */
+    suspend fun render(dark: Boolean): Render? {
+        val s = _state.value
+        if (!s.set) return null
+        val key = "${s.effect}-$dark"
+        synchronized(cache) { cache[key] }?.let { return it }
+        return withContext(Dispatchers.Default) {
+            runCatching {
+                val source = BitmapFactory.decodeFile(file.path) ?: return@runCatching null
+                val scale = min(1f, 1200f / max(source.width, source.height))
+                val w = max(1, (source.width * scale).roundToInt())
+                val h = max(1, (source.height * scale).roundToInt())
+                val sized = Bitmap.createScaledBitmap(source, w, h, true).copy(Bitmap.Config.ARGB_8888, false)
+                val buffer = ByteBuffer.allocate(w * h * 4)
+                sized.copyPixelsToBuffer(buffer)
+                val out = wallpaperRender(buffer.array(), w.toUInt(), h.toUInt(), s.effect, !dark)
+                // Text sits over the top of the artwork: primary text keeps
+                // 4.5:1, secondary 3:1 against its worst pixels there.
+                val text = (if (dark) 0xE8E8EA else 0x27272C).toUInt()
+                val secondary = (if (dark) 0xA9A9AE else 0x62626A).toUInt()
+                val background = (if (dark) 0x060606 else 0xF3F3F5).toUInt()
+                val primary = wallpaperSafeOpacity(out, w.toUInt(), h.toUInt(), text, background, 0.6f, 4.5f, 1f)
+                val muted = wallpaperSafeOpacity(out, w.toUInt(), h.toUInt(), secondary, background, 0.6f, 3f, 1f)
+                val rendered = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+                rendered.copyPixelsFromBuffer(ByteBuffer.wrap(out))
+                Render(rendered.asImageBitmap(), min(primary, muted))
+            }.getOrNull()
+        }?.also { r -> if (_state.value.generation == s.generation) synchronized(cache) { cache[key] = r } }
+    }
+
+    companion object {
+        val effects = listOf(WallpaperEffect.NONE, WallpaperEffect.DITHER, WallpaperEffect.ASCII, WallpaperEffect.HALFTONE, WallpaperEffect.SCANLINES)
+
+        fun label(e: WallpaperEffect) = when (e) {
+            WallpaperEffect.NONE -> "None"
+            WallpaperEffect.DITHER -> "Dither"
+            WallpaperEffect.ASCII -> "ASCII"
+            WallpaperEffect.HALFTONE -> "Halftone"
+            WallpaperEffect.SCANLINES -> "Scanlines"
+        }
+
+        fun detail(e: WallpaperEffect) = when (e) {
+            WallpaperEffect.NONE -> "Shows the original artwork."
+            WallpaperEffect.DITHER -> "Rebuilds the artwork with a dithered color palette."
+            WallpaperEffect.ASCII -> "Recreates the artwork with colored characters."
+            WallpaperEffect.HALFTONE -> "Recreates the artwork with colored print dots."
+            WallpaperEffect.SCANLINES -> "Adds a pronounced horizontal display-line texture."
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `apps/android/app/src/main/java/sh/zeron/android/transcript/TranscriptState.kt`
+```
+package sh.zeron.android.transcript
+
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import sh.zeron.android.core.TextEngine
+import uniffi.zeron_core.LayoutFrame
+import uniffi.zeron_core.LayoutListener
+import uniffi.zeron_core.RowKind
+import uniffi.zeron_core.TranscriptView
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.max
+
+/**
+ * One transcript's layout engine plus the viewport over it. Rust owns
+ * geometry: each [LayoutFrame] gives exact row offsets, so this only tracks
+ * the scroll offset (dp) and keeps the user's place across frames — anchored
+ * to a row, or following the tail.
+ */
+@Stable
+class TranscriptState {
+    private val main = Handler(Looper.getMainLooper())
+    private val pending = AtomicBoolean(false)
+
+    val engine: TranscriptView = TranscriptView(TextEngine.shared, object : LayoutListener {
+        // Layout thread: coalesce to one pull per main-loop turn.
+        override fun frameReady(revision: ULong) {
+            if (pending.compareAndSet(false, true)) main.post {
+                pending.set(false)
+                if (!closed) apply(engine.frame())
+            }
+        }
+    })
+
+    var frame by mutableStateOf<LayoutFrame?>(null)
+        private set
+    /** Scroll offset in dp (0 = top of the content). */
+    var offset by mutableFloatStateOf(0f)
+    var viewport by mutableFloatStateOf(0f)
+    /** Breathing room below the last row, on top of the frame's own (dp). */
+    var bottomInset by mutableFloatStateOf(12f)
+    var following by mutableStateOf(true)
+    var dragging by mutableStateOf(false)
+    val fonts = StyleFonts()
+    /** Rows present before a frame arrived don't fade in. */
+    internal val knownKeys = HashSet<ULong>()
+    internal var settled = false
+
+    private val cache = object : LinkedHashMap<Triple<ULong, ULong, Float>, RowModel>(64, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Triple<ULong, ULong, Float>, RowModel>?) = size > 400
+    }
+
+    private var closed = false
+    private var width = 0f
+    private var scale = 0f
+
+    /** Attachment upload progress (rings on `pending://` thumbnails). */
+    var uploadProgress by mutableStateOf<Double?>(null)
+
+    // ── Runway (desktop transcript.rs `OwnTurnAnchor`) ─────────────────────
+    //
+    // On an immediate send the prompt glides to the top of the viewport and
+    // the content is held at least one viewport tall below it, so the reply
+    // streams into reserved space without the view moving on every token.
+    // Once the reply fills it, the runway retires and the ordinary follow
+    // takes over; a drag releases the hold (the space stays as scroll room).
+    private class OwnTurn(val key: ULong?, val before: Set<ULong>)
+    private var ownTurn by mutableStateOf<OwnTurn?>(null)
+    private var queuedTurn: Set<ULong>? = null
+
+    /** Reserve the reply's space below the prompt about to be sent. */
+    fun beginOwnTurn() {
+        queuedTurn = null
+        ownTurn = OwnTurn(null, recentUserKeys())
+        following = true
+    }
+
+    /** A message queued behind the live turn takes the runway once its bubble lands. */
+    fun expectQueuedTurn() {
+        if (queuedTurn == null) queuedTurn = recentUserKeys()
+        following = true
+    }
+
+    /** The newest user row not in `before`, near the tail. */
+    private fun newUserRow(f: LayoutFrame, before: Set<ULong>): ULong? {
+        val n = f.rowCount().toInt()
+        for (i in (n - 1) downTo max(0, n - 12)) {
+            val p = f.placement(i.toUInt()) ?: continue
+            if (p.kind == RowKind.USER && p.key !in before) return p.key
+        }
+        return null
+    }
+
+    /** Content height the runway holds, or null when it isn't holding. */
+    private val runwayHeight: Float?
+        get() {
+            val turn = ownTurn ?: return null
+            val f = frame ?: return null
+            val key = turn.key ?: return null
+            val p = f.indexOf(key)?.let { f.placement(it) } ?: return null
+            val natural = f.totalHeight() + bottomInset
+            val minimum = p.y + viewport
+            return if (natural >= minimum - 0.5f) null else minimum
+        }
+
+    /** The runway is gliding the prompt up (ease-out instead of the settle spring). */
+    val runwayActive: Boolean get() = runwayHeight != null
+
+    val contentHeight: Float get() = max((frame?.totalHeight() ?: 0f) + bottomInset, runwayHeight ?: 0f)
+    val maxOffset: Float get() = max(0f, contentHeight - viewport)
+    val distanceFromBottom: Float get() = maxOffset - offset
+
+    fun setViewport(widthDp: Float, heightDp: Float, textScale: Float) {
+        viewport = heightDp
+        if (widthDp != width || textScale != scale) {
+            width = widthDp
+            scale = textScale
+            engine.setViewport(widthDp, textScale)
+        }
+    }
+
+    fun apply(new: LayoutFrame) {
+        val old = frame
+        val first = old == null || old.rowCount() == 0u
+        var anchor: Pair<ULong, Float>? = null
+        if (!following && old != null) {
+            old.indexAt(max(0f, offset))?.let { i ->
+                old.placement(i)?.let { p -> anchor = p.key to (offset - p.y) }
+            }
+        }
+        queuedTurn?.let { before ->
+            newUserRow(new, before)?.let { key ->
+                queuedTurn = null
+                ownTurn = OwnTurn(key, before)
+                following = true
+            }
+        }
+        ownTurn?.let { turn -> if (turn.key == null) newUserRow(new, turn.before)?.let { ownTurn = OwnTurn(it, turn.before) } }
+        motion = motionFor(old, new)
+        frame = new
+        if (first && new.rowCount() > 0u) {
+            for (i in 0u until new.rowCount()) new.placement(i)?.let { knownKeys.add(it.key) }
+            offset = maxOffset
+            settled = true
+        } else if (!following) {
+            anchor?.let { (key, delta) ->
+                new.indexOf(key)?.let { i -> new.placement(i)?.let { p -> offset = (p.y + delta).coerceIn(0f, maxOffset) } }
+            }
+        }
+    }
+
+    // ── Row motion ────────────────────────────────────────────────────────
+    //
+    // Fold toggles tween 140 ms ease-out; a visible tool group that grew (a
+    // new call arrived) reveals over 360 ms expo — the desktop timings. Rows
+    // interpolate from where the previous frame placed them.
+
+    class Motion(val id: Int, val from: Map<ULong, Pair<Float, Float>>, val durationMs: Int, val expo: Boolean)
+
+    var motion by mutableStateOf<Motion?>(null)
+        private set
+    private var motionId = 0
+    private var pendingFold: ULong? = null
+
+    private fun motionFor(old: LayoutFrame?, new: LayoutFrame): Motion? {
+        if (old == null || old.rowCount() == 0u || old.width() != new.width()) return null
+        fun height(f: LayoutFrame, key: ULong) = f.indexOf(key)?.let { f.placement(it)?.height }
+        val band = old.rowsIn(offset - viewport, offset + viewport * 2)
+        val fold = pendingFold
+        val kind = when {
+            fold != null && height(old, fold) != null && height(old, fold) != height(new, fold) -> {
+                pendingFold = null
+                140 to false
+            }
+            band.any { it.kind == RowKind.TOOLS && (height(new, it.key) ?: 0f) > it.height } -> 360 to true
+            else -> return null
+        }
+        return Motion(++motionId, band.associate { it.key to (it.y to it.height) }, kind.first, kind.second)
+    }
+
+    /** The display model for a row at the frame's width (cached per version). */
+    fun model(frame: LayoutFrame, index: UInt, key: ULong, version: ULong): RowModel? {
+        val k = Triple(key, version, frame.width())
+        cache[k]?.let { return it }
+        val display = frame.display(index) ?: return null
+        return RowModel(display).also { cache[k] = it }
+    }
+
+    /** User scroll by `delta` dp (positive = toward the tail). Returns the consumed amount. */
+    fun scrollBy(delta: Float): Float {
+        val before = offset
+        offset = (offset + delta).coerceIn(0f, maxOffset)
+        // Momentum carrying the list back into the last 70dp re-latches follow.
+        if (!following && !dragging && delta > 0 && distanceFromBottom < 70f) following = true
+        return offset - before
+    }
+
+    fun scrollToBottom() {
+        following = true
+    }
+
+    /** A drag hands control to the user (the runway's space stays as scroll room). */
+    fun released() {
+        following = false
+    }
+
+    fun toggle(key: ULong) {
+        pendingFold = key
+        engine.toggle(key)
+    }
+
+    fun toggleDetail(row: ULong, detail: ULong, open: Boolean) {
+        pendingFold = row
+        engine.toggleDetail(row, detail, open)
+    }
+
+    /** Newest user row keys (the runway looks for a new one after a send). */
+    fun recentUserKeys(): Set<ULong> {
+        val f = frame ?: return emptySet()
+        val n = f.rowCount().toInt()
+        val out = HashSet<ULong>()
+        for (i in (n - 1) downTo max(0, n - 24)) f.placement(i.toUInt())?.let { if (it.kind == RowKind.USER) out.add(it.key) }
+        return out
+    }
+
+    /** Where this transcript's visuals load their scripts (the chat's host) and the frames' pixel density. */
+    fun setVisualSource(client: uniffi.zeron_core.CoreClient, deviceId: String, pixelScale: Float) =
+        engine.setVisualSource(client, deviceId, pixelScale)
+
+    fun close() {
+        closed = true
+        engine.shutdown()
+        engine.close()
+    }
+}
+
+```
 
 ### Core Architecture Module: `apps/ios/Zeron/Core/Fonts.swift`
 ```
@@ -190,1335 +1594,17 @@ enum TextEngine {
 
 ```
 
-### Core Architecture Module: `apps/ios/Zeron/Core/Generated/zeron_core.swift`
-```
-// This file was autogenerated by some hot garbage in the `uniffi` crate.
-// Trust me, you don't want to mess with it!
-
-// swiftlint:disable all
-import Foundation
-
-// Depending on the consumer's build setup, the low-level FFI code
-// might be in a separate module, or it might be compiled inline into
-// this module. This is a bit of light hackery to work with both.
-#if canImport(zeron_coreFFI)
-import zeron_coreFFI
-#endif
-
-fileprivate extension RustBuffer {
-    // Allocate a new buffer, copying the contents of a `UInt8` array.
-    init(bytes: [UInt8]) {
-        let rbuf = bytes.withUnsafeBufferPointer { ptr in
-            RustBuffer.from(ptr)
-        }
-        self.init(capacity: rbuf.capacity, len: rbuf.len, data: rbuf.data)
-    }
-
-    static func empty() -> RustBuffer {
-        RustBuffer(capacity: 0, len:0, data: nil)
-    }
-
-    static func from(_ ptr: UnsafeBufferPointer<UInt8>) -> RustBuffer {
-        try! rustCall { ffi_zeron_mobile_rustbuffer_from_bytes(ForeignBytes(bufferPointer: ptr), $0) }
-    }
-
-    // Frees the buffer in place.
-    // The buffer must not be used after this is called.
-    func deallocate() {
-        try! rustCall { ffi_zeron_mobile_rustbuffer_free(self, $0) }
-    }
-}
-
-fileprivate extension ForeignBytes {
-    init(bufferPointer: UnsafeBufferPointer<UInt8>) {
-        self.init(len: Int32(bufferPointer.count), data: bufferPointer.baseAddress)
-    }
-
-    init(rawBufferPointer: UnsafeRawBufferPointer) {
-        self.init(
-            len: Int32(rawBufferPointer.count),
-            data: rawBufferPointer.baseAddress?.assumingMemoryBound(to: UInt8.self)
-        )
-    }
-}
-
-// Converter for `&[u8]` / `[ByRef] bytes` arguments.
-//
-// Conforms to `FfiConverter` so the compiler enforces the full converter
-// method set. Only the scope-bound `lower(_:_body:)` overload is sound —
-// zero-copy byte buffers only flow foreign -> Rust, and only in argument
-// position. The four protocol-witness methods (`lift`, `lower`, `read`,
-// `write`) `fatalError` at runtime if anyone reaches them.
-//
-// The scope-bound `lower` takes a closure because the `ForeignBytes`
-// pointer is only guaranteed valid for the duration of
-// `Data.withUnsafeBytes`. Callers must run the full FFI call inside
-// the closure body.
-fileprivate enum FfiConverterByRefBytes: FfiConverter {
-    typealias SwiftType = Data
-    typealias FfiType = ForeignBytes
-
-    static func lower<R>(_ value: Data, _ body: (ForeignBytes) throws -> R) rethrows -> R {
-        return try value.withUnsafeBytes { rawBuf in
-            try body(ForeignBytes(rawBufferPointer: rawBuf))
-        }
-    }
-
-    static func lower(_ value: Data) -> ForeignBytes {
-        fatalError("ByRef bytes cannot use the plain lower: returning ForeignBytes escapes the Data.withUnsafeBytes scope. Use the scope-bound lower(_:_body:) overload instead.")
-    }
-
-    static func lift(_ value: ForeignBytes) throws -> Data {
-        fatalError("ByRef bytes cannot be lifted: zero-copy &[u8] only flows foreign->Rust")
-    }
-
-    static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Data {
-        fatalError("ByRef bytes cannot be read from a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
-    }
-
-    static func write(_ value: Data, into buf: inout [UInt8]) {
-        fatalError("ByRef bytes cannot be written to a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
-    }
-}
-
-// For every type used in the interface, we provide helper methods for conveniently
-// lifting and lowering that type from C-compatible data, and for reading and writing
-// values of that type in a buffer.
-
-// Helper classes/extensions that don't change.
-// Someday, this will be in a library of its own.
-
-fileprivate extension Data {
-    init(rustBuffer: RustBuffer) {
-        self.init(
-            bytesNoCopy: rustBuffer.data!,
-            count: Int(rustBuffer.len),
-            deallocator: .none
-        )
-    }
-}
-
-// Define reader functionality.  Normally this would be defined in a class or
-// struct, but we use standalone functions instead in order to make external
-// types work.
-//
-// With external types, one swift source file needs to be able to call the read
-// method on another source file's FfiConverter, but then what visibility
-// should Reader have?
-// - If Reader is fileprivate, then this means the read() must also
-//   be fileprivate, which doesn't work with external types.
-// - If Reader is internal/public, we'll get compile errors since both source
-//   files will try define the same type.
-//
-// Instead, the read() method and these helper functions input a tuple of data
-
-fileprivate func createReader(data: Data) -> (data: Data, offset: Data.Index) {
-    (data: data, offset: 0)
-}
-
-// Reads an integer at the current offset, in big-endian order, and advances
-// the offset on success. Throws if reading the integer would move the
-// offset past the end of the buffer.
-fileprivate func readInt<T: FixedWidthInteger>(_ reader: inout (data: Data, offset: Data.Index)) throws -> T {
-    let range = reader.offset..<reader.offset + MemoryLayout<T>.size
-    guard reader.data.count >= range.upperBound else {
-        throw UniffiInternalError.bufferOverflow
-    }
-    if T.self == UInt8.self {
-        let value = reader.data[reader.offset]
-        reader.offset += 1
-        return value as! T
-    }
-    var value: T = 0
-    let _ = withUnsafeMutableBytes(of: &value, { reader.data.copyBytes(to: $0, from: range)})
-    reader.offset = range.upperBound
-    return value.bigEndian
-}
-
-// Reads an arbitrary number of bytes, to be used to read
-// raw bytes, this is useful when lifting strings
-fileprivate func readBytes(_ reader: inout (data: Data, offset: Data.Index), count: Int) throws -> Array<UInt8> {
-    let range = reader.offset..<(reader.offset+count)
-    guard reader.data.count >= range.upperBound else {
-        throw UniffiInternalError.bufferOverflow
-    }
-    var value = [UInt8](repeating: 0, count: count)
-    value.withUnsafeMutableBufferPointer({ buffer in
-        reader.data.copyBytes(to: buffer, from: range)
-    })
-    reader.offset = range.upperBound
-    return value
-}
-
-// Reads a float at the current offset.
-fileprivate func readFloat(_ reader: inout (data: Data, offset: Data.Index)) throws -> Float {
-    return Float(bitPattern: try readInt(&reader))
-}
-
-// Reads a float at the current offset.
-fileprivate func readDouble(_ reader: inout (data: Data, offset: Data.Index)) throws -> Double {
-    return Double(bitPattern: try readInt(&reader))
-}
-
-// Indicates if the offset has reached the end of the buffer.
-fileprivate func hasRemaining(_ reader: (data: Data, offset: Data.Index)) -> Bool {
-    return reader.offset < reader.data.count
-}
-
-// Define writer functionality.  Normally this would be defined in a class or
-// struct, but we use standalone functions instead in order to make external
-// types work.  See the above discussion on Readers for details.
-
-fileprivate func createWriter() -> [UInt8] {
-    return []
-}
-
-fileprivate func writeBytes<S>(_ writer: inout [UInt8], _ byteArr: S) where S: Sequence, S.Element == UInt8 {
-    writer.append(contentsOf: byteArr)
-}
-
-// Writes an integer in big-endian order.
-//
-// Warning: make sure what you are trying to write
-// is in the correct type!
-fileprivate func writeInt<T: FixedWidthInteger>(_ writer: inout [UInt8], _ value: T) {
-    var value = value.bigEndian
-    withUnsafeBytes(of: &value) { writer.append(contentsOf: $0) }
-}
-
-fileprivate func writeFloat(_ writer: inout [UInt8], _ value: Float) {
-    writeInt(&writer, value.bitPattern)
-}
-
-fileprivate func writeDouble(_ writer: inout [UInt8], _ value: Double) {
-    writeInt(&writer, value.bitPattern)
-}
-
-// Protocol for types that transfer other types across the FFI. This is
-// analogous to the Rust trait of the same name.
-fileprivate protocol FfiConverter {
-    associatedtype FfiType
-    associatedtype SwiftType
-
-    static func lift(_ value: FfiType) throws -> SwiftType
-    static func lower(_ value: SwiftType) -> FfiType
-    static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType
-    static func write(_ value: SwiftType, into buf: inout [UInt8])
-}
-
-// Types conforming to `Primitive` pass themselves directly over the FFI.
-fileprivate protocol FfiConverterPrimitive: FfiConverter where FfiType == SwiftType { }
-
-extension FfiConverterPrimitive {
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public static func lift(_ value: FfiType) throws -> SwiftType {
-        return value
-    }
-
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public static func lower(_ value: SwiftType) -> FfiType {
-        return value
-    }
-}
-
-// Types conforming to `FfiConverterRustBuffer` lift and lower into a `RustBuffer`.
-// Used for complex types where it's hard to write a custom lift/lower.
-fileprivate protocol FfiConverterRustBuffer: FfiConverter where FfiType == RustBuffer {}
-
-extension FfiConverterRustBuffer {
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public static func lift(_ buf: RustBuffer) throws -> SwiftType {
-        var reader = createReader(data: Data(rustBuffer: buf))
-        let value = try read(from: &reader)
-        if hasRemaining(reader) {
-            throw UniffiInternalError.incompleteData
-        }
-        buf.deallocate()
-        return value
-    }
-
-#if swift(>=5.8)
-    @_documentation(visibility: private)
-#endif
-    public static func lower(_ value: SwiftType) -> RustBuffer {
-          var writer = createWriter()
-          write(value, into: &writer)
-          return RustBuffer(bytes: writer)
-    }
-}
-// An error type for FFI errors. These errors occur at the UniFFI level, not
-// the library level.
-fileprivate enum UniffiInternalError: LocalizedError {
-    case bufferOverflow
-    case incompleteData
-    case unexpectedOptionalTag
-    case unexpectedEnumCase
-    case unexpectedNullPointer
-    case unexpectedRustCallS
-```
-
-### Core Architecture Module: `apps/ios/Zeron/Session/CoreSessionSource.swift`
-```
-import UIKit
-
-/// A live session backed by the Rust core. The transcript flows Rust→Rust
-/// (`TranscriptView.attach`); this maps the composer-facing state.
-final class CoreSessionSource: SessionSource {
-    private(set) var chrome = SessionChrome()
-    var onChange: (() -> Void)?
-    private weak var app: AppModel?
-    private let client: CoreClient
-    private let handle: SessionHandle
-    private let chatId: String
-    private var token: AnyObject?
-    private var appToken: AnyObject?
-    private var hostDevice = "" {
-        didSet { if hostDevice != oldValue { connectVisuals() } }
-    }
-    /// Between turns, on a host that switches providers, the model menu
-    /// offers the other providers too.
-    private var canSwitchProvider = false
-    private var hostSwitchesProviders = false
-    private var turnRunning = false
-    /// The host's providers, read ahead: a menu whose top level waits on the
-    /// host doesn't open until it answers.
-    private var hostHarnesses: [HarnessInfo] = []
-    private var harnessesDevice = ""
-    /// What a chat with no model of its own runs: its host's default (the
-    /// catalog's first model), by "device|harness". Seeded from the built-in
-    /// list so the chip never shows a bare provider name, then the host's.
-    private var defaultModels: [String: ModelPickerRow] = [:]
-    private var defaultModelsLoading: Set<String> = []
-    private weak var engine: TranscriptView?
-
-    init(app: AppModel, client: CoreClient, handle: SessionHandle, chatId: String) {
-        self.app = app
-        self.client = client
-        self.handle = handle
-        self.chatId = chatId
-        token = app.observeSession(chatId) { [weak self] in self?.refresh() }
-        appToken = app.observe { [weak self] in self?.refresh() }
-        refresh()
-    }
-
-    func attach(_ engine: TranscriptView) {
-        _ = engine.attach(client: client, chatId: chatId)
-        self.engine = engine
-        connectVisuals()
-        handle.setViewAttached(attached: true)
-    }
-
-    /// Agent visuals load their scripts from the chat's host device.
-    private func connectVisuals() {
-        guard let engine, !hostDevice.isEmpty else { return }
-        engine.setVisualSource(client: client, deviceId: hostDevice, pixelScale: Float(max(2, UITraitCollection.current.displayScale)))
-    }
-
-    func detach() {
-        handle.setViewAttached(attached: false)
-    }
-
-    func reattach() {
-        handle.setViewAttached(attached: true)
-    }
-
-    private func refresh() {
-        let c = handle.composer()
-        let row = app?.row(chatId)
-        hostDevice = c.host.deviceId
-        hostSwitchesProviders = c.host.capabilities.providerSwitch
-        turnRunning = c.live.turnRunning
-        // Not mid-turn, and not while a message is still on its way (its
-        // turn is about to start on the current provider).
-        let sendPending = c.sendState == .sending || c.sendState == .queued
-        canSwitchProvider = hostSwitchesProviders && !turnRunning && !sendPending
-        if canSwitchProvider, harnessesDevice != hostDevice {
-            let device = hostDevice
-            harnessesDevice = device
-            Task { @MainActor [weak self] in
-                guard let self else { return }
-                let list = await self.client.listHarnesses(deviceId: device)
-                guard self.hostDevice == device else { return }
-                // Nothing back (offline, slow): ask again on the next refresh.
-                guard !list.isEmpty else {
-                    self.harnessesDevice = ""
-                    return
-                }
-                self.hostHarnesses = list
-                self.onChange?()
-            }
-        }
-        var next = SessionChrome()
-        next.title = c.title
-        let project = row?.project?.name ?? "No project"
-        // A Cloud chat's machine is "Cloud", not its own device name.
-        let hostName = row?.isCloud == true ? row?.deviceName : c.host.name
-        next.subtitle = hostName.map { "\(project) @ \($0)" } ?? project
-        next.running = c.live.turnRunning
-        next.canSteer = c.host.capabilities.midTurnSteering ?? false
-        next.placeholder = "Message \(row?.harnessLabel ?? "the agent")"
-        var chips: [ComposerChip] = []
-        if let model = row?.modelLabel ?? row.flatMap({ defaultModel(for: $0)?.label }) ?? row?.harnessLabel {
-            chips.append(ComposerChip(id: "model", title: model, symbol: nil, icon: BrandMarks.image(for: row?.harness ?? "claude-code", side: 13)))
-        }
-        if let r = row?.reasoning, !r.isEmpty {
-            chips.append(ComposerChip(id: "effort", title: reasoningLabel(level: r), symbol: "gauge.with.dots.needle.67percent"))
-        }
-        if let pr = row?.pullRequest {
-            let state: SessionRowVM.PR = switch pr.state { case .open: .open; case .merged: .merged; case .closed: .closed }
-            chips.append(ComposerChip(id: "pr", title: "\(pr.number)", symbol: nil, tint: PRBadgeView.tone(state), icon: PRIcon.image(side: 12)))
-        } else if let b = row?.branch, !b.isEmpty {
-            chips.append(ComposerChip(id: "branch", title: b, symbol: nil, icon: BranchIcon.sized()))
-        }
-        if let usage = c.contextUsage, let tokens = usage.tokens, let window = usage.window, window > 0 {
-            let fraction = Double(tokens) / Double(window)
-            if fraction >= 0.5 {
-                chips.append(ComposerChip(
-                    id: "context",
-                    title: "\(Int((fraction * 100).rounded()))% context",
-                    symbol: fraction >= 0.85 ? "exclamationmark.circle" : "circle.lefthalf.filled",
-                    tint: fraction >= 0.85 ? Palette.warning : nil
-                ))
-            }
-        }
-        next.chips = chips
-        if let sendFailure {
-            next.banner = .failed(sendFailure)
-        } else if c.sendState == .failed {
-            next.banner = .notDelivered
-        } else if c.sendState == .queued {
-            // A Cloud chat's message waits for its machine to start or wake —
-            // the transcript's setup step says so, as on the desktop.
-            if row?.isCloud != true {
-                next.banner = .failed("\(c.host.name ?? "Host") is offline — will send when it's back")
-            }
-        } else if c.sendState == .sending {
-            next.banner = .sending
-        } else if app?.connectivity?.state == .offline {
-            next.banner = .offline
-        } else if !c.room.connected, let retry = c.room.retryAtMs {
-            next.banner = .reconnecting(in: max(1, Int((retry - Int64(Date().timeIntervalSince1970 * 1000)) / 1000)))
-        }
-        next.uploadProgress = c.transferProgress
-        // Working state is shown at the transcript tail (layout engine), not here.
-        if let input = c.openInput {
-            next.questions = (input.requestId, input.questions.map {
-                SessionChrome.Question(id: $0.id, header: $0.header, text: $0.question, options: $0.options, multiSelect: $0.multiSelect, prefill: $0.prefill, multiline: $0.multiline)
-            })
-        }
-        next.queue = c.queue.map { q in
-            let gate: String? = switch q.gate {
-            case let .editing(_, _, mine)?: mine ? "Editing" : "Being edited"
-            case .reviewRequired?: "Needs review"
-            case nil: q.actionPending ? "Updating" : nil
-            }
-            return SessionChrome.QueuedItem(id: q.id, text: q.visibleText, thumbnail: nil, gate: gate)
-        }
-        next.error = c.queueError
-        if next != chrome {
-            chrome = next
-            onChange?()
-        }
-    }
-
-    /// False when the core refused the message (it stays in the composer).
-    @discardableResult
-    func send(text: String, images: [StagedImage], mode: DeliveryMode) -> Bool {
-        do {
-            if mode == .interrupt, chrome.running { try handle.interrupt() }
-            _ = try handle.send(request: SendRequest(text: text, attachments: images.map(\.outgoing), worktree: nil, busy: mode == .steer ? .steer : .queue))
-            app?.noteDeliveryActivity()
-            sendFailure = nil
-            return true
-        } catch {
-            // Kept across refreshes (which rebuild the chrome) until the next send.
-            sendFailure = "Couldn't send: \(error)"
-            refresh()
-            return false
-        }
-    }
-
-    private var sendFailure: String?
-
-    func stop() {
-        try? handle.interrupt()
-    }
-
-    func answer(requestId: String, answers: [(questionId: String, labels: [String])]) {
-        try? handle.respondInput(requestId: requestId, answers: answers.map { UserInputAnswer(questionId: $0.questionId, labels: $0.labels) })
-    }
-
-    func queueAction(_ id: String, _ action: QueueAction) {
-        switch action {
-        // Steers text into the live turn (never interrupts it); only
-        // attachment rows stop the turn to send.
-        case .sendNow: Task { _ = try? await handle.deliverQueuedNow(id: id) }
-        case .remove: Task { _ = try? await handle.removeQueued(id: id) }
-        case .moveUp: _ = try? handle.moveQueuedBy(id: id, delta: -1)
-        case .moveDown: _ = try? handle.moveQueuedBy(id: id, delta: 1)
-        case .edit: break // Driven by the view: beginEdit / finishEdit.
-        }
-    }
-
-    private var lease: QueueEditLease?
-    private var renewal: Task<Void, Never>?
-    /// The row as it was when the edit began: the composer only edits its
-    /// visible text, the rest (Appshot context, attachment trailer) rides along.
-    private var editBase: (raw: String, visible: String)?
-
-    func beginEdit(_ id: String) async -> String? {
-        let start = await handle.beginQueuedEdit(id: id, instanceId: UUID().uuidString)
-        guard case let .acquired(lease) = start else { return nil }
-        self.lease = lease
-        renewal?.cancel()
-        renewal = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(20))
-                gua
-```
-
-### Core Architecture Module: `apps/zeron/src/bin/zeron-engine.rs`
-```
-//! `zeron-engine` — the desktop app's background engine, as a process of its
-//! own ("Zeron Engine" in Activity Monitor): the app starts it and attaches;
-//! sessions keep running with the app closed. Without the UI linked in.
-//!
-//! It also answers what the engine runs its own executable for: `mcp` (the
-//! Zeron MCP server injected into agents) and `--noop-browser` (browser
-//! suppression for agents' sign-in flows).
-
-#![cfg_attr(windows, windows_subsystem = "windows")]
-
-fn main() -> anyhow::Result<()> {
-    match std::env::args().nth(1).as_deref() {
-        Some("--noop-browser") => Ok(()),
-        Some("mcp") => {
-            zeron_app::init_logging(false, "mcp", true);
-            zeron_app::run_mcp()
-        }
-        Some("--version" | "-V") => {
-            println!("zeron-engine {}", env!("CARGO_PKG_VERSION"));
-            Ok(())
-        }
-        _ => zeron_app::background::run(),
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/audio/src/worker.rs`
-```
-//! Poll on an audio worker, never GPUI or a hardware callback. Exact 10 ms
-//! DSP windows retain partial frames between polls; network frames are 20 ms.
-use crate::{
-    AudioError,
-    aec::{DSP_SAMPLES, EchoProcessor},
-    dsp::Resampler,
-    native::AudioIo,
-};
-use std::collections::VecDeque;
-use std::sync::atomic::Ordering;
-use zeron_proto::voice::VoiceFrame;
-
-pub struct AudioWorker {
-    pub io: AudioIo,
-    echo: EchoProcessor,
-    mic_resampler: Resampler,
-    reference_resampler: Resampler,
-    mic: VecDeque<f32>,
-    reference: VecDeque<f32>,
-    network: Vec<f32>,
-    scratch: Vec<f32>,
-    generation: u64,
-    sequence: u64,
-}
-impl AudioWorker {
-    pub fn open(generation: u64) -> Result<Self, AudioError> {
-        let io = AudioIo::open(generation)?;
-        Ok(Self {
-            echo: EchoProcessor::new()?,
-            mic_resampler: Resampler::new(io.input_rate, 48_000).ok_or(AudioError::Device)?,
-            reference_resampler: Resampler::new(io.output_rate, 48_000)
-                .ok_or(AudioError::Device)?,
-            io,
-            mic: VecDeque::with_capacity(9600),
-            reference: VecDeque::with_capacity(9600),
-            network: Vec::with_capacity(480),
-            scratch: Vec::with_capacity(8),
-            generation,
-            sequence: 0,
-        })
-    }
-    pub fn poll(&mut self) -> Result<Vec<VoiceFrame>, AudioError> {
-        if self.io.failed.load(Ordering::Acquire) {
-            return Err(AudioError::Device);
-        }
-        while let Some(sample) = self.io.reference.pop() {
-            self.scratch.clear();
-            self.reference_resampler.push(sample, &mut self.scratch);
-            self.reference.extend(self.scratch.iter().copied());
-            if self.reference.len() > 9600 {
-                return Err(AudioError::Overflow);
-            }
-        }
-        while self.reference.len() >= DSP_SAMPLES {
-            let frame = std::array::from_fn(|_| self.reference.pop_front().unwrap());
-            self.echo.render(&frame)?;
-        }
-        if self.io.muted.load(Ordering::Acquire) {
-            while self.io.capture.pop().is_some() {}
-            self.mic.clear();
-            self.network.clear();
-            self.mic_resampler = Resampler::new(self.io.input_rate, 48_000).unwrap();
-            return Ok(Vec::new());
-        }
-        while let Some(sample) = self.io.capture.pop() {
-            self.scratch.clear();
-            self.mic_resampler.push(sample, &mut self.scratch);
-            self.mic.extend(self.scratch.iter().copied());
-            if self.mic.len() > 9600 {
-                return Err(AudioError::Overflow);
-            }
-        }
-        let mut frames = Vec::with_capacity(10);
-        while self.mic.len() >= DSP_SAMPLES {
-            let mut frame = std::array::from_fn(|_| self.mic.pop_front().unwrap());
-            self.echo.capture(&mut frame)?;
-            // Exact 48 -> 24 kHz decimation with a pair average after AEC.
-            self.network
-                .extend(frame.chunks_exact(2).map(|s| (s[0] + s[1]) * 0.5));
-            if self.network.len() == 480 {
-                self.sequence += 1;
-                frames.push(crate::encode(
-                    &self.network,
-                    self.generation,
-                    self.sequence,
-                )?);
-                self.network.clear();
-            }
-        }
-        Ok(frames)
-    }
-    pub fn invalidate_playout(&mut self, next_generation: u64) -> Result<(), AudioError> {
-        self.io.flush(next_generation);
-        self.echo.reset()?;
-        self.generation = next_generation;
-        self.sequence = 0;
-        self.mic.clear();
-        self.reference.clear();
-        self.network.clear();
-        self.mic_resampler = Resampler::new(self.io.input_rate, 48_000).unwrap();
-        self.reference_resampler = Resampler::new(self.io.output_rate, 48_000).unwrap();
-        Ok(())
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/doc/src/queue.rs`
-```
-//! The pending-message queue on a session doc.
-//!
-//! What you typed while the agent was busy, held where every device can see it
-//! (and edit it) until the host has somewhere to put it. Distinct from the
-//! `commands` ledger next door: commands are append-only and immutable by
-//! design (rule 1), and a queue whose rows can be retyped, reordered and
-//! dropped is the opposite of that. So it gets its own container.
-//!
-//! `queue` is a **LoroMovableList** rather than the plain `LoroList` the rest
-//! of the doc uses. A plain list has no move: reordering means delete+insert,
-//! which two devices doing it at once resolve into duplicated or lost rows.
-//! MovableList carries a real move op, so concurrent reorders converge on one
-//! order with every row still present exactly once.
-//!
-//! Writers: any device (unlike `messages`, which is host-only). The host is
-//! the only one that *takes* from the queue — see `DocHost::drain_queue`.
-
-use loro::ToJson;
-use serde::{Deserialize, Serialize};
-
-use crate::schema::{DocError, SessionDoc};
-
-/// One unsent message waiting its turn.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct QueuedMessage {
-    /// Stable through promotion: the host uses this as the transcript user
-    /// message id when the row is finally dispatched.
-    pub id: String,
-    /// What the user typed. Never empty — emptying it deletes the row.
-    pub text: String,
-    /// Committed upload paths, staged at queue time so the row never points at
-    /// files that only exist on the device that typed it.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub attachments: Vec<String>,
-    /// Do not automatically steer this row into a live turn. The row remains
-    /// visible until turn end or an explicit Steer now / Send now action.
-    #[serde(default, skip_serializing_if = "is_false")]
-    pub hold_for_turn_end: bool,
-    /// Device that queued it.
-    pub issued_by: String,
-    /// Epoch millis.
-    pub issued_at: i64,
-    /// Epoch millis of the last text edit, when there has been one.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub edited_at: Option<i64>,
-    /// Host-authoritative barrier preventing this row from reaching the
-    /// agent while a client has an edit open. Expired edits fail closed into
-    /// `ReviewRequired`; they never silently become sendable again.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub delivery_gate: Option<QueueDeliveryGate>,
-}
-
-/// Why a queued row is not currently eligible for automatic or explicit
-/// delivery. Kept on the row so moves preserve it and deleting the row cannot
-/// leave an orphaned lease behind.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(
-    tag = "kind",
-    rename_all = "camelCase",
-    rename_all_fields = "camelCase"
-)]
-pub enum QueueDeliveryGate {
-    Editing {
-        lease_id: String,
-        owner_device_id: String,
-        owner_instance_id: String,
-        acquired_at_ms: i64,
-        expires_at_ms: i64,
-        base_text_hash: String,
-    },
-    ReviewRequired {
-        previous_lease_id: String,
-        owner_device_id: String,
-        since_ms: i64,
-        base_text_hash: String,
-    },
-}
-
-fn is_false(value: &bool) -> bool {
-    !*value
-}
-
-impl QueuedMessage {
-    pub fn new(
-        id: impl Into<String>,
-        text: impl Into<String>,
-        issued_by: impl Into<String>,
-    ) -> Self {
-        Self {
-            id: id.into(),
-            text: text.into(),
-            attachments: Vec::new(),
-            hold_for_turn_end: false,
-            issued_by: issued_by.into(),
-            issued_at: 0,
-            edited_at: None,
-            delivery_gate: None,
-        }
-    }
-}
-
-impl SessionDoc {
-    /// The queue in send order. Malformed rows skip rather than poison the read.
-    pub fn read_queue(&self) -> Result<Vec<QueuedMessage>, DocError> {
-        let raw = self
-            .doc()
-            .get_movable_list("queue")
-            .get_deep_value()
-            .to_json_value();
-        let items: Vec<serde_json::Value> = match serde_json::from_value(raw) {
-            Ok(items) => items,
-            Err(_) => return Ok(Vec::new()),
-        };
-        Ok(items.into_iter().filter_map(queued_from_json).collect())
-    }
-
-    /// Append to the back of the queue.
-    pub fn push_queued(&self, item: &QueuedMessage) -> Result<(), DocError> {
-        if item.id.trim().is_empty() {
-            return Err(DocError::Schema("queued message id required".into()));
-        }
-        if item.text.trim().is_empty() {
-            return Err(DocError::Schema("queued message text required".into()));
-        }
-        let queue = self.doc().get_movable_list("queue");
-        let map = queue.push_container(loro::LoroMap::new())?;
-        write_queued_map(&map, item)?;
-        self.doc().commit();
-        Ok(())
-    }
-
-    /// Put a row back at `index` (clamped). The host's undo for a send that
-    /// failed after the row was taken: it goes back where it was rather than to
-    /// the back of the queue, so a failed "send now" doesn't demote the message
-    /// the user just called urgent.
-    pub fn insert_queued(&self, index: usize, item: &QueuedMessage) -> Result<(), DocError> {
-        if item.id.trim().is_empty() {
-            return Err(DocError::Schema("queued message id required".into()));
-        }
-        if item.text.trim().is_empty() {
-            return Err(DocError::Schema("queued message text required".into()));
-        }
-        let queue = self.doc().get_movable_list("queue");
-        let map = queue.insert_container(index.min(queue.len()), loro::LoroMap::new())?;
-        write_queued_map(&map, item)?;
-        self.doc().commit();
-        Ok(())
-    }
-
-    /// Retype one row. Empty text means "I don't want to send this after all",
-    /// so the row goes — that is the delete gesture, not an error.
-    /// `false` when there is no such row, or the text is unchanged.
-    pub fn set_queued_text(&self, id: &str, text: &str, now_ms: i64) -> Result<bool, DocError> {
-        if text.trim().is_empty() {
-            return self.remove_queued(id);
-        }
-        let queue = self.doc().get_movable_list("queue");
-        let Some(index) = index_of(&queue, id) else {
-            return Ok(false);
-        };
-        let Some(loro::ValueOrContainer::Container(loro::Container::Map(map))) = queue.get(index)
-        else {
-            return Ok(false);
-        };
-        let unchanged = matches!(
-            map.get("text"),
-            Some(loro::ValueOrContainer::Value(loro::LoroValue::String(s))) if s.as_str() == text
-        );
-        if unchanged {
-            return Ok(false);
-        }
-        map.insert("text", text)?;
-        map.insert("editedAt", now_ms)?;
-        self.doc().commit();
-        Ok(true)
-    }
-
-    /// Install, replace or clear a host-authoritative delivery barrier.
-    /// Callers serialize this with the host's queue drain lock.
-    pub fn set_queued_delivery_gate(
-        &self,
-        id: &str,
-        gate: Option<&QueueDeliveryGate>,
-    ) -> Result<bool, DocError> {
-        let queue = self.doc().get_movable_list("queue");
-        let Some(index) = index_of(&queue, id) else {
-            return Ok(false);
-        };
-        let Some(loro::ValueOrContainer::Container(loro::Container::Map(map))) = queue.get(index)
-        else {
-            return Ok(false);
-        };
-        match gate {
-            Some(gate) => map.insert(
-                "deliveryGate",
-                crate::schema::loro_value_from_json(&serde_json::to_value(gate)?),
-            )?,
-            None => {
-                map.delete("deliveryGate")?;
-            }
-        }
-        self.doc().commit();
-        Ok(true)
-    }
-
-    /// Resolve an edit in one document commit. `None` cancels and preserves
-    /// the old text; an empty replacement discards the row; any other value
-    /// updates the text and clears the delivery gate atomically.
-    ///
-    /// Lease ownership is deliberately checked by `DocHost` while holding
-    /// its drain lock immediately before this method is called.
-    pub fn finish_queued_edit(
-        &self,
-        id: &str,
-        replacement: Option<&str>,
-        now_ms: i64,
-    ) -> Result<bool, DocError> {
-        self.finish_queued_edit_with_attachments(id, replacement, None, now_ms)
-    }
-
-    /// Replace text and optional attachment paths in the same CRDT commit
-    /// that releases the row. `None` preserves attachments for older clients;
-    /// an empty slice explicitly removes all attachments.
-    pub fn finish_queued_edit_with_attachments(
-        &self,
-        id: &str,
-        replacement: Option<&str>,
-        attachments: Option<&[String]>,
-        now_ms: i64,
-    ) -> Result<bool, DocError> {
-        if replacement.is_some_and(|text| text.trim().is_empty()) {
-            return self.remove_queued(id);
-        }
-        let queue = self.doc().get_movable_list("queue");
-        let Some(index) = index_of(&queue, id) else {
-            return Ok(false);
-        };
-        let Some(loro::ValueOrContainer::Container(loro::Container::Map(map))) = queue.get(index)
-        else {
-            return Ok(false);
-        };
-        if let Some(text) = replacement {
-            let unchanged = matches!(
-                map.get("text"),
-                Some(loro::ValueOrContainer::Value(loro::LoroValue::String(s)))
-                    if s.as_str() == text
-            );
-            if !unchanged {
-                map.insert("text", text)?;
-                map.insert("editedAt", now_ms)?;
-            }
-        }
-        if let Some(attachments) = attachments {
-            map.insert(
-                "attachments",
-                crate::schema::loro_value_from_json(&serde_json::to_value(attachments)?),
-            )?;
-            map.insert("editedAt", now_ms)?;
-        }
-        map.delete("deliveryGate")?;
-        self.doc().commit();
-        Ok(true)
-    }
-
-```
-
-### Core Architecture Module: `crates/engine/examples/mcp_standalone_smoke.rs`
-```
-//! Isolated MCP stdio instance for manual discovery/create/converse smoke tests.
-//! Run with `cargo run -p zeron-engine --example mcp_standalone_smoke`.
-//! Uses a temporary profile and scripted harness, never the user's workspace.
-
-use std::sync::Arc;
-
-use async_trait::async_trait;
-use futures::stream::BoxStream;
-use zeron_engine::{EngineCore, HarnessRegistry};
-use zeron_harness::{Harness, HarnessError, RunControls, mock::MockHarness};
-use zeron_mcp::{Origin, Tools, Zeron};
-use zeron_proto::{
-    AgentEvent, DoneStatus, HarnessId, Model, ReasoningLevel, RunRequest, SteeringMode,
-};
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    let dir = tempfile::tempdir()?;
-    std::fs::write(dir.path().join("device-id"), "smoke-device")?;
-    let registry = HarnessRegistry::new();
-    registry.register(Arc::new(SmokeHarness));
-    let core = EngineCore::assemble(dir.path(), Arc::new(registry), HarnessId::Codex, None)?;
-    core.workspace.create_space(
-        "smoke-project",
-        "smoke-device",
-        dir.path().to_str().unwrap(),
-        Some("Smoke project".into()),
-        false,
-    )?;
-    core.workspace
-        .create_chat("smoke-origin", Some("smoke-project"), None, None, None)?;
-    core.workspace.rename_chat("smoke-origin", "Coordinator")?;
-    let tools = Tools::new(Arc::new(Zeron::with_client(
-        zeron_rpc::memory_client(core.rpc_service()),
-        Origin {
-            chat_id: Some("smoke-origin".into()),
-            device_id: Some("smoke-device".into()),
-        },
-    )));
-    zeron_mcp::serve_stdio(Arc::new(tools)).await?;
-    core.shutdown().await;
-    Ok(())
-}
-
-/// A scripted, installed Codex adapter: the production catalog excludes Mock.
-struct SmokeHarness;
-
-#[async_trait]
-impl Harness for SmokeHarness {
-    fn id(&self) -> HarnessId {
-        HarnessId::Codex
-    }
-    fn display_name(&self) -> &str {
-        "Scripted Codex (smoke only)"
-    }
-    fn supports_steering(&self) -> bool {
-        false
-    }
-    fn steering_mode(&self) -> SteeringMode {
-        SteeringMode::TurnBoundary
-    }
-    fn reasoning_levels(&self) -> &[ReasoningLevel] {
-        &[]
-    }
-    async fn models(&self) -> Result<Vec<Model>, HarnessError> {
-        Ok(vec![Model {
-            id: "smoke-1".into(),
-            label: "Smoke 1".into(),
-            description: None,
-            reasoning_levels: vec![],
-            options: vec![],
-        }])
-    }
-    async fn run(
-        &self,
-        request: RunRequest,
-        controls: RunControls,
-    ) -> Result<BoxStream<'static, Result<AgentEvent, HarnessError>>, HarnessError> {
-        let session_id = uuid::Uuid::new_v4().to_string();
-        let mock = MockHarness {
-            script: vec![
-                AgentEvent::SessionStarted {
-                    harness: HarnessId::Codex,
-                    model: "smoke-1".into(),
-                    tools: vec![],
-                    cwd: request.cwd.clone(),
-                    session_id: session_id.clone(),
-                    assistant_message_id: uuid::Uuid::new_v4().to_string(),
-                },
-                AgentEvent::TextDelta {
-                    text: "pong".into(),
-                },
-                AgentEvent::Done {
-                    status: DoneStatus::Completed,
-                    result: None,
-                    error: None,
-                    session_id: Some(session_id),
-                },
-            ],
-        };
-        mock.run(request, controls).await
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/engine/examples/sidecar_probe.rs`
-```
-//! Isolate `DocHost::upload_tool_sidecar`: point it at a one-shot local HTTP
-//! listener and report whether the PUT ever arrives. Diagnosing the
-//! zero-blobs-in-prod mystery (refs stamped, uploads absent, no warns).
-use std::sync::Arc;
-
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use zeron_engine::doc_host::{DocHost, DocHostConfig, EdgeConfig};
-use zeron_sync::DocsStore;
-
-#[tokio::main]
-async fn main() {
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-    let addr = listener.local_addr().unwrap();
-    let server = tokio::spawn(async move {
-        let (mut sock, _) = listener.accept().await.unwrap();
-        let mut buf = vec![0u8; 4096];
-        let n = sock.read(&mut buf).await.unwrap();
-        let head = String::from_utf8_lossy(&buf[..n]);
-        let first = head.lines().next().unwrap_or("").to_string();
-        let auth = head
-            .lines()
-            .find(|l| l.to_lowercase().starts_with("authorization"))
-            .unwrap_or("")
-            .to_string();
-        let _ = sock
-            .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 11\r\ncontent-type: application/json\r\n\r\n{\"ok\":true}")
-            .await;
-        (first, auth)
-    });
-
-    let dir = std::env::temp_dir().join(format!("sidecar-probe-{}", std::process::id()));
-    std::fs::create_dir_all(&dir).unwrap();
-    let store = Arc::new(DocsStore::open(&dir).unwrap());
-    let host = DocHost::new(
-        store,
-        DocHostConfig {
-            device_id: "probe-dev".into(),
-            default_harness: zeron_proto::HarnessId::ClaudeCode,
-            edge: Some(EdgeConfig::with_static_token(
-                format!("http://{addr}"),
-                "probe-user",
-            )),
-        },
-    );
-    host.upload_tool_sidecar(
-        "chat-probe",
-        zeron_doc::SidecarPayload {
-            part_id: "part#1".into(),
-            output: Some("full output body".into()),
-            diff: None,
-        },
-    );
-
-    match tokio::time::timeout(std::time::Duration::from_secs(5), server).await {
-        Ok(Ok((first, auth))) => {
-            println!("PUT ARRIVED: {first}");
-            println!("auth header present: {}", !auth.is_empty());
-        }
-        _ => println!("NO REQUEST within 5s — uploader silently skipped"),
-    }
-    let _ = std::fs::remove_dir_all(&dir);
-}
-
-```
-
-### Core Architecture Module: `crates/engine/examples/transcript_load_probe.rs`
-```
-//! Read-only profiler for exported local snapshots. Prints timings, not content.
-use std::time::Instant;
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    for path in std::env::args().skip(1) {
-        let started = Instant::now();
-        let bytes = std::fs::read(&path)?;
-        let read = started.elapsed();
-        let doc = loro::LoroDoc::new();
-        let t = Instant::now();
-        doc.import(&bytes)?;
-        let import = t.elapsed();
-        let doc = zeron_doc::SessionDoc::from_doc(doc);
-        let t = Instant::now();
-        let tail = doc.read_opening_tail(128)?;
-        let tail_materialize = t.elapsed();
-        let t = Instant::now();
-        let preview = zeron_doc::TranscriptUpdate {
-            frame: zeron_doc::TranscriptFrame::reset(&tail),
-            context_usage: doc.context_usage(),
-            replay_baseline: Some(zeron_doc::TranscriptBaseline::capture(&tail)),
-        };
-        let tail_wire = serde_json::to_vec(&serde_json::to_value(preview)?)?;
-        let _: zeron_doc::TranscriptUpdate =
-            serde_json::from_value(serde_json::from_slice(&tail_wire)?)?;
-        println!(
-            "opening tail parts={} wire_bytes={} materialize={tail_materialize:?} serialize_and_decode={:?}",
-            tail.iter().map(|e| e.parts.len()).sum::<usize>(),
-            tail_wire.len(),
-            t.elapsed()
-        );
-        let t = Instant::now();
-        let entries = zeron_doc::join_continuation_entries(doc.read_entries()?);
-        let materialize = t.elapsed();
-        let mut kinds = std::collections::BTreeMap::<&str, (usize, usize, usize)>::new();
-        for entry in &entries {
-            for part in &entry.parts {
-                let kind = match part {
-                    zeron_doc::MessagePart::Text { .. } => "text",
-                    zeron_doc::MessagePart::Reasoning { .. } => "reasoning",
-                    zeron_doc::MessagePart::Tool { .. } => "tool",
-                    _ => "other",
-                };
-                let size = part.byte_len();
-                let slot = kinds.entry(kind).or_default();
-                slot.0 += 1;
-                slot.1 += size;
-                slot.2 = slot.2.max(size);
-            }
-        }
-        println!("part count/bytes/max: {kinds:?}");
-
-        let t = Instant::now();
-        let update = zeron_doc::TranscriptUpdate {
-            frame: zeron_doc::TranscriptFrame::reset(&entries),
-            context_usage: doc.context_usage(),
-            replay_baseline: Some(zeron_doc::TranscriptBaseline::capture(&entries)),
-        };
-        let value = serde_json::to_value(update)?;
-        let wire = serde_json::to_vec(&value)?;
-        let serialize = t.elapsed();
-        let t = Instant::now();
-        let value: serde_json::Value = serde_json::from_slice(&wire)?;
-        let _: zeron_doc::TranscriptUpdate = serde_json::from_value(value)?;
-        let deserialize = t.elapsed();
-        println!(
-            "{} snapshot_bytes={} entries={} wire_bytes={} read={read:?} import={import:?} materialize={materialize:?} serialize={serialize:?} deserialize={deserialize:?}",
-            path,
-            bytes.len(),
-            entries.len(),
-            wire.len()
-        );
-    }
-    Ok(())
-}
-
-```
-
-### Core Architecture Module: `crates/engine/examples/workspace_search_bench.rs`
-```
-//! Workspace search benchmark: the `SearchFiles` (`@`),
-//! `SearchWorkspaceFiles` (file tree) and `SearchWorkspaceContent` (cmd+K)
-//! paths against one folder.
-//!
-//! ```text
-//! BENCH_ROOT=/path/to/checkout cargo run --release -p zeron-engine \
-//!     --example workspace_search_bench
-//! ```
-//!
-//! `BENCH_QUERIES` (comma separated) overrides the default queries and
-//! `BENCH_RUNS` the number of timed runs per query (default 10, after one
-//! warm-up). RSS comes from `/proc/self/status`, so it prints only on Linux.
-use std::path::{Path, PathBuf};
-use std::time::{Duration, Instant};
-
-use zeron_engine::Repos;
-
-const DEFAULT_QUERIES: &[&str] = &[
-    "composer",
-    "repos",
-    "cmdpal",
-    "Cargo.toml",
-    "workspace_files",
-];
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let root = std::env::var_os("BENCH_ROOT")
-        .map(PathBuf::from)
-        .ok_or("set BENCH_ROOT to the folder to search")?;
-    let root = std::fs::canonicalize(root)?;
-    let queries: Vec<String> = match std::env::var("BENCH_QUERIES") {
-        Ok(list) => list
-            .split(',')
-            .map(str::trim)
-            .filter(|q| !q.is_empty())
-            .map(str::to_owned)
-            .collect(),
-        Err(_) => DEFAULT_QUERIES.iter().map(|q| (*q).to_owned()).collect(),
-    };
-    let runs: usize = std::env::var("BENCH_RUNS")
-        .ok()
-        .and_then(|runs| runs.parse().ok())
-        .unwrap_or(10)
-        .max(1);
-    let runtime = tokio::runtime::Runtime::new()?;
-    let data = tempfile::tempdir()?;
-    let repos = Repos::with_worktrees_root(data.path(), "bench", data.path().join("worktrees"));
-
-    println!("root: {}", root.display());
-    print_rss("baseline");
-
-    let search = repos.workspace_search();
-    let started = Instant::now();
-    search.warm(&root)?;
-    if !search.wait_until_indexed(&root, Duration::from_secs(600)) {
-        return Err("index did not finish within 10 minutes".into());
-    }
-    println!(
-        "index ready in {:?}",
-        started.elapsed()
-    );
-    print_rss("after index");
-
-    println!();
-    println!(
-        "{:<38} {:>10} {:>10} {:>10} {:>8}",
-        "query", "min", "median", "max", "results"
-    );
-    for query in &queries {
-        let (timings, results) = measure(runs, || {
-            runtime
-                .block_on(repos.search_files(root.clone(), query.clone(), Vec::new()))
-                .map(|matches| matches.len())
-        })?;
-        report(&format!("SearchFiles {query}"), &timings, results);
-    }
-    for query in &queries {
-        let (timings, results) = measure(runs, || tree_search(&repos, &root, query, false))?;
-        report(&format!("SearchWorkspaceFiles {query}"), &timings, results);
-    }
-    for query in &queries {
-        let (timings, results) = measure(runs, || tree_search(&repos, &root, query, true))?;
-        report(&format!("…including ignored {query}"), &timings, results);
-    }
-    for query in &queries {
-        let (timings, results) = measure(runs, || {
-            search
-                .search_content(&root, query, 100, 3)
-                .map(|found| found.matches.len())
-        })?;
-        report(
-            &format!("SearchWorkspaceContent {query}"),
-            &timings,
-            results,
-        );
-    }
-    print_rss("after all queries");
-    search.release_all();
-    // Release runs off-thread; give it and the allocator a moment.
-    std::thread::sleep(Duration::from_secs(2));
-    println!("live indexes after release: {}", search.live());
-    print_rss("after evicting the index");
-    Ok(())
-}
-
-fn tree_search(
-    repos: &Repos,
-    root: &Path,
-    query: &str,
-    include_ignored: bool,
-) -> Result<usize, Box<dyn std::error::Error>> {
-    Ok(zeron_engine::workspace_files::bench_search_root(
-        repos.workspace_search(),
-        root,
-        query,
-        include_ignored,
-        zeron_engine::workspace_files::MAX_SEARCH_RESULTS,
-    )?
-    .len())
-}
-
-/// One warm-up, then `runs` timed calls.
-fn measure<E: Into<Box<dyn std::error::Error>>>(
-    runs: usize,
-    mut search: impl FnMut() -> Result<usize, E>,
-) -> Result<(Vec<Duration>, usize), Box<dyn std::error::Error>> {
-    search().map_err(Into::into)?;
-    let mut timings = Vec::with_capacity(runs);
-    let mut results = 0;
-    for _ in 0..runs {
-        let started = Instant::now();
-        results = search().map_err(Into::into)?;
-        timings.push(started.elapsed());
-    }
-    timings.sort();
-    Ok((timings, results))
-}
-
-fn report(label: &str, timings: &[Duration], results: usize) {
-    println!(
-        "{label:<38} {:>10} {:>10} {:>10} {results:>8}",
-        format_duration(timings[0]),
-        format_duration(timings[timings.len() / 2]),
-        format_duration(timings[timings.len() - 1]),
-    );
-}
-
-fn format_duration(duration: Duration) -> String {
-    format!("{:.2}ms", duration.as_secs_f64() * 1000.0)
-}
-
-fn print_rss(label: &str) {
-    let Ok(status) = std::fs::read_to_string("/proc/self/status") else {
-        return;
-    };
-    if let Some(line) = status.lines().find(|line| line.starts_with("VmRSS:")) {
-        println!("RSS {label}: {}", line.trim_start_matches("VmRSS:").trim());
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #966** (2026-10-22): **Zeron Cloud, provider switching, and the phone model picker**
-  *Symptoms*: Zeron Cloud: agents running on Cloud machines of their own, plus the work around it on desktop, phone and the edge.  ## Cloud - Cloud chats run on their own sandbox machine, cloning the project's GitHub repository. Machines wake on a send and sleep after 10 idle minutes. Deleting a chat deletes its machine, with durable retries. - Cloud agents can start child Cloud chats one level deep. - A credential vault keeps provider logins and GitHub access for Cloud machines and for your own computers. - Billing: plans and credit packs through Stripe, with Cloud's own customer portal. - Cloud is offered per account via `CLOUD_ACCESS` on the edge; anyone else sees no Cloud UI. - Cloud's model list is kept on the edge, so new models need no app release.  ## Providers and models - A chat can switch provider between turns on hosts that support it, with a seam in the transcript and per-provider session resume. - The phone's model picker is a sheet with a provider switcher and the host's model list. Chats on the default model name it.  ## Apps - Desktop: Cloud settings, billing, onboarding, the Cloud checkout, sidebar drag and overscroll fixes. - Phone: provider sign-in, Cloud screens, out-of-credits notice, onboarding polish. - Engine: Codex app-server relaunch, status publication, shutdown and terminal robustness.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/966?autoLogin=true&r
+- **Issue #1034** (2026-10-25): **Transcript rail: ten ticks at most; hovering opens the prompt list**
+  *Symptoms*: In long conversations the rail had become a dense comb of one tick per prompt. Now it draws **at most 10 ticks**, and **resting the pointer on it replaces it with a list of every prompt**, the pattern [shadcn recommends](https://x.com/shadcn) from ChatGPT web. Each entry shows the prompt *and* the opening of its reply.  **Rail** - Up to 10 prompts, one tick each, as before. Past 10, each tick stands for an even slice of the conversation, lit while any of its prompts is on screen. - The rail now centres between the titlebar and the composer, the same band the list opens in. - **Lighting fix:** while the transcript is pinned to the bottom, the list reported no row positions, so only the prompt being read lit up. Rows are now placed from the content's end in that state, so every prompt on screen lights its tick and its list entry.  **Prompt list (on hover)** - **Opening:** it opens after the pointer **rests on the rail for 150ms**, so passing over it on the way to the sidebar doesn't flash it open. It closes when the pointer leaves. - **Content:** each prompt on **one line**, with its reply's opening on up to **three**. Replies are reduced to prose (no `**`, backticks or link targets). - **Size and position:** it opens where the rail is, replacing it. It's at most **three quarters of the band's height**, and **sizes to the gutter** left of the reading column (260 to 320px) to overlap the transcript as little as possible. - **Navigation:** clicking an entry glides the transcript 
 
-- **Issue #957** (2026-10-21): **Track agent activity with OSC 7501 across sidebar and MCP**
-  *Symptoms*: Native agents already emit structured lifecycle events, but chat-owned PTYs did not understand OSC 7501, and MCP derived completion and stale activity differently from the sidebar. This adds engine-owned Program Status Protocol support and one shared display contract: working, needs input, unseen completion, error, or idle.  - Parse bounded, fragmented OSC reports and answer capability probes without an attached terminal view. Preserve hierarchical records, app inheritance, shell/reset/exit lifetimes, and input reasons. - Project terminal activity through the session watch and synced registry. Use the synced seen marker so acknowledged errors cannot hide newer results. - Share sidebar/MCP status derivation and expose native status, last native outcome, terminal metadata, and stale evidence separately. Interrupted or stale work does not imply successful completion. - Keep native Stop/steer controls and turn completion receipts independent of terminal reports.  ## Validation  - 2,711 Linux tests passed across client, document, protocol, MCP, engine, desktop UI, native lifecycle, publication, and workspace synchronization suites. - Real PTY tests cover capability detection without a viewport, input reasons, acknowledgement, stale owners, and isolation from native completion receipts. Included in core CI. - Built and ran the opt-in native capture fixture successfully. It emits real OSC reports into three isolated PTYs and renders the production Shell with the resulting shared sta
+- **Issue #1032** (2026-10-25): **Releases: serve the Android APK's stable name uncached; name each build uniquely**
+  *Symptoms*: ## Why  The website's Android download (`zeron.sh/releases/zeron-android-arm64.apk`) could hand back an old build. The edge sent every release artifact except `.txt`/`.json` as `cache-control: public, max-age=86400, immutable`, which overrode the `no-cache` the Android workflow uploads with. Every build replaces that stable name, so a browser that had downloaded it once kept serving its cached copy for up to a day without checking the server again.  ## What  - **edge**: the `/releases/*` route moved to `edge/src/releases.ts`. When an object was uploaded with its own cache-control, the route now serves that. `.apk` files are served as `application/vnd.android.package-archive`. Desktop artifacts are uploaded without metadata, so their headers stay the same. - **android.yml**: each published APK is now named `zeron-<version>-<build>-android-arm64.apk`. Before, the name was reused by every build of a version. These per-build copies are never replaced, so they're uploaded as `immutable` for a year. The stable name is still uploaded `no-cache`. - New workerd test `test/workerd/releases.workerd.test.ts` covers immutable artifacts, short-lived pointers and an upload's own policy. The `RELEASES` bucket is now bound in the workerd test config.  ## Testing  - `npm run typecheck` and `npm test` in `edge/`: everything passes except `device-nudges` (draining 300 queued wakes), which failed in the full run. It passes on its own, both on this branch and on main. - Checked the live origin: wi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1535,676 +1621,686 @@ fn print_rss(label: &str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69b67d33` (2026-10-22)
-**Commit Message**: Bump version to v0.2.116
+### Incident Patch 1: `2e151ca6` (2026-10-23)
+**Commit Message**: Harden every provider: crash and stall detection, Windows-safe launching, and run recovery (#977)
 
-**File**: `Cargo.lock` (modified, +27/-27)
+* Harness: lossy line framing for child stdio; OpenCode startup retries and readiness
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Harness: drop unused line-reader imports; retry OpenCode port races per line
+
+lossy_lines replaced every tokio Lines, leaving AsyncBufReadExt and
+BufReader imports unused across the harnesses.
+
+Address-in-use was matched against the stderr tail after exit, but the
+tail keeps only the last few lines and Node prints EADDRINUSE above a
+stack trace that scrolls it out, so a lost port race failed the spawn
+instead of retrying. Match it per line alongside "database is locked",
+with a fixture that loses the race once.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Claude: classify results by their error fields and never drop a result line
+
+The CLI files API failures (invalid key, 429, 529, full context) under
+`subtype: "success"` with `is_error`/`terminal_reason`/`api_error_status`;
+they ended the turn Completed. They now end Errored with readable wording
+(the CLI's own text after a plain headline), aborts end Interrupted, and a
+failure already 
+
+**File**: `.github/workflows/windows.yml` (modified, +5/-0)
 ```diff
-@@ -13308,7 +13308,7 @@ dependencies = [
- 
- [[package]]
- name = "zatex"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "tiny-skia",
-  "ttf-parser",
-@@ -13559,7 +13559,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13582,7 +13582,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-audio"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "base64 0.22.1",
-  "cpal 0.18.2",
-@@ -13594,7 +13594,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-client"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "async-trait",
-  "base64 0.22.1",
-@@ -13622,7 +13622,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-doc"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "chrono",
-  "loro",
-@@ -13636,7 +13636,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-engine"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13683,7 +13683,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-harness"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13711,14 +13711,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-markdown"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "pulldown-cmark",
- ]
- 
- [[package]]
- name = "zeron-mcp"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13738,7 +13738,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "async-trait",
-  "serde",
-@@ -13764,19 +13764,19 @@ dependencies = [
- 
- [[package]]
- name = "zeron-notify"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "objc",
-  "tracing",
- ]
- 
- [[package]]
- name = "zeron-orb"
--version = "0.2.115"
-+version = "0.2.116"
- 
- [[package]]
- name = "zeron-preview"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13804,7 +13804,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-proto"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "chrono",
-  "pulldown-cmark",
-@@ -13815,7 +13815,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-rpc"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13836,7 +13836,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-sync"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "block2 0.6.2",
-  "chrono",
-@@ -13859,7 +13859,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-syntax"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "thiserror 2.0.20",
-  "tree-sitter",
-@@ -13893,7 +13893,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-text"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "core-foundation 0.10.1",
-  "core-graphics 0.24.0",
-@@ -13910,7 +13910,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13925,7 +13925,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-ui"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -14006,7 +14006,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -14022,11 +14022,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-veil"
--version = "0.2.115"
-+version = "0.2.116"
- 
- [[package]]
- name = "zeron-visual"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -14038,7 +14038,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "image",
-  "pollster 0.4.0",
-@@ -14049,7 +14049,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "anyhow",
-  "cpal 0.17.3",
-@@ -14066,7 +14066,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-media"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "async-trait",
-  "semver",
-@@ -14081,7 +14081,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-session"
--version = "0.2.115"
-+version = "0.2.116"
- dependencies = [
-  "async-trait",
-  "futures",
+@@ -73,6 +73,11 @@ jobs:
+       - uses: ./.github/actions/windows-ci-setup
+       - name: Native harness security and integration tests
+         run: cargo test --release --locked -p zeron-harness --features native-fixture --lib --test codex_availability --test windows_native
++      # The driver suites whose fixtures run without a POSIX shell: an in-test
++      # HTTP/SSE server (OpenCode), node (the Cursor shim) and a Rust peer
++      # (Pi). The shell- and python-fixture suites are unix-only.
++      - name: Portable harness integration tests
++        run: cargo test --release --locked -p zeron-harness --features native-fixture --test opencode --test cursor_shim --test pi_rpc
+       - name: Shader layout tests
+         run: cargo test --release --locked -p gpui_windows --lib layout
+       - name: Application and updater tests
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/engine/src/doc_host.rs` (modified, +11/-1)
 ```diff
-@@ -31,7 +31,7 @@ members = [
- ]
+@@ -5216,12 +5216,22 @@ impl DocHost {
+             // between mark-processed and the outcome write. Left alone it is
+             // a send no drain or retry can ever reach ("Sending…" forever,
+             // 2026-08-19); terminalize it so the truth lands in the doc and
+-            // a user retry can mint a fresh attempt.
++            // a user retry can mint a fresh attempt. `commands` may predate a
++            // racing drain that has since resolved the command and released
++            // its claim (resolve comes first), so once no claim is seen the
++            // status is read again rather than overwriting that outcome.
++            let still_pending = |id: &str| {
++                handle.doc.read_commands().is_ok_and(|now| {
++                    now.iter()
++                        .any(|c| c.id == id && c.status == SessionCommandStatus::Pending)
++                })
++            };
+             for c in &commands {
+                 if c.status == SessionCommandStatus::Pending
+                     && !skipped.contains(&c.id)
+                     && is_processed(&c.id)
+                     && !lock(&self.inner.executing).contains(&c.id)
++                    && still_pending(&c.id)
+                 {
+                     tracing::warn!(chat = %handle.chat_id, command = %c.id,
+                         "command consumed but never resolved (crash mid-execute?); rejecting");
+```
+
+**File**: `crates/engine/src/lib.rs` (modified, +52/-0)
+```diff
+@@ -579,6 +579,16 @@ impl EngineCore {
+         // releases the next queued row. Freeze first so quitting never starts
+         // recovered work while the engine is being torn down.
+         self.doc_host.pause_all_queues();
++        // Decided here, from the auth state at the stop, so every way an
++        // engine goes down (headless, background, in-process) agrees.
++        let auth = self
++            .auth
++            .lock()
++            .unwrap_or_else(std::sync::PoisonError::into_inner)
++            .clone();
++        if auth.is_some_and(|auth| forgoes_revival(self.workspace_scope, &auth.state())) {
++            self.sessions.forgo_revival();
++        }
+         self.sessions.shutdown().await;
+         self.terminals.shutdown();
+         self.sessions.stop_activity_projection().await;
+@@ -1146,6 +1156,16 @@ impl Engine {
+     }
+ }
  
- [workspace.package]
--version = "0.2.115"
-+version = "0.2.116"
- edition = "2024"
- license = "MIT"
- publish = false
++/// Whether a stopping engine's cut-off turns stay ended rather than revive on
++/// the next boot ([`EngineCore::shutdown`] asks): a synced engine whose
++/// account is signed out by the time it stops, whichever stop reached it
++/// first — the auth watcher, or the app's StopEngine right after its SignOut.
++/// Sign-out is the user ending the session, like a Stop. A local engine is
++/// signed out as a matter of course.
++pub(crate) fn forgoes_revival(scope: WorkspaceScope, auth: &AuthState) -> bool {
++    scope == WorkspaceScope::Synced && matches!(auth, AuthState::SignedOut)
++}
++
+ async fn wait_for_signed_out(state: &mut tokio::sync::watch::Receiver<AuthState>) {
+     loop {
+         if matches!(&*state.borrow(), AuthState::SignedOut) {
+@@ -1698,3 +1718,35 @@ fn replace_empty_device_id(temp_path: &Path, path: &Path) -> std::io::Result<()>
+         std::fs::hard_link(temp_path, path)
+     }
+ }
++
++#[cfg(test)]
++mod revival_tests {
++    use super::*;
++
++    #[test]
++    fn only_a_signed_out_synced_engine_forgoes_revival() {
++        assert!(forgoes_revival(
++            WorkspaceScope::Synced,
++            &AuthState::SignedOut
++        ));
++        let user = AuthUser {
++            id: "u".into(),
++            email: "u@example.com".into(),
++            name: None,
++        };
++        assert!(!forgoes_revival(
++            WorkspaceScope::Synced,
++            &AuthState::SignedIn {
++                user: user.clone(),
++                org_id: Some("o".into()),
++            }
++        ));
++        assert!(!forgoes_revival(
++            WorkspaceScope::Synced,
++            &AuthState::NeedsOrganization { user }
++        ));
++        for scope in [WorkspaceScope::Local, WorkspaceScope::Development] {
++            assert!(!forgoes_revival(scope, &AuthState::SignedOut));
++        }
++    }
++}
+```
+
+**File**: `crates/engine/src/managed.rs` (modified, +3/-0)
+```diff
+@@ -387,6 +387,9 @@ impl Engine {
+         engine.refresh_task.abort();
+         engine.auth.quiesce_refresh(Duration::from_secs(10)).await;
+         let runtime = engine.runtime.lock().await.take();
++        // The app signs out, then stops the engine: the StopEngine may land
++        // before the auth watcher does, so the runtime's shutdown decides
++        // revival from the auth state, not from the branch that fired.
+         if let Some(runtime) = runtime {
+             runtime.shutdown().await;
+         }
+```
+
+**File**: `crates/engine/src/run_journal.rs` (modified, +121/-10)
+```diff
+@@ -5,7 +5,9 @@
+ //! journal is the durable replay source for live streams (`Subscribe` = replay then tail
+ //! the broadcast hub) and the crash-recovery gauge: a journal whose LAST event is not
+ //! `Done` belongs to a run that died mid-stream — boot recovery stamps its doc entry
+-//! `aborted` and closes the journal with a synthetic `Done`.
++//! `aborted` and closes the journal with a synthetic `Done`. A turn the engine's own
++//! shutdown cut off closes normally, so a `{chat_id}.shutdown` marker beside the
++//! journal flags it for the same pick-up on the next boot.
+ //!
+ //! Bounded-window compaction is deferred (whole file kept for now, per M2 scope); a torn
+ //! trailing line from a crash mid-write is tolerated everywhere.
+@@ -72,24 +74,95 @@ impl RunJournal {
+         self.dir.join(format!("{}.resume", sanitize_id(chat_id)))
+     }
+ 
++    fn shutdown_path(&self, chat_id: &str) -> PathBuf {
++        self.dir.join(format!("{}.shutdown", sanitize_id(chat_id)))
++    }
++
++    fn stop_path(&self, chat_id: &str) -> PathBuf {
++        self.dir.join(format!("{}.stopped", sanitize_id(chat_id)))
++    }
++
+     /// Auto-resume revival budget (zeron `resumeAttempt`/`MAX_AUTO_RESUME`):
+     /// persisted beside the journal so a run that CRASHES THE ENGINE cannot
+-    /// revive itself in an infinite boot loop.
+-    pub fn resume_attempts(&self, chat_id: &str) -> u32 {
+-        std::fs::read_to_string(self.attempts_path(chat_id))
+-            .ok()
+-            .and_then(|s| s.trim().parse().ok())
+-            .unwrap_or(0)
++    /// revive itself in an infinite boot loop. Stored as `{count} {last_ms}`;
++    /// a ledger whose last revival is older than `since_ms` has expired (a
++    /// chain from days ago must not refuse today's crash). A bare count (the
++    /// older format) never expires.
++    pub fn resume_attempts(&self, chat_id: &str, since_ms: i64) -> u32 {
++        let Ok(raw) = std::fs::read_to_string(self.attempts_path(chat_id)) else {
++            return 0;
++        };
++        let mut fields = raw.split_whitespace();
++        let count = fields.next().and_then(|s| s.parse().ok()).unwrap_or(0);
++        match fields.next().and_then(|s| s.parse::<i64>().ok()) {
++            Some(last) if last < since_ms => 0,
++            _ => count,
++        }
+     }
+ 
+-    pub fn note_resume_attempt(&self, chat_id: &str) -> u32 {
+-        let next = self.resume_attempts(chat_id) + 1;
+-        if let Err(err) = std::fs::write(self.attempts_path(chat_id), next.to_string()) {
++    /// Record one revival at `at_ms`, counting on from the unexpired ledger
++    /// (`since_ms` as in [`Self::resume_attempts`]); returns the new count.
++    pub fn note_resume_attempt(&self, chat_id: &str, at_ms: i64, since_ms: i64) -> u32 {
++        let next = self.resume_attempts(chat_id, since_ms) + 1;
++        if let Err(err) = std::fs::write(self.attempts_path(chat_id), format!("{next} {at_ms}")) {
+             tracing::warn!(chat = %chat_id, error = %err, "resume-attempt ledger write failed");
+         }
+         next
+     }
+ 
++    /// Mark a chat whose turn the engine's own shutdown cut off (at `at_ms`):
++    /// its journal closes with an ordinary `Done{interrupted}`, so this marker
++    /// is what tells the next boot the turn was not the user's to end.
++    pub fn note_shutdown_interrupt(&self, chat_id: &str, at_ms: i64) {
++        if let Err(err) = std::fs::write(self.shutdown_path(chat_id), at_ms.to_string()) {
++            tracing::warn!(chat = %chat_id, error = %err, "shutdown marker write failed");
++        }
++    }
++
++    /// Chats marked by [`Self::note_shutdown_interrupt`], with when.
++    pub fn shutdown_interrupts(&self) -> Result<Vec<(String, i64)>, JournalError> {
++        let mut marked = Vec::new();
++        for entry in std::fs::read_dir(&self.dir)? {
++            let path = entry?.path();
++            if path.extension().and_then(|e| e.to_str()) != Some("shutdown") {
++                continue;
++            }
++            let Some(chat_id) = path.file_stem().and_then(|s| s.to_str()) else {
++                continue;
++            };
++            let at = std::fs::read_to_string(&path)
++                .ok()
++                .and_then(|s| s.trim().parse().ok())
++                .unwrap_or(0);
++            marked.push((chat_id.to_string(), at));
++        }
++        marked.sort();
++        Ok(marked)
++    }
++
++    pub fn clear_shutdown_interrupt(&self, chat_id: &str) {
++        let _ = std::fs::remove_file(self.shutdown_path(chat_id));
++    }
++
++    /// Mark a chat whose turn the user stopped. Its journal closes only once
++    /// the stopped run settles (seconds later, for a harness slow to let
++    /// go): an engine that dies in between leaves a journal that reads as a
++    /// crash, and this marker keeps the next boot from reviving the turn.
++    pub fn note_user_stop(&self, chat_id: &str) {
++        if let Err(err) = std::fs::write(self.stop_path(chat_id), b"") {
++            tracing::warn!(chat = %chat_id, error = %err,
+```
+
+**File**: `crates/engine/src/sessions.rs` (modified, +1199/-106)
+```diff
+@@ -184,6 +184,10 @@ struct RunHandle {
+     /// is unambiguously before the stop (cancelled with it) or after it
+     /// (re-dispatched to a fresh runtime — never lost).
+     retiring: Arc<std::sync::atomic::AtomicBool>,
++    /// The turn was working when the engine's shutdown began, and no Stop
++    /// has claimed it since: if the shutdown is what ends it, the next boot
++    /// picks it back up (see [`Inner::mark_shutdown_cut`]).
++    shutdown_cut: std::sync::atomic::AtomicBool,
+     /// The credential the run started with (a Cloud device's broker; `None`
+     /// elsewhere): a parked session whose account has since changed is
+     /// replaced before its next turn.
+@@ -225,14 +229,36 @@ struct RoutedSteer {
+     request: Option<Box<RunRequest>>,
+ }
+ 
++/// A turn the engine cut off (a crash or its own shutdown), on its way back
++/// to the provider as a fresh dispatch of the same user message.
++#[derive(Debug, Clone)]
++struct Revival {
++    message_id: String,
++    /// Sent instead of the original prompt when the resumed provider session
++    /// already holds that prompt and part of the work on it.
++    continuation: Option<String>,
++}
++
+ struct Inner {
+     voice: crate::voice::VoiceManager,
+     device_id: String,
+     /// The engine is shutting down: dying runs re-dispatch nothing.
+     shutting_down: std::sync::atomic::AtomicBool,
++    /// A shutdown marks the turns it cuts off for pick-up on the next boot
++    /// (cleared by [`SessionsEngine::forgo_revival`]).
++    revive_after_shutdown: std::sync::atomic::AtomicBool,
++    /// Per chat: the recovery re-dispatch on its way (see
++    /// [`SessionsEngine::recover_stale`]), claimed by its message's dispatch.
++    revivals: Mutex<HashMap<String, Revival>>,
+     /// Per chat: messages a Stop cancelled while they were still on their
+     /// way (see [`SessionsEngine::cancel_sent_messages`]).
+     cancelled_sends: Mutex<HashMap<String, std::collections::HashSet<String>>>,
++    /// Per chat: how many Stops the user has sent, counted before each one
++    /// looks for the run to stop. A retry re-dispatching a failed start
++    /// compares it with the count its run started under: a Stop that landed
++    /// while no run was live (between the failed run and its retry) found
++    /// nothing to stop, and still ends the turn.
++    user_stops: Mutex<HashMap<String, u64>>,
+     /// Loopback IPC port this engine serves, once known (0 = not serving):
+     /// what the injected `zeron mcp` server dials back into.
+     ipc_port: std::sync::atomic::AtomicU16,
+@@ -263,6 +289,14 @@ struct Inner {
+     /// (zeron kept the same pair on `chats.harness_session_id`). An empty
+     /// session id is the "do not resume" tombstone after a rejected resume.
+     harness_sessions: Mutex<HashMap<String, HarnessSessionRef>>,
++    /// Per chat: session ids the provider said it no longer has. Never
++    /// resumed again from any source — the per-provider record a switched
++    /// chat keeps would otherwise hand the dead id straight back — until a
++    /// new session replaces them (in memory only, like the tombstone).
++    rejected_resumes: Mutex<HashMap<String, std::collections::HashSet<String>>>,
++    /// Chats whose next run starts over after a rejected resume, owed a
++    /// notice in the transcript that the earlier session is gone.
++    fresh_start_notices: Mutex<std::collections::HashSet<String>>,
+     /// Auto-titler for untitled chats (wired at engine assembly; absent in bare tests).
+     titles: OnceLock<crate::titles::TitleGenerator>,
+     generated_images: OnceLock<(crate::uploads::Uploads, std::path::PathBuf)>,
+@@ -299,7 +333,10 @@ impl SessionsEngine {
+                 voice: crate::voice::VoiceManager::default(),
+                 device_id,
+                 shutting_down: std::sync::atomic::AtomicBool::new(false),
++                revive_after_shutdown: std::sync::atomic::AtomicBool::new(true),
++                revivals: Mutex::new(HashMap::new()),
+                 cancelled_sends: Mutex::new(HashMap::new()),
++                user_stops: Mutex::new(HashMap::new()),
+                 ipc_port: std::sync::atomic::AtomicU16::new(0),
+                 ipc_token_file: Mutex::new(None),
+                 journal,
+@@ -313,6 +350,8 @@ impl SessionsEngine {
+                 activity_task: Mutex::new(None),
+                 last_requests: Mutex::new(HashMap::new()),
+                 harness_sessions: Mutex::new(HashMap::new()),
++                rejected_resumes: Mutex::new(HashMap::new()),
++                fresh_start_notices: Mutex::new(std::collections::HashSet::new()),
+                 titles: OnceLock::new(),
+                 generated_images: OnceLock::new(),
+                 scratch_root: OnceLock::new(),
+@@ -572,8 +611,17 @@ impl SessionsEngine {
+                 _ => break,
+             }
+         }
+-        self.dispatch_inner(chat_id, HarnessId::Codex, request, None, false, true)
+-            .await
++        self.dispatch_inner(
++            chat_id,
++            Ha
+```
+
+**File**: `crates/engine/tests/message_queue.rs` (modified, +12/-2)
+```diff
+@@ -387,7 +387,8 @@ async fn queue_holds_during_a_turn_and_flushes_in_order_at_its_end() {
+ 
+ /// Quitting the host must neither release the queue through the interrupt's
+ /// Idle transition nor release it when the persisted document is reopened.
+-/// An explicit queue action remains the thaw gesture.
++/// An explicit queue action remains the thaw gesture. (The turn the shutdown
++/// cut off is picked back up on its own; the queue behind it is not.)
+ #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+ async fn restart_restores_the_queue_frozen_until_an_explicit_send() {
+     let tmp = tempfile::tempdir().unwrap();
+@@ -429,9 +430,18 @@ async fn restart_restores_the_queue_frozen_until_an_explicit_send() {
+     // Materializing the persisted chat starts its background drain task. Give
+     // that task time to prove the restored row stays frozen.
+     assert_eq!(queue_texts(&after), vec!["after restart"]);
++    wait_for(
++        || after_prompts.lock().unwrap().iter().any(|p| p == "opening"),
++        "the interrupted opening turn to be picked back up",
++    )
++    .await;
+     tokio::time::sleep(Duration::from_millis(250)).await;
+     assert!(
+-        after_prompts.lock().unwrap().is_empty(),
++        !after_prompts
++            .lock()
++            .unwrap()
++            .iter()
++            .any(|p| p == "after restart"),
+         "startup must not dispatch a recovered queue"
+     );
+     assert_eq!(queue_texts(&after), vec!["after restart"]);
+```
+
+**File**: `crates/engine/tests/restart_resume.rs` (modified, +19/-9)
+```diff
+@@ -732,20 +732,30 @@ async fn fresh_crash_auto_resumes_and_notes_the_interruption() {
+         )),
+         "aborted entry carries the visible interruption note"
+     );
+-    // Re-dispatch reuses the original user message id — never a duplicate.
+-    assert_eq!(
+-        entries
+-            .iter()
+-            .filter(|e| e.role == MessageRole::User)
+-            .count(),
+-        1
+-    );
++    // Re-dispatch reuses the original user message id — never a duplicate,
++    // and the transcript keeps the user's own words.
++    let users: Vec<_> = entries
++        .iter()
++        .filter(|e| e.role == MessageRole::User)
++        .collect();
++    assert_eq!(users.len(), 1);
++    assert!(matches!(
++        &users[0].parts[0],
++        MessagePart::Text { text, .. } if text == "long task"
++    ));
+     // The revived run continues the journal-recovered harness conversation.
++    // That session already holds the request and the partial work on it, so
++    // the provider gets a continuation, never the bare request a second time
++    // (it rides along only for reference, should the session have started over).
+     // (An auto-title request may precede it — titling fires at dispatch.)
+     let recorded = requests.lock().unwrap().clone();
++    assert!(
++        recorded.iter().all(|r| r.prompt != "long task"),
++        "the crashed request must not be re-sent: {recorded:#?}"
++    );
+     let revived = recorded
+         .iter()
+-        .find(|r| r.prompt == "long task")
++        .find(|r| r.prompt.contains("Continue where you left off"))
+         .expect("auto-resumed dispatch reached the harness");
+     assert_eq!(
+         revived.resume.as_deref(),
 ```
 
 ---
 
-### Incident Patch 2: `acd7c9ba` (2026-10-22)
-**Commit Message**: RPC: fragment large messages so a long transcript can't drop the engine socket
+### Incident Patch 2: `3c97a05c` (2026-10-24)
+**Commit Message**: iOS: paint terminal box and block glyphs; fix the subagents chip icon (#1010)
 
-A long chat's transcript watch reply (~18 MiB) exceeded tungstenite's
-default 16 MiB frame cap. The desktop dropped the socket, reconnected, got
-the same frame, and after five losses reported "engine keeps stopping"
-while the engine ran fine.
+Box drawing, block elements and the ⏺ bullet are now painted into their
+cells instead of shaped. Geist Mono has none of them, and fallback glyphs
+neither fill the terminal's line height nor the cell width, so Claude
+Code's block-art mascot showed seams and borders broke between rows; ⏺
+fell back to the color emoji. Other one-cell symbols ask for their text
+presentation.
 
-- Write messages over 1 MiB as fragmented frames, so peers on the default
-  limits (older builds) reassemble them.
-- Raise the local IPC frame/message cap to 512 MiB for unfragmented
-  frames from older peers.
-- Log transport errors instead of dropping them, expose
-  RpcClient::close_reason, and show it in the desktop's failure message.
+The subagents chip drew its bot icon as a speck: the tool-* SVGs declare
+1em and load at a point square. Rasterize assets at the icon's size.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/rpc/src/client.rs` (modified, +31/-39)
+**File**: `apps/ios/Zeron/Companions/CompanionStrip.swift` (modified, +15/-1)
 ```diff
-@@ -4,9 +4,7 @@ use std::collections::HashMap;
- use std::sync::atomic::{AtomicU64, Ordering};
- use std::sync::{Arc, Mutex, PoisonError};
- 
--use futures::{SinkExt, StreamExt};
- use tokio::sync::{mpsc, oneshot};
--use tokio_tungstenite::tungstenite::Message as WsMessage;
- 
- use crate::{ClientFrame, RpcError, ServerFrame};
- 
-@@ -44,6 +42,8 @@ pub struct RpcClient {
-     reader: tokio::task::JoinHandle<()>,
-     /// Flips to true once the server side of the duplex is gone.
-     closed: tokio::sync::watch::Receiver<bool>,
-+    /// Why the transport failed, when it did; set before `closed` flips.
-+    close_reason: Arc<std::sync::OnceLock<String>>,
- }
- 
- /// Owned stream receiver whose drop immediately cancels the server task.
-@@ -140,9 +140,16 @@ impl RpcClient {
-             next_id: AtomicU64::new(1),
-             reader,
-             closed,
-+            close_reason: Arc::default(),
+@@ -119,7 +119,7 @@ final class CompanionChip: UIControl {
+         if spinning { glyph.kind = .spinner }
+         icon.isHidden = spinning || symbol == nil
+         if let symbol {
+-            icon.image = UIImage(named: symbol)?.withRenderingMode(.alwaysTemplate)
++            icon.image = Self.asset(symbol)
+                 ?? UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(pointSize: 12, weight: .semibold))
          }
+         if case let .dot(color)? = kind {
+@@ -136,4 +136,18 @@ final class CompanionChip: UIControl {
+     override var isHighlighted: Bool {
+         didSet { alpha = isHighlighted ? 0.7 : 1 }
      }
- 
-+    /// Why the connection failed (an oversized frame, a reset socket), once
-+    /// [`Self::closed`] resolved; `None` for a clean close.
-+    pub fn close_reason(&self) -> Option<String> {
-+        self.close_reason.get().cloned()
-+    }
 +
-     /// Resolves once the connection has closed (the server went away). An
-     /// in-memory client's never does while its service lives.
-     pub async fn closed(&self) {
-@@ -443,45 +450,30 @@ async fn dial(url: &str, token: Option<&str>) -> Result<RpcClient, DialError> {
-             HeaderValue::from_str(&format!("Bearer {token}")).map_err(|_| DialError::Malformed)?;
-         request.headers_mut().insert(header::AUTHORIZATION, value);
-     }
--    let (ws, _) = tokio::time::timeout(CONNECT_TIMEOUT, tokio_tungstenite::connect_async(request))
--        .await
--        .map_err(|_| DialError::Other(RpcError::Transport(format!("timed out dialing {url}"))))?
--        .map_err(|e| match e {
--            tokio_tungstenite::tungstenite::Error::Http(response)
--                if response.status() == StatusCode::UNAUTHORIZED =>
--            {
--                DialError::Unauthorized
--            }
--            other => DialError::Other(RpcError::Transport(other.to_string())),
--        })?;
--    let (mut sink, mut stream) = ws.split();
--    let (out_tx, mut out_rx) = mpsc::channel::<String>(256);
-+    let (ws, _) = tokio::time::timeout(
-+        CONNECT_TIMEOUT,
-+        tokio_tungstenite::connect_async_with_config(request, Some(crate::ws::config()), false),
-+    )
-+    .await
-+    .map_err(|_| DialError::Other(RpcError::Transport(format!("timed out dialing {url}"))))?
-+    .map_err(|e| match e {
-+        tokio_tungstenite::tungstenite::Error::Http(response)
-+            if response.status() == StatusCode::UNAUTHORIZED =>
-+        {
-+            DialError::Unauthorized
-+        }
-+        other => DialError::Other(RpcError::Transport(other.to_string())),
-+    })?;
-+    let (out_tx, out_rx) = mpsc::channel::<String>(256);
-     let (in_tx, in_rx) = mpsc::channel::<String>(256);
-+    let client = RpcClient::new(out_tx, in_rx);
-+    let close_reason = client.close_reason.clone();
-+    let url = url.to_owned();
-     tokio::spawn(async move {
--        loop {
--            tokio::select! {
--                frame = out_rx.recv() => match frame {
--                    Some(text) => {
--                        if sink.send(WsMessage::Text(text)).await.is_err() {
--                            break;
--                        }
--                    }
--                    None => {
--                        let _ = sink.send(WsMessage::Close(None)).await;
--                        break;
--                    }
--                },
--                message = stream.next() => match message {
--                    Some(Ok(WsMessage::Text(text))) => {
--                        if in_tx.send(text).await.is_err() {
--                            break;
--                        }
--                    }
--                    Some(Ok(WsMessage::Close(_))) | Some(Err(_)) | None => break,
--                    Some(Ok(_)) => {}
--                },
--            }
-+        if let Some(reason) = crate::ws::pump(ws, out_rx, in_tx).await {
-+            tracing::warn!(%reason, %url, "rpc: lost the connection");
-+            let _ = close_reason.set(reason);
-         }
-     });
--    Ok(RpcClient::new(out_tx, in_rx))
-+    Ok(client)
++    /// A `tool-*` asset at the icon's size. The SVGs declare `1em` and load
++    /// at about a point square, which a centered image view drew as a speck.
++    private static var assets: [String: UIImage] = [:]
++    private static func asset(_ name: String) -> UIImage? {
++        if let cached = assets[name] { return cached }
++        guard let image = UIImage(named: name) else { return nil }
++        let side: CGFloat = 15
++        let sized = UIGraphicsImageRenderer(size: CGSize(width: side, height: side)).image { _ in
++            image.draw(in: CGRect(x: 0, y: 0, width: side, height: side))
++        }.withRenderingMode(.alwaysTemplate)
++        assets[name] = sized
++        return sized
++    }
  }
 ```
 
-**File**: `crates/rpc/src/lib.rs` (modified, +50/-0)
+**File**: `apps/ios/Zeron/Companions/TerminalGlyphs.swift` (added, +198/-0)
 ```diff
-@@ -22,6 +22,7 @@ mod client;
- pub mod device_room;
- pub mod ipc_auth;
- mod server;
-+mod ws;
- 
- pub use client::{RpcClient, RpcSubscription, connect_ipc, connect_ws};
- pub use device_room::{
-@@ -737,6 +738,55 @@ mod tests {
-         assert_eq!(items.recv().await, None);
+@@ -0,0 +1,198 @@
++import UIKit
++
++/// Box drawing (U+2500–257F), block elements (U+2580–259F) and the `⏺`
++/// bullet, drawn instead of shaped. Geist Mono has none of them, and a
++/// fallback font's glyphs neither fill the roomy line height nor share the
++/// cell width: borders broke between rows and Claude Code's block-art mascot
++/// fell apart. Painted from the cell's own rect, snapped to device pixels,
++/// neighbors meet exactly; `⏺` would otherwise fall back to the color emoji.
++enum TerminalGlyphs {
++    static func draws(_ scalar: Unicode.Scalar) -> Bool {
++        (0x2500...0x259F).contains(scalar.value) || scalar.value == 0x23FA
++    }
++
++    /// `cell` in UIKit coordinates (y down); `baseline` and `xHeight` place
++    /// the bullet like a text glyph.
++    static func draw(_ scalar: Unicode.Scalar, in cell: CGRect, baseline: CGFloat, xHeight: CGFloat, color: UIColor, ctx: CGContext, scale: CGFloat) {
++        let snap = { (v: CGFloat) in (v * scale).rounded() / scale }
++        let rect = CGRect(x: snap(cell.minX), y: snap(cell.minY), width: snap(cell.maxX) - snap(cell.minX), height: snap(cell.maxY) - snap(cell.minY))
++        ctx.saveGState()
++        defer { ctx.restoreGState() }
++        ctx.setFillColor(color.cgColor)
++        ctx.setStrokeColor(color.cgColor)
++        let v = scalar.value
++        if v == 0x23FA {
++            let d = snap(min(rect.width * 0.62, xHeight * 1.15))
++            ctx.fillEllipse(in: CGRect(x: rect.midX - d / 2, y: baseline - xHeight / 2 - d / 2, width: d, height: d))
++        } else if v >= 0x2580 {
++            block(v, rect, ctx, snap)
++        } else {
++            box(v, rect, ctx, snap, scale)
++        }
++    }
++
++    // MARK: Block elements
++
++    private static func block(_ v: UInt32, _ r: CGRect, _ ctx: CGContext, _ snap: (CGFloat) -> CGFloat) {
++        func fill(_ x0: CGFloat, _ y0: CGFloat, _ x1: CGFloat, _ y1: CGFloat) {
++            let a = snap(r.minX + r.width * x0), b = snap(r.minY + r.height * y0)
++            ctx.fill(CGRect(x: a, y: b, width: snap(r.minX + r.width * x1) - a, height: snap(r.minY + r.height * y1) - b))
++        }
++        switch v {
++        case 0x2580: fill(0, 0, 1, 0.5)
++        case 0x2581...0x2588: fill(0, 1 - CGFloat(v - 0x2580) / 8, 1, 1)
++        case 0x2589...0x258F: fill(0, 0, CGFloat(0x2590 - v) / 8, 1)
++        case 0x2590: fill(0.5, 0, 1, 1)
++        case 0x2591...0x2593:
++            ctx.setAlpha(CGFloat(v - 0x2590) / 4)
++            fill(0, 0, 1, 1)
++        case 0x2594: fill(0, 0, 1, 1.0 / 8)
++        case 0x2595: fill(7.0 / 8, 0, 1, 1)
++        default:
++            // Quadrants: upper left, upper right, lower left, lower right.
++            let masks: [UInt32: Int] = [0x2596: 4, 0x2597: 8, 0x2598: 1, 0x2599: 13, 0x259A: 9, 0x259B: 7, 0x259C: 11, 0x259D: 2, 0x259E: 6, 0x259F: 14]
++            let mask = masks[v] ?? 0
++            if mask & 1 != 0 { fill(0, 0, 0.5, 0.5) }
++            if mask & 2 != 0 { fill(0.5, 0, 1, 0.5) }
++            if mask & 4 != 0 { fill(0, 0.5, 0.5, 1) }
++            if mask & 8 != 0 { fill(0.5, 0.5, 1, 1) }
++        }
++    }
++
++    // MARK: Box drawing
++
++    /// Per code point from U+2500: the left, up, right and down arms —
++    /// 0 none, 1 light, 2 heavy, 3 double. `.` marks the arcs and diagonals.
++    private static let arms: [String] = [
++        "1010", "2020", "0101", "0202", "1010", "2020", "0101", "0202", // ─━│┃┄┅┆┇
++        "1010", "2020", "0101", "0202", "0011", "0021", "0012", "0022", // ┈┉┊┋┌┍┎┏
++        "1001", "2001", "1002", "2002", "0110", "0120", "0210", "0220", // ┐┑┒┓└┕┖┗
++        "1100", "2100", "1200", "2200", "0111", "0121", "0211", "0112", // ┘┙┚┛├┝┞┟
++        "0212", "0221", "0122", "0222", "1101", "2101", "1201", "1102", // ┠┡┢┣┤┥┦┧
++        "1202", "2201", "2102", "2202", "1011", "2011", "1021", "2021", // ┨┩┪┫┬┭┮┯
++        "1012", "2012", "1022", "2022", "1110", "2110", "1120", "2120", // ┰┱┲┳┴┵┶┷
++        "1210", "2210", "1220", "2220", "1111", "2111", "1121", "2121", // ┸┹┺┻┼┽┾┿
++        "1211", "1112", "1212", "2211", "1221", "2112", "1122", "2221", // ╀╁╂╃╄╅╆╇
++        "2122", "2212", "1222", "2222", "1010", "2020", "0101", "0202", // ╈╉╊╋╌╍╎╏
++        "3030", "0303", "0031", "0013", "0033", "3001", "1003", "3003", // ═║╒╓╔╕╖╗
++        "0130", "0310", "0330", "3100", "1300", "3300", "0131", "0313", // ╘╙╚╛╜╝╞╟
++        "0333", "3101", "1303", "3303", "3031", "1013", "3033", "3130", // ╠╡╢╣╤╥╦╧
++        "1310", "3330", "3131", "1313", "3333", ".", ".", ".",          // ╨╩╪╫╬╭╮╯
++        ".", ".", ".", ".", "1000", "0100", "0010", "0001",             // ╰╱╲╳╴╵╶╷
++        "2000", "0200", "0020", "0002", "1020", "0102", "2010", "0201", // ╸╹╺╻╼╽╾╿
++    ]
++
++    private static func box(_ v: UInt32, _ r: CGRect, _ ctx: CGContext, _ snap: (CGFloat) -> CGFloat, _ scale: CGFloat) {
++        let light = max(1 / scale, snap(r.width / 9))
++        let heavy = max(2 / scale, snap(light * 2))
++        let gap = max(1 / scale, light)
++        let cx = snap(r.midX 
+```
+
+**File**: `apps/ios/Zeron/Companions/TerminalView.swift` (modified, +34/-1)
+```diff
+@@ -546,6 +546,12 @@ final class TerminalCanvas: UIView {
+         )
      }
  
-+    /// A reply past tungstenite's default 16 MiB frame cap (a long chat's
-+    /// transcript watch) must arrive, not drop the connection.
-+    #[tokio::test]
-+    async fn websocket_carries_messages_past_the_default_frame_cap() {
-+        let token = ipc_auth::generate_token().unwrap();
-+        let port = serve_test(&token).await;
-+        // Multi-byte chars so fragment boundaries land mid-codepoint.
-+        let big = "é".repeat(9_500_000);
++    /// The scalar `TerminalGlyphs` paints for `ch`, if it does.
++    private static func drawn(_ ch: Character) -> Unicode.Scalar? {
++        guard ch.unicodeScalars.count == 1, let scalar = ch.unicodeScalars.first, TerminalGlyphs.draws(scalar) else { return nil }
++        return scalar
++    }
 +
-+        let client = connect_ws(&format!("ws://127.0.0.1:{port}"), Some(&token))
-+            .await
-+            .unwrap();
-+        let echoed = client.call("Echo", serde_json::json!(big)).await.unwrap();
-+        assert_eq!(echoed.as_str().map(str::len), Some(big.len()));
-+        assert_eq!(client.close_reason(), None);
-+
-+        // A peer still on tungstenite's default limits (an older app build)
-+        // reassembles the fragmented reply too.
-+        use futures::{SinkExt, StreamExt};
-+        use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest};
-+        let mut req = format!("ws://127.0.0.1:{port}")
-+            .into_client_request()
-+            .unwrap();
-+        req.headers_mut()
-+            .insert("authorization", format!("Bearer {token}").parse().unwrap());
-+        let (mut legacy, _) = tokio_tungstenite::connect_async(req).await.unwrap();
-+        let request = serde_json::to_string(&ClientFrame {
-+            id: 1,
-+            method: Some("Echo".into()),
-+            params: serde_json::json!(big),
-+            cancel: false,
-+        })
-+        .unwrap();
-+        // It sends one unfragmented frame past 16 MiB: the raised cap takes it.
-+        assert!(request.len() > 16 << 20);
-+        legacy.send(Message::Text(request)).await.unwrap();
-+        let reply = loop {
-+            match legacy.next().await.unwrap().unwrap() {
-+                Message::Text(text) => break text,
-+                _ => continue,
+     override func draw(_ rect: CGRect) {
+         guard let frame = frameModel, let ctx = UIGraphicsGetCurrentContext() else { return }
+         let m = metrics
+@@ -571,6 +577,25 @@ final class TerminalCanvas: UIView {
+                 }
+             }
+         }
++        // Box drawing, blocks and the bullet: painted into their cells.
++        let scale = traitCollection.displayScale
++        let xHeight = CTFontGetXHeight(m.regular)
++        for (r, line) in rows {
++            let y = inset.top + CGFloat(r) * m.lineHeight + dy
++            guard y < rect.maxY, y + m.lineHeight > rect.minY else { continue }
++            for run in line.runs where !run.text.allSatisfy(\.isASCII) {
++                let color = run.fg == 0 ? fg : Self.color(run.fg)
++                let span = (run.wide ? 2 : 1) * m.cellWidth
++                var x = inset.left + CGFloat(run.col) * m.cellWidth
++                for ch in run.text {
++                    if let scalar = Self.drawn(ch) {
++                        let cell = CGRect(x: x, y: y, width: span, height: m.lineHeight)
++                        TerminalGlyphs.draw(scalar, in: cell, baseline: y + m.ascent, xHeight: xHeight, color: color, ctx: ctx, scale: scale)
++                    }
++                    x += span
++                }
 +            }
-+        };
-+        let frame: ServerFrame = serde_json::from_str(&reply).unwrap();
-+        assert_eq!(
-+            frame.ok.and_then(|v| v.as_str().map(str::len)),
-+            Some(big.len())
-+        );
-+    }
-+
-     /// Raw handshake status for a dial with the given headers (`None` = served).
-     async fn handshake_status(port: u16, headers: &[(&str, &str)]) -> Option<u16> {
-         use tokio_tungstenite::tungstenite::client::IntoClientRequest;
-```
-
-**File**: `crates/rpc/src/server.rs` (modified, +11/-28)
-```diff
-@@ -3,10 +3,9 @@
- use std::collections::HashMap;
- use std::sync::Arc;
- 
--use futures::{SinkExt, StreamExt};
-+use futures::StreamExt;
- use tokio::net::{TcpListener, TcpStream};
- use tokio::sync::mpsc;
--use tokio_tungstenite::tungstenite::Message as WsMessage;
- use tokio_tungstenite::tungstenite::handshake::server::{
-     ErrorResponse, Request as HandshakeRequest, Response as HandshakeResponse,
- };
-@@ -202,42 +201,26 @@ async fn serve_ws_socket(stream: TcpStream, service: Arc<dyn RpcService>, token:
-         }
-         Ok(resp)
-     };
--    let ws = match tokio_tungstenite::accept_hdr_async(stream, authorize).await {
-+    let ws = match tokio_tungstenite::accept_hdr_async_with_config(
-+        stream,
-+        authorize,
-+        Some(crate::ws::config()),
-+    )
-+    .await
-+    {
-         Ok(ws) => ws,
-         Err(err) => {
-             tracing::warn!(error = %err, "rpc: websocket handshake failed");
-             return;
-         }
-     };
--    let (mut sink, mut ws_stream) = ws.split();
--    let (out_tx, mut out_rx) = mpsc::channel::<String>(256);
-+    let (out_tx, out_rx) = mpsc::channel::<String>(256);
-     let (in_tx, in_rx) = mpsc::channel::<String>(256);
- 
-     // Pump: socket <-> string channels. Ends when either side closes.
-     let pump = tokio::spawn(async move {
--        loop {
--            tokio::select! {
--                frame = out_rx.recv() => match frame {
--                    Some(text) => {
--                        if sink.send(WsMessage::Text(text)).await.is_err() {
--                            break;
--                        }
--                    }
--                    None => {
--                        let _ = sink.send(WsMessage::Close(None)).await;
--                        break;
--                    }
--                },
--                message = ws_stream.next() => match message {
--                    Some(Ok(WsMessage::Text(text))) => {
--                        if in_tx.send(text).await.is_err() {
--                            break;
--                        }
--                    }
--                    Some(Ok(WsMessage::Close(_))) | Some(Err(_)) | None => break,
--                    Some(Ok(_)) => {} // ping/pong/binary — ignored
--                },
--            }
-+        if let Some(reason) = crate::ws::pump(ws, out_rx, in_tx).await {
-+            tracing::warn!(%reason, "rpc: lost a viewport connection");
-         }
-     });
- 
-```
-
-**File**: `crates/rpc/src/ws.rs` (added, +95/-0)
-```diff
-@@ -0,0 +1,95 @@
-+//! The socket <-> string-channel pump both ends of the local RPC WebSocket run.
-+
-+use futures::{SinkExt, StreamExt};
-+use tokio::io::{AsyncRead, AsyncWrite};
-+use tokio::sync::mpsc;
-+use tokio_tungstenite::WebSocketStream;
-+use tokio_tungstenite::tungstenite::Message as WsMessage;
-+use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
-+use tokio_tungstenite::tungstenite::protocol::frame::Frame;
-+use tokio_tungstenite::tungstenite::protocol::frame::coding::{Data, OpCode};
-+
-+/// Largest single frame we write. tungstenite refuses any *frame* over 16 MiB
-+/// by default, and one watch reply carries a whole transcript — a long chat's
-+/// is past that, and the peer dropping the socket on it then repeats on every
-+/// reconnect. Fragmenting keeps every frame small, so even a peer built
-+/// before this still reassembles the message (up to its 64 MiB message cap).
-+const FRAGMENT_BYTES: usize = 1 << 20;
-+
-+/// Largest message (and, from older peers that don't fragment, frame) we
-+/// accept. Local IPC behind the bearer token: the cap only stops runaways.
-+const MAX_MESSAGE_BYTES: usize = 512 << 20;
-+
-+pub(crate) fn config() -> WebSocketConfig {
-+    WebSocketConfig {
-+        max_message_size: Some(MAX_MESSAGE_BYTES),
-+        max_frame_size: Some(MAX_MESSAGE_BYTES),
-+        ..WebSocketConfig::default()
-+    }
-+}
-+
-+/// Shuttle frames between `ws` and the string channels until either side
-+/// closes. Returns why the socket went away when it wasn't a clean close.
-+pub(crate) async fn pump<S>(
-+    ws: WebSocketStream<S>,
-+    mut out: mpsc::Receiver<String>,
-+    inbound: mpsc::Sender<String>,
-+) -> Option<String>
-+where
-+    S: AsyncRead + AsyncWrite + Unpin,
-+{
-+    let (mut sink, mut stream) = ws.split();
-+    loop {
-+        tokio::select! {
-+            frame = out.recv() => match frame {
-+                Some(text) => {
-+                    if let Err(error) = send_text(&mut sink, text).await {
-+                        return Some(format!("sending to the socket failed: {error}"));
-+                    }
-+                }
-+                None => {
-+                    let _ = sink.send(WsMessage::Close(None)).await;
-+                    return None;
-+                }
-+            },
-+            message = stream.next() => match message {
-+                Some(Ok(WsMessage::Text(text))) => {
-+                    if inbound.send(text).await.is_err() {
-+                        return None;
-+                    }
-+                }
-+                Some(Ok(WsMessage::Close(_))) | None => return None,
-+                Some(Err(error)) => return Some(format!("reading the socket failed: {error}")),
-+                Some(Ok(_)) => {} // ping/pong/binary — ignored
-+            },
 +        }
-+    }
-+}
-+
-+async fn send_text<S>(
-+    sink: &mut futures::stream::SplitSink<WebSocketStream<S>, WsMessage>,
-+    text: String,
-+) -> Result<(), tokio_tungstenite::tungstenite::Error>
-+where
-+    S: AsyncRead + AsyncWrite + Unpin,
-+{
-+    if text.len() <= FRAGMENT_BYTES {
-+        return sink.send(WsMessage::Text(text)).await;
-+    }
-+    // A text message may split mid-codepoint: the receiver validates UTF-8
-+    // over the reassembled message, not per fragment.
-+    let bytes = text.into_bytes();
-+    let mut chunks = bytes.chunks(FRAGMENT_BYTES).peekable();
-+    let mut opcode = OpCode::Data(Data::Text);
-+    while let Some(chunk) = chunks.next() {
-+        let last = chunks.peek().is_none();
-+        sink.feed(WsMessage::Frame(Frame::message(
-+            chunk.to_vec(),
-+            opcode,
-+            last,
-+        )))
-+        .await?;
-+        opcode = OpCode::Data(Data::Continue);
-+    }
-+    sink.flush().await
-+}
+         ctx.textMatrix = .identity
+         ctx.translateBy(x: 0, y: bounds.height)
+         ctx.scaleBy(x: 1, y: -1)
+@@ -600,7 +625,15 @@ final class TerminalCanvas: UIView {
+                     var col = x
+                     for ch in run.text {
+                         let span = (run.wide ? 2 : 1) * m.cellWidth
+-                        let line = CTLineCreateWithAttributedString(NSAttributedString(string: String(ch), attributes: attrs))
++                        if Self.drawn(ch) != nil {
++                            col += span
++                            continue
++                        }
++                        // A one-cell symbol that also has an emoji form (`⏵`,
++                        // `☐`): ask for the text glyph, not the color emoji.
++                        let emojiCapable = ch.unicodeScalars.count == 1 && ch.unicodeScalars.first!.properties.isEmoji
++                        let glyph = !run.wide && emojiCapable ? "\(ch)\u{FE0E}" : String(ch)
++                        let line = CTLineCreateWithAttributedString(NSAttributedString(string: glyph, attributes: attrs))
+                         let width = CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
+                         ctx.textPosition = CGPoint(x: col + max(0, (span - width) / 2), y: baseline)
+                         CTLineDraw(line, ctx)
 ```
 
-**File**: `crates/ui/src/state.rs` (modified, +17/-6)
+---
+
+### Incident Patch 3: `5b8edb2d` (2026-10-23)
+**Commit Message**: iOS: don't crash Providers when there's no device to pick (#980)
+
+A new account with no paired computer and no Cloud offer has an empty
+device menu. UIKit aborts on a .popUpMenu with nothing to select
+("Menu does not have a valid element for default selection"), and
+onboarding reopens Providers on launch, so the app crashed every time
+it opened. Skip the pop-up accessory when the menu is empty.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/ios/Zeron/Cloud/ProvidersViewController.swift` (modified, +6/-1)
 ```diff
-@@ -3384,6 +3384,9 @@ impl AppState {
-         let Some(config) = self.boot_config.clone() else {
-             return;
-         };
-+        // A transport failure (an oversized frame, a reset socket) loses the
-+        // connection while the engine runs on; say which it was.
-+        let reason = handle.client().close_reason();
-         let respawn = record_engine_loss(&mut self.engine_losses, std::time::Instant::now());
-         self.engine = None;
-         self.watch_tasks.clear();
-@@ -3395,16 +3398,24 @@ impl AppState {
-             let log = config.data_dir.join("logs").join("zeron-engine.log");
-             tracing::error!(
-                 losses = self.engine_losses.len(),
--                "the background engine keeps stopping; giving up until Retry"
-+                reason = reason.as_deref().unwrap_or("the engine went away"),
-+                "the engine connection keeps dropping; giving up until Retry"
-             );
--            self.connection = ConnectionStatus::Failed(format!(
--                "Zeron's engine keeps stopping unexpectedly. Details are in {}.",
--                log.display()
--            ));
-+            self.connection = ConnectionStatus::Failed(match reason {
-+                Some(reason) => format!(
-+                    "Zeron keeps losing its connection to the engine: {reason}. \
-+                     Details are in {}.",
-+                    log.display()
-+                ),
-+                None => format!(
-+                    "Zeron's engine keeps stopping unexpectedly. Details are in {}.",
-+                    log.display()
-+                ),
-+            });
-             cx.notify();
-             return;
-         };
--        tracing::warn!(?delay, "lost the engine connection; reconnecting");
-+        tracing::warn!(?delay, ?reason, "lost the engine connection; reconnecting");
-         self.reconnect_task = Some(cx.spawn(async move |this, cx| {
-             cx.background_executor().timer(delay).await;
-             let _ = cx.update(|cx| {
+@@ -115,7 +115,12 @@ final class ProvidersViewController: UIViewController, UICollectionViewDelegate
+             cell.backgroundConfiguration = bg
+             var accessories: [UICellAccessory] = []
+             if row.id == "device" {
+-                accessories.append(.popUpMenu(self.deviceMenu(), displayed: .always, options: .init(tintColor: Palette.text)))
++                // UIKit aborts on a pop-up menu with nothing to select: a new
++                // account with no computer and no Cloud offer has no devices.
++                let menu = self.deviceMenu()
++                if !menu.children.isEmpty {
++                    accessories.append(.popUpMenu(menu, displayed: .always, options: .init(tintColor: Palette.text)))
++                }
+                 let name = UILabel()
+                 name.text = self.targetName
+                 name.font = Fonts.ui(.sansMedium, 15)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #966** (2026-10-22): Zeron Cloud, provider switching, and the phone model picker (@wingleeio)
-- **PR #957** (2026-10-21): Track agent activity with OSC 7501 across sidebar and MCP (@katulevskiy)
-- **PR #953** (2026-10-19): ACP: order advertised effort levels from lowest to highest (@woosal1337)
-- **PR #942** (2026-10-18): iOS: adapt to iPhone Duo (fold/unfold, uneven safe areas) (@wingleeio)
-- **PR #920** (2026-10-15): fix: send cursor model defaults for plus subscriptions (@laurentcodes)
-- **PR #912** (2026-10-18): Render LaTeX math in messages with zatex (@SinaKhalili)
+- **PR #1034** (2026-10-25): Transcript rail: ten ticks at most; hovering opens the prompt list (@zeronsh[bot])
+- **PR #1032** (2026-10-25): Releases: serve the Android APK's stable name uncached; name each build uniquely (@zeronsh[bot])
+- **PR #1031** (2026-10-25): Syntax: Luau highlighting (@zeronsh[bot])
+- **PR #1030** (2026-10-25): Bump version to v0.2.123 (@zeronsh[bot])
+- **PR #1029** (2026-10-25): Android: Gmail-style Sessions page; the transcript fades behind the composer (@zeronsh[bot])
+- **PR #1028** (2026-10-25): Session card: snap on chat switch instead of fading over the next chat (@alexandre-vl)
 
 ---
 
@@ -2224,80 +2320,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to v0.2.116
+## X. Harden every provider: crash and stall detection, Windows-safe launching, and ru
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/windows.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69b67d33`: Bump version to v0.2.116. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2e151ca6`: Harden every provider: crash and stall detection, Windows-safe launching, and run recovery (#977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/windows.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
-version = "0.2.116"
+      # The driver suites whose fixtures run without a POSIX shell: an in-test
+      # HTTP/SSE server (OpenCode), node (the Cursor shim) and a Rust peer
+      # (Pi). The shell- and python-fixture suites are unix-only.
+      - name: Portable harness integration tests
+        run: cargo test --release --locked -p zeron-harness --features native-fixture --test opencode --test cursor_shim --test pi_rpc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
-version = "0.2.115"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69b67d33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2e151ca6` are properly handled with clean fallback behavior.

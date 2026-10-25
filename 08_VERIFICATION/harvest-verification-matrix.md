@@ -4826,3 +4826,9 @@
 | `CYCLE-20261025-ZWCJ` | `2026-10-25T13:24:07.939Z` | `ionic-team/ionic-framework` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4304` | Yes (`2202f743...`) |
 | `CYCLE-20261025-ZWPV` | `2026-10-25T13:24:08.419Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`7513d467...`) |
 | `CYCLE-20261025-ZX4O` | `2026-10-25T13:24:08.952Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4305` | Yes (`1cab1a3f...`) |
+| `CYCLE-20261025-8GU9` | `2026-10-25T13:30:47.745Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`6f54a28b...`) |
+| `CYCLE-20261025-8IIY` | `2026-10-25T13:30:49.930Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4306` | Yes (`9bca7a61...`) |
+| `CYCLE-20261025-8LGC` | `2026-10-25T13:30:53.724Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3917, Rule 4307` | Yes (`f084f76d...`) |
+| `CYCLE-20261025-8LSS` | `2026-10-25T13:30:54.172Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4308` | Yes (`914fdd3e...`) |
+| `CYCLE-20261025-8NJ1` | `2026-10-25T13:30:56.413Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4309` | Yes (`d959109a...`) |
+| `CYCLE-20261025-8Q69` | `2026-10-25T13:30:59.841Z` | `crate/crate` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/crate-crate-learnings.md` | Yes (`855a92e8...`) |

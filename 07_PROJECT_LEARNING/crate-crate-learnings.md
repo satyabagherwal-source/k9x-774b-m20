@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `33429e62`  
+> **Source Version**: `4b5d3bc9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:23:56.765Z  
+> **Timestamp**: 2026-10-25T13:30:59.668Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:23:55.141Z  
+> **Harvest Timestamp**: 2026-10-25T13:30:59.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4445 stars
+- **Stars / Engagement**: 4444 stars
 
 ---
 
@@ -555,641 +555,71 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f98376b9` (2026-10-15)
-**Commit Message**: Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl
+### Incident Patch 1: `4b5d3bc9` (2026-10-22)
+**Commit Message**: Remove LR integration test retries added to suppress flakiness
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +6/-0)
+**File**: `server/src/test/java/io/crate/integrationtests/LogicalReplicationITest.java` (modified, +0/-5)
 ```diff
-@@ -143,3 +143,9 @@ Fixes
-     JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
+@@ -35,7 +35,6 @@
+ import org.elasticsearch.cluster.metadata.Metadata;
+ import org.elasticsearch.cluster.node.DiscoveryNode;
+ import org.elasticsearch.cluster.service.ClusterService;
+-import org.junit.Rule;
+ import org.junit.Test;
  
-   A query like this used to fail with ``Index 1 out of bounds for length 1``.
-+
-+- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
-+  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
-+  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
-+  subscriber cluster didn't trust publisher cluster's certificate.
-+
+ import io.crate.exceptions.DependentObjectsExists;
+@@ -49,16 +48,12 @@
+ import io.crate.replication.logical.metadata.SubscriptionsMetadata;
+ import io.crate.role.Role;
+ import io.crate.role.Roles;
+-import io.crate.testing.RetryRule;
+ import io.crate.testing.UseRandomizedSchema;
+ 
+ 
+ @UseRandomizedSchema(random = false)
+ public class LogicalReplicationITest extends LogicalReplicationITestCase {
+ 
+-    @Rule
+-    public RetryRule retryRule = new RetryRule(3);
+-
+     @Test
+     public void test_create_publication_checks_owner_was_not_deleted_before_creation() {
+         executeOnPublisher("CREATE TABLE doc.t1 (id INT)");
 ```
 
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +6/-0)
+**File**: `server/src/test/java/io/crate/integrationtests/MetadataTrackerITest.java` (modified, +0/-5)
 ```diff
-@@ -148,3 +148,9 @@ Fixes
-     JOIN t3 ON t1.x = t2.y AND t1.x = t3.z;
- 
-   A query like this used to fail with ``Index 1 out of bounds for length 1``.
-+
-+- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
-+  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
-+  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
-+  subscriber cluster didn't trust publisher cluster's certificate.
-+
-```
-
-**File**: `server/src/main/java/io/crate/protocols/postgres/PgClient.java` (modified, +14/-0)
-```diff
-@@ -334,6 +334,20 @@ public Handler(ConnectionProfile profile,
-             this.result = result;
-         }
- 
-+        @Override
-+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-+            result.completeExceptionally(cause);
-+            ctx.fireExceptionCaught(cause);
-+        }
-+
-+        @Override
-+        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-+            result.completeExceptionally(
-+                new ConnectTransportException(node, "connection closed before switching to transport protocol")
-+            );
-+            ctx.fireChannelInactive();
-+        }
-+
-         @Override
-         public boolean acceptInboundMessage(Object msg) throws Exception {
-             return true;
-```
-
-**File**: `server/src/test/java/io/crate/protocols/postgres/PgClientTest.java` (modified, +85/-70)
-```diff
-@@ -22,6 +22,7 @@
- package io.crate.protocols.postgres;
- 
- import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
- import static org.mockito.ArgumentMatchers.any;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
-@@ -30,6 +31,7 @@
+@@ -29,21 +29,16 @@
  import java.util.List;
- import java.util.Set;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.ExecutionException;
  import java.util.concurrent.TimeUnit;
  
- import org.elasticsearch.Version;
-@@ -45,13 +47,13 @@
- import org.elasticsearch.transport.TransportService;
- import org.elasticsearch.transport.netty4.Netty4Transport;
- import org.junit.After;
-+import org.junit.Before;
- import org.junit.Test;
- import org.mockito.Answers;
- 
- import com.carrotsearch.randomizedtesting.annotations.Repeat;
- 
- import io.crate.auth.AlwaysOKAuthentication;
--import io.crate.auth.Authentication;
- import io.crate.metadata.settings.session.SessionSettingRegistry;
- import io.crate.netty.NettyBootstrap;
- import io.crate.protocols.ssl.SslContextProvider;
-@@ -65,15 +67,23 @@
- public class PgClientTest extends CrateDummyClusterServiceUnitTest {
- 
-     private List<LifecycleComponent> toClose = new ArrayList<>();
-+    private NettyBootstrap nettyBootstrap;
-     private PgClient pgClient;
- 
-+    @Before
-+    public void init() {
-+        nettyBootstrap = new NettyBootstrap(Settings.EMPTY);
-+        nettyBootstrap.start();
-+        toClose.add(nettyBootstrap);
-+    }
-+
-     @After
-     public void stop() throws Exception {
-         for (var lifecycleComponent : toClose.reversed()) {
-             lifecycleComponent.close();
-         }
-         assertBusy(() -> {
--            assertThat(pgClient.nettyBootstrap.workerIsShutdown()).isTrue();
-+            assertThat(nettyBootstrap.workerIsShutdown()).isTrue();
-         });
-     }
- 
-@@ -85,64 +95,93 @@ public void test_pg_client_can_connect_to_postgres_netty() throws Exception {
-         var serverNodeSettings = Settings.builder()
-             .put("node.name", "server")
-             .build();
--        var clientSettings = Settings.builder()
--            .put("node.name", "client")
--            .build();
--        var nettyBootstrap = new NettyBootstrap(Settings.EMPTY);
--        nettyBootstrap.start();
--        toClose.add(nettyBootstrap);
--        var pageCacheRecycler = PageCacheRecycler.NON_RECYCLING_INSTANCE;
--        var networkService = new NetworkService(List.of());
--        var namedWriteableRegistry = new NamedWriteableRegistry(List.of());
--        var circuitBreakerService = new NoneCircuitBreakerService();
--        Authentication authentication = new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER));
--        var sslContextProvider = new SslContextProvider(serverNodeSettings);
--        var serverTransport = new Netty4Transport(
--            serverNodeSettings,
-+        TransportAddress serverAddress = startPostgresNetty(serverNodeSettings);
-+        pgClient = pgClient(serverAddress, Settings.EMPTY);
-+
-+
-+        CompletableFuture<Connection> connect = pgClient.ensureConnected();
-+        Connection connection = connect.get(10, TimeUnit.SECONDS);
-+        assertThat(connection.getNode().getAddress()).isEqualTo(serverAddress);
-+
-+        // Must be able to call ensureConnected again
-+        CompletableFuture<Connection> conn2 = pgClient.ensureConnected();
-+        CompletableFuture<Connection> conn3 = pgClient.ensureConnected();
-+
-+        conn2.get(10, TimeUnit.SECONDS);
-+        conn3.get(10, TimeUnit.SECONDS);
-+
-+        assertThat(connect).isSameAs(conn2);
-+        assertThat(conn2).isSameAs(conn3);
-+        connection.close();
-+
-+        // if a connection failed, calling ensureConnected again should return a new connection
-+        connect.obtrudeException(new IllegalStateException("test"));
-+        CompletableFuture<Connection> conn4 = pgClient.ensureConnected();
-+        assertThat(conn4).isNotEqualTo(conn3);
-+        connection = conn4.get(10, TimeUnit.SECONDS);
-+
-+        pgClient.close();
-+        assertThat(connection.isClosed()).as("pgClient.close must close connection").isTrue();
-+    }
-+
-+    @Test
-+    public void test_connect_fails_if_ssl_is_required_but_server_does_not_support_it() throws Exception {
-+        TransportAddress serverAddress = startPostgresNetty(Settings.builder().put("node.name", "server").build());
-+        pgClient = pgClient(serverAddress, Settings.builder().put("sslmode", "require").build());
-+
-+        CompletableFuture<Connection> connect = pgClient.ensureConnected();
-+        assertThatThrownBy(() -> connect.get(10, TimeUnit.SECONDS))
-+            .isExactlyInstanceOf(ExecutionException.class)
-+            .hasMessageContaining("SSL required but not supported");
-+        pgClient.close();
-+    }
-+
-+    private Netty4Transport newTransport(Settings settings) {
-+        return new Netty4Transport(
-+            settings,
-             Version.CURRENT,
-             THREAD_POOL,
--          
-```
-
----
-
-### Incident Patch 2: `c94472df` (2026-09-23)
-**Commit Message**: Extend DataType class docs with implementation requirements
-
-**File**: `server/src/main/java/io/crate/types/DataType.java` (modified, +11/-0)
-```diff
-@@ -50,6 +50,17 @@
- import io.crate.sql.tree.Expression;
- import io.crate.statistics.ColumnStatsSupport;
- 
-+/// Represents a type supported in CrateDB, either in-memory only or also for persistence (via [#storageSupport()]
-+///
-+/// A full data type implementation needs an implementation of this class and some extensions in:
-+/// - [io.crate.types.DataTypes]
-+/// - [io.crate.expression.symbol.LiteralValueFormatter] if the DataType uses a new value type
-+/// - [io.crate.protocols.postgres.types.PGTypes] and a [io.crate.protocols.types.PGType] implementation if necessary
-+/// - [io.crate.server.xcontent.ServerXContentExtension] for outgoing HTTP streaming
-+/// - [io.crate.execution.engine.sort.LuceneSort] if [#sortSupport()] returns [Sort#SORT_FIELD] and [io.crate.expression.reference.doc.lucene.NullSentinelValues]
-+/// - `DataTypeTesting.getDataGenerator`
-+/// - A test case extending `DataTypeTestCase`
-+/// - `SQLTransportExecutor` - `toJdbcCompatObject` and `executeAndConvertResult`
- public abstract class DataType<T> implements Comparable<DataType<?>>, Writeable, Comparator<T>, Accountable {
- 
-     /**
-```
-
----
-
-### Incident Patch 3: `e943e65e` (2026-10-20)
-**Commit Message**: Add UUID to `PRIMITIVE_TYPES` list
-
-In order to match the documentation and gives it a bit more test
-coverage as well as adding support for max/min aggregations
-
-**File**: `extensions/functions/src/main/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregation.java` (modified, +0/-1)
-```diff
-@@ -113,7 +113,6 @@ public static void register(Functions.Builder builder) {
-         for (var supportedType : DataTypes.PRIMITIVE_TYPES) {
-             register(builder, supportedType);
-         }
--        register(builder, UUIDType.INSTANCE);
-     }
- 
-     private final Signature signature;
-```
-
-**File**: `extensions/functions/src/test/java/io/crate/operation/aggregation/HyperLogLogDistinctAggregationTest.java` (modified, +1/-2)
-```diff
-@@ -41,7 +41,6 @@
- import com.carrotsearch.randomizedtesting.generators.RandomPicks;
- 
- import io.crate.Streamer;
--import io.crate.common.collections.Lists;
- import io.crate.data.breaker.RamAccounting;
- import io.crate.execution.engine.aggregation.AggregationFunction;
- import io.crate.execution.engine.aggregation.impl.HyperLogLogPlusPlus;
-@@ -174,7 +173,7 @@ public void test_without_precision_long() throws Exception {
- 
-     @Test
-     public void test_random_type_random_values() throws Exception {
--        var validTypes = Lists.concat(DataTypes.PRIMITIVE_TYPES, UUIDType.INSTANCE).stream()
-+        var validTypes = DataTypes.PRIMITIVE_TYPES.stream()
-             .filter(x -> x.storageSupport() != null)
-             .collect(Collectors.toList());
-         var type = RandomPicks.randomFrom(RandomizedContext.current().getRandom(), validTypes);
-```
-
-**File**: `server/src/main/java/io/crate/types/DataTypes.java` (modified, +5/-1)
-```diff
-@@ -105,6 +105,9 @@ public final class DataTypes {
-     public static final RegclassType REGCLASS = RegclassType.INSTANCE;
-     public static final RegtypeType REGTYPE = RegtypeType.INSTANCE;
- 
-+
-+    /// non-collection types as documented in docs/general/ddl/data-types.rst
-+    /// Types listed here _must_ implement a accurate [DataType#compare(Object, Object)]
-     public static final List<DataType<?>> PRIMITIVE_TYPES = List.of(
-         BYTE,
-         BOOLEAN,
-@@ -119,7 +122,8 @@ public final class DataTypes {
-         LONG,
-         TIMESTAMPZ,
-         TIMESTAMP,
--        DATE
-+        DATE,
-+        UUIDType.INSTANCE
-     );
- 
-     private static final Set<Integer> PRIMITIVE_TYPE_IDS =
-```
-
-**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/MaximumAggregationTest.java` (modified, +24/-44)
-```diff
-@@ -26,15 +26,16 @@
- 
- import java.math.BigDecimal;
- import java.util.List;
-+import java.util.function.Supplier;
- 
--import org.joda.time.Period;
+-import org.junit.Rule;
  import org.junit.Test;
  
- import io.crate.exceptions.UnsupportedFunctionException;
- import io.crate.metadata.FunctionType;
- import io.crate.metadata.functions.Signature;
- import io.crate.metadata.functions.Signature.Feature;
- import io.crate.operation.aggregation.AggregationTestCase;
-+import io.crate.testing.DataTypeTesting;
- import io.crate.types.DataType;
- import io.crate.types.DataTypes;
- import io.crate.types.NumericType;
-@@ -151,22 +152,31 @@ public void testNumeric() throws Exception {
-         }
-     }
+ import io.crate.exceptions.OperationOnInaccessibleRelationException;
+ import io.crate.replication.logical.LogicalReplicationService;
+ import io.crate.replication.logical.MetadataTracker;
+-import io.crate.testing.RetryRule;
+ import io.crate.testing.UseRandomizedSchema;
  
--    @Test
--    public void testDouble() throws Exception {
--        Object result = executeAggregation(DataTypes.DOUBLE, new Object[][]{{0.8d}, {0.3d}});
--        assertThat(result).isEqualTo(0.8d);
--    }
--
--    @Test
--    public void testFloat() throws Exception {
--        Object result = executeAggregation(DataTypes.FLOAT, new Object[][]{{0.8f}, {0.3f}});
--        assertThat(result).isEqualTo(0.8f);
-+    private <T> void assert_max_on_primitive_type(DataType<T> type) throws Exception {
-+        Supplier<T> dataGenerator = DataTypeTesting.getDataGenerator(type);
-+        T val1 = dataGenerator.get();
-+        T val2;
-+        do {
-+            val2 = dataGenerator.get();
-+        } while (type.compare(val1, val2) == 0);
-+
-+        Object[][] data = new Object[][] {
-+            { val1 },
-+            { val2 }
-+        };
-+        Object result = executeAggregation(type, data);
-+        if (type.compare(val1, val2) > 0) {
-+            assertThat(result).isEqualTo(val1);
-+        } else {
-+            assertThat(result).isEqualTo(val2);
-+        }
-     }
+ @UseRandomizedSchema(random = false)
+ public class MetadataTrackerITest extends LogicalReplicationITestCase {
  
-     @Test
--    public void testInteger() throws Exception {
--        Object result = executeAggregation(DataTypes.INTEGER, new Object[][]{{8}, {3}});
--        assertThat(result).isEqualTo(8);
-+    public void test_max_on_primitive_types() throws Exception {
-+        for (var type : DataTypes.PRIMITIVE_TYPES) {
-+            assert_max_on_primitive_type(type);
-+        }
-     }
- 
-     @Test
-@@ -204,41 +214,11 @@ public void test_aggregate_min_long() throws Exception {
-         assertThat(result).isEqualTo((Long.MIN_VALUE + 1));
-     }
- 
--    @Test
--    public void testLong() throws Exception {
--        Object result = executeAggregation(DataTypes.LONG, new Object[][]{{8L}, {3L}});
--
--        assertThat(result).isEqualTo(8L);
--    }
--
--    @Test
--    public void testShort() throws Exception {
--        Object result = executeAggregation(DataTypes.SHORT, new Object[][]{{(short) 8}, {(short) 3}});
--
--        assertThat(result).isEqualTo((short) 8);
--    }
+-    @Rule
+-    public RetryRule retryRule = new RetryRule(3);
 -
      @Test
-     public void test_max_with_byte_argument_type() throws Exception {
-         assertThat(executeAggregation(DataTypes.BYTE, new Object[][]{{(byte) 1}, {(byte) 0}})).isEqualTo(((byte) 1));
-     }
- 
--    @Test
--    public void testString() throws Exception {
--        Object result = executeAggregation(DataTypes.STRING, new Object[][]{{"Youri"}, {"Ruben"}});
--
--        assertThat(result).isEqualTo("Youri");
--    }
--
--    @Test
--    public void test_max_on_interval() throws Exception {
--        Object result = executeAggregation(DataTypes.INTERVAL, new Object[][] {
--            { new Period(3, 2, 5, 7, 4, 30, 0, 0) },
--            { new Period(3, 2, 5, 7, 5, 50, 0, 0) }
--        });
--        assertThat(result).isEqualTo(new Period(3, 2, 5, 7, 5, 50, 0, 0));
--    }
--
-     @Test
-     public void testUnsupportedType() throws Exception {
-         assertThatThrownBy(() -> executeAggregation(DataTypes.UNTYPED_OBJECT, new Object[][]{{new Object()}}))
-```
-
-**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/MinimumAggregationTest.java` (modified, +24/-41)
-```diff
-@@ -26,15 +26,16 @@
- 
- import java.math.BigDecimal;
- import java.util.List;
-+import java.util.function.Supplier;
- 
--import org.joda.time.Period;
- import org.junit.Test;
- 
- import io.crate.exceptions.UnsupportedFunctionException;
- import io.crate.metadata.FunctionType;
- import io.crate.metadata.functions.Signature;
- import io.crate.metadata.functions.Signature.Feature;
- import io.crate.operation.aggregation.AggregationTestCase;
-+import io.crate.testing.DataTypeTesting;
- import io.crate.types.DataType;
- import io.crate.types.DataTypes;
- import io.crate.types.NumericType;
-@@ -152,16 +153,31 @@ public void testNumeric() throws Exception {
-         }
-     }
- 
--    @Test
--    public void testDouble() throws Exception {
--        Object result = executeAggregation(DataTypes.DOUBLE, new Object[][]{{0.8d}, {0.3d}});
--        assertThat(result).isEqualTo(0.3d);
-+    private <T> void assert_min_on_primitive_type(DataType<T> type) throws Exception {
-+        Supplier<T> dataGenerator = DataTypeTesting.getDataGenerator(type);
-+        T val1 = dataGenerator.get();
-+        T val2;
-+        do {
-+            val2 = dataGenerator.get();
-+        } while (type.compare(val1, val2) == 0);
-+
-+        Object[][] data = new Object[][] {
-+            { val1 },
-+            { val2 }
-+        };
-+        Object result = executeAggregation(type, data);
-+        if (type.compare(val1, val2) < 0) {
-+            assertThat(result).isEqualTo(val1);
-+        } else {
-+            assertThat(result).isEqualTo(val2);
-+        }
-     }
- 
-     @Test
--    public void testFloat() throws Exception {
--        Object result = executeAggregation(DataTypes.FLOAT, new Object[][]{{0.8f}, {0.3f}});
--        assertThat(result).isEqualTo(0.3f);
-+    public void test_min_on_primitive_types() throws Exception {
-+        for (var type : DataTypes.PRIMITIVE_TYPES) {
-+            assert_min_on_primitive_type(type);
-+        }
-     }
- 
-     @Test
-@@ -176,44 +192,11 @@ public void test_aggregate_float_zero() throws Exception {
-         assertThat(result).isEqualTo((0.0f));
-     }
- 
--    @Test
--    public void testInteger() throws Exception {
--        Object result = executeAggregation(DataTypes.INTEGER, new Object[][]{{8}, {3}});
--        assertThat(result).isEqualTo(3);
--    }
--
--    @Test
--    public void testLong() throws Exception {
--        Object result = executeAggregation(DataTypes.LONG, new Object[][]{{8L}, {3L}});
--        assertThat(result).isEqualTo(3L);
--    }
--
--    @Test
--    public void testShort() throws Exception {
--        Object result = executeAggregation(DataTypes.SHORT, new Object[][]{{(short) 8}, {(short) 3}});
--        assertThat(result).isEqualTo((short) 3);
--    }
--
-     @Test
-     public void test_min_with_byte_argument_type() throws Exception {
-         assertThat(executeAggregation(DataTypes.BYTE, new Object[][]{{(byte) 1}, {(byte) 0}})).isEqualTo(((byte) 0));
-     }
- 
--    @Test
--    public void testString() throws Exception {
--        Object result = executeAggregation(DataTypes.STRING, new Object[][]{{"Youri"}, {"Ruben"}});
--        assertThat(result).isEqualTo("Ruben");
--    }
--
--    @Test
--    public void test_min_on_interval() throws Exception {
--        Object result = executeAggregation(DataTypes.INTERVAL, new Object[][] {
--            { new Period(3, 2, 5, 7, 4, 30, 0, 0) },
--            { new Period(3, 2, 5, 7, 5, 50, 0, 0) }
--        });
--        assertThat(result).isEqualTo(new Period(3, 2, 5, 7, 4, 30, 0, 0));
--    }
--
-     @Test
-     public void testUnsupportedType() throws Exception {
-         assertThatThrownBy(() -> executeAggregation(DataTypes.UNTYPED_OBJECT, new Object[][]{{new Object()}}))
-```
-
-**File**: `server/src/test/java/io/crate/expression/operator/CmpOperatorTest.java` (modified, +8/-0)
-```diff
-@@ -55,6 +55,8 @@ public void testLte() {
-         assertEvaluateNull("null <= 1");
-         assertEvaluateNull("null <= 'abc'");
-         assertEvaluateNull("null <= null");
-+        assertNormalize("uuid <= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_<="));
-+        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid <= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(false));
-     }
- 
-     @Test
-@@ -77,6 +79,8 @@ public void testLt() {
-         assertEvaluateNull("null < 1");
-         assertEvaluateNull("null < name", Literal.of("foo"));
-         assertEvaluateNull("null < null");
-+        assertNormalize("uuid < 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_<"));
-+        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid < 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(false));
-     }
- 
-     @Test
-@@ -96,6 +100,8 @@ public void testGte() {
-         assertEvaluateNull("null >= 1");
-         assertEvaluateNull("null >= 'abc'");
-         assertEvaluateNull("null >= null");
-+        assertNormalize("uuid >= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_>="));
-+        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid >= 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(true));
-     }
- 
-     @Test
-@@ -112,6 +118,8 @@ public void testGt() {
-         assertEvaluateNull("null > 1");
-         assertEvaluateNull("name > null", Literal.of("foo"));
-         assertEvaluateNull("null > null");
-+        assertNormalize("uuid > 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isFunction("op_>"));
-+        assertNormalize("'6907e963-6446-4903-a239-5c2dae350f72'::uuid > 'a5857231-05f3-4257-b59a-fd5eb2681dac'::uuid", isLiteral(true));
-     }
- 
-     @Test
-```
-
-**File**: `server/src/test/java/io/crate/expression/symbol/LiteralTest.java` (modified, +2/-13)
-```diff
-@@ -26,15 +26,14 @@
- import java.util.List;
- 
- import org.elasticsearch.test.ESTestCase;
--import org.joda.time.Period;
- import org.junit.Test;
- import org.locationtech.spatial4j.shape.Point;
- 
- import io.crate.expression.scalar.cast.CastMode;
- import io.crate.expression.scalar.cast.ImplicitCastFunction;
- import io.crate.testing.Asserts;
-+import io.crate.testing.DataTypeTesting;
- import io.crate.types.ArrayType;
--import io.crate.types.BooleanType;
- import io.crate.types.DataType;
- import io.crate.types.DataTypes;
- 
-@@ -44,17 +43,7 @@ public class LiteralTest extends ESTestCase {
-     public void testNestedArrayLiteral() throws Exception {
-         for (DataType<?> type : DataTypes.PRIMITIVE_TYPES) {
-             DataType<?> nestedType = new ArrayType<>(new ArrayType<>(type));
--            Object value;
--
--            if (type.id() == BooleanType.ID) {
--                value = true;
--            } else if (type.id() == DataTypes.IP.id()) {
--                value = type.sanitizeValue("123.34.243.23");
--            } else if (type.id() == DataTypes.INTERVAL.id()) {
--                value = type.sanitizeValue(new Period().withSeconds(100));
--            } else {
--                value = type.implicitCast("0");
--            }
-+            Object value = DataTypeTesting.getDataGenerator(type).get();
-             var nestedValue = List.of(List.of(value));
-             Literal<?> nestedLiteral = Literal.ofUnchecked(nestedType, nestedValue);
-             assertThat(nestedLiteral.valueType()).isEqualTo(nestedType);
-```
-
-**File**: `server/src/test/java/io/crate/lucene/CommonQueryBuilderTest.java` (modified, +42/-0)
-```diff
-@@ -71,6 +71,7 @@
- import io.crate.types.DataType;
- import io.crate.types.DataTypes;
- import io.crate.types.FloatVectorType;
-+import io.crate.types.IpType;
- import io.crate.types.ObjectType;
- 
- public class CommonQueryBuilderTest extends LuceneQueryBuilderTest {
-@@ -1002,6 +1003,47 @@ public void test_all_eq_query_for_all_types() throws Exception {
-         }
-     }
- 
-+    private <T> void assert_cmp_op_matches_type_compare_for_primitive_type(DataType<T> type) throws Exception {
-+        String typeDefinition = SqlFormatter.formatSql(type.toColumnType(null));
-+        QueryTester.Builder builder = new QueryTester.Builder(
-+            THREAD_POOL,
-+            clusterService,
-+            Version.CURRENT,
-+            "create table tbl (x " + typeDefinition + ")");
-+        try (QueryTester tester = builder.build()) {
-+            var dataGenerator = DataTypeTesting.getDataGenerator(type);
-+            T val1 = dataGenerator.get();
-+            T val2;
-+            do {
-+                val2 = dataGenerator.get();
-+            } while (type.compare(val1, val2) == 0);
-+
-+            builder.indexValues("x", val1);
-+            builder.indexValues("x", val2);
-+
-+            String query = type.compare(val1, val2) > 0
-+                ? "x < ?"
-+                : "x > ?";
-+            assertThat(tester.runQuery("x", query, val1))
-+                .as("range query for `" + type.getName() + "` must match second value")
-+                .containsExactly(val2);
-+        }
-+    }
-+
-+    @Test
-+    public void test_cmp_op_matches_type_compare_for_all_primitive_types() throws Exception {
-+        for (DataType<?> type : DataTypes.PRIMITIVE_TYPES) {
-+            if (type.storageSupport() == null) {
-+                continue;
-+            }
-+            if (type.id() == IpType.ID) {
-+                // TODO: type.compareTo & rangeQuery have different semantics(?)
-+                continue;
-+            }
-+            assert_cmp_op_matches_type_compare_for_primitive_type(type);
-+        }
-+    }
-+
-     @Test
-     public void test_all_eq_query_for_all_types_with_columnstore_false() throws Exception {
-         for (DataType<?> type : DataTypeTesting.getStorableTypesExceptArrays(random())) {
+     public void test_schema_changes_of_subscribed_table_is_replicated() throws Exception {
+         executeOnPublisher("CREATE TABLE t1 (id INT) WITH(" + defaultTableSettings() + ")");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20469** (2026-10-23): Remove LR integration test retries added to suppress flakiness (backport #20467) (@mergify[bot])
+- **PR #20468** (2026-10-23): Remove LR integration test retries added to suppress flakiness (backport #20467) (@mergify[bot])
+- **PR #20467** (2026-10-23): Remove LR integration test retries added to suppress flakiness (@jeeminso)
 - **PR #20465** (2026-10-21): Remove dropped tables from explicit publications (backport #20427) (@mergify[bot])
 - **PR #20464** (2026-10-21): Remove dropped tables from explicit publications (backport #20427) (@mergify[bot])
 - **PR #20462** (2026-10-21): Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl (backport #20420) (@mergify[bot])
-- **PR #20461** (2026-10-21): Fix stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl (backport #20420) (@mergify[bot])
-- **PR #20459** (2026-10-21): Update JVM flags to account for JDK27 changes (@mfussenegger)
-- **PR #20457** (2026-10-21): Move the JSON type out of the primitive type section (@mfussenegger)
 
 ---
 
@@ -1203,39 +633,3 @@ coverage as well as adding support for max/min aggregations
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl
-
-**RULE**:
-When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `f98376b9`: stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```java
-// Verified production-grade fix pattern:
-
-- Fixed an issue causing :ref:`CREATE SUBSCRIPTION<sql-create-subscription>` to
-  get stuck if :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` was
-  used together with  ``sslmode`` set to ``prefer`` or ``required`` and
-  subscriber cluster didn't trust publisher cluster's certificate.
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f98376b9` are properly handled with clean fallback behavior.

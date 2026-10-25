@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T13:24:08.897Z",
+  "last_updated": "2026-10-25T13:30:59.785Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6992,8 +6992,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "33429e62",
-      "content_hash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
+      "source_version": "4b5d3bc9",
+      "content_hash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -7033,7 +7033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:23:57.032Z",
+      "verified_at": "2026-10-25T13:30:59.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14241,8 +14241,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "cdbff3ee",
-      "content_hash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
+      "source_version": "55988303",
+      "content_hash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -14275,6 +14275,11 @@
           "number": 3815,
           "title": "Multi-Source Credential Conflict Assertion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4309,
+          "title": "test: Refactor and add test case for graph rendering in Dot format. (#39437)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14282,7 +14287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:39:26.142Z",
+      "verified_at": "2026-10-25T13:30:56.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21300,7 +21305,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
+      "content_hash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -21353,6 +21358,16 @@
           "number": 3315,
           "title": "GGUF Metadata Integrity for Mixed-Precision Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 3917,
+          "title": "Non-Uniform Precision Allocation Under Hard Size Constraints",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4307,
+          "title": "GGUF Format Agnosticism for Quantization Methods",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21373,7 +21388,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-20T18:20:46.866Z",
+      "verified_at": "2026-10-25T13:30:53.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36399,14 +36414,19 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "3224f1b4",
-      "content_hash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
+      "source_version": "6bb01eab",
+      "content_hash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
         {
           "number": 2454,
           "title": "vite): Android release bundles keep the class names the binding generator reads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4308,
+          "title": "core): make background: none clear the background color (#11536)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36415,7 +36435,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:06:40.222Z",
+      "verified_at": "2026-10-25T13:30:54.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52433,8 +52453,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "69b67d33",
-      "content_hash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
+      "source_version": "c04e3749",
+      "content_hash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -52452,6 +52472,11 @@
           "number": 3722,
           "title": "Bump version to v0.2.116",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4306,
+          "title": "Harden every provider: crash and stall detection, Windows-safe launching, and ru",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52459,7 +52484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:30:15.734Z",
+      "verified_at": "2026-10-25T13:30:49.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59007,7 +59032,7 @@
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
       "source_version": "3d8ca28e",
-      "content_hash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
+      "content_hash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "promoted_rules": [
@@ -59032,7 +59057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:59:45.402Z",
+      "verified_at": "2026-10-25T13:30:47.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117490,14 +117515,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 3917,
       "title": "Non-Uniform Precision Allocation Under Hard Size Constraints",
-      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-24T19:34:54.374Z"
+      "verified_at": "2026-10-25T13:30:53.659Z"
     },
     "rule-3918": {
       "learning_id": "rule-3918",
@@ -123191,6 +123216,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T13:24:08.886Z"
+    },
+    "rule-4306": {
+      "learning_id": "rule-4306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4306,
+      "title": "Harden every provider: crash and stall detection, Windows-safe launching, and ru",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "c04e3749",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:30:49.839Z"
+    },
+    "rule-4307": {
+      "learning_id": "rule-4307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4307,
+      "title": "GGUF Format Agnosticism for Quantization Methods",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:30:53.659Z"
+    },
+    "rule-4308": {
+      "learning_id": "rule-4308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4308,
+      "title": "core): make background: none clear the background color (#11536)",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "6bb01eab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:30:54.106Z"
+    },
+    "rule-4309": {
+      "learning_id": "rule-4309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4309,
+      "title": "test: Refactor and add test case for graph rendering in Dot format. (#39437)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "55988303",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T13:30:56.346Z"
     }
   },
   "aliases": {

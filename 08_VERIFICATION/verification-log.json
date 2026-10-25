@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261022-EBDN",
-    "timestamp": "2026-10-22T16:32:17.435Z",
-    "repository": "tokio-rs/tokio",
-    "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "ec584f3d71c87b2c3256df031d604e3ecb406d8a7f3dbd30bcb2a6bb5d5eba41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-EEBJ",
-    "timestamp": "2026-10-22T16:32:21.247Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-ELE7",
-    "timestamp": "2026-10-22T16:32:30.415Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "02a53f0967593a554183822c776bb2136cd7f727fca09f2fe1231bc7f0ab50ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-MJVH",
-    "timestamp": "2026-10-22T16:38:41.693Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "22d0efffcb8dceb998498bc751772bfd775ee80af04c7bf657225bacabb2c9fe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-MO8W",
-    "timestamp": "2026-10-22T16:38:47.360Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261022-UUE5",
-    "timestamp": "2026-10-22T16:45:08.573Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "12f368b6b4f24a20403d03ccb9d0abdaaa707d1b933563b86a3321c994708b3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261022-V0MP",
     "timestamp": "2026-10-22T16:45:16.657Z",
     "repository": "gardener/gardener",
@@ -7492,6 +7402,96 @@
     "contentHash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8GU9",
+    "timestamp": "2026-10-25T13:30:47.745Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8IIY",
+    "timestamp": "2026-10-25T13:30:49.930Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8LGC",
+    "timestamp": "2026-10-25T13:30:53.724Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8LSS",
+    "timestamp": "2026-10-25T13:30:54.172Z",
+    "repository": "NativeScript/NativeScript",
+    "learningId": "learn-github-nativescript-nativescript",
+    "contentHash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8NJ1",
+    "timestamp": "2026-10-25T13:30:56.413Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-8Q69",
+    "timestamp": "2026-10-25T13:30:59.841Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

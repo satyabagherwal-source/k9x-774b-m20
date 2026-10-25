@@ -4833,3 +4833,9 @@ Every entry in this ledger must capture:
 | `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `25a114f4` | Multi-dimensional audit evidence | 2026-10-25T13:24:07.944Z |
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-25T13:24:08.423Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `e7e95b45` | Multi-dimensional audit evidence | 2026-10-25T13:24:08.955Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `3d8ca28e` | Multi-dimensional audit evidence | 2026-10-25T13:30:47.749Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `c04e3749` | Multi-dimensional audit evidence | 2026-10-25T13:30:49.933Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-25T13:30:53.728Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `6bb01eab` | Multi-dimensional audit evidence | 2026-10-25T13:30:54.175Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `55988303` | Multi-dimensional audit evidence | 2026-10-25T13:30:56.416Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `4b5d3bc9` | Multi-dimensional audit evidence | 2026-10-25T13:30:59.844Z |

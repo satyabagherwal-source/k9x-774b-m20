@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "dc5c4ccdc327e869db2b43c1b0a657d6c0cd782540fce479b650165b086a756b",
-    "lastHarvestedAt": "2026-10-20T18:20:46.930Z",
+    "contentHash": "f084f76d4c09dbbb467b25eb4e23afec6e40d9fe5ec5a99596540ef167cfc4d1",
+    "lastHarvestedAt": "2026-10-25T13:30:53.728Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -1335,8 +1335,8 @@
     "sourceUrl": "https://github.com/cosscom/ui",
     "sourceVersion": "3d8ca28e",
     "license": "AGPL-3.0",
-    "contentHash": "59551b460dd1a92c83408757aa8caf77c27209bfe5352393e8e1d6fa4a4a2ddf",
-    "lastHarvestedAt": "2026-10-23T08:59:45.498Z",
+    "contentHash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
+    "lastHarvestedAt": "2026-10-25T13:30:47.749Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "33429e62",
+    "sourceVersion": "4b5d3bc9",
     "license": "Apache-2.0",
-    "contentHash": "856dd6ba26c9e90a66819dc8a05f6be6dd2f52913223f5f2600b1a27ac6e7f21",
-    "lastHarvestedAt": "2026-10-23T06:23:57.097Z",
+    "contentHash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
+    "lastHarvestedAt": "2026-10-25T13:30:59.844Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "69b67d33",
+    "sourceVersion": "c04e3749",
     "license": "MIT",
-    "contentHash": "f8fcdcc5a91ca1255d8a80c87702845ee9dde99b02196eecea943cde73635c59",
-    "lastHarvestedAt": "2026-10-22T20:30:15.775Z",
+    "contentHash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
+    "lastHarvestedAt": "2026-10-25T13:30:49.933Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "cdbff3ee",
+    "sourceVersion": "55988303",
     "license": "NOASSERTION",
-    "contentHash": "346a4eb42c2ef7d269eac9928be7c93eb2bf3d892d1a708e646da6badcc2567f",
-    "lastHarvestedAt": "2026-10-23T07:39:26.210Z",
+    "contentHash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
+    "lastHarvestedAt": "2026-10-25T13:30:56.416Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "3224f1b4",
+    "sourceVersion": "6bb01eab",
     "license": "MIT",
-    "contentHash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
-    "lastHarvestedAt": "2026-10-19T09:06:40.269Z",
+    "contentHash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
+    "lastHarvestedAt": "2026-10-25T13:30:54.175Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {
