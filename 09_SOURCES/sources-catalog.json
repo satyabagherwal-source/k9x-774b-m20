@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "adbc963f8ca212e0960490be6dcac4cfcf499a8846b91853a415ca293cc2a4dc",
-    "lastHarvestedAt": "2026-10-21T01:36:31.403Z",
+    "contentHash": "c61238734cc88c9987b5f0d82c14b0476bfd4b566f5e49fc9a542e8dd118164e",
+    "lastHarvestedAt": "2026-10-25T21:27:18.756Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -8383,10 +8383,10 @@
     "repository": "touchlab/xcode-kotlin",
     "platform": "github",
     "sourceUrl": "https://github.com/touchlab/xcode-kotlin",
-    "sourceVersion": "00970b1c",
+    "sourceVersion": "56560d20",
     "license": "Apache-2.0",
-    "contentHash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
-    "lastHarvestedAt": "2026-10-19T16:43:41.775Z",
+    "contentHash": "99a16c81b2eb014ebaf47f7c1bd9d0f06aafe4da5acaafebed8501c4fc8572bd",
+    "lastHarvestedAt": "2026-10-25T21:25:38.037Z",
     "learningId": "learn-github-touchlab-xcode-kotlin"
   },
   "jeffli1993-seo-audit-skill": {

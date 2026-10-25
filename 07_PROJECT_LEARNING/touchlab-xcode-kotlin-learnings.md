@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md`  
 > **Source**: github ([https://github.com/touchlab/xcode-kotlin](https://github.com/touchlab/xcode-kotlin))  
-> **Source Version**: `00970b1c`  
+> **Source Version**: `56560d20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:43:41.469Z  
+> **Timestamp**: 2026-10-25T21:25:37.642Z  
 > **Learning ID**: `learn-github-touchlab-xcode-kotlin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/touchlab/xcode-kotlin](https://github.com/touchlab/xcode-kotlin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:43:41.463Z  
+> **Harvest Timestamp**: 2026-10-25T21:25:36.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -44,6 +44,8 @@ import lldb
 from .KonanStepIn import KonanStepIn
 from .KonanStepOut import KonanStepOut
 from .KonanStepOver import KonanStepOver
+from ..module_registration import scan_and_register_modules
+from ..util.log import log
 
 KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS = 'KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS'
 MAX_SIZE_FOR_STOP_REASON = 20
@@ -59,6 +61,13 @@ class KonanHook:
         pass
 
     def handle_stop(self, execution_context: lldb.SBExecutionContext, stream: lldb.SBStream) -> bool:
+        # Side-effect only: try/except so registration can never alter the
+        # stop/continue decision below.
+        try:
+            scan_and_register_modules(execution_context)
+        except Exception as e:
+            log(lambda: 'Kotlin module registration error: {}'.format(e))
+
         is_bridging_functions_skip_enabled = not execution_context.target.GetEnvironment().Get(
             KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS
         )
@@ -611,13 +620,11 @@ class CrashHelper {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #129** (2026-04-21): **Fix: list count is incorrect**
-  *Symptoms*: ## Summary For a list variable, the count is displayed incorrectly; it shows the capacity of the backing object instead.  ## Fix This fix first tries to read the `length` property, falling back to the original logic if it’s not present.  ## Pull Request Labels  <!--- While not necessary, you can help organize our pull requests by labeling this issue when you open it.  To add a label automatically, simply [x] mark the appropriate box below: -->  - [ ] has-reproduction - [ ] feature - [ ] blocking - [ ] good first review  <!--- To add a label not listed above, simply place `/label another-label-name` on a line by itself. -->
+- **Issue #131** (2026-10-25): **Fix: slow app launch under the debugger**
+  *Symptoms*: 
 
-- **Issue #127** (2025-08-26): **Xcode Kotlin plugin seems to conflict with Jetbrain's Kotlin Multiplatform plugin**
-  *Symptoms*: When JetBrains released the new Kotlin Multiplatform plugin for IDEA and Android Studio, I enabled it on my KMP project. However, code under `commonMain` in the new directory structure would result in the IDE claiming "Project JDK not defined".  I created an issue with JetBrains. Others have also discovered the issue and commented. Further, in the Kotlin Slack, several have responded to my questions there.  2 months later, I revisited by striving to recreate in a new project. After some experimentation, I found that the setup to make this Xcode Kotlin plugin work seems to be the underlying issue.  I discovered that the referenced Kotlin code in my `project.pbxproj` was creating complications in the new Kotlin Multiplatform plugin.  I describe my findings here:  https://youtrack.jetbrains.com/issue/KMT-1299/After-upgrading-to-Narwhal-Project-JDK-is-not-defined#focus=Comments-27-12540399.0-0  
-  **Post-Mortem & Fix Analysis**:
-  > Looks like this will be handled on the JB side https://youtrack.jetbrains.com/issue/KMT-1299/Kotlin-files-referenced-from-project.pbxproj-file-lead-to-Project-JDK-is-not-defined#focus=Comments-27-12553801.0-0
+- **Issue #130** (2026-10-25): **Fix: ObjC-bridged Kotlin fields rendered as `None`**
+  *Symptoms*: Issue: https://github.com/touchlab/xcode-kotlin/issues/125  ## Summary When a Kotlin object displays as None, its attributes and other information are not visible, but it actually holds values.  ## Fix This fix unwraps such bridged objects via `Kotlin_ObjCExport_refFromObjC` to recover the real `ObjHeader`, retries the normal provider so fields display, and falls back to a readable class-tagged summary (e.g. `SwiftCallback objc@0x…`) when the runtime still can't describe the object, so Swift-implemented Kotlin interface instances no longer render as `None`.  ## Pull Request Labels  <!--- While not necessary, you can help organize our pull requests by labeling this issue when you open it.  To add a label automatically, simply [x] mark the appropriate box below: -->  - [ ] has-reproduction - [ ] feature - [ ] blocking - [ ] good first review  <!--- To add a label not listed above, simply place `/label another-label-name` on a line by itself. -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -634,166 +641,484 @@ class CrashHelper {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86b78fb1` (2024-03-06)
-**Commit Message**: Fix crash for Xcode 15.3
+### Incident Patch 1: `56560d20` (2026-10-25)
+**Commit Message**: Fix: slow app launch under the debugger (#131)
 
-**File**: `src/macosMain/kotlin/co/touchlab/xcode/cli/PluginManager.kt` (modified, +1/-1)
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/__init__.py` (modified, +3/-86)
 ```diff
-@@ -73,7 +73,7 @@ object PluginManager {
+@@ -1,5 +1,4 @@
+ import os
+-from typing import Optional
  
-         Console.echo("Synchronizing plugin compatibility list.")
-         val additionalPluginCompatibilityIds =
--            xcodeInstallations.map { PropertyList.Object.String(it.pluginCompatabilityId) }
-+            xcodeInstallations.mapNotNull { it.pluginCompatabilityId?.let { PropertyList.Object.String(it) } }
-         logger.v { "Xcode installation IDs to include: ${additionalPluginCompatibilityIds.joinToString { it.value }}" }
-         val infoPlist = PropertyList.create(pluginTargetInfoFile)
-         val rootDictionary = infoPlist.root.dictionary
+ import lldb
+ 
+@@ -8,16 +7,13 @@
+ from .util.log import log
+ from .commands import FieldTypeCommand, SymbolByNameCommand, TypeByAddressCommand, GCCollectCommand
+ 
+-from .types.summary import kotlin_object_type_summary, kotlin_objc_class_summary
+-from .types.proxy import KonanProxyTypeProvider, KonanObjcProxyTypeProvider
++from .types.summary import kotlin_object_type_summary
++from .types.proxy import KonanProxyTypeProvider
+ 
+ from .cache import LLDBCache
+ 
+ os.environ['CLIENT_TYPE'] = 'Xcode'
+ 
+-KONAN_INIT_PREFIX = '_Konan_init_'
+-KONAN_INIT_MODULE_NAME = '[0-9a-zA-Z_]+'
+-KONAN_INIT_SUFFIX = '_kexe'
+ 
+ def __lldb_init_module(debugger: lldb.SBDebugger, _):
+     log(lambda: "init start")
+@@ -27,8 +23,6 @@ def __lldb_init_module(debugger: lldb.SBDebugger, _):
+     register_commands(debugger)
+     register_hooks(debugger)
+ 
+-    configure_objc_types_init(debugger)
+-
+     log(lambda: "init end")
+ 
+ 
+@@ -38,78 +32,6 @@ def reset_cache():
+     LLDBCache.reset()
+ 
+ 
+-def configure_objc_types_init(debugger: lldb.SBDebugger):
+-    target = debugger.GetDummyTarget()
+-    breakpoint = target.BreakpointCreateByRegex(
+-        "^{}({})({})?$".format(KONAN_INIT_PREFIX, KONAN_INIT_MODULE_NAME, KONAN_INIT_SUFFIX)
+-    )
+-    breakpoint.SetOneShot(True)
+-    breakpoint.SetAutoContinue(True)
+-    breakpoint.SetScriptCallbackFunction('{}.{}'.format(__name__, configure_objc_types_breakpoint.__name__))
+-
+-
+-def configure_objc_types_breakpoint(frame: lldb.SBFrame, bp_loc: lldb.SBBreakpointLocation, internal_dict):
+-    process = frame.thread.process
+-    target = process.target
+-
+-    symbols = target.FindSymbols('_OBJC_CLASS_RO_$_KotlinBase')
+-
+-    base_class_name: Optional[str] = None
+-    for symbol_context in symbols:
+-        error = lldb.SBError()
+-        name_addr = process.ReadPointerFromMemory(symbol_context.symbol.addr.GetLoadAddress(target) + 6 * 4, error)
+-        # TODO: Log error?
+-        if not error.success:
+-            continue
+-        base_class_name = process.ReadCStringFromMemory(name_addr, 128, error)
+-        # TODO: Log error?
+-        if not error.success:
+-            continue
+-
+-        break
+-
+-    module_name = frame.symbol.name.removeprefix(KONAN_INIT_PREFIX).removesuffix(KONAN_INIT_SUFFIX)
+-    if module_name == "stdlib":
+-        return False
+-
+-    specifiers_to_register = [
+-        lldb.SBTypeNameSpecifier(
+-            '^{}\\.'.format(module_name),
+-            lldb.eMatchTypeRegex,
+-        ),
+-    ]
+-
+-    if base_class_name is not None:
+-        objc_class_prefix = base_class_name.removesuffix("Base")
+-        specifiers_to_register.append(
+-            lldb.SBTypeNameSpecifier(
+-                '^{}'.format(objc_class_prefix),
+-                lldb.eMatchTypeRegex,
+-            )
+-        )
+-
+-    category = target.debugger.GetCategory(KOTLIN_CATEGORY)
+-
+-    for type_specifier in specifiers_to_register:
+-        category.AddTypeSummary(
+-            type_specifier,
+-            lldb.SBTypeSummary.CreateWithFunctionName(
+-                '{}.{}'.format(__name__, kotlin_objc_class_summary.__name__),
+-                lldb.eTypeOptionHideValue,
+-            )
+-        )
+-        category.AddTypeSynthetic(
+-            type_specifier,
+-            lldb.SBTypeSynthetic.CreateWithClassName(
+-                '{}.{}'.format(__name__, KonanObjcProxyTypeProvider.__name__),
+-            )
+-        )
+-
+-    bp_loc.GetBreakpoint().SetEnabled(False)
+-
+-    return False
+-
+-
+ def configure_types(debugger: lldb.SBDebugger):
+     category = debugger.CreateCategory(KOTLIN_CATEGORY)
+ 
+@@ -154,9 +76,4 @@ def register_hooks(debugger: lldb.SBDebugger):
+     # Avoid Kotlin/Native runtime
+     debugger.HandleCommand('settings set target.process.thread.step-avoid-regexp ^::Kotlin_')
+ 
+-    hooks_to_register = [
+-        KonanHook,
+-    ]
+-
+-    for hook in hooks_to_register:
+-        debugger.HandleCommand('target stop-hook add -P {}.{}'.format(__name__, hook.__name__))
++    debugger.HandleCommand('target stop-hook add -P {}.{}'.format(__name__, KonanHook.__name__))
 ```
 
-**File**: `src/macosMain/kotlin/co/touchlab/xcode/cli/XcodeHelper.kt` (modified, +11/-1)
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/cache/__init__.py` (modified, +6/-1)
 ```diff
-@@ -5,9 +5,11 @@ import co.touchlab.xcode.cli.XcodeHelper.Defaults.nonApplePlugins
- import co.touchlab.xcode.cli.util.BackupHelper
- import co.touchlab.xcode.cli.util.Console
- import co.touchlab.xcode.cli.util.File
-+import co.touchlab.xcode.cli.util.fromString
- import co.touchlab.xcode.cli.util.Path
- import co.touchlab.xcode.cli.util.PropertyList
- import co.touchlab.xcode.cli.util.Shell
-+import co.touchlab.xcode.cli.util.Version
- import kotlinx.serialization.SerialName
- import kotlinx.serialization.Serializable
- import kotlinx.serialization.json.Json
-@@ -83,6 +85,14 @@ object XcodeHelper {
-             checkNotNull(versionPlist.build?.trim()) { "Couldn't get build number of Xcode at $path." }
-         }
+@@ -1,4 +1,4 @@
+-from typing import Optional
++from typing import Dict, Optional, Set
  
-+        if (Version.fromString(version) >= Version.fromString("15.3")) {
-+            return XcodeInstallation(
-+                version = version,
-+                build = build,
-+                path = path
-+            )
-+        }
+ import lldb
+ 
+@@ -28,3 +28,8 @@ def __init__(self):
+         self._array_header_type: Optional[lldb.SBType] = None
+         self._runtime_type_size: Optional[lldb.value] = None
+         self._runtime_type_alignment: Optional[lldb.value] = None
++        # Modules fully handled (registered or ruled out).
++        self.registered_module_keys: Set[str] = set()
++        # Kotlin modules with `^<module>\.` registered but ObjC prefix not yet
++        # readable; key -> attempt count.
++        self.pending_prefix: Dict[str, int] = {}
+```
+
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/module_registration.py` (added, +165/-0)
+```diff
+@@ -0,0 +1,165 @@
++import re
++from typing import List, Optional
 +
-         val xcodeInfoPath = path / "Contents" / "Info"
-         val pluginCompatabilityIdResult = Shell.exec("/usr/bin/defaults", "read", xcodeInfoPath.value, "DVTPlugInCompatibilityUUID")
-             .checkSuccessful {
-@@ -154,7 +164,7 @@ object XcodeHelper {
-         val version: String,
-         val build: String,
-         val path: Path,
--        val pluginCompatabilityId: String,
-+        val pluginCompatabilityId: String? = null,
-     ) {
-         val name: String = "Xcode $version ($build)"
-     }
++import lldb
++
++from .types.base import KOTLIN_CATEGORY
++from .types.summary import kotlin_objc_class_summary
++from .types.proxy import KonanObjcProxyTypeProvider
++from .cache import LLDBCache
++from .util.log import log
++
++# `_Konan_init_MyMod` (framework) or `_Konan_init_MyApp_kexe` (executable); group 1 = module name.
++_KONAN_INIT_RE = re.compile(r'^_Konan_init_([0-9a-zA-Z_]+?)(_kexe)?$')
++_KOTLIN_RUNTIME_MARKER = 'Kotlin_initRuntimeIfNeeded'
++_KOTLIN_BASE_OBJC_SYMBOL = '_OBJC_CLASS_RO_$_KotlinBase'
++# `name` pointer offset in the 64-bit ObjC class_ro_t; all current Apple targets are 64-bit.
++_OBJC_CLASS_RO_NAME_OFFSET = 6 * 4
++# Skipping these by PATH ALONE — before any symbol API realizes their symtab — is the launch-time win.
++_SYSTEM_PATH_MARKERS = ('/usr/lib', '/System/')
++# Cap ObjC-prefix retries: the read fails until dyld rebases the class_ro_t name pointer.
++_MAX_PREFIX_ATTEMPTS = 16
++
++
++def _module_key(module: lldb.SBModule) -> str:
++    # Fall back to path so two no-UUID modules don't collide on one key.
++    return module.GetUUIDString() or module.GetFileSpec().fullpath or ''
++
++
++def _is_candidate_module(module: lldb.SBModule) -> bool:
++    directory = module.GetFileSpec().GetDirectory() or ''
++    return not any(marker in directory for marker in _SYSTEM_PATH_MARKERS)
++
++
++def _is_kotlin_module(module: lldb.SBModule) -> bool:
++    return len(module.FindSymbols(_KOTLIN_RUNTIME_MARKER)) > 0
++
++
++def _kotlin_module_names(module: lldb.SBModule) -> List[str]:
++    names: List[str] = []
++    for symbol in module.symbols:
++        match = _KONAN_INIT_RE.match(symbol.name or '')
++        if match is None:
++            continue
++        module_name = match.group(1)
++        if module_name == 'stdlib':
++            continue
++        names.append(module_name)
++    return names
++
++
++def _read_objc_class_prefix(
++    target: lldb.SBTarget,
++    process: lldb.SBProcess,
++    base_symbols: lldb.SBSymbolContextList,
++) -> Optional[str]:
++    for symbol_context in base_symbols:
++        error = lldb.SBError()
++        symbol_addr = symbol_context.symbol.addr.GetLoadAddress(target)
++        name_addr = process.ReadPointerFromMemory(symbol_addr + _OBJC_CLASS_RO_NAME_OFFSET, error)
++        if not error.success:
++            continue
++        base_class_name = process.ReadCStringFromMemory(name_addr, 128, error)
++        if not error.success or not base_class_name:
++            continue
++        # `or None`: an empty prefix would build `^`, matching every type.
++        return base_class_name.removesuffix('Base') or None
++    return None
++
++
++def _register_specifiers(target: lldb.SBTarget, specifiers: List[lldb.SBTypeNameSpecifier]):
++    category = target.debugger.GetCategory(KOTLIN_CATEGORY)
++    for type_specifier in specifiers:
++        category.AddTypeSummary(
++            type_specifier,
++            lldb.SBTypeSummary.CreateWithFunctionName(
++                '{}.{}'.format(kotlin_objc_class_summary.__module__, kotlin_objc_class_summary.__name__),
++                lldb.eTypeOptionHideValue,
++            ),
++        )
++        category.AddTypeSynthetic(
++            type_specifier,
++            lldb.SBTypeSynthetic.CreateWithClassName(
++                '{}.{}'.format(KonanObjcProxyTypeProvider.__module__, KonanObjcProxyTypeProvider.__name__),
++            ),
++        )
++
++
++def _try_register_objc_prefix(
++    target: lldb.SBTarget,
++    process: lldb.SBProcess,
++    cache: 'LLDBCache',
++    module: lldb.SBModule,
++    key: str,
++) -> bool:
++    """Register `^<prefix>`. True when handled (registered / no base class / cap hit), False to retry."""
++    base_symbols = module.FindSymbols(_KOTLIN_BASE_OBJC_SYMBOL)
++    if not base_symbols:
++        return True  # no exported ObjC base class; module-name formatters suffice
++
++    prefix = _read_objc_class_prefix(target, process, base_symbols)
++    if prefix:
++        _register_specifiers(target, [lldb.SBTypeNameSpecifier('^{}'.format(prefix), lldb.eMatchTypeRegex)])
++        log(lambda: 'Registered ObjC prefix ^{} for {}.'.format(prefix, module.GetFileSpec().GetFilename()))
++        return True
++
++    attempts = cache.pending_prefix.get(key, 0) + 1
++    cache.pending_prefix[key] = attempts
++    if attempts >= _MAX_PREFIX_ATTEMPTS:
++        log(lambda: 'Gave up reading ObjC prefix for {} after {} stops; '
++            '^<prefix> formatting unavailable.'.format(module.GetFileSpec().GetFilename(), attempts))
++        return True
++    return False
++
++
++def _register_kotlin_module(
++    target: lldb.SBTarget,
++    process: lldb.SBProcess,
++    cache: 'LLDBCache',
++    module: lldb.SBModule,
++    key: str,
++) -> bool:
++    """First sight of a Kotlin module: register `^<module>\\.` now, then attempt the ObjC prefix."""
++    names = _kotlin_module_names(module)
++    if not names:
++        log(lambda: 'Kotlin marker present but no module names for {}; skipping.'.format(
++            module.GetFileSpec().Get
+```
+
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/stepping/KonanHook.py` (modified, +9/-0)
+```diff
+@@ -3,6 +3,8 @@
+ from .KonanStepIn import KonanStepIn
+ from .KonanStepOut import KonanStepOut
+ from .KonanStepOver import KonanStepOver
++from ..module_registration import scan_and_register_modules
++from ..util.log import log
+ 
+ KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS = 'KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS'
+ MAX_SIZE_FOR_STOP_REASON = 20
+@@ -18,6 +20,13 @@ def __init__(self, target: lldb.SBTarget, extra_args, _):
+         pass
+ 
+     def handle_stop(self, execution_context: lldb.SBExecutionContext, stream: lldb.SBStream) -> bool:
++        # Side-effect only: try/except so registration can never alter the
++        # stop/continue decision below.
++        try:
++            scan_and_register_modules(execution_context)
++        except Exception as e:
++            log(lambda: 'Kotlin module registration error: {}'.format(e))
++
+         is_bridging_functions_skip_enabled = not execution_context.target.GetEnvironment().Get(
+             KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS
+         )
 ```
 
 ---
 
-### Incident Patch 2: `d9affdb1` (2025-01-12)
-**Commit Message**: Fix using lower Xcode version than minimum required by macOS: _LSOpenURLsWithCompletionHandler() failed for the application /Applications/Xcode.app with error -10664.
+### Incident Patch 2: `e37c1c63` (2026-10-25)
+**Commit Message**: Fix: ObjC-bridged Kotlin fields rendered as `None` (#130)
 
-**File**: `src/macosMain/kotlin/co/touchlab/xcode/cli/XcodeHelper.kt` (modified, +8/-2)
+* Fix: ObjC-bridged Kotlin fields rendered as `None`
+
+* Add class name to summary
+
+---------
+
+Co-authored-by: Sam Hill <[REDACTED_EMAIL]>
+
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/types/base.py` (modified, +16/-0)
 ```diff
-@@ -44,8 +44,14 @@ object XcodeHelper {
-     }
+@@ -76,6 +76,22 @@ def obj_header_pointer(valobj: lldb.SBValue) -> lldb.SBValue:
+     return single_pointer(valobj).Cast(obj_header_type())
  
-     fun openInBackground(installation: XcodeInstallation) {
--        Shell.exec("/usr/bin/open", "-gjFa", installation.path.value).checkSuccessful {
--            "Couldn't open ${installation.name} at ${installation.path}!"
-+        // Fix using lower Xcode version than minimum required by macOS:
-+        // _LSOpenURLsWithCompletionHandler() failed for the application /Applications/Xcode.app with error -10664.
-+        // Usage: ./build/bin/macosArm64/debugExecutable/xcode-kotlin.kexe sync /Applications/Xcode.app
-+        val realXcodePath = "${installation.path.value}/Contents/MacOS/Xcode"
-+        logger.i { "Opening realXcodePath in background." }
-+        Console.echo("Opening realXcodePath in background.")
-+        Shell.exec("/usr/bin/open", "-gjF", realXcodePath).checkSuccessful {
-+            "Couldn't open ${installation.name} at $realXcodePath!"
-         }
-     }
  
-```
-
----
-
-### Incident Patch 3: `00970b1c` (2026-04-21)
-**Commit Message**: Fix: list count is incorrect (#129)
-
-**File**: `LLDBPlugin/touchlab_kotlin_lldb/types/KonanListSyntheticProvider.py` (modified, +29/-2)
-```diff
-@@ -10,9 +10,11 @@
- 
- class KonanListSyntheticProvider(KonanObjectSyntheticProvider):
-     __possible_backing_properties = {'backing', '$this_asList', 'backingArray'}
-+    __possible_size_properties = {'length'}
- 
-     def __init__(self, valobj: lldb.SBValue, type_info: lldb.value):
-         self._backing: KonanArraySyntheticProvider = None  # type: ignore
-+        self._size: Optional[int] = None
- 
-         super().__init__(valobj, type_info)
- 
-@@ -35,10 +37,14 @@ def update(self):
-             self._backing = backing
- 
-         self._backing.update()
-+        self._size = self._try_update_size()
-         return False
- 
-     def num_children(self):
--        return self._backing.num_children()
-+        if self._size is None:
-+            return self._backing.num_children()
-+        else:
-+            return self._size
- 
-     def has_children(self):
-         return True
-@@ -50,7 +56,12 @@ def get_child_at_index(self, index):
-         return self._backing.get_child_at_index(index)
- 
-     def to_string(self):
--        return self._backing.to_string()
-+        if self._size is None:
-+            return self._backing.to_string()
-+        elif self._size == 1:
-+            return '1 value'
-+        else:
-+            return '{} values'.format(self._size)
- 
-     def _create_backing(self, index: int, name: str) -> Optional[KonanArraySyntheticProvider]:
-         address = self.get_child_address_at_index(index)
-@@ -64,3 +75,19 @@ def _create_backing(self, index: int, name: str) -> Optional[KonanArraySynthetic
-             return None
-         else:
-             return KonanArraySyntheticProvider(backing_value, child_type_info)
-+
-+    def _try_update_size(self) -> Optional[int]:
-+        for index, name in enumerate(self._children_names):
-+            if name not in KonanListSyntheticProvider.__possible_size_properties:
-+                continue
-+            try:
-+                value = super().get_child_at_index(index)
-+                if value is None or not value.IsValid():
-+                    continue
-+                size = value.GetValueAsSigned()
-+                if size < 0:
-+                    continue
-+                return int(size)
-+            except BaseException:
-+                continue
++def objc_bridged_obj_header(cast_value: lldb.SBValue) -> Optional[lldb.SBValue]:
++    """If cast_value points at an ObjC instance wrapping a Kotlin object,
++    return the corresponding ObjHeader*. Otherwise, return None."""
++    if cast_value.unsigned == 0:
 +        return None
++    bridged = evaluate(
++        'void* __result = 0; (ObjHeader*)Kotlin_ObjCExport_refFromObjC((void*){:#x}, &__result)',
++        cast_value.unsigned,
++    )
++    if bridged is None or not bridged.IsValid() or bridged.error.Fail():
++        return None
++    if bridged.unsigned == 0 or bridged.unsigned == cast_value.unsigned:
++        return None
++    return bridged
++
++
+ def get_runtime_type(variable):
+     return strip_quotes(evaluate("(char *)Konan_DebugGetTypeName({:#x})", variable.unsigned).summary)
+ 
+```
+
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/types/proxy.py` (modified, +11/-6)
+```diff
+@@ -6,7 +6,7 @@
+ from .KonanNotInitializedObjectSyntheticProvider import KonanNotInitializedObjectSyntheticProvider
+ from .KonanBaseSyntheticProvider import KonanBaseSyntheticProvider
+ from .KonanZerroSyntheticProvider import KonanZerroSyntheticProvider
+-from .base import get_type_info, obj_header_pointer, single_pointer
++from .base import get_type_info, obj_header_pointer, objc_bridged_obj_header, single_pointer
+ from .select_provider import select_provider
+ 
+ 
+@@ -20,11 +20,16 @@ def __getattr__(self, item):
+             cast_value = obj_header_pointer(self._valobj)
+             type_info = get_type_info(cast_value)
+ 
+-            if not type_info:
+-                self._proxy = KonanNotInitializedObjectSyntheticProvider(self._valobj)
+-                return
+-
+-            self._proxy = select_provider(cast_value, type_info)
++            if type_info:
++                self._proxy = select_provider(cast_value, type_info)
++            else:
++                bridged = objc_bridged_obj_header(cast_value)
++                bridged_type_info = get_type_info(bridged) if bridged is not None else None
++                if bridged_type_info:
++                    self._proxy = select_provider(bridged, bridged_type_info)
++                else:
++                    self._proxy = KonanNotInitializedObjectSyntheticProvider(self._valobj)
++                    return
+ 
+         return getattr(self._proxy, item)
+ 
+```
+
+**File**: `LLDBPlugin/touchlab_kotlin_lldb/types/summary.py` (modified, +53/-5)
+```diff
+@@ -1,8 +1,41 @@
++from typing import Optional
++
+ import lldb
+ 
+ from .select_provider import select_provider
+-from .base import get_type_info, obj_header_pointer, single_pointer
+-from ..util import log, evaluate
++from .base import get_type_info, obj_header_pointer, objc_bridged_obj_header, single_pointer
++from ..util import log, evaluate, strip_quotes
++
++
++def _objc_class_name(objc_ptr: int) -> Optional[str]:
++    """Return the ObjC class name for an instance pointer, or None if it can't
++    be read. Used to label a bridged Kotlin object with the class the user
++    actually wrote (e.g. their Swift type) instead of a bare address."""
++    name = evaluate('(const char*)object_getClassName((void*){:#x})', objc_ptr)
++    if name is None or not name.IsValid() or name.error.Fail():
++        return None
++    return strip_quotes(name.summary) or None
++
++
++def _objc_bridge_summary_fallback(cast_value: lldb.SBValue) -> str:
++    """Build a summary for a Kotlin object that the Kotlin runtime can't
++    describe via Konan_DebugObjectToUtf8Array (typically a Kotlin wrapper
++    around a Swift class implementing a Kotlin interface). It looks up the
++    underlying ObjC pointer via Kotlin_ObjCExport_refToObjC and the instance's
++    ObjC class name so the user sees something like `SwiftCallback objc@0x…`
++    instead of `None`."""
++    if cast_value.unsigned == 0:
++        return "@0x0"
++    objc_ptr = evaluate(
++        '(void*)Kotlin_ObjCExport_refToObjC((ObjHeader*){:#x})',
++        cast_value.unsigned,
++    )
++    if objc_ptr is not None and objc_ptr.error.Success() and objc_ptr.unsigned != 0:
++        class_name = _objc_class_name(objc_ptr.unsigned)
++        if class_name:
++            return "{} objc@{:#x}".format(class_name, objc_ptr.unsigned)
++        return "objc@{:#x}".format(objc_ptr.unsigned)
++    return "@{:#x}".format(cast_value.unsigned)
+ 
+ 
+ def kotlin_object_type_summary(valobj: lldb.SBValue, internal_dict):
+@@ -13,20 +46,35 @@ def kotlin_object_type_summary(valobj: lldb.SBValue, internal_dict):
+     type_info = internal_dict["type_info"] if "type_info" in internal_dict.keys() else get_type_info(cast_value)
+ 
+     if not type_info:
++        bridged = objc_bridged_obj_header(cast_value)
++        if bridged is not None:
++            bridged_type_info = get_type_info(bridged)
++            if bridged_type_info:
++                log(lambda: "kotlin_object_type_summary: bridged ObjC->Kotlin {:#x}->{:#x}".format(
++                    cast_value.unsigned, bridged.unsigned))
++                provider = select_provider(bridged, bridged_type_info)
++                provider.update()
++                bridged_summary = provider.to_string()
++                if bridged_summary is not None:
++                    return bridged_summary
++            return _objc_bridge_summary_fallback(bridged)
+         return cast_value.GetValue()
+ 
+     provider = select_provider(cast_value, type_info)
+     log(lambda: "kotlin_object_type_summary({:#x} - {})".format(cast_value.unsigned, type(provider).__name__))
+     provider.update()
+-    return provider.to_string()
++    summary = provider.to_string()
++    if summary is None and cast_value.unsigned != 0:
++        return _objc_bridge_summary_fallback(cast_value)
++    return summary
+ 
+ 
+ def kotlin_objc_class_summary(objc_obj: lldb.SBValue, internal_dict):
+-    # """Hook that is run by lldb to display a Kotlin ObjC class wrapper."""
++    """Hook that is run by lldb to display a Kotlin ObjC class wrapper."""
+     objc_obj = single_pointer(objc_obj)
+ 
+     konan_obj = evaluate(
+         'void* __result = 0; (ObjHeader*)Kotlin_ObjCExport_refFromObjC((void*){:#x}, &__result)',
+         objc_obj.unsigned
+     )
+-    return kotlin_object_type_summary(konan_obj, internal_dict)
+\ No newline at end of file
++    return kotlin_object_type_summary(konan_obj, internal_dict)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #131** (2026-10-25): Fix: slow app launch under the debugger (@wellingtoncosta)
+- **PR #130** (2026-10-25): Fix: ObjC-bridged Kotlin fields rendered as `None` (@wellingtoncosta)
 - **PR #129** (2026-04-21): Fix: list count is incorrect (@Insta360-Infra)
 - **PR #121** (2025-04-15): Fix: An address is returned when the string is empty (@TheDadda)
 - **PR #119** (2025-04-08): Replace kotlinx.cli with Clikt and make stuff suspending. (@TadeasKriz)
 - **PR #117** (2025-04-08): Fix using lower Xcode version than minimum required by macOS: _LSOpenURLsWithCompletionHandler() failed for the application /Applications/Xcode.app with error -10664. (@xiaobailong24)
-- **PR #111** (2024-07-06): Improve type summaries and children synthetization. (@TadeasKriz)
-- **PR #108** (2024-06-11): Fix info command for 15.3 (@kpgalligan)
 
 ---
 
@@ -813,28 +1138,57 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash for Xcode 15.3
+## X. slow app launch under the debugger (#131)
 
 **RULE**:
-When implementing operations in `src/macosMain/kotlin/co/touchlab/xcode/cli/PluginManager.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/xcode-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `LLDBPlugin/touchlab_kotlin_lldb/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in touchlab/xcode-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86b78fb1`: crash for Xcode 15.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56560d20`: slow app launch under the debugger (#131). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/macosMain/kotlin/co/touchlab/xcode/cli/PluginManager.kt`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `LLDBPlugin/touchlab_kotlin_lldb/__init__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            xcodeInstallations.mapNotNull { it.pluginCompatabilityId?.let { PropertyList.Object.String(it) } }
+from .types.summary import kotlin_object_type_summary
+from .types.proxy import KonanProxyTypeProvider
+    debugger.HandleCommand('target stop-hook add -P {}.{}'.format(__name__, KonanHook.__name__))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-            xcodeInstallations.map { PropertyList.Object.String(it.pluginCompatabilityId) }
+from typing import Optional
+from .types.summary import kotlin_object_type_summary, kotlin_objc_class_summary
+from .types.proxy import KonanProxyTypeProvider, KonanObjcProxyTypeProvider
+KONAN_INIT_PREFIX = '_Konan_init_'
+KONAN_INIT_MODULE_NAME = '[0-9a-zA-Z_]+'
+KONAN_INIT_SUFFIX = '_kexe'
+    configure_objc_types_init(debugger)
+
+def configure_objc_types_init(debugger: lldb.SBDebugger):
+    target = debugger.GetDummyTarget()
+    breakpoint = target.BreakpointCreateByRegex(
+        "^{}({})({})?$".format(KONAN_INIT_PREFIX, KONAN_INIT_MODULE_NAME, KONAN_INIT_SUFFIX)
+    )
+    breakpoint.SetOneShot(True)
+    breakpoint.SetAutoContinue(True)
+    breakpoint.SetScriptCallbackFunction('{}.{}'.format(__name__, configure_objc_types_breakpoint.__name__))
+
+
+def configure_objc_types_breakpoint(frame: lldb.SBFrame, bp_loc: lldb.SBBreakpointLocation, internal_dict):
+    process = frame.thread.process
+    target = process.target
+
+    symbols = target.FindSymbols('_OBJC_CLASS_RO_$_KotlinBase')
+
+    base_class_name: Optional[str] = None
+    for symbol_context in symbols:
+        error = lldb.SBError()
+        name_addr = process.ReadPointerFromMemory(symbol_context.symbol.addr.GetLoadAddress(target) 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86b78fb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56560d20` are properly handled with clean fallback behavior.

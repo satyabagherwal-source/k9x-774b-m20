@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T21:15:24.036Z",
+  "last_updated": "2026-10-25T21:27:18.769Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "adbc963f8ca212e0960490be6dcac4cfcf499a8846b91853a415ca293cc2a4dc",
-      "verified_at": "2026-10-21T01:36:31.411Z",
+      "content_hash": "c61238734cc88c9987b5f0d82c14b0476bfd4b566f5e49fc9a542e8dd118164e",
+      "verified_at": "2026-10-25T21:27:18.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T01:36:31.411Z"
+      "last_updated": "2026-10-25T21:27:18.764Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -12621,14 +12621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-touchlab-xcode-kotlin",
-      "content_hash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
-      "verified_at": "2026-10-19T16:43:41.782Z",
+      "content_hash": "99a16c81b2eb014ebaf47f7c1bd9d0f06aafe4da5acaafebed8501c4fc8572bd",
+      "verified_at": "2026-10-25T21:25:38.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:43:41.782Z"
+      "last_updated": "2026-10-25T21:25:38.045Z"
     },
     "JeffLi1993/seo-audit-skill": {
       "repository": "JeffLi1993/seo-audit-skill",

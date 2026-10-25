@@ -5005,3 +5005,5 @@ Every entry in this ledger must capture:
 | `learn-github-primer-react` | `https://github.com/primer/react` | `190fafd9` | Multi-dimensional audit evidence | 2026-10-25T21:08:40.996Z |
 | `learn-github-touchlab-skie` | `https://github.com/touchlab/SKIE` | `25bb2b91` | Multi-dimensional audit evidence | 2026-10-25T21:15:16.524Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-25T21:15:24.022Z |
+| `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `56560d20` | Multi-dimensional audit evidence | 2026-10-25T21:25:38.037Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-25T21:27:18.756Z |

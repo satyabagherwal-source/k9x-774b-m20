@@ -4998,3 +4998,5 @@
 | `CYCLE-20261025-LBC1` | `2026-10-25T21:08:40.993Z` | `primer/react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3483` | Yes (`36721dc2...`) |
 | `CYCLE-20261025-TSIX` | `2026-10-25T21:15:16.521Z` | `touchlab/SKIE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4450` | Yes (`a256d453...`) |
 | `CYCLE-20261025-TYB7` | `2026-10-25T21:15:24.019Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`dc847eb4...`) |
+| `CYCLE-20261025-7436` | `2026-10-25T21:25:38.034Z` | `touchlab/xcode-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4451` | Yes (`99a16c81...`) |
+| `CYCLE-20261025-99SX` | `2026-10-25T21:27:18.753Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4452, Rule 4453, Rule 4454` | Yes (`c6123873...`) |
