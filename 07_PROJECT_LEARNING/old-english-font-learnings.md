@@ -280,3 +280,15 @@ This document records empirical learnings, forensic bug investigations, and patt
 
 
 
+
+### INC-28: Google AdSense "Low-Value Content" & "ads.txt Not Found" Resolution Playbook
+* **Context**: User uploaded screenshot of Google AdSense site approval portal showing: `oldenglishfontfree.com` | `Needs attention` | `Low value content` | `Not found` (for ads.txt) dated Oct 18, 2026.
+* **Forensic Root Cause Analysis**:
+  1. *ads.txt Tracking Casing*: The file was tracked in git as `public/Ads.txt` (capital A). While Windows is case-insensitive, Linux edge servers and Cloudflare Pages URL routing are strictly case-sensitive. Requests directly to lowercase `/ads.txt` could fail or rely on 301 redirects, which AdSense verification crawlers may reject or timeout on.
+  2. *Missing Head Script Tag*: The site lacked the official AdSense client snippet (`<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5901471283694215" crossorigin="anonymous"></script>`) in `src/layouts/Layout.astro`. Without this tag, AdSense could not perform automated on-page tag detection.
+  3. *Review Timeline Mismatch*: The AdSense automated review was executed on October 18, 2026, when the site was still an early MVP with ~20 fonts and prior to the comprehensive 124-font expansion, 9-category educational paleography guides, and 14-language internationalization suite.
+* **Architectural Remediation**:
+  1. *Git Casing Normalization*: Executed two-stage `git mv` to ensure `public/ads.txt` is tracked in git index in strictly lowercase.
+  2. *AdSense Verification Integration*: Injected asynchronous `adsbygoogle.js` with publisher ID `ca-pub-5901471283694215` into `src/layouts/Layout.astro` right before `</head>` in compliance with Rule 1179.
+  3. *Live Verification*: Probed `https://oldenglishfontfree.com/ads.txt` verifying HTTP 200 OK, `Content-Type: text/plain; charset=utf-8`, and exact body `google.com, pub-5901471283694215, DIRECT, f08c47fec0942fa0`.
+  4. *Edge Deployment*: Recompiled static production bundle (2,088 pages) and deployed to Cloudflare Pages edge.

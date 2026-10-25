@@ -321567,3 +321567,11 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `796c21ca` are properly handled with clean fallback behavior.
+
+### Rule 4380: Google AdSense Dual-Verification & Tool-Site E-E-A-T Content Elevation Standard
+- **Context**: Tool-based and generator web applications (font generators, canvas studios, calculators) face an 85%+ initial rejection rate from Google AdSense with reasons: "Low-Value Content / Thin Utility" and "ads.txt: Not Found".
+- **Invariant**:
+  1. *Dual Verification*: Never rely solely on `ads.txt`. Always inject the official asynchronous AdSense script tag `<script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXX" crossorigin="anonymous"></script>` into the `<head>` of the global layout, adhering strictly to Rule 1179 (after primary SEO title, meta descriptions, and canonical tags).
+  2. *Strict Lowercase ads.txt File Casing*: Git and edge deployments must track `public/ads.txt` in strictly lowercase (`ads.txt`, never `Ads.txt`). On Linux-based edge runners (Cloudflare Pages, Vercel, Netlify), case mismatches return 404 to automated IAB Tech Lab crawlers. Always serve `ads.txt` with HTTP 200 OK and `Content-Type: text/plain; charset=utf-8`.
+  3. *Tool-Site Substantive Text Shield*: AdSense crawlers cannot execute JavaScript or canvas rendering. An interactive tool must be fortified with authoritative educational guides, taxonomy handbooks, category paleography deep dives (>= 400 words per category), and complete legal trust disclosures (`/about/`, `/privacy/`, `/license/`, `/contact/`).
+  4. *Console Recrawl Directive*: After deploying fixes, AdSense automated bots do not immediately recrawl cached status. The site owner must explicitly trigger "Check for updates" on ads.txt and click "Request review" under the site approval tab in Google AdSense Console.
