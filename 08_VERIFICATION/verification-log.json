@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261021-TT1D",
-    "timestamp": "2026-10-21T18:20:38.593Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "a0bc6e566f93e9550a73b8228cfd99310407a7a97adba360a06677e353db2f97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-244Y",
-    "timestamp": "2026-10-21T18:27:06.226Z",
-    "repository": "LifeSciForge/seo-auditor",
-    "learningId": "learn-github-lifesciforge-seo-auditor",
-    "contentHash": "1cf29fd1d6763cd778460ad0027beb432a85e2be0003bb9afa8d668b9847c74b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-ADVM",
-    "timestamp": "2026-10-21T18:33:32.098Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "6042b497483e9ca1d9676d72c479d6e0968b797ac8ed1d061d100cca659fa2fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-IJ1R",
-    "timestamp": "2026-10-21T18:39:52.047Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "1cf7e5d3b9381b5f68ca89a88c22c5e149e83d1bd057c711d0520b8263803138",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261021-QFKS",
-    "timestamp": "2026-10-21T18:46:00.796Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "0f2c1743e1854a340469b42e5704e2694f6a4ca8bbe95f9127aed78013d17397",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261021-QHVP",
     "timestamp": "2026-10-21T18:46:03.781Z",
     "repository": "trufflesecurity/trufflehog",
@@ -7490,6 +7415,81 @@
     "repository": "influxdata/influxdb",
     "learningId": "learn-github-influxdata-influxdb",
     "contentHash": "eaee8df6720047da83f998a1c93ab42f5936d441fe5f166145b78bc18bb9933d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-B3BF",
+    "timestamp": "2026-10-25T10:16:52.875Z",
+    "repository": "vikejs/vike",
+    "learningId": "learn-github-vikejs-vike",
+    "contentHash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-B4WB",
+    "timestamp": "2026-10-25T10:16:54.923Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-B7VR",
+    "timestamp": "2026-10-25T10:16:58.791Z",
+    "repository": "lysine-dev/okio",
+    "learningId": "learn-github-lysine-dev-okio",
+    "contentHash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-BA8I",
+    "timestamp": "2026-10-25T10:17:01.842Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261025-BALG",
+    "timestamp": "2026-10-25T10:17:02.308Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "64af429cf7f1c12e1867fef695160a2f1aa8bf4e97dc83c213105a5e61de5c48",
-    "lastHarvestedAt": "2026-10-20T16:02:28.213Z",
+    "contentHash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
+    "lastHarvestedAt": "2026-10-25T10:17:01.845Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "f117827b",
+    "sourceVersion": "a6c26c78",
     "license": "NOASSERTION",
-    "contentHash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
-    "lastHarvestedAt": "2026-10-22T17:58:13.506Z",
+    "contentHash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
+    "lastHarvestedAt": "2026-10-25T10:16:54.926Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "c7c11377",
+    "sourceVersion": "c11f9323",
     "license": "NOASSERTION",
-    "contentHash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
-    "lastHarvestedAt": "2026-10-20T15:17:20.478Z",
+    "contentHash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
+    "lastHarvestedAt": "2026-10-25T10:17:02.311Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -5763,10 +5763,10 @@
     "repository": "vikejs/vike",
     "platform": "github",
     "sourceUrl": "https://github.com/vikejs/vike",
-    "sourceVersion": "c8c53e6f",
+    "sourceVersion": "7a16befc",
     "license": "MIT",
-    "contentHash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
-    "lastHarvestedAt": "2026-10-22T21:41:46.185Z",
+    "contentHash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
+    "lastHarvestedAt": "2026-10-25T10:16:52.877Z",
     "learningId": "learn-github-vikejs-vike"
   },
   "nvidia-cuda-rust": {
@@ -6653,10 +6653,10 @@
     "repository": "lysine-dev/okio",
     "platform": "github",
     "sourceUrl": "https://github.com/lysine-dev/okio",
-    "sourceVersion": "c0ac5061",
+    "sourceVersion": "334c028c",
     "license": "Apache-2.0",
-    "contentHash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
-    "lastHarvestedAt": "2026-10-19T06:26:22.896Z",
+    "contentHash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
+    "lastHarvestedAt": "2026-10-25T10:16:58.794Z",
     "learningId": "learn-github-lysine-dev-okio"
   },
   "nginx-kubernetes-ingress": {

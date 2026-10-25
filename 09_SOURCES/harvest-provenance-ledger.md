@@ -4772,3 +4772,8 @@ Every entry in this ledger must capture:
 | `learn-github-insertkoinio-koin` | `https://github.com/InsertKoinIO/koin` | `d39a4f8e` | Multi-dimensional audit evidence | 2026-10-25T10:10:53.079Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `4dbe4f57` | Multi-dimensional audit evidence | 2026-10-25T10:10:53.541Z |
 | `learn-github-influxdata-influxdb` | `https://github.com/influxdata/influxdb` | `185688a5` | Multi-dimensional audit evidence | 2026-10-25T10:10:58.469Z |
+| `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `7a16befc` | Multi-dimensional audit evidence | 2026-10-25T10:16:52.877Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `a6c26c78` | Multi-dimensional audit evidence | 2026-10-25T10:16:54.926Z |
+| `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `334c028c` | Multi-dimensional audit evidence | 2026-10-25T10:16:58.794Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-25T10:17:01.845Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c11f9323` | Multi-dimensional audit evidence | 2026-10-25T10:17:02.311Z |

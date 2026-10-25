@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T10:10:58.473Z",
-  "total_cycles_completed": 4742,
-  "total_learnings_persisted": 4742,
-  "total_rules_promoted": 4107,
+  "last_updated": "2026-10-25T10:17:02.315Z",
+  "total_cycles_completed": 4747,
+  "total_learnings_persisted": 4747,
+  "total_rules_promoted": 4113,
   "history": [
-    {
-      "timestamp": "2026-10-24T19:35:06.270Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:41:27.546Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:43:48.072Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:44:12.408Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-24T19:50:13.340Z",
-      "repository": "h3js/h3",
-      "learningId": "learn-github-h3js-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-24T19:52:49.977Z",
       "repository": "nezhahq/nezha",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-25T10:10:58.473Z",
       "repository": "influxdata/influxdb",
       "learningId": "learn-github-influxdata-influxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:16:52.882Z",
+      "repository": "vikejs/vike",
+      "learningId": "learn-github-vikejs-vike",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:16:54.929Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:16:58.797Z",
+      "repository": "lysine-dev/okio",
+      "learningId": "learn-github-lysine-dev-okio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:17:01.849Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-25T10:17:02.315Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source**: github ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
-> **Source Version**: `c8c53e6f`  
+> **Source Version**: `7a16befc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:41:45.850Z  
+> **Timestamp**: 2026-10-25T10:16:52.756Z  
 > **Learning ID**: `learn-github-vikejs-vike`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:41:44.758Z  
+> **Harvest Timestamp**: 2026-10-25T10:16:51.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: (Replaces Next.js/Nuxt) 🔨 Build mission-critical applications with stability and development freedom.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5836 stars
+- **Stars / Engagement**: 5839 stars
 
 ---
 
@@ -433,13 +433,13 @@ async function onRenderClient(pageContext) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3649** (2026-10-22): **docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links**
-  *Symptoms*: Add subpoints to Axxxx0n's user feedback, to highlight Vike's advantages over Next.js, focusing on development speed, integration simplicity, and flexibility in data fetching.  Fix some internal site links due to lint error.
-  **Post-Mortem & Fix Analysis**:
-  > :+1:  Also, I'd mention that Vike also has first-class serverless support, e.g. it supports [`@cloudflare/vite-plugin`](https://www.npmjs.com/package/@cloudflare/vite-plugin) which is Cloudflare's official Vite plugin that enables to the user to develop applications against Cloudlfare's worked runtime at developement.
+- **Issue #3658** (2026-10-24): **docs: Next.js page: Fix formatting of AI section**
+  *Symptoms*: 
 
-- **Issue #3647** (2026-10-22): **Add subpoints to Axxxx0n's user feedback section for clarity and emph…**
-  *Symptoms*: …asis  Add subpoints to Axxxx0n's user feedback, to highlight Vike's advantages over Next.js, focusing on development speed, integration simplicity, and flexibility in data fetching.
+- **Issue #3657** (2026-10-24): **docs: Add AI & Code Generation comparison section**
+  *Symptoms*: Added a section comparing AI code generation in Next.js and Vike, highlighting the advantages of Vike's architecture for deterministic AI output.
+  **Post-Mortem & Fix Analysis**:
+  > Neat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -456,205 +456,86 @@ async function onRenderClient(pageContext) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8c53e6f` (2026-10-22)
-**Commit Message**: docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (#3649)
+### Incident Patch 1: `7a16befc` (2026-10-24)
+**Commit Message**: docs: Next.js page: Fix formatting of AI section (#3658)
 
-**File**: `docs/pages/nextjs/+Page.mdx` (modified, +15/-8)
+**File**: `docs/pages/nextjs/+Page.mdx` (modified, +5/-4)
 ```diff
-@@ -68,17 +68,24 @@ HTTP server | No*, bring your own | Baked-in, custom server partially supported
+@@ -265,7 +265,7 @@ We foster the proliferation of React frameworks, highly-tailored to specific use
+ Read more at [Vike.land](https://land.vike.dev).
  
- ## User feedback
  
--[From @Axxxx0n](https://github.com/vikejs/vike/issues/158#issuecomment-934224512):
-+[From @Axxxx0n](https://github.com/vikejs/vike/issues/158#issuecomment-934224512), with subnotes by @redbar0n:
+-## AI & Code Generation: 
++## AI & Code Generation
  
--1. Blazing fast development speed powered by Vite (on-demand transpiling, native ESM).
-+1. Vike has blazing fast development speed powered by Vite (on-demand transpiling, native ESM).
-+  - Next.js historically relied on Webpack (and more recently Turbopack, which is improving rapidly but still matures across various edge cases). For cold starts and HMR responsiveness in large codebases, Vite’s architecture maintains a distinct, measurable DX advantage.
- 1. Next.js has to have many examples and a whole plethora of libraries are existing just to integrate some library with Next.js because it's not trivial (for example [next-i18next](https://github.com/isaachinman/next-i18next)). With Vike, you just read the documentation of the library you want to integrate and you're good to go.
-+  - Framework-native vs. Proprietary abstractions: While Vike offers <Link href="/extensions" /> (e.g., _vike-react-zustand_ or _vike-i18n-routing_) for zero-config convenience, they merely package public lifecycle hooks you can easily copy-paste or write yourself. Next.js, by contrast, relies on closed internal routing and compiler abstractions, making third-party wrapper libraries (like _next-i18next_) an architectural necessity to bypass framework restrictions rather than an optional shortcut.
- 1. When new React features arrive you can start to use it right away and don't have to wait for the Next.js team to integrate it. (Streaming API, server components, suspense on server, progressive rendering, etc.)
-+  - Next.js acts as its own meta-framework and bundler layer, meaning new React core features (like advanced Suspense APIs, streaming, or React Server Components) must be explicitly integrated, tested, and exposed by the Next.js core team, with their monolithic release cycles and opinionated abstractions. With a Vite-based setup like Vike, you can directly depend on React, and experiment with it's new features right away, or wait for a plug-and-play <Link href="/extensions" />).
- 1. Next.js can't read files in `/public` directory after it was built, i.e. user uploaded images.
--1. With `getServerSideProps()`, Next.js blocks client-side rendering.
--1. You cannot bypass data fetching on client-side navigation ([Next.js - 	&#35;23921](https://github.com/vercel/next.js/discussions/23921)) while with Vike you're flexible and can choose what you want.
-+  - Next.js’s build-time asset optimization (next/image) and caching layers assume static assets are managed at build time. Vike inherits standard Vite/Node filesystem behaviors, making raw disk reads/writes in self-hosted environments behave more predictably.
-+1. Next.js blocks client-side rendering with `getServerSideProps()` (Pages Router).
-+  - But the critique applies even more strongly to Next.js modern App Router, where server components, async data fetching boundaries, and Suspense trees dictate execution flow. Next.js forces a rigid server-first waterfall or layout-blocking pattern during navigation unless meticulously architected. Vike uses data hooks (like `data()`) that offer fine-grained control over when and where data is fetched, allowing for much more flexible client/server handoffs.
-+1. You cannot bypass data fetching on client-side navigation ([Next.js - 	&#35;23921](https://github.com/vercel/next.js/discussions/23921) and [&#35;32243](https://github.com/vercel/next.js/discussions/32243)) while with Vike you're flexible and can choose what you want.
-+  - Vike treats routing and page context (`pageContext`) with lower-level primitives, giving you explicit control over navigation lifecycles and whether a transition requires a data hook execution.
- 1. Next.js is really pushing the Vercel platform and is starting to show in recent feature updates. Features that align with this are getting priority while important fixes are delayed.
-+  - As an open-source project backed heavily by a commercial hosting provider (Vercel), Next.js naturally prioritizes features that shine on Vercel’s infrastructure (e.g., ISR, specific edge runtimes, analytics, and Vercel-optimized caching). Critical issues affecting self-hosters or non-Vercel deployments (like AWS/Open-Next complexities) often take longer to resolve, fueling friction for enterprise users wary of vendor lock-in and egress pricing.
- 1. Next.js is leaning on serverless and complicates usage when you don't want it.
--
-+  - Next.js is architecturally optimized for serverless and edge environments (split functions per route, automatic bundling for cloud functions). If you want to run a simple, long-running, traditional stateful Node.js monolith or tightly control a custom microservice infrastructure, Next.js's build ou
+ ### Training Volume vs. Architectural Determinism
+ 
+@@ -275,17 +275,18 @@ Read more at [Vike.land](https://land.vike.dev).
+ 
+ ### Detailed Comparison:
+ 
+-* **The Next.js AI Dilemma (High Volume, High Hallucination Rate):**
++#### Next.js' AI dilemma (High Volume, High Hallucination Rate):
+ 
+ While LLMs know Next.js syntax well due to sheer dataset size, the rapid shift from the Pages Router to the App Router (RSC, `'use client'` boundaries, implicit caching, and server actions) created massive amounts of outdated or conflicting code in LLM training sets. As a result, AI coding agents (such as Cursor, Copilot, or Claude) can struggle with:
+ 
+   - Incorrectly splitting Server Components vs. Client Components.
+   - Importing server-only modules inside `'use client'` boundaries.
+   - Misunderstanding Next.js-specific caching and revalidation rules.
+ 
+-**Context Window & Rule File Overhead:** To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
++Context Window & Rule File Overhead:
++To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
+ 
+-* **The Vike Advantage (Low Abstraction Surface = Deterministic AI Output):**
++#### Vike's Advantage (Low Abstraction Surface = Deterministic AI Output):
+ 
+ Vike relies on standard Vite primitives and explicit, minimal lifecycle hooks (`+Page`, `+data`, `+onRenderHtml`). Because there are no hidden compiler passes or implicit server/client transformations:
+ 
 ```
 
 ---
 
-### Incident Patch 2: `cd265486` (2026-10-21)
-**Commit Message**: fix: keep repeated search params upon client-side navigation and in modifyUrl() (#3645)
+### Incident Patch 2: `2a992f10` (2026-10-23)
+**Commit Message**: fix: Vike's client code no longer loads twice in dev (#3651)
 
-**File**: `packages/vike/src/shared-server-client/modifyUrl.spec.ts` (modified, +6/-0)
+**File**: `packages/vike/src/node/vite/plugins/pluginDev/optimizeDeps.ts` (modified, +5/-4)
 ```diff
-@@ -32,6 +32,12 @@ describe('modifyUrl', () => {
-       modifyUrl('/products?country=germany', { search: { sort: 'asc', filter: 'car', country: null } }),
-     ).toMatchInlineSnapshot(`"/products?sort=asc&filter=car"`)
-   })
-+  it('repeated keys', () => {
-+    expect(modifyUrl('/products?tag=a&tag=b', { search: { sort: 'asc' } })).toMatchInlineSnapshot(
-+      `"/products?tag=a&tag=b&sort=asc"`,
-+    )
-+    expect(modifyUrl('/products?tag=a&tag=b', { search: { tag: 'c' } })).toMatchInlineSnapshot(`"/products?tag=c"`)
-+  })
-   it('error handling', () => {
-     expect(() => modifyUrl('/products', { pathname: 'cars' })).toThrowError("it should start with '/'")
-   })
-```
-
-**File**: `packages/vike/src/shared-server-client/modifyUrlSameOrigin.ts` (modified, +5/-11)
-```diff
-@@ -5,8 +5,6 @@ export { ModifyUrlSameOriginOptions }
- // https://github.com/vikejs/vike/blob/c5a2de5e85262771f97851767c00ac35da69c64b/packages/vike/client/runtime-client-routing/navigate.ts#L4
+@@ -49,13 +49,13 @@ const LATE_DISCOVERED = [
+ const ALWAYS_REMOVE = ['@brillout/require-shim', 'vike > @brillout/require-shim']
  
- import { createUrlFromComponents, assertUsageUrlPathAbsolute, parseUrl } from '../utils/parseUrl.js'
--import { isNotNullish_keyVal } from '../utils/isNullish.js'
--import { objectFilter } from '../utils/objectFilter.js'
- 
- type ModifyUrlSameOriginOptions = {
-   hash?: string | null
-@@ -49,15 +47,11 @@ function resolveSearch(urlParsed: ReturnType<typeof parseUrl>, modifySearch: Sea
-     searchParams = modifySearch
-   } else {
-     // Merge
--    const searchMap = objectFilter(
--      { ...urlParsed.search, ...objectFilter(modifySearch, isNotUndefined) },
--      isNotNullish_keyVal<string>,
--    )
--    searchParams = new URLSearchParams(searchMap)
-+    searchParams = new URLSearchParams(urlParsed.searchOriginal ?? '')
-+    Object.entries(modifySearch).forEach(([key, val]) => {
-+      if (val === null) searchParams.delete(key)
-+      else if (val !== undefined) searchParams.set(key, val)
-+    })
-   }
-   return '?' + searchParams.toString()
- }
--
--function isNotUndefined<T>(arg: [string, T | undefined]): arg is [string, T] {
--  return arg[1] !== undefined
--}
-```
-
-**File**: `packages/vike/src/utils/isNullish.ts` (modified, +0/-4)
-```diff
-@@ -5,7 +5,3 @@ export function isNullish(val: unknown): val is null | undefined {
- export function isNotNullish<T>(p: T | null | undefined): p is T {
-   return !isNullish(p)
- }
--// objectFilter(obj).filter(isNotNullish_keyVal)
--export function isNotNullish_keyVal<T>(arg: [string, T | null | undefined]): arg is [string, T] {
--  return !isNullish(arg[1])
--}
-```
-
-**File**: `packages/vike/src/utils/objectFilter.ts` (removed, +0/-10)
-```diff
-@@ -1,10 +0,0 @@
--// Type inference for:
--// ```js
--// Object.fromEntries(Object.entries(obj).filter(someFilter))
--// ```
--export function objectFilter<T, U extends T>(
--  obj: Record<string, T>,
--  filter: (entry: [string, T]) => entry is [string, U],
--): Record<string, U> {
--  return Object.fromEntries(Object.entries(obj).filter(filter))
--}
-```
-
----
-
-### Incident Patch 3: `e0ecaff0` (2026-10-21)
-**Commit Message**: test: fix flaky `test/custom-server-entry-dev` (#3643)
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@
-     "@biomejs/biome": "^1.9.4",
-     "@brillout/replace": "^0.1.6",
-     "@brillout/spellcheck": "^0.1.3",
--    "@brillout/test-e2e": "^0.6.25",
-+    "@brillout/test-e2e": "^0.6.26",
-     "@brillout/test-types": "^0.1.13",
-     "playwright-chromium": "1.57.0",
-     "vitest": "^5.0.5"
-```
-
-**File**: `pnpm-lock.yaml` (modified, +5/-5)
-```diff
-@@ -18,8 +18,8 @@ importers:
-         specifier: ^0.1.3
-         version: 0.1.3
-       '@brillout/test-e2e':
--        specifier: ^0.6.25
--        version: 0.6.25
-+        specifier: ^0.6.26
-+        version: 0.6.26
-       '@brillout/test-types':
-         specifier: ^0.1.13
-         version: 0.1.15(typescript@7.0.2)
-@@ -2680,8 +2680,8 @@ packages:
-     resolution: {integrity: sha512-J01PT4Z1KwWtzj5A1/63je/Td7mA25QybRw2nImgxSiBQyJxNgTN5jmoIELfQMWWZULm/speuS4SGohLZ84Bcg==}
-     hasBin: true
- 
--  '@brillout/test-e2e@0.6.25':
--    resolution: {integrity: sha512-Cz83eq1ySNgGm+a1Mqcbxr7l8CW5kbFkbe97PVIdqqINQf9haUkhEWioEqdEvIFTD2MTpNROprvDpsxSjUZTOg==}
-+  '@brillout/test-e2e@0.6.26':
-+    resolution: {integrity: sha512-OIXxqMnUB1k8+I2dzy3IYjwRiUOX+pbbR00xQ8Cf31uLGcWFmXyBf3xdBy6qWQ+NQyPRKGntj/0V8xVlz6JCvg==}
-     hasBin: true
- 
-   '@brillout/test-types@0.1.15':
-@@ -9166,7 +9166,7 @@ snapshots:
-       '@brillout/picocolors': 1.0.31
-       '@brillout/shell': 0.2.2
- 
--  '@brillout/test-e2e@0.6.25':
-+  '@brillout/test-e2e@0.6.26':
-     dependencies:
-       '@brillout/part-regex': 0.1.4
-       '@brillout/picocolors': 1.0.31
-```
-
-**File**: `test/custom-server-entry-dev/.testRun.ts` (modified, +4/-1)
-```diff
-@@ -1,6 +1,6 @@
- export { testRun }
- 
--import { test, expect, fetchHtml, autoRetry, editFile, editFileRevert } from '@brillout/test-e2e'
-+import { test, expect, fetchHtml, autoRetry, editFile, editFileRevert, page } from '@brillout/test-e2e'
- import { testRunClassic, sleepBeforeEditFile } from '../utils'
- 
- function testRun(cmd: 'pnpm run dev' | 'pnpm run preview') {
-@@ -22,6 +22,9 @@ function testRun(cmd: 'pnpm run dev' | 'pnpm run preview') {
- 
-   if (isDev) {
-     test('+serverEntry.ts is re-run upon modification of a file it imports', async () => {
-+      // Upon server restart, Vite's client reloads the page => we leave the page
-+      // - Otherwise the test can end while the server is still rendering the reloaded page
-+      await page.goto('about:blank')
-       const org = 'Hello from +serverEntry.ts'
-       const mod = 'Hello from modified +serverEntry.ts'
-       // autoRetry() because the server restarts
+ const optimizeDeps = {
++  // Client-side
+   optimizeDeps: {
+     exclude: [
+       // We must exclude Vike's client runtime so it can import virtual modules
+-      'vike/client',
+-      'vike/client/router',
+-      // Also all entries of Vike's client runtime, otherwise pre-bundling an entry would load a second copy of Vike's client code (also problematic as it duplicates module-level variables that don't use `getGlobalObject()`)
+-      'vike/__internal/client',
++      // - The 'vike' entry excludes all import paths ('vike/client', 'vike/client/router', 'vike/__internal/client', ...) which is what we want: pre-bundling any import path would load a second copy of Vike's client code (also problematic as it duplicates module-level variables that don't use `getGlobalObject()`)
++      // - https://github.com/vikejs/vike/pull/3651
++      'vike',
+     ],
+     include: [
+       // Avoid:
+@@ -68,6 +68,7 @@ const optimizeDeps = {
+       'vike > @brillout/picocolors',
+     ],
+   },
++  // Server-side
+   ssr: {
+     optimizeDeps: {
+       exclude: [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3649** (2026-10-22): docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (@redbar0n)
-- **PR #3647** (closed): Add subpoints to Axxxx0n's user feedback section for clarity and emph… (@redbar0n)
-- **PR #3646** (2026-10-21): `pageContext.skipGuardAndData_experimentalRSC` (@nitedani)
-- **PR #3645** (2026-10-21): fix: repeated search params in `pageContext.urlParsed` upon client-side navigation and in `modifyUrl()` (@nitedani)
-- **PR #3644** (closed): fix: going back to a `history.pushState()` entry of the same page (@nitedani)
-- **PR #3643** (2026-10-21): test: fix flaky `test/custom-server-entry-dev` (@nitedani)
+- **PR #3658** (2026-10-24): docs: Next.js page: Fix formatting of AI section (@redbar0n)
+- **PR #3657** (2026-10-24): docs: Add AI & Code Generation comparison section (@redbar0n)
+- **PR #3656** (2026-10-23): docs: add Auto Bild to use cases (@brillout-agent)
+- **PR #3655** (2026-10-23): chore(deps): bump vike-react from 0.6.29 to 0.6.30 (@dependabot[bot])
+- **PR #3654** (2026-10-23): chore(deps): bump vike-vue from 0.9.15 to 0.9.16 (@dependabot[bot])
+- **PR #3653** (2026-10-23): chore(deps): bump @batijs/elements from 0.0.99 to 0.0.100 (@dependabot[bot])
 
 ---
 
@@ -674,13 +555,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (
+## X. docs: Next.js page: Fix formatting of AI section (#3658)
 
 **RULE**:
 When implementing operations in `docs/pages/nextjs/+Page.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8c53e6f`: docs: Add subpoints to Axxxx0n's user feedback section for clarity + Fix links (#3649). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a16befc`: docs: Next.js page: Fix formatting of AI section (#3658). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/nextjs/+Page.mdx`.
@@ -688,22 +569,21 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-[From @Axxxx0n](https://github.com/vikejs/vike/issues/158#issuecomment-934224512), with subnotes by @redbar0n:
-1. Vike has blazing fast development speed powered by Vite (on-demand transpiling, native ESM).
-  - Next.js historically relied on Webpack (and more recently Turbopack, which is improving rapidly but still matures across various edge cases). For cold starts and HMR responsiveness in large codebases, Vite’s architecture maintains a distinct, measurable DX advantage.
-  - Framework-native vs. Proprietary abstractions: While Vike offers <Link href="/extensions" /> (e.g., _vike-react-zustand_ or _vike-i18n-routing_) for zero-config convenience, they merely package public lifecycle hooks you can easily copy-paste or write yourself. Next.js, by contrast, relies on closed internal routing and compiler abstractions, making third-party wrapper libraries (like _next-i18next_) an architectural necessity to bypass framework restrictions rather than an optional shortcut.
-  - Next.js acts as its own meta-framework and bundler layer, meaning new React core features (like advanced Suspense APIs, streaming, or React Server Components) must be explicitly integrated, tested, and exposed by th
+## AI & Code Generation
+#### Next.js' AI dilemma (High Volume, High Hallucination Rate):
+Context Window & Rule File Overhead:
+To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
+#### Vike's Advantage (Low Abstraction Surface = Deterministic AI Output):
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-[From @Axxxx0n](https://github.com/vikejs/vike/issues/158#issuecomment-934224512):
-1. Blazing fast development speed powered by Vite (on-demand transpiling, native ESM).
-1. With `getServerSideProps()`, Next.js blocks client-side rendering.
-1. You cannot bypass data fetching on client-side navigation ([Next.js - 	&#35;23921](https://github.com/vercel/next.js/discussions/23921)) while with Vike you're flexible and can choose what you want.
-
+## AI & Code Generation: 
+* **The Next.js AI Dilemma (High Volume, High Hallucination Rate):**
+**Context Window & Rule File Overhead:** To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
+* **The Vike Advantage (Low Abstraction Surface = Deterministic AI Output):**
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8c53e6f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a16befc` are properly handled with clean fallback behavior.

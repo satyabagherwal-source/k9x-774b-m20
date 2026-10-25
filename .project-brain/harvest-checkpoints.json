@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-25T10:10:58.481Z",
+  "last_updated": "2026-10-25T10:17:02.322Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2111,14 +2111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "64af429cf7f1c12e1867fef695160a2f1aa8bf4e97dc83c213105a5e61de5c48",
-      "verified_at": "2026-10-20T16:02:28.218Z",
+      "content_hash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
+      "verified_at": "2026-10-25T10:17:01.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T16:02:28.218Z"
+      "last_updated": "2026-10-25T10:17:01.851Z"
     },
     "openbmb/MiniCPM-V-4.7-35B-A3B": {
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
-      "verified_at": "2026-10-22T17:58:13.521Z",
+      "content_hash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
+      "verified_at": "2026-10-25T10:16:54.931Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:58:13.521Z"
+      "last_updated": "2026-10-25T10:16:54.931Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
-      "verified_at": "2026-10-20T15:17:20.487Z",
+      "content_hash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
+      "verified_at": "2026-10-25T10:17:02.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T15:17:20.487Z"
+      "last_updated": "2026-10-25T10:17:02.317Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -8766,14 +8766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vikejs-vike",
-      "content_hash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
-      "verified_at": "2026-10-22T21:41:46.197Z",
+      "content_hash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
+      "verified_at": "2026-10-25T10:16:52.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:41:46.197Z"
+      "last_updated": "2026-10-25T10:16:52.885Z"
     },
     "NVIDIA/cuda-rust": {
       "repository": "NVIDIA/cuda-rust",
@@ -10041,14 +10041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lysine-dev-okio",
-      "content_hash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
-      "verified_at": "2026-10-19T06:26:22.900Z",
+      "content_hash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
+      "verified_at": "2026-10-25T10:16:58.800Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:26:22.900Z"
+      "last_updated": "2026-10-25T10:16:58.800Z"
     },
     "nginx/kubernetes-ingress": {
       "repository": "nginx/kubernetes-ingress",

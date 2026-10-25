@@ -4765,3 +4765,8 @@
 | `CYCLE-20261025-3DP0` | `2026-10-25T10:10:53.076Z` | `InsertKoinIO/koin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4231` | Yes (`3cf9abb8...`) |
 | `CYCLE-20261025-3E1U` | `2026-10-25T10:10:53.538Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4232` | Yes (`7cdbf1f4...`) |
 | `CYCLE-20261025-3HUQ` | `2026-10-25T10:10:58.466Z` | `influxdata/influxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4233` | Yes (`eaee8df6...`) |
+| `CYCLE-20261025-B3BF` | `2026-10-25T10:16:52.875Z` | `vikejs/vike` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vikejs-vike-learnings.md` | Yes (`c52ec982...`) |
+| `CYCLE-20261025-B4WB` | `2026-10-25T10:16:54.923Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4234` | Yes (`45312ee2...`) |
+| `CYCLE-20261025-B7VR` | `2026-10-25T10:16:58.791Z` | `lysine-dev/okio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4235` | Yes (`9820bd0d...`) |
+| `CYCLE-20261025-BA8I` | `2026-10-25T10:17:01.842Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4236, Rule 4237, Rule 4238` | Yes (`f6ede5f3...`) |
+| `CYCLE-20261025-BALG` | `2026-10-25T10:17:02.308Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4239` | Yes (`5e28044b...`) |

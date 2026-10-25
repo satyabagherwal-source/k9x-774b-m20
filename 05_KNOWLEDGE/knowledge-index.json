@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-25T10:10:58.421Z",
+  "last_updated": "2026-10-25T10:17:02.271Z",
   "total_verified_learnings": 1085,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30365,8 +30365,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "c7c11377",
-      "content_hash": "b9f38f6ef3caa7e842e448126ed8d3a31cf72ccf6363aa36f2facebb34e1e2bd",
+      "source_version": "c11f9323",
+      "content_hash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -30384,6 +30384,11 @@
           "number": 3240,
           "title": "log scanning link lookup failures",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4239,
+          "title": "codehost): handle bot identity changes in review summaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30391,7 +30396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T15:17:20.411Z",
+      "verified_at": "2026-10-25T10:17:02.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32719,17 +32724,23 @@
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "c0ac5061",
-      "content_hash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
+      "source_version": "334c028c",
+      "content_hash": "9820bd0d0f88195fe020c993187d4b96868b3b2e274c4753dadda0aad8b9ce5e",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4235,
+          "title": "Allow throttler to apply the new rate immediately (#1880)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:26:22.851Z",
+      "verified_at": "2026-10-25T10:16:58.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33270,8 +33281,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "f117827b",
-      "content_hash": "54f016882a78b878c43fd694ca1201416d412dc295b9838342ca75f606da592e",
+      "source_version": "a6c26c78",
+      "content_hash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -33294,6 +33305,11 @@
           "number": 3677,
           "title": "demo command tracking and simplify Try it copy (#4546)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4234,
+          "title": "Skip non-UTF-8 environment entries instead of panicking in config loading (#4563",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33301,7 +33317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:58:13.428Z",
+      "verified_at": "2026-10-25T10:16:54.875Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49895,8 +49911,8 @@
       "slug": "vikejs-vike",
       "platform": "github",
       "source_url": "https://github.com/vikejs/vike",
-      "source_version": "c8c53e6f",
-      "content_hash": "55c4ed2f93e8bd3a6a867658eabe161e7852752594252a053e7e90d58a256550",
+      "source_version": "7a16befc",
+      "content_hash": "c52ec98273bb3c08a46c8aca6e32f912fdc46b1d15bb4982986fd51f654f37f9",
       "dossier_path": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vikejs-vike-learnings.md",
       "promoted_rules": [
@@ -49941,7 +49957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:41:46.121Z",
+      "verified_at": "2026-10-25T10:16:52.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60015,16 +60031,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "64af429cf7f1c12e1867fef695160a2f1aa8bf4e97dc83c213105a5e61de5c48",
+      "content_hash": "f6ede5f37ec1ca211f680a133e35656ee16f97637200b807d5228bea013d7efb",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4236,
+          "title": "Hybrid Attention Layer Interleaving for Latency-Critical Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4237,
+          "title": "MoE Expert Load Balancing via Auxiliary Loss",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4238,
+          "title": "NVFP4 Quantization for Memory-Constrained Deployment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T16:02:28.171Z",
+      "verified_at": "2026-10-25T10:17:01.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -121815,6 +121847,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T10:10:58.411Z"
+    },
+    "rule-4234": {
+      "learning_id": "rule-4234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4234,
+      "title": "Skip non-UTF-8 environment entries instead of panicking in config loading (#4563",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "a6c26c78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:16:54.875Z"
+    },
+    "rule-4235": {
+      "learning_id": "rule-4235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4235,
+      "title": "Allow throttler to apply the new rate immediately (#1880)",
+      "source_url": "https://github.com/lysine-dev/okio",
+      "source_version": "334c028c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:16:58.749Z"
+    },
+    "rule-4236": {
+      "learning_id": "rule-4236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4236,
+      "title": "Hybrid Attention Layer Interleaving for Latency-Critical Inference",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:17:01.801Z"
+    },
+    "rule-4237": {
+      "learning_id": "rule-4237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4237,
+      "title": "MoE Expert Load Balancing via Auxiliary Loss",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:17:01.801Z"
+    },
+    "rule-4238": {
+      "learning_id": "rule-4238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4238,
+      "title": "NVFP4 Quantization for Memory-Constrained Deployment",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:17:01.801Z"
+    },
+    "rule-4239": {
+      "learning_id": "rule-4239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4239,
+      "title": "codehost): handle bot identity changes in review summaries",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "c11f9323",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-25T10:17:02.264Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `f117827b`  
+> **Source Version**: `a6c26c78`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:58:13.047Z  
+> **Timestamp**: 2026-10-25T10:16:54.681Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:58:11.379Z  
+> **Harvest Timestamp**: 2026-10-25T10:16:54.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9392 stars
+- **Stars / Engagement**: 9464 stars
 
 ---
 
@@ -2119,748 +2119,373 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab9cecb1` (2026-10-22)
-**Commit Message**: Fix demo command tracking and simplify Try it copy (#4546)
+### Incident Patch 1: `d187abf9` (2026-10-23)
+**Commit Message**: Skip non-UTF-8 environment entries instead of panicking in config loading (#4563)
 
-Demoshell's guide needs Bash to report command exit status before it can
-verify successful steps. Put the command-tracker prompt and OSC 133 exit
-markers in the startup rcfile, skipping the initial prompt so Studio
-does not mistake it for the app exiting. Keep the recipe and published
-guide representation aligned with the working demo.
+`std::env::vars()` panics when any environment entry is not valid UTF-8,
+so an unrelated variable could crash config loading. Read with `vars_os`
+and skip entries that don't decode; a non-UTF-8 `WORKTRUNK_*` override
+is ignored like any other unusable entry.
 
-Shorten the Try it page to the introduction, loading note, full-page
-fallback, attribution, and install link. This follows
-[#4280](https://github.com/max-sixty/worktrunk/pull/4280).
+> _This was written by Claude Code on behalf of max-sixty_
 
-Validation: ARM64 Alpine recipe and guide walkthrough; startup,
-failed-command, and successful-command marker checks; published demo
-walkthrough; docs sync test and build; rendered copy review.
+---------
 
-The full local gate ran 5,392 tests: 5,389 passed and three PowerShell
-tests failed because the installed PowerShell 7.5.2 crashes with `Stack
-overflow.` even on `pwsh -NoProfile -Command '1 + 1'` outside the
-repository. Pre-commit checks pass separately.
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `src/config/user/mod.rs` (modified, +4/-1)
+```diff
+@@ -164,7 +164,10 @@ fn parse_worktrunk_env_vars() -> Vec<EnvVar> {
+         "WORKTRUNK_APPROVALS_PATH",
+     ];
+ 
+-    let mut env_vars: Vec<_> = std::env::vars()
++    // `std::env::vars()` panics on any non-UTF-8 entry, including unrelated
++    // ones; skip those entries instead.
++    let mut env_vars: Vec<_> = std::env::vars_os()
++        .filter_map(|(k, v)| Some((k.into_string().ok()?, v.into_string().ok()?)))
+         .filter(|(k, _)| k.starts_with("WORKTRUNK_"))
+         .filter(|(k, _)| !INFRA_VARS.contains(&k.as_str()))
+         .filter(|(k, _)| !k.starts_with("WORKTRUNK_TEST_"))
+```
+
+**File**: `tests/integration_tests/config_show.rs` (modified, +17/-0)
+```diff
+@@ -7970,3 +7970,20 @@ fn test_config_show_reports_failed_migration_diff(repo: TestRepo) {
+         "expected the failure to be reported, got:\n{stdout}"
+     );
+ }
++
++/// A non-UTF-8 environment entry must not panic config loading.
++#[cfg(unix)]
++#[rstest]
++fn test_config_show_non_utf8_environment(repo: TestRepo) {
++    use std::ffi::OsString;
++    use std::os::unix::ffi::OsStringExt;
++
++    let output = repo
++        .wt_command()
++        .env("UNRELATED", OsString::from_vec(vec![0xff]))
++        .env(OsString::from_vec(b"UNRELATED_\xff".to_vec()), "value")
++        .args(["config", "show"])
++        .output()
++        .unwrap();
++    assert!(output.status.success(), "{output:?}");
++}
+```
+
+---
+
+### Incident Patch 2: `423960b2` (2026-10-22)
+**Commit Message**: docs: simplify logging and integration guidance (#4576)
+
+Trim repeated explanations in the verbosity FAQ, agent activity
+tracking, statusline setup, custom columns, and hook ordering. Keep
+setup commands, template namespaces, and hook failure and ordering
+rules; update generated references and help snapshots.
+
+Validated with the documentation sync test, all 56 help tests, the site
+build, and an independent review of the served passages.
 
 > _This was written by Codex on behalf of max-sixty_
 
-**File**: `docs/demos/demoshell/README.md` (modified, +2/-0)
+**File**: `docs/src/content/docs/claude-code.md` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,8 @@ The VM's definition is kept here and entered into the Demoshell studio, where th
+@@ -126,7 +126,7 @@ $ git config worktrunk.state.feature.marker '{"marker":"💬","set_at":0}'  # Di
  
- Set **When a visitor opens the VM → Start an app** to `bash --rcfile /root/after-load.sh`. Demoshell's shell-prompt mode runs ash even if the recipe changes root's login shell. Starting bash explicitly loads Worktrunk's shell integration so switching and merging move the visitor's shell.
+ ### Agent CLIs without a plugin
  
-+`after-load.sh` supplies the prompt prefix Demoshell uses to identify commands and an OSC 133 exit-status marker so the guide can verify whether they succeeded.
-+
- To check the full recipe before a Studio build, run this from the repository root with Docker:
+-Activity tracking is not plugin-specific. The plugins above only call `wt` on their host's session events, and the marker itself is plain git config — so any CLI that can run a command on session lifecycle events drives the same 🤖/💬 markers with no worktrunk plugin:
++For other agent CLIs, configure these commands to run on session events:
  
- ```bash
+ | Host event | Command |
+ |---|---|
+@@ -152,7 +152,7 @@ Claude Code asks for confirmation before a session enters an existing worktree b
+ 
+ <code>~/w/myproject.feature-auth  !🤖  @<span style='color:#0a0'>+42</span> <span style='color:#a00'>-8</span>  <span style='color:#0a0'>↑3</span>  <span style='color:#0a0'>⇡1</span>  <span style='color:#0a0'>#3035</span>  Opus  🌔 65%  <span style='color:#a70'>1.4×(10am–3pm)</span></code>
+ 
+-Worktree state comes from the same cells [`wt list`](/list/) renders; Claude Code's stdin JSON adds the model, the `🌔 65%` context gauge, and the rate-limit pace notice. [`wt list statusline`](/list/#wt-list-statusline) documents every segment, how the links behave, and the JSON fields behind them.
++The statusline shows worktree status, model, context usage, and rate-limit pace. See [`wt list statusline`](/list/#wt-list-statusline) for details.
+ 
+ <figure class="demo">
+ <picture>
 ```
 
-**File**: `docs/demos/demoshell/after-load.sh` (modified, +10/-0)
+**File**: `docs/src/content/docs/faq.md` (modified, +1/-3)
 ```diff
-@@ -1,5 +1,15 @@
- # Bash rcfile for Demoshell's "Start an app" command; see README.md.
- . "$HOME/.bashrc"
-+# Demoshell strips this prefix from typed commands and reads OSC 133 exit
-+# markers to verify command success. Bash needs its own marker after each command.
-+PS1='arm64js:\[\e[32m\]\W\[\e[0m\] $ '
-+# The first prompt has no completed command. Install reporting there so Studio
-+# does not mistake an initial exit marker for the start app exiting.
-+_demoshell_first_prompt() {
-+    PROMPT_COMMAND='printf "\033]133;D;%s\007" "$?"'
-+    unset -f _demoshell_first_prompt
-+}
-+PROMPT_COMMAND=_demoshell_first_prompt
- cd "$HOME/acme"
- clear
- echo "A git repository with two worktrees in flight. Follow the guide to the right."
-```
-
-**File**: `docs/demos/demoshell/guide.json` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@
-       "body": "Run wt switch to open a picker: type to filter, move with the arrow keys, Enter to switch, Esc to leave. Mark this step done when you've tried it.",
-       "kind": "manual",
-       "match_mode": "exact",
--      "pattern": null,
-+      "pattern": "",
-       "output_contains": null,
-       "require_success": false,
-       "optional": true
-```
-
-**File**: `docs/demos/demoshell/recipe.sh` (modified, +0/-2)
-```diff
-@@ -13,8 +13,6 @@ rm -rf /tmp/worktrunk-aarch64-unknown-linux-musl
+@@ -97,9 +97,7 @@ Three verbosity levels. Each is a superset of the previous one.
+ | `-v` | + Info: hook output, alias template variable resolution | — | Debugging hooks/aliases |
+ | `-vv` | Same as `-v` | + `trace.log`, `trace.jsonl`, `subprocess.log`, `diagnostic.md` | Filing a bug |
  
- # Studio launches bash explicitly with after-load.sh as its rcfile; changing
- # root's login shell would not change Demoshell's running ash session.
--# Demoshell's command tracker requires the arm64js: prompt prefix.
--echo 'PS1='"'"'arm64js:\[\e[32m\]\W\[\e[0m\] $ '"'" > "$HOME/.bashrc"
- wt config shell install bash --yes
+-At `-vv`, debug-level records (command lines, in-process spans, bounded subprocess preview) route to `trace.log` instead of stderr — so the terminal stays readable while the deep trace lands on disk. A one-line pointer on stderr shows where the files went.
+-
+-The `-vv` files have distinct audiences: `trace.log` is the human trace (bounded, gistable), `trace.jsonl` the same records for machines, `subprocess.log` the raw uncapped subprocess output, and `diagnostic.md` a bug-report bundle. Each is described in [`wt config state logs`](/config/#wt-config-state-logs).
++With `-vv`, stderr shows the log directory. See [`wt config state logs`](/config/#wt-config-state-logs) for the file formats.
  
- git config --global user.name "Demo User"
-```
-
-**File**: `docs/src/pages/try-it.astro` (modified, +5/-11)
-```diff
-@@ -12,23 +12,19 @@ const launchUrl = `${server}/launch?snapshot=${encodeURIComponent(snapshot)}`;
- <StarlightPage
-   frontmatter={{
-     title: 'Try it',
--    description: 'Run Worktrunk in your browser: a Linux VM with wt installed and a guided walk through creating, merging, and removing a worktree.',
-+    description: 'Try Worktrunk in your browser.',
-     editUrl: false,
-     tableOfContents: false,
-     pagefind: false,
-     head: [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex' } }],
-   }}
- >
-   <p>
--    Run Worktrunk in a Linux VM inside this browser tab — no install, and nothing
--    you type leaves your machine. The guide beside the terminal walks through a
--    worktree's whole life: create one, change a file, and merge it back to
--    <code>main</code>.
-+    Run Worktrunk in your browser. No installation needed.
-   </p>
-   <p>
--    Nothing downloads until you press run. Chrome and Edge run the VM in the
--    page. <a href={launchUrl}>Open the full-page demo</a> if your browser cannot
--    run it here.
-+    Nothing downloads until you press Run.{' '}
-+    <a href={launchUrl}>Open the full-page demo</a> if your browser cannot run it here.
-   </p>
- 
-   <div class="wt-try-it" data-server={server} data-snapshot={snapshot}>
-@@ -41,9 +37,7 @@ const launchUrl = `${server}/launch?snapshot=${encodeURIComponent(snapshot)}`;
-   </p>
- 
-   <p>
--    Ready for the real thing? <a href="/#install">Install Worktrunk</a>, then run
--    <code>wt config shell install</code> so <code>wt switch</code> can change
--    directory.
-+    <a href="/#install">Install Worktrunk</a>
-   </p>
- </StarlightPage>
+ `RUST_LOG` overrides the flag baseline when set (`RUST_LOG=debug wt -v` lifts `-v` to debug-on-stderr).
  
 ```
 
----
-
-### Incident Patch 2: `d6cb21a2` (2026-10-21)
-**Commit Message**: fix(remove): derive the trash directory in `wt _drain-trash` instead of taking it as an argument (#4536)
-
-The hidden `wt _drain-trash <dir>` deleted every `<name>-<digits>` entry
-in whatever directory it was given, with no prompt: `wt _drain-trash ~`
-would delete `~/backup-2024` and `~/proj-2` and leave a `~.lock` beside
-it. Worktrunk only ever passed `repo.wt_trash_dir()`, but nothing tied
-the argument to a trash directory. It now takes no argument and drains
-`<git-common-dir>/wt/trash` of the repository it discovers; outside a
-repository it fails and deletes nothing. Both spawn sites run it as `wt
--C <git-common-dir> _drain-trash`, since a removal's spawn cwd can be
-the empty placeholder of the worktree it just removed (`wt remove -D` of
-a bare repository's primary worktree from inside it), which in a sibling
-layout is in no repository.
-
-Discovering the repository in the child exposed a second problem:
-detached children inherited the parent's git discovery variables. Run as
-a `!wt` alias, `wt remove` of the current worktree inherits a `GIT_DIR`
-naming that worktree's gitdir, which the removal prunes, so the drain
-failed with "not a git repository" and the trash stayed. Background
-
-**File**: `src/cli/mod.rs` (modified, +2/-2)
+**File**: `docs/src/content/docs/hook.md` (modified, +1/-1)
 ```diff
-@@ -2725,9 +2725,9 @@ Hooks, aliases and `step.copy-ignored.exclude` accumulate rather than replace, s
-         force_delete: bool,
-     },
+@@ -117,7 +117,7 @@ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependenc
  
--    /// Delete the worktrees staged in a trash directory.
-+    /// Delete the worktrees staged in this repository's trash directory.
-     #[command(name = "_drain-trash", hide = true)]
--    InternalDrainTrash { trash_dir: std::path::PathBuf },
-+    InternalDrainTrash,
+ To run a specific hook when user and project both define the same name, use `user:name` or `project:name` syntax.
  
-     /// Run a custom `wt-<name>` command found on PATH.
-     ///
+-A `pre-*` hook blocks the command, so both sources run as one pipeline: user commands first, and a failure there skips the project's. A `post-*` hook runs in the background, where each source is its own detached pipeline — they start together, neither waits for the other, and a failure in one leaves the other running. Order within a source is still yours to set with `[[hook]]` blocks; across `post-*` sources there is none. Two `post-*` hooks that write the same file, or run `git` in the same worktree, will race, so put commands that depend on each other in one source.
++For `pre-*` hooks, a user-hook failure skips project hooks. For `post-*` hooks, a failure in one source does not stop the other. Concurrent hooks can race when writing the same file or running Git in the same worktree. Commands that depend on each other should use ordered `[[hook]]` blocks within one source.
+ 
+ ## Template variables
+ 
 ```
 
-**File**: `src/commands/process.rs` (modified, +21/-10)
+**File**: `docs/src/content/docs/list.md` (modified, +1/-1)
 ```diff
-@@ -280,6 +280,7 @@ fn spawn_detached_exec_unix(
-         .stderr(Stdio::from(log_file))
-         .process_group(0);
-     worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
-+    worktrunk::shell_exec::scrub_git_discovery_env_vars(&mut cmd);
-     set_background_hook_env(&mut cmd, is_background_hook);
-     worktrunk::shell_exec::spawn(&mut cmd).context("Failed to spawn detached process")?;
+@@ -138,7 +138,7 @@ Reuses the [`commit.generation`](/config/#commit) command — the same LLM that
  
-@@ -315,6 +316,7 @@ fn spawn_detached_exec_windows(
-         .stderr(Stdio::from(log_file))
-         .creation_flags(CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW);
-     worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
-+    worktrunk::shell_exec::scrub_git_discovery_env_vars(&mut cmd);
-     set_background_hook_env(&mut cmd, is_background_hook);
-     worktrunk::shell_exec::spawn(&mut cmd).context("Failed to spawn detached process")?;
+ <span class="badge-experimental"></span>
  
-@@ -384,7 +386,7 @@ pub fn sweep_trash(repo: &Repository) {
-             spawn_detached(
-                 repo,
-                 &repo.wt_dir(),
--                &build_drain_trash_command(executable, &trash_dir),
-+                &build_drain_trash_command(executable, repo),
-                 "",
-                 &HookLog::Shared(InternalOp::TrashSweep),
-             )
-@@ -394,15 +396,20 @@ pub fn sweep_trash(repo: &Repository) {
-     }
- }
+-Each `[list.custom-columns]` entry in user config adds a column: the key is the header, the template renders each row's cell. Templates read two per-branch namespaces — `{{ vars.* }}`, stored with [`wt config state vars set`](/config/#wt-config-state-vars), and `{{ git.branch.* }}`, the branch's own git config under `branch.<name>.*` (a `jira` key you set yourself, or the git-native `description`) — useful for tracking what each of many (often agent-driven) branches is for:
++Each `[list.custom-columns]` entry in user config adds a column. Its key sets the header; its template renders each row's cell. Templates read `{{ vars.* }}`, set with [`wt config state vars set`](/config/#wt-config-state-vars), and `{{ git.branch.* }}`, from `branch.<name>.*` in Git config:
  
--/// Shell argv that runs `wt _drain-trash <trash_dir>`: a fixed script, its
--/// `$0`, then native arguments. Paths are never interpolated into shell source.
--pub fn build_drain_trash_command(executable: PathBuf, trash_dir: &Path) -> Vec<OsString> {
-+/// Shell argv that runs `wt -C <git-common-dir> _drain-trash`: a fixed script,
-+/// its `$0`, then native arguments. Paths are never interpolated into shell
-+/// source. The drain derives the trash directory from the repository it
-+/// discovers, so it can't be pointed at a directory outside a trash. `-C`
-+/// names that repository because the spawn's cwd may be the placeholder of a
-+/// worktree the removal just deleted.
-+pub fn build_drain_trash_command(executable: PathBuf, repo: &Repository) -> Vec<OsString> {
-     vec![
-         OsString::from(r#"exec "$@""#),
-         OsString::from("wt"),
-         executable.into_os_string(),
-+        OsString::from("-C"),
-+        repo.git_common_dir().as_os_str().to_os_string(),
-         OsString::from("_drain-trash"),
--        trash_dir.as_os_str().to_os_string(),
-     ]
- }
- 
-@@ -502,12 +509,16 @@ mod tests {
-     }
- 
-     #[test]
--    fn drain_command_passes_trash_dir_as_its_own_argument() {
--        let trash_dir = Path::new("/repo/with space-'$(echo PWNED)\n/.git/wt/trash");
--        let args = build_drain_trash_command(PathBuf::from("/bin/wt"), trash_dir);
-+    fn drain_command_passes_paths_as_their_own_arguments() {
-+        let test = worktrunk::testing::TestRepo::with_initial_commit();
-+        let repo = Repository::at(test.root_path()).unwrap();
-+        let executable = PathBuf::from("/opt/with space-'$(echo PWNED)\n/wt");
-+        let args = build_drain_trash_command(executable.clone(), &repo);
-         assert_eq!(args[0], r#"exec "$@""#);
--        assert_eq!(args[3], "_drain-trash");
--        assert_eq!(args[4], trash_dir.as_os_str());
-+        assert_eq!(args[2], executable.as_os_str());
-+        assert_eq!(args[3], "-C");
-+        assert_eq!(args[4], repo.git_common_dir().as_os_str());
-+        assert_eq!(args[5], "_drain-trash");
-     }
- 
-     #[test]
+ ```toml
+ # ~/.config/worktrunk/config.toml
 ```
 
-**File**: `src/main.rs` (modified, +3/-1)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/claude-code.md` (modified, +2/-2)
 ```diff
-@@ -971,7 +971,9 @@ fn dispatch_command(
-             expected_tip.as_deref(),
-             force_delete,
-         ),
--        Commands::InternalDrainTrash { trash_dir } => worktrunk::git::drain_trash(&trash_dir),
-+        Commands::InternalDrainTrash => {
-+            worktrunk::git::drain_trash(&Repository::current()?.wt_trash_dir())
-+        }
-         // `working_dir` is the top-level `-C <path>` flag, applied as the
-         // child's current directory so global `-C` works for custom
-         // subcommands the same way it does for built-ins.
-```
-
-**File**: `src/output/handlers.rs` (modified, +2/-2)
-```diff
-@@ -236,7 +236,7 @@ fn execute_instant_removal_or_fallback(
-                 .context("Failed to locate Worktrunk executable")
-                 .and_then(|executable| {
-                     spawn_cleanup(
--                        &build_drain_trash_command(executable, &trash_dir),
-+                        &build_drain_trash_command(executable, repo),
-                         InternalOp::Remove,
-                     )
-                 })
-@@ -2506,7 +2506,7 @@ mod tests {
-             },
-             BackgroundFallbackMode::Detached,
-             |args, _| {
--                assert_eq!(args.last().unwrap(), repo.wt_trash_dir().as_os_str());
-+                assert_eq!(args.last().unwrap(), "_drain-trash");
-                 worktrunk::git::drain_trash(&repo.wt_trash_dir())
-             },
-         )
-```
-
-**File**: `src/shell_exec.rs` (modified, +4/-1)
-```diff
-@@ -704,7 +704,10 @@ pub fn apply_cd_directive_env(cmd: &mut std::process::Command, cd_file: &std::pa
- ///   into a relocated command misdirects every `git` call in it; with both
- ///   `GIT_DIR` and `GIT_WORK_TREE` present, a `git init` even writes
- ///   `core.worktree` into the *inherited* repo's config, silently redirecting
--///   every later plain git command there. See issue #3373.
-+///   every later plain git command there. See issue #3373. Detached children
-+///   (`spawn_detached_exec`: hook pipelines, trash drains) are relocated the
-+///   same way, and outlive the parent, so removing the invoking worktree would
-+///   also leave an inherited `GIT_DIR` naming a pruned gitdir.
- ///
- /// - **The child runs where the user already was** — aliases (the user's own
- ///   top-level command, run from the invoking worktree) and `commit.generation`
-```
-
-**File**: `tests/integration_tests/remove.rs` (modified, +63/-0)
-```diff
-@@ -4586,6 +4586,69 @@ fn test_remove_leaves_entries_to_the_running_drain(mut repo: TestRepo) {
-     });
- }
+@@ -118,7 +118,7 @@ $ git config worktrunk.state.feature.marker '{"marker":"💬","set_at":0}'  # Di
  
-+/// `wt _drain-trash` drains only the trash of the repository at its cwd, the
-+/// way the post-removal sweep runs it from `.git/wt`. Outside a repository it
-+/// fails and deletes nothing, however the directory's entries are named.
-+#[rstest]
-+fn test_drain_trash_derives_the_trash_from_the_repository(repo: TestRepo) {
-+    let outside = tempfile::tempdir().unwrap();
-+    let lookalike = outside.path().join("backup-2024");
-+    fs::create_dir(&lookalike).unwrap();
-+    let output = repo
-+        .wt_command()
-+        .arg("_drain-trash")
-+        .current_dir(outside.path())
-+        .output()
-+        .unwrap();
-+    assert!(!output.status.success());
-+    assert!(lookalike.exists());
-+
-+    let wt_dir = crate::common::resolve_git_common_dir(repo.root_path()).join("wt");
-+    let staged = wt_dir.join("trash/feature-1700000000");
-+    fs::create_dir_all(&staged).unwrap();
-+    let output = repo
-+        .wt_command()
-+        .arg("_drain-trash")
-+        .current_dir(&wt_dir)
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    assert!(!staged.exists());
-+}
-+
-+/// Run as a `!wt` alias, `wt remove` inherits a `GIT_DIR` naming the invoking
-+/// worktree's gitdir, which the removal prunes. The detached drain discovers
-+/// the repository from its cwd instead, so it still empties the trash.
-+#[rstest]
-+fn test_remove_drains_trash_under_inherited_git_dir(mut repo: TestRepo) {
-+    let feature_wt = repo.add_worktree("feature");
-+    let git_dir = fs::read_to_string(feature_wt.join(".git")).unwrap();
-+    let git_dir = PathBuf::from(git_dir.trim().strip_prefix("gitdir: ").unwrap());
-+
-+    let output = repo
-+        .wt_command()
-+        .current_dir(&feature_wt)
-+        .args(["remove", "--no-delete-branch", "--yes"])
-+        .env("GIT_DIR", &git_dir)
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    assert!(!git_dir.exists());
-+
-+    let trash_dir = crate::common::resolve_git_common_dir(repo.root_path()).join("wt/trash");
-+    crate::common::wait_for("trash drained", || {
-+        fs::read_dir(&trash_dir).unwrap().next().is_none()
-+    });
-+}
-+
- /// `wt remove -vv` resolves every fsmonitor daemon in ONE `lsof` spawn and
- /// traces the sweep.
- ///
+ ### Agent CLIs without a plugin
+ 
+-Activity tracking is not plugin-specific. The plugins above only call `wt` on their host's session events, and the marker itself is plain git config — so any CLI that can run a command on session lifecycle events drives the same 🤖/💬 markers with no worktrunk plugin:
++For other agent CLIs, configure these commands to run on session events:
+ 
+ | Host event | Command |
+ |---|---|
+@@ -144,7 +144,7 @@ Claude Code asks for confirmation before a session enters an existing worktree b
+ 
+ <code>~/w/myproject.feature-auth  !🤖  @<span style='color:#0a0'>+42</span> <span style='color:#a00'>-8</span>  <span style='color:#0a0'>↑3</span>  <span style='color:#0a0'>⇡1</span>  <span style='color:#0a0'>#3035</span>  Opus  🌔 65%  <span style='color:#a70'>1.4×(10am–3pm)</span></code>
+ 
+-Worktree state comes from the same cells [`wt list`](https://worktrunk.dev/list/) renders; Claude Code's stdin JSON adds the model, the `🌔 65%` context gauge, and the rate-limit pace notice. [`wt list statusline`](https://worktrunk.dev/list/#wt-list-statusline) documents every segment, how the links behave, and the JSON fields behind them.
++The statusline shows worktree status, model, context usage, and rate-limit pace. See [`wt list statusline`](https://worktrunk.dev/list/#wt-list-statusline) for details.
+ 
+ Add to `~/.claude/settings.json`:
+ 
+```
+
+**File**: `plugins/worktrunk/skills/worktrunk/reference/faq.md` (modified, +1/-3)
+```diff
+@@ -93,9 +93,7 @@ Three verbosity levels. Each is a superset of the previous one.
+ | `-v` | + Info: hook output, alias template variable resolution | — | Debugging hooks/aliases |
+ | `-vv` | Same as `-v` | + `trace.log`, `trace.jsonl`, `subprocess.log`, `diagnostic.md` | Filing a bug |
+ 
+-At `-vv`, debug-level records (command lines, in-process spans, bounded subprocess preview) route to `trace.log` instead of stderr — so the terminal stays readable while the deep trace lands on disk. A one-line pointer on stderr shows where the files went.
+-
+-The `-vv` files have distinct audiences: `trace.log` is the human trace (bounded, gistable), `trace.jsonl` the same records for machines, `subprocess.log` the raw uncapped subprocess output, and `diagnostic.md` a bug-report bundle. Each is described in [`wt config state logs`](https://worktrunk.dev/config/#wt-config-state-logs).
++With `-vv`, stderr shows the log directory. See [`wt config state logs`](https://worktrunk.dev/config/#wt-config-state-logs) for the file formats.
+ 
+ `RUST_LOG` overrides the flag baseline when set (`RUST_LOG=debug wt -v` lifts `-v` to debug-on-stderr).
+ 
+```
+
+**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependenc
+ 
+ To run a specific hook when user and project both define the same name, use `user:name` or `project:name` syntax.
+ 
+-A `pre-*` hook blocks the command, so both sources run as one pipeline: user commands first, and a failure there skips the project's. A `post-*` hook runs in the background, where each source is its own detached pipeline — they start together, neither waits for the other, and a failure in one leaves the other running. Order within a source is still yours to set with `[[hook]]` blocks; across `post-*` sources there is none. Two `post-*` hooks that write the same file, or run `git` in the same worktree, will race, so put commands that depend on each other in one source.
++For `pre-*` hooks, a user-hook failure skips project hooks. For `post-*` hooks, a failure in one source does not stop the other. Concurrent hooks can race when writing the same file or running Git in the same worktree. Commands that depend on each other should use ordered `[[hook]]` blocks within one source.
+ 
+ ## Template variables
+ 
+```
+
+**File**: `plugins/worktrunk/skills/worktrunk/reference/list.md` (modified, +1/-1)
+```diff
+@@ -122,7 +122,7 @@ Reuses the [`commit.generation`](https://worktrunk.dev/config/#commit) command 
+ 
+ ### Custom columns [experimental]
+ 
+-Each `[list.custom-columns]` entry in user config adds a column: the key is the header, the template renders each row's cell. Templates read two per-branch namespaces — `{{ vars.* }}`, stored with [`wt config state vars set`](https://worktrunk.dev/config/#wt-config-state-vars), and `{{ git.branch.* }}`, the branch's own git config under `branch.<name>.*` (a `jira` key you set yourself, or the git-native `description`) — useful for tracking what each of many (often agent-driven) branches is for:
++Each `[list.custom-columns]` entry in user config adds a column. Its key sets the header; its template renders each row's cell. Templates read `{{ vars.* }}`, set with [`wt config state vars set`](https://worktrunk.dev/config/#wt-config-state-vars), and `{{ git.branch.* }}`, from `branch.<name>.*` in Git config:
+ 
+ ```toml
+ # ~/.config/worktrunk/config.toml
 ```
 
 ---
 
-### Incident Patch 3: `e14c30e2` (2026-10-22)
-**Commit Message**: Fix hook filtering, source isolation and template failure handling (#4429)
+### Incident Patch 3: `fc34f8e3` (2026-10-22)
+**Commit Message**: docs: trim repeated explanations across six guides (#4575)
 
-Hook name filters previously ran after template validation and argument
-routing, so an excluded command could reject the invocation or consume
-its arguments. Filtered background hooks also combined user and project
-sources, and runtime template failures bypassed foreground Warn
-handling.
+Remove repeated explanations and implementation detail from the merge,
+shell integration, extending, LLM commits, approvals, and tether guides.
+Keep the usage examples and behavioral distinctions, and update
+generated references and help snapshots.
 
-Select raw commands before parsing or binding arguments. Live execution
-and frozen approval plans share preparation; the announcer owns one
-background pipeline per source. Runtime expansion follows the existing
-Warn/FailFast policy, while errors retain hook identity and alias
-diagnostics. Selected templates still receive syntax validation before
-execution. No flags or configuration keys change.
+Validated with the documentation sync test, all 56 help tests, and the
+documentation site build. Reviewed the served passages in context.
 
-The production change removes 24 lines overall (+183/−207 across 11
-files). The full diff is +911/−267 across 34 files, mostly regression
-tests and snapshots. It includes current main’s JSON output, stdin
-ownership and Ctrl-C behavior.
+> _This was written by Codex on behalf of max-sixty_
 
-Validation: the required project gate passed 5,411 tests with one
-skipped, plus lint, lockfile, doctests and rustdoc. Independent
-integration and simplification review found no unresolved defects.
-R
-
-**File**: `docs/src/content/docs/hook.md` (modified, +2/-2)
+**File**: `docs/src/content/docs/config.md` (modified, +1/-1)
 ```diff
-@@ -356,9 +356,9 @@ $ wt hook post-start
+@@ -1078,7 +1078,7 @@ $ wt config approvals list --format=json | jq -r .state
  
- ## Passing values
+ Approved commands are saved to `~/.config/worktrunk/approvals.toml`. Re-approval is required when the command template changes or the project moves.
  
--`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any command of the hook — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
-+`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any selected hook command — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
+-`--yes` bypasses the prompt, and what it leaves behind depends on the command it is passed to. On a command that runs project commands it grants consent for that run alone and records nothing, so the next run asks again. On `wt config approvals add` the record is the whole point, so the approvals are written — which is how an unattended environment pre-approves a project it has just cloned.
++`--yes` approves project commands for the current run without saving approval. `wt config approvals add --yes` saves approvals for future runs.
  
--Any `--KEY=VALUE` whose key isn't referenced by a hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
-+Any `--KEY=VALUE` whose key isn't referenced by a selected hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
- 
- # Recipes
+ ### Reading approval state
  
 ```
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +2/-2)
+**File**: `docs/src/content/docs/extending.md` (modified, +1/-9)
 ```diff
-@@ -350,9 +350,9 @@ $ wt hook post-start
+@@ -4,15 +4,7 @@ description: "Three ways to add custom behavior: hooks for lifecycle automation,
+ sidebar:
+   order: 22
+ ---
+-Worktrunk has three extension mechanisms.
+-
+-**[Hooks](#hooks)** are shell commands that run automatically at lifecycle events (switching, starting, committing, merging, removing). Defined in TOML.
+-
+-**[Aliases](#aliases)** are reusable shell commands invoked as `wt <name>`. Defined in TOML.
+-
+-**[Custom subcommands](#custom-subcommands)** are standalone executables invoked as `wt <name>`. Drop `wt-foo` on `PATH` and it becomes `wt foo`.
+-
+-| | Hooks | Aliases | Custom subcommands |
++| | [Hooks](#hooks) | [Aliases](#aliases) | [Custom subcommands](#custom-subcommands) |
+ |---|---|---|---|
+ | **Trigger** | Automatic (lifecycle events) | Manual (`wt <name>`) | Manual (`wt <name>`) |
+ | **Defined in** | TOML config | TOML config | Any executable on `PATH` |
+```
+
+**File**: `docs/src/content/docs/llm-commits.md` (modified, +2/-2)
+```diff
+@@ -205,7 +205,7 @@ See `wt config create --help` for the full default templates.
  
- ## Passing values
+ ## Appending to the prompt
  
--`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any command of the hook — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
-+`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any selected hook command — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
+-`template-append` adds to the commit and squash prompts instead of replacing them. It lives in both user config (personal preferences) and project config (`.config/wt.toml`, shared so every teammate's LLM sees the same style guide). Each fragment is itself a [minijinja](https://docs.rs/minijinja/) template — Worktrunk renders it with the same variables as the main template (`{{ branch }}`, `{{ git_diff }}`, …), then appends the result after `<style>`. The user fragment renders into a `<user-guidance>` block and the project fragment into a `<project-guidance>` block, so the LLM can tell personal preference from shared convention:
++`template-append` adds instructions to the default commit and squash prompts. Set it in user config for personal preferences or `.config/wt.toml` for shared project conventions. Fragments support the same template variables as the main prompt.
  
--Any `--KEY=VALUE` whose key isn't referenced by a hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
-+Any `--KEY=VALUE` whose key isn't referenced by a selected hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
+ ```toml
+ # .config/wt.toml
+@@ -216,7 +216,7 @@ template-append = """
+ """
+ ```
  
- # Recipes
+-When both the user and project set `template-append`, the `<user-guidance>` block comes first, then `<project-guidance>`.
++When both are configured, user instructions come before project instructions.
+ 
+ The user fragment needs no approval — it's the developer's own config. For the project fragment, the first time the rendered text is sent to the LLM, Worktrunk shows the raw fragment in an approval prompt — the same one-shot gate as project-defined hooks. Subsequent commits don't re-prompt unless the fragment changes. Declining is non-fatal: the LLM runs with just the user fragment (if any).
  
 ```
 
-**File**: `skills/worktrunk/reference/hook.md` (modified, +2/-2)
+**File**: `docs/src/content/docs/merge.md` (modified, +1/-5)
 ```diff
-@@ -350,9 +350,9 @@ $ wt hook post-start
+@@ -101,11 +101,7 @@ Use `--no-commit` to skip committing uncommitted changes and squashing; rebase s
  
- ## Passing values
+ ## Local CI
  
--`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any command of the hook — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
-+`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any selected hook command — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
+-For personal projects, pre-merge hooks open up the possibility of a workflow with much faster iteration — an order of magnitude more small changes instead of fewer large ones.
+-
+-Historically, ensuring tests ran before merging was difficult to enforce locally. Remote CI was valuable for the process as much as the checks: it guaranteed validation happened. `wt merge` brings that guarantee local.
+-
+-The full workflow: start an agent (one of many) on a task, work elsewhere, return when it's ready. Review the diff, run `wt merge`, move on. Pre-merge hooks validate before merging — if they pass, the branch goes to the default branch and the worktree cleans up.
++Pre-merge hooks run checks locally before merging. A failed check stops the merge:
  
--Any `--KEY=VALUE` whose key isn't referenced by a hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
-+Any `--KEY=VALUE` whose key isn't referenced by a selected hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
+ ```toml
+ # .config/wt.toml
+```
+
+**File**: `docs/src/content/docs/shell-integration.md` (modified, +1/-11)
+```diff
+@@ -75,17 +75,7 @@ wt switch feature  # Now uses the dev build with shell integration
  
- # Recipes
+ ### "Alias bypasses shell integration"
+ 
+-**Meaning**: An alias like `alias gwt="/usr/bin/wt"` or `alias gwt="wt.exe"` points directly to the binary instead of the shell function.
+-
+-When shell integration is installed, it creates a shell function named `wt` (or `git-wt`). If the alias points to the binary path, it bypasses this function and shell integration won't work.
+-
+-**Examples that bypass** (won't auto-cd):
+-
+-```bash
+-alias gwt="/usr/bin/wt"
+-alias gwt="wt.exe"
+-alias wt="/path/to/wt"
+-```
++**Meaning**: The alias invokes the binary directly, bypassing the shell function that changes directories.
+ 
+ **Fix**: Change the alias to point to the function name instead of the binary:
  
 ```
 
-**File**: `src/cli/mod.rs` (modified, +2/-2)
+**File**: `docs/src/content/docs/step.md` (modified, +1/-8)
 ```diff
-@@ -1988,9 +1988,9 @@ $ wt hook post-start
+@@ -992,14 +992,7 @@ Run a command; kill its whole process tree when its worktree is removed. Teardow
  
- ## Passing values
+ ### Why
  
--`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any command of the hook — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
-+`--KEY=VALUE` binds `KEY` whenever `{{ KEY }}` appears in any selected hook command — the same smart-routing rule `wt <alias>` uses. Built-in variables can be overridden: `--branch=foo` sets `{{ branch }}` inside hook templates (the worktree's actual branch doesn't move). Hyphens in keys become underscores: `--my-var=x` sets `{{ my_var }}`.
+-A `post-start` hook to start a long-lived process and a `pre-remove` hook to
+-stop it is usually enough. But `pre-remove` only runs when worktrunk removes
+-the worktree, so a `git worktree remove`, an `rm -rf`, or a crashed hook skips
+-it. Across enough worktree churn some process is bound to outlive its worktree,
+-and with no cleanup these leaks accumulate (on macOS they eventually saturate
+-`fseventsd`). `tether` removes the need for a `pre-remove`: it ties the
+-command's lifetime to the worktree and kills the whole process group once the
+-worktree is gone.
++`pre-remove` hooks run only when Worktrunk removes a worktree. `tether` also stops the command when another tool removes the worktree.
  
--Any `--KEY=VALUE` whose key isn't referenced by a hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
-+Any `--KEY=VALUE` whose key isn't referenced by a selected hook template forwards into `{{ args }}` as a literal `--KEY=VALUE` token. Tokens after `--` also forward into `{{ args }}` verbatim. `{{ args }}` renders as a space-joined, shell-escaped string; index with `{{ args[0] }}`, loop with `{% for a in args %}…{% endfor %}`, count with `{{ args | length }}`.
- 
- # Recipes
+ ### Arguments
  
 ```
 
-**File**: `src/commands/alias.rs` (modified, +3/-2)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/config.md` (modified, +1/-1)
 ```diff
-@@ -446,7 +446,7 @@ pub(crate) fn load_aliases(
- fn referenced_vars_for_entry(name: &str, entry: &AliasEntry) -> anyhow::Result<BTreeSet<String>> {
-     let mut out = BTreeSet::new();
-     for (_, cfg) in entry.iter() {
--        out.extend(referenced_vars_for_config(cfg, name)?);
-+        out.extend(referenced_vars_for_config(cfg, |_| name.to_owned())?);
-     }
-     Ok(out)
- }
-@@ -1599,7 +1599,8 @@ cmd = [
- ]
- "#,
-         );
--        let refs = worktrunk::config::referenced_vars_for_config(&cfg, "deploy").unwrap();
-+        let refs =
-+            worktrunk::config::referenced_vars_for_config(&cfg, |_| "deploy".to_owned()).unwrap();
-         let names: Vec<&str> = refs.iter().map(String::as_str).collect();
-         assert_eq!(names, vec!["args", "env", "target"]);
-     }
+@@ -1070,7 +1070,7 @@ $ wt config approvals list --format=json | jq -r .state
+ 
+ Approved commands are saved to `~/.config/worktrunk/approvals.toml`. Re-approval is required when the command template changes or the project moves.
+ 
+-`--yes` bypasses the prompt, and what it leaves behind depends on the command it is passed to. On a command that runs project commands it grants consent for that run alone and records nothing, so the next run asks again. On `wt config approvals add` the record is the whole point, so the approvals are written — which is how an unattended environment pre-approves a project it has just cloned.
++`--yes` approves project commands for the current run without saving approval. `wt config approvals add --yes` saves approvals for future runs.
+ 
+ ### Reading approval state
+ 
 ```
 
-**File**: `src/commands/command_executor.rs` (modified, +41/-28)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/extending.md` (modified, +1/-9)
 ```diff
-@@ -13,8 +13,8 @@ use color_print::cformat;
- use serde::{Deserialize, Serialize};
- use worktrunk::HookType;
- use worktrunk::config::{
--    Command, CommandConfig, HookStep, TemplateContext, UserConfig, VarScope, VarsMode,
--    format_hook_variables, validate_template_syntax,
-+    Command, CommandConfig, HookStep, TemplateContext, TemplateExpandError, UserConfig, VarScope,
-+    VarsMode, format_hook_variables, validate_template_syntax,
- };
- use worktrunk::git::{ErrorExt, Repository, WorktrunkError};
- use worktrunk::path::{format_path_for_display, to_posix_path};
-@@ -41,9 +41,7 @@ pub struct PreparedCommand {
-     /// Template variables, frozen at preparation. Serialized to JSON only at
-     /// the process boundary (the background pipeline spec).
-     pub context: TemplateContext,
--    /// Name used in template expansion errors: `"user:foo"` for named hook
--    /// commands, `"user pre-merge hook"` for unnamed ones, the alias name for
--    /// aliases.
-+    /// Hook identity from [`HookSource::hook_label`], or the alias name.
-     pub template_name: String,
-     /// Label for the per-command announcement summary and render span.
-     /// For hooks: `"user:foo"` for named, `"user"` for unnamed. For aliases: alias name.
-@@ -522,9 +520,10 @@ pub fn execute_pipeline_foreground(
- /// expansion reads git config; racing on reads would produce inconsistent
- /// state), announces each command (per the step's `PipelineKind` — hooks
- /// render per-command announcements, aliases only announce the outer group),
--/// then dispatches to `run_concurrent_commands` which streams each child's
--/// output prefixed by its label and waits for all to complete before folding
--/// outcomes.
-+/// skips failed expansions under `Warn` (or aborts before spawning under
-+/// `FailFast`), then dispatches to `run_concurrent_commands` which streams each
-+/// child's output prefixed by its label and waits for all to complete before
-+/// folding outcomes.
- fn run_concurrent_group(
-     cmds: &[PreparedCommand],
-     fg_step: &ForegroundStep,
-@@ -534,39 +533,45 @@ fn run_concurrent_group(
- ) -> anyhow::Result<()> {
-     let directives = &fg_step.directives;
+@@ -1,14 +1,6 @@
+ # Extending Worktrunk
  
--    let expanded: Vec<String> = cmds
--        .iter()
--        .map(|cmd| {
-+    let mut admitted = Vec::new();
-+    for cmd in cmds {
-+        let expanded = {
-             let _span = Span::new(format!("template_render:{}", cmd.label));
-             resolve_command_str(cmd, repo)
--        })
--        .collect::<Result<_>>()?;
-+        };
-+        match expanded {
-+            Ok(command_str) => admitted.push((cmd, command_str)),
-+            Err(err) => {
-+                handle_command_error(err, cmd, &fg_step.error_wrapper, failure_strategy)?;
-+            }
-+        }
-+    }
- 
--    for (cmd, command_str) in cmds.iter().zip(&expanded) {
-+    for (cmd, command_str) in &admitted {
-         announce_command(cmd, &fg_step.announce, fg_step.source, command_str);
-     }
- 
-     // Both alias tables and hook tables produce named commands (TOML keys
-     // become `name`), so `cmd.name` is always `Some` here.
--    let labels: Vec<&str> = cmds
-+    let labels: Vec<&str> = admitted
-         .iter()
--        .map(|cmd| {
-+        .map(|(cmd, _)| {
-             cmd.name
-                 .as_deref()
-                 .expect("concurrent group commands are always named")
-         })
-         .collect();
- 
--    let log_labels: Vec<Option<String>> = cmds
-+    let log_labels: Vec<Option<String>> = admitted
-         .iter()
--        .map(|cmd| fg_step.announce.log_label(cmd))
-+        .map(|(cmd, _)| fg_step.announce.log_label(cmd))
-         .collect();
- 
-     let scrub_git_discovery = fg_step.announce.is_hook();
--    let specs: Vec<ConcurrentCommand<'_>> = (0..cmds.len())
-+    let specs: Vec<ConcurrentCommand<'_>> = (0..admitted.len())
-         .map(|i| ConcurrentCommand {
-             label: labels[i],
--            expanded: &expanded[i],
-+            expanded: &admitted[i].1,
-             working_dir: wt_path,
-             log_label: log_labels[i].as_deref(),
-             directives,
-@@ -577,7 +582,7 @@ fn run_concurrent_group(
-     let outcomes = run_concurrent_commands(&specs)?;
- 
-     let mut first_failure: Option<anyhow::Error> = None;
--    for (outcome, cmd) in outcomes.into_iter().zip(cmds) {
-+    for (outcome, (cmd, _)) in outcomes.into_iter().zip(&admitted) {
-         let Err(err) = outcome else { continue };
-         match handle_command_error(err, cmd, &fg_step.error_wrapper, failure_strategy) {
-             Ok(()) => {}
-@@ -607,7 +612,13 @@ fn run_one_command(
- 
-     let command_str = {
-         let _span = Span::new(format!("template_render:{}", cmd.label));
--        resolve_command_str(cmd, repo)?
-+        resolve_command_str(cmd, repo)
-+    };
-+    let command_str = match command_str {
-+        Ok(command_str) => command_str,
-+        Err(err) => {
-+            return handle_command_error(err, cmd, &fg_step.error_wrapper, failure_strategy);
-+        }
-     };
-     announce_command(cmd, 
-```
-
-**File**: `src/commands/config/alias.rs` (modified, +1/-1)
-```diff
-@@ -163,7 +163,7 @@ pub fn handle_alias_dry_run(name: String, args: Vec<String>) -> anyhow::Result<(
-     // so a flag binds if any entry's template references it.
-     let mut referenced: BTreeSet<String> = BTreeSet::new();
-     for (cfg, _) in &entries {
--        referenced.extend(referenced_vars_for_config(cfg, &name)?);
-+        referenced.extend(referenced_vars_for_config(cfg, |_| name.clone())?);
-     }
-     let mut parse_args = Vec::with_capacity(1 + args.len());
-     parse_args.push(name.clone());
-```
-
-**File**: `src/commands/hook_commands.rs` (modified, +24/-39)
-```diff
-@@ -28,6 +28,7 @@ use super::command_executor::{
-     CommandContext, FailureStrategy, PreparedStep, prepare_steps, render_template_preview,
- };
- use super::context::CommandEnv;
-+use super::hook_filter::selected_hook_configs;
- use super::hooks::{HookAnnouncer, prepare_and_check, run_hooks_foreground};
- use super::project_config::command_label;
- use super::template_vars::TemplateVars;
-@@ -56,24 +57,17 @@ fn run_post_hook(
-         .map(drop);
-     }
- 
--    // Filter path merges user + project matches into one pipeline (the user
--    // cherry-picked specific names across sources). The default path keeps
--    // sources independent so a user hook failure doesn't abort project hooks.
-+    // Each source runs independently, including when names are filtered.
-     let mut announcer = HookAnnouncer::new(ctx.repo, false);
--    if name_filters.is_empty() {
--        announcer.register(ctx, hook_type, extra_vars, None)?;
--    } else {
--        let flat = prepare_and_check(
--            ctx,
--            user_config,
--            project_config,
--            hook_type,
--            extra_vars,
--            name_filters,
--        )?;
--        // `flat` is non-empty: a filter that matches nothing errors above.
--        announcer.add_groups(ctx, hook_type, None, vec![flat]);
--    }
-+    let steps = prepare_and_check(
-+        ctx,
-+        user_config,
-+        project_config,
-+        hook_type,
-+        extra_vars,
-+        name_filters,
-+    )?;
-+    announcer.add_steps(ctx, hook_type, None, steps);
-     announcer.flush()
- }
- 
-@@ -146,26 +140,17 @@ fn parse_shorthand_token(raw: &str) -> anyhow::Result<(String, String, String)>
-     Ok((key.replace('-', "_"), key.to_string(), value.to_string()))
- }
- 
--/// Union of top-level template variable names referenced across every command
--/// in both configs for this hook type. Matches alias pipeline semantics:
--/// referenced in any step is a binding candidate for the whole invocation.
-+/// Union of top-level variables referenced by selected commands.
-+/// A reference in any selected step makes the variable a binding candidate.
- fn referenced_vars_union(
--    user_config: Option<&CommandConfig>,
--    project_config: Option<&CommandConfig>,
-+    selected: &[(HookSource, CommandConfig)],
-     hook_type: HookType,
- ) -> anyhow::Result<std::collections::BTreeSet<String>> {
-     let mut out = std::collections::BTreeSet::new();
--    if let Some(cfg) = user_config {
--        out.extend(referenced_vars_for_config(
--            cfg,
--            &format!("user {hook_type} hook"),
--        )?);
--    }
--    if let Some(cfg) = project_config {
--        out.extend(referenced_vars_for_config(
--            cfg,
--            &format!("project {hook_type} hook"),
--        )?);
-+    for (source, config) in selected {
-+        out.extend(referenced_vars_for_config(config, |name| {
-+            source.hook_label(hook_type, name)
-+        })?);
-     }
-     Ok(out)
- }
-@@ -179,23 +164,22 @@ pub struct HookCliArgs<'a> {
-     /// Explicit `--var KEY=VALUE` bindings (deprecated force-bind).
-     pub explicit_vars: &'a [(String, String)],
-     /// Raw `KEY=VALUE` tokens from the `--KEY=VALUE` shorthand. Smart-routed:
--    /// bind if any hook template references KEY, else forward to `{{ args }}`.
-+    /// bind if a selected template references KEY, else forward to `{{ args }}`.
-     pub shorthand_vars: &'a [String],
-     /// Tokens after `--` that forward to `{{ args }}` verbatim.
-     pub forwarded_args: &'a [String],
- }
- 
- /// Handle `wt hook` command
- ///
--/// When explicitly invoking hooks, ALL hooks run (both user and project).
--/// There's no skip flag - if you explicitly run hooks, all configured hooks run.
-+/// Runs configured user and project hooks selected by optional source/name filters.
- ///
- /// Works in detached HEAD state - the `{{ branch }}` template variable (and the
- /// `{{ base }}` / `{{ target }}` names derived from it) is simply unset there.
- ///
- /// Template variables come from three sources in [`HookCliArgs`], routed per
- /// alias semantics:
--/// - `shorthand_vars` (`--KEY=VALUE`): binds `{{ KEY }}` if any hook template
-+/// - `shorthand_vars` (`--KEY=VALUE`): binds `{{ KEY }}` if a selected hook template
- ///   references it; otherwise forwards `--KEY=VALUE` into `{{ args }}`.
- /// - `forwarded_args` (tokens after `--`): forwards into `{{ args }}` verbatim.
- /// - `explicit_vars` (`--var KEY=VALUE`): deprecated force-bind. Always binds,
-@@ -256,7 +240,8 @@ pub fn run_hook(
- 
-     // Smart-route shorthand: bind when the template references the key,
-     // forward otherwise. Mirrors `AliasOptions::parse` for the alias path.
--    let referenced = referenced_vars_union(user_config, proj_config, hook_type)?;
-+    let selected = selected_hook_configs(user_config, proj_config, name_filters);
-+    let referenced = referenced_vars_union(&selected, hook_type)?;
-     let mut bindings: Vec<(String, String)> = Vec::new();
-     let mut args: Vec<String> = Vec::new();
-     for raw in shorth
+-Worktrunk has three extension mechanisms.
+-
+-**[Hooks](#hooks)** are shell commands that run automatically at lifecycle events (switching, starting, committing, merging, removing). Defined in TOML.
+-
+-**[Aliases](#aliases)** are reusable shell commands invoked as `wt <name>`. Defined in TOML.
+-
+-**[Custom subcommands](#custom-subcommands)** are standalone executables invoked as `wt <name>`. Drop `wt-foo` on `PATH` and it becomes `wt foo`.
+-
+-| | Hooks | Aliases | Custom subcommands |
++| | [Hooks](#hooks) | [Aliases](#aliases) | [Custom subcommands](#custom-subcommands) |
+ |---|---|---|---|
+ | **Trigger** | Automatic (lifecycle events) | Manual (`wt <name>`) | Manual (`wt <name>`) |
+ | **Defined in** | TOML config | TOML config | Any executable on `PATH` |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4584** (2026-10-23): Retain partial JSON results when later command steps fail (@max-sixty)
+- **PR #4581** (2026-10-23): Move the full-page demo link below the workspace (@max-sixty)
+- **PR #4579** (2026-10-23): Make the Try it demo a viewport-sized workspace (@max-sixty)
+- **PR #4576** (2026-10-22): docs: simplify logging and integration guidance (@max-sixty)
+- **PR #4575** (2026-10-22): docs: trim repeated explanations across six guides (@max-sixty)
 - **PR #4574** (2026-10-22): Preserve JSON results and diagnostics on command failure (@max-sixty)
-- **PR #4572** (2026-10-22): docs: trim code signing policy and clarify test signing (@max-sixty)
-- **PR #4571** (2026-10-22): Trim Try it page to a single introduction (@max-sixty)
-- **PR #4557** (2026-10-22): Reuse the read-only completion benchmark fixture (@max-sixty)
-- **PR #4546** (2026-10-22): Fix demo command tracking and simplify Try it copy (@max-sixty)
-- **PR #4540** (2026-10-21): perf(commit): skip the second staging pass when no pre-commit hook ran (@worktrunk-bot)
 
 ---
 
@@ -2880,29 +2505,31 @@ R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. demo command tracking and simplify Try it copy (#4546)
+## X. Skip non-UTF-8 environment entries instead of panicking in config loading (#4563
 
 **RULE**:
-When implementing operations in `docs/demos/demoshell/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/config/user/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab9cecb1`: demo command tracking and simplify Try it copy (#4546). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d187abf9`: Skip non-UTF-8 environment entries instead of panicking in config loading (#4563). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/demos/demoshell/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/config/user/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`after-load.sh` supplies the prompt prefix Demoshell uses to identify commands and an OSC 133 exit-status marker so the guide can verify whether they succeeded.
-
+    // `std::env::vars()` panics on any non-UTF-8 entry, including unrelated
+    // ones; skip those entries instead.
+    let mut env_vars: Vec<_> = std::env::vars_os()
+        .filter_map(|(k, v)| Some((k.into_string().ok()?, v.into_string().ok()?)))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    let mut env_vars: Vec<_> = std::env::vars()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab9cecb1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d187abf9` are properly handled with clean fallback behavior.

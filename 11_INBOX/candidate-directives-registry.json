@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T04:57:21.241Z",
+  "last_updated": "2026-10-25T10:16:52.881Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2620,6 +2620,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf"
+    },
+    {
+      "id": "CD-B3BL",
+      "directive_title": "docs: Next.js page: Fix formatting of AI section (#3658)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "vikejs/vike",
+      "source_commit": "7a16befc",
+      "date_staged": "2026-10-25",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-vikejs-vike"
     }
   ]
 }
