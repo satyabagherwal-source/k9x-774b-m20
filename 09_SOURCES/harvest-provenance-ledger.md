@@ -5168,3 +5168,4 @@ Every entry in this ledger must capture:
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `83df76a5` | Multi-dimensional audit evidence | 2026-10-26T13:58:25.488Z |
 | `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-10-26T14:03:29.026Z |
 | `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-26T14:10:05.393Z |
+| `learn-github-berkaycubuk-kitsune` | `https://github.com/berkaycubuk/kitsune` | `616da5b1` | Multi-dimensional audit evidence | 2026-10-26T14:16:46.808Z |

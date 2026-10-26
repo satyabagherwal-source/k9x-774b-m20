@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T14:10:05.332Z",
+  "last_updated": "2026-10-26T14:16:46.748Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64446,14 +64446,19 @@
       "slug": "berkaycubuk-kitsune",
       "platform": "github",
       "source_url": "https://github.com/berkaycubuk/kitsune",
-      "source_version": "f6bd4da3",
-      "content_hash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
+      "source_version": "616da5b1",
+      "content_hash": "a09d116f95d8729ef540891ac289a4b429c97979e40255f4735c40e3c4ac014f",
       "dossier_path": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/berkaycubuk-kitsune-learnings.md",
       "promoted_rules": [
         {
           "number": 2769,
           "title": "build processes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4623,
+          "title": "read page dates from JSON-LD and <time>, not only meta tags",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -64462,7 +64467,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:22:21.368Z",
+      "verified_at": "2026-10-26T14:16:46.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129523,6 +129528,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T14:10:05.320Z"
+    },
+    "rule-4623": {
+      "learning_id": "rule-4623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4623,
+      "title": "read page dates from JSON-LD and <time>, not only meta tags",
+      "source_url": "https://github.com/berkaycubuk/kitsune",
+      "source_version": "616da5b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:16:46.736Z"
     }
   },
   "aliases": {

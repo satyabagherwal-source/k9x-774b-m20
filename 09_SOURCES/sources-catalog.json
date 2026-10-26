@@ -8743,10 +8743,10 @@
     "repository": "berkaycubuk/kitsune",
     "platform": "github",
     "sourceUrl": "https://github.com/berkaycubuk/kitsune",
-    "sourceVersion": "f6bd4da3",
+    "sourceVersion": "616da5b1",
     "license": "MIT",
-    "contentHash": "a6cf6290b3095535df9a5ebe02e5c93f8a17a80f4f07dda8301d5988fad8d869",
-    "lastHarvestedAt": "2026-10-19T19:22:21.438Z",
+    "contentHash": "a09d116f95d8729ef540891ac289a4b429c97979e40255f4735c40e3c4ac014f",
+    "lastHarvestedAt": "2026-10-26T14:16:46.808Z",
     "learningId": "learn-github-berkaycubuk-kitsune"
   },
   "touchlab-droidconkotlin": {

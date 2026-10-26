@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-R3VX",
-    "timestamp": "2026-10-25T04:25:25.101Z",
-    "repository": "goharbor/harbor",
-    "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "c81bc195a0d841ad78a53f7ff24a4f6a8c00821e1fe19d42bcd8d8dc4a841121",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-ZC7U",
     "timestamp": "2026-10-25T04:31:49.146Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7477,21 @@
     "contentHash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-BGET",
+    "timestamp": "2026-10-26T14:16:46.805Z",
+    "repository": "berkaycubuk/kitsune",
+    "learningId": "learn-github-berkaycubuk-kitsune",
+    "contentHash": "a09d116f95d8729ef540891ac289a4b429c97979e40255f4735c40e3c4ac014f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
