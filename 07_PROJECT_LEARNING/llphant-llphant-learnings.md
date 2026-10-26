@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source**: github ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
-> **Source Version**: `b9e6030a`  
+> **Source Version**: `6305ae46`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:28:34.321Z  
+> **Timestamp**: 2026-10-26T13:51:49.653Z  
 > **Learning ID**: `learn-github-llphant-llphant`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/llphant-llphant-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/LLPhant/LLPhant](https://github.com/LLPhant/LLPhant))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:28:34.314Z  
+> **Harvest Timestamp**: 2026-10-26T13:51:49.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -236,466 +236,497 @@ export default config
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb5b9074` (2026-10-23)
-**Commit Message**: Add SECURITY.md (#542)
+### Incident Patch 1: `973f03e4` (2026-10-25)
+**Commit Message**: Fix CI
 
-**File**: `SECURITY.md` (added, +9/-0)
+**File**: `src/Embeddings/VectorStores/Elasticsearch/ElasticsearchVectorStore.php` (modified, +3/-2)
 ```diff
-@@ -0,0 +1,9 @@
-+# Security Policy
-+
-+## Supported Versions
-+
-+Only the latest version is currently being supported with security updates.
-+
-+## Reporting a Vulnerability
-+
-+Please report any vulnerability sending a message to [Franco Lombardo's LinkedIn profile](https://www.linkedin.com/in/francolombardo)
-```
-
----
-
-### Incident Patch 2: `67f33cb4` (2026-10-25)
-**Commit Message**: Fix streams for OpenAI and Gemini (#534)
-
-* Fix for streams in OpenAI and Gemini
-Changes to Integration test for GeminiAIChat
-
-* Fix for streams in OpenAI and Gemini
-
-* Fix for streams in OpenAI and Gemini - improve test
-
-* Fix for streams in OpenAI and Gemini - corner cases
-
-* Fix for streams in OpenAI and Gemini - Address CR
-
-* Fix for streams in OpenAI and Gemini - Address CR - 2
-
-* Address CR - 1
-
-* Address CR - 2 - add failing test
-
-* Address CR - 2 - add fix
-
-* Address CR - 2 - add fix and unit test
-
-* Address CR - 4 - add failing test
-
-* Address CR - 4 - add GeminiAIChat.php
-
-* Fix CI problems
-
-* Upgrade models. Address CR
-
-**File**: `docs/usage.rst` (modified, +4/-3)
-```diff
-@@ -42,14 +42,15 @@ replace it with any Atlas Cloud model identifier available in your account.
- Gemini
- ------
+@@ -25,6 +25,7 @@ public function __construct(public Client $client, public string $indexName = se
  
--We support Gemini through its OpenAI API compatibility. Here is an example:
-+We support Gemini through its OpenAI-compatible API with a dedicated chat class.
-+Use ``GeminiAIChat`` together with ``GeminiOpenAIConfig``.
- 
- .. code-block:: php
- 
-     $config = new GeminiOpenAIConfig();
-     $config->apiKey = "your_api_key";
-     $config->model = 'gemini-2.0-flash';
--    $chat = new OpenAIChat($config);
-+    $chat = new GeminiAIChat($config);
-     $response = $chat->generateText('what is one + one ?');
- 
- If you do not specify an api key, the ``GeminiOpenAIConfig`` tries to read it from the ``GEMINI_API_KEY`` environment variable.
-@@ -168,7 +169,7 @@ The API to generate text using OpenAI will only be from the chat API.
- So even if you want to generate a completion for a simple question under the hood it will use the chat API.
- This is why this class is called OpenAIChat.
- 
--You can use the ``OpenAIChat``, ``MistralAIChat`` or ``OllamaChat`` to generate text or to create a chat.
-+You can use ``OpenAIChat``, ``GeminiAIChat``, ``MistralAIChat`` or ``OllamaChat`` to generate text or to create a chat.
- 
- We can use it to simply generate text from a prompt.
- This will ask directly an answer from the LLM.
-```
-
-**File**: `src/Chat/CalledFunction/CalledFunction.php` (modified, +8/-2)
-```diff
-@@ -8,8 +8,14 @@ class CalledFunction
- {
-     /**
-      * @param  array<string, mixed>  $arguments
-+     * @param  array<string, mixed>|null  $extra_content
-      */
--    public function __construct(public FunctionInfo $definition, public array $arguments, public ?string $return, public ?string $tool_call_id = null)
--    {
-+    public function __construct(
-+        public FunctionInfo $definition,
-+        public array $arguments,
-+        public ?string $return,
-+        public ?string $tool_call_id = null,
-+        public ?array $extra_content = null
-+    ) {
-     }
- }
-```
-
-**File**: `src/Chat/Enums/OpenAIChatModel.php` (modified, +2/-1)
-```diff
-@@ -4,10 +4,11 @@
- 
- enum OpenAIChatModel: string
- {
-+    //    case Gpt35Turbo = 'gpt-3.5-turbo';
-     case Gpt35Turbo = 'gpt-3.5-turbo';
-     case Gpt4 = 'gpt-4';
-     case Gpt4Turbo = 'gpt-4-turbo';
--    case Gpt4Omni = 'gpt-4o';
-+    case Gpt4o = 'gpt-4o';
-     case Gpt4Omini = 'gpt-4o-mini';
-     case Gpt56Sol = 'gpt-5.6-sol';
- }
-```
-
-**File**: `src/Chat/FunctionInfo/FunctionInfo.php` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ public function asOpenAIMessages(mixed $functionResult): array
-             Message::assistantAskingTools([$this->asToolCallObject()]),
-             Message::toolResult(
-                 $functionResult,
--                $this->toolCallId
-+                $this->toolCallId,
-             )];
-     }
- }
-```
-
-**File**: `src/Chat/GeminiAIChat.php` (added, +210/-0)
-```diff
-@@ -0,0 +1,210 @@
-+<?php
+         if ($existStatusCode === 200) {
+             $this->ensureMetadataMapping();
 +
-+namespace LLPhant\Chat;
-+
-+use GuzzleHttp\Psr7\Utils;
-+use LLPhant\Chat\CalledFunction\CalledFunction;
-+use LLPhant\GeminiOpenAIConfig;
-+use OpenAI\Responses\Chat\CreateStreamedResponse;
-+use OpenAI\Responses\StreamResponse;
-+use Psr\Http\Message\ResponseInterface;
-+use Psr\Http\Message\StreamInterface;
-+use Psr\Log\LoggerInterface;
-+use Psr\Log\NullLogger;
-+
-+class GeminiAIChat extends OpenAIChat
-+{
-+    public function __construct(GeminiOpenAIConfig $config = new GeminiOpenAIConfig(), LoggerInterface $logger = new NullLogger())
-+    {
-+        parent::__construct($config, $logger);
-+    }
-+
-+    /**
-+     * Gemini ends streamed tool-call turns with finish_reason "stop".
-+     */
-+    protected function shouldCallStreamedTools(?string $finishReason): bool
-+    {
-+        return $finishReason !== null && $finishReason !== 'length' && $finishReason !== 'content_filter';
-+    }
-+
-+    protected function shouldAddAssistantToolCallsMessage(): bool
-+    {
-+        return false;
-+    }
-+
-+    protected function createMessageWithToolOutput(CalledFunction $functionCalled): Message
-+    {
-+        return Message::functionResult($this->createStructuredFunctionResultPayload($functionCalled), $functionCalled->definition->name);
-+    }
-+
-+    /**
-+     * @param  Message[]  $messages
-+     */
-+    protected function createStreamedResponse(array $messages): StreamInterface
-+    {
-+        $openAiArgs = $this->getOpenAiArgs($messages);
-+
-+        $this->logger->debug('Calling Chat::createStreamed', [
-+            'chat' => self::class,
-+            'args' => $openAiArgs,
-+        ]);
-+
-+        $stream = $this->client->chat()->createStreamed($openAiArgs);
-+        $response = $this->extractRawStreamResponse($stream);
-+
-+        $generator = function (ResponseInterface $response) use ($messages) {
-+            $toolsToCall = [];
-+
-+            while (! $response->getBody()->eof()) {
-+                $line = $this->readLineFromStream($response->getBody());
-+
-+                $event = null;
-+                if (str_starts_with($line, 'event:')) {
-+                    $event = trim(substr($line, strlen('event:')));
-+                    $line = $this->readLineFromStream($response->getBody());
-+                }
-+
-+                if (! str_starts_with($line, 'data:')) {
-+                    continue;
-+                }
-+
-+                $data = trim(substr($line, strlen('data:')));
-+                if ($data === '[DONE]') {
-+                    break;
-+                }
-+
-+                $chunk = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
-+                if ($event !== null) {
-+                    $chunk['__event'] = $event;
-+                }
-+
-+                if (isset($chunk['error'])) {
-+                    throw new \RuntimeException('Gemini stream error: '.json_encode($chunk['error'], JSON_THROW_ON_ERROR));
-+                }
-+
-+                $choices = $chunk['choices'] ?? [];
-+                if (! is_array($choices) || $choices === []) {
-+                    continue;
-+                }
-+
-+                $choice = $choices[0];
-+                $delta = $choice['delta'] ?? [];
-+                $toolCalls = $delta['tool_calls'] ?? [];
-+                foreach ($toolCalls as $toolCall) {
-+                    if (! is_array($toolCall) || ! isset($toolCall['function']) || ! is_array($toolCall['function'])) {
-+                        continue;
-+                    }
-+
-+                    $functionName = $toolCall['function']['name'] ?? null;
-+                    $argumentsDelta = (string) ($toolCall['function']['arguments'] ?? '');
-+                    $indexFromPayload = isset($toolCall['index']) && is_int($toolCall['index']) ? $toolCall['index'] : null;
-+                    $callId = isset($toolCall['id']) && is_string($toolCall['id']) ? $toolCall['id'] : null;
-+                    $extraContent = isset($toolCall['extra_content']) && is_array($toolCall['extra_content']) ? $toolCall['extra_content'] : null;
-+
-+                    if (is_string($functionName)) {
-+                        $toolsToCall[$indexFromPayload ?? count($toolsToCall)] = [
-+                            'function' => $functionName,
-+                            'arguments' => $argumentsDelta,
-+                            'id' => $callId,
-+                            'extra_content' => $extraContent,
-+                        ];
-+
-+                        continue;
-+                    }
-+
-+                    $index = $indexFromPayload ?? array_key_last($toolsToCall);
-+                    if ($index === null || ! isset($toolsToCall[$index])) {
-+                        continue;
-+                    }
-+
-+                    $toolsToCall[$index]['arguments'] .= $argumentsDelta;
-+                    if (($toolsToCall[$index]['extra_content'] ?? null) === null && $extraContent !== null) {
-+                        $toolsToCall[$index]['extra_content'] = $extraContent;
-+                    }
-+                }
-+
-+     
-```
-
-**File**: `src/Chat/Message.php` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@ public function jsonSerialize(): mixed
-             $result['tool_call_id'] = $this->tool_call_id;
+             return;
          }
  
--        if (! empty($this->name)) {
-+        if ($this->role === ChatRole::Function && ! empty($this->name)) {
-             $result['name'] = $this->name;
-         }
- 
-```
-
-**File**: `src/Chat/OpenAIChat.php` (modified, +69/-14)
-```diff
-@@ -27,7 +27,7 @@
-  * @phpstan-import-type ModelOptions from OpenAIConfig
-  */ class OpenAIChat implements ChatInterface
- {
--    private readonly ClientContract $client;
-+    protected readonly ClientContract $client;
- 
-     public string $model;
- 
-@@ -53,7 +53,7 @@
- 
-     public ?FunctionInfo $requiredFunction = null;
- 
--    public function __construct(OpenAIConfig $config = new OpenAIConfig(), private readonly LoggerInterface $logger = new NullLogger())
-+    public function __construct(OpenAIConfig $config = new OpenAIConfig(), protected readonly LoggerInterface $logger = new NullLogger())
-     {
-         if ($config->client instanceof ClientContract) {
-             $this->client = $config->client;
-@@ -172,7 +172,7 @@ private function getNewMessagesFromTurn(array $messages, array $newFunctionsCall
-         $toolsOutput = [];
-         foreach ($newFunctionsCalled as $functionCalled) {
-             if ($functionCalled->return !== null) {
--                $toolsOutput[] = Message::toolResult($functionCalled->return, $functionCalled->tool_call_id);
-+                $toolsOutput[] = $this->createMessageWithToolOutput($functionCalled);
+@@ -281,8 +282,8 @@ private function assertBulkSucceeded(array $bulkResponse): void
+                 continue;
              }
-             if ($functionCalled->tool_call_id) {
-                 $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
-@@ -183,7 +183,9 @@ private function getNewMessagesFromTurn(array $messages, array $newFunctionsCall
-             return [];
-         }
- 
--        $messages[] = Message::assistantAskingTools($toolsCalls);
-+        if ($toolsCalls !== [] && $this->shouldAddAssistantToolCallsMessage()) {
-+            $messages[] = Message::assistantAskingTools($toolsCalls);
-+        }
- 
-         return array_merge($messages, $toolsOutput);
-     }
-@@ -216,6 +218,9 @@ public function generateChatOrReturnFunctionToCall(array $messages): string|arra
-      */
-     public function generateChatStream(array $messages): StreamInterface
-     {
-+        $this->functionsCalled = [];
-+        $this->lastFunctionCalled = null;
-+
-         return $this->createStreamedResponse($messages);
-     }
- 
-@@ -288,7 +293,7 @@ private function createOpenAIMessagesFromPrompt(string $prompt): array
-     /**
-      * @param  Message[]  $messages
-      */
--    private function createStreamedResponse(array $messages): StreamInterface
-+    protected function createStreamedResponse(array $messages): StreamInterface
-     {
-         $openAiArgs = $this->getOpenAiArgs($messages);
- 
-@@ -363,7 +368,7 @@ private function createStreamedResponse(array $messages): StreamInterface
-      * @param  Message[]  $messages
-      * @return array<string, mixed>
-      */
--    private function getOpenAiArgs(array $messages): array
-+    protected function getOpenAiArgs(array $messages): array
-     {
-         // The system message should be the first
-         $finalMessages = [];
-@@ -379,6 +384,7 @@ private function getOpenAiArgs(array $messages): array
- 
-         if ($this->tools !== []) {
-             $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->tools);
-+            $this->normalizeReasoningEffortForToolCalls($openAiArgs);
-         }
- 
-         if ($this->requiredFunction instanceof FunctionInfo) {
-@@ -390,6 +396,39 @@ private function getOpenAiArgs(array $messages): array
-         return $openAiArgs;
-     }
- 
-+    /**
-+     * OpenAI chat/completions models in the GPT-5 family reject function tools unless reasoning_effort is "none".
-+     *
-+     * @param  array<string, mixed>  $openAiArgs
-+     */
-+    private function normalizeReasoningEffortForToolCalls(array &$openAiArgs): void
-+    {
-+        $prefixes = [
-+            'gpt-5.4',
-+            'gpt-5.5',
-+            'gpt-5.6',
-+            'gpt-6-sol',
-+        ];
-+        if ($this->hasPrefix(strtolower($this->model), $prefixes)) {
-+            $openAiArgs['reasoning_effort'] = 'none';
-+        }
-+
-+    }
-+
-+    /**
-+     * @param  string[]  $prefixes
-+     */
-+    private function hasPrefix(string $string, array $prefixes): bool
-+    {
-+        foreach ($prefixes as $prefix) {
-+            if (str_starts_with($string, $prefix)) {
-+                return true;
-+            }
-+        }
-+
-+        return false;
-+    }
-+
-     /**
-      * @throws \JsonException
-      */
-@@ -418,13 +457,18 @@ private function getFunctionInfoFromName(string $functionName, string $toolCallI
-         throw new Exception("OpenAI tried to call $functionName which doesn't exist");
-     }
- 
--    private function callFunction(string $functionName, string $argumentsString, string $toolCallId): void
-+    /**
-+     * @param  array<string,mixed>|null  $extraContent
-+     *
-+     * @throws \JsonException
-+     */
-+    protected function callFunction(string $functionName, string $argumentsString, string $toolCallId, ?array $extraContent = null): void
-     {
-         $arguments = $argumentsString !== '' && $argumentsString !== '0' ? json_decode($argumentsString, true,
+             $error = $operationResult['error'] ?? [];
+-            $errorType = is_array($error) ? ($error['type'] ?? 'unknown') : 'unknown';
+-            $errorReason = is_array($error) ? ($error['reason'] ?? 'unknown') : 'unknown';
++            $errorType = $error['type'] ?? 'unknown';
++            $errorReason = $error['reason'] ?? 'unknown';
+             $documentId = $operationResult['_id'] ?? 'unknown';
+             $failures[] = sprintf(
+                 '%s/%s returned status %d (%s: %s)',
 ```
 
-**File**: `src/OpenAIConfig.php` (modified, +1/-0)
+**File**: `src/Embeddings/VectorStores/OpenSearch/OpenSearchVectorStore.php` (modified, +3/-2)
 ```diff
-@@ -25,6 +25,7 @@
-  *     response_format?: ResponseFormat|null,
-  *     seed?: int|null,
-  *     service_tier?: string|null,
-+ *     reasoning_effort?: 'none'|'minimal'|'low'|'medium'|'high'|string|null,
-  *     stop?: string|array<string>|null,
-  *     temperature?: float|null,
-  *     top_p?: float|null,
+@@ -19,6 +19,7 @@ public function __construct(public Client $client, public string $indexName = se
+     {
+         if ($client->indices()->exists(['index' => $indexName])) {
+             $this->ensureMetadataMapping();
++
+             return;
+         }
+ 
+@@ -284,8 +285,8 @@ private function assertBulkSucceeded(array $bulkResponse): void
+                 continue;
+             }
+             $error = $operationResult['error'] ?? [];
+-            $errorType = is_array($error) ? ($error['type'] ?? 'unknown') : 'unknown';
+-            $errorReason = is_array($error) ? ($error['reason'] ?? 'unknown') : 'unknown';
++            $errorType = $error['type'] ?? 'unknown';
++            $errorReason = $error['reason'] ?? 'unknown';
+             $documentId = $operationResult['_id'] ?? 'unknown';
+             $failures[] = sprintf(
+                 '%s/%s returned status %d (%s: %s)',
 ```
 
 ---
 
-### Incident Patch 3: `39a5419c` (2026-10-23)
-**Commit Message**: Update predis/predis requirement from ^2.2 to ^2.4 (#463)
+### Incident Patch 2: `63903117` (2026-10-25)
+**Commit Message**: Revert "Add Meilisearch vector store support"
 
-Updates the requirements on [predis/predis](https://github.com/predis/predis) to permit the latest version.
-- [Release notes](https://github.com/predis/predis/releases)
-- [Changelog](https://github.com/predis/predis/blob/v2.4.1/CHANGELOG.md)
-- [Commits](https://github.com/predis/predis/compare/v2.2.0...v2.4.1)
+This reverts commit d3b0279ebc92f8a6ddfdadf6ec7666dfee21ce88.
+
+**File**: `composer.json` (modified, +0/-2)
+```diff
+@@ -23,7 +23,6 @@
+         "yethee/tiktoken": "^0.10.0"
+     },
+     "suggest": {
+-        "meilisearch/meilisearch-php": "This is required for the MeilisearchVectorStore (^1.16).",
+         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
+         "doctrine/mongodb-odm": "This is required for the DoctrineODMVectoreStore. This should be working with any version ^2.16.1",
+         "symfony/cache": "This is one of the possible types of psr/cache needed by doctrine/orm",
+@@ -43,7 +42,6 @@
+         "elasticsearch/elasticsearch": "^8.15",
+         "hkulekci/qdrant": "^1.19",
+         "laravel/pint": "v1.15.3",
+-        "meilisearch/meilisearch-php": "^1.16",
+         "mockery/mockery": "^1.6.12",
+         "mongodb/mongodb": "^2.4",
+         "opensearch-project/opensearch-php": "^2.3",
+```
+
+**File**: `docs/embeddings.rst` (modified, +0/-43)
+```diff
+@@ -149,7 +149,6 @@ Once you have embeddings you need to store them in a vector store.
+ The vector store is a database that can store vectors and perform a similarity search.
+ There are currently these vectorStore classes:
+ 
+--   MeilisearchVectorStore stores embeddings in `Meilisearch <https://www.meilisearch.com/>`_. (require meilisearch/meilisearch-php ^1.16)
+ -   MemoryVectorStore stores the embeddings in the memory
+ -   FileSystemVectorStore stores the embeddings in a file
+ -   DoctrineVectorStore stores the embeddings in a postgresql or in a MariaDB database. (require doctrine/orm)
+@@ -400,45 +399,3 @@ convertFromOldFileFormat:
+    :format: html
+ 
+ .. include:: footer.rst
+-
+-Meilisearch VectorStore
+-~~~~~~~~~~~~~~~~~~~~~~
+-
+-Install the official client with ``composer require meilisearch/meilisearch-php:^1.16``
+-and run a Meilisearch server supporting user-provided embeddings (v1.13 or later).
+-LLPhant generates the embeddings; configure the same dimensions as your embedding generator.
+-
+-.. code-block:: php
+-
+-   use LLPhant\Embeddings\VectorStores\Meilisearch\MeilisearchVectorStore;
+-   use Meilisearch\Client;
+-
+-   $client = new Client('http://localhost:7700', 'your-api-key');
+-   $vectorStore = new MeilisearchVectorStore($client, 'documents', embedder: 'default');
+-   $vectorStore->createIndex(1536); // Run once for a new index.
+-   $vectorStore->addDocuments($embeddedDocuments);
+-   $documents = $vectorStore->similaritySearch($embedding, 4);
+-   $vectorStore->deleteDocument($embeddedDocuments[0]);
+-
+-For an existing index, configure its named embedder with ``source: userProvided`` and
+-matching dimensions before adding documents. The constructor makes no network requests.
+-Documents have deterministic IDs based on content, source type, source name and chunk number,
+-so inserting the same document again replaces it. Metadata and document fields are preserved.
+-Changing content produces a new ID; delete the original document when replacing its content.
+-
+-``similaritySearch`` performs pure semantic search. Pass Meilisearch search parameters
+-such as ``filter`` or ``rankingScoreThreshold`` as its third argument. Configure any filterable
+-attributes on the index using the official client first. Results contain the document fields
+-and metadata; embeddings are not retrieved by default.
+-
+-``deleteDocuments`` accepts an array of documents; ``deleteIndex`` removes the entire index.
+-Index setup, writes and deletions wait for task completion and report server failures.
+-The task timeout defaults to 30 seconds and can be changed with the constructor's
+-``timeoutInMs`` argument. A timeout does not cancel the server-side task.
+-
+-To run the integration test, start Meilisearch and set ``MEILISEARCH_URL`` and optionally
+-``MEILISEARCH_API_KEY``, then run:
+-
+-.. code-block:: bash
+-
+-   vendor/bin/pest tests/Integration/Embeddings/VectorStores/Meilisearch
+```
+
+**File**: `docs/features.rst` (modified, +0/-1)
+```diff
+@@ -108,7 +108,6 @@ Supported Vector Stores
+    * - ElasticSearch
+    * - Local File System
+    * - MariaDB (via Doctrine)
+-   * - Meilisearch
+    * - Memory
+    * - Milvus
+    * - MongoDB
+```
+
+**File**: `src/Embeddings/VectorStores/Meilisearch/MeilisearchVectorStore.php` (removed, +0/-140)
+```diff
+@@ -1,140 +0,0 @@
+-<?php
+-
+-declare(strict_types=1);
+-
+-namespace LLPhant\Embeddings\VectorStores\Meilisearch;
+-
+-use LLPhant\Embeddings\Document;
+-use LLPhant\Embeddings\DocumentUtils;
+-use LLPhant\Embeddings\VectorStores\VectorStoreBase;
+-use LLPhant\Exception\MissingParameterException;
+-use Meilisearch\Client;
+-use Meilisearch\Endpoints\Indexes;
+-use RuntimeException;
+-
+-class MeilisearchVectorStore extends VectorStoreBase
+-{
+-    private readonly Indexes $index;
+-
+-    public function __construct(
+-        private readonly Client $client,
+-        private readonly string $indexName,
+-        private readonly string $embedder = 'default',
+-        private readonly int $timeoutInMs = 30000,
+-    ) {
+-        $this->index = $client->index($indexName);
+-    }
+-
+-    /**
+-     * Create a new index configured for embeddings generated by LLPhant.
+-     */
+-    public function createIndex(int $embeddingLength): void
+-    {
+-        $this->waitForTask($this->client->createIndex($this->indexName, ['primaryKey' => 'id']));
+-        $this->waitForTask($this->index->updateEmbedders([
+-            $this->embedder => ['source' => 'userProvided', 'dimensions' => $embeddingLength],
+-        ]));
+-    }
+-
+-    public function addDocument(Document $document): void
+-    {
+-        $this->addDocuments([$document]);
+-    }
+-
+-    public function addDocuments(array $documents): void
+-    {
+-        if ($documents === []) {
+-            return;
+-        }
+-
+-        $points = [];
+-        foreach ($documents as $document) {
+-            if ($document->embedding === null) {
+-                throw new MissingParameterException('It is impossible to save a document without its vectors. You need to call an embeddingGenerator first.');
+-            }
+-
+-            $points[] = [
+-                'id' => $this->getId($document),
+-                'content' => $document->content,
+-                'formattedContent' => $document->formattedContent,
+-                'hash' => $document->hash,
+-                'sourceName' => $document->sourceName,
+-                'sourceType' => $document->sourceType,
+-                'chunkNumber' => $document->chunkNumber,
+-                'metadata' => $document->metadata,
+-                '_vectors' => [$this->embedder => $document->embedding],
+-            ];
+-        }
+-
+-        $this->waitForTask($this->index->addDocuments($points, 'id'));
+-    }
+-
+-    /**
+-     * @param  float[]  $embedding
+-     * @param  array<string, mixed>  $additionalArguments  Meilisearch search parameters, e.g. filter or rankingScoreThreshold
+-     * @return Document[]
+-     */
+-    public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
+-    {
+-        $response = $this->index->search('', array_merge($additionalArguments, [
+-            'vector' => $embedding,
+-            'limit' => $k,
+-            'hybrid' => ['semanticRatio' => 1.0, 'embedder' => $this->embedder],
+-        ]));
+-
+-        $documents = [];
+-        foreach ($response->getHits() as $hit) {
+-            $document = new Document();
+-            $document->id = $hit['id'];
+-            $document->content = $hit['content'];
+-            $document->formattedContent = $hit['formattedContent'] ?? null;
+-            $document->hash = $hit['hash'];
+-            $document->sourceName = $hit['sourceName'];
+-            $document->sourceType = $hit['sourceType'];
+-            $document->chunkNumber = $hit['chunkNumber'];
+-            $document->metadata = $hit['metadata'] ?? [];
+-            $documents[] = $document;
+-        }
+-
+-        return $documents;
+-    }
+-
+-    public function deleteDocument(Document $document): void
+-    {
+-        $this->waitForTask($this->index->deleteDocument($this->getId($document)));
+-    }
+-
+-    /**
+-     * @param  Document[]  $documents
+-     */
+-    public function deleteDocuments(array $documents): void
+-    {
+-        if ($documents === []) {
+-            return;
+-        }
+-
+-        $ids = array_map(fn (Document $document): string => $this->getId($document), $documents);
+-        $this->waitForTask($this->index->deleteDocuments($ids));
+-    }
+-
+-    public function deleteIndex(): void
+-    {
+-        $this->waitForTask($this->client->deleteIndex($this->indexName));
+-    }
+-
+-    private function getId(Document $document): string
+-    {
+-        return hash('sha256', $document->content.DocumentUtils::getUniqueId($document));
+-    }
+-
+-    /**
+-     * @param  array<string, mixed>  $task
+-     */
+-    private function waitForTask(array $task): void
+-    {
+-        $result = $this->client->waitForTask($task['taskUid'], $this->timeoutInMs);
+-        if ($result['status'] !== 'succeeded') {
+-            throw new RuntimeException('Meilisearch task failed: '.($result['error']['message'] ?? $result['status']));
+-        }
+-    }
+-}
+```
+
+**File**: `tests/Integration/Embeddings/VectorStores/Meilisearch/MeilisearchVectorStoreTest.php` (removed, +0/-42)
+```diff
+@@ -1,42 +0,0 @@
+-<?php
+-
+-declare(strict_types=1);
+-
+-use LLPhant\Embeddings\DocumentUtils;
+-use LLPhant\Embeddings\VectorStores\Meilisearch\MeilisearchVectorStore;
+-use Meilisearch\Client;
+-
+-it('creates, upserts, searches and deletes documents in Meilisearch', function () {
+-    $client = new Client(getenv('MEILISEARCH_URL') ?: 'http://localhost:7700', getenv('MEILISEARCH_API_KEY') ?: null);
+-    $indexName = 'llphant_test_'.bin2hex(random_bytes(4));
+-    $store = new MeilisearchVectorStore($client, $indexName, 'custom');
+-    $store->createIndex(3);
+-
+-    try {
+-        $task = $client->index($indexName)->updateFilterableAttributes(['metadata.country']);
+-        $client->waitForTask($task['taskUid']);
+-
+-        $documents = DocumentUtils::documents('Paris is in France', 'Rome is in Italy');
+-        $documents[0]->embedding = [1.0, 0.0, 0.0];
+-        $documents[0]->metadata = ['country' => 'France'];
+-        $documents[1]->embedding = [0.0, 1.0, 0.0];
+-        $store->addDocuments($documents);
+-        $store->addDocument($documents[0]);
+-
+-        $results = $store->similaritySearch([1.0, 0.0, 0.0], 2);
+-        expect($results)->toHaveCount(2)
+-            ->and($results[0]->content)->toBe($documents[0]->content)
+-            ->and($results[0]->metadata)->toBe(['country' => 'France']);
+-
+-        $filtered = $store->similaritySearch([1.0, 0.0, 0.0], 2, ['filter' => 'metadata.country = France']);
+-        expect($filtered)->toHaveCount(1)
+-            ->and($filtered[0]->content)->toBe($documents[0]->content);
+-
+-        $store->deleteDocument($results[0]);
+-        expect($store->similaritySearch([1.0, 0.0, 0.0], 2))->toHaveCount(1);
+-        $store->deleteDocuments([$documents[1]]);
+-        expect($store->similaritySearch([1.0, 0.0, 0.0]))->toBe([]);
+-    } finally {
+-        $store->deleteIndex();
+-    }
+-});
+```
+
+**File**: `tests/Unit/Embeddings/VectorStores/Meilisearch/MeilisearchVectorStoreTest.php` (removed, +0/-160)
+```diff
+@@ -1,160 +0,0 @@
+-<?php
+-
+-declare(strict_types=1);
+-
+-namespace Tests\Unit\Embeddings\VectorStores\Meilisearch;
+-
+-use GuzzleHttp\Client as HttpClient;
+-use GuzzleHttp\Handler\MockHandler;
+-use GuzzleHttp\HandlerStack;
+-use GuzzleHttp\Middleware;
+-use GuzzleHttp\Psr7\Response;
+-use LLPhant\Embeddings\DocumentUtils;
+-use LLPhant\Embeddings\VectorStores\Meilisearch\MeilisearchVectorStore;
+-use LLPhant\Exception\MissingParameterException;
+-use Meilisearch\Client;
+-use RuntimeException;
+-
+-function storeWithResponses(array $responses, array &$history): MeilisearchVectorStore
+-{
+-    $handler = HandlerStack::create(new MockHandler(array_map(
+-        function (array $response): Response {
+-            if (isset($response['hits'])) {
+-                $response += [
+-                    'processingTimeMs' => 0,
+-                    'query' => '',
+-                    'limit' => 20,
+-                    'offset' => 0,
+-                    'estimatedTotalHits' => count($response['hits']),
+-                ];
+-            }
+-
+-            return new Response(200, ['Content-Type' => 'application/json'], json_encode($response, JSON_THROW_ON_ERROR));
+-        },
+-        $responses
+-    )));
+-    $handler->push(Middleware::history($history));
+-
+-    return new MeilisearchVectorStore(new Client('http://localhost:7700', 'test-key', new HttpClient(['handler' => $handler])), 'documents', 'custom');
+-}
+-
+-it('creates an index with the configured user-provided embedder', function () {
+-    $history = [];
+-    $store = storeWithResponses([
+-        ['taskUid' => 1], ['status' => 'succeeded'],
+-        ['taskUid' => 2], ['status' => 'succeeded'],
+-    ], $history);
+-    $store->createIndex(3);
+-
+-    expect(json_decode((string) $history[0]['request']->getBody(), true))->toBe(['primaryKey' => 'id', 'uid' => 'documents'])
+-        ->and($history[2]['request']->getUri()->getPath())->toBe('/indexes/documents/settings/embedders')
+-        ->and(json_decode((string) $history[2]['request']->getBody(), true))->toBe(['custom' => ['source' => 'userProvided', 'dimensions' => 3]]);
+-});
+-
+-it('upserts documents in one batch with deterministic ids and metadata', function () {
+-    $history = [];
+-    $store = storeWithResponses([['taskUid' => 1], ['status' => 'succeeded']], $history);
+-    $documents = DocumentUtils::documents('Hello', 'World');
+-    foreach ($documents as $document) {
+-        $document->embedding = [0.1, 0.2];
+-        $document->metadata = ['tags' => ['test']];
+-    }
+-    $store->addDocuments($documents);
+-
+-    $body = json_decode((string) $history[0]['request']->getBody(), true);
+-    expect($body)->toHaveCount(2)
+-        ->and($body[0]['id'])->toBe(hash('sha256', 'Hellomanual:manual:0'))
+-        ->and($body[0]['_vectors'])->toBe(['custom' => [0.1, 0.2]])
+-        ->and($body[0]['metadata'])->toBe(['tags' => ['test']])
+-        ->and($history[0]['request']->getMethod())->toBe('POST')
+-        ->and($history[0]['request']->getUri()->getQuery())->toBe('primaryKey=id')
+-        ->and($history[1]['request']->getUri()->getPath())->toBe('/tasks/1');
+-});
+-
+-it('adds a single document', function () {
+-    $history = [];
+-    $store = storeWithResponses([['taskUid' => 1], ['status' => 'succeeded']], $history);
+-    $document = DocumentUtils::document('Hello');
+-    $document->embedding = [0.1, 0.2];
+-    $store->addDocument($document);
+-
+-    expect(json_decode((string) $history[0]['request']->getBody(), true))->toHaveCount(1);
+-});
+-
+-it('rejects a batch containing missing embeddings before sending it', function () {
+-    $history = [];
+-    $store = storeWithResponses([], $history);
+-    $documents = DocumentUtils::documents('Hello', 'World');
+-    $documents[0]->embedding = [0.1, 0.2];
+-    expect(fn () => $store->addDocuments($documents))->toThrow(MissingParameterException::class)
+-        ->and($history)->toBe([]);
+-});
+-
+-it('does not send empty batches', function () {
+-    $history = [];
+-    $store = storeWithResponses([], $history);
+-    $store->addDocuments([]);
+-    $store->deleteDocuments([]);
+-    expect($history)->toBe([]);
+-});
+-
+-it('searches semantically with filters and restores document fields', function () {
+-    $history = [];
+-    $store = storeWithResponses([['hits' => [[
+-        'id' => 'one', 'content' => 'Hello', 'formattedContent' => 'Formatted',
+-        'hash' => 'hash', 'sourceName' => 'hello.txt', 'sourceType' => 'file',
+-        'chunkNumber' => 2, 'metadata' => ['tags' => ['test']],
+-    ]]]], $history);
+-    $documents = $store->similaritySearch([0.1, 0.2], 30, ['filter' => 'sourceType = file']);
+-
+-    expect(json_decode((string) $history[0]['request']->getBody(), true))->toBe([
+-        'q' => '', 'filter' => 'sourceType = file', 'vector' => [0.1, 0.2],
+-        'limit' => 30, 'hybrid' => ['semanticRatio' => 1, 'embedder' => 'custom'],
+-    ])->and($documents)->toHaveCount(1)
+-        ->and($documents[0]->id)->toBe('one')
+-        ->and($documents[0]->content)->toBe('Hello')
+-        -
+```
 
 ---
-updated-dependencies:
-- dependency-name: predis/predis
-  dependency-version: 2.4.1
-  dependency-type: direct:development
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 3: `61de1f87` (2026-10-25)
+**Commit Message**: Revert "Update similaritySearch to handle attributesToRetrieve"
 
-**File**: `composer.json` (modified, +1/-1)
+This reverts commit 2fc2a6f8c26483a967833ae4df41ecf09711dc47.
+
+**File**: `src/Embeddings/VectorStores/Meilisearch/MeilisearchVectorStore.php` (modified, +0/-7)
 ```diff
-@@ -49,7 +49,7 @@
-         "pestphp/pest-plugin-arch": "^3.0",
-         "pestphp/pest-plugin-type-coverage": "^3.0",
-         "phpstan/phpstan": "^2",
--        "predis/predis": "^2.2",
-+        "predis/predis": "^2.4",
-         "rector/rector": "^2",
-         "scotteuser/pinecone-php": "^1.0.4",
-         "symfony/cache": "^7.2",
+@@ -76,13 +76,6 @@ public function addDocuments(array $documents): void
+      */
+     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
+     {
+-        if (isset($additionalArguments['attributesToRetrieve'])) {
+-            $additionalArguments['attributesToRetrieve'] = array_values(array_unique(array_merge(
+-                $additionalArguments['attributesToRetrieve'],
+-                ['id', 'content', 'formattedContent', 'hash', 'sourceName', 'sourceType', 'chunkNumber', 'metadata']
+-            )));
+-        }
+-
+         $response = $this->index->search('', array_merge($additionalArguments, [
+             'vector' => $embedding,
+             'limit' => $k,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #547** (2026-10-26): Add document metadata (@f-lombardo)
+- **PR #546** (2026-10-25): Revert "Add Meilisearch vector store support" (@f-lombardo)
 - **PR #545** (2026-10-25): Add plumbphp badge (@f-lombardo)
 - **PR #544** (2026-10-25): Add GisooConfig for the OpenAI-compatible Gisoo API (@netarz)
 - **PR #543** (2026-10-25): Improve fix-lint and quality composer scripts (@f-lombardo)
 - **PR #542** (2026-10-23): Add SECURITY.md (@f-lombardo)
-- **PR #541** (2026-10-22): Update mongodb/mongodb library for security issues (@f-lombardo)
-- **PR #539** (2026-10-21): Throw a readable HttpException on an error event in AnthropicChat streams (@pcbeingused333)
 
 ---
 
@@ -715,36 +746,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add SECURITY.md (#542)
+## X. Empirical Invariant Guard in ElasticsearchVectorStore.php
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Embeddings/VectorStores/Elasticsearch/ElasticsearchVectorStore.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in LLPhant/LLPhant. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb5b9074`: Add SECURITY.md (#542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `973f03e4`: CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Embeddings/VectorStores/Elasticsearch/ElasticsearchVectorStore.php`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-# Security Policy
 
-## Supported Versions
-
-Only the latest version is currently being supported with security updates.
-
-## Reporting a Vulnerability
-
-Please report any vulnerability sending a message to [Franco Lombardo's LinkedIn profile](https://www.linkedin.com/in/francolombardo)
+            $errorType = $error['type'] ?? 'unknown';
+            $errorReason = $error['reason'] ?? 'unknown';
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            $errorType = is_array($error) ? ($error['type'] ?? 'unknown') : 'unknown';
+            $errorReason = is_array($error) ? ($error['reason'] ?? 'unknown') : 'unknown';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb5b9074` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `973f03e4` are properly handled with clean fallback behavior.

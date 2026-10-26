@@ -5161,3 +5161,6 @@ Every entry in this ledger must capture:
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `07d9354d` | Multi-dimensional audit evidence | 2026-10-26T13:40:31.545Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `002a6b7a` | Multi-dimensional audit evidence | 2026-10-26T13:40:38.960Z |
 | `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-10-26T13:40:39.397Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `259984cd` | Multi-dimensional audit evidence | 2026-10-26T13:51:47.223Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-26T13:51:48.929Z |
+| `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `6305ae46` | Multi-dimensional audit evidence | 2026-10-26T13:51:49.855Z |

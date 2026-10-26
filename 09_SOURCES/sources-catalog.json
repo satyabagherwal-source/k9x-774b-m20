@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "6c7a3d4e",
+    "sourceVersion": "259984cd",
     "license": "NOASSERTION",
-    "contentHash": "11715ad404f817e11861dc107cb2ad214bad18c48cae76234fd4e1af373c36e1",
-    "lastHarvestedAt": "2026-10-26T02:51:02.281Z",
+    "contentHash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
+    "lastHarvestedAt": "2026-10-26T13:51:47.223Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3533,10 +3533,10 @@
     "repository": "LLPhant/LLPhant",
     "platform": "github",
     "sourceUrl": "https://github.com/LLPhant/LLPhant",
-    "sourceVersion": "b9e6030a",
+    "sourceVersion": "6305ae46",
     "license": "MIT",
-    "contentHash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
-    "lastHarvestedAt": "2026-10-25T16:28:34.507Z",
+    "contentHash": "3767525e06428ba80ac04e13fd2f00315861377e0d6eb6773d52a7ec4cf8fcc9",
+    "lastHarvestedAt": "2026-10-26T13:51:49.855Z",
     "learningId": "learn-github-llphant-llphant"
   },
   "ant-design-pro-components": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "51be6c41ad1ecb844725749683a43a0bcc13f087bb8db51b1021249d1e009039",
-    "lastHarvestedAt": "2026-10-22T15:28:47.483Z",
+    "contentHash": "41f20dbdcb0e0d8d6eab19342ee838a3d6bbc916ee6dd6c1de268684c1a847e9",
+    "lastHarvestedAt": "2026-10-26T13:51:48.929Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

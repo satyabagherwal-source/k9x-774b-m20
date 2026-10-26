@@ -5154,3 +5154,6 @@
 | `CYCLE-20261026-0TYT` | `2026-10-26T13:40:31.541Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4611` | Yes (`8605e7a2...`) |
 | `CYCLE-20261026-0ZOR` | `2026-10-26T13:40:38.955Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612` | Yes (`1234e514...`) |
 | `CYCLE-20261026-100Y` | `2026-10-26T13:40:39.394Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612, Rule 4613, Rule 4614` | Yes (`60c25a6d...`) |
+| `CYCLE-20261026-FBBN` | `2026-10-26T13:51:47.219Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4615` | Yes (`802f1662...`) |
+| `CYCLE-20261026-FCN2` | `2026-10-26T13:51:48.926Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 4616, Rule 4617` | Yes (`41f20dbd...`) |
+| `CYCLE-20261026-FDCS` | `2026-10-26T13:51:49.852Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/llphant-llphant-learnings.md` | Yes (`3767525e...`) |

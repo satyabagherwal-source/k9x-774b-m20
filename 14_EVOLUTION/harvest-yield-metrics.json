@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:40:39.402Z",
-  "total_cycles_completed": 5131,
-  "total_learnings_persisted": 5131,
-  "total_rules_promoted": 4512,
+  "last_updated": "2026-10-26T13:51:49.866Z",
+  "total_cycles_completed": 5134,
+  "total_learnings_persisted": 5134,
+  "total_rules_promoted": 4516,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:12:49.720Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:12:58.899Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:19:06.126Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:19:10.409Z",
       "repository": "vinceglb/FileKit",
@@ -1403,6 +1382,27 @@
       "repository": "RecursiveSI/flint",
       "learningId": "learn-huggingface-recursivesi-flint",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:51:47.228Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:51:48.934Z",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:51:49.866Z",
+      "repository": "LLPhant/LLPhant",
+      "learningId": "learn-github-llphant-llphant",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

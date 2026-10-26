@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:40:39.338Z",
+  "last_updated": "2026-10-26T13:51:49.783Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12097,8 +12097,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "6c7a3d4e",
-      "content_hash": "11715ad404f817e11861dc107cb2ad214bad18c48cae76234fd4e1af373c36e1",
+      "source_version": "259984cd",
+      "content_hash": "802f16620230337f1eae2c8a58cca69bbf1c86fb72dd47bcbc588728f80da48a",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -12196,6 +12196,11 @@
           "number": 4552,
           "title": "build: release 0.2.150 (#5995)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4615,
+          "title": "fdev): write build artifacts atomically (#5997)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12203,7 +12208,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:51:02.206Z",
+      "verified_at": "2026-10-26T13:51:47.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33365,8 +33370,8 @@
       "slug": "llphant-llphant",
       "platform": "github",
       "source_url": "https://github.com/LLPhant/LLPhant",
-      "source_version": "b9e6030a",
-      "content_hash": "b353f0570ac925111758507b71de7726d47650dfd6903477499084cbf9ac718c",
+      "source_version": "6305ae46",
+      "content_hash": "3767525e06428ba80ac04e13fd2f00315861377e0d6eb6773d52a7ec4cf8fcc9",
       "dossier_path": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/llphant-llphant-learnings.md",
       "promoted_rules": [
@@ -33396,7 +33401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:28:34.428Z",
+      "verified_at": "2026-10-26T13:51:49.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -75987,14 +75992,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
-      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-22T17:58:21.235Z"
+      "verified_at": "2026-10-26T13:51:48.855Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -114158,16 +114163,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
       "source_version": "hf-xhtoken-spark-x2.6-4b",
-      "content_hash": "51be6c41ad1ecb844725749683a43a0bcc13f087bb8db51b1021249d1e009039",
+      "content_hash": "41f20dbdcb0e0d8d6eab19342ee838a3d6bbc916ee6dd6c1de268684c1a847e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4616,
+          "title": "Dual RoPE Parameter Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4617,
+          "title": "Controllable Thinking Budget Enforcement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:28:47.401Z",
+      "verified_at": "2026-10-26T13:51:48.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129353,6 +129374,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:40:39.327Z"
+    },
+    "rule-4615": {
+      "learning_id": "rule-4615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4615,
+      "title": "fdev): write build artifacts atomically (#5997)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "259984cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:51:47.147Z"
+    },
+    "rule-4616": {
+      "learning_id": "rule-4616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4616,
+      "title": "Dual RoPE Parameter Decoupling Invariant",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:51:48.855Z"
+    },
+    "rule-4617": {
+      "learning_id": "rule-4617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4617,
+      "title": "Controllable Thinking Budget Enforcement Invariant",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:51:48.855Z"
     }
   },
   "aliases": {

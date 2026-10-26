@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:11:27.506Z",
+  "last_updated": "2026-10-26T13:51:49.860Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2840,6 +2840,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kuddev-pebrel"
+    },
+    {
+      "id": "CD-FDD0",
+      "directive_title": "Empirical Invariant Guard in ElasticsearchVectorStore.php",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LLPhant/LLPhant",
+      "source_commit": "6305ae46",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-llphant-llphant"
     }
   ]
 }
