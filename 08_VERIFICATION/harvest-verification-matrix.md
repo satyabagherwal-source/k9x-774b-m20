@@ -5056,3 +5056,6 @@
 | `CYCLE-20261026-VK5A` | `2026-10-26T00:32:36.286Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4502` | Yes (`6fa671c3...`) |
 | `CYCLE-20261026-VPXQ` | `2026-10-26T00:32:43.790Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4503` | Yes (`2e37d5aa...`) |
 | `CYCLE-20261026-ZPHV` | `2026-10-26T00:35:49.843Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4504, Rule 4505, Rule 4506` | Yes (`e23d98bb...`) |
+| `CYCLE-20261026-7GG5` | `2026-10-26T00:41:51.365Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`48b89959...`) |
+| `CYCLE-20261026-7H6C` | `2026-10-26T00:41:52.308Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4507` | Yes (`ba6657c3...`) |
+| `CYCLE-20261026-7LR5` | `2026-10-26T00:41:58.241Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4508` | Yes (`2cead0ed...`) |

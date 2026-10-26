@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:35:49.787Z",
+  "last_updated": "2026-10-26T00:41:58.198Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10966,8 +10966,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "eb860e7c",
-      "content_hash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
+      "source_version": "b11ea7ea",
+      "content_hash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -10995,6 +10995,11 @@
           "number": 4094,
           "title": "exception_ptr_get_object under pointer authentication",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4507,
+          "title": "Build absl from source on Ubuntu 24.04",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11002,7 +11007,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:06:13.273Z",
+      "verified_at": "2026-10-26T00:41:52.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15923,7 +15928,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
+      "content_hash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -15975,7 +15980,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-21T04:21:58.162Z",
+      "verified_at": "2026-10-26T00:41:51.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30445,14 +30450,19 @@
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "ff0d09e6",
-      "content_hash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
+      "source_version": "ad88767b",
+      "content_hash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "promoted_rules": [
         {
           "number": 2771,
           "title": "Update Rust crate uuid to v1.24.1 (#1255)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4508,
+          "title": "Update Rust crate tokio to v1.54.0 (#1288)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30461,7 +30471,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:29:51.840Z",
+      "verified_at": "2026-10-26T00:41:58.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127173,6 +127183,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:35:49.775Z"
+    },
+    "rule-4507": {
+      "learning_id": "rule-4507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4507,
+      "title": "Build absl from source on Ubuntu 24.04",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "b11ea7ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:41:52.254Z"
+    },
+    "rule-4508": {
+      "learning_id": "rule-4508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4508,
+      "title": "Update Rust crate tokio to v1.54.0 (#1288)",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "ad88767b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:41:58.188Z"
     }
   },
   "aliases": {

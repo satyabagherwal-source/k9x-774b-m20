@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:35:49.851Z",
-  "total_cycles_completed": 5033,
-  "total_learnings_persisted": 5033,
-  "total_rules_promoted": 4397,
+  "last_updated": "2026-10-26T00:41:58.248Z",
+  "total_cycles_completed": 5036,
+  "total_learnings_persisted": 5036,
+  "total_rules_promoted": 4399,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:38:08.694Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:38:09.379Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:44:17.606Z",
-      "repository": "bvaughn/react-virtualized",
-      "learningId": "learn-github-bvaughn-react-virtualized",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:44:27.923Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1403,6 +1382,27 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:41:51.376Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:41:52.315Z",
+      "repository": "facebook/folly",
+      "learningId": "learn-github-facebook-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:41:58.248Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

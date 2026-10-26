@@ -5063,3 +5063,6 @@ Every entry in this ledger must capture:
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `301402f9` | Multi-dimensional audit evidence | 2026-10-26T00:32:36.289Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `de16943c` | Multi-dimensional audit evidence | 2026-10-26T00:32:43.794Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-26T00:35:49.846Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-26T00:41:51.368Z |
+| `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `b11ea7ea` | Multi-dimensional audit evidence | 2026-10-26T00:41:52.311Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `ad88767b` | Multi-dimensional audit evidence | 2026-10-26T00:41:58.244Z |

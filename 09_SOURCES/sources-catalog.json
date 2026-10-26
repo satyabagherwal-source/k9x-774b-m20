@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
-    "lastHarvestedAt": "2026-10-21T04:21:58.196Z",
+    "contentHash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
+    "lastHarvestedAt": "2026-10-26T00:41:51.368Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -7663,10 +7663,10 @@
     "repository": "facebook/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "eb860e7c",
+    "sourceVersion": "b11ea7ea",
     "license": "Apache-2.0",
-    "contentHash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
-    "lastHarvestedAt": "2026-10-25T06:06:13.315Z",
+    "contentHash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
+    "lastHarvestedAt": "2026-10-26T00:41:52.311Z",
     "learningId": "learn-github-facebook-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -8773,10 +8773,10 @@
     "repository": "JuulLabs/kable",
     "platform": "github",
     "sourceUrl": "https://github.com/JuulLabs/kable",
-    "sourceVersion": "ff0d09e6",
+    "sourceVersion": "ad88767b",
     "license": "Apache-2.0",
-    "contentHash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
-    "lastHarvestedAt": "2026-10-19T19:29:51.911Z",
+    "contentHash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
+    "lastHarvestedAt": "2026-10-26T00:41:58.244Z",
     "learningId": "learn-github-juullabs-kable"
   },
   "tmolavi-siteprobe": {

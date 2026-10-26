@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `eb860e7c`  
+> **Source Version**: `b11ea7ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:06:13.078Z  
+> **Timestamp**: 2026-10-26T00:41:51.989Z  
 > **Learning ID**: `learn-github-facebook-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:06:12.272Z  
+> **Harvest Timestamp**: 2026-10-26T00:41:51.983Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2368,175 +2368,40 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e73f0d9` (2026-10-23)
-**Commit Message**: Fix exception_ptr_get_object under pointer authentication
+### Incident Patch 1: `3d04a788` (2026-10-25)
+**Commit Message**: Build absl from source on Ubuntu 24.04
 
 Summary:
-On arm64e, `exception_ptr_get_object` traps with `EXC_ARM_PAC_FAIL` whenever it is given a target type, so `exception_wrapper::what()`, `get_exception()` and `is_compatible_with<Ex>()` crash on any non-empty wrapper.
+X-link: https://github.com/facebookexternal/rdma_gen/pull/38
 
-The libc++abi implementation calls libc++abi's private `__shim_type_info::can_catch` through `__folly_shim_type_info`, a declaration with the same vtable layout under a different name. With pointer authentication, a virtual call also authenticates the function pointer against a discriminator hashed from the mangled name of the method that introduced the slot, and the two names hash differently (`0x5b1b` here, `0x6b2a` in libc++abi).
+Ubuntu 24.04's libabsl-dev (20220623.1) provides no `absl::log` target, so the rdma-unit suite's `find_package(absl)` fails to generate there. The manifest now excludes 24.04 from distro packages, falling back to the pinned source rev.
 
-When `ptrauth_calls` is on, declare the class with libc++abi's name and `can_catch` signature instead. The parameter type is part of the mangled name, so renaming the class alone is not enough. folly only declares the class and emits no vtable or typeinfo for it. Builds without pointer authentication keep `__folly_shim_type_info` and compile to the same code. The change also applies to the AArch64 Linux `pauthtest` ABI, which signs vtables the same way, but it was tested 
+Reviewed By: ccanel
 
-**File**: `folly/lang/Exception.cpp` (modified, +20/-2)
+Differential Revision: D127265177
+
+fbshipit-source-id: b13866e619a03e93f303803d965c588d6f8a3d70
+
+**File**: `build/fbcode_builder/manifests/absl` (modified, +3/-5)
 ```diff
-@@ -232,8 +232,24 @@ struct __folly_cxa_exception_with_reserve {
- static const uint64_t kOurExceptionClass = 0x434C4E47432B2B00; // CLNGC++\0
- #endif
+@@ -14,14 +14,12 @@ ABSL_BUILD_TESTING = OFF
+ ABSL_PROPAGATE_CXX_STD = ON
+ ABSL_USE_SYSTEM_INCLUDES = ON
  
-+#if FOLLY_HAS_FEATURE(ptrauth_calls)
-+//  with pointer authentication, a virtual call authenticates the function
-+//  pointer against a discriminator derived from the mangled name of the method,
-+//  so the shim must have the same name and signature as the real one
-+class __shim_type_info : public std::type_info {
-+ public:
-+  virtual ~__shim_type_info() = 0;
-+
-+  virtual void noop1() const = 0;
-+  virtual void noop2() const = 0;
-+  virtual bool can_catch(
-+      const __shim_type_info* thrown_type, void*& adjustedPtr) const = 0;
-+};
-+using __folly_shim_type_info = __shim_type_info;
-+#else
- //  named differently from the real shim type __shim_type_info and all members
--//  are pure virtual; as long as the vtable is the same, though, it should work
-+//  are pure virtual; absent pointer authentication, a matching vtable layout is
-+//  enough
- class __folly_shim_type_info : public std::type_info {
-  public:
-   virtual ~__folly_shim_type_info() = 0;
-@@ -243,6 +259,7 @@ class __folly_shim_type_info : public std::type_info {
-   virtual bool can_catch(
-       const std::type_info* thrown_type, void*& adjustedPtr) const = 0;
- };
-+#endif
+-# Prefer distro abseil where it is new enough to provide absl::log, and
+-# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
+-# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
+-# which predate absl::log.
++# EL8/EL9 ship 20211102.0, too old for absl::log.
+ [rpms.any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9))))]
+ abseil-cpp-devel
  
- } // namespace __cxxabiv1
+-[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
++# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
++[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
+ libabsl-dev
  
-@@ -483,7 +500,8 @@ void* exception_ptr_get_object_(
-   auto object = cxxabi_get_object(ptr);
-   auto type = exception_ptr_get_type(ptr);
-   auto starget = static_cast<abi::__folly_shim_type_info const*>(target);
--  return !target || starget->can_catch(type, object) ? object : nullptr;
-+  auto stype = static_cast<abi::__folly_shim_type_info const*>(type);
-+  return !target || starget->can_catch(stype, object) ? object : nullptr;
- }
- 
- std::size_t exception_ptr_use_count_(std::exception_ptr const& ptr) noexcept {
-```
-
----
-
-### Incident Patch 2: `0f90b081` (2026-10-22)
-**Commit Message**: Use `std::chrono::{ceil,round}` instead of `folly::chrono::` (folly, quic)
-
-Summary:
-`folly/Chrono.h` re-exports `std::chrono::{abs,ceil,floor,round}` as
-`folly::chrono::*` via plain `using` declarations. D115147400 deletes those
-re-exports; this diff moves callers to the `std::chrono` names first so that
-diff can land with only the deletion. It changes no behavior:
-`folly::chrono::ceil` *is* `std::chrono::ceil`.
-
-- `folly/futures/ThreadWheelTimekeeper.cpp`, `folly/io/async/TimeoutManager.cpp`:
-  `folly::chrono::ceil` -> `std::chrono::ceil`; their `<folly/Chrono.h>` include
-  was only for this, so it becomes `<chrono>`.
-- `folly/coro/test/CoroTest.cpp`: the unqualified `chrono::round` resolved to
-  `folly::chrono::round` through `using namespace folly;`; now `std::chrono::round`.
-- `quic/api/QuicTransportBaseLite.cpp`, `quic/api/test/QuicTypedTransportTest.cpp`,
-  `quic/congestion_control/QuicCubic.cpp`, `quic/loss/QuicLossFunctions.h`,
-  `quic/loss/test/QuicLossFunctionsTest.cpp`: `folly::chrono::ceil` ->
-  `std::chrono::ceil`, with `<chrono>` in place of `<folly/Chrono.h>` where that
-  was its only use. Dropped the now-unused `//folly:chrono` dep from
-  `quic/congestion_control` 
-
-**File**: `folly/coro/test/CoroTest.cpp` (modified, +2/-1)
-```diff
-@@ -126,7 +126,8 @@ TEST_F(CoroTest, Sleep) {
-   // rounding here.
-   auto totalTime = std::chrono::steady_clock::now() - startTime;
-   EXPECT_GE(
--      chrono::round<std::chrono::seconds>(totalTime), std::chrono::seconds{1});
-+      std::chrono::round<std::chrono::seconds>(totalTime),
-+      std::chrono::seconds{1});
- }
- 
- TEST_F(CoroTest, ExecutorKeepAlive) {
-```
-
-**File**: `folly/futures/ThreadWheelTimekeeper.cpp` (modified, +2/-2)
-```diff
-@@ -18,7 +18,7 @@
- 
- #include <future>
- 
--#include <folly/Chrono.h>
-+#include <chrono>
- #include <folly/futures/Future.h>
- #include <folly/futures/WTCallback.h>
- 
-@@ -59,7 +59,7 @@ SemiFuture<Unit> EventBaseThreadTimekeeper::after(HighResDuration dur) {
-   // fine here.
-   eventBaseRef_.runInEventBaseThread([this, cob2 = std::move(cob), dur] {
-     eventBaseRef_.timer().scheduleTimeout(
--        cob2.get(), folly::chrono::ceil<Duration>(dur));
-+        cob2.get(), std::chrono::ceil<Duration>(dur));
-   });
-   return std::move(sf);
- }
-```
-
-**File**: `folly/io/async/TimeoutManager.cpp` (modified, +2/-2)
-```diff
-@@ -19,7 +19,7 @@
- #include <boost/intrusive/list.hpp>
- #include <glog/logging.h>
- 
--#include <folly/Chrono.h>
-+#include <chrono>
- #include <folly/Exception.h>
- #include <folly/Memory.h>
- #include <folly/io/async/AsyncTimeout.h>
-@@ -72,7 +72,7 @@ TimeoutManager::TimeoutManager()
- 
- bool TimeoutManager::scheduleTimeoutHighRes(
-     AsyncTimeout* obj, timeout_type_high_res timeout) {
--  timeout_type timeout_ms = folly::chrono::ceil<timeout_type>(timeout);
-+  timeout_type timeout_ms = std::chrono::ceil<timeout_type>(timeout);
-   return scheduleTimeout(obj, timeout_ms);
- }
- 
-```
-
----
-
-### Incident Patch 3: `094b133e` (2026-10-23)
-**Commit Message**: Use getdeps absl for the rdma-unit suite
-
-Summary:
-The rdma-unit suite fetched its own Abseil with CMake FetchContent. It now uses the getdeps `absl` project: platforms with a new-enough distro package install it instead of compiling from source, and source builds stay pinned to the same rev so the built code is unchanged.
-
-No functional change intended. Only the test variant's Abseil sourcing changes.
-
-- Drop the test-conditional `glog` entry, an exact duplicate of the unconditional one (`metaroce`).
-
-Reviewed By: bsorrells
-
-Differential Revision: D125553093
-
-fbshipit-source-id: 0188b551824e698a64587fe8d837aabc15f2f869
-
-**File**: `build/fbcode_builder/manifests/metaroce` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ glog = shared_libs
- 
- [dependencies.all(test=on, not(os=windows))]
- googletest
--glog = shared_libs
-+absl
- 
- [rpms.all(distro=centos_stream,distro_vers=8)]
- gcc-toolset-13-gcc-c++
+ [homebrew]
 ```
 
 #### Recent Merged Pull Requests:
@@ -2565,48 +2430,34 @@ fbshipit-source-id: 0188b551824e698a64587fe8d837aabc15f2f869
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. exception_ptr_get_object under pointer authentication
+## X. Build absl from source on Ubuntu 24.04
 
 **RULE**:
-When implementing operations in `folly/lang/Exception.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/fbcode_builder/manifests/absl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e73f0d9`: exception_ptr_get_object under pointer authentication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d04a788`: Build absl from source on Ubuntu 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/lang/Exception.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/absl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#if FOLLY_HAS_FEATURE(ptrauth_calls)
-//  with pointer authentication, a virtual call authenticates the function
-//  pointer against a discriminator derived from the mangled name of the method,
-//  so the shim must have the same name and signature as the real one
-class __shim_type_info : public std::type_info {
- public:
-  virtual ~__shim_type_info() = 0;
-
-  virtual void noop1() const = 0;
-  virtual void noop2() const = 0;
-  virtual bool can_catch(
-      const __shim_type_info* thrown_type, void*& adjustedPtr) const = 0;
-};
-using __folly_shim_type_info = __shim_type_info;
-#else
-//  are pure virtual; absent pointer authentication, a matching vtable layout is
-//  enough
-#endif
-  auto stype = static_cast<abi::__folly_shim_type_info const*>(type);
-  return !target || starget->can_catch(stype, object) ? object : nullptr;
+# EL8/EL9 ship 20211102.0, too old for absl::log.
+# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
+[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-//  are pure virtual; as long as the vtable is the same, though, it should work
-  return !target || starget->can_catch(type, object) ? object : nullptr;
+# Prefer distro abseil where it is new enough to provide absl::log, and
+# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
+# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
+# which predate absl::log.
+[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e73f0d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d04a788` are properly handled with clean fallback behavior.

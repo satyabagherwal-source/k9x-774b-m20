@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:35:49.855Z",
+  "last_updated": "2026-10-26T00:41:58.252Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1595,14 +1595,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "5d960ed25268eca54cfa2bf7e2368e9719c5205d4254dba4ed45b4b10aef411f",
-      "verified_at": "2026-10-21T04:21:58.202Z",
+      "content_hash": "48b89959dd6906e58c21549c2ef7002da2f95529e419dcd059d573b8c18be2ef",
+      "verified_at": "2026-10-26T00:41:51.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:21:58.202Z"
+      "last_updated": "2026-10-26T00:41:51.378Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
@@ -11541,14 +11541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-facebook-folly",
-      "content_hash": "e7255f10788615a79eac5c8f88abc3a22256ddd59807a82b5d81d5ff2d1fd7ba",
-      "verified_at": "2026-10-25T06:06:13.328Z",
+      "content_hash": "ba6657c376819353ff545a1e8ffd286f9ae308308ad8ba948779da27ef9e91e4",
+      "verified_at": "2026-10-26T00:41:52.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:06:13.328Z"
+      "last_updated": "2026-10-26T00:41:52.317Z"
     },
     "Kotlin/kmp-production-sample": {
       "repository": "Kotlin/kmp-production-sample",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
-      "verified_at": "2026-10-19T19:29:51.917Z",
+      "content_hash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
+      "verified_at": "2026-10-26T00:41:58.251Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:29:51.917Z"
+      "last_updated": "2026-10-26T00:41:58.251Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",

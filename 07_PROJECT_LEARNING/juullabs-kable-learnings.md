@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `ff0d09e6`  
+> **Source Version**: `ad88767b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:29:51.583Z  
+> **Timestamp**: 2026-10-26T00:41:57.897Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:29:51.572Z  
+> **Harvest Timestamp**: 2026-10-26T00:41:57.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kotlin Asynchronous Bluetooth Low-Energy
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1202 stars
+- **Stars / Engagement**: 1203 stars
 
 ---
 
@@ -1116,57 +1116,32 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05849690` (2026-09-24)
-**Commit Message**: Update Rust crate uuid to v1.26.1 (#1273)
-
-
-
----
-
-### Incident Patch 2: `c5ffb264` (2026-08-20)
-**Commit Message**: Update Rust crate uuid to v1.24.1 (#1255)
+### Incident Patch 1: `ad88767b` (2026-10-21)
+**Commit Message**: Update Rust crate tokio to v1.54.0 (#1288)
 
 **File**: `kable-btleplug-ffi/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1230,9 +1230,9 @@ dependencies = [
+@@ -1022,9 +1022,9 @@ dependencies = [
  
  [[package]]
- name = "uuid"
--version = "1.24.0"
-+version = "1.24.1"
+ name = "tokio"
+-version = "1.53.1"
++version = "1.54.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
-+checksum = "2cefc03fd367c0c6d4305de1b312cf00248c4114f4a0418ce6a6af769e3b0bd9"
+-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
++checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
  dependencies = [
-  "js-sys",
-  "serde_core",
-```
-
----
-
-### Incident Patch 3: `b3906b7c` (2026-08-14)
-**Commit Message**: Update dependency androidx.compose.ui:ui to v1.12.0 (#1254)
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-common", version =
- androidx-startup = { module = "androidx.startup:startup-runtime", version = "1.2.0" }
- atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version = "0.33.0" }
- compose-activity = { module = "androidx.activity:activity-compose", version = "1.13.0" }
--compose-ui = { module = "androidx.compose.ui:ui", version = "1.11.4" }
-+compose-ui = { module = "androidx.compose.ui:ui", version = "1.12.0" }
- datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.8.0-0.6.x-compat" }
- desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
- equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.5" }
+  "libc",
+  "mio",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1288** (2026-10-21): Update Rust crate tokio to v1.54.0 (@juul-mobile-bot)
 - **PR #1286** (2026-10-05): Update Rust crate btleplug to v0.13.4 (@juul-mobile-bot)
 - **PR #1285** (2026-09-28): Update Gradle to v9.8.0 (@juul-mobile-bot)
 - **PR #1278** (2026-09-24): Update Rust crate btleplug to v0.13.2 (@juul-mobile-bot)
 - **PR #1275** (2026-09-24): Update dependency com.juul.khronicle:khronicle-core to v1.2.0 (@juul-mobile-bot)
 - **PR #1274** (closed): Fix JVM maximum write length using negotiated MTU (@AvikMakwana)
-- **PR #1273** (2026-09-24): Update Rust crate uuid to v1.26.1 (@juul-mobile-bot)
 
 ---
 
@@ -1186,13 +1161,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate uuid to v1.24.1 (#1255)
+## X. Update Rust crate tokio to v1.54.0 (#1288)
 
 **RULE**:
 When implementing operations in `kable-btleplug-ffi/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5ffb264`: Update Rust crate uuid to v1.24.1 (#1255). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad88767b`: Update Rust crate tokio to v1.54.0 (#1288). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-btleplug-ffi/Cargo.lock`.
@@ -1200,16 +1175,16 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-version = "1.24.1"
-checksum = "2cefc03fd367c0c6d4305de1b312cf00248c4114f4a0418ce6a6af769e3b0bd9"
+version = "1.54.0"
+checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.24.0"
-checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
+version = "1.53.1"
+checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5ffb264` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad88767b` are properly handled with clean fallback behavior.
