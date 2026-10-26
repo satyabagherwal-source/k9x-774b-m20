@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/angular-angular-learnings.md`  
 > **Source**: github ([https://github.com/angular/angular](https://github.com/angular/angular))  
-> **Source Version**: `bd4e7816`  
+> **Source Version**: `5244ea78`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:31:38.754Z  
+> **Timestamp**: 2026-10-26T02:02:11.684Z  
 > **Learning ID**: `learn-github-angular-angular`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/angular-angular-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/angular/angular](https://github.com/angular/angular))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:31:38.452Z  
+> **Harvest Timestamp**: 2026-10-26T02:01:52.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Deliver web apps with confidence 🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 101104 stars
+- **Stars / Engagement**: 101102 stars
 
 ---
 
@@ -768,244 +768,317 @@ function stripErrorMessagePrefix(input: string): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `455b6270` (2026-10-24)
-**Commit Message**: docs: label developer preview and experimental APIs in guides
+### Incident Patch 1: `5244ea78` (2026-10-21)
+**Commit Message**: fix(compiler): skip escaped characters when looking for comments in expressions
 
-Four guides document APIs without their stability status: route
-resources (withRouterResources, Route.resources, nonBlocking) and
-createComponent's onError/ErrorDetails are @developerPreview 22.2,
-provideCheckNoChangesConfig is @developerPreview 20.0, and
-resourceFromSnapshots is @experimental. Add the standard IMPORTANT
-callouts.
+The expression parser drops everything after the first `//` outside of quotes,
+but it did not account for escaped characters. A regular expression ending with
+an escaped slash, such as `url.replace(/^https?:\/\//, '')`, was cut off and
+reported as an unterminated regular expression, and a string with an escaped
+quote followed by `//`, such as `'it\'s // here'`, was cut off as well.
 
-**File**: `adev/src/content/guide/components/programmatic-rendering.md` (modified, +2/-0)
+**File**: `packages/compiler/src/expression_parser/parser.ts` (modified, +5/-0)
 ```diff
-@@ -406,6 +406,8 @@ export class PopupService {
+@@ -467,6 +467,11 @@ export class Parser {
+       const char = input.charCodeAt(i);
+       const nextChar = input.charCodeAt(i + 1);
  
- ## Handling rendering errors
- 
-+IMPORTANT: The `onError` option and its `ErrorDetails` parameter are in [developer preview](reference/releases#developer-preview).
++      if (char === chars.$BACKSLASH) {
++        i++;
++        continue;
++      }
 +
- When dynamically creating components using `ViewContainerRef.createComponent` or the standalone `createComponent` function, you can provide an `onError` callback in the options object to handle errors that occur during the rendering or change detection phases. This is the programmatic equivalent of using an `@error` block in templates.
+       if (char === chars.$SLASH && nextChar == chars.$SLASH && outerQuote == null) return i;
  
- ```ts
+       if (outerQuote === char) {
 ```
 
-**File**: `adev/src/content/guide/routing/data-fetching-with-resources.md` (modified, +2/-0)
+**File**: `packages/compiler/test/expression_parser/parser_spec.ts` (modified, +9/-0)
 ```diff
-@@ -1,5 +1,7 @@
- # Data fetching with resources
+@@ -798,6 +798,11 @@ describe('parser', () => {
+         checkBinding('/abc/.test("foo") && something || somethingElse');
+       });
  
-+IMPORTANT: Route resources are in [developer preview](reference/releases#developer-preview).
++      it('should parse a regular expression literal that ends with an escaped slash', () => {
++        checkBinding('/^https?:\\/\\//');
++        checkBinding('url.replace(/^\\//, "") //comment', 'url.replace(/^\\//, "")');
++      });
 +
- The Angular Router integrates with Angular signals through the `resources` route configuration. This allows you to fetch data reactively using `Resource` APIs.
+       it('should report invalid regular expression flag', () => {
+         expectBindingError('"foo".match(/abc/O)', 'Unsupported regular expression flag "O"');
+       });
+@@ -1828,6 +1833,10 @@ describe('parser', () => {
+         checkInterpolation(`{{ "a\'b\`" //comment}}`, `{{ "a\'b\`" }}`);
+       });
  
- ## Why use route resources?
-```
-
-**File**: `adev/src/content/guide/signals/resource.md` (modified, +2/-0)
-```diff
-@@ -231,6 +231,8 @@ Each snapshot contains a `status` and either a `value` or an `error`.
- 
- ### Composing resources with snapshots
- 
-+IMPORTANT: `resourceFromSnapshots` is [experimental](reference/releases#experimental). It's ready for you to try, but it might change before it is stable.
++      it('should ignore escaped quotes when looking for comments', () => {
++        checkInterpolation(`{{ 'it\\'s // here' //comment }}`, `{{ "it's // here" }}`);
++      });
 +
- You can create new resources from snapshots using `resourceFromSnapshots`. This enables composition with signal APIs like `computed` and `linkedSignal` to transform resource behavior.
- 
- ```ts
-```
-
-**File**: `adev/src/content/guide/zoneless.md` (modified, +2/-0)
-```diff
-@@ -172,6 +172,8 @@ in tests. If a test needs it, the component usually isn't fully reactive or
- 
- ### Debug-mode check to ensure updates are detected
- 
-+IMPORTANT: `provideCheckNoChangesConfig` is in [developer preview](reference/releases#developer-preview).
-+
- Angular also provides an additional tool to help verify that an application is making
- updates to state in a zoneless-compatible way. `provideCheckNoChangesConfig({exhaustive: true, interval: <milliseconds>})`
- can be used to periodically check to ensure that no bindings have been updated
+       it('should ignore quotes inside a comment', () => {
+         checkInterpolation(`"{{name // " }}"`, `"{{ name }}"`);
+       });
 ```
 
 ---
 
-### Incident Patch 2: `d6c4cade` (2026-10-23)
-**Commit Message**: fix(compiler-cli): handle missing tyes as injection tokens
+### Incident Patch 2: `b2d3ba9f` (2026-10-25)
+**Commit Message**: fix(upgrade): only compile the template contents of a downgraded component
 
-Matches the ngtsc behavior for the cases where a missing type is used as an injection token.
+Previously, a downgraded component compiled whatever its element contained when the component was created. By then, AngularJS could already have linked or written content into the element, for example through `ng-transclude` or `ng-bind` on it, and that content was compiled again.
 
-**File**: `packages/compiler-cli/preprocessor/ng-analyze/src/compiler/tests.rs` (modified, +12/-0)
+**File**: `packages/upgrade/src/common/src/downgrade_component.ts` (modified, +18/-2)
 ```diff
-@@ -6815,6 +6815,7 @@ fn test_constructor_dependency_diagnostics() {
-         import type { TypeOnly } from './types';
-         import * as Ns from './types';
-         import { Shape } from './types';
-+        import { Missing } from 'missing';
+@@ -123,6 +123,9 @@ export function downgradeComponent(info: {
+     // When downgrading multiple modules, special handling is needed wrt injectors.
+     const hasMultipleDowngradedModules = isNgUpgradeLite && getDowngradedModuleCount($injector) > 1;
  
-         export interface Iface {}
++    // A copy of the contents of each element, taken before anything on the element is linked.
++    const templates = new WeakMap<Node, Node[]>();
++
+     return {
+       restrict: 'E',
+       terminal: true,
+@@ -131,8 +134,21 @@ export function downgradeComponent(info: {
+       // configuration properties can be made available. See:
+       // See G3: javascript/angular2/angular1_router_lib.js
+       // https://github.com/angular/angular.js/blob/47bf11ee94664367a26ed8c91b9b586d3dd420f5/src/ng/compile.js#L1670-L1691.
+-      controller: function () {},
++      controller: [
++        '$element',
++        function (element: IAugmentedJQuery) {
++          // Controllers are instantiated before anything on the element is linked, so the contents
++          // are still the template. A fragment keeps the copies as siblings, as multi-element
++          // directives (e.g. `ng-repeat-start`) need.
++          const fragment = document.createDocumentFragment();
++          element[0].childNodes.forEach((node) => fragment.appendChild(node.cloneNode(true)));
++          templates.set(element[0], Array.from(fragment.childNodes));
++        },
++      ],
+       link: (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, required: any[]) => {
++        const template = templates.get(element[0]) ?? [];
++        templates.delete(element[0]);
++
+         // We might have to compile the contents asynchronously, because this might have been
+         // triggered by `UpgradeNg1ComponentAdapterBuilder`, before the Angular templates have
+         // been compiled.
+@@ -210,7 +226,7 @@ export function downgradeComponent(info: {
+             unsafelyOverwriteSignalInputs,
+           );
  
-@@ -6843,6 +6844,10 @@ fn test_constructor_dependency_diagnostics() {
-             constructor(param: Shape) {}
-         }
-         @Injectable()
-+        export class MissingModuleType {
-+            constructor(param: Missing) {}
-+        }
-+        @Injectable()
-         export class ExplicitToken {
-             constructor(@Inject('token') param: string) {}
-         }
-@@ -7010,6 +7015,13 @@ fn test_constructor_dependency_diagnostics() {
-                 use_inject.clone(),
-                 vec![(no_value.to_string(), "Shape".to_string())],
-             ),
-+            (
-+                2003,
-+                missing("MissingModuleType", "param"),
-+                "param".to_string(),
-+                use_inject.clone(),
-+                vec![(no_value.to_string(), "Missing".to_string())],
-+            ),
-             cmp,
-             (
-                 2016,
+-          const projectableNodes = facade.compileContents();
++          const projectableNodes = facade.compileContents(template);
+           const componentRef = facade.createComponentAndSetup(
+             projectableNodes,
+             isNgUpgradeLite,
 ```
 
-**File**: `packages/compiler-cli/preprocessor/ng-analyze/src/query/engine.rs` (modified, +43/-3)
+**File**: `packages/upgrade/src/common/src/downgrade_component_adapter.ts` (modified, +15/-4)
 ```diff
-@@ -1224,17 +1224,57 @@ pub fn resolve_symbol_value_kind<'a, Fs: ResourceResolverFs + Clone + 'static>(
-             .await;
-         }
+@@ -65,9 +65,20 @@ export class DowngradeComponentAdapter {
+     this.componentScope = scope.$new();
+   }
  
--        let Ok(decl) =
--            crate::evaluator::cross_file::cross_file_resolve(ctx, &file_path, None, name, visited)
--                .await
-+        let Ok(decl) = crate::evaluator::cross_file::cross_file_resolve(
-+            ctx,
-+            &file_path,
-+            None,
-+            name.clone(),
-+            visited,
-+        )
-+        .await
-         else {
-             return SymbolValueKind::Unresolved;
-         };
-+        if decl.is_none() && is_imported_from_missing_module(&file_path, &name, ctx).await {
-+            return SymbolValueKind::TypeOnly;
-+        }
-         classify_declaration(decl, &file_path, ctx).await
+-  compileContents(): Node[][] {
++  compileContents(template: Node[]): Node[][] {
++    if (!template.length) {
++      // There is no template to compile, so whatever is in the element was put there by AngularJS
++      // (e.g. through `ng-transclude`): project it as it is.
++      const projectableNodes = this.groupProjectableNodes(this.element.contents!());
++      projectableNodes.forEach((nodes) =>
++        nodes.forEach((node) => this.element[0].removeChild(node)),
++      );
++      this.element.empty!();
++      return projectableNodes;
++    }
++
+     const compiledProjectableNodes: Node[][] = [];
+-    const projectableNodes: Node[][] = this.groupProjectableNodes();
++    const projectableNodes: Node[][] = this.groupProjectableNodes(template);
+     const linkFns = projectableNodes.map((nodes) => this.$compile(nodes));
+ 
+     this.element.empty!();
+@@ -347,9 +358,9 @@ export class DowngradeComponentAdapter {
      }
-     .boxed()
+   }
+ 
+-  private groupProjectableNodes() {
++  private groupProjectableNodes(nodes: Node[]) {
+     let ngContentSelectors = reflectComponentType(this.component)?.ngContentSelectors ?? [];
+-    return groupNodesBySelector(ngContentSelectors, this.element.contents!());
++    return groupNodesBySelector(ngContentSelectors, nodes);
+   }
  }
  
-+/// Returns `true` when `name` is bound by an import declaration in `file_path` whose module
-+/// specifier cannot be resolved (leaving the symbol without any value declaration). Ignores
-+/// `@angular/*` specifiers so unit tests that omit `@angular/core` `.d.ts` stubs still treat
-+/// framework symbols like `ElementRef` as values.
-+async fn is_imported_from_missing_module<Fs: ResourceResolverFs + Clone + 'static>(
-+    file_path: &Path,
-+    name: &str,
-+    ctx: &QueryContext<Fs>,
-+) -> bool {
-+    let syntax = ctx
-+        .analyze_file_syntax(ctx.engine.intern_path(file_path))
-+        .await;
-+    for decl in &syntax.import_declarations {
-+        if decl.specifier.starts_with("@angular/") {
-+            continue;
-+        }
-+        if decl
-+            .bindings
-+            .iter()
-+            .any(|b| b.local == name && !b.is_type)
-+        {
-+            return crate::evaluator::cross_file::resolve_specifier(
-+                ctx.engine.resolver.as_ref(),
-+                file_path,
-+                &decl.specifier,
-+            )
-+            .is_none();
-+        }
-+    }
-+    false
-+}
+```
+
+**File**: `packages/upgrade/static/test/integration/content_projection_spec.ts` (modified, +92/-0)
+```diff
+@@ -70,6 +70,77 @@ withEachNg1Version(() => {
+       expect(document.body.textContent).toEqual('ng1[NG2(~ng1-content~)]');
+     });
+ 
++    it('should not compile content that `ng-transclude` added to the host element', async () => {
++      @Component({template: '<ng-content></ng-content>'})
++      class Ng2Component {}
 +
- fn find_namespace_import_specifier<'a>(syntax: &'a FileData, ns_prefix: &str) -> Option<&'a str> {
-     for decl in &syntax.import_declarations {
-         for binding in &decl.bindings {
++      @NgModule({imports: [BrowserModule, UpgradeModule]})
++      class Ng2Module {
++        ngDoBootstrap() {}
++      }
++
++      const evaluated = jasmine.createSpy('evaluated');
++      const ng1Module = angular
++        .module_('ng1', [])
++        .component('ng1', {transclude: true, template: '<ng2 ng-transclude></ng2>'})
++        .directive('ng2', downgradeComponent({component: Ng2Component}))
++        .run([
++          '$rootScope',
++          ($rootScope: angular.IRootScopeService) => {
++            $rootScope['evaluated'] = evaluated;
++            $rootScope['user'] = {
++              name: 'Alice',
++              avatarUrl: '/avatars/alice.png?{{ $root.evaluated() }}',
++            };
++          },
++        ]);
++
++      const element = html(
++        '<div><ng1><img ng-src="{{ user.avatarUrl }}">{{ user.name }}</ng1></div>',
++      );
++      await bootstrap(platformBrowserDynamic(), Ng2Module, element, ng1Module);
++
++      expect(evaluated).not.toHaveBeenCalled();
++      expect(multiTrim(element.textContent)).toBe('Alice');
++    });
++
++    it('should not compile content that a directive on the host element wrote while it was linked', async () => {
++      @Component({template: '<ng-content></ng-content>'})
++      class Ng2Component {}
++
++      @NgModule({imports: [BrowserModule, UpgradeModule]})
++      class Ng2Module {
++        ngDoBootstrap() {}
++      }
++
++      const evaluated = jasmine.createSpy('evaluated');
++      const ng1Module = angular
++        .module_('ng1', [])
++        .directive('ng1Label', () => ({
++          link: {
++            pre: (
++              scope: angular.IScope,
++              element: angular.IAugmentedJQuery,
++              attrs: angular.IAttributes,
++            ) => (element[0].textContent = attrs['ng1Label']),
++          },
++        }))
++        .directive('ng2', downgradeComponent({component: Ng2Component}))
++        .run([
++          '$rootScope',
++          ($rootScope: angular.IRootScopeService) => {
++            $rootScope['evaluated'] = evaluated;
++            $rootScope['value'] = '{{ $root.evaluated() }}';
++          },
++        ]);
++
++      const element = html('<div><ng2 ng1-label="{{ value }}">label</ng2></div>');
++      await bootstrap(platformBrowserDynamic(), Ng2Module, element, ng1Module);
++
++      expect(evaluated).not.toHaveBeenCalled();
++      expect(multiTrim(element.textContent)).toBe('label');
++    });
++
+     it('should correctly project structural directives', async () => {
+       @Component({
+         selector: 'ng2',
+@@ -109,6 +180,27 @@ withEachNg1Version(() => {
+       expect(multiTrim(document.body.textContent)).toBe('ng2-a( 123 )ng2-b( 456 )ng2-c( 789 )');
+     });
+ 
++    it('should project content that uses multi-element directives', async () => {
++      @Component({template: '[<ng-content></ng-content>]'})
++      class Ng2Component {}
++
++      @NgModule({imports: [BrowserModule, UpgradeModule]})
++      class Ng2Module {
++        ngDoBootstrap() {}
++      }
++
++      const ng1Module = angular
++        .module_('ng1', [])
++        .directive('ng2', downgradeComponent({component: Ng2Component}));
++
++      const element = html(
++        '<ng2><b ng-repeat-start="i in [1, 2]">{{ i }}</b><i ng-repeat-end>;</i></ng2>',
++      );
++
++      await bootstrap(platformBrowserDynamic(), Ng2Module, element, ng1Module);
++      expect(multiTrim(element.textContent)).toBe('[1;2;]');
++    });
++
+     it('should instantiate ng1 in ng2 template and project content', async () => {
+       @Component({
+         selector: 'ng2',
 ```
 
-**File**: `packages/compiler-cli/src/ngtsc/file_system/testing/src/ngp_known_failures.ts` (modified, +0/-2)
+**File**: `packages/upgrade/static/test/integration/downgrade_module_spec.ts` (modified, +39/-0)
 ```diff
-@@ -415,9 +415,7 @@ const NGP_KNOWN_NGTSC_FAILURES: ReadonlySet<string> = new Set([
-   'ngtsc @defer block @Component.deferredImports error handling should produce an error when unsupported type (@NgModule) is used in `deferredImports`',
-   'ngtsc @defer block @Component.deferredImports should handle defer blocks that rely on deps from `deferredImports` and `imports`',
-   'ngtsc @defer block block-specific deferredImports type checking should report an error when a pipe declared in a keyed block is used in an unnamed defer block',
--  'ngtsc behavioral tests compiling invalid @Injectables with strictInjectionParameters = true should report an error when using a missing type as injection token',
-   'ngtsc behavioral tests cycle detection should detect a simple cycle and fatally error if doing partial-compilation',
--  'ngtsc behavioral tests should filter out directives and pipes from module exports in the injector def',
-   'ngtsc compilation of standalone types component-side should compile a standalone component in a cycle with its module',
-   'ngtsc extended template checks should produce nullish coalescing not nullable warning',
-   'ngtsc incremental compilation (semantic changes) NgModule declarations should not recompile components when a non-matching directive is added in scope',
-```
-
----
-
-### Incident Patch 3: `ac67ace7` (2026-10-23)
-**Commit Message**: fix(docs-infra): disable the Navigation API integration on Firefox
-
-Firefox versions prior to 159 crash the tab when the Router drives the
-platform Navigation API on fragment navigations, which happens on adev
-whenever a visitor uses the "On this page" menu, clicks a heading, or opens
-a URL with a hash (https://bugzilla.mozilla.org/show_bug.cgi?id=2077448).
-
-Skip `withExperimentalPlatformNavigation()` on Firefox so it falls back to
-the history-based `Location`, as it did before #71504. The exclusion can be
-removed once Firefox 159+ is widely adopted.
-
-Fixes #71567
-
-**File**: `adev/src/app/routing/router_providers.ts` (modified, +10/-1)
-```diff
-@@ -27,6 +27,7 @@ import {ADevTitleStrategy} from '../core/services/a-dev-title-strategy';
- import {ReuseTutorialsRouteStrategy} from '../features/tutorial/tutorials-route-reuse-strategy';
- import {AppScroller} from '../app-scroller';
- import {HttpErrorResponse} from '@angular/common/http';
-+import {isFirefox} from '@angular/docs';
+@@ -741,6 +741,45 @@ withEachNg1Version(() => {
+         expect(element.textContent).toBe('a(1) | b(1)');
+       });
  
- /**
-  * Integrates the Router with the browser's Navigation API, which lets the browser indicate an
-@@ -35,9 +36,17 @@ import {HttpErrorResponse} from '@angular/common/http';
-  *
-  * Only enabled when the Navigation API is available: it is not supported by all browsers yet, and
-  * it doesn't exist on the server (SSR/prerendering).
-+ *
-+ * Firefox is excluded for now: versions prior to 159 crash the tab on fragment navigations when
-+ * the Router drives the Navigation API (https://bugzilla.mozilla.org/show_bug.cgi?id=2077448),
-+ * e.g. when using the "On this page" menu or opening a URL with a hash. See
-+ * https://github.com/angular/angular/issues/71567.
-+ * TODO: remove the Firefox exclusion once Firefox 159+ is widely adopted.
-  */
- const isPlatformNavigationSupported =
--  typeof window !== 'undefined' && (window as {navigation?: unknown}).navigation !== undefined;
-+  typeof window !== 'undefined' &&
-+  (window as {navigation?: unknown}).navigation !== undefined &&
-+  !isFirefox;
- 
- export const routerProviders = [
-   provideRouter(
++      it('should compile and link projected content when the component is created asynchronously', async () => {
++        @Component({template: '[<ng-content></ng-content>]'})
++        class Ng2Component {}
++
++        @NgModule({imports: [BrowserModule]})
++        class Ng2Module {
++          ngDoBootstrap() {}
++        }
++
++        const ng1Module = angular
++          .module_('ng1', [downgradeModule(Ng2Module)])
++          .directive('ng2', downgradeComponent({component: Ng2Component, propagateDigest}))
++          .run([
++            '$rootScope',
++            ($rootScope: angular.IRootScopeService) => {
++              $rootScope['items'] = ['a', 'b'];
++              $rootScope['show'] = true;
++            },
++          ]);
++
++        const element = html(`
++          <div>
++            <ng2><b ng-repeat-start="item in items">{{ item }}</b><i ng-repeat-end>;</i><u ng-if="show">!</u></ng2>
++          </div>
++        `);
++        const $injector = angular.bootstrap(element, [ng1Module.name]);
++        const $rootScope = $injector.get($ROOT_SCOPE) as angular.IRootScopeService;
++
++        await ($injector.get(LAZY_MODULE_REF) as LazyModuleRef).promise;
++        $rootScope.$digest();
++        expect(multiTrim(element.textContent)).toBe('[a;b;!]');
++
++        $rootScope.$apply(() => {
++          $rootScope['items'] = ['c'];
++          $rootScope['show'] = false;
++        });
++        expect(multiTrim(element.textContent)).toBe('[c;]');
++      });
++
+       it('should support using an upgraded service', async () => {
+         @Injectable()
+         class Ng2Service {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #71607** (closed): perf(forms): avoid repeated FormGroup control enumeration (@splincode)
 - **PR #71600** (2026-10-24): docs: add the missing imports to code examples (@erkamyaman)
 - **PR #71598** (2026-10-24): docs: add the missing imports to the resource snapshot example (@erkamyaman)
 - **PR #71593** (2026-10-24): docs(docs-infra): add Uzbek community translation (@Ilyoskhuja)
 - **PR #71591** (2026-10-24): build: update cross-repo angular dependencies to 1183a2e (22.2.x) (@angular-robot)
 - **PR #71590** (2026-10-24): build: update cross-repo angular dependencies to 1183a2e (main) (@angular-robot)
-- **PR #71589** (2026-10-24): perf(forms): match multi-select identities in a single pass (@splincode)
 
 ---
 
@@ -1025,21 +1098,24 @@ Fixes #71567
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: label developer preview and experimental APIs in guides
+## X. compiler): skip escaped characters when looking for comments in expressions
 
 **RULE**:
-When implementing operations in `adev/src/content/guide/components/programmatic-rendering.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in angular/angular. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/compiler/src/expression_parser/parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in angular/angular. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `455b6270`: docs: label developer preview and experimental APIs in guides. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5244ea78`: compiler): skip escaped characters when looking for comments in expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `adev/src/content/guide/components/programmatic-rendering.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/compiler/src/expression_parser/parser.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-IMPORTANT: The `onError` option and its `ErrorDetails` parameter are in [developer preview](reference/releases#developer-preview).
+      if (char === chars.$BACKSLASH) {
+        i++;
+        continue;
+      }
 
 ```
 
@@ -1050,4 +1126,4 @@ IMPORTANT: The `onError` option and its `ErrorDetails` parameter are in [develop
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `455b6270` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5244ea78` are properly handled with clean fallback behavior.

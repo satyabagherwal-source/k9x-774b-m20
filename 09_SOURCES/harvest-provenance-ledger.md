@@ -5091,3 +5091,6 @@ Every entry in this ledger must capture:
 | `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `e1e672b3` | Multi-dimensional audit evidence | 2026-10-26T01:49:16.202Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `656d02b6` | Multi-dimensional audit evidence | 2026-10-26T01:55:35.225Z |
 | `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-26T01:55:36.402Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `e05c7bdf` | Multi-dimensional audit evidence | 2026-10-26T02:01:55.669Z |
+| `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-26T02:01:57.755Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `5244ea78` | Multi-dimensional audit evidence | 2026-10-26T02:02:12.031Z |

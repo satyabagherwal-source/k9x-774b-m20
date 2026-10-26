@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-3UGR",
-    "timestamp": "2026-10-24T20:11:26.331Z",
-    "repository": "malisper/pgrust",
-    "learningId": "learn-github-malisper-pgrust",
-    "contentHash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-DUWQ",
-    "timestamp": "2026-10-24T20:19:13.466Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "7dcc0ae2c0261979bae15bc13ee41878a38d95d70168ddb0fe9348c35eb9a467",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-E411",
-    "timestamp": "2026-10-24T20:19:25.285Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "fb4fdf9cf60e13dc396bed90d678584e0b034638dc9b582f968f5301fc1e85f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-TCD2",
     "timestamp": "2026-10-24T20:31:15.926Z",
     "repository": "typedb/typedb",
@@ -7490,6 +7445,51 @@
     "repository": "hartemyaakoub/seo-toolkit",
     "learningId": "learn-github-hartemyaakoub-seo-toolkit",
     "contentHash": "4f7b2e2d411e2d7946cd5cdf80e34c8c827e003e471c8d375754dc3bd6dddb43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2FGY",
+    "timestamp": "2026-10-26T02:01:55.666Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "acb7f0e2d342bfb06ad72b4f8f97289aa5eef37945b2c8b32e5848f0cb9ab928",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2H2W",
+    "timestamp": "2026-10-26T02:01:57.752Z",
+    "repository": "Maatify/php-seo",
+    "learningId": "learn-github-maatify-php-seo",
+    "contentHash": "ad9206bba018495f8e8542bcc4b54130d96fd01242f0f72481168c1361cb9e62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2S3G",
+    "timestamp": "2026-10-26T02:02:12.028Z",
+    "repository": "angular/angular",
+    "learningId": "learn-github-angular-angular",
+    "contentHash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

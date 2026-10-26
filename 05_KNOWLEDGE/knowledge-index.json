@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T01:55:36.340Z",
+  "last_updated": "2026-10-26T02:02:11.981Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1810,8 +1810,8 @@
       "slug": "angular-angular",
       "platform": "github",
       "source_url": "https://github.com/angular/angular",
-      "source_version": "bd4e7816",
-      "content_hash": "739e0d11fe6e9799fa2780aa52c28465342d32af2bbccd4853ab41186d676b87",
+      "source_version": "5244ea78",
+      "content_hash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
       "dossier_path": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/angular-angular-learnings.md",
       "promoted_rules": [
@@ -1879,6 +1879,11 @@
           "number": 4341,
           "title": "docs: label developer preview and experimental APIs in guides",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4537,
+          "title": "compiler): skip escaped characters when looking for comments in expressions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1886,7 +1891,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:31:39.100Z",
+      "verified_at": "2026-10-26T02:02:11.971Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43757,8 +43762,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "32b2ec43",
-      "content_hash": "c68dfdd9ce246ee138482d19c91dcc950e6c73e6c4e2368302e5066e7dff47a6",
+      "source_version": "e05c7bdf",
+      "content_hash": "acb7f0e2d342bfb06ad72b4f8f97289aa5eef37945b2c8b32e5848f0cb9ab928",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -43791,6 +43796,11 @@
           "number": 4168,
           "title": "State-Aware Non-Destructive Workspace Config Migration Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4535,
+          "title": "Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43798,7 +43808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:52:18.331Z",
+      "verified_at": "2026-10-26T02:01:55.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99960,7 +99970,7 @@
       "platform": "github",
       "source_url": "https://github.com/Maatify/seo",
       "source_version": "47d17d7d",
-      "content_hash": "c9a73722bb04438578327bb3895f4d7bd8cfe282ccc2763da2fe92ef922003f1",
+      "content_hash": "ad9206bba018495f8e8542bcc4b54130d96fd01242f0f72481168c1361cb9e62",
       "dossier_path": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maatify-seo-learnings.md",
       "promoted_rules": [
@@ -99983,6 +99993,11 @@
           "number": 3535,
           "title": "Pure Domain Logic: No Global State Access",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4536,
+          "title": "security): add security policy badges",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -99990,7 +100005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:21:58.728Z",
+      "verified_at": "2026-10-26T02:01:57.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127705,6 +127720,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T01:55:35.148Z"
+    },
+    "rule-4535": {
+      "learning_id": "rule-4535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4535,
+      "title": "Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "e05c7bdf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:01:55.589Z"
+    },
+    "rule-4536": {
+      "learning_id": "rule-4536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4536,
+      "title": "security): add security policy badges",
+      "source_url": "https://github.com/Maatify/seo",
+      "source_version": "47d17d7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:01:57.696Z"
+    },
+    "rule-4537": {
+      "learning_id": "rule-4537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4537,
+      "title": "compiler): skip escaped characters when looking for comments in expressions",
+      "source_url": "https://github.com/angular/angular",
+      "source_version": "5244ea78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:02:11.972Z"
     }
   },
   "aliases": {
