@@ -5079,3 +5079,6 @@ Every entry in this ledger must capture:
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `eca52f48` | Multi-dimensional audit evidence | 2026-10-26T01:10:18.323Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `7f902bd3` | Multi-dimensional audit evidence | 2026-10-26T01:10:18.436Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `febdfe08` | Multi-dimensional audit evidence | 2026-10-26T01:10:25.448Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6e3d753f` | Multi-dimensional audit evidence | 2026-10-26T01:22:51.829Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `6c30c500` | Multi-dimensional audit evidence | 2026-10-26T01:22:55.891Z |
+| `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `195e522f` | Multi-dimensional audit evidence | 2026-10-26T01:25:49.497Z |

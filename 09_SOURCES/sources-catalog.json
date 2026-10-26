@@ -6723,10 +6723,10 @@
     "repository": "vuetifyjs/vuetify",
     "platform": "github",
     "sourceUrl": "https://github.com/vuetifyjs/vuetify",
-    "sourceVersion": "537d56b0",
+    "sourceVersion": "195e522f",
     "license": "NOASSERTION",
-    "contentHash": "bb5b37fd939ab964f0ec16494af086b61785afeb096b6140c7e905284778a081",
-    "lastHarvestedAt": "2026-10-25T13:57:06.832Z",
+    "contentHash": "dee3af550b2959667e9e9c0d2b9a34761e6ded177bf3fa27f5e119ce4f56b0b9",
+    "lastHarvestedAt": "2026-10-26T01:25:49.497Z",
     "learningId": "learn-github-vuetifyjs-vuetify"
   },
   "pauljuliusmartinez-jless": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "8a2408ed",
+    "sourceVersion": "6e3d753f",
     "license": "MIT",
-    "contentHash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
-    "lastHarvestedAt": "2026-10-25T06:55:50.959Z",
+    "contentHash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
+    "lastHarvestedAt": "2026-10-26T01:22:51.829Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "f0a89e31",
+    "sourceVersion": "6c30c500",
     "license": "Apache-2.0",
-    "contentHash": "7e25f320291e1225b8460fef81bc3508eea740880ded5f7b4bfe2f061c21f2b3",
-    "lastHarvestedAt": "2026-10-21T18:14:00.180Z",
+    "contentHash": "3fb1912dadf6a24bb42d159c91dcf757bf2201f55e3b26d3ae751846c259e438",
+    "lastHarvestedAt": "2026-10-26T01:22:55.891Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

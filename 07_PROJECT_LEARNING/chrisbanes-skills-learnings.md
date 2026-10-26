@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `f0a89e31`  
+> **Source Version**: `6c30c500`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T18:13:59.963Z  
+> **Timestamp**: 2026-10-26T01:22:55.507Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T18:13:59.623Z  
+> **Harvest Timestamp**: 2026-10-26T01:22:55.499Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1114 stars
+- **Stars / Engagement**: 1121 stars
 
 ---
 
@@ -224,14 +224,11 @@ class ProfileModel {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #133** (2026-10-21): **Improve Claude eval compliance and trigger gaps**
-  *Symptoms*: Stacked on #132 (which is stacked on #131); retarget to `main` as each merges.  ## Summary  Two small changes aimed at gaps the Haiku 5.5 / Sonnet-judged run found:  - **Forbidden-action gate (Claude only):** the Claude subject prompt states that every Gradle command must include `--offline --no-scan` and, for edit cases, lists the only paths it may create or change (or says no file may change). Codex prompts are unchanged (a test asserts both sides). - **`kotlin-control-flow`:** guard conditions are stable from Kotlin 2.2; an explicit `languageVersion` is honored, otherwise the project's Kotlin version confirms support.  ## Measured (compose rerun, Haiku subject, Sonnet judge)  - Forbidden-action failures 19 -> 2 (none 7 -> 1, forced 2 -> 0, automatic 10 -> 1); the gate is still NOT MET by those two. - Automatic tokens per pass 139.3k -> 106.9k, tool calls per pass 9.4 -> 7.1. - Pass rates moved by 1 to 2 records per arm (noise at n=3). - Compose routing recall fell (83.3% -> 79.6% reported): the explicit flags in the prompt seem to let Haiku run `./gradlew` directly instead of loading `gradle-run`. A `gradle-run` description change meant to raise recall did not help and was reverted. Recall remains a known gap. - The `kotlin-control-flow` change is not yet measured; it lives in the kotlin-gradle suite.  ## Test plan  - `npm run lint`, `npm run evals:validate` (212 cases) and the eval unit tests pass. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"61a89cb71a7e203f567f29ed901520e4ec44c6c4","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-21T16:34:25.077943Z">2026-10-21T16:34:25.077943Z</relative-time> | `61a89cb` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Code
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=84562812"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/banes/github/chrisbanes/skills/-/pull/133"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2"><img alt="View in Greptile" src="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptile.svg?v=2" align="right"></picture></a>Confidence Score:
+- **Issue #135** (2026-10-25): **Keep serial implementation solo and PR polling in the controller**
+  *Symptoms*: ## Summary  Single-item and serial implementation currently force worker handoffs, and routine PR polling starts an evidence helper. Choose implementation ownership once from the whole graph and keep routine polling in the controller:  ```text implementation preflight   no parallel point -> lead owns every item   any parallel point -> workers own every item   both -> integrated-head checks + independent final review  shepherd   routine polling -> controller   large failed CI log -> one bounded read-only diagnostic question ```  Align the skill entrypoints, launcher, README wording and existing evaluations. Add five calibration cases without changing the scored benchmark size or published result metrics.  Closes #134. Approved [agent brief](https://github.com/chrisbanes/skills/issues/134#issuecomment-6389915351) and [implementation plan](https://github.com/chrisbanes/skills/issues/134#issuecomment-6395119976).  ## Evidence  - **Before:** Static inspection at `0bd44a0` found unconditional worker assignment for a single item or serial graph, a serial-chain rubric requiring worker acceptance, and a routine polling-helper rule.   **After:** The new solo-chain, unavailable-reviewer, late-fanout, direct-poll and large-log cases cover the selected behavior. Existing serial-chain and handoff rubrics are reconciled; delegated recovery, API/DOC/WIRE reuse and host-monitor cases remain. - Passed `npm run build`, `npm run lint`, `npm run evals:validate` (223 cases), and `npm test` (7 Node
 
-- **Issue #132** (2026-10-21): **Close skill gaps found by the Claude Code evals**
-  *Symptoms*: Stacked on #131; retarget to `main` after it merges.  ## Summary  Three minimal skill-text fixes for failures in the Haiku 5.5 / Sonnet-judged run (see the run record in #131):  - `gradle-run`: rerunning an unchanged task under a relabeled question is still a repeat (`gradle-fingerprint-diagnosis-novel`, 2 automatic failures). - `kotlin-api-design` value classes: when callers must stay untouched, change only the declaration; keep the public constructor and add no private constructor or factory (`kotlin-api-value-class-direct`, 1 forced and 1 automatic failure). - `deliver-spec`: name conversation-mode `to-plan` as the initial route for an approved local source, including when answering a resume question (`deliver-spec-novel`, 2 forced failures).  Versions are unchanged. The two single-record failures (`compose-state-authoring-novel`, `router-kotlin-gradle-validation`) are left alone as within noise.  ## Test plan  - `npm run lint`, `npm run evals:validate` (212 cases) and the eval unit tests (403) pass. `npm test` fails in this checkout only because the opencode plugin test cannot resolve `js-yaml` (no `node_modules`); it is unrelated to these edits. - A targeted live rerun of the affected skills (`gradle-run`, `kotlin-api-design`, `deliver-spec`, `shepherd`) will follow once approved, with results reported separately.
+- **Issue #134** (2026-10-25): **Use subagents only where they pay off in implement-with-subagents and shepherd**
+  *Symptoms*: > *This was generated by AI during triage.*  ## Current status  - **Completed:** Approved workflow changes and five calibration cases implemented in [PR #135](https://github.com/chrisbanes/skills/pull/135), head `632cce7d2abbaae1a24b72349d404651717ef09f`. Independent review and current-main compatibility review both returned **ship**. Automatic [Codex](https://github.com/chrisbanes/skills/pull/135#issuecomment-6395209170) and [Greptile](https://github.com/chrisbanes/skills/pull/135#issuecomment-6395228222) reviews also completed on this head with no findings. - **Validation:** Local build, lint, corpus validation (223 cases), and full tests passed. [GitHub CI](https://github.com/chrisbanes/skills/actions/runs/40175126890) passed on the PR integration candidate. No live model evaluations or version bump. - **Blockers:** No delivery blocker identified. PR is open and ready for review; it has not been merged. - **Next action:** Review and, with explicit merge authority, merge PR #135. - **Contract:** [Approved agent brief](https://github.com/chrisbanes/skills/issues/134#issuecomment-6389915351) and [implementation plan](https://github.com/chrisbanes/skills/issues/134#issuecomment-6395119976).  ## Background  Anthropic's article [Building agents: when to fold subagents into your main agent loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop) argues that one main loop with progressively disclosed skills and tools often beats
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -248,212 +245,251 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0a89e31` (2026-10-21)
-**Commit Message**: Improve Claude eval compliance and trigger gaps (#133)
+### Incident Patch 1: `6c30c500` (2026-10-25)
+**Commit Message**: Keep serial implementation solo and PR polling in the controller (#135)
 
-Stacked on #132 (which is stacked on #131); retarget to `main` as each
-merges.
-
-## Summary
-
-Two small changes aimed at gaps the Haiku 5.5 / Sonnet-judged run found:
-
-- **Forbidden-action gate (Claude only):** the Claude subject prompt
-states that every Gradle command must include `--offline --no-scan` and,
-for edit cases, lists the only paths it may create or change (or says no
-file may change). Codex prompts are unchanged (a test asserts both
-sides).
-- **`kotlin-control-flow`:** guard conditions are stable from Kotlin
-2.2; an explicit `languageVersion` is honored, otherwise the project's
-Kotlin version confirms support.
-
-## Measured (compose rerun, Haiku subject, Sonnet judge)
-
-- Forbidden-action failures 19 -> 2 (none 7 -> 1, forced 2 -> 0,
-automatic 10 -> 1); the gate is still NOT MET by those two.
-- Automatic tokens per pass 139.3k -> 106.9k, tool calls per pass 9.4 ->
-7.1.
-- Pass rates moved by 1 to 2 records per arm (noise at n=3).
-- Compose routing recall fell (83.3% -> 79.6% reported): the explicit
-flags in the prompt seem to let Haiku run `./gradlew` directly instead
-of loading `gradle-run`. A `gradle-run` description
-
-**File**: `evals/harness/claude.py` (modified, +18/-0)
+**File**: `README.md` (modified, +4/-3)
 ```diff
-@@ -829,6 +829,24 @@ def forced_target_observed(self, record, targets):
-                     return True
-         return False
+@@ -129,17 +129,18 @@ for its lane-specific fallback and blocking behavior.
+ - [`deliver-spec`](skills/deliver-spec/SKILL.md) — coordinate one approved spec or verified Project-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and evidence, independent integrated-candidate review and focused repair review, and PR shepherding; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
+ - [`release-kotlin-library`](skills/release-kotlin-library/SKILL.md) — assess readiness, prepare, and verify Kotlin library releases; check the `gradle-maven-publish-plugin` prerequisite, reconcile changelogs and Metalava API snapshots, and follow repository checks and publication gates.
+ - [`gradle-run`](skills/gradle-run/SKILL.md) — run every agent-initiated Gradle command through a compact-output wrapper; recover run identity and bounded results by workflow ID with read-only status, and diagnose failures with optional investigation helpers.
+-- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — coordinate one or more worker-owned implementation tasks through dependency-aware dispatch, task acceptance, integration, and same-owner repair; dispatch independent ready work concurrently within actual capacity, reuse sequential worker slots, and support read-only orchestration review.
++- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — choose solo implementation for a single item or serial graph and worker ownership for every item in a graph with parallel work; preserve dependency-aware integration, independent final review, same-owner repair, bounded checkout reuse, and read-only orchestration review.
+ - [`to-plan`](skills/to-plan/SKILL.md) — create risk-scaled implementation plans that prove baselines from green CI, with observable slices and consequential boundary validation before dependent work, plus authenticated integration amendments and explicit consumer handoffs; decide separate PRs by coherent deliverable boundaries.
+ - [`run-github-project`](skills/run-github-project/SKILL.md) — set up, review, or operate a repository's GitHub Project workflow with current-column authorization, human-only Backlog promotion, and deterministic configured agent selection; deliver ordinary implementation tickets through `deliver-spec`, resolve run-level merging once at startup with a 60-second default-no question unless already specified, preflight offline live-qualification harness evidence, preserve asynchronous or persistent failures in durable checkpoints, prioritize active delivery through safe planner checkpoints, fast-path small Todo tickets straight into implementation, start external review while CI runs after local qualification, free slots while reviewed PRs wait on CI, record ticket-local pauses while independent work continues, and keep `drain` alive under a read-only Project Watcher instead of returning at the first human wait.
+-- [`shepherd`](skills/shepherd/SKILL.md) — autonomously poll open PRs and MRs, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
++- [`shepherd`](skills/shepherd/SKILL.md) — poll open PRs and MRs directly in the controller, using a read-only helper only for a bounded large failed-log question, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
  
-+    def boundary_instruction(self, case: EvalCase) -> str:
-+        # Claude subjects add tests and drop --offline unless told; Codex prompts stay unchanged.
-+        text = (
-+            " Every Gradle command you run must include `--offline --no-scan`;"
-+            " omitting `--offline` is a violation."
-+        )
-+        if case.task_mode == "edit":
-+            allowed = (
-+                "only " + ", ".join(f"`{path}`" for path in case.allowed_write_paths)
-+                if case.allowed_write_paths
-+                else "no file"
-+            )
-+            text += (
-+                f" Create or change {allowed}; add no test, build or other file,"
-+                " and do not edit anything outside the workspace."
-+            )
-+        return text
-+
-     def forced_instruction(self, case: EvalCase) -> str:
-         skills = ", ".join(f"`{skill}`" for skill in case.target_skills)
-         dependencies = ", ".join(f"`{skill}`" for skill in case.constant_skills)
-```
-
-**File**: `evals/harness/runner.py` (modified, +3/-0)
-```diff
-@@ -311,6 +311,9 @@ def _subject_prompt(case: EvalCase, arm: str, runtime: Runtime) -> str:
-     else:
-         prompt += " This case has no evaluator-owned fixture dependencies."
-     prompt += getattr(runtime, "answer_instruction", "")
-+    boundary = getattr(runtime, "boundary_instruction", None)
-+    if boundary is not None:
-+        prompt += boundary(case)
-     if arm == "forced":
-         prompt += runtime.forced_instruction(case)
-     return prompt + "\n"
-```
-
-**File**: `evals/tests/test_claude_runner.py` (modified, +13/-0)
-```diff
-@@ -20,6 +20,7 @@
-     captured_skill_file_evidence,
-     prepare_workspace,
-     reported_skill_names,
-+    _subject_prompt,
-     run_subject,
- )
- from evals.harness.score import forced_integrity_status, is_behavioral_evidence
-@@ -134,6 +135,18 @@ def test_edit_forced_command_uses_skill_tool_instruction(self):
-         self.assertNotIn("`cat`", prompt)
-         self.assertIn("In the final `skills_used`, include each of these exact public", prompt)
+ Workflows that delegate agents share the [subagent selection and handoff
+ reference](references/subagent-selection.md). Each workflow retains its own
+ delegation trigger, authority, and acceptance rules. Each consuming skill also
+ contains a copy of the reference for standalone installation.
+ `deliver-spec` bundles its own solo-or-delegated implementation procedure;
+-`implement-with-subagents` retains its explicitly delegated workflow.
++`implement-with-subagents` chooses solo or delegated ownership once from the
++whole task graph.
  
-+    def test_claude_prompt_states_the_write_boundary_and_offline_rule_codex_does_not(self):
-+        with tempfile.TemporaryDirectory() as tmp:
-+            edit = sample_case(Path(tmp))
-+            review = replace(edit, task_mode="review", allowed_write_paths=())
-+            claude = _subject_prompt(edit, "none", ClaudeRuntime())
-+            self.assertIn("must include `--offline --no-scan`", claude)
-+            self.assertIn("only `src/main/kotlin/example/Subject.kt`", claude)
-+            self.assertNotIn("Create or change", _subject_prompt(review, "none", ClaudeRuntime()))
-+            no_write = replace(edit, allowed_write_paths=())
-+            self.assertIn("Create or change no file", _subject_prompt(no_write, "none", ClaudeRuntime()))
-+            self.assertNotIn("must include", _subject_prompt(edit, "none", test_codex_runner.CodexRuntime()))
-+
-     def test_fixture_skill_dependencies_are_never_switched_off(self):
-         self.write_subject_schema()
-         case = replace(sample_case(self.root), constant_skills=("implement",))
+ Planning and drain admission distinguish behavioral prerequisites, shared-file
+ mutation conflicts and final integration requirements. Plan-proven independent
 ```
 
-**File**: `skills/kotlin-control-flow/SKILL.md` (modified, +4/-1)
+**File**: `evals/README.md` (modified, +10/-6)
 ```diff
-@@ -28,7 +28,10 @@ branch, and let the compiler prove closed-domain coverage.
- 3. Use a guard only on a subject `when`, after a primary condition, when the
-    extra predicate belongs to that branch and an unguarded branch still handles
-    the primary condition. Put the guarded branch first. Split comma-separated
--   conditions instead of guarding one of them.
-+   conditions instead of guarding one of them. Guards are stable from Kotlin
-+   2.2. Honor an explicit `languageVersion` setting; otherwise the project's
-+   Kotlin version in its build file or version catalog is enough to confirm
-+   support, so do not decline a guard for lack of further proof.
- 4. For a closed enum, Boolean, sealed type, or nullable closed type, name every
-    case and omit `else`. Match objects by value and class/data-class subtypes
-    with `is`. If the input is an open server/platform value or needs real
+@@ -344,7 +344,7 @@ forbidden-action grading; they do not contact a provider. The
+ dependency. Its missing-provider challenge supplies a behavior ticket without
+ `tdd` and checks that implementation does not start.
+ 
+-The workflows/writing corpus contains 114 calibration-only cases, including
++The workflows/writing corpus contains 119 calibration-only cases, including
+ the two missing-provider challenges. Select them
+ explicitly with `--case`; they do not change the published benchmark or its
+ default call count. They cover authorized local planning, prior confirmation,
+@@ -359,7 +359,7 @@ evidence reuse versus missing, stale, failed, or explicitly required fresh
+ evidence. Six additional cases cover accessible context-pointer handoffs and
+ optional shared discovery, including bounded evidence reuse, capacity and
+ restraint. The local-planning cases check the generated plan artifact. The scored orchestration
+-triad exercises a ready fork/join, a serial dependency chain, and restraint for
++triad exercises a ready fork/join, a solo serial dependency chain, and restraint for
+ a cyclic or incomplete graph, unsafe shared-file overlap, and validation
+ invalidated at an integrated head. Additional orchestration calibrations cover
+ direct TDD at an approved behavior seam, documentation without TDD, completed
+@@ -370,9 +370,13 @@ different slot, preservation of checkouts and artifacts that are unsafe to
+ retire, and cleanup failure that blocks workflow completion despite successful
+ code verification. These cases assess supplied state read-only and do not prove
+ live subagent execution.
++Five ownership calibrations cover a solo chain with integrated-head checks,
++missing final-review capability before solo implementation, worker ownership of
++an entire late-fanout graph, direct controller polling, and one bounded large-log
++question with capability and model selection. Decisive supplied facts have
++mutation-sensitive deterministic fixture checks; model behavior is rubric-graded.
+ Three shared-handoff calibrations check bounded implementation ownership,
+-capability-based PR evidence helper selection, and restraint for one-off PR
+-inspection. They also assess supplied state read-only.
++rejection of routine PR evidence helpers, and restraint for one-off PR inspection. They also assess supplied state read-only.
+ Two host-monitor calibrations check that `shepherd` handles a Claude desktop
+ CI-monitor wake with one read and no self-scheduled polling, and sets up the
+ monitor from deferred tools with Auto-fix and authorized auto-merge, using
+@@ -383,8 +387,8 @@ capability, and the trivial-edit exception versus useful overlap and retained
+ repair ownership and the clean-checkout preflight. They assess immutable state
+ without live execution.
+ Deterministic coverage stages `deliver-spec` alone, follows its local procedure
+-and handoff links, and checks that its bundled procedure matches the orchestration
+-skill's copy.
++and handoff links, and checks its bundled procedure independently of the
++orchestration skill's mode-specific procedure.
+ Three Project-delivery calibrations cover automatic `deliver-spec` handoff,
+ one startup merge question with a 60-second default-no deadline, explicit
+ instructions, nonblocking fallback, late replies and invocation expiry,
+```
+
+**File**: `evals/cases/implement-with-subagents-explicit-rerun-novel/prompt.md` (modified, +2/-0)
+```diff
+@@ -1,3 +1,5 @@
++The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++
+ Review acceptance for one implementation item. The task-scoped commit, independent
+ diff inspection, command, complete passing output, tested revision, relevant
+ inputs, and environment all match current state. The user nevertheless requires
+```
+
+**File**: `evals/cases/implement-with-subagents-failed-verification-negative/prompt.md` (modified, +2/-0)
+```diff
+@@ -1,3 +1,5 @@
++The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++
+ Review acceptance for one implementation item at its current task-scoped commit.
+ The owner returned the exact requested command, complete output, tested revision,
+ and environment, but the command exited 1 with a failing parser test. Describe
+```
+
+**File**: `evals/cases/implement-with-subagents-final-review-stale-negative/prompt.md` (modified, +2/-0)
+```diff
+@@ -1,3 +1,5 @@
++The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++
+ All tickets were integrated at aaaaaaa, where the full required suite passed
+ and the joined diff was independently reviewed. The original task owner then
+ repaired a shared interface; its accepted repair is integrated at bbbbbbb.
+```
+
+**File**: `evals/cases/implement-with-subagents-fix-forward-novel/prompt.md` (modified, +2/-0)
+```diff
+@@ -1,3 +1,5 @@
++The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++
+ Task `ENCODE` has an accepted commit integrated at `1111111`. The lead then
+ cherry-picked the accepted `WIRE` task, producing integrated head `2222222`.
+ That Git operation completed, but an endpoint check affected by `WIRE` fails at
+```
+
+**File**: `evals/cases/implement-with-subagents-late-fanout-novel/case.json` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++{
++  "id": "implement-with-subagents-late-fanout-novel",
++  "title": "Choose delegated ownership before a late fanout",
++  "family": "workflow",
++  "target_skills": [
++    "implement-with-subagents"
++  ],
++  "expected_skills": [
++    "implement-with-subagents"
++  ],
++  "task_mode": "review",
++  "kind": "novel",
++  "fixture": "workflow-subagents",
++  "forbid_all_commands": true,
++  "allow_skill_reference_reads": true,
++  "allowed_write_paths": [],
++  "validators": [
++    {
++      "argv": [
++        "python3",
++        "@validators/text_case.py",
++        "implement-with-subagents-late-fanout-novel"
++      ],
++      "timeout_seconds": 30
++    }
++  ],
++  "rubric": [
++    {
++      "id": "whole-graph",
++      "text": "Chooses delegated mode once at preflight because B and C form a later parallel point; assigns A as well as B and C to workers, rejecting per-frontier mode switching."
++    },
++    {
++      "id": "dependency",
++      "text": "Accepts and integrates the worker-owned A commit and passes affected checks at that integrated head before releasing B and C."
++    },
++    {
++      "id": "fanout",
++      "text": "Dispatches B and C concurrently within actual capacity in separate checkouts, preserving same-owner repair and mandatory independent final review."
++    }
++  ],
++  "provenance": {
++    "kind": "synthetic"
++  },
++  "calibration": true
++}
+```
+
+**File**: `evals/cases/implement-with-subagents-late-fanout-novel/expectations.json` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++{
++  "files": [
++    "state.md"
++  ],
++  "must_contain": [
++    "The validated graph is A followed by B and C: A has no dependencies; B and C both depend on A and are independent with disjoint write sets.",
++    "The runtime has capable resumable workers, independent final review, sufficient capacity, isolated checkouts and approved test seams.",
++    "Only A is ready now. The draft has the lead implement A and proposes deciding again whether to use workers when B and C become ready."
++  ]
++}
 ```
 
 ---
 
-### Incident Patch 2: `0e99d1c5` (2026-10-21)
-**Commit Message**: Close skill gaps found by the Claude Code evals (#132)
+### Incident Patch 2: `e8e32270` (2026-10-22)
+**Commit Message**: Bump version to 2026.10.22
 
-Stacked on #131; retarget to `main` after it merges.
-
-## Summary
-
-Three minimal skill-text fixes for failures in the Haiku 5.5 /
-Sonnet-judged run (see the run record in #131):
-
-- `gradle-run`: rerunning an unchanged task under a relabeled question
-is still a repeat (`gradle-fingerprint-diagnosis-novel`, 2 automatic
-failures).
-- `kotlin-api-design` value classes: when callers must stay untouched,
-change only the declaration; keep the public constructor and add no
-private constructor or factory (`kotlin-api-value-class-direct`, 1
-forced and 1 automatic failure).
-- `deliver-spec`: name conversation-mode `to-plan` as the initial route
-for an approved local source, including when answering a resume question
-(`deliver-spec-novel`, 2 forced failures).
-
-Versions are unchanged. The two single-record failures
-(`compose-state-authoring-novel`, `router-kotlin-gradle-validation`) are
-left alone as within noise.
-
-## Test plan
-
-- `npm run lint`, `npm run evals:validate` (212 cases) and the eval unit
-tests (403) pass. `npm test` fails in this checkout only because the
-opencode plugin test cannot resolve `js-yaml` (no `node_modules`); it is
-u
-
-**File**: `skills/deliver-spec/SKILL.md` (modified, +4/-1)
+**File**: `.claude-plugin/plugin.json` (modified, +1/-1)
 ```diff
-@@ -37,7 +37,10 @@ Project run already owns that issue, return it to that controller.
-    publication gates. A source qualifying for the [fast path](references/fast-path.md)
-    applies it instead. For a GitHub issue missing `ready-for-agent`, first use
-    `triage` and wait for its approved outcome; do not change labels yourself.
--   Local sources skip triage but need explicit stakeholder approval.
-+   Local sources skip triage but need explicit stakeholder approval. For an
-+   approved local source with no plan that does not qualify for the fast path,
-+   name conversation-mode `to-plan` as the initial route, including when
-+   answering a resume question.
-    Approval covers the accepted contract and only the live qualification
-    allowances it explicitly records; do not infer extra attempts or authority.
- 3. Verify scope and boundaries once. A verified handoff authorizes continuing
+@@ -1,7 +1,7 @@
+ {
+   "name": "chrisbanes-skills",
+   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
+-  "version": "2026.10.21",
++  "version": "2026.10.22",
+   "author": {
+     "name": "Chris Banes",
+     "url": "https://github.com/chrisbanes"
 ```
 
-**File**: `skills/gradle-run/SKILL.md` (modified, +2/-1)
+**File**: `.codex-plugin/plugin.json` (modified, +1/-1)
 ```diff
-@@ -94,7 +94,8 @@ follow-up inspection invalidate lifecycle evidence even when Gradle succeeds.
-    context before revising the diagnosis. Verify each source change with the
-    same wrapper and narrowest applicable task. In the final diagnosis, name the
-    focused inspection as the next action; do not claim a source fix before it.
--   A new question does not permit a blind repeat.
-+   A new question does not permit a blind repeat: rerunning an unchanged task
-+   under a relabeled question is still a repeat.
- 7. Treat the full log as raw sensitive material even though summaries and
-    ledgers redact common credentials. Never expose it in model-visible context.
-    On interruption, use the wrapper's recorded signal and bounded partial
+@@ -1,6 +1,6 @@
+ {
+   "name": "chrisbanes-skills",
+-  "version": "2026.10.21",
++  "version": "2026.10.22",
+   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
+   "author": {
+     "name": "Chris Banes",
 ```
 
-**File**: `skills/kotlin-api-design/references/value-classes.md` (modified, +3/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -14,7 +14,9 @@ data class for multiple fields or different equality.
- 3. Check equality, serialization, Java interop, and hot-path boxing.
- 4. Choose the type below, then compile and test. For a Compose performance
-    change, re-check compiler or recomposition evidence. On contract drift, keep
--   the existing type.
-+   the existing type. When callers must stay untouched, change only the type
-+   declaration: keep the public constructor and property, and add no private
-+   constructor or factory.
- 
- ## Decision flow
- 
+@@ -1,6 +1,6 @@
+ {
+   "name": "chrisbanes-skills",
+-  "version": "2026.10.21",
++  "version": "2026.10.22",
+   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
+   "type": "module",
+   "main": ".opencode/plugins/chrisbanes-skills.js",
+```
+
+**File**: `plugin.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "chrisbanes-skills",
+-  "version": "2026.10.21",
++  "version": "2026.10.22",
+   "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
+   "author": {
+     "name": "Chris Banes",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #135** (2026-10-25): Keep serial implementation solo and PR polling in the controller (@chrisbanes)
 - **PR #133** (2026-10-21): Improve Claude eval compliance and trigger gaps (@chrisbanes)
 - **PR #132** (2026-10-21): Close skill gaps found by the Claude Code evals (@chrisbanes)
 - **PR #131** (2026-10-21): Judge Claude evals with Sonnet; count gradle-run once Gradle runs (@chrisbanes)
 - **PR #130** (2026-10-20): Simplify grounded-writing around Chris's own style (@chrisbanes)
 - **PR #129** (2026-10-19): Ask once at Project startup whether to merge (@chrisbanes)
-- **PR #128** (2026-10-19): Keep nested agents waiting on their results; define one payload digest (@chrisbanes)
 
 ---
 
@@ -473,45 +509,33 @@ u
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve Claude eval compliance and trigger gaps (#133)
+## X. Keep serial implementation solo and PR polling in the controller (#135)
 
 **RULE**:
-When implementing operations in `evals/harness/claude.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0a89e31`: Improve Claude eval compliance and trigger gaps (#133). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c30c500`: Keep serial implementation solo and PR polling in the controller (#135). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `evals/harness/claude.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    def boundary_instruction(self, case: EvalCase) -> str:
-        # Claude subjects add tests and drop --offline unless told; Codex prompts stay unchanged.
-        text = (
-            " Every Gradle command you run must include `--offline --no-scan`;"
-            " omitting `--offline` is a violation."
-        )
-        if case.task_mode == "edit":
-            allowed = (
-                "only " + ", ".join(f"`{path}`" for path in case.allowed_write_paths)
-                if case.allowed_write_paths
-                else "no file"
-            )
-            text += (
-                f" Create or change {allowed}; add no test, build or other file,"
-                " and do not edit anything outside the workspace."
-            )
-        return text
-
+- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — choose solo implementation for a single item or serial graph and worker ownership for every item in a graph with parallel work; preserve dependency-aware integration, independent final review, same-owner repair, bounded checkout reuse, and read-only orchestration review.
+- [`shepherd`](skills/shepherd/SKILL.md) — poll open PRs and MRs directly in the controller, using a read-only helper only for a bounded large failed-log question, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
+`implement-with-subagents` chooses solo or delegated ownership once from the
+whole task graph.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — coordinate one or more worker-owned implementation tasks through dependency-aware dispatch, task acceptance, integration, and same-owner repair; dispatch independent ready work concurrently within actual capacity, reuse sequential worker slots, and support read-only orchestration review.
+- [`shepherd`](skills/shepherd/SKILL.md) — autonomously poll open PRs and MRs, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
+`implement-with-subagents` retains its explicitly delegated workflow.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0a89e31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c30c500` are properly handled with clean fallback behavior.

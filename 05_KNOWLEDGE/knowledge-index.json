@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T01:10:25.390Z",
+  "last_updated": "2026-10-26T01:25:49.438Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5865,8 +5865,8 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "f0a89e31",
-      "content_hash": "7e25f320291e1225b8460fef81bc3508eea740880ded5f7b4bfe2f061c21f2b3",
+      "source_version": "6c30c500",
+      "content_hash": "3fb1912dadf6a24bb42d159c91dcf757bf2201f55e3b26d3ae751846c259e438",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
@@ -5879,6 +5879,11 @@
           "number": 3578,
           "title": "Improve Claude eval compliance and trigger gaps (#133)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4521,
+          "title": "Keep serial implementation solo and PR polling in the controller (#135)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5886,7 +5891,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:14:00.142Z",
+      "verified_at": "2026-10-26T01:22:55.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49272,8 +49277,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "8a2408ed",
-      "content_hash": "70e6c4877ce16a30c8ca9a5d79cfa3617beb9bc10eb1dc0edcf56717bd1d9fa6",
+      "source_version": "6e3d753f",
+      "content_hash": "8c6f15c90c8600e847a98f51569a070ff5b735c7162379a5f24cfaee3e3c047a",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -49301,6 +49306,11 @@
           "number": 3640,
           "title": "task: clarify `block_in_place` panics in `LocalSet` (#8701)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4520,
+          "title": "ci: require a completion marker from the io_uring kernel test guest (#8440)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49308,7 +49318,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:55:50.893Z",
+      "verified_at": "2026-10-26T01:22:51.759Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51504,8 +51514,8 @@
       "slug": "vuetifyjs-vuetify",
       "platform": "github",
       "source_url": "https://github.com/vuetifyjs/vuetify",
-      "source_version": "537d56b0",
-      "content_hash": "bb5b37fd939ab964f0ec16494af086b61785afeb096b6140c7e905284778a081",
+      "source_version": "195e522f",
+      "content_hash": "dee3af550b2959667e9e9c0d2b9a34761e6ded177bf3fa27f5e119ce4f56b0b9",
       "dossier_path": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vuetifyjs-vuetify-learnings.md",
       "promoted_rules": [
@@ -51558,6 +51568,21 @@
           "number": 4317,
           "title": "VCalendar): accept date adapter values (#23313)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4522,
+          "title": "Label-in-Name Accessible Identity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4523,
+          "title": "Phantom Nominal Type Coordinate System Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4524,
+          "title": "Monotonic Integer Date-Time Identifier Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51565,7 +51590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:57:06.788Z",
+      "verified_at": "2026-10-26T01:25:49.426Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127420,6 +127445,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T01:10:25.379Z"
+    },
+    "rule-4520": {
+      "learning_id": "rule-4520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4520,
+      "title": "ci: require a completion marker from the io_uring kernel test guest (#8440)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "6e3d753f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:22:51.759Z"
+    },
+    "rule-4521": {
+      "learning_id": "rule-4521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4521,
+      "title": "Keep serial implementation solo and PR polling in the controller (#135)",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "6c30c500",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:22:55.822Z"
+    },
+    "rule-4522": {
+      "learning_id": "rule-4522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4522,
+      "title": "Label-in-Name Accessible Identity Invariant",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "195e522f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:25:49.426Z"
+    },
+    "rule-4523": {
+      "learning_id": "rule-4523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4523,
+      "title": "Phantom Nominal Type Coordinate System Boundary",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "195e522f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:25:49.426Z"
+    },
+    "rule-4524": {
+      "learning_id": "rule-4524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4524,
+      "title": "Monotonic Integer Date-Time Identifier Invariant",
+      "source_url": "https://github.com/vuetifyjs/vuetify",
+      "source_version": "195e522f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:25:49.426Z"
     }
   },
   "aliases": {

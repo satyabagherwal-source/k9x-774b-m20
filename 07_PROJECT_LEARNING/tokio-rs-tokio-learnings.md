@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `8a2408ed`  
+> **Source Version**: `6e3d753f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:55:50.739Z  
+> **Timestamp**: 2026-10-26T01:22:51.448Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:55:50.541Z  
+> **Harvest Timestamp**: 2026-10-26T01:22:50.159Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33506 stars
+- **Stars / Engagement**: 33516 stars
 
 ---
 
@@ -1934,11 +1934,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8714** (2026-10-24): **Merge 'tokio-1.51.x' into 'tokio-1.53.x'**
+- **Issue #8725** (2026-10-25): **Merge 'tokio-1.54.x' into 'master'**
   *Symptoms*: 
 
-- **Issue #8711** (2026-10-23): **sync: add `SetOnce::take`**
-  *Symptoms*: ## Motivation  `SetOnce` has `get_mut` for exclusive in-place mutation and `into_inner` for consuming ownership, but lacks `take` to extract the contained value and leave the cell empty without deallocating or dropping the cell.  `OnceCell` already provides this via `take(&mut self) -> Option<T>` by relying on `Default`. Because `SetOnce` already implements `Default`, adding the matching `take` method completes the standard Rust cell API matrix across `OnceCell` and `SetOnce`.  ## Solution  Add `pub fn take(&mut self) -> Option<T>` to `SetOnce<T>`: ```rust pub fn take(&mut self) -> Option<T> {     std::mem::take(self).into_inner() } ``` This replaces `*self` with an uninitialized `SetOnce::default()` and extracts the inner value via `.into_inner()`, allowing the cell to be inspected, drained, or re-initialized with `set()`.  ## Validation  - Added unit tests in `tokio/tests/sync_set_once.rs`:   - `take_uninit`: Verifies `take()` returns `None` on an empty cell.   - `take_and_reset`: Verifies `take()` extracts the contained value, resets `get()` to `None`, and allows re-initialization with `set()`.   - `take_from`: Verifies `take()` works on cells initialized with `SetOnce::from()`. - Verified 100% passing test battery locally (`cargo test --test sync_set_once --features full` — 20/20 tests passed). - Verified documentation test (`cargo test --doc --features full -- sync::set_once` — 6/6 doctests passed). - Checked formatting with `cargo fmt --check`. 
+- **Issue #8724** (2026-10-25): **Merge 'tokio-1.51.x' into 'tokio-1.53.x'**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1955,682 +1955,227 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `57c0681c` (2026-10-22)
-**Commit Message**: task: clarify `block_in_place` panics in `LocalSet` (#8701)
+### Incident Patch 1: `d81db549` (2026-09-10)
+**Commit Message**: ci: require a completion marker from the io_uring kernel test guest (#8440)
 
-**File**: `tokio/src/runtime/scheduler/multi_thread/worker.rs` (modified, +1/-1)
-```diff
-@@ -448,7 +448,7 @@ fn maybe_move_runtime() -> Result<(bool, bool), &'static str> {
-                     // This probably means we are on the current_thread runtime or in a
-                     // LocalSet, where it is _not_ okay to block.
-                     return Err(
--                        "can call blocking only when running on the multi-threaded runtime",
-+                        "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`",
-                     );
-                 }
-             }
-```
+The `Test io_uring on Linux <version>` job greps the QEMU log for
+`test result: FAILED`, so a test binary that is killed before it prints
+a summary leaves the job green. On the latest-kernel leg `fs_uring` is
+OOM-killed inside the 1 GiB guest during `open_many_files`, init dies
+with it, and the ten binaries that sort after it never run.
 
-**File**: `tokio/src/task/blocking.rs` (modified, +3/-1)
-```diff
-@@ -67,9 +67,11 @@ cfg_rt_multi_thread! {
-     ///
-     /// # Panics
-     ///
--    /// This function panics if called from a [`current_thread`] runtime.
-+    /// This function panics if called from a [`current_thread`] runtime or from
-+    /// within a [`LocalSet`].
-     ///
-     /// [`current_thread`]: fn@crate::runtime::Builder::new_current_thread
-+    /// [`LocalSet`]: struct@crate::task::LocalSet
-     #[track_caller]
-     pub fn block_in_place<F, R>(f: F) -> R
-     where
-```
+- init now echoes `ALL_TESTS_COMPLETED` after the last binary and the
+  step fails when the marker is missing from the log.
+- The guest gets 3 GiB: the initramfs holds ~760 MB of unstripped test
+  binaries and `open_many_files` had 200-340 MB of anon RSS when the
+  1 GiB guest OOM-killed it.
+- `stat_permission_denied` returns early when running as root, which
+  is how the guest runs the binaries; a 0o244 directory does not stop
+  root, so the EACCES the test expects never happens there.
+- `fs_uring_statx_fd_leak_test` gets the same target cfg as the
+  io_uring branch of `tokio::fs::read`; the guest binaries are built
+  for musl, where `read` falls back to `spawn_blocking` and the test's
+  poll-count assumptions cannot hold.
 
-**File**: `tokio/tests/task_blocking.rs` (modified, +8/-2)
+Fixes: #8433
+(cherry picked from commit 18f74481
+
+**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +15/-3)
 ```diff
-@@ -76,7 +76,7 @@ async fn block_in_block() {
- }
+@@ -79,6 +79,7 @@ jobs:
+           mount -t sysfs sysfs /sys
+           mkdir -p /tmp && mount -t tmpfs -o mode=1777 tmpfs /tmp
+           for f in /bin/tests/*; do RUST_BACKTRACE=1 "$f" ; done
++          echo "ALL_TESTS_COMPLETED"
+           EOF
+           chmod +x initramfs/init
  
- #[tokio::test(flavor = "current_thread")]
--#[should_panic]
-+#[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
- async fn no_block_in_current_thread_scheduler() {
-     task::block_in_place(|| {});
- }
-@@ -90,7 +90,13 @@ fn yes_block_in_threaded_block_on() {
- }
+@@ -92,11 +93,14 @@ jobs:
+           set -euo pipefail
  
- #[test]
--#[should_panic]
-+fn yes_block_outside_runtime() {
-+    let out = task::block_in_place(|| "hello");
-+    assert_eq!(out, "hello");
-+}
+           set +e
++          # 3 GiB guest (the runner has 16 GB): the initramfs holds ~760 MB of
++          # unstripped test binaries, and `open_many_files` in `fs_uring` had
++          # 200-340 MB of anon RSS when the 1 GiB guest OOM-killed it.
+           qemu-system-x86_64 \
+             -kernel linux-${{ env.KERNEL_VERSION }}/arch/x86/boot/bzImage \
+             -initrd initramfs.cpio.gz \
+             -append "console=ttyS0 rootfstype=ramfs panic=1" \
+-            -nographic -no-reboot -m 1024 -action panic=exit-failure 2>&1 | tee qemu-output.log
++            -nographic -no-reboot -m 3072 -action panic=exit-failure 2>&1 | tee qemu-output.log
+           qemu_status=${PIPESTATUS[0]} tee_status=${PIPESTATUS[1]}
+           set -e
+ 
+@@ -113,6 +117,14 @@ jobs:
+           if grep -q "test result: FAILED" qemu-output.log; then
+             echo "tests reported failures"
+             exit 1
+-          else
+-            echo "all tests passed"
+           fi
 +
-+#[test]
-+#[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
- fn no_block_in_current_thread_block_on() {
-     let rt = runtime::Builder::new_current_thread().build().unwrap();
-     rt.block_on(async {
-```
-
-**File**: `tokio/tests/task_local_set.rs` (modified, +7/-7)
-```diff
-@@ -182,7 +182,7 @@ mod block_in_place_cases {
-     }
- 
-     #[test]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     fn local_threadpool_blocking_in_place() {
-         thread_local! {
-             static ON_RT_THREAD: Cell<bool> = const { Cell::new(false) };
-@@ -206,7 +206,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "multi_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_run_until_mt() {
-         let local_set = LocalSet::new();
-         local_set
-@@ -217,7 +217,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "multi_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_spawn_local_mt() {
-         let local_set = LocalSet::new();
-         let jh = local_set.spawn_local(async {
-@@ -228,7 +228,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "multi_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_spawn_local_drop_mt() {
-         let local_set = LocalSet::new();
-         let jh = local_set.spawn_local(BlockInPlaceOnDrop);
-@@ -238,7 +238,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "current_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_run_until_ct() {
-         let local_set = LocalSet::new();
-         local_set
-@@ -249,7 +249,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "current_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_spawn_local_ct() {
-         let local_set = LocalSet::new();
-         let jh = local_set.spawn_local(async {
-@@ -260,7 +260,7 @@ mod block_in_place_cases {
-     }
- 
-     #[tokio::test(flavor = "current_thread")]
--    #[should_panic = "can call blocking only when running on the multi-threaded runtime"]
-+    #[should_panic = "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`"]
-     async fn block_in_place_in_spawn_local_drop_ct() {
-         let local_set = LocalSet::new();
-         let jh = local_set.spawn_local(BlockInPlaceOnDrop);
++          # A binary killed before it prints its summary (OOM, panic in init)
++          # never writes `test result: FAILED`, so also require the marker that
++          # init prints after the last binary.
++          if ! grep -q "ALL_TESTS_COMPLETED" qemu-output.log; then
++            echo "tests did not run to completion"
++            exit 1
++          fi
++
++          echo "all tests passed"
 ```
 
 ---
 
-### Incident Patch 2: `45d6579e` (2026-10-21)
-**Commit Message**: time: defer `chunks_timeout` buffer allocation (#8680)
+### Incident Patch 2: `e3cb70f2` (2026-10-25)
+**Commit Message**: stream: reset the timer in `timeout` and `throttle` (#8718)
 
-**File**: `tokio-stream/src/stream_ext/chunks_timeout.rs` (modified, +1/-1)
+**File**: `tokio-stream/src/stream_ext.rs` (modified, +4/-0)
 ```diff
-@@ -30,7 +30,7 @@ impl<S: Stream> ChunksTimeout<S> {
+@@ -68,6 +68,10 @@ cfg_time! {
+     use throttle::{throttle, Throttle};
+     mod chunks_timeout;
+     pub use chunks_timeout::ChunksTimeout;
++
++    fn safe_delay(duration: Duration) -> Duration {
++        duration.min(Duration::from_secs(86400 * 365 * 30))
++    }
+ }
+ 
+ /// An extension trait for the [`Stream`] trait that provides a variety of
+```
+
+**File**: `tokio-stream/src/stream_ext/throttle.rs` (modified, +7/-3)
+```diff
+@@ -1,8 +1,9 @@
+ //! Slow down a stream by enforcing a delay between items.
+ 
++use crate::stream_ext::safe_delay;
+ use crate::Stream;
+ use futures_core::FusedStream;
+-use tokio::time::{sleep, Duration, Sleep};
++use tokio::time::{sleep, Duration, Instant, Sleep};
+ 
+ use std::future::Future;
+ use std::pin::Pin;
+@@ -16,7 +17,7 @@ where
+ {
+     Throttle {
+         delay: None,
+-        duration,
++        duration: safe_delay(duration),
+         has_delayed: true,
+         stream,
+     }
+@@ -84,7 +85,10 @@ impl<T: Stream> Stream for Throttle<T> {
+ 
+         if value.is_some() {
+             if !is_zero(dur) {
+-                me.delay.set(Some(sleep(dur)));
++                match me.delay.as_mut().as_pin_mut() {
++                    Some(delay) => delay.reset(Instant::now() + dur),
++                    None => me.delay.set(Some(sleep(dur))),
++                }
+             }
+ 
+             *me.has_delayed = false;
+```
+
+**File**: `tokio-stream/src/stream_ext/timeout.rs` (modified, +5/-5)
+```diff
+@@ -1,6 +1,6 @@
+-use crate::stream_ext::Fuse;
++use crate::stream_ext::{safe_delay, Fuse};
+ use crate::Stream;
+-use tokio::time::{sleep, Sleep};
++use tokio::time::{sleep, Instant, Sleep};
+ 
+ use core::future::Future;
+ use core::pin::Pin;
+@@ -35,7 +35,7 @@ impl<S: Stream> Timeout<S> {
+         Timeout {
              stream: Fuse::new(stream),
-             deadline: None,
-             duration,
--            items: Vec::with_capacity(max_size),
-+            items: Vec::new(),
-             cap: max_size,
+             deadline,
+-            duration,
++            duration: safe_delay(duration),
+             poll_deadline: true,
          }
      }
+@@ -45,12 +45,12 @@ impl<S: Stream> Stream for Timeout<S> {
+     type Item = Result<S::Item, Elapsed>;
+ 
+     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+-        let mut me = self.project();
++        let me = self.project();
+ 
+         match me.stream.poll_next(cx) {
+             Poll::Ready(v) => {
+                 if v.is_some() {
+-                    me.deadline.set(sleep(*me.duration));
++                    me.deadline.reset(Instant::now() + *me.duration);
+                     *me.poll_deadline = true;
+                 }
+                 return Poll::Ready(v.map(Ok));
 ```
 
-**File**: `tokio-stream/tests/stream_chunks_timeout.rs` (modified, +8/-0)
+**File**: `tokio-stream/tests/time_throttle.rs` (modified, +16/-0)
 ```diff
-@@ -28,3 +28,11 @@ async fn stream_chunks_remainder() -> Result<(), Box<dyn Error>> {
-     assert_eq!(inner.next().await, Some(5));
-     Ok(())
+@@ -56,6 +56,22 @@ async fn duration_max_does_not_overflow() {
+     assert_ready_eq!(stream.poll_next(), Some(1));
  }
+ 
++#[tokio::test]
++async fn duration_max_does_not_overflow_between_items() {
++    time::pause();
 +
-+#[tokio::test(start_paused = true)]
-+async fn empty_stream_does_not_allocate_large_chunk_buffer() {
-+    let chunked = stream::empty::<u8>().chunks_timeout(usize::MAX, Duration::from_secs(1));
-+    tokio::pin!(chunked);
++    let mut stream = task::spawn(futures::stream::iter([1, 2, 3]).throttle(Duration::MAX));
 +
-+    assert_eq!(chunked.next().await, None);
++    assert_ready_eq!(stream.poll_next(), Some(1));
++    assert_pending!(stream.poll_next());
++
++    // Like `sleep`, the delay is clamped to roughly 30 years.
++    time::advance(Duration::from_secs(86400 * 365 * 31)).await;
++
++    assert_ready_eq!(stream.poll_next(), Some(2));
++    assert_pending!(stream.poll_next());
 +}
++
+ #[tokio::test]
+ async fn size_hint() {
+     let stream = futures::stream::iter([1, 2, 3]).throttle(Duration::from_secs(1));
 ```
 
 ---
 
-### Incident Patch 3: `b6b49d01` (2026-10-23)
-**Commit Message**: Merge two CI fixes from 'tokio-1.51.x' into 'master'
+### Incident Patch 3: `cc7f3e4f` (2026-10-24)
+**Commit Message**: ci: pass -std=gnu11 when building Linux kernel for io_uring tests (#8708)
 
-**File**: `.github/workflows/ci.yml` (modified, +3/-3)
-```diff
-@@ -1349,14 +1349,14 @@ jobs:
-           # and contains no duplicates.
-           #
-           # Since `sort` is sensitive to locale, we set it
--          # using LC_ALL to en_US.UTF8 to be consistent in different
-+          # using LC_ALL to C to be consistent in different
-           # environments.
- 
-           (
--            sed '1d' $FILE | LC_ALL=en_US.UTF8 sort -uc
-+            sed '1d' $FILE | LC_ALL=C sort -uc
-           ) || {
-             echo "Dictionary is not in sorted order. Correct order is:"
--            LC_ALL=en_US.UTF8 sort -u <(sed '1d' $FILE)
-+            LC_ALL=C sort -u <(sed '1d' $FILE)
-             false
-           }
-       - name: Run cargo-spellcheck
-```
+GitHub Actions recently upgraded `ubuntu-latest` to Ubuntu 26.04, which
+uses GCC 15 and defaults to `-std=gnu23`. Linux 4.19's `REALMODE_CFLAGS`
+does not specify a C standard version, causing the kernel build to fail
+under C23 where `bool` and `false` are keywords. Thus, pass
+`CC="gcc -std=gnu11"` when building the kernel.
 
-**File**: `spellcheck.dic` (modified, +97/-97)
+**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,6 @@
- 333
- &
- +
--<
--=
-->
--\
--~
--—
- 0o777
- 0s
- 0xA
-@@ -15,31 +9,113 @@
- 100ns
- 10ms
- 10μs
--~12
--120s
- 12.5%
--±1m
--±1ms
-+120s
- 1ms
- 1s
- 25%
- 250ms
- 2x
--~4
- 443
- 450ms
- 50ms
- 8MB
-+<
-+=
-+>
- ABI
-+AIO
-+APIs
-+Adaptors
-+Blockingly
-+CLI
-+CQE
-+Cancelling
-+Config
-+Customizable
-+Cygwin
-+DNS
-+Datagram
-+Deallocates
-+Deregisters
-+Destructures
-+Dev
-+DoS
-+EWMA
-+Emscripten
-+Emscripten's
-+EntryInner
-+Erlang's
-+FIFOs
-+FreeBSD
-+GID
-+Growable
-+H2
-+HashMaps
-+HdrHistogram
-+ICMP
-+IOCP
-+IOs
-+IP
-+IPv4
-+IPv6
-+Illumos
-+Invariants
-+JSPI
-+Kotlin's
-+LLVM
-+Lauck
-+MacOS
-+Marsaglia's
-+Mio
-+Multi
-+Multithreaded
-+Mutex
-+NTO
-+NUMA
-+Nagle
-+NetBSD
-+ORed
-+OpenBSD
-+PGID
-+PID
-+POSIX
-+RAII
-+RCU
-+RMW
-+RNG
-+Redox
-+SQE
-+SmallCrush
-+Solaris
-+Splitter
-+TCP
-+TLS
-+TOCTOU
-+TODO
-+TestU01
-+Tokio
-+Tokio's
-+Tuple
-+UDP
-+UID
-+Unpark
-+Unparks
-+Unsets
-+Valgrind
-+Varghese
-+WASI
-+Wakers
-+Wasm
-+WebAssembly
-+ZST
-+\
- accessors
- adaptor
- adaptors
--Adaptors
--AIO
- ambient
- amongst
- api
--APIs
- async
- atomics
- awaitable
-@@ -51,13 +127,10 @@ backtracing
- binded
- bitfield
- bitfields
--Blockingly
- boolean
- broadcasted
- cancelled
- cancelling
--Cancelling
--CLI
- cloneable
- codebase
- codec
-@@ -66,23 +139,17 @@ combinator
- combinators
- condvar
- config
--Config
- connectionless
- coroutines
- cpu
- cpus
- cqe
--CQE
- cqe's
- customizable
--Customizable
--Cygwin
- datagram
--Datagram
- datagrams
- deallocate
- deallocated
--Deallocates
- debuginfo
- decrement
- decrementing
-@@ -94,57 +161,39 @@ deregister
- deregistered
- deregistering
- deregisters
--Deregisters
- deregistration
- descriptor's
- destructor
- destructors
- destructure
--Destructures
--Dev
- dns
--DNS
--DoS
- dwOpenMode
--Emscripten
--Emscripten's
- endian
- enqueue
- enqueued
--EntryInner
- enum
- eof
--Erlang's
- errored
--EWMA
- expirations
- fcntl
- fd
- fd's
--FIFOs
- filename
- filesystem
- filesystems
- fn
- fns
--FreeBSD
- frontend
- fs
- functionalities
- getters
--GID
- goroutines
--Growable
- gzip
--H2
- hashmaps
--HashMaps
- hashsets
--HdrHistogram
--ICMP
-+iOS
- ie
- iff
--Illumos
- impl
- implementers
- implementor
-@@ -153,31 +202,17 @@ incrementing
- inlining
- interoperate
- invariants
--Invariants
- io
--IOCP
--iOS
--IOs
- io_uring
--IP
--IPv4
--IPv6
- iteratively
--JSPI
--Kotlin's
- latencies
--Lauck
- libc
- lifecycle
- lifo
--LLVM
- lookups
- macOS
--MacOS
--Marsaglia's
- metadata
- mio
--Mio
- mio's
- miri
- misconfigured
-@@ -186,43 +221,28 @@ monomorphization
- mpmc
- mpsc
- multi
--Multi
- multicast
--Multithreaded
- mut
- mutex
--Mutex
--Nagle
- namespace
--NetBSD
- nonblocking
- nondecreasing
- noop
- ntasks
--NTO
--NUMA
- ok
- oneshot
- opcode
--OpenBSD
--ORed
- os
- parker
- parsers
- peekable
--PGID
--PID
- plaintext
- poller
--POSIX
- proxied
- pthreads
- qos
--RAII
--RCU
- reallocations
- recv's
--Redox
- refactors
- refcount
- refcounting
-@@ -233,8 +253,6 @@ reqwest
- reregistering
- resize
- resized
--RMW
--RNG
- runtime
- runtime's
- runtimes
-@@ -247,14 +265,10 @@ setpgid
- sharded
- signalled
- signalling
--SmallCrush
--Solaris
- spawner
- spawners
--Splitter
- spmc
- spsc
--SQE
- src
- stabilised
- startup
-@@ -277,44 +291,29 @@ sys
- syscall
- syscalls
- tcp
--TCP
--TestU01
- threadpool
- timestamp
- timestamps
--TLS
--TOCTOU
--TODO
- tokio
--Tokio
- tokio's
--Tokio's
- tuple
--Tuple
- tvOS
- tx
- udp
--UDP
--UID
- unhandled
- unix
- unlink
- unpark
--Unpark
- unparked
- unparking
- unparks
--Unparks
- unreceived
- unsafety
- unsets
--Unsets
- unsynchronized
- untrusted
- uring
- usecases
--Valgrind
--Varghese
- vec
- versa
- versioned
-@@ -323,12 +322,13 @@ visionOS
- vtable
- waker
- wakers
--Wakers
- wakeup
- wakeups
--WASI
--Wasm
- watchOS
--WebAssembly
- workstealing
--ZST
-+~
-+~12
-+~4
-+±1m
-+±1ms
-+—
-```
-
-**File**: `tokio/tests/tracing_sync.rs` (modified, +16/-5)
-```diff
-@@ -5,11 +5,18 @@
- #![warn(rust_2018_idioms)]
- #![cfg(all(tokio_unstable, feature = "tracing", target_has_atomic = "64"))]
+@@ -38,7 +38,7 @@ jobs:
+           tar xf linux-${KERNEL_VERSION}.tar.xz
+           cd linux-${KERNEL_VERSION}
+           make defconfig
+-          make -j$(nproc)
++          make -j$(nproc) CC="gcc -std=gnu11"
  
-+use std::sync::Mutex;
- use tokio::sync;
- use tracing_mock::{expect, subscriber};
- 
-+// Serialize tests in this file so they cannot race on `tracing-core` callsite
-+// interest registration.
-+static TEST_MUTEX: Mutex<()> = Mutex::new(());
-+
- #[test]
- fn test_barrier_creates_span() {
-+    let _guard = TEST_MUTEX.lock();
-+
-     let barrier_span = expect::span()
-         .named("runtime.resource")
-         .with_target("tokio::sync::barrier");
-@@ -45,6 +52,8 @@ fn test_barrier_creates_span() {
- 
- #[test]
- fn test_mutex_creates_span() {
-+    let _guard = TEST_MUTEX.lock();
-+
-     let mutex_span = expect::span()
-         .named("runtime.resource")
-         .with_target("tokio::sync::mutex");
-@@ -89,6 +98,8 @@ fn test_mutex_creates_span() {
- 
- #[test]
- fn test_oneshot_creates_span() {
-+    let _guard = TEST_MUTEX.lock();
-+
-     let oneshot_span_id = expect::id();
-     let oneshot_span = expect::span()
-         .with_id(oneshot_span_id.clone())
-@@ -188,6 +199,8 @@ fn test_oneshot_creates_span() {
- 
- #[test]
- fn test_rwlock_creates_span() {
-+    let _guard = TEST_MUTEX.lock();
-+
-     let rwlock_span = expect::span()
-         .named("runtime.resource")
-         .with_target("tokio::sync::rwlock");
-@@ -244,6 +257,8 @@ fn test_rwlock_creates_span() {
- 
- #[test]
- fn test_semaphore_creates_span() {
-+    let _guard = TEST_MUTEX.lock();
-+
-     let semaphore_span = expect::span()
-         .named("runtime.resource")
-         .with_target("tokio::sync::semaphore");
-@@ -285,19 +300,15 @@ fn test_semaphore_creates_span() {
- /// is in the middle of an operation.
- #[cfg(panic = "unwind")]
- mod subscriber_panic {
-+    use super::TEST_MUTEX;
-     use std::future::Future;
-     use std::panic::{catch_unwind, AssertUnwindSafe};
-     use std::sync::atomic::{AtomicBool, Ordering};
--    use std::sync::Mutex;
-     use tokio::sync;
-     use tokio_test::{assert_pending, assert_ready_ok, task};
-     use tracing::span::{Attributes, Id, Record};
-     use tracing::{Event, Metadata, Subscriber};
- 
--    // Serialize tests that run instrumented operations outside `with_default`
--    // so they cannot race with `tracing-core` callsite interest registration.
--    static TEST_MUTEX: Mutex<()> = Mutex::new(());
--
-     /// A subscriber that panics on the first event with the given target.
-     ///
-     /// Later events, such as those emitted while unwinding, are ignored.
+       - name: Generate test binaries with io_uring enabled
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8714** (2026-10-24): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
-- **PR #8711** (closed): sync: add `SetOnce::take` (@SofiaDev225)
-- **PR #8710** (closed): [DO NOT MERGE] tokio: simplify WakeList internals (@ADD-SP)
-- **PR #8708** (2026-10-24): ci: pass -std=gnu11 when building Linux kernel for io_uring tests (@Darksonn)
-- **PR #8705** (2026-10-23): ci: use LC_ALL=C for spellcheck.dic sort check (@Darksonn)
-- **PR #8701** (2026-10-22): task: clarify `block_in_place` panics in LocalSet (@darkraider01)
+- **PR #8725** (2026-10-25): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
+- **PR #8724** (2026-10-25): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
+- **PR #8722** (2026-10-25): sync: remove obsolete TODO in mpsc block reclaim (@darkraider01)
+- **PR #8720** (2026-10-25): sync: clarify async waiting in SetOnce example (@fallintoplace)
+- **PR #8718** (2026-10-25): stream: reset the timer in `timeout` and `throttle` (@patrick-immometrica)
+- **PR #8716** (2026-10-25): ci: fix QEMU CPU model and completion check for io_uring tests (@Darksonn)
 
 ---
 
@@ -2650,28 +2195,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. task: clarify `block_in_place` panics in `LocalSet` (#8701)
+## X. ci: require a completion marker from the io_uring kernel test guest (#8440)
 
 **RULE**:
-When implementing operations in `tokio/src/runtime/scheduler/multi_thread/worker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/uring-kernel-version-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `57c0681c`: task: clarify `block_in_place` panics in `LocalSet` (#8701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d81db549`: ci: require a completion marker from the io_uring kernel test guest (#8440). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/scheduler/multi_thread/worker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/uring-kernel-version-test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        "cannot call `block_in_place` from a `current_thread` runtime or from within a `LocalSet`",
+          echo "ALL_TESTS_COMPLETED"
+          # 3 GiB guest (the runner has 16 GB): the initramfs holds ~760 MB of
+          # unstripped test binaries, and `open_many_files` in `fs_uring` had
+          # 200-340 MB of anon RSS when the 1 GiB guest OOM-killed it.
+            -nographic -no-reboot -m 3072 -action panic=exit-failure 2>&1 | tee qemu-output.log
+
+          # A binary killed before it prints its summary (OOM, panic in init)
+          # never writes `test result: FAILED`, so also require the marker that
+          # init prints after the last binary.
+          if ! grep -q "ALL_TESTS_COMPLETED" qemu-output.log; then
+            echo "tests did not run to completion"
+            exit 1
+          fi
+
+          echo "all tests passed"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        "can call blocking only when running on the multi-threaded runtime",
+            -nographic -no-reboot -m 1024 -action panic=exit-failure 2>&1 | tee qemu-output.log
+          else
+            echo "all tests passed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `57c0681c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d81db549` are properly handled with clean fallback behavior.

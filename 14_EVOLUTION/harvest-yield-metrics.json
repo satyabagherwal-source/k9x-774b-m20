@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T01:10:25.453Z",
-  "total_cycles_completed": 5049,
-  "total_learnings_persisted": 5049,
-  "total_rules_promoted": 4410,
+  "last_updated": "2026-10-26T01:25:49.501Z",
+  "total_cycles_completed": 5052,
+  "total_learnings_persisted": 5052,
+  "total_rules_promoted": 4415,
   "history": [
-    {
-      "timestamp": "2026-10-25T15:09:53.921Z",
-      "repository": "goss-org/goss",
-      "learningId": "learn-github-goss-org-goss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:09:59.206Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:15:52.707Z",
-      "repository": "Nanbeige/Nanbeige4.3-33B",
-      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T15:15:56.939Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1403,6 +1382,27 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:22:51.834Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:22:55.896Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:25:49.501Z",
+      "repository": "vuetifyjs/vuetify",
+      "learningId": "learn-github-vuetifyjs-vuetify",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
