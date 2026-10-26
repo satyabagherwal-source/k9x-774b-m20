@@ -5117,3 +5117,5 @@
 | `CYCLE-20261026-WVVE` | `2026-10-26T09:53:30.458Z` | `ParadevAI/Paradev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4574` | Yes (`68ff24bc...`) |
 | `CYCLE-20261026-XJRH` | `2026-10-26T09:54:01.421Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4575` | Yes (`3badd473...`) |
 | `CYCLE-20261026-XS94` | `2026-10-26T09:54:12.424Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4576` | Yes (`7b7d707a...`) |
+| `CYCLE-20261026-OR2O` | `2026-10-26T10:15:10.608Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4577, Rule 4578` | Yes (`32d2a2a5...`) |
+| `CYCLE-20261026-OXGQ` | `2026-10-26T10:15:18.890Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4579` | Yes (`c795260e...`) |

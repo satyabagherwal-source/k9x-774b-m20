@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-30UU",
-    "timestamp": "2026-10-25T02:42:42.582Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "b7a43655c36fe751bbb007626fdf8ff2bb20920f98cbfd96a334eb0a5cd914ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-4QIF",
-    "timestamp": "2026-10-25T02:44:02.487Z",
-    "repository": "ynqa/jnv",
-    "learningId": "learn-github-ynqa-jnv",
-    "contentHash": "d956b5fad29243fdbbceefe2f361d6f129edcac1aaf22b6d95577f4529d6ff93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-D15N",
     "timestamp": "2026-10-25T02:50:29.531Z",
     "repository": "actions/actions-runner-controller",
@@ -7490,6 +7460,36 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-OR2O",
+    "timestamp": "2026-10-26T10:15:10.608Z",
+    "repository": "briaai/Fibo-2.0-dev",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-OXGQ",
+    "timestamp": "2026-10-26T10:15:18.890Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

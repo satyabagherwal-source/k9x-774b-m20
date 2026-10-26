@@ -4470,3 +4470,7 @@ https://github.com/ParadevAI/superset
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T09:48:17.556Z] ---
 # [AI-AGENTS] ParadevAI/Paradev (8545 score) - Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run an
 https://github.com/ParadevAI/Paradev
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-26T10:14:57.272Z] ---
+# [HUGGINGFACE-AI-MODELS] briaai/Fibo-2.0-dev (2847 score) - Verified Hugging Face Model: briaai/Fibo-2.0-dev (158 likes, 1267 downloads)
+https://huggingface.co/briaai/Fibo-2.0-dev

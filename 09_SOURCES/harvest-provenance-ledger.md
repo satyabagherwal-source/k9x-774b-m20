@@ -5124,3 +5124,5 @@ Every entry in this ledger must capture:
 | `learn-github-paradevai-paradev` | `https://github.com/ParadevAI/Paradev` | `d962fd0f` | Multi-dimensional audit evidence | 2026-10-26T09:53:30.462Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `d6271e63` | Multi-dimensional audit evidence | 2026-10-26T09:54:01.424Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4a5b9e47` | Multi-dimensional audit evidence | 2026-10-26T09:54:12.427Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-10-26T10:15:10.611Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `263bc134` | Multi-dimensional audit evidence | 2026-10-26T10:15:18.894Z |

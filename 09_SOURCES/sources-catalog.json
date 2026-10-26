@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "731d4383",
+    "sourceVersion": "263bc134",
     "license": "MIT",
-    "contentHash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
-    "lastHarvestedAt": "2026-10-26T00:18:23.957Z",
+    "contentHash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
+    "lastHarvestedAt": "2026-10-26T10:15:18.894Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -10758,5 +10758,15 @@
     "contentHash": "68ff24bc731aacfcb9fabae1f8a34f9e990fde09e6e7d7692e8ca4344d2a45cb",
     "lastHarvestedAt": "2026-10-26T09:53:30.462Z",
     "learningId": "learn-github-paradevai-paradev"
+  },
+  "hf-briaai-fibo-2.0-dev": {
+    "repository": "briaai/Fibo-2.0-dev",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
+    "sourceVersion": "hf-briaai-fibo-2.0-dev",
+    "license": "Open-Source",
+    "contentHash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
+    "lastHarvestedAt": "2026-10-26T10:15:10.611Z",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   }
 }

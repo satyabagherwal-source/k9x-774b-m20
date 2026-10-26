@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T09:54:12.435Z",
+  "last_updated": "2026-10-26T10:15:18.902Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
-      "verified_at": "2026-10-26T00:18:23.963Z",
+      "content_hash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
+      "verified_at": "2026-10-26T10:15:18.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:18:23.963Z"
+      "last_updated": "2026-10-26T10:15:18.901Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -16169,6 +16169,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-26T09:53:30.469Z"
+    },
+    "briaai/Fibo-2.0-dev": {
+      "repository": "briaai/Fibo-2.0-dev",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
+      "content_hash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
+      "verified_at": "2026-10-26T10:15:10.619Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-26T10:15:10.619Z"
     }
   },
   "repos": {

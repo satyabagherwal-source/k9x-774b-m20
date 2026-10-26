@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `731d4383`  
+> **Source Version**: `263bc134`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:18:23.675Z  
+> **Timestamp**: 2026-10-26T10:15:18.512Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:18:23.407Z  
+> **Harvest Timestamp**: 2026-10-26T10:15:17.376Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32308 stars
+- **Stars / Engagement**: 32315 stars
 
 ---
 
@@ -1445,893 +1445,237 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ea11e5f` (2026-10-25)
-**Commit Message**: Merge pull request #7784 from root-Manas/feat/openapi-oauth-security
+### Incident Patch 1: `263bc134` (2026-10-26)
+**Commit Message**: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
 
-feat(openapi): support OAuth2 and OpenID Connect access tokens
+fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
 
-**File**: `pkg/input/formats/README.md` (modified, +19/-1)
+**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
 ```diff
-@@ -53,7 +53,25 @@ For unsupported media types, no appropriate content type is found for the body.
- 
- This module converts each operation into one or more example HTTP requests. Each request is dumped into a string format, accompanied by its method, URL, headers, and body. These are send as a callback for further processing.
- 
--_Please note: This document does not cover other features of OpenAPI specification like responses, security schemes, links, callbacks, etc. as these are not currently handled by the module._
-+### Security Schemes
-+
-+The OpenAPI input supports HTTP basic and bearer authentication, API keys in headers, query parameters or cookies, and OAuth2/OpenID Connect access tokens. Security requirements can be declared globally or per operation.
-+
-+For OAuth2 (`type: oauth2`) and OpenID Connect (`type: openIdConnect`), supply an existing access token as the full `Authorization` header value:
-+
-+```sh
-+nuclei -l openapi.yaml -im openapi -var 'Authorization=Bearer YOUR_ACCESS_TOKEN'
-+```
-+
-+The same variable is used for HTTP bearer authentication. For basic authentication, provide the full `Basic ...` value; for API keys, use the parameter name specified by the security scheme.
-+
-+Nuclei does not perform OAuth authorization flows, discover OpenID Connect providers, acquire tokens, or refresh them. Obtain an access token with the scopes required by the API before running the scan. The provided header value is used unchanged.
-+
-+Security requirement objects are alternatives. The generator selects the first supported alternative, in document order, for which all required credentials are supplied, and includes every scheme in that object. An empty object (`{}`) permits anonymous access. If no supported alternative has all its credentials, the first supported alternative is used to report missing values; credentials from different alternatives are not combined.
-+
-+Operations declaring `security: []` can be generated without the global token. Absent, nil or empty credential values cause affected requests to be skipped. Normal parameter validation reports missing credentials even when another required parameter is also missing. With `-skip-format-validation`, requests with missing credentials are silently skipped and the remaining operations are generated without inventing placeholder credentials.
-+
-+_Please note: Other OpenAPI features such as responses, links and callbacks are not currently handled by the module._
- 
- ## Postman Collection file
- 
-```
-
-**File**: `pkg/input/formats/openapi/generator.go` (modified, +98/-62)
-```diff
-@@ -36,33 +36,7 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
- 	if len(schema.Servers) == 0 {
- 		return errors.New("no servers found in openapi schema")
- 	}
--
--	// new set of globalParams obtained from security schemes
--	globalParams := openapi3.NewParameters()
--
--	if len(schema.Security) > 0 {
--		params, err := GetGlobalParamsForSecurityRequirement(schema, &schema.Security)
--		if err != nil {
--			return err
--		}
--		globalParams = append(globalParams, params...)
--	}
--
--	// validate global param requirements
--	for _, param := range globalParams {
--		if val, ok := opts.Variables[param.Value.Name]; ok {
--			param.Value.Example = val
--		} else {
--			// if missing check for validation
--			if opts.SkipFormatValidation {
--				gologger.Verbose().Msgf("openapi: skipping all requests due to missing global auth parameter: %s\n", param.Value.Name)
--				return nil
--			} else {
--				// fatal error
--				gologger.Fatal().Msgf("openapi: missing global auth parameter: %s\n", param.Value.Name)
--			}
--		}
--	}
-+	globalParams, globalSecurityErr := selectSecurityParameters(schema, &schema.Security, opts.Variables)
- 
- 	missingVarMap := make(map[string]struct{})
- 	optionalVarMap := make(map[string]struct{})
-@@ -92,6 +66,10 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
- 				requestPath = serverPath + path
- 			}
- 			for method, ov := range ops {
-+				// An override need not use an unsupported global security scheme.
-+				if ov.Security == nil && globalSecurityErr != nil {
-+					return globalSecurityErr
-+				}
- 				if err := generateRequestsFromOp(&generateReqOptions{
- 					requiredOnly:              opts.RequiredOnly,
- 					method:                    method,
-@@ -148,7 +126,7 @@ type generateReqOptions struct {
- 	// post request generation callback
- 	callback formats.ParseReqRespCallback
- 
--	// global parameters
-+	// Selected global authentication parameters, used only without an override.
- 	globalParams openapi3.Parameters
- 	// requestparams map
- 	reqParams openapi3.Parameters
-@@ -175,21 +153,42 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 	}
- 	// add existing req params
- 	reqParams = append(reqParams, opts.op.Parameters...)
--	// check for endpoint specific auth
-+	// Select one complete requirement for this operation before adding its
-+	// authentication parameters. Operation security overrides global security.
-+	authParams := opts.globalParams
- 	if opts.op.Security != nil {
--		params, err := GetGlobalParamsForSecurityRequirement(opts.schema, opts.op.Security)
-+		authParams, err = selectSecurityParameters(opts.schema, opts.op.Security, opts.opts.Variables)
- 		if err != nil {
- 			return err
- 		}
--		reqParams = append(reqParams, params...)
--	} else {
--		reqParams = append(reqParams, opts.globalParams...)
-+	}
-+	reqParams = append(reqParams, authParams...)
-+	authParameters := make(map[*openapi3.Parameter]struct{}, len(authParams))
-+	for _, parameter := range authParams {
-+		authParameters[parameter.Value] = struct{}{}
-+	}
-+
-+	// Collect missing credentials before ordinary parameter validation can return
-+	// early. Still validate ordinary parameters so their diagnostics are retained.
-+	missingAuth := false
-+	for _, parameter := range authParams {
-+		value := parameter.Value
-+		if types.ToString(opts.opts.Variables[value.Name]) != "" {
-+			continue
-+		}
-+		missingAuth = true
-+		if opts.missingParamValueCallback != nil {
-+			opts.missingParamValueCallback(value, opts)
-+		}
- 	}
- 
- 	query := url.Values{}
- 	for _, parameter := range reqParams {
- 		value := parameter.Value
- 
-+		if _, isAuth := authParameters[value]; missingAuth && isAuth {
-+			continue
-+		}
- 		if value.Schema == nil || value.Schema.Value == nil {
- 			continue
- 		}
-@@ -261,6 +260,9 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 			req.AddCookie(&http.Cookie{Name: value.Name, Value: types.ToString(paramValue)})
- 		}
- 	}
-+	if missingAuth {
-+		return nil
-+	}
- 	req.URL.RawQuery = query.Encode()
- 	req.URL.Path = opts.requestPath
- 
-@@ -401,45 +403,79 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 	return nil
- }
- 
--// GetGlobalParamsForSecurityRequirement returns the global parameters for a security requirement
-+// GetGlobalParamsForSecurityRequirement returns parameters for the first supported
-+// security alternative, or no parameters when anonymous access is permitted.
- func GetGlobalParamsForSecurityRequirement(schema *openapi3.T, requirement *openapi3.SecurityRequirements) ([]*openapi3.ParameterRef, error) {
--	globalParams := openapi3.NewParameters()
--	if len(schema.Components.SecuritySchemes) == 0 {
--		return nil, errkit.Newf("security requirements (%+v) without any security schemes found in openapi file", schema.Security)
-+	return selectSecurityParameters(schema, requirement, nil)
-+}
-+
-+// selectSecurityParameters chooses the first fully supplied alternative. If none
-+// is supplied, return the first supported alternative for missing-value repor
-```
-
-**File**: `pkg/input/formats/openapi/generator_test.go` (added, +350/-0)
-```diff
-@@ -0,0 +1,350 @@
-+package openapi
-+
-+import (
-+	"bufio"
-+	"context"
-+	"fmt"
-+	"net/http"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/getkin/kin-openapi/openapi3"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	httpTypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestGenerateRequestsWithSecuritySchemes(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		scheme   string
-+		variable string
-+		value    string
-+		in       string
-+	}{
-+		{
-+			name: "oauth2", scheme: `{"type":"oauth2","flows":{"clientCredentials":{"tokenUrl":"https://example.com/token","scopes":{"read":"Read access"}}}}`,
-+			variable: "Authorization", value: "Bearer supplied-token", in: "header",
-+		},
-+		{
-+			name: "openIdConnect", scheme: `{"type":"openIdConnect","openIdConnectUrl":"https://example.com/.well-known/openid-configuration"}`,
-+			variable: "Authorization", value: "Bearer supplied-token", in: "header",
-+		},
-+		{
-+			name: "bearer", scheme: `{"type":"http","scheme":"bearer"}`,
-+			variable: "Authorization", value: "Bearer supplied-token", in: "header",
-+		},
-+		{
-+			name: "basic", scheme: `{"type":"http","scheme":"basic"}`,
-+			variable: "Authorization", value: "Basic dXNlcjpwYXNz", in: "header",
-+		},
-+		{
-+			name: "apiKey-header", scheme: `{"type":"apiKey","name":"X-API-Key","in":"header"}`,
-+			variable: "X-API-Key", value: "supplied-key", in: "header",
-+		},
-+		{
-+			name: "apiKey-query", scheme: `{"type":"apiKey","name":"api_key","in":"query"}`,
-+			variable: "api_key", value: "supplied-key", in: "query",
-+		},
-+		{
-+			name: "apiKey-cookie", scheme: `{"type":"apiKey","name":"session","in":"cookie"}`,
-+			variable: "session", value: "supplied-key", in: "cookie",
-+		},
-+	} {
-+		for _, scope := range []string{"global", "operation"} {
-+			t.Run(test.name+"/"+scope, func(t *testing.T) {
-+				security := `"security":[{"auth":[]}],`
-+				if test.name == "oauth2" || test.name == "openIdConnect" {
-+					security = `"security":[{"auth":["read"]}],`
-+				}
-+				globalSecurity, operationSecurity := security, ""
-+				if scope == "operation" {
-+					globalSecurity, operationSecurity = "", security
-+				}
-+				document := fmt.Sprintf(`{
-+					"openapi":"3.0.3",
-+					"info":{"title":"Authentication test","version":"1.0"},
-+					"servers":[{"url":"https://example.com"}],
-+					"components":{"securitySchemes":{"auth":%s}},
-+					%s
-+					"paths":{"/protected":{"get":{%s"responses":{"200":{"description":"OK"}}}}}
-+				}`, test.scheme, globalSecurity, operationSecurity)
-+				parser := New()
-+				parser.SetOptions(formats.InputFormatOptions{
-+					RequiredOnly: true,
-+					Variables:    map[string]interface{}{test.variable: test.value},
-+				})
-+				var requests []*http.Request
-+				err := parser.Parse(strings.NewReader(document), func(rr *httpTypes.RequestResponse) bool {
-+					req, err := http.ReadRequest(bufio.NewReader(strings.NewReader(rr.Request.Raw)))
-+					require.NoError(t, err)
-+					requests = append(requests, req)
-+					return false
-+				}, "")
-+				require.NoError(t, err)
-+				require.Len(t, requests, 1)
-+				req := requests[0]
-+				t.Cleanup(func() { require.NoError(t, req.Body.Close()) })
-+				require.Equal(t, "/protected", req.URL.Path)
-+				switch test.in {
-+				case "header":
-+					require.Equal(t, test.value, req.Header.Get(test.variable))
-+				case "query":
-+					require.Equal(t, test.value, req.URL.Query().Get(test.variable))
-+				case "cookie":
-+					cookie, err := req.Cookie(test.variable)
-+					require.NoError(t, err)
-+					require.Equal(t, test.value, cookie.Value)
-+				}
-+			})
-+		}
-+	}
-+}
-+
-+func TestGenerateRequestsOAuthOperationOverride(t *testing.T) {
-+	parser := New()
-+	parser.SetOptions(formats.InputFormatOptions{
-+		Variables: map[string]interface{}{
-+			"Authorization": "Bearer supplied-token",
-+			"X-API-Key":     "supplied-key",
-+		},
-+	})
-+	document := `{
-+		"openapi":"3.0.3",
-+		"info":{"title":"Authentication override test","version":"1.0"},
-+		"servers":[{"url":"https://example.com"}],
-+		"components":{"securitySchemes":{
-+			"oauth":{"type":"oauth2","flows":{"clientCredentials":{"tokenUrl":"https://example.com/token","scopes":{}}}},
-+			"key":{"type":"apiKey","name":"X-API-Key","in":"header"}
-+		}},
-+		"security":[{"oauth":[]}],
-+		"paths":{
-+			"/protected":{"get":{"security":[{"key":[]}],"responses":{"200":{"description":"OK"}}}},
-+			"/public":{"get":{"security":[],"responses":{"200":{"description":"OK"}}}}
-+		}
-+	}`
-+	paths := make(map[string]bool)
-+	err := parser.Parse(strings.NewReader(document), func(rr *httpTypes.RequestResponse) bool {
-+		paths[rr.URL.Path] = true
-+		key, _ := rr.Request.Headers.Get("X-Api-Key")
-+		if rr.URL.Path == "/protected" {
-+			require.Equal(t, "supplied-key", key)
-+		} else {
-+			require.Empty(t, key)
-+		}
-+		auth, _ := rr.Request.Headers.Get("Authorization")
-+		require.
-```
-
-**File**: `pkg/input/formats/openapi/security_test.go` (added, +152/-0)
-```diff
-@@ -0,0 +1,152 @@
-+package openapi
-+
-+import (
-+	"bufio"
-+	"fmt"
-+	"net/http"
-+	"strings"
-+	"testing"
-+
-+	"github.com/getkin/kin-openapi/openapi3"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	httpTypes "github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestGenerateRequestsSecurityAlternatives(t *testing.T) {
-+	for _, tc := range []struct {
-+		name, security string
-+		variables      map[string]interface{}
-+		wantCount      int
-+		wantAuth       string
-+		wantKey        string
-+	}{
-+		{"first alternative", `[{"oauth":[]},{"key":[]}]`, map[string]interface{}{"Authorization": "Bearer token"}, 1, "Bearer token", ""},
-+		{"second alternative", `[{"oauth":[]},{"key":[]}]`, map[string]interface{}{"X-API-Key": "key"}, 1, "", "key"},
-+		{"both alternatives available", `[{"oauth":[]},{"key":[]}]`, map[string]interface{}{"Authorization": "Bearer token", "X-API-Key": "key"}, 1, "Bearer token", ""},
-+		{"neither alternative available", `[{"oauth":[]},{"key":[]}]`, nil, 0, "", ""},
-+		{"combined complete", `[{"oauth":[],"key":[]}]`, map[string]interface{}{"Authorization": "Bearer token", "X-API-Key": "key"}, 1, "Bearer token", "key"},
-+		{"combined missing key", `[{"oauth":[],"key":[]}]`, map[string]interface{}{"Authorization": "Bearer token"}, 0, "", ""},
-+		{"combined missing token", `[{"oauth":[],"key":[]}]`, map[string]interface{}{"X-API-Key": "key"}, 0, "", ""},
-+		{"complete alternative after incomplete combined", `[{"oauth":[],"key":[]},{"key":[]}]`, map[string]interface{}{"X-API-Key": "key"}, 1, "", "key"},
-+		{"anonymous alternative first", `[{}, {"oauth":[]}]`, map[string]interface{}{"Authorization": "Bearer token"}, 1, "", ""},
-+		{"anonymous alternative last", `[{"oauth":[]},{}]`, nil, 1, "", ""},
-+		{"empty security list", `[]`, nil, 1, "", ""},
-+		{"unsupported alternative first", `[{"unsupported":[]},{"key":[]}]`, map[string]interface{}{"X-API-Key": "key"}, 1, "", "key"},
-+	} {
-+		for _, scope := range []string{"global", "operation"} {
-+			for _, skip := range []bool{false, true} {
-+				t.Run(fmt.Sprintf("%s/%s/skip=%t", tc.name, scope, skip), func(t *testing.T) {
-+					global, operation := `"security":`+tc.security+`,`, ""
-+					if scope == "operation" {
-+						global, operation = "", global
-+					}
-+					document := fmt.Sprintf(`{
-+						"openapi":"3.0.3","info":{"title":"Security alternatives","version":"1"},
-+						"servers":[{"url":"https://example.com"}],
-+						"components":{"securitySchemes":{
-+							"oauth":{"type":"oauth2","flows":{"clientCredentials":{"tokenUrl":"https://example.com/token","scopes":{}}}},
-+							"key":{"type":"apiKey","in":"header","name":"X-API-Key"},
-+							"unsupported":{"type":"http","scheme":"digest"}
-+						}},%s"paths":{"/protected":{"get":{%s"responses":{"200":{"description":"OK"}}}}}
-+					}`, global, operation)
-+					parser := New()
-+					parser.SetOptions(formats.InputFormatOptions{SkipFormatValidation: skip, Variables: tc.variables})
-+					var requests []*http.Request
-+					err := parser.Parse(strings.NewReader(document), func(rr *httpTypes.RequestResponse) bool {
-+						req, err := http.ReadRequest(bufio.NewReader(strings.NewReader(rr.Request.Raw)))
-+						require.NoError(t, err)
-+						requests = append(requests, req)
-+						return false
-+					}, "")
-+					require.NoError(t, err)
-+					require.Len(t, requests, tc.wantCount)
-+					for _, req := range requests {
-+						t.Cleanup(func() { require.NoError(t, req.Body.Close()) })
-+						require.Equal(t, tc.wantAuth, req.Header.Get("Authorization"))
-+						require.Equal(t, tc.wantKey, req.Header.Get("X-API-Key"))
-+					}
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+func TestGenerateRequestsOrdinaryParameterAuthDescription(t *testing.T) {
-+	for _, skip := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("skip=%t", skip), func(t *testing.T) {
-+			parser := New()
-+			parser.SetOptions(formats.InputFormatOptions{SkipFormatValidation: skip})
-+			const document = `{
-+				"openapi":"3.0.3","info":{"title":"Public operation","version":"1"},
-+				"servers":[{"url":"https://example.com"}],
-+				"paths":{"/public":{"get":{
-+					"parameters":[{"name":"display","in":"query","required":false,"description":"globalAuth","schema":{"type":"string","default":"compact"}}],
-+					"responses":{"200":{"description":"OK"}}
-+				}}}
-+			}`
-+			count := 0
-+			err := parser.Parse(strings.NewReader(document), func(rr *httpTypes.RequestResponse) bool {
-+				count++
-+				require.Equal(t, "display=compact", rr.URL.RawQuery)
-+				return false
-+			}, "")
-+			require.NoError(t, err)
-+			require.Equal(t, 1, count)
-+		})
-+	}
-+}
-+
-+func TestGenerateRequestsPublicOverrideUnsupportedGlobalSecurity(t *testing.T) {
-+	const document = `{
-+		"openapi":"3.0.3","info":{"title":"Public override","version":"1"},
-+		"servers":[{"url":"https://example.com"}],
-+		"components":{"securitySchemes":{"auth":{"type":"http","scheme":"digest"}}},
-+		"security":[{"auth":[]}],
-+		"paths":{"/public":{"get":{"security":[],
-```
-
----
-
-### Incident Patch 2: `731d4383` (2026-10-25)
-**Commit Message**: Merge pull request #7690 from IgorDaniel45/fix-threadsafe-compiled-template-cache
-
-fix: reuse compiled templates in thread-safe engine
-
-**File**: `internal/runner/runner.go` (modified, +5/-0)
-```diff
-@@ -802,6 +802,11 @@ func (r *Runner) RunEnumeration() error {
- 	if err := store.Load(); err != nil {
- 		return err
- 	}
-+	// Each template is parsed once per scan, so the compiled cache only holds
-+	// pre-compilation snapshots that nothing reads after loading.
-+	if parser, ok := r.parser.(*templates.Parser); ok {
-+		parser.PurgeCompiled()
-+	}
- 	if profiles != nil {
- 		profiles.Prepare(slices.Concat(store.Templates(), store.Workflows()))
- 		executorOpts.TargetScope = profiles
-```
-
-**File**: `lib/cached_flow_test.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+package nuclei_test
-+
-+import (
-+	"context"
-+	"net/http"
-+	"net/http/httptest"
-+	"os"
-+	"path/filepath"
-+	"sync/atomic"
-+	"testing"
-+
-+	nuclei "github.com/projectdiscovery/nuclei/v3/lib"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestThreadSafeCachedFlowPreservesPrecondition(t *testing.T) {
-+	for _, positive := range []bool{false, true} {
-+		name := "negative"
-+		if positive {
-+			name = "positive"
-+		}
-+		t.Run(name, func(t *testing.T) {
-+			path := filepath.Join(t.TempDir(), "flow.yaml")
-+			require.NoError(t, os.WriteFile(path, []byte(`id: cached-flow
-+info:
-+  name: Cached flow
-+  author: pdteam
-+  severity: info
-+flow: http(1) && http(2)
-+http:
-+  - method: GET
-+    path: ["{{BaseURL}}/precondition"]
-+    matchers:
-+      - type: status
-+        status: [200]
-+        internal: true
-+  - method: GET
-+    path: ["{{BaseURL}}/check"]
-+    matchers:
-+      - type: status
-+        status: [404]
-+`), 0o600))
-+			var checks, findings atomic.Int64
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.URL.Path == "/check" {
-+					checks.Add(1)
-+				}
-+				if positive && r.URL.Path == "/precondition" {
-+					w.WriteHeader(200)
-+					return
-+				}
-+				http.NotFound(w, r)
-+			}))
-+			defer server.Close()
-+			engine, err := nuclei.NewThreadSafeNucleiEngineCtx(context.Background(), nuclei.DisableUpdateCheck())
-+			require.NoError(t, err)
-+			defer engine.Close()
-+			engine.GlobalResultCallback(func(*output.ResultEvent) { findings.Add(1) })
-+			for call := int64(1); call <= 3; call++ {
-+				require.NoError(t, engine.ExecuteNucleiWithOptsCtx(context.Background(), []string{server.URL}, nuclei.WithTemplatesOrWorkflows(nuclei.TemplateSources{Templates: []string{path}})))
-+				expected := int64(0)
-+				if positive {
-+					expected = call
-+				}
-+				require.Equal(t, expected, checks.Load(), "check requests after call %d", call)
-+				require.Equal(t, expected, findings.Load(), "findings after call %d", call)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `lib/multi.go` (modified, +1/-5)
-```diff
-@@ -44,11 +44,7 @@ func createEphemeralObjects(ctx context.Context, base *NucleiEngine, opts *types
- 		ResumeCfg:    types.NewResumeCfg(),
- 		Parser:       base.parser,
- 		Browser:      base.browserInstance,
--		// Thread-safe executes can run concurrently with different Output writers.
--		// The compiled-template cache shallow-copies requests and mutates shared
--		// ExecutorOptions.Output via UpdateOptions/ApplyNewEngineOptions, which
--		// would otherwise route all findings to whichever call last won the race.
--		DoNotCache: true,
-+		DoNotCache:   opts.DoNotCacheTemplates,
- 	}
- 	if base.interactshClient != nil {
- 		u.executerOpts.InteractshScope = base.interactshClient.NewRequestScope()
-```
-
-**File**: `lib/parser_lifecycle_test.go` (modified, +88/-0)
-```diff
-@@ -2,10 +2,14 @@ package nuclei
- 
+@@ -3,20 +3,32 @@ package offlinehttp
  import (
- 	"context"
-+	"net/http"
-+	"net/http/httptest"
- 	"os"
- 	"path/filepath"
-+	"sync"
- 	"testing"
+ 	"bufio"
+ 	"errors"
++	"io"
+ 	"net/http"
+ 	"regexp"
+ 	"strings"
+ )
  
-+	"github.com/projectdiscovery/nuclei/v3/pkg/output"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/stretchr/testify/require"
-@@ -68,3 +72,87 @@ http:
- 		require.NotNil(t, cached)
+-var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
++var (
++	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
++	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
++)
+ 
+ // readResponseFromString reads a raw http response from a string.
+ func readResponseFromString(data string) (*http.Response, error) {
+ 	// Check if "data" contains RFC compatible Request followed by a response
+ 	br := bufio.NewReader(strings.NewReader(data))
+ 	if req, err := http.ReadRequest(br); err == nil {
+-		if resp, err := http.ReadResponse(br, req); err == nil {
+-			return resp, nil
++		if req.Body != nil {
++			_, _ = io.Copy(io.Discard, req.Body)
++			_ = req.Body.Close()
++		}
++		remaining, _ := io.ReadAll(br)
++		if len(remaining) > 0 {
++			remainingStr := addMinorVersionToHTTP(string(remaining))
++			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
++				return resp, nil
++			}
+ 		}
  	}
+ 
+@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
+ 	if strings.HasPrefix(data, "HTTP/") {
+ 		final = addMinorVersionToHTTP(data)
+ 	} else {
+-		lastIndex := strings.LastIndex(data, "HTTP/")
+-		if lastIndex == -1 {
++		loc := responseStatusRegex.FindStringIndex(data)
++		if loc == nil {
+ 			return nil, errors.New("malformed raw http response")
+ 		}
+-		final = data[lastIndex:] // choose last http/ in case of it being later.
+-
+-		final = addMinorVersionToHTTP(final)
++		final = addMinorVersionToHTTP(data[loc[0]:])
+ 	}
+ 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
+ }
+```
+
+**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
+```diff
+@@ -199,3 +199,44 @@ Server: Google Frontend
+ 
+ 	})
  }
 +
-+func TestThreadSafeExecuteUsesSharedCompiledCache(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "template.yaml")
-+	require.NoError(t, os.WriteFile(templatePath, []byte(`id: thread-safe-shared-cache
 +
-+info:
-+  name: Thread safe shared cache
-+  author: pdteam
-+  severity: info
-+  tags: thread-safe-shared-cache
-+
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+    matchers:
-+      - type: word
-+        words:
-+          - "thread-safe-shared-cache"
-+`), 0o600))
-+
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+		_, _ = w.Write([]byte("thread-safe-shared-cache"))
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	engine, err := NewThreadSafeNucleiEngineCtx(context.Background())
-+	require.NoError(t, err)
-+	t.Cleanup(engine.Close)
-+
-+	const executions = 4
-+	var waitGroup sync.WaitGroup
-+	errors := make([]error, executions)
-+	for i := range executions {
-+		waitGroup.Add(1)
-+		go func() {
-+			defer waitGroup.Done()
-+			errors[i] = engine.ExecuteNucleiWithOptsCtx(context.Background(), []string{server.URL},
-+				WithTemplatesOrWorkflows(TemplateSources{Templates: []string{templatePath}}),
-+				WithTemplateFilters(TemplateFilters{Tags: []string{"thread-safe-shared-cache"}}),
-+				WithResultCallback(func(*output.ResultEvent) {}),
-+			)
-+		}()
++func TestReadResponse_HTTPInBodyCases(t *testing.T) {
++	tests := []struct {
++		name         string
++		data         string
++		expectedBody string
++		statusCode   int
++	}{
++		{
++			name:         "http2 response without minor version and HTTP/ in body (#7924)",
++			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
++		{
++			name:         "request with body and HTTP/ in response body (#7924)",
++			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
++		{
++			name:         "control http 1.1 with HTTP/ in response body (#7924)",
++			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
 +	}
-+	waitGroup.Wait()
 +
-+	for _, err := range errors {
-+		require.NoError(t, err)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resp, err := readResponseFromString(tt.data)
++			require.NoError(t, err, "could not read response from string")
++			require.Equal(t, tt.statusCode, resp.StatusCode)
++
++			body, err := io.ReadAll(resp.Body)
++			require.NoError(t, err)
++			require.Equal(t, tt.expectedBody, string(body))
++		})
 +	}
-+	require.Equal(t, 1, engine.eng.GetParser().CompiledCount())
 +}
-+
-+func TestThreadSafeExecuteHonorsDisableTemplateCache(t *testing.T) {
-+	templatePath := filepath.Join(t.TempDir(), "template.yaml")
-+	require.NoError(t, os.WriteFile(templatePath, []byte(`id: thread-safe-disable-cache
-+
-+info:
-+  name: Thread safe disable cache
-+  author: pdteam
-+  severity: info
-+  tags: thread-safe-disable-cache
-+
-+http:
-+  - method: GET
-+    path:
-+      - "{{BaseURL}}"
-+`), 0o600))
-+
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+		_, _ = w.Write([]byte("ok"))
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	engine, err := NewThreadSafeNucleiEngineCtx(context.Background(), DisableTemplateCache())
-+	require.NoError(t, err)
-+	t.Cleanup(engine.Close)
-+
-+	err = engine.ExecuteNucleiWithOptsCtx(context.Background(), []string{server.URL},
-+		WithTemplatesOrWorkflows(TemplateSources{Templates: []string{templatePath}}),
-+		WithTemplateFilters(TemplateFilters{Tags: []string{"thread-safe-disable-cache"}}),
-+	)
-+	require.NoError(t, err)
-+	require.Equal(t, 0, engine.eng.GetParser().CompiledCount())
-+}
-```
-
-**File**: `pkg/protocols/code/code.go` (modified, +9/-0)
-```diff
-@@ -493,6 +493,15 @@ func prettyPrint(templateId string, buff string) {
- 
- // UpdateOptions replaces this request's options with a new copy
- func (r *Request) UpdateOptions(opts *protocols.ExecutorOptions) {
-+	r.Operators = protocols.CloneOperators(r.Operators)
-+	r.CompiledOperators = nil
-+	if r.options == nil {
-+		if opts != nil {
-+			r.options = opts.Copy()
-+		}
-+		return
-+	}
-+	r.options = r.options.Copy()
- 	r.options.ApplyNewEngineOptions(opts)
- }
- 
-```
-
-**File**: `pkg/protocols/dns/dns.go` (modified, +9/-0)
-```diff
-@@ -351,5 +351,14 @@ func classToInt(class string) uint16 {
- 
- // UpdateOptions replaces this request's options with a new copy
- func (r *Request) UpdateOptions(opts *protocols.ExecutorOptions) {
-+	r.Operators = protocols.CloneOperators(r.Operators)
-+	r.CompiledOperators = nil
-+	if r.options == nil {
-+		if opts != nil {
-+			r.options = opts.Copy()
-+		}
-+		return
-+	}
-+	r.options = r.options.Copy()
- 	r.options.ApplyNewEngineOptions(opts)
- }
-```
-
-**File**: `pkg/protocols/file/file.go` (modified, +9/-0)
-```diff
-@@ -233,5 +233,14 @@ func (request *Request) Requests() int {
- 
- // UpdateOptions replaces this request's options with a new copy
- func (r *Request) UpdateOptions(opts *protocols.ExecutorOptions) {
-+	r.Operators = protocols.CloneOperators(r.Operators)
-+	r.CompiledOperators = nil
-+	if r.options == nil {
-+		if opts != nil {
-+			r.options = opts.Copy()
-+		}
-+		return
-+	}
-+	r.options = r.options.Copy()
- 	r.options.ApplyNewEngineOptions(opts)
- }
-```
-
-**File**: `pkg/protocols/headless/headless.go` (modified, +9/-0)
-```diff
-@@ -180,6 +180,15 @@ func (request *Request) Requests() int {
- 
- // UpdateOptions replaces this request's options with a new copy
- func (r *Request) UpdateOptions(opts *protocols.ExecutorOptions) {
-+	r.Operators = protocols.CloneOperators(r.Operators)
-+	r.CompiledOperators = nil
-+	if r.options == nil {
-+		if opts != nil {
-+			r.options = opts.Copy()
-+		}
-+		return
-+	}
-+	r.options = r.options.Copy()
- 	r.options.ApplyNewEngineOptions(opts)
- }
- 
 ```
 
 ---
 
-### Incident Patch 3: `a81624e5` (2026-10-25)
-**Commit Message**: fix readme
+### Incident Patch 2: `aa761b9c` (2026-10-25)
+**Commit Message**: fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
 
-**File**: `README.md` (modified, +1/-1)
+Signed-off-by: TassioSales <[REDACTED_EMAIL]>
+
+**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
 ```diff
-@@ -9,7 +9,7 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
+@@ -3,20 +3,32 @@ package offlinehttp
+ import (
+ 	"bufio"
+ 	"errors"
++	"io"
+ 	"net/http"
+ 	"regexp"
+ 	"strings"
+ )
  
- </div>
+-var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
++var (
++	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
++	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
++)
+ 
+ // readResponseFromString reads a raw http response from a string.
+ func readResponseFromString(data string) (*http.Response, error) {
+ 	// Check if "data" contains RFC compatible Request followed by a response
+ 	br := bufio.NewReader(strings.NewReader(data))
+ 	if req, err := http.ReadRequest(br); err == nil {
+-		if resp, err := http.ReadResponse(br, req); err == nil {
+-			return resp, nil
++		if req.Body != nil {
++			_, _ = io.Copy(io.Discard, req.Body)
++			_ = req.Body.Close()
++		}
++		remaining, _ := io.ReadAll(br)
++		if len(remaining) > 0 {
++			remainingStr := addMinorVersionToHTTP(string(remaining))
++			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
++				return resp, nil
++			}
+ 		}
+ 	}
+ 
+@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
+ 	if strings.HasPrefix(data, "HTTP/") {
+ 		final = addMinorVersionToHTTP(data)
+ 	} else {
+-		lastIndex := strings.LastIndex(data, "HTTP/")
+-		if lastIndex == -1 {
++		loc := responseStatusRegex.FindStringIndex(data)
++		if loc == nil {
+ 			return nil, errors.New("malformed raw http response")
+ 		}
+-		final = data[lastIndex:] // choose last http/ in case of it being later.
+-
+-		final = addMinorVersionToHTTP(final)
++		final = addMinorVersionToHTTP(data[loc[0]:])
+ 	}
+ 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
+ }
 ```
 
-**File**: `README_CN.md` (modified, +2/-1)
+**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
 ```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
+@@ -199,3 +199,44 @@ Server: Google Frontend
  
-```
-
-**File**: `README_ES.md` (modified, +2/-1)
-```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
- 
-```
-
-**File**: `README_FA.md` (modified, +228/-207)
-```diff
-@@ -9,15 +9,16 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
- 
- </div>
- 
- <p align="center">
- 
- <a href="https://docs.projectdiscovery.io/tools/nuclei/overview?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme"><img src="https://img.shields.io/badge/Documentation-%23000000.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ib29rLW9wZW4iPjxwYXRoIGQ9Ik0xMiA3djE0Ii8+PHBhdGggZD0iTTMgMThhMSAxIDAgMCAxLTEtMVY0YTEgMSAwIDAgMSAxLTFoNWE0IDQgMCAwIDEgNCA0IDQgNCAwIDAgMSA0LTRoNWExIDEgMCAwIDEgMSAxdjEzYTEgMSAwIDAgMS0xIDFoLTZhMyAzIDAgMCAwLTMgMyAzIDMgMCAwIDAtMy0zeiIvPjwvc3ZnPg==&logoColor=white" alt="Documentation Badge"></a>
- &nbsp;&nbsp;
--<a href="https://github.com/projectdiscovery/nuclei-templates"><img src="https://img.shields.io/badge/Templates Library-%23000000.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNoaWVsZCI+PHBhdGggZD0iTTIwIDEzYzAgNS0zLjUgNy41LTcuNjYgOC45NWExIDEgMCAwIDEtLjY3LS4wMUM3LjUgMjAuNSA0IDEarrayNCIgMTNWNmExIDEgMCAwIDEgMS0xYzIgMCA0LjUtMS4yIDYuMjQtMi43MmExLjE3IDEuMTcgMCAwIDEgMS41MiAwQzE0LjUxIDMuODEgMTcgNSAxOSA1YTEgMSAwIDAgMSAxIDF6Ii8+PC9zdmc+&logoColor=white" alt="Templates Library Badge"></a>
-+<a href="https://github.com/projectdiscovery/nuclei-templates"><img src="https://img.shields.io/badge/Templates Library-%23000000.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNoaWVsZCI+PHBhdGggZD0iTTIwIDEzYzAgNS0zLjUgNy41LTcuNjYgOC45NWExIDEgMCAwIDEtLjY3LS4wMUM3LjUgMjAuNSA0IDE4IDQgMTNWNmExIDEgMCAwIDEgMS0xYzIgMCA0LjUtMS4yIDYuMjQtMi43MmExLjE3IDEuMTcgMCAwIDEgMS41MiAwQzE0LjUxIDMuODEgMTcgNSAxOSA1YTEgMSAwIDAgMSAxIDF6Ii8+PC9zdmc+&logoColor=white"></a>
- &nbsp;&nbsp;
- <a href="https://discord.gg/projectdiscovery?utm_source=github&utm_medium=web&utm_campaign=nuclei_readme"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Badge"></a>
- 
-@@ -31,7 +32,7 @@
- <br>
- <br>
- 
--**نیوکلای (Nuclei) یک اسکنر آسیب‌پذیری مدرن و با کارایی بالاست که از قالب‌های ساده بر پایه YAML استفاده می‌کند. این ابزار به شما امکان می‌دهد سناریوهای سفارشی برای شناسایی آسیب‌پذیری‌ها طراحی کنید که شرایط واقعی را شبیه‌سازی می‌کنند و منجر به صفر شدن خطاهای مثبت کاذب (گزارش‌های اشتباه) می‌شوند.**
-+**Nuclei یک اسکنر آسیب‌پذیری مدرن و با کارایی بالاست که از قالب‌های ساده بر پایه YAML استفاده می‌کند. این ابزار به شما امکان می‌دهد سناریوهای سفارشی برای شناسایی آسیب‌پذیری‌ها طراحی کنید که شرایط واقعی را شبیه‌سازی می‌کنند و منجر به صفر شدن خطاهای مثبت کاذب (گزارش‌های اشتباه) می‌شوند.**
- 
- - فرمت ساده YAML برای ساخت و سفارشی‌سازی قالب‌های آسیب‌پذیری.
- - مشارکت توسط هزاران متخصص امنیت جهت مقابله با آسیب‌پذیری‌های نوظهور و رایج.
-@@ -149,257 +150,277 @@ Nuclei is a fast, template based vulnerability scanner focusing
- on extensive configurability, massive extensibility and ease of use.
- 
- Usage:
--  ./nuclei [flags]
-+  ./nuclei [flags]
- 
- Flags:
- TARGET:
--   -u, -target string[]          target URLs/hosts to scan
--   -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
--   -targets-inline string        inline multiline target list (for use in template profiles)
--   -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
--   -sa, -scan-all-ips            scan all the IP's associated with dns record
--   -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
-+   -u, -target string[]          target URLs/hosts to scan
-+   -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-+   -targets-inline string        in
-```
-
-**File**: `README_ID.md` (modified, +2/-1)
-```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
- 
-```
-
-**File**: `README_JP.md` (modified, +2/-1)
-```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
- 
-```
-
-**File**: `README_KR.md` (modified, +2/-1)
-```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
- 
-```
-
-**File**: `README_PT-BR.md` (modified, +2/-1)
-```diff
-@@ -9,7 +9,8 @@
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_ES.md">`Spanish`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_JP.md">`日本語`</a> •
-   <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_PT-BR.md">`Portuguese`</a> •
--  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a>
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_TR.md">`Türkçe`</a> •
-+  <a href="https://github.com/projectdiscovery/nuclei/blob/main/README_FA.md">`فارسی`</a>
-   
- </div>
- 
+ 	})
+ }
++
++
++func TestReadResponse_HTTPInBodyCases(t *testing.T) {
++	tests := []struct {
++		name         string
++		data         string
++		expectedBody string
++		statusCode   int
++	}{
++		{
++			name:         "http2 response without minor version and HTTP/ in body (#7924)",
++			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
++		{
++			name:         "request with body and HTTP/ in response body (#7924)",
++			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
++		{
++			name:         "control http 1.1 with HTTP/ in response body (#7924)",
++			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
++			expectedBody: "Supports HTTP/2 and HTTP/3.",
++			statusCode:   200,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resp, err := readResponseFromString(tt.data)
++			require.NoError(t, err, "could not read response from string")
++			require.Equal(t, tt.statusCode, resp.StatusCode)
++
++			body, err := io.ReadAll(resp.Body)
++			require.NoError(t, err)
++			require.Equal(t, tt.expectedBody, string(body))
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
+- **PR #7941** (2026-10-26): fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924) (@TassioSales)
 - **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
 - **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
 - **PR #7928** (2026-10-25): http: stop copying large request bodies (fixes OOM on multi-MB body templates) (@Ice3man543)
 - **PR #7926** (2026-10-25): apply host backoff to javascript template dials (@dogancanbakir)
-- **PR #7923** (closed): fix(http): bound memory for large Flow request bodies (@knakul853)
-- **PR #7922** (2026-10-24): fix(offlinehttp): preserve response content during HTTP version normalization (@MasterchiefGalaxy)
 
 ---
 
@@ -2351,42 +1695,52 @@ fix: reuse compiled templates in thread-safe engine
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7784 from root-Manas/feat/openapi-oauth-security
+## X. Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
 
 **RULE**:
-When implementing operations in `pkg/input/formats/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/protocols/offlinehttp/read_response.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ea11e5f`: Merge pull request #7784 from root-Manas/feat/openapi-oauth-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `263bc134`: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/input/formats/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/offlinehttp/read_response.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-### Security Schemes
-
-The OpenAPI input supports HTTP basic and bearer authentication, API keys in headers, query parameters or cookies, and OAuth2/OpenID Connect access tokens. Security requirements can be declared globally or per operation.
-
-For OAuth2 (`type: oauth2`) and OpenID Connect (`type: openIdConnect`), supply an existing access token as the full `Authorization` header value:
-
-```sh
-nuclei -l openapi.yaml -im openapi -var 'Authorization=Bearer YOUR_ACCESS_TOKEN'
-```
-
-The same variable is used for HTTP bearer authentication. For basic authentication, provide the full `Basic ...` value; for API keys, use the parameter name specified by the security scheme.
-
-Nuclei does not perform OAuth authorization flows, discover OpenID Connect providers, acquire tokens, or refresh them. Obtain an access token with the scopes required by the API before running the scan. The provided header value is used unchanged.
-
-Security requirement objects are alternatives. The generator selects the first supported alternative, in document order, for which all required credentials are supplied, and includes every scheme in that object. An empty object (`{}`) permits anonymous access. If no supported
+	"io"
+var (
+	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
+	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
+)
+		if req.Body != nil {
+			_, _ = io.Copy(io.Discard, req.Body)
+			_ = req.Body.Close()
+		}
+		remaining, _ := io.ReadAll(br)
+		if len(remaining) > 0 {
+			remainingStr := addMinorVersionToHTTP(string(remaining))
+			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
+				return resp, nil
+			}
+		loc := responseStatusRegex.FindStringIndex(data)
+		if loc == nil {
+		final = addMinorVersionToHTTP(data[loc[0]:])
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-_Please note: This document does not cover other features of OpenAPI specification like responses, security schemes, links, callbacks, etc. as these are not currently handled by the module._
+var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
+		if resp, err := http.ReadResponse(br, req); err == nil {
+			return resp, nil
+		lastIndex := strings.LastIndex(data, "HTTP/")
+		if lastIndex == -1 {
+		final = data[lastIndex:] // choose last http/ in case of it being later.
+
+		final = addMinorVersionToHTTP(final)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ea11e5f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `263bc134` are properly handled with clean fallback behavior.

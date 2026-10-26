@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T09:54:12.367Z",
-  "total_verified_learnings": 1092,
+  "last_updated": "2026-10-26T10:15:18.835Z",
+  "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -41676,8 +41676,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "731d4383",
-      "content_hash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
+      "source_version": "263bc134",
+      "content_hash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -41725,6 +41725,11 @@
           "number": 4499,
           "title": "Merge pull request #7784 from root-Manas/feat/openapi-oauth-security",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4579,
+          "title": "Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41732,7 +41737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:18:23.912Z",
+      "verified_at": "2026-10-26T10:15:18.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128569,6 +128574,86 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T09:54:12.356Z"
+    },
+    "learn-huggingface-briaai-fibo-2-0-dev": {
+      "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "briaai/Fibo-2.0-dev",
+      "repository": "briaai/Fibo-2.0-dev",
+      "slug": "hf-briaai-fibo-2.0-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "content_hash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
+      "dossier_path": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4577,
+          "title": "Model Configuration Immutability & Schema Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4578,
+          "title": "Safe Weight Serialization & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-26T10:15:10.540Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4577": {
+      "learning_id": "rule-4577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4577,
+      "title": "Model Configuration Immutability & Schema Validation",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:15:10.540Z"
+    },
+    "rule-4578": {
+      "learning_id": "rule-4578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4578,
+      "title": "Safe Weight Serialization & Memory Safety",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:15:10.540Z"
+    },
+    "rule-4579": {
+      "learning_id": "rule-4579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4579,
+      "title": "Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "263bc134",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:15:18.823Z"
     }
   },
   "aliases": {

@@ -18718,5 +18718,17 @@
     "qualityScore": 8545,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-26T09:47:55.968Z"
+  },
+  {
+    "name": "briaai/Fibo-2.0-dev",
+    "fullName": "briaai/Fibo-2.0-dev",
+    "url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: briaai/Fibo-2.0-dev (158 likes, 1267 downloads)",
+    "likes": 158,
+    "downloads": 1267,
+    "qualityScore": 2847,
+    "discoveredAt": "2026-10-26T10:14:57.270Z"
   }
 ]

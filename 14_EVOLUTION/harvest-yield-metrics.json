@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T09:54:12.432Z",
-  "total_cycles_completed": 5094,
-  "total_learnings_persisted": 5094,
-  "total_rules_promoted": 4472,
+  "last_updated": "2026-10-26T10:15:18.898Z",
+  "total_cycles_completed": 5096,
+  "total_learnings_persisted": 5096,
+  "total_rules_promoted": 4475,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:30:10.006Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:30:14.442Z",
-      "repository": "webrtc-rs/webrtc",
-      "learningId": "learn-github-webrtc-rs-webrtc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T17:36:31.834Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-26T09:54:12.432Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:15:10.616Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:15:18.898Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
