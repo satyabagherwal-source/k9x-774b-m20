@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T18:12:35.371Z",
-  "total_cycles_completed": 5158,
-  "total_learnings_persisted": 5158,
-  "total_rules_promoted": 4543,
+  "last_updated": "2026-10-26T18:19:11.759Z",
+  "total_cycles_completed": 5159,
+  "total_learnings_persisted": 5159,
+  "total_rules_promoted": 4544,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:23:52.609Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:30:15.384Z",
       "repository": "openai/gpt-oss-20b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-26T18:12:35.371Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:19:11.759Z",
+      "repository": "bitnami/sealed-secrets",
+      "learningId": "learn-github-bitnami-sealed-secrets",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

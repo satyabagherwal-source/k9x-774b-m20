@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T18:12:35.375Z",
+  "last_updated": "2026-10-26T18:19:11.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9891,14 +9891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitnami-sealed-secrets",
-      "content_hash": "4690cae9b4e358957cc7583d8531e2a391c0098968c4dd80c43a4ea5467c216f",
-      "verified_at": "2026-10-25T02:42:37.071Z",
+      "content_hash": "ed66db44b7086880face3c974a16bfcc0bc122f1d10e419ea194ba5b2f15ad88",
+      "verified_at": "2026-10-26T18:19:11.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:42:37.071Z"
+      "last_updated": "2026-10-26T18:19:11.761Z"
     },
     "run-llama/llama_index": {
       "repository": "run-llama/llama_index",

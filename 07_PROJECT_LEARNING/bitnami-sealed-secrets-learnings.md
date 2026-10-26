@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source**: github ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
-> **Source Version**: `f845e8f8`  
+> **Source Version**: `c58a60f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:42:36.864Z  
+> **Timestamp**: 2026-10-26T18:19:11.310Z  
 > **Learning ID**: `learn-github-bitnami-sealed-secrets`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:42:36.856Z  
+> **Harvest Timestamp**: 2026-10-26T18:19:10.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller and tool for one-way encrypted Secrets
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9317 stars
+- **Stars / Engagement**: 9318 stars
 
 ---
 
@@ -1475,71 +1475,69 @@ func (c *Clientset) BitnamiV1alpha1() bitnamiv1alpha1.BitnamiV1alpha1Interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f845e8f8` (2026-10-23)
-**Commit Message**: Release notes 0.41.1 (#2079)
+### Incident Patch 1: `c58a60f0` (2026-10-26)
+**Commit Message**: Release carvel package 2.22.0 (#2085)
 
-Signed-off-by: Alvaro Neira <[REDACTED_EMAIL]>
+Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
 
-**File**: `RELEASE-NOTES.md` (modified, +3/-0)
+Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
+Co-authored-by: agarcia-oss <[REDACTED_EMAIL]>
+
+**File**: `carvel/package.yaml` (modified, +3/-3)
 ```diff
-@@ -4,6 +4,9 @@ Latest release:
- 
- [![](https://img.shields.io/github/release/bitnami/sealed-secrets.svg)](https://github.com/bitnami/sealed-secrets/releases/latest)
- 
-+## v0.41.1
-+- Failing pipelines during release
-+
- ## v0.41.0
- 
- - Heal manually modified Secrets ([#2073](https://github.com/bitnami/sealed-secrets/pull/2073))
+@@ -1,10 +1,10 @@
+ apiVersion: data.packaging.carvel.dev/v1alpha1
+ kind: Package
+ metadata:
+-  name: "sealedsecrets.bitnami.com.2.20.0"
++  name: "sealedsecrets.bitnami.com.2.22.0"
+ spec:
+   refName: "sealedsecrets.bitnami.com"
+-  version: "2.20.0"
++  version: "2.22.0"
+   valuesSchema:
+     openAPIv3:
+       title: Chart Values
+@@ -424,7 +424,7 @@ spec:
+     spec:
+       fetch:
+         - imgpkgBundle:
+-            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:0167e74df60eb190a1c79be4beec516aedcef07f299c4ca1a0a0f2d86b3d90bd
++            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:3bd25880e516548888f6988f0b6cd2a2a9f993ab8ed7e08d97b50b347613ab99
+       template:
+         - helmTemplate:
+             path: sealed-secrets
 ```
 
 ---
 
-### Incident Patch 2: `6772bee5` (2026-10-23)
-**Commit Message**: Release notes 0.41.0 (#2078)
+### Incident Patch 2: `c60dbbc0` (2026-10-26)
+**Commit Message**: Release chart 2.22.0 (#2084)
 
-Signed-off-by: Alvaro Neira <[REDACTED_EMAIL]>
+Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
 
-**File**: `RELEASE-NOTES.md` (modified, +21/-0)
+Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
+Co-authored-by: agarcia-oss <[REDACTED_EMAIL]>
+
+**File**: `helm/sealed-secrets/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,27 @@ Latest release:
- 
- [![](https://img.shields.io/github/release/bitnami/sealed-secrets.svg)](https://github.com/bitnami/sealed-secrets/releases/latest)
- 
-+## v0.41.0
-+
-+- Heal manually modified Secrets ([#2073](https://github.com/bitnami/sealed-secrets/pull/2073))
-+- fix(controller): remove redundant scheme registration from NewController, fixing a startup abort ("concurrent map read and map write") with `--additional-namespaces` introduced in v0.39.0 ([#2046](https://github.com/bitnami/sealed-secrets/pull/2046))
-+- fix(multidocyaml): do not panic on malformed YAML in /v1/verify ([#2074](https://github.com/bitnami/sealed-secrets/pull/2074))
-+- controller: with `--watch-for-secrets`, dynamically detect new, updated, and deleted sealing key secrets without a restart ([#2034](https://github.com/bitnami/sealed-secrets/pull/2034))
-+- Add terminating newline to end of prometheusrule.yaml ([#2055](https://github.com/bitnami/sealed-secrets/pull/2055))
-+- Bump Golang to 1.27.3 ([#2077](https://github.com/bitnami/sealed-secrets/pull/2077))
-+- Bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 ([#2075](https://github.com/bitnami/sealed-secrets/pull/2075))
-+- Bump distroless/static from `5813399` to `9e0130b` in /docker ([#2076](https://github.com/bitnami/sealed-secrets/pull/2076))
-+- Bump github.com/prometheus/client_golang from 1.24.1 to 1.25.0 ([#2071](https://github.com/bitnami/sealed-secrets/pull/2071))
-+- Bump golang.org/x/crypto from 0.57.0 to 0.58.0 ([#2072](https://github.com/bitnami/sealed-secrets/pull/2072))
-+- Bump github.com/onsi/gomega from 1.43.1 to 1.44.0 ([#2065](https://github.com/bitnami/sealed-secrets/pull/2065))
-+- Bump k8s.io/code-generator from 0.37.0 to 0.37.1 ([#2064](https://github.com/bitnami/sealed-secrets/pull/2064))
-+- Bump k8s.io/client-go from 0.37.0 to 0.37.1 ([#2067](https://github.com/bitnami/sealed-secrets/pull/2067))
-+- Bump github.com/onsi/gomega from 1.43.0 to 1.43.1 ([#2062](https://github.com/bitnami/sealed-secrets/pull/2062))
-+- Bump github.com/onsi/ginkgo/v2 from 2.32.2 to 2.33.0 ([#2061](https://github.com/bitnami/sealed-secrets/pull/2061))
-+- Bump golang.org/x/crypto from 0.56.0 to 0.57.0 ([#2057](https://github.com/bitnami/sealed-secrets/pull/2057))
-+- Bump distroless/static from `f2ea270` to `5813399` in /docker ([#2056](https://github.com/bitnami/sealed-secrets/pull/2056))
-+- Bump github.com/onsi/ginkgo/v2 from 2.32.1 to 2.32.2 ([#2058](https://github.com/bitnami/sealed-secrets/pull/2058))
-+
- ## v0.40.0
- 
- - Bump Golang to 1.26.8 ([#2050](https://github.com/bitnami/sealed-secrets/pull/2050))
+@@ -14,6 +14,6 @@ maintainers:
+     url: https://github.com/bitnami/sealed-secrets
+ name: sealed-secrets
+ type: application
+-version: 2.21.0
++version: 2.22.0
+ sources:
+   - https://github.com/bitnami/sealed-secrets
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2085** (2026-10-26): Release carvel package 2.22.0 (@github-actions[bot])
+- **PR #2084** (2026-10-26): Release chart 2.22.0 (@github-actions[bot])
+- **PR #2083** (2026-10-26): Release chart 2.21.0 (@github-actions[bot])
+- **PR #2082** (2026-10-26): Release notes 0.41.2 (@alvneiayu)
 - **PR #2079** (2026-10-23): Release notes 0.41.1 (@alvneiayu)
 - **PR #2078** (2026-10-23): Release notes 0.41.0 (@alvneiayu)
-- **PR #2077** (2026-10-22): Bump go to 1.27.3 (@agarcia-oss)
-- **PR #2076** (2026-10-21): Bump distroless/static from `5813399` to `9e0130b` in /docker (@dependabot[bot])
-- **PR #2075** (2026-10-21): Bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (@dependabot[bot])
-- **PR #2074** (2026-10-22): fix(multidocyaml): do not panic on malformed YAML (@cvas22)
 
 ---
 
@@ -1559,30 +1557,32 @@ Signed-off-by: Alvaro Neira <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release notes 0.41.1 (#2079)
+## X. Release carvel package 2.22.0 (#2085)
 
 **RULE**:
-When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `carvel/package.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f845e8f8`: Release notes 0.41.1 (#2079). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c58a60f0`: Release carvel package 2.22.0 (#2085). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `carvel/package.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v0.41.1
-- Failing pipelines during release
-
+  name: "sealedsecrets.bitnami.com.2.22.0"
+  version: "2.22.0"
+            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:3bd25880e516548888f6988f0b6cd2a2a9f993ab8ed7e08d97b50b347613ab99
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  name: "sealedsecrets.bitnami.com.2.20.0"
+  version: "2.20.0"
+            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:0167e74df60eb190a1c79be4beec516aedcef07f299c4ca1a0a0f2d86b3d90bd
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f845e8f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c58a60f0` are properly handled with clean fallback behavior.

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-QUA3",
-    "timestamp": "2026-10-25T05:21:11.883Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "066ff796f8b1b2d92c16a239ecfec588b61d41397b69a01bc1d2d6ddde223567",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-R10G",
     "timestamp": "2026-10-25T05:21:20.608Z",
     "repository": "MariaDB/server",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-Z7D4",
+    "timestamp": "2026-10-26T18:19:11.752Z",
+    "repository": "bitnami/sealed-secrets",
+    "learningId": "learn-github-bitnami-sealed-secrets",
+    "contentHash": "ed66db44b7086880face3c974a16bfcc0bc122f1d10e419ea194ba5b2f15ad88",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

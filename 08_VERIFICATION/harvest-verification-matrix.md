@@ -5181,3 +5181,4 @@
 | `CYCLE-20261026-QM0M` | `2026-10-26T18:12:30.838Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4640` | Yes (`beef5a6d...`) |
 | `CYCLE-20261026-QOWJ` | `2026-10-26T18:12:34.579Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4641` | Yes (`9859e3d3...`) |
 | `CYCLE-20261026-QPI9` | `2026-10-26T18:12:35.361Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4642` | Yes (`757f4926...`) |
+| `CYCLE-20261026-Z7D4` | `2026-10-26T18:19:11.752Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4643` | Yes (`ed66db44...`) |

@@ -6543,10 +6543,10 @@
     "repository": "bitnami/sealed-secrets",
     "platform": "github",
     "sourceUrl": "https://github.com/bitnami/sealed-secrets",
-    "sourceVersion": "f845e8f8",
+    "sourceVersion": "c58a60f0",
     "license": "Apache-2.0",
-    "contentHash": "4690cae9b4e358957cc7583d8531e2a391c0098968c4dd80c43a4ea5467c216f",
-    "lastHarvestedAt": "2026-10-25T02:42:37.062Z",
+    "contentHash": "ed66db44b7086880face3c974a16bfcc0bc122f1d10e419ea194ba5b2f15ad88",
+    "lastHarvestedAt": "2026-10-26T18:19:11.754Z",
     "learningId": "learn-github-bitnami-sealed-secrets"
   },
   "run-llama-llama_index": {
