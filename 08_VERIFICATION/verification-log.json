@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZCS9",
-    "timestamp": "2026-10-25T05:27:49.113Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "12c3551f382b614e91fbf71b0ec32c31f403f984aa7cff5ee10bb3a9df353364",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-7DKU",
     "timestamp": "2026-10-25T05:34:03.390Z",
     "repository": "apache/arrow",
@@ -7490,6 +7475,21 @@
     "repository": "wzh4869/AppPorts",
     "learningId": "learn-github-wzh4869-appports",
     "contentHash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-G3RG",
+    "timestamp": "2026-10-26T18:32:20.236Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

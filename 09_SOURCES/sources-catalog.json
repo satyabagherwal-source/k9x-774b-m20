@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "eba00ab3",
+    "sourceVersion": "7a365049",
     "license": "BSD-3-Clause",
-    "contentHash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
-    "lastHarvestedAt": "2026-10-26T10:33:19.975Z",
+    "contentHash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
+    "lastHarvestedAt": "2026-10-26T18:32:20.239Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
