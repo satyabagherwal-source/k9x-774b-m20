@@ -5113,3 +5113,6 @@ Every entry in this ledger must capture:
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `f5dec9c4` | Multi-dimensional audit evidence | 2026-10-26T05:00:08.766Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `908119ae` | Multi-dimensional audit evidence | 2026-10-26T05:07:44.891Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-26T05:11:29.725Z |
+| `learn-github-google-elephant-goldfish-model` | `https://github.com/google/elephant-goldfish-model` | `3d0b3482` | Multi-dimensional audit evidence | 2026-10-26T05:17:46.002Z |
+| `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `87286fca` | Multi-dimensional audit evidence | 2026-10-26T05:17:56.778Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `a5ee540b` | Multi-dimensional audit evidence | 2026-10-26T05:18:00.958Z |

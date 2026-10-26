@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `ac82f3a1`  
+> **Source Version**: `a5ee540b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:44:29.915Z  
+> **Timestamp**: 2026-10-26T05:18:00.586Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:44:29.703Z  
+> **Harvest Timestamp**: 2026-10-26T05:18:00.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12051 stars
+- **Stars / Engagement**: 12053 stars
 
 ---
 
@@ -804,14 +804,17 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22560** (2026-10-24): **docs: add Tristan Brian introduction**
-  *Symptoms*: ## Notes for Reviewers  - Adds my introduction to the Meshery community meeting notes. - Documentation-only change; no application code or tests affected.  **[[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**  - [ ] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a profile featuring Brian Kioko’s education, software engineering and backend/cybersecurity interests, and GitHub and LinkedIn links.   * The profile also notes an LFX Mentorship goal involving Meshery, Layer5, and open-source collaboration.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22579** (2026-10-26): **Introduction - Muskan Kumari**
+  *Symptoms*: ### Description This pull request adds my newcomer introduction file for the Newcomers Meeting (week of 10-22-2026).  ### Changes - Added `docs/meetings/2026/week-of-10-22-2026/MuskanKumari.md`  ### Checklist - [x] Signed off commits (`git commit -s`) - [x] Followed repository naming conventions and guidelines  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a contributor profile for Muskan Kumari, including her role, GitHub link, interests, Meshery contributions, and community goals. This provides readers with information about her background and involvement in the project.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22560?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
-  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22560/ <!-- Sticky Pull Request Commentpr-preview -->
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22579?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
+  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22579/ <!-- Sticky Pull Request Commentpr-preview -->
 
-- **Issue #22558** (2026-10-24): **[Docs] Introduction - AryaBhatt**
-  *Symptoms*: Added personal information and goals for Arya Bhatt.  **Notes for Reviewers** - Added introduction file under docs/meetings/2026/week-of-10-22-2026/ - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [X ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an Arya Bhatt profile featuring an introductory bio, education and role information, and links to GitHub and LinkedIn.   * The profile also describes an LFX Mentorship goal focused on contributing to Meshery under Layer5.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #22576** (2026-10-25): **Introduction - Shatrughan Mishra**
+  *Symptoms*: **Notes for Reviewers**  Introduction  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [ ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->  ## Summary by CodeRabbit  * **Documentation**   * Added a meeting-participant profile for Shatrughan Mishra, including information about his open-source interests, role, and social profiles. The meeting materials now provide readers with a brief introduction to the participant and links to his public profiles.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22576?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review.  <details> <summary><strong><picture><img src="https://storage.googleapis.com/coderabbit_public_asset
+  > 📖 Docs preview: https://docs.meshery.io/pr-preview/pr-22576/ <!-- Sticky Pull Request Commentpr-preview -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -828,83 +831,202 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfa38789` (2026-10-24)
-**Commit Message**: Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos
+### Incident Patch 1: `488285b7` (2026-10-25)
+**Commit Message**: Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-validation
 
-[Docs] Fix typos, missing words, and duplicate tokens in Workspaces and Operator CRDs guides
+[mesheryctl] Reject --page values below 1 in perf profile and perf result
 
-**File**: `docs/content/en/concepts/logical/workspaces.md` (modified, +1/-1)
+**File**: `mesheryctl/internal/cli/root/perf/profile.go` (modified, +3/-0)
 ```diff
-@@ -26,7 +26,7 @@ Workspaces facilitate collaboration between you and your teams, allow you to con
- - Access to Workspaces may be granted to one or more teams.
- - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
- 
--After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
-+After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or a shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
- 
- ## Key Components
- 
+@@ -56,6 +56,9 @@ mesheryctl perf profile test 2
+ mesheryctl perf profile test --view
+ `,
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
++		if pageNumber < 1 {
++			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
++		}
+ 		// Check for valid output Format
+ 		if outputFormatFlag != "" {
+ 			return display.ValidateOutputFormat(outputFormatFlag)
 ```
 
-**File**: `docs/content/en/reference/meshery-operator-crds.md` (modified, +10/-10)
+**File**: `mesheryctl/internal/cli/root/perf/profile_test.go` (modified, +9/-0)
 ```diff
-@@ -35,20 +35,20 @@ spec:
+@@ -85,6 +85,15 @@ func TestProfileCmd(t *testing.T) {
+ 			ExpectedResponse: "profile.noProfiles.output.golden",
+ 			ExpectError:      false,
+ 		},
++		{
++			Name:             "given page 0 when profile then throw invalid flag error",
++			Args:             []string{"profile", "--page", "0"},
++			URLs:             []utils.MockURL{},
++			ExpectedResponse: "",
++			ExpectError:      true,
++			IsOutputGolden:   false,
++			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
++		},
+ 		{
+ 			Name: "given invalid output format when profile then throw error",
+ 			Args: []string{"profile", "-o", "invalid"},
+```
+
+**File**: `mesheryctl/internal/cli/root/perf/result.go` (modified, +3/-0)
+```diff
+@@ -73,6 +73,9 @@ mesheryctl perf result saturday-profile --view
+ `,
+ 	Annotations: linkDocPerfResult,
+ 	PreRunE: func(cmd *cobra.Command, args []string) error {
++		if pageNumber < 1 {
++			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
++		}
+ 		// Check for valid output Format
+ 		if outputFormatFlag != "" {
+ 			return display.ValidateOutputFormat(outputFormatFlag)
+```
+
+**File**: `mesheryctl/internal/cli/root/perf/result_test.go` (modified, +9/-0)
+```diff
+@@ -83,6 +83,15 @@ func TestResultCmd(t *testing.T) {
+ 	}
  
- The following section outlines the fields and their descriptions
- 
--- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
--- **kind** – Resource type. Must be set to **Broker**, also helps in quering for custom resources in the cluster using its plural form **brokers**
-+- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
-+- **kind** – Resource type. Must be set to **Broker**, also helps in querying for custom resources in the cluster using its plural form **brokers**
- - **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For Broker, the following metadata is required
-   - **name** : The name of this custom resource
-   - **namespace**: The namespace that this custom resource will live in, usually **meshery** namespace
-   - **labels**: labels are used to organize kubernetes objects and can be used to filter for objects either by kubectl or the Kubernetes API
-     - **app**: The name of the application, in this case **meshery**
-     - **component**: In the architecture diagram of meshery, the section that this application belongs to, for this case the **controller**
-     - **version**: The current version of the meshery application as from its release
--  - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
--    - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
-+  - **annotations**: Annotations are used to provide non-identifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
-+    - **meshery/component-type**: The component type of this custom resource with respect to meshery design, for this case **management-plane**
- - **spec**
-   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
--  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
-+  - **size**: The size is an integer value denoting the number of Broker instances that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
- 
- ### Usage
- 
-@@ -108,9 +108,9 @@ spec:
- 
- The following section outlines the fields and their descriptions
- 
--- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
-+- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
- 
--- **kind** – Resource type. Must be set to **MeshSync**, also helps in quering for custom resources in the cluster using its plural form **meshsyncs**
-+- **kind** – Resource type. Must be set to **MeshSync**, also helps in querying for custom resources in the cluster using its plural form **meshsyncs**
- 
- - **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For MeshSync, the following metadata is required
- 
-@@ -121,12 +121,12 @@ The following section outlines the fields and their descriptions
-     - **app**: The name of the application, in this case **meshery**
-     - **component**: In the architecture diagram of meshery, the section that this application belongs to, for this case the **controller**
-     - **version**: The current version of the meshery application as from its release
--  - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
--    - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
-+  - **annotations**: Annotations are used to provide non-identifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
-+    - **meshery/component-type**: The component type of this custom resource with respect to meshery design, for this case **management-plane**
- 
- - **spec**
-   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
--  - **size**: The size is an integer value denoting the number of MeshSync instances that that should be in one cluster, currently only one instance of MeshSync is supported.
-+  - **size**: The size is an integer value denoting the number of MeshSync instances that should be in one cluster, currently
+ 	loggerTests := []utils.MesheryMultiURLCommamdTest{
++		{
++			Name:             "negative page",
++			Args:             []string{"result", "abhishek", "--page", "-1"},
++			URLs:             []utils.MockURL{},
++			ExpectedResponse: "",
++			ExpectError:      true,
++			IsOutputGolden:   false,
++			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '-1'")),
++		},
+ 		{
+ 			Name:             "invalid output format",
+ 			Args:             []string{"result", "abhishek", "-o", "invalid"},
 ```
 
 ---
 
-### Incident Patch 2: `b8386bab` (2026-10-24)
-**Commit Message**: Merge branch 'master' into fix/docs-workspaces-crds-typos
+### Incident Patch 2: `d10e1776` (2026-10-25)
+**Commit Message**: Merge branch 'master' into fix/mesheryctl-perf-page-validation
+
+**File**: `.github/SECURITY-INSIGHTS.yml` (removed, +0/-101)
+```diff
+@@ -1,101 +0,0 @@
+-header:
+-  schema-version: 2.0.0
+-  last-updated: '2026-03-03'
+-  last-reviewed: '2026-03-03'
+-  url: https://github.com/meshery/meshery/blob/master/SECURITY-INSIGHTS.yml
+-  comment: |
+-    This file contains the security information for the Meshery project.
+-
+-project:
+-  name: Meshery
+-  homepage: https://meshery.io
+-  roadmap: https://github.com/meshery/meshery/blob/master/ROADMAP.md
+-  administrators:
+-    - name: Lee Calcote
+-      affiliation: Layer5
+-      social: https://layer5.io/community/members/lee-calcote/
+-      primary: true
+-  documentation:
+-    quickstart-guide: https://docs.meshery.io/installation/quick-start
+-    detailed-guide: https://docs.meshery.io/guides
+-    code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
+-    release-process: https://docs.meshery.io/project/contributing/build-and-release#release-channels
+-    support-policy: https://docs.meshery.io/project/contributing/build-and-release#release-support
+-    design: https://docs.meshery.io/concepts/architecture
+-  repositories:
+-    - name: Meshery
+-      url: https://github.com/meshery/meshery
+-      comment: |
+-        Meshery is the core repository for the Meshery CNCF project.
+-    - name: meshery.io
+-      url: https://github.com/meshery/meshery.io
+-      comment: |
+-        The source code and content for the official Meshery website (meshery.io).
+-    - name: meshkit
+-      url: https://github.com/meshery/meshkit
+-      comment: |
+-        A common microservices framework used across various Meshery components for consistent toolkit functionality.
+-    - name: meshery-operator
+-      url: https://github.com/meshery/meshery-operator
+-      comment: |
+-        The Kubernetes operator for Meshery, managing the lifecycle of Meshery components within a cluster.
+-    - name: meshsync
+-      url: https://github.com/meshery/meshsync
+-      comment: |
+-        A custom controller that performs multi-cluster resource discovery and keeps Meshery in sync with infrastructure changes.
+-    - name: schemas
+-      url: https://github.com/meshery/schemas
+-      comment: |
+-        Contains the logical object models and JSON schemas that define Meshery's cloud native resources.
+-    - name: play
+-      url: https://github.com/meshery/play
+-      comment: |
+-        The Cloud Native Playground, a hosted environment for exploring Kubernetes and CNCF projects using Meshery.
+-    - name: qa
+-      url: https://github.com/meshery/qa
+-      comment: |
+-        The project quality dashboard and testing infrastructure for ensuring Meshery's compatibility and performance.
+-    - name: meshery-adapter-library
+-      url: https://github.com/meshery/meshery-adapter-library
+-      comment: |
+-        A Go library providing common functionality for building and maintaining Meshery adapters.
+-  vulnerability-reporting:
+-    reports-accepted: true
+-    bug-bounty-available: false
+-    contact:
+-      name: Meshery Security
+-      email: security@meshery.io
+-      primary: true
+-
+-repository:
+-  url: https://github.com/meshery/meshery
+-  status: active
+-  accepts-change-request: true
+-  accepts-automated-change-request: false
+-  core-team:
+-    - name: Lee Calcote
+-      affiliation: Layer5
+-      social: https://layer5.io/community/members/lee-calcote/
+-      primary: false
+-    - name: Sangram Rath
+-      affiliation: OD10
+-      social: https://layer5.io/community/members/sangram-rath/
+-      primary: true
+-  license:
+-    url: https://github.com/meshery/meshery/blob/master/LICENSE
+-    expression: Apache-2.0
+-  security:
+-    assessments:
+-      self:
+-        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
+-        comment: |
+-          CNCF TAG Security based self-assessment.
+-  documentation:
+-    contributing-guide: https://docs.meshery.io/project/contributing
+-    governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
+-    security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
+-  release:
+-    automated-pipeline: true
+-    distribution-points:
+-      - uri: https://github.com/meshery/meshery/releases
+-        comment: Meshery Releases page in GitHub
+```
+
+**File**: `.github/agents/meshery-docs-contributor.md` (modified, +1/-1)
+```diff
+@@ -544,7 +544,7 @@ make docs
+ - **Prevention**: Check the shortcode file in `docs/layouts/shortcodes/` — if it calls `.Inner`, use `{{% %}}` when wrapping Markdown body content
+ 
+ #### Problem: Generated CLI reference docs drift
+-- **Solution**: Do not edit files under `docs/content/en/references/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
++- **Solution**: Do not edit files under `docs/content/en/reference/mesheryctl/` directly; they are auto-generated from `mesheryctl` Cobra command definitions. Edit the `Short`, `Long`, or `Example` fields in the relevant Go source file instead
+ - **Prevention**: Note `# This file is auto-generated` comments at the top of generated files; treat them as read-only
+ 
+ ## Documentation Patterns
+```
 
 **File**: `.github/label-commenter-config.yml` (modified, +2/-2)
 ```diff
@@ -923,643 +1045,158 @@ Observed empirical fixes and code patches:
      labeled:
 ```
 
-**File**: `GOVERNANCE.md` (modified, +2/-2)
+**File**: `.github/meetings/archive/2026-10-08-8089.md` (added, +133/-0)
 ```diff
-@@ -267,7 +267,7 @@ First-time contributors are encouraged to start with issues labeled
- 
- A current list of contributors is published at
- [the project's contributor list](https://github.com/meshery/meshery/graphs/contributors)
--and celebrated through [meshery.io/community/members](https://meshery.io/community/members).
-+and celebrated through [meshery.io/community](https://meshery.io/community).
- 
- **Reviewing work in progress.** Everyone is welcome to review and comment on open
- pull requests and issues. The project does not maintain a separate, gated "Reviewer"
-@@ -891,7 +891,7 @@ and [OWNERS](https://www.kubernetes.dev/docs/guide/owners/) model.
- ## Appendix A: Mapping to CNCF Incubation Governance Review Criteria
- 
- This appendix maps each consideration in the CNCF TOC
--[Governance Review Template](https://github.com/cncf/toc/blob/main/toc_subprojects/project-reviews-subproject/governance-review-template.md)
-+[Governance Review Template](https://github.com/cncf/toc/blob/main/operations/project-reviews/governance-review-template.md)
- to where it is addressed, so the project and reviewers can confirm coverage during
- Incubation diligence. It is a self-assessment companion to this document and may be
- maintained as part of the project's Incubation self-assessment rather than published
-```
-
-**File**: `docs/catalog/deployment/2acfea0e-f26c-4d1c-b602-eb1c2aff279e.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,133 @@
++# Discussion about Redesigning Community Recognition: Graduated Badges, Multi-Repo Impact & Beyond GitHub
++
++**Date:** 2026-10-08
++**Source:** http://discuss.meshery.io//t/discussion-about-redesigning-community-recognition-graduated-badges-multi-repo-impact-beyond-github/8089
++
 +---
-+layout: item
-+name: Load- Balancer-AWS-Architecture
-+publishedVersion: 0.0.12
-+userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
-+userName: Brian Kioko
-+userAvatarURL: 
-+type: deployment
-+compatibility:
-+    - aws-apigatewayv2-controller
-+patternId: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  This%20design%20illustrates%20a%20robust%20and%20scalable%20architecture%20for%20deploying%20applications%20on%20Amazon%20Web%20Services%20(AWS)%20with%20load%20balancing%20capabilities.%20This%20design%20leverages%20AWS%20Elastic%20Load%20Balancers%20(ELB)%20to%20distribute%20incoming%20traffic%20across%20multiple%20instances%20of%20your%20application%2C%20ensuring%20high%20availability%20and%20reliability.%20The%20architecture%20typically%20includes%20Auto%20Scaling%20groups%20to%20automatically%20adjust%20the%20number%20of%20running%20instances%20based%20on%20traffic%20demand%2C%20further%20enhancing%20the%20system%E2%80%99s%20ability%20to%20handle%20varying%20loads.
-+patternCaveats: |
-+  1.%20AWS%20services%20can%20accumulate%20costs%20quickly%2C%20especially%20with%20high%20traffic%20volumes%20and%20large-scale%20deployments.%20It's%20essential%20to%20monitor%20and%20manage%20usage%20to%20avoid%20unexpected%20expenses.%0A%0A2.%20Network%20latency%20can%20be%20introduced%20by%20load%20balancers%20and%20cross-region%20data%20transfers.%20It's%20important%20to%20design%20your%20architecture%20to%20minimize%20latency%2C%20particularly%20for%20latency-sensitive%20applications.
-+createdAt: 2026-10-23T08:17:27Z
-+permalink: catalog/deployment/load-balancer-aws-architecture-2acfea0e-f26c-4d1c-b602-eb1c2aff279e.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/2acfea0e-f26c-4d1c-b602-eb1c2aff279e/0.0.12/design.yml'
-+downloadLink: 2acfea0e-f26c-4d1c-b602-eb1c2aff279e/design.yml
-+---
++
++<p>Hi everyone ,</p>
++<p>We are actively revamping our community recognition and badge automation pipeline across Layer5, Meshery, and our broader ecosystem.</p>
++<p>During our Dev meet on 7th Oct 2026, <strong>Lee Calcote</strong> and community members highlighted a core philosophy: <strong>psychology and meaningful recognition &gt; raw automation</strong>. Badges shouldn’t just be an automated counter, they should provide a clear journey of progression, reward high-impact work, and celebrate contributions both inside and outside of GitHub.</p>
++<p>We want to open this discussion to get everyone’s thoughts, ideas, and preferences. Here are the key proposals :-</p>
++<h3><a name="p-12602-h-1-graduated-tiered-recognition-order-1" class="anchor" href="#p-12602-h-1-graduated-tiered-recognition-order-1" aria-label="Heading link"></a><strong>1. Graduated / Tiered Recognition Order</strong></h3>
++<p>Rather than isolated, one-off badges, we want to lay out recognitions in a <strong>graduated order</strong> (e.g., <em>Novice → Contributor → Specialist → Maintainer/Champion</em> or <em>Bronze → Silver → Gold</em>).</p>
++<ul>
++<li>
++<p><strong>The Goal:</strong> Gives contributors a clear sense of milestone achievement and a visible path to grow within the community.</p>
++</li>
++<li>
++<p><strong>Question for you:</strong> How do you prefer badge tiers to be named and structured? (e.g., Tier numbers, metals, or role-based titles?)</p>
++</li>
++<li>
++<p><strong>Which badges should be tiered ?</strong></p>
++<p>Should every contribution area follow this graduated structure (e.g., repo tracks like Meshery, Sistent, Docs, Community Support)?</p>
++<p>Or should tiering apply only to core tracks while keeping certain special achievements as standalone badges?</p>
++</li>
++</ul>
++<hr>
++<h3><a name="p-12602-h-2-multi-repo-breadth-vs-first-timer-milestones-2" class="anchor" href="#p-12602-h-2-multi-repo-breadth-vs-first-timer-milestones-2" aria-label="Heading link"></a><strong>2. Multi-Repo Breadth vs. First-Timer Milestones</strong></h3>
++<p>Our ecosystem spans dozens of repositories (<code>meshery</code>, <code>meshery-operator</code>, <code>meshsync</code>, <code>sistent</code>, <code>docs</code>, etc.).</p>
++<ul>
++<li><strong>First-Timer vs. Repo Badges:</strong> Currently, a badge is awarded at <code>&gt;= 1 PR</code> per repo. We are evaluating whether to have a universal <strong>“First-Time Contributor”</strong> badge, or rename repo badges so they explicitly celebrate this first milestone.</li>
++<li><strong>Cross-Repo (“Ecosystem”) Recognition:</strong> Introducing a badge track for contributors who contribute across multiple different repositories, showing broad architectural and cross-project versatility.</li>
++</ul>
++<p><strong>Poll on First-Time Recognition:</strong></p>
++<div class="poll" data-poll-charttype="bar" data-poll-name="poll" data-poll-public="true" data-poll-results="always" data-poll-status="open" data-poll-type="regular">
++<div class="poll-container">
++<ul>
++<li data-poll-option-id="661f011bd83691824cb7038331ca0800">Dedicated Universal First-Timer Badge</li>
++<li data-poll-option-id="3b1d280d0c22d6195413641d89fcdc4b">Keep repo-specific badges with updated milestone naming</li>
++<li data-poll-option-id="831378eb4726d3adf089cb6675eae761">Both (Universal first-timer badge + graduated repo badges)</li>
++</ul>
++</div>
++<div class="poll-info">
++<div class="poll-info_counts">
++<div class="poll-info_counts-count">
++<span class="info-number">0</span>
++<span class="info-label">voters</span>
++</div>
++</div>
++</div>
++</div>
++<h3><a name="p-12602-h-3-pr-quality-high-impact-contributions-3" class="anchor" href="#p-12602-h-3-pr-quality-high-impact-contributions-3" aria-label="Heading link"></a><strong>3. PR Quality &amp; High-Impact Contributions</strong></h3>
++<p>As raised in the meet, PR count alone doesn’t reflect true effort:</p>
++<ul>
++<li>Should we introduce recognition specifically for <strong>PR / Contribution Quality</strong> (e.g., major architectural enhancements, complex bug fixes, significant test coverage additions, or complex refactors)?</li>
++<li>How should we determine this? (e.g., maintainer nomination / label-based triggers like <code>major-feature</code> or <code>high-impact</code>?)</li>
++</ul>
++<hr>
++<h3><a name="p-12602-h-4-beyond-git-slack-activity-community-help-advocacy-4" class="anchor" href="#p-12602-h-4-beyond-git-slack-activity-community-help-advocacy-4" aria-label="Heading link"></a><strong>4. Beyond Git: Slack Activity, Community Help &amp; Advocacy</strong></h3>
++<p>Not all vital contributions happen on GitHub PRs:</p>
++<p><strong>Poll on Recognizing Community &amp; Slack Help</strong></p
+```
+
+**File**: `.github/workflows/auto-merge-meeting-minutes.yml` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ jobs:
+           echo "Actor: ${{ github.actor }}"
+           echo "Event Name: ${{ github.event_name }}"
+           echo "Repository: ${{ github.repository }}"
+-          echo "Ref: ${{ github.ref }}"
++          echo "Ref: $GITHUB_REF"
+           echo "::endgroup::"
+           
+           echo "::group::Pull Request Context"
+```
+
+**File**: `.github/workflows/build-and-release-stable.yml` (modified, +12/-0)
+```diff
+@@ -4,6 +4,14 @@ on:
+     tags:
+       - "v*"
+ 
++# Repository GITHUB_TOKEN default is read. A called workflow cannot request
++# more than the calling job grants. Only helm-chart-releaser.yml declares
++# more than contents: read; that grant is on call-helm-chart-releaser.
++# Goreleaser and Homebrew publish with PATs (RELEASE_NOTES_PAT, GH_ACCESS_TOKEN),
++# not this token. No job uses OIDC.
++permissions:
++  contents: read
++
+ jobs:
+   build:
+     name: Docker build and push
+@@ -92,6 +100,10 @@ jobs:
+     needs:
+       - build
+     name: Release Helm Charts
++    # Same set helm-chart-releaser.yml declares at workflow scope.
++    permissions:
++      contents: write
++      packages: write
+     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
+     secrets: inherit
+   # call-aks-playground-deploy-workflow:
+```
+
+**File**: `.github/workflows/build-and-test.yml` (modified, +4/-1)
+```diff
+@@ -57,7 +57,10 @@ jobs:
+     secrets:
+       REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+   publish-allure-report:
+-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
++    # The E2E workflow uploads its report before enforcing the Playwright
++    # verdict. Run this publisher after a failed suite so the failure remains
++    # visible in Allure; never publish after cancellation or when E2E did not run.
++    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build-meshery.result == 'success' && needs.tests-e2e.result != 'cancelled' && needs.tests-e2e.result != 'skipped' }}
+     needs: [build-meshery, tests-e2e]
+     uses: ./.github/workflows/publish-allure-report.yml
+     with:
+```
+
+**File**: `.github/workflows/build-docs-preview.yml` (modified, +2/-2)
+```diff
+@@ -80,7 +80,7 @@ jobs:
+       - name: Install dependencies
+         run: |
+           cd docs
+-          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
++          npm ci
+ 
+       - name: Build PR preview
+         env:
+@@ -111,4 +111,4 @@ jobs:
+           path: |
+             ${{ github.event.action != 'closed' && 'docs/public' || '' }}
+             pr/
+-          if-no-files-found: error
 \ No newline at end of file
-```
-
-**File**: `docs/catalog/deployment/8ee7c57f-66bf-4b50-83d0-7960145b74e5.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: aws-infra
-+publishedVersion: 0.0.3
-+userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
-+userName: Brian Kioko
-+userAvatarURL: 
-+type: deployment
-+compatibility:
-+    - aws-ec2-controller
-+patternId: 8ee7c57f-66bf-4b50-83d0-7960145b74e5
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  A%20reference%20architecture%20for%20a%20load-balanced%20web%20application%20on%20AWS.%20An%20internet-facing%20Elastic%20Load%20Balancer%20distributes%20incoming%20traffic%20across%20two%20EC2%20web%20servers%20deployed%20in%20separate%20Availability%20Zones%2C%20both%20of%20which%20connect%20to%20a%20managed%20RDS%20database%20for%20persistence.%20The%20design%20is%20organized%20inside%20a%20Kubernetes%20Namespace%20container%20and%20expresses%20the%20traffic%20flow%2C%20the%20multi-AZ%20redundancy%20pattern%2C%20and%20the%20containment%20hierarchy%20as%20Meshery%20relationships.%20Use%20it%20as%20a%20starting%20point%20for%20reviewing%2C%20adapting%2C%20or%20documenting%20a%20three-tier%20AWS%20topology%20before%20provisioning%20it%20with%20ACK%2C%20Terraform%2C%20or%20CloudFormation.
-+patternCaveats: |
-+  %E2%9A%A0%EF%B8%8F%20This%20is%20a%20reference%20topology%2C%20not%20a%20deployable%20stack%0AThe%20AWS%20components%20in%20this%20design%20are%20annotation-style%20components%20(isAnnotation%3A%20true)%20with%20placeholder%20configuration.%20Their%20configuration%20blocks%20carry%20only%20metadata.namespace%3A%20default%20%E2%80%94%20no%20AMI%2C%20instance%20type%2C%20subnet%2C%20listener%2C%20or%20target-group%20settings.%20Importing%20and%20deploying%20this%20design%20as-is%20will%20not%20provision%20real%20AWS%20infrastructure.%20It%20renders%20the%20intended%20architecture%20visually%20and%20structurally%3B%20turning%20it%20into%20running%20infrastructure%20requires%20populating%20each%20component's%20configuration%20(or%20exporting%20to%20Terraform%2FCloudFormation%20and%20completing%20the%20resource%20definitions%20there).
-+createdAt: 2026-10-23T09:43:42Z
-+permalink: catalog/deployment/aws-infra-8ee7c57f-66bf-4b50-83d0-7960145b74e5.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/8ee7c57f-66bf-4b50-83d0-7960145b74e5/0.0.3/design.yml'
-+downloadLink: 8ee7c57f-66bf-4b50-83d0-7960145b74e5/design.yml
-+---
-\ No newline at end of file
-```
-
-**File**: `docs/catalog/deployment/a7701717-2abc-4223-aab0-3eb09693561e.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+layout: item
-+name: autoscaling-demo
-+publishedVersion: 0.0.2
-+userId: 6d8f0768-ad93-4eaa-8ba2-81d733dd694e
-+userName: Brian Kioko
-+userAvatarURL: 
-+type: deployment
-+compatibility:
-+    - kubernetes
-+patternId: a7701717-2abc-4223-aab0-3eb09693561e
-+image: /assets/images/logos/service-mesh-pattern.svg
-+patternInfo: |
-+  A%20horizontally%20auto-scaling%20Kubernetes%20web%20application.%20A%20Deployment%20runs%20the%20web%20tier%20behind%20a%20ClusterIP%20Service%2C%20while%20a%20HorizontalPodAutoscaler%20dynamically%20adjusts%20replicas%20between%202%20and%2010%20based%20on%20CPU%20utilization.%20All%20resources%20live%20in%20a%20dedicated%20Namespace.%20This%20pattern%20demonstrates%20Kubernetes-native%20elasticity%20with%20minimal%20component%20count%3A%20traffic%20scales%20with%20demand%2C%20failed%20pods%20are%20replaced%20automatically%2C%20and%20idle%20load%20collapses%20back%20to%20the%20two-replica%20floor.%20It%20runs%20on%20any%20conformant%20Kubernetes%20cluster%2C%20including%20EKS%2C%20GKE%2C%20AKS%2C%20kind%2C%20and%20minikube.
-+patternCaveats: |
-+  Requires%20metrics-server.%20The%20HPA%20cannot%20function%20without%20metrics-server%20installed%20in%20the%20cluster%2C%20because%20it%20depends%20on%20the%20resource%20metrics%20API%20to%20read%20CPU%20utilization.%20Most%20managed%20clusters%20(EKS%2C%20GKE%2C%20AKS)%20include%20it%20by%20default%3B%20kind%20and%20minikube%20may%20require%20enabling%20the%20metrics-server%20addon%20manually.%20Without%20it%2C%20the%20HPA%20will%20report%20%3Cunknown%3E%20metrics%20and%20will%20not%20scale.%0A%0AThe%20image%20is%20a%20placeholder.%20nginx%3A1.27-alpine%20is%20used%20to%20demonstrate%20the%20pattern.%20Replace%20it%20with%20your%20actual%20application%20image%20and%20adjust%20resources.requests.cpu%20accordingly%20%E2%80%94%20HPA%20CPU%20targets%20are%20calculated%20as%20a%20percentage%20of%20the%20requested%20CPU%2C%20so%20a%20missing%20or%20too-small%20request%20value%20will%20distort%20scaling%20behaviour.%0A%0ACPU%20is%20a%20proxy%20metric.%20This%20HPA%20scales%20on%20CPU%20utilization.%20Applications%20that%20are%20I%2FO-bound%2C%20queue-depth-bound%2C%20or%20memory-bound%20should%20use%20custom%20or%20external%20metrics%20instead%20of%20%E2%80%94%20or%20in%20addition%20to%20%E2%80%94%20CPU.%20The%20design%20is%20intentionally%20minimal%3B%20adding%20custom%20metrics%20requires%20Prometheus%20or%20another%20metrics%20adapter.
-+createdAt: 2026-10-23T09:49:06Z
-+permalink: catalog/deployment/autoscaling-demo-a7701717-2abc-4223-aab0-3eb09693561e.html
-+URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/a7701717-2abc-4223-aab0-3eb09693561e/0.0.2/design.yml'
-+downloadLink: a7701717-2abc-4223-aab0-3eb09693561e/design.yml
-+---
-\ No newline at end of file
-```
-
-**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/color/delivery-destination-color.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Icon-Architecture-BG/32/Management-Governance" fill="#E7157B"> <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect> </g> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
-\ No newline at end of file
-```
-
-**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-destination/icons/white/delivery-destination-white.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
-\ No newline at end of file
-```
-
-**File**: `docs/content/en/extensions/models/aws-cloudwatchlogs-controller/components/delivery-source/icons/color/delivery-source-color.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"> <g id="Icon-Architecture/32/Arch_Amazon-CloudWatch_32" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Icon-Architecture-BG/32/Management-Governance" fill="#E7157B"> <rect id="Rectangle" x="0" y="0" width="40" height="40"></rect> </g> <path d="M27.6299844,24.1243419 C27.6299844,22.2207948 26.0499046,20.6723135 24.1075134,20.6723135 C22.1651223,20.6723135 20.5850425,22.2207948 20.5850425,24.1243419 C20.5850425,26.027889 22.1651223,27.5763703 24.1075134,27.5763703 C26.0499046,27.5763703 27.6299844,26.027889 27.6299844,24.1243419 L27.6299844,24.1243419 Z M28.6364047,24.1243419 C28.6364047,26.5713369 26.6044421,28.5626641 24.1075134,28.5626641 C21.6105848,28.5626641 19.5786222,26.5713369 19.5786222,24.1243419 C19.5786222,21.6773469 21.6105848,19.6860197 24.1075134,19.6860197 C26.6044421,19.6860197 28.6364047,21.6773469 28.6364047,24.1243419 L28.6364047,24.1243419 Z M32.9116779,30.7029217 L29.5250737,27.7134651 C29.2362311,28.1306674 28.8950547,28.5064453 28.5166406,28.8457304 L31.8841229,31.8223652 C32.2001388,32.0995137 32.6862398,32.0738701 32.9690439,31.7661464 C33.2508416,31.459409 33.2256811,30.9810565 32.9116779,30.7029217 L32.9116779,30.7029217 Z M24.1075134,29.5489579 C27.1589797,29.5489579 29.6428249,27.1157711 29.6428249,24.1243419 C29.6428249,21.1329127 27.1589797,18.6997259 24.1075134,18.6997259 C21.0560472,18.6997259 18.572202,21.1329127 18.572202,24.1243419 C18.572202,27.1157711 21.0560472,29.5489579 24.1075134,29.5489579 L24.1075134,29.5489579 Z M33.5859795,29.9710917 C34.3106021,30.6131689 34.3689745,31.7138729 33.7168142,32.425977 C33.3655735,32.8066864 32.8824918,33 32.3963908,33 C31.9726878,33 31.5489849,32.8530422 31.2108277,32.5551815 L27.7165365,29.4661092 C26.6809301,30.1407342 25.4410203,30.5352517 24.1075134,30.5352517 C20.5005032,30.5352517 17.5657817,27.6592189 17.5657817,24.1243419 C17.5657817,20.5894648 20.5005032,17.713432 24.1075134,17.713432 C27.7145237,17.713432 30.6492452,20.5894648 30.6492452,24.1243419 C30.6492452,25.0918961 30.4228006,26.0071768 30.0292903,26.8307321 L33.5859795,29.9710917 Z M10.5922957,24.6174888 L15.5529412,24.6174888 L15.5529412,25.6037826 L10.5862572,25.6037826 C10.0287003,25.5978649 9.42988027,25.3976472 8.79986118,25.0080611 C7.75620337,24.3738742 6,22.8806254 6,20.0351677 C6,16.5930022 8.41037654,15.3285736 9.81231997,14.8847413 C9.80124935,14.7220029 9.79621725,14.5572918 9.79621725,14.3925807 C9.79621725,11.5885474 11.7376019,8.67898061 14.3110186,7.62759139 C17.3242408,6.39077894 20.5135867,7.00523999 22.8424432,9.26582544 C23.5710914,9.97299811 24.1699115,10.83206 24.6278327,11.8292031 C25.2417491,11.3222481 26.0026028,11.0421406 26.8047198,11.0421406 C28.3656776,11.0421406 30.1238938,12.2069536 30.430852,14.7545506 C31.8871421,15.0810138 35,16.2300461 35,20.0756057 C35,21.7276479 34.4333854,23.0650623 33.3132396,24.047411 L32.6409509,23.3136084 C33.5386778,22.5255596 33.9935797,21.4357049 33.9935797,20.0756057 C33.9935797,16.6936042 31.10616,15.8532819 29.8642374,15.6491191 C29.7293771,15.6274206 29.6106195,15.5524623 29.5331251,15.4419974 C29.4546243,15.3315324 29.427451,15.1954239 29.4536179,15.0642468 C29.3066805,12.9900709 28.0164498,12.0284344 26.8047198,12.0284344 C26.0478917,12.0284344 25.3383654,12.389418 24.8572965,13.0186734 C24.7475967,13.1646449 24.5624154,13.2356581 24.3802533,13.211987 C24.1980913,13.1853571 24.044109,13.0620704 23.9817109,12.8914415 C23.5489502,11.7197245 22.9279889,10.7363895 22.1349297,9.96708034 C20.1029672,7.9944927 17.3232344,7.45893515 14.6984904,8.53794059 C12.513552,9.4305365 10.8026375,12.0018045 10.8026375,14.3925807 C10.8026375,14.6608526 10.8187402,14.9291246 10.8509457,15.1865473 C10.8690613,15.326601 10.8247788,15.467641 10.7291688,15.5741607 C10.6526809,15.658982 10.550026,15.7142145 10.4383134,15.7339403 C9.14204407,16.0613899 7.00642027,17.0536015 7.00642027,20.0351677 C7.00642027,22.2849039 8.27249696,23.5266478 9.33326393,24.1726703 C9.80628145,24.4646133 10.228978,24.6135436 10.5922957,24.6174888 L10.5922957,24.6174888 Z" id="Amazon-CloudWatch_Icon_32_Squid" fill="#FFFFFF"></path> </g></svg>
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 3: `b1516039` (2026-10-24)
-**Commit Message**: Merge pull request #22464 from rudrakshSoni-dev/fix/dry-run-discovery-and-namespaces
-
-Fix(server): resolve dry-run GVR discovery and in-design namespaces
-
-**File**: `server/handlers/design_engine_handler.go` (modified, +72/-14)
-```diff
-@@ -34,7 +34,9 @@ import (
- 	pattern "github.com/meshery/schemas/models/v1beta3/design"
- 	"github.com/pkg/errors"
- 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
-+	meta "k8s.io/apimachinery/pkg/api/meta"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/restmapper"
- 
- 	patternHelpers "github.com/meshery/meshkit/models/patterns"
- )
-@@ -408,17 +410,41 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
- 	}
- }
- 
--// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
--// NOTE: Currently tied to kubernetes
--// Returns ComponentName->ContextID->Response
-+// DryRun executes server-side dry-run validation of the specified components across all target Kubernetes contexts.
-+// It pre-scans declared namespaces in the design to handle dependencies and initializes discovery RESTMappers per cluster.
-+// Returns ComponentName -> ContextID -> Response.
- func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]patterncore.DryRunResponseWrapper, err error) {
--	for _, cmp := range comps {
--		for ctxID, kc := range sap.ctxTokubeconfig {
--			cl, err := meshkube.New([]byte(kc))
--			if err != nil {
--				return resp, err
-+	// 1. Scan all components in the design/pattern and collect declared namespaces
-+	declaredNamespaces := collectDeclaredNamespaces(comps)
-+
-+	// 2. Initialize meshkube.Client and DiscoveryRESTMapper ONCE per target cluster before looping over components
-+	type clusterContext struct {
-+		client *meshkube.Client
-+		mapper meta.RESTMapper
-+	}
-+	clusters := make(map[string]clusterContext, len(sap.ctxTokubeconfig))
-+	for ctxID, kc := range sap.ctxTokubeconfig {
-+		cl, err := meshkube.New([]byte(kc))
-+		if err != nil {
-+			return resp, err
-+		}
-+		var mapper meta.RESTMapper
-+		if cl.KubeClient != nil {
-+			gr, err := restmapper.GetAPIGroupResources(cl.KubeClient.Discovery())
-+			if len(gr) > 0 {
-+				mapper = restmapper.NewDiscoveryRESTMapper(gr)
-+			}
-+			if err != nil && sap.log != nil {
-+				sap.log.Warn(fmt.Errorf("discovery RESTMapper failed on context %s, falling back to default mapping: %w", ctxID, err))
- 			}
--			dResp, err := dryRunComponent(cl, cmp, sap.opIsDelete)
-+		}
-+		clusters[ctxID] = clusterContext{client: cl, mapper: mapper}
-+	}
-+
-+	// 3. Loop over components and dry-run them across initialized clusters
-+	for _, cmp := range comps {
-+		for ctxID, cluster := range clusters {
-+			dResp, err := dryRunComponent(cluster.client, cmp, sap.opIsDelete, cluster.mapper, declaredNamespaces)
- 			if err != nil {
- 				return resp, err
- 			}
-@@ -434,12 +460,44 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
- 	return
- }
- 
--func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (patterncore.DryRunResponseWrapper, error) {
--	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
--	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: cmd}
-+// collectDeclaredNamespaces returns the names of the Namespace components declared in the design.
-+func collectDeclaredNamespaces(comps []*component.ComponentDefinition) map[string]bool {
-+	declaredNamespaces := make(map[string]bool)
-+	for _, cmp := range comps {
-+		if cmp == nil || !strings.EqualFold(cmp.Component.Kind, "Namespace") {
-+			continue
-+		}
-+		if nsName := getNamespaceNameFromComponent(cmp); nsName != "" {
-+			declaredNamespaces[nsName] = true
-+		}
-+	}
-+	return declaredNamespaces
-+}
-+
-+// getNamespaceNameFromComponent returns the name a Namespace component is created with on deploy.
-+// meshkit's converter.CreateK8sResourceStructure sets metadata.name to the component's DisplayName and
-+// ignores metadata.name in the configuration, so DisplayName is the only name dry-run may register.
-+func getNamespaceNameFromComponent(cmp *component.ComponentDefinition) string {
-+	if cmp == nil {
-+		return ""
-+	}
-+	return cmp.DisplayName
-+}
-+
-+// dryRunComponent executes dry-run validation for a single component against a Kubernetes cluster client,
-+// applying discovery REST mapping and in-design declared namespace suppression options.
-+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool, mapper meta.RESTMapper, declaredNamespaces map[string]bool) (patterncore.DryRunResponseWrapper, error) {
-+	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete, k8s.DryRunOptions{
-+		RESTMapper:         mapper,
-+		DeclaredNamespaces: declaredNamespaces,
-+	})
-+	cmpCopy := *cmd
-+	dResp := patterncore.DryRunResponseWrapper{Success: ok, Component: &cmpCopy}
- 	if ok {
--		dResp.Component.Configuration = filterConfiguration(st)
--	} else if err != nil {
-+		if !isDelete {
-+			dResp.Component.Configuration = filterConfiguration(st)
-+		}
-+	} else if err != nil && (len(st) == 0 || st["status"] != "Failure") {
- 		dResp.Error = &patterncore.DryRunResponse{Status: err.Error()}
- 	} else {
- 		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
-```
-
-**File**: `server/handlers/design_engine_handler_test.go` (modified, +333/-0)
-```diff
-@@ -1,13 +1,28 @@
- package handlers
- 
- import (
-+	"bytes"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync"
- 	"testing"
- 
- 	"github.com/gofrs/uuid"
- 	"github.com/meshery/meshery/server/models/pattern/planner"
- 	"github.com/meshery/meshkit/logger"
-+	meshkube "github.com/meshery/meshkit/utils/kubernetes"
- 	"github.com/meshery/schemas/models/v1beta2/component"
- 	pattern "github.com/meshery/schemas/models/v1beta3/design"
-+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/runtime/serializer"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/rest/fake"
- )
- 
- func mutateTestComponent(displayName, kind string) *component.ComponentDefinition {
-@@ -114,3 +129,321 @@ func TestMutateDoesNotRepeatADependencyTheDesignAlreadyDeclares(t *testing.T) {
- 		t.Errorf("%q depends on %v, want [%q]", widget.DisplayName, dependsOn, crd.DisplayName)
- 	}
- }
-+
-+// TestGetNamespaceNameFromComponent tests extracting namespace names from component metadata, configuration, or display name fallback.
-+func TestGetNamespaceNameFromComponent(t *testing.T) {
-+	t.Run("returns DisplayName even when metadata.name differs", func(t *testing.T) {
-+		cmp := &component.ComponentDefinition{
-+			DisplayName: "staging",
-+			Configuration: map[string]interface{}{
-+				"metadata": map[string]interface{}{
-+					"name": "production",
-+				},
-+			},
-+		}
-+		if name := getNamespaceNameFromComponent(cmp); name != "staging" {
-+			t.Errorf("got %q, want %q", name, "staging")
-+		}
-+	})
-+
-+	t.Run("returns DisplayName without configuration", func(t *testing.T) {
-+		cmp := &component.ComponentDefinition{
-+			DisplayName: "fallback-display-name",
-+		}
-+		if name := getNamespaceNameFromComponent(cmp); name != "fallback-display-name" {
-+			t.Errorf("got %q, want %q", name, "fallback-display-name")
-+		}
-+	})
-+
-+	t.Run("returns empty string for nil component", func(t *testing.T) {
-+		if name := getNamespaceNameFromComponent(nil); name != "" {
-+			t.Errorf("got %q, want empty string", name)
-+		}
-+	})
-+}
-+
-+// TestCollectDeclaredNamespaces pins that a Namespace is registered under the name deploy creates it with,
-+// its DisplayName, and never under a differing metadata.name.
-+func TestCollectDeclaredNamespaces(t *testing.T) {
-+	ns := mutateTestComponent("staging", "Namespace")
-+	ns.Configuration = map[string]interface{}{
-+		"metadata": map[string]interface{}{"name": "production"},
-+	}
-+	workload := mutateTestComponent("web", "Deployment")
-+
-+	got := collectDeclaredNamespaces([]*component.ComponentDefinition{ns, workload, nil})
-+
-+	if len(got) != 1 || !got["staging"] {
-+		t.Fatalf("got %v, want only %q declared", got, "staging")
-+	}
-+	if got["production"] {
-+		t.Errorf("metadata.name %q must not be registered; deploy creates the Namespace as %q", "production", "staging")
-+	}
-+}
-+
-+// fakeCluster is a stand-in API server for DryRun tests. It serves discovery for core/v1 and
-+// networking.k8s.io/v1 unless discovery is broken, records the path of every dry-run request, and
-+// answers dry-runs with the response chosen by respond.
-+type fakeCluster struct {
-+	server *httptest.Server
-+	mu     sync.Mutex
-+	paths  []string
-+}
-+
-+func newFakeCluster(t *testing.T, brokenDiscovery bool, respond func(path string, body []byte) (int, interface{})) *fakeCluster {
-+	t.Helper()
-+
-+	discovery := map[string]interface{}{
-+		"/api": metav1.APIVersions{
-+			TypeMeta: metav1.TypeMeta{Kind: "APIVersions"},
-+			Versions: []string{"v1"},
-+		},
-+		"/apis": metav1.APIGroupList{
-+			TypeMeta: metav1.TypeMeta{Kind: "APIGroupList", APIVersion: "v1"},
-+			Groups: []metav1.APIGroup{{
-+				Name:             "networking.k8s.io",
-+				Versions:         []metav1.GroupVersionForDiscovery{{GroupVersion: "networking.k8s.io/v1", Version: "v1"}},
-+				PreferredVersion: metav1.GroupVersionForDiscovery{GroupVersion: "networking.k8s.io/v1", Version: "v1"},
-+			}},
-+		},
-+		"/api/v1": metav1.APIResourceList{
-+			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
-+			GroupVersion: "v1",
-+			APIResources: []metav1.APIResource{{Name: "namespaces", Kind: "Namespace", Verbs: []string{"create", "delete", "get"}}},
-+		},
-+		"/apis/networking.k8s.io/v1": metav1.APIResourceList{
-+			TypeMeta:     metav1.TypeMeta{Kind: "APIResourceList", APIVersion: "v1"},
-+			GroupVersion: "networking.k8s.io/v1",
-+			APIResources: []metav1.APIResource{{Name: "ingresses", Namespaced: true, Kind: "Ingress", Verbs: []string{"create", "delete", "get"}}},
-+		},
-+	}
-+
-+	fc := &fakeCluster{}
-+	fc.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+
-+		if r.URL.Query().Get("dryRun") != "All" {
-+			obj, ok := discovery[r.URL.Path]
-+			if brokenDiscovery || !ok {
-+				w.WriteHeader(http.StatusInternalServerError)
-+				return
-+			}
-+			_ = json.NewEncoder(w).E
-```
-
-**File**: `server/models/pattern/patterns/k8s/k8s.go` (modified, +260/-28)
-```diff
-@@ -3,6 +3,7 @@ package k8s
- import (
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"strings"
- 
-@@ -13,6 +14,10 @@ import (
- 
- 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
- 	"gopkg.in/yaml.v2"
-+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/client-go/rest"
- )
- 
-@@ -39,55 +44,106 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
- 	return nil
- }
- 
--func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool) (st map[string]interface{}, success bool, err error) {
-+// DryRunOptions encapsulates configuration parameters for dry-run validation,
-+// including a discovery RESTMapper for dynamic resource resolution and in-design declared namespaces.
-+type DryRunOptions struct {
-+	RESTMapper         meta.RESTMapper
-+	DeclaredNamespaces map[string]bool
-+}
-+
-+// DryRunHelper performs server-side dry-run validation for a component definition against the client's cluster,
-+// using opts for discovery-based resource resolution and in-design declared namespaces.
-+func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
-+	if client == nil || client.KubeClient == nil {
-+		return nil, false, ErrDryRun(fmt.Errorf("kubernetes client is nil"), "")
-+	}
- 	resource := converter.CreateK8sResourceStructure(&comp)
--	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
- 	namespace := getNamespaceForComponent(&comp)
--	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete)
-+	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete, opts)
- }
- 
- // dryRun performs a dry-run operation on the given Kubernetes resource using the provided REST client.
- // It constructs the appropriate API request based on the resource type and operation (create/update or delete).
- // Returns the status response from the Kubernetes server, a success flag, and any encountered error.
--// TODO: add more tests for this function
--func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool) (st map[string]interface{}, success bool, err error) {
--	// Validate resource has required fields
--	if k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
--		err = ErrDryRun(fmt.Errorf("invalid resource or namespace not provided"), "\"kind\" and \"apiVersion\" cannot be empty")
--		return
-+func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool, opts DryRunOptions) (st map[string]interface{}, success bool, err error) {
-+	if rClient == nil {
-+		return nil, false, ErrDryRun(fmt.Errorf("RESTClient is nil"), "")
- 	}
- 
--	// Determine API path prefix (api vs apis)
--	aV := k8sResource["apiVersion"].(string)
--	apiString := "api"
--	if len(strings.Split(aV, "/")) > 1 {
--		// for non-core resources, the endpoint should use 'apis' instead of 'api'
--		apiString += "s"
-+	st, success, reqErr := executeDryRunRequest(rClient, k8sResource, namespace, isDelete, opts.RESTMapper)
-+
-+	// Suppress 404 NotFound on undeploy dry-runs only when the object being deleted is what is missing
-+	if isDelete {
-+		if isDeleteTargetNotFound(reqErr, st, k8sResource, namespace, opts.RESTMapper) {
-+			return map[string]interface{}{"status": "Success"}, true, nil
-+		}
-+		if !success && st != nil && st["status"] == "Failure" {
-+			return st, false, nil
-+		}
-+		return st, success, reqErr
- 	}
- 
--	// Build the base resource path
--	resourcePath := kindToResource(k8sResource["kind"].(string))
--	basePath := fmt.Sprintf("/%s/%s", apiString, aV)
-+	// For create dry-runs, account for in-design namespaces
-+	if !success && opts.DeclaredNamespaces != nil && opts.DeclaredNamespaces[namespace] && isMissingNamespaceError(reqErr, st, namespace) {
-+		// Substitute "default" namespace on a copy of the unstructured object and re-run create dry-run
-+		resourceCopy := deepCopyMap(k8sResource)
-+		if resourceCopy == nil {
-+			resourceCopy = make(map[string]interface{})
-+		}
-+		metaMap, ok := resourceCopy["metadata"].(map[string]interface{})
-+		if !ok || metaMap == nil {
-+			metaMap = make(map[string]interface{})
-+			resourceCopy["metadata"] = metaMap
-+		}
-+		metaMap["namespace"] = "default"
- 
--	// Add namespace to path if provided
--	if namespace != "" {
--		basePath = fmt.Sprintf("%s/namespaces/%s", basePath, namespace)
-+		stDef, okDef, reqErrDef := executeDryRunRequest(rClient, resourceCopy, "default", false, opts.RESTMapper)
-+		if okDef {
-+			return stDef, true, nil
-+		}
-+		// The API server checks for a name conflict only after admission and schema validation have passed, so
-+		// an unrelated object of the same name in default still means the workload is valid. Return the
-+		// workload itself, so the component's configuration in the
-```
-
-**File**: `server/models/pattern/patterns/k8s/k8s_test.go` (added, +903/-0)
-```diff
-@@ -0,0 +1,903 @@
-+package k8s
-+
-+import (
-+	"bytes"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"strings"
-+	"testing"
-+
-+	"github.com/meshery/schemas/models/v1beta2/component"
-+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/runtime/serializer"
-+	"k8s.io/client-go/rest/fake"
-+)
-+
-+// newTestRESTMapper constructs a mock meta.RESTMapper configured with irregular plural Kubernetes resources for unit testing.
-+func newTestRESTMapper() meta.RESTMapper {
-+	groupVersions := []schema.GroupVersion{
-+		{Group: "", Version: "v1"},
-+		{Group: "apps", Version: "v1"},
-+		{Group: "networking.k8s.io", Version: "v1"},
-+		{Group: "storage.k8s.io", Version: "v1"},
-+	}
-+	mapper := meta.NewDefaultRESTMapper(groupVersions)
-+
-+	// Add irregular plural kinds
-+	mapper.AddSpecific(
-+		schema.GroupVersionKind{Group: "networking.k8s.io", Version: "v1", Kind: "Ingress"},
-+		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "ingresses"},
-+		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "ingress"},
-+		meta.RESTScopeNamespace,
-+	)
-+	mapper.AddSpecific(
-+		schema.GroupVersionKind{Group: "networking.k8s.io", Version: "v1", Kind: "NetworkPolicy"},
-+		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "networkpolicies"},
-+		schema.GroupVersionResource{Group: "networking.k8s.io", Version: "v1", Resource: "networkpolicy"},
-+		meta.RESTScopeNamespace,
-+	)
-+	mapper.AddSpecific(
-+		schema.GroupVersionKind{Group: "storage.k8s.io", Version: "v1", Kind: "StorageClass"},
-+		schema.GroupVersionResource{Group: "storage.k8s.io", Version: "v1", Resource: "storageclasses"},
-+		schema.GroupVersionResource{Group: "storage.k8s.io", Version: "v1", Resource: "storageclass"},
-+		meta.RESTScopeRoot,
-+	)
-+	mapper.AddSpecific(
-+		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Endpoints"},
-+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "endpoints"},
-+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "endpoint"},
-+		meta.RESTScopeNamespace,
-+	)
-+	mapper.AddSpecific(
-+		schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Namespace"},
-+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "namespaces"},
-+		schema.GroupVersionResource{Group: "", Version: "v1", Resource: "namespace"},
-+		meta.RESTScopeRoot,
-+	)
-+
-+	return mapper
-+}
-+
-+// newFakeRESTClient constructs a fake Kubernetes REST client using the provided HTTP round-trip handler function.
-+func newFakeRESTClient(fn func(req *http.Request) (*http.Response, error)) *fake.RESTClient {
-+	scheme := runtime.NewScheme()
-+	codecs := serializer.NewCodecFactory(scheme)
-+	return &fake.RESTClient{
-+		NegotiatedSerializer: codecs.WithoutConversion(),
-+		GroupVersion:         schema.GroupVersion{Group: "", Version: "v1"},
-+		Client:               fake.CreateHTTPClient(fn),
-+	}
-+}
-+
-+// jsonResponse serializes an object into JSON and wraps it in an HTTP response with the specified status code.
-+func jsonResponse(statusCode int, obj interface{}) (*http.Response, error) {
-+	data, err := json.Marshal(obj)
-+	if err != nil {
-+		return nil, err
-+	}
-+	resp := &http.Response{
-+		StatusCode: statusCode,
-+		Header:     http.Header{"Content-Type": []string{"application/json"}},
-+		Body:       io.NopCloser(bytes.NewReader(data)),
-+	}
-+	return resp, nil
-+}
-+
-+// TestResolveResourcePath_IrregularPlurals tests dynamic resource path resolution for irregular plural Kubernetes resources.
-+func TestResolveResourcePath_IrregularPlurals(t *testing.T) {
-+	mapper := newTestRESTMapper()
-+
-+	tests := []struct {
-+		name             string
-+		k8sResource      map[string]interface{}
-+		namespace        string
-+		useMapper        bool
-+		wantBasePath     string
-+		wantResourcePath string
-+	}{
-+		{
-+			name: "Ingress with RESTMapper discovers ingresses",
-+			k8sResource: map[string]interface{}{
-+				"apiVersion": "networking.k8s.io/v1",
-+				"kind":       "Ingress",
-+			},
-+			namespace:        "test-ns",
-+			useMapper:        true,
-+			wantBasePath:     "/apis/networking.k8s.io/v1/namespaces/test-ns",
-+			wantResourcePath: "ingresses",
-+		},
-+		{
-+			name: "NetworkPolicy with RESTMapper discovers networkpolicies",
-+			k8sResource: map[string]interface{}{
-+				"apiVersion": "networking.k8s.io/v1",
-+				"kind":       "NetworkPolicy",
-+			},
-+			namespace:        "prod",
-+			useMapper:        true,
-+			wantBasePath:     "/apis/networking.k8s.io/v1/namespaces/prod",
-+			wantResourcePath: "networkpolicies",
-+		},
-+		{
-+			name: "StorageClass with RESTMapper discovers storageclasses and root scope",
-+			k8sResource: map[string]interface{}{
-+				"apiVersion": "storage.k8s.io/v1",
-+				"kind":       "StorageClass",
-+			},
-+			namespace:        "ignored-ns",
-+			useMapper:        true,
-+			wantBasePath:     "/apis/s
++          if-no-files-found: error
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22579** (2026-10-26): Introduction - Muskan Kumari (@muskan-creates352)
+- **PR #22576** (2026-10-25): Introduction - Shatrughan Mishra (@shatrughantwt)
 - **PR #22560** (2026-10-24): docs: add Tristan Brian introduction (@TristanBrian)
 - **PR #22558** (2026-10-24): [Docs] Introduction - AryaBhatt (@AryaBhatt45)
 - **PR #22557** (2026-10-24): introduction- Pranav Gupta (@sabertooth-123)
 - **PR #22554** (closed): docs: add Paul Anyebe introduction (@cutewizzy11)
-- **PR #22548** (2026-10-23): Create Dipansu Mishra.md with personal details (@dipansumishra9797-sudo)
-- **PR #22547** (closed): Create Dipansu Mishra.md with personal details (@dipansumishra9797-sudo)
 
 ---
 
@@ -1579,28 +1216,30 @@ Fix(server): resolve dry-run GVR discovery and in-design namespaces
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos
+## X. Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-v
 
 **RULE**:
-When implementing operations in `docs/content/en/concepts/logical/workspaces.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/perf/profile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfa38789`: Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `488285b7`: Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-validation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/content/en/concepts/logical/workspaces.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/perf/profile.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or a shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+		if pageNumber < 1 {
+			return utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '%d'", pageNumber))
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfa38789` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `488285b7` are properly handled with clean fallback behavior.

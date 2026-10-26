@@ -4458,3 +4458,7 @@ https://github.com/kajisho5/ffmpeg-skill
 # --- Automatically Discovered by AI Scout Engine [2026-10-25T20:04:32.835Z] ---
 # [AI-AGENTS] windmill-labs/windmill (9820 score) - Code-first platform for workflows, apps and AI agents, on the fastest self-hosta
 https://github.com/windmill-labs/windmill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-26T05:17:41.166Z] ---
+# [AI-AGENTS] google/elephant-goldfish-model (1948 score [VERIFIED ORG]) - An open-source method and skill set created at Google for spec-driven developmen
+https://github.com/google/elephant-goldfish-model

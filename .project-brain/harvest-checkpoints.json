@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T05:11:29.734Z",
+  "last_updated": "2026-10-26T05:18:00.966Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
-      "verified_at": "2026-10-25T14:44:30.233Z",
+      "content_hash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
+      "verified_at": "2026-10-26T05:18:00.966Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:44:30.233Z"
+      "last_updated": "2026-10-26T05:18:00.966Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -13806,14 +13806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-signerlabs-shipswift",
-      "content_hash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
-      "verified_at": "2026-10-19T21:46:36.316Z",
+      "content_hash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
+      "verified_at": "2026-10-26T05:17:56.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T21:46:36.316Z"
+      "last_updated": "2026-10-26T05:17:56.786Z"
     },
     "scrapy-plugins/scrapy-zyte-api": {
       "repository": "scrapy-plugins/scrapy-zyte-api",
@@ -16124,6 +16124,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-25T20:04:38.713Z"
+    },
+    "google/elephant-goldfish-model": {
+      "repository": "google/elephant-goldfish-model",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-google-elephant-goldfish-model",
+      "content_hash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
+      "verified_at": "2026-10-26T05:17:46.009Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-26T05:17:46.009Z"
     }
   },
   "repos": {

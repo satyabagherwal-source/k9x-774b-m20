@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T05:11:29.664Z",
-  "total_verified_learnings": 1089,
+  "last_updated": "2026-10-26T05:18:00.901Z",
+  "total_verified_learnings": 1090,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -34861,8 +34861,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "ac82f3a1",
-      "content_hash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+      "source_version": "a5ee540b",
+      "content_hash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -34895,6 +34895,11 @@
           "number": 4353,
           "title": "Merge pull request #22300 from Paramveersingh-S/fix/docs-workspaces-crds-typos",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4564,
+          "title": "Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-v",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34902,7 +34907,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:44:30.171Z",
+      "verified_at": "2026-10-26T05:18:00.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45476,8 +45481,8 @@
       "slug": "signerlabs-shipswift",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/ShipSwift",
-      "source_version": "3341a192",
-      "content_hash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
+      "source_version": "87286fca",
+      "content_hash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
       "promoted_rules": [
@@ -45495,6 +45500,11 @@
           "number": 2832,
           "title": "Continuous-Time Gesture Phase Invariant for Autonomous Oscillators",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4563,
+          "title": "require iOS 18 / macOS 15 across the library",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45502,7 +45512,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T21:46:36.247Z",
+      "verified_at": "2026-10-26T05:17:56.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128199,6 +128209,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T05:11:29.652Z"
+    },
+    "learn-github-google-elephant-goldfish-model": {
+      "learning_id": "learn-github-google-elephant-goldfish-model",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/elephant-goldfish-model",
+      "repository": "google/elephant-goldfish-model",
+      "slug": "google-elephant-goldfish-model",
+      "platform": "github",
+      "source_url": "https://github.com/google/elephant-goldfish-model",
+      "source_version": "3d0b3482",
+      "content_hash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
+      "dossier_path": "07_PROJECT_LEARNING/google-elephant-goldfish-model-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/google-elephant-goldfish-model-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4562,
+          "title": "site: render og.png at 2x and enlarge its type (#111)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-26T05:17:45.915Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4562": {
+      "learning_id": "rule-4562",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4562,
+      "title": "site: render og.png at 2x and enlarge its type (#111)",
+      "source_url": "https://github.com/google/elephant-goldfish-model",
+      "source_version": "3d0b3482",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:17:45.915Z"
+    },
+    "rule-4563": {
+      "learning_id": "rule-4563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4563,
+      "title": "require iOS 18 / macOS 15 across the library",
+      "source_url": "https://github.com/signerlabs/ShipSwift",
+      "source_version": "87286fca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:17:56.706Z"
+    },
+    "rule-4564": {
+      "learning_id": "rule-4564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4564,
+      "title": "Merge pull request #22248 from Raghavcommercialwinner/fix/mesheryctl-perf-page-v",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "a5ee540b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:18:00.890Z"
     }
   },
   "aliases": {

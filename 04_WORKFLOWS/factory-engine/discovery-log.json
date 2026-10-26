@@ -18673,5 +18673,20 @@
     "qualityScore": 9820,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-25T20:00:52.633Z"
+  },
+  {
+    "name": "elephant-goldfish-model",
+    "fullName": "google/elephant-goldfish-model",
+    "url": "https://github.com/google/elephant-goldfish-model",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An open-source method and skill set created at Google for spec-driven development with LLMs",
+    "stars": 1110,
+    "forks": 103,
+    "openIssues": 56,
+    "language": "Python",
+    "qualityScore": 1948,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-10-26T05:14:10.848Z"
   }
 ]

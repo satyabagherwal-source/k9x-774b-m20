@@ -1371,12 +1371,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "burntsushi-ripgrep": {
-    "name": "BurntSushi/ripgrep",
+    "name": "ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T10:43:09.423Z",
-    "lastVerified": "2026-10-25T10:43:09.423Z",
+    "lastChecked": "2026-10-26T05:17:46.604Z",
+    "lastVerified": "2026-10-26T05:17:46.604Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-burntsushi-ripgrep",
@@ -1385,7 +1385,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6892bc2b"
   },
   "expo-expo": {
     "name": "expo/expo",
@@ -2723,8 +2724,8 @@
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T23:45:53.272Z",
-    "lastVerified": "2026-10-25T23:45:53.272Z",
+    "lastChecked": "2026-10-26T05:17:56.590Z",
+    "lastVerified": "2026-10-26T05:17:56.590Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nexus-xyz-nexus-zkvm",
@@ -4193,12 +4194,12 @@
     "revisionIdentifier": "4b5d3bc9"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-25T13:42:24.110Z",
-    "lastVerified": "2026-10-25T13:42:24.110Z",
+    "lastChecked": "2026-10-26T05:17:59.105Z",
+    "lastVerified": "2026-10-26T05:17:59.105Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -4207,7 +4208,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6bc056af"
   },
   "giancarloerra-socraticode": {
     "name": "giancarloerra/SocratiCode",
@@ -9462,14 +9464,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-25T14:44:29.703Z",
-    "lastVerified": "2026-10-25T14:44:29.703Z",
+    "lastChecked": "2026-10-26T05:18:00.360Z",
+    "lastVerified": "2026-10-26T05:18:00.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
+    "contentHash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -18574,8 +18576,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T03:03:50.321Z",
-    "lastVerified": "2026-10-26T03:03:50.321Z",
+    "lastChecked": "2026-10-26T05:18:01.611Z",
+    "lastVerified": "2026-10-26T05:18:01.611Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -19615,22 +19617,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "signerlabs-shipswift": {
-    "name": "ShipSwift",
+    "name": "signerlabs/ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-22T15:56:45.088Z",
-    "lastVerified": "2026-10-22T15:56:45.088Z",
+    "lastChecked": "2026-10-26T05:17:56.136Z",
+    "lastVerified": "2026-10-26T05:17:56.136Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-signerlabs-shipswift",
-    "contentHash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 11,
+    "contentHash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3341a192"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dohooo-helmor": {
     "name": "dohooo/helmor",
@@ -25345,9 +25346,9 @@
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
     "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
-    "lastChecked": "2026-10-21T16:19:26.528Z",
+    "lastChecked": "2026-10-26T05:17:49.086Z",
     "revisionIdentifier": "cdbf66bf55",
-    "lastVerified": "2026-10-21T16:19:26.528Z"
+    "lastVerified": "2026-10-26T05:17:49.086Z"
   },
   "xseo": {
     "name": "xseo",
@@ -27502,8 +27503,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-26T05:11:32.276Z",
-    "lastVerified": "2026-10-26T05:11:32.276Z",
+    "lastChecked": "2026-10-26T05:18:03.507Z",
+    "lastVerified": "2026-10-26T05:18:03.507Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -28606,6 +28607,23 @@
     "contentHash": "34cc763778dd68501203d40d3d4b0876fbc5ea8bbb55d9544fe33ddc8f2a4483",
     "promotedRulesCount": 1,
     "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-elephant-goldfish-model": {
+    "name": "google/elephant-goldfish-model",
+    "officialUrl": "https://github.com/google/elephant-goldfish-model",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-26T05:17:44.603Z",
+    "lastVerified": "2026-10-26T05:17:44.603Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-google-elephant-goldfish-model",
+    "contentHash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

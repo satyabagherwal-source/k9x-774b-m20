@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "ac82f3a1",
+    "sourceVersion": "a5ee540b",
     "license": "Apache-2.0",
-    "contentHash": "1b9c87096685db4353a722c66ca8337447d98d7f00f02c626cb17e031ee2dee5",
-    "lastHarvestedAt": "2026-10-25T14:44:30.227Z",
+    "contentHash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
+    "lastHarvestedAt": "2026-10-26T05:18:00.958Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -9173,10 +9173,10 @@
     "repository": "signerlabs/ShipSwift",
     "platform": "github",
     "sourceUrl": "https://github.com/signerlabs/ShipSwift",
-    "sourceVersion": "3341a192",
+    "sourceVersion": "87286fca",
     "license": "MIT",
-    "contentHash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
-    "lastHarvestedAt": "2026-10-19T21:46:36.309Z",
+    "contentHash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
+    "lastHarvestedAt": "2026-10-26T05:17:56.778Z",
     "learningId": "learn-github-signerlabs-shipswift"
   },
   "scrapy-plugins-scrapy-zyte-api": {
@@ -10728,5 +10728,15 @@
     "contentHash": "34cc763778dd68501203d40d3d4b0876fbc5ea8bbb55d9544fe33ddc8f2a4483",
     "lastHarvestedAt": "2026-10-25T20:04:38.705Z",
     "learningId": "learn-github-windmill-labs-windmill"
+  },
+  "google-elephant-goldfish-model": {
+    "repository": "google/elephant-goldfish-model",
+    "platform": "github",
+    "sourceUrl": "https://github.com/google/elephant-goldfish-model",
+    "sourceVersion": "3d0b3482",
+    "license": "Apache-2.0",
+    "contentHash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
+    "lastHarvestedAt": "2026-10-26T05:17:46.002Z",
+    "learningId": "learn-github-google-elephant-goldfish-model"
   }
 }

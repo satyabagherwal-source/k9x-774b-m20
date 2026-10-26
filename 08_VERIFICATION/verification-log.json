@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-GQVR",
-    "timestamp": "2026-10-25T02:25:23.223Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "5d80cee2c83c284802c5cf5b40b46e642866319907ea85e722624f18a8073ad4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GTGQ",
-    "timestamp": "2026-10-25T02:25:26.570Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "9db6de5efdbef4406cc0189ab1cba2c64598dfddb78e56e0f6fa7140c4b1718c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-IK9L",
-    "timestamp": "2026-10-25T02:26:47.961Z",
-    "repository": "chakra-ui/zag",
-    "learningId": "learn-github-chakra-ui-zag",
-    "contentHash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-JBAJ",
     "timestamp": "2026-10-25T02:27:22.987Z",
     "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
@@ -7492,6 +7447,51 @@
     "contentHash": "c9ce21dbd64de9fb87ed63d3434fa4a08abf4077b40925f28e29e4dabdaf4dc4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2A33",
+    "timestamp": "2026-10-26T05:17:45.999Z",
+    "repository": "google/elephant-goldfish-model",
+    "learningId": "learn-github-google-elephant-goldfish-model",
+    "contentHash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2IEF",
+    "timestamp": "2026-10-26T05:17:56.775Z",
+    "repository": "signerlabs/ShipSwift",
+    "learningId": "learn-github-signerlabs-shipswift",
+    "contentHash": "17f83ee0f6ace8d7674a93464816a543d81a958437dfd9d97702a41e7ed5cb16",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-2LMJ",
+    "timestamp": "2026-10-26T05:18:00.955Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
