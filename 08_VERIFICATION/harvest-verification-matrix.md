@@ -5066,3 +5066,5 @@
 | `CYCLE-20261026-NV2P` | `2026-10-26T00:54:36.817Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4511` | Yes (`02a217bc...`) |
 | `CYCLE-20261026-O4KB` | `2026-10-26T00:54:49.115Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4512` | Yes (`b0ca96c9...`) |
 | `CYCLE-20261026-O5S2` | `2026-10-26T00:54:50.690Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4513` | Yes (`3efeb7ed...`) |
+| `CYCLE-20261026-W66A` | `2026-10-26T01:01:04.450Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4514` | Yes (`5cdffec4...`) |
+| `CYCLE-20261026-WBF2` | `2026-10-26T01:01:11.246Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4515, Rule 4516` | Yes (`11e900cd...`) |

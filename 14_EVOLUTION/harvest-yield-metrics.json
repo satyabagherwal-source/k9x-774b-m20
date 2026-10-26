@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:54:50.699Z",
-  "total_cycles_completed": 5043,
-  "total_learnings_persisted": 5043,
-  "total_rules_promoted": 4404,
+  "last_updated": "2026-10-26T01:01:11.252Z",
+  "total_cycles_completed": 5045,
+  "total_learnings_persisted": 5045,
+  "total_rules_promoted": 4407,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:57:16.564Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:03:18.415Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T15:03:18.560Z",
       "repository": "assistant-ui/assistant-ui",
@@ -1403,6 +1389,20 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:01:04.458Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:01:11.252Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

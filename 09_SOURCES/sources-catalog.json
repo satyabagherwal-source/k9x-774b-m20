@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
-    "lastHarvestedAt": "2026-10-21T04:42:53.802Z",
+    "contentHash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
+    "lastHarvestedAt": "2026-10-26T01:01:11.249Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "3493ce30",
+    "sourceVersion": "3fbef5ba",
     "license": "MIT",
-    "contentHash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
-    "lastHarvestedAt": "2026-10-25T06:38:17.810Z",
+    "contentHash": "5cdffec49f586676e29b89996133171d7f0796dfeb3261688cbfaa23b0c61795",
+    "lastHarvestedAt": "2026-10-26T01:01:04.453Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

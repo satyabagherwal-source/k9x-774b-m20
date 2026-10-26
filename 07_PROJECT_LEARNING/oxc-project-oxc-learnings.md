@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `3493ce30`  
+> **Source Version**: `3fbef5ba`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:38:17.502Z  
+> **Timestamp**: 2026-10-26T01:01:04.095Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:38:16.803Z  
+> **Harvest Timestamp**: 2026-10-26T01:01:03.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23217 stars
+- **Stars / Engagement**: 23223 stars
 
 ---
 
@@ -1229,16 +1229,11 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28149** (2026-10-25): **perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression**
-  *Symptoms*: remove redundant string comparisons when replacing global new expression with call. reuse `is_error_constructor` from ecma
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 87` untouched benchmarks   `⏩ 9` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>armano2:perf/is_native_error_name</code> (92df512) with <code>main</code> (a22c9f2)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/armano2%3Aperf%2Fis_native_error_name?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 9 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click here and archive them to remove them fro
+- **Issue #28156** (2026-10-25): **chore(deps): update dependency serialize-javascript to v7.1.3**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript) | [`7.1.2` → `7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3) | ![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true) |  ---  ### Release Notes  <details> <summary>yahoo/serialize-javascript (serialize-javascript)</summary>  ### [`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)  [Compare Source](https://redirect.github.com/yahoo/serialize-javascript/compare/v7.1.2...v7.1.3)  See: <https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-m5mm-p8h7-m29v>  #### What's Changed  - fix: escape `</script` at the end of a serialized function body by [@&#8203;redonkulus](https://redirect.github.com/redonkulus) in [#&#8203;235](https://redi
 
-- **Issue #28139** (2026-10-23): **perf(parser): move annotation comment handling out of hot paths**
-  *Symptoms*: Applying `@__PURE__` and `@__NO_SIDE_EFFECTS__` comments is rare, so move it into `#[cold]` helpers to keep `with_pure_comments`, `parse_assignment_expression` and `parse_statement_list_item` small.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"6ba6494c23fe0ba4d114fb64a90e7ce1de47052b","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-23T22:54:07.864753Z">2026-10-23T22:54:07.864753Z</relative-time> | `6ba6494` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
-  > ### Merge activity  * **Oct 23, 10:53 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Oct 23, 10:58 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Oct 23, 11:02 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+- **Issue #28155** (2026-10-26): **oxlint: under Bun, output through a pipe stops silently at 64 KiB (WouldBlock treated as end of output)**
+  *Symptoms*: ## Versions  - oxlint 1.89.0 (npm package: `node_modules/.bin/oxlint` → `dist/cli.js`) - Bun 1.4.4+38afee6c8, macOS 15.7.7 arm64 (pipe buffer 64 KiB) - Node 25.2.1 for comparison  ## Reproduction  ```sh mkdir repro && cd repro bun init -y bun add oxlint@1.89.0 for i in $(seq 3000); do echo 'debugger;'; done > many.js  bun node_modules/.bin/oxlint --format json | wc -c    # 65536, exit 0 bun node_modules/.bin/oxlint --format json > out.json  # 960969 bytes, exit 0 node node_modules/.bin/oxlint --format json | wc -c   # 960973 ```  Under Bun, the piped report ends mid-JSON at exactly 65,536 bytes. Nothing goes to stderr, and oxlint exits 0 (`no-debugger` is a warning), so a CI step or a script reading the pipe cannot tell the report is incomplete. With an error-level finding the exit code is 1 as it should be, but the list of diagnostics is still cut.  ## Cause  `dist/cli.js` makes stdio blocking before it hands over to the native linter:  ```js process.stdout.isTTY || (process.stdin._handle?.setBlocking?.(!0), process.stdout._handle?.setBlocking?.(!0)) ```  `_handle.setBlocking` is a Node internal. Bun has no `process.stdout._handle`, so the optional chain does nothing. Like libuv, Bun makes a piped fd 1 `O_NONBLOCK` once `process.stdout` is used; a probe holding the pipe's write end saw the flag set while the Bun process ran. The native writer then gets `EAGAIN` as soon as the pipe buffer is full, and since #20295 `check_for_writer_error` treats `WouldBlock` as benign, so the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1255,312 +1250,229 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ce5ee45` (2026-10-22)
-**Commit Message**: chore(deps): update rustls webpki crates for security advisories (#28112)
+### Incident Patch 1: `3fbef5ba` (2026-10-25)
+**Commit Message**: refactor(minifier): use ast helpers for enum tests (#28148)
 
-Updates `webpki-roots` 1.0.8 -> 1.0.10, `webpki-root-certs` 1.0.8 -> 1.0.10, and `rustls-webpki` 0.103.15 -> 0.103.16 to resolve RUSTSEC-2026-0381, RUSTSEC-2026-0382, and RUSTSEC-2026-0383.
-
-**File**: `Cargo.lock` (modified, +11/-11)
+**File**: `crates/oxc_minifier/src/peephole/fold_constants.rs` (modified, +2/-2)
 ```diff
-@@ -280,7 +280,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
+@@ -11,7 +11,7 @@ use oxc_ecmascript::{
+ use oxc_semantic::IsGlobalReference;
+ use oxc_span::{GetSpan, SPAN};
+ use oxc_str::JSStr;
+-use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
++use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
  
- [[package]]
-@@ -688,7 +688,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
+ use crate::{TraverseCtx, generated::ancestor::Ancestor};
  
- [[package]]
-@@ -3384,7 +3384,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
+@@ -1209,7 +1209,7 @@ pub(super) fn is_cjs_module_exports_hint(expr: &Expression<'_>) -> bool {
+     let Expression::AssignmentExpression(assign) = expr else {
+         return false;
+     };
+-    assign.operator == AssignmentOperator::Assign
++    assign.operator.is_assign()
+         && assign
+             .left
+             .as_member_expression()
+```
+
+**File**: `crates/oxc_minifier/src/peephole/inline.rs` (modified, +3/-7)
+```diff
+@@ -220,7 +220,7 @@ impl<'a> PeepholeOptimizations {
+                     matches!(
+                         prop,
+                         ObjectPropertyKind::ObjectProperty(p)
+-                            if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
++                            if p.kind.is_accessor()
+                                 || Self::expression_has_setter_or_getter(&p.value)
+                                 // `{ __proto__: ... }` sets the prototype chain and could
+                                 // install setters that make property writes side-effectful.
+@@ -267,11 +267,7 @@ impl<'a> PeepholeOptimizations {
+                     // A static getter OR setter makes a write to that key throw in
+                     // strict mode (a get-only accessor has no [[Set]]; a setter runs
+                     // on write), so neither is a droppable fresh-value write.
+-                    || (method.r#static
+-                        && matches!(
+-                            method.kind,
+-                            MethodDefinitionKind::Set | MethodDefinitionKind::Get
+-                        ))
++                    || (method.r#static && method.kind.is_accessor())
+             }
+             // `static accessor foo` auto-generates a getter+setter pair.
+             ClassElement::AccessorProperty(prop) => prop.r#static || !prop.decorators.is_empty(),
+@@ -295,7 +291,7 @@ impl<'a> PeepholeOptimizations {
+                 matches!(
+                     prop,
+                     ObjectPropertyKind::ObjectProperty(p)
+-                        if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
++                        if p.kind.is_accessor()
+                             || Self::expression_has_setter_or_getter(&p.value)
+                 )
+             }),
+```
+
+**File**: `crates/oxc_minifier/src/peephole/minimize_conditional_expression.rs` (modified, +1/-1)
+```diff
+@@ -219,7 +219,7 @@ impl<'a> PeepholeOptimizations {
  
- [[package]]
-@@ -3413,9 +3413,9 @@ dependencies = [
+         // `a ? c : b && c` => `(a || b) && c`
+         if let Expression::LogicalExpression(logical_expr) = &mut expr.alternate
+-            && logical_expr.operator == LogicalOperator::And
++            && logical_expr.operator.is_and()
+             && ctx.expr_eq(&logical_expr.right, &expr.consequent)
+         {
+             let mut new_logical = logical_expr.take_in_box(ctx);
+```
+
+**File**: `crates/oxc_minifier/src/peephole/minimize_conditions.rs` (modified, +1/-1)
+```diff
+@@ -163,7 +163,7 @@ impl<'a> PeepholeOptimizations {
+         match expr {
+             Expression::Identifier(id) => Some(id),
+             Expression::AssignmentExpression(assign_expr) => {
+-                if assign_expr.operator == AssignmentOperator::Assign
++                if assign_expr.operator.is_assign()
+                     && let AssignmentTarget::AssignmentTargetIdentifier(id) = &assign_expr.left
+                 {
+                     return Some(id);
+```
+
+**File**: `crates/oxc_minifier/src/peephole/minimize_statements.rs` (modified, +2/-3)
+```diff
+@@ -355,8 +355,7 @@ impl<'a> PeepholeOptimizations {
+             };
+             if kind.name == id.name {
+                 if decl.init.is_none()
+-                    && (declaration_kind == VariableDeclarationKind::Var
+-                        || assign_expr.right.is_literal_value(true, ctx))
++                    && (declaration_kind.is_var() || assign_expr.right.is_literal_value(true, ctx))
+                 {
+                     // "var a; a = b();" => "var a = b();"
+                     decl.init = Some(assign_expr.right.take_in(ctx));
+@@ -1356,7 +1355,7 @@ impl<'a> PeepholeOptimizations {
+                 }
+             }
+             Expression::UnaryExpression(unary_expr) => {
+-                if unary_expr.operator != UnaryOperator::Delete
++                if !unary_expr.operator.is_delete()
+                     && let Some(changed) = Self::substitute_single_use_symbol_in_expression(
+                         &mut unary_expr.argument,
+                         search_for,
+```
+
+**File**: `crates/oxc_minifier/src/peephole/normalize.rs` (modified, +2/-2)
+```diff
+@@ -54,7 +54,7 @@ impl<'a> Normalize {
+ impl<'a> Traverse<'a> for Normalize {
+     fn exit_program(&mut self, node: &mut Program<'a>, _ctx: &mut TraverseCtx<'a>) {
+         if self.options.remove_unnecessary_use_strict && node.source_type.is_module() {
+-            node.directives.drain_filter(|d| d.directive.as_str() == "use strict");
++            node.directives.drain_filter(|d| d.is_use_strict());
+         }
+     }
  
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "ring",
-  "rustls-pki-types",
-@@ -3803,7 +3803,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -4275,18 +4275,18 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.8"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d46a5a140e6f7afeccd8eae97eff335163939eac8b929834875168b29b3d267"
-+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
- dependencies = [
-  "rustls-pki-types",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.8"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bf85cb06032201fa7c6f829d7db5a7e5aa45bcc0655327713065f6f0576731bf"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
-@@ -4337,7 +4337,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
+@@ -680,7 +680,7 @@ impl<'a> Normalize {
+                 .map(|scope_id| ctx.scoping().scope_flags(scope_id))
+                 .is_some_and(ScopeFlags::is_strict_mode)
+         {
+-            body.directives.drain_filter(|d| d.directive.as_str() == "use strict");
++            body.directives.drain_filter(|d| d.is_use_strict());
+         }
+     }
+ }
+```
+
+**File**: `crates/oxc_minifier/src/peephole/substitute_alternate_syntax.rs` (modified, +1/-1)
+```diff
+@@ -1174,7 +1174,7 @@ impl<'a> PeepholeOptimizations {
+             // `BigInt(1n)` -> `1n`
+             "BigInt" => match arg {
+                 None => None,
+-                Some(arg) => matches!(arg, Expression::BigIntLiteral(_)).then(|| arg.take_in(ctx)),
++                Some(arg) => arg.is_big_int_literal().then(|| arg.take_in(ctx)),
+             },
+             _ => None,
+         };
 ```
 
 ---
 
-### Incident Patch 2: `7f3c9086` (2026-10-23)
-**Commit Message**: fix(linter/eslint/array-callback-return): check callbacks passed with extra arguments (#28133)
+### Incident Patch 2: `1a377316` (2026-10-25)
+**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 (#28156)
 
-Fixes #28128
+This PR contains the following updates:
 
-`array-callback-return` only checked array method calls with exactly one
-argument, so a callback followed by anything else was skipped. That's
-why `reduce`/`reduceRight` with an initial value were never reported.
-The same thing happened to `foo.map(cb, thisArg)` and `Array.from(x, cb,
-thisArg)`.
-
-ESLint's rule checks the first argument (the second for
-`Array.from`/`Array.fromAsync`) no matter how many arguments follow it.
-This PR does the same.
-
-```js
-[1, 2].reduce((total, x) => {
-  if (x > 1) {
-    return total + x;
-  }
-}, 0); // now reported, same as ESLint
-```
-
-Tests: new pass/fail cases for `reduce`/`reduceRight` with an initial
-value, `map` with `thisArg`, `Array.from` with `thisArg`, and a callback
-that isn't the first argument (`foo.reduce(bar, function() {})` stays
-unreported). Snapshot updated. `cargo test -p oxc_linter`, `cargo clippy
--p oxc_linter --all-targets -- -D warnings` and `cargo fmt --check`
-pass.
-
-AI disclosure: I used an AI assistant while writing this change. I
-reviewed the code and tests myself.
-
----------
-
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
-
-**File**: `crates/oxc_linter/src/rules/eslint/array_callback_return/mod.rs` (modified, +14/-3)
-```diff
-@@ -390,7 +390,7 @@ pub fn get_array_method_info<'a>(
- 
-                 // Array.from
-                 if callee.is_specific_member_access("Array", "from")
--                    && call.arguments.len() == 2
-+                    && call.arguments.len() >= 2
-                     && let Some(call_arg) = call.arguments[1].as_expression()
-                     && call_arg.span() == current_node.kind().span()
-                 {
-@@ -399,7 +399,7 @@ pub fn get_array_method_info<'a>(
- 
-                 // Array.fromAsync
-                 if callee.is_specific_member_access("Array", "fromAsync")
--                    && call.arguments.len() == 2
-+                    && call.arguments.len() >= 2
-                     && let Some(call_arg) = call.arguments[1].as_expression()
-                     && call_arg.span() == current_node.kind().span()
-                 {
-@@ -410,8 +410,9 @@ pub fn get_array_method_info<'a>(
-                 let (array_method_span, array_method) = callee.static_property_info()?;
-                 let array_method = array_method.as_str()?;
- 
-+                // The callback is the first argument; any further arguments (an initial
-+                // value for `reduce`/`reduceRight`, or a `thisArg`) don't change that.
-                 if TARGET_METHODS.contains(&array_method)
--                    && call.arguments.len() == 1
-                     && let Some(call_arg) = call.arguments.first()
-                     && call_arg
-                         .as_expression()
-@@ -686,6 +687,11 @@ fn test() {
-   });"#,
-             Some(serde_json::json!([{"allowImplicit": true}])),
-         ),
-+        ("[1, 2].reduce((total, x) => total + x, 0)", None),
-+        ("[1, 2].reduceRight((total, x) => { return total + x; }, 0)", None),
-+        ("foo.map(function() { return 1; }, thisArg)", None),
-+        ("Array.from(x, function() { return 1; }, thisArg)", None),
-+        ("foo.reduce(bar, function() {})", None),
-     ];
- 
-     let fail = vec![
-@@ -976,6 +982,11 @@ const _test = fruits.map((fruit) => {
-             "foo.forEach(x => { if (a === b) { return (x + a); } });",
-             Some(serde_json::json!([{"allowVoid": true, "checkForEach": true}])),
-         ),
-+        ("[1, 2].reduce((total, x) => { if (x > 1) { return total + x; } }, 0)", None),
-+        ("[1, 2].reduceRight((total, x) => { if (x > 1) { return total + x; } }, 0)", None),
-+        ("foo.reduce(function() {}, 0)", None),
-+        ("foo.map(function() {}, thisArg)", None),
-+        ("Array.from(x, function() {}, thisArg)", None),
-     ];
- 
-     Tester::new(ArrayCallbackReturn::NAME, ArrayCallbackReturn::PLUGIN, pass, fail)
-```
-
-**File**: `crates/oxc_linter/src/snapshots/eslint_array_callback_return.snap` (modified, +44/-0)
-```diff
-@@ -1240,3 +1240,47 @@ source: crates/oxc_linter/src/tester.rs
-    ·        ╰── "Array.prototype.forEach" is called here.
-    ╰────
-   help: Expected the return expression to be started with `void`
-+
-+  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduce" may reach the end of an `if` without returning
-+   ╭─[array_callback_return.tsx:1:8]
-+ 1 │ [1, 2].reduce((total, x) => { if (x > 1) { return total + x; } }, 0)
-+   ·        ───┬──            ──   ────────────────┬───────────────
-+   ·           │               │                   ╰── This path may reach the end of the callback.
-+   ·           ╰── "Array.prototype.reduce" is called here.
-+   ╰────
-+  help: This `if` has no `else` branch, so the callback may reach the end without a `return`. Add an `else`, or add a final `return`/`throw` after the `if`.
-+        Return a value on each path (or enable `allowImplicit` to allow `return;`).
-+
-+  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduceRight" may reach the end of an `if` without returning
-+   ╭─[array_callback_return.tsx:1:8]
-+ 1 │ [1, 2].reduceRight((total, x) => { if (x > 1) { return total + x; } }, 0)
-+   ·        ─────┬─────            ──   ────────────────┬───────────────
-+   ·             │                  │                   ╰── This path may reach the end of the callback.
-+   ·             ╰── "Array.prototype.reduceRight" is called here.
-+   ╰────
-+  help: This `if` has no `else` branch, so the callback may reach the end without a `return`. Add an `else`, or add a final `return`/`throw` after the `if`.
-+        Return a value on each path (or enable `allowImplicit` to allow `return;`).
-+
-+  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.reduce" does not return on all code paths
-+   ╭─[array_callback_return.tsx:1:23]
-+ 1 │ foo.reduce(function() {}, 0)
-+   ·                       ──
-+   ╰────
-+  help: "Array.prototype.reduce" uses the callback's return value. Add a `return` on every possible code path.
-+        Return a value on each path (or enable `allowImplicit` to allow `return;`).
-+
-+  ⚠ eslint(array-callback-return): Callback for array method "Array.prototype.map" does not return on all code paths
-+   ╭─[array_callback_return.tsx:1:20]
-+ 1 │ foo.map(function() {}, thisArg)
-+   ·                    ──
-+   ╰────
-+  help: "Array.prototype.map" uses the callback's return value. Add a `return` on every possible code path.
-+        Return a value on each path (or enable `allowImplicit` to allow `return;`).
-+
-+  ⚠ eslint(array-callback-return): Callback for array method "Array.from" does not return on all code paths
-+   ╭─[array_callback_return.tsx:1:26]
-+ 1 │ Array.from(x, function() {}, thisArg)
-+   ·                          ──
-+   ╰────
-+  help: "Array.from" uses the callback's return value. Add a `return` on every possible code path.
-+        Return a value on each path (or enable `allowImplicit` to allow `return;`).
-```
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Adoption](https://docs.renovatebot.com/merge-confidence/) |
+[Passing](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|---|---|
+|
+[serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript)
+| [`7.1.2` →
+`7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3)
+|
+![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true)
+|
+![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true)
+|
+![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
+|
 
 ---
 
-### Incident Patch 3: `0e6498f7` (2026-10-23)
-**Commit Message**: perf(tasks): build the coverage profile without cross-crate LTO (#28007)
+### Release Notes
 
-> AI disclosure: this PR, the measurements behind it, and this description were produced with Claude Code at a maintainer's request. It should get human review before it leaves draft.
+<details>
+<summary>yahoo/serialize-javascript (serialize-javascript)</summary>
 
-## Summary
+###
+[`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)
 
-This PR does three things:
-- **`Cargo.toml`:** `[profile.coverage]` changes from `lto = "thin"` to `lto = false`.
-- **`AGENTS.md`:** adds an opt-in note on incremental compilation for this profile, with its measured cost.
-- **`AGENTS.md`:** the `cargo coverage -- <tool>` examples become `cargo coverage <tool>`; the old form runs every suite.
 
-## Why
 
-With `lto = "thin"`, the library crates are compiled to bitcode only (`-C linker-plugin-lto`). The final binary (`-C lto=thin`) then re-optimizes and re-codegens the whole program on every rebuild. After a one-line `oxc_minifier` edit, `cargo build --timings` showed where the time went:
-
-| | `oxc_minifier` lib | `oxc_minsize` lib | `oxc_minsize` bin |
-|---|---|---|---|
-| `lto = "thin"` | 5.2s | 1.9s | **19.4s** (whole-program ThinLTO) |
-| `lto = false` | 7.2s | 2.3s | **0.7s** (plain link) |
-
-Every binary built with this profile pays that step separately. That covers th
-
-**File**: `AGENTS.md` (modified, +3/-3)
+**File**: `pnpm-lock.yaml` (modified, +4/-4)
 ```diff
-@@ -160,8 +160,8 @@ just conformance                       # Run all conformance tests (alias: cargo
- cargo test -p <crate_name>             # Test specific crate
+@@ -372,7 +372,7 @@ importers:
+         version: 1.2.14
+       serialize-javascript:
+         specifier: ^7.0.4
+-        version: 7.1.2
++        version: 7.1.3
+       tsdown:
+         specifier: 'catalog:'
+         version: 0.23.1(@arethetypeswrong/core@0.18.5)(publint@0.3.24)(tsx@4.23.15)(typescript@6.0.3)
+@@ -5856,8 +5856,8 @@ packages:
+     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
+     engines: {node: '>= 18'}
  
- # Conformance for specific tools
--cargo coverage -- parser               # Parser conformance
--cargo coverage -- transformer          # Transformer conformance
-+cargo coverage parser                  # Parser conformance
-+cargo coverage transformer             # Transformer conformance
- cargo run -p oxc_transform_conformance # Transformer Babel tests
+-  serialize-javascript@7.1.2:
+-    resolution: {integrity: sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==}
++  serialize-javascript@7.1.3:
++    resolution: {integrity: sha512-kYEnegpAxWFjUw3dSYdSM9zVlTrsxDbsSkq/qd3B7VanqyJ+JdDy6qVyuqVGBhSfuD/rLZQEKuXsO5KZFCrVYQ==}
+     engines: {node: '>=20.0.0'}
  
- # NAPI packages
-@@ -175,7 +175,7 @@ Each crate follows distinct testing patterns:
- #### oxc_parser
+   seroval-plugins@1.3.3:
+@@ -11575,7 +11575,7 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
  
- - **Conformance only** via `tasks/coverage`
--- **Command**: `cargo coverage -- parser`
-+- **Command**: `cargo coverage parser`
- - **Suites**: Test262, Babel, TypeScript
- - **Special**: `just allocs` for allocation tracking
+-  serialize-javascript@7.1.2: {}
++  serialize-javascript@7.1.3: {}
  
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -346,7 +346,7 @@ inherits = "release"
- panic = "unwind"
- opt-level = 2 # Compile faster
- codegen-units = 256 # Compile faster
--lto = "thin" # Faster compile time with thin LTO
-+lto = false # Compile faster: cross-crate LTO re-optimizes the whole binary on every rebuild
- debug-assertions = true # Make sure `debug_assert!`s pass
- overflow-checks = true # Catch arithmetic overflow errors
- 
+   seroval-plugins@1.3.3(seroval@1.3.2):
+     dependencies:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #28156** (2026-10-25): chore(deps): update dependency serialize-javascript to v7.1.3 (@renovate[bot])
+- **PR #28152** (2026-10-25): chore(deps): update npm packages (@renovate[bot])
 - **PR #28149** (2026-10-25): perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression (@armano2)
+- **PR #28148** (2026-10-25): refactor(minifier): use ast helpers for enum tests (@armano2)
 - **PR #28139** (2026-10-23): perf(parser): move annotation comment handling out of hot paths (@camc314)
 - **PR #28138** (2026-10-23): fix(linter): use the type-aware rule's severity when another plugin has a rule with the same name (@NavpreetSSidhu)
-- **PR #28133** (2026-10-23): fix(linter/eslint/array-callback-return): check callbacks passed with extra arguments (@sarankumar1325)
-- **PR #28132** (2026-10-23): feat(oxlint): export `Oxlintrc` type (@Sysix)
-- **PR #28118** (2026-10-23): feat(oxlint): require mininum oxlint-tsgolint version v7.0.2005 (@camc314)
 
 ---
 
@@ -1580,48 +1492,30 @@ Every binary built with this profile pays that step separately. That covers th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update rustls webpki crates for security advisories (#28112)
+## X. minifier): use ast helpers for enum tests (#28148)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_minifier/src/peephole/fold_constants.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ce5ee45`: deps): update rustls webpki crates for security advisories (#28112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fbef5ba`: minifier): use ast helpers for enum tests (#28148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_minifier/src/peephole/fold_constants.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
- "windows-sys 0.59.0",
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- "windows-sys 0.59.0",
-version = "1.0.10"
-checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- "windows-sys 0.59.0",
+use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
+    assign.operator.is_assign()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
- "windows-sys 0.52.0",
-version = "1.0.8"
-checksum = "0d46a5a140e6f7afeccd8eae97eff335163939eac8b929834875168b29b3d267"
-version = "1.0.8"
-checksum = "bf85cb06032201fa7c6f829d7db5a7e5aa45bcc0655327713065f6f0576731bf"
- "windows-sys 0.52.0",
+use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
+    assign.operator == AssignmentOperator::Assign
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ce5ee45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fbef5ba` are properly handled with clean fallback behavior.

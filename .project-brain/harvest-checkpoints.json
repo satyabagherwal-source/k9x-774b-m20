@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:54:50.702Z",
+  "last_updated": "2026-10-26T01:01:11.255Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
-      "verified_at": "2026-10-21T04:42:53.809Z",
+      "content_hash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
+      "verified_at": "2026-10-26T01:01:11.254Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:42:53.809Z"
+      "last_updated": "2026-10-26T01:01:11.254Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
-      "verified_at": "2026-10-25T06:38:17.820Z",
+      "content_hash": "5cdffec49f586676e29b89996133171d7f0796dfeb3261688cbfaa23b0c61795",
+      "verified_at": "2026-10-26T01:01:04.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:38:17.820Z"
+      "last_updated": "2026-10-26T01:01:04.460Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

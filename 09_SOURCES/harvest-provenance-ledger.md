@@ -5073,3 +5073,5 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `449877f3` | Multi-dimensional audit evidence | 2026-10-26T00:54:36.820Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `bae35972` | Multi-dimensional audit evidence | 2026-10-26T00:54:49.118Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `57e72b32` | Multi-dimensional audit evidence | 2026-10-26T00:54:50.692Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3fbef5ba` | Multi-dimensional audit evidence | 2026-10-26T01:01:04.453Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-26T01:01:11.249Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:54:50.658Z",
+  "last_updated": "2026-10-26T01:01:11.187Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -21291,7 +21291,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "22a26985d60495d75b83277d10a47e1d7eba90b16d25d7a1b0e11a6ccbc45533",
+      "content_hash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -21314,6 +21314,16 @@
           "number": 1447,
           "title": "Contiguous Memory Re-stride Invariant in Transformer Multi-Head Self-Attention",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4515,
+          "title": "Input Normalization Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4516,
+          "title": "CLS Token Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21333,7 +21343,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-21T04:42:53.742Z",
+      "verified_at": "2026-10-26T01:01:11.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40159,8 +40169,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "3493ce30",
-      "content_hash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
+      "source_version": "3fbef5ba",
+      "content_hash": "5cdffec49f586676e29b89996133171d7f0796dfeb3261688cbfaa23b0c61795",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -40188,6 +40198,11 @@
           "number": 4112,
           "title": "deps): update rustls webpki crates for security advisories (#28112)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4514,
+          "title": "minifier): use ast helpers for enum tests (#28148)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40195,7 +40210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:38:17.754Z",
+      "verified_at": "2026-10-26T01:01:04.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127306,6 +127321,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:54:50.651Z"
+    },
+    "rule-4514": {
+      "learning_id": "rule-4514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4514,
+      "title": "minifier): use ast helpers for enum tests (#28148)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "3fbef5ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:01:04.390Z"
+    },
+    "rule-4515": {
+      "learning_id": "rule-4515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4515,
+      "title": "Input Normalization Consistency Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:01:11.178Z"
+    },
+    "rule-4516": {
+      "learning_id": "rule-4516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4516,
+      "title": "CLS Token Extraction Invariant",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:01:11.178Z"
     }
   },
   "aliases": {
