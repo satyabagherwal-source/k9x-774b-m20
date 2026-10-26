@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T09:02:22.575Z",
+  "last_updated": "2026-10-26T09:24:30.194Z",
   "total_verified_learnings": 1091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6054,8 +6054,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "b28d8046",
-      "content_hash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
+      "source_version": "621dd74c",
+      "content_hash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6153,6 +6153,21 @@
           "number": 3940,
           "title": "aws/ipam: Stop expanding delegated prefixes into ENI addresses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4568,
+          "title": "Guarded Deep Traversal of Promoted Struct Fields in Reflection Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4569,
+          "title": "Strict Type-Safe Reflection on Dynamic Map Key Ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4570,
+          "title": "Null-Preserving Semantic Demarcation for JSON Zero Values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6160,7 +6175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:31:51.898Z",
+      "verified_at": "2026-10-26T09:23:36.960Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43326,8 +43341,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "79b80d06",
-      "content_hash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
+      "source_version": "742a03ea",
+      "content_hash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -43340,6 +43355,11 @@
           "number": 3626,
           "title": "of 6: Show native paywall buttons in UIKit (#8024)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4571,
+          "title": "paywalls) Native delayed back button (#8114)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43347,7 +43367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:10:02.328Z",
+      "verified_at": "2026-10-26T09:24:30.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128369,6 +128389,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T09:02:22.568Z"
+    },
+    "rule-4568": {
+      "learning_id": "rule-4568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4568,
+      "title": "Guarded Deep Traversal of Promoted Struct Fields in Reflection Engines",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "621dd74c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:23:36.960Z"
+    },
+    "rule-4569": {
+      "learning_id": "rule-4569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4569,
+      "title": "Strict Type-Safe Reflection on Dynamic Map Key Ingestion",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "621dd74c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:23:36.960Z"
+    },
+    "rule-4570": {
+      "learning_id": "rule-4570",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4570,
+      "title": "Null-Preserving Semantic Demarcation for JSON Zero Values",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "621dd74c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:23:36.960Z"
+    },
+    "rule-4571": {
+      "learning_id": "rule-4571",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4571,
+      "title": "paywalls) Native delayed back button (#8114)",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "742a03ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:24:30.182Z"
     }
   },
   "aliases": {

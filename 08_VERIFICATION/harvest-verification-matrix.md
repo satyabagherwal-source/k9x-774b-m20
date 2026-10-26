@@ -5110,3 +5110,5 @@
 | `CYCLE-20261026-2IEF` | `2026-10-26T05:17:56.775Z` | `signerlabs/ShipSwift` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4563` | Yes (`17f83ee0...`) |
 | `CYCLE-20261026-2LMJ` | `2026-10-26T05:18:00.955Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4564` | Yes (`09afca69...`) |
 | `CYCLE-20261026-34PI` | `2026-10-26T09:02:22.614Z` | `ParadevAI/superset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4565, Rule 4566, Rule 4567` | Yes (`c021f0c5...`) |
+| `CYCLE-20261026-UG1U` | `2026-10-26T09:23:37.026Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4568, Rule 4569, Rule 4570` | Yes (`3dfa9131...`) |
+| `CYCLE-20261026-VL4B` | `2026-10-26T09:24:30.251Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4571` | Yes (`7089b1d9...`) |

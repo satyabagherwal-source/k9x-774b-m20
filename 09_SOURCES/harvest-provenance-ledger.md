@@ -5117,3 +5117,5 @@ Every entry in this ledger must capture:
 | `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `87286fca` | Multi-dimensional audit evidence | 2026-10-26T05:17:56.778Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `a5ee540b` | Multi-dimensional audit evidence | 2026-10-26T05:18:00.958Z |
 | `learn-github-paradevai-superset` | `https://github.com/ParadevAI/superset` | `d962fd0f` | Multi-dimensional audit evidence | 2026-10-26T09:02:22.616Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `621dd74c` | Multi-dimensional audit evidence | 2026-10-26T09:23:37.029Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `742a03ea` | Multi-dimensional audit evidence | 2026-10-26T09:24:30.254Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T09:02:22.620Z",
-  "total_cycles_completed": 5087,
-  "total_learnings_persisted": 5087,
-  "total_rules_promoted": 4463,
+  "last_updated": "2026-10-26T09:24:30.259Z",
+  "total_cycles_completed": 5089,
+  "total_learnings_persisted": 5089,
+  "total_rules_promoted": 4467,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:08:05.033Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:14:27.603Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T17:14:33.133Z",
       "repository": "momenbasel/PureMac",
@@ -1403,6 +1389,20 @@
       "repository": "ParadevAI/superset",
       "learningId": "learn-github-paradevai-superset",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T09:23:37.034Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T09:24:30.259Z",
+      "repository": "RevenueCat/purchases-ios",
+      "learningId": "learn-github-revenuecat-purchases-ios",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

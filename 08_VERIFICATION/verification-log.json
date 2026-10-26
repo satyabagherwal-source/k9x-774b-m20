@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-UKX8",
-    "timestamp": "2026-10-25T02:36:08.684Z",
-    "repository": "ant-design/pro-components",
-    "learningId": "learn-github-ant-design-pro-components",
-    "contentHash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-URT9",
-    "timestamp": "2026-10-25T02:36:17.613Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-USZW",
     "timestamp": "2026-10-25T02:36:19.148Z",
     "repository": "nolabs-ai/nono",
@@ -7492,6 +7462,36 @@
     "contentHash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-UG1U",
+    "timestamp": "2026-10-26T09:23:37.026Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-VL4B",
+    "timestamp": "2026-10-26T09:24:30.251Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

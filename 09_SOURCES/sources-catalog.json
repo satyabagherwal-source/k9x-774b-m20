@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "b28d8046",
+    "sourceVersion": "621dd74c",
     "license": "Apache-2.0",
-    "contentHash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
-    "lastHarvestedAt": "2026-10-25T04:31:51.963Z",
+    "contentHash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
+    "lastHarvestedAt": "2026-10-26T09:23:37.029Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "79b80d06",
+    "sourceVersion": "742a03ea",
     "license": "MIT",
-    "contentHash": "6e808ec9d095441ad1e606239807aa339ce26ebe893204bfa1159c5866fe3d53",
-    "lastHarvestedAt": "2026-10-22T16:10:02.409Z",
+    "contentHash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
+    "lastHarvestedAt": "2026-10-26T09:24:30.254Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {
