@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T05:18:00.966Z",
+  "last_updated": "2026-10-26T09:02:22.622Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16139,6 +16139,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-26T05:17:46.009Z"
+    },
+    "ParadevAI/superset": {
+      "repository": "ParadevAI/superset",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paradevai-superset",
+      "content_hash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
+      "verified_at": "2026-10-26T09:02:22.622Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-26T09:02:22.622Z"
     }
   },
   "repos": {

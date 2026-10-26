@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-JBAJ",
-    "timestamp": "2026-10-25T02:27:22.987Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "a6ffc821b6e2637abe21f0b1ca931118de1af06e7a2ec5eba76e4290c5e80522",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-UKX8",
     "timestamp": "2026-10-25T02:36:08.684Z",
     "repository": "ant-design/pro-components",
@@ -7492,6 +7477,21 @@
     "contentHash": "09afca69d4c02cdbd699ab4a17b196f5a50a30b2b2b52e0eaad4d0e318bc4cc0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-34PI",
+    "timestamp": "2026-10-26T09:02:22.614Z",
+    "repository": "ParadevAI/superset",
+    "learningId": "learn-github-paradevai-superset",
+    "contentHash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

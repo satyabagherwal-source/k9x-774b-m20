@@ -5109,3 +5109,4 @@
 | `CYCLE-20261026-2A33` | `2026-10-26T05:17:45.999Z` | `google/elephant-goldfish-model` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4562` | Yes (`8d89444f...`) |
 | `CYCLE-20261026-2IEF` | `2026-10-26T05:17:56.775Z` | `signerlabs/ShipSwift` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4563` | Yes (`17f83ee0...`) |
 | `CYCLE-20261026-2LMJ` | `2026-10-26T05:18:00.955Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4564` | Yes (`09afca69...`) |
+| `CYCLE-20261026-34PI` | `2026-10-26T09:02:22.614Z` | `ParadevAI/superset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4565, Rule 4566, Rule 4567` | Yes (`c021f0c5...`) |

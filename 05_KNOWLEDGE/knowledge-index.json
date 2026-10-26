@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T05:18:00.901Z",
-  "total_verified_learnings": 1090,
+  "last_updated": "2026-10-26T09:02:22.575Z",
+  "total_verified_learnings": 1091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -128284,6 +128284,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T05:18:00.890Z"
+    },
+    "learn-github-paradevai-superset": {
+      "learning_id": "learn-github-paradevai-superset",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ParadevAI/superset",
+      "repository": "ParadevAI/superset",
+      "slug": "paradevai-superset",
+      "platform": "github",
+      "source_url": "https://github.com/ParadevAI/superset",
+      "source_version": "d962fd0f",
+      "content_hash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
+      "dossier_path": "07_PROJECT_LEARNING/paradevai-superset-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/paradevai-superset-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4565,
+          "title": "Webhook Signature Verification and Stream Consumption Ordering",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4566,
+          "title": "Context Value Splitting for High-Frequency Render Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4567,
+          "title": "Semaphore-Constrained Sequential Fanout for Serverless Database Pooling",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-26T09:02:22.568Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4565": {
+      "learning_id": "rule-4565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4565,
+      "title": "Webhook Signature Verification and Stream Consumption Ordering",
+      "source_url": "https://github.com/ParadevAI/superset",
+      "source_version": "d962fd0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:02:22.568Z"
+    },
+    "rule-4566": {
+      "learning_id": "rule-4566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4566,
+      "title": "Context Value Splitting for High-Frequency Render Trees",
+      "source_url": "https://github.com/ParadevAI/superset",
+      "source_version": "d962fd0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:02:22.568Z"
+    },
+    "rule-4567": {
+      "learning_id": "rule-4567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4567,
+      "title": "Semaphore-Constrained Sequential Fanout for Serverless Database Pooling",
+      "source_url": "https://github.com/ParadevAI/superset",
+      "source_version": "d962fd0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:02:22.568Z"
     }
   },
   "aliases": {

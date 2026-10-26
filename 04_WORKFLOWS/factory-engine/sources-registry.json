@@ -1481,8 +1481,8 @@
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T10:49:25.631Z",
-    "lastVerified": "2026-10-25T10:49:25.631Z",
+    "lastChecked": "2026-10-26T08:53:41.892Z",
+    "lastVerified": "2026-10-26T08:53:41.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
@@ -3212,8 +3212,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T23:53:29.859Z",
-    "lastVerified": "2026-10-25T23:53:29.859Z",
+    "lastChecked": "2026-10-26T08:53:51.992Z",
+    "lastVerified": "2026-10-26T08:53:51.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -9722,12 +9722,12 @@
     "revisionIdentifier": "1550af79"
   },
   "orange-cyberdefense-goad": {
-    "name": "Orange-Cyberdefense/GOAD",
+    "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
     "sourceType": "github",
     "technology": "PowerShell",
-    "lastChecked": "2026-10-25T14:50:54.076Z",
-    "lastVerified": "2026-10-25T14:50:54.076Z",
+    "lastChecked": "2026-10-26T08:53:49.306Z",
+    "lastVerified": "2026-10-26T08:53:49.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-orange-cyberdefense-goad",
@@ -9736,7 +9736,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "74af01eb"
   },
   "bridgecrewio-checkov": {
     "name": "checkov",
@@ -18522,8 +18523,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-26T03:10:22.739Z",
-    "lastVerified": "2026-10-26T03:10:22.739Z",
+    "lastChecked": "2026-10-26T08:53:56.827Z",
+    "lastVerified": "2026-10-26T08:53:56.827Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -19654,8 +19655,8 @@
     "officialUrl": "https://github.com/yannickl/DynamicColor",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-22T16:03:22.486Z",
-    "lastVerified": "2026-10-22T16:03:22.486Z",
+    "lastChecked": "2026-10-26T08:53:46.783Z",
+    "lastVerified": "2026-10-26T08:53:46.783Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yannickl-dynamiccolor",
@@ -22973,12 +22974,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "tickernelz/opencode-mem",
+    "name": "opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-25T13:57:19.864Z",
-    "lastVerified": "2026-10-25T13:57:19.864Z",
+    "lastChecked": "2026-10-26T08:53:54.327Z",
+    "lastVerified": "2026-10-26T08:53:54.327Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tickernelz-opencode-mem",
@@ -22987,7 +22988,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2acd554c"
   },
   "hf-autotrust-jev-35b-nvfp4": {
     "name": "autotrust/JEV-35B-NVFP4",
@@ -25483,9 +25485,9 @@
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
     "officialUrl": "https://github.com/SArfrz/NovaCrawl",
-    "lastChecked": "2026-10-21T16:25:39.795Z",
+    "lastChecked": "2026-10-26T08:53:44.350Z",
     "revisionIdentifier": "68c95079df",
-    "lastVerified": "2026-10-21T16:25:39.795Z"
+    "lastVerified": "2026-10-26T08:53:44.350Z"
   },
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
@@ -27503,8 +27505,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-26T05:18:03.507Z",
-    "lastVerified": "2026-10-26T05:18:03.507Z",
+    "lastChecked": "2026-10-26T09:02:25.164Z",
+    "lastVerified": "2026-10-26T09:02:25.164Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -28624,6 +28626,23 @@
     "contentHash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "paradevai-superset": {
+    "name": "ParadevAI/superset",
+    "officialUrl": "https://github.com/ParadevAI/superset",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-26T08:53:41.996Z",
+    "lastVerified": "2026-10-26T08:53:41.996Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-paradevai-superset",
+    "contentHash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -4462,3 +4462,7 @@ https://github.com/windmill-labs/windmill
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T05:17:41.166Z] ---
 # [AI-AGENTS] google/elephant-goldfish-model (1948 score [VERIFIED ORG]) - An open-source method and skill set created at Google for spec-driven developmen
 https://github.com/google/elephant-goldfish-model
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-26T08:53:36.371Z] ---
+# [AI-AGENTS] ParadevAI/superset (8544 score) - Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run an
+https://github.com/ParadevAI/superset

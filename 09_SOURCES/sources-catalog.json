@@ -10738,5 +10738,15 @@
     "contentHash": "8d89444f596684dfa22d45a1511823ed618965cb6ba1fd9edb79ec4ad250f2a7",
     "lastHarvestedAt": "2026-10-26T05:17:46.002Z",
     "learningId": "learn-github-google-elephant-goldfish-model"
+  },
+  "paradevai-superset": {
+    "repository": "ParadevAI/superset",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ParadevAI/superset",
+    "sourceVersion": "d962fd0f",
+    "license": "NOASSERTION",
+    "contentHash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
+    "lastHarvestedAt": "2026-10-26T09:02:22.616Z",
+    "learningId": "learn-github-paradevai-superset"
   }
 }
