@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `179664ea`  
+> **Source Version**: `449877f3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:31:56.590Z  
+> **Timestamp**: 2026-10-26T00:54:36.584Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:31:56.392Z  
+> **Harvest Timestamp**: 2026-10-26T00:54:36.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96388 stars
+- **Stars / Engagement**: 96408 stars
 
 ---
 
@@ -1001,363 +1001,229 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1917b1aa` (2026-10-23)
-**Commit Message**: Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)
+### Incident Patch 1: `449877f3` (2026-10-25)
+**Commit Message**: console.groupCollapsed: start a group, as console.group does (#46505)
 
-### What does this PR do?
+### Problem
+- `console.groupCollapsed()` does not start a group. Later lines are not
+indented, and its `console.groupEnd()` removes the indent of an
+enclosing `console.group()`. A call with no label writes `undefined`.
+- Cause: `message_with_type_and_level_` (`src/jsc/ConsoleObject.rs:383`,
+`:394`) tests `MessageType::StartGroup` only. JSC sends
+`StartGroupCollapsed`.
 
-Three things, in one PR because each of them bakes the CI images again.
+### Fix
+- One `is_start_group` flag covers both types. The `undefined` fallback
+is removed: a collapsed group with no label was its only caller. The
+`bun-types` JSDoc is updated.
+- Correct: Node documents `groupCollapsed` as [an alias of
+`group`](https://nodejs.org/docs/latest-v26.x/api/console.html#consolegroupcollapsed),
+and the [WHATWG spec](https://console.spec.whatwg.org/#groupcollapsed)
+pushes both onto one group stack.
+- Verified: `test/js/web/console/console-log.test.ts`,
+`test/js/bun/test/dots.test.ts` (new tests fail on bun 1.4.3-canary).
+Also ran: console test directories, bun-types test.
+- Self-reviewed: 15 concerns raised, 15 addressed. Notes names two
+follow-ups that are not in this PR.
 
-**1. Bun 1.4.2 → 1.4.4 for the repository's own tooling.** The CI
-machine images (`pins.bun`), the macOS host setup script
-(`scripts/darwin-ci/host.sh`), and the four GitHub workflows that pin a
-version. Workflows on `canary` or `latest` are unchanged.
+### Background
+- JSC passes each console call,
 
-**2. Node.js 26.3.0 → 26.12.1, a security release. This one is visible
-to users.** `pins.nodejs` is the Node.js on the CI machines, the headers
-Bun compiles against, and the version Bun reports:
-
-| | before | after |
-|---|---|---|
-| `process.version` | `v26.3.0` | `v26.12.1` |
-| `process.versions.v8` | `14.6.202.34-node.20` | `14.6.202.34-node.40`
-|
-| `process.versions.modules` / `.napi` | `147` / `10` | unchanged |
-
-In the new headers `node::ObjectWrap` calls `AddEnvironmentCleanupHook`
-and `RemoveEnvironmentCleanupHook`. Bun already exports both on every
-platform.
-
-Five test files use the real `node` as a reference or as the server, and
-failed once the CI machines had 26.12.1. Each was traced to the release
-that changed the behavior, by running the test or reading the headers
-
-**File**: `.github/workflows/release.yml` (modified, +5/-5)
+**File**: `packages/bun-types/globals.d.ts` (modified, +7/-3)
 ```diff
-@@ -75,7 +75,7 @@ jobs:
-       - name: Setup Bun
-         uses: ./.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
-       - name: Install Dependencies
-         run: bun install
-       - name: Sign Release
-@@ -104,7 +104,7 @@ jobs:
-       - name: Setup Bun
-         uses: ./.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
-       - name: Install Dependencies
-         run: bun install
-       - name: Release
-@@ -135,7 +135,7 @@ jobs:
-         if: ${{ env.BUN_VERSION != 'canary' }}
-         uses: ./.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
-       - name: Setup Bun
-         if: ${{ env.BUN_VERSION == 'canary' }}
-         uses: ./.github/actions/setup-bun
-@@ -189,7 +189,7 @@ jobs:
-       - name: Setup Bun
-         uses: ./bun/.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
-       - id: bun-version
-         run: echo "BUN_VERSION=${BUN_VERSION#bun-v}" >> "$GITHUB_OUTPUT"
-       - name: Update bun-types version in package.json
-@@ -333,7 +333,7 @@ jobs:
-       - name: Setup Bun
-         uses: ./.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
-       - name: Install Dependencies
-         run: bun install
-       - name: Release
+@@ -1240,11 +1240,15 @@ interface Console {
+    * @param data something to display
+    */
+   error(...data: any[]): void;
+-  /** Does nothing currently */
++  /**
++   * Start a group. Logs `data` as the label of the group, if there is any,
++   * then indents later `log`, `info`, `debug`, `warn`, `error`, `dir` and
++   * `trace` output by two more spaces.
++   */
+   group(...data: any[]): void;
+-  /** Does nothing currently */
++  /** An alias for {@link group}. */
+   groupCollapsed(...data: any[]): void;
+-  /** Does nothing currently */
++  /** End the most recent group that is still open, and remove its indent. */
+   groupEnd(): void;
+   info(...data: any[]): void;
+   log(...data: any[]): void;
 ```
 
-**File**: `.github/workflows/rust-lints.yml` (modified, +1/-1)
+**File**: `src/jsc/ConsoleObject.rs` (modified, +8/-6)
 ```diff
-@@ -33,7 +33,7 @@ concurrency:
-   cancel-in-progress: true
+@@ -377,10 +377,13 @@ fn message_with_type_and_level_(
+     len: usize,
+ ) -> JsResult<()> {
+     let console: *mut ConsoleObject = vm_console(global);
+-    // `defer console.default_indent +|= (message_type == StartGroup) as u16;`
++    // `defer console.default_indent +|= is_start_group as u16;`
+     // Capture the raw pointer (Copy) by `move` so no borrow of the local is
+     // held across the body; dereference only at scope-exit.
+-    let is_start_group = message_type == MessageType::StartGroup;
++    let is_start_group = matches!(
++        message_type,
++        MessageType::StartGroup | MessageType::StartGroupCollapsed
++    );
+     let _indent_guard = scopeguard::guard(console, move |console| {
+         // SAFETY: see `vm_console` — points at the live boxed
+         // `ConsoleObject` for this VM; JS-thread-only.
+@@ -391,8 +394,9 @@ fn message_with_type_and_level_(
+         }
+     });
  
- env:
--  BUN_VERSION: "1.4.2"
-+  BUN_VERSION: "1.4.4"
-   LLVM_VERSION_MAJOR: "23"
-   # Pin the toolchain explicitly so rustup ignores rust-toolchain.toml's
-   # `targets` list (11 cross triples ≈ 450 MB of prebuilt std we don't need
+-    if message_type == MessageType::StartGroup && len == 0 {
+-        // undefined is printed if passed explicitly.
++    if is_start_group && len == 0 {
++        // No label prints nothing, so return before the before-print hook of
++        // `bun test` runs. An explicit `undefined` is a label and is printed.
+         return Ok(());
+     }
+ 
+@@ -550,8 +554,6 @@ fn message_with_type_and_level_(
+         let w = unsafe { (*console).writer() };
+         let _ = w.write_all(b"\n");
+         let _ = w.flush();
+-    } else if message_type != MessageType::Trace {
+-        let _ = writer.write_all(b"undefined\n");
+     }
+ 
+     if message_type == MessageType::Trace {
 ```
 
-**File**: `.github/workflows/source-lints.yml` (modified, +1/-1)
+**File**: `test/js/bun/test/dots.test.ts` (modified, +37/-1)
 ```diff
-@@ -61,7 +61,7 @@ on:
-   merge_group:
+@@ -1,5 +1,5 @@
+ import { expect, test } from "bun:test";
+-import { bunEnv, bunExe, normalizeBunSnapshot } from "harness";
++import { bunEnv, bunExe, normalizeBunSnapshot, tempDir } from "harness";
  
- env:
--  BUN_VERSION: "1.4.2"
-+  BUN_VERSION: "1.4.4"
- 
- jobs:
-   source-lints:
-```
-
-**File**: `.github/workflows/vscode-release.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-       - name: Setup Bun
-         uses: ./.github/actions/setup-bun
-         with:
--          bun-version: "1.4.2"
-+          bun-version: "1.4.4"
- 
-       - name: Install dependencies (root)
-         run: bun install
-```
-
-**File**: `scripts/build/ci-images/spec.ts` (modified, +50/-23)
-```diff
-@@ -111,34 +111,34 @@ const prefetchTriggerVersion = 1;
-  */
- export const pins = {
-   nodejs: {
--    version: "26.3.0",
-+    version: "26.12.1",
-     nodeGypInstallVersion: "11",
-     // SHASUMS256.txt beside the files; unofficial-builds.nodejs.org has its own for the musl builds.
-     sha256: {
--      headers: "fca113c5d5add8bfb1aa31129a24acb8d49aa69ab3c22a2cc569aec88960526d",
--      "linux-x64": "a6e65cc653e40c1653b77742f9185dbce3ff1f99fa2746d211bddb53530ef206",
--      "linux-aarch64": "b2e01f65905c24cb5dd19c4cfbfefe0118e0504c170cc18beac343a2abbb59bd",
--      "linux-x64-musl": "6ad2e7c0cf693fecc2febb1abf753940244f3baaa04626361ed52d64843ffc67",
--      "linux-aarch64-musl": "2487ff4f03dbd8998a3778886d50c1ee5f13a3b9cefbfa3aed02c32dbf1e1fb8",
--      "darwin-x64": "7453bd54a17bdc656e2e784d702f6eeb224fb517965e6f8c5a31a88c83d3804c",
--      "darwin-aarch64": "77ef7f7a15aa757c2ca19d63cf41c8d9eb3b18590ebc6883871310787d8c6b6c",
-+      headers: "a983cdcea96e85d137b9b807cc776bb5564fc9e3e1c9185d59bbfaa781efd08f",
-+      "linux-x64": "0fd1eb7770598f52a21995edf6ed35fc690400fa437c2386af329519e9143132",
-+      "linux-aarch64": "a6c01af459dd8972ab3fb08ee5da81244d26ba8c4944a62d5bbba8c597ae154f",
-+      "linux-x64-musl": "8bf9cc0e7f8e3c7ec5368dca19242cad651b6b09d35bcdcf290ac3f80925e8dd",
-+      "linux-aarch64-musl": "c3694551f6cb888fe0befb4cb2e13ffe45b0bb2528ec141e7c3a29a7d7974d13",
-+      "darwin-x64": "b85c2ea4420ad0bc4abf2dc6cf1f55130ed681f1cabf60cf3f526e4c9e2712ff",
-+      "darwin-aarch64": "1901d539912c02afa10d1cc126943a8855a7eedebe830119463470db5e6c59e8",
-       // node.lib: Scoop installs Node.js itself on Windows.
--      "windows-x64": "2f71186cc7649a7406b1616566700e397e9dd52bd7267440d78d78a1725bd312",
--      "windows-aarch64": "bd474f1ca8c44b2ab10e908c14447c5d91e1bac3f3a4d3141c78b6dbb5d1a253",
-+      "windows-x64": "caad0090dc3add94c06abd01e395e8ec0f1586c10071bda1f99480445d695f6f",
-+      "windows-aarch64": "45084cbfc0170d7a30b29ab1eeeb2b0d770995ade0a13a4cc82cf31189f95c9f",
-     },
-   },
-   bun: {
--    version: "1.4.2",
-+    version: "1.4.4",
-     // The release's SHASUMS256.txt.
-     sha256: {
--      "linux-x64": "36368faef7527875d5ffa52e53cd48021741f2a83eb6208a8dd64068d422a913",
--      "linux-aarch64": "54328bbc2d9c8e0c9f892c544d66c57a83b84139e34909e5ee81758f1ac8fda7",
--      "linux-x64-musl": "4835eca59d6da70f4674f5642f6e459dcadab773695b2ed9922d131057989742",
--      "linux-aarch64-musl": "71760b6c8ea30623b81a4907cb815d48e2ea266f2e73e751534a44a0607950df",
--      "darwin-x64": "80520d7e17526308c9185d261679ac6d27798d3803a0e9f7ff9121ab8affb012",
--      "darwin-aarch64": "90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f",
--      "windows-x64": "ce4c17497b2f29712a99d3d53f028de28cd42e3bacb8589599e7f000e49b6405",
--      "windows-aarch64": "a7a16b876a305fd1029c66dbd27007b4f6112ae896532f675878731a21e50cfd",
-+      "linux-x64": "bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c",
-+      "linux-aarch64": "baa6bb36f51d6e58561e02bbea825038a9df454f673d6d776e8bbf86f8c7850e",
-+      "linux-x64-musl": "a5a8ccc5e74dcb883fe974f125a7bdb3b41e5195ed1b870e73f17effd3eb2b2d",
-+      "linux-aarch64-musl": "57f01b02ac7113c61c935f28f38c2eab849e3c970dab21f8b640a87b1ef65009",
-+      "darwin-x64": "50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e",
-+      "darwin-aarch64": "c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510",
-+      "windows-x64": "cd2c0fccc78f3ede1f50ca827a15f063eda13d4d150a3d0674f4f6e323d864a5",
-+      "windows-aarch64": "2d57a0eec0cb44d95c918c3f9734f60455a1306ae5085d76fc68f44e3ee30d09",
-     },
-   },
-   curlH3: {
-@@ -1944,6 +1944,9 @@ function visualStudio(): Tool {
-         installer,
-         `--passive --norestart --wait --force --locale en-US ${components.map(id => `--add ${id}`).join(" ")} --includeRecommended`,
-         [0, 3010],
-+        // dd_<program>_<time>.log and its _errors.log. Not dd_setup_<time>_<n>_<package>.log: there are hundreds,
-+        // and an MSI's ends with every property of the machine and the user.
-+        [printEndOfLogs(environment("TEMP"), /^dd_[a-z_]+_\d+(_errors)?\.log$/)],
-       ),
-     ],
-   };
-@@ -2960,12 +2963,36 @@ const scheduledTaskAtStartup = (options: { name: string; program: string; argume
-   ),
- ];
- 
--/** An installer that reports through its exit code. 3010: installed, and a restart is needed; the bake ends with one. */
-+/**
-+ * An installer that reports through its exit code. 3010: installed, and a restart is needed; the bake ends with one.
-+ * `onFailure` runs before the bake fails: the machine is deleted next, and what the installer wrote with it.
-+ */
- const runInstaller =
--  (what: string, program: Value, argumentList: Value, okExitCodes: number[] = [0]): Step =>
-+  (what: string, program: Value, argumentList: Value, okExitCodes: number[] = [0], onFailure: Step[] = []): Step =>
-+  c => {
-+    const failed = okExitCodes.map(code => `$process.ExitCode -ne ${code}`).join(" -and ");
-+    const fail = `throw "bootstr
-```
-
-**File**: `scripts/build/deps/nodejs-headers.ts` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ export const NODEJS_VERSION = pins.nodejs.version;
- export const NODEJS_ABI_VERSION = "147";
- 
- /** V8 version reported by process.versions.v8 — must match the pinned Node.js version's. */
--export const NODEJS_V8_VERSION = "14.6.202.34-node.20";
-+export const NODEJS_V8_VERSION = "14.6.202.34-node.40";
- 
- export const nodejsHeaders: Dependency = {
-   name: "nodejs",
-```
-
-**File**: `scripts/darwin-ci/host.sh` (modified, +3/-3)
-```diff
-@@ -8,9 +8,9 @@ sudo -n true 2>/dev/null || { echo "needs passwordless sudo for $(whoami)"; exit
- brew_installer_commit=a34ae4ee9151cbce4c3b33bca7043a972b7ae9a5
- brew_installer_sha256=12479a24be3f5307eecac7cde670fad7118640f031229e964f544b1367b52a41
- # https://github.com/oven-sh/bun/releases/download/bun-v$bun_version/SHASUMS256.txt
--bun_version=1.4.2
--bun_sha256_aarch64=90987a3a16d7db556d886ac3d551e7b6d3edf0a1cf43acaed622e8676be1d12f
--bun_sha256_x64=80520d7e17526308c9185d261679ac6d27798d3803a0e9f7ff9121ab8affb012
-+bun_version=1.4.4
-+bun_sha256_aarch64=c240d7f0ccb90c263a849fcdb09b7ee62630d921348ed6aafda86b9d577bc510
-+bun_sha256_x64=50a3491f73abc2fe81673171a85762d3bc2cc1680ccecadd983de99adf77977e
- 
- if [ "$(uname -m)" = arm64 ]; then prefix=/opt/homebrew; target=aarch64; bun_sha256=$bun_sha256_aarch64; else prefix=/usr/local; target=x64; bun_sha256=$bun_sha256_x64; fi
- 
-```
-
-**File**: `src/js/node/http2.ts` (modified, +4/-4)
-```diff
-@@ -6539,6 +6539,10 @@ function initializeOptions(options) {
-     if (options.remoteCustomSettings.length > MAX_ADDITIONAL_SETTINGS) throw $ERR_HTTP2_TOO_MANY_CUSTOM_SETTINGS();
-   }
- 
-+  if (options.strictSingleValueFields !== undefined) {
-+    validateBoolean(options.strictSingleValueFields, "options.strictSingleValueFields");
-+  }
+ test("dots 1", async () => {
+   const result = await Bun.spawn({
+@@ -101,3 +101,39 @@ test("dots 2", async () => {
+     }
+   `);
+ });
 +
-   if (options.maxSessionInvalidFrames !== undefined)
-     validateUint32(options.maxSessionInvalidFrames, "options.maxSessionInvalidFrames");
++test("a console group with no label does not break the line of dots", async () => {
++  using dir = tempDir("dots-empty-group", {
++    "empty-group.test.ts": `
++      import { test } from "bun:test";
++      test("before", () => {});
++      test("group", () => {
++        console.group();
++        console.groupEnd();
++      });
++      test("between", () => {});
++      test("groupCollapsed", () => {
++        console.groupCollapsed();
++        console.groupEnd();
++      });
++      test("after", () => {});
++    `,
++  });
++  await using proc = Bun.spawn({
++    cmd: [bunExe(), "test", "--dots", "./empty-group.test.ts"],
++    cwd: String(dir),
++    env: bunEnv,
++    stdout: "pipe",
++    stderr: "pipe",
++  });
++  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
++  expect({
++    stdout: normalizeBunSnapshot(stdout, String(dir)),
++    stderr: normalizeBunSnapshot(stderr, String(dir)),
++    exitCode,
++  }).toEqual({
++    stdout: "bun test <version> (<revision>)",
++    stderr: ".....\n\n5 pass\n0 fail\nRan 5 tests across 1 file.",
++    exitCode: 0,
++  });
++});
+```
+
+**File**: `test/js/web/console/console-log.test.ts` (modified, +62/-0)
+```diff
+@@ -180,6 +180,68 @@ NamedError: console.error a named error
+ `);
+ });
  
-@@ -6550,10 +6554,6 @@ function initializeOptions(options) {
-     validateUint32(options.unknownProtocolTimeout, "options.unknownProtocolTimeout");
-   else options.unknownProtocolTimeout = 10000;
- 
--  if (options.strictSingleValueFields !== undefined) {
--    validateBoolean(options.strictSingleValueFields, "options.strictSingleValueFields");
--  }
--
-   // Initialize http1Options bag for HTTP/1 fallback when allowHTTP1 is true.
-   options.http1Options = { ...options.http1Options };
-   if (options.Http1IncomingMessage !== undefined) {
-```
-
----
-
-### Incident Patch 2: `b6a5ecee` (2026-10-22)
-**Commit Message**: release: fix the Homebrew job and a flaky Docker download (#46498)
-
-### What does this PR do?
-
-Fixes two jobs that failed in the [v1.4.4 release
-run](https://github.com/oven-sh/bun/actions/runs/39761233959).
-
-**Homebrew.** The job failed with `Unavailable version 2.6.10 for ruby
-on ubuntu-26.04`. `ubuntu-latest` is now `ubuntu-26.04`, and
-`ruby/setup-ruby` has no prebuilt Ruby older than 3.2 for that image.
-The job now asks for 3.4. The tap's `scripts/release.rb` only uses
-`net/http`, `json` and `digest`, so it does not need an old Ruby.
-
-**Docker.** The `-debian` build got a 404 for `SHASUMS256.txt.asc` 53
-seconds after the Sign job uploaded it. The other Docker jobs downloaded
-the same URL 3 seconds earlier and 2 seconds later. `curl --retry 5`
-does not retry a 404, so one bad response failed the build. The `.asc`
-download in all four Dockerfiles now passes `--retry-all-errors`.
-
-Re-running the failed Docker job published the missing tags. Homebrew
-does not have 1.4.4 yet. After this merges, the release workflow has to
-be run by hand from `main` with `tag=bun-v1.4.4` and
-`use-homebrew=true`.
-
-### How did you verify your code works?
-
-- Ruby: `ruby-3.4.10-ubuntu-26.04-x64.tar.gz` e
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -304,7 +304,7 @@ jobs:
-       - name: Setup Ruby
-         uses: ruby/setup-ruby@a0102e0972be65f351c307e2d64b9314a57c8073 # v1
-         with:
--          ruby-version: "2.6"
-+          ruby-version: "3.4"
-       - name: Update Tap
-         run: ruby scripts/release.rb "$BUN_VERSION"
-       - name: Commit Tap
-```
-
-**File**: `dockerhub/alpine/Dockerfile` (modified, +1/-0)
-```diff
-@@ -46,6 +46,7 @@ RUN apk --no-cache add ca-certificates curl gpg gpg-agent unzip \
-       -fsSLO \
-       --compressed \
-       --retry 5 \
-+      --retry-all-errors \
-     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
-       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
-       || (echo "error: failed to verify: $tag" && exit 1) \
-```
-
-**File**: `dockerhub/debian-slim/Dockerfile` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ RUN apt-get update -qq \
-       -fsSLO \
-       --compressed \
-       --retry 5 \
-+      --retry-all-errors \
-     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
-       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
-       || (echo "error: failed to verify: $tag" && exit 1) \
-```
-
-**File**: `dockerhub/debian/Dockerfile` (modified, +1/-0)
-```diff
-@@ -58,6 +58,7 @@ RUN apt-get update -qq \
-       -fsSLO \
-       --compressed \
-       --retry 5 \
-+      --retry-all-errors \
-     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
-       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
-       || (echo "error: failed to verify: $tag" && exit 1) \
-```
-
-**File**: `dockerhub/distroless/Dockerfile` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ RUN apt-get update -qq \
-       -fsSLO \
-       --compressed \
-       --retry 5 \
-+      --retry-all-errors \
-     && gpg --batch --assert-signer F3DCC08A8572C0749B3E18888EAB4D40A7B22B59 \
-       --verify --output SHASUMS256.verified.txt SHASUMS256.txt.asc \
-       || (echo "error: failed to verify: $tag" && exit 1) \
++it("console.groupCollapsed starts a group, as console.group does", async () => {
++  await using proc = Bun.spawn({
++    cmd: [
++      bunExe(),
++      "-e",
++      `console.groupCollapsed("Collapsed");
++       console.log("in collapsed");
++       console.warn("warn in collapsed");
++       console.groupCollapsed();
++       console.log("in collapsed with no label");
++       console.groupEnd();
++       console.group("Group in collapsed");
++       console.log("in group in collapsed");
++       console.groupEnd();
++       console.groupEnd();
++       console.group("Group");
++       console.groupCollapsed("Collapsed in group");
++       console.log("in collapsed in group");
++       console.error("error in collapsed in group");
++       console.groupEnd();
++       console.groupCollapsed(undefined);
++       console.log("in collapsed with an undefined label");
++       console.groupEnd();
++       console.log("back in group");
++       console.groupEnd();
++       console.groupCollapsed("%s has %d args", "label", 3);
++       console.groupEnd();
++       console.groupCollapsed();
++       console.groupEnd();
++       console.log("after");`,
++    ],
++    env: bunEnv,
++    stdout: "pipe",
++    stderr: "pipe",
++  });
++  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
++  expect({
++    stdout: stdout.replaceAll("\r\n", "\n"),
++    stderr: stderr.replaceAll("\r\n", "\n"),
++    exitCode,
++  }).toEqual({
++    stdout: [
++      "Collapsed",
++      "  in collapsed",
++      "    in collapsed with no label",
++      "  Group in collapsed",
++      "    in group in collapsed",
++      "Group",
++      "  Collapsed in group",
++      "    in collapsed in group",
++      "  undefined",
++      "    in collapsed with an undefined label",
++      "  back in group",
++      "label has 3 args",
++      "after",
++      "",
++    ].join("\n"),
++    stderr: ["  warn in collapsed", "    error in collapsed in group", ""].join("\n"),
++    exitCode: 0,
++  });
++});
++
+ it("console.log with SharedArrayBuffer", () => {
+   // console.log(x) === Bun.inspect(x) + "\n" written to stdout.
+   expect(Bun.inspect(new ArrayBuffer(0))).toBe("ArrayBuffer(0) []");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #46853** (closed): fuzzilli: make process.abort, execve and _kill no-ops in the REPRL child (@robobun)
 - **PR #46841** (closed): node:quic: keep a stream's headers and pendingTrailers after it closes (@robobun)
 - **PR #46831** (closed): http3: scope malformed-message failures to one stream instead of CONNECTION_CLOSE (@robobun)
 - **PR #46798** (closed): node:quic: derive header interest from onheaders, ontrailers and oninfo (@robobun)
 - **PR #46785** (closed): fix(jsc): bypass close_range syscall on Android (@SjnExe)
 - **PR #46784** (closed): fix(sys): avoid pidfd_open on Android to prevent SIGSYS seccomp crash (@SjnExe)
-- **PR #46782** (closed): fix(build): bypass Clang and Rust LLVM major version check on Android (@SjnExe)
 
 ---
 
@@ -1377,36 +1243,36 @@ be run by hand from `main` with `tag=bun-v1.4.4` and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533)
+## X. console.groupCollapsed: start a group, as console.group does (#46505)
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/bun-types/globals.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1917b1aa`: Build with Bun 1.4.4, update Node.js to 26.12.1 (#46533). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `449877f3`: console.groupCollapsed: start a group, as console.group does (#46505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/bun-types/globals.d.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          bun-version: "1.4.4"
-          bun-version: "1.4.4"
-          bun-version: "1.4.4"
-          bun-version: "1.4.4"
-          bun-version: "1.4.4"
+  /**
+   * Start a group. Logs `data` as the label of the group, if there is any,
+   * then indents later `log`, `info`, `debug`, `warn`, `error`, `dir` and
+   * `trace` output by two more spaces.
+   */
+  /** An alias for {@link group}. */
+  /** End the most recent group that is still open, and remove its indent. */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-          bun-version: "1.4.2"
-          bun-version: "1.4.2"
-          bun-version: "1.4.2"
-          bun-version: "1.4.2"
-          bun-version: "1.4.2"
+  /** Does nothing currently */
+  /** Does nothing currently */
+  /** Does nothing currently */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1917b1aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `449877f3` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-SV6S",
-    "timestamp": "2026-10-24T19:34:54.436Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "78368454b7e83365d15b5f37c7ede172beb608d575401a2f1053aca4458e4b90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-SZF0",
-    "timestamp": "2026-10-24T19:34:59.916Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "198da7b76d0aa07344ac7f092d3d5104848e1661b66e37cb4b534b6e9d4e01b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-SZS8",
-    "timestamp": "2026-10-24T19:35:00.392Z",
-    "repository": "Comfy-Org/Fibo-2.0",
-    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "a5a5dc18fadc36df27acab5008ef9d59c04d5ec1c373d48062f257dc26fdf8ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-T4B8",
-    "timestamp": "2026-10-24T19:35:06.260Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "ee48504ba0858da7a602982b7614538e74466ae477f204bc1cdc9f0af259e248",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-1AIA",
     "timestamp": "2026-10-24T19:41:27.538Z",
     "repository": "trailbaseio/trailbase",
@@ -7490,6 +7430,66 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-NTZR",
+    "timestamp": "2026-10-26T00:54:35.415Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "1cf440d82d974fe840dcb350af74bdd5d5c745ad6796a121ef3e63bb57bf0b11",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-NV2P",
+    "timestamp": "2026-10-26T00:54:36.817Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "02a217bcc7e254429dbcfa9f229eb6b436ffc5f08d82f936434993591521c862",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-O4KB",
+    "timestamp": "2026-10-26T00:54:49.115Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "b0ca96c9580bfb4a3aa3cb74b94eb2e5c8a55722f2120780efd19421c9cd7c49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-O5S2",
+    "timestamp": "2026-10-26T00:54:50.690Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "3efeb7edf5dda197ed34b0a6057bafa76d5c3d7d5fd20214cf0848ae8466320d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

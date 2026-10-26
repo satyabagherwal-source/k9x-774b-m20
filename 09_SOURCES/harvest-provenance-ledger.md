@@ -5069,3 +5069,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-26T00:48:22.899Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `f20acf34` | Multi-dimensional audit evidence | 2026-10-26T00:48:34.042Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `aa93d669` | Multi-dimensional audit evidence | 2026-10-26T00:48:37.245Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-26T00:54:35.422Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `449877f3` | Multi-dimensional audit evidence | 2026-10-26T00:54:36.820Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `bae35972` | Multi-dimensional audit evidence | 2026-10-26T00:54:49.118Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `57e72b32` | Multi-dimensional audit evidence | 2026-10-26T00:54:50.692Z |

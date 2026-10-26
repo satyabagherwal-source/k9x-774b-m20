@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `155f3050`  
+> **Source Version**: `bae35972`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:43:23.718Z  
+> **Timestamp**: 2026-10-26T00:54:48.866Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:43:22.399Z  
+> **Harvest Timestamp**: 2026-10-26T00:54:48.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25381 stars
+- **Stars / Engagement**: 25387 stars
 
 ---
 
@@ -810,1062 +810,490 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `155f3050` (2026-10-23)
-**Commit Message**: Docs - Add guides to How To Guides (#6060)
+### Incident Patch 1: `bae35972` (2026-10-25)
+**Commit Message**: [5/6] Async IDC: Rust cli UX (#6313)
 
 # Description of Changes
 
-Adds short guides to the **How To Guides** section of the docs: pages
-that each solve one precise problem, with module code in TypeScript, C#,
-Rust and C++, plus client code. They're grouped into three new
-categories, listed in the sidebar after the existing how-to pages, with
-URLs under `/how-to/games/`, `/how-to/social/` and
-`/how-to/app-patterns/`:
+Adds CLI, `spacetime.json` config and `spacetime dev` changes required
+for IDC receiver bindings.
+It can be reviewed commit wise.
 
-- **Games**: top 100 leaderboard, fixed-rate game tick, matchmaking
-queue, skill-based matchmaking with OpenSkill, turn-based game with turn
-timeouts, syncing only what's near the player, hiding information from
-players, seasonal leaderboard reset
-- **Social**: unique and non-offensive usernames, friends or follow
-list, chat rooms and private DMs, typing indicators, unread counts and
-notifications
-- **Common app patterns**: pagination, admin and moderator roles (with
-and without SpacetimeAuth), sending an email, calling an external API,
-calling an AI model (from the module or from a sidecar), seeding initial
-data
+This is required for [Receiver Binding of Async IDC
+proposal](https://github.com/clockworklabs/SpacetimeDBPrivate/blob/2c3c7492dadcc2633a662e22d8555182a5789d8b/proposals/0037-async-inter-database-communication.md#receiver-bindings)
 
-Written guides are also listed on the section's index page.
-`docs/GUIDES_TODO.md` tracks which guides are written. Each guide will
-also get a short-forma
+#### Examples:
+  Declare a dependency from local source, without publishing it:
 
-**File**: `docs/GUIDES_TODO.md` (added, +40/-0)
+
+
+  ```json
+  {
+ 
+    "database": "lobby",    # Database to publish
+
+    "module-path": "./lobby",    # Sender module source
+
+    "dependencies": [
+      {
+"name": "game_world", # Local Rust module name for the generated
+bindings
+    
+        "module-path": "./game_world",  # Receiver source
+
+"out-dir": "./lobby/src/remote_bindings" # Optional; Rust default:
+<sender module-path>/src/remote_binding
+      }
+    ]
+  }
+  ```
+
+  Or with also publishing dependency database.
+
+  ```json
+  {
+    "database": "lobby",
+    "module-path": "./lobby",
+    "dependencies": [
+      {
+        "name": "game_world",
+
+        "database": "game-world",
+
+      }
+    ],
+
+# Additional publish targets; existi
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+# Guides to write
+@@ -50,6 +50,14 @@ spacetime generate --lang typescript|csharp|rust --out-dir ./bindings --module-p
+ spacetime generate --lang unrealcpp --uproject-dir ./MyGame --module-path ./server --unreal-module-name MyGame
+ ```
+ 
++### Client and Module Bindings
 +
-+Short guides, each focused on one precise topic. Check off each one once it's written.
++`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
 +
-+Each guide has a stub page under `docs/00250-how-to/` (one folder per section below, numbered from `01000`),
-+wired into the sidebar in `sidebars.ts` under the "How To Guides" header. Once a guide is written, also list it
-+on the section's index page, `docs/00250-how-to/00000-index.md`. The stubs are regular published pages, so don't
-+merge this branch to `master` until every guide is written, or remove the unfinished stubs first.
++In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For dependencies, module binding language defaults to the calling module's language and Rust/TypeScript output defaults to `<calling module-path>/src/remote_bindings`. Explicit config `out-dir` is config-relative. A regular `generate` entry can select `"bindings": "module"`, but does not use dependency language or output defaults. The CLI `--bindings` override is allowed only when a single generation entry is selected.
 +
-+Each guide will also get a short-format video (done later, once the written guides exist).
++`dev` generates only root dependencies before building the calling module, and watches their source paths. Child targets are available for source lookup, not recursive dependency generation. `--skip-generate` skips receiver/client generation and receiver-only watching; `--skip-publish` does not. See https://spacetimedb.com/docs/cli-reference/spacetime-json#receiver-dependencies for examples.
 +
-+## Games
-+
-+- [x] How to make a top 100 leaderboard
-+- [x] Run a fixed-rate game tick
-+- [x] Build a matchmaking queue
-+- [x] Skill-based matchmaking with OpenSkill
-+- [x] Make a turn-based game with turn timeouts
-+- [x] Only sync what's near the player
-+- [x] Hide information from players
-+- [x] Reset a leaderboard each season
-+
-+## Social
-+
-+- [x] Keep usernames unique and block offensive ones
-+- [x] Build a friends or follow list
-+- [x] Chat rooms and private DMs
-+- [x] Typing indicators and other short-lived signals
-+- [x] Unread counts and notifications
-+
-+## Common app patterns
-+
-+- [x] Paginate or infinite-scroll a large table
-+- [x] Admin and moderator roles
-+- [x] Send an email from your module
-+- [x] Call an external API from your module
-+- [x] Call an AI model from your module
-+- [x] Call an AI model from a sidecar
-+- [x] Seed initial data on first publish
-+- [x] Store files in S3
+ ### Publishing & Deployment
+ 
+ ```bash
 ```
 
-**File**: `docs/docs/00250-how-to/00000-index.md` (modified, +38/-3)
+**File**: `crates/cli/src/spacetime_config.rs` (modified, +22/-0)
 ```diff
-@@ -5,16 +5,51 @@ slug: /how-to
+@@ -196,6 +196,9 @@ impl SpacetimeConfig {
+                 if fields.contains_key(key) {
+                     continue;
+                 }
++                if key == "dependencies" {
++                    continue;
++                }
+                 // If the child specifies any module source, skip inheriting the others
+                 if child_specifies_source && MODULE_SOURCE_KEYS.contains(&key.as_str()) {
+                     continue;
+@@ -2648,6 +2651,25 @@ mod tests {
+         );
+     }
  
- Step-by-step guides for common tasks.
- 
--- **Development**
-+- **Troubleshooting**
-+  - [Troubleshooting](./00050-troubleshooting.md) - Fix common problems with logins, modules and clients
++    #[test]
++    fn test_dependencies_not_inherited_from_parent() {
++        let json = r#"{
++            "database": "parent-db",
++            "dependencies": [
++                { "name": "auth", "database": "auth-db" }
++            ],
++            "children": [
++                { "database": "child-db" }
++            ]
++        }"#;
 +
-+- **App Patterns**
-+  - [Pagination](./01200-common-app-patterns/00100-pagination.md) - Load a large feed one page at a time with a view that takes the page number and page size
-+  - [Admin and Moderator Roles](./01200-common-app-patterns/00200-admin-roles.md) - Let moderators and admins do what regular users can't, checked in each reducer
-+  - [Send an Email](./01200-common-app-patterns/00400-send-email.md) - Queue emails from reducers and send them from a scheduled procedure, with retries
-+  - [Call an External API](./01200-common-app-patterns/00500-call-external-api.md) - Fetch data from a web API on a schedule and store it in a table that clients subscribe to
-+  - [Call an AI Model](./01200-common-app-patterns/00550-call-ai-model.md) - Generate text from a procedure without exposing your API key
-+  - [Call an AI Model from a Sidecar](./01200-common-app-patterns/00560-call-ai-model-sidecar.md) - Answer players with a separate program next to your database
-+  - [Seed Initial Data](./01200-common-app-patterns/00600-seed-initial-data.md) - Fill tables when the database is created, and update them later with an owner-only reducer
-+  - [Store Files in S3](./01200-common-app-patterns/00700-store-files-in-s3.md) - Let players upload and download files directly to a private bucket, with URLs your module signs
++        let config: SpacetimeConfig = json5::from_str(json).unwrap();
++        let targets = config.collect_all_targets_with_inheritance();
 +
-+- **Social Features**
-+  - [Unique Usernames](./01100-social/00100-unique-usernames.md) - Keep names unique and reject offensive ones with a word list and a moderation API
-+  - [Friends or Follow List](./01100-social/00200-friends-list.md) - Let players follow each other and see their own lists live
-+  - [Chat Rooms and Private DMs](./01100-social/00300-chat-rooms-and-dms.md) - Let players chat in rooms and send direct messages that only the right players receive
-+  - [Typing Indicators](./01100-social/00400-typing-indicators.md) - Show who's typing with an event table, without storing anything
-+  - [Unread Counts](./01100-social/00500-unread-counts.md) - Show how many messages each room has that the player hasn't read, and notify them about new ones
++        assert!(targets[0].fields.contains_key("dependencies"));
++        assert!(!targets[1].fields.contains_key("dependencies"));
++    }
 +
-+- **Multiplayer Games**
-+  - [Top 100 Leaderboard](./01000-games/00100-top-100-leaderboard.md) - Keep a live top 100 that clients subscribe to
-+  - [Fixed-Rate Game Tick](./01000-games/00200-fixed-rate-game-tick.md) - Run game logic on a schedule
-+  - [Matchmaking Queue](./01000-games/00300-matchmaking-queue.md) - Pair waiting players into matches
-+  - [Skill-Based Matchmaking](./01000-games/00350-skill-based-matchmaking.md) - Match players of similar skill with OpenSkill
-+  - [Turn-Based Game](./01000-games/00400-turn-based-game.md) - Enforce turns and time limits on the server
-+  - [Sync Nearby Players](./01000-games/00500-sync-nearby-entities.md) - Send each client only what's near its player
-+  - [Hide Information](./01000-games/00600-hide-information.md) - Keep tables private and show each player only what they may see
-+  - [Seasonal Leaderboard](./01000-games/00700-seasonal-leaderboard-reset.md) - Start the leaderboard over each season and keep a hall of fame
-+
-+- **Develop**
-   - [Unit Testing](./00900-unit-testing.md) - Test Rust and TypeScript modules against an in-memory database
-+  - [Logging](./00300-logging.md) - Set up logging for debugging
- 
--- **Deployment**
-+- **Deploy**
-   - [Deploy to MainCloud](./00100-deploy/00100-maincloud.md) - Deploy to SpacetimeDB's managed cloud
-   - [Railway](./00100-deploy/00300-railway.md) - Deploy SpacetimeDB with the official Railway template
-   - [Self-Hosting](./00100-deploy/00200-self-hosting.md) - Run SpacetimeDB on your own infrastructure
-+  - [Azure VMs and Key Rotation](./00700-self-hosted-key-rotation.md) - Rotate JWT signing keys on self-hosted servers without breaking `spacetime publish`
- 
- - **Database Features**
-   - [PostgreSQL Compatibility](./00200-pg-wire.md) - Connect with PostgreSQL clients
--  - [Logging](./00300-logging.md) - Set up logging for debugging
-   - [Row-Level Security](./00400-row-level-security.md) - Fine-grained access control
-   - [Reject Connections](./00500-reject-client-connections.md) - Control client access
-+
-+- **Migrate**
-+  - [From 1.0 to 2.0](./00600-migrating-to-2.0.md) - Update your code for the breaking changes in SpacetimeDB 2.0
-+  - [From Convex](./00800-migrating-from-convex.md) - Move an app backend from Convex to a SpacetimeDB module
+     #[test]
+     fn test_generate_not_inherited_from_parent() {
+         // Generate is never inherited. Children must define their own.
 ```
 
-**File**: `docs/docs/00250-how-to/01000-games/00100-top-100-leaderboard.md` (added, +452/-0)
+**File**: `crates/cli/src/subcommands/dev.rs` (modified, +143/-10)
 ```diff
-@@ -0,0 +1,452 @@
-+---
-+title: How to make a top 100 leaderboard
-+slug: /how-to/games/top-100-leaderboard
-+---
-+
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
-+
-+:::note Prerequisites
-+You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
-+:::
-+
-+In this guide, you'll build a leaderboard that shows the 100 best scores in your game and updates live on every client. You'll use an [index](../../00200-core-concepts/00300-tables/00300-indexes.md) to read scores, an anonymous [view](../../00200-core-concepts/00200-functions/00500-views.md) to pick the top 100, and a [subscription](../../00200-core-concepts/00400-subscriptions.md) to keep each client up to date.
-+
-+## How it works
-+
-+- A private `player_score` table stores each player's best score, with an index on the score.
-+- A `submit_score` reducer records a new score.
-+- A public `top_100` view reads every score through the index and returns the 100 highest.
-+- Clients subscribe to `top_100`, never to `player_score` itself.
-+
-+The view is anonymous: it returns the same rows no matter who asks. SpacetimeDB computes it once and shares the result with every subscribed client, instead of computing it once per client.
-+
-+## Define the table
-+
-+Add a table that holds one row per player, with an index on the `score` column. The view needs this index: views can't scan a whole table with `iter()`, so they read rows through indexes instead.
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+import { schema, table, t, Range } from 'spacetimedb/server';
-+
-+const playerScore = table(
-+  { name: 'player_score' },
-+  {
-+    identity: t.identity().primaryKey(),
-+    name: t.string(),
-+    score: t.u64().index('btree'),
-+  }
-+);
-+
-+const spacetimedb = schema({ playerScore });
-+export default spacetimedb;
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+```csharp
-+using SpacetimeDB;
-+
-+public static partial class Module
-+{
-+    [SpacetimeDB.Table(Accessor = "PlayerScore")]
-+    public partial struct PlayerScore
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        public Identity Identity;
-+
-+        public string Name;
-+
-+        [SpacetimeDB.Index.BTree]
-+        public ulong Score;
-+    }
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="rust" label="Rust">
-+
-+```rust
-+use spacetimedb::{view, AnonymousViewContext, Identity, ReducerContext, Table};
-+
-+#[spacetimedb::table(accessor = player_score)]
-+pub struct PlayerScore {
-+    #[primary_key]
-+    identity: Identity,
-+    name: String,
-+    #[index(btree)]
-+    score: u64,
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="cpp" label="C++">
-+
-+<CppModuleVersionNotice />
-+
-+```cpp
-+#include <spacetimedb.h>
-+#include <algorithm>
-+using namespace SpacetimeDB;
-+
-+struct PlayerScore {
-+    Identity identity;
-+    std::string name;
-+    uint64_t score;
-+};
-+SPACETIMEDB_STRUCT(PlayerScore, identity, name, score)
-+SPACETIMEDB_TABLE(PlayerScore, player_score, Private)
-+FIELD_PrimaryKey(player_score, identity)
-+FIELD_Index(player_score, score)
-+```
-+
-+</TabItem>
-+</Tabs>
-+
-+The table is private, so clients can't subscribe to it directly. They only see the 100 rows the view returns, however many players you have.
-+
-+:::tip
-+Keep scores in their own table. The view re-runs every time a row in `player_score` changes. If the score lived on a row that changes often, like a player's position, the leaderboard would be recomputed on every movement.
-+:::
-+
-+## Submit a score
-+
-+Add a reducer that records a score for the player who calls it. It only keeps a player's best score: a lower score than the one already stored is ignored.
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+export const submitScore = spacetimedb.reducer(
-+  { name: t.string(), score: t.u64() },
-+  (ctx, { name, score }) => {
-+    const existing = ctx.db.playerScore.identity.find(ctx.sender);
-+    if (!existing) {
-+      ctx.db.playerScore.insert({ identity: ctx.sender, name, score });
-+    } else if (score > existing.score) {
-+      // Keep the player's best score.
-+      ctx.db.playerScore.identity.update({ ...existing, name, score });
-+    }
-+  }
-+);
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+```csharp
-+public static partial class Module
-+{
-+    [SpacetimeDB.Reducer]
-+    public static void SubmitScore(ReducerContext ctx, string name, ulong score)
-+    {
-+        if (ctx.Db.PlayerScore.Identity.Find(ctx.Sender) is not PlayerScore existing)
-+        {
-+            ctx.Db.PlayerScore.Insert(new PlayerScore { Identity = ctx.Sender, Name = name, Score = score });
+@@ -486,7 +486,6 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
+     }
+ 
+     let spacetime_config = loaded_config.as_ref().map(|lc| &lc.config);
+-    let using_spacetime_config = spacetime_config.is_some();
+     let generate_configs_from_file: Vec<HashMap<String, serde_json::Value>> = {
+         let mut entries = spacetime_config.and_then(|c| c.generate.clone()).unwrap_or_default();
+         // Inherit top-level `module-path` into generate entries that don't specify their own.
+@@ -695,8 +694,13 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
+     // Use first database for client process
+     let db_name_for_client = &db_names_for_logging[0];
+ 
+-    // Extract watch directories from publish configs
+-    let watch_dirs = extract_watch_dirs(&publish_configs, &spacetimedb_dir, &project_dir);
++    // Watch published modules and receiver dependencies used for generation.
++    let watch_dirs = extract_watch_dirs(
++        &publish_configs,
++        &spacetimedb_dir,
++        &project_dir,
++        if skip_generate { None } else { spacetime_config },
++    )?;
+ 
+     println!("\n{}", "Starting development mode...".green().bold());
+     if db_names_for_logging.len() == 1 {
+@@ -769,7 +773,7 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
+         clear_database,
+         &publish_configs,
+         &generate_configs_from_file,
+-        using_spacetime_config,
++        spacetime_config,
+         server_from_cli,
+         force,
+         dotnet_version.as_deref(),
+@@ -885,7 +889,7 @@ pub async fn exec(mut config: Config, args: &ArgMatches) -> Result<(), anyhow::E
+                     clear_database,
+                     &publish_configs,
+                     &generate_configs_from_file,
+-                    using_spacetime_config,
++                    spacetime_config,
+                     server_from_cli,
+                     force,
+                     dotnet_version.as_deref(),
+@@ -1033,14 +1037,28 @@ async fn generate_build_and_publish(
+     clear_database: ClearMode,
+     publish_configs: &[CommandConfig<'_>],
+     generate_configs: &[HashMap<String, serde_json::Value>],
+-    using_spacetime_config: bool,
++    spacetime_config: Option<&SpacetimeConfig>,
+     server: Option<&str>,
+     yes: bool,
+     dotnet_version: Option<&str>,
+     native_aot: bool,
+     skip_publish: bool,
+     skip_generate: bool,
+ ) -> Result<(), anyhow::Error> {
++    // Receiver bindings must exist before compiling the sender, including on rebuilds.
++    if !skip_generate && let Some(spacetime_config) = spacetime_config {
++        let targets = spacetime_config.collect_all_targets_with_inheritance();
++        // Generate only the root config entry's dependencies.
++        // Child database entries are included for dependency lookup.
++        let entries = generate::dependency_generate_entries(&targets[0], &targets)?;
++        if !entries.is_empty() {
++            println!("{}", "Generating receiver bindings from spacetime.json...".cyan());
++            // Dependencies carry receiver build settings; do not inherit the sender's SDK version.
++            let entries = with_dotnet_version_for_dev(entries, dotnet_version, &[]);
++            generate::exec_from_entries(entries, crate::generate::extract_descriptions, yes, config_dir).await?;
 +        }
-+        else if (score > existing.Score)
-+        {
-+            // Keep the player's best score.
-+            existing.Name = na
++    }
++
+     println!("{}", "Building...".cyan());
+     let (_path_to_program, _host_type) = tasks::build(
+         spacetimedb_dir,
+@@ -1078,7 +1096,7 @@ async fn generate_build_and_publish(
+ 
+     if skip_generate {
+         println!("{}", "Skipping generate step (--skip-generate).".dimmed());
+-    } else if using_spacetime_config {
++    } else if spacetime_config.is_some() {
+         if generate_configs.is_empty() {
+             println!(
+                 "{}",
+@@ -1624,12 +1642,13 @@ fn resolve_database_sources(config: &SpacetimeConfig) -> HashMap<String, Option<
+     sources
+ }
+ 
+-/// Extract unique watch directories from publish configs
++/// Watch published modules and the root sender's receiver dependencies.
+ fn extract_watch_dirs(
+     publish_configs: &[CommandConfig<'_>],
+     default_spacetimedb_dir: &Path,
+     project_dir: &Path,
+-) -> std::collections::HashSet<PathBuf> {
++    spacetime_config: Option<&SpacetimeConfig>,
++) -> anyhow::Result<std::collections::HashSet<PathBuf>> {
+     use std::collections::HashSet;
+     let mut watch_dirs = HashSet::new();
+ 
+@@ -1653,7 +1672,19 @@ fn extract_watch_dirs(
+         watch_dirs.insert(canonical_path);
+     }
+ 
+-    watch_dirs
++    if let Some(config) = spacetime_config {
++        let targets = config.collect_all_targets_with_inheritance();
++        for entry in generate::dependency_generate_entries(&targets[0], &targets)? {
++            for key in ["module-path", "wasm-file", "js-file"] {
++                if let Some(path) = entry.get(key).and_then(|v| v.as_str()) {
++                    let path = project_dir.join(path);
++              
 ```
 
-**File**: `docs/docs/00250-how-to/01000-games/00200-fixed-rate-game-tick.md` (added, +467/-0)
+**File**: `crates/cli/src/subcommands/generate.rs` (modified, +550/-70)
 ```diff
-@@ -0,0 +1,467 @@
-+---
-+title: Run a fixed-rate game tick
-+slug: /how-to/games/fixed-rate-game-tick
-+---
+@@ -21,7 +21,7 @@ use crate::spacetime_config::{
+ };
+ use crate::tasks::csharp::dotnet_format;
+ use crate::tasks::rust::rustfmt;
+-use crate::util::y_or_n;
++use crate::util::{detect_module_language, y_or_n, ModuleLanguage};
+ use crate::Config;
+ use crate::{build, common_args};
+ use clap::builder::PossibleValue;
+@@ -53,6 +53,9 @@ fn build_generate_config_schema(command: &clap::Command) -> Result<CommandSchema
+         .key(Key::new("build_options").module_specific())
+         .key(Key::new("dotnet_version").module_specific())
+         .key(Key::new("include_private"))
++        .key(Key::new("bindings").generate_entry_specific())
++        .key(Key::new("dependency_name").config_only().generate_entry_specific())
++        .key(Key::new("sender_module_path").config_only().generate_entry_specific())
+         .exclude("json_module")
+         .exclude("force")
+         .exclude("no_config")
+@@ -86,7 +89,7 @@ fn get_filtered_generate_configs<'a>(
+             glob::Pattern::new(cli_database).with_context(|| format!("Invalid glob pattern: {cli_database}"))?;
+ 
+         let matched: Vec<_> = all_targets
+-            .into_iter()
++            .iter()
+             .filter(|target| {
+                 target
+                     .fields
+@@ -100,8 +103,7 @@ fn get_filtered_generate_configs<'a>(
+             anyhow::bail!(
+                 "No database target matches '{}'. Available databases: {}",
+                 cli_database,
+-                spacetime_config
+-                    .collect_all_targets_with_inheritance()
++                all_targets
+                     .iter()
+                     .filter_map(|t| t.fields.get("database").and_then(|v| v.as_str()))
+                     .collect::<Vec<_>>()
+@@ -111,39 +113,46 @@ fn get_filtered_generate_configs<'a>(
+ 
+         matched
+     } else {
+-        all_targets
++        all_targets.iter().collect()
+     };
+ 
+-    // Collect generate entries from matched targets, inheriting entity fields
+-    // Deduplicate by (module_path, serialized_generate_entry)
++    // Collect generate entries from matched targets, inheriting entity fields.
++    // Also synthesize module-binding entries for receiver dependencies.
++    // Deduplicate by (module_path, serialized_generate_entry).
+     let mut seen = std::collections::HashSet::new();
+     let mut generate_configs = Vec::new();
+ 
+     for target in &filtered_targets {
+-        let generate_entries = match &target.generate {
+-            Some(entries) if !entries.is_empty() => entries,
+-            _ => continue,
+-        };
+-
+-        // Get module_path from the target's entity fields for dedup
+         let module_path = target.fields.get("module-path").and_then(|v| v.as_str()).unwrap_or("");
+-
+-        for entry in generate_entries {
+-            // Deduplicate: same module path + same generate entry config = generate once
+-            let dedup_key = format!("{}:{}", module_path, serde_json::to_string(entry).unwrap_or_default());
++        let entries = target
++            .generate
++            .as_deref()
++            .unwrap_or(&[])
++            .iter()
++            .cloned()
++            .chain(dependency_generate_entries(target, &all_targets)?);
 +
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++        for entry in entries {
++            // Deduplicate: same module path + same generate entry config = generate once.
++            let dedup_key = format!("{}:{}", module_path, serde_json::to_string(&entry).unwrap_or_default());
+             if !seen.insert(dedup_key) {
+                 continue;
+             }
+ 
+-            // Merge entity-level fields (module-path, etc.) with the generate entry
+-            let mut merged = entry.clone();
+-            // Inherit module-path from the target entity if not set in the generate entry
+-            if let Some(mp) = target.fields.get("module-path") {
+-                merged.entry("module-path".to_string()).or_insert_with(|| mp.clone());
++            // Merge entity-level fields (module-path, etc.) with the generate entry.
++            let mut merged = entry;
++            // Inherit module-path from the target entity if the entry has no source of its own.
++            if !has_module_source(&merged)
++                && let Some(mp) = target.fields.get("module-path")
++            {
++                merged.insert("module-path".to_string(), mp.clone());
+             }
+ 
+             let command_config = CommandConfig::new(schema, merged, args)?;
+-            command_config.validate()?;
++            // Receiver language and output defaults will be resolved from the sender.
++            if command_config.get_one::<BindingKind>("bindings")? != Some(BindingKind::Module) {
++                command_config.validate()?;
++            }
+             generate_configs.push(command_config);
+         }
+     }
+@@ -167,6 +176,108 @@ fn get_filtered_generate_configs<'a>(
+     Ok(generate_configs)
+ }
+ 
++pub(super) fn dependency_generate_entries(
++    target: &crate::spacetime_config::FlatTarget,
++    all_targets: &[crate::spacetime_config::FlatTarget],
++) 
+```
+
+**File**: `docs/docs/00200-core-concepts/00100-databases/00200-spacetime-dev.md` (modified, +8/-0)
+```diff
+@@ -100,6 +100,14 @@ After completing setup, `spacetime dev`:
+ 
+ Your database will be available at `https://maincloud.spacetimedb.com`.
+ 
++### Receiver dependencies
 +
-+:::note Prerequisites
-+You need a module you can publish. If you don't have one yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
-+:::
++For inter-database calls, the **calling database** needs module bindings for the **receiving database** whose reducers it calls. These are distinct from the client bindings used by clients. Rust and TypeScript modules support receiver bindings.
 +
-+In this guide, you'll run your game's server logic at a fixed rate: a reducer that SpacetimeDB calls 20 times per second, which moves every entity in the world. You'll use a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to call the reducer and the `init` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md) to start it.
++When the root database in `spacetime.json` declares `dependencies`, `dev` generates those receiver bindings **before** building the calling module, including on rebuilds. It watches receiving module source paths as well as published module sources, even when the receiving modules are outside the calling module directory. Child targets may provide receiving module source settings, but their own dependency arrays are not processed by `dev`.
 +
-+## How it works
++`--skip-generate` skips both receiver and client binding generation and removes receiver-only watch paths; it does not supply missing bindings. `--skip-publish` does not skip generation. See the [receiver dependency reference](/cli-reference/spacetime-json#receiver-dependencies) for configuration and language support.
 +
-+- A `tick_timer` schedule table holds one row that tells SpacetimeDB to call the `tick` reducer every 50 milliseconds.
-+- The `init` reducer inserts that row when the database is created.
-+- The `tick` reducer measures how much time has passed since the last tick, then moves each entity by its velocity.
+ ### Client Development Server
+ 
+ `spacetime dev` can automatically run your client's development server alongside the SpacetimeDB module. This is configured via the `spacetime.json` file in your project root:
+```
+
+**File**: `docs/docs/00300-resources/00100-cli-reference/00100-cli-reference.md` (modified, +8/-2)
+```diff
+@@ -345,7 +345,7 @@ Start development mode with auto-regenerate client module bindings, auto-rebuild
+ * `--module-path <MODULE-PATH>` — Path to the SpacetimeDB server module, relative to current directory. Defaults to `<project-path>/spacetimedb`.
+ * `--client-lang <CLIENT-LANG>` — The programming language for the generated client module bindings (e.g., typescript, csharp, rust, unrealcpp). If not specified, it will be detected from the project.
+ 
+-  Possible values: `csharp`, `typescript`, `rust`, `unrealcpp`
++  Possible values: `csharp`, `typescript`, `rust`, `cpp`, `unrealcpp`
+ 
+ * `-s`, `--server <SERVER>` — The nickname, host name or URL of the server to publish to
+ * `-y`, `--yes` — Run non-interactively wherever possible. This will answer "yes" to almost all prompts, but will sometimes answer "no" to preserve non-interactivity (e.g. when prompting whether to log in with spacetimedb.com).
+@@ -468,7 +468,13 @@ Run `spacetime help generate` for more detailed information.
+ 
+ * `-l`, `--lang <LANG>` — The language to generate
+ 
+-  Possible values: `csharp`, `typescript`, `rust`, `unrealcpp`
++  Possible values: `csharp`, `typescript`, `rust`, `cpp`, `unrealcpp`
 +
-+## Define the tables
++* `--bindings <BINDINGS>` — The kind of bindings to generate (client applications or inter-database module calls)
 +
-+Add three tables:
++  Default value: `client`
 +
-+- `tick_timer` is the schedule table. Its `scheduled_at` column says when to call `tick`.
-+- `tick_state` is a private table with a single row that stores when the last tick ran.
-+- `entity` holds the things your tick moves. It's public, so clients can subscribe to it.
++  Possible values: `client`, `module`
+ 
+ * `--build-options <BUILD_OPTIONS>` — Options to pass to the build command, for example --build-options='--lint-dir='
+ 
+```
+
+**File**: `docs/docs/00300-resources/00100-cli-reference/00300-spacetime-json.md` (modified, +85/-2)
+```diff
+@@ -40,6 +40,7 @@ These fields can appear at any level (root or child):
+ | `num-replicas` | number | Yes | Number of database replicas |
+ | `anonymous` | boolean | Yes | Use anonymous identity |
+ | `organization` | string | Yes | Organization name or identity |
++| `dependencies` | array | No | Receiver binding inputs for this calling database (see [Receiver dependencies](#receiver-dependencies)) |
+ | `generate` | array | No | Generate targets (see [Generate configuration](#generate-configuration)) |
+ | `children` | array | No | Child database entities (see [Children and inheritance](#children-and-inheritance)) |
+ | `dev` | object | No | Dev server configuration, root-level only (see [`spacetime dev` configuration](#spacetime-dev-configuration)) |
+@@ -52,14 +53,15 @@ The `generate` key is an array of objects. Each object configures bindings gener
+ 
+ | Field | Type | Description |
+ |-------|------|-------------|
+-| `language` | string | Target language: `typescript`, `csharp`, `rust`, `unrealcpp` (required) |
++| `language` | string | Target language: `typescript`, `csharp`, `rust`, `unrealcpp`; `cpp` is reserved for module bindings |
++| `bindings` | string | `client` (default) for application clients, or `module` for inter-database calls |
+ | `out-dir` | string | Output directory for generated files |
+ | `namespace` | string | C# namespace (`csharp` only) |
+ | `unreal-module-name` | string | Unreal module name (`unrealcpp` only) |
+ | `uproject-dir` | string | Unreal project directory (`unrealcpp` only) |
+ | `include-private` | boolean | Include private tables in generated code |
+ 
+-Generate entries use the `module-path` (or `bin-path`/`js-path`) from their parent entity to determine which module to build and generate from.
++By default, generate entries use the `module-path` (or `bin-path`/`js-path`) from their parent entity to determine which module to build and generate from. An entry can specify its own module source instead.
+ 
+ When `spacetime generate` runs, it deduplicates by module path. If multiple databases share the same module and generate config (for example, via inheritance), bindings are generated once.
+ 
+@@ -80,6 +82,78 @@ When `spacetime generate` runs, it deduplicates by module path. If multiple data
+ }
+ ```
+ 
++## Receiver dependencies
 +
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
++`spacetime generate` produces two kinds of bindings:
 +
-+```typescript
-+import { ScheduleAt } from 'spacetimedb';
-+import { schema, table, t, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
++- **Client bindings** are used by clients to connect to a database, subscribe to data, and call its reducers.
++- **Module bindings**, also called **receiver bindings**, are used inside one database module to make asynchronous inter-database communication (IDC) calls to another database's reducers. Rust and TypeScript modules support these bindings; C# and C++ module bindings are not implemented yet.
 +
-+// 50 ms between ticks: 20 ticks per second.
-+const TICK_INTERVAL_MICROS = 50_000n;
++With `spacetime.json`, put client bindings in `generate` and receiver bindings in `dependencies`. Running `spacetime generate` processes both arrays: regular `generate` entries default to client bindings, and dependencies automatically generate module bindings. No `--bindings` flag or second `generate` entry is needed for a dependency.
 +
-+const tickTimer = table(
-+  { name: 'tick_timer' },
-+  {
-+    scheduledId: t.u64().primaryKey().autoInc(),
-+    scheduledAt: t.scheduleAt(),
-+  }
-+);
++A regular `generate` entry can also set `"bindings": "module"` explicitly. Unlike a dependency, it uses its parent target's module source unless overridden; if its language or output directory is omitted, those defaults are resolved from the config directory rather than the calling module.
 +
-+const tickState = table(
-+  { name: 'tick_state' },
-+  {
-+    id: t.u8().primaryKey(),
-+    lastTick: t.timestamp(),
-+  }
-+);
++The **calling database** contains the code making the inter-database call. The **receiving database** contains the reducers being called. In the examples below, `lobby` is the calling database and `game-world` is the receiving database. Declare receiver binding inputs in the calling database's `dependencies` array.
 +
-+const entity = table(
-+  { name: 'entity', public: true },
-+  {
-+    id: t.u64().primaryKey().autoInc(),
-+    x: t.f32(),
-+    y: t.f32(),
-+    velocityX: t.f32(),
-+    velocityY: t.f32(),
-+  }
-+);
++Each calling database with dependencies must define `module-path`. Dependencies are not inherited by children.
 +
-+const spacetimedb = schema({ tickTimer, tickState, entity });
-+export default spacetimedb;
++| Field | Required | Description |
++|-------|----------|-------------|
++| `name` | Yes | Local dependency name passed to receiver binding generation; not the receiver's database name |
++| `module-path` | One source required | Receiver source directory; takes precedence over `database` when both are set |
++| `database` | One source required | Exact name of another target in the same config, used to look up its local module source; not a live-schema fetch |
++| `out-dir` | No | Output directory, relative to the config directory |
++| `build-options` | No | Receiver build options when using a direct `module-path` |
++| `dotnet-version` | No | Receiver .NET SDK version when using a direct `module-path` |
 +
-+type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
-+```
++### Receiver source without a publish target
 +
-+</TabItem>
-+<TabItem value="csharp" label="C#">
++A receiving module source does not need its own database target:
 +
-+```csharp
-+using SpacetimeDB;
-+
-+public static partial class Module
++```json
 +{
-+    // 50 ms between ticks: 20 ticks per second.
-+    static readonly TimeSpan TickInterval = TimeSpan.FromMilliseconds(50);
-+
-+    [SpacetimeDB.Table(Accessor = "TickTimer", Scheduled = "Tick", ScheduledAt = "ScheduledAt")]
-+    public partial struct TickTimer
++  "database": "lobby",
++  "module-path": "./lobby",
++  "dependencies": [
 +    {
-+        [SpacetimeDB.PrimaryKey]
-+        [SpacetimeDB.AutoInc]
-+        public ulong ScheduledId;
-+        public ScheduleAt ScheduledAt;
++      "name": "game_world",
++      "module-path": "./game_world",
++      "out-dir": "./lobby/src/remote_bindings"
 +    }
-+
-+    [SpacetimeDB.Table(Accessor = "TickState")]
-+    public partial struct TickState
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        public byte Id;
-+        public Timestamp LastTick;
-+    }
-+
-+    [SpacetimeDB.Table(Accessor = "Entity", Public = true)]
-+    public partial struct Entity
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        [SpacetimeDB.AutoInc]
-+        public ulong Id;
-+        public float X;
-+        public float Y;
-+        public float VelocityX;
-+        public float VelocityY;
-+    }
++  ]
 +}
 +```
 +
-+</TabItem>
-+<TabItem value="rust" label="Rust">
-+
-+```rust
-+use spacetimedb::{reducer, table, ReducerContext, ScheduleAt, Table, Timestamp};
-+use std::time::Duration;
-+
-+// 50 ms between ticks: 20 ticks per second.
-+const TICK_INTERVAL: Duration = Duration::from_millis(50);
-+
-+#[table(accessor = tick_timer, scheduled(tick))]
-+pub struct TickTimer {
-+    #[primary_key]
-+    #[auto_inc]
-+    scheduled_id: u64,
-+    scheduled_at: ScheduleAt,
-+}
-+
-+#[table(accessor = tick_state)]
-+pub struct TickState {
-+    #[primary_key]
-+    id: u8,
-+    last_tick: Timestamp,
-+}
-+
-+#[table(accessor = entity, public)]
-+pub struct Entity {
-+    #[primary_key]
-+    #[auto_inc]
-+    id: u64,
-+    x: f32,
-+    y: f32,
-+    velocity_x: f32,
-+    velocity_y: f32,
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="cpp" label="C++">
-+
-+<CppModuleVersionNotice />
-+
-+```cpp
-+#include <spacetimedb.h>
-+using namespace SpacetimeDB;
-+
-+// 50 ms between ticks: 20 ticks per second.
-+const TimeDuration TICK_INTERVAL = TimeDuration::from_millis(50);
-+
-+struct TickTimer {
-+    uint64_t scheduled_id;
-+    ScheduleAt scheduled_at;
-+};
-+SPACETIMEDB_STRUCT(TickTimer, scheduled_id, scheduled_at)
-+SPACETIMEDB_TABLE(TickTimer, tick_timer, Private)
-+FIELD_PrimaryKeyAutoInc(tick_timer, scheduled_id)
-+SPACETIMEDB_SCHEDULE(tick_timer, 1, tick)  // Column 1 is scheduled_at
-+
-+struct TickState {
-+    uint8_t id;
-+    Timestamp last_tick;
-+};
-+SPACETIMEDB_STRUCT(TickState,
++Declaring a dependency does not publish the receiver. To make it a publish target too, define it under `children` and re
 ```
 
-**File**: `docs/docs/00250-how-to/01000-games/00300-matchmaking-queue.md` (added, +631/-0)
+**File**: `skills/cli/SKILL.md` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,631 @@
-+---
-+title: Build a matchmaking queue
-+slug: /how-to/games/matchmaking-queue
-+---
+@@ -50,6 +50,14 @@ spacetime generate --lang typescript|csharp|rust --out-dir ./bindings --module-p
+ spacetime generate --lang unrealcpp --uproject-dir ./MyGame --module-path ./server --unreal-module-name MyGame
+ ```
+ 
++### Client and Module Bindings
 +
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
++`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
 +
-+:::note Prerequisites
-+You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
-+:::
++In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For dependencies, module binding language defaults to the calling module's language and Rust/TypeScript output defaults to `<calling module-path>/src/remote_bindings`. Explicit config `out-dir` is config-relative. A regular `generate` entry can select `"bindings": "module"`, but does not use dependency language or output defaults. The CLI `--bindings` override is allowed only when a single generation entry is selected.
 +
-+In this guide, you'll build a matchmaking queue: players ask to find a match, wait in a queue, and are put into a 4-player match as soon as enough players are waiting. You'll use [reducers](../../00200-core-concepts/00200-functions/00300-reducers/00300-reducers.md) to join and leave the queue, the `client_disconnected` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00500-lifecycle.md) to clean up after players who leave, and a per-player [view](../../00200-core-concepts/00200-functions/00500-views.md) to tell each player about their match.
++`dev` generates only root dependencies before building the calling module, and watches their source paths. Child targets are available for source lookup, not recursive dependency generation. `--skip-generate` skips receiver/client generation and receiver-only watching; `--skip-publish` does not. See https://spacetimedb.com/docs/cli-reference/spacetime-json#receiver-dependencies for examples.
 +
-+## How it works
-+
-+- A private `queue_entry` table holds the players who are waiting.
-+- A `join_queue` reducer adds the caller to the queue, then creates a match if enough players are waiting.
-+- A `leave_queue` reducer and the `client_disconnected` reducer remove players from the queue.
-+- Private `game_match` and `match_player` tables record each match and its players.
-+- A public `my_match` view returns the players in the caller's match, and nothing else.
-+
-+## Define the tables
-+
-+Add three tables. All of them are private: players only learn about their own match, through the view.
-+
-+- `queue_entry` has one row per waiting player, with the time they joined.
-+- `game_match` has one row per match.
-+- `match_player` has one row per player in a match. Its primary key is the player's identity, so a player can only be in one match at a time. It has an index on `match_id`, to find every player in a match.
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
-+
-+// Number of players in each match.
-+const MATCH_SIZE = 4;
-+
-+const queueEntry = table(
-+  { name: 'queue_entry' },
-+  {
-+    identity: t.identity().primaryKey(),
-+    joinedAt: t.timestamp(),
-+  }
-+);
-+
-+const gameMatch = table(
-+  { name: 'game_match' },
-+  {
-+    id: t.u64().primaryKey().autoInc(),
-+    createdAt: t.timestamp(),
-+  }
-+);
-+
-+const matchPlayer = table(
-+  { name: 'match_player' },
-+  {
-+    identity: t.identity().primaryKey(),
-+    matchId: t.u64().index('btree'),
-+  }
-+);
-+
-+const spacetimedb = schema({ queueEntry, gameMatch, matchPlayer });
-+export default spacetimedb;
-+
-+type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+```csharp
-+using SpacetimeDB;
-+
-+public static partial class Module
-+{
-+    // Number of players in each match.
-+    const int MatchSize = 4;
-+
-+    [SpacetimeDB.Table(Accessor = "QueueEntry")]
-+    public partial struct QueueEntry
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        public Identity Identity;
-+        public Timestamp JoinedAt;
-+    }
-+
-+    [SpacetimeDB.Table(Accessor = "GameMatch")]
-+    public partial struct GameMatch
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        [SpacetimeDB.AutoInc]
-+        public ulong Id;
-+        public Timestamp CreatedAt;
-+    }
-+
-+    [SpacetimeDB.Table(Accessor = "MatchPlayer")]
-+    public partial struct MatchPlayer
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        public Identity Identity;
-+
-+        [SpacetimeDB.Index.BTree]
-+        public ulong MatchId;
-+    }
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="rust" label="Rust">
-+
-+```rust
-+use spacetimedb::{reducer, table, view, Identity, ReducerContext, Table, Timestamp, ViewContext};
-+
-+// Number of players in each match.
-+const MATCH_SIZE: usize = 4;
-+
-+#[table(accessor = queue_entry)]
-+pub struct QueueEntry {
-+    #[primary_key]
-+    identity: Identity,
-+    joined_at: Timestamp,
-+}
-+
-+#[table(accessor = game_match)]
-+pub struct GameMatch {
-+    #[primary_key]
-+    #[auto_inc]
-+    id: u64,
-+    created_at: Timestamp,
-+}
-+
-+#[table(accessor = match_player)]
-+pub struct MatchPlayer {
-+    #[primary_key]
-+    identity: Identity,
-+    #[index(btree)]
-+    match_id: u64,
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="cpp" label="C++">
-+
-+<CppModuleVersionNotice />
-+
-+```cpp
-+#include <spacetimedb.h>
-+#include <algorithm>
-+using namespace SpacetimeDB;
-+
-+// Number of players in each match.
-+constexpr size_t MATCH_SIZE = 4;
-+
-+struct QueueEntry {
-+    Identity identity;
-+    Timestamp joined_at;
-+};
-+SPACETIMEDB_STRUCT(QueueEntry, identity, joined_at)
-+SPACETIMEDB_TABLE(QueueEntry, queue_entry, Private)
-+FIELD_PrimaryKey(queue_entry, identity)
-+
-+struct GameMatch {
-+    uint64_t id;
-+    Timestamp created_at;
-+};
-+SPACETIMEDB_STRUCT(GameMatch, id, created_at)
-+SP
-```
-
-**File**: `docs/docs/00250-how-to/01000-games/00350-skill-based-matchmaking.md` (added, +1024/-0)
-```diff
-@@ -0,0 +1,1024 @@
-+---
-+title: Skill-based matchmaking with OpenSkill
-+slug: /how-to/games/skill-based-matchmaking
-+---
-+
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
-+
-+:::note Prerequisites
-+You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first. This guide builds on [Build a matchmaking queue](./00300-matchmaking-queue.md), so read that one first.
-+:::
-+
-+In this guide, you'll put players of similar skill in the same match, and update each player's skill after every match. Skill is measured with [OpenSkill](https://openskill.me), an open-source rating system that, like TrueSkill, rates players in teams as well as one-on-one. Matches have two teams, and a single constant switches between 1v1 and 2v2. You'll use a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to look for matches every second, allowing a wider skill gap the longer players wait.
-+
-+## How it works
-+
-+- A public `player_rating` table holds each player's rating: `mu`, their estimated skill, and `sigma`, how uncertain that estimate is. New players start at a `mu` of 25 and a `sigma` of 8.33.
-+- A `join_queue` reducer adds the caller to the queue with their current `mu`.
-+- A `match_players` reducer runs every second. It sorts the waiting players by `mu`, and creates a match from any group of neighbours whose skill gap is small enough. The allowed gap grows with time spent waiting, so nobody waits forever.
-+- Each match has two teams. Players are dealt to the teams so that both get a similar total skill.
-+- A `finish_match` function, which your game logic calls when a match ends, updates the rating of every player in it.
-+
-+## Install OpenSkill
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+Add the [`openskill`](https://www.npmjs.com/package/openskill) package to your module:
-+
-+```bash
-+npm install openskill
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+Add the [`OpenSkillSharp`](https://www.nuget.org/packages/OpenSkillSharp) package to your module:
-+
-+```bash
-+dotnet add package OpenSkillSharp
-+```
-+
-+</TabItem>
-+<TabItem value="rust" label="Rust">
-+
-+Add the [`skillratings`](https://crates.io/crates/skillratings) crate to your module. Its `weng_lin` module implements the Weng-Lin algorithm, which is what OpenSkill is built on:
-+
-+```bash
-+cargo add skillratings
-+```
-+
-+</TabItem>
-+<TabItem value="cpp" label="C++">
-+
-+<CppModuleVersionNotice />
-+
-+There's no OpenSkill library for C++ yet. Instead, you'll write the rating update yourself: it's a short function, shown in [Update ratings when a match ends](#update-ratings-when-a-match-ends).
-+
-+</TabItem>
-+</Tabs>
-+
-+## Define the tables
-+
-+Start from the tables of the matchmaking queue guide, and make three changes:
-+
-+- `queue_entry` also stores the player's `mu`, so `match_players` can sort the queue without looking up every rating.
-+- `match_player` has a `team` column, 0 or 1.
-+- A new `player_rating` table holds every player's rating. It's public, so anyone can see anyone's rating.
-+
-+Then add `matchmaking_timer`, the schedule table that calls `match_players`.
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+import { ScheduleAt } from 'spacetimedb';
-+import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
-+import { rate, rating } from 'openskill';
-+
-+// Players on each team: 1 for 1v1 matches, 2 for 2v2, and so on.
-+const TEAM_SIZE = 2;
-+const MATCH_SIZE = 2 * TEAM_SIZE;
-+
-+// The largest skill gap allowed in a match, and how much it grows
-+// for each second the longest-waiting player has waited.
-+const STARTING_GAP = 2;
-+const GAP_GROWTH_PER_SECOND = 0.2;
-+
-+const playerRating = table(
-+  { name: 'player_rating', public: true },
-+  {
-+    identity: t.identity().primaryKey(),
-+    mu: t.f64(),
-+    sigma: t.f64(),
-+  }
-+);
-+
-+const queueEntry = table(
-+  { name: 'queue_entry' },
-+  {
-+    identity: t.identity().primaryKey(),
-+    joinedAt: t.timestamp(),
-+    mu: t.f64(),
-+  }
-+);
-+
-+const gameMatch = table(
-+  { name: 'game_match' },
-+  {
-+    id: t.u64().primaryKey().autoInc(),
-+    createdAt: t.timestamp(),
-+  }
-+);
-+
-+const matchPlayer = table(
-+  { name: 'match_player' },
-+  {
-+    identity: t.identity().primaryKey(),
-+    matchId: t.u64().index('btree'),
-+    team: t.u8(),
-+  }
-+);
-+
-+const matchmakingTimer = table(
-+  { name: 'matchmaking_timer' },
-+  {
-+    scheduledId: t.u64().primaryKey().autoInc(),
-+    scheduledAt: t.scheduleAt(),
-+  }
-+);
-+
-+const spacetimedb = schema({ playerRating, queueEntry, gameMatch, matchPlayer, matchmakingTimer });
-+export default spacetimedb;
-+
-+type Ctx = ReducerCtx<InferSchema<typeof spacetime
-```
-
-**File**: `docs/docs/00250-how-to/01000-games/00400-turn-based-game.md` (added, +886/-0)
-```diff
-@@ -0,0 +1,886 @@
-+---
-+title: Make a turn-based game with turn timeouts
-+slug: /how-to/games/turn-based-game
-+---
-+
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
-+
-+:::note Prerequisites
-+You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
-+:::
-+
-+In this guide, you'll build a game of tic-tac-toe where each player has 30 seconds to make a move, and loses the game if they run out of time. The server checks every move, so players can't cheat. You'll use a [reducer](../../00200-core-concepts/00200-functions/00300-reducers/00300-reducers.md) to check and apply moves, and a [schedule table](../../00200-core-concepts/00300-tables/00500-schedule-tables.md) to end turns that take too long.
-+
-+The same pattern works for any turn-based game, such as a card game or a strategy game: replace the board and the rules with your own.
-+
-+## How it works
-+
-+- A private `game` table holds each game: its players, its board, whose turn it is, and when that turn times out.
-+- A `make_move` reducer checks that a move is legal, applies it, then gives the turn to the other player.
-+- A private `turn_timer` schedule table holds one timer per game in progress. When the current turn's deadline passes, it calls the `turn_timeout` reducer.
-+- Each move replaces the game's timer with a new one. If the timer fires, the player whose turn it is forfeits.
-+- A `my_games` view returns the caller's games. Clients subscribe to it, and show the board and a countdown.
-+
-+## Define the tables
-+
-+Add two tables and a view:
-+
-+- `game` has one row per game. It's private: players read their games through the `my_games` view. It has an index on each player column. The view combines the two columns with `or`, and SpacetimeDB can't use an index for an `or`, so it reads every game. That's fine while the table is small. If you expect many games, split the view in two, one for each player column, as the [chat guide does for DMs](../01100-social/00300-chat-rooms-and-dms.md#show-each-player-their-messages): each view then reads only the caller's games through its index.
-+- `turn_timer` is the schedule table. It's private too: clients read the deadline from their games instead. Its `game_id` column is unique, so a game never has more than one timer.
-+- `my_games` is a public view that returns the caller's games, as X or as O. Keeping tables private and exposing what clients need through views is the recommended practice: see [Hide information from players](./00600-hide-information.md).
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+import { ScheduleAt, Timestamp, type Identity } from 'spacetimedb';
-+import { schema, table, t, SenderError, type InferSchema, type ReducerCtx } from 'spacetimedb/server';
-+
-+// How long each player has to make a move: 30 seconds.
-+const TURN_TIME_LIMIT_MICROS = 30_000_000n;
-+
-+const game = table(
-+  { name: 'game' },
-+  {
-+    id: t.u64().primaryKey().autoInc(),
-+    playerX: t.identity().index('btree'),
-+    playerO: t.identity().index('btree'),
-+    // The 9 cells, row by row: 'X', 'O', or '-' when empty.
-+    board: t.string(),
-+    // The player whose turn it is.
-+    turn: t.identity(),
-+    // When the current turn times out.
-+    turnDeadline: t.timestamp(),
-+    finished: t.bool(),
-+    // The winner, or undefined while the game is in progress or after a draw.
-+    winner: t.option(t.identity()),
-+  }
-+);
-+
-+const turnTimer = table(
-+  { name: 'turn_timer' },
-+  {
-+    scheduledId: t.u64().primaryKey().autoInc(),
-+    scheduledAt: t.scheduleAt(),
-+    gameId: t.u64().unique(),
-+  }
-+);
-+
-+const spacetimedb = schema({ game, turnTimer });
-+export default spacetimedb;
-+
-+type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
-+
-+export const myGames = spacetimedb.view(
-+  { name: 'my_games', public: true },
-+  t.array(game.rowType),
-+  ctx => ctx.from.game.where(g => g.playerX.eq(ctx.sender).or(g.playerO.eq(ctx.sender)))
-+);
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+```csharp
-+using SpacetimeDB;
-+
-+public static partial class Module
-+{
-+    // How long each player has to make a move.
-+    static readonly TimeDuration TurnTimeLimit = TimeDuration.FromSeconds(30);
-+
-+    [SpacetimeDB.Table(Accessor = "Game")]
-+    public partial struct Game
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        [SpacetimeDB.AutoInc]
-+        public ulong Id;
-+
-+        [SpacetimeDB.Index.BTree]
-+        public Identity PlayerX;
-+
-+        [SpacetimeDB.Index.BTree]
-+        public Identity PlayerO;
-+
-+        // The 9 cells, row by row: 'X', 'O', or '-' when empty.
-+        public string Board;
-+
-+        // The player whose turn it is.
-+        public Identity Turn;
-+
-+        // When the current turn times out.
-+     
-```
-
-**File**: `docs/docs/00250-how-to/01000-games/00500-sync-nearby-entities.md` (added, +613/-0)
-```diff
-@@ -0,0 +1,613 @@
-+---
-+title: "Only sync what's near the player"
-+slug: /how-to/games/sync-nearby-entities
-+---
-+
-+import Tabs from '@theme/Tabs';
-+import TabItem from '@theme/TabItem';
-+import { CppModuleVersionNotice } from "@site/src/components/CppModuleVersionNotice";
-+
-+:::note Prerequisites
-+You need a module and a client connected to it. If you don't have them yet, follow the [quickstart](../../00100-intro/00100-getting-started/00100-getting-started.md) for your language first.
-+:::
-+
-+In this guide, you'll make each client receive only the players near it, rather than every player in the world. You'll split the world into square chunks, store the chunk each player is in, and have each client [subscribe](../../00200-core-concepts/00400-subscriptions.md) to the chunks around its player, moving that subscription as the player moves.
-+
-+:::warning This doesn't hide players
-+Clients choose what they subscribe to, and the `player` table is public, so a modified client can subscribe to every chunk and see every player. This guide reduces what honest clients download. If players must not be able to see where other players are, for example hidden units in a strategy game, the server has to decide what each client can see: see [Hide information from players](./00600-hide-information.md).
-+:::
-+
-+## How it works
-+
-+- The world is a grid of square chunks, each 100 units wide.
-+- A public `player` table holds each player's position and the chunk they're in, with an index on the chunk.
-+- A `move_player` reducer updates the player's position and chunk.
-+- Each client subscribes to its own row, and to the players in its chunk and the 8 chunks around it.
-+- When the player enters a new chunk, the client subscribes to the new chunks, then drops its old subscription.
-+
-+## Define the table
-+
-+Add a `player` table with one row per online player. `chunk` is a single number that identifies a chunk: `chunk_y * 100 + chunk_x`. Its index lets SpacetimeDB find the players in a chunk directly, without scanning the whole table.
-+
-+The world here is 10,000 units wide, or 100 chunks per side. Use the size of your own world.
-+
-+<Tabs groupId="server-language" queryString>
-+<TabItem value="typescript" label="TypeScript">
-+
-+```typescript
-+import { schema, table, t, SenderError } from 'spacetimedb/server';
-+
-+// The world is a square, split into 100 x 100 square chunks.
-+const WORLD_SIZE = 10_000;
-+const CHUNK_SIZE = 100;
-+const CHUNKS_PER_SIDE = 100;
-+
-+const player = table(
-+  { name: 'player', public: true },
-+  {
-+    identity: t.identity().primaryKey(),
-+    x: t.f32(),
-+    y: t.f32(),
-+    // The chunk the player is in. Updated whenever the player moves.
-+    chunk: t.u32().index('btree'),
-+  }
-+);
-+
-+const spacetimedb = schema({ player });
-+export default spacetimedb;
-+```
-+
-+</TabItem>
-+<TabItem value="csharp" label="C#">
-+
-+```csharp
-+using SpacetimeDB;
-+
-+public static partial class Module
-+{
-+    // The world is a square, split into 100 x 100 square chunks.
-+    const float WorldSize = 10_000f;
-+    const float ChunkSize = 100f;
-+    const uint ChunksPerSide = 100;
-+
-+    [SpacetimeDB.Table(Accessor = "Player", Public = true)]
-+    public partial struct Player
-+    {
-+        [SpacetimeDB.PrimaryKey]
-+        public Identity Identity;
-+        public float X;
-+        public float Y;
-+
-+        // The chunk the player is in. Updated whenever the player moves.
-+        [SpacetimeDB.Index.BTree]
-+        public uint Chunk;
-+    }
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="rust" label="Rust">
-+
-+```rust
-+use spacetimedb::{reducer, table, Identity, ReducerContext, Table};
-+
-+// The world is a square, split into 100 x 100 square chunks.
-+const WORLD_SIZE: f32 = 10_000.0;
-+const CHUNK_SIZE: f32 = 100.0;
-+const CHUNKS_PER_SIDE: u32 = 100;
-+
-+#[table(accessor = player, public)]
-+pub struct Player {
-+    #[primary_key]
-+    identity: Identity,
-+    x: f32,
-+    y: f32,
-+    // The chunk the player is in. Updated whenever the player moves.
-+    #[index(btree)]
-+    chunk: u32,
-+}
-+```
-+
-+</TabItem>
-+<TabItem value="cpp" label="C++">
-+
-+<CppModuleVersionNotice />
-+
-+```cpp
-+#include <spacetimedb.h>
-+using namespace SpacetimeDB;
-+
-+// The world is a square, split into 100 x 100 square chunks.
-+constexpr float WORLD_SIZE = 10'000.0f;
-+constexpr float CHUNK_SIZE = 100.0f;
-+constexpr uint32_t CHUNKS_PER_SIDE = 100;
-+
-+struct Player {
-+    Identity identity;
-+    float x;
-+    float y;
-+    // The chunk the player is in. Updated whenever the player moves.
-+    uint32_t chunk;
-+};
-+SPACETIMEDB_STRUCT(Player, identity, x, y, chunk)
-+SPACETIMEDB_TABLE(Player, player, Public)
-+FIELD_PrimaryKey(player, identity)
-+FIELD_Index(player, chunk)
-+```
-+
-+</TabItem>
-+</Tabs>
-+
-+## Track each player's chunk
-+
-+Add a `chunk_at` function that returns the chunk containing a position, and keep `chunk` up to date wherever a player's position changes:
-+
-+- The `client_connected` [lifecycle reducer](../../00200-core-concepts/00200-functions/00300-reducers/00
+ ### Publishing & Deployment
+ 
+ ```bash
 ```
 
 #### Recent Merged Pull Requests:
@@ -1894,51 +1322,25 @@ also get a short-forma
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Docs - Add guides to How To Guides (#6060)
+## X. [5/6] Async IDC: Rust cli UX (#6313)
 
 **RULE**:
-When implementing operations in `docs/GUIDES_TODO.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `155f3050`: Docs - Add guides to How To Guides (#6060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bae35972`: [5/6] Async IDC: Rust cli UX (#6313). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/GUIDES_TODO.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Guides to write
+### Client and Module Bindings
 
-Short guides, each focused on one precise topic. Check off each one once it's written.
+`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
 
-Each guide has a stub page under `docs/00250-how-to/` (one folder per section below, numbered from `01000`),
-wired into the sidebar in `sidebars.ts` under the "How To Guides" header. Once a guide is written, also list it
-on the section's index page, `docs/00250-how-to/00000-index.md`. The stubs are regular published pages, so don't
-merge this branch to `master` until every guide is written, or remove the unfinished stubs first.
-
-Each guide will also get a short-format video (done later, once the written guides exist).
-
-## Games
-
-- [x] How to make a top 100 leaderboard
-- [x] Run a fixed-rate game tick
-- [x] Build a matchmaking queue
-- [x] Skill-based matchmaking with OpenSkill
-- [x] Make a turn-based game with turn timeouts
-- [x] Only sync what's near the player
-- [x] Hide information from players
-- [x] Reset a leaderboard each season
-
-## Social
-
-- [x] Keep usernames unique and block offensive ones
-- [x] Build a friends or follow list
-- [x] Chat rooms and private DMs
-- [x] Typing indicators and other short-lived signals
-- [x] Unread counts and notifications
-
-## Common app patte
+In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For depen
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1948,4 +1350,4 @@ Each guide will also get a short-format video (done later, once the written guid
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `155f3050` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bae35972` are properly handled with clean fallback behavior.

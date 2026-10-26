@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e6dbc624`  
+> **Source Version**: `57e72b32`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:17:30.162Z  
+> **Timestamp**: 2026-10-26T00:54:50.440Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:17:30.153Z  
+> **Harvest Timestamp**: 2026-10-26T00:54:50.435Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3814 stars
+- **Stars / Engagement**: 3815 stars
 
 ---
 
@@ -2203,221 +2203,149 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e6dbc624` (2026-10-25)
-**Commit Message**: deps: pin Polars to the published py-2.1.0 tag (#4918)
+### Incident Patch 1: `57e72b32` (2026-10-26)
+**Commit Message**: fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920)
 
-* deps: pin Polars to the published py-2.1.0 tag
+* fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0)
 
-py-2.1.0 points at 7f902bd, the commit #4917 pinned, so the code is
-unchanged. Switch all three pins (polars, polars-core, polars-arrow) from
-rev = to tag = together, so they keep one Cargo source, set
-QSV_POLARS_REV=py-2.1.0 per the release-tag convention, and point the
-README badge and CHANGELOG entry at the release.
+A date-only value (July 4, 2005; 2005-07-04; ...) took its time of day
+from today's offset in qsv-dateparser 0.19.0. With --input-tz west of UTC
+it landed on the next day, all year (America/Los_Angeles: July 4, 2005 ->
+2005-07-05); east of UTC it shifted by up to an hour with the season, and
+Europe/Athens moved a July date to the previous day once Athens left
+summer time, turning datefmt_input_tz red on every CI job from 2026-10-26
+00:00 UTC. qsv-dateparser 0.20.0 (dathere/qsv-dateparser#14) makes a
+date-only input the written date at the default time in UTC.
+
+- datefmt_tz_inout encoded the next-day bug (US/Hawaii expected July 5);
+  corrected to July 4.
+- New datefmt_date_only_input_tz_keeps_the_written_date: date-only values
+  in five layouts under America/Los_Angeles, Europe/Athens and
+  Pacific/Auckland print the bare written date. It, datefmt_input_tz and
+  datefmt_tz_inout all fail on 0.19.0.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: cite #4918 in the Polars CHANGELOG entry
+* docs: cite #4920 in the datefmt CHANGELOG entry
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By
 
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - **New: `CREATE [OR REPLACE] TEMP TABLE`** in `.sql` scripts ([#30256](https://github.com/pola-rs/polars/pull/30256)). It works like `CREATE TABLE`.
-   - Unchanged on both revs: `REGEXP_REPLACE`, `REAL`/`DECIMAL` division and `CORR`/`COVAR` results.
-   - Also lower memory for CSV scans of wide rows ([#30165](https://github.com/pola-rs/polars/pull/30165)), out-of-core streaming windows and sorts, and smaller SQL code size.
--- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
-+- **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
- - **deps: Polars bumped to upstream rev [`34cc518`](https://github.com/pola-rs/polars/commit/34cc5185a9d7c83e9e3b6b63022fe596c6aebb53)** (from `c7da28c`, [#4875](https://github.com/dathere/qsv/pull/4875)). No `sqlp` result that already worked changes; every difference is a query that used to fail.
-   - **Fixed: `COUNT(*)` over a `UNION ALL ... LIMIT n`** panicked ([#30150](https://github.com/pola-rs/polars/pull/30150)).
-   - **Fixed: a correlated subquery whose table has a column named like the outer table** (`WHERE w.g = t.g` where `w` has a column `t`) failed with `StructFieldNotFound` ([#30149](https://github.com/pola-rs/polars/pull/30149)). This regressed in the `c7da28c` bump.
+@@ -103,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+ 
+ ### Fixed
++- **`datefmt --input-tz`: a date-only value keeps its date** ([#4920](https://github.com/dathere/qsv/pull/4920)). A value with no time of day, such as `July 4, 2005` or `2005-07-04`, is midnight UTC on the written date, so `datefmt` prints the bare date. With `--input-tz` set to any zone west of UTC, it used to land on the **next day**, all year (`America/Los_Angeles` turned `July 4, 2005` into `2005-07-05`). Zones east of UTC were off by up to an hour depending on the season, and with `Europe/Athens` a July date moved to the previous day once Athens left summer time, which turned qsv's own CI red. The parser took the time of day from **today's** offset; [qsv-dateparser 0.20.0](https://github.com/dathere/qsv-dateparser/releases/tag/0.20.0) fixes it ([dathere/qsv-dateparser#14](https://github.com/dathere/qsv-dateparser/pull/14)). The same applies to date-only timestamps under `sample --ts-input-tz`. A date-only `geocode --older-than` cutoff is now that date at the current UTC time rather than the current local time. Inputs with a time of day, and `stats`/`schema` date inference (which parse in UTC), are unchanged.
+ - **`QSV_SNIFF_DELIMITER` no longer sets the output delimiter from the file being replaced** ([#4916](https://github.com/dathere/qsv/pull/4916)). With `-o out.csv` and an existing semicolon-delimited `out.csv`, the new output was written with semicolons, because the output path was sniffed like an input. Writers now use the delimiter from `--delimiter`, the extension or `QSV_DEFAULT_DELIMITER`, as without the env var.
+ - **`count` and `frequency` report a missing `dc:` entry** ([#4916](https://github.com/dathere/qsv/pull/4916)). They printed a bare `No such file or directory` for a `dc:` name that isn't cached, where other commands say `dc: cache entry '…' not found. Fetch it first…`. Their index lookup now checks the input's format error first, as the readers do.
+ - **`QSV_TOGGLE_HEADERS` accepts the usual true values** ([#4916](https://github.com/dathere/qsv/pull/4916)). It only toggled when set to exactly `1`, so `QSV_TOGGLE_HEADERS = True` (as `dotenv.template` writes it) silently did nothing. It now reads `1`, `true`, `yes`, `on` and the rest like the other boolean env vars, in every command and in `writestat`'s stats-cache check.
 ```
 
-**File**: `Cargo.lock` (modified, +28/-28)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -6037,7 +6037,7 @@ dependencies = [
+@@ -7161,9 +7161,9 @@ dependencies = [
+ 
  [[package]]
- name = "polars"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+ name = "qsv-dateparser"
+-version = "0.19.0"
++version = "0.20.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "dc7e7ce31c22c49e1186b443636a08e072d8072d79bd4ab706ec16a1fc14a0aa"
++checksum = "c3d6372a4a7b3895321fb3a43800c9426be3a27c8ebdb423f9ccbce31cea6858"
  dependencies = [
-  "getrandom 0.2.17",
-  "getrandom 0.4.3",
-@@ -6062,7 +6062,7 @@ dependencies = [
- [[package]]
- name = "polars-arrow"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "atoi_simd",
-  "avro-schema",
-@@ -6106,7 +6106,7 @@ dependencies = [
- [[package]]
- name = "polars-async"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "atomic-waker",
-  "crossbeam-channel",
-@@ -6125,7 +6125,7 @@ dependencies = [
- [[package]]
- name = "polars-buffer"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "bytemuck",
-  "either",
-@@ -6137,7 +6137,7 @@ dependencies = [
- [[package]]
- name = "polars-compute"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "atoi_simd",
-  "bytemuck",
-@@ -6162,7 +6162,7 @@ dependencies = [
- [[package]]
- name = "polars-config"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "polars-error",
-  "serde",
-@@ -6172,7 +6172,7 @@ dependencies = [
- [[package]]
- name = "polars-core"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "atoi_simd",
-  "bitflags 2.13.2",
-@@ -6213,7 +6213,7 @@ dependencies = [
- [[package]]
- name = "polars-defs"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
+  "anyhow",
   "chrono",
-  "chrono-tz",
-@@ -6229,7 +6229,7 @@ dependencies = [
- [[package]]
- name = "polars-descriptions"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
+@@ -9149,7 +9149,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
  dependencies = [
-  "serde",
-  "strum_macros 0.28.0",
-@@ -6238,7 +6238,7 @@ dependencies = [
- [[package]]
- name = "polars-dtype"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "boxcar",
-  "hashbrown 0.17.1",
-@@ -6252,7 +6252,7 @@ dependencies = [
- [[package]]
- name = "polars-error"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "avro-schema",
-  "object_store",
-@@ -6266,7 +6266,7 @@ dependencies = [
- [[package]]
- name = "polars-expr"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
-  "bitflags 2.13.2",
-  "hashbrown 0.17.1",
-@@ -6295,7 +6295,7 @@ dependencies = [
- [[package]]
- name = "polars-io"
- version = "0.55.1"
--source = "git+https://github.com/pola-rs/polars?rev=7f902bd3ffd27ff82d14278a09a295ff2f7aed92#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
-+source = "git+https://github.com/pola-rs/polars?tag=py-2.1.0#7f902bd3ffd27ff82d14278a09a295ff2f7aed92"
- dependencies = [
+  "fastrand",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+  "windows-sys 0.61.2",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -412,7 +412,7 @@ pyo3 = { version = "0.30", features = ["auto-initialize"], optional = true }
+ # https://github.com/yaml/yaml-serde - used by the `profile` command to parse
+ # CKAN scheming specs (e.g. dataset-druf.yaml).
+ yaml_serde = { version = "0.10", optional = true }
+-qsv-dateparser = "0.19"
++qsv-dateparser = "0.20"
+ qsv_docopt = "1.10"
+ qsv-stats = "0.56"
+ qsv_currency = "0.8"
+```
+
+**File**: `tests/test_datefmt.rs` (modified, +40/-1)
+```diff
+@@ -146,7 +146,9 @@ fn datefmt_tz_inout() {
+         svec!["2012-09-17T23:09:00+08:00"],
+         svec!["2021-06-02T14:31:39+08:00"],
+         svec!["2009-01-20T18:00:00+08:00"],
+-        svec!["2005-07-05T08:00:00+08:00"],
++        // a date-only value is midnight UTC on the written date; it used to land on
++        // July 5 for every --input-tz west of UTC (qsv-dateparser 0.20.0)
++        svec!["2005-07-04T08:00:00+08:00"],
+         svec!["2021-05-01T09:17:02.604456+08:00"],
+         svec!["This is not a date and it will not be reformatted"],
+         svec!["2017-11-26T06:22:26+08:00"],
+@@ -195,6 +197,43 @@ fn datefmt_input_tz() {
+     assert_eq!(got, expected);
+ }
  
-```
-
-**File**: `Cargo.toml` (modified, +5/-5)
-```diff
-@@ -532,8 +532,8 @@ serial_test = { version = "4.0", features = ["file_locks"] }
- [patch.crates-io]
- # polars-readstat-rs depends on these directly; redirect them onto the same git polars
- # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io.
--polars-core  = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
--polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92" }
-+polars-core  = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
-+polars-arrow = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
- # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
- # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
- # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
-@@ -595,9 +595,9 @@ webdriver-downloader = { git = "https://github.com/jqnatividad/webdriver-downloa
- #     (e.g. py-1.19.0:52ea381 to indicate that we are Python Polars 1.19.0,
- #      and the commit hash 52ea381)
- # ================================
--# QSV_POLARS_REV=py-2.1.0:7f902bd
--# polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
--polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
-+# QSV_POLARS_REV=py-2.1.0
-+# polars = { git = "https://github.com/pola-rs/polars", rev = "7f902bd3ffd27ff82d14278a09a295ff2f7aed92", optional = true }
-+polars = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0", optional = true }
- 
- # Apache DataSketches (t-digest, HLL, Frequent Items) — upstream C++ does not
- # support big-endian targets, so we exclude the crate on big-endian builds.
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@
- 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
- 🗄️: [Extended input support](#extended-input-support).  
- 🗃️: [Limited Extended input support](#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
- 🤖: command uses Natural Language Processing or Generative AI.  
- 🏎️: multithreaded and/or faster when an index (📇) is available.  
- 🚀: multithreaded even without an index.  
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@
- 🧠: expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.  
- 🗄️: [Extended input support](../../README.md#extended-input-support).  
- 🗃️: [Limited Extended input support](../../README.md#limited-extended-input-support).  
--🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0:7f902bd](https://img.shields.io/badge/polars-0.55.1:py--2.1.0:7f902bd-blue?logo=polars)](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92) vectorized query engine.  
-+🐻‍❄️: command powered/accelerated by [![polars 0.55.1 at py-2.1.0](https://img.shields.io/badge/polars-0.55.1:py--2.1.0-blue?logo=polars)](https://github.com/pola-rs/polars/releases/tag/py-2.1.0) vectorized query engine.  
- 🤖: command uses Natural Language Processing or Generative AI.  
- 🏎️: multithreaded and/or faster when an index (📇) is available.  
- 🚀: multithreaded even without an index.  
++#[test]
++fn datefmt_date_only_input_tz_keeps_the_written_date() {
++    // A date-only value is midnight UTC on the written date, whatever --input-tz is
++    // and whatever day the test runs. It used to land on the next day for every zone
++    // west of UTC, and to shift by an hour (Athens in July went to the previous day)
++    // once today's offset differed from the date's.
++    let wrk = Workdir::new("datefmt_date_only_input_tz_keeps_the_written_date");
++    wrk.create(
++        "data.csv",
++        vec![
++            svec!["d"],
++            svec!["July 4, 2005"],
++            svec!["2005-07-04"],
++            svec!["2005/07/04"],
++            svec!["07/04/2005"],
++            svec!["4 July 2005"],
++            svec!["January 15, 2005"],
++        ],
++    );
++    for tz in ["America/Los_Angeles", "Europe/Athens", "Pacific/Auckland"] {
++        let mut cmd = wrk.command("datefmt");
++        cmd.arg("d").args(["--input-tz", tz]).arg("data.csv");
++
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        let expected = vec![
++            svec!["d"],
++            svec!["2005-07-04"],
++            svec!["2005-07-04"],
++            svec!["2005-07-04"],
++            svec!["2005-07-04"],
++            svec!["2005-07-04"],
++            svec!["2005-01-15"],
++        ];
++        assert_eq!(got, expected, "--input-tz {tz}");
++    }
++}
++
+ #[test]
+ fn datefmt_zulu() {
+     let wrk = Workdir::new("datefmt_zulu");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4920** (2026-10-26): fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (@jqnatividad)
 - **PR #4918** (2026-10-25): deps: pin Polars to the published py-2.1.0 tag (@jqnatividad)
 - **PR #4917** (2026-10-25): deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (@jqnatividad)
 - **PR #4916** (2026-10-25): fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (@jqnatividad)
 - **PR #4915** (2026-10-25): fix(index): compare index staleness at full mtime precision (@jqnatividad)
 - **PR #4914** (2026-10-25): fix: describegpt subprocesses and `to parquet` read piped stdin / .tsv with the right delimiter (@jqnatividad)
-- **PR #4913** (2026-10-25): fix(validate): uniqueCombinedWith column checks, duplicate-header indices, dynamicEnum index, schema URLs (@jqnatividad)
 
 ---
 
@@ -2437,13 +2365,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: pin Polars to the published py-2.1.0 tag (#4918)
+## X. datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e6dbc624`: deps: pin Polars to the published py-2.1.0 tag (#4918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `57e72b32`: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2451,14 +2379,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
+- **`datefmt --input-tz`: a date-only value keeps its date** ([#4920](https://github.com/dathere/qsv/pull/4920)). A value with no time of day, such as `July 4, 2005` or `2005-07-04`, is midnight UTC on the written date, so `datefmt` prints the bare date. With `--input-tz` set to any zone west of UTC, it used to land on the **next day**, all year (`America/Los_Angeles` turned `July 4, 2005` into `2005-07-05`). Zones east of UTC were off by up to an hour depending on the season, and with `Europe/Athens` a July date moved to the previous day once Athens left summer time, which turned qsv's own CI red. The parser took the time of day from **today's** offset; [qsv-dateparser 0.20.0](https://github.com/dathere/qsv-dateparser/releases/tag/0.20.0) fixes it ([dathere/qsv-dateparser#14](https://github.com/dathere/qsv-dateparser/pull/14)). The same applies to date-only timestamps under `sample --ts-input-tz`. A date-only `geocode --older-than` cutoff is now that date at the current UTC time rather than the current local time. Inputs with a time of day, and `stats`/`schema` date inference (which parse in UTC), are unchanged.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **deps: Polars bumped to the Python Polars 2.1.0 release commit [`7f902bd`](https://github.com/pola-rs/polars/commit/7f902bd3ffd27ff82d14278a09a295ff2f7aed92)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e6dbc624` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `57e72b32` are properly handled with clean fallback behavior.

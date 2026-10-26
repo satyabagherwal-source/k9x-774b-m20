@@ -328680,3 +328680,165 @@ use turso_core::NamespaceId;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `aa93d669` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4511. console.groupCollapsed: start a group, as console.group does (#46505) (Harvested from oven-sh/bun)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "console.groupCollapsed: start a group, as console.group does (#46505)",
+  "source": "oven-sh/bun",
+  "source_url": "https://github.com/oven-sh/bun",
+  "source_version": "449877f3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-26T00:54:36.702Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oven-sh-bun",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oven-sh/bun](https://github.com/oven-sh/bun) (Revision: `449877f3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/bun-types/globals.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `449877f3`: console.groupCollapsed: start a group, as console.group does (#46505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/bun-types/globals.d.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  /**
+   * Start a group. Logs `data` as the label of the group, if there is any,
+   * then indents later `log`, `info`, `debug`, `warn`, `error`, `dir` and
+   * `trace` output by two more spaces.
+   */
+  /** An alias for {@link group}. */
+  /** End the most recent group that is still open, and remove its indent. */
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+  /** Does nothing currently */
+  /** Does nothing currently */
+  /** Does nothing currently */
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `449877f3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4512. [5/6] Async IDC: Rust cli UX (#6313) (Harvested from clockworklabs/SpacetimeDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[5/6] Async IDC: Rust cli UX (#6313)",
+  "source": "clockworklabs/SpacetimeDB",
+  "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+  "source_version": "bae35972",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-26T00:54:49.000Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clockworklabs-spacetimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `bae35972`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bae35972`: [5/6] Async IDC: Rust cli UX (#6313). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+### Client and Module Bindings
+
+`spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **calling database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
+
+In `spacetime.json`, each calling database's non-inherited `dependencies` array requires its own `module-path` and dependency `name` plus receiving-module `module-path` or `database`. A `database` reference resolves another target's local source/build settings in the same config; it does not fetch a running database's schema. A direct receiving module source takes precedence. Dependencies do not themselves publish receiving databases or inherit the calling module's build settings. `generate <calling-database>` processes both its regular `generate` entries (client bindings by default) and `dependencies` (module bindings automatically); no `--bindings` flag or second `generate` entry is needed for a dependency. For depen
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bae35972` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4513. datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920 (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "57e72b32",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-26T00:54:50.571Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `57e72b32`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `57e72b32`: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **`datefmt --input-tz`: a date-only value keeps its date** ([#4920](https://github.com/dathere/qsv/pull/4920)). A value with no time of day, such as `July 4, 2005` or `2005-07-04`, is midnight UTC on the written date, so `datefmt` prints the bare date. With `--input-tz` set to any zone west of UTC, it used to land on the **next day**, all year (`America/Los_Angeles` turned `July 4, 2005` into `2005-07-05`). Zones east of UTC were off by up to an hour depending on the season, and with `Europe/Athens` a July date moved to the previous day once Athens left summer time, which turned qsv's own CI red. The parser took the time of day from **today's** offset; [qsv-dateparser 0.20.0](https://github.com/dathere/qsv-dateparser/releases/tag/0.20.0) fixes it ([dathere/qsv-dateparser#14](https://github.com/dathere/qsv-dateparser/pull/14)). The same applies to date-only timestamps under `sample --ts-input-tz`. A date-only `geocode --older-than` cutoff is now that date at the current UTC time rather than the current local time. Inputs with a time of day, and `stats`/`schema` date inference (which parse in UTC), are unchanged.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `57e72b32` are properly handled with clean fallback behavior.

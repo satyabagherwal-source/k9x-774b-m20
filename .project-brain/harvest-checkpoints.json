@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:48:37.254Z",
+  "last_updated": "2026-10-26T00:54:50.702Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "16d526a0d6f9025582f1db4182c29a9341c016c256cc0e16594fbd5b78cda78f",
-      "verified_at": "2026-10-25T23:17:30.554Z",
+      "content_hash": "3efeb7edf5dda197ed34b0a6057bafa76d5c3d7d5fd20214cf0848ae8466320d",
+      "verified_at": "2026-10-26T00:54:50.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:17:30.554Z"
+      "last_updated": "2026-10-26T00:54:50.701Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "6268861045df576e319009a9a57b9bc4027c6af139a379df0fd0287b194199c3",
-      "verified_at": "2026-10-25T10:43:23.879Z",
+      "content_hash": "b0ca96c9580bfb4a3aa3cb74b94eb2e5c8a55722f2120780efd19421c9cd7c49",
+      "verified_at": "2026-10-26T00:54:49.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:43:23.879Z"
+      "last_updated": "2026-10-26T00:54:49.124Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "d4d9db03497c20ac079abd747779edb8b3b35df6ab3fd768dc59173e25c1ec4a",
-      "verified_at": "2026-10-25T06:31:56.889Z",
+      "content_hash": "02a217bcc7e254429dbcfa9f229eb6b436ffc5f08d82f936434993591521c862",
+      "verified_at": "2026-10-26T00:54:36.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:31:56.889Z"
+      "last_updated": "2026-10-26T00:54:36.825Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -12441,14 +12441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "5514742189d58e8fa8218d0a6ce427e5a8da9373362a50a1adc026143fec34b9",
-      "verified_at": "2026-10-21T04:36:16.578Z",
+      "content_hash": "1cf440d82d974fe840dcb350af74bdd5d5c745ad6796a121ef3e63bb57bf0b11",
+      "verified_at": "2026-10-26T00:54:35.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:36:16.578Z"
+      "last_updated": "2026-10-26T00:54:35.429Z"
     },
     "SvenTiigi/WhatsNewKit": {
       "repository": "SvenTiigi/WhatsNewKit",

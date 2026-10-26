@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:48:37.250Z",
-  "total_cycles_completed": 5039,
-  "total_learnings_persisted": 5039,
-  "total_rules_promoted": 4401,
+  "last_updated": "2026-10-26T00:54:50.699Z",
+  "total_cycles_completed": 5043,
+  "total_learnings_persisted": 5043,
+  "total_rules_promoted": 4404,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:50:54.525Z",
-      "repository": "Orange-Cyberdefense/GOAD",
-      "learningId": "learn-github-orange-cyberdefense-goad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:50:59.217Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:57:15.644Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:57:15.965Z",
-      "repository": "adobe/react-spectrum",
-      "learningId": "learn-github-adobe-react-spectrum",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:57:16.564Z",
       "repository": "o2sh/onefetch",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-26T00:48:37.250Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:54:35.426Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:54:36.823Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:54:49.122Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:54:50.699Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

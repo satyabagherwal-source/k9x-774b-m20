@@ -5062,3 +5062,7 @@
 | `CYCLE-20261026-FUK0` | `2026-10-26T00:48:22.896Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`63dcd370...`) |
 | `CYCLE-20261026-G35I` | `2026-10-26T00:48:34.038Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4509` | Yes (`88700fa9...`) |
 | `CYCLE-20261026-G5MH` | `2026-10-26T00:48:37.241Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4510` | Yes (`6c8a53c3...`) |
+| `CYCLE-20261026-NTZR` | `2026-10-26T00:54:35.415Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`1cf440d8...`) |
+| `CYCLE-20261026-NV2P` | `2026-10-26T00:54:36.817Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4511` | Yes (`02a217bc...`) |
+| `CYCLE-20261026-O4KB` | `2026-10-26T00:54:49.115Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4512` | Yes (`b0ca96c9...`) |
+| `CYCLE-20261026-O5S2` | `2026-10-26T00:54:50.690Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4513` | Yes (`3efeb7ed...`) |
