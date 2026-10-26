@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-738T",
-    "timestamp": "2026-10-24T20:41:57.293Z",
-    "repository": "lokoe-mehdi/scouter",
-    "learningId": "learn-github-lokoe-mehdi-scouter",
-    "contentHash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-76CG",
     "timestamp": "2026-10-24T20:42:01.312Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7475,21 @@
     "repository": "serpapi/google-search-results-nodejs",
     "learningId": "learn-github-serpapi-google-search-results-nodejs",
     "contentHash": "95dbb19054e430dc6adfd8a9812e55e1fa4895725a698a5d981beeaea0a21584",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-7L0S",
+    "timestamp": "2026-10-26T02:33:55.756Z",
+    "repository": "serpapi/google-search-results-python",
+    "learningId": "learn-github-serpapi-google-search-results-python",
+    "contentHash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

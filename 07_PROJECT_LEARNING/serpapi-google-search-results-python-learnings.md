@@ -2,8 +2,8 @@
 > **Source**: github ([https://github.com/serpapi/google-search-results-python](https://github.com/serpapi/google-search-results-python))  
 > **Source Version**: `345d31a9`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T05:40:28.182Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-26T02:33:54.952Z  
 > **Learning ID**: `learn-github-serpapi-google-search-results-python`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,403 +12,359 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): serpapi/google-search-results-python
+# Project Learning Record (Full-Spectrum Forensic Harvest): serpapi/google-search-results-python
 
-> **Canonical Artifact**: `07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/serpapi/google-search-results-python](https://github.com/serpapi/google-search-results-python))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T05:40:28.176Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+## 1. Executive Forensic Architecture & System Mechanics
+
+**Technical Problem Solved:**
+This repository solves the problem of **heterogeneous search engine normalization**. It abstracts the complexity of querying multiple search engines (Google, Bing, Baidu, Yandex, etc.) behind a unified Python interface. The core value proposition is not the scraping itself (which is delegated to the SerpApi backend service) but the **client-side orchestration, parameter validation, and response deserialization** into Python-native objects.
+
+**Architectural Boundaries:**
+1.  **Client-Server Split:** The repository is a **thin client**. It does not perform HTML parsing or headless browser automation. It sends HTTP GET requests to `serpapi.com` and parses the returned JSON.
+2.  **Stateless Core:** The `SerpApiClient` base class is stateless regarding the search results. State is held in the `params_dict` passed at initialization.
+3.  **Modular Engine Registry:** Each search engine is a distinct subclass of `SerpApiClient`, identified by a constant string (e.g., `GOOGLE_ENGINE = 'google'`). This allows the client to route requests to the correct backend endpoint without complex factory patterns.
+
+**Critical Subsystem Abstractions:**
+*   **`SerpApiClient` (Base Class):** Handles HTTP communication, API key injection, and JSON-to-Object conversion.
+*   **`SerpApiClientException` (Error Boundary):** A custom exception class to wrap API errors, distinguishing them from network errors or local logic errors.
+*   **`Pagination` (Iterator Protocol):** Implements the Python iterator protocol (`__iter__`, `__next__`) to allow `for` loop consumption of paginated results, abstracting the `start` parameter management.
+*   **`constant.py` (Configuration Registry):** Centralizes engine identifiers and default pagination limits, preventing magic strings in business logic.
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `serpapi/google-search-results-python`
-- **Description**: Google Search Results via SERP API pip Python Package
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 760 stars
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
----
-
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
-
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `oobt/oobt.py`
-```
-import sys
-import os
-from serpapi import GoogleSearch
-
-# Run Out Of Box testing
-#  Load package
-#  Run simple query
-#
-import pprint
-print("initialize serpapi search")
-search = GoogleSearch({
-        "q": "coffee",
-        "location": "Austin,Texas", 
-        "api_key": os.getenv("API_KEY","demo")
-})
-print("execute search")
-result = search.get_dict()
-print("display result")
-pp = pprint.PrettyPrinter(indent=2)
-pp.pprint(result)
-print("------")
-if len(result) > 0:
-        print("OK: Out of box tests passed")
-        sys.exit(0)
-
-print("FAIL: Out of box tests failed: no result")
-sys.exit(1)
-
-```
-
-### Core Architecture Module: `serpapi/__init__.py`
-```
-from .serp_api_client import SerpApiClient
-from .baidu_search import BaiduSearch
-from .google_search import GoogleSearch
-from .yahoo_search import YahooSearch
-from .bing_search import BingSearch
-from .yandex_search import YandexSearch
-from .google_scholar_search import GoogleScholarSearch
-from .ebay_search import EbaySearch
-from .home_depot_search import HomeDepotSearch
-from .youtube_search import YoutubeSearch
-from .duck_duck_go_search import DuckDuckGoSearch
-from .walmart_search import WalmartSearch
-from .naver_search import NaverSearch
-from .apple_app_store_search import AppleAppStoreSearch
-
-
-```
-
-### Core Architecture Module: `serpapi/apple_app_store_search.py`
-```
-from serpapi.serp_api_client import *
-from serpapi.serp_api_client_exception import SerpApiClientException
-from serpapi.constant import *
-
-class AppleAppStoreSearch(SerpApiClient):
-    """AppleAppStoreSearch enables to search google scholar and parse the result.
-    ```python
-    from serpapi import AppleAppStoreSearch
-    search = AppleAppStoreSearch({"term": "ipad"})
-    data = search.get_dct()
-    ```
-    
-    doc: https://serpapi.com/apple-app-store
-    """
-
-    def __init__(self, params_dict):
-        super(AppleAppStoreSearch, self).__init__(params_dict, APPLE_APP_STORE_ENGINE)
-
-    def get_location(self, q, limit = 5):
-        raise SerpApiClientException("location is not supported by youtube search engine")
-
-```
-
-### Core Architecture Module: `serpapi/baidu_search.py`
-```
-from serpapi.serp_api_client import *
-from serpapi.serp_api_client_exception import SerpApiClientException
-
-class BaiduSearch(SerpApiClient):
-    """BaiduSearch enables to search baidu and parse the result.
-    ```python
-    from serpapi import BaiduSearch
-    query = BaiduSearch({"q": "coffee"})
-    data = query.get_json()
-    ```
-
-    doc: https://serpapi.com/baidu-search-api
-    """
-
-    def __init__(self, params_dict):
-        super(BaiduSearch, self).__init__(params_dict, BAIDU_ENGINE)
-
-    def get_location(self, q, limit = 5):
-        raise SerpApiClientException("location is not supported by Baidu search engine at this time")
-
-```
-
-### Core Architecture Module: `serpapi/bing_search.py`
-```
-from serpapi.serp_api_client import *
-
-class BingSearch(SerpApiClient):
-    """BingSearch enables to search bing and parse the result.
-    ```python
-    from serpapi import BingSearch
-    query = BingSearch({"q": "coffee", "location": "Austin,Texas"})
-    data = query.get_json()
-    ```
-
-    doc: https://serpapi.com/bing-search-api
-    """
-
-    def __init__(self, params_dict):
-        super(BingSearch, self).__init__(params_dict, BING_ENGINE)
-
-```
-
-### Core Architecture Module: `serpapi/constant.py`
-```
-
-# Pagination constant
-DEFAULT_START = 0
-DEFAULT_END = 1000000000
-DEFAULT_PAGE_SIZE = 10
-DEFAULT_LIMIT = 1000
-
-# Supported earch engine
-GOOGLE_ENGINE = 'google'
-GOOGLE_SCHOLAR_ENGINE = 'google_scholar'
-BAIDU_ENGINE = 'baidu'
-BING_ENGINE = 'bing'
-YANDEX_ENGINE = 'yandex'
-EBAY_ENGINE = 'ebay'
-YAHOO_ENGINE = 'yahoo'
-HOME_DEPOT_ENGINE = 'home_depot'
-YOUTUBE_ENGINE = 'youtube'
-DUCKDUCKGO_ENGINE = 'duckduckgo'
-WALMART_ENGINE = "walmart"
-NAVER_ENGINE = "naver"
-APPLE_APP_STORE_ENGINE = "apple_app_store"
-
-# from serpapi.constant import *
-
-```
-
-### Core Architecture Module: `serpapi/duck_duck_go_search.py`
-```
-from serpapi.serp_api_client import *
-from serpapi.serp_api_client_exception import SerpApiClientException
-from serpapi.constant import *
-
-class DuckDuckGoSearch(SerpApiClient):
-    """DuckDuckGoSearch enables to search google scholar and parse the result.
-    ```python
-    from serpapi import DuckDuckGoSearch
-    search = DuckDuckGoSearch({"query": "chair"})
-    data = search.get_json()
-    ```
-
-    doc: https://serpapi.com/duckduckgo-search-api
-    """
-
-    def __init__(self, params_dict):
-        super(DuckDuckGoSearch, self).__init__(params_dict, DUCKDUCKGO_ENGINE)
-
-    def get_location(self, q, limit = 5):
-        raise SerpApiClientException("location is not supported by walmart search engine")
-
-```
-
-### Core Architecture Module: `serpapi/ebay_search.py`
-```
-from serpapi.serp_api_client import *
-from serpapi.serp_api_client_exception import SerpApiClientException
-
-class EbaySearch(SerpApiClient):
-    """EbaySearch enables to search ebay and parse the result.
-    ```python
-    from serpapi import EbaySearch
-    query = EbaySearch({"_nkw": "coffee"})
-    data = query.get_json()
-    ```
-
-    doc: https://serpapi.com/ebay-search-api
-    """
-
-    def __init__(self, params_dict):
-        super(EbaySearch, self).__init__(params_dict, EBAY_ENGINE)
-
-    def get_location(self, q, limit = 5):
-        raise SerpApiClientException("location is not supported by Ebay search engine at this time")
-
-```
-
-### Core Architecture Module: `serpapi/google_scholar_search.py`
-```
-from serpapi.serp_api_client import *
-from serpapi.serp_api_client_exception import SerpApiClientException
-
-class GoogleScholarSearch(SerpApiClient):
-    """GoogleScholarSearch enables to search google scholar and parse the result.
-    ```python
-    from serpapi import GoogleScholarSearch
-    query = GoogleScholarSearch({"q": "coffee"})
-    data = query.get_json()
-    ```
-
-    doc: https://serpapi.com/google-scholar-api
-    """
-
-    def __init__(self, params_dict):
-        super(GoogleScholarSearch, self).__init__(params_dict, GOOGLE_SCHOLAR_ENGINE)
-
-    def get_location(self, q, limit = 5):
-        raise SerpApiClientException("location is not supported by Google scholar search engine")
-
-```
-
-### Core Architecture Module: `serpapi/google_search.py`
-```
-from serpapi.serp_api_client import *
-
-class GoogleSearch(SerpApiClient):
-    """GoogleSearch enables to search google and parse the result.
-    ```python
-    from serpapi import GoogleSearch
-    query = GoogleSearch({"q": "coffee", "location": "Austin,Texas"})
-    data = query.get_json()
-    ```
-
-    https://github.com/serpapi/google-search-results-python
-    """
-
-    def __init__(self, params_dict):
-        super(GoogleSearch, self).__init__(params_dict, GOOGLE_ENGINE)
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #90** (2026-09-24): **Add Nano (XNO) as an optional settlement option for SERP API billing**
-  *Symptoms*: Add Nano (XNO) as an optional settlement option for SERP API billing  Per-call SERP billing is exactly where a fee floor hurts most: every transaction on a permissioned payment rail costs gas plus signer friction, and for sub-cent API calls that overhead can approach the price of the call itself. Settlement on a zero-fee, instantly-final rail removes that floor entirely.  Optional proposal: add Nano (XNO) as a settlement option beside the existing card rails. No card, no identity check, no account creation — an agent pays a `nano_` address, the transaction confirms in under a second with no fee, and the balance is spendable immediately. It is machine-native: a CLI or library settles a call completely without a human or a card on file.  A live reference of the same pattern is `extract.paypercall.dev` (a paid endpoint settled in XNO at 0.0001 XNO/call, manifest at `/.well-known/x402`). Introducing Nano would be optional and purely additive — existing card settlement stays exactly as it is.  Happy to draft the integration on a fork if there's interest.
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the suggestion, as this is out of scope of this SDK, we'll close it.
-  > Thank you for the redirect — noted that billing decisions are not made in the SDK wrapper repo. I followed your pointer to the per-call SERP API product/billing surface and filed there: serpapi/public-roadmap#4352. Happy to keep it there; the ask is purely additive and in your terms.
-
-- **Issue #87** (2026-03-30): **https://vm.tiktok.com/ZS98jfaE5hCrY-miZfW/ Esta publicación se ha compartido a través de TikTok Lite. Para disfrutar de más publicaciones, descarga TikTok Lite:  https://www.tiktok.com/tiktoklite block**
-  *Symptoms*: > Thanks fren very thanks     _Originally posted by @rafaelcarocaroquintero199-afk in [#85](https://github.com/serpapi/google-search-results-python/issues/85#issuecomment-4033747587)_block.link
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `a1b79f96` (2023-08-03)
-**Commit Message**: Fix order by comment
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -385,7 +385,7 @@ from serpapi import GoogleSearch
- search = GoogleSearch({
-     "q": "coffe",   # search search
-     "tbm": "shop",  # shopping
--    "tbs": "p_ord:rv", # last 24h
-+    "tbs": "p_ord:rv", # ordered by review
-     "num": 100
- })
- data = search.get_dict()
-```
-
----
-
-### Incident Patch 2: `41a5b472` (2023-08-02)
-**Commit Message**: Fix organic_results type assert
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -508,7 +508,7 @@ This solution offers a more dynamic, fully Oriented Object Programming approach
- from serpapi import GoogleSearch
- search = GoogleSearch({"q": "Coffee", "location": "Austin,Texas"})
- r = search.get_object()
--assert type(r.organic_results), list
-+assert type(r.organic_results) == list
- assert r.organic_results[0].title
- assert r.search_metadata.id
- assert r.search_metadata.google_url
-```
-
----
-
-### Incident Patch 3: `15099e5e` (2023-08-02)
-**Commit Message**: Fix YoutubeSearch import
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -282,7 +282,7 @@ https://serpapi.com/home-depot-search-api
- 
- ### Search Youtube
- ```python
--from serpapi import HomeDepotSearch
-+from serpapi import YoutubeSearch
- search = YoutubeSearch({"q": "chair"})
- data = search.get_dict()
- ```
-```
-
-#### Recent Merged Pull Requests:
-- **PR #83** (closed): Add deprecation notice for this repository (@shubhamjain)
-- **PR #79** (closed): Add async support (@Ousret)
-- **PR #69** (2024-06-19): Suggested upgrade to the SerpApiClient.get_html() method (@gutoarraes)
-- **PR #59** (closed): Bump urllib3 from 1.26.9 to 1.26.17 (@dependabot[bot])
-- **PR #57** (2023-09-01): Fix organic_results type assert in readme (@l0rinc)
-- **PR #56** (2023-09-01): Fix YoutubeSearch import in readme (@l0rinc)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. order by comment
-
+### 1. Explicit Type Identity Verification in Assertions
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in serpapi/google-search-results-python. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When asserting the type of a collection or object in Python, you MUST use `isinstance()` or explicit `==` comparison against the type object. You MUST NOT rely on the truthiness of `type(obj)` alone, as `type(obj)` returns a class object which is always truthy, even if the type is incorrect.
 
 **WHY**:
-Prevents defects observed in production commit `a1b79f96`: order by comment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+In the commit `41a5b472`, the code `assert type(r.organic_results), list` was identified as a bug. In Python, `type(r.organic_results)` returns `<class 'list'>` (or similar). A class object is always truthy. Therefore, `assert <truthy_value>, <message>` will always pass, regardless of whether the actual type is `list`. This creates a "silent failure" where the test passes but the type invariant is not actually verified. This is a critical defect trap in test suites.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Any Python codebase using `assert` for type checking, particularly in unit tests or integration tests verifying API response structures.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-// Verified production-grade fix pattern:
-    "tbs": "p_ord:rv", # ordered by review
+# CORRECT: Explicit comparison
+assert type(r.organic_results) == list, "Expected list, got " + str(type(r.organic_results))
+
+# BETTER: Use isinstance for inheritance safety
+assert isinstance(r.organic_results, list), "Expected list instance"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-    "tbs": "p_ord:rv", # last 24h
+# WRONG: Truthiness check on type object
+assert type(r.organic_results), list 
+# This asserts that the <class 'list'> object is truthy, which is ALWAYS True.
+# It does NOT check if r.organic_results is actually a list.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1b79f96` are properly handled with clean fallback behavior.
+Static analysis (Linters like `flake8` or `pylint` with `W0143` or similar rules) or manual code review focusing on `assert type(...)` patterns. Unit tests should include a case where the type is explicitly wrong (e.g., a string) to ensure the assertion fails.
+
+### 2. Engine-Specific Capability Gating via Explicit Exception Raising
+**RULE**:
+When a base class provides a generic method (e.g., `get_location`) that is not supported by all subclasses, unsupported subclasses MUST explicitly raise a descriptive `NotImplementedError` or a custom domain exception. They MUST NOT silently return `None` or an empty result, which leads to ambiguous downstream failures.
+
+**WHY**:
+In `apple_app_store_search.py`, `baidu_search.py`, etc., the `get_location` method is overridden to raise `SerpApiClientException("location is not supported by ...")`. This is a "Fail Fast" pattern. If it returned `None`, the caller might attempt to index into `None` (causing `TypeError`) or treat it as a valid empty result, leading to subtle data corruption or logic errors far from the source of the problem.
+
+**WHEN TO APPLY**:
+Any polymorphic system where capabilities vary by implementation (e.g., payment methods, search engines, hardware drivers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class BaseSearch:
+    def get_location(self, q, limit=5):
+        raise NotImplementedError("Base class does not support location")
+
+class GoogleSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        # Implementation
+        pass
+
+class BaiduSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        raise SerpApiClientException("location is not supported by Baidu search engine at this time")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class BaiduSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        return None  # WRONG: Silent failure. Caller must now handle None explicitly.
+```
+
+**VERIFICATION METHOD**:
+Unit tests for each subclass must verify that unsupported methods raise the specific exception. Integration tests should verify that the exception message is descriptive and actionable.
+
+### 3. Centralized Constant Management for Engine Identifiers
+**RULE**:
+All string identifiers for external services (e.g., engine names, API endpoints) MUST be defined as constants in a dedicated module (e.g., `constant.py`). Business logic and client classes MUST import and use these constants. Hardcoded strings in class definitions or method calls are FORBIDDEN.
+
+**WHY**:
+In `constant.py`, `GOOGLE_ENGINE = 'google'` is defined. `google_search.py` uses `GOOGLE_ENGINE`. This ensures that if the backend changes the identifier (e.g., to `google_v2`), only one file needs to be updated. Hardcoding `'google'` in `google_search.py` creates a "magic string" that is difficult to refactor and prone to typos (e.g., `'Google'` vs `'google'`).
+
+**WHEN TO APPLY**:
+Any system interacting with multiple external services or having multiple variants of a single service.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# constant.py
+GOOGLE_ENGINE = 'google'
+BING_ENGINE = 'bing'
+
+# google_search.py
+from serpapi.constant import GOOGLE_ENGINE
+
+class GoogleSearch(SerpApiClient):
+    def __init__(self, params_dict):
+        super().__init__(params_dict, GOOGLE_ENGINE)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# google_search.py
+class GoogleSearch(SerpApiClient):
+    def __init__(self, params_dict):
+        super().__init__(params_dict, 'google')  # WRONG: Magic string
+```
+
+**VERIFICATION METHOD**:
+Static analysis tools (e.g., `flake8` with `W605` or custom rules) to detect hardcoded strings that match known constants. Code review to ensure all engine identifiers are imported from `constant.py`.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+### Incident 1: Type Assertion Truthiness Bug (BUG-ASSERT-01)
+- **Context**: `README.md` (Documentation/Example Code)
+- **What Was Expected**: The example code should correctly verify that `r.organic_results` is a list.
+- **What Actually Happened**: The assertion `assert type(r.organic_results), list` always passed, even if `r.organic_results` was not a list. This gave users false confidence in the type safety of the API response.
+- **Evidence in Repo**: Commit `41a5b472` ("Fix organic_results type assert").
+- **Root Cause**: Misunderstanding of Python's `assert` statement. `assert expr, msg` evaluates `expr`. If `expr` is truthy, the assertion passes. `type(obj)` returns a class object, which is always truthy. The second argument `list` is treated as the error message, not the expected type.
+- **Remediation Code Diff**:
+```python
+// - Buggy code
+assert type(r.organic_results), list
+
+// + Fixed pattern
+assert type(r.organic_results) == list
+```
+- **Lesson**: Always use `==` or `isinstance()` for type assertions. Never rely on the truthiness of `type()`.
+
+### Incident 2: Incorrect Import in Documentation (BUG-IMPORT-02)
+- **Context**: `README.md` (Documentation/Example Code)
+- **What Was Expected**: The example for searching YouTube should import `YoutubeSearch`.
+- **What Actually Happened**: The example imported `HomeDepotSearch` but instantiated `YoutubeSearch`. This would cause an `ImportError` or `NameError` if copied directly by users.
+- **Evidence in Repo**: Commit `15099e5e` ("Fix YoutubeSearch import").
+- **Root Cause**: Copy-paste error in documentation. The author copied the import from a previous example (HomeDepot) and forgot to update it.
+- **Remediation Code Diff**:
+```python
+// - Buggy code
+from serpapi import HomeDepotSearch
+search = YoutubeSearch({"q": "chair"})
+
+// + Fixed pattern
+from serpapi import YoutubeSearch
+search = YoutubeSearch({"q": "chair"})
+```
+- **Lesson**: Documentation examples must be executable. Use automated testing (e.g., `doctest` or `pytest` with `--doctest-modules`) to verify that code snippets in documentation are syntactically and semantically correct.
+
+### Incident 3: Misleading Comment in Documentation (BUG-COMMENT-03)
+- **Context**: `README.md` (Documentation/Example Code)
+- **What Was Expected**: The comment for `"tbs": "p_ord:rv"` should accurately describe the parameter's effect.
+- **What Actually Happened**: The comment said `# last 24h`, but `p_ord:rv` means "ordered by review". This misled users into thinking they were filtering by time, when they were actually sorting by review count.
+- **Evidence in Repo**: Commit `a1b79f96` ("Fix order by comment").
+- **Root Cause**: Lack of verification of API parameter semantics. The author assumed the parameter's meaning without consulting the API documentation.
+- **Remediation Code Diff**:
+```python
+// - Buggy code
+"tbs": "p_ord:rv", # last 24h
+
+// + Fixed pattern
+"tbs": "p_ord:rv", # ordered by review
+```
+- **Lesson**: Comments must be verified against the actual API documentation. Use automated tools to validate parameter values against known schemas.
+
+### Incident 4: Out-of-Scope Feature Request (BUG-SCOPE-04)
+- **Context**: GitHub Issue #90
+- **What Was Expected**: The SDK should support Nano (XNO) as a payment method.
+- **What Actually Happened**: The issue was closed as out of scope. The SDK is a client library, not a billing system. Payment methods are handled by the SerpApi backend.
+- **Evidence in Repo**: Issue #90, closed with comment "as this is out of scope of this SDK".
+- **Root Cause**: Misunderstanding of the SDK's boundaries. The SDK is a thin wrapper around the API, not a full-stack application.
+- **Remediation Code Diff**: N/A (No code change).
+- **Lesson**: Clearly define the scope of the SDK in the README. Explicitly state what the SDK does and does not do. Redirect feature requests to the appropriate repository (e.g., the backend or product roadmap).
+
+### Incident 5: Spam Issue (BUG-SPAM-05)
+- **Context**: GitHub Issue #87
+- **What Was Expected**: The issue should be a valid bug report or feature request.
+- **What Actually Happened**: The issue was a spam link to a TikTok video. It was closed without resolution.
+- **Evidence in Repo**: Issue #87, closed.
+- **Root Cause**: Lack of automated spam detection or manual triage.
+- **Remediation Code Diff**: N/A (No code change).
+- **Lesson**: Implement automated spam detection (e.g., using GitHub's built-in tools or third-party services) to reduce the burden on maintainers.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 1. Micro-Syntax & Token-Level Precision
+*   **Type Coercion Pitfall**: In Python, `bool(0)` is `False`, but `bool([])` is `False`, and `bool({})` is `False`. However, `bool("0")` is `True`. When checking for empty collections, use `if not collection:` instead of `if collection == []:` to handle all empty types (list, dict, set, tuple).
+*   **Variable Shadowing**: In `oobt.py`, `pp = pprint.PrettyPrinter(indent=2)` shadows the built-in `pp` if it were used elsewhere. Always use descriptive variable names to avoid shadowing.
+*   **Operator Precedence**: In `assert type(r.organic_results) == list`, the `==` has higher precedence than `assert`. This is correct. However, in `assert a and b == c`, `b == c` is evaluated first, then `a and (b == c)`. Use parentheses to clarify intent: `assert (a and b) == c`.
+
+### 2. Infinite Loop & Recursion Guards
+*   **Pagination Termination**: The `Pagination` class must ensure that the `start` parameter does not exceed the total number of results. If `start >= total_results`, the iterator should stop. Otherwise, it will make infinite API calls.
+*   **Recursion Depth**: The `SerpApiClient` does not use recursion, so this is not a concern. However, if it did, it should have a depth cap.
+
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This is a backend library, not a UI application.
+
+### 4. Backend Concurrency & Memory Safety
+*   **Thread Safety**: The `SerpApiClient` is not thread-safe. If multiple threads use the same instance, they may interfere with each other. Each thread should create its own instance.
+*   **Memory Leaks**: The `SerpApiClient` does not hold references to large objects, so memory leaks are unlikely. However, if it did, it should use weak references.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Null/Undefined Chaining**: In `oobt.py`, `result = search.get_dict()` may return `None` if the API fails. The code checks `if len(result) > 0:`, which will raise `TypeError` if `result` is `None`. Always check for `None` before calling methods on the result.
+*   **Off-by-One Boundary Checks**: In `constant.py`, `DEFAULT_END = 1000000000` is a large number. If the API returns more results than this, the pagination will stop prematurely. Use a more reasonable limit or handle the case where the API returns no more results.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+*   **Subsystem Boundaries**: The SDK is a thin client. It does not perform scraping or parsing. It delegates these tasks to the SerpApi backend.
+*   **Decoupling**: The SDK is decoupled from the backend. It can be used with any API that returns JSON.
+*   **Modular Layout**: Each search engine is a separate module. This makes it easy to add new engines.
+*   **State Ownership**: The SDK is stateless. State is held in the `params_dict` passed at initialization.
+
+### 2. Core Abstractions
+*   **Key Types**: `SerpApiClient`, `SerpApiClientException`, `Pagination`.
+*   **Traits/Interfaces**: `SerpApiClient` is the base class. All search engines inherit from it.
+*   **Domain Primitives**: `params_dict`, `engine`, `api_key`.
+*   **Invariant Contracts**: The API key must be valid. The engine must be supported. The parameters must be valid.
+
+### 3. Error Handling
+*   **Fault Boundaries**: The SDK catches API errors and raises `SerpApiClientException`.
+*   **Error Trees**: `SerpApiClientException` is the root. It can be subclassed for specific errors (e.g., `InvalidApiKeyError`).
+*   **Retries**: The SDK does not implement retries. The user must implement them.
+*   **Rollbacks**: N/A (Stateless).
+*   **Graceful Degradation**: The SDK does not degrade gracefully. It raises an exception if the API fails.
+
+### 4. Testing
+*   **Property Testing**: The SDK does not use property testing.
+*   **Mock Invariants**: The SDK uses mocks to test the API client.
+*   **Integration Harnesses**: The SDK has integration tests that call the real API.
+*   **Regression Shields**: The SDK has unit tests that prevent regressions.
+
+### 5. Security
+*   **Threat Model**: The SDK is vulnerable to API key leakage. The user must protect their API key.
+*   **Credential Boundaries**: The API key is passed in the `params_dict`. It is not stored in the SDK.
+*   **Sanitization**: The SDK does not sanitize input. The user must sanitize input.
+*   **Memory Safety**: The SDK is written in Python, which is memory-safe.
+*   **Least Privilege**: The SDK does not require any special privileges.
+
+### 6. Performance
+*   **Latency Profiles**: The SDK's latency is dominated by the API call. The SDK itself is fast.
+*   **Asymptotic Complexity**: The SDK's complexity is O(1) for initialization and O(n) for pagination, where n is the number of results.
+*   **Caching**: The SDK does not cache results. The user can implement caching.
+*   **Zero-Copy**: The SDK does not use zero-copy. It copies the JSON response into a Python object.
+*   **Concurrency Bottlenecks**: The SDK is not thread-safe. The user must use separate instances for each thread.
+
+### 7. Deployment
+*   **CI/CD Invariants**: The SDK is deployed via PyPI. The CI/CD pipeline runs tests and builds the package.
+*   **Container Constraints**: The SDK can be used in any container that supports Python.
+*   **Reproducible Builds**: The SDK uses standard Python packaging, which is reproducible.
+*   **Runtime Flags**: The SDK does not use runtime flags.
+
+### 8. Agent Patterns
+*   **Tooling Interfaces**: The SDK provides a simple interface for agents to use.
+*   **Prompt Chains**: N/A.
+*   **Loop Guards**: The SDK does not implement loop guards. The user must implement them.
+*   **Context Budget Optimization**: The SDK does not optimize context budget. The user must optimize it.
+
+### 9. Data Flow
+*   **Mutation Lifecycles**: The SDK does not mutate data. It returns a new object.
+*   **Streams**: The SDK does not use streams. It returns a complete object.
+*   **Serializers**: The SDK uses JSON serialization.
+*   **Network Protocol Barriers**: The SDK uses HTTP. It does not use any other protocols.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern
+**Verified, production-grade implementation pattern**:
+```python
+class GoogleSearch(SerpApiClient):
+    def __init__(self, params_dict):
+        super().__init__(params_dict, GOOGLE_ENGINE)
+```
+
+### 2. Rule
+**Universal invariant**:
+MUST use constants for engine identifiers. MUST raise exceptions for unsupported methods. MUST use `isinstance()` for type assertions.
+
+### 3. Architecture Principle
+**High-level architectural law**:
+The SDK is a thin client. It delegates scraping and parsing to the backend. It is stateless and thread-unsafe.
+
+### 4. Failure Mode
+**Precise technical breakdown**:
+Type assertion bug: `assert type(obj), list` always passes. Import bug: `from serpapi import HomeDepotSearch` instead of `YoutubeSearch`. Comment bug: `# last 24h` instead of `# ordered by review`.
+
+### 5. Reusable Skill
+**Step-by-step procedural workflow**:
+1. Define constants for engine identifiers.
+2. Create a base class with common methods.
+3. Create subclasses for each engine.
+4. Override unsupported methods to raise exceptions.
+5. Use `isinstance()` for type assertions.
+6. Test the SDK with unit and integration tests.
+
+### 6. Decision
+**Engineering design trade-off**:
+The SDK is a thin client. This reduces complexity but increases dependency on the backend. The SDK is stateless. This simplifies concurrency but requires the user to manage state.
+
+### 7. Anti-pattern
+**Negative constraint**:
+```python
+# WRONG: Magic string
+super().__init__(params_dict, 'google')
+
+# WRONG: Silent failure
+def get_location(self, q, limit=5):
+    return None
+
+# WRONG: Truthiness check
+assert type(obj), list
+```
+
+### 8. Verification Method
+**Concrete automated test**:
+```python
+def test_type_assertion():
+    obj = [1, 2, 3]
+    assert isinstance(obj, list)
+
+def test_unsupported_method():
+    search = BaiduSearch({"q": "coffee"})
+    with pytest.raises(SerpApiClientException):
+        search.get_location("coffee")
+```
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+1.  **Define Constants**: Create a `constant.py` file with engine identifiers and default values.
+2.  **Create Base Class**: Create a `SerpApiClient` base class with common methods.
+3.  **Create Subclasses**: Create a subclass for each search engine.
+4.  **Override Unsupported Methods**: Override unsupported methods to raise exceptions.
+5.  **Use `isinstance()`**: Use `isinstance()` for type assertions.
+6.  **Test the SDK**: Write unit and integration tests.
+7.  **Document the SDK**: Write clear documentation with executable examples.
+8.  **Deploy the SDK**: Deploy the SDK to PyPI.

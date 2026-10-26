@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T02:26:58.231Z",
+  "last_updated": "2026-10-26T02:33:55.701Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63114,7 +63114,7 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-python",
       "source_version": "345d31a9",
-      "content_hash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
+      "content_hash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-python-learnings.md",
       "promoted_rules": [
@@ -63122,6 +63122,21 @@
           "number": 2683,
           "title": "order by comment",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4545,
+          "title": "Explicit Type Identity Verification in Assertions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4546,
+          "title": "Engine-Specific Capability Gating via Explicit Exception Raising",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4547,
+          "title": "Centralized Constant Management for Engine Identifiers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63129,7 +63144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:40:28.377Z",
+      "verified_at": "2026-10-26T02:33:55.689Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127895,6 +127910,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T02:26:58.221Z"
+    },
+    "rule-4545": {
+      "learning_id": "rule-4545",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4545,
+      "title": "Explicit Type Identity Verification in Assertions",
+      "source_url": "https://github.com/serpapi/google-search-results-python",
+      "source_version": "345d31a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:33:55.689Z"
+    },
+    "rule-4546": {
+      "learning_id": "rule-4546",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4546,
+      "title": "Engine-Specific Capability Gating via Explicit Exception Raising",
+      "source_url": "https://github.com/serpapi/google-search-results-python",
+      "source_version": "345d31a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:33:55.689Z"
+    },
+    "rule-4547": {
+      "learning_id": "rule-4547",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4547,
+      "title": "Centralized Constant Management for Engine Identifiers",
+      "source_url": "https://github.com/serpapi/google-search-results-python",
+      "source_version": "345d31a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:33:55.689Z"
     }
   },
   "aliases": {

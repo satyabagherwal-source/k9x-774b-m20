@@ -1835,8 +1835,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-python",
     "sourceVersion": "345d31a9",
     "license": "MIT",
-    "contentHash": "ebf8d80f10b3949bc800de20980724816c80a6cbb238a49d3980d4fd8a2d0b15",
-    "lastHarvestedAt": "2026-10-21T05:40:28.441Z",
+    "contentHash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
+    "lastHarvestedAt": "2026-10-26T02:33:55.759Z",
     "learningId": "learn-github-serpapi-google-search-results-python"
   },
   "serpapi-google-search-results-ruby": {

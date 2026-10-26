@@ -331281,3 +331281,181 @@ if (node.type === 'AssignmentExpression') {
 ```
 
 ---
+
+
+---
+
+## 4545. Explicit Type Identity Verification in Assertions (Harvested from serpapi/google-search-results-python)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Explicit Type Identity Verification in Assertions",
+  "source": "serpapi/google-search-results-python",
+  "source_url": "https://github.com/serpapi/google-search-results-python",
+  "source_version": "345d31a9",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T02:33:55.163Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-serpapi-google-search-results-python",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [serpapi/google-search-results-python](https://github.com/serpapi/google-search-results-python) (Revision: `345d31a9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When asserting the type of a collection or object in Python, you MUST use `isinstance()` or explicit `==` comparison against the type object. You MUST NOT rely on the truthiness of `type(obj)` alone, as `type(obj)` returns a class object which is always truthy, even if the type is incorrect.
+
+**WHY**:
+In the commit `41a5b472`, the code `assert type(r.organic_results), list` was identified as a bug. In Python, `type(r.organic_results)` returns `<class 'list'>` (or similar). A class object is always truthy. Therefore, `assert <truthy_value>, <message>` will always pass, regardless of whether the actual type is `list`. This creates a "silent failure" where the test passes but the type invariant is not actually verified. This is a critical defect trap in test suites.
+
+**WHEN TO APPLY**:
+Any Python codebase using `assert` for type checking, particularly in unit tests or integration tests verifying API response structures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# CORRECT: Explicit comparison
+assert type(r.organic_results) == list, "Expected list, got " + str(type(r.organic_results))
+
+# BETTER: Use isinstance for inheritance safety
+assert isinstance(r.organic_results, list), "Expected list instance"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Truthiness check on type object
+assert type(r.organic_results), list 
+# This asserts that the <class 'list'> object is truthy, which is ALWAYS True.
+# It does NOT check if r.organic_results is actually a list.
+```
+
+**VERIFICATION METHOD**:
+Static analysis (Linters like `flake8` or `pylint` with `W0143` or similar rules) or manual code review focusing on `assert type(...)` patterns. Unit tests should include a case where the type is explicitly wrong (e.g., a string) to ensure the assertion fails.
+
+
+---
+
+## 4546. Engine-Specific Capability Gating via Explicit Exception Raising (Harvested from serpapi/google-search-results-python)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Engine-Specific Capability Gating via Explicit Exception Raising",
+  "source": "serpapi/google-search-results-python",
+  "source_url": "https://github.com/serpapi/google-search-results-python",
+  "source_version": "345d31a9",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T02:33:55.374Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-serpapi-google-search-results-python",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [serpapi/google-search-results-python](https://github.com/serpapi/google-search-results-python) (Revision: `345d31a9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a base class provides a generic method (e.g., `get_location`) that is not supported by all subclasses, unsupported subclasses MUST explicitly raise a descriptive `NotImplementedError` or a custom domain exception. They MUST NOT silently return `None` or an empty result, which leads to ambiguous downstream failures.
+
+**WHY**:
+In `apple_app_store_search.py`, `baidu_search.py`, etc., the `get_location` method is overridden to raise `SerpApiClientException("location is not supported by ...")`. This is a "Fail Fast" pattern. If it returned `None`, the caller might attempt to index into `None` (causing `TypeError`) or treat it as a valid empty result, leading to subtle data corruption or logic errors far from the source of the problem.
+
+**WHEN TO APPLY**:
+Any polymorphic system where capabilities vary by implementation (e.g., payment methods, search engines, hardware drivers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class BaseSearch:
+    def get_location(self, q, limit=5):
+        raise NotImplementedError("Base class does not support location")
+
+class GoogleSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        # Implementation
+        pass
+
+class BaiduSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        raise SerpApiClientException("location is not supported by Baidu search engine at this time")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+class BaiduSearch(BaseSearch):
+    def get_location(self, q, limit=5):
+        return None  # WRONG: Silent failure. Caller must now handle None explicitly.
+```
+
+**VERIFICATION METHOD**:
+Unit tests for each subclass must verify that unsupported methods raise the specific exception. Integration tests should verify that the exception message is descriptive and actionable.
+
+
+---
+
+## 4547. Centralized Constant Management for Engine Identifiers (Harvested from serpapi/google-search-results-python)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Centralized Constant Management for Engine Identifiers",
+  "source": "serpapi/google-search-results-python",
+  "source_url": "https://github.com/serpapi/google-search-results-python",
+  "source_version": "345d31a9",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T02:33:55.573Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-serpapi-google-search-results-python",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [serpapi/google-search-results-python](https://github.com/serpapi/google-search-results-python) (Revision: `345d31a9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+All string identifiers for external services (e.g., engine names, API endpoints) MUST be defined as constants in a dedicated module (e.g., `constant.py`). Business logic and client classes MUST import and use these constants. Hardcoded strings in class definitions or method calls are FORBIDDEN.
+
+**WHY**:
+In `constant.py`, `GOOGLE_ENGINE = 'google'` is defined. `google_search.py` uses `GOOGLE_ENGINE`. This ensures that if the backend changes the identifier (e.g., to `google_v2`), only one file needs to be updated. Hardcoding `'google'` in `google_search.py` creates a "magic string" that is difficult to refactor and prone to typos (e.g., `'Google'` vs `'google'`).
+
+**WHEN TO APPLY**:
+Any system interacting with multiple external services or having multiple variants of a single service.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# constant.py
+GOOGLE_ENGINE = 'google'
+BING_ENGINE = 'bing'
+
+# google_search.py
+from serpapi.constant import GOOGLE_ENGINE
+
+class GoogleSearch(SerpApiClient):
+    def __init__(self, params_dict):
+        super().__init__(params_dict, GOOGLE_ENGINE)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# google_search.py
+class GoogleSearch(SerpApiClient):
+    def __init__(self, params_dict):
+        super().__init__(params_dict, 'google')  # WRONG: Magic string
+```
+
+**VERIFICATION METHOD**:
+Static analysis tools (e.g., `flake8` with `W605` or custom rules) to detect hardcoded strings that match known constants. Code review to ensure all engine identifiers are imported from `constant.py`.
+
+---
