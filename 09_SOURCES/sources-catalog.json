@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "18d1103e",
+    "sourceVersion": "1167438a",
     "license": "Apache-2.0",
-    "contentHash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
-    "lastHarvestedAt": "2026-10-26T11:15:46.094Z",
+    "contentHash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
+    "lastHarvestedAt": "2026-10-26T17:58:31.464Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "c534a3f5",
+    "sourceVersion": "8252d52f",
     "license": "NOASSERTION",
-    "contentHash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
-    "lastHarvestedAt": "2026-10-24T19:58:58.322Z",
+    "contentHash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
+    "lastHarvestedAt": "2026-10-26T17:58:26.668Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "cc54f798",
+    "sourceVersion": "05f166aa",
     "license": "NOASSERTION",
-    "contentHash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
-    "lastHarvestedAt": "2026-10-25T17:14:42.451Z",
+    "contentHash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
+    "lastHarvestedAt": "2026-10-26T17:58:30.307Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "d4db00df",
+    "sourceVersion": "9f805e24",
     "license": "Apache-2.0",
-    "contentHash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
-    "lastHarvestedAt": "2026-10-25T15:03:20.168Z",
+    "contentHash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
+    "lastHarvestedAt": "2026-10-26T17:58:20.019Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "e471c770",
+    "sourceVersion": "79e49c75",
     "license": "Apache-2.0",
-    "contentHash": "91d45098058977735e7549286688a7d5826ce95b2ac6d43119d29eea831b2cbf",
-    "lastHarvestedAt": "2026-10-25T18:08:58.444Z",
+    "contentHash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
+    "lastHarvestedAt": "2026-10-26T17:58:25.076Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -9743,10 +9743,10 @@
     "repository": "KartikLabhshetwar/better-shot",
     "platform": "github",
     "sourceUrl": "https://github.com/KartikLabhshetwar/better-shot",
-    "sourceVersion": "7b7d0077",
+    "sourceVersion": "0e005e9c",
     "license": "NOASSERTION",
-    "contentHash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
-    "lastHarvestedAt": "2026-10-20T00:51:42.791Z",
+    "contentHash": "79955de58feba2c22dfd824696620c73102d591e01f66192b447e43a2b5e27ee",
+    "lastHarvestedAt": "2026-10-26T17:58:21.784Z",
     "learningId": "learn-github-kartiklabhshetwar-better-shot"
   },
   "rdflib-pyshacl": {

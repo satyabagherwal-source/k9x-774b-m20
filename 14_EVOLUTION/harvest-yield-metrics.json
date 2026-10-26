@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T17:52:06.942Z",
-  "total_cycles_completed": 5145,
-  "total_learnings_persisted": 5145,
-  "total_rules_promoted": 4530,
+  "last_updated": "2026-10-26T17:58:31.467Z",
+  "total_cycles_completed": 5151,
+  "total_learnings_persisted": 5151,
+  "total_rules_promoted": 4536,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:51:41.836Z",
-      "repository": "maziyarpanahi/openmed",
-      "learningId": "learn-github-maziyarpanahi-openmed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:51:44.647Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:51:48.815Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:51:50.011Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:58:12.718Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:58:22.457Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:04:38.710Z",
       "repository": "windmill-labs/windmill",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-26T17:52:06.942Z",
       "repository": "opentofu/opentofu",
       "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:20.022Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:21.787Z",
+      "repository": "KartikLabhshetwar/better-shot",
+      "learningId": "learn-github-kartiklabhshetwar-better-shot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:25.079Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:26.672Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:30.310Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T17:58:31.467Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T17:52:06.872Z",
+  "last_updated": "2026-10-26T17:58:31.428Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12766,8 +12766,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "d4db00df",
-      "content_hash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
+      "source_version": "9f805e24",
+      "content_hash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -12800,6 +12800,11 @@
           "number": 4359,
           "title": "honor init object-format defaults, context, and section filtering",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4630,
+          "title": "Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12807,7 +12812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:03:20.123Z",
+      "verified_at": "2026-10-26T17:58:19.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30870,8 +30875,8 @@
       "slug": "kartiklabhshetwar-better-shot",
       "platform": "github",
       "source_url": "https://github.com/KartikLabhshetwar/better-shot",
-      "source_version": "7b7d0077",
-      "content_hash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
+      "source_version": "0e005e9c",
+      "content_hash": "79955de58feba2c22dfd824696620c73102d591e01f66192b447e43a2b5e27ee",
       "dossier_path": "07_PROJECT_LEARNING/kartiklabhshetwar-better-shot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kartiklabhshetwar-better-shot-learnings.md",
       "promoted_rules": [
@@ -30889,6 +30894,11 @@
           "number": 2941,
           "title": "TCC Permission Cache Invalidation via External Relaunch",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4631,
+          "title": "Add DataBull analytics to website root layout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30896,7 +30906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:51:42.732Z",
+      "verified_at": "2026-10-26T17:58:21.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34242,8 +34252,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "cc54f798",
-      "content_hash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
+      "source_version": "05f166aa",
+      "content_hash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -34281,6 +34291,11 @@
           "number": 4392,
           "title": "adapter: reject sealed replacement targets at CREATE REPLACEMENT (#39594)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4634,
+          "title": "build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34288,7 +34303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:14:42.377Z",
+      "verified_at": "2026-10-26T17:58:30.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38508,8 +38523,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "18d1103e",
-      "content_hash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
+      "source_version": "1167438a",
+      "content_hash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -38567,6 +38582,11 @@
           "number": 4467,
           "title": "Accept NUC 49 colon-free conditional suites",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4635,
+          "title": "Make NUC token gate depend on mode and category",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38574,7 +38594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:15:46.015Z",
+      "verified_at": "2026-10-26T17:58:31.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41885,8 +41905,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "e471c770",
-      "content_hash": "91d45098058977735e7549286688a7d5826ce95b2ac6d43119d29eea831b2cbf",
+      "source_version": "79e49c75",
+      "content_hash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -41924,6 +41944,11 @@
           "number": 4405,
           "title": "Merge pull request #19878 from wbollock/fix/sd-refresh-metrics-reload",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4632,
+          "title": "Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41931,7 +41956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:08:58.376Z",
+      "verified_at": "2026-10-26T17:58:25.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53485,8 +53510,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "c534a3f5",
-      "content_hash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
+      "source_version": "8252d52f",
+      "content_hash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -53524,6 +53549,11 @@
           "number": 3935,
           "title": "gpu): boolean array should use boolean bitnot",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4633,
+          "title": "gpu): also fuzz cpp code for gpu",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53531,7 +53561,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:58:58.280Z",
+      "verified_at": "2026-10-26T17:58:26.625Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129656,6 +129686,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T17:52:06.862Z"
+    },
+    "rule-4630": {
+      "learning_id": "rule-4630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4630,
+      "title": "Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "9f805e24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:19.977Z"
+    },
+    "rule-4631": {
+      "learning_id": "rule-4631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4631,
+      "title": "Add DataBull analytics to website root layout",
+      "source_url": "https://github.com/KartikLabhshetwar/better-shot",
+      "source_version": "0e005e9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:21.741Z"
+    },
+    "rule-4632": {
+      "learning_id": "rule-4632",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4632,
+      "title": "Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "79e49c75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:25.033Z"
+    },
+    "rule-4633": {
+      "learning_id": "rule-4633",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4633,
+      "title": "gpu): also fuzz cpp code for gpu",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "8252d52f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:26.625Z"
+    },
+    "rule-4634": {
+      "learning_id": "rule-4634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4634,
+      "title": "build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "05f166aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:30.262Z"
+    },
+    "rule-4635": {
+      "learning_id": "rule-4635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4635,
+      "title": "Make NUC token gate depend on mode and category",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "1167438a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:58:31.421Z"
     }
   },
   "aliases": {

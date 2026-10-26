@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-FE67",
-    "timestamp": "2026-10-25T04:44:18.175Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "6a4c7d2d66790abcaab4aefc52d18230917ae05818b0ce45dd138adde09c1853",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-FHP4",
-    "timestamp": "2026-10-25T04:44:22.744Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "36f1ac4797798fbf122ded1c56058933ce39f74d794af2d328cdcdb864049d62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-RQAQ",
-    "timestamp": "2026-10-25T04:53:53.762Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "5b1cea13e7516ab30f008965f51f5bbcb387ca6a948990380189680598751cc7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-RTEB",
-    "timestamp": "2026-10-25T04:53:57.779Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "8e5dd7f201e50d9974044e32c2736b8c2e9a9fb110201740d32082c8ce978b56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-VPGI",
-    "timestamp": "2026-10-25T04:56:59.298Z",
-    "repository": "czy0729/Bangumi",
-    "learningId": "learn-github-czy0729-bangumi",
-    "contentHash": "1e27c58337c8bda86da3017de7fa5a6ab91091d8d342d3921d63bdf65e0469a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-W6DS",
-    "timestamp": "2026-10-25T04:57:21.232Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "c67df6d3d4e7257aae1f5de0a97f5f59e7e078201895ec586a9e65744767c8e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-XOJL",
     "timestamp": "2026-10-25T04:58:31.425Z",
     "repository": "agent-of-empires/agent-of-empires",
@@ -7490,6 +7400,96 @@
     "repository": "opentofu/opentofu",
     "learningId": "learn-github-opentofu-opentofu",
     "contentHash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8DIO",
+    "timestamp": "2026-10-26T17:58:20.016Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8EVQ",
+    "timestamp": "2026-10-26T17:58:21.782Z",
+    "repository": "KartikLabhshetwar/better-shot",
+    "learningId": "learn-github-kartiklabhshetwar-better-shot",
+    "contentHash": "79955de58feba2c22dfd824696620c73102d591e01f66192b447e43a2b5e27ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8HF5",
+    "timestamp": "2026-10-26T17:58:25.073Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8INE",
+    "timestamp": "2026-10-26T17:58:26.666Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8LGG",
+    "timestamp": "2026-10-26T17:58:30.304Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-8MCM",
+    "timestamp": "2026-10-26T17:58:31.462Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

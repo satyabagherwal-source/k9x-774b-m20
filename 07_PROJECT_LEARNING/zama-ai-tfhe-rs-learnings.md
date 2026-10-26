@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `c534a3f5`  
+> **Source Version**: `8252d52f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:58:58.096Z  
+> **Timestamp**: 2026-10-26T17:58:26.427Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:58:58.091Z  
+> **Harvest Timestamp**: 2026-10-26T17:58:25.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,29 +1927,367 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `baad54c1` (2026-10-23)
-**Commit Message**: fix(gpu): boolean array should use boolean bitnot
+### Incident Patch 1: `0fc677fa` (2026-09-29)
+**Commit Message**: fix(gpu): also fuzz cpp code for gpu
 
-**File**: `tfhe/src/high_level_api/array/gpu/booleans.rs` (modified, +1/-1)
+**File**: `.github/workflows/gpu_fuzzing.yml` (modified, +49/-11)
 ```diff
-@@ -206,7 +206,7 @@ impl BitwiseArrayBackend for GpuFheBoolArrayBackend {
-         GpuBooleanOwned(global_state::with_cuda_internal_keys(|cuda_key| {
-             let streams = &cuda_key.streams;
-             lhs.par_iter()
--                .map(|lhs| CudaBooleanBlock(cuda_key.pbs_key().bitnot(&lhs.0, streams)))
-+                .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
-                 .collect::<Vec<_>>()
-         }))
-     }
+@@ -1,6 +1,6 @@
+ # Weekly AFL++ GPU fuzzing campaign for harness-cuda-compute.
+ # Runs on the internal mirror only, the public repo skips every job.
+-name: gpu-fuzzing
++name: gpu_fuzzing
+ 
+ env:
+   CARGO_TERM_COLOR: always
+@@ -19,6 +19,7 @@ env:
+   # Secrets will be available only to zama-ai organization members
+   SECRETS_AVAILABLE: ${{ secrets.JOB_SECRET != '' }}
+   EXTERNAL_CONTRIBUTION_RUNNER: "gpu_ubuntu-22.04"
++  INSTANCE_TYPE_SCHEDULED: "terraform::generic-4-l4orl40-tests (nebius-L40)"
+ 
+ on:
+   workflow_dispatch:
+@@ -28,6 +29,20 @@ on:
+         description: "Campaign duration in seconds"
+         default: "1200" # 20 min
+         required: false
++      instance-type:
++        description: "Instance type"
++        type: choice
++        default: "terraform::generic-4-l4orl40-tests (nebius-L40)"
++        options:
++          - "terraform::generic-4-l4orl40-tests (nebius-L40)"
++          - "terraform::scaleway-1-l4 (L4-1-24G)"
++          - "terraform::scaleway-4-l4 (L4-4-24G)"
++          - "terraform::scaleway-4-l40-tests (L40S-4-48G)"
++          - "terraform::scaleway-single-h100 (H100-1-80G)"
++          - "terraform::nebius-single-h100 (nebius-H100-SXM-1-80G)"
++          - "hyperstack::l40 (n3-L40x1)"
++          - "hyperstack::4-l40 (n3-L40x4)"
++          - "hyperstack::single-h100 (n3-H100x1)"
+   schedule:
+     # Saturday 05:00 UTC (day after the CPU campaign).
+     - cron: "0 5 * * 6"
+@@ -40,14 +55,34 @@ concurrency:
+   cancel-in-progress: false
+ 
+ jobs:
+-  setup-instance:
+-    name: gpu-fuzzing/setup-instance
++  parse-inputs:
++    name: gpu-fuzzing/parse-inputs
+     # Skip on the public repo so fuzz logs are not exposed publicly.
+     if: github.repository != 'zama-ai/tfhe-rs'
+     runs-on: ubuntu-latest
++    outputs:
++      backend: ${{ steps.parse.outputs.backend }}
++      profile: ${{ steps.parse.outputs.profile }}
++      cloud-provider: ${{ steps.parse.outputs.cloud_provider }}
++    steps:
++      - name: Checkout
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: "false"
++          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
++
++      - name: Parse instance type
++        id: parse
++        env:
++          INSTANCE_TYPE: ${{ inputs['instance-type'] || env.INSTANCE_TYPE_SCHEDULED }}
++        run: python3 ci/parse_benchmark_profile.py "$INSTANCE_TYPE" "$GITHUB_OUTPUT"
++
++  setup-instance:
++    name: gpu-fuzzing/setup-instance
++    needs: parse-inputs
++    runs-on: ubuntu-latest
+     outputs:
+       runner-name: ${{ steps.start-instance.outputs.label }}
+-      cloud-provider: ${{ steps.start-instance.outputs.cloud-provider }}
+     steps:
+       - name: Start instance
+         id: start-instance
+@@ -57,16 +92,15 @@ jobs:
+           github-token: ${{ secrets.SLAB_ACTION_TOKEN }}
+           slab-url: ${{ secrets.SLAB_BASE_URL }}
+           job-secret: ${{ secrets.JOB_SECRET }}
+-          backend: terraform
+-          profile: scaleway-1-l4
++          backend: ${{ needs.parse-inputs.outputs.backend }}
++          profile: ${{ needs.parse-inputs.outputs.profile }}
+ 
+   fuzz:
+     name: gpu-fuzzing/run-campaign
+-    needs: setup-instance
++    needs: [parse-inputs, setup-instance]
+     if: needs.setup-instance.result == 'success'
+     runs-on: ${{ needs.setup-instance.outputs.runner-name }}
+-    # 2h: covers a 20min campaign + CUDA build (~90m) + pre/post with headroom.
+-    timeout-minutes: 120
++    timeout-minutes: 1640
+     env:
+       FUZZ_DURATION_SECONDS: ${{ inputs['duration-seconds'] }}
+     steps:
+@@ -81,13 +115,16 @@ jobs:
+         with:
+           cuda-version: "12.8 12.2"
+           gcc-version: 12
+-          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
++          cloud-provider: ${{ needs.parse-inputs.outputs.cloud-provider }}
+ 
+       - name: Install latest stable
+         uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+         with:
+           toolchain: stable
+ 
++      - name: Install clang-14 and OpenMP for AFL C++ instrumentation
++        run: sudo apt-get install -y clang-14 libomp-14-dev
++
+       - name: Install cargo-afl
+         run: make install_cargo_afl
+ 
+@@ -101,6 +138,7 @@ jobs:
+         run: make fuzz_gpu_run
+ 
+       - name: Run postcampaign processing
++        if: always()
+         run: make fuzz_gpu_postcampaign
+ 
+       - name: Upload artifacts
+@@ -139,7 +177,7 @@ jobs:
+   teardown-instance:
+     name: gpu-fuzzing/teardown-instance
+     if: ${{ always() && needs.setup-instance.result != 'skipped' }}
+-    needs: [setup-instance, fuzz]
++    needs: [parse-inputs, setup-instance, fuzz]
+     runs-on: ubuntu-latest
+     steps:
+       - name: Stop instance
+```
+
+**File**: `Cargo.lock` (modified, +0/-1)
+```diff
+@@ -1429,7 +1429,6 @@ name = "fuzz-utils"
+ version = "0.1.0"
+ dependencies = [
+  "afl",
+- "bincode",
+  "tfhe",
+ ]
+ 
+```
+
+**File**: `Makefile` (modified, +21/-1)
+```diff
+@@ -755,10 +755,30 @@ fuzz_gpu_precampaign: install_cargo_afl
+ fuzz_gpu_build: install_cargo_afl
+ 	cd utils/fuzz && ./build.sh --gpu
+ 
+-.PHONY: fuzz_gpu_run # Run the GPU AFL harness as a single master instance
++.PHONY: fuzz_gpu_run # Run GPU AFL harness: 2 instances per GPU, auto-detected via nvidia-smi
+ fuzz_gpu_run: check_fuzz_system_config
+ 	cd utils/fuzz && ./run.sh --gpu $(if $(FUZZ_DURATION_SECONDS),--duration-seconds $(FUZZ_DURATION_SECONDS))
+ 
++.PHONY: fuzz_gpu_reproduce # Reproduce GPU crashes from a CI artifact: GPU_FUZZ_ARTIFACT=<unpacked-artifact-dir>
++fuzz_gpu_reproduce:
++	$(if $(GPU_FUZZ_ARTIFACT),,$(error GPU_FUZZ_ARTIFACT is not set. Usage: make fuzz_gpu_reproduce GPU_FUZZ_ARTIFACT=<unpacked-artifact-dir>))
++	TFHE_CUDA_FUZZING=1 cargo build -p harness-cuda-compute --features gpu
++	@crashes="$(GPU_FUZZ_ARTIFACT)/stored_crashes/cuda-compute"; \
++	if [ ! -d "$$crashes" ]; then echo "ERROR: no crashes dir at $$crashes" >&2; exit 1; fi; \
++	total=$$(ls "$$crashes" | wc -l); \
++	echo "==> Reproducing $$total crash(es) from $$crashes"; \
++	failed=0; \
++	for f in "$$crashes"/*; do \
++		echo "--- $$(basename $$f)"; \
++		if RUST_BACKTRACE=1 TFHE_FUZZ_AUX_DIR="$(GPU_FUZZ_ARTIFACT)/aux_data" \
++				./target/debug/harness-cuda-compute < "$$f"; then \
++			echo "    (no crash)"; \
++		else \
++			failed=$$((failed + 1)); \
++		fi; \
++	done; \
++	echo "==> $$failed/$$total inputs crashed"
++
+ .PHONY: clippy_wasm_par_mq # Run clippy lints on wasm-par-mq and its examples
+ clippy_wasm_par_mq: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy --all-targets --all-features \
+```
+
+**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +33/-0)
+```diff
+@@ -61,7 +61,40 @@ fn main() {
+             cmake_config.define("TFHE_CUDA_COMMON_CHECK_CUDA_DIR", &check_cuda_dir);
+         }
+ 
++        // When building under cargo-afl, instrument host-side C++ for AFL coverage.
++        // We bypass afl-clang-fast++ (which has a bug duplicating flags once per argument)
++        // and use clang++ directly with -fsanitize-coverage=trace-pc-guard — the same
++        // mechanism AFL PCGUARD uses internally. No LLVM plugin is loaded, so there is no
++        // LLVM version matching requirement. AFL's runtime (linked by cargo-afl into the
++        // Rust binary) intercepts __sanitizer_cov_trace_pc_guard callbacks automatically.
++        println!("cargo::rerun-if-env-changed=AFL_CXX");
++        println!("cargo::rerun-if-env-changed=TFHE_CUDA_FUZZING");
++        let afl_build = std::env::var("AFL_CXX").is_ok();
++        // TFHE_CUDA_FUZZING=1 enables polynomial_size=32 in the CUDA dispatch table, which the
++        // fuzzer needs (its generated inputs use small parameters). Set this independently of
++        // AFL_CXX so plain `cargo build` can reproduce crashes without AFL instrumentation.
++        let cuda_fuzzing = afl_build || std::env::var("TFHE_CUDA_FUZZING").as_deref() == Ok("1");
++        if afl_build {
++            // clang-14 satisfies all constraints: NVCC accepts clang < 15, and clang
++            // supports -fsanitize-coverage=trace-pc-guard for AFL coverage instrumentation.
++            cmake_config.define("CMAKE_CXX_COMPILER", "clang++-14");
++            cmake_config.define("CMAKE_C_COMPILER", "clang-14");
++            // Coverage flags for CXX (.cpp files) and CUDA (.cu files via -Xcompiler) are
++            // both added by CMakeLists.txt after project()/enable_language() so the cmake
++            // compiler tests don't fail trying to link without the AFL runtime.
++            // -ccbin must be in CMAKE_CUDA_FLAGS from the start so the cmake CUDA compiler
++            // test (inside enable_language) uses clang++-14 as host, not g++.
++            cmake_config.define("CMAKE_CUDA_FLAGS", "-ccbin clang++-14");
++            cmake_config.define("AFL_CUDA_INSTRUMENT", "ON");
++            cmake_config.define("CMAKE_VERBOSE_MAKEFILE", "ON");
++        }
++        if cuda_fuzzing {
++            cmake_config.define("TFHE_CUDA_FUZZING", "ON");
++        }
++
+         // Build the CMake project
++        let jobs = std::env::var("NUM_JOBS").unwrap_or_else(|_| "1".to_string());
++        cmake_config.build_arg(format!("-j{jobs}"));
+         let dest = cmake_config.build();
+         println!("cargo:rustc-link-search=native={}", dest.display());
+         println!("cargo:rustc-link-lib=static=tfhe_cuda_backend");
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/CMakeLists.txt` (modified, +26/-1)
+```diff
+@@ -1,6 +1,14 @@
+ cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
+ project(tfhe_cuda_backend LANGUAGES CXX)
+ 
++# AFL coverage flags for C++ files are added after project() so the CXX compiler test (which runs inside project())
++# doesn't require the AFL runtime at link time.
++if(AFL_CUDA_INSTRUMENT)
++  set(CMAKE_CXX_FLAGS
++      "${CMAKE_CXX_FLAGS} -fsanitize-coverage=trace-pc-guard -D__AFL_COMPILER=1 -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION=1"
++  )
++endif()
++
+ # See if the minimum CUDA version is available. If not, only enable documentation building.
+ set(MINIMUM_SUPPORTED_CUDA_VERSION 10.0)
+ include(CheckLanguage)
+@@ -9,6 +17,19 @@ check_language(CUDA)
+ # If so, enable CUDA to check the version.
+ if(CMAKE_CUDA_COMPILER)
+   enable_language(CUDA)
++  # AFL coverage flags are added after enable_language so the cmake CUDA compiler test (which runs inside
++  # enable_language) doesn't require the AFL runtime at link time.
++  if(AFL_CUDA_INSTRUMENT)
++    set(CMAKE_CUDA_FLAGS
++        "${CMAKE_CUDA_FLAGS} \
++      -Xcompiler -fsanitize-coverage=trace-pc-guard \
++      -Xcompiler -D__AFL_COMPILER=1 \
++      -Xcompiler -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION=1")
++  endif()
++  if(TFHE_CUDA_FUZZING)
++    add_compile_definitions(TFHE_CUDA_FUZZING=1)
++    message(STATUS "TFHE_CUDA_FUZZING enabled: polynomial_size=32 supported in dispatch")
++  endif()
+ endif()
+ # If CUDA is not available, or the minimum version is too low do not build
+ if(NOT CMAKE_CUDA_COMPILER)
+@@ -112,8 +133,12 @@ endif()
+ 
+ # in production, should use -arch=sm_70 --ptxas-options=-v to see register spills -lineinfo for better debugging to use
+ # nvtx when profiling -lnvToolsExt
++string(FIND "${CMAKE_CUDA_FLAGS}" "-ccbin" _cuda_has_ccbin)
++if(_cuda_has_ccbin EQUAL -1)
++  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -ccbin ${CMAKE_CXX_COMPILER}")
++endif()
+ set(CMAKE_CUDA_FLAGS
+-    "${CMAKE_CUDA_FLAGS} -ccbin ${CMAKE_CXX_COMPILER} ${OPTIMIZATION_FLAGS}\
++    "${CMAKE_CUDA_FLAGS} ${OPTIMIZATION_FLAGS}\
+   -std=c++17 --no-exceptions  --expt-relaxed-constexpr -rdc=true \
+   --use_fast_math -Xcompiler -fPIC ")
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cu` (modified, +0/-6)
+```diff
+@@ -24,15 +24,9 @@ uint64_t scratch_cuda_integer_mult_inplace_64_async(
+     uint32_t carry_modulus, CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_radix_blocks,
+     bool allocate_gpu_memory) {
+-  const uint32_t polynomial_size = bsk_params.polynomial_size;
+   int_radix_params params(bsk_params, ksk_params, message_modulus,
+                           carry_modulus);
+ 
+-  if (polynomial_size < 256 || polynomial_size > 16384 ||
+-      (polynomial_size & (polynomial_size - 1)) != 0)
+-    PANIC("Cuda error (integer multiplication): unsupported polynomial size. "
+-          "Supported N's are powers of two in the interval [256..16384].")
+-
+   return scratch_cuda_integer_mult_radix_ciphertext<uint64_t>(
+       CudaStreams(streams), (int_mul_memory<uint64_t> **)mem_ptr,
+       is_boolean_left, is_boolean_right, num_radix_blocks, params,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/polynomial/dispatch.cuh` (modified, +8/-0)
+```diff
+@@ -11,8 +11,15 @@
+ 
+ // Standard policy: AmortizedDegree for sizes 256-16384
+ // (64-bit PBS CG, integer ops, FFT, keyswitch, sample extract)
++// TFHE_CUDA_FUZZING extends support down to 32 for small synthetic parameters
++// used by the GPU fuzz harness (reduces LWE mask size, no correctness
++// guarantee).
+ template <uint32_t N> struct AmortizedDegreePolicy {
++#ifdef TFHE_CUDA_FUZZING
++  static constexpr bool supported = (N >= 32 && N <= 16384);
++#else
+   static constexpr bool supported = (N >= 256 && N <= 16384);
++#endif
+   using type = AmortizedDegree<N>;
+ };
+ 
+@@ -68,6 +75,7 @@ template <uint32_t N> struct Multibit128DegreePolicy {
+ #define DISPATCH_POLY_SIZE(poly_size, Policy, ...)                             \
+   do {                                                                         \
+     switch (poly_size) {                                                       \
++      DISPATCH_POLY_SIZE_CASE(32, Policy, __VA_ARGS__)                         \
+       DISPATCH_POLY_SIZE_CASE(64, Policy, __VA_ARGS__)                         \
+       DISPATCH_POLY_SIZE_CASE(128, Policy, __VA_ARGS__)                        \
+       DISPATCH_POLY_SIZE_CASE(256, Policy, __VA_ARGS__)                        \
+```
+
+**File**: `ci/parse_benchmark_profile.py` (modified, +3/-1)
+```diff
+@@ -9,6 +9,8 @@
+     "hyperstack": "hyperstack",
+     "scaleway": "terraform",
+     "nebius": "terraform",
++    # Direct terraform prefix: profile name is used as-is (no cloud provider prefix prepended).
++    "terraform": "terraform",
+ }
+ 
+ 
+@@ -43,7 +45,7 @@ def parse_profile(profile_string, output_file, slab_toml):
+         sys.exit(1)
+ 
+     slab_backend = BACKEND_MAP[backend_prefix]
+-    if slab_backend == "terraform":
++    if slab_backend == "terraform" and backend_prefix != "terraform":
+         profile = backend_prefix + "-" + profile_name
+     else:
+         profile = profile_name
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
+- **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
+- **PR #4106** (2026-10-26): chore(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
 - **PR #4101** (2026-10-23): chore(gpu): run multi-bit h100 and zk memcheck workflows weekly on cron (@agnesLeroy)
 - **PR #4100** (2026-10-23): fix(gpu): boolean array should use boolean bitnot (@agnesLeroy)
 - **PR #4097** (closed): chore: with a license checker, check them in CI (@IceTDrinker)
-- **PR #4096** (2026-10-22): Am/chore/node mess update (@IceTDrinker)
-- **PR #4095** (2026-10-22): chore: bump node version (@IceTDrinker)
-- **PR #4094** (2026-10-21): Tm/sequential carry prop degree (@tmontaigu)
 
 ---
 
@@ -1969,28 +2307,67 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): boolean array should use boolean bitnot
+## X. gpu): also fuzz cpp code for gpu
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/array/gpu/booleans.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/gpu_fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `baad54c1`: gpu): boolean array should use boolean bitnot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0fc677fa`: gpu): also fuzz cpp code for gpu. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/array/gpu/booleans.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                .map(|lhs| cuda_key.pbs_key().boolean_bitnot(lhs, streams))
+name: gpu_fuzzing
+  INSTANCE_TYPE_SCHEDULED: "terraform::generic-4-l4orl40-tests (nebius-L40)"
+      instance-type:
+        description: "Instance type"
+        type: choice
+        default: "terraform::generic-4-l4orl40-tests (nebius-L40)"
+        options:
+          - "terraform::generic-4-l4orl40-tests (nebius-L40)"
+          - "terraform::scaleway-1-l4 (L4-1-24G)"
+          - "terraform::scaleway-4-l4 (L4-4-24G)"
+          - "terraform::scaleway-4-l40-tests (L40S-4-48G)"
+          - "terraform::scaleway-single-h100 (H100-1-80G)"
+          - "terraform::nebius-single-h100 (nebius-H100-SXM-1-80G)"
+          - "hyperstack::l40 (n3-L40x1)"
+          - "hyperstack::4-l40 (n3-L40x4)"
+          - "hyperstack::single-h100 (n3-H100x1)"
+  parse-inputs:
+    name: gpu-fuzzing/parse-inputs
+    outputs:
+      backend: ${{ steps.parse.outputs.backend }}
+      profile: ${{ steps.parse.outputs.profile }}
+      cloud-provider: ${{ steps.parse.outputs.cloud_provider }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: "false"
+          token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+
+      - nam
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                .map(|lhs| CudaBooleanBlock(cuda_key.pbs_key().bitnot(&lhs.0, streams)))
+name: gpu-fuzzing
+  setup-instance:
+    name: gpu-fuzzing/setup-instance
+      cloud-provider: ${{ steps.start-instance.outputs.cloud-provider }}
+          backend: terraform
+          profile: scaleway-1-l4
+    needs: setup-instance
+    # 2h: covers a 20min campaign + CUDA build (~90m) + pre/post with headroom.
+    timeout-minutes: 120
+          cloud-provider: ${{ needs.setup-instance.outputs.cloud-provider }}
+    needs: [setup-instance, fuzz]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `baad54c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0fc677fa` are properly handled with clean fallback behavior.

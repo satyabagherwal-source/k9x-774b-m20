@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T17:52:06.945Z",
+  "last_updated": "2026-10-26T17:58:31.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
-      "verified_at": "2026-10-26T11:15:46.108Z",
+      "content_hash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
+      "verified_at": "2026-10-26T17:58:31.469Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:15:46.108Z"
+      "last_updated": "2026-10-26T17:58:31.469Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "63be647b008739d080533367fc5ba1500d0fa8641870620f0ce8a960179a6b03",
-      "verified_at": "2026-10-24T19:58:58.332Z",
+      "content_hash": "2b30b67f7f363751b1a7807e68f8d582d8dc0ba73c57a545d95f88496fd2ad9a",
+      "verified_at": "2026-10-26T17:58:26.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:58:58.332Z"
+      "last_updated": "2026-10-26T17:58:26.674Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
-      "verified_at": "2026-10-25T17:14:42.460Z",
+      "content_hash": "d79645254cd6a18d234ea38338a1c8c8548f6a53ea3ecab5834ad95ef3418ac2",
+      "verified_at": "2026-10-26T17:58:30.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:14:42.460Z"
+      "last_updated": "2026-10-26T17:58:30.312Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "3fb5e6003b73efded7b8a3187761b8951e3e3703e0f4f809421d052a9de24e8b",
-      "verified_at": "2026-10-25T15:03:20.175Z",
+      "content_hash": "8ecf11112de359356f8a675ed64cd39dc1eb89646f3f24a99cea4fc16401f342",
+      "verified_at": "2026-10-26T17:58:20.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:03:20.175Z"
+      "last_updated": "2026-10-26T17:58:20.024Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "91d45098058977735e7549286688a7d5826ce95b2ac6d43119d29eea831b2cbf",
-      "verified_at": "2026-10-25T18:08:58.452Z",
+      "content_hash": "086c57db452884cf14868307702aa7f3197945ec9058d0c9c813ea5a0aea7d12",
+      "verified_at": "2026-10-26T17:58:25.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:08:58.452Z"
+      "last_updated": "2026-10-26T17:58:25.081Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -14661,14 +14661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kartiklabhshetwar-better-shot",
-      "content_hash": "ac38387cc4a8710dcaeb4dcc62212bf53070df3ce223ddf3c990dbaa66272edb",
-      "verified_at": "2026-10-20T00:51:42.798Z",
+      "content_hash": "79955de58feba2c22dfd824696620c73102d591e01f66192b447e43a2b5e27ee",
+      "verified_at": "2026-10-26T17:58:21.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:51:42.798Z"
+      "last_updated": "2026-10-26T17:58:21.789Z"
     },
     "RDFLib/pySHACL": {
       "repository": "RDFLib/pySHACL",

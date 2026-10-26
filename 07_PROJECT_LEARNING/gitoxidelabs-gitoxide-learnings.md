@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `d4db00df`  
+> **Source Version**: `9f805e24`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:03:19.924Z  
+> **Timestamp**: 2026-10-26T17:58:19.763Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:03:19.919Z  
+> **Harvest Timestamp**: 2026-10-26T17:58:15.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An idiomatic, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12060 stars
+- **Stars / Engagement**: 12066 stars
 
 ---
 
@@ -1612,11 +1612,14 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3124** (2026-10-25): **Add benchmark for `gix-blame`**
+  *Symptoms*: This PR adds a benchmark for `gix-blame`. This will hopefully be the basis for some upcoming work on `gix-blame` that I intend to do.  The benchmark is deliberately simple, and it deliberately does not set up a synthetic repository, but measures `gix_blame::file()` on a set of files from the `gitoxide` repository itself. I hope that the files I chose are somewhat representative of real-world workloads.  The benchmark only measures `gix_blame::file()`, excluding the time it takes to construct and destruct the resource cache.  ```bash # to capture a baseline cargo bench -p gix-blame --bench blame -- --save-baseline baseline  # to compare a change against a captured baseline cargo bench -p gix-blame --bench blame -- --baseline baseline ``` 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"950f4081d98882da5d0cc79d28646d461bc9dd6d","has_any_findings":null,"has_unresolved_findings":null,"status":"running"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | 🔄 **Running** since <relative-time datetime="2026-10-25T17:19:43.912308Z">2026-10-25T17:19:43.912308Z</relative-time> | `950f408` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review
+  > Thanks!  In future, I'd hope to see what's in the PR description in the commit as well, as I still think that having as much context as possible in the commit history is valuable, also in the long run. Also no need to rely on information that is on GitHub exclusively.
+
 - **Issue #3123** (2026-10-25): **[macOS] `getattrlistbulk` is used unconditionally but may not be available, which breaks linking**
   *Symptoms*: ### Current behavior 😯  ``` Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 Process exited with non-zero exit status 1 FAILING COMMAND: /opt/local/libexec/mrustc/bin/mrustc /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/src/ein.rs -o /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein -C emit-depfile=/opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein.d --cfg debug_assertions -O -L /opt/local/libexec/mrustc/lib -L /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release --cfg feature="default" --cfg feature="max" --cfg feature="hashes" --cfg feature="max-control" --cfg feature="fast" --cfg feature="gitoxide-core-tools-query" --cfg feature="gitoxide-core-tools-corpus" --cfg feature="gitoxide-core-blocking-client" --cfg feature="http-client-curl-openssl" --cfg fe
-
-- **Issue #3122** (2026-10-25): **Give the Windows console editor test 2 minutes instead of 30 seconds**
-  *Symptoms*: This fixes the `gix-tix` flake that has been causing a number of recent CI failures that resolve when a job is rerun.  *The following description is written by Claude Opus 5.5, with corrections by Codex.*  > `edit::tests::editor_inherits_the_windows_console` in `gix-tix`, added in 28a32b5420a2c0594c35447958aa2fd206b285b8 (#2938), occasionally fails in both Windows `test-fast` jobs with: >  > > The console editor test did not finish within 30 seconds. >  > `with-console.ps1` reruns the test in a hidden console. It kills that run if it hasn't exited within 30 seconds. The limit keeps a hung editor from hanging CI, but slow runs on Windows sometimes exceed it. >  > - The first commit writes the limit only once, as a `TimeSpan` from which both the wait and the error message are derived. Behavior is unchanged except on PowerShell older than 7.3, which the script now refuses with `#Requires -Version 7.3`, since passing a `TimeSpan` to `WaitForExit` needs .NET 7 or later. Every supported `pwsh` release is 7.3 or later. > - The second commit raises the limit to 2 minutes, so the error message now says "within 120 seconds". `WaitForExit` returns as soon as the process exits, so runs that finish within 30 seconds are unaffected. Runs that finish within the 2-minute wait no longer fail because of this timeout; longer runs still time out. >  > ### Evidence >  > These are the available `nextest` timings examined from workflow runs created by 2026-10-25 00:40 UTC, including earlier ARM att
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1633,352 +1636,190 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47a36514` (2026-10-24)
-**Commit Message**: fix: honor init object-format defaults, context, and section filtering
+### Incident Patch 1: `9f805e24` (2026-10-25)
+**Commit Message**: Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame
 
-This is a typical review with quite a bunch of agent-enabled changes to
-avoid super-specific tests in favor of adjusting existing tests to capture
-what's now also interesting.
+Add benchmark for `gix-blame`
 
-Additionally, make it more Git-conform as Git picks up intial values from the
-global configuration.
-
-<!-- agent -->
-Keep `create::Options::default().object_hash` unspecified in every build;
-apply the build fallback only in repository creation. This lets configured
-and environment defaults be validated even in SHA-256-only builds while
-preserving explicit hash requests and clone behavior.
-
-Read `init.defaultObjectFormat` without a future Git directory, honor the
-opening options' section filter, and distinguish a valueless selected entry
-from an absent setting before creating anything.
-
-Regression tests reproduce all four init findings. They cover both repository
-kinds, available and unsupported environment requests, excluded API settings,
-and Git comparisons for conditional includes and valueless settings.
-Focused checks pass with SHA-1, SHA-256, and both hashes; the full `gix-init`
-integration target passes with default features plus SHA
-
-**File**: `gix/src/config/tree/sections/extensions.rs` (modified, +1/-2)
+**File**: `Cargo.lock` (modified, +2/-0)
 ```diff
-@@ -10,8 +10,7 @@ impl Extensions {
-     pub const RELATIVE_WORKTREES: keys::Boolean =
-         keys::Boolean::new_boolean("relativeWorktrees", &config::Tree::EXTENSIONS);
-     /// The `extensions.objectFormat` key.
--    pub const OBJECT_FORMAT: ObjectFormat =
--        ObjectFormat::new_with_validate("objectFormat", &config::Tree::EXTENSIONS, validate::ObjectFormat);
-+    pub const OBJECT_FORMAT: ObjectFormat = ObjectFormat::new_object_format("objectFormat", &config::Tree::EXTENSIONS);
- }
- 
- /// The `extensions.objectFormat` key.
+@@ -1668,9 +1668,11 @@ dependencies = [
+ name = "gix-blame"
+ version = "0.20.0"
+ dependencies = [
++ "criterion",
+  "gix-commitgraph",
+  "gix-date",
+  "gix-diff",
++ "gix-discover",
+  "gix-error",
+  "gix-filter",
+  "gix-fs",
 ```
 
-**File**: `gix/src/create.rs` (modified, +3/-13)
+**File**: `gix-blame/Cargo.toml` (modified, +6/-0)
 ```diff
-@@ -88,7 +88,7 @@ fn create_dir(p: &Path) -> Result<()> {
- }
+@@ -32,7 +32,9 @@ gix-traverse = { version = "^0.64.0", path = "../gix-traverse" }
+ smallvec = "1.15.1"
  
- /// Options for use in [`into()`];
--#[derive(Copy, Clone)]
-+#[derive(Copy, Clone, Default)]
- pub struct Options {
-     /// Control whether the destination directory must be empty when creating a repository with a worktree.
-     ///
-@@ -113,21 +113,11 @@ pub struct Options {
-     /// which is interpreted as legacy SHA-1.
-     /// In builds without SHA-1 support, `None` means SHA-256.
-     ///
--    /// If `None`, [`ThreadSafeRepository::init_opts()`][crate::ThreadSafeRepository::init_opts()]
-+    /// If `None` (the default), [`ThreadSafeRepository::init_opts()`][crate::ThreadSafeRepository::init_opts()]
-     /// will apply `init.defaultObjectFormat` or `GIT_DEFAULT_HASH` if set.
-     pub object_hash: Option<gix_hash::Kind>,
- }
+ [dev-dependencies]
++criterion = "0.8.2"
+ insta = "1.46.3"
++gix-discover = { path = "../gix-discover", features = ["sha1", "sha256"] }
+ gix-hash = { path = "../gix-hash", features = ["sha1", "sha256"] }
+ gix-ref = { path = "../gix-ref", features = ["sha1", "sha256"] }
+ gix-filter = { path = "../gix-filter" }
+@@ -42,5 +44,9 @@ gix-odb = { path = "../gix-odb", features = ["sha1"] }
+ gix-testtools = { path = "../tests/tools" }
+ pretty_assertions = "1.4.0"
  
--impl Default for Options {
--    fn default() -> Self {
--        Options {
--            destination_must_be_empty: None,
--            fs_capabilities: None,
--            object_hash: default_object_hash(),
--        }
--    }
--}
--
- fn default_object_hash() -> Option<gix_hash::Kind> {
-     #[cfg(feature = "sha1")]
-     {
-@@ -310,7 +300,7 @@ fn bool(v: bool) -> &'static str {
- mod tests {
-     #[test]
-     fn default_object_hash_matches_available_hash_support() {
--        let object_hash = super::Options::default().object_hash;
-+        let object_hash = super::default_object_hash();
-         #[cfg(feature = "sha1")]
-         assert_eq!(
-             object_hash, None,
++[[bench]]
++name = "blame"
++harness = false
++
+ [package.metadata.docs.rs]
+ features = ["sha1"]
 ```
 
-**File**: `gix/src/init.rs` (modified, +14/-15)
+**File**: `gix-blame/benches/blame.rs` (added, +102/-0)
 ```diff
-@@ -48,7 +48,7 @@ impl ThreadSafeRepository {
-     ) -> Result<Self> {
-         let directory = directory.as_ref();
-         if create_options.object_hash.is_none() {
--            create_options.object_hash = default_object_format(directory, kind, &open_options)?;
-+            create_options.object_hash = default_object_format(&open_options)?;
-         }
-         Self::create_and_open(directory, kind, create_options, open_options)
-     }
-@@ -101,20 +101,19 @@ impl ThreadSafeRepository {
-     }
- }
- 
--/// Read `init.defaultObjectFormat` from the configuration that a new repository in `directory` would see.
--fn default_object_format(
--    directory: &Path,
--    kind: crate::create::Kind,
--    options: &crate::open::Options,
--) -> Result<Option<gix_hash::Kind>> {
--    let git_dir = match kind {
--        crate::create::Kind::Bare => directory.to_owned(),
--        crate::create::Kind::WithWorktree => directory.join(gix_discover::DOT_GIT_DIR),
--    };
--    let config = crate::config(Some(&git_dir), options)?;
-+/// Read `init.defaultObjectFormat` without repository context, like Git's format selection.
-+fn default_object_format(options: &crate::open::Options) -> Result<Option<gix_hash::Kind>> {
-+    let config = crate::config(None, options)?;
-     let key = &Init::DEFAULT_OBJECT_FORMAT;
--    config
--        .string(key)
--        .map(|value| key.try_into_object_format(value.as_bstr()))
-+    let filter = options
-+        .filter_config_section
-+        .unwrap_or(crate::config::section::is_trusted);
-+    let value = config.string_implicit_filter(key, filter);
-+    value
-+        .map(|value| {
-+            let value = value
-+                .ok_or_else(|| crate::config::key::error(key, "Missing configuration value").validation_error())?;
-+            key.try_into_object_format(value.as_bstr())
-+        })
-         .transpose()
- }
-```
-
-**File**: `gix/tests/gix/clone.rs` (modified, +2/-2)
-```diff
-@@ -1608,12 +1608,12 @@ fn clone_ignores_default_object_format() -> TestResult {
-         tmp.path(),
-         gix::create::Kind::Bare,
-         Default::default(),
--        restricted().config_overrides(["init.defaultObjectFormat=sha256"]),
-+        restricted().config_overrides(["init.defaultObjectFormat=invalid-will-not-be-read"]),
-     )?
-     .persist();
-     assert_eq!(
-         repo.object_hash(),
--        gix::create::Options::default().object_hash.unwrap_or_default(),
-+        gix::hash::Kind::default(),
-         "clones adopt the remote's object format later, so the default for new repositories doesn't apply"
-     );
-     Ok(())
-```
-
-**File**: `gix/tests/gix/init.rs` (modified, +121/-152)
-```diff
-@@ -27,49 +27,7 @@ mod bare {
-     #[serial_test::serial]
-     fn init_into_empty_directory_uses_it_directly() -> TestResult {
-         let _environment = gix_testtools::isolate_git_environment()?;
--        #[cfg(feature = "sha1")]
--        let (expected, version, object_format) = (gix_hash::Kind::Sha1, 0, None);
--        #[cfg(not(feature = "sha1"))]
--        let (expected, version, object_format) = (gix_hash::Kind::Sha256, 1, Some("sha256"));
--        for options in [
--            gix::create::Options::default(),
--            gix::create::Options {
--                object_hash: None,
--                ..Default::default()
--            },
--        ] {
--            let tmp = tempfile::tempdir()?;
--            let repo = gix::ThreadSafeRepository::init_opts(
--                tmp.path(),
--                gix::create::Kind::Bare,
--                options,
--                gix::open::Options::isolated(),
--            )?
--            .to_thread_local();
--            assert_eq!(repo.kind(), gix::repository::Kind::Common);
--            assert!(
--                repo.workdir().is_none(),
--                "a worktree isn't present in bare repositories"
--            );
--            assert_eq!(
--                repo.git_dir(),
--                tmp.path(),
--                "the repository is placed into the directory itself"
--            );
--            assert_eq!(
--                repo.object_hash(),
--                expected,
--                "initialization uses a supported object hash"
--            );
--            super::object_format::assert_on_disk_format(&repo, version, object_format)?;
--            assert_eq!(
--                gix_testtools::git(repo.git_dir(), "rev-parse --show-object-format")?.trim(),
--                expected.to_string(),
--                "git agrees on the object format"
--            );
--            assert_eq!(gix::open_opts(repo.git_dir(), crate::restricted())?, repo);
--        }
--        Ok(())
-+        super::assert_init_into_empty_directory(gix::create::Kind::Bare)
-     }
- 
-     #[test]
-@@ -206,7 +164,7 @@ mod non_bare {
-             gix::open_opts(repo.workdir().as_ref().expect("non-bare repo"), crate::restricted())?,
-             repo
-         );
--        Ok(())
-+        super::assert_init_into_empty_directory(gix::create::Kind::WithWorktree)
-     }
- 
-     #[test]
-@@ -254,126 +212,137 @@ mod non_bare {
-     }
- }
- 
--mod object_format {
--    use gix_testtools::{TestResult, tempfile};
--
--    fn init(
--        kind: gix::create::Kind,
--        object_hash: Option<gix_hash::Kind>,
--        default_object_format: Option<&str>,
--    ) -> TestResult<(tempfile::TempDir, gix::Repository)> {
--        let tmp = tempfile::tempdir()?;
--        let overrides = default_object_format.map(|format| format!("init.defaultObjectFormat={format}"));
--        let repo: gix::Repository = gix::ThreadSafeRepository::init_opts(
--            tmp.path(),
--            kind,
--            gix::create::Options {
--                object_hash,
--                ..Default::default()
--            },
--            crate::restricted().config_overrides(overrides),
--        )?
--        .into();
--        Ok((tmp, repo))
--    }
--
--    pub(super) fn assert_on_disk_format(
--        repo: &gix::Repository,
--        version: i64,
--        object_format: Option<&str>,
--    ) -> TestResult {
--        let config =
--            gix::config::File::from_path_no_includes(repo.git_dir().join("config"), gix::config::Source::Local)?;
--        assert_eq!(
--            config.integer("core.repositoryFormatVersion")?,
--            Some(version),
--            "the repository format version matches what git writes for this object format"
--        );
--        assert_eq!(
--            config.string("extensions.objectFormat"),
--            object_format.map(Into::into),
--            "only non-SHA-1 object formats are written as extension"
--        );
--        Ok(())
-+#[test]
-+fn invalid_default_object_format_is_an_error_unless_explicitly_overridden() -> gix_testtools::TestResult {
-+    for repo_kind in [gix::create::Kind::Bare, gix::create::Kind::WithWorktree] {
-+        for &requested_object_hash in OBJECT_FORMATS {
-+            let tmp = gix_testtools::tempfile::tempdir()?;
-+            let result = gix::ThreadSafeRepository::init_opts(
-+                tmp.path(),
-+                repo_kind,
-+                gix::create::Options {
-+                    object_hash: requested_object_hash,
-+                    ..Default::default()
+@@ -0,0 +1,102 @@
++//! A benchmark for `gix-blame`. It benchmarks blames for files in `gitoxide` itself, in order to
++//! exercise somewhat realistic workloads.
++use std::path::PathBuf;
++
++use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
++use gix_hash::ObjectId;
++
++// These are files whose blames are supposed to be somewhat representative of real-world use cases.
++const FILES_TO_BLAME: [&str; 9] = [
++    // These files are among the most frequently changed ones in the entire repository. They mostly
++    // exercise blob diffs and history traversal.
++    "CHANGELOG.md",
++    "STABILITY.md",
++    "README.md",
++    "Cargo.toml",
++    // These files live in nested directories. In addition to blob diffs and history traversal,
++    // they also exercise tree diffs.
++    "gix-blame/src/file/function.rs",
++    "gix-path/src/env/mod.rs",
++    "gix-index/tests/index/file/write.rs",
++    "gix-object/src/lib.rs",
++    "gix-odb/src/store_impls/loose/write.rs",
++];
++
++// The commit to start blame from. A fixed commit was chosen to make the benchmark start from a
++// stable starting point. This commit was created on 2026-10-25.
++const COMMIT_TO_BLAME: &str = "d4db00dfdd5874ad13a40eff4d820fb242b986f7";
++
++fn bench_blame(c: &mut Criterion) {
++    let crate_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
++    let (repository, _trust) = gix_discover::upwards(&crate_path).expect("did not find a repository");
++    let (git_dir, worktree_dir) = repository.into_repository_and_work_tree_directories();
++
++    let common_dir = match gix_discover::path::from_plain_file(&git_dir.join("commondir"))
++        .transpose()
++        .expect("was not able to resolve common dir")
++    {
++        Some(path) => git_dir.join(path),
++        None => git_dir.clone(),
++    }
++    .canonicalize()
++    .expect("was not able to canonicalize common dir");
++
++    let odb = gix_odb::at(common_dir.join("objects"), gix_hash::Kind::Sha1).expect("object database could not be read");
++
++    let head_id = ObjectId::from_hex(COMMIT_TO_BLAME.as_bytes()).expect("commit to blame to point to an actual commit");
++
++    let index = gix_index::File::at(git_dir.join("index"), gix_hash::Kind::Sha1, false, Default::default())
++        .expect("index could not be read");
++
++    let create_resource_cache = || {
++        let stack = gix_worktree::Stack::from_state_and_ignore_case(
++            worktree_dir.as_deref().unwrap_or(&git_dir),
++            false,
++            gix_worktree::stack::State::AttributesAndIgnoreStack {
++                attributes: Default::default(),
++                ignore: Default::default(),
++            },
++            &index,
++            index.path_backing(),
++        );
++        gix_diff::blob::Platform::new(
++            Default::default(),
++            gix_diff::blob::Pipeline::new(
++                gix_diff::blob::pipeline::WorktreeRoots {
++                    old_root: None,
++                    new_root: None,
 +                },
-+                crate::restricted().config_overrides(["init.defaultObjectFormat=invalid"]),
++                gix_filter::Pipeline::new(Default::default(), gix_hash::Kind::Sha1, Default::default()),
++                vec![],
++                gix_diff::blob::pipeline::Options {
++                    large_file_threshold_bytes: 0,
++                    fs: Default::default(),
++                },
++            ),
++            gix_diff::blob::pipeline::Mode::ToGit,
++            stack,
++        )
++    };
++
++    for file in FILES_TO_BLAME {
++        c.bench_function(file, |b| {
++            // This benchmark measures `gix_blame::file` alone. Construction and destruction of
++            // `resource_cache` is outside the timed section.
++            b.iter_batched_ref(
++                create_resource_cache,
++                |resource_cache| {
++                    let start = gix_blame::Start::Commit(head_id);
++
++                    std::hint::black_box(
++                        gix_blame::file(&odb, start, None, resource_cache, file.as_ref(), Default::default())
++                            .expect("blame to not fail"),
++                    )
++                },
++                BatchSize::SmallInput,
 +            );
-+            if let Some(expected_object_hash) = requested_object_hash {
-+                assert_eq!(
-+                    result?.to_thread_local().object_hash(),
-+                    expected_object_hash,
-+                    "an explicit hash bypasses an invalid configured default for {repo_kind:?}"
-+                );
-+            } else {
-+                let err = result.expect_err("an unknown 
++        });
++    }
++}
++
++criterion_group!(benches, bench_blame);
++criterion_main!(benches);
 ```
 
 ---
 
-### Incident Patch 2: `500cdc55` (2026-10-25)
-**Commit Message**: Merge pull request #3122 from EliahKagan/claude/run-ci/console-editor-test-timeout
+### Incident Patch 2: `02e6d7e4` (2026-10-25)
+**Commit Message**: review
 
-Give the Windows console editor test 2 minutes instead of 30 seconds
-
-**File**: `gix-tix/tests/fixtures/with-console.ps1` (modified, +4/-2)
+**File**: `gix-blame/benches/blame.rs` (modified, +0/-10)
 ```diff
-@@ -1,3 +1,4 @@
-+#Requires -Version 7.3
- param(
-     [Parameter(Mandatory = $true)][string]$Executable,
-     [Parameter(Mandatory = $true)][string]$TestName,
-@@ -15,9 +16,10 @@ $process = Start-Process -FilePath $Executable `
-     -ArgumentList @('--exact', $TestName, '--nocapture', '--test-threads=1') `
-     -WorkingDirectory (Get-Location).Path -WindowStyle Hidden `
-     -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
--if (-not $process.WaitForExit(30000)) {
-+$limit = [TimeSpan]::FromMinutes(2)
-+if (-not $process.WaitForExit($limit)) {
-     Stop-Process -Id $process.Id -Force
--    throw 'The console editor test did not finish within 30 seconds.'
-+    throw "The console editor test did not finish within $($limit.TotalSeconds) seconds."
- }
- # Wait for redirected output to drain as well as for the process to exit.
- $process.WaitForExit()
+@@ -1,15 +1,5 @@
+ //! A benchmark for `gix-blame`. It benchmarks blames for files in `gitoxide` itself, in order to
+ //! exercise somewhat realistic workloads.
+-//!
+-//! ## Running the benchmark
+-//!
+-//!     # to capture a baseline
+-//!     cargo bench -p gix-blame --bench blame -- --save-baseline baseline
+-//!
+-//!     # to compare a change against a captured baseline
+-//!     cargo bench -p gix-blame --bench blame -- --baseline baseline
+-//!
+-//! Since `gitoxide` uses SHA-1 hashes, we can hardcode `object_hash` to `Sha1`.
+ use std::path::PathBuf;
+ 
+ use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
 ```
-
----
-
-### Incident Patch 3: `61bb08f6` (2026-10-24)
-**Commit Message**: Remove two fixture archives left over from replaced fixture scripts
-
-No test has used these archives since before they reached `main`, yet
-as tracked files they pass for archives that tests depend on. Each
-outlived the script that produced it, which was replaced while its PR
-was being revised. Both began as `.tar.xz` files stored in Git LFS:
-
-- `single_parent_huge_dates.tar` in `gix-commitgraph` began as
-  `single_parent_huge_dates.tar.xz`, generated from
-  `single_parent_huge_dates.sh`, which the ignored test
-  `single_parent_huge_dates_v2` in `tests/access/mod.rs` used in
-  earlier versions of #892, such as 73ed70fd9. The archive's stored
-  identity (in `__gitoxide_meta__/identity`), 2584929091, is that
-  script's CRC-32/CKSUM as `gix-testtools` computes it, and its
-  commits carry the committer date the script sets. A force-push
-  replaced 73ed70fd9 with 1694bfab5, which dropped the script and that
-  test in favor of `single_commit_huge_dates.sh`, but kept the
-  `.tar.xz`. It reached `main` unchanged in 101dec0ad (#892).
-
-- `match_baseline.tar` in `gix-pathspec` began as a
-  `match_baseline.tar.xz` generated by a version of `match_baseline.sh`,
-  the script that the test `direct
-
-
 
 #### Recent Merged Pull Requests:
+- **PR #3124** (2026-10-25): Add benchmark for `gix-blame` (@cruessler)
 - **PR #3122** (2026-10-25): Give the Windows console editor test 2 minutes instead of 30 seconds (@EliahKagan)
 - **PR #3121** (2026-10-25): Build `gix-glob`'s `glob` integration tests again (@EliahKagan)
 - **PR #3120** (2026-10-25): Remove two fixture archives left over from replaced fixture scripts (@EliahKagan)
 - **PR #3119** (2026-10-25): fix: apply `gitoxide.core.defaultPackCacheMemoryLimit` to the default pack cache (@castrog)
 - **PR #3118** (2026-10-24): Pin `test-32bit (i386)` to `ubuntu-24.04` (@EliahKagan)
-- **PR #3117** (2026-10-24): release testtools (@Byron)
 
 ---
 
@@ -1998,29 +1839,29 @@ was being revised. Both began as `.tar.xz` files stored in Git LFS:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. honor init object-format defaults, context, and section filtering
+## X. Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame
 
 **RULE**:
-When implementing operations in `gix/src/config/tree/sections/extensions.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47a36514`: honor init object-format defaults, context, and section filtering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9f805e24`: Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix/src/config/tree/sections/extensions.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub const OBJECT_FORMAT: ObjectFormat = ObjectFormat::new_object_format("objectFormat", &config::Tree::EXTENSIONS);
+ "criterion",
+ "gix-discover",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    pub const OBJECT_FORMAT: ObjectFormat =
-        ObjectFormat::new_with_validate("objectFormat", &config::Tree::EXTENSIONS, validate::ObjectFormat);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47a36514` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9f805e24` are properly handled with clean fallback behavior.

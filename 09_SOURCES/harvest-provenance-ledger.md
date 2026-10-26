@@ -5175,3 +5175,9 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `84409045` | Multi-dimensional audit evidence | 2026-10-26T14:23:26.789Z |
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `c7b45497` | Multi-dimensional audit evidence | 2026-10-26T14:29:54.224Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `aa0f14f5` | Multi-dimensional audit evidence | 2026-10-26T17:52:06.938Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `9f805e24` | Multi-dimensional audit evidence | 2026-10-26T17:58:20.019Z |
+| `learn-github-kartiklabhshetwar-better-shot` | `https://github.com/KartikLabhshetwar/better-shot` | `0e005e9c` | Multi-dimensional audit evidence | 2026-10-26T17:58:21.784Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `79e49c75` | Multi-dimensional audit evidence | 2026-10-26T17:58:25.076Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `8252d52f` | Multi-dimensional audit evidence | 2026-10-26T17:58:26.668Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `05f166aa` | Multi-dimensional audit evidence | 2026-10-26T17:58:30.307Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1167438a` | Multi-dimensional audit evidence | 2026-10-26T17:58:31.464Z |
