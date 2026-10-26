@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "5bbf3c0ff7bdea4ab2c864c337b8101087c09958d7c07b71e8fea3b9f3e742ea",
-    "lastHarvestedAt": "2026-10-21T18:14:01.855Z",
+    "contentHash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
+    "lastHarvestedAt": "2026-10-26T11:32:00.847Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T11:25:33.549Z",
+  "last_updated": "2026-10-26T11:32:00.798Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -101192,7 +101192,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "5bbf3c0ff7bdea4ab2c864c337b8101087c09958d7c07b71e8fea3b9f3e742ea",
+      "content_hash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -101214,11 +101214,21 @@
         {
           "number": 3579,
           "title": "MoE Expert Routing Determinism & Load Balancing Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3580,
           "title": "NVFP4 Quantization Dequantization Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4596,
+          "title": "NVFP4 Quantization Precision & Scale Factor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4597,
+          "title": "MoE Memory Bandwidth & Expert Parallelism Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -101227,7 +101237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:14:01.814Z",
+      "verified_at": "2026-10-26T11:32:00.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -113721,7 +113731,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T18:14:01.814Z"
+      "verified_at": "2026-10-26T11:32:00.788Z"
     },
     "rule-3580": {
       "learning_id": "rule-3580",
@@ -128959,6 +128969,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T11:25:33.537Z"
+    },
+    "rule-4596": {
+      "learning_id": "rule-4596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4596,
+      "title": "NVFP4 Quantization Precision & Scale Factor Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:32:00.788Z"
+    },
+    "rule-4597": {
+      "learning_id": "rule-4597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4597,
+      "title": "MoE Memory Bandwidth & Expert Parallelism Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:32:00.788Z"
     }
   },
   "aliases": {

@@ -5140,3 +5140,4 @@ Every entry in this ledger must capture:
 | `learn-github-melbahja-seo` | `https://github.com/melbahja/seo` | `cd4e4122` | Multi-dimensional audit evidence | 2026-10-26T11:19:43.686Z |
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `8bb1677b` | Multi-dimensional audit evidence | 2026-10-26T11:20:25.794Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `4fc541b2` | Multi-dimensional audit evidence | 2026-10-26T11:25:33.611Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-26T11:32:00.847Z |
