@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `b2a3be78`  
+> **Source Version**: `002a6b7a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:11:19.804Z  
+> **Timestamp**: 2026-10-26T13:40:38.503Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:11:18.972Z  
+> **Harvest Timestamp**: 2026-10-26T13:40:38.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14567 stars
+- **Stars / Engagement**: 14577 stars
 
 ---
 
@@ -1155,11 +1155,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7748** (2026-10-23): **warmup: reuse in-flight full-block downloads**
-  *Symptoms*: Based on #7649 (original commit by @qingketsing kept), fixes #7634.  ### Change  `FillCache` (warmup) first tries `TryPiggyback` to reuse an in-flight full-block download of the same block, avoiding a duplicate GET. On success it caches the block with `force=true` (so `--cache-partial-only` still fills the cache); on shared failure it falls back to its own download.  Compared with #7649, the piggybacked page is copied into a page owned by warmup before caching. The shared page may be the caller's buffer of a full-block read, which vfs `sliceReader` reuses on re-read; caching it directly could change the cached content of an immutable block (see #7743 for the same issue on the normal read path). Tests and docs from #7649 are dropped to keep the change minimal.  ### Validation  - Ad-hoc reproduction (not committed): read + concurrent warmup with `CacheFullBlock=false`, then rewrite the reader's buffer. #7649 caches the mutated bytes; this change keeps the original data, still with one GET. - `go test -gcflags='all=-N -l' ./pkg/chunk -count=1` passes. 
+- **Issue #7762** (2026-10-26): **meta: resolve subdir root for ACL operations**
+  *Symptoms*: ## Problem  On subdir mounts, ACL reads and writes can target the volume root instead of the mounted directory.  ## Fix  Resolve the inode once at the ACL entry points so backend operations and cache handling use the same real inode. Regression coverage is in #7759.
 
-- **Issue #7747** (2026-10-23): **ci: run KeyDB in Docker to avoid unavailable apt repository**
-  *Symptoms*: 
+- **Issue #7760** (2026-10-26): **meta: resolve subdir root before batch unlink**
+  *Symptoms*: ## Problem  On subdir mounts, BatchUnlink can leave requested files undeleted or delete a same-name hardlink at the volume root.   Related: #7752  ## Fix  Resolve the parent inode before deleting entries and updating usage.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,199 +1176,76 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0eb0e6d5` (2026-10-22)
-**Commit Message**: sdk/java: fix Central publishing with Maven 3.10 (#7729)
+### Incident Patch 1: `735029cb` (2026-10-26)
+**Commit Message**: meta: fix subdir quota accounting after mkdir (#7758)
 
-Signed-off-by: jiefenghuang <[REDACTED_EMAIL]>
-
-**File**: `sdk/java/pom.xml` (modified, +1/-1)
+**File**: `pkg/meta/base.go` (modified, +1/-1)
 ```diff
-@@ -109,7 +109,7 @@
- 			<plugin>
- 				<groupId>org.sonatype.central</groupId>
- 				<artifactId>central-publishing-maven-plugin</artifactId>
--				<version>0.8.0</version>
-+				<version>0.12.0</version>
- 				<extensions>true</extensions>
- 				<configuration>
- 					<publishingServerId>central</publishingServerId>
+@@ -1730,7 +1730,7 @@ func (m *baseMeta) Mkdir(ctx Context, parent Ino, name string, mode uint16, cuma
+ 	st := m.Mknod(ctx, parent, name, TypeDirectory, mode, cumask, 0, "", inode, attr)
+ 	if st == 0 {
+ 		m.parentMu.Lock()
+-		m.dirParents[*inode] = parent
++		m.dirParents[*inode] = m.checkRoot(parent)
+ 		m.parentMu.Unlock()
+ 	}
+ 	return st
 ```
 
----
-
-### Incident Patch 2: `1f4ccc59` (2026-10-22)
-**Commit Message**: CI: capture sync checkpoint debug logs (#7728)
-
-**File**: `.github/scripts/sync/sync_minio.sh` (modified, +18/-10)
+**File**: `pkg/meta/base_test.go` (modified, +36/-0)
 ```diff
-@@ -579,16 +579,19 @@ test_checkpoint_minio_big_file_resume(){
- test_checkpoint_minio_multipart_resume(){
-     # Test: multipart upload checkpoint should persist upload state and resume for >4GiB objects
-     prepare_test
-+    set -x
-+    local log_dir=sync-minio-debug/multipart-resume
-+    mkdir -p "$log_dir"
-     local key="multipart-checkpoint.bin"
-     local size=$((5 * 1024 * 1024 * 1024 + 17 * 1024 * 1024))
--    local checkpoint_json=/tmp/minio-multipart-checkpoint.json
-+    local checkpoint_json="$log_dir/checkpoint-before-resume.json"
-     rm -f "$checkpoint_json"
-     create_sparse_marker_file "/jfs/$key" "$size"
- 
-     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
-         --threads 1 --list-threads 1 --debug \
-         --enable-checkpoint --checkpoint-interval 60s \
--        >sync1.log 2>&1 &
-+        >"$log_dir/sync1.log" 2>&1 &
-     sync_pid=$!
-     sleep 4
-     kill -INT $sync_pid || true
-@@ -597,7 +600,7 @@ test_checkpoint_minio_multipart_resume(){
-     checkpoint_file=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | head -1)
-     if [ -z "$checkpoint_file" ]; then
-         echo "checkpoint file should exist after interrupted multipart minio sync"
--        cat sync1.log
-+        cat "$log_dir/sync1.log"
-         exit 1
-     fi
- 
-@@ -608,12 +611,12 @@ test_checkpoint_minio_multipart_resume(){
-     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
-         --threads 1 --list-threads 1 --debug \
-         --enable-checkpoint --checkpoint-interval 2s \
--        >sync2.log 2>&1
-+        >"$log_dir/sync2.log" 2>&1
- 
-     checkpoint_count=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | wc -l)
-     if [ "$checkpoint_count" -ne 0 ]; then
-         echo "checkpoint file should be deleted after multipart minio sync resumes successfully"
--        cat sync2.log
-+        cat "$log_dir/sync2.log"
-         exit 1
-     fi
- 
-@@ -623,18 +626,21 @@ test_checkpoint_minio_multipart_resume(){
-         exit 1
-     fi
- 
--    grep "panic:\|<FATAL>" sync2.log && echo "panic or fatal in sync2.log" && exit 1 || true
-+    grep "panic:\|<FATAL>" "$log_dir/sync2.log" && echo "panic or fatal in sync2.log" && exit 1 || true
+@@ -5003,6 +5003,42 @@ func testQuota(t *testing.T, m Meta) {
+ 	if st := m.Create(ctx, parent, "f4", 0644, 0, 0, nil, &attr); st != syscall.EDQUOT {
+ 		t.Fatalf("Create quota/d22/f4: %s", st)
+ 	}
++
++	t.Run("SubdirQuota", func(t *testing.T) {
++		const path = "/quota-subdir"
++		var parent, inode Ino
++		if st := m.Mkdir(ctx, RootInode, "quota-subdir", 0755, 0, 0, &parent, nil); st != 0 {
++			t.Fatalf("Mkdir quota-subdir: %s", st)
++		}
++		if err := m.HandleQuota(ctx, QuotaSet, path, DirQuotaType, map[string]*Quota{path: {MaxInodes: 2}}, false, false, false); err != nil {
++			t.Fatalf("Set quota: %s", err)
++		}
++		defer m.HandleQuota(ctx, QuotaDel, path, DirQuotaType, nil, false, false, false)
++		base := m.getBase()
++		base.loadQuotas()
++		defer base.chroot(base.root)
++		if st := m.Chroot(ctx, path); st != 0 {
++			t.Fatalf("Chroot: %s", st)
++		}
++
++		if st := m.Mkdir(ctx, RootInode, "d", 0755, 0, 0, &inode, nil); st != 0 {
++			t.Fatalf("Mkdir d: %s", st)
++		}
++		if st := m.Create(ctx, inode, "f", 0644, 0, 0, nil, nil); st != 0 {
++			t.Fatalf("Create d/f: %s", st)
++		}
++		base.doFlushQuotas()
++		qs := make(map[string]*Quota)
++		if err := m.HandleQuota(ctx, QuotaGet, path, DirQuotaType, qs, false, false, false); err != nil {
++			t.Fatalf("Get quota: %s", err)
++		}
++		if q := qs[path]; q.UsedInodes != 2 || q.UsedSpace != 2*4<<10 {
++			t.Errorf("Subdir quota: got %+v, want 2 inodes and 8192 bytes", q)
++		}
++		if st := m.Create(ctx, inode, "overflow", 0644, 0, 0, nil, nil); st != syscall.EDQUOT {
++			t.Errorf("Create d/overflow: got %s, want %s", st, syscall.EDQUOT)
++		}
++	})
  }
  
- test_checkpoint_minio_signal_save(){
-     # Test: SIGINT saves checkpoint for minio sync
-     prepare_test
-+    set -x
-+    local log_dir=sync-minio-debug/signal-save
-+    mkdir -p "$log_dir"
-     ./juicefs mdtest $META_URL /test --dirs 10 --depth 3 --files 10 --threads 10
-     # Start sync in background
-     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
--        --list-threads 100 --list-depth 10 \
-+        --list-threads 100 --list-depth 10 --debug \
-         --enable-checkpoint --checkpoint-interval 60s \
--        >sync1.log 2>&1 &
-+        >"$log_dir/sync1.log" 2>&1 &
-     sync_pid=$!
-     sleep 3
-     kill -INT $sync_pid || true
-@@ -645,11 +651,13 @@ test_checkpoint_minio_signal_save(){
-         echo "checkpoint file should exist after SIGINT"
-         exit 1
-     fi
-+    checkpoint_file=$(./mc find myminio/myjfs/ --name ".juicefs-sync-checkpoint*" 2>/dev/null | head -1)
-+    ./mc cat "$checkpoint_file" > "$log_dir/checkpoint-before-resume.json"
-     # Resume should work
-     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ \
--        --list-threads 100 --list-depth 10 \
-+        --list-threads 100 --list-depth 10 --debug \
-         --enable-checkpoint --checkpoint-interval 2s \
--        >sync2.log 2>&1
-+        >"$log_dir/sync2.log" 2>&1
-     count1=$(./mc ls -r juicegw/myjfs/ | grep -v ".juicefs-sync-checkpoint" | wc -l)
-     count2=$(./mc ls -r myminio/myjfs/ | grep -v ".juicefs-sync-checkpoint" | wc -l)
-     [ $count1 -eq $count2 ] || (echo "file count mismatch after resume: $count1 vs $count2" && exit 1)
-```
-
-**File**: `.github/workflows/sync.yml` (modified, +8/-0)
-```diff
-@@ -112,6 +112,14 @@ jobs:
-             exit 1
-           fi
- 
-+      - name: Upload MinIO checkpoint logs
-+        if: failure() && matrix.type == 'sync_minio'
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: sync-minio-debug-${{ github.run_attempt }}
-+          path: sync-minio-debug/
-+          retention-days: 7
-+
-       - name: upload coverage report
-         timeout-minutes: 5
-         continue-on-error: true
-```
-
----
-
-### Incident Patch 3: `52dde796` (2026-10-22)
-**Commit Message**: sdk/java: fix limit reload (#7720)
-
-Signed-off-by: miyang <[REDACTED_EMAIL]>
-
-**File**: `sdk/java/libjfs/main.go` (modified, +11/-8)
-```diff
-@@ -680,6 +680,8 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
- 		if jConf.FreeSpace != "" {
- 			freeSpaceRatio, _ = strconv.ParseFloat(jConf.FreeSpace, 64)
- 		}
-+		uploadLimit := utils.ParseMbpsStr("upload-limit", jConf.UploadLimit)
-+		downloadLimit := utils.ParseMbpsStr("download-limit", jConf.DownloadLimit)
- 		chunkConf := chunk.Config{
- 			BlockSize:         format.BlockSize * 1024,
- 			Compress:          format.Compression,
-@@ -698,8 +700,8 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
- 			MaxUpload:         jConf.MaxUploads,
- 			MaxDownload:       jConf.MaxDownloads,
- 			MaxRetries:        jConf.IORetries,
--			UploadLimit:       utils.ParseMbpsStr("upload-limit", jConf.UploadLimit) * 1e6 / 8,
--			DownloadLimit:     utils.ParseMbpsStr("download-limit", jConf.DownloadLimit) * 1e6 / 8,
-+			UploadLimit:       uploadLimit * 1e6 / 8,
-+			DownloadLimit:     downloadLimit * 1e6 / 8,
- 			Prefetch:          jConf.Prefetch,
- 			Writeback:         jConf.Writeback,
- 			HashPrefix:        format.HashPrefix,
-@@ -732,14 +734,15 @@ func jfs_init(credentialPtr uintptr, count int32, cname, cjsonConf, cuser, group
- 			logger.Errorf("new session: %s", err)
- 			return nil
- 		}
--		m.OnReload(func(fmt *meta.Format) error {
--			if chunkConf.UploadLimit > 0 {
--				fmt.UploadLimit = chunkConf.UploadLimit
-+		m.OnReload(func(format *meta.Format) error {
-+			upload, download := format.UploadLimit, format.DownloadLimit
-+			if uploadLimit > 0 {
-+				upload = uploadLimit
- 			}
--			if chunkConf.DownloadLimit > 0 {
--				fmt.DownloadLimit = chunkConf.DownloadLimit
-+			if downloadLimit > 0 {
-+				download = downloadLimit
- 			}
--			store.UpdateLimit(fmt.UploadLimit, fmt.DownloadLimit)
-+			store.UpdateLimit(upload, download)
- 			return nil
- 		})
- 
+ func testAtime(t *testing.T, m Meta) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7748** (closed): warmup: reuse in-flight full-block downloads (@jiefenghuang)
-- **PR #7747** (2026-10-23): ci: run KeyDB in Docker to avoid unavailable apt repository (@zxh326)
-- **PR #7737** (2026-10-22): meta/redis: bypass client cache in watched transactions (@jiefenghuang)
-- **PR #7736** (2026-10-22): bump to 1.4.2 (@jiefenghuang)
-- **PR #7735** (2026-10-22): bump to 1.3.4 (@jiefenghuang)
-- **PR #7734** (2026-10-23): meta/redis: enable tracking before purging the client-side cache (@jiefenghuang)
+- **PR #7762** (2026-10-26): meta: resolve subdir root for ACL operations (@jiefenghuang)
+- **PR #7760** (2026-10-26): meta: resolve subdir root before batch unlink (@jiefenghuang)
+- **PR #7759** (2026-10-26): test: cover file operations on subdir mounts (@jiefenghuang)
+- **PR #7758** (2026-10-26): meta: fix subdir quota accounting after mkdir (@zxh326)
+- **PR #7757** (closed): chunk: fix data races on diskCache state fields (@cxljs)
+- **PR #7756** (2026-10-26): chore: modernize Go idioms and remove dead code (@cxljs)
 
 ---
 
@@ -1388,28 +1265,28 @@ Signed-off-by: miyang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk/java: fix Central publishing with Maven 3.10 (#7729)
+## X. meta: fix subdir quota accounting after mkdir (#7758)
 
 **RULE**:
-When implementing operations in `sdk/java/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0eb0e6d5`: sdk/java: fix Central publishing with Maven 3.10 (#7729). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `735029cb`: meta: fix subdir quota accounting after mkdir (#7758). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/java/pom.xml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				<version>0.12.0</version>
+		m.dirParents[*inode] = m.checkRoot(parent)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-				<version>0.8.0</version>
+		m.dirParents[*inode] = parent
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0eb0e6d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `735029cb` are properly handled with clean fallback behavior.

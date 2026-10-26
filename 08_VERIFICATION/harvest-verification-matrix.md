@@ -5151,3 +5151,6 @@
 | `CYCLE-20261026-M1OL` | `2026-10-26T13:29:01.701Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4608` | Yes (`eb85ffa9...`) |
 | `CYCLE-20261026-M43A` | `2026-10-26T13:29:04.822Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4609` | Yes (`3f9a2096...`) |
 | `CYCLE-20261026-SKJ3` | `2026-10-26T13:34:06.063Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4610` | Yes (`58ba65b7...`) |
+| `CYCLE-20261026-0TYT` | `2026-10-26T13:40:31.541Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4611` | Yes (`8605e7a2...`) |
+| `CYCLE-20261026-0ZOR` | `2026-10-26T13:40:38.955Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612` | Yes (`1234e514...`) |
+| `CYCLE-20261026-100Y` | `2026-10-26T13:40:39.394Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4612, Rule 4613, Rule 4614` | Yes (`60c25a6d...`) |

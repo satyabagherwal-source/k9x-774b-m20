@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:34:06.008Z",
+  "last_updated": "2026-10-26T13:40:39.338Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -92,8 +92,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "b09a8a5f",
-      "content_hash": "020bc2b320fab13cad792449cbef2c36590d1a177639d7294d91d44a3d5926be",
+      "source_version": "07d9354d",
+      "content_hash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -136,6 +136,11 @@
           "number": 4324,
           "title": "tui): show waiting todo clocks and live dependency progress",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4611,
+          "title": "test(tui): validate blocked todo marker lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -143,7 +148,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:03:16.661Z",
+      "verified_at": "2026-10-26T13:40:31.470Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30519,8 +30524,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "b2a3be78",
-      "content_hash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
+      "source_version": "002a6b7a",
+      "content_hash": "1234e51457906fe8eb1a50f2ecb1fe6c8fade2526155ffc9f9d77f7c7316ab93",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -30548,6 +30553,11 @@
           "number": 3946,
           "title": "sdk/java: fix Central publishing with Maven 3.10 (#7729)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4612,
+          "title": "meta: fix subdir quota accounting after mkdir (#7758)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30555,7 +30565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:11:19.995Z",
+      "verified_at": "2026-10-26T13:40:38.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -114202,7 +114212,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RecursiveSI/flint",
       "source_version": "hf-recursivesi-flint",
-      "content_hash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
+      "content_hash": "60c25a6de6221ab360e4a38dadd476c58bc799b3b31bf49a2f5cc29a480a21bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
       "promoted_rules": [
@@ -114215,6 +114225,21 @@
           "number": 3601,
           "title": "MoE Router Sparsity & Load Balancing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4612,
+          "title": "Hybrid Attention Positional Encoding Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4613,
+          "title": "MoE Router Score Function Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4614,
+          "title": "Sliding Window Boundary Precision",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -114222,7 +114247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:28:55.769Z",
+      "verified_at": "2026-10-26T13:40:39.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129272,6 +129297,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:34:05.994Z"
+    },
+    "rule-4611": {
+      "learning_id": "rule-4611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4611,
+      "title": "test(tui): validate blocked todo marker lifecycle",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "07d9354d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:40:31.470Z"
+    },
+    "rule-4612": {
+      "learning_id": "rule-4612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4612,
+      "title": "Hybrid Attention Positional Encoding Isolation",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:40:39.327Z"
+    },
+    "rule-4613": {
+      "learning_id": "rule-4613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4613,
+      "title": "MoE Router Score Function Consistency",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:40:39.327Z"
+    },
+    "rule-4614": {
+      "learning_id": "rule-4614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4614,
+      "title": "Sliding Window Boundary Precision",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:40:39.327Z"
     }
   },
   "aliases": {

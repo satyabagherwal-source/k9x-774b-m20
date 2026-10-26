@@ -5158,3 +5158,6 @@ Every entry in this ledger must capture:
 | `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `48edc688` | Multi-dimensional audit evidence | 2026-10-26T13:29:01.705Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `6acf1e16` | Multi-dimensional audit evidence | 2026-10-26T13:29:04.826Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `8f54626e` | Multi-dimensional audit evidence | 2026-10-26T13:34:06.067Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `07d9354d` | Multi-dimensional audit evidence | 2026-10-26T13:40:31.545Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `002a6b7a` | Multi-dimensional audit evidence | 2026-10-26T13:40:38.960Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-10-26T13:40:39.397Z |

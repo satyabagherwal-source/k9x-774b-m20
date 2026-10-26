@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "b09a8a5f",
+    "sourceVersion": "07d9354d",
     "license": "MIT",
-    "contentHash": "020bc2b320fab13cad792449cbef2c36590d1a177639d7294d91d44a3d5926be",
-    "lastHarvestedAt": "2026-10-25T14:03:16.707Z",
+    "contentHash": "8605e7a25e6552536edcff255dc123c2967af850e8735dbccb0a29b76d82e10f",
+    "lastHarvestedAt": "2026-10-26T13:40:31.545Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "b2a3be78",
+    "sourceVersion": "002a6b7a",
     "license": "Apache-2.0",
-    "contentHash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
-    "lastHarvestedAt": "2026-10-24T20:11:20.036Z",
+    "contentHash": "1234e51457906fe8eb1a50f2ecb1fe6c8fade2526155ffc9f9d77f7c7316ab93",
+    "lastHarvestedAt": "2026-10-26T13:40:38.960Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -10515,8 +10515,8 @@
     "sourceUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceVersion": "hf-recursivesi-flint",
     "license": "Open-Source",
-    "contentHash": "4868085fd591f11d29377e5fefe6de2af0511c5f2276e52645c5beb271fe471d",
-    "lastHarvestedAt": "2026-10-22T15:28:55.846Z",
+    "contentHash": "60c25a6de6221ab360e4a38dadd476c58bc799b3b31bf49a2f5cc29a480a21bc",
+    "lastHarvestedAt": "2026-10-26T13:40:39.397Z",
     "learningId": "learn-huggingface-recursivesi-flint"
   },
   "hf-qwen-qwen3-14b": {

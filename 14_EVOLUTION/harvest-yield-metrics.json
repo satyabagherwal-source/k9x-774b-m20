@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:34:06.072Z",
-  "total_cycles_completed": 5128,
-  "total_learnings_persisted": 5128,
-  "total_rules_promoted": 4507,
+  "last_updated": "2026-10-26T13:40:39.402Z",
+  "total_cycles_completed": 5131,
+  "total_learnings_persisted": 5131,
+  "total_rules_promoted": 4512,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:06:27.614Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:06:28.498Z",
-      "repository": "mlua-rs/mlua",
-      "learningId": "learn-github-mlua-rs-mlua",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:12:49.511Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:12:49.720Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1403,6 +1382,27 @@
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:40:31.550Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:40:38.967Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:40:39.402Z",
+      "repository": "RecursiveSI/flint",
+      "learningId": "learn-huggingface-recursivesi-flint",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
