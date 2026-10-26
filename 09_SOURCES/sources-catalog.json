@@ -9033,10 +9033,10 @@
     "repository": "yattee/yattee",
     "platform": "github",
     "sourceUrl": "https://github.com/yattee/yattee",
-    "sourceVersion": "2969b086",
+    "sourceVersion": "55b6c63d",
     "license": "AGPL-3.0",
-    "contentHash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
-    "lastHarvestedAt": "2026-10-19T20:53:18.500Z",
+    "contentHash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
+    "lastHarvestedAt": "2026-10-26T02:44:41.433Z",
     "learningId": "learn-github-yattee-yattee"
   },
   "shubham0812-swiftui-animations": {

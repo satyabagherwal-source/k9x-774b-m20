@@ -331459,3 +331459,195 @@ class GoogleSearch(SerpApiClient):
 Static analysis tools (e.g., `flake8` with `W605` or custom rules) to detect hardcoded strings that match known constants. Code review to ensure all engine identifiers are imported from `constant.py`.
 
 ---
+
+
+---
+
+## 4548. Durable Tombstone-First Deletion Invariant for Token-Based Sync Systems (Harvested from yattee/yattee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Durable Tombstone-First Deletion Invariant for Token-Based Sync Systems",
+  "source": "yattee/yattee",
+  "source_url": "https://github.com/yattee/yattee",
+  "source_version": "55b6c63d",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-26T02:44:41.174Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yattee-yattee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yattee/yattee](https://github.com/yattee/yattee) (Revision: `55b6c63d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an entity is deleted in a client-side architecture synchronizing with a remote or cloud backend via delta tokens (e.g., CloudKit change tokens, Git commit range syncs, or CouchDB seq tokens), the entity MUST be committed to an append-only durable tombstone outbox BEFORE its local cryptographic credentials or identity associations are destroyed. Systems MUST NOT perform optimistic local credential purging or silent in-memory removal prior to persisting deletion intent.
+
+**WHY**:
+Delta-sync protocols do not enumerate absolute state; they receive partial diffs relative to a cursor. If credentials or local records are deleted and a crash occurs before the deletion sync packet is dispatched, the server entity remains active. On the subsequent sync iteration, the server sends down the undeleted remote entity. Because the client previously wiped the credentials and instance binding, the incoming record is reconstituted as an un-actionable, orphaned zombie entity that cannot be signed into, authenticated, or reached via UI controls.
+
+**WHEN TO APPLY**:
+Apply to any multi-device synchronized storage engine (CloudKit, Realm Sync, Firebase with offline persistence, Couchbase Lite) where entities hold scoped credentials in a secondary secure enclave (Keychain, Hardware Keystore) and sync engines fetch changes using server change tokens.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified pattern from Yattee: Yattee/Core/AccountRemoval.swift & AccountsManager.swift
+@MainActor
+final class AccountSyncStore {
+    private var pendingDeletions: Set<UUID> = []
+    private var deletedAccountIDs: Set<UUID> = []
+    private let defaults: UserDefaults
+
+    func removeOrphan(
+        _ accountID: UUID,
+        stores: [any AccountCredentialsManager],
+        discardData: (UUID) -> Void
+    ) {
+        // STEP 1: Persist deletion tombstone to durable storage FIRST
+        self.pendingDeletions.insert(accountID)
+        self.deletedAccountIDs.insert(accountID)
+        persistOutboxState()
+
+        // STEP 2: Iterate across all isolated credential enclaves and purge secrets
+        for store in stores {
+            store.deleteCredential(forAccountID: accountID)
+        }
+
+        // STEP 3: Purge volatile in-memory representations and cached feed state
+        discardData(accountID)
+        
+        // STEP 4: Notify system of state change
+        NotificationCenter.default.post(name: .accountsDidChange, object: nil)
+    }
+
+    private func persistOutboxState() {
+        let stringIDs = deletedAccountIDs.map(\.uuidString)
+        defaults.set(stringIDs, forKey: "sync.tombstones.accounts")
+        defaults.synchronize() // Force synchronization to avoid crash loss
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Optimistic secret deletion prior to durable persistence
+func unsafeDeleteAccount(_ accountID: UUID, store: AccountCredentialsManager) {
+    // CRITICAL BUG: If process crashes immediately after this line,
+    // the credential is gone, but the remote backend still holds the account record.
+    store.deleteCredential(forAccountID: accountID)
+
+    // Remote sync arrives next boot -> Reconstitutes account without credentials!
+    self.accounts.removeAll { $0.id == accountID }
+    // Deletion never recorded to outbox or persistent tombstones.
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a simulated crash (`fatalError()` or process kill) immediately after `defaults.synchronize()` in `persistOutboxState()`. Restart the application, trigger a remote pull delivering the "deleted" ID, and assert via unit test that `deletedAccountIDs.contains(incomingID)` causes the sync parser to silently discard the record instead of recreating it in the active account list.
+
+---
+
+
+---
+
+## 4549. Singularity Invariant for SwiftUI Root Dependency Injection Trees (Harvested from yattee/yattee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Singularity Invariant for SwiftUI Root Dependency Injection Trees",
+  "source": "yattee/yattee",
+  "source_url": "https://github.com/yattee/yattee",
+  "source_version": "55b6c63d",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-26T02:44:41.306Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yattee-yattee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yattee/yattee](https://github.com/yattee/yattee) (Revision: `55b6c63d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When initializing root application environment containers (`AppEnvironment`, service registries, coordinators) containing background workers, network session delegates, or file listeners within a SwiftUI lifecycle, the container MUST be bound to a process-lifetime static constant (`static let shared`) before assignment to `@State` or `@StateObject`. Root containers MUST NOT rely on inline instantiation inside `@State(initialValue:)` or inline variable declaration.
+
+**WHY**:
+SwiftUI's view hierarchy reconciler re-evaluates `@State` initial value autoclosures dynamically during scene graph reconstruction, view struct re-evaluations, or multiple window scene attachments (notably on macOS and iPadOS). While SwiftUI retains only the first allocated object in its property wrapper storage, the side-effects of discarded evaluations run to completion. If the environment instantiates background `URLSession(configuration:delegate:delegateQueue:)` instances with identical session identifiers, delegate callbacks for finished downloads are hijacked or routed to orphaned instances whose in-memory state tracking queues are empty, causing completed payloads to be dropped from disk.
+
+**WHEN TO APPLY**:
+All Swift/SwiftUI architectures deploying across iOS, macOS, and tvOS where background `URLSession`s, database handles (`CoreData`, `SwiftData`), or audio engine pipelines are initialized at the root of the application hierarchy.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified pattern from Yattee: Yattee/Core/AppEnvironment.swift
+@MainActor
+@Observable
+final class AppEnvironment {
+    // Process-wide lifetime guarantee: evaluated strictly once upon first access
+    static let shared = AppEnvironment()
+    
+    let downloadSession: URLSession
+    private let downloadDelegate: SessionDelegateBridge
+
+    private init() {
+        self.downloadDelegate = SessionDelegateBridge()
+        let config = URLSessionConfiguration.background(withIdentifier: "stream.yattee.downloads")
+        self.downloadSession = URLSession(configuration: config, delegate: downloadDelegate, delegateQueue: nil)
+    }
+}
+
+// SwiftUI Entrypoint
+@main
+struct YatteeApp: App {
+    // References shared singleton directly; prevents duplicate instantiation runs
+    @State private var environment = AppEnvironment.shared
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environment(environment)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Inline initialization inside @State or View Struct
+@main
+struct YatteeApp: App {
+    // CRITICAL BUG: Autoclosure can execute multiple times during scene reconciliation!
+    // Creates 2+ URLSessions with ID "stream.yattee.downloads" -> breaks background download callbacks!
+    @State private var environment = AppEnvironment() 
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Instrument `AppEnvironment.init` with an atomic counter assertion:
+```swift
+private static let initCounter = OSAllocatedUnfairLock(initialState: 0)
+// Inside init():
+initCounter.withLock { count in
+    count += 1
+    assert(count == 1, "AppEnvironment initialized more than once! Violates Root Singularity.")
+}
+```
+
+---

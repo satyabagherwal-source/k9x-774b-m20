@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-76CG",
-    "timestamp": "2026-10-24T20:42:01.312Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "bc1f9bb45896a9640de7195eacc878e7b56b2f932d8ee8dc8147f8c9982a688a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-FOJ0",
     "timestamp": "2026-10-24T20:48:38.124Z",
     "repository": "Ataraxy-Labs/sem",
@@ -7492,6 +7477,21 @@
     "contentHash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-LF86",
+    "timestamp": "2026-10-26T02:44:41.430Z",
+    "repository": "yattee/yattee",
+    "learningId": "learn-github-yattee-yattee",
+    "contentHash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

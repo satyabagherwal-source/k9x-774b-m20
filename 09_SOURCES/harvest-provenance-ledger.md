@@ -5099,3 +5099,4 @@ Every entry in this ledger must capture:
 | `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `30741f73` | Multi-dimensional audit evidence | 2026-10-26T02:26:50.011Z |
 | `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-26T02:26:58.300Z |
 | `learn-github-serpapi-google-search-results-python` | `https://github.com/serpapi/google-search-results-python` | `345d31a9` | Multi-dimensional audit evidence | 2026-10-26T02:33:55.759Z |
+| `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `55b6c63d` | Multi-dimensional audit evidence | 2026-10-26T02:44:41.433Z |
