@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T03:10:15.967Z",
+  "last_updated": "2026-10-26T05:00:08.774Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
-      "verified_at": "2026-10-25T10:16:54.931Z",
+      "content_hash": "2bedfec73c9306fe6ca481f0bba41d89f939f06cb8e34ad99177233954ce4bd3",
+      "verified_at": "2026-10-26T05:00:08.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:16:54.931Z"
+      "last_updated": "2026-10-26T05:00:08.774Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `a6c26c78`  
+> **Source Version**: `f5dec9c4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:16:54.681Z  
+> **Timestamp**: 2026-10-26T05:00:08.354Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:16:54.260Z  
+> **Harvest Timestamp**: 2026-10-26T05:00:04.986Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9464 stars
+- **Stars / Engagement**: 9479 stars
 
 ---
 
@@ -309,7 +309,7 @@ impl HookOptions {
 //! **Authoritative** (hand-authored or override state; lost permanently if
 //! cleared). `state clear` prompts before removing these unless `--yes`:
 //!
-//! - Default branch override (git config `worktrunk.default_branch.*`)
+//! - Default branch override (git config `worktrunk.default-branch`)
 //! - Branch markers (git config `worktrunk.state.<branch>.marker`)
 //! - Vars (git config `worktrunk.state.<branch>.vars.*`)
 //! - Logs (`.git/wt/logs/`)
@@ -531,7 +531,7 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
         .filter_map(|entry| {
             let metadata = entry.metadata().ok()?;
             Some(TrashEntry {
-                n
+                nam
 ```
 
 ### Core Architecture Module: `src/commands/hook_announcement.rs`
@@ -2119,373 +2119,297 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d187abf9` (2026-10-23)
-**Commit Message**: Skip non-UTF-8 environment entries instead of panicking in config loading (#4563)
+### Incident Patch 1: `7427b2fa` (2026-10-26)
+**Commit Message**: test(picker): wait for rendered rows before the escape-abort snapshot (#4527)
 
-`std::env::vars()` panics when any environment entry is not valid UTF-8,
-so an unrelated variable could crash config loading. Read with `vars_os`
-and skip entries that don't decode; a non-UTF-8 `WORKTRUNK_*` override
-is ignored like any other unusable entry.
+`test_switch_picker_abort_with_escape` failed on Windows in the
+`affected` run on main ([run
+39373658313](https://github.com/max-sixty/worktrunk/actions/runs/39373658313)).
+Its list snapshot held only the prompt line `>`, with no header and no
+`@ main` row. The commit that triggered the run (#4516, trash draining)
+doesn't touch the picker, so this is a test timing race.
 
-> _This was written by Claude Code on behalf of max-sixty_
+**Cause.** This is the only capture-before-abort test that passes no
+inputs (`&[]`). So the only thing that gates its capture is
+`boot_picker_pty`: it waits for the `> ` prompt, then for the screen to
+sit unchanged for `STABLE_DURATION` (500ms). Items load asynchronously.
+On a loaded Windows runner the prompt can stay quiet for 500ms before
+the first row arrives, and the test captures that frame.
 
----------
+**Fix.** Gate the capture on `"has no file changes"`. That preview text
+appears only after the list has a selected row, so it confirms both
+panels before the capture. The sibling tests already gate the same way
+(`&[("", Some("plain-branch"))]`, `&[("", Some("@ main"))]`). If the
+preview never renders, the test now panics after 30s and shows the
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `src/config/user/mod.rs` (modified, +4/-1)
+**File**: `tests/integration_tests/switch_picker.rs` (modified, +5/-1)
 ```diff
-@@ -164,7 +164,10 @@ fn parse_worktrunk_env_vars() -> Vec<EnvVar> {
-         "WORKTRUNK_APPROVALS_PATH",
-     ];
+@@ -859,7 +859,11 @@ fn test_switch_picker_abort_with_escape(repo: TestRepo) {
+         &["switch"],
+         repo.root_path(),
+         &env_vars,
+-        &[], // No inputs before abort
++        // Settle: the preview renders only after the list has a selected row,
++        // so gating on it confirms both panels before capture. Without a gate,
++        // a prompt that sits quiet for STABLE_DURATION on a slow runner gets
++        // captured before any rows arrive.
++        &[("", Some("has no file changes"))],
+     );
  
--    let mut env_vars: Vec<_> = std::env::vars()
-+    // `std::env::vars()` panics on any non-UTF-8 entry, including unrelated
-+    // ones; skip those entries instead.
-+    let mut env_vars: Vec<_> = std::env::vars_os()
-+        .filter_map(|(k, v)| Some((k.into_string().ok()?, v.into_string().ok()?)))
-         .filter(|(k, _)| k.starts_with("WORKTRUNK_"))
-         .filter(|(k, _)| !INFRA_VARS.contains(&k.as_str()))
-         .filter(|(k, _)| !k.starts_with("WORKTRUNK_TEST_"))
+     assert_valid_abort_exit_code(result.exit_code);
 ```
 
-**File**: `tests/integration_tests/config_show.rs` (modified, +17/-0)
+---
+
+### Incident Patch 2: `f5dec9c4` (2026-10-26)
+**Commit Message**: fix(push): read the push range from the target branch, not a same-named tag (#4499)
+
+When a tag shares the target branch's name, `wt step push <target>` and
+`wt merge` compared against the tag instead of the branch. With a tag
+`main` at the feature commit, both reported "Already up to date with
+main" and left `refs/heads/main` where it was. This PR makes every range
+in the push path read the target SHA that `MergeContext::prepare`
+already snapshots from `refs/heads/<target>`.
+
+Git resolves a bare `main` to `refs/tags/main` before `refs/heads/main`.
+The fast-forward check already used the qualified ref, but four later
+reads passed the bare name: the commit count, the overlap check against
+the target worktree's uncommitted changes, the commit graph, and the
+diffstat. A tag pointing elsewhere also skewed the count, graph, and
+diffstat shown before the push.
+
+Two regression tests in `tests/integration_tests/push.rs` fail on `main`
+and pass here. One checks that the push advances the branch despite the
+tag. The other checks that a dirty target worktree's overlapping file is
+still refused. Before this fix, the overlap went unchecked because the
+zero commit count made the push a no-op, so
+
+**File**: `src/commands/repository_ext.rs` (modified, +6/-1)
 ```diff
-@@ -7970,3 +7970,20 @@ fn test_config_show_reports_failed_migration_diff(repo: TestRepo) {
-         "expected the failure to be reported, got:\n{stdout}"
-     );
+@@ -71,6 +71,9 @@ pub trait RepositoryCliExt {
+     /// so this only names the files that genuinely conflict, before anything
+     /// moves.
+     ///
++    /// The push range is `target_tip..source_sha`; `target_branch` only names
++    /// the branch in the error.
++    ///
+     /// The caller has already established that `target_worktree` exists on disk
+     /// (`MergeContext::prepare` refuses a registered-but-missing worktree), so
+     /// the status read here is free to fail if the directory is gone.
+@@ -83,6 +86,7 @@ pub trait RepositoryCliExt {
+         &self,
+         target_worktree: Option<&PathBuf>,
+         target_branch: &str,
++        target_tip: &str,
+         source_sha: &str,
+     ) -> anyhow::Result<()>;
+ 
+@@ -443,6 +447,7 @@ impl RepositoryCliExt for Repository {
+         &self,
+         target_worktree: Option<&PathBuf>,
+         target_branch: &str,
++        target_tip: &str,
+         source_sha: &str,
+     ) -> anyhow::Result<()> {
+         let Some(wt_path) = target_worktree else {
+@@ -461,7 +466,7 @@ impl RepositoryCliExt for Repository {
+             return Ok(());
+         }
+ 
+-        let push_files = self.changed_files(target_branch, source_sha)?;
++        let push_files = self.changed_files(target_tip, source_sha)?;
+         let wt_files = parse_porcelain_z(&wt_status_output);
+ 
+         let overlapping: Vec<String> = push_files
+```
+
+**File**: `src/commands/worktree/push.rs` (modified, +12/-5)
+```diff
+@@ -160,6 +160,8 @@ impl MergeContext {
+ 
+         // Snapshot target SHA early for TOCTOU safety (used by both strategies
+         // for the fast-forward check; --no-ff also uses it for update-ref).
++        // Every later range reads this SHA rather than the bare branch name,
++        // which git would resolve to a same-named tag first.
+         let target_ref = format!("refs/heads/{}", target_branch);
+         let target_tip = repo
+             .run_command(&["rev-parse", &target_ref])?
+@@ -197,7 +199,12 @@ impl MergeContext {
+         // Refuse when uncommitted changes in the target worktree overlap the
+         // push range. Non-overlapping changes stay in place: the two-tree
+         // merge in `advance_target` carries them through untouched.
+-        repo.ensure_no_target_conflicts(target_worktree_path.as_ref(), &target_branch, &head_sha)?;
++        repo.ensure_no_target_conflicts(
++            target_worktree_path.as_ref(),
++            &target_branch,
++            &target_tip,
++            &head_sha,
++        )?;
+ 
+         // TODO(#3519 follow-up): when `target_branch` was behind its upstream
+         // (see `Repository::span_upstream`), this count mixes the carried
+@@ -206,11 +213,11 @@ impl MergeContext {
+         // overstates what the branch itself contributed. Splitting them needs
+         // a carried-count threaded through `MergeContext`; deferred as
+         // cosmetic.
+-        let commit_count = repo.count_commits(&target_branch, &head_sha)?;
++        let commit_count = repo.count_commits(&target_tip, &head_sha)?;
+ 
+         let stats_summary = if commit_count > 0 {
+             repo.current_worktree()
+-                .prepare_commit_diff(&target_branch, &head_sha)
++                .prepare_commit_diff(&target_tip, &head_sha)
+                 .stats_summary()
+         } else {
+             Vec::new()
+@@ -267,12 +274,12 @@ impl MergeContext {
+             "--graph",
+             "--oneline",
+             "--end-of-options",
+-            &format!("{}..{}", self.target_branch, self.head_sha),
++            &format!("{}..{}", self.target_tip, self.head_sha),
+         ])?;
+         eprintln!("{}", format_with_gutter(&log_output, None));
+ 
+         // Diff statistics
+-        crate::commands::show_diffstat(&self.repo, &self.target_branch, &self.head_sha)?;
++        crate::commands::show_diffstat(&self.repo, &self.target_tip, &self.head_sha)?;
+ 
+         Ok(())
+     }
+```
+
+**File**: `tests/integration_tests/push.rs` (modified, +67/-0)
+```diff
+@@ -65,6 +65,73 @@ fn test_push_to_default_branch(#[from(repo_with_feature_worktree)] repo: TestRep
+     snapshot_push("push_to_default", &repo, &[], Some(feature_wt));
  }
-+
-+/// A non-UTF-8 environment entry must not panic config loading.
-+#[cfg(unix)]
+ 
++/// A tag named after the target branch must not stand in for the branch. Git
++/// resolves a bare `main` to `refs/tags/main` before `refs/heads/main`, so
++/// with such a tag at the feature commit, `main..HEAD` counted zero commits
++/// and the push reported "Already up to date" without moving the branch.
 +#[rstest]
-+fn test_config_show_non_utf8_environment(repo: TestRepo) {
-+    use std::ffi::OsString;
-+    use std::os::unix::ffi::OsStringExt;
++fn test_push_ignores_tag_named_like_target(mut repo: TestRepo) {
++    repo.add_main_worktree();
++    let feature_wt =
++        repo.add_worktree_with_commit("feature", "test.txt", "test content", "Add test file");
++    let feature_sha = repo.head_sha_in(&feature_wt);
++    repo.run_git(&["tag", "main", &feature_sha]);
 +
 +    let output = repo
 +        .wt_command()
-+        .env("UNRELATED", OsString::from_vec(vec![0xff]))
-+        .env(OsString::from_vec(b"UNRELATED_\xff".to_vec()), "value")
-+        .args(["config", "show"])
++        .args(["step", "push", "main"])
++        .current_dir(&feature_wt)
 +        .output()
++        .expect("failed to run command");
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(output.status.success(), "push failed: {stderr}");
++    assert!(
++        !stderr.contains("Already up to date"),
++        "push should not compare against the tag: {stderr}"
++    );
++
++    let main_sha = repo
++        .git_command()
++        .args(["rev-parse", "refs/heads/main"])
++        .run()
 +        .unwrap();
-+    assert!(output.status.success(), "{output:?}");
++    assert_eq!(
++        String::from_utf8_lossy(&main_sha.stdout).trim(),
++        feature_sha
++    );
 +}
++
++/// The overlap check against the target worktree's uncommitted changes reads
++/// the push range from the branch, not a same-named tag. With the tag at the
++/// feature commit, the range looked empty and the overlap went unreported.
++#[rstest]
++fn test_push_dirty_target_overlap_ignores_tag_named_like_target(mut repo: TestRepo) {
++    std::fs::write(repo.root_path().join("conflict.txt"), "old content").unwrap();
++    let feature_wt = repo.add_worktree_with_commit(
++        "feature",
++        "conflict.txt",
++        "new content",
++        "Add conflict file",
++    );
++    let feature_sha = repo.head_sha_in(&feature_wt);
++    repo.run_git(&["tag", "main", &feature_sha]);
++
++    let output = repo
++        .wt_command()
++        .args(["step", "push", "main"])
++        .current_dir(&feature_wt)
++        .output()
++        .expect("failed to run command");
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(!output.status.success(), "push should refuse: {stderr}");
++    assert!(
++        stderr.contains("conflicting uncommitted changes") && stderr.contains("conflict.txt"),
++        "the overlap check should refuse and name the file: {stderr}"
++    );
++    let main_contents = std::fs::read_to_string(repo.root_path().join("conflict.txt")).unwrap();
++    assert_eq!(main_contents, "old content");
++}
++
+ #[rstest]
+ fn test_push_with_dirty_target(mut repo: TestRepo) {
+     // Make main worktree (repo root) dirty with a conflicting file
 ```
 
 ---
 
-### Incident Patch 2: `423960b2` (2026-10-22)
-**Commit Message**: docs: simplify logging and integration guidance (#4576)
+### Incident Patch 3: `9cf6c949` (2026-10-26)
+**Commit Message**: skills(running-tend): post nightly ci-fix diagnoses on the auto-filed nightly issue (#4512)
 
-Trim repeated explanations in the verbosity FAQ, agent activity
-tracking, statusline setup, custom columns, and hook ordering. Keep
-setup commands, template namespaces, and hook failure and ordering
-rules; update generated references and help snapshots.
+When a scheduled nightly fails, `create-issue-on-nightly-failure` opens
+a `Nightly tests failed` issue before `tend-ci-fix` starts. ci-fix's
+dedup only searches the bot's `ci-fix:`-titled issues, so it can't see
+that issue. When ci-fix can't produce a fix for a durable cause, it
+opens a second, open tracker for the same run. This adds a short
+`running-tend` section: look up the open `Nightly tests failed` issue by
+title and post a durable diagnosis there instead of opening a `ci-fix:`
+tracking issue. A fix PR closes it with `Fixes #<n>`. Transient
+diagnoses still file their closed `tend-outage` tracker, because
+ci-fix's repeat-occurrence escalation counts only those. The lookup
+command in the section returns #4509 today.
 
-Validated with the documentation sync test, all 56 help tests, the site
-build, and an independent review of the served passages.
+The fix belongs in the overlay rather than upstream because the
+auto-filed issue comes from this repo's own `nightly.yaml` job and
+`.github/nightly-failure.md` template, not from tend.
 
-> _This was written by Codex on behalf of max-sixty_
+Today's case left two open trackers for one failure. ci-fix
+[39211195743](https://github.com/max-sixty/worktrunk/actions/runs/39211195743)
+opened #4511 for nightly run 39206247278, which #4
 
-**File**: `docs/src/content/docs/claude-code.md` (modified, +2/-2)
+**File**: `.claude/skills/running-tend/SKILL.md` (modified, +10/-0)
 ```diff
-@@ -126,7 +126,7 @@ $ git config worktrunk.state.feature.marker '{"marker":"💬","set_at":0}'  # Di
+@@ -124,6 +124,16 @@ failure, not a broken link:
+ When in doubt, post a comment on the failed run summarizing the diagnosis and
+ wait — don't open a PR.
  
- ### Agent CLIs without a plugin
++## CI Fix: A Failed Scheduled Nightly Already Has Its Issue
++
++When a scheduled `nightly` run fails, its `create-issue-on-nightly-failure` job opens (or updates) an open `Nightly tests failed` issue labelled `ci`, and `tend-triage` diagnoses it there. That issue is the tracker for the failure. The `ci-fix:` title search in `/tend-ci-runner:ci-fix` cannot find it, so look it up by title before filing anything:
++
++```bash
++gh issue list --state open --label ci --search '"Nightly tests failed" in:title' --json number,title
++```
++
++Post a durable diagnosis on that issue, unless a comment there already covers it, instead of opening a `ci-fix:` tracking issue. A fix PR closes it with `Fixes #<n>`. A transient diagnosis still files its closed `tend-outage` tracker, since the repeat-occurrence escalation in `/tend-ci-runner:ci-fix` counts only those.
++
+ ## Applying GitHub Suggestions
  
--Activity tracking is not plugin-specific. The plugins above only call `wt` on their host's session events, and the marker itself is plain git config — so any CLI that can run a command on session lifecycle events drives the same 🤖/💬 markers with no worktrunk plugin:
-+For other agent CLIs, configure these commands to run on session events:
- 
- | Host event | Command |
- |---|---|
-@@ -152,7 +152,7 @@ Claude Code asks for confirmation before a session enters an existing worktree b
- 
- <code>~/w/myproject.feature-auth  !🤖  @<span style='color:#0a0'>+42</span> <span style='color:#a00'>-8</span>  <span style='color:#0a0'>↑3</span>  <span style='color:#0a0'>⇡1</span>  <span style='color:#0a0'>#3035</span>  Opus  🌔 65%  <span style='color:#a70'>1.4×(10am–3pm)</span></code>
- 
--Worktree state comes from the same cells [`wt list`](/list/) renders; Claude Code's stdin JSON adds the model, the `🌔 65%` context gauge, and the rate-limit pace notice. [`wt list statusline`](/list/#wt-list-statusline) documents every segment, how the links behave, and the JSON fields behind them.
-+The statusline shows worktree status, model, context usage, and rate-limit pace. See [`wt list statusline`](/list/#wt-list-statusline) for details.
- 
- <figure class="demo">
- <picture>
-```
-
-**File**: `docs/src/content/docs/faq.md` (modified, +1/-3)
-```diff
-@@ -97,9 +97,7 @@ Three verbosity levels. Each is a superset of the previous one.
- | `-v` | + Info: hook output, alias template variable resolution | — | Debugging hooks/aliases |
- | `-vv` | Same as `-v` | + `trace.log`, `trace.jsonl`, `subprocess.log`, `diagnostic.md` | Filing a bug |
- 
--At `-vv`, debug-level records (command lines, in-process spans, bounded subprocess preview) route to `trace.log` instead of stderr — so the terminal stays readable while the deep trace lands on disk. A one-line pointer on stderr shows where the files went.
--
--The `-vv` files have distinct audiences: `trace.log` is the human trace (bounded, gistable), `trace.jsonl` the same records for machines, `subprocess.log` the raw uncapped subprocess output, and `diagnostic.md` a bug-report bundle. Each is described in [`wt config state logs`](/config/#wt-config-state-logs).
-+With `-vv`, stderr shows the log directory. See [`wt config state logs`](/config/#wt-config-state-logs) for the file formats.
- 
- `RUST_LOG` overrides the flag baseline when set (`RUST_LOG=debug wt -v` lifts `-v` to debug-on-stderr).
- 
-```
-
-**File**: `docs/src/content/docs/hook.md` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependenc
- 
- To run a specific hook when user and project both define the same name, use `user:name` or `project:name` syntax.
- 
--A `pre-*` hook blocks the command, so both sources run as one pipeline: user commands first, and a failure there skips the project's. A `post-*` hook runs in the background, where each source is its own detached pipeline — they start together, neither waits for the other, and a failure in one leaves the other running. Order within a source is still yours to set with `[[hook]]` blocks; across `post-*` sources there is none. Two `post-*` hooks that write the same file, or run `git` in the same worktree, will race, so put commands that depend on each other in one source.
-+For `pre-*` hooks, a user-hook failure skips project hooks. For `post-*` hooks, a failure in one source does not stop the other. Concurrent hooks can race when writing the same file or running Git in the same worktree. Commands that depend on each other should use ordered `[[hook]]` blocks within one source.
- 
- ## Template variables
- 
-```
-
-**File**: `docs/src/content/docs/list.md` (modified, +1/-1)
-```diff
-@@ -138,7 +138,7 @@ Reuses the [`commit.generation`](/config/#commit) command — the same LLM that
- 
- <span class="badge-experimental"></span>
- 
--Each `[list.custom-columns]` entry in user config adds a column: the key is the header, the template renders each row's cell. Templates read two per-branch namespaces — `{{ vars.* }}`, stored with [`wt config state vars set`](/config/#wt-config-state-vars), and `{{ git.branch.* }}`, the branch's own git config under `branch.<name>.*` (a `jira` key you set yourself, or the git-native `description`) — useful for tracking what each of many (often agent-driven) branches is for:
-+Each `[list.custom-columns]` entry in user config adds a column. Its key sets the header; its template renders each row's cell. Templates read `{{ vars.* }}`, set with [`wt config state vars set`](/config/#wt-config-state-vars), and `{{ git.branch.* }}`, from `branch.<name>.*` in Git config:
- 
- ```toml
- # ~/.config/worktrunk/config.toml
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/claude-code.md` (modified, +2/-2)
-```diff
-@@ -118,7 +118,7 @@ $ git config worktrunk.state.feature.marker '{"marker":"💬","set_at":0}'  # Di
- 
- ### Agent CLIs without a plugin
- 
--Activity tracking is not plugin-specific. The plugins above only call `wt` on their host's session events, and the marker itself is plain git config — so any CLI that can run a command on session lifecycle events drives the same 🤖/💬 markers with no worktrunk plugin:
-+For other agent CLIs, configure these commands to run on session events:
- 
- | Host event | Command |
- |---|---|
-@@ -144,7 +144,7 @@ Claude Code asks for confirmation before a session enters an existing worktree b
- 
- <code>~/w/myproject.feature-auth  !🤖  @<span style='color:#0a0'>+42</span> <span style='color:#a00'>-8</span>  <span style='color:#0a0'>↑3</span>  <span style='color:#0a0'>⇡1</span>  <span style='color:#0a0'>#3035</span>  Opus  🌔 65%  <span style='color:#a70'>1.4×(10am–3pm)</span></code>
- 
--Worktree state comes from the same cells [`wt list`](https://worktrunk.dev/list/) renders; Claude Code's stdin JSON adds the model, the `🌔 65%` context gauge, and the rate-limit pace notice. [`wt list statusline`](https://worktrunk.dev/list/#wt-list-statusline) documents every segment, how the links behave, and the JSON fields behind them.
-+The statusline shows worktree status, model, context usage, and rate-limit pace. See [`wt list statusline`](https://worktrunk.dev/list/#wt-list-statusline) for details.
- 
- Add to `~/.claude/settings.json`:
- 
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/faq.md` (modified, +1/-3)
-```diff
-@@ -93,9 +93,7 @@ Three verbosity levels. Each is a superset of the previous one.
- | `-v` | + Info: hook output, alias template variable resolution | — | Debugging hooks/aliases |
- | `-vv` | Same as `-v` | + `trace.log`, `trace.jsonl`, `subprocess.log`, `diagnostic.md` | Filing a bug |
- 
--At `-vv`, debug-level records (command lines, in-process spans, bounded subprocess preview) route to `trace.log` instead of stderr — so the terminal stays readable while the deep trace lands on disk. A one-line pointer on stderr shows where the files went.
--
--The `-vv` files have distinct audiences: `trace.log` is the human trace (bounded, gistable), `trace.jsonl` the same records for machines, `subprocess.log` the raw uncapped subprocess output, and `diagnostic.md` a bug-report bundle. Each is described in [`wt config state logs`](https://worktrunk.dev/config/#wt-config-state-logs).
-+With `-vv`, stderr shows the log directory. See [`wt config state logs`](https://worktrunk.dev/config/#wt-config-state-logs) for the file formats.
- 
- `RUST_LOG` overrides the flag baseline when set (`RUST_LOG=debug wt -v` lifts `-v` to debug-on-stderr).
- 
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependenc
- 
- To run a specific hook when user and project both define the same name, use `user:name` or `project:name` syntax.
- 
--A `pre-*` hook blocks the command, so both sources run as one pipeline: user commands first, and a failure there skips the project's. A `post-*` hook runs in the background, where each source is its own detached pipeline — they start together, neither waits for the other, and a failure in one leaves the other running. Order within a source is still yours to set with `[[hook]]` blocks; across `post-*` sources there is none. Two `post-*` hooks that write the same file, or run `git` in the same worktree, will race, so put commands that depend on each other in one source.
-+For `pre-*` hooks, a user-hook failure skips project hooks. For `post-*` hooks, a failure in one source does not stop the other. Concurrent hooks can race when writing the same file or running Git in the same worktree. Commands that depend on each other should use ordered `[[hook]]` blocks within one source.
- 
- ## Template variables
- 
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/list.md` (modified, +1/-1)
-```diff
-@@ -122,7 +122,7 @@ Reuses the [`commit.generation`](https://worktrunk.dev/config/#commit) command 
- 
- ### Custom columns [experimental]
- 
--Each `[list.custom-columns]` entry in user config adds a column: the key is the header, the template renders each row's cell. Templates read two per-branch namespaces — `{{ vars.* }}`, stored with [`wt config state vars set`](https://worktrunk.dev/config/#wt-config-state-vars), and `{{ git.branch.* }}`, the branch's own git config under `branch.<name>.*` (a `jira` key you set yourself, or the git-native `description`) — useful for tracking what each of many (often agent-driven) branches is for:
-+Each `[list.custom-columns]` entry in user config adds a column. Its key sets the header; its template renders each row's cell. Templates read `{{ vars.* }}`, set with [`wt config state vars set`](https://worktrunk.dev/config/#wt-config-state-vars), and `{{ git.branch.* }}`, from `branch.<name>.*` in Git config:
- 
- ```toml
- # ~/.config/worktrunk/config.toml
-```
-
----
-
-### Incident Patch 3: `fc34f8e3` (2026-10-22)
-**Commit Message**: docs: trim repeated explanations across six guides (#4575)
-
-Remove repeated explanations and implementation detail from the merge,
-shell integration, extending, LLM commits, approvals, and tether guides.
-Keep the usage examples and behavioral distinctions, and update
-generated references and help snapshots.
-
-Validated with the documentation sync test, all 56 help tests, and the
-documentation site build. Reviewed the served passages in context.
-
-> _This was written by Codex on behalf of max-sixty_
-
-**File**: `docs/src/content/docs/config.md` (modified, +1/-1)
-```diff
-@@ -1078,7 +1078,7 @@ $ wt config approvals list --format=json | jq -r .state
- 
- Approved commands are saved to `~/.config/worktrunk/approvals.toml`. Re-approval is required when the command template changes or the project moves.
- 
--`--yes` bypasses the prompt, and what it leaves behind depends on the command it is passed to. On a command that runs project commands it grants consent for that run alone and records nothing, so the next run asks again. On `wt config approvals add` the record is the whole point, so the approvals are written — which is how an unattended environment pre-approves a project it has just cloned.
-+`--yes` approves project commands for the current run without saving approval. `wt config approvals add --yes` saves approvals for future runs.
- 
- ### Reading approval state
- 
-```
-
-**File**: `docs/src/content/docs/extending.md` (modified, +1/-9)
-```diff
-@@ -4,15 +4,7 @@ description: "Three ways to add custom behavior: hooks for lifecycle automation,
- sidebar:
-   order: 22
- ---
--Worktrunk has three extension mechanisms.
--
--**[Hooks](#hooks)** are shell commands that run automatically at lifecycle events (switching, starting, committing, merging, removing). Defined in TOML.
--
--**[Aliases](#aliases)** are reusable shell commands invoked as `wt <name>`. Defined in TOML.
--
--**[Custom subcommands](#custom-subcommands)** are standalone executables invoked as `wt <name>`. Drop `wt-foo` on `PATH` and it becomes `wt foo`.
--
--| | Hooks | Aliases | Custom subcommands |
-+| | [Hooks](#hooks) | [Aliases](#aliases) | [Custom subcommands](#custom-subcommands) |
- |---|---|---|---|
- | **Trigger** | Automatic (lifecycle events) | Manual (`wt <name>`) | Manual (`wt <name>`) |
- | **Defined in** | TOML config | TOML config | Any executable on `PATH` |
-```
-
-**File**: `docs/src/content/docs/llm-commits.md` (modified, +2/-2)
-```diff
-@@ -205,7 +205,7 @@ See `wt config create --help` for the full default templates.
- 
- ## Appending to the prompt
- 
--`template-append` adds to the commit and squash prompts instead of replacing them. It lives in both user config (personal preferences) and project config (`.config/wt.toml`, shared so every teammate's LLM sees the same style guide). Each fragment is itself a [minijinja](https://docs.rs/minijinja/) template — Worktrunk renders it with the same variables as the main template (`{{ branch }}`, `{{ git_diff }}`, …), then appends the result after `<style>`. The user fragment renders into a `<user-guidance>` block and the project fragment into a `<project-guidance>` block, so the LLM can tell personal preference from shared convention:
-+`template-append` adds instructions to the default commit and squash prompts. Set it in user config for personal preferences or `.config/wt.toml` for shared project conventions. Fragments support the same template variables as the main prompt.
- 
- ```toml
- # .config/wt.toml
-@@ -216,7 +216,7 @@ template-append = """
- """
- ```
- 
--When both the user and project set `template-append`, the `<user-guidance>` block comes first, then `<project-guidance>`.
-+When both are configured, user instructions come before project instructions.
- 
- The user fragment needs no approval — it's the developer's own config. For the project fragment, the first time the rendered text is sent to the LLM, Worktrunk shows the raw fragment in an approval prompt — the same one-shot gate as project-defined hooks. Subsequent commits don't re-prompt unless the fragment changes. Declining is non-fatal: the LLM runs with just the user fragment (if any).
- 
-```
-
-**File**: `docs/src/content/docs/merge.md` (modified, +1/-5)
-```diff
-@@ -101,11 +101,7 @@ Use `--no-commit` to skip committing uncommitted changes and squashing; rebase s
- 
- ## Local CI
- 
--For personal projects, pre-merge hooks open up the possibility of a workflow with much faster iteration — an order of magnitude more small changes instead of fewer large ones.
--
--Historically, ensuring tests ran before merging was difficult to enforce locally. Remote CI was valuable for the process as much as the checks: it guaranteed validation happened. `wt merge` brings that guarantee local.
--
--The full workflow: start an agent (one of many) on a task, work elsewhere, return when it's ready. Review the diff, run `wt merge`, move on. Pre-merge hooks validate before merging — if they pass, the branch goes to the default branch and the worktree cleans up.
-+Pre-merge hooks run checks locally before merging. A failed check stops the merge:
- 
- ```toml
- # .config/wt.toml
-```
-
-**File**: `docs/src/content/docs/shell-integration.md` (modified, +1/-11)
-```diff
-@@ -75,17 +75,7 @@ wt switch feature  # Now uses the dev build with shell integration
- 
- ### "Alias bypasses shell integration"
- 
--**Meaning**: An alias like `alias gwt="/usr/bin/wt"` or `alias gwt="wt.exe"` points directly to the binary instead of the shell function.
--
--When shell integration is installed, it creates a shell function named `wt` (or `git-wt`). If the alias points to the binary path, it bypasses this function and shell integration won't work.
--
--**Examples that bypass** (won't auto-cd):
--
--```bash
--alias gwt="/usr/bin/wt"
--alias gwt="wt.exe"
--alias wt="/path/to/wt"
--```
-+**Meaning**: The alias invokes the binary directly, bypassing the shell function that changes directories.
- 
- **Fix**: Change the alias to point to the function name instead of the binary:
- 
-```
-
-**File**: `docs/src/content/docs/step.md` (modified, +1/-8)
-```diff
-@@ -992,14 +992,7 @@ Run a command; kill its whole process tree when its worktree is removed. Teardow
- 
- ### Why
- 
--A `post-start` hook to start a long-lived process and a `pre-remove` hook to
--stop it is usually enough. But `pre-remove` only runs when worktrunk removes
--the worktree, so a `git worktree remove`, an `rm -rf`, or a crashed hook skips
--it. Across enough worktree churn some process is bound to outlive its worktree,
--and with no cleanup these leaks accumulate (on macOS they eventually saturate
--`fseventsd`). `tether` removes the need for a `pre-remove`: it ties the
--command's lifetime to the worktree and kills the whole process group once the
--worktree is gone.
-+`pre-remove` hooks run only when Worktrunk removes a worktree. `tether` also stops the command when another tool removes the worktree.
- 
- ### Arguments
- 
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/config.md` (modified, +1/-1)
-```diff
-@@ -1070,7 +1070,7 @@ $ wt config approvals list --format=json | jq -r .state
- 
- Approved commands are saved to `~/.config/worktrunk/approvals.toml`. Re-approval is required when the command template changes or the project moves.
- 
--`--yes` bypasses the prompt, and what it leaves behind depends on the command it is passed to. On a command that runs project commands it grants consent for that run alone and records nothing, so the next run asks again. On `wt config approvals add` the record is the whole point, so the approvals are written — which is how an unattended environment pre-approves a project it has just cloned.
-+`--yes` approves project commands for the current run without saving approval. `wt config approvals add --yes` saves approvals for future runs.
- 
- ### Reading approval state
- 
-```
-
-**File**: `plugins/worktrunk/skills/worktrunk/reference/extending.md` (modified, +1/-9)
-```diff
-@@ -1,14 +1,6 @@
- # Extending Worktrunk
- 
--Worktrunk has three extension mechanisms.
--
--**[Hooks](#hooks)** are shell commands that run automatically at lifecycle events (switching, starting, committing, merging, removing). Defined in TOML.
--
--**[Aliases](#aliases)** are reusable shell commands invoked as `wt <name>`. Defined in TOML.
--
--**[Custom subcommands](#custom-subcommands)** are standalone executables invoked as `wt <name>`. Drop `wt-foo` on `PATH` and it becomes `wt foo`.
--
--| | Hooks | Aliases | Custom subcommands |
-+| | [Hooks](#hooks) | [Aliases](#aliases) | [Custom subcommands](#custom-subcommands) |
- |---|---|---|---|
- | **Trigger** | Automatic (lifecycle events) | Manual (`wt <name>`) | Manual (`wt <name>`) |
- | **Defined in** | TOML config | TOML config | Any executable on `PATH` |
+ Apply the literal suggestion only — change the lines it covers, nothing more.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4594** (2026-10-26): chore: bump astral-sh/setup-uv from 10.3.0 to 10.3.2 in /.github/actions/tend-setup (@dependabot[bot])
+- **PR #4592** (closed): chore: bump max-sixty/tend from 0.3.14 to 0.3.15 (@dependabot[bot])
+- **PR #4590** (2026-10-26): chore: bump jdx/packslip from 1.7.0 to 1.11.0 (@dependabot[bot])
+- **PR #4589** (2026-10-26): chore: bump the docs-site group across 1 directory with 5 updates (@dependabot[bot])
+- **PR #4586** (2026-10-26): ci: bump cargo-nextest pin to 0.9.149 (@worktrunk-bot)
 - **PR #4584** (2026-10-23): Retain partial JSON results when later command steps fail (@max-sixty)
-- **PR #4581** (2026-10-23): Move the full-page demo link below the workspace (@max-sixty)
-- **PR #4579** (2026-10-23): Make the Try it demo a viewport-sized workspace (@max-sixty)
-- **PR #4576** (2026-10-22): docs: simplify logging and integration guidance (@max-sixty)
-- **PR #4575** (2026-10-22): docs: trim repeated explanations across six guides (@max-sixty)
-- **PR #4574** (2026-10-22): Preserve JSON results and diagnostics on command failure (@max-sixty)
 
 ---
 
@@ -2505,31 +2429,32 @@ documentation site build. Reviewed the served passages in context.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip non-UTF-8 environment entries instead of panicking in config loading (#4563
+## X. test(picker): wait for rendered rows before the escape-abort snapshot (#4527)
 
 **RULE**:
-When implementing operations in `src/config/user/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/integration_tests/switch_picker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d187abf9`: Skip non-UTF-8 environment entries instead of panicking in config loading (#4563). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7427b2fa`: test(picker): wait for rendered rows before the escape-abort snapshot (#4527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/config/user/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration_tests/switch_picker.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // `std::env::vars()` panics on any non-UTF-8 entry, including unrelated
-    // ones; skip those entries instead.
-    let mut env_vars: Vec<_> = std::env::vars_os()
-        .filter_map(|(k, v)| Some((k.into_string().ok()?, v.into_string().ok()?)))
+        // Settle: the preview renders only after the list has a selected row,
+        // so gating on it confirms both panels before capture. Without a gate,
+        // a prompt that sits quiet for STABLE_DURATION on a slow runner gets
+        // captured before any rows arrive.
+        &[("", Some("has no file changes"))],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let mut env_vars: Vec<_> = std::env::vars()
+        &[], // No inputs before abort
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d187abf9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7427b2fa` are properly handled with clean fallback behavior.

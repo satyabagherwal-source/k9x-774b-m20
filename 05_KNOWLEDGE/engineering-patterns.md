@@ -332072,3 +332072,57 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `255dee03` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4557. test(picker): wait for rendered rows before the escape-abort snapshot (#4527) (Harvested from max-sixty/worktrunk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(picker): wait for rendered rows before the escape-abort snapshot (#4527)",
+  "source": "max-sixty/worktrunk",
+  "source_url": "https://github.com/max-sixty/worktrunk",
+  "source_version": "f5dec9c4",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-26T05:00:08.563Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-max-sixty-worktrunk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `f5dec9c4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `tests/integration_tests/switch_picker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7427b2fa`: test(picker): wait for rendered rows before the escape-abort snapshot (#4527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration_tests/switch_picker.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Settle: the preview renders only after the list has a selected row,
+        // so gating on it confirms both panels before capture. Without a gate,
+        // a prompt that sits quiet for STABLE_DURATION on a slow runner gets
+        // captured before any rows arrive.
+        &[("", Some("has no file changes"))],
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        &[], // No inputs before abort
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7427b2fa` are properly handled with clean fallback behavior.

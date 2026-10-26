@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T03:10:15.896Z",
+  "last_updated": "2026-10-26T05:00:08.690Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34269,8 +34269,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "a6c26c78",
-      "content_hash": "45312ee28a1e655ca5a6aaa1ccf13e7fc52d05d8be14b74280887ef71120c653",
+      "source_version": "f5dec9c4",
+      "content_hash": "2bedfec73c9306fe6ca481f0bba41d89f939f06cb8e34ad99177233954ce4bd3",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -34298,6 +34298,11 @@
           "number": 4234,
           "title": "Skip non-UTF-8 environment entries instead of panicking in config loading (#4563",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4557,
+          "title": "test(picker): wait for rendered rows before the escape-abort snapshot (#4527)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34305,7 +34310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:16:54.875Z",
+      "verified_at": "2026-10-26T05:00:08.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128104,6 +128109,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T03:10:13.992Z"
+    },
+    "rule-4557": {
+      "learning_id": "rule-4557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4557,
+      "title": "test(picker): wait for rendered rows before the escape-abort snapshot (#4527)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "f5dec9c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:00:08.678Z"
     }
   },
   "aliases": {

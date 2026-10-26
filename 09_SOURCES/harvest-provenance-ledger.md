@@ -5110,3 +5110,4 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `a4d9f092` | Multi-dimensional audit evidence | 2026-10-26T03:03:50.738Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `255dee03` | Multi-dimensional audit evidence | 2026-10-26T03:10:14.067Z |
 | `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `11326ef3` | Multi-dimensional audit evidence | 2026-10-26T03:10:15.958Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `f5dec9c4` | Multi-dimensional audit evidence | 2026-10-26T05:00:08.766Z |
