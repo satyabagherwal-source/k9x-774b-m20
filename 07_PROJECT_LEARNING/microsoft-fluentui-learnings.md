@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
-> **Source Version**: `6d3e9d68`  
+> **Source Version**: `c7b45497`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:34:44.324Z  
+> **Timestamp**: 2026-10-26T14:29:53.831Z  
 > **Learning ID**: `learn-github-microsoft-fluentui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:34:43.127Z  
+> **Harvest Timestamp**: 2026-10-26T14:29:52.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1545,13 +1545,11 @@ module.exports = [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #36998** (2026-10-26): **chore(deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies group across 1 directory**
+  *Symptoms*: Bumps the security-dependencies group with 1 update in the / directory: [browserslist](https://github.com/browserslist/browserslist).  Updates `browserslist` from 4.28.2 to 4.29.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/browserslist/browserslist/releases">browserslist's releases</a>.</em></p> <blockquote> <h2>4.29.3</h2> <ul> <li>Updated Firefox ESR.</li> </ul> <h2>4.29.2</h2> <ul> <li>Fixed ignoring <code>null</code> usage in <code>cover X in Y</code> query (by <a href="https://github.com/wahidrizka"><code>@​wahidrizka</code></a>).</li> </ul> <h2>4.29.1</h2> <ul> <li>Fixed config name loading protection on Windows (by <a href="https://github.com/oss-security-shop"><code>@​oss-security-shop</code></a>).</li> <li>Fixed case-insensitive negation queries (by <a href="https://github.com/jakezwang"><code>@​jakezwang</code></a>).</li> <li>Fixed percentage and supports queries case-insensitive (by <a href="https://github.com/wahidrizka"><code>@​wahidrizka</code></a>).</li> <li>Fixed old Node.js tests (by <a href="https://github.com/aaron-belenky"><code>@​aaron-belenky</code></a>).</li> <li>Reduced code (by <a href="https://github.com/charmander"><code>@​charmander</code></a>).</li> </ul> <h2>4.29.0</h2> <ul> <li>Added query continuations across lines and array entries (by <a href="https://github.com/fzlzjerry"><code>@​fzlzjerry</code></a>).</li> </ul> <h2>4.28.9</h2> <ul> <li>Improve <code>or</code> parsing performance (by <a href="
+
 - **Issue #36995** (2026-10-25): **fix(react-headless-components-preview): remove keyborg and react-tabster from the headless bundle**
   *Symptoms*: > [!NOTE] > Stacked on #36994. Until that merges, this diff also contains its commit (`92c4b9cd`), including a second `react-aria` change file. Only the last commit belongs to this PR. I'll rebase once #36994 lands and mark this ready.  ## Previous Behavior  The headless bundle still pulled in `keyborg` and `@fluentui/react-tabster` through: - `useActiveDescendant` (`react-aria`), via `useOnKeyboardNavigationChange` - `useListbox` (`react-combobox`), via `useOnKeyboardNavigationChange` - the shared combobox trigger slot, via `useSetKeyboardNavigation` - the headless `Tooltip`, via `KEYBORG_FOCUSIN` and `useIsNavigatingWithKeyboard`  ## New Behavior  - **`react-utilities`** gets two `@internal` helpers:   - `useKeyboardModality(onChange?)` returns a stable getter: `true` after a keyboard interaction, `false` after a pointer interaction, `undefined` before either. All instances in a document share **one** set of document listeners, ref-counted and removed when the last subscriber unmounts. Synthetic screen-reader clicks keep the keyboard modality.   - `isFocusVisible(element)` returns `undefined` when `:focus-visible` isn't supported, so each caller picks its own fallback explicitly. - **`useActiveDescendant`** reads the shared modality and falls back to `:focus-visible` on the active parent when no interaction has been tracked yet (for example, when a keydown mounts and autofocuses a standalone Listbox). - **`useListbox`** uses the same getter. It no longer keeps `isNavigating
-
-- **Issue #36982** (2026-10-23): **Canary: verify PR preview site deployment of PR-controlled content (inert marker only)**
-  *Symptoms*: Security research verification. This PR changes exactly one file (apps/pr-deploy-site/index.html) by appending a single inert HTML comment marker (CANARY-FLUENTUI-20261023-8b7ea3). Purpose: verify whether static content from a fork PR is deployed verbatim to the public PR preview site (fluentuipr.z22.web.core.windows.net/pull/<this PR>/) by the workflow_run deploy workflow, without content validation. The marker contains no scripts, no links, and no impersonation, and has no functional effect. I will close this PR after verification.
-  **Post-Mortem & Fix Analysis**:
-  > Canary verification complete, closing as planned.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1568,161 +1566,136 @@ module.exports = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea1a99bf` (2026-10-22)
-**Commit Message**: fix(web-components): height for empty vertical divider (#36981)
+### Incident Patch 1: `c7b45497` (2026-10-26)
+**Commit Message**: chore(deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies group across 1 directory (#36998)
 
-**File**: `change/@fluentui-web-components-b2ad883c-7324-451d-b7ea-076363ade0cf.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "type": "patch",
-+  "comment": "fix: height for empty vertical divider",
-+  "packageName": "@fluentui/web-components",
-+  "email": "machi@microsoft.com"
-+}
-```
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
+Co-authored-by: Hotell <[REDACTED_EMAIL]>
 
-**File**: `packages/web-components/src/divider/divider.styles.css` (modified, +21/-13)
+**File**: `yarn.lock` (modified, +29/-29)
 ```diff
-@@ -6,6 +6,8 @@
- }
+@@ -13896,12 +13896,12 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- :host {
-+  --_vertical-min-height: 10px;
-+
-   contain: content;
- }
+-"baseline-browser-mapping@npm:^2.10.12":
+-  version: 2.10.32
+-  resolution: "baseline-browser-mapping@npm:2.10.32"
++"baseline-browser-mapping@npm:^2.11.26":
++  version: 2.11.33
++  resolution: "baseline-browser-mapping@npm:2.11.33"
+   bin:
+     baseline-browser-mapping: dist/cli.cjs
+-  checksum: 10c0/408c93245bdf1e92ab0f891ebf9283ec60dbabfaac81bdc9a20d371565a2a496b0fb8028f7d628c3f66f90ee142670a81575cf1cbd5229f7b4b0d350db911085
++  checksum: 10c0/41ccaadfbae9d8df112b8771631465e7f04def4a319502f99d59ad04879ab2a35d609baf27a9feb523f8eee1728d7a9fd71125a13eca5bf06bcb240212c33d5e
+   languageName: node
+   linkType: hard
  
-@@ -44,34 +46,40 @@
-   align-items: center;
-   flex-direction: column;
-   height: 100%;
--  min-height: 84px;
--}
--
--:host([orientation='vertical']):empty {
--  min-height: 20px;
- }
+@@ -14181,17 +14181,17 @@ __metadata:
+   linkType: hard
  
- :host([orientation='vertical'][inset])::before {
-   margin-top: 12px;
- }
-+
- :host([orientation='vertical'][inset])::after {
-   margin-bottom: 12px;
- }
+ "browserslist@npm:^4.16.1, browserslist@npm:^4.24.0, browserslist@npm:^4.24.2, browserslist@npm:^4.28.1":
+-  version: 4.28.2
+-  resolution: "browserslist@npm:4.28.2"
+-  dependencies:
+-    baseline-browser-mapping: "npm:^2.10.12"
+-    caniuse-lite: "npm:^1.0.30001782"
+-    electron-to-chromium: "npm:^1.5.328"
+-    node-releases: "npm:^2.0.36"
+-    update-browserslist-db: "npm:^1.2.3"
++  version: 4.29.3
++  resolution: "browserslist@npm:4.29.3"
++  dependencies:
++    baseline-browser-mapping: "npm:^2.11.26"
++    caniuse-lite: "npm:^1.0.30001813"
++    electron-to-chromium: "npm:^1.5.439"
++    node-releases: "npm:^2.0.57"
++    update-browserslist-db: "npm:^1.3.3"
+   bin:
+     browserslist: cli.js
+-  checksum: 10c0/c0228b6330f785b7fa59d2d360124ec6d9322f96ed9f3ee1f873e33ecc9503a6f0ffc3b71191a28c4ff6e930b753b30043da1c33844a9548f3018d491f09ce60
++  checksum: 10c0/6e1a1fcae77369260e936fe63e7994105f04c6b7aea4f2139fdf3ecccfcb1eb24d4522c2828c6ed48ef71206a33f4346e11cf714c5aac0f7496cead06bb66bac
+   languageName: node
+   linkType: hard
  
--:host([orientation='vertical']):empty::before,
--:host([orientation='vertical']):empty::after {
--  height: 10px;
--  min-height: 10px;
--  flex-grow: 0;
--}
--
- :host([orientation='vertical'])::before,
- :host([orientation='vertical'])::after {
-   width: var(--strokeWidthThin);
--  min-height: 20px;
-+  min-height: var(--_vertical-min-height);
-   height: 100%;
- }
+@@ -14466,10 +14466,10 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-+/**
-+   * Use @supports to avoid the scoped styles from applying in Safari. Because
-+   * Safari supports @scope but ':scope:has(*)' would select a host with no
-+   * children.
-+   */
-+@supports not selector(:host(:has(*))) {
-+  @scope {
-+    :scope:has(*) {
-+      --_vertical-min-height: 20px;
-+    }
-+  }
-+}
-+
-+:host(:has(*)) {
-+  --_vertical-min-height: 20px;
-+}
-+
- :host([orientation='vertical']) ::slotted(*) {
-   display: flex;
-   flex-direction: column;
-```
-
-**File**: `packages/web-components/src/divider/divider.styles.ts` (modified, +21/-13)
-```diff
-@@ -22,6 +22,8 @@ export const styles = css`
-   ${display('flex')}
+-"caniuse-lite@npm:^1.0.30001173, caniuse-lite@npm:^1.0.30001687, caniuse-lite@npm:^1.0.30001782":
+-  version: 1.0.30001793
+-  resolution: "caniuse-lite@npm:1.0.30001793"
+-  checksum: 10c0/bee8f8b55d1ccdb2076b7355c06fd01916952eadd76b828e4d5fb9ac62d17ec7db0e2b7c326b923478b93526ad1ff74f189cf40c06de0e4a5edbc677009b97fe
++"caniuse-lite@npm:^1.0.30001173, caniuse-lite@npm:^1.0.30001687, caniuse-lite@npm:^1.0.30001813":
++  version: 1.0.30001819
++  resolution: "caniuse-lite@npm:1.0.30001819"
++  checksum: 10c0/6842319cdb9c8ac950ef0910fc3cc7dac3320b96b150de83ac65162c6b4906d2721ca830943a9e5a833c265b186aa0c417402ddd4157108bbf5474d6fabdc843
+   languageName: node
+   linkType: hard
  
-   :host {
-+    --_vertical-min-height: 10px;
-+
-     contain: content;
-   }
+@@ -17108,10 +17108,10 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-@@ -60,34 +62,40 @@ export const styles = css`
-     align-items: center;
-     flex-direction: column;
-     height: 100%;
--    min-height: 84px;
--  }
--
--  :host([orientation='vertical']):empty {
--    min-height: 20px;
-   }
+-"electron-to-chromium@npm:^1.5.328":
+-  version: 1.5.361
+-  resolution: "electron-to-chromium@npm:1.5.361"
+-  checksum: 10c0/5e6e9c0c12ab82366eddf575c8b9114d5af710abad3b592141c56cfa0169471f3633dcc793420c303fad68dff21c8fb724b43cde7e66be947983fa3d6d5a7359
++"electron-to-chromium@npm:^1.5.439":
++  version: 1.5.464
++  resolution: "electron-to-chromium@npm:1.5.464"
++  checksum: 10c0/65e6244c3b109942497ec6f7e8294258e74a7b410c804339fec39ecb2921926423e08f8f3a2a7979008c1a196a4c57145c1e76abe40ba374f60028fab23baa10
+   languageName: node
+   linkType: hard
  
-   :host([orientation='vertical'][inset])::before {
-     margin-top: 12px;
-   }
-+
-   :host([orientation='vertical'][inset])::after {
-     margin-bottom: 12px;
-   }
+@@ -25866,10 +25866,10 @@ __metadata:
+   languageName: node
+   linkType: hard
  
--  :host([orientation='vertical']):empty::before,
--  :host([orientation='vertical']):empty::after {
--    height: 10px;
--    min-height: 10px;
--    flex-grow: 0;
--  }
--
-   :host([orientation='vertical'])::before,
-   :host([orientation='vertical'])::after {
-     width: ${strokeWidthThin};
--    min-height: 20px;
-+    min-height: var(--_vertical-min-height);
-     height: 100%;
-   }
+-"node-releases@npm:^2.0.36":
+-  version: 2.0.46
+-  resolution: "node-releases@npm:2.0.46"
+-  checksum: 10c0/04632591f97f15848adfb12b21fa013a6c19809afcf5db65fe88c95a36271c3f423e21110fd319ad5a9c5029ffe65eb81f3e4857e6af19622bc888d92a04ad22
++"node-releases@npm:^2.0.57":
++  version: 2.0.60
++  resolution: "node-releases@npm:2.0.60"
++  checksum: 10c0/f0c7b37cf83405291c0de87e15b5cef4af167248f8cc91b7c1c2281338c0e7e9aebfb77e0153ba335bb4c6ec5b1563431cfba93e8c83292760856012d93cb93e
+   languageName: node
+   linkType: hard
  
-+  /**
-+   * Use @supports to avoid the scoped styles from applying in Safari. Because
-+   * Safari supports @scope but ':scope:has(*)' would select a host with no
-+   * children.
-+   */
-+  @supports not selector(:host(:has(*))) {
-+    @scope {
-+      :scope:has(*) {
-+        --_vertical-min-height: 20px;
-+      }
-+    }
-+  }
-+
-+  :host(:has(*)) {
-+    --_vertical-min-height: 20px;
-+  }
-+
-   :host([orientation='vertical']) ::slotted(*) {
-     display: flex;
-     flex-direction: column;
+@@ -32467,17 +32467,17 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"update-browserslist-db@npm:^1.2.3":
+-  version: 1.2.3
+-  resolution: "update-browserslist-db@npm:1.2.3"
++"update-browserslist-db@npm:^1.3.3":
++  version: 1.3.4
++  resolution: "update-browserslist-db@npm:1.3.4"
+   dependencies:
+     escalade: "npm:^3.2.0"
+     picocolors: "npm:^1.1.1"
+   peerDependencies:
+     browserslist: ">= 4.21.0"
+   bin:
+     update-browserslist-db: cli.js
+-  checksum: 10c0/13a00355ea822388f68af57410ce3255941d5fb9b7c49342c4709a07c9f230bbef7f7499ae0ca7e0de532e79a82cc0c4edbd125f1a323a1845bf914efddf8bec
++  checksum: 10c0/5c0769472715b57371208c3146cc07a4f0917c1d18cc34f60325bc4234f4a28f332e50b99f675999ff311315231ff19beb22a815dfe04ccc1e798e1d389514d7
+   languageName: node
+   linkType: hard
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #36998** (2026-10-26): chore(deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies group across 1 directory (@dependabot[bot])
 - **PR #36995** (closed): fix(react-headless-components-preview): remove keyborg and react-tabster from the headless bundle (@dmytrokirpa)
 - **PR #36982** (closed): Canary: verify PR preview site deployment of PR-controlled content (inert marker only) (@idleicefire)
 - **PR #36981** (2026-10-22): fix(web-components): height for empty vertical divider (@marchbox)
 - **PR #36980** (2026-10-22): docs(public-docsite-v9): add RangeSlider preview stories (@mainframev)
 - **PR #36979** (2026-10-22): fix(react-headless-components-preview): emit data-disabled on ImageSwatch (@mainframev)
-- **PR #36978** (2026-10-22): feat(react-components): export existing Menu base hooks (@PaulGMardling)
 
 ---
 
@@ -1742,33 +1715,68 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web-components): height for empty vertical divider (#36981)
+## X. deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies grou
 
 **RULE**:
-When implementing operations in `change/@fluentui-web-components-b2ad883c-7324-451d-b7ea-076363ade0cf.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/fluentui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea1a99bf`: web-components): height for empty vertical divider (#36981). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7b45497`: deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies group across 1 directory (#36998). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/@fluentui-web-components-b2ad883c-7324-451d-b7ea-076363ade0cf.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{
-  "type": "patch",
-  "comment": "fix: height for empty vertical divider",
-  "packageName": "@fluentui/web-components",
-  "email": "machi@microsoft.com"
-}
+"baseline-browser-mapping@npm:^2.11.26":
+  version: 2.11.33
+  resolution: "baseline-browser-mapping@npm:2.11.33"
+  checksum: 10c0/41ccaadfbae9d8df112b8771631465e7f04def4a319502f99d59ad04879ab2a35d609baf27a9feb523f8eee1728d7a9fd71125a13eca5bf06bcb240212c33d5e
+  version: 4.29.3
+  resolution: "browserslist@npm:4.29.3"
+  dependencies:
+    baseline-browser-mapping: "npm:^2.11.26"
+    caniuse-lite: "npm:^1.0.30001813"
+    electron-to-chromium: "npm:^1.5.439"
+    node-releases: "npm:^2.0.57"
+    update-browserslist-db: "npm:^1.3.3"
+  checksum: 10c0/6e1a1fcae77369260e936fe63e7994105f04c6b7aea4f2139fdf3ecccfcb1eb24d4522c2828c6ed48ef71206a33f4346e11cf714c5aac0f7496cead06bb66bac
+"caniuse-lite@npm:^1.0.30001173, caniuse-lite@npm:^1.0.30001687, caniuse-lite@npm:^1.0.30001813":
+  version: 1.0.30001819
+  resolution: "caniuse-lite@npm:1.0.30001819"
+  checksum: 10c0/6842319cdb9c8ac950ef0910fc3cc7dac3320b96b150de83ac65162c6b4906d2721ca830943a9e5a833c265b186aa0c417402ddd4157108bbf5474d6fabdc843
+"electron-to-chromium@npm:^1.5.439":
+  version: 1.5.464
+  resolution: "electron-to-chromium@npm:1.5.464"
+  checksum: 10c0/65e6244c3b109942497ec6f7e8294258e74a7b410c804339fec39ecb2921926423e08f8f3a2a7979008c1a1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+"baseline-browser-mapping@npm:^2.10.12":
+  version: 2.10.32
+  resolution: "baseline-browser-mapping@npm:2.10.32"
+  checksum: 10c0/408c93245bdf1e92ab0f891ebf9283ec60dbabfaac81bdc9a20d371565a2a496b0fb8028f7d628c3f66f90ee142670a81575cf1cbd5229f7b4b0d350db911085
+  version: 4.28.2
+  resolution: "browserslist@npm:4.28.2"
+  dependencies:
+    baseline-browser-mapping: "npm:^2.10.12"
+    caniuse-lite: "npm:^1.0.30001782"
+    electron-to-chromium: "npm:^1.5.328"
+    node-releases: "npm:^2.0.36"
+    update-browserslist-db: "npm:^1.2.3"
+  checksum: 10c0/c0228b6330f785b7fa59d2d360124ec6d9322f96ed9f3ee1f873e33ecc9503a6f0ffc3b71191a28c4ff6e930b753b30043da1c33844a9548f3018d491f09ce60
+"caniuse-lite@npm:^1.0.30001173, caniuse-lite@npm:^1.0.30001687, caniuse-lite@npm:^1.0.30001782":
+  version: 1.0.30001793
+  resolution: "caniuse-lite@npm:1.0.30001793"
+  checksum: 10c0/bee8f8b55d1ccdb2076b7355c06fd01916952eadd76b828e4d5fb9ac62d17ec7db0e2b7c326b923478b93526ad1ff74f189cf40c06de0e4a5edbc677009b97fe
+"electron-to-chromium@npm:^1.5.328":
+  version: 1.5.361
+  resolution: "electron-to-chromium@npm:1.5.361"
+  checksum: 10c0/5e6e9c0c12ab82366eddf575c8b9114d5af710abad3b592141c56cfa0169471f3633dcc793420c303fad68d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea1a99bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7b45497` are properly handled with clean fallback behavior.

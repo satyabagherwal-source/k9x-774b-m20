@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "6d3e9d68",
+    "sourceVersion": "c7b45497",
     "license": "NOASSERTION",
-    "contentHash": "5c3c7badcc9bb5e72c3af8cf3768e88054710d349029ce733d521e065e0846c2",
-    "lastHarvestedAt": "2026-10-25T18:34:44.594Z",
+    "contentHash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
+    "lastHarvestedAt": "2026-10-26T14:29:54.224Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {

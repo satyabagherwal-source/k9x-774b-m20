@@ -5166,3 +5166,4 @@
 | `CYCLE-20261026-JWRL` | `2026-10-26T14:23:21.249Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4625` | Yes (`b0f81c97...`) |
 | `CYCLE-20261026-JZ54` | `2026-10-26T14:23:24.328Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4626` | Yes (`8642fa35...`) |
 | `CYCLE-20261026-K11E` | `2026-10-26T14:23:26.786Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4627` | Yes (`eaa34984...`) |
+| `CYCLE-20261026-SBZG` | `2026-10-26T14:29:54.220Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4628` | Yes (`375db551...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-7K1R",
-    "timestamp": "2026-10-25T04:38:12.543Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "679489d313570bed2d58fc53e3d53605be1909059d46477b26793d4b87e478c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-FCRW",
     "timestamp": "2026-10-25T04:44:16.364Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7475,21 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-SBZG",
+    "timestamp": "2026-10-26T14:29:54.220Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
