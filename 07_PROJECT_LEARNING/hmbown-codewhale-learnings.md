@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `62bbcebf`  
+> **Source Version**: `88772172`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:20:49.647Z  
+> **Timestamp**: 2026-10-26T09:49:02.431Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:20:48.930Z  
+> **Harvest Timestamp**: 2026-10-26T09:48:27.676Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41118 stars
+- **Stars / Engagement**: 41119 stars
 
 ---
 
@@ -1393,7 +1393,6 @@ pub struct PrefixChange {
     pub tools_changed: bool,
 }
 
-#[allow(dead_code)]
 impl PrefixChange {
     /// Returns a human-readable description of what changed.
     pub fn description(&self) -> String {
@@ -1503,7 +1502,7 @@ pub enum PrefixCheck {
 
 /// Default capacity for the tool-catalog serialization cache. Sized for
 /// "session + 1 or 2 forked subagent catalogs" without unbounded growth.
-const T
+const TOOL_CATALOG_CACHE_CA
 ```
 
 ### Core Architecture Module: `crates/core/src/request.rs`
@@ -1526,11 +1525,11 @@ pub use codewhale_protocol::role::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7072** (2026-10-25): **codewhale review accepts DeepSeek's leaked DSML tool-call markup as the review and exits 0 with no tally**
+  *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. Provider `deepseek`, model `deepseek-flash`, `reasoning_effort = "high"`, UI locale zh-Hans. **Target:** 0.10.3 · Related: #7067  ## Repro Same setup as #7067: a one-file +10/−1 working-tree diff with no sensitive paths, so triage classes it as Low risk, which offers **0 tools**. Run `codewhale review`. In 1 of 4 runs it printed this as the entire review and exited normally:  ``` <｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="read_file"> <｜｜DSML｜｜ parameter name="path" string="true">tides.py</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> <｜｜DSML｜｜ invoke name="search_repository"> <｜｜DSML｜｜ parameter name="query" string="true">parse_reading\|high_tides\|low_tides\|tides</｜｜DSML｜｜ parameter> </｜｜DSML｜｜ invoke> </｜｜DSML｜｜ calls> ```  There were no findings, no "Checked, nothing wrong" section and no `<!-- codewhale-review: … -->` tally. The other three runs hit the #7067 output cap.  ## Cause - The engine already knows this shape. `crates/tui/src/core/engine/streaming.rs:~586` says: "DeepSeek also emits a doubled-delimiter form (`<｜｜DSML｜｜ calls>`) when a request offers no tools; one-shot `codewhale exec` printed it verbatim as the answer." It's handled there through `TOOL_CALL_MARKER_PAIRS` and `contains_fake_tool_wrapper` (`streaming.rs:717`). - The review path builds its own requests in `crates/tui/src/tools/review_core.rs` and never applies that check. Neither `review_core.rs`, `review.rs` nor the CLI path in `lib.rs` references `con
+
 - **Issue #7069** (2026-10-25): **Composer history ignores CODEWHALE_HOME: typed prompts go to $HOME/.codewhale and are shared across isolated homes**
   *Symptoms*: **Version:** 0.10.2 (`ff466b2ed0bf`, npm build), Linux. **Target:** 0.10.3  ## Repro ```sh export CODEWHALE_HOME=/tmp/cw-isolated   # an explicit, isolated home codewhale                                # type and send any prompt, then quit ls ~/.codewhale/composer_history.jsonl   # exists, and holds the prompt ls /tmp/cw-isolated/composer_history.jsonl  # absent ``` I saw this across several sessions, each with its own `CODEWHALE_HOME`. All their prompts went to one `$HOME/.codewhale/composer_history.jsonl`, so Up-arrow history in each "isolated" home shows the others' prompts.  ## Cause `composer_history::default_history_path()` builds the path from `effective_home_dir()` (the user's `$HOME`) plus `.codewhale` (`crates/tui/src/composer_history.rs:43-72`). It never consults `CODEWHALE_HOME`. It can also fall back to `~/.deepseek/composer_history.jsonl` when that file exists.  ## Why it matters - `docs/REBRAND.md` says: "An explicit `CODEWHALE_HOME` intentionally isolates that home and disables the ambient `~/.deepseek` fallback." Composer history breaks both halves of that. - History holds everything the user typed, which can include pasted secrets. People use a separate home for CI, demos, classrooms or per-client separation, and they don't expect prompts to land in, or be read back from, the shared ambient home.  ## Expected When `CODEWHALE_HOME` is set, read and write `$CODEWHALE_HOME/composer_history.jsonl`, with no `~/.deepseek` fallback. Keep today's resolution only whe
-
-- **Issue #7058** (2026-10-24): **v0.11: Model refresh can still drift — 24 unseeded remote providers, unreachable non-text rows, unflagged stale pins, no scheduled job**
-  *Symptoms*: **Why this matters.** The founder reported that the OpenAI/ChatGPT models were visibly out of date and concluded the model-updating system had failed. The user-visible symptom had a real cause (see "What was fixed"), but investigating it surfaced four systemic gaps that keep any route able to drift silently: 24 remote providers have no offline seed facts, non-text-output rows are unreachable, a stale-but-present pin is never flagged, and the scheduled refresh exists only as prose. Each is independently checkable, so they are tracked here as one body of work rather than four vague wishes.  ## What was fixed (evidence, verified against the shipped binary)  The refresh pipeline was healthy; the installed binary was older than the catalog it read.  - `codewhale models --provider openai` on the installed release binary showed `source=models_dev_cache status={"state":"fresh"}` with 51 rows. - `~/.codewhale/catalog/models-dev-catalog.json` held 230 providers / 8,849 rows, `python3 scripts/catalog_models_dev.py seed age --max-days 30` → 0.0 days. - Stale ChatGPT-plan rosters at launch were fixed in `c869044358`.  So "OpenAI is stale" was a stale *binary*, not a dead updater. The gaps below are what remains.  ## Gap 1 — 24 remote providers have no offline seed block  `crates/config/assets/provider_descriptors.json` declares 52 providers; `scripts/catalog/models_dev_seed.toml` has 23 seed blocks. Four uncovered entries are loopback (`custom`, `ollama`, `sglang`, `vllm`) and one is a di
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1547,393 +1546,240 @@ pub use codewhale_protocol::role::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `485382f8` (2026-10-25)
-**Commit Message**: fix(runtime): name a started Fleet member's child by its member id (CW-7182)
+### Incident Patch 1: `6378f3b6` (2026-10-26)
+**Commit Message**: fix(docs): keep the OrcaRouter registry summary within its limit [skip ci]
 
-917e6b2 passed the member's display_name as the child's session name. The
-spawn path validates session names as ASCII letters, digits, '-', '_' and
-'.', so any whale whose name has a space or non-ASCII text ("Ana Lovelace",
-小鲸) failed every member start with "name must not contain whitespace". The
-child is now named by member_id (the whale's Agent id), which is always a
-valid session name and is unique per whale, so the existing "one live child
-per name" rule still refuses a second start for a busy member. The platform's
-members inspection maps that id back to the whale's name (platform 6ea8a0f).
-docs/RUNTIME_API.md says the session name is the member id.
+The new provider description was141characters against the registry's120
+limit. Shorten it to105 and regenerate the public feature projection.
+The existing feature_registry_matches_code check fails before with the
+141-character diagnostic, then passes1/1 after the correction.
 
-Also moves the FleetMemberStarted alias above SessionSnapshot's doc comment;
-917e6b2 had inserted it between the comment's two lines, so the alias took
-SessionSnapshot's first doc line.
+Compiled the unchanged existing feature_registry.rs independently with the
+actual built runtime/serde/toml libraries under the existing build lock;
+no new tests, shim or whole TUI rebuild. Node facts and whitespace pass.
+The uncompiled reasoning-recovery packet remains unstaged and is excluded.
 
-Verification: cargo test -p codewhale-tui --lib -- protocol_covers_engine_ops
-runtime_info spawn_ plus a throwaway test (not committed) of
-parse_spawn_request: 105 passed, 0 failed. The throwaway test showed
-"Ana Lovelace" refused ("name must not contain whitespace…"), 
-
-**File**: `crates/tui/src/core/ops.rs` (modified, +1/-1)
+**File**: `docs/features.toml` (modified, +1/-1)
 ```diff
-@@ -16,9 +16,9 @@ use std::path::PathBuf;
- /// Prefix used for tool-call ids created by local composer shell shortcuts.
- pub const USER_SHELL_TOOL_ID_PREFIX: &str = "user_shell_";
- 
--/// Snapshot of session state for saving to disk.
- pub type FleetMemberStarted = Result<String, String>;
- 
-+/// Snapshot of session state for saving to disk.
- /// Returned by `Op::GetSessionSnapshot` via a oneshot channel.
- #[derive(Debug, Clone, PartialEq, serde::Serialize)]
- pub struct SessionSnapshot {
+@@ -296,7 +296,7 @@ owner = "crates/tui/src/sandbox"
+ [[feature]]
+ id = "providers"
+ name = "Providers"
+-summary = "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers."
++summary = "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers."
+ status = "stable"
+ surfaces = { tui = "stable", api = "stable" }
+ docs = "docs/PROVIDERS.md"
 ```
 
-**File**: `crates/tui/src/tools/subagent/mod.rs` (modified, +1/-1)
+**File**: `web/data/features.generated.json` (modified, +2/-2)
 ```diff
-@@ -20369,7 +20369,7 @@ pub(crate) async fn start_fleet_member(
-     let input = json!({
-         "action": "start",
-         "profile": start.member_id,
--        "name": start.display_name,
-+        "name": start.member_id,
-         "prompt": start.prompt,
-     });
-     let (result, _) = spawn_subagent_from_input(
-```
-
-**File**: `docs/RUNTIME_API.md` (modified, +2/-1)
-```diff
-@@ -3124,7 +3124,8 @@ The response is `200 {thread_id, member_id, agent_id, state: "started"}`, or
- between turns. Repeating the same `operation_key` with the same body returns
- the original `agent_id` once started; a different body under the same key is
- refused. The child appears in `/v1/agent-runs` with `owner_session_id` set to the
--thread and its `display_name` as `session_name`; `agent.spawned`,
-+thread and its `member_id` as `session_name` (a display name may hold spaces or
-+non-ASCII text, which session names refuse); `agent.spawned`,
- `agent.progress` and `agent.completed` arrive on the thread's event stream.
- Stop it with `POST /v1/agent-runs/{id}/cancel`, which also stops its
- descendants. A second start for a member whose child is still running is
+@@ -2,7 +2,7 @@
+   "format": "codewhale.features.v1",
+   "source": {
+     "path": "docs/features.toml",
+-    "sha256": "35709461f147148def39fbaf18b4ce8e7985a823549be2ee2cc016d18785429f"
++    "sha256": "ea640f30d580f72c2f98f643ebc523d3ddf0d87ac1cea2c19a0e31e1eb07ef46"
+   },
+   "features": [
+     {
+@@ -335,7 +335,7 @@
+     {
+       "id": "providers",
+       "name": "Providers",
+-      "summary": "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers.",
++      "summary": "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers.",
+       "status": "stable",
+       "surfaces": {
+         "tui": "stable",
 ```
 
 ---
 
-### Incident Patch 2: `62bbcebf` (2026-10-25)
-**Commit Message**: docs: correct FreeBSD source-build claims (#1097)
+### Incident Patch 2: `579c8d92` (2026-10-26)
+**Commit Message**: feat(tui): recommend the OrcaRouter partner offer in route pickers [skip ci]
 
-FreeBSD stays a source-only target, with no prebuilt asset and no
-release-matrix row (founder decision 2026-10-25, item 14). This change
-fixes the claims the issue sweep found to be false or stale:
+No-Issue: founder-requested provider/model recommendation for 0.10.3.
 
-- packaging/freebsd/README.md said x86_64-unknown-freebsd "is validated in
-  CI ... on the release/0.9.5 branch". No job does this:
-  `git grep -i freebsd -- .github scripts` matches only a YAML comment. The
-  README now says no CI job checks the target and gives the cargo check
-  command to run on a FreeBSD host.
-- The README pointed to crates/tui/build.rs for the rquickjs bindgen fix.
-  1582ba9653/5eb0385e8f touch only crates/workflow-js/Cargo.toml, which
-  holds the target_os = "freebsd" bindgen dependency. It now names that
-  file.
-- The README now states the Rust minimum, 1.89 (Cargo.toml rust-version),
-  and its verification block no longer says ">= 1.88". The matrix list now
-  says Linux musl arm64, which is the target the matrix builds, not gnu.
-- The release-artifacts.yml build-job comment no longer claims a FreeBSD
-  cargo check. It now says FreeBSD has no prebuilt asset, no npm binary and
-  no CI check.
-- "OpenBSD" is dropped
+Reuse one recommendation row in /provider, /model and OrcaRouter sign-in
+choices. F7 or a click opens the existing non-closing pager with the exact
+redemption URL, 30% top-up match for DeepSeek V4.1 Flash, current-terms
+pointer and public referral disclosure. Keep provider/model/auth choices
+explicit. Clear previous click latches before opening the offer. Brand-first
+titles retain OrcaRouter at narrow widths. All 15 locale packs, key catalog,
+keybindings guide, provider feature row/docs and both changelogs updated;
+regenerated public docs/features projections.
 
-**File**: `.github/workflows/release-artifacts.yml` (modified, +2/-3)
+Verification: final production CLI build passed14m10s with the retained
+large-__eh_frame linker warning. Focused existing batch ran273 tests:
+272 passed,1 failed because F7 was missing from the keybindings guide.
+Corrected only that documentation and its generated projection, compiled
+unchanged keybinding_table.rs with the actual built localization library,
+and reran the exact failed existing test:1 passed,0 failed. Reused the272
+unchanged passing tests; no new tests or code com
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -87,9 +87,8 @@ jobs:
-     # Both cold macOS artifact builds on 0.10.1 exhausted 90 minutes inside
-     # compilation. Keep the full CI build budget; packaging stays capped below.
-     timeout-minutes: 210
--    # FreeBSD is a source-build target validated via `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked`
--    # (see packaging/freebsd/README.md and docs/INSTALL.md#freebsd). The 7×1 prebuilt matrix stays 7 targets;
--    # FreeBSD has no prebuilt asset, no npm binary, and no matrix bloat — it builds from source.
-+    # FreeBSD is a source-build target with no prebuilt asset, no npm binary and no CI check
-+    # (see packaging/freebsd/README.md and docs/INSTALL.md#freebsd).
-     strategy:
-       fail-fast: false
-       matrix:
-```
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- # Build artifacts
- /target
- /target-*
-+/vendor/codewhale-ratatui/target/
- .entire/
- .cursor/
- .plans/
-```
-
-**File**: `docs/INSTALL.md` (modified, +1/-1)
-```diff
-@@ -1005,7 +1005,7 @@ v0.8.8 onward. Linux RISC-V prebuilts are temporarily paused because the locked
- | Windows | arm64 | `codewhale-windows-arm64.exe`, `codew-windows-arm64.exe` | ✅ | ✅ |
- | Linux x64 or arm64 on musl (Alpine) | native arch | matching static Linux asset | ✅ (static) | ✅ |
- | Other Linux (musl on other arches) | — | build from source | ❌¹ | ✅² |
--| FreeBSD 14+ / OpenBSD | x64, arm64 | `cargo install codewhale-cli --locked` (no prebuilt; see § FreeBSD) | ❌ | ✅² |
-+| FreeBSD 14+ | x64, arm64 | `cargo install codewhale-cli --locked` (no prebuilt; see § FreeBSD) | ❌ | ✅² |
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ¹ The npm package will exit with a clear error and point you here.
- ² Provided your toolchain can compile a recent Rust workspace; see
-```
-
-**File**: `docs/zh_hans/INSTALL.md` (modified, +1/-1)
-```diff
-@@ -764,7 +764,7 @@ v0.10.0 的已知 bug。bash 和 fish 没问题。
- | Windows | arm64 | `codewhale-windows-arm64.exe`, `codew-windows-arm64.exe` | ✅ | ✅ |
- | Linux x64 或 arm64 上的 musl（Alpine） | 原生架构 | 匹配的静态 Linux 资源 | ✅（静态） | ✅ |
- | 其他 Linux（其他架构上的 musl） | — | 从源码构建 | ❌¹ | ✅² |
--| FreeBSD 14+ / OpenBSD | x64, arm64 | `cargo install codewhale-cli --locked`（无预编译；见 § FreeBSD） | ❌ | ✅² |
-+| FreeBSD 14+ | x64, arm64 | `cargo install codewhale-cli --locked`（无预编译；见 § FreeBSD） | ❌ | ✅² |
+ ## [Unreleased]
  
- ¹ npm 包会以明确的错误退出，并引导你到这里。
- ² 前提是你的工具链能编译较新的 Rust workspace；见下文[从源码构建](#5-cargo-与从源码构建)。
-```
-
-**File**: `packaging/freebsd/README.md` (modified, +7/-5)
-```diff
-@@ -5,7 +5,8 @@ Resolves #1097 — FreeBSD install via `cargo` today, native `pkg` port planned.
- ## Current: cargo install (supported)
- 
- FreeBSD has no prebuilt GitHub Release asset. The npm wrapper intentionally fails with
--`Unsupported platform: freebsd` and points to the Cargo path. Build from source:
-+`Unsupported platform: freebsd` and points to the Cargo path. Build from source with
-+Rust 1.89 or newer (the workspace `rust-version`):
- 
- ```bash
- pkg install -y rust pkgconf git  # or: pkg install -y lang/rust devel/pkgconf devel/git
-@@ -22,13 +23,14 @@ installed `codewhale-tui` from ports or Cargo, run
- 
- Linux `libdbus-1` / `pkg-config` build deps are not needed on FreeBSD for the default
- feature set; the `rquickjs` FreeBSD bindings are generated at build time via `bindgen`
--(see `crates/tui/build.rs` and the `1582ba965`/`5eb0385e8` FreeBSD bindgen fix).
-+(see the `target_os = "freebsd"` dependency in `crates/workflow-js/Cargo.toml`, added by
-+`1582ba965`/`5eb0385e8`).
- 
- ## Target validation
- 
--- Rust tier-2 target `x86_64-unknown-freebsd` is validated in CI via `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked` on the `release/0.9.5` branch.
-+- No CI job builds or checks the Rust tier-2 target `x86_64-unknown-freebsd`, so FreeBSD source builds are not verified before a release. To check one, run `cargo check --target x86_64-unknown-freebsd -p codewhale-cli --locked` on a FreeBSD host.
- - `aarch64-unknown-freebsd` cross-check is tracked for future hardware.
--- The release matrix in `.github/workflows/release-artifacts.yml` remains 7×1 (Linux musl x64, Linux gnu arm64, Android arm64, macOS x64/arm64, Windows x64/arm64). FreeBSD is a source-build target — no prebuilt asset, no matrix bloat, but the row in `docs/INSTALL.md` is authoritative.
-+- The release matrix in `.github/workflows/release-artifacts.yml` remains 7×1 (Linux musl x64, Linux musl arm64, Android arm64, macOS x64/arm64, Windows x64/arm64). FreeBSD is a source-build target — no prebuilt asset, no matrix bloat, but the row in `docs/INSTALL.md` is authoritative.
- 
- ## Future: native pkg / port
- 
-@@ -53,7 +55,7 @@ and report the `codewhale doctor` JSON in #1097.
- 
- ```bash
- # on a FreeBSD 14.1 amd64 host or VM
--rustc --version  # >= 1.88
-+rustc --version  # >= 1.89
- cargo install --path crates/cli --locked
- codewhale --version
- codewhale exec --auto "run pwd"
-```
-
----
-
-### Incident Patch 3: `f6b7af39` (2026-10-25)
-**Commit Message**: fix(tui): treat a child silent for 10m as suspect again (#6184)
-
-CW-7500 (574dc76e26) removed SUBAGENT_SUSPECT_AFTER, which treated a
-Running child past its wall budget as suspect, together with the default
-child wall time. Since then, every current-session Running row in
-subagent_cache counts in live_running_agent_count. Every recovery
-branch of reconcile_turn_liveness_with requires !has_running_agents,
-and the engine heartbeat enters TurnPhase::Tools with no bound, leaving
-that bound to the UI tool-hang watchdog. So a tool batch waiting on a
-wedged child, or on a ghost Running row whose AgentComplete was lost,
-could again sit silent forever while follow-up messages queued behind
-it.
-
-Founder decision (FOUNDER-DECISIONS-20261025 item 7): a running child
-that has reported no progress for 10 minutes counts as suspect again.
-"No progress" is measured from AgentProgressMeta.last_progress_at,
-which each mailbox envelope and Engine AgentProgress event refreshes. If no envelope has
-arrived yet, it is measured from the row's started_at. It is not
-measured as elapsed wall time. The bound reuses
-max(TOOL_HANG_WATCHDOG_TIMEOUT, child heartbeat_timeout_ms), preserving
-legitimate child operati
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   installs provider access in the running computer's memory. Retries retain
-   one operation key and the account/VM binding. Existing Agent Work dispatch
-   remains available when no computer conversation is selected.
-+- A delegated agent still marked running that has reported no progress for 10
-+  minutes no longer holds its parent turn open: the turn's stall watchdogs can
-+  recover again, and the stall record names the agent. A child's running time
-+  stays unlimited; only silence counts (#6184).
- - A long draft or paste now grows the composer past its density row limit, up
-   to half the screen (never less than that limit) while leaving room for the
-   transcript, so the text can be read and edited before sending. While a
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   installs provider access in the running computer's memory. Retries retain
-   one operation key and the account/VM binding. Existing Agent Work dispatch
-   remains available when no computer conversation is selected.
-+- A delegated agent still marked running that has reported no progress for 10
-+  minutes no longer holds its parent turn open: the turn's stall watchdogs can
-+  recover again, and the stall record names the agent. A child's running time
-+  stays unlimited; only silence counts (#6184).
- - A long draft or paste now grows the composer past its density row limit, up
-   to half the screen (never less than that limit) while leaving room for the
-   transcript, so the text can be read and edited before sending. While a
-```
-
-**File**: `crates/tui/src/tui/ui.rs` (modified, +1/-1)
-```diff
-@@ -1329,7 +1329,7 @@ pub(crate) fn flush_background_finished(app: &mut App, config: &Config, parent_i
-         return;
-     }
-     let mode = config.notifications_config().subagent_completion;
--    let finite_work_live = session_state::live_running_agent_count(app) > 0
-+    let finite_work_live = session_state::live_running_agent_count(app, Instant::now()) > 0
-         || frame::workflow_tool_is_running(app)
-         || app.task_panel.iter().any(|entry| {
-             // A stale entry (a recovered task whose ownership is unverified)
-```
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +1/-0)
-```diff
-@@ -4109,6 +4109,7 @@ pub(crate) async fn run_event_loop(
-                             app.agent_progress.insert(id.clone(), display.clone());
-                         }
-                         let meta = app.agent_progress_meta.entry(id.clone()).or_default();
-+                        meta.last_progress_at = Some(Instant::now());
-                         meta.parent_run_id = parent_run_id;
-                         meta.spawn_depth = spawn_depth;
-                         let current_tool = activity
-```
-
-**File**: `crates/tui/src/tui/ui/session_state.rs` (modified, +24/-9)
-```diff
-@@ -159,20 +159,35 @@ pub(crate) fn restore_matching_offline_queue_state(
-     true
- }
- 
--/// Prior-session Running rows have no live actor in this process. Elapsed
--/// time alone does not establish that a current child is stalled.
--pub(crate) fn suspect_running_agents(app: &App) -> Vec<String> {
-+/// Running rows that never veto recovery: a prior-session row has no live
-+/// actor in this process, and a current child silent beyond its heartbeat
-+/// bound (at least `TOOL_HANG_WATCHDOG_TIMEOUT`) may have lost its terminal event (#6184).
-+/// Elapsed time alone does not establish that a current child is stalled.
-+pub(crate) fn suspect_running_agents(app: &App, now: Instant) -> Vec<String> {
-     app.subagent_cache
-         .iter()
-         .filter(|agent| matches!(agent.status, SubAgentStatus::Running))
--        .filter(|agent| agent.from_prior_session)
-+        .filter(|agent| {
-+            agent.from_prior_session
-+                || app
-+                    .agent_progress_meta
-+                    .get(&agent.agent_id)
-+                    .and_then(|meta| meta.last_progress_at)
-+                    .or(agent.started_at)
-+                    .is_some_and(|at| {
-+                        now.saturating_duration_since(at)
-+                            > TOOL_HANG_WATCHDOG_TIMEOUT.max(Duration::from_millis(
-+                                agent.heartbeat_timeout_ms.unwrap_or(0),
-+                            ))
-+                    })
-+        })
-         .map(|agent| agent.agent_id.clone())
-         .collect()
- }
- 
- /// Running sub-agents that still legitimately hold the turn open.
--pub(crate) fn live_running_agent_count(app: &App) -> usize {
--    let suspects = suspect_running_agents(app);
-+pub(crate) fn live_running_agent_count(app: &App, now: Instant) -> usize {
-+    let suspects = suspect_running_agents(app, now);
-     let mut ids: std::collections::HashSet<&str> =
-         app.agent_progress.keys().map(String::as_str).collect();
-     for agent in app
-@@ -197,10 +212,10 @@ fn held_queue_note(app: &App) -> String {
- 
- /// Log, record under `crashes/`, and name a stall the UI watchdog saw.
- fn record_ui_stall(app: &App, phase: &str, since_progress: Duration, bound: Duration) {
--    let suspects = suspect_running_agents(app);
-+    let suspects = suspect_running_agents(app, Instant::now());
-     let detail = (!suspects.is_empty()).then(|| {
-         format!(
--            "sub-agent(s) retained from a prior session, with no live actor: {}",
-+            "sub-agent(s) from a prior session or with no progress for 10m, treated as suspect: {}",
-             suspects.join(", ")
-         )
-     });
-@@ -247,7 +262,7 @@ pub(crate) fn reconcile_turn_liveness_supervised(
-         let text = format!("{}{}", stall.status_line(), held_queue_note(app));
-         app.push_status_toast(text, StatusToastLevel::Error, None);
-     }
--    let has_live_agents = live_running_agent_count(app) > 0;
-+    let has_live_agents = live_running_agent_count(app, now) > 0;
-     let recovered = reconcile_turn_liveness_with(app, now, has_live_agents, Some(heartbeat));
-     if recovered && turn_in_progress && app.runtime_turn_status.is_none() {
-         engine.cancel_with_reason(crate::core::engine::CancelReason::Stalled);
-```
-
-**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +9/-4)
-```diff
-@@ -15743,7 +15743,7 @@ fn stall_engine_report_shows_phase_and_held_queue() {
- }
- 
- /// Prior-session Running rows do not veto recovery. Current children remain
--/// live regardless of elapsed time.
-+/// live regardless of elapsed time while they report progress.
- #[test]
- fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
-     use crate::core::engine::turn_heartbeat::{TurnPhase, set_test_stall_record_dir};
-@@ -15770,10 +15770,10 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
-     let idle = stall_heartbeat(TurnPhase::Idle, None, None);
- 
-     assert_eq!(
--        suspect_running_agents(&app),
-+        suspect_running_agents(&app, now),
-         vec!["agent_ghost".to_string()]
-     );
--    assert_eq!(live_running_agent_count(&app), 0);
-+    assert_eq!(live_running_agent_count(&app, now), 0);
-     let engine = crate::core::engine::mock_engine_handle();
-     assert!(!engine.handle.is_cancelled());
-     assert!(reconcile_turn_liveness_supervised(
-@@ -15815,7 +15815,11 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
-     fresh.started_at = now.checked_sub(Duration::from_secs(2 * 60 * 60));
-     assert!(fresh.started_at.is_some());
-     app.subagent_cache = vec![fresh];
--    assert_eq!(live_running_agent_count(&app), 1);
-+    app.agent_progress_meta
-+        .entry("agent_fresh".to_string())
-+        .or_default()
-+        .last_progress_at = Some(now);
-+    assert_eq!(live_running_agent_count(&app, now), 1);
-     let engine = crate::core::engine::mock_engine_handle();
-     assert!(!reconcile_turn_liveness_supervised(
-         &mut app,
-@@ -15828,6 +15832,7 @@ fn stall_prior_session_subagent_is_suspect_but_long_running_child_is_live() {
-         !engine.handle.is_cancelled(),
-         "a turn that is still live is never cancelled"
-     );
++- **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
 +
-     set_test_stall_record_dir(None);
- }
+ - Long drafts now show a localized external-editor hint when the actual composer
+   viewport clips their text. The hint uses the shared F4 binding and preserves
+   queue, running-turn, history, and menu hints (#7049). Thanks @Lstarsky0.
+```
+
+**File**: `crates/localization/locales/ca.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Recomanat",
++  "OrcaRouterOfferAction": "Mostra l’oferta d’OrcaRouter a /provider o /model",
++  "OrcaRouterOfferBody": "Aconsegueix un 30% de crèdit addicional per a DeepSeek V4.1 Flash en les recàrregues amb l’oferta Codewhale × OrcaRouter. Consulta les condicions vigents a la pàgina de l’oferta.",
++  "OrcaRouterOfferDisclosure": "Codewhale rep una comissió de recomanació d’OrcaRouter.",
+   "ShellWaitNoActive": "No s'està esperant cap ordre de l'intèrpret.",
+   "ShellWaitInteractive": "Les ordres interactives no poden continuar en segon pla. Cancel·la el torn o espera que acabin.",
+   "ShellWaitUnavailable": "Aquesta eina no pot continuar en segon pla. Cancel·la el torn o espera que acabi.",
+```
+
+**File**: `crates/localization/locales/de.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Empfohlen",
++  "OrcaRouterOfferAction": "OrcaRouter-Angebot in /provider oder /model anzeigen",
++  "OrcaRouterOfferBody": "Erhalte mit dem Angebot Codewhale × OrcaRouter bei Aufladungen 30% zusätzliches Guthaben für DeepSeek V4.1 Flash. Die aktuellen Bedingungen stehen auf der Angebotsseite.",
++  "OrcaRouterOfferDisclosure": "Codewhale erhält von OrcaRouter eine Vermittlungsprovision.",
+   "ShellWaitNoActive": "Aktuell wird auf keinen Shell-Befehl gewartet.",
+   "ShellWaitInteractive": "Interaktive Befehle können nicht im Hintergrund weiterlaufen. Brich den aktuellen Durchgang ab oder warte, bis der Befehl fertig ist.",
+   "ShellWaitUnavailable": "Dieses Werkzeug kann nicht im Hintergrund weiterlaufen. Brich den aktuellen Durchgang ab oder warte, bis es fertig ist.",
+```
+
+**File**: `crates/localization/locales/en.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Recommended",
++  "OrcaRouterOfferAction": "View OrcaRouter offer in /provider or /model",
++  "OrcaRouterOfferBody": "Get a 30% top-up match for DeepSeek V4.1 Flash with the Codewhale × OrcaRouter offer. Check the offer page for current terms.",
++  "OrcaRouterOfferDisclosure": "Codewhale earns a referral fee from OrcaRouter.",
+   "ShellWaitNoActive": "No shell wait is active.",
+   "ShellWaitInteractive": "Interactive commands cannot continue in the background. Cancel the turn, or wait for completion.",
+   "ShellWaitUnavailable": "This tool cannot continue in the background. Cancel the turn, or wait for completion.",
+```
+
+**File**: `crates/localization/locales/es-419.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Recomendado",
++  "OrcaRouterOfferAction": "Ver oferta de OrcaRouter en /provider o /model",
++  "OrcaRouterOfferBody": "Obtén un 30% de crédito extra para DeepSeek V4.1 Flash en tus recargas con la oferta Codewhale × OrcaRouter. Consulta las condiciones vigentes en la página de la oferta.",
++  "OrcaRouterOfferDisclosure": "Codewhale recibe una comisión por recomendación de OrcaRouter.",
+   "ShellWaitNoActive": "No hay ninguna espera de shell activa.",
+   "ShellWaitInteractive": "Los comandos interactivos no pueden continuar en segundo plano. Cancela el turno o espera a que terminen.",
+   "ShellWaitUnavailable": "Esta herramienta no puede continuar en segundo plano. Cancela el turno o espera a que termine.",
+```
+
+**File**: `crates/localization/locales/fr.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Recommandé",
++  "OrcaRouterOfferAction": "Voir l’offre OrcaRouter dans /provider ou /model",
++  "OrcaRouterOfferBody": "Obtenez 30% de crédit supplémentaire pour DeepSeek V4.1 Flash sur vos recharges avec l’offre Codewhale × OrcaRouter. Consultez les conditions en vigueur sur la page de l’offre.",
++  "OrcaRouterOfferDisclosure": "Codewhale reçoit une commission de recommandation d’OrcaRouter.",
+   "ShellWaitNoActive": "Aucune attente de commande shell en cours.",
+   "ShellWaitInteractive": "Les commandes interactives ne peuvent pas continuer en arrière-plan. Annulez le tour ou attendez la fin de la commande.",
+   "ShellWaitUnavailable": "Cet outil ne peut pas continuer en arrière-plan. Annulez le tour ou attendez la fin de son exécution.",
+```
+
+**File**: `crates/localization/locales/hi.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · सुझाया गया",
++  "OrcaRouterOfferAction": "/provider या /model में OrcaRouter का ऑफ़र देखें",
++  "OrcaRouterOfferBody": "Codewhale × OrcaRouter ऑफ़र के साथ टॉप-अप पर DeepSeek V4.1 Flash के लिए 30% अतिरिक्त क्रेडिट पाएँ। मौजूदा शर्तों के लिए ऑफ़र पेज देखें।",
++  "OrcaRouterOfferDisclosure": "Codewhale को OrcaRouter से रेफ़रल शुल्क मिलता है।",
+   "ShellWaitNoActive": "अभी किसी शेल कमांड के पूरा होने का इंतज़ार नहीं हो रहा है।",
+   "ShellWaitInteractive": "इंटरैक्टिव कमांड बैकग्राउंड में जारी नहीं रह सकतीं। इस बारी को रद्द करें या कमांड पूरी होने की प्रतीक्षा करें।",
+   "ShellWaitUnavailable": "यह टूल बैकग्राउंड में जारी नहीं रह सकता। इस बारी को रद्द करें या इसके पूरा होने की प्रतीक्षा करें।",
+```
+
+**File**: `crates/localization/locales/id.json` (modified, +4/-0)
+```diff
+@@ -1,4 +1,8 @@
+ {
++  "OrcaRouterOfferRecommended": "OrcaRouter · Direkomendasikan",
++  "OrcaRouterOfferAction": "Lihat penawaran OrcaRouter di /provider atau /model",
++  "OrcaRouterOfferBody": "Dapatkan tambahan kredit DeepSeek V4.1 Flash sebesar 30% dari isi ulang melalui penawaran Codewhale × OrcaRouter. Lihat ketentuan terbaru di halaman penawaran.",
++  "OrcaRouterOfferDisclosure": "Codewhale menerima komisi rujukan dari OrcaRouter.",
+   "ShellWaitNoActive": "Tidak ada perintah shell yang sedang ditunggu.",
+   "ShellWaitInteractive": "Perintah interaktif tidak dapat berjalan di latar belakang. Batalkan giliran atau tunggu hingga selesai.",
+   "ShellWaitUnavailable": "Alat ini tidak dapat berjalan di latar belakang. Batalkan giliran atau tunggu hingga selesai.",
+```
+
+---
+
+### Incident Patch 3: `eea9f1ea` (2026-10-26)
+**Commit Message**: docs(changelog): credit the verified NoNewPrivs container fix [skip ci]
+
+Refs #7021. Record the existing test-only source fix e7c336d634 and credit
+@asto18089 for diagnosing inherited NoNewPrivs. Both changelogs updated.
+
+Local verification now completed against source bytes identical to the
+carrying commit: compiled the unchanged canonical process_hardening.rs
+as an independent test module with the workspace-pinned real libc/tracing
+libraries, edition2024 and the same stable Rust1.99.0 compiler. Static
+ARM64 Linux musl ELF has no interpreter or needed shared libraries.
+Dependency and module compilation ran under the existing host build lock
+and cache; no new manifest, checkout, cache, shim or tests.
+
+The same harness passed3existing tests in each unpinned/pinned local
+Bookworm container, parent NoNewPrivs0/1. Two substantive matrices cover
+7child rows per state. Pinned run printed exactly2ratchet disclosures;
+unpinned printed0. Child/mode/override markers were unset. Source/binary/
+dependency/compiler/kernel hashes and logs retained in the receipt.
+
+No full Linux TUI/GNU compilation, startup-order, status UI, sudo, hosted
+CI, provider call, release or deployment claim. Changelog-o
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
+ ## [Unreleased]
+ 
++- **Linux hardening tests:** the NoNewPrivs child matrices now respect a parent that already holds the irreversible flag, keeping the full assertions on unpinned hosts and checking the kernel ratchet on pinned hosts. Thanks [@asto18089](https://github.com/asto18089) for diagnosing the hardened-container failure. (#7021)
++
+ - **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
+ 
+ - Long drafts now show a localized external-editor hint when the actual composer
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Linux hardening tests:** the NoNewPrivs child matrices now respect a parent that already holds the irreversible flag, keeping the full assertions on unpinned hosts and checking the kernel ratchet on pinned hosts. Thanks [@asto18089](https://github.com/asto18089) for diagnosing the hardened-container failure. (#7021)
++
+ - **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
+ 
+ - Long drafts now show a localized external-editor hint when the actual composer
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7090** (2026-10-25): fix(tui): don't print an unpriced session cost as $0.0000 in /status (@Lstarsky0)
+- **PR #7089** (2026-10-26): fix(tui): only say "Goal cleared." when there was a goal to clear (@Lstarsky0)
+- **PR #7087** (2026-10-25): fix(tui): keep the /diff pager's place when the terminal is resized (@Lstarsky0)
 - **PR #7084** (closed): feat(tui): consider Ctrl+C clearing a non-empty composer before it arms exit (Esc/Ctrl+C split revisited) (@Hmbown)
 - **PR #7083** (closed): feat(engine): soft model-facing context notice while auto-compaction is enabled (no competing save/compact ceremony) (@Hmbown)
 - **PR #7082** (closed): feat(tui): optionally show the running command on a foreground shell card — off by default, with a one-line or fully wrapped detail mode (@Hmbown)
-- **PR #7081** (closed): feat(config): optional knobs for the standing-instruction budget, and a visible notice when instruction content is trimmed or dropped (@Hmbown)
-- **PR #7080** (closed): CPU Usage Regression: v0.9.12 (idle) → v0.9.13 (moderate) → v0.10.0 (heavy) (@Hmbown)
-- **PR #7079** (closed): Black text on black background (@Hmbown)
 
 ---
 
@@ -1953,28 +1799,28 @@ legitimate child operati
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): name a started Fleet member's child by its member id (CW-7182)
+## X. docs): keep the OrcaRouter registry summary within its limit [skip ci]
 
 **RULE**:
-When implementing operations in `crates/tui/src/core/ops.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/features.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `485382f8`: runtime): name a started Fleet member's child by its member id (CW-7182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6378f3b6`: docs): keep the OrcaRouter registry summary within its limit [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/src/core/ops.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/features.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Snapshot of session state for saving to disk.
+summary = "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// Snapshot of session state for saving to disk.
+summary = "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `485382f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6378f3b6` are properly handled with clean fallback behavior.

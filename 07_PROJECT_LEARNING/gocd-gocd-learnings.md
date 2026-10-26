@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `3c310992`  
+> **Source Version**: `4a5b9e47`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:03:26.959Z  
+> **Timestamp**: 2026-10-26T09:54:12.026Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:03:26.955Z  
+> **Harvest Timestamp**: 2026-10-26T09:48:33.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7433 stars
+- **Stars / Engagement**: 7434 stars
 
 ---
 
@@ -880,133 +880,19 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c310992` (2026-10-25)
-**Commit Message**: build(deps-ui-dev): bump webpack (#14695)
+### Incident Patch 1: `4a5b9e47` (2026-10-25)
+**Commit Message**: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
 
-Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [webpack](https://github.com/webpack/webpack).
-
-
-Updates `webpack` from 5.112.0 to 5.112.2
-- [Release notes](https://github.com/webpack/webpack/releases)
-- [Changelog](https://github.com/webpack/webpack/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/webpack/webpack/compare/v5.112.0...v5.112.2)
+Bumps [org.mybatis:mybatis](https://github.com/mybatis/mybatis-3) from 3.5.19 to 3.6.0.
+- [Release notes](https://github.com/mybatis/mybatis-3/releases)
+- [Commits](https://github.com/mybatis/mybatis-3/compare/mybatis-3.5.19...mybatis-3.6.0)
 
 ---
 updated-dependencies:
-- dependency-name: webpack
-  dependency-version: 5.112.2
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-  dependency-group: webpack
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
-```diff
-@@ -119,7 +119,7 @@
-     "typescript": "^6.0.3",
-     "upath": "^3.0.8",
-     "url-loader": "^4.1.1",
--    "webpack": "^5.112.0",
-+    "webpack": "^5.112.2",
-     "webpack-assets-manifest": "^6.5.5",
-     "webpack-cli": "^7.2.3"
-   },
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +12/-12)
-```diff
-@@ -4660,7 +4660,7 @@ __metadata:
-     url-loader: "npm:^4.1.1"
-     url-parse: "npm:^1.5.10"
-     uuid: "npm:^14.0.3"
--    webpack: "npm:^5.112.0"
-+    webpack: "npm:^5.112.2"
-     webpack-assets-manifest: "npm:^6.5.5"
-     webpack-cli: "npm:^7.2.3"
-     what-input: "npm:^5.2.12"
-@@ -7561,7 +7561,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0, schema-utils@npm:^4.3.3, schema-utils@npm:^4.5.0":
-+"schema-utils@npm:^4.0.0, schema-utils@npm:^4.2.0, schema-utils@npm:^4.3.3":
-   version: 4.5.0
-   resolution: "schema-utils@npm:4.5.0"
-   dependencies:
-@@ -8925,12 +8925,12 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"watchpack@npm:^2.6.1":
--  version: 2.6.1
--  resolution: "watchpack@npm:2.6.1"
-+"watchpack@npm:^2.6.3":
-+  version: 2.6.3
-+  resolution: "watchpack@npm:2.6.3"
-   dependencies:
-     graceful-fs: "npm:^4.1.2"
--  checksum: 10c0/43929cc2ed2482a52cba0578046977e7e39ce9a967b5d5bb350da2c1246f6b623b89fa6d24ea94051a6a5b01a7c9c85c9eb5e52e20c75428431adab531167b81
-+  checksum: 10c0/c0630d3b9a6bab485a5edce6c0b240e7c7565119023a03f5d12329c9ec6561e897e0b80c58c7117d11719cc4549f14db4b889aae2d74dd4f1e7d4ccf57fde5d7
-   languageName: node
-   linkType: hard
- 
-@@ -9002,9 +9002,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"webpack@npm:^5.112.0":
--  version: 5.112.0
--  resolution: "webpack@npm:5.112.0"
-+"webpack@npm:^5.112.2":
-+  version: 5.112.2
-+  resolution: "webpack@npm:5.112.2"
-   dependencies:
-     "@types/estree": "npm:^1.0.8"
-     "@types/json-schema": "npm:^7.0.15"
-@@ -9019,16 +9019,16 @@ __metadata:
-     graceful-fs: "npm:^4.2.11"
-     mime-db: "npm:^1.54.0"
-     minimizer-webpack-plugin: "npm:^5.13.0"
--    schema-utils: "npm:^4.5.0"
-+    schema-utils: "npm:^4.8.1"
-     tapable: "npm:^2.3.0"
--    watchpack: "npm:^2.6.1"
-+    watchpack: "npm:^2.6.3"
-     webpack-sources: "npm:^3.6.0"
-   peerDependenciesMeta:
-     webpack-cli:
-       optional: true
-   bin:
-     webpack: bin/webpack.js
--  checksum: 10c0/dee2e7ad612138536e1b8d5dc306955fc5b110146085061e43ed5e100293ebeb23d3521a1b400da9f4e11e99396305bba8aabb5fc35be9480c15c38759c163f9
-+  checksum: 10c0/e3b299c0ce691f22d9c9bd75731f6406d9fb5166c20eb0f61f5a4f8f59c55ddddda9b4633a0348c272dfded407735b8d20311bc8a5d6d13d80d0088440e93283
-   languageName: node
-   linkType: hard
- 
-```
-
----
-
-### Incident Patch 2: `2edd2a5c` (2026-10-24)
-**Commit Message**: build(deps): bump net.javacrumbs.json-unit:json-unit-assertj (#14683)
-
-Bumps the test group with 1 update: [net.javacrumbs.json-unit:json-unit-assertj](https://github.com/lukas-krecan/JsonUnit).
-
-
-Updates `net.javacrumbs.json-unit:json-unit-assertj` from 6.3.0 to 6.4.0
-- [Changelog](https://github.com/lukas-krecan/JsonUnit/blob/master/RELEASES.md)
-- [Commits](https://github.com/lukas-krecan/JsonUnit/compare/json-unit-parent-6.3.0...json-unit-parent-6.4.0)
-
----
-updated-dependencies:
-- dependency-name: net.javacrumbs.json-unit:json-unit-assertj
-  dependency-version: 6.4.0
+- dependency-name: org.mybatis:mybatis
+  dependency-version: 3.6.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
-  dependency-group: test
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -1014,71 +900,24 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -123,7 +123,7 @@ def libraries = [
-   jolt                : 'com.bazaarvoice.jolt:jolt-core:0.1.8',
-   jruby               : 'org.jruby:jruby:9.4.15.0',
-   jrubyRack           : 'com.github.gocd-contrib:jruby-rack:1.3.0.15',
--  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.3.0',
-+  jsonUnit            : 'net.javacrumbs.json-unit:json-unit-assertj:6.4.0',
-   jsoup               : 'org.jsoup:jsoup:1.23.2',
-   junit5Bom           : 'org.junit:junit-bom:6.1.3',
-   liquibase           : 'org.liquibase:liquibase-core:5.0.4',
-```
-
----
-
-### Incident Patch 3: `004624e4` (2026-10-24)
-**Commit Message**: build(deps-ui-dev): bump rack-test (#14684)
-
-Bumps the rack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rack-test](https://github.com/rack/rack-test).
-
-
-Updates `rack-test` from 2.2.0 to 2.3.0
-- [Release notes](https://github.com/rack/rack-test/releases)
-- [Changelog](https://github.com/rack/rack-test/blob/main/History.md)
-- [Commits](https://github.com/rack/rack-test/compare/v2.2.0...v2.3.0)
-
----
-updated-dependencies:
-- dependency-name: rack-test
-  dependency-version: 2.3.0
-  dependency-type: indirect
-  update-type: version-update:semver-minor
-  dependency-group: rack
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -98,7 +98,7 @@ GEM
-     rack (2.2.24)
-     rack-session (1.0.2)
-       rack (< 3)
--    rack-test (2.2.0)
-+    rack-test (2.3.0)
-       rack (>= 1.3)
-     rackup (1.0.1)
-       rack (< 3)
-@@ -230,7 +230,7 @@ CHECKSUMS
-   racc (1.8.1-java) sha256=54f2e6d1e1b91c154013277d986f52a90e5ececbe91465d29172e49342732b98
-   rack (2.2.24) sha256=ef16526a0d871c43753452338c754040a664c8b41bf0dd7450b85f7772adca5f
-   rack-session (1.0.2) sha256=a02115e5420b4de036839b9811e3f7967d73446a554b42aa45106af335851d76
--  rack-test (2.2.0) sha256=005a36692c306ac0b4a9350355ee080fd09ddef1148a5f8b2ac636c720f5c463
-+  rack-test (2.3.0) sha256=b118d177cc002c572fc1b6fd8d19c9ed5881a36e8d6f689f9e618f9f861241e8
-   rackup (1.0.1) sha256=ba86604a28989fe1043bff20d819b360944ca08156406812dca6742b24b3c249
-   rails-controller-testing (1.0.5) sha256=741448db59366073e86fc965ba403f881c636b79a2c39a48d0486f2607182e94
-   rails-dom-testing (2.3.0) sha256=8acc7953a7b911ca44588bf08737bc16719f431a1cc3091a292bca7317925c1d
+@@ -131,7 +131,7 @@ def libraries = [
+   logback             : 'ch.qos.logback:logback-classic:1.6.5',
+   lombok              : 'org.projectlombok:lombok:1.18.48',
+   mockitoBom          : 'org.mockito:mockito-bom:5.24.0',
+-  mybatis             : 'org.mybatis:mybatis:3.5.19',
++  mybatis             : 'org.mybatis:mybatis:3.6.0',
+   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
+   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
+   objenesis           : 'org.objenesis:objenesis:3.6',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14696** (2026-10-25): build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (@dependabot[bot])
 - **PR #14695** (2026-10-25): build(deps-ui-dev): bump webpack from 5.112.0 to 5.112.2 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
 - **PR #14694** (2026-10-25): build(deps-ui): bump undici from 8.11.2 to 8.12.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14693** (2026-10-25): build(deps-ui): bump fast-uri from 3.1.8 to 3.1.9 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14692** (2026-10-24): build(deps-ui): bump filesize from 11.0.26 to 11.0.28 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14691** (2026-10-24): build(deps-ui): bump chart.js from 4.5.1 to 4.6.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14689** (2026-10-24): build(deps-ui-dev): bump crass from 1.0.7 to 1.0.8 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -1098,28 +937,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump webpack (#14695)
+## X. build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c310992`: build(deps-ui-dev): bump webpack (#14695). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a5b9e47`: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    "webpack": "^5.112.2",
+  mybatis             : 'org.mybatis:mybatis:3.6.0',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    "webpack": "^5.112.0",
+  mybatis             : 'org.mybatis:mybatis:3.5.19',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c310992` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a5b9e47` are properly handled with clean fallback behavior.

@@ -4466,3 +4466,7 @@ https://github.com/google/elephant-goldfish-model
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T08:53:36.371Z] ---
 # [AI-AGENTS] ParadevAI/superset (8544 score) - Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run an
 https://github.com/ParadevAI/superset
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-26T09:48:17.556Z] ---
+# [AI-AGENTS] ParadevAI/Paradev (8545 score) - Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run an
+https://github.com/ParadevAI/Paradev

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md`  
 > **Source**: github ([https://github.com/Kruszoneq/macUSB](https://github.com/Kruszoneq/macUSB))  
-> **Source Version**: `938f7d12`  
+> **Source Version**: `777ed534`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T22:06:45.245Z  
+> **Timestamp**: 2026-10-26T09:49:23.532Z  
 > **Learning ID**: `learn-github-kruszoneq-macusb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kruszoneq/macUSB](https://github.com/Kruszoneq/macUSB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T22:06:44.791Z  
+> **Harvest Timestamp**: 2026-10-26T09:48:31.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The all-in-one bootable USB creator for Mac
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3268 stars
+- **Stars / Engagement**: 3297 stars
 
 ---
 
@@ -129,16 +129,16 @@ private enum LinuxDistroIconCatalog {
 extension AnalysisLogic {
     func loadLinuxDetectedSystemIcon(for distro: String?) -> NSImage? {
         if let distro, let distroIcon = loadLinuxDistroIcon(for: distro) {
-            self.log("Załadowano ikonę Linux distro: \(distro)")
+            self.logLinux("Loaded Linux distribution icon: \(distro)")
             return distroIcon
         }
 
         guard let icon = loadLinuxDistroIcon(for: "linux") else {
-            self.log("Nie znaleziono fallback ikony linux.png - zostanie użyty SF Symbol.", category: "FileAnalysis")
+            self.logLinux("Fallback linux.png icon not found; using SF Symbol.", category: "FileAnalysis")
             return nil
         }
         icon.isTemplate = false
-        self.log("Załadowano fallback ikonę linux.png.", category: "FileAnalysis")
+        self.logLinux("Loaded fallback linux.png icon.", category: "FileAnalysis")
         return icon
     }
 
@@ -165,7 +165,7 @@ extension AnalysisLogic {
             }
         }
 
-        self.log("Brak dedykowanej ikony distro dla: \(distro). Kandydaci: \(candidates.joined(separator: ", "))", category: "FileAnalysis")
+        self.logLinux("No dedicated distribution icon for: \(distro). Candidates: \(candidates.joined(separator: ", "))", category: "FileAnalysis")
         return nil
     }
 
@@ -276,19 +276,18 @@ extension AnalysisLogic {
         self.isPPC = false
         self.legacyArchInfo = nil
         self.userSkippedAnalysis = false
-        let capacityResolution = resolveRequiredUSBCapacityForImageSource(sourceURL)
-        self.requiredUSBCapacityGB = capacityResolution.requiredCapacityGB
-        if let fileSizeBytes = capacityResolution.sourceFileSizeBytes,
-           let fileSizeSource = capacityResolution.sourceFileSizeSource {
-            self.log("Linux source size: \(fileSizeBytes) bytes (source=\(fileSizeSource))")
-        } else if capacityResolution.usedFallback {
-            self.log("Linux source size unavailable. Applying fallback USB threshold: \(capacityResolution.requiredCapacityGB) GB")
-        }
-        self.log("Linux required USB threshold: \(capacityResolution.requiredCapacityGB) GB")
+        applySourceCapacityRequirement(
+            try? USBTargetCapacityRequirement.forSource(at: sourceURL),
+            sourceURL: sourceURL
+        )
 
-        self.log("Rozpoznano obraz Linux: \(result.displayName)")
-        self.log("Linux source file: \(sourceURL.path)")
-        self.log("Linux details: distro=\(result.distro ?? "?")
+        self.logLinux("Recognized Linux image: \(result.displayName)")
+        self.logLinux("Linux source file: \(sourceURL.path)")
+        self.logLinux("Linux details: distro=\(result.distro ?? "?") version=\(result.version ?? "?") edition=\(result.edition ?? "?") arch=\(result.archRaw ?? "?") arm=\(result.isARM ? "yes" : "no")")
+        self.logLinux("Linux classification: rule=\(result.classificationRule) matched_signal=\(result.matchedSignal ?? "none") version_source=\(result.versionSource ?? "none")")
+        self.logLinux("Linux gate_signals: \(result.gateSignals.joined(separator: ", "))")
+        self.logLinux("Linux evidence: \(result.evidence.joined(separator: ", "))")
+        cleanupLinuxAttach
 ```
 
 ### Core Architecture Module: `macUSB/Features/Analysis/Logic/Linux/AnalysisLogicRawLinuxImageLifecycle.swift`
@@ -298,17 +297,17 @@ import SwiftUI
 
 extension AnalysisLogic {
     func forceRawLinuxImageSelection(_ sourceURL: URL) {
-        cancelActiveImageAnalysisRun(reason: "Wybór surowego obrazu .iso/.img")
+        cancelActiveImageAnalysisRun(reason: "raw .iso/.img image selection")
 
         let standardizedURL = sourceURL.standardizedFileURL
         let sourceExtension = standardizedURL.pathExtension.lowercased()
         guard ["iso", "img"].contains(sourceExtension) else {
-            logError("Nie można wymusić surowego zapisu dla .\(sourceExtension).")
+            logRawError("Cannot enable raw image writing for .\(sourceExtension).")
             return
         }
         MenuState.shared.lockLanguageChanges(reason: "raw_linux_selection")
 
-        log("Ręcznie wybrano surowy obraz .iso/.img (bez analizy pliku).")
+        logRaw("Raw .iso/.img image selected manually without file analysis.")
 
         withAnimation {
             self.selectedFilePath = standardizedURL.path
@@ -343,21 +342,17 @@ extension AnalysisLogic {
             self.isPPC = false
             self.legacyArchInfo = nil
             self.selectedDrive = nil
-            self.capacityCheckFinished = false
+            self.usbTargetReadiness = .noSelection
             self.shouldShowMavericksDialog = false
             self.shouldShowAlreadyMountedSourceAlert = false
+            self.shouldShowSourceSizeUnavailableAlert = false
         }
 
-        let capacityResolution = resolveRequiredUSBCapacityForImageSource(standardizedURL)
-        requiredUSBCapacityGB = capacityResolution.requiredCapacityGB
-        if let fileSizeBytes = capacityResolution.sourceFileSizeBytes,
-           let fileSizeSource = capacityResolution.sourceFileSizeSource {
-            log("Raw image source size: \(fileSizeBytes) bytes (source=\(fileSizeSource))")
-        } else if capacityResolution.usedFallback {
-            log("Raw image source size unavailable. Applying fallback USB threshold: \(capacityResolution.requiredCapacityGB) GB")
-        }
-        log("Raw image required USB threshold: \(capacityResolution.requiredCapacityGB) GB")
-        log("Ustawiono ręczny zapis surowego obrazu: recognizedVersion=\(recognizedVersion), source=\(standardizedURL.path)")
+        applySourceCapacityRequirement(
+            try? USBTargetCapacityRequirement.forSource(at: standardizedURL),
+            sourceURL: standardizedURL
+        )
+        logRaw("Manual raw image writing configured: recognizedVersion=\(recognizedVersion), source=\(standardizedURL.path)")
     }
 }
 
@@ -393,7 +388,7 @@ extension AnalysisLogic {
 
         guard let iconURL,
               let icon = NSImage(contentsOf: iconURL) else {
-            self.log("Nie znaleziono ikony Windows w zasobach: \(iconName).svg")
+            self.logWindows("Windows icon not found in resources: \(iconName).svg")
             return nil
         }
 
@@ -452,25 +447,21 @@ extension AnalysisLogic {
         self.userSkippedAnalysis = false
 
         let windowsToolchainPresence = detectWindowsToolchainPresence()
-        self.log(
+        self.logWindows(
             "Windows toolchain presence: brew=\(windowsToolchainPresence.hasHomebrew), wimlib=\(windowsToolchainPresence.hasWimlib)"
         )
-        self.log(
+        self.logWindows(
             "Windows toolchain paths: brew=\(windowsToolchainPresence.homebrewPath ?? "not_found"), wimlib=\(windowsToolchainPresence.wimlibPath ?? "not_found")"
         )
 
         if result.isSupported {
-            let capacityResolution = resolveRequiredUSBCapacityForImageSource(sourceURL)
-            self.requiredUSBCapacityGB = capacityResolution.requiredCapacityGB
-            if let fileSizeBytes = capacityResolution.sourceFileSizeBytes,
-               let fileSizeSource = capacityResolution.sourceFileSizeSource {
-                self.log("Windows source size: \(fileSizeBytes) bytes (source=\(fileSizeSource))")
-            } else if capacityResolution.usedFallback {
-                self.log("Windows source size unavailable. Applying fallback USB threshold: \(capacityResolution.requiredCapacityGB) GB")
-            }
-            self.log("Windows required USB threshold: \(capacityResolution.requiredCapacityGB) GB")
+            applySourceCapacityRequirement(
+                try? USBTargetCapacityRequirement.forSource(at: sourceURL),
+                sourceURL: sourceURL
+            )
         } else {
-            self.requiredUSBCapacityGB = nil
+            self.usbTargetCapacityRequirement = nil
+            self.shouldShowSourceSizeUnavailableAlert = false
         }
 
         if result.isSupported {
@@ -483,20 +474,20 @@ extension AnalysisLogic {
             self.showUSBSection = false
         }
 
-        self.log("Rozpoznano obraz Windows: \(result.displayName)")
-        self.log(
-            "Windows support gate: supported=\(result.isSupported ? "TAK" : "NIE"), reason=\(result.supportReason.rawValue), has_eligible_boot_mode=\(result.bootCapabilities.eligibleModes.isEmpty ? "NIE" : "TAK"), hasEFI=\(result.bootCapabilities.hasUEFI ? "TAK" : "NIE")"
+        self.logWindows("Recognized Windows image: \(result.displayName)")
+        self.logWindows(
+            "Windows support gate: supported=\(result.isSupported ? "yes" : "no"), reason=\(result.supportReason.rawValue), has_eligible_boot_mode=\(result.bootCapabilities.eligibleModes.isEmpty ? "no" : "yes"), hasEFI=\(result.bootCapabilities.hasUEFI ? "yes" : "no")"
         )
-        self.log("Windows workflow flag: isWindowsWorkflowSupported=\(self.isWindowsWorkflowSupported ? "TAK" : "NIE")")
-        self.log("Windows workflow split-wim flag: \(self.windowsWillSplitWIM ? "TAK" : "NIE")")
-        self.log("Windows source file: \(sourceURL.path)")
-        self.log(
+        self.logWindows("Windows workflow flag: isWindowsWorkflowSupported=\(self.isWindowsWorkflowSupported ? "yes" : "no")")
+        self.logWindows("Windows workflow split-wim flag: \(self.windowsWillSplitWIM ? "yes" : "no")")
+        self.logWindows("Windows source file: \(sourceURL.path)")
+        self.logWindows(
             "Windows boot capabilities: detected=\(windowsBootModesLogValue(result.bootCapabilities.detectedModes)), eligible=\(windowsBootModesLogValue(result.bootCapabilities.eligibleModes)), family=\(result.family.rawValue), arch=\(result.arch.rawValue), workflow_supported=\(result.isSupported ? "yes" : "no")"
         )
-        self.log(
+        self.logWindows(
             "Windows boot marker evidence: BIOS present=\(windowsBootMarkersLogValue(result.bootCapabilities.biosPresentMarkers)) missing=\(windowsBootMarkersLogValue(result.bootCapabilities.biosMissingRequiredMarkers)); UEFI present=\(windowsBootMarkersLogValue(result.bootCapabilities.uefiPresentMarkers)) missing=\(windowsBootMarkersLogValue(result.bootCapabilities.uefiMissingRequiredMarkers))"
         )
-        AppLogging.separator()
+        AppLogging.separator(stage: .analysis, workflow: .windows)
     }
 
     private func windowsBootModesLogValue(_ modes: Set<WindowsBootMode>) -> String {
@@ -517,22 +508,22 @@ extension AnalysisLogic {
                 from: result.displayName,
                 architecture: result.arch
               ) != nil else {
-            self.log("Windows autounattend language check: pominięto, bo obraz nie jest wspieranym Windows 10 64-bit/11 dla tej funkcji.")
+            self.logWindows("Windows autounattend language check skipped: image is not supported Windows 10 64-bit or Windows 11 for this feature.")
             return nil
         }
 
         let macLanguage = CreatorWindowsAutounattendMacLocale.normalizedWindowsTag(Locale.preferredLanguages.first) ?? "unknown"
         let macRegion = CreatorWindowsAutounattendMacLocale.normalizedWindowsTag(Locale.current.identifier) ?? "unknown"
-        self.log(
-            "Windows autounattend language check: odczytuję sources/lang.ini z obrazu Windows (mount=\(mountedImagePath ?? "nil"))."
+        self.logWindows(
+            "Windows autounattend language check: reading sources/lang.ini from Windows image (mount=\(mountedImagePath ?? "nil"))."
         )
 
         let isoLanguageTags = CreatorWindowsAutounattendSourceInspection.availableLanguageTags(in: mountedImagePath)
-        let isoLanguagesDescription = isoLanguageTags?.sorted().joined(separator: ", ") ?? "brak/nie odczytano"
+        let isoLanguagesDescription = isoLanguageTags?.sorted().joined(separator: ", ") ?? "none/unreadable"
         let macLocale = CreatorWindowsAutounattendMacLocale.current(availableLanguageTags: isoLanguageTags)
 
-        self.log(
-            "Windows autounattend language check: języki ISO=\(isoLanguagesDescription); język macOS=\(macLanguage); region macOS=\(macRegion); zgodność=\((macLocale?.languageIsAvailableInSource == true) ? "TAK" : "NIE")."
+        self.logWindows(
+            "Windows autounattend language check: ISO languages=\(isoLanguagesDescription); macOS language=\(macLanguage); macOS region=\(macRegion); match=\((macLocale?.languageIsAvailableInSource == true) ? "yes" : "no")."
         )
 
         return macLocale
@@ -579,10 +570,11 @@ import Foundation
 extension AnalysisLogic {
     func forceTigerMultiDVDSelection() {
         MenuState.shared.lockLanguageChanges(reason: "manual_tiger_selection")
-        cancelActiveImageAnalysisRun(reason: "Ręczne przełączenie na Tiger Multi DVD")
-        self.log("Ręcznie wybrano tryb Tiger Multi DVD")
+        cancelActiveImageAnalysisRun(reason: "manual Tiger Multi DVD selection")
+        self.log("Tiger Multi DVD mode selected manually", workflow: .ppc)
         let fileURL = self.selectedFileUrl
         DispatchQueue.global(qos: .userInitiated).async {
+            let resolvedRequirement = fileURL.flatMap { try? USBTargetCapacityRequirement.forSource(at: $0) }
             var mountPoint: String? = self.mountedDMGPath
             var effectiveSourceAppURL: URL? = nil
             if let url = fileURL {
@@ -599,6 +591,7 @@ extension AnalysisLogic {
                 }
             }
             DispatchQueue.main.async {
+                guard self.selectedFileUrl == fileURL else { return }
                 withAnimation {
                     self.isAnalyzing = false
                     self.userSkippedAnalysis = true
@@ -623,19 +616,24 @@ extension AnalysisLogic {
                     self.macOSRosettaRequirement = .notRequired
                     self.legacyArchInfo = nil
                     self.selectedDrive = nil
-                    self.capacityCheckFinished = false
-                    self.requiredUSBCapacityGB = 16
+                    self.usbTargetReadiness = .noSelection
+                    if let fileURL {
+                        self.applySourceCapacityRequirement(resolvedRequirement, sourceURL: fileURL)
+                    } else {
+                        self.usbTargetCapacityRequirement = USBTargetCapacityRequirement.fallback()
+                        self.shouldShowSourceSizeUnavailableAlert = true
+                    }
                     self.resetLinuxDetectionState()
                     self.resetWindowsDetectionState()
                 }
                 let flags = [self.isPPC ? "isPPC" : nil].compactMap { $0 }.joined(separator: ", ")
-                self.log("Ustawiono Tiger Multi DVD: recognizedVersion=\(self.recognizedVersion). Flagi: \(flags.isEmpty ? "brak" : flags)")
+                self.log("Tiger Multi DVD mode set: recognizedVersion=\(self.recognizedVersion). Flags: \(flags.isEmpty ? "none" : flags)", workflow: .ppc)
             }
         }
     }
 
     func resetAll() {
-        cancelActiveImageAnalysisRun(reason: "Pełny reset stanu analizy")
+        cancelActiveImageAnalysisRun(reason: "full analysis state reset")
         let oldMount = self.mountedDMGPath
         if let path = oldMount {
             let task = Process()
@@ -674,27 +672,23 @@ extension AnalysisLogic {
                 self.shouldShowAlreadyMountedSourceAlert = false
                 self.userSkippedAnalysis = false
                 self.shouldShowMavericksDialog = false
-                self.requiredUSBCapacityGB = nil
+                self.usbTargetCapacityRequirement = nil
+                self.shouldShowSourceSizeUnavailableAlert = false
                 self.resetLinuxDetectionState()
                 self.resetWindowsDetectionState()
 
                 self.isMacOSCreateInstallMediaVolumeOverrideActive = false
                 self.presentedUSBTargets = self.physicalUSBTargetsCache
                 self.selectedDrive = nil
-                self.hasUnreadableExternalUSBMedia = false
-                self.unreadableExternalUSBMediaCount = 0
-                self.lastUnreadableUSBDetectionDate = .distantPast
-                self.isUnreadableUSBDetectionRunning = false
 
-                self.isCapacitySufficient = false
-                self.capacityCheckFinished = false
+                self.usbTargetReadiness = .noSelection
             }
         }
     }
 
     // Call this from the UI when the user presses the "Przejdź dalej" button
     func recordProceedPressed() {
-        self.log("Użytkownik nacisnął przycisk 'Przejdź dalej'. Wybrany nośnik: \(self.selectedDrive?.url.path ?? "brak"), źródło: \(self.sourceAppURL?.path ?? "brak"), rozpoznano: \(self.recognizedVersion)")
+        self.log("User selected Continue. Selected target: \(self.selectedDrive?.url.path ?? "none"), source: \(self.sourceAppURL?.path ?? "none"), recognized: \(self.recognizedVersion)", workflow: selectedWorkflowForLogging)
     }
 }
 
@@ -761,12 +755,14 @@ extension MontereyDownloadFlowModel {
         executable: String,
         arguments: [String]
     ) async throws -> String {
-        try await withCheckedThrowingContinuation { continuation in
+        let workflow = loggingWorkflow
+        return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     let output = try Self.runProcessAndCaptureOutputBlocking(
                         executable: executable,
-                        arguments: arguments
+                        arguments: arguments,
+                        workflow: workflow
                     )
                     continuation.resume(returning: output)
                 } catch {
@@ -783,7 +779,8 @@ extension MontereyDownloadFlowModel {
     ) throws -> String {
         try Self.runProcessAndCaptureOutputBlocking(
             executable: executable,
-            arguments: arguments
+            arguments: arguments,
+            workflow: loggingWorkflow
         )
     }
 
@@ -801,13 +798,13 @@ extension MontereyDownloadFlowModel {
                 )
                 AppLogging.info(
                     "\(context): detach success attempt=\(attempt) mode=normal mount=\(mountURL.path)",
-                    category: "Downloader"
+                    stage: .downloader, workflow: loggingWorkflow
                 )
                 return true
             } catch {
                 AppLogging.error(
                     "\(context): detach failed attempt=\(attempt) mode=normal mount=\(mountURL.path) error=\(error.localizedDescription)",
-                    category: "Downloader"
+                    stage: .downloader, workflow: loggingWorkflow
                 )
                 if attempt == 1 {
                     Thread.sleep(forTimeInterval: 0.25)
@@ -822,13 +819,13 @@ extension MontereyDownloadFlowModel {
             )
             AppLogging.info(
                 "\(context): detach success mode=force mount=\(mountURL.path)",
-                category: "Downloader"
+                stage: .downloader, workflow: loggingWorkflow
             )
             return true
         } catch {
             AppLogging.error(
                 "\(context): detach failed mode=force mount=\(mountURL.path) error=\(error.localizedDescription)",
-                category: "Downloader"
+                stage: .downloader, workflow: loggingWorkflow
             )
             return false
         }
@@ -836,7 +833,8 @@ extension MontereyDownloadFlowModel {
 
     private static func runProcessAndCaptureOutputBlocking(
         executable: String,
-        arguments: [String]
+        arguments: [String],
+        workflow: AppLogging.Workflow
     ) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: executable)
@@ -864,7 +862,7 @@ extension MontereyDownloadFlowModel {
         if !merged.isEmpty {
             AppLogging.info(
                 "legacy-assembly command \(URL(fileURLWithPath: executable).lastPathComponent): \(merged)",
-                category: "Downloader"
+                stage: .downloader, workflow: workflow
             )
         }
 
@@ -921,42 +919,42 @@ enum DownloadFailureReason: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unsupportedSelection:
-            return String(localized: "Wybrana pozycja nie jest wspierana w aktualnym pobieraniu")
+            return String(localized: "downloader.selection.error.unsupported", table: "Downloader")
         case let .insufficientDiskSpace(requiredMinimumBytes, availableBytes, installerBytes):
             return String(
-                format: String(localized: "Brak wolnego miejsca: wymagane minimum %@ (250%% rozmiaru instalatora %@), dostępne %@."),
+                format: String(localized: "downloader.space.error.insufficient", table: "Downloader"),
                 DownloadManifestItem.formatBytes(requiredMinimumBytes),
                 DownloadManifestItem.formatBytes(installerBytes),
                 DownloadManifestItem.formatBytes(availableBytes)
             )
         case let .sessionInitializationFailed(details):
             return String(
-                format: String(localized: "Nie udało się rozpocząć pobierania. Nie udało się przygotować sesji pobierania: %@"),
+                format: String(localized: "downloader.session.error.initialization", table: "Downloader"),
                 details
             )
         case let .downloadFailed(details):
             return String(
-                format: String(localized: "Nie udało się pobrać plików instalatora: %@"),
+                format: String(localized: "downloader.transfer.error.failed", table: "Downloader"),
                 details
             )
         case let .verificationFailed(details):
             return String(
-                format: String(localized: "Weryfikacja plików nie powiodła się: %@"),
+                format: String(localized: "downloader.verification.error.failed", table: "Downloader"),
                 details
             )
         case let .assemblyFailed(details):
             return String(
-                format: String(localized: "Nie udało się przygotować instalatora: %@"),
+                format: String(localized: "downloader.assembly.error.failed", table: "Downloader"),
                 details
             )
         case let .diskImageCreationFailed(details):
             return String(
-                format: String(localized: "downloader.disk_image.error.creation"),
+                format: String(localized: "downloader.disk_image.error.creation", table: "Downloader"),
                 details
             )
         case let .cleanupFailed(details):
             return String(
-                format: String(localized: "Usuwanie plików tymczasowych nie zostało ukończone: %@"),
+                format: String(localized: "downloader.cleanup.error.failed", table: "Downloader"),
                 details
             )
         }
@@ -1019,32 +1017,32 @@ final class MontereyDownloadFlowModel: ObservableObject {
     @Published var networkWarningMessage: String?
     @Published var hasExpiredButTrustedAppleSignature: Bool = false
 
-    @Published var connectionStatusText: String = String(localized: "Łączenie z serwerami Apple...")
+    @Published var connectionStatusText: String = String(localized: "downloader.connection.status.connecting", table: "Downloader")
     @Published var downloadCurrentIndex: Int = 0
     @Published var downloadTotal: Int = 0
-    @Published var downloadFileName: String = String(localized: "Oczekiwanie...")
+    @Published var downloadFileName: String = String(localized: "downloader.transfer.status.waiting", table: "Downloader")
     @Published var downloadProgress: Double = 0
     @Published var downloadSpeedText: String = "0.0 MB/s"
     @Published var downloadTransferredText: String = "0.0MB/0.0MB"
     @Published var verifyCurrentIndex: Int = 0
     @Published var verifyTotal: Int = 0
-    @Published var verifyFileName: String = String(localized: "Oczekiwanie...")
+    @Published var verifyFileName: String = String(localized: "downloader.transfer.status.waiting", table: "Downloader")
     @Published var verifyProgress: Double = 0
-    @Published var buildStatusText: String = String(localized: "Przygotowywanie instalatora...")
+    @Published var buildStatusText: String = String(localized: "downloader.assembly.status.preparing_installer", table: "Downloader")
     @Published var buildProgress: Double? = nil
     @Published var diskImageStageStatus: MacOSDiskImageStageStatus = .preparing
-    @Published var cleanupStatusText: String = String(localized: "Przygotowanie czyszczenia...")
+    @Published var cleanupStatusText: String = String(localized: "downloader.cleanup.status.preparing", table: "Downloader")
     @Published var cleanupProgress: Double = 0
     @Published var summaryTotalDownloadedText: String = "0.0 GB"
     @Published var summaryAverageSpeedText: String = "0.0 MB/s"
     @Published var summaryDurationText: String = String(
-        format: String(localized: "%02dm %02ds"),
+        format: String(localized: "downloader.summary.duration.format", table: "Downloader"),
         0,
         0
     )
-    @Published var summaryLocationText: String = String(localized: "Brak danych")
-    @Published var summaryTemporaryFilesText: String = String(localized: "Brak danych")
-    @Published var summaryCreatedFileText: String = String(localized: "Brak danych")
+    @Published var summaryLocationText: String = String(localized: "downloader.summary.value.unavailable", table: "Downloader")
+    @Published var summaryTemporaryFilesText: String = String(localized: "downloader.summary.value.unavailable", table: "Downloader")
+    @Published var summaryCreatedFileText: String = String(localized: "downloader.summary.value.unavailable", table: "Downloader")
     @Published var discoveredDownloadItems: [DownloadManifestItem] = []
     @Published var pendingDiskSpaceAlert: DiskSpaceAlertContext?
     @Published var suppressInlineFailureMessage: Bool = false
@@ -1060,6 +1058,7 @@ final class MontereyDownloadFlowModel: ObservableObject {
     var didPlayCompletionSound: Bool = false
 
     var activeManifest: DownloadManifest?
+    var loggingWorkflow: AppLogging.Workflow = .modern
     var activeSessionID: String?
     var activeSessionRootURL: URL?
     var activeSessionPayloadURL: URL?
@@ -1139,18 +1138,7 @@ final class MontereyDownloadFlowModel: ObservableObject {
         isPartialSuccess = false
         cleanupWarningMessage = nil
         networkWarningMessage = nil
-        hasExpiredButTrustedAppleSignature = false
-
-        connectionStatusText = String(localized: "Łączenie z serwerami Apple...")
-        downloadCurrentIndex = 0
-        downloadTotal = 0
-        downloadFileName = String(localized: "Oczekiwanie...")
-        downloadProgress = 0
-        downloadSpeedText = "0.0 MB/s"
-        downloadTransferredText = "0.0MB/0.0MB"
-        verifyCurrentIndex = 0
-        verifyTotal = 0
-        verifyFileName =
+        hasExpiredButTrusted
 ```
 
 ### Core Architecture Module: `macUSB/Shared/Services/MenuState.swift`
@@ -1160,6 +1148,11 @@ import Combine
 
 final class MenuState: ObservableObject {
     static let shared = MenuState()
+    @Published var skipWelcomeEnabled = UserDefaults.standard.bool(forKey: "SkipWelcomeScreenV1") {
+        didSet {
+            UserDefaults.standard.set(skipWelcomeEnabled, forKey: "SkipWelcomeScreenV1")
+        }
+    }
     @Published var skipAnalysisEnabled: Bool = false
     @Published var externalDrivesEnabled: Bool = UserDefaults.standard.bool(forKey: "AllowExternalDrives")
     @Published var notificationsEnabled: Bool = false
@@ -1169,7 +1162,7 @@ final class MenuState: ObservableObject {
     @Published private(set) var isDownloaderAccessBlocked: Bool = false
     @Published private(set) var isLanguageChangeEnabled: Bool = true
     @Published var debugCopiedDataLabel: String = String(
-        format: String(localized: "Przekopiowane dane: %.1f GB"),
+        format: "Copied data: %.1f GB",
         0.0
     )
 
@@ -1187,7 +1180,7 @@ final class MenuState: ObservableObject {
     func updateDebugCopiedData(bytes: Int64) {
         let gigabytes = max(0, Double(bytes)) / 1_073_741_824
         let label = String(
-            format: String(localized: "Przekopiowane dane: %.1f GB"),
+            format: "Copied data: %.1f GB",
             gigabytes
         )
 
@@ -1227,8 +1220,8 @@ final class MenuState: ObservableObject {
             languageChangesLockedForWorkflow = true
             refreshLanguageChangeAvailability()
             AppLogging.info(
-                "Zablokowano zmianę języka dla bieżącego przepływu [reason=\(reason)].",
-                category: "AppLifecycle"
+                "Language changes locked for the current workflow [reason=\(reason)].",
+                stage: .app
             )
         }
     }
@@ -1376,13 +1369,10 @@ final class HelperProcessLifecycle {
     }
 
     private func logState(_ message: String) {
-        os_log(
-            "%{public}@ connections=%{public}d operations=%{public}d",
-            log: log,
-            type: .default,
-            message,
-            activeConnections,
-            activeOperations
+        HelperDiagnosticLogging.info(
+            "\(message) connections=\(activeConnections) operations=\(activeOperations)",
+            stage: .helper,
+            log: log
         )
     }
 }
@@ -1465,6 +1455,7 @@ struct ContentView: View {
                                 path = NavigationPath()
                             },
                             isPPC: false,
+                            loggingWorkflow: .macos,
                             didFail: false,
                             cleanupTempWorkURL: debugCleanupTempWorkURL,
                             shouldDetachMountPoint: false,
@@ -1479,6 +1470,7 @@ struct ContentView: View {
                                 path = NavigationPath()
                             },
                             isPPC: true,
+                            loggingWorkflow: .ppc,
                             didFail: false,
                             cleanupTempWorkURL: debugTigerCleanupTempWorkURL,
                             shouldDetachMountPoint: false,
@@ -1494,6 +1486,7 @@ struct ContentView: View {
                             },
                             isPPC: false,
                             isLinuxWorkflow: true,
+                            loggingWorkflow: .linux,
                             didFail: false,
                             cleanupTempWorkURL: debugLinuxCleanupTempWorkURL,
                             shouldDetachMountPoint: false,
@@ -1509,8 +1502,9 @@ struct ContentView: View {
         }
         // Podpięcie konfiguratora okna
         .background(WindowConfigurator())
-        // Wstrzyknięcie języka
+        // Inject the language and layout direction
         .environment(\.locale, languageManager.locale)
+        .environment(\.layoutDirection, languageManager.layoutDirection)
         // Wymuszenie odświeżenia przy zmianie języka
         .id(languageManager.currentLanguage)
         .onChange(of: languageManager.needsRestart) { needsRestart in
@@ -1524,25 +1518,25 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .macUSBDebugGoToBigSurSummary)) { _ in
             scheduleDebugSummaryNavigation(
                 route: .debugFinishUSBBigSurSuccess,
-                logMessage: "DEBUG: Zaplanowano przejście do podsumowania Big Sur za 2 sekundy"
+                logMessage: "DEBUG: Scheduled Big Sur summary navigation in 2 seconds."
             )
         }
         .onReceive(NotificationCenter.default.publisher(for: .macUSBDebugGoToTigerSummary)) { _ in
             scheduleDebugSummaryNavigation(
                 route: .debugFinishUSBTigerSuccess,
-                logMessage: "DEBUG: Zaplanowano przejście do podsumowania Tiger (isPPC) za 2 sekundy"
+                logMessage: "DEBUG: Scheduled Tiger (PPC) summary navigation in 2 seconds."
             )
         }
         .onReceive(NotificationCenter.default.publisher(for: .macUSBDebugGoToLinuxSummary)) { _ in
             scheduleDebugSummaryNavigation(
                 route: .debugFinishUSBLinuxSuccess,
-                logMessage: "DEBUG: Zaplanowano przejście do podsumowania Linux (Ubuntu 24.04) za 2 sekundy"
+                logMessage: "DEBUG: Scheduled Linux (Ubuntu 24.04) summary navigation in 2 seconds."
             )
         }
     }
 
     private func scheduleDebugSummaryNavigation(route: AppRoute, logMessage: String) {
-        AppLogging.info(logMessage, category: "Navigation")
+        AppLogging.info(logMessage, stage: .app)
         pendingDebugNavigationWorkItem?.cancel()
 
         let workItem = DispatchWorkItem {
@@ -1573,9 +1567,9 @@ struct ContentView: View {
         let alert = NSAlert()
         alert.alertStyle = .informational
         alert.icon = NSApp.applicationIconImage
-        alert.messageText = String(localized: "Wymagany restart aplikacji")
-        alert.informativeText = String(localized: "Aby zmienić język interfejsu we wszystkich elementach aplikacji (w tym menu i przyciskach), wymagany jest restart. Kliknij poniżej, aby uruchomić aplikację ponownie.")
-        alert.addButton(withTitle: String(localized: "Uruchom aplikację ponownie"))
+        alert.messageText = String(localized: "app.language.restart.title", table: "App")
+        alert.informativeText = String(localized: "app.language.restart.message", table: "App")
+        alert.addButton(withTitle: String(localized: "app.language.restart.action", table: "App"))
 
         if let window = NSApp.keyWindow ?? NSApp.mainWindow {
             alert.beginSheetModal(for: window) { response in
@@ -1646,11 +1640,11 @@ struct WindowConfigurator: NSViewRepresentable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #138** (2026-10-09): **[macOS USB Creation]**
-  *Symptoms*: ### macUSB version  2.5  ### Host macOS version  Golden Gate 27.0.1  ### Host architecture  Apple Silicon  ### Required permissions  - [x] I enabled Full Disk Access for macUSB in System Settings - [x] I enabled Allow in the Background for macUSB in System Settings  ### Was helper repair executed? (Tools -> Repair helper)  Yes  ### Which system were you creating?  Golden Gate  ### Installer source origin  Downloader  ### Installer source details  Creating a Installer USB shows only the complete Stick and no Partition.  <img width="539" height="783" alt="Image" src="https://github.com/user-attachments/assets/418167c5-5cf2-42e3-a7cb-e7781e1e3cb9" />  <img width="1083" height="474" alt="Image" src="https://github.com/user-attachments/assets/598808cf-b380-436c-8e46-2e1433f55ada" />  ### Installer format  .dmg  ### Failure stage  Analysis  ### Target media type  Pendrive  ### Is the issue reproducible?  Always  ### Steps to reproduce  1.Open MacUsb 2.Select which OS 3.Download 4.Select Target (only the complete Drive)   ### Diagnostic logs  [macUSB_20261008_143819_logs.txt](https://github.com/user-attachments/files/33204503/macUSB_20261008_143819_logs.txt)  ### Screenshots or videos  _No response_
+- **Issue #140** (2026-10-25): **[Windows USB Creation] Split stage fails for UUP-based (solid WIM) images: "The requested operation is unsupported"**
+  *Symptoms*: ### macUSB version  v2.5  ### Host macOS version  macOS 27.0.1  ### Host architecture  Apple Silicon  ### Required permissions  - [x] I enabled Full Disk Access for macUSB in System Settings - [x] I enabled Allow in the Background for macUSB in System Settings  ### Was helper repair executed? (Tools -> Repair helper)  Yes  ### Which Windows system were you creating?  Windows 11 24H2 (build 26100.4349)  ### Image format  .iso  ### Image source details  ISO built with CrystalFetch from Microsoft's UUP files (Windows 11 26100.4349, 6 editions). The same applies to UUP dump images. sources/install.wim is 4.45 GB and stored as a solid LZMS WIM (wimlib-imagex info --header: Version = 0xe00, WIM_HDR_FLAG_COMPRESS_LZMS set).  ### Is `wimlib` installed on your system?  Yes  ### Failure stage  USB creation  ### Problem description  urrent behavior: macUSB copies the whole ISO, then fails at the "splitting install.wim" stage with "Installer creation failed". wimlib-imagex split exits with code 68 and "The requested operation is unsupported", because wimlib can't split solid WIMs. This is the same root cause as #71, which was closed as stale with the advice to use Microsoft's ISO instead.  From the attached log:  [18:06:17][HelperLiveLog] [ERROR] Splitting of WIM containing solid resources is not supported. [18:06:17][HelperLiveLog] Export it in non-solid format first. [18:06:17][HelperLiveLog] ERROR: Exiting with error code 68: [18:06:17][HelperLiveLog] The requested operation is unsupp
 
-- **Issue #120** (2026-09-22): **[Downloader] Missing Mavericks**
-  *Symptoms*: ### macUSB version  v2.5  ### Host macOS version  macOS Golden Gate 27.0  ### Host architecture  Apple Silicon  ### Required permissions  - [x] I enabled Full Disk Access for macUSB in System Settings - [x] I enabled Allow in the Background for macUSB in System Settings  ### Was helper repair executed? (Tools -> Repair helper)  Yes  ### Which system were you downloading?  Mac OS X Mavericks 10.9.5  ### Failure stage  Installer list  ### Is the issue reproducible?  Always  ### Steps to reproduce  I wanted to prepare a Mavericks installer and was hoping/assuming macUSB had learned to handle the fetch (from #4). But the macOS download list still skips straight from Yosemite to Mountain Lion.  ### Diagnostic logs  [macUSB_20260921_132054_logs.txt](https://github.com/user-attachments/files/32479502/macUSB_20260921_132054_logs.txt)  ### Screenshots or videos  _No response_
+- **Issue #139** (2026-10-25): **Crash on Start from double release of an IOMedia Mach port**
+  *Symptoms*: ## Bug  On macOS 27.2 (build 26B5091g), macUSB 2.5 (44) exits when I press **Start**, before the source and target selection screen appears.  ## Steps to reproduce  1. Open macUSB. 2. Press **Start**.  ## Expected behavior  The source and USB target configuration screen opens.  ## Actual behavior  The app terminates. The crash report shows `EXC_GUARD / GUARD_TYPE_MACH_PORT / INVALID_NAME` in `mach_port_deallocate`, on `com.apple.root.utility-qos`.  ## Cause and local fix  I traced it to `USBDriveLogic.detectUSBSpeed(forBSDName:)`. The `IOIteratorNext` service is owned by the iterator loop and released by its `defer`, but the parent traversal also released `current`. When `current` was the original service, loop cleanup released the same Mach port a second time.  I fixed this locally by leaving the iterator-owned service for the loop's `defer` and releasing only parent entries acquired by `IORegistryEntryGetParentEntry`. The final cleanup also skips the original service.  ## Verification  I reproduced the crash repeatedly on 2.5 (44). With the ownership fix, my local 2.5 (45) build opens the source and target configuration screen after pressing **Start**; macUSB also reported that its helper update succeeded. I did not start a USB write. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1667,308 +1661,673 @@ struct WindowConfigurator: NSViewRepresentable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0603758` (2026-09-19)
-**Commit Message**: Clarify README compatibility and image writing guidance
+### Incident Patch 1: `cfff17e3` (2026-10-04)
+**Commit Message**: Fix USB messages across app activation
 
-Clarify Golden Gate host requirements, document raw image writing for ISO and IMG files, and simplify PowerPC guidance with the macusb.app guide link.
+Retain USB selection messages during application inactivity and rechecking. Keep navigation blocked until fresh verification and bound the presentation grace after activation.
 
-**File**: `README.md` (modified, +14/-14)
+**File**: `docs/reference/features/analysis/ANALYSIS_COMPATIBILITY.md` (modified, +1/-1)
 ```diff
-@@ -210,7 +210,7 @@ macOS versions recognized and supported for USB creation:
- | **Mac OS X Leopard** | 10.5 | ✅ |
- | **Mac OS X Tiger**[^4] | 10.4 | ✅ |
+@@ -20,7 +20,7 @@ All localized source/target selection, requirements, recognition/results, compat
  
--[^1]: USB creation is supported on **Apple Silicon only.**
-+[^1]: Creating a bootable USB installer for **macOS Golden Gate** is supported only on Macs with **Apple Silicon**. The Mac used to create the installer does not need to be running macOS Golden Gate.
- [^2]: Only **10.12.6** is supported.
- [^3]: Fully verified with the image from [Mavericks Forever](https://mavericksforever.com/). Other sources may fail.
- [^4]: **Single-DVD** images are auto-detected. For **Multi-DVD** images, only the first disc is recognized correctly. Other discs may appear as unrecognized or be identified incorrectly. To use them, force detection manually from **Options** → **Skip file analysis** → **Mac OS X Tiger 10.4 (Multi DVD)**.
-@@ -252,28 +252,28 @@ macUSB also supports creating bootable USB media from Linux `.iso` images.
+ ## USB Admission Boundary
  
- When a Linux image is recognized, macUSB detects the distribution, version, and architecture automatically. ARM builds are labeled directly in the detected name, for example `Linux - Ubuntu 26.04 (ARM)`.
+-Prepared physical and Option target presentation, per-device partial failures, retry/lifecycle state, identity verification and selected-target readiness are defined in `../usb/USB_VALIDATION_AND_CAPACITY.md`. Ordinary discovery remains automatic at 2.5-second intervals; the 0.5-second UI tick and immediate Option presentation stay separate. Only a currently verified selected target with known sufficient capacity and target-specific monotonic evidence younger than 20 seconds is passed to the existing installation summary. The existing tick evaluates freshness even while discovery is running or blocked. The destructive warning remains visible for every selected target regardless of application activity or verification readiness. Prolonged loss of confirmation retains the selection and adds the `analysis.usb.discovery.availability.title` / `.description` card in `Analysis` above that warning, using the same warning styling; inline discovery cards have no retry action and the generic notice does not duplicate it. Same-identity recovery restores readiness automatically, while replacement identity requires deliberate reselection. Continue still performs its exact final identity/capacity check. Source detection flags, creation workflows, helper payloads and destructive confirmation remain unchanged.
++Prepared physical and Option target presentation, per-device partial failures, retry/lifecycle state, identity verification and selected-target readiness are defined in `../usb/USB_VALIDATION_AND_CAPACITY.md`. Ordinary discovery remains automatic at 2.5-second intervals; the 0.5-second UI tick and immediate Option presentation stay separate. Only a currently verified selected target with known sufficient capacity and target-specific monotonic evidence younger than 20 seconds is passed to the existing installation summary. The existing tick evaluates freshness even while discovery is running or blocked. A selected target shows the capacity error when insufficient, otherwise the destructive warning. Lifecycle suspension retains the last messages separately from admission, so inactivity and initial rechecking do not replace a capacity error with the destructive warning or temporarily remove existing discovery errors or the empty-catalog card. The bounded presentation grace and its invalidation rules are defined in the USB reference. Prolonged active loss of confirmation retains the selection and adds the `analysis.usb.discovery.availability.title` / `.description` card in `Analysis` above the destructive warning, using the same warning styling; inline discovery cards have no retry action and the generic notice does not duplicate it. Same-identity recovery restores readiness automatically, while replacement identity requires deliberate reselection. Continue still performs its exact final identity/capacity check. Source detection flags, creation workflows, helper payloads and destructive confirmation remain unchanged.
  
--If a selected file is a valid Linux image but is not recognized automatically, you can force Linux mode manually from **Options** → **Skip file analysis** → **Linux**.
-+> Linux support has been tested with 19 distributions.[^5]
+ ## Detection Source of Truth
  
--Linux-based `.img` images can also be written from **Tools** → **Write Raw Linux Image (.img)…**. This raw-image path is separate from the officially boot-tested Linux `.iso` support matrix.
-+[^5]: Validated distributions: *Ubuntu*, *Kali Linux*, *NixOS*, *Garuda Linux*, *openSUSE Leap*, *Gentoo*, *Rocky Linux*, *Linux Mint*, *Fedora Workstation*, *Manjaro*, *Zorin OS*, *CachyOS*, *AlmaLinux*, *Debian*, *Arch Linux*, *MX Linux*, *Pop!_OS*, *EndeavourOS*, and *elementary OS*. Testing used the latest versions available as of April 30, 2026. Boot behavior was verified on a MacBook Air 2017, a Dell OptiPlex 5040 with UEFI, and an Asus F52Q with Legacy BIOS.
+```
+
+**File**: `docs/reference/features/usb/USB_VALIDATION_AND_CAPACITY.md` (modified, +2/-0)
+```diff
+@@ -99,6 +99,8 @@ Errors add a contextual warning card in the existing USB section, styled like th
  
--> Linux support has been tested with 19 distributions using the latest available releases as of April 30, 2026, with boot behavior verified on real hardware.[^5]
-+---
+ The final handoff check updates the selected target's evidence as well as its readiness. A failed check therefore remains blocked on deliberate reselection until a successful new read replaces that evidence; a known capacity change is retained as a byte value rather than a generic error.
  
--[^5]: Validated distributions: *Ubuntu*, *Kali Linux*, *NixOS*, *Garuda Linux*, *openSUSE Leap*, *Gentoo*, *Rocky Linux*, *Linux Mint*, *Fedora Workstation*, *Manjaro*, *Zorin OS*, *CachyOS*, *AlmaLinux*, *Debian*, *Arch Linux*, *MX Linux*, *Pop!_OS*, *EndeavourOS*, and *elementary OS*. Boot behavior was verified on a MacBook Air 2017, a Dell OptiPlex 5040 with UEFI, and an Asus F52Q with Legacy BIOS.
-+## 💾 Raw Image Writing
- 
-----
-+macUSB can write `.iso` and `.img` image files directly to external drives using **Tools → Write a Raw Image to a Drive…**.
- 
--## 🧩 PowerPC Notes
-+This method can also be used when a Linux image is not recognized during analysis.
- 
--If you are reviving a PowerPC Mac, the project website includes a dedicated Open Firmware guide based on real boot testing of PowerPC USB workflows created with macUSB.
-+> [!NOTE]
-+> The resulting media is not guaranteed to be bootable. Bootability depends on the structure and compatibility of the source image.
- 
--Validated scenarios include:
--- **Mac OS X Tiger** and **Mac OS X Leopard** boot scenarios,
--- **Single DVD** editions, and for Tiger also the **Multi-DVD** path,
--- Open Firmware boot commands verified in real hardware tests, including an **iMac G5**.
-+---
++Application inactivity and screen hiding retain a separate presentation of the last discovery outcome and selected-target readiness. Capacity errors (for whole disks and Option volumes), destructive warnings, discovery errors, unavailable picker labels, verified-alternative hints and the empty-catalog card therefore do not switch solely because lifecycle cancellation revokes admission. Continue is still blocked immediately, cancelled callbacks remain invalid, and evidence timestamps are not renewed. On activation, this presentation stays visible until the first complete, partial or failed scan result; an unchanged successful result produces no message change. If checking cannot finish, the existing active UI tick ends the presentation grace after `20 s` from resumption and surfaces the current uncertainty. Time spent inactive does not consume this presentation grace or extend admission freshness. Deliberate selection, a changed target identity/capacity requirement or external-drive preference ends the retained presentation immediately. A confirmed removal, replacement, capacity change or read failure updates messages through the normal scan-result rules.
 +
-+## 🧩 PowerPC Notes
+ Repeated requests are skipped rather than queued. While an owned child remains in the shared runner slot, the UI shows a waiting state; normal periodic ticks resume checking after the slot is released. Cancelled generations cannot overwrite current state. IOKit parent traversal owns a separate retained starting reference and releases every acquired ancestor on all return paths.
  
--Use the [step-by-step guide](https://kruszoneq.github.io/macUSB/pages/guides/ppc_boot_instructions.html) for setup and boot instructions.
-+For instructions on booting a USB installer created with macUSB on a PowerPC Mac, see the [Open Firmware USB boot guide](https://macusb.app/pages/guides/ppc_boot_instructions.html).
+ Run the standalone resource/scheduling regression checks with `bash scripts/TestUSBDiscovery.sh`. They compile production utilities and use mocked registry ownership plus synthetic child processes; they do not launch macUSB, invoke diskutil or modify media.
+```
+
+**File**: `macUSB/Features/Analysis/AnalysisLogic.swift` (modified, +1/-0)
+```diff
+@@ -147,6 +147,7 @@ final class AnalysisLogic: ObservableObject {
+     }
  
--> PowerPC USB boot behavior can vary by model. During validation testing, USB boot was confirmed on an **iMac G5**, while an **iBook G4 (2003)** detected the USB device but did not boot from it successfully.
-+> USB boot compatibility depends on the Mac model and its Open Firmware version. Not every PowerPC Mac can boot from USB.
+     @Published var usbDiscoveryState = AnalysisUSBDiscoveryState()
++    @Published var heldUSBDiscoveryPresentation: AnalysisUSBHeldPresentation?
+     @Published var usbTargetReadiness: USBTargetReadiness = .noSelection
+     @Published var usbTargetCapacityRequirement: USBTargetCapacityRequirement? = nil
+     @Published var shouldShowSourceSizeUnavailableAlert: Bool = false
+```
+
+**File**: `macUSB/Features/Analysis/AnalysisUSBDiscoveryPresentation.swift` (modified, +72/-7)
+```diff
+@@ -8,19 +8,83 @@ struct AnalysisUSBDiscoveryNotice: Equatable {
+     let waiting: Bool
+ }
  
- ---
++/// A lifecycle pause changes admission, not the last result shown to the user.
++struct AnalysisUSBHeldPresentation {
++    let discovery: AnalysisUSBDiscoveryState
++    let readiness: USBTargetReadiness
++    let selectionID: String?
++    let identity: String?
++    let requiredBytes: Int64?
++    let allowExternalDrives: Bool
++    let capturedAt: TimeInterval
++    var resumedAt: TimeInterval?
++}
++
+ extension AnalysisLogic {
++    private var currentHeldUSBPresentation: AnalysisUSBHeldPresentation? {
++        guard let held = heldUSBDiscoveryPresentation,
++              held.selectionID == selectedDrive?.selectionID,
++              held.identity == selectedTargetIdentity,
++              held.requiredBytes == usbTargetCapacityRequirement?.minimumBytes,
++              held.allowExternalDrives == UserDefaults.standard.bool(forKey: "AllowExternalDrives") else { return nil }
++        return held
++    }
++
++    var usbDiscoveryPresentationState: AnalysisUSBDiscoveryState {
++        currentHeldUSBPresentation?.discovery ?? usbDiscoveryState
++    }
++
++    var usbTargetPresentationReadiness: USBTargetReadiness {
++        currentHeldUSBPresentation?.readiness ?? usbTargetReadiness
++    }
++
++    func holdUSBDiscoveryPresentation() {
++        let previous = currentHeldUSBPresentation
++        heldUSBDiscoveryPresentation = AnalysisUSBHeldPresentation(
++            discovery: previous?.discovery ?? usbDiscoveryState,
++            readiness: previous?.readiness ?? usbTargetReadiness,
++            selectionID: selectedDrive?.selectionID, identity: selectedTargetIdentity,
++            requiredBytes: usbTargetCapacityRequirement?.minimumBytes,
++            allowExternalDrives: UserDefaults.standard.bool(forKey: "AllowExternalDrives"),
++            capturedAt: previous?.capturedAt ?? ProcessInfo.processInfo.systemUptime
++        )
++    }
++
++    func resumeUSBDiscoveryPresentation() {
++        guard heldUSBDiscoveryPresentation != nil else { return }
++        guard var held = currentHeldUSBPresentation else {
++            heldUSBDiscoveryPresentation = nil
++            return
++        }
++        let now = ProcessInfo.processInfo.systemUptime
++        if let resumedAt = held.resumedAt {
++            // Bound the presentation grace as well: a stalled active refresh
++            // must eventually surface loss of confirmation. Admission never
++            // uses this grace or renews the evidence timestamp.
++            if now - resumedAt >= USBTargetVerification.maximumConfirmationAge {
++                heldUSBDiscoveryPresentation = nil
++            }
++        } else {
++            held.resumedAt = now
++            heldUSBDiscoveryPresentation = held
++        }
++    }
++
+     var usbDiscoveryNotice: AnalysisUSBDiscoveryNotice? {
+         // The availability card accompanies the persistent destructive warning.
+         // Never repeat this selected-target problem above the same selector.
+         if isUSBAvailabilityConfirmationExpired { return nil }
++        let usbDiscoveryState = usbDiscoveryPresentationState
++        let usbTargetReadiness = usbTargetPresentationReadiness
++        let verificationTime = currentHeldUSBPresentation?.capturedAt ?? ProcessInfo.processInfo.systemUptime
+         let alternative = usbDiscoveryState.hasCurrentSnapshot && selectableUSBTargets.contains { drive in
+             guard let required = usbTargetCapacityRequirement?.minimumBytes,
+-                  let proof = usbDiscoveryState.snapshot?.verification[drive.selectionID], proof.problem == nil, proof.isFresh(),
++                  let proof = usbDiscoveryState.snapshot?.verification[drive.selectionID], proof.problem == nil, proof.isFresh(at: verificationTime),
+                   case .success(let actual) = proof.capacity else { return false }
+             return actual >= required
+         }
+         if let failure = usbDiscoveryState.failure {
+-            return AnalysisUSBDiscoveryNotice(titleKey: "analysis.usb.discovery.refresh.title", descriptionKey: usbSelectionProblemDescriptionKey(failure), offersVerifiedAlternative: false, waiting: false)
++            return AnalysisUSBDiscoveryNotice(titleKey: "analysis.usb.discovery.refresh.title", descriptionKey: usbSelectionProblemDescriptionKey(failure, enumerationFailed: true), offersVerifiedAlternative: false, waiting: false)
+         }
+         if usbTargetReadiness.problem == .targetMissing,
+            usbDiscoveryState.hasCurrentSnapshot, selectableUSBTargets.isEmpty,
+@@ -37,21 +101,22 @@ extension AnalysisLogic {
+         return nil
+     }
  
+-    private func usbSelectionProblemDescriptionKey(_ problem: USBDiscoveryProblem) -> String {
+-        if usbDiscoveryState.failure != nil, case .query(.exitStatus) = problem {
++    private func usbSelectionProblemDescriptionKey(_ problem: USBDiscoveryProblem, enumerationFailed: Bool) -> String {
++        if enumerationFailed, case .query(.exitStatus) = problem {
+ 
+```
+
+**File**: `macUSB/Features/Analysis/Logic/AnalysisLogicUsbDrives.swift` (modified, +11/-3)
+```diff
+@@ -57,7 +57,9 @@ extension AnalysisLogic {
+         else { cancelDriveRefresh(reason: "analysis screen hidden") }
+     }
+ 
+-    func cancelDriveRefresh(reason: String = "application inactive") {
++    func cancelDriveRefresh(reason: String = "application inactive", preservePresentation: Bool = true) {
++        if preservePresentation { holdUSBDiscoveryPresentation() }
++        else { heldUSBDiscoveryPresentation = nil }
+         physicalDriveRefreshGeneration &+= 1
+         driveRefreshCancellation?.cancel()
+         // The registry read itself cannot be interrupted. Retain ownership
+@@ -71,7 +73,7 @@ extension AnalysisLogic {
+ 
+     func usbExternalDrivePreferenceChanged() {
+         log("USB discovery preference changed: AllowExternalDrives=\(UserDefaults.standard.bool(forKey: "AllowExternalDrives")).", category: "USBSelection")
+-        cancelDriveRefresh(reason: "external-drive preference changed")
++        cancelDriveRefresh(reason: "external-drive preference changed", preservePresentation: false)
+         refreshDrives(force: true, reason: "external-drive preference changed")
+     }
+ 
+@@ -84,7 +86,10 @@ extension AnalysisLogic {
+         guard isDriveRefreshVisible, NSApp.isActive else { return }
+         // Evaluate evidence on every existing UI tick, even while a worker or
+         // an unreaped child prevents another scan from starting.
+-        withAnimation(.easeInOut(duration: 0.24)) { checkCapacity() }
++        withAnimation(.easeInOut(duration: 0.24)) {
++            resumeUSBDiscoveryPresentation()
++            checkCapacity()
++        }
+         guard !driveRefreshPolicy.isRunning else { return }
+         // The worker may have returned after bounded cleanup while its child
+         // still owns the process slot. Never queue another scan behind it.
+@@ -122,20 +127,23 @@ extension AnalysisLogic {
+                     self.usbDiscoveryState.activity = .idle
+                     switch result {
+                     case .complete(let snapshot), .partial(let snapshot):
++                        self.heldUSBDiscoveryPresentation = nil
+                         let presentation = self.retainingUnresolvedUSBSelection(in: self.retainingUSBConfirmationTimes(in: snapshot))
+                         self.usbDiscoveryState.snapshot = presentation
+                         self.usbDiscoveryState.outcome = .current
+                         self.applyUSBDiscoverySnapshot(presentation)
+                         if snapshot.issues.contains(where: { $0.problem == .query(.busy) }) { self.usbDiscoveryState.activity = .waiting }
+                         diagnostics.recordSnapshot(snapshot, message: "USB scan completed: generation=\(generation), duration=\(elapsed)s, physicalTargets=\(snapshot.physicalDrives.count), optionTargets=\(snapshot.optionDrives.count), issues=\(snapshot.issues).", workflow: workflow, force: reason == "user retry")
+                     case .failed(let problem):
++                        self.heldUSBDiscoveryPresentation = nil
+                         self.usbDiscoveryState.outcome = .failed(problem)
+                         self.checkCapacity()
+                         diagnostics.record("USB scan failed: generation=\(generation), duration=\(elapsed)s, reason=\(problem).", key: "scan.result", signature: "\(problem)", workflow: workflow)
+                     case .busy:
+                         self.usbDiscoveryState.activity = .waiting
+                         diagnostics.record("USB scan waiting: generation=\(generation), duration=\(elapsed)s, reason=runner busy.", key: "scan.result", signature: "busy", workflow: workflow)
+                     case .cancelled:
++                        self.holdUSBDiscoveryPresentation()
+                         self.usbDiscoveryState.activity = .suspended
+                         self.usbDiscoveryState.outcome = .pending
+                         self.checkCapacity()
+```
+
+**File**: `macUSB/Features/Analysis/SystemAnalysisUSBSectionView.swift` (modified, +5/-5)
+```diff
+@@ -6,7 +6,7 @@ struct SystemAnalysisUSBSectionView: View {
+     let isSelectionEnabled: Bool
+ 
+     private var isSelectedTargetCapacityInsufficient: Bool {
+-        if case .insufficient = logic.usbTargetReadiness { return true }
++        if case .insufficient = logic.usbTargetPresentationReadiness { return true }
+         return false
+     }
+ 
+@@ -21,7 +21,7 @@ struct SystemAnalysisUSBSectionView: View {
+     }
+ 
+     private func pickerDisplayName(for drive: USBDrive) -> String {
+-        if logic.usbDiscoveryState.failure != nil || logic.usbDiscoveryState.snapshot?.verification[drive.selectionID]?.problem != nil {
++        if logic.usbDiscoveryPresentationState.failure != nil || logic.usbDiscoveryPresentationState.snapshot?.verification[drive.selectionID]?.problem != nil {
+             let mediaSuffix = drive.mediaKind == .sdCard ? " - \(drive.mediaDisplayName)" : ""
+             return "\(drive.device) - " + String(localized: "analysis.usb.discovery.unavailable.label", table: "Analysis") + mediaSuffix
+         }
+@@ -39,7 +39,7 @@ struct SystemAnalysisUSBSectionView: View {
+     }
+ 
+     private var needsExplicitReselectionAction: Bool {
+-        guard let problem = logic.usbTargetReadiness.problem, logic.selectedDrive != nil else { return false }
++        guard let problem = logic.usbTargetPresentationReadiness.problem, logic.selectedDrive != nil else { return false }
+         return problem != .query(.busy) && problem != .query(.cancelled) && problem != .confirmationExpired
+     }
+ 
+@@ -134,7 +134,7 @@ struct SystemAnalysisUSBSectionView: View {
+                         ProgressView()
+                             .controlSize(.small)
+                             .frame(maxWidth: .infinity, alignment: .leading)
+-                    } else if logic.presentedUSBTargets.isEmpty && logic.usbDiscoveryState.hasCurrentSnapshot && logic.usbDiscoveryState.snapshot?.issues.isEmpty == true {
++                    } else if logic.presentedUSBTargets.isEmpty && logic.usbDiscoveryPresentationState.hasCurrentSnapshot && logic.usbDiscoveryPresentationState.snapshot?.issues.isEmpty == true {
+                         StatusCard(tone: .error, density: .compact) {
+                             HStack {
+                                 Image(systemName: "externaldrive.badge.xmark").font(sectionIconFont).foregroundColor(.red).frame(width: MacUSBDesignTokens.iconColumnWidth)
+@@ -233,6 +233,6 @@ struct SystemAnalysisUSBSectionView: View {
+             }
+         }
+         .animation(.easeInOut(duration: 0.24), value: logic.usbDiscoveryNotice)
+-        .animation(.easeInOut(duration: 0.24), value: logic.usbTargetReadiness)
++        .animation(.easeInOut(duration: 0.24), value: logic.usbTargetPresentationReadiness)
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `f45a6509` (2026-09-19)
-**Commit Message**: Merge pull request #118 from Kruszoneq/fix/helper_lifecycle
+### Incident Patch 2: `1799df11` (2026-10-25)
+**Commit Message**: Clarify permission requirements in README
 
-Manage helper lifetime with the app
+Explain Full Disk Access and the SMAppService helper, and update the background activity setting name for macOS Golden Gate.
 
-**File**: `docs/reference/core/APP_RUNTIME_OVERVIEW.md` (modified, +2/-0)
+**File**: `README.md` (modified, +6/-3)
 ```diff
-@@ -38,6 +38,8 @@ The Help menu provides diagnostic-log export through its menu item and the `Opti
- - App termination is coordinated through a process-wide active-operation registry.
- - Quit requests and main-window close requests are rejected while analysis, USB creation, the downloader window, Rosetta installation, helper repair, long helper work, cleanup, or USB ejection is active.
- - An allowed termination runs the idempotent application cleanup before exit; cleanup errors are logged and do not keep the app running.
-+- The privileged helper is launch-on-demand, remains connected and ready while the app runs, and exits after the app disconnects and all privileged work reaches a terminal state.
-+- Normal termination closes helper XPC explicitly; app crash and Force Quit are handled by helper-side XPC connection-loss detection.
+@@ -69,14 +69,17 @@ Thanks to user feedback, macUSB has grown beyond legacy macOS installer creation
+ 5. Review the final result and safely eject the media directly from the final screen.
  
- ## Active Operation and Termination Model
- 
-```
-
-**File**: `docs/reference/core/FILE_STRUCTURE.md` (modified, +1/-0)
-```diff
-@@ -118,6 +118,7 @@
- - `macUSBHelper/main.swift`
- - `macUSBHelper/IPC/*`
- - `macUSBHelper/Service/*`
-+- `macUSBHelper/Service/HelperProcessLifecycle.swift` — tracks XPC connections and privileged operations so the launch-on-demand helper exits safely after normal app termination, crash, or Force Quit.
- - `macUSBHelper/Workflow/*`
- - `macUSBHelper/Workflow/Linux/*` — Linux raw-copy stage builder, parser, and disk ops.
- - `macUSBHelper/Workflow/Windows/*` — Windows ISO-copy stage builder, exact formatted-target partition and mount-point resolution, boot-mode-aware source/target validation, progress parsing, and verification.
-```
-
-**File**: `docs/reference/core/RISK_AREAS.md` (modified, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ Keep this file current with operational hotspots that can cause regressions.
- - Old Yosemite–Catalina installers may still fail after Rosetta removes `EBADARCH`; Rosetta availability is a prerequisite, not a guarantee of complete legacy installer compatibility.
- - Termination during privileged or destructive work can leave media, mounts, or temporary data in an indeterminate state; every new long-running operation must acquire and release an active-operation token on all terminal paths.
- - A helper cancellation acknowledgement is not a terminal workflow result. App-side USB and helper tokens remain active until the helper sends the final result or the XPC connection is invalidated.
-+- Helper process exit is gated by both client-connection and privileged-operation leases. App crash or Force Quit may request cancellation, but the daemon must not exit during a non-cancellable safety-critical stage.
- 
- ## Mitigation Pattern
- 
-```
-
-**File**: `docs/reference/features/helper/HELPER.md` (modified, +15/-1)
-```diff
-@@ -75,6 +75,9 @@ The helper system has two runtime layers:
- High-level model:
- - App-side validates readiness, manages registration/repair, and communicates via XPC.
- - Daemon executes privileged workflows and sends progress/result events back to app-side.
-+- The daemon is launch-on-demand and stays alive while the app holds its XPC connection.
-+- Normal termination explicitly closes that connection; crash and Force Quit are observed as connection loss by the daemon.
-+- With no client connection, cancellable work is cancelled and the daemon exits after all active privileged operations reach a terminal state.
- 
- Core invariant:
- - No terminal fallback privileged path.
-@@ -134,8 +137,17 @@ Contract invariants:
- - Checks app location and helper service status.
- - Handles status states (`enabled`, `requiresApproval`, `notRegistered`, `notFound`).
- - Performs health validation via XPC after configuring app-side helper code-signing requirements.
-+- The successful startup health validation creates the persistent app-lifetime XPC connection and starts the on-demand helper.
- - Uses controlled recovery when enabled service is unhealthy.
- 
-+### Process Lifecycle Flow
-+- LaunchDaemon plists advertise the XPC Mach service without `RunAtLoad`; registration and user approval persist independently of the helper process.
-+- `HelperProcessLifecycle` tracks accepted XPC connections and active privileged operations.
-+- The helper schedules a short idle exit when both counts reach zero. A new connection or operation cancels the pending exit.
-+- App termination explicitly invalidates its XPC connection after termination cleanup.
-+- XPC invalidation or interruption also covers app crash and Force Quit. It requests cancellation for active USB and downloader work; non-cancellable stages and Rosetta installation finish before the process exits.
-+- The helper process exiting does not unregister the service. A later Mach-service connection launches it again on demand.
+ > [!IMPORTANT]
+-> For reliable media creation, enable **Allow in the Background** and **Full Disk Access** for macUSB in System Settings. Without them, creation workflows may fail.
++> Enable **Full Disk Access** and **Background App Activity** for macUSB in System Settings. These are required by the app’s current installer download and media creation workflows.
 +
- ### Passive Readiness Probe
- - Downloader uses an app-side passive readiness probe that reads `SMAppService` status and performs a bounded XPC health check only when the service is enabled.
- - The probe distinguishes user approval required from other helper unavailability.
-@@ -247,7 +259,9 @@ Daemon helper runtime:
- - `macUSBHelper/Service/PrivilegedHelperServiceCapabilities.swift`
-   - helper capability identifiers and advertised capability payload.
- - `macUSBHelper/Service/HelperListenerDelegate.swift`
--  - listener delegate and connection wiring.
-+  - listener delegate, connection wiring, and client-disconnection handling.
-+- `macUSBHelper/Service/HelperProcessLifecycle.swift`
-+  - process-lifetime leases for XPC connections and privileged operations, including guarded idle exit.
- - `macUSBHelper/Workflow/HelperWorkflowExecutor.swift`
-   - USB workflow execution orchestration and cancellation.
- - `macUSBHelper/Workflow/HelperWorkflowStages.swift`
-```
-
-**File**: `docs/reference/platform/PERMISSIONS_AND_BACKGROUND.md` (modified, +4/-0)
-```diff
-@@ -23,6 +23,10 @@ Startup and helper readiness flows must surface missing prerequisites.
- - The pre-settings check acts as a best-effort registration probe so macOS can add macUSB to the Full Disk Access list before the user enables it.
- - The Full Disk Access panel uses the current System Settings deep link for supported macOS versions, with the existing general System Settings fallback if the deep link cannot be opened.
- - Helper background approval is checked at startup and in ensure-ready/repair flows.
-+- The registered LaunchDaemon runs on demand: startup readiness opens and retains an XPC connection for the lifetime of the app instead of relying on `RunAtLoad`.
-+- Normal app termination explicitly invalidates the XPC connection. A crash or Force Quit is detected by the helper through XPC connection loss.
-+- After the final client disconnects, the helper cancels cancellable work and exits once no privileged operation remains. Non-cancellable safety-critical work reaches its terminal state before exit.
-+- The helper remains registered and approved while its process is stopped, so the next app launch can start it through the Mach service without repeating approval.
- - Downloader presentation and app reactivation passively refresh Full Disk Access, helper service approval, and XPC health without registering or repairing the helper.
- - Downloader discovery remains available with missing prerequisites, but a download session cannot start until Full Disk Access and helper readiness are confirmed.
- - Downloader prerequisite alerts use the current System Settings terminology `Aktywność aplikacji w tle` / `App Background Activity` and open the corresponding settings panel directly.
-```
-
-**File**: `macUSB.xcodeproj/project.pbxproj` (modified, +6/-2)
-```diff
-@@ -15,6 +15,7 @@
- 		A10000012F00000100000031 /* IPC/HelperIPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000021 /* IPC/HelperIPC.swift */; };
- 		A10000012F00000100000032 /* Service/PrivilegedHelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000022 /* Service/PrivilegedHelperService.swift */; };
- 		A10000012F00000100000033 /* Service/HelperListenerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000023 /* Service/HelperListenerDelegate.swift */; };
-+		H10000012F00000100000001 /* Service/HelperProcessLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = H10000012F00000100000002 /* Service/HelperProcessLifecycle.swift */; };
- 		A10000012F00000100000034 /* Workflow/HelperWorkflowExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000024 /* Workflow/HelperWorkflowExecutor.swift */; };
- 		A10000012F00000100000035 /* Workflow/HelperWorkflowStages.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000025 /* Workflow/HelperWorkflowStages.swift */; };
- 		A10000012F00000100000036 /* Workflow/HelperWorkflowProgressParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000012F00000100000026 /* Workflow/HelperWorkflowProgressParsing.swift */; };
-@@ -135,6 +136,7 @@
- 		A10000012F00000100000021 /* IPC/HelperIPC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPC/HelperIPC.swift; sourceTree = "<group>"; };
- 		A10000012F00000100000022 /* Service/PrivilegedHelperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service/PrivilegedHelperService.swift; sourceTree = "<group>"; };
- 		A10000012F00000100000023 /* Service/HelperListenerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service/HelperListenerDelegate.swift; sourceTree = "<group>"; };
-+		H10000012F00000100000002 /* Service/HelperProcessLifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service/HelperProcessLifecycle.swift; sourceTree = "<group>"; };
- 		A10000012F00000100000024 /* Workflow/HelperWorkflowExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workflow/HelperWorkflowExecutor.swift; sourceTree = "<group>"; };
- 		A10000012F00000100000025 /* Workflow/HelperWorkflowStages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workflow/HelperWorkflowStages.swift; sourceTree = "<group>"; };
- 		A10000012F00000100000026 /* Workflow/HelperWorkflowProgressParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workflow/HelperWorkflowProgressParsing.swift; sourceTree = "<group>"; };
-@@ -589,6 +591,7 @@
- 				A10000012F00000100000022 /* Service/PrivilegedHelperService.swift */,
- 				F10000012F00000100000011 /* Service/PrivilegedHelperServiceCapabilities.swift */,
- 				A10000012F00000100000023 /* Service/HelperListenerDelegate.swift */,
-+				H10000012F00000100000002 /* Service/HelperProcessLifecycle.swift */,
- 				G10000012F00000100000002 /* Rosetta/HelperRosettaInstaller.swift */,
- 				A10000012F00000100000024 /* Workflow/HelperWorkflowExecutor.swift */,
- 				A10000012F00000100000025 /* Workflow/HelperWorkflowStages.swift */,
-@@ -846,6 +849,7 @@
- 				A10000012F00000100000032 /* Service/PrivilegedHelperService.swift in Sources */,
- 				F10000012F00000100000001 /* Service/PrivilegedHelperServiceCapabilities.swift in Sources */,
- 				A10000012F00000100000033 /* Service/HelperListenerDelegate.swift in Sources */,
-+				H10000012F00000100000001 /* Service/HelperProcessLifecycle.swift in Sources */,
- 				G10000012F00000100000001 /* Rosetta/HelperRosettaInstaller.swift in Sources */,
- 				A10000012F00000100000034 /* Workflow/HelperWorkflowExecutor.swift in Sources */,
- 				A10000012F00000100000035 /* Workflow/HelperWorkflowStages.swift in Sources */,
-@@ -1048,7 +1052,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 43;
-+				CURRENT_PROJECT_VERSION = 44;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = 27NC66L8P2;
- 				ENABLE_APP_SANDBOX = NO;
-@@ -1105,7 +1109,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
- 				CODE_SIGN_STYLE = Manual;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 43;
-+				CURRENT_PROJECT_VERSION = 44;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_TEAM = 27NC66L8P2;
- 				ENABLE_APP_SANDBOX = NO;
-```
-
-**File**: `macUSB/Resources/LaunchDaemons/com.kruszoneq.macusb.helper.debug.plist` (modified, +0/-2)
-```diff
-@@ -15,8 +15,6 @@
- 		<key>com.kruszoneq.macusb.helper.debug</key>
- 		<true/>
- 	</dict>
--	<key>RunAtLoad</key>
--	<true/>
- 	<key>KeepAlive</key>
- 	<false/>
- </dict>
-```
-
-**File**: `macUSB/Resources/LaunchDaemons/com.kruszoneq.macusb.helper.plist` (modified, +0/-2)
-```diff
-@@ -15,8 +15,6 @@
- 		<key>com.kruszoneq.macusb.helper</key>
- 		<true/>
- 	</dict>
--	<key>RunAtLoad</key>
--	<true/>
- 	<key>KeepAlive</key>
- 	<false/>
- </dict>
++- **Full Disk Access:** macUSB requires this permission to write to the selected external drive and build installers in the Downloader. On Macs with the Apple T2 Security Chip and on Apple silicon Macs, Removable Volumes access alone was insufficient for all required write operations, even with administrator privileges.
++- **Background App Activity:** macUSB uses a helper registered through Apple’s `SMAppService`. This setting is required for the helper to run and perform privileged operations, such as preparing installers, formatting media, and writing data.
+ 
+ <table align="center">
+   <tr>
+     <td align="center" valign="top">
+-      <strong>Allow in the Background</strong><br>
++      <strong>Background App Activity</strong><br>
+       <a href="docs/readme-assets/permissions/allow-in-the-background.png">
+-        <img src="docs/readme-assets/permissions/allow-in-the-background.png" alt="macOS Login Items settings with macUSB enabled in Allow in the Background" width="360">
++        <img src="docs/readme-assets/permissions/allow-in-the-background.png" alt="macOS Login Items settings with macUSB enabled under Background App Activity" width="360">
+       </a><br>
+       <sub>General → Login Items &amp; Extensions</sub>
+     </td>
 ```
 
 ---
 
-### Incident Patch 3: `342bb95a` (2026-09-18)
-**Commit Message**: Fix macUSBoot resource packaging
+### Incident Patch 3: `d8f69815` (2026-10-14)
+**Commit Message**: Merge pull request #144 from aliafshany/fix/fa_rtl
 
-Copy only the pinned macUSBoot artifact files into the app bundle so repository documentation does not invalidate the BIOS helper capability.
+Fix right-to-left layout in Persian strings
 
-**File**: `macUSB.xcodeproj/project.pbxproj` (modified, +31/-3)
+**File**: `macUSB/Resources/Analysis.xcstrings` (modified, +4/-4)
 ```diff
-@@ -43,7 +43,9 @@
- 		B10000012F00000100000001 /* macUSB/Resources/Sounds/burn_complete.aif in Resources */ = {isa = PBXBuildFile; fileRef = B10000012F00000100000002 /* macUSB/Resources/Sounds/burn_complete.aif */; };
- 		C10000012F00000100000001 /* ../macUSB/Shared/Localization/HelperWorkflowLocalizationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000012F00000100000002 /* ../macUSB/Shared/Localization/HelperWorkflowLocalizationKeys.swift */; };
- 		D10000012F00000100000001 /* macUSB/Resources/Icons/Linux/Distros in Resources */ = {isa = PBXBuildFile; fileRef = D10000012F00000100000002 /* macUSB/Resources/Icons/Linux/Distros */; };
--		E10000012F00000100000001 /* macUSB/Resources/Bootloaders/macUSBoot in Resources */ = {isa = PBXBuildFile; fileRef = E10000012F00000100000002 /* macUSB/Resources/Bootloaders/macUSBoot */; };
-+		E10000012F00000100000003 /* manifest.json in Copy macUSBoot Artifacts */ = {isa = PBXBuildFile; fileRef = E10000012F00000100000006 /* manifest.json */; };
-+		E10000012F00000100000004 /* macUSBoot-v1.0.bin in Copy macUSBoot Artifacts */ = {isa = PBXBuildFile; fileRef = E10000012F00000100000007 /* macUSBoot-v1.0.bin */; };
-+		E10000012F00000100000005 /* macUSBoot-v1.0.bin.sha256 in Copy macUSBoot Artifacts */ = {isa = PBXBuildFile; fileRef = E10000012F00000100000008 /* macUSBoot-v1.0.bin.sha256 */; };
- 		F10000012F00000100000001 /* Service/PrivilegedHelperServiceCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000012F00000100000011 /* Service/PrivilegedHelperServiceCapabilities.swift */; };
- 		F10000012F00000100000002 /* Workflow/Windows/HelperWorkflowWindowsBootValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000012F00000100000012 /* Workflow/Windows/HelperWorkflowWindowsBootValidation.swift */; };
- 		F10000012F00000100000003 /* Workflow/Windows/MacUSBoot/HelperWorkflowWindowsMacUSBootTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000012F00000100000013 /* Workflow/Windows/MacUSBoot/HelperWorkflowWindowsMacUSBootTypes.swift */; };
-@@ -103,6 +105,18 @@
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-+		E10000012F0000010000000A /* Copy macUSBoot Artifacts */ = {
-+			isa = PBXCopyFilesBuildPhase;
-+			buildActionMask = 2147483647;
-+			dstPath = macUSBoot;
-+			dstSubfolderSpec = 7;
-+			files = (
-+				E10000012F00000100000003 /* manifest.json in Copy macUSBoot Artifacts */,
-+				E10000012F00000100000004 /* macUSBoot-v1.0.bin in Copy macUSBoot Artifacts */,
-+				E10000012F00000100000005 /* macUSBoot-v1.0.bin.sha256 in Copy macUSBoot Artifacts */,
-+			);
-+			runOnlyForDeploymentPostprocessing = 0;
-+		};
- /* End PBXCopyFilesBuildPhase section */
- 
- /* Begin PBXFileReference section */
-@@ -149,7 +163,10 @@
- 		B10000012F00000100000002 /* macUSB/Resources/Sounds/burn_complete.aif */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = macUSB/Resources/Sounds/burn_complete.aif; sourceTree = "<group>"; };
- 		C10000012F00000100000002 /* ../macUSB/Shared/Localization/HelperWorkflowLocalizationKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ../macUSB/Shared/Localization/HelperWorkflowLocalizationKeys.swift; sourceTree = "<group>"; };
- 		D10000012F00000100000002 /* macUSB/Resources/Icons/Linux/Distros */ = {isa = PBXFileReference; lastKnownFileType = folder; path = macUSB/Resources/Icons/Linux/Distros; sourceTree = "<group>"; };
--		E10000012F00000100000002 /* macUSB/Resources/Bootloaders/macUSBoot */ = {isa = PBXFileReference; lastKnownFileType = folder; path = macUSB/Resources/Bootloaders/macUSBoot; sourceTree = "<group>"; };
-+		E10000012F00000100000006 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
-+		E10000012F00000100000007 /* macUSBoot-v1.0.bin */ = {isa = PBXFileReference; lastKnownFileType = file; path = "macUSBoot-v1.0.bin"; sourceTree = "<group>"; };
-+		E10000012F00000100000008 /* macUSBoot-v1.0.bin.sha256 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "macUSBoot-v1.0.bin.sha256"; sourceTree = "<group>"; };
-+		E10000012F00000100000009 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
- 		F10000012F00000100000011 /* Service/PrivilegedHelperServiceCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service/PrivilegedHelperServiceCapabilities.swift; sourceTree = "<group>"; };
- 		F10000012F00000100000012 /* Workflow/Windows/HelperWorkflowWindowsBootValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workflow/Windows/HelperWorkflowWindowsBootValidation.swift; sourceTree = "<group>"; };
- 		F10000012F00000100000013 /* Workflow/Windows/MacUSBoot/HelperWorkflowWindowsMacUSBootTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workflow/Windows/MacUSBoot/HelperWorkflowWindowsMacUSBootTypes.s
+@@ -1070,7 +1070,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "باز کردن فایل ISO امکان‌پذیر نبود: %@"
++            "value" : "باز کردن فایل ISO امکان‌پذیر نبود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -1165,7 +1165,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "خواندن فایل ISO امکان‌پذیر نبود: %@"
++            "value" : "خواندن فایل ISO امکان‌پذیر نبود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -2115,7 +2115,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Linux - توزیع ناشناخته"
++            "value" : "‏Linux - توزیع ناشناخته"
+           }
+         },
+         "fr" : {
+@@ -2687,7 +2687,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "OS X Mavericks شناسایی شد"
++            "value" : "‏OS X Mavericks شناسایی شد"
+           }
+         },
+         "fr" : {
+```
+
+**File**: `macUSB/Resources/App.xcstrings` (modified, +17/-17)
+```diff
+@@ -1830,7 +1830,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "بازنشانی مجوزهای دسترسی به رسانهٔ خارجی امکان‌پذیر نبود. دوباره تلاش کنید، یا این دستور را به‌صورت دستی در Terminal اجرا کنید: tccutil reset SystemPolicyRemovableVolumes %@"
++            "value" : "بازنشانی مجوزهای دسترسی به رسانهٔ خارجی امکان‌پذیر نبود. دوباره تلاش کنید، یا این دستور را به‌صورت دستی در Terminal اجرا کنید: tccutil reset SystemPolicyRemovableVolumes ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -2305,7 +2305,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper نیازمند تأیید در System Settings است."
++            "value" : "در System Settings، Helper نیازمند تأیید است."
+           }
+         },
+         "fr" : {
+@@ -2400,7 +2400,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUSB برای فعال‌سازی مدیریت درایو به مجوز فعالیت در پس‌زمینه نیاز دارد. برای اعطای مجوزهای لازم به System Settings بروید"
++            "value" : "برای فعال‌سازی مدیریت درایو، macUSB به مجوز فعالیت در پس‌زمینه نیاز دارد. برای اعطای مجوزهای لازم به System Settings بروید"
+           }
+         },
+         "fr" : {
+@@ -2590,7 +2590,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUSB نسخهٔ جدیدی از برنامه را شناسایی کرد، اما به‌روزرسانی خودکار Helper با خطا مواجه شد. ابزارها ← تعمیر Helper را انتخاب کرده و تعمیر را به‌صورت دستی اجرا کنید."
++            "value" : "نسخهٔ جدیدی از برنامه توسط macUSB شناسایی شد، اما به‌روزرسانی خودکار Helper با خطا مواجه شد. ابزارها ← تعمیر Helper را انتخاب کرده و تعمیر را به‌صورت دستی اجرا کنید."
+           }
+         },
+         "fr" : {
+@@ -3825,7 +3825,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper ثبت شد، اما نیازمند تأیید کاربر است."
++            "value" : "ثبت Helper انجام شد، اما نیازمند تأیید کاربر است."
+           }
+         },
+         "fr" : {
+@@ -5820,7 +5820,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper پس از لغو ثبت همچنان فعال ماند. تعمیر متوقف شد."
++            "value" : "پس از لغو ثبت، Helper همچنان فعال ماند. تعمیر متوقف شد."
+           }
+         },
+         "fr" : {
+@@ -7910,7 +7910,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper به‌درستی کار می‌کند و آمادهٔ استفاده است."
++            "value" : "‏Helper به‌درستی کار می‌کند و آمادهٔ استفاده است."
+           }
+         },
+         "fr" : {
+@@ -8385,7 +8385,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUSB نمی‌تواند تأیید کند که با یک Helper معتبر و امضاشده در ارتباط است. عملیات متوقف شد. برنامهٔ فعلی macUSB را از پوشهٔ Applications باز کنید، سپس ابزارها ← تعمیر Helper را انتخاب نمایید."
++            "value" : "تأیید ارتباط با یک Helper معتبر و امضاشده برای macUSB امکان‌پذیر نیست. عملیات متوقف شد. برنامهٔ فعلی macUSB را از پوشهٔ Applications باز کنید، سپس ابزارها ← تعمیر Helper را انتخاب نمایید."
+           }
+         },
+         "fr" : {
+@@ -8480,7 +8480,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUSB نمی‌تواند Helper را تأیید کند"
++            "value" : "تأیید Helper توسط macUSB امکان‌پذیر نیست"
+           }
+         },
+         "fr" : {
+@@ -8575,7 +8575,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper قبلاً حذف شده است"
++            "value" : "قبلاً Helper حذف شده است"
+           }
+         },
+         "fr" : {
+@@ -8670,7 +8670,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper حذف شد"
++            "value" : "‏Helper حذف شد"
+           }
+         },
+         "fr" : {
+@@ -9335,7 +9335,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper به‌درستی پاسخ می‌دهد (uid=%@, euid=%@, pid=%@)"
++            "value" : "‏Helper به‌درستی پاسخ می‌دهد (uid=%@, euid=%@, pid=%@)"
+           }
+         },
+         "fr" : {
+@@ -9620,7 +9620,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper شناسهٔ گردش کاری برنگرداند."
++            "value" : "شناسهٔ گردش کاری توسط Helper برگردانده نشد."
+           }
+         },
+         "fr" : {
+@@ -13895,7 +13895,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "System Settings باز شد"
++            "value" : "‏System Settings باز شد"
+           }
+         },
+         "fr" : {
+@@ -14655,7 +14655,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUS
+```
+
+**File**: `macUSB/Resources/Creator.xcstrings` (modified, +1/-1)
+```diff
+@@ -880,7 +880,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper آماده نیست."
++            "value" : "‏Helper آماده نیست."
+           }
+         },
+         "fr" : {
+```
+
+**File**: `macUSB/Resources/Downloader.xcstrings` (modified, +11/-11)
+```diff
+@@ -588,7 +588,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper در سرهم‌بندی نصب‌کننده خطایی برگرداند"
++            "value" : "در سرهم‌بندی نصب‌کننده، Helper خطایی برگرداند"
+           }
+         },
+         "fr" : {
+@@ -682,7 +682,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper مسیر نصب‌کنندهٔ .app را برنگرداند"
++            "value" : "مسیر نصب‌کنندهٔ .app توسط Helper برگردانده نشد"
+           }
+         },
+         "fr" : {
+@@ -3504,7 +3504,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "حذف فایل‌های موقت تکمیل نشد: %@"
++            "value" : "حذف فایل‌های موقت تکمیل نشد: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -3598,7 +3598,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper حذف پوشهٔ نشست را تأیید نکرد"
++            "value" : "حذف پوشهٔ نشست توسط Helper تأیید نشد"
+           }
+         },
+         "fr" : {
+@@ -6982,7 +6982,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "پوشهٔ «%@» قبلاً شامل «%@» است. اگر ادامه دهید، ایمیج دیسک جدید به‌صورت «%@» ذخیره خواهد شد."
++            "value" : "پوشهٔ ⁨«%@»⁩ قبلاً شامل ⁨«%@»⁩ است. اگر ادامه دهید، ایمیج دیسک جدید به‌صورت ⁨«%@»⁩ ذخیره خواهد شد."
+           }
+         },
+         "fr" : {
+@@ -7170,7 +7170,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "ایجاد ایمیج دیسک امکان‌پذیر نبود: %@"
++            "value" : "ایجاد ایمیج دیسک امکان‌پذیر نبود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -7734,7 +7734,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "ایمیج دیسک ایجاد شد، اما امکان حذف نصب‌کنندهٔ منبع «%@» وجود نداشت. هر دو فایل روی دیسک باقی می‌مانند."
++            "value" : "ایمیج دیسک ایجاد شد، اما امکان حذف نصب‌کنندهٔ منبع ⁨«%@»⁩ وجود نداشت. هر دو فایل روی دیسک باقی می‌مانند."
+           }
+         },
+         "fr" : {
+@@ -12631,7 +12631,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Helper در دسترس نیست"
++            "value" : "‏Helper در دسترس نیست"
+           }
+         },
+         "fr" : {
+@@ -15451,7 +15451,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "دانلود فایل‌های نصب‌کننده ناموفق بود: %@"
++            "value" : "دانلود فایل‌های نصب‌کننده ناموفق بود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -15545,7 +15545,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "ذخیرهٔ فایل %@ ناموفق بود: %@"
++            "value" : "ذخیرهٔ فایل ⁨%@⁩ ناموفق بود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -16391,7 +16391,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "بررسی صحت فایل ناموفق بود: %@"
++            "value" : "بررسی صحت فایل ناموفق بود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+```
+
+**File**: `macUSB/Resources/FinishUSB.xcstrings` (modified, +5/-5)
+```diff
+@@ -215,7 +215,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "حذف فایل‌های موقت ناموفق بود: %@"
++            "value" : "حذف فایل‌های موقت ناموفق بود: ⁨%@⁩"
+           }
+         },
+         "fr" : {
+@@ -1355,7 +1355,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macOS هنوز نمی‌تواند درایو را خارج کند. هر برنامه‌ای را که ممکن است از آن استفاده کند ببندید، سپس دوباره تلاش کنید."
++            "value" : "هنوز macOS نمی‌تواند درایو را خارج کند. هر برنامه‌ای را که ممکن است از آن استفاده کند ببندید، سپس دوباره تلاش کنید."
+           }
+         },
+         "fr" : {
+@@ -1545,7 +1545,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Spotlight در حال ایندکس کردن این درایو است، بنابراین macOS نمی‌تواند آن را با ایمنی خارج کند. می‌توانید برای متوقف کردن این فرآیند، درایو را به‌صورت اجباری خارج کنید."
++            "value" : "این درایو توسط Spotlight در حال ایندکس شدن است، بنابراین macOS نمی‌تواند آن را با ایمنی خارج کند. می‌توانید برای متوقف کردن این فرآیند، درایو را به‌صورت اجباری خارج کنید."
+           }
+         },
+         "fr" : {
+@@ -1640,7 +1640,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Spotlight مانع از خارج کردن درایو می‌شود"
++            "value" : "‏Spotlight مانع از خارج کردن درایو می‌شود"
+           }
+         },
+         "fr" : {
+@@ -3825,7 +3825,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "PC خود را روشن کرده و منوی بوت (Boot Menu) را باز کنید"
++            "value" : "‏PC خود را روشن کرده و منوی بوت (Boot Menu) را باز کنید"
+           }
+         },
+         "fr" : {
+```
+
+**File**: `macUSB/Resources/Summary.xcstrings` (modified, +3/-3)
+```diff
+@@ -2400,7 +2400,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "macUSB نتوانست در دسترس بودن Rosetta را تأیید کند. برای ادامه دوباره بررسی کنید."
++            "value" : "در دسترس بودن Rosetta توسط macUSB تأیید نشد. برای ادامه دوباره بررسی کنید."
+           }
+         },
+         "fr" : {
+@@ -2875,7 +2875,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Rosetta نصب شده است"
++            "value" : "‏Rosetta نصب شده است"
+           }
+         },
+         "fr" : {
+@@ -3730,7 +3730,7 @@
+         "fa" : {
+           "stringUnit" : {
+             "state" : "translated",
+-            "value" : "Rosetta هنوز در دسترس نیست"
++            "value" : "هنوز Rosetta در دسترس نیست"
+           }
+         },
+         "fr" : {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #145** (2026-10-25): Release v2.6 (@Kruszoneq)
 - **PR #144** (2026-10-14): Fix right-to-left layout in Persian strings (@aliafshany)
 - **PR #143** (2026-10-11): Improve RTL layout and navigation (@Kruszoneq)
 - **PR #142** (2026-10-11): Add Persian (fa) localization (@aliafshany)
 - **PR #141** (2026-10-11): Support solid install.wim images in Windows WIM split (@TheFilipcom4607)
 - **PR #137** (2026-10-06): Extend Option volume selection to legacy macOS restore (@Kruszoneq)
-- **PR #134** (2026-10-04): Stabilize USB selection messages (@Kruszoneq)
 
 ---
 
@@ -1988,47 +2347,28 @@ Copy only the pinned macUSBoot artifact files into the app bundle so repository 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clarify README compatibility and image writing guidance
+## X. USB messages across app activation
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kruszoneq/macUSB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/reference/features/analysis/ANALYSIS_COMPATIBILITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kruszoneq/macUSB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0603758`: Clarify README compatibility and image writing guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfff17e3`: USB messages across app activation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/reference/features/analysis/ANALYSIS_COMPATIBILITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-[^1]: Creating a bootable USB installer for **macOS Golden Gate** is supported only on Macs with **Apple Silicon**. The Mac used to create the installer does not need to be running macOS Golden Gate.
-> Linux support has been tested with 19 distributions.[^5]
-[^5]: Validated distributions: *Ubuntu*, *Kali Linux*, *NixOS*, *Garuda Linux*, *openSUSE Leap*, *Gentoo*, *Rocky Linux*, *Linux Mint*, *Fedora Workstation*, *Manjaro*, *Zorin OS*, *CachyOS*, *AlmaLinux*, *Debian*, *Arch Linux*, *MX Linux*, *Pop!_OS*, *EndeavourOS*, and *elementary OS*. Testing used the latest versions available as of April 30, 2026. Boot behavior was verified on a MacBook Air 2017, a Dell OptiPlex 5040 with UEFI, and an Asus F52Q with Legacy BIOS.
----
-## 💾 Raw Image Writing
-macUSB can write `.iso` and `.img` image files directly to external drives using **Tools → Write a Raw Image to a Drive…**.
-This method can also be used when a Linux image is not recognized during analysis.
-> [!NOTE]
-> The resulting media is not guaranteed to be bootable. Bootability depends on the structure and compatibility of the source image.
----
-
-## 🧩 PowerPC Notes
-For instructions on booting a USB installer created with macUSB on a 
+Prepared physical and Option target presentation, per-device partial failures, retry/lifecycle state, identity verification and selected-target readiness are defined in `../usb/USB_VALIDATION_AND_CAPACITY.md`. Ordinary discovery remains automatic at 2.5-second intervals; the 0.5-second UI tick and immediate Option presentation stay separate. Only a currently verified selected target with known sufficient capacity and target-specific monotonic evidence younger than 20 seconds is passed to the existing installation summary. The existing tick evaluates freshness even while discovery is running or blocked. A selected target shows the capacity error when insufficient, otherwise the destructive warning. Lifecycle suspension retains the last messages separately from admission, so inactivity and initial rechecking do not replace a capacity error with the destructive warning or temporarily remove existing discovery errors or the empty-catalog card. The bounded presentation grace and its invalidation rules are defined in the USB reference. Prolonged active loss of confirmation retains the selection and adds the `analysis.usb.discovery.availability.title` / `.description` card in `Analysis` a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-[^1]: USB creation is supported on **Apple Silicon only.**
-If a selected file is a valid Linux image but is not recognized automatically, you can force Linux mode manually from **Options** → **Skip file analysis** → **Linux**.
-Linux-based `.img` images can also be written from **Tools** → **Write Raw Linux Image (.img)…**. This raw-image path is separate from the officially boot-tested Linux `.iso` support matrix.
-> Linux support has been tested with 19 distributions using the latest available releases as of April 30, 2026, with boot behavior verified on real hardware.[^5]
-[^5]: Validated distributions: *Ubuntu*, *Kali Linux*, *NixOS*, *Garuda Linux*, *openSUSE Leap*, *Gentoo*, *Rocky Linux*, *Linux Mint*, *Fedora Workstation*, *Manjaro*, *Zorin OS*, *CachyOS*, *AlmaLinux*, *Debian*, *Arch Linux*, *MX Linux*, *Pop!_OS*, *EndeavourOS*, and *elementary OS*. Boot behavior was verified on a MacBook Air 2017, a Dell OptiPlex 5040 with UEFI, and an Asus F52Q with Legacy BIOS.
-## 🧩 PowerPC Notes
-If you are reviving a PowerPC Mac, the project website includes a dedicated Open Firmware guide based on real boot testing of PowerPC USB workflows created with macUSB.
-Validated scenarios includ
+Prepared physical and Option target presentation, per-device partial failures, retry/lifecycle state, identity verification and selected-target readiness are defined in `../usb/USB_VALIDATION_AND_CAPACITY.md`. Ordinary discovery remains automatic at 2.5-second intervals; the 0.5-second UI tick and immediate Option presentation stay separate. Only a currently verified selected target with known sufficient capacity and target-specific monotonic evidence younger than 20 seconds is passed to the existing installation summary. The existing tick evaluates freshness even while discovery is running or blocked. The destructive warning remains visible for every selected target regardless of application activity or verification readiness. Prolonged loss of confirmation retains the selection and adds the `analysis.usb.discovery.availability.title` / `.description` card in `Analysis` above that warning, using the same warning styling; inline discovery cards have no retry action and the generic notice does not duplicate it. Same-identity recovery restores readiness automatically, while replacement identity requires deliberate reselection. Continue still performs its exact final identity/capacity
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0603758` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfff17e3` are properly handled with clean fallback behavior.

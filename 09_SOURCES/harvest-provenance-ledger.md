@@ -5119,3 +5119,8 @@ Every entry in this ledger must capture:
 | `learn-github-paradevai-superset` | `https://github.com/ParadevAI/superset` | `d962fd0f` | Multi-dimensional audit evidence | 2026-10-26T09:02:22.616Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `621dd74c` | Multi-dimensional audit evidence | 2026-10-26T09:23:37.029Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `742a03ea` | Multi-dimensional audit evidence | 2026-10-26T09:24:30.254Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `88772172` | Multi-dimensional audit evidence | 2026-10-26T09:49:02.843Z |
+| `learn-github-kruszoneq-macusb` | `https://github.com/Kruszoneq/macUSB` | `777ed534` | Multi-dimensional audit evidence | 2026-10-26T09:49:23.943Z |
+| `learn-github-paradevai-paradev` | `https://github.com/ParadevAI/Paradev` | `d962fd0f` | Multi-dimensional audit evidence | 2026-10-26T09:53:30.462Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `d6271e63` | Multi-dimensional audit evidence | 2026-10-26T09:54:01.424Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4a5b9e47` | Multi-dimensional audit evidence | 2026-10-26T09:54:12.427Z |

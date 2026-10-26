@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "4ab22a49",
+    "sourceVersion": "d6271e63",
     "license": "AGPL-3.0",
-    "contentHash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
-    "lastHarvestedAt": "2026-10-25T14:18:54.733Z",
+    "contentHash": "3badd4738fbfc3e063083918a20c882ac23638cc4919097c972276e725ca510a",
+    "lastHarvestedAt": "2026-10-26T09:54:01.424Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "62bbcebf",
+    "sourceVersion": "88772172",
     "license": "MIT",
-    "contentHash": "6541c3f98f9bc2a71923e98fe4d6e2bd80c9bc2726da3ddfdea59ac650924f59",
-    "lastHarvestedAt": "2026-10-25T11:20:49.955Z",
+    "contentHash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
+    "lastHarvestedAt": "2026-10-26T09:49:02.843Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "3c310992",
+    "sourceVersion": "4a5b9e47",
     "license": "Apache-2.0",
-    "contentHash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
-    "lastHarvestedAt": "2026-10-25T15:03:27.199Z",
+    "contentHash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
+    "lastHarvestedAt": "2026-10-26T09:54:12.427Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -9243,10 +9243,10 @@
     "repository": "Kruszoneq/macUSB",
     "platform": "github",
     "sourceUrl": "https://github.com/Kruszoneq/macUSB",
-    "sourceVersion": "938f7d12",
+    "sourceVersion": "777ed534",
     "license": "MIT",
-    "contentHash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
-    "lastHarvestedAt": "2026-10-19T22:06:45.343Z",
+    "contentHash": "1997a061fb6bbb4ebc2647a33773b0ca6e0a773e5df994eb3c24c968ac168323",
+    "lastHarvestedAt": "2026-10-26T09:49:23.943Z",
     "learningId": "learn-github-kruszoneq-macusb"
   },
   "webrecorder-browsertrix-crawler": {
@@ -10748,5 +10748,15 @@
     "contentHash": "c021f0c537d445bbffeaeb3a8623c12fc6f8b167995e572875e965970ff1ec86",
     "lastHarvestedAt": "2026-10-26T09:02:22.616Z",
     "learningId": "learn-github-paradevai-superset"
+  },
+  "paradevai-paradev": {
+    "repository": "ParadevAI/Paradev",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ParadevAI/Paradev",
+    "sourceVersion": "d962fd0f",
+    "license": "NOASSERTION",
+    "contentHash": "68ff24bc731aacfcb9fabae1f8a34f9e990fde09e6e7d7692e8ca4344d2a45cb",
+    "lastHarvestedAt": "2026-10-26T09:53:30.462Z",
+    "learningId": "learn-github-paradevai-paradev"
   }
 }

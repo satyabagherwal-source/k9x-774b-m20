@@ -18703,5 +18703,20 @@
     "qualityScore": 8544,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-26T08:49:48.228Z"
+  },
+  {
+    "name": "Paradev",
+    "fullName": "ParadevAI/Paradev",
+    "url": "https://github.com/ParadevAI/Paradev",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run any agent with your own subscription.",
+    "stars": 15563,
+    "forks": 1379,
+    "openIssues": 1043,
+    "language": "TypeScript",
+    "qualityScore": 8545,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-26T09:47:55.968Z"
   }
 ]

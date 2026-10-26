@@ -5112,3 +5112,8 @@
 | `CYCLE-20261026-34PI` | `2026-10-26T09:02:22.614Z` | `ParadevAI/superset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4565, Rule 4566, Rule 4567` | Yes (`c021f0c5...`) |
 | `CYCLE-20261026-UG1U` | `2026-10-26T09:23:37.026Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4568, Rule 4569, Rule 4570` | Yes (`3dfa9131...`) |
 | `CYCLE-20261026-VL4B` | `2026-10-26T09:24:30.251Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4571` | Yes (`7089b1d9...`) |
+| `CYCLE-20261026-R5DK` | `2026-10-26T09:49:02.840Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4572` | Yes (`9d1d301b...`) |
+| `CYCLE-20261026-RLNO` | `2026-10-26T09:49:23.940Z` | `Kruszoneq/macUSB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4573` | Yes (`1997a061...`) |
+| `CYCLE-20261026-WVVE` | `2026-10-26T09:53:30.458Z` | `ParadevAI/Paradev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4574` | Yes (`68ff24bc...`) |
+| `CYCLE-20261026-XJRH` | `2026-10-26T09:54:01.421Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4575` | Yes (`3badd473...`) |
+| `CYCLE-20261026-XS94` | `2026-10-26T09:54:12.424Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4576` | Yes (`7b7d707a...`) |

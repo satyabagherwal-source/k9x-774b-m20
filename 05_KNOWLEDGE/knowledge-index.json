@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T09:24:30.194Z",
-  "total_verified_learnings": 1091,
+  "last_updated": "2026-10-26T09:54:12.367Z",
+  "total_verified_learnings": 1092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6770,13 +6770,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "bf028bcc",
-      "content_hash": "08fc9d507fc72feec96321c59f2c765636b2575af0310ea0bbd38c9ffe626e15",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "88772172",
+      "content_hash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -6842,6 +6842,11 @@
           "number": 4530,
           "title": "UTF-8 Char Boundary Slicing on Bounded Buffer Caps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4572,
+          "title": "docs): keep the OrcaRouter registry summary within its limit [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6849,7 +6854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:49:13.469Z",
+      "verified_at": "2026-10-26T09:49:02.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13080,8 +13085,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "3c310992",
-      "content_hash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
+      "source_version": "4a5b9e47",
+      "content_hash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -13109,6 +13114,11 @@
           "number": 4360,
           "title": "build(deps-ui-dev): bump webpack (#14695)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4576,
+          "title": "build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13116,7 +13126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:03:27.152Z",
+      "verified_at": "2026-10-26T09:54:12.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31648,17 +31658,23 @@
       "slug": "kruszoneq-macusb",
       "platform": "github",
       "source_url": "https://github.com/Kruszoneq/macUSB",
-      "source_version": "938f7d12",
-      "content_hash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
+      "source_version": "777ed534",
+      "content_hash": "1997a061fb6bbb4ebc2647a33773b0ca6e0a773e5df994eb3c24c968ac168323",
       "dossier_path": "07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4573,
+          "title": "USB messages across app activation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T22:06:45.305Z",
+      "verified_at": "2026-10-26T09:49:23.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62231,8 +62247,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "4ab22a49",
-      "content_hash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
+      "source_version": "d6271e63",
+      "content_hash": "3badd4738fbfc3e063083918a20c882ac23638cc4919097c972276e725ca510a",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -62275,6 +62291,11 @@
           "number": 4335,
           "title": "langchain): honor nested filters and index field selectors (#6404)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4575,
+          "title": "deps): require SDK 0.1.17 for Compile APIs (#6596)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -62282,7 +62303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:18:54.663Z",
+      "verified_at": "2026-10-26T09:54:01.352Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128445,6 +128466,109 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T09:24:30.182Z"
+    },
+    "rule-4572": {
+      "learning_id": "rule-4572",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4572,
+      "title": "docs): keep the OrcaRouter registry summary within its limit [skip ci]",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "88772172",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:49:02.771Z"
+    },
+    "rule-4573": {
+      "learning_id": "rule-4573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4573,
+      "title": "USB messages across app activation",
+      "source_url": "https://github.com/Kruszoneq/macUSB",
+      "source_version": "777ed534",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:49:23.870Z"
+    },
+    "learn-github-paradevai-paradev": {
+      "learning_id": "learn-github-paradevai-paradev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ParadevAI/Paradev",
+      "repository": "ParadevAI/Paradev",
+      "slug": "paradevai-paradev",
+      "platform": "github",
+      "source_url": "https://github.com/ParadevAI/Paradev",
+      "source_version": "d962fd0f",
+      "content_hash": "68ff24bc731aacfcb9fabae1f8a34f9e990fde09e6e7d7692e8ca4344d2a45cb",
+      "dossier_path": "07_PROJECT_LEARNING/paradevai-paradev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/paradevai-paradev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4574,
+          "title": "desktop): stop deleting a sidebar group from blocking the UI (#8882)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-26T09:53:30.390Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4574": {
+      "learning_id": "rule-4574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4574,
+      "title": "desktop): stop deleting a sidebar group from blocking the UI (#8882)",
+      "source_url": "https://github.com/ParadevAI/Paradev",
+      "source_version": "d962fd0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:53:30.390Z"
+    },
+    "rule-4575": {
+      "learning_id": "rule-4575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4575,
+      "title": "deps): require SDK 0.1.17 for Compile APIs (#6596)",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "d6271e63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:54:01.352Z"
+    },
+    "rule-4576": {
+      "learning_id": "rule-4576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4576,
+      "title": "build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "4a5b9e47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T09:54:12.356Z"
     }
   },
   "aliases": {

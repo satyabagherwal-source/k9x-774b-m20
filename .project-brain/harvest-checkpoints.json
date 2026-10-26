@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T09:24:30.263Z",
+  "last_updated": "2026-10-26T09:54:12.435Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "e783004c3e39de74290c1cf72aa1e870f8f74edb6fc71f0d374db010d8e49ac8",
-      "verified_at": "2026-10-25T14:18:54.741Z",
+      "content_hash": "3badd4738fbfc3e063083918a20c882ac23638cc4919097c972276e725ca510a",
+      "verified_at": "2026-10-26T09:54:01.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:18:54.741Z"
+      "last_updated": "2026-10-26T09:54:01.431Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "08fc9d507fc72feec96321c59f2c765636b2575af0310ea0bbd38c9ffe626e15",
-      "verified_at": "2026-10-26T01:49:13.549Z",
+      "content_hash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
+      "verified_at": "2026-10-26T09:49:02.851Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:49:13.549Z"
+      "last_updated": "2026-10-26T09:49:02.851Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "c9e26af95b616b39d62474051d53cceae30b12f8e356fbd17f4beac780446011",
-      "verified_at": "2026-10-25T15:03:27.210Z",
+      "content_hash": "7b7d707a4d6863b837b15f61bcacaa266fd51e53cf1bde2fbb4e62b964b1db31",
+      "verified_at": "2026-10-26T09:54:12.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:03:27.210Z"
+      "last_updated": "2026-10-26T09:54:12.435Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -13911,14 +13911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kruszoneq-macusb",
-      "content_hash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
-      "verified_at": "2026-10-19T22:06:45.349Z",
+      "content_hash": "1997a061fb6bbb4ebc2647a33773b0ca6e0a773e5df994eb3c24c968ac168323",
+      "verified_at": "2026-10-26T09:49:23.951Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T22:06:45.349Z"
+      "last_updated": "2026-10-26T09:49:23.951Z"
     },
     "webrecorder/browsertrix-crawler": {
       "repository": "webrecorder/browsertrix-crawler",
@@ -16154,6 +16154,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-26T09:02:22.622Z"
+    },
+    "ParadevAI/Paradev": {
+      "repository": "ParadevAI/Paradev",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paradevai-paradev",
+      "content_hash": "68ff24bc731aacfcb9fabae1f8a34f9e990fde09e6e7d7692e8ca4344d2a45cb",
+      "verified_at": "2026-10-26T09:53:30.469Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-26T09:53:30.469Z"
     }
   },
   "repos": {

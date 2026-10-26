@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `4ab22a49`  
+> **Source Version**: `d6271e63`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:18:54.362Z  
+> **Timestamp**: 2026-10-26T09:54:01.019Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:18:54.231Z  
+> **Harvest Timestamp**: 2026-10-26T09:48:38.850Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40781 stars
+- **Stars / Engagement**: 40858 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6588** (2026-10-26): **[Bug]: # issue-v0.5.2-SDK漂移致镜像崩溃**
+  *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  # issue-v0.5.2-SDK漂移致镜像崩溃  > 上游 issue 稿件（待提交）：v0.5.2 发布管道把不含 ​`git_diff_paths` 的 SDK 0.1.15 打进镜像，server 调用不存在的方法导致崩溃。已回滚 v0.5.1.1 自用，本文档为完整 issue 稿，证据全部实测。  **同类事故**：#5928（0cdce969）、2da84464（10-13）之后第三轮 SDK 漂移。  ---  # [Bug] v0.5.2 release pipeline ships SDK 0.1.15 without ​`git_diff_paths` — server calls a method the installed SDK does not have  ## Environment  - Image: official ​`openviking`​ v0.5.2 (built from the ​`v0.5.2`​ tag via ​`build-docker-image.yml`) - Installed inside the image (verified by starting a throwaway container and inspecting):    - `openviking == 0.5.2`   - `openviking-sdk == 0.1.15`   - `hasattr(AsyncHTTPClient, "git_diff_paths") == False`  ## Symptom  Server code shipped in v0.5.2 calls ​`git_diff_paths`​, but neither the SDK version locked in ​`uv.lock`​ (0.1.15) nor the latest PyPI release (0.1.16) contains that method. The v0.5.2 image therefore crashes whenever the affected code paths run (compile / memory snapshot diffing). We had to roll back to v0.5.1.1, where the server does not call ​`git_diff_paths` and is self-consistent with SDK 0.1.15.  ## Evidence chain (all verified locally, nothing inferred)  1. **v0.5.2 tag server source calls** ​**​`git_diff_paths`​**​ **:**     - `service/compile_targets.py:1096`​ — ​`await self._fs._async_agfs.run("git_diff_paths", ...)`    - `storage/viking_fs/_snapshot.py:808`​ — ​`await self._async_agfs.run("git_diff_
+
 - **Issue #6356** (2026-10-21): **[Bug]: Studio Markdown preview drops viking:// images and lacks internal image navigation**
   *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  In the Markdown body preview, `rehype-sanitize` uses its default protocol allowlists, which do not include OpenViking's `viking` scheme. Explicit internal image `src` values and internal link `href` values are therefore stripped before the custom Markdown renderers can use them.  The existing `MarkdownImage` component already resolves resource-relative paths and downloads internal images through the authenticated content-download API, but it does not receive `onNavigate`. Consequently, bare internal images that do render cannot open the corresponding resource from the preview.  This is a code-level finding with local component-test coverage using mocked authenticated downloads. End-to-end acceptance against a live authenticated service has not been performed.  ### Steps to Reproduce  1. Place a readable JPEG at `viking://resources/demo/photo.jpg` and a Markdown document at `viking://resources/demo/article.md`. 2. Include the Markdown example below in the document. 3. Open the document body in Studio's resource preview. 4. Check the explicit internal image/link, then click or focus and press Enter on the relative image.  ```markdown ![Explicit internal image](viking://resources/demo/photo.jpg)  ![Relative internal image](./photo.jpg)  [Open image](viking://resources/demo/photo.jpg)  [![Linked image](./photo.jpg)](./target.md) ```  These are suggested live reproduction steps; live aut
-
-- **Issue #6290** (2026-10-20): **[Bug]: Experience application count is always 0 — plugin tool_status stays "running", gateway injection produces no ToolPart**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  ## Summary Experience **application count** (trajectory linkage via `collect_read_experience_uris`) stays **0 forever**, even when sessions clearly contain successful Experience body reads.  Verified locally on OpenViking **0.4.23**: 37 Experiences all return `total: 0`, while session archives show multiple `read`s of `.../memories/experiences/*.md`.  ## Environment - **OS**: macOS (arm64) - **OpenViking server**: 0.4.23 (`uv tool`, `127.0.0.1:1933`) - **Also checked**: 0.5.0 wheel — `collect_read_experience_uris` gating logic unchanged - **Clients**:   - Cursor (memory plugin capture)   - WorkBuddy / CodeBuddy (shared `openviking-transcript.mjs` / fleet adapter)  ### Steps to Reproduce  1. Install OpenViking **0.4.23** + the official memory plugin (Cursor or WorkBuddy). 2. Enable agent evolution / Experience features as usual. 3. In a new agent session, have the model **explicitly read** one Experience file, e.g. via MCP `read` / `CallDynamicTool` → `toolName: "read"` with:    - `uris: ["viking://user/<user>/memories/experiences/<name>.md"]` 4. Continue until the session is **captured and committed** (Stop / sessionEnd commit path). 5. Confirm the committed session `messages` contain a tool part whose `tool_input` includes that Experience URI. 6. Query:    ```http    GET /api/v1/agent-evolution/experiences/trajectories?experience_uri=viking://user/<user>/memories/experiences/<name>.md  ### E
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,713 +1495,706 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d5022f57` (2026-10-23)
-**Commit Message**: fix(langchain): honor nested filters and index field selectors (#6404)
+### Incident Patch 1: `009c483f` (2026-10-26)
+**Commit Message**: fix(deps): require SDK 0.1.17 for Compile APIs (#6596)
 
-* fix(langchain): match nested JSON store filters
+Use the published SDK that supports directory diffs and Compile write options.
+Refresh the lockfile, including the existing bot numpy requirement.
 
-(cherry picked from commit f6471b877ce1967455a7fd78015281c5f82308e5)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
+Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
 
-* fix(langchain): index LangGraph store field selectors
+**File**: `pyproject.toml` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ dependencies = [
+     "async-timeout>=5.0.1",
+     "orjson>=3.11.7",
+     "packaging>=24.0",
+-    "openviking-sdk>=0.1.15",
++    "openviking-sdk>=0.1.17",
+     "pydantic>=2.0.0",
+     "typing-extensions>=4.5.0",
+     "pyyaml>=6.0",
+```
 
-(cherry picked from commit 3c7bcae3f5410b7b6d7c38ee17563721ccb8fe39)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+**File**: `uv.lock` (modified, +7/-4)
+```diff
+@@ -3608,6 +3608,8 @@ bot = [
+     { name = "lark-oapi" },
+     { name = "mcp" },
+     { name = "msgpack" },
++    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
++    { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+     { name = "opencode-ai" },
+     { name = "opensandbox" },
+     { name = "opensandbox-server" },
+@@ -3763,6 +3765,7 @@ requires-dist = [
+     { name = "msgpack", marker = "extra == 'bot'", specifier = ">=1.0.8" },
+     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+     { name = "myst-parser", marker = "extra == 'doc'", specifier = ">=2.0.0" },
++    { name = "numpy", marker = "extra == 'bot'", specifier = ">=1.26.0" },
+     { name = "openai", specifier = ">=1.0.0" },
+     { name = "opencode-ai", marker = "extra == 'bot'", specifier = ">=0.1.0a0" },
+     { name = "opensandbox", marker = "extra == 'bot'", specifier = ">=0.1.5" },
+@@ -3772,7 +3775,7 @@ requires-dist = [
+     { name = "opentelemetry-exporter-otlp-proto-http", specifier = ">=1.14" },
+     { name = "opentelemetry-instrumentation-asyncio", specifier = ">=0.61b0" },
+     { name = "opentelemetry-sdk", specifier = ">=1.14" },
+-    { name = "openviking-sdk", specifier = ">=0.1.15" },
++    { name = "openviking-sdk", specifier = ">=0.1.17" },
+     { name = "orjson", specifier = ">=3.11.7" },
+     { name = "packaging", specifier = ">=24.0" },
+     { name = "pandas", marker = "extra == 'benchmark'", specifier = ">=2.0.0" },
+@@ -3861,14 +3864,14 @@ dev = [{ name = "pytest", specifier = ">=9.0.2" }]
+ 
+ [[package]]
+ name = "openviking-sdk"
+-version = "0.1.15"
++version = "0.1.17"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "httpx" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/ca/0d/4363876996c031976749c448ce449e3d5d1503c30745dba3127404664940/openviking_sdk-0.1.15.tar.gz", hash = "sha256:51586349329180d665ff9f33613aa2a33eff47d6f3e390f00077204ac139612d", size = 57632, upload-time = "2026-10-13T08:19:31.295Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8b/f5/2f63ccc7543e14af9facf500db8774fbd03ef47c9f7d362882f27ccaf93f/openviking_sdk-0.1.17.tar.gz", hash = "sha256:9f365e02a780ad04e4573180924e5afbe71f84342956356afc1e6834b2291751", size = 58085, upload-time = "2026-10-26T03:26:29.718Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/26/c2/c95482ecfd3a77294f9396b57011c5b3d01aeda5f0493515413a13127f2e/openviking_sdk-0.1.15-py3-none-any.whl", hash = "sha256:0eeb296feb0c963b43a21fc4a59cab1a487960a7c647c684ca1562246be7bd57", size = 34783, upload-time = "2026-10-13T08:19:30.101Z" },
++    { url = "https://files.pythonhosted.org/packages/42/7a/95698db99666c833fcd9fec0050f7d26f3202080003373a73a1e35bc439e/openviking_sdk-0.1.17-py3-none-any.whl", hash = "sha256:9bd2b4df917d8d807876b10acee3cc69d4ce7d292bb3b0ac44379a6ed959d205", size = 35006, upload-time = "2026-10-26T03:26:28.264Z" },
+ ]
+ 
+ [[package]]
+```
 
-* test(langgraph): cover filtered recall of selected fields
+---
 
-Exercise selected index fields and nested filters together through sync, async and batch search. Check caller values remain unchanged and document projection refresh behavior in both guides.
+### Incident Patch 2: `d6271e63` (2026-10-26)
+**Commit Message**: fix(auth): reveal only the caller's own user API key in admin listings (#6610)
 
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+* fix(auth): mask stored user API keys in admin listings
 
-* docs(langchain): clarify reserved nested filter operators
+* fix(auth): reveal only the caller's own user key in admin listings
 
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+- non-ROOT list_users responses keep plaintext api_key solely for the
+  caller's own row, requiring strict match of listing account, row user
+  and the account/user segments embedded in the key; all other rows stay
+  masked key_prefix
+- apply the same rule to MCP list_users(include_credentials=true)
+- CLI list-users merges api_key/key_prefix into one api_key table column,
+  masks by default, and reveals plaintext via --reveal-api-keys
+- move FileStore from api_keys/legacy.py to account_stores/file.py and
+  require the three-segment key format; update memory doctor diagnostics
+- sync zh/en docs and tests
+
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
-Co-authored-by: ktz03 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
 
-**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
+**File**: `crates/ov_cli/src/commands/admin.rs` (modified, +182/-28)
 ```diff
-@@ -271,6 +271,11 @@ errors propagate, and `put()` does not overwrite a record after a failed read.
- `list_namespaces(prefix=("users", "*"))` matches one namespace label per `*`, including
- when `root_uri` uses a peer home alias such as `viking://~/peers/support/memories/langgraph_store`.
+@@ -5,7 +5,7 @@ use crate::theme;
+ use colored::Colorize;
+ use serde_json::{Value, json};
  
-+`search()` accepts nested JSON filters such as `filter={"metadata": {"color": "blue"}}`.
-+Filter keys `eq`, `ne`, `gt`, `gte`, `lt`, `lte` and `in` are reserved operator aliases at every nesting level.
-+Use `index=["items[*].text"]` to index selected array fields while retaining the complete
-+stored value. Existing index projections are updated when the item is written again.
-+
- ### LangGraph middleware
+-const SECRET_PLACEHOLDER: &str = "********";
++const SECRET_MASK_NOTICE: &str = "Note: API keys are masked by default. Pass --reveal-api-keys to reveal plaintext (ROOT sees every key; ADMIN/USER only its own).";
  
- ```python
-```
-
-**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
-```diff
-@@ -258,6 +258,11 @@ store.put(("users", "ada"), "preferences", None)  # 值为 None 表示删除该
- `list_namespaces(prefix=("users", "*"))` 中的每个 `*` 匹配一层命名空间，
- 也适用于 `viking://~/peers/support/memories/langgraph_store` 这样的 peer 主目录别名。
- 
-+`search()` 支持 `filter={"metadata": {"color": "blue"}}` 这样的嵌套 JSON 筛选。
-+筛选中的 `eq`、`ne`、`gt`、`gte`、`lt`、`lte` 和 `in` 在所有嵌套层级均为保留的运算符别名。
-+使用 `index=["items[*].text"]` 可以只索引数组中的指定字段，同时保留完整的存储值。
-+已有条目的索引会在再次写入该条目时更新。
-+
- ### LangGraph middleware
- 
- ```python
-```
-
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/store.py` (modified, +29/-6)
-```diff
-@@ -35,6 +35,7 @@
-         PutOp,
-         SearchItem,
-         SearchOp,
-+        get_text_at_path,
-     )
- else:
-     try:
-@@ -47,6 +48,7 @@
-             PutOp,
-             SearchItem,
-             SearchOp,
-+            get_text_at_path,
-         )
-     except ImportError:  # pragma: no cover - exercised by optional import path
-         _LANGGRAPH_IMPORT_ERROR = missing_dependency("langgraph", "langgraph")
-@@ -559,7 +561,11 @@ def _extract_uris(value: Any) -> list[str]:
- 
- def _project_value(value: dict[str, Any], index: bool | list[str] | None) -> dict[str, Any]:
-     if isinstance(index, list):
--        return {field: _nested_value(value, field) for field in index}
-+        projected = {field: _nested_value(value, field) for field in index}
-+        for field in index:
-+            if projected[field] is None:
-+                projected[field] = get_text_at_path(value, field) or None
-+        return projected
-     return value
- 
- 
-@@ -577,15 +583,32 @@ def _matches_filter(value: dict[str, Any], filter: dict[str, Any] | None) -> boo
-         return True
-     for path, expected in filter.items():
-         actual = _nested_value(value, path)
--        if isinstance(expected, dict):
--            for op, target in expected.items():
--                if not _compare(actual, op, target):
--                    return False
--        elif actual != expected:
-+        if not _matches_value(actual, expected):
-             return False
-     return True
- 
- 
-+def _matches_value(actual: Any, expected: Any) -> bool:
-+    if isinstance(expected, dict):
-+        if any(
-+            key.startswith("$") or key in {"eq", "ne", "gt", "gte", "lt", "lte", "in"}
-+            for key in expected
-+        ):
-+            return all(_compare(actual, op, target) for op, target in expected.items())
-+        return isinstance(actual, dict) and all(
-+            _matches_value(actual.get(key), target) for key, target in expected.items()
-+        )
-+    if isinstance(expected, (list, tuple)):
-+        return (
-+            isinstance(actual, (list, tuple))
-+            and len(actual) == len(expected)
-+            and all(
-+                _matches_value(left, right) for left, right in zip(actual, expected, strict=False)
-+            )
-+        )
-+    return actual == expected
-+
-+
- def _compare(actual: Any, op: str, target: Any) -> bool:
-     if op in {"$eq", "eq"}:
-         return actual == target
-```
-
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_integration.py` (modified, +118/-1)
-```diff
-@@ -24,7 +24,7 @@
-     convert_to_openai_messages,
- )
- from langchain_core.runnables import RunnableLambda
--from langgraph.store.base import InvalidNamespaceError, PutOp
-+from langgraph.store.base import InvalidNamespaceError, PutOp, SearchOp
- from openviking_sdk.errors import (
-     InvalidArgumentError,
-     NotFoundError,
-@@ -1894,6 +1894,58 @@ def rm(self, uri, recursive=False):
-     assert store.search(namespace, query="azure") == []
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("query", [None, "doc"])
-+@pytest.mark.parametrize(
-+    "filter, expected",
-+    [
-+        ({"metadata": {"color": "blue"}}, ["alpha"]),
-+        ({"metadata": {"nested": {"owner": "ada"}}}, ["alpha"]),
-+        ({"metadata": {"nested": {"rank": {"$gte": 2}}}}, ["alpha"]),
-+        ({"metadata": {"detail.region": "eu"}}, ["alpha"]),
-+        ({"tags": [{"role": "reviewer"}, "memory"]}, ["alpha"]),
-+        ({"tags": [{"role": "reviewer"}]}, []),
-+        ({"metadata": {}}, ["alpha", "beta"]),
-+        ({"metadata": {"color": "black"}}, []),
-+        ({"metadata.nested.rank": {"gte": 2}}, ["alpha"]),
-+        ({"metadata.nested": {"$eq": {"rank": 3, "owner": "ada"}}}, ["alpha"]),
-+        ({"metadata": {"eq": "blue", "label": "blue"}}, ["scalar"]),
-+        ({"metadata": {"$unknown": "blue"}}, ["scalar"]),
-+        ({"tags": ["reviewer", "memory"]}, ["scalar"]),
-+        ({"kind": "doc"}, ["alpha", "beta", "scalar"]),
-+    ],
-+)
-+async def test_langgraph_store_structured_filters(filter, expected, query):
-+    store = OpenVikingStore(client=InMemoryOpenVikingClient())
-+    for key, value in {
-+        "alpha": {
-+            "kind": "doc",
-+            "metadata": {
-+                "color": "blue",
-+                "nested": {"rank": 3, "owner": "ada"},
-+                "detail.region": "eu",
-+            },
-+            "tags": [{"role": "reviewer", "active": True}, "memory"],
-+        },
-+        "beta": {
-+            "kind": "doc",
-+            "metadata": {"color": "red", "nested": {"rank": 1, "owner": "bob"}},
-+            "tags": [{"role": "reader", "active": True}, "memory"],
-+        },
-+        "scalar": {"kind": "doc", "metadata": "blue", "tags": ["reviewer", "memory"]},
-+    }.items():
-+        store.put(("users", "ada"), key, value)
-+
-+    op = SearchOp(("users",), filter=filter, query=query)
-+    results = [
-+        store.search(("users",), filter=filter, query=query),
-+        await store.asearch(("users",), filter=filter, query=query),
-+        store.batch([op])[0],
-+        (await store.abatch([op]))[0],
-+    ]
-+    assert all(sorted(item.key for item in items) == expected for items in results)
-+
-+
- def test_langgraph_store_semantic_search_keeps_peer_id_out_of_retrieval():
-     client = InMemoryOpenVikingClient()
-     store = OpenVikingStore(client=client, actor_peer_id="peer-store")
-@@ -1911,6 +1963,71 @@ def test_langgraph_store_rejects_ttl_writes():
-         store.put(("users", "ada"), "temporary", {"note": "expires"}, ttl=60)
- 
- 
-+@pytest.mark.parametrize("use_default", [False, True])
-+@pytest.mark.parametrize(
-+    ("field", "query", "expected_match"),
-+    [
-+        ("$", "solstice", True),
-+        ("", "solstice", True),
-+        ("items[0].text", "pulsar", True),
-+        ("items[-1].text", "galaxy", True),
-+        ("items[*].text", "galaxy", True),
-+        ("nested[*].parts[*].text", "aurora", True),
-+        ("metadata.*", "quasar", True),
-+        ("{text,metadata.title}", "nebula", True),
-+        ("text", "nebula", True),
-+        ("metadata.title", "quasar", True),
-+        ("absent", "solstice", False),
-+        ("literal[0]", "nova", True),
-+    ],
-+)
-+@pytest.mark.asyncio
-+async def test_langgraph_store_indexes_selected_field_paths(
-+    field, query, expected_match, use_default
-+):
-+    value = {
-+        "text": "nebula",
-+        "metadata": {"title": "quasar"},
-+        "items": [{"text": "pulsar"}, {"text": "galaxy"}],
-+        "nested": [{"parts": [{"text": "aurora"}]}],
-+        "literal[0]": "nova",
-+        "ignored": "solstice",
+ pub async fn create_account(
+     client: &HttpClient,
+@@ -104,13 +104,20 @@ pub async fn list_users(
+     name: Option<String>,
+     role: Option<String>,
+     page: u32,
++    reveal_api_keys: bool,
+     output_format: OutputFormat,
+     compact: bool,
+ ) -> Result<()> {
+     let response = client
+         .admin_list_users(account_id, limit, name, role, page)
+         .await?;
+-    let response = list_users_response_for_output(response, output_format);
++    let (mut response, masked) = list_users_response_for_output(response, reveal_api_keys);
++    if matches!(output_format, OutputFormat::Table) {
++        merge_key_prefix_into_api_key(&mut response);
 +    }
-+    original = deepcopy(value)
-+    for mode in ("put", "aput", "batch", "abatch"):
-+        client = InMemoryOpenVikingClient()
-+        store = OpenVikingStore(client=client, index=[field] if use_default else None)
-+        index = None if use_default else [field]
-+        if mode == "put":
-+            store.put(("documents",), "note", value, index=index)
-+        elif mode == "aput":
-+            await store.aput(("documents",), "note", value, index=index)
-+        elif mode == "batch":
-+            store.batch([PutOp(("documents",), "note", value, index=index)])
-+        else:
-+            await store.abatch([PutOp(("documents",), "note", value, index=index)])
++    if masked {
++        eprintln!("{SECRET_MASK_NOTICE}");
++    }
+     output_success(&response, output_format, compact);
+     Ok(())
+ }
+@@ -348,37 +355,88 @@ fn contains_non_empty_user_key(value: &Value) -> bool {
+     }
+ }
+ 
+-fn list_users_response_for_output(mut response: Value, output_format: OutputFormat) -> Value {
+-    if matches!(output_format, OutputFormat::Table) {
+-        redact_plaintext_api_keys(&mut response);
++fn list_users_response_for_output(mut response: Value, reveal_api_keys: bool) -> (Value, bool) {
++    if reveal_api_keys {
++        return (response, false);
++    }
++    let masked = mask_plaintext_api_keys(&mut response);
++    (response, masked)
++}
 +
-+        assert store.get(("documents",), "note").value == value
-+        assert value == original
-+        expected_keys = ["note"] if expected_match else []
-+        assert [item.key for item in store.search(("documents",), query=query)] == expected_keys
-+        filter = {"me
++/// Collapse the server's `key_prefix`/`api_key` fields into a single `api_key`
++/// table column; the JSON response shape is left untouched.
++fn merge_key_prefix_into_api_key(value: &mut Value) {
++    fn normalize_row(row: &mut Value) {
++        let Some(object) = row.as_object_mut() else {
++            return;
++        };
++        if !object.contains_key("api_key") {
++            if let Some(prefix) = object.remove("key_prefix") {
++                object.insert("api_key".to_string(), prefix);
++            }
++        } else {
++            object.remove("key_prefix");
++        }
++    }
++    match value {
++        Value::Array(users) => users.iter_mut().for_each(normalize_row),
++        Value::Object(object) => {
++            if let Some(users) = object.get_mut("users").and_then(Value::as_array_mut) {
++                users.iter_mut().for_each(normalize_row);
++            }
++        }
++        _ => {}
+     }
+-    response
+ }
+ 
+-fn redact_plaintext_api_keys(value: &mut Value) {
++fn mask_plaintext_api_keys(value: &mut Value) -> bool {
+     match value {
+         Value::Object(object) => {
++            let mut masked = false;
+             for (key, child) in object {
+-                if key == "api_key"
+-                    && child
+-                        .as_str()
+-                        .is_some_and(|api_key| !api_key.trim().is_empty())
+-                {
+-                    *child = Value::String(SECRET_PLACEHOLDER.to_string());
+-                } else {
+-                    redact_plaintext_api_keys(child);
++                if key == "api_key" {
++                    if let Some(api_key) = child.as_str() {
++                        if !api_key.trim().is_empty() {
++                            *child = Value::String(mask_api_key(api_key));
++                            masked = true;
++                        }
++                    }
++                } else if mask_plaintext_api_keys(child) {
++                    masked = true;
+                 }
+             }
++            masked
+         }
+         Value::Array(items) => {
++            let mut masked = false;
+             for item in items {
+-                redact_plaintext_api_keys(item);
++                if mask_plaintext_api_keys(item) {
++                    masked = true;
++                }
+             }
++            masked
+         }
+-        _ => {}
++        _ => false,
+     }
+ }
+ 
++/// Match `openviking/server/api_keys/new.py:mask_api_key` so CLI and API output look the same.
++fn mask_api_key(api_key: &str) -> String {
++    let parts: Vec<&str> = api_key.split('.').collect();
++    if api_key.is_empty() || parts.len() != 3 {
++        return "*".repeat(api_key.chars().count());
++    }
++
++    let secret_chars: Vec<char> = parts[2].chars().collect();
++    let visible_length = if secret_chars.len() > 4 { 4 } else { 0 };
++    let hidden_length = secret_chars.len() - visible_length;
++
++    let mut masked = format!("{}.{}.", parts[0], parts[1]);
++    masked.push_str(&"*".repeat(hidden_length));
++    masked.push_str(&secret_chars[hidden_length..].iter().collect::<String>());
++    masked
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -463,43 +521,139 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn list_users_table_output_redacts_plaintext_api_keys() {
++    fn mask_api_key_matches_server_format() {
++        let cases = [
++    
+```
+
+**File**: `crates/ov_cli/src/handlers.rs` (modified, +2/-0)
+```diff
+@@ -648,6 +648,7 @@ pub async fn handle_admin(cmd: AdminCommands, ctx: CliContext) -> Result<()> {
+             name,
+             role,
+             page,
++            reveal_api_keys,
+         } => {
+             commands::admin::list_users(
+                 &client,
+@@ -656,6 +657,7 @@ pub async fn handle_admin(cmd: AdminCommands, ctx: CliContext) -> Result<()> {
+                 name,
+                 role,
+                 page,
++                reveal_api_keys,
+                 ctx.output_format,
+                 ctx.compact,
+             )
+```
+
+**File**: `crates/ov_cli/src/main.rs` (modified, +3/-0)
+```diff
+@@ -2185,6 +2185,9 @@ enum AdminCommands {
+         /// 1-based page number (requires --limit)
+         #[arg(long, default_value = "1", value_name = "n")]
+         page: u32,
++        /// Show plaintext API keys instead of masked values (ROOT sees all keys; ADMIN/USER only its own)
++        #[arg(long)]
++        reveal_api_keys: bool,
+     },
+     /// Create an empty account-scoped group
+     CreateGroup {
+```
+
+**File**: `docs/en/api/08-admin.md` (modified, +9/-3)
+```diff
+@@ -1593,7 +1593,7 @@ List active users in a workspace. Users with deletion in progress are omitted.
+ 2. Call API Key Manager to get active users list (in creation order)
+ 3. Apply optional filters (name, role)
+ 4. Apply optional `limit`/`page` pagination
+-5. Return users list (trusted mode omits user_key)
++5. Return users list with role-based credential visibility (trusted mode omits credentials)
+ 
+ **Code Entry Points:**
+ - `openviking/server/routers/admin.py:list_users` - HTTP route
+@@ -1611,14 +1611,18 @@ List active users in a workspace. Users with deletion in progress are omitted.
+ | role | str | No | null | Filter by role |
+ | query | str | No | null | HTTP-only, case-insensitive literal substring match on user IDs |
+ | include_summary | bool | No | false | HTTP-only, return paginated users and account statistics in an object |
+-| include_credentials | bool | No | true | HTTP-only. Set false to return `user_id`, `role`, and `api_key_available` without credentials or key prefixes. `api_key_available` is true only when the server can read the complete key for a server-side binding; hash-only credentials return false. The default preserves the existing mode-dependent response. |
++| include_credentials | bool | No | true | HTTP-only. ROOT receives all available plaintext keys; ADMIN receives its own plaintext key and masked prefixes for other users. Set false to return `user_id`, `role`, and `api_key_available` without credentials or key prefixes. `api_key_available` is true only when the server can read the complete key for a server-side binding; hash-only credentials return false. |
+ | limit | int | No | null | Page size (≥1). Omit to return all matches |
+ | page | int | No | 1 | 1-based page number; only applies when `limit` is set |
+ 
+ **Notes:**
+ - Results are returned in creation order
+ - ADMIN can only list users in their own account
+-- In `trusted` mode, `user_key` is omitted from the response
++- ROOT receives every stored key as plaintext in `api_key`. A non-ROOT caller receives plaintext in `api_key` only for its own row; every other user (including other ADMIN users) is returned as a masked `key_prefix`. Self-matching is strict: the listing account, the row's user ID, and the account/user segments embedded in the three-segment key must all equal the caller's authenticated identity; otherwise the row is masked. Three-segment keys retain the first two segments and only the last four characters of the secret segment; every preceding secret character is replaced by `*`. Secrets of four characters or fewer are completely hidden. Keys that are not in the three-segment format are fully masked. Hash-only credentials retain their existing prefix.
++- Masking is enforced by the server for HTTP and MCP `list_users(include_credentials=true)`, so it also applies to CLI/SDK JSON output. Clients must treat `key_prefix` as display-only and require a supplied key to switch identities.
++- `ov admin list-users` additionally masks the plaintext `api_key` rows client-side by default, in both table and JSON output, and prints a notice on stderr. Pass `--reveal-api-keys` to emit plaintext: ROOT then shows every key, while an ADMIN/USER caller still sees only its own key (other rows are masked by the server). The flag affects CLI rendering only and does not change the server response. In table output the server's `api_key` (plaintext or client-masked) and `key_prefix` fields are merged into a single `api_key` column; JSON output keeps the server field names.
++- This restriction applies to stored-key listing. Registration and key regeneration still return the newly issued key to ROOT or ADMIN; ordinary USER self-service key rotation is not yet available.
++- In `trusted` mode, both `api_key` and `key_prefix` are omitted from the response
+ - Users whose deletion has started are no longer returned
+ 
+ **Summary responses (HTTP):** Set `include_summary=true` to return an object in `result` with `users` (the current page), `total` (matching users), `account_total`, `manager_count` (admin/root), and `key_count` (users with a visible key or prefix). Account statistics ignore search/role filters and exclude deleting users; `key_count` is zero when key exposure is disabled. The default remains a user array for existing callers.
+@@ -1688,6 +1692,8 @@ fmt.Println(users)
+ ov admin list-users acme
+ # If using root_api_key (--sudo):
+ ov --sudo admin list-users acme
++# Show plaintext keys instead of masked values (ROOT: all keys; ADMIN/USER: own key only)
++ov --sudo admin list-users acme --reveal-api-keys
+ # Filter by wildcard name
+ ov admin list-users acme --name '*ali*'
+ # Paginated
+```
+
+**File**: `docs/en/guides/04-authentication.md` (modified, +2/-0)
+```diff
+@@ -52,6 +52,8 @@ openviking-server
+ 
+ User keys are generated by the Admin API. By default they use random secret material; Admin API callers may also provide a `seed` to derive a predictable key secret from `sha256(user_id + "\0" + seed)`. The server still verifies the resulting key against the stored key or key hash.
+ 
++User keys use the three-segment format `base64url(account).base64url(user).base64url(secret)`. Only this format is accepted; bare or otherwise malformed keys are rejected with `401 Invalid API key`.
++
+ ### Managing Accounts and Users
+ 
+ Use the root key to create accounts (workspaces) and users via the Admin API:
+```
+
+**File**: `docs/en/guides/06-mcp-integration.md` (modified, +3/-1)
+```diff
+@@ -215,7 +215,9 @@ not echo resolved secrets in chat. Tree and upsert return no stored values.
+ 
+ All account users may call `list_users` and `list_groups`; neither tool accepts a different account.
+ The default output contains only user IDs and a matching total, or group IDs. Even administrators
+-must explicitly set `include_credentials=true` to include available credentials. A USER requesting
++must explicitly set `include_credentials=true` to include credential fields: ROOT receives
++every available plaintext key in `api_key`; ADMIN receives its own plaintext key and masked
++`key_prefix` values for every other user. A USER requesting
+ credentials receives `PERMISSION_DENIED`, even when the query matches no users. Trusted auth mode
+ forbids credential disclosure. Group membership remains available through the admin API.
+ 
+```
+
+**File**: `docs/en/guides/08-encryption.md` (modified, +2/-2)
+```diff
+@@ -101,7 +101,7 @@ File encryption and API key hashing are independent controls:
+ **By default, `encryption.api_key_hashing.enabled = false`**:
+ - API keys are stored in plaintext within JSON files
+ - If `encryption.enabled = true`, the entire file is protected by AES-GCM encryption
+-- `ov admin list-users` can display the full API key
++- `ov admin list-users` can display the full API key when run with `--reveal-api-keys`
+ - If `encryption.enabled = true` and API key hashing stays disabled, the server writes an informational log line about this at startup
+ 
+ ### Enabling Argon2id Hashing
+@@ -122,7 +122,7 @@ Enable Argon2id one-way hashing to stop storing recoverable API key values:
+ **Note**: When enabled:
+ - API keys are stored using Argon2id one-way hashing
+ - Plaintext keys cannot be recovered from hash values
+-- `ov admin list-users` only shows `key_prefix` instead of the full API key
++- `ov admin list-users` only shows `key_prefix` instead of the full API key (a caller's own row cannot be revealed either, since no plaintext is stored)
+ - Plaintext keys are only visible when creating users or regenerating keys
+ 
+ ### Configuration Example
+```
+
+**File**: `docs/zh/api/08-admin.md` (modified, +9/-3)
+```diff
+@@ -1449,7 +1449,7 @@ ov admin register-user acme bob-private --role user \
+ 2. 调用 API Key Manager 获取活跃用户列表（按创建顺序排列）
+ 3. 应用可选的过滤条件（name、role）
+ 4. 应用可选的 `limit`/`page` 分页
+-5. 返回用户列表（trusted 模式下不包含 user_key）
++5. 按调用者角色返回密钥信息（trusted 模式下不包含密钥信息）
+ 
+ **代码入口：**
+ - `openviking/server/routers/admin.py:list_users` - HTTP 路由
+@@ -1467,14 +1467,18 @@ ov admin register-user acme bob-private --role user \
+ | role | str | 否 | null | 按角色过滤 |
+ | query | str | 否 | null | 仅 HTTP，按用户 ID 做不区分大小写的字面包含匹配 |
+ | include_summary | bool | 否 | false | 仅 HTTP，以对象返回分页用户和账号统计 |
+-| include_credentials | bool | 否 | true | 仅 HTTP。设为 false 时仅返回 `user_id`、`role` 和 `api_key_available`，不返回密钥或前缀；仅当服务端能读取完整 key 并用于服务端绑定时 `api_key_available` 才为 true，仅存哈希的凭据返回 false；默认保持现有按鉴权模式返回字段的行为。 |
++| include_credentials | bool | 否 | true | 仅 HTTP。ROOT 可获取可用的明文密钥，ADMIN 仅获取打码后的前缀。设为 false 时仅返回 `user_id`、`role` 和 `api_key_available`，不返回密钥或前缀；仅当服务端能读取完整 key 并用于服务端绑定时 `api_key_available` 才为 true，仅存哈希的凭据返回 false。 |
+ | limit | int | 否 | null | 每页数量（≥1）。省略则返回所有匹配项 |
+ | page | int | 否 | 1 | 从 1 开始的页码；仅在设置了 `limit` 时生效 |
+ 
+ **说明：**
+ - 结果按创建顺序返回
+ - ADMIN 只能列出自己所属的 account 中的用户
+-- 在 `trusted` 模式下，响应中不会包含 `user_key` 字段
++- ROOT 可通过 `api_key` 获取全部已存储的明文密钥。非 ROOT 调用方只有自身那一行返回 `api_key` 明文，其他用户（包括其他 ADMIN）均返回打码后的 `key_prefix`。自身匹配是严格匹配：列表 account、行内 user ID 以及三段式 key 内嵌的 account/user 段必须全部等于调用方认证身份，否则该行仍打码。三段式密钥保留前两段和 secret 的最后 4 个字符，secret 中其余每个字符均替换为 `*`；secret 不超过 4 个字符时完全隐藏。非三段式密钥完全隐藏；仅存哈希的凭据沿用已有前缀。
++- 打码在服务端执行，同时覆盖 HTTP 和 MCP 的 `list_users(include_credentials=true)`，因此 CLI/SDK 的 JSON 输出也受保护。客户端只能将 `key_prefix` 用于展示，切换身份时需要另行提供可用密钥。
++- `ov admin list-users` 默认还会在 CLI 侧对明文 `api_key` 行使用相同格式打码，table 和 JSON 输出保持一致，并在 stderr 打印提示。传入 `--reveal-api-keys` 可输出明文：ROOT 会显示全部密钥，ADMIN/USER 调用方仍只能看到自身密钥（其他行由服务端打码）。该 flag 只影响 CLI 渲染，不改变服务端响应。table 输出会把服务端的 `api_key`（明文或 CLI 打码值）与 `key_prefix` 合并为同一个 `api_key` 列；JSON 输出保留服务端的字段名。
++- 本限制针对已存储密钥的列表浏览。创建用户与重置密钥仍会向 ROOT 或 ADMIN 返回新密钥；普通 USER 尚无自助轮换接口。
++- 在 `trusted` 模式下，响应中不会包含 `api_key` 或 `key_prefix` 字段
+ - 用户删除开始后，不再出现在该列表中
+ 
+ **带统计的响应（HTTP）：** 设置 `include_summary=true` 后，`result` 返回对象：`users` 为当前页，`total` 为匹配人数，`account_total` 为账号总人数，`manager_count` 为 admin/root 人数，`key_count` 为具有可见密钥或前缀的用户数。账号统计不受搜索和角色过滤影响，并排除正在删除的用户；禁用密钥展示时 `key_count` 为零。默认仍返回用户数组，兼容现有调用。
+@@ -1544,6 +1548,8 @@ fmt.Println(users)
+ ov admin list-users acme
+ # 如果使用 root_api_key（--sudo）：
+ ov --sudo admin list-users acme
++# 输出明文密钥而不是打码值（仅 ROOT）
++ov --sudo admin list-users acme --reveal-api-keys
+ # 按通配符 name 过滤
+ ov admin list-users acme --name '*ali*'
+ # 分页
 ```
 
 ---
 
-### Incident Patch 2: `2260f689` (2026-10-23)
-**Commit Message**: fix(langchain): isolate session commits and report reset failures (#6479)
+### Incident Patch 3: `c7239e81` (2026-10-26)
+**Commit Message**: fix(retrieve): opt-in rerank for context mode and decouple rerank.threshold (#6605)
 
-* fix(langchain): isolate capture commit policies
+Context mode recalls through QUICK find()/find_skills, so a configured
+reranker never affected it (#6182). Add retrieval.apply_rerank_to_context
+(default false): one rerank call over the merged, deduplicated pool before
+quota allocation and budgeting, with wider recall, skill abstracts filled
+first, and fallback to vector scores.
 
-(cherry picked from commit e2440e409b14e1f47b95ceaec2a3b6d547140932)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
+rerank.threshold now filters only scores the reranker produced; vector-only
+paths default to 0 unless the request sets score_threshold. Extract the
+rerank scoring into openviking/retrieve/rerank_scoring.py so the retriever
+and the context assembler share it.
 
-* fix(langchain): report history reset recreation failures
+Fixes #6182
 
-(cherry picked from commit 3b2591cde30a1e6e41f158bd1052795eeddfa814)
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
-
-* test(langchain): validate session lifecycle fixes
-
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Hao Zhe <[REDACTED_EMAIL]>
-Co-authored-by: ktz03 <[REDACTED_EMAIL]>
-
-**File**: `docs/en/agent-integrations/07-langchain-langgraph.md` (modified, +7/-0)
+**File**: `docs/en/api/06-retrieval.md` (modified, +14/-4)
 ```diff
-@@ -312,6 +312,13 @@ recorder.flush("support-thread-1")
- recorder.close()
+@@ -9,10 +9,18 @@ OpenViking provides multiple retrieval methods, including simple vector similari
+ | Intent Analysis | No | Requires session content and `retrieval.enable_intent=true` |
+ | Session Context | No | Optional |
+ | Query Expansion | No | When session content exists and intent analysis is enabled |
+-| Reranking | No | Used for text queries when a reranker is configured |
++| Reranking | Never | `mode="list"`: text queries when a reranker is configured. `mode="context"`: only when `retrieval.apply_rerank_to_context` is on |
+ | Default Limit | 10 | 10 per planned query |
+ | Use Case | Simple queries | Conversational search |
+ 
++Reranking applies per path:
++
++- `find()` never reranks; it always uses vector scores.
++- `search(mode="list")` reranks text queries when a usable `rerank` config exists.
++- `search(mode="context")` reranks only when the server sets `retrieval.apply_rerank_to_context=true` (default `false`) and a usable `rerank` config exists. It reranks once per assembly, over the merged candidate pool before quotas and the token budget apply, for text queries only, and falls back to vector scores if the rerank call fails.
++
++Score thresholds follow one rule: a request `score_threshold` overrides everything and filters whatever scores the path produces. Without it, `rerank.threshold` (default `0.1`) filters only scores the reranker produced; vector-only paths, including `find()` and a failed rerank fallback, default to `0`.
++
+ ## Retrieval Pipeline
+ 
+ The core retrieval pipeline is as follows:
+@@ -417,7 +425,7 @@ Semantic retrieval with optional session-aware query planning.
+ 
+ `search()` uses the same target resolution and explicit tag filtering rules as `find()`, including the peer collection filter selected by `X-OpenViking-Actor-Peer` or SDK `actor_peer_id`. When `image_url` is provided, `search()` uses direct image retrieval and skips session query planning. `keywords` requires a non-empty text query, does not support images, and requires a remote VikingDB backend with a full-text index.
+ 
+-Event time decay applies to results tagged `memory_type=events` in semantic `find()` and both `search(mode="list")` and `search(mode="context")`. Memory extraction writes this tag on user/peer event L2 records; retrieval identifies events by the tag rather than inferring the type from a URI or level. Untagged/non-event results, query-less filter-only `find()`, `recall`, `grep`, and `glob` are unaffected. During event recall, the vector engine multiplies the original vector score by `time_score`. List responses expose this recall-stage vector score as `origin_score` and the factor as `time_score`; `score` is the final retrieval score, which may come from model rerank. Context mode uses that final score while assembling its candidates. The CLI labels list-result scores as semantic, time, and final scores. Inside the protection period `time_score` is 1, so the original score is unchanged. Time distance follows the VikingDB exponential decay operator, using the absolute difference from the request time. Time is read from the existing indexed `updated_at` field; no reindex or timestamp rewrite is required. Local fusion preserves the original score for missing or invalid timestamps; cloud fusion uses the indexed date-time field and the backend operator. The curve is owned by the server; callers only provide the per-request protection period. No `ov.conf` or `ovcli.conf` change is required.
++Event time decay applies to results tagged `memory_type=events` in semantic `find()` and both `search(mode="list")` and `search(mode="context")`. Memory extraction writes this tag on user/peer event L2 records; retrieval identifies events by the tag rather than inferring the type from a URI or level. Untagged/non-event results, query-less filter-only `find()`, `recall`, `grep`, and `glob` are unaffected. During event recall, the vector engine multiplies the original vector score by `time_score`. List responses expose this recall-stage vector score as `origin_score` and the factor as `time_score`; `score` is the final retrieval score, which may come from model rerank. Context mode assembles its candidates with vector scores, or with the model score when `retrieval.apply_rerank_to_context` is on. The CLI labels list-result scores as semantic, time, and final scores. Inside the protection period `time_score` is 1, so the original score is unchanged. Time distance follows the VikingDB exponential decay operator, using the absolute difference from the request time. Time is read from the existing indexed `updated_at` field; no reindex or timestamp rewrite is required. Local fusion preserves the original score for missing or invalid timestamps; cloud fusion uses the indexed date-time field and the backend operator. The curve is owned by the server; callers only provide the per-request protection period. No `ov.conf` or `ovcli.conf` change is required.
+ 
+ New and updated memories produced by memory extraction automatically rece
+```
+
+**File**: `docs/en/concepts/07-retrieval.md` (modified, +2/-2)
+```diff
+@@ -89,7 +89,7 @@ class TypedQuery:
+ | THINKING with a usable rerank configuration | `2 × limit` | One pass over the recalled candidates, returning at most `limit` results |
+ | THINKING without a usable rerank configuration | `limit` | Disabled |
+ 
+-`find()` uses QUICK. `search()` automatically selects THINKING when a reranker is configured, otherwise QUICK. This internal retrieval mode is separate from LLM reasoning parameters and session intent analysis. Queries generated by intent analysis continue to be retrieved and ranked separately, then aggregated as before.
++`find()` uses QUICK. `search()` automatically selects THINKING when a reranker is configured, otherwise QUICK. This internal retrieval mode is separate from LLM reasoning parameters and session intent analysis. Queries generated by intent analysis continue to be retrieved and ranked separately, then aggregated as before. Context mode (`search(mode="context")`) recalls through `find()`, so it uses vector scores unless the server enables `retrieval.apply_rerank_to_context`; it then reranks its merged candidates once per request, against the original query and its session expansions, before quotas and the token budget apply.
+ 
+ Image queries skip text reranking and recall `limit` candidates. They default to L2 unless `level` is specified.
+ 
+@@ -99,7 +99,7 @@ Rerank processes only the candidates from the completed global search; it never
+ 
+ - Candidate index records supply the `abstract` text for reranking.
+ - Scores and ranking use rerank scores when available, otherwise vector scores; access frequency, update time, and parent-directory scores do not affect them.
+-- Score thresholds apply after reranking, or to vector scores when reranking is disabled.
++- Score thresholds apply after reranking. A request `score_threshold` filters any score; without one, `rerank.threshold` filters only model rerank scores; vector scores (reranking disabled or failed) only need to exceed `0`.
+ - Failed requests or invalid rerank results retain the existing fallback to vector scores.
+ - Directory priority queues, parent-to-child score propagation, and convergence rounds are removed.
+ 
+```
+
+**File**: `docs/en/configuration/01-server.md` (modified, +5/-3)
+```diff
+@@ -246,7 +246,7 @@ discard source restrictions. Empty does not mean unknown or inapplicable.
+ | `provider` | `vikingdb`, `cohere`, `openai`, `litellm`, `jev` / `null` | `null` | Rerank service; inferred from credentials when omitted |
+ | `model` | string / `null` | `null` | OpenAI-compatible, LiteLLM, or Jev rerank model |
+ | `mode` | `noul`, `choice`, or `null` | `noul` | Jev rerank mode; `null` also uses `noul` |
+-| `threshold` | number | `0.1` | Minimum score considered relevant |
++| `threshold` | number | `0.1` | Minimum rerank score considered relevant; filters only model rerank scores, never vector scores, and a request `score_threshold` overrides it |
+ | `max_input_tokens` | integer; `0` or `>= 128` | `0` | Maximum estimated tokens per query-document pair; `0` disables truncation |
+ | `log_payloads` | boolean | `false` | Log complete rerank request and response payloads; may expose query and document content |
+ 
+@@ -259,7 +259,8 @@ Rerank has no separate `enabled` field. It becomes available when the required p
+ ```json
+ {
+   "retrieval": {
+-    "enable_intent": true
++    "enable_intent": true,
++    "apply_rerank_to_context": false
+   }
+ }
  ```
+@@ -269,8 +270,9 @@ Rerank has no separate `enabled` field. It becomes available when the required p
+ | Field | Type / values | Default | Purpose |
+ |---|---|---|---|
+ | `enable_intent` | boolean | `true` | Run intent analysis/query planning when `session_id` is present |
++| `apply_rerank_to_context` | boolean | `false` | Rerank `search(mode="context")` candidates with the configured `rerank` model |
  
-+Pass `commit_policy=` to `record()` or `arecord()` to override the recorder's
-+policy for that call without changing its default. `None` uses the default;
-+`OpenVikingCommitPolicy(mode="never")` suppresses a new post-write commit, but
-+still retries any previously failed commit. `history.clear()` and `aclear()`
-+raise if deletion or recreation fails; a failed recreation leaves the old
-+session deleted and does not acknowledge pending context references.
-+
- `record()` writes only the messages supplied by the caller. It filters framework
- control messages, writes in server-safe batches, and applies the configured
- commit policy. If a later batch or the post-write commit fails,
+-Search and Find requests default to `limit: 10`; override the limit on each API or SDK request. `retrieval.enable_intent` controls LLM query planning for session-aware Search, while result reranking is enabled only when `rerank` has a usable provider configuration.
++Search and Find requests default to `limit: 10`; override the limit on each API or SDK request. `retrieval.enable_intent` controls LLM query planning for session-aware Search, while result reranking is enabled only when `rerank` has a usable provider configuration. Context mode recalls with Find's vector scores; with `retrieval.apply_rerank_to_context` and a usable `rerank`, it also reranks its merged candidates once against the original query and its expansions before quotas and the token budget apply, which adds one rerank call per request.
+ 
+ ## Storage Settings
+ 
 ```
 
-**File**: `docs/zh/agent-integrations/07-langchain-langgraph.md` (modified, +5/-0)
+**File**: `docs/en/guides/01-configuration.md` (modified, +3/-1)
 ```diff
-@@ -298,6 +298,11 @@ recorder.flush("support-thread-1")
- recorder.close()
+@@ -1202,7 +1202,7 @@ using Choice through MCP.
+ | `timeout` | float | HTTP request timeout in seconds for HTTP rerank providers, including Jev. Default: `30.0` |
+ | `max_input_tokens` | int | Maximum estimated raw-text tokens in each query-document pair sent to the reranker. Oversized inputs retain their beginning and end. `0` disables. Default: `0` |
+ | `log_payloads` | bool | Log complete rerank request and response payloads. May expose query and document content. Default: `false` |
+-| `threshold` | float | Score threshold between `0.0` and `1.0`; results below this are filtered out. Default: `0.1` |
++| `threshold` | float | Rerank score threshold between `0.0` and `1.0`; reranked results below this are filtered out. It never filters vector scores (rerank not used, or failed), and a request `score_threshold` overrides it. Default: `0.1` |
+ | `extra_headers` | object | Custom HTTP headers (for OpenAI-compatible providers, optional) |
+ 
+ **Supported providers:**
+@@ -1222,6 +1222,7 @@ Configuration for session intent analysis and context assembly timeouts.
+ {
+   "retrieval": {
+     "enable_intent": true,
++    "apply_rerank_to_context": false,
+     "recall_intent_timeout_s": 5.0,
+     "recall_rewrite_timeout_s": 30.0
+   }
+@@ -1231,6 +1232,7 @@ Configuration for session intent analysis and context assembly timeouts.
+ | Parameter | Type | Description | Default |
+ |-----------|------|-------------|---------|
+ | `enable_intent` | bool | Run intent analysis and query planning when `search()` receives a `session_id`. | `true` |
++| `apply_rerank_to_context` | bool | Rerank `mode="context"` candidates with the configured [`rerank`](#rerank) model, once per request against the original query and its expansions, before quotas and the token budget apply. Needs a usable `rerank` config; image queries keep vector scores. | `false` |
+ 
+ Session intent analysis in ordinary `search()` and query expansion in `mode="context"` share `recall_intent_timeout_s`. Context digest rewriting uses a separate timeout:
+ 
+```
+
+**File**: `docs/zh/api/06-retrieval.md` (modified, +14/-4)
+```diff
+@@ -9,10 +9,18 @@ OpenViking 提供多种检索方法，包括简单的向量相似度搜索、关
+ | 意图分析 | 否 | 有会话内容且 `retrieval.enable_intent=true` 时执行 |
+ | 会话上下文 | 不使用 | 可选 |
+ | 查询扩展 | 否 | 意图分析启用且有会话内容时执行 |
+-| 重排序 | 不使用 | 配置了重排序模型时用于文本查询 |
++| 重排序 | 从不使用 | `mode="list"`：配置了重排序模型时用于文本查询。`mode="context"`：仅在开启 `retrieval.apply_rerank_to_context` 时使用 |
+ | 默认结果数 | 10 | 每条规划查询最多 10 条 |
+ | 使用场景 | 简单查询 | 对话式搜索 |
+ 
++各路径的 Rerank 情况：
++
++- `find()` 从不执行 Rerank，始终使用向量分数。
++- `search(mode="list")` 在配置了可用的 `rerank` 时对文本查询执行 Rerank。
++- `search(mode="context")` 仅在服务端设置 `retrieval.apply_rerank_to_context=true`（默认 `false`）且 `rerank` 配置可用时执行 Rerank：每次组装在配额和 token 预算之前对合并后的候选统一重排一次，仅限文本查询，Rerank 调用失败时回退到向量分数。
++
++分数阈值遵循同一规则：请求中的 `score_threshold` 优先，过滤该路径产出的任何分数；未指定时，`rerank.threshold`（默认 `0.1`）只过滤 Reranker 产出的分数，仅用向量分数的路径（包括 `find()` 和 Rerank 失败后的回退）默认阈值为 `0`。
++
+ ## 检索流程
+ 
+ 检索的核心流程如下：
+@@ -417,7 +425,7 @@ ov find "红色海报风格" --image ./poster.png --uri "viking://resources/imag
+ 
+ `search()` 使用和 `find()` 相同的目标解析和显式标签过滤规则，包括由 `X-OpenViking-Actor-Peer` 或 SDK `actor_peer_id` 选择的 peer 集合过滤。提供 `image_url` 时，`search()` 会直接执行图片检索并跳过会话 query planning。`keywords` 要求非空文本 query，不支持图片，且需要远程 VikingDB 配置全文索引。
+ 
+-事件时间衰减作用于语义 `find()`、`search(mode="list")` 和 `search(mode="context")` 中带 `memory_type=events` 标签的结果。记忆提取流程将该标签写入 user / peer 事件的 L2 记录；检索按标签判断，不从 URI 或层级推断事件类型。无事件标签的结果、无 query 的纯过滤 `find()`、`recall`、`grep` 和 `glob` 不受影响。事件召回阶段由向量引擎将原向量分乘以 `time_score`；响应中的 `score` 是最终检索分数，开启模型 rerank 时使用模型分。context 模式按最终分组装候选。保护期内 `time_score` 为 1，原分不变；时间距离与 VikingDB 指数衰减算子一致，取时间戳与请求时间的绝对差。list 响应中的 event 结果额外返回 `origin_score` 和 `time_score`，CLI 分别展示为 semantic、time 和 final 分。时间取自已有索引的 `updated_at` 字段，无需重新索引或改写时间戳；本地计算遇到缺失或非法时间时保持原分；云端使用索引中的日期时间字段和后处理算子。衰减曲线由服务端内部维护，调用方只需按请求传入保护期，无需修改 `ov.conf` 或 `ovcli.conf`。
++事件时间衰减作用于语义 `find()`、`search(mode="list")` 和 `search(mode="context")` 中带 `memory_type=events` 标签的结果。记忆提取流程将该标签写入 user / peer 事件的 L2 记录；检索按标签判断，不从 URI 或层级推断事件类型。无事件标签的结果、无 query 的纯过滤 `find()`、`recall`、`grep` 和 `glob` 不受影响。事件召回阶段由向量引擎将原向量分乘以 `time_score`；响应中的 `score` 是最终检索分数，开启模型 rerank 时使用模型分。context 模式默认按向量分组装候选，开启 `retrieval.apply_rerank_to_context` 后按模型分组装。保护期内 `time_score` 为 1，原分不变；时间距离与 VikingDB 指数衰减算子一致，取时间戳与请求时间的绝对差。list 响应中的 event 结果额外返回 `origin_score` 和 `time_score`，CLI 分别展示为 semantic、time 和 final 分。时间取自已有索引的 `updated_at` 字段，无需重新索引或改写时间戳；本地计算遇到缺失或非法时间时保持原分；云端使用索引中的日期时间字段和后处理算子。衰减曲线由服务端内部维护，调用方只需按请求传入保护期，无需修改 `ov.conf` 或 `ovcli.conf`。
+ 
+ 由记忆提取流程新生成或更新的记忆会自动写入 `memory_type=<类型>` 检索标签。启用衰减时，本地和云端均将按是否带 `memory_type=events` 标签拆成互斥且完整覆盖原范围的两路，再合并排序；两路均保留原 scope 的权限、目录和 level 限制，无需指定 peer id。存量数据不补标签，无标签记忆保持原分。直接内容刷新和普通标签更新保留已有类型，不从 URI 推断或重设类型。
+ 
+@@ -659,7 +667,7 @@ Agent 插件每轮注入上下文时，过去需要按类型逐个检索、再
+ 
+ **处理流程**：
+ 1. **L1 查询理解**：可选，结合 Session 最近消息做有界意图扩展（最多 3 条查询，超时熔断，失败回退原查询）
+-2. **L0 检索**：按 `quotas` 分桶独立检索，或不设配额时全域检索一次
++2. **L0 检索**：按 `quotas` 分桶独立检索，或不设配额时全域检索一次。命中使用与 `find()` 相同的向量分数；服务端开启 `retrieval.apply_rerank_to_context` 且 `rerank` 配置可用时，合并后的候选会在配额和预算之前用原始查询及其扩展查询统一重排一次（见下文）
+ 3. **L2 组装**：token 预算内填充档位（全员先落到各自类别的默认档，再用剩余预算按分数序加深），超限退档不截断
+ 4. **L3 重写**：可选，把组装结果压成带 URI 引用的 digest（超时熔断，失败仍返回未重写的 `rendered`；精确返回 `NO_RELEVANT_MEMORY` 时记为 `stats.rewrite="no_relevant"`，Coding Agent 客户端不会再回退注入 `rendered`）
+ 
+@@ -673,6 +681,8 @@ Agent 插件每轮注入上下文时，过去需要按类型逐个检索、再
+ 
+ **L0 检索域**：`query`、`image_url`、`context_type`、`limit`、`score_threshold`、`filter`、`tags`、`since`/`until` 以及可选的 `events_time_decay_protection` 与 list 模式一致。`limit` 只约束 quota-free 检索；一旦 `purpose` 或显式 `quotas` 启用分桶检索，各分类配额之和就是候选上限。`target_uri` 在 context 模式下暂不支持（返回 400）；`level` 被忽略，档位由 `detail` 决定。
+ 
++**可选 Rerank**：开启 `retrieval.apply_rerank_to_context` 且 `rerank` 配置可用时，文本查询每个请求对合并、去重后的候选执行一次 Rerank，以原始 `query` 与各条扩展查询拼接后的文本打分，只由扩展查询召回的命中也按该扩展点明的主题评判。不设配额时为此召回 `2 × limit` 条候选；分桶检索每桶最多重排 `2 × quota` 条，候选不足的桶留出的名额让给其他桶。Skill 以其包摘要参与打分。参与重排的候选 `score` 变为 Rerank 分数，`other_peer_penalty` 仍在其上生效。`score_threshold` 随之改为过滤最终分数而非召回；未指定时，`rerank.threshold` 只过滤模型分数。模型未打分的候选（文本为空或 Rerank 调用失败）保留向量分数。图像查询不执行 Rerank。`stats.rerank` 报告 `used`、`candidates`（送入模型的数量）和 `capped`（被每桶上限排除的数量）
++
+ **L1 查询理解**
+ 
+ | 参数 | 类型 | 默认值 | 说明 |
+@@ -809,7 +819,7 @@ curl -X POST http://localhost:1933/api/v1/search/search \
+ | `entries[].text` | string | 该档位的正文；`uri` 档为空 |
+ | `rendered` | string | 扁平 XML 上下文块，可直接注入；重写返回 `no_relevant` 时为空 |
+ | `digest` | string | 重写成功时的摘要；失败或压缩器判定无相关记忆时为空字符串 |
+-| `stats` | object | 预算用量、档位分布、扩展与重写状态（`off`、`ok`、`no_relevant`、`failed` 或 `timeout`）、去重账本状态；某个检索域失败时附带 `retrieval_errors`，用于区分「检索坏了」和「确实没有相关记忆」 |
++| `stats` | object | 预算用量、档位分布、扩展与重写状态（`off`、`ok`、`no_relevant`、`failed` 或 `timeout`）、去重账本状态；某个检索域失败时附带 `retrieval_errors`，用于区分「检索坏了」和「确实没有相关记忆」；请求应用了 context Rerank 时附带 `rerank` |
+ 
+ 当 `stats.rewrite` 为 `no_relevant` 时，响应仍保留 `entries` 供检查，但 `digest` 和
+ `rendered` 都为空字符串。这样即使客户端尚未识别新状态，也不会回退注入原文。本轮
+```
+
+**File**: `docs/zh/concepts/07-retrieval.md` (modified, +2/-2)
+```diff
+@@ -89,7 +89,7 @@ class TypedQuery:
+ | THINKING，且配置了可用的 Rerank | `2 × limit` | 对召回候选统一执行一次，返回最多 `limit` 条 |
+ | THINKING，未配置可用的 Rerank | `limit` | 不执行 |
+ 
+-`find()` 使用 QUICK。`search()` 配置了可用的 Rerank 时自动使用 THINKING，否则使用 QUICK。这是内部检索模式，不是 LLM 的思考参数，也不控制会话意图分析。意图分析生成的多条查询仍分别检索和排序，再按现有方式汇总。
++`find()` 使用 QUICK。`search()` 配置了可用的 Rerank 时自动使用 THINKING，否则使用 QUICK。这是内部检索模式，不是 LLM 的思考参数，也不控制会话意图分析。意图分析生成的多条查询仍分别检索和排序，再按现有方式汇总。Context 模式（`search(mode="context")`）通过 `find()` 召回，因此默认使用向量分数；服务端开启 `retrieval.apply_rerank_to_context` 后，会在配额和 token 预算之前，用原始查询及其会话扩展查询对合并后的候选每个请求统一重排一次。
+ 
+ 图像查询跳过文本 Rerank，候选数为 `limit`；未指定 `level` 时默认搜索 L2。
+ 
+@@ -99,7 +99,7 @@ Rerank 只处理本次全局召回的候选，不会触发下一轮检索。例
+ 
+ - 使用候选索引记录的 `abstract` 字段作为 Rerank 文本。
+ - 分数与排序使用 Rerank 分数，否则使用向量分数；访问频次、更新时间和父目录分数不参与加权。
+-- 分数阈值在 Rerank 后应用；未启用 Rerank 时使用向量分数。
++- 分数阈值在 Rerank 后应用。请求中的 `score_threshold` 过滤所有分数；未指定时，`rerank.threshold` 只过滤模型产出的 Rerank 分数，向量分数（未启用 Rerank 或 Rerank 失败时）不受其过滤。
+ - Rerank 请求失败或返回无效结果时，保留已有的向量分数回退行为。
+ - 不再使用目录优先队列、父子分数传播或多轮收敛判断。
+ 
+```
+
+**File**: `docs/zh/configuration/01-server.md` (modified, +5/-3)
+```diff
+@@ -238,7 +238,7 @@ Compiler 会优先忠实提炼原文中的对象、操作、前提和场景，
+ | `provider` | `vikingdb`、`cohere`、`openai`、`litellm`、`jev` / `null` | `null` | Rerank 服务类型；省略时根据凭证字段推断 |
+ | `model` | string / `null` | `null` | OpenAI 兼容、LiteLLM 或 Jev Rerank 模型 |
+ | `mode` | `noul`、`choice` 或 `null` | `noul` | Jev Rerank 模式；`null` 同样使用 `noul` |
+-| `threshold` | number | `0.1` | 判定结果相关的最低分数 |
++| `threshold` | number | `0.1` | 判定结果相关的最低 Rerank 分数；只过滤模型产出的 Rerank 分数，不过滤向量分数；请求中的 `score_threshold` 优先 |
+ | `max_input_tokens` | integer；`0` 或 `>= 128` | `0` | 每个 query-document pair 的最大估算 token；`0` 表示不截断 |
+ | `log_payloads` | boolean | `false` | 记录完整 rerank 请求和响应；日志可能包含 query 和文档内容 |
+ 
+@@ -251,7 +251,8 @@ Rerank 没有单独的 `enabled` 字段；配置了对应 provider 所需的凭
+ ```json
+ {
+   "retrieval": {
+-    "enable_intent": true
++    "enable_intent": true,
++    "apply_rerank_to_context": false
+   }
+ }
  ```
+@@ -261,8 +262,9 @@ Rerank 没有单独的 `enabled` 字段；配置了对应 provider 所需的凭
+ | 字段 | 类型 / 可选值 | 默认值 | 作用 |
+ |---|---|---|---|
+ | `enable_intent` | boolean | `true` | 有 `session_id` 时是否进行意图分析和查询规划 |
++| `apply_rerank_to_context` | boolean | `false` | 是否用已配置的 `rerank` 模型重排 `search(mode="context")` 的候选 |
  
-+向 `record()` 或 `arecord()` 传入 `commit_policy=` 可仅覆盖本次调用的策略，
-+不改变 recorder 的默认值。`None` 使用默认策略；`OpenVikingCommitPolicy(mode="never")`
-+禁止本次写入后的新 commit，但仍会重试之前失败的 commit。`history.clear()` 和 `aclear()`
-+会在删除或重建失败时抛出异常；重建失败时旧 session 已被删除，待确认的上下文引用不会被确认。
-+
- `record()` 只写入调用方传入的消息；它会过滤框架控制消息、按服务端限制分批写入，并应用已配置的
- commit 策略。如果后续批次或写入后的 commit 失败，`OpenVikingPartialWriteError` 会报告已经
- 确认写入的输入前缀，调用方可仅重试尚未写入的后缀；空后缀会安全地重试待完成的 commit。
+-Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 请求中覆盖。`retrieval.enable_intent` 控制带 Session 的 Search 是否执行 LLM 查询规划；只有配置了可用的 `rerank` provider 时才会执行结果重排。
++Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 请求中覆盖。`retrieval.enable_intent` 控制带 Session 的 Search 是否执行 LLM 查询规划；只有配置了可用的 `rerank` provider 时才会执行结果重排。Context 模式使用 Find 的向量分数召回；开启 `retrieval.apply_rerank_to_context` 且 `rerank` 可用时，会在配额和 token 预算之前，用原始查询及其扩展查询对合并后的候选统一重排一次，每个请求多一次 Rerank 调用。
+ 
+ ## 存储配置
+ 
 ```
 
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/history.py` (modified, +2/-2)
+**File**: `docs/zh/guides/01-configuration.md` (modified, +3/-1)
 ```diff
-@@ -185,15 +185,15 @@ async def aadd_messages(self, messages: Sequence[BaseMessage]) -> None:
-     def clear(self) -> None:
-         client = self._get_client()
-         call_openviking(client, "delete_session", session_id=self.session_id)
--        self._ensure_session(client)
-+        call_openviking(client, "create_session", session_id=self.session_id)
-         self._acknowledge_context_parts()
+@@ -1190,7 +1190,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
+ | `timeout` | float | HTTP Rerank provider（包括 Jev）的请求超时时间，单位为秒。默认：`30.0` |
+ | `max_input_tokens` | int | 每个 query-document 对发送给 reranker 的最大估算原始文本 token 数；超长输入会保留开头和结尾。`0` 表示不截断。默认：`0` |
+ | `log_payloads` | bool | 记录完整 rerank 请求和响应；日志可能包含 query 和文档内容。默认：`false` |
+-| `threshold` | float | 分数阈值，范围为 `0.0` 到 `1.0`。低于此值的结果会被过滤。默认：`0.1` |
++| `threshold` | float | Rerank 分数阈值，范围为 `0.0` 到 `1.0`。Rerank 后低于此值的结果会被过滤；它不过滤向量分数（未使用 Rerank 或 Rerank 失败时），请求中的 `score_threshold` 优先。默认：`0.1` |
+ | `extra_headers` | object | 自定义 HTTP 请求头（OpenAI 兼容 provider 可用，可选） |
  
-     async def aclear(self) -> None:
-         """Asynchronously reset this OpenViking session."""
+ **支持的提供方:**
+@@ -1210,6 +1210,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
+ {
+   "retrieval": {
+     "enable_intent": true,
++    "apply_rerank_to_context": false,
+     "recall_intent_timeout_s": 5.0,
+     "recall_rewrite_timeout_s": 30.0
+   }
+@@ -1219,6 +1220,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
+ | 参数 | 类型 | 说明 | 默认值 |
+ |------|------|------|--------|
+ | `enable_intent` | bool | `search()` 收到 `session_id` 时是否执行意图分析和查询规划。 | `true` |
++| `apply_rerank_to_context` | bool | 是否用已配置的 [`rerank`](#rerank) 模型重排 `mode="context"` 的候选：每个请求用原始查询及其扩展查询统一重排一次，在配额和 token 预算之前执行。需要可用的 `rerank` 配置；图像查询保持向量分数。 | `false` |
  
-         client = await self._get_async_client()
-         await acall_openviking(client, "delete_session", session_id=self.session_id)
--        await self._aensure_session(client)
-+        await acall_openviking(client, "create_session", session_id=self.session_id)
-         self._acknowledge_context_parts()
+ 普通 `search()` 的会话意图分析和 `mode="context"` 的查询扩展共用 `recall_intent_timeout_s`；上下文 digest 重写使用独立的超时配置：
  
-     def close(self) -> None:
-```
-
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/middleware.py` (modified, +6/-4)
-```diff
-@@ -312,10 +312,10 @@ def _capture(
-         plan = self._capture_plan(state, runtime)
-         if plan is None:
-             return None
--        self.recorder.commit_policy = self.commit_policy if commit else None
-+        policy = self.commit_policy if commit else None
-         if plan.unchanged:
-             with self._actor_peer_scope(plan.actor_peer_id):
--                self.recorder.record(plan.session_id, ())
-+                self.recorder.record(plan.session_id, (), commit_policy=policy)
-             self._pending_context_parts.pop(plan.key, None)
-             return None
-         try:
-@@ -325,6 +325,7 @@ def _capture(
-                     plan.messages[plan.start :],
-                     peer_id=plan.peer_id,
-                     context_parts=plan.context_parts,
-+                    commit_policy=policy,
-                 )
-         except OpenVikingPartialWriteError as exc:
-             self._handle_partial_capture(plan, exc)
-@@ -347,10 +348,10 @@ async def _acapture(
-         plan = self._capture_plan(state, runtime)
-         if plan is None:
-             return None
--        self.recorder.commit_policy = self.commit_policy if commit else None
-+        policy = self.commit_policy if commit else None
-         if plan.unchanged:
-             with self._actor_peer_scope(plan.actor_peer_id):
--                await self.recorder.arecord(plan.session_id, ())
-+                await self.recorder.arecord(plan.session_id, (), commit_policy=policy)
-             self._pending_context_parts.pop(plan.key, None)
-             return None
-         try:
-@@ -360,6 +361,7 @@ async def _acapture(
-                     plan.messages[plan.start :],
-                     peer_id=plan.peer_id,
-                     context_parts=plan.context_parts,
-+                    commit_policy=policy,
-                 )
-         except OpenVikingPartialWriteError as exc:
-             self._handle_partial_capture(plan, exc)
-```
-
-**File**: `integrations/frameworks/langchain/src/langchain_openviking/recording.py` (modified, +13/-4)
-```diff
-@@ -284,10 +284,16 @@ def record(
-         messages: Iterable[BaseMessage],
-         peer_id: str | None = None,
-         context_parts: Sequence[dict[str, Any]] = (),
-+        *,
-+        commit_policy: OpenVikingCommitPolicy | None = None,
-     ) -> OpenVikingRecordResult:
--        """Persist a caller-selected batch and apply the configured commit policy."""
-+        """Persist messages with a per-call policy, or the recorder default if None.
-+
-+        Use a ``never`` policy to suppress this call's post-write commit.
-+        """
- 
-         self._raise_if_closed()
-+        policy = self.commit_policy if commit_policy is None else commit_policy
-         self._retry_pending_commit(session_id)
-         input_messages = list(messages)
-         prepared_messages = _prepare_messages(
-@@ -343,7 +349,7 @@ def record(
-             apply_commit_policy(
-                 client,
-                 session_id,
--                self.commit_policy,
-+                policy,
-                 persisted_pending_tokens=persisted_pending_tokens,
-             )
-         except Exception as exc:
-@@ -362,10 +368,13 @@ async def arecord(
-         messages: Iterable[BaseMessage],
-         peer_id: str | None = None,
-         context_parts: Sequence[dict[str, Any]] = (),
-+        *,
-+        commit_policy: OpenVikingCommitPolicy | None = None,
-     ) -> OpenVikingRecordResult:
--        """Asynchronously persist messages and apply the configured commit policy."""
-+        """Async ``record`` with the same per-call and default policy behavior."""
- 
-         self._raise_if_closed()
-+        policy = self.commit_policy if commit_policy is None else commit_policy
-         await self._aretry_pending_commit(session_id)
-         input_messages = list(messages)
-         prepared_messages = _prepare_messages(
-@@ -435,7 +444,7 @@ async def arecord(
-             await aapply_commit_policy(
-                 client,
-                 session_id,
--                self.commit_policy,
-+                policy,
-                 persisted_pending_tokens=persisted_pending_tokens,
-             )
-         except asyncio.CancelledError as exc:
-```
-
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_host_history.py` (modified, +52/-0)
-```diff
-@@ -1,5 +1,7 @@
- """Native host history and capture remain independent of OV archive summaries."""
- 
-+import asyncio
-+import threading
- from copy import deepcopy
- from types import SimpleNamespace
- 
-@@ -290,3 +292,53 @@ def answer(messages):
-     else:
-         assert observed.content.startswith(f"{content}\n\n<openviking_context>")
-         assert "Deployment uses azure." in observed.content
-+
-+
-+@pytest.mark.parametrize("capture_mode", ["sync", "async-sync-client", "async-native-client"])
-+@pytest.mark.parametrize("first_commits", [False, True])
-+@pytest.mark.asyncio
-+async def test_concurrent_capture_hooks_keep_their_commit_policies(capture_mode, first_commits):
-+    entered = threading.Event()
-+    release = threading.Event()
-+
-+    class PausedClient(NoContextClient):
-+        def batch_add_messages(self, session_id, messages, **kwargs):
-+            if session_id == "first":
-+                entered.set()
-+                assert release.wait(5), "other session did not finish its capture"
-+            return super().batch_add_messages(session_id, messages, **kwargs)
-+
-+    class AsyncPausedClient(NoContextClient):
-+        async def batch_add_messages(self, session_id, messages, **kwargs):
-+            if session_id == "first":
-+                entered.set()
-+                assert await asyncio.to_thread(release.wait, 5), "other session did not finish"
-+            return super().batch_add_messages(session_id, messages, **kwargs)
-+
-+    client = AsyncPausedClient() if capture_mode == "async-native-client" else PausedClient()
-+    client_kwargs = {"async_client" if capture_mode == "async-native-client" else "client": client}
-+    middleware = OpenVikingContextMiddleware(**client_kwargs, commit_on_after_agent=True)
-+
-+    async def capture(session_id, commit):
-+        name = "after_agent" if commit else "before_model"
-+        state = {"session_id": session_id, "messages": [HumanMessage(content=session_id)]}
-+        if capture_mode != "sync":
-+            await getattr(middleware, "a" + name)(state, None)
-+        else:
-+            await asyncio.to_thread(getattr(middleware, name), state, None)
-+
-+    first = asyncio.create_task(capture("first", first_commits))
-+    try:
-+        assert await asyncio.to_thread(entered.wait, 5)
-+        await capture("second", not first_commits)
-+    finally:
-+        release.set()
-+        await first
-+        await middleware.aclose()
-+
-+    committed, pending = ("first", "second") if first_commits else ("second", "first")
-+    assert len(client.archives[committed]) == 1
-+    assert client.archives[committed][0]["messages"][0]["parts"][0]["text"] == committed
-+    assert not client.sessions[committed]
-+    assert not client.archives[pending]
-+    assert client.sessions[pending][0]["parts"][0]["text"] == pending
-```
-
-**File**: `integrations/frameworks/langchain/tests/unit/test_langchain_recording.py` (modified, +129/-16)
-```diff
-@@ -15,6 +15,7 @@
-     SystemMessage,
-     ToolMessage,
- )
-+from openviking_sdk.errors import UnavailableError
- 
- import langchain_openviking.recording as recording_module
- from langchain_openviking import (
-@@ -321,22 +322,48 @@ def test_recorder_ignores_filtered_only_batch_without_initializing_client():
-     assert client._initialized is False
- 
- 
--def test_recorder_applies_commit_policy_once_after_all_batches():
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.parametrize(
-+    "override", [None, "always", "never", "threshold-met", "threshold-not-met"]
-+)
-+@pytest.mark.asyncio
-+async def test_recorder_applies_commit_policy_once_after_all_batches(asynchronous, override):
-     client = TrackingOpenVikingClient()
--    recorder = OpenVikingSessionRecorder(
--        client=client,
--        commit_policy=OpenVikingCommitPolicy(mode="always"),
--    )
-+    default = OpenVikingCommitPolicy(mode="always" if override in (None, "never") else "never")
-+    recorder = OpenVikingSessionRecorder(client=client, commit_policy=default)
-+    policy = None
-+    if override in ("always", "never"):
-+        policy = OpenVikingCommitPolicy(mode=override)
-+    elif override is not None:
-+        policy = OpenVikingCommitPolicy(
-+            mode="pending_tokens",
-+            pending_token_threshold=1 if override == "threshold-met" else 100_000,
-+        )
- 
--    recorder.record(
-+    async def record(session_id, messages, **kwargs):
-+        if asynchronous:
-+            return await recorder.arecord(session_id, messages, **kwargs)
-+        return recorder.record(session_id, messages, **kwargs)
-+
-+    await record(
-         "recorder-commit",
-         [HumanMessage(content=f"Message {index}") for index in range(101)],
-+        **({"commit_policy": policy} if override is not None else {}),
-     )
- 
-+    commits = override not in ("never", "threshold-not-met")
-     assert client.batch_sizes == [100, 1]
--    assert client.commit_calls == ["recorder-commit"]
--    assert client.sessions["recorder-commit"] == []
--    assert len(client.archives["recorder-commit"][0]["messages"]) == 101
-+    assert client.commit_calls == (["recorder-commit"] if commits else [])
-+    if commits:
-+        assert client.sessions["recorder-commit"] == []
-+        assert len(client.archives["recorder-commit"][0]["messages"]) == 101
-+    else:
-+        assert len(client.sessions["recorder-commit"]) == 101
-+        assert not client.archives["recorder-commit"]
-+
-+    await record("recorder-default", [HumanMessage(content="Use the default again.")])
-+    assert bool(client.archives["recorder-default"]) == (default.mode == "always")
-+    await recorder.aclose()
- 
- 
- def test_recorder_reports_partial_progress_and_retries_only_unwritten_suffix():
-@@ -387,7 +414,12 @@ def batch_add_messages(
-     ]
- 
- 
--def test_recorder_reports_commit_failure_and_retries_without_duplicate_writes():
-+@pytest.mark.parametrize("asynchronous", [False, True])
-+@pytest.mark.parametrize("override", [False, True])
-+@pytest.mark.asyncio
-+async def test_recorder_reports_commit_failure_and_retries_without_duplicate_writes(
-+    asynchronous, override
-+):
-     class FailFirstCommitClient(TrackingOpenVikingClient):
-         def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
-             self.commit_calls.append(session_id)
-@@ -398,15 +430,22 @@ def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
-     client = FailFirstCommitClient()
-     recorder = OpenVikingSessionRecorder(
-         client=client,
--        commit_policy=OpenVikingCommitPolicy(mode="always"),
-+        commit_policy=OpenVikingCommitPolicy(mode="never" if override else "always"),
-     )
-+
-+    async def record(messages, policy):
-+        kwargs = {"commit_policy": OpenVikingCommitPolicy(mode=policy)} if override else {}
-+        if asynchronous:
-+            return await recorder.arecord("recorder-failed-commit", messages, **kwargs)
-+        return recorder.record("recorder-failed-commit", messages, **kwargs)
-+
-     messages = [
-         HumanMessage(content="Remember this turn."),
-         AIMessage(content="Remembered."),
-     ]
- 
-     with pytest.raises(OpenVikingPartialWriteError, match="commit failed") as exc_info:
--        recorder.record("recorder-failed-commit", messages)
-+        await record(messages, "always")
- 
-     assert exc_info.value.stage == "commit"
-     assert exc_info.value.commit_pending is True
-@@ -415,16 +454,15 @@ def commit_session(self, session_id: str, **kwargs: Any) -> dict[str, Any]:
-     assert client.batch_sizes == [2]
-     assert len(client.sessions["recorder-failed-commit"]) == 2
- 
--    recorder.record(
--        "recorder-failed-commit",
--        messages[exc_info.value.input_messages_consumed :],
--    )
-+    await record(messages[exc_info.value.input_messages_consumed :], "never")
- 
-     assert client.batch_sizes == [2]
-     assert client.commit_calls == ["recorder-failed-commit", "recorder-failed-commit"]
-     assert client
-```
-
----
-
-### Incident Patch 3: `4ab22a49` (2026-10-23)
-**Commit Message**: fix(release): pin wheel and CLI versions to release tag (#6488)
-
-**File**: `.github/workflows/_build.yml` (modified, +18/-2)
-```diff
-@@ -231,9 +231,17 @@ jobs:
-       shell: bash
-       run: |
-         OPENVIKING_VERSION=$(
--          uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
-+          exact_tag=$(git describe --tags --exact-match "$GITHUB_SHA" 2>/dev/null || true)
-+          if [[ "$exact_tag" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
-+            printf '%s\n' "${exact_tag#v}"
-+          else
-+            rm -f openviking/_version.py
-+            rm -rf openviking.egg-info
-+            env -u OPENVIKING_VERSION -u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
-+          fi
-         )
-         echo "OPENVIKING_VERSION=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
-+        echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
-         echo "Resolved OpenViking version: $OPENVIKING_VERSION"
- 
-     - name: Build Rust CLI (Linux)
-@@ -478,9 +486,17 @@ jobs:
-       shell: bash
-       run: |
-         OPENVIKING_VERSION=$(
--          uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
-+          exact_tag=$(git describe --tags --exact-match "$GITHUB_SHA" 2>/dev/null || true)
-+          if [[ "$exact_tag" =~ ^v[0-9]+(\.[0-9]+)*$ ]]; then
-+            printf '%s\n' "${exact_tag#v}"
-+          else
-+            rm -f openviking/_version.py
-+            rm -rf openviking.egg-info
-+            env -u OPENVIKING_VERSION -u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING uv run --frozen python -c "from scripts.build_support.versioning import resolve_openviking_version; print(resolve_openviking_version())"
-+          fi
-         )
-         echo "OPENVIKING_VERSION=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
-+        echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" >> "$GITHUB_ENV"
-         echo "Resolved OpenViking version: $OPENVIKING_VERSION"
- 
-     - name: Build Rust CLI (macOS/Windows)
-```
-
-**File**: `tests/misc/test_release_tag_selection.py` (modified, +20/-0)
-```diff
-@@ -44,3 +44,23 @@ def fake_get_version(**kwargs):
-         captured_kwargs["git_describe_command"]
-         == "git describe --dirty --tags --long --match v[0-9]*"
-     )
-+
-+
-+def test_release_build_pins_cli_and_wheel_to_git_version() -> None:
-+    workflow = (ROOT / ".github/workflows/_build.yml").read_text()
-+
-+    resolve_command = (
-+        "env -u OPENVIKING_VERSION "
-+        "-u SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING "
-+        "uv run --frozen python -c"
-+    )
-+    pretend_version_export = (
-+        'echo "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OPENVIKING=$OPENVIKING_VERSION" '
-+        '>> "$GITHUB_ENV"'
-+    )
-+
-+    assert workflow.count(resolve_command) == 2
-+    assert workflow.count(pretend_version_export) == 2
-+    assert workflow.count('git describe --tags --exact-match "$GITHUB_SHA"') == 2
-+    assert workflow.count("rm -f openviking/_version.py") == 2
-+    assert workflow.count("rm -rf openviking.egg-info") == 2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6511** (closed): test(gateway): add kind acceptance matrix and nightly workflow (@t0saki)
-- **PR #6510** (closed): feat(gateway): add standalone Helm deployment and operations guide (@t0saki)
-- **PR #6509** (closed): fix(gateway): respect OpenViking refusals and revoke rejected capture keys (@t0saki)
-- **PR #6507** (closed): feat(gateway): support stdout request log sink (@t0saki)
-- **PR #6506** (closed): feat(gateway): keep SSE streams alive during idle periods (@t0saki)
-- **PR #6504** (closed): feat(gateway): add Redis kernel storage and handle evicted tool receipts (@t0saki)
+- **PR #6610** (2026-10-26): fix(auth): reveal only the caller's own user API key in admin listings (@MaojiaSheng)
+- **PR #6609** (2026-10-26): feat: add DingTalk connector OAuth auth (@leeebai)
+- **PR #6607** (2026-10-26): fix(ragfs): backport multiwrite hotfixes to v0.5.0 (@baojun-zhang)
+- **PR #6606** (2026-10-26): fix(multiwrite): avoid glob cleanup during full import (@baojun-zhang)
+- **PR #6605** (2026-10-26): fix(retrieve): opt-in rerank for context mode and decouple rerank.threshold (@t0saki)
+- **PR #6604** (2026-10-26): fix(multiwrite): 取消删除 v1 元数据时 glob 操作，在 import account 阶段进行删除 && 增加迁移阶段执行进度日志 (@baojun-zhang)
 
 ---
 
@@ -2221,32 +2214,28 @@ Co-authored-by: ktz03 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. langchain): honor nested filters and index field selectors (#6404)
+## X. deps): require SDK 0.1.17 for Compile APIs (#6596)
 
 **RULE**:
-When implementing operations in `docs/en/agent-integrations/07-langchain-langgraph.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d5022f57`: langchain): honor nested filters and index field selectors (#6404). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `009c483f`: deps): require SDK 0.1.17 for Compile APIs (#6596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/07-langchain-langgraph.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-`search()` accepts nested JSON filters such as `filter={"metadata": {"color": "blue"}}`.
-Filter keys `eq`, `ne`, `gt`, `gte`, `lt`, `lte` and `in` are reserved operator aliases at every nesting level.
-Use `index=["items[*].text"]` to index selected array fields while retaining the complete
-stored value. Existing index projections are updated when the item is written again.
-
+    "openviking-sdk>=0.1.17",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "openviking-sdk>=0.1.15",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d5022f57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `009c483f` are properly handled with clean fallback behavior.
