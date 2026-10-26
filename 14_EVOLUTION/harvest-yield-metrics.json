@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:12:17.560Z",
-  "total_cycles_completed": 5025,
-  "total_learnings_persisted": 5025,
-  "total_rules_promoted": 4386,
+  "last_updated": "2026-10-26T00:18:23.961Z",
+  "total_cycles_completed": 5027,
+  "total_learnings_persisted": 5027,
+  "total_rules_promoted": 4390,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:18:54.738Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:25:09.868Z",
-      "repository": "lucide-icons/lucide",
-      "learningId": "learn-github-lucide-icons-lucide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:25:10.884Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-26T00:12:17.560Z",
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:18:22.980Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:18:23.961Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-2H7D",
-    "timestamp": "2026-10-23T11:30:49.369Z",
-    "repository": "wix/react-native-navigation",
-    "learningId": "learn-github-wix-react-native-navigation",
-    "contentHash": "943d6e99d130ada7b8ab5ab90bbd683dd92885ff9d8e46fc212441356648d6bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-2LOQ",
-    "timestamp": "2026-10-23T11:30:55.178Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "91749168966195231178b09477c8096a7a3ee79cddab6964afae924e33d95e71",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-BBEV",
     "timestamp": "2026-10-23T11:37:41.767Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7490,6 +7460,36 @@
     "repository": "mitmproxy/mitmproxy",
     "learningId": "learn-github-mitmproxy-mitmproxy",
     "contentHash": "065515d4b7be0793c72b6933f91e45bfae7e318f3e59d59a636d2f292d758d58",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-D9Q6",
+    "timestamp": "2026-10-26T00:18:22.974Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-DAHF",
+    "timestamp": "2026-10-26T00:18:23.955Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

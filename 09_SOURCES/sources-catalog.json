@@ -1175,8 +1175,8 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "f23c4b9b11a66402a995e49a44938b9326a92b324bc5f5500dc7251b7a5e7062",
-    "lastHarvestedAt": "2026-10-21T04:03:16.898Z",
+    "contentHash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
+    "lastHarvestedAt": "2026-10-26T00:18:22.977Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "47398198",
+    "sourceVersion": "731d4383",
     "license": "MIT",
-    "contentHash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
-    "lastHarvestedAt": "2026-10-25T20:49:24.506Z",
+    "contentHash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
+    "lastHarvestedAt": "2026-10-26T00:18:23.957Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

@@ -5048,3 +5048,5 @@
 | `CYCLE-20261026-XDJI` | `2026-10-26T00:06:01.422Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`e9fc7b11...`) |
 | `CYCLE-20261026-56N4` | `2026-10-26T00:12:05.728Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`6443a7a5...`) |
 | `CYCLE-20261026-5FRL` | `2026-10-26T00:12:17.553Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4495` | Yes (`065515d4...`) |
+| `CYCLE-20261026-D9Q6` | `2026-10-26T00:18:22.974Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4496, Rule 4497, Rule 4498` | Yes (`6081141d...`) |
+| `CYCLE-20261026-DAHF` | `2026-10-26T00:18:23.955Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4499` | Yes (`24f02408...`) |

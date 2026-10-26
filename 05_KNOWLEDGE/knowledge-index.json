@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:12:17.518Z",
+  "last_updated": "2026-10-26T00:18:23.920Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19180,7 +19180,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "f23c4b9b11a66402a995e49a44938b9326a92b324bc5f5500dc7251b7a5e7062",
+      "content_hash": "6081141d033525f7a5797eb5db67a863dc8142976ce857675708431b0a5a653d",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -19248,6 +19248,21 @@
           "number": 3514,
           "title": "Jinja Template Enforcement for Tool Calling Syntax",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4496,
+          "title": "Functional Fidelity Preservation in Mixed-Precision Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4497,
+          "title": "Chat Template as the Primary Agent Interface",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4498,
+          "title": "Context Window and GPU Offloading Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19266,7 +19281,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-21T04:03:16.834Z",
+      "verified_at": "2026-10-26T00:18:22.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41465,8 +41480,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "47398198",
-      "content_hash": "20c6d8e5860f7201d484d6bc476926d49022b8a40b3ab98feb91f08076d129ee",
+      "source_version": "731d4383",
+      "content_hash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -41509,6 +41524,11 @@
           "number": 4447,
           "title": "Merge pull request #7928 from projectdiscovery/fix/http-large-request-body-memor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4499,
+          "title": "Merge pull request #7784 from root-Manas/feat/openapi-oauth-security",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41516,7 +41536,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:49:24.462Z",
+      "verified_at": "2026-10-26T00:18:23.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126964,6 +126984,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:12:17.511Z"
+    },
+    "rule-4496": {
+      "learning_id": "rule-4496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4496,
+      "title": "Functional Fidelity Preservation in Mixed-Precision Quantization",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:18:22.929Z"
+    },
+    "rule-4497": {
+      "learning_id": "rule-4497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4497,
+      "title": "Chat Template as the Primary Agent Interface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:18:22.929Z"
+    },
+    "rule-4498": {
+      "learning_id": "rule-4498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4498,
+      "title": "Context Window and GPU Offloading Invariants",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:18:22.929Z"
+    },
+    "rule-4499": {
+      "learning_id": "rule-4499",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4499,
+      "title": "Merge pull request #7784 from root-Manas/feat/openapi-oauth-security",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "731d4383",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:18:23.912Z"
     }
   },
   "aliases": {
