@@ -5126,3 +5126,4 @@
 | `CYCLE-20261026-C46K` | `2026-10-26T10:33:20.684Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4584` | Yes (`2ec8392b...`) |
 | `CYCLE-20261026-C7IC` | `2026-10-26T10:33:24.996Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4585` | Yes (`30da0198...`) |
 | `CYCLE-20261026-C974` | `2026-10-26T10:33:27.184Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4586` | Yes (`002f05a2...`) |
+| `CYCLE-20261026-FQJ2` | `2026-10-26T11:04:09.230Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4587` | Yes (`f5dfabad...`) |

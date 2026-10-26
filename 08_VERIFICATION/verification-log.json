@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-7SX1",
-    "timestamp": "2026-10-25T03:14:25.189Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "a16bd6f2c2cbae43981d46ac16b794f5755744f022a9ddd44bd7ac4fb09f2c5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-993U",
     "timestamp": "2026-10-25T03:15:32.826Z",
     "repository": "topgrade-rs/topgrade",
@@ -7490,6 +7475,21 @@
     "repository": "cachix/devenv",
     "learningId": "learn-github-cachix-devenv",
     "contentHash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-FQJ2",
+    "timestamp": "2026-10-26T11:04:09.230Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "f5dfabad03f4713f0087fcaf3f0eccac29d1125d4e8f600f8fcb908c9fd36665",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

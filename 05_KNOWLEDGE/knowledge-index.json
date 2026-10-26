@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T10:33:27.127Z",
+  "last_updated": "2026-10-26T11:04:09.175Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50143,8 +50143,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "31ce31ee",
-      "content_hash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
+      "source_version": "291e3f03",
+      "content_hash": "f5dfabad03f4713f0087fcaf3f0eccac29d1125d4e8f600f8fcb908c9fd36665",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -50197,6 +50197,11 @@
           "number": 3965,
           "title": "security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (#5472)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4587,
+          "title": "Skip GitHub comment errors when issues or PRs are off (#5467)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50204,7 +50209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:48:46.353Z",
+      "verified_at": "2026-10-26T11:04:09.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128788,6 +128793,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T10:33:27.116Z"
+    },
+    "rule-4587": {
+      "learning_id": "rule-4587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4587,
+      "title": "Skip GitHub comment errors when issues or PRs are off (#5467)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "291e3f03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:04:09.163Z"
     }
   },
   "aliases": {

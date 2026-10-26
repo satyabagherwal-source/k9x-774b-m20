@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T10:33:27.192Z",
-  "total_cycles_completed": 5103,
-  "total_learnings_persisted": 5103,
-  "total_rules_promoted": 4482,
+  "last_updated": "2026-10-26T11:04:09.238Z",
+  "total_cycles_completed": 5104,
+  "total_learnings_persisted": 5104,
+  "total_rules_promoted": 4483,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:49:18.667Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T17:59:11.814Z",
       "repository": "Comfy-Org/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-26T10:33:27.192Z",
       "repository": "cachix/devenv",
       "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:04:09.238Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

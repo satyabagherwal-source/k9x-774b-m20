@@ -5133,3 +5133,4 @@ Every entry in this ledger must capture:
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `47d1c2da` | Multi-dimensional audit evidence | 2026-10-26T10:33:20.687Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5293992f` | Multi-dimensional audit evidence | 2026-10-26T10:33:24.999Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `7d3fbffc` | Multi-dimensional audit evidence | 2026-10-26T10:33:27.188Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `291e3f03` | Multi-dimensional audit evidence | 2026-10-26T11:04:09.233Z |
