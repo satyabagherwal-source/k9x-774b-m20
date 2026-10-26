@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T02:08:33.390Z",
+  "last_updated": "2026-10-26T02:26:58.307Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2871,14 +2871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-nodejs",
-      "content_hash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
-      "verified_at": "2026-10-21T05:34:17.476Z",
+      "content_hash": "95dbb19054e430dc6adfd8a9812e55e1fa4895725a698a5d981beeaea0a21584",
+      "verified_at": "2026-10-26T02:26:58.307Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:34:17.476Z"
+      "last_updated": "2026-10-26T02:26:58.307Z"
     },
     "serpapi/google-search-results-python": {
       "repository": "serpapi/google-search-results-python",
@@ -3276,14 +3276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bvaughn-react-virtualized",
-      "content_hash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
-      "verified_at": "2026-10-25T14:44:17.609Z",
+      "content_hash": "c0301313a2e02670a6c78c48fcf5c9db6781559bacc5ae0207991ba0917caed0",
+      "verified_at": "2026-10-26T02:26:50.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:44:17.609Z"
+      "last_updated": "2026-10-26T02:26:50.018Z"
     },
     "dkhamsing/open-source-ios-apps": {
       "repository": "dkhamsing/open-source-ios-apps",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
-      "verified_at": "2026-10-25T12:17:04.762Z",
+      "content_hash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
+      "verified_at": "2026-10-26T02:25:29.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:17:04.762Z"
+      "last_updated": "2026-10-26T02:25:29.957Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

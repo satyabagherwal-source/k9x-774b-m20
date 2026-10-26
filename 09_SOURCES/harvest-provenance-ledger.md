@@ -5095,3 +5095,6 @@ Every entry in this ledger must capture:
 | `learn-github-maatify-php-seo` | `https://github.com/Maatify/seo` | `47d17d7d` | Multi-dimensional audit evidence | 2026-10-26T02:01:57.755Z |
 | `learn-github-angular-angular` | `https://github.com/angular/angular` | `5244ea78` | Multi-dimensional audit evidence | 2026-10-26T02:02:12.031Z |
 | `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `902c09fd` | Multi-dimensional audit evidence | 2026-10-26T02:08:33.381Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `197403e8` | Multi-dimensional audit evidence | 2026-10-26T02:25:29.950Z |
+| `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `30741f73` | Multi-dimensional audit evidence | 2026-10-26T02:26:50.011Z |
+| `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-26T02:26:58.300Z |

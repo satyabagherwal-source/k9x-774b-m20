@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T02:08:33.319Z",
+  "last_updated": "2026-10-26T02:26:58.231Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32243,8 +32243,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "de0c5edc",
-      "content_hash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
+      "source_version": "197403e8",
+      "content_hash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -32277,6 +32277,11 @@
           "number": 4284,
           "title": "rust): accept usize::MAX as a local query limit (#4567)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4538,
+          "title": "honor downstream Lance dependency overrides (#4671)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32284,7 +32289,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:17:04.715Z",
+      "verified_at": "2026-10-26T02:25:29.893Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63061,7 +63066,7 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-nodejs",
       "source_version": "f6d03fc9",
-      "content_hash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
+      "content_hash": "95dbb19054e430dc6adfd8a9812e55e1fa4895725a698a5d981beeaea0a21584",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
       "promoted_rules": [
@@ -63069,6 +63074,21 @@
           "number": 2680,
           "title": "dev dependency security issues",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4542,
+          "title": "Zero-Mutation of Caller Input Parameters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4543,
+          "title": "Node.js Event Loop Boundary Containment (No Throwing in Asynchronous Callbacks)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4544,
+          "title": "Prohibition of Global Module Mutation for Per-Request Configuration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63076,7 +63096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:34:17.382Z",
+      "verified_at": "2026-10-26T02:26:58.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85836,8 +85856,8 @@
       "slug": "bvaughn-react-virtualized",
       "platform": "github",
       "source_url": "https://github.com/bvaughn/react-virtualized",
-      "source_version": "fe90ae02",
-      "content_hash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
+      "source_version": "30741f73",
+      "content_hash": "c0301313a2e02670a6c78c48fcf5c9db6781559bacc5ae0207991ba0917caed0",
       "dossier_path": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bvaughn-react-virtualized-learnings.md",
       "promoted_rules": [
@@ -85865,6 +85885,21 @@
           "number": 4349,
           "title": "Update react-lib-tools to 0.0.69",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4539,
+          "title": "Virtual Coordinate Space Compression for Native Rendering Limits",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4540,
+          "title": "Guard Against Functional Prop Instability in Virtualized Recalculations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4541,
+          "title": "Absolute Coordinate Staging for Dynamic DOM Geometry Probing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -85872,7 +85907,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:44:17.545Z",
+      "verified_at": "2026-10-26T02:26:49.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127762,6 +127797,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T02:02:11.972Z"
+    },
+    "rule-4538": {
+      "learning_id": "rule-4538",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4538,
+      "title": "honor downstream Lance dependency overrides (#4671)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "197403e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:25:29.893Z"
+    },
+    "rule-4539": {
+      "learning_id": "rule-4539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4539,
+      "title": "Virtual Coordinate Space Compression for Native Rendering Limits",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "30741f73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:49.951Z"
+    },
+    "rule-4540": {
+      "learning_id": "rule-4540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4540,
+      "title": "Guard Against Functional Prop Instability in Virtualized Recalculations",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "30741f73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:49.951Z"
+    },
+    "rule-4541": {
+      "learning_id": "rule-4541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4541,
+      "title": "Absolute Coordinate Staging for Dynamic DOM Geometry Probing",
+      "source_url": "https://github.com/bvaughn/react-virtualized",
+      "source_version": "30741f73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:49.951Z"
+    },
+    "rule-4542": {
+      "learning_id": "rule-4542",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4542,
+      "title": "Zero-Mutation of Caller Input Parameters",
+      "source_url": "https://github.com/serpapi/google-search-results-nodejs",
+      "source_version": "f6d03fc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:58.221Z"
+    },
+    "rule-4543": {
+      "learning_id": "rule-4543",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4543,
+      "title": "Node.js Event Loop Boundary Containment (No Throwing in Asynchronous Callbacks)",
+      "source_url": "https://github.com/serpapi/google-search-results-nodejs",
+      "source_version": "f6d03fc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:58.221Z"
+    },
+    "rule-4544": {
+      "learning_id": "rule-4544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4544,
+      "title": "Prohibition of Global Module Mutation for Per-Request Configuration",
+      "source_url": "https://github.com/serpapi/google-search-results-nodejs",
+      "source_version": "f6d03fc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T02:26:58.221Z"
     }
   },
   "aliases": {

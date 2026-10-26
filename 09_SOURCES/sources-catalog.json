@@ -1825,8 +1825,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-nodejs",
     "sourceVersion": "f6d03fc9",
     "license": "MIT",
-    "contentHash": "beb35fcb4b1f5c63185ade7b406327bbb4ff4498ddb1414d54f4f1589f1c73ea",
-    "lastHarvestedAt": "2026-10-21T05:34:17.461Z",
+    "contentHash": "95dbb19054e430dc6adfd8a9812e55e1fa4895725a698a5d981beeaea0a21584",
+    "lastHarvestedAt": "2026-10-26T02:26:58.300Z",
     "learningId": "learn-github-serpapi-google-search-results-nodejs"
   },
   "serpapi-google-search-results-python": {
@@ -2093,10 +2093,10 @@
     "repository": "bvaughn/react-virtualized",
     "platform": "github",
     "sourceUrl": "https://github.com/bvaughn/react-virtualized",
-    "sourceVersion": "fe90ae02",
+    "sourceVersion": "30741f73",
     "license": "MIT",
-    "contentHash": "e16d8f5b74bdb1cf97e0973d3e0e1b5842e021cf696b098479db090f7058db4f",
-    "lastHarvestedAt": "2026-10-25T14:44:17.602Z",
+    "contentHash": "c0301313a2e02670a6c78c48fcf5c9db6781559bacc5ae0207991ba0917caed0",
+    "lastHarvestedAt": "2026-10-26T02:26:50.011Z",
     "learningId": "learn-github-bvaughn-react-virtualized"
   },
   "dkhamsing-open-source-ios-apps": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "de0c5edc",
+    "sourceVersion": "197403e8",
     "license": "Apache-2.0",
-    "contentHash": "17690d987778ac08711c9f138108b30e3858ec84582198a8d93977d2e2730ad8",
-    "lastHarvestedAt": "2026-10-25T12:17:04.756Z",
+    "contentHash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
+    "lastHarvestedAt": "2026-10-26T02:25:29.950Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
