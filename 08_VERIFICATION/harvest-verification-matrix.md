@@ -5178,3 +5178,6 @@
 | `CYCLE-20261026-HLD8` | `2026-10-26T18:05:30.092Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4637` | Yes (`1d09a55f...`) |
 | `CYCLE-20261026-HOJV` | `2026-10-26T18:05:34.220Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4638` | Yes (`0620b175...`) |
 | `CYCLE-20261026-HPDG` | `2026-10-26T18:05:35.284Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4639` | Yes (`1e789e54...`) |
+| `CYCLE-20261026-QM0M` | `2026-10-26T18:12:30.838Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4640` | Yes (`beef5a6d...`) |
+| `CYCLE-20261026-QOWJ` | `2026-10-26T18:12:34.579Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4641` | Yes (`9859e3d3...`) |
+| `CYCLE-20261026-QPI9` | `2026-10-26T18:12:35.361Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4642` | Yes (`757f4926...`) |

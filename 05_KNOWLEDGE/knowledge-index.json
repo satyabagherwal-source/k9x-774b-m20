@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T18:05:35.217Z",
+  "last_updated": "2026-10-26T18:12:35.287Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7966,8 +7966,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6e35860f",
-      "content_hash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
+      "source_version": "71221647",
+      "content_hash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8190,6 +8190,11 @@
           "number": 4598,
           "title": "deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4642,
+          "title": "json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8197,7 +8202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:46:44.940Z",
+      "verified_at": "2026-10-26T18:12:35.263Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47070,8 +47075,8 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "7670fd4a",
-      "content_hash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
+      "source_version": "437d18a6",
+      "content_hash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
@@ -47084,6 +47089,11 @@
           "number": 3620,
           "title": "Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4640,
+          "title": "keep floating builder image tag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47091,7 +47101,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:56:54.666Z",
+      "verified_at": "2026-10-26T18:12:30.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50013,8 +50023,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "80e1c7ec",
-      "content_hash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
+      "source_version": "17b07077",
+      "content_hash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -50027,6 +50037,11 @@
           "number": 3563,
           "title": "Update Rust dependencies to address Wasmtime security advisories.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4641,
+          "title": "Update Rust dependencies and address security advisories.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50034,7 +50049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:41:27.474Z",
+      "verified_at": "2026-10-26T18:12:34.486Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129846,6 +129861,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T18:05:35.197Z"
+    },
+    "rule-4640": {
+      "learning_id": "rule-4640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4640,
+      "title": "keep floating builder image tag",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "437d18a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:12:30.735Z"
+    },
+    "rule-4641": {
+      "learning_id": "rule-4641",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4641,
+      "title": "Update Rust dependencies and address security advisories.",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "17b07077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:12:34.486Z"
+    },
+    "rule-4642": {
+      "learning_id": "rule-4642",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4642,
+      "title": "json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "71221647",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:12:35.263Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source**: github ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
-> **Source Version**: `7670fd4a`  
+> **Source Version**: `437d18a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:56:54.346Z  
+> **Timestamp**: 2026-10-26T18:12:30.237Z  
 > **Learning ID**: `learn-github-stakater-reloader`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:56:54.340Z  
+> **Harvest Timestamp**: 2026-10-26T18:12:26.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10508 stars
+- **Stars / Engagement**: 10524 stars
 
 ---
 
@@ -1460,11 +1460,13 @@ func GenerateSHA(data string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1252** (2026-10-22): **fix: isolate metrics port from pprof and expvar handlers (#1251)**
-  *Symptoms*: ## Summary  Fixes #1251.  Reloader previously served HTTP on `http.DefaultServeMux` by passing `nil` to `http.ListenAndServe(constants.DefaultHttpListenAddr, nil)`. Because `reloader.go` imported `net/http/pprof` for its side-effects, `/debug/pprof/*` (and any expvar endpoints) were registered on `http.DefaultServeMux` and exposed unconditionally on the metrics port (`:9090`), even when `--enable-pprof` was false.  Furthermore, `startPProfServer()` also passed `nil` to `http.ListenAndServe(options.PProfAddr, nil)`, which merely created a second listener serving `http.DefaultServeMux` (including `/metrics` and `/live`).  This change: - Replaces the blank `_ "net/http/pprof"` import with an explicit `newPProfServeMux()` helper that registers pprof endpoints (`Index`, `Cmdline`, `Profile`, `Symbol`, `Trace`) exclusively on a dedicated `http.ServeMux` used by `--pprof-addr`. - Uses an explicit `mainMux` for the metrics/liveness listener on `constants.DefaultHttpListenAddr` (`:9090`), registering only `/metrics` and `/live`. - Adds `SetupPrometheusEndpointWithMux` and `SetupLivenessEndpointWithMux` while preserving the existing parameterless functions for backwards compatibility.  ## Test  - Added `TestMainServerMuxEndpoints` and `TestPProfServerMuxEndpoints` in `internal/pkg/cmd/server_mux_test.go`:   - Verifies `/metrics` and `/live` return 200 on `mainMux` and 404 for `/debug/pprof/*` and `/debug/vars`.   - Verifies `/debug/pprof/*` returns 200 on `newPProfServeMux()` and 404 f
+- **Issue #1258** (2026-10-26): **chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943)**
+  *Symptoms*: ## Problem Private keys for 8 eMudhra intermediate CAs were compromised ([CVE-2026-111943](https://hol.org/blog/cve-2026-111943-emudhra-ca-key-compromise-go-certifi-node-java), GO-2026-6809). Go 1.26.10 adds a `crypto/x509` denylist so any chain through those intermediates fails verification. Older toolchains still trust them, so our binaries would accept certificates minted with the leaked keys.  ## Solution Bump the `go` directive to 1.26.10. The builder image keeps its floating tag: the official `golang` image sets `GOTOOLCHAIN=local`, so a stale cached image fails the build (`go.mod requires go >= 1.26.10`) instead of shipping an unpatched binary.  ## Before/After | | Before | After | |---|---|---| | `go.mod` | `go 1.26.9` | `go 1.26.10` |  Example: a TLS call to a server presenting a chain via one of the compromised eMudhra intermediates now fails certificate verification instead of succeeding.  The fix only reaches users after a new release image is built and deployed.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #1251** (2026-10-22): **[BUG] pprof and expvar handlers are always served on the metrics port (:9090), regardless of --enable-pprof**
-  *Symptoms*: **Describe the bug** internal/pkg/cmd/reloader.go imports net/http/pprof for its side effect (_ "net/http/pprof"), which registers /debug/pprof/* on http.DefaultServeMux. The main HTTP server is started with http.ListenAndServe(constants.DefaultHttpListenAddr, nil), i.e. on :9090 with the default mux, so the profiling handlers are always served next to /metrics and /live. /debug/vars (expvar) is served there too.  --enable-pprof / --pprof-addr (added in #980) only start a second listener, also with the default mux (http.ListenAndServe(options.PProfAddr, nil)). So the flag doesn’t control whether profiling is exposed; it only adds another port that serves the same handlers, including /metrics and /live.  **To Reproduce** Deploy Reloader v1.4.17 (also present on master) without --enable-pprof. From any pod in the cluster: curl http://<reloader-pod-ip>:9090/debug/pprof/ and curl http://<reloader-pod-ip>:9090/debug/vars.  **Expected behavior** Profiling and expvar handlers are served only when --enable-pprof is set, and only on --pprof-addr. The metrics port serves /metrics and /live only.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Environment** - Reloader v1.4.17 (Helm chart, default values) - Kubernetes v1.33 (k3s)  **Additional context** Add any other context about the problem here.  **Impact** Port 9090 has no authentication and is usually reachable cluster-wide, because Prometheus scrapes it and the kubelet probes it. Any pod can read me
+- **Issue #1256** (2026-10-26): **chore(chart): tighten metadata Role RBAC for reloader-meta-info**
+  *Symptoms*: Tighten the ConfigMap RBAC rules for <release>-metadata-role according to least-privilege principles:  - Drop unused list and watch verbs (which are unused by Reloader in its own deployment namespace). - Restrict get and update to esourceNames: ["reloader-meta-info"], where Reloader writes startup metadata. - Retain create without esourceNames (as resourceNames restrictions are not supported on create in Kubernetes RBAC).  This mirrors the existing lease lock least-privilege scoping in the same Role.  Closes #1221 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-title-freeze --> Thank you for your contribution. The `master` branch is in feature freeze and accepts only `fix:` and `chore:` pull requests.  - For a bug fix or maintenance change, update the title to begin with `fix:` or `chore:`, for example `fix(chart): correct probe port`. - For a new feature, change the base branch of this pull request to `v2`, the active development branch.  For more details, see [Branches and PR titles](https://github.com/stakater/Reloader/blob/master/README.md#branches-and-pr-titles). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1481,442 +1483,34 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7670fd4a` (2026-10-22)
-**Commit Message**: Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port
+### Incident Patch 1: `18cdbf14` (2026-10-26)
+**Commit Message**: chore: keep floating builder image tag
 
-fix: isolate metrics port from pprof and expvar handlers (#1251)
+go.mod enforces 1.26.10 and the golang image sets GOTOOLCHAIN=local,
+so a stale image fails the build rather than shipping unpatched.
 
-**File**: `internal/pkg/cmd/reloader.go` (modified, +17/-5)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@ import (
- 	"fmt"
- 	"math"
- 	"net/http"
--	_ "net/http/pprof"
-+	"net/http/pprof"
- 	"os"
- 	"strings"
- 	"time"
-@@ -231,7 +231,8 @@ func startReloader(cmd *cobra.Command, args []string) {
- 		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
- 	}
+@@ -2,7 +2,7 @@ ARG BUILDER_IMAGE
+ ARG BASE_IMAGE
  
--	collectors := metrics.SetupPrometheusEndpoint()
-+	mainMux := http.NewServeMux()
-+	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
+ # Build the manager binary
+-FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26.10} AS builder
++FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26} AS builder
  
- 	var controllers []*controller.Controller
- 	for _, currentNamespace := range watchNamespaces {
-@@ -278,13 +279,24 @@ func startReloader(cmd *cobra.Command, args []string) {
- 		go startPProfServer()
- 	}
- 
--	leadership.SetupLivenessEndpoint()
--	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
-+	leadership.SetupLivenessEndpointWithMux(mainMux)
-+	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
-+}
-+
-+func newPProfServeMux() *http.ServeMux {
-+	mux := http.NewServeMux()
-+	mux.HandleFunc("/debug/pprof/", pprof.Index)
-+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-+	return mux
- }
- 
- func startPProfServer() {
- 	logrus.Infof("Starting pprof server on %s", options.PProfAddr)
--	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
-+	mux := newPProfServeMux()
-+	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
- 		logrus.Errorf("Failed to start pprof server: %v", err)
- 	}
- }
-```
-
-**File**: `internal/pkg/cmd/server_mux_test.go` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+package cmd
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/stakater/Reloader/internal/pkg/leadership"
-+	"github.com/stakater/Reloader/internal/pkg/metrics"
-+)
-+
-+func TestMainServerMuxEndpoints(t *testing.T) {
-+	mux := http.NewServeMux()
-+	metrics.SetupPrometheusEndpointWithMux(mux)
-+	leadership.SetupLivenessEndpointWithMux(mux)
-+
-+	// Liveness endpoint should be served
-+	liveReq := httptest.NewRequest(http.MethodGet, "/live", nil)
-+	liveRec := httptest.NewRecorder()
-+	mux.ServeHTTP(liveRec, liveReq)
-+	assert.Equal(t, http.StatusOK, liveRec.Code)
-+	assert.Equal(t, "alive", liveRec.Body.String())
-+
-+	// Metrics endpoint should be served
-+	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
-+	metricsRec := httptest.NewRecorder()
-+	mux.ServeHTTP(metricsRec, metricsReq)
-+	assert.Equal(t, http.StatusOK, metricsRec.Code)
-+
-+	// pprof and expvar endpoints should NOT be served on the main metrics/liveness mux
-+	disallowedEndpoints := []string{
-+		"/debug/pprof/",
-+		"/debug/pprof/cmdline",
-+		"/debug/pprof/profile",
-+		"/debug/pprof/symbol",
-+		"/debug/pprof/trace",
-+		"/debug/pprof/goroutine",
-+		"/debug/pprof/heap",
-+		"/debug/vars",
-+	}
-+
-+	for _, endpoint := range disallowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on main mux", endpoint)
-+		})
-+	}
-+}
-+
-+func TestPProfServerMuxEndpoints(t *testing.T) {
-+	mux := newPProfServeMux()
-+
-+	// pprof endpoints should be served on pprof mux
-+	allowedEndpoints := []string{
-+		"/debug/pprof/",
-+		"/debug/pprof/cmdline",
-+		"/debug/pprof/goroutine",
-+		"/debug/pprof/heap",
-+	}
-+
-+	for _, endpoint := range allowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusOK, rec.Code, "pprof endpoint %s should be served on pprof mux", endpoint)
-+		})
-+	}
-+
-+	// Main metrics and liveness endpoints should NOT be served on the pprof mux
-+	disallowedEndpoints := []string{
-+		"/metrics",
-+		"/live",
-+	}
-+
-+	for _, endpoint := range disallowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on pprof mux", endpoint)
-+		})
-+	}
-+}
-```
-
-**File**: `internal/pkg/leadership/leadership.go` (modified, +10/-1)
-```diff
-@@ -112,7 +112,16 @@ func stopControllers(stopChannels []chan struct{}) {
- // enabled and a replica stops leading the liveness probe will fail and the
- // kubelet will restart the container.
- func SetupLivenessEndpoint() {
--	http.HandleFunc("/live", healthz)
-+	SetupLivenessEndpointWithMux(http.DefaultServeMux)
-+}
-+
-+// SetupLivenessEndpointWithMux sets up the liveness probe endpoint on the provided ServeMux.
-+func SetupLivenessEndpointWithMux(mux *http.ServeMux) {
-+	if mux != nil {
-+		mux.HandleFunc("/live", healthz)
-+	} else {
-+		http.HandleFunc("/live", healthz)
-+	}
- }
- 
- func healthz(w http.ResponseWriter, req *http.Request) {
-```
-
-**File**: `internal/pkg/metrics/prometheus.go` (modified, +4/-2)
-```diff
-@@ -367,7 +367,9 @@ func NewCollectors() Collectors {
- 	}
- }
- 
--func SetupPrometheusEndpoint() Collectors {
-+// SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
-+// on the provided ServeMux instead of the global DefaultServeMux.
-+func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
- 	collectors := NewCollectors()
- 
- 	prometheus.MustRegister(collectors.Reloaded)
-@@ -390,7 +392,7 @@ func SetupPrometheusEndpoint() Collectors {
- 		prometheus.MustRegister(collectors.ReloadedByNamespace)
- 	}
- 
--	http.Handle("/metrics", promhttp.Handler())
-+	mux.Handle("/metrics", promhttp.Handler())
- 
- 	return collectors
- }
-```
-
----
-
-### Incident Patch 2: `15f37cbe` (2026-10-22)
-**Commit Message**: refactor(metrics): remove unused wrapper and simplify ServeMux handler registration
-
-**File**: `internal/pkg/metrics/prometheus.go` (modified, +1/-9)
-```diff
-@@ -367,10 +367,6 @@ func NewCollectors() Collectors {
- 	}
- }
- 
--func SetupPrometheusEndpoint() Collectors {
--	return SetupPrometheusEndpointWithMux(http.DefaultServeMux)
--}
--
- // SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
- // on the provided ServeMux instead of the global DefaultServeMux.
- func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
-@@ -396,11 +392,7 @@ func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
- 		prometheus.MustRegister(collectors.ReloadedByNamespace)
- 	}
- 
--	if mux != nil {
--		mux.Handle("/metrics", promhttp.Handler())
--	} else {
--		http.Handle("/metrics", promhttp.Handler())
--	}
-+	mux.Handle("/metrics", promhttp.Handler())
- 
- 	return collectors
- }
-```
-
----
-
-### Incident Patch 3: `6304c6d3` (2026-10-21)
-**Commit Message**: fix: isolate metrics port from pprof and expvar handlers (#1251)
-
-**File**: `internal/pkg/cmd/reloader.go` (modified, +17/-5)
-```diff
-@@ -6,7 +6,7 @@ import (
- 	"fmt"
- 	"math"
- 	"net/http"
--	_ "net/http/pprof"
-+	"net/http/pprof"
- 	"os"
- 	"strings"
- 	"time"
-@@ -231,7 +231,8 @@ func startReloader(cmd *cobra.Command, args []string) {
- 		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
- 	}
- 
--	collectors := metrics.SetupPrometheusEndpoint()
-+	mainMux := http.NewServeMux()
-+	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
- 
- 	var controllers []*controller.Controller
- 	for _, currentNamespace := range watchNamespaces {
-@@ -278,13 +279,24 @@ func startReloader(cmd *cobra.Command, args []string) {
- 		go startPProfServer()
- 	}
- 
--	leadership.SetupLivenessEndpoint()
--	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
-+	leadership.SetupLivenessEndpointWithMux(mainMux)
-+	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
-+}
-+
-+func newPProfServeMux() *http.ServeMux {
-+	mux := http.NewServeMux()
-+	mux.HandleFunc("/debug/pprof/", pprof.Index)
-+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-+	return mux
- }
- 
- func startPProfServer() {
- 	logrus.Infof("Starting pprof server on %s", options.PProfAddr)
--	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
-+	mux := newPProfServeMux()
-+	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
- 		logrus.Errorf("Failed to start pprof server: %v", err)
- 	}
- }
-```
-
-**File**: `internal/pkg/cmd/server_mux_test.go` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+package cmd
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/stakater/Reloader/internal/pkg/leadership"
-+	"github.com/stakater/Reloader/internal/pkg/metrics"
-+)
-+
-+func TestMainServerMuxEndpoints(t *testing.T) {
-+	mux := http.NewServeMux()
-+	metrics.SetupPrometheusEndpointWithMux(mux)
-+	leadership.SetupLivenessEndpointWithMux(mux)
-+
-+	// Liveness endpoint should be served
-+	liveReq := httptest.NewRequest(http.MethodGet, "/live", nil)
-+	liveRec := httptest.NewRecorder()
-+	mux.ServeHTTP(liveRec, liveReq)
-+	assert.Equal(t, http.StatusOK, liveRec.Code)
-+	assert.Equal(t, "alive", liveRec.Body.String())
-+
-+	// Metrics endpoint should be served
-+	metricsReq := httptest.NewRequest(http.MethodGet, "/metrics", nil)
-+	metricsRec := httptest.NewRecorder()
-+	mux.ServeHTTP(metricsRec, metricsReq)
-+	assert.Equal(t, http.StatusOK, metricsRec.Code)
-+
-+	// pprof and expvar endpoints should NOT be served on the main metrics/liveness mux
-+	disallowedEndpoints := []string{
-+		"/debug/pprof/",
-+		"/debug/pprof/cmdline",
-+		"/debug/pprof/profile",
-+		"/debug/pprof/symbol",
-+		"/debug/pprof/trace",
-+		"/debug/pprof/goroutine",
-+		"/debug/pprof/heap",
-+		"/debug/vars",
-+	}
-+
-+	for _, endpoint := range disallowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on main mux", endpoint)
-+		})
-+	}
-+}
-+
-+func TestPProfServerMuxEndpoints(t *testing.T) {
-+	mux := newPProfServeMux()
-+
-+	// pprof endpoints should be served on pprof mux
-+	allowedEndpoints := []string{
-+		"/debug/pprof/",
-+		"/debug/pprof/cmdline",
-+		"/debug/pprof/goroutine",
-+		"/debug/pprof/heap",
-+	}
-+
-+	for _, endpoint := range allowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusOK, rec.Code, "pprof endpoint %s should be served on pprof mux", endpoint)
-+		})
-+	}
-+
-+	// Main metrics and liveness endpoints should NOT be served on the pprof mux
-+	disallowedEndpoints := []string{
-+		"/metrics",
-+		"/live",
-+	}
-+
-+	for _, endpoint := range disallowedEndpoints {
-+		t.Run(endpoint, func(t *testing.T) {
-+			req := httptest.NewRequest(http.MethodGet, endpoint, nil)
-+			rec := httptest.NewRecorder()
-+			mux.ServeHTTP(rec, req)
-+			assert.Equal(t, http.StatusNotFound, rec.Code, "endpoint %s should not be registered on pprof mux", endpoint)
-+		})
-+	}
-+}
-```
-
-**File**: `internal/pkg/leadership/leadership.go` (modified, +10/-1)
-```diff
-@@ -112,7 +112,16 @@ func stopControllers(stopChannels []chan struct{}) {
- // enabled and a replica stops leading the liveness probe will fail and the
- // kubelet will restart the container.
- func SetupLivenessEndpoint() {
--	http.HandleFunc("/live", healthz)
-+	SetupLivenessEndpointWithMux(http.DefaultServeMux)
-+}
-+
-+// SetupLivenessEndpointWithMux sets up the liveness probe endpoint on the provided ServeMux.
-+func SetupLivenessEndpointWithMux(mux *http.ServeMux) {
-+	if mux != nil {
-+		mux.HandleFunc("/live", healthz)
-+	} else {
-+		http.HandleFunc("/live", healthz)
-+	}
- }
- 
- func healthz(w http.ResponseWriter, req *http.Request) {
-```
-
-**File**: `internal/pkg/metrics/prometheus.go` (modified, +11/-1)
-```diff
-@@ -368,6 +368,12 @@ func NewCollectors() Collectors {
- }
- 
- func SetupPrometheusEndpoint() Collectors {
-+	return SetupPrometheusEndpointWithMux(http.DefaultServeMux)
-+}
-+
-+// SetupPrometheusEndpointWithMux configures metrics collectors and registers the /metrics handler
-+// on the provided ServeMux instead of the global DefaultServeMux.
-+func SetupPrometheusEndpointWithMux(mux *http.ServeMux) Collectors {
- 	collectors := NewCollectors()
- 
- 	prometheus.MustRegister(collectors.Reloaded)
-@@ -390,7 +396,11 @@ func SetupPrometheusEndpoint() Collectors {
- 		prometheus.MustRegister(collectors.ReloadedByNamespace)
- 	}
- 
--	http.Handle("/metrics", promhttp.Handler())
-+	if mux != nil {
-+		mux.Handle("/metrics", promhttp.Handler())
-+	} else {
-+		http.Handle("/metrics", promhttp.Handler())
-+	}
- 
- 	return collectors
- }
+ ARG TARGETOS
+ ARG TARGETARCH
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1258** (2026-10-26): chore: bump Go to 1.26.10 for eMudhra CA distrust (CVE-2026-111943) (@msafwankarim)
+- **PR #1256** (closed): chore(chart): tighten metadata Role RBAC for reloader-meta-info (@Hrushikesh-ramilla)
+- **PR #1255** (closed): fix(chart): make NetworkPolicy egress ports configurable (@Hrushikesh-ramilla)
+- **PR #1254** (2026-10-22): chore(chart): bump enterprise console to 0.0.42 (@msafwankarim)
+- **PR #1253** (closed): chore(chart): expose deployment update strategy in values (@Hrushikesh-ramilla)
 - **PR #1252** (2026-10-22): fix: isolate metrics port from pprof and expvar handlers (#1251) (@Hrushikesh-ramilla)
-- **PR #1250** (2026-10-21): chore(chart): bump enterprise console and gateway images (@msafwankarim)
-- **PR #1249** (2026-10-21): fix: honour resources-to-ignore in controller initialization check (@NickAnge)
-- **PR #1247** (2026-10-20): docs(chart): mark enterprise operator image as optional (@msafwankarim)
-- **PR #1246** (2026-10-21): fix: unwrap informer tombstones in the delete handler (@RaphaelFakhri)
-- **PR #1243** (2026-10-21): fix: guard the pause resume timers against concurrent access (@RaphaelFakhri)
 
 ---
 
@@ -1936,48 +1530,28 @@ fix: isolate metrics port from pprof and expvar handlers (#1251)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port
+## X. keep floating builder image tag
 
 **RULE**:
-When implementing operations in `internal/pkg/cmd/reloader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7670fd4a`: Merge pull request #1252 from Hrushikesh-ramilla/fix/pprof-handlers-metrics-port. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18cdbf14`: keep floating builder image tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/cmd/reloader.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"net/http/pprof"
-	mainMux := http.NewServeMux()
-	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
-	leadership.SetupLivenessEndpointWithMux(mainMux)
-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
-}
-
-func newPProfServeMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/debug/pprof/", pprof.Index)
-	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-	return mux
-	mux := newPProfServeMux()
-	if err := http.ListenAndServe(options.PProfAddr, mux); err != nil {
+FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26} AS builder
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	_ "net/http/pprof"
-	collectors := metrics.SetupPrometheusEndpoint()
-	leadership.SetupLivenessEndpoint()
-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, nil))
-	if err := http.ListenAndServe(options.PProfAddr, nil); err != nil {
+FROM --platform=${BUILDPLATFORM} ${BUILDER_IMAGE:-golang:1.26.10} AS builder
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7670fd4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18cdbf14` are properly handled with clean fallback behavior.

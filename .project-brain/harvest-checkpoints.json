@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T18:05:35.296Z",
+  "last_updated": "2026-10-26T18:12:35.375Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
-      "verified_at": "2026-10-26T11:46:45.022Z",
+      "content_hash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
+      "verified_at": "2026-10-26T18:12:35.375Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:46:45.022Z"
+      "last_updated": "2026-10-26T18:12:35.375Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
-      "verified_at": "2026-10-24T19:41:27.549Z",
+      "content_hash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
+      "verified_at": "2026-10-26T18:12:34.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:41:27.549Z"
+      "last_updated": "2026-10-26T18:12:34.592Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
-      "verified_at": "2026-10-22T15:56:54.744Z",
+      "content_hash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
+      "verified_at": "2026-10-26T18:12:30.853Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:56:54.744Z"
+      "last_updated": "2026-10-26T18:12:30.853Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",

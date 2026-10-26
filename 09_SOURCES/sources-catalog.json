@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6e35860f",
+    "sourceVersion": "71221647",
     "license": "NOASSERTION",
-    "contentHash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
-    "lastHarvestedAt": "2026-10-26T11:46:45.014Z",
+    "contentHash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
+    "lastHarvestedAt": "2026-10-26T18:12:35.366Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "80e1c7ec",
+    "sourceVersion": "17b07077",
     "license": "OSL-3.0",
-    "contentHash": "0be263e531f3b9b943cf6145cd2a152f1fe536ed871a5ce324f25fcc257a42b0",
-    "lastHarvestedAt": "2026-10-24T19:41:27.541Z",
+    "contentHash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
+    "lastHarvestedAt": "2026-10-26T18:12:34.584Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -6513,10 +6513,10 @@
     "repository": "stakater/Reloader",
     "platform": "github",
     "sourceUrl": "https://github.com/stakater/Reloader",
-    "sourceVersion": "7670fd4a",
+    "sourceVersion": "437d18a6",
     "license": "Apache-2.0",
-    "contentHash": "93aa00b4fb3ff950e70184462901b8b02509ab30939d3fa8fe07b962862922d7",
-    "lastHarvestedAt": "2026-10-22T15:56:54.733Z",
+    "contentHash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
+    "lastHarvestedAt": "2026-10-26T18:12:30.843Z",
     "learningId": "learn-github-stakater-reloader"
   },
   "pathwaycom-llm-app": {

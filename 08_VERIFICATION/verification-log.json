@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-8I55",
-    "timestamp": "2026-10-25T05:06:56.345Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "ca081c6e5daafb50b64c0c415f2b5eb70fa8d52babee62464c714aa84882eb58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-IKW4",
-    "timestamp": "2026-10-25T05:14:46.468Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "72a6de191e6520cf2710f4a532fedc5723412f3828f1c18fcd79eebb9380e21d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ILDI",
-    "timestamp": "2026-10-25T05:14:47.094Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "4e641fef331f0b5b16128dbfbccb1476b99380f9584d3a3e41c9a519d2d82467",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-QUA3",
     "timestamp": "2026-10-25T05:21:11.883Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-QM0M",
+    "timestamp": "2026-10-26T18:12:30.838Z",
+    "repository": "stakater/Reloader",
+    "learningId": "learn-github-stakater-reloader",
+    "contentHash": "beef5a6d18bef7e86fd5cf2e40228ed0bdd81190efb88c256e8ca024af32bca9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-QOWJ",
+    "timestamp": "2026-10-26T18:12:34.579Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-QPI9",
+    "timestamp": "2026-10-26T18:12:35.361Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "757f49267bfe5c2a913b93ffbc3131ffc73c2f3bca9b79789a4be4069d75c0b4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

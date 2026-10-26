@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T18:05:35.292Z",
-  "total_cycles_completed": 5155,
-  "total_learnings_persisted": 5155,
-  "total_rules_promoted": 4540,
+  "last_updated": "2026-10-26T18:12:35.371Z",
+  "total_cycles_completed": 5158,
+  "total_learnings_persisted": 5158,
+  "total_rules_promoted": 4543,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:11:24.500Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:17:44.897Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:23:37.581Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:23:52.609Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T18:05:35.292Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:12:30.848Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:12:34.589Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:12:35.371Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

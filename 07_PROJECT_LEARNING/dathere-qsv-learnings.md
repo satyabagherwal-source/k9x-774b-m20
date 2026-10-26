@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6e35860f`  
+> **Source Version**: `71221647`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:46:44.601Z  
+> **Timestamp**: 2026-10-26T18:12:34.803Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:41:24.138Z  
+> **Harvest Timestamp**: 2026-10-26T18:12:34.159Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3815 stars
+- **Stars / Engagement**: 3816 stars
 
 ---
 
@@ -2203,201 +2203,140 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a831b79f` (2026-10-26)
-**Commit Message**: deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#4923)
+### Incident Patch 1: `71221647` (2026-10-26)
+**Commit Message**: fix(json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)
 
-* deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked)
+The intermediate CSV's TempPath was a temporary dropped at the end of its
+statement, which deleted the empty tempfile immediately; the CSV writer then
+re-created a file at that path by name, which nothing ever removed. Each run
+left a .tmpXXXXXX.csv copy of the data in the temp dir, at umask mode.
 
-luau0-src 0.22.1+luau744 was yanked upstream (mlua-rs/mlua#748): it broke
-the released mlua-sys 0.13.0, and it will be re-released as 0.23.0. Releasing
-against a yanked crate isn't acceptable, so drop the mlua git patch from
-#4919 and pin luau0-src back to 0.22.0+luau740. mlua 0.12.2 and mlua-sys
-0.13.0 now come from crates.io again. The rest of #4919's lock refresh stays.
+Write through the tempfile's own (0600) handle, then keep the TempPath bound
+until `run` returns so the file is deleted on success and on error.
 
-Luau version strings in the README, INTERPRETERS.md, luau USAGE and the
-regenerated help docs go back to 0.740; the CHANGELOG entry now describes
-only the lock refresh and why Luau stays at 0.740.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #4923 in the CHANGELOG entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+Fixes #4924
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - Unchanged on both revs: `REGEXP_REPLACE`, `REAL`/`DECIMAL` division and `CORR`/`COVAR` results.
-   - Also lower memory for CSV scans of wide rows ([#30165](https://github.com/pola-rs/polars/pull/30165)), out-of-core streaming windows and sorts, and smaller SQL code size.
- - **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
--- **deps: Luau bumped to [0.744](https://github.com/luau-lang/luau/releases/tag/0.744)** (from 0.740, [#4919](https://github.com/dathere/qsv/pull/4919)). The released mlua 0.12.2 rejects Luau 0.744's bytecode version, which made every qsv command panic at startup, so `mlua` is pinned to upstream rev [`ff96ed7`](https://github.com/mlua-rs/mlua/commit/ff96ed786295cae96f43ef1372bd22be0fbf7866), which includes the fix ([mlua-rs/mlua@bca1afe](https://github.com/mlua-rs/mlua/commit/bca1afedd)), until a release has it. Also a lock-file refresh, notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0.
-+- **deps: lock-file refresh** ([#4919](https://github.com/dathere/qsv/pull/4919)), notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0. Luau stays at 0.740: #4919 also moved it to 0.744 by pinning `mlua` to an upstream git rev, but `luau0-src` 0.22.1+luau744 was then yanked ([mlua-rs/mlua#748](https://github.com/mlua-rs/mlua/issues/748)), so [#4923](https://github.com/dathere/qsv/pull/4923) reverts that and this release keeps released crates only (`mlua` 0.12.2, `luau0-src` 0.22.0+luau740). Luau 0.744 returns once mlua releases support for the re-released `luau0-src` 0.23.0.
- - **deps: Polars bumped to upstream rev [`34cc518`](https://github.com/pola-rs/polars/commit/34cc5185a9d7c83e9e3b6b63022fe596c6aebb53)** (from `c7da28c`, [#4875](https://github.com/dathere/qsv/pull/4875)). No `sqlp` result that already worked changes; every difference is a query that used to fail.
-   - **Fixed: `COUNT(*)` over a `UNION ALL ... LIMIT n`** panicked ([#30150](https://github.com/pola-rs/polars/pull/30150)).
-   - **Fixed: a correlated subquery whose table has a column named like the outer table** (`WHERE w.g = t.g` where `w` has a column `t`) failed with `StructFieldNotFound` ([#30149](https://github.com/pola-rs/polars/pull/30149)). This regressed in the `c7da28c` bump.
+@@ -104,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
+ 
+ ### Fixed
++- **`json` no longer leaves a temp file behind** ([#4924](https://github.com/dathere/qsv/issues/4924)). Each run left a `.tmpXXXXXX.csv` copy of the converted data in the system temp directory, readable under the default umask. The intermediate CSV was deleted as soon as it was created and then re-created by name, so nothing removed it. It is now written through the temp file's own owner-only handle and deleted when `json` finishes or fails.
+ - **`datefmt --input-tz`: a date-only value keeps its date** ([#4920](https://github.com/dathere/qsv/pull/4920)). A value with no time of day, such as `July 4, 2005` or `2005-07-04`, is midnight UTC on the written date, so `datefmt` prints the bare date. With `--input-tz` set to any zone west of UTC, it used to land on the **next day**, all year (`America/Los_Angeles` turned `July 4, 2005` into `2005-07-05`). Zones east of UTC were off by up to an hour depending on the season, and with `Europe/Athens` a July date moved to the previous day once Athens left summer time, which turned qsv's own CI red. The parser took the time of day from **today's** offset; [qsv-dateparser 0.20.0](https://github.com/dathere/qsv-dateparser/releases/tag/0.20.0) fixes it ([dathere/qsv-dateparser#14](https://github.com/dathere/qsv-dateparser/pull/14)). The same applies to date-only timestamps under `sample --ts-input-tz`. A date-only `geocode --older-than` cutoff is now that date at the current UTC time rather than the current local time. Inputs with a time of day, and `stats`/`schema` date inference (which parse in UTC), are unchanged.
+ - **`QSV_SNIFF_DELIMITER` no longer sets the output delimiter from the file being replaced** ([#4916](https://github.com/dathere/qsv/pull/4916)). With `-o out.csv` and an existing semicolon-delimited `out.csv`, the new output was written with semicolons, because the output path was sniffed like an input. Writers now use the delimiter from `--delimiter`, the extension or `QSV_DEFAULT_DELIMITER`, as without the env var.
+ - **`count` and `frequency` report a missing `dc:` entry** ([#4916](https://github.com/dathere/qsv/pull/4916)). They printed a bare `No such file or directory` for a `dc:` name that isn't cached, where other commands say `dc: cache entry '…' not found. Fetch it first…`. Their index lookup now checks the input's format error first, as the readers do.
 ```
 
-**File**: `Cargo.lock` (modified, +7/-5)
+**File**: `src/cmd/json.rs` (modified, +8/-6)
 ```diff
-@@ -4703,9 +4703,9 @@ checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
+@@ -333,13 +333,11 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     // we need to do this so we can use qsv select to reorder headers to first dict's keys order
+     // as the order of the headers in the CSV file is not guaranteed to be the same as the order of
+     // the keys in the JSON object
++    // Write through the tempfile's own (0600) handle rather than re-creating the file by name.
+     let temp_dir = env::temp_dir();
+-    let intermediate_csv = tempfile::Builder::new()
++    let mut intermediate_tmp = tempfile::Builder::new()
+         .suffix(".csv")
+-        .tempfile_in(&temp_dir)?
+-        .into_temp_path()
+-        .to_string_lossy()
+-        .into_owned();
++        .tempfile_in(&temp_dir)?;
  
- [[package]]
- name = "luau0-src"
--version = "0.22.1+luau744"
-+version = "0.22.0+luau740"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "abf3cf06d603de6835228ccf5e1afbed6e5c2409aa5d3122c1b2036055a2af15"
-+checksum = "4ea012e8a8aaff2f7b6c788fad41a60630003b6a0932bcf045f7d14952c9bd31"
- dependencies = [
-  "cc",
- ]
-@@ -4946,7 +4946,8 @@ dependencies = [
- [[package]]
- name = "mlua"
- version = "0.12.2"
--source = "git+https://github.com/mlua-rs/mlua?rev=ff96ed786295cae96f43ef1372bd22be0fbf7866#ff96ed786295cae96f43ef1372bd22be0fbf7866"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7a7ae6b65bf54b7fdd4cf5b6f44f60862350ebf3fe3779b3a9cc005e7fa14f81"
- dependencies = [
-  "bstr",
-  "either",
-@@ -4963,7 +4964,8 @@ dependencies = [
- [[package]]
- name = "mlua-sys"
- version = "0.13.0"
--source = "git+https://github.com/mlua-rs/mlua?rev=ff96ed786295cae96f43ef1372bd22be0fbf7866#ff96ed786295cae96f43ef1372bd22be0fbf7866"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1631cda17bd6486410ab751d91f5fd4484f441589278cdad879eb3afc721a285"
- dependencies = [
-  "cc",
-  "cfg-if",
-@@ -9147,7 +9149,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
- dependencies = [
-  "fastrand",
-- "getrandom 0.4.3",
-+ "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-  "windows-sys 0.61.2",
+     // convert JSON to CSV
+     // its inside a block so all the unneeded resources are freed & flushed after the block ends
+@@ -355,9 +353,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+ 
+         let intermediate_csv_writer = csv::WriterBuilder::new()
+             .has_headers(true)
+-            .from_path(intermediate_csv.clone())?;
++            .from_writer(intermediate_tmp.as_file_mut());
+         json_objects_to_csv(values, intermediate_csv_writer)?;
+     }
++    // Close the write handle before the file is re-opened for reading (Windows), but keep the
++    // TempPath bound until `run` returns: dropping it deletes the file on every exit path.
++    let intermediate_path = intermediate_tmp.into_temp_path();
++    let intermediate_csv = intermediate_path.to_string_lossy().into_owned();
+ 
+     // STEP 2: select the columns to use in the final output
+     // Read the intermediate CSV to get the actual headers (which, since we preserve key order,
 ```
 
-**File**: `Cargo.toml` (modified, +0/-5)
+**File**: `tests/test_json.rs` (modified, +56/-0)
 ```diff
-@@ -539,11 +539,6 @@ polars-arrow = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
- # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
- # [patch.crates-io] section of the pinned polars rev's Cargo.toml. Drop once #727 is released.
- hashbrown = { git = "https://github.com/pola-rs/hashbrown", rev = "d76a6f81abd8f388676aff15068236a8d21c7e1a" }
--# Luau 0.744 (luau0-src 0.22.1) emits bytecode version 14, above the LBC_VERSION_MAX = 11 that
--# the released mlua-sys 0.13.0 accepts, so every qsv command panicked at startup. mlua main has
--# the fix (mlua-rs/mlua@bca1afe, "Bump Luau to 0.744"); its own mlua-sys and mlua_derive come
--# along from the same checkout. Drop once an mlua release contains bca1afe.
--mlua = { git = "https://github.com/mlua-rs/mlua", rev = "ff96ed786295cae96f43ef1372bd22be0fbf7866" }
- # use our tweaked fork of csv crate
- # the csv crate underpins a lot of qsv's functionality, so every perf tweak helps
- # for details, see https://github.com/dathere/qsv/wiki/Tuned-csv-Fork-Benchmarks
-```
-
-**File**: `README.md` (modified, +2/-2)
-```diff
-@@ -66,7 +66,7 @@
- | [json](docs/help/json.md)<br>👆 | Convert JSON array to CSV.
- | [jsonl](docs/help/jsonl.md)<br>🚀🔣 | Convert newline-delimited JSON ([JSONL](https://jsonlines.org/)/[NDJSON](http://ndjson.org/)) to CSV. See `tojsonl` command to convert CSV to JSONL.
- | [lens](docs/help/lens.md)✨<br>🗃️🐻‍❄️🖥️ | Interactively view, search & filter tabular data files using the [csvlens](https://github.com/YS-L/csvlens#csvlens) engine. Apart from CSV and its dialects, Arrow, Avro/IPC, Parquet, JSON array & JSONL formats are supported with the "polars" feature. |
--| [luau](docs/help/luau.md)✨<br>📇🌐🔣📚 ![CKAN](docs/images/ckan.png) ![Luau](docs/images/luau.png) | <a name="luau_deeplink"></a>Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)).<br>Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections.<br> It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines. |
-+| [luau](docs/help/luau.md)✨<br>📇🌐🔣📚 ![CKAN](docs/images/ckan.png) ![Luau](docs/images/luau.png) | <a name="luau_deeplink"></a>Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)).<br>Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections.<br> It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines. |
- | [moarstats](docs/help/moarstats.md)<br>📇🏎️ | Add up to an additional 73 statistical measures, including extended outlier, robust & bivariate statistics to an existing stats CSV file. ([example](docs/moarstats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).|
- | [partition](docs/help/partition.md)<br>👆 | Partition a CSV based on a column value. |
- | [pivotp](docs/help/pivotp.md)✨<br>🐻‍❄️🚀🪄 | Pivot CSV data. Features "smart" aggregation auto-selection based on data type & stats. |
-@@ -126,7 +126,7 @@
- 📚: has lookup table support, enabling runtime "lookups" against local or remote reference CSVs.  
- 🌎: has geospatial capabilities.  
- ⛩️: uses [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine.  
--![Luau](docs/images/luau.png) : uses [Luau](https://luau.org/) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) as an embedded scripting [DSL](https://en.wikipedia.org/wiki/Domain-specific_language).  
-+![Luau](docs/images/luau.png) : uses [Luau](https://luau.org/) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) as an embedded scripting [DSL](https://en.wikipedia.org/wiki/Domain-specific_language).  
- 🎲: randomly generated or randomized output with a --seed option for reproducibility.  
- 🖥️: part of the User Interface (UI) feature group.  
- 
-```
-
-**File**: `docs/INTERPRETERS.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ As date manipulation is often needed, the [LuaDate](https://tieske.github.io/dat
- 
- Finally, as [qsv's DSL](../README.md#luau_deeplink) (👑), `luau` will gain even more features over time compared to the `python` feature.
- 
--[Luau 0.744](https://github.com/Roblox/luau/releases/tag/0.744) is currently embedded - qsv's policy is to use the latest stable Luau version at the time of each qsv release.
-+[Luau 0.740](https://github.com/Roblox/luau/releases/tag/0.740) is currently embedded - qsv's policy is to use the latest stable Luau version at the time of each qsv release.
- 
- ## Building qsv with python feature
- 
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +3/-3)
-```diff
-@@ -33,7 +33,7 @@
- | [flatten](flatten.md) | A flattened view of CSV records. Useful for viewing one record at a time. e.g. `qsv slice -i 5 data.csv \| qsv flatten`. |
- | [fmt](fmt.md) | Reformat a CSV with different delimiters, record terminators or quoting rules. (Supports ASCII delimited data.) |
- | [foreach](foreach.md) | Execute a shell command once per record in a given CSV file. |
--| [frequency](frequency.md)<br>[📇](#legend "uses an index when available.")[😣](#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](#legend "uses Luau 0.744 as an embedded scripting DSL.") | Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)). |
-+| [frequency](frequency.md)<br>[📇](#legend "uses an index when available.")[😣](#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](#legend "uses Luau 0.740 as an embedded scripting DSL.") | Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)). |
- | [get](get.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🌐](#legend "has web-aware options.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integration options.") | Get tabular data from local files, URLs (http/https & `dathere://`) & [CKAN](https://ckan.org) (`ckan://`) into a managed, queryable disk cache - with conditional revalidation (ETag/Last-Modified), transparent [zstd](https://github.com/facebook/zstd) compression, [BLAKE3](https://github.com/BLAKE3-team/BLAKE3) hashing & automatic indexing. Cached resources are reusable by ANY qsv command via the `dc:` prefix (e.g. `qsv stats dc:data.csv`), with stale entries auto-refreshed. Efficiently seeds `luau` lookup tables, `validate` dynamicEnum reference data & speeds up Datapusher+ harvesting. |
- | [geocode](geocode.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🚀](#legend "multithreaded even without an index.")[🌐](#legend "has web-aware options.")[🔣](#legend "requires UTF-8 encoded input.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🌎](#legend "has geospatial capabilities.") | Geocodes a location against an updatable local copy of the [Geonames](https://www.geonames.org/) cities & the [Maxmind GeoLite2](https://www.maxmind.com/en/geolite-free-ip-geolocation-data) databases — with caching and multi-threading, this offline path geocodes up to 360,000 records/sec! Can also geocode online (forward & reverse) via the [OpenCage](https://opencagedata.com) geocoder, geocode New York City addresses, BBLs and BINs via NYC's [Geoclient](https://github.com/mlipper/geoclient) API, which also returns NYC attributes such as council districts and census tracts, and geocode US addresses & coordinates via the free [US Census Geocoder](https://geocoding.geo.census.gov/geocoder/) - single or batch - returning Census state, county, tract, block group & block GEOIDs for Census data enrichment. |
- | [geoconvert](geoconvert.md)<br>[🌎](#legend "has geospatial capabilities.") | Convert between various spatial formats and CSV/SVG including GeoJSON, SHP, and more. |
-@@ -46,7 +46,7 @@
- | [json](json.md)<br>[👆](#legend "has powerful column selector support. See `select` for syntax.") | Convert JSON array to CSV. |
- | [jsonl](jsonl.md)<br>[🚀](#legend "multithreaded even without an index.")[🔣](#legend "requires UTF-8 encoded input.") | Convert newline-delimited JSON ([JSONL](https://jsonlines.org/)/[NDJSON](http://ndjson.org/)) to CSV. See `tojsonl` command to convert CSV to JSONL. |
- | [lens](lens.md)<br>[🗃️](#legend "Limited Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🖥️](#legend "part of the User Inte
-```
-
-**File**: `docs/help/frequency.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- > Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)).
- 
--**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/frequency.rs](https://github.com/dathere/qsv/blob/master/src/cmd/frequency.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[😣](TableOfContents.md#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.744 as an embedded scripting DSL.")
-+**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/frequency.rs](https://github.com/dathere/qsv/blob/master/src/cmd/frequency.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[😣](TableOfContents.md#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.740 as an embedded scripting DSL.")
- 
- <a name="nav"></a>
- [Description](#description) | [Usage](#usage) | [Frequency Options](#frequency-options) | [Frequency Cache Options](#frequency-cache-options) | [JSON Output Options](#json-output-options) | [Common Options](#common-options)
-```
-
-**File**: `docs/help/luau.md` (modified, +3/-3)
-```diff
-@@ -1,8 +1,8 @@
- # luau
- 
--> Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)). Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections. It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines.
-+> Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)). Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections. It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines.
- 
--**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/luau.rs](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🌐](TableOfContents.md#legend "has web-aware options.")[🔣](TableOfContents.md#legend "requires UTF-8 encoded input.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.") [![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.744 as an embedded scripting DSL.")
-+**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/luau.rs](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🌐](TableOfContents.md#legend "has web-aware options.")[🔣](TableOfContents.md#legend "requires UTF-8 encoded input.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.") [![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.740 as an embedded scripting DSL.")
- 
- <a name="nav"></a>
- [Description](#description) | [Usage](#usage) | [Arguments](#arguments) | [Luau Options](#luau-options) | [Common Options](#common-options)
-@@ -12,7 +12,7 @@
- ## Description [↩](#nav)
- 
- Create multiple new computed columns, filter rows or compute aggregations by
--executing a Luau 0.744 script for every row (SEQUENTIAL MODE) or for
-+executing a Luau 0.740 script for every row (SEQUENTIAL MODE) or for
- specified rows (RANDOM ACCESS MODE) of a CSV file.
- 
- Luau is not just another qsv command. It is qsv's Domain-Specific Language (DSL)
+@@ -539,3 +539,59 @@ fn json_jaq_runtime_error_surfaced() {
+         "stderr did not surface the underlying runtime error: {got_stderr}"
+     );
+ }
++
++fn json_tempdir_cmd(wrk: &Workdir, tmpdir: &std::path::Path) -> std::process::Command {
++    let mut cmd = wrk.command("json");
++    // std::env::temp_dir() reads TMPDIR on Unix and TMP/TEMP on Windows
++    cmd.env("TMPDIR", tmpdir)
++        .env("TMP", tmpdir)
++        .env("TEMP", tmpdir);
++    cmd
++}
++
++fn leftover_files(tmpdir: &std::path::Path) -> Vec<String> {
++    std::fs::read_dir(tmpdir)
++        .unwrap()
++        .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
++        .collect()
++}
++
++// https://github.com/dathere/qsv/issues/4924
++#[test]
++#[serial]
++fn json_no_leftover_tempfile() {
++    let wrk = Workdir::new("json_no_leftover_tempfile");
++    wrk.create_from_string(
++        "x.json",
++        r#"{"name": "John", "age": 30, "city": "New York"}"#,
++    );
++    let tmpdir = wrk.path("tmp");
++    std::fs::create_dir_all(&tmpdir).unwrap();
++
++    let mut cmd = json_tempdir_cmd(&wrk, &tmpdir);
++    cmd.arg("x.json");
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["name", "age", "city"],
++            svec!["John", "30", "New York"]
++        ]
++    );
++    assert_eq!(leftover_files(&tmpdir), Vec::<String>::new());
++}
++
++// the intermediate CSV is also removed when `run` fails after creating it
++#[test]
++#[serial]
++fn json_no_leftover_tempfile_on_error() {
++    let wrk = Workdir::new("json_no_leftover_tempfile_on_error");
++    wrk.create_from_string("x.json", r#"[{"a": 1, "b": 2}]"#);
++    let tmpdir = wrk.path("tmp");
++    std::fs::create_dir_all(&tmpdir).unwrap();
++
++    let mut cmd = json_tempdir_cmd(&wrk, &tmpdir);
++    cmd.arg("x.json").args(["--select", "nosuchcolumn"]);
++    wrk.assert_err(&mut cmd);
++    assert_eq!(leftover_files(&tmpdir), Vec::<String>::new());
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4925** (2026-10-26): fix(json): don't leave the intermediate CSV in the temp dir (@jqnatividad)
 - **PR #4923** (2026-10-26): deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (@jqnatividad)
 - **PR #4922** (2026-10-26): build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
 - **PR #4921** (2026-10-26): build(deps): bump anthropics/claude-code-action from 1.0.255 to 1.0.261 (@dependabot[bot])
 - **PR #4920** (2026-10-26): fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (@jqnatividad)
 - **PR #4919** (2026-10-26): deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (@jqnatividad)
-- **PR #4918** (2026-10-25): deps: pin Polars to the published py-2.1.0 tag (@jqnatividad)
 
 ---
 
@@ -2417,13 +2356,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#
+## X. json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a831b79f`: deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#4923). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71221647`: json): don't leave the intermediate CSV in the temp dir (#4924) (#4925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2431,14 +2370,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **deps: lock-file refresh** ([#4919](https://github.com/dathere/qsv/pull/4919)), notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0. Luau stays at 0.740: #4919 also moved it to 0.744 by pinning `mlua` to an upstream git rev, but `luau0-src` 0.22.1+luau744 was then yanked ([mlua-rs/mlua#748](https://github.com/mlua-rs/mlua/issues/748)), so [#4923](https://github.com/dathere/qsv/pull/4923) reverts that and this release keeps released crates only (`mlua` 0.12.2, `luau0-src` 0.22.0+luau740). Luau 0.744 returns once mlua releases support for the re-released `luau0-src` 0.23.0.
+- **`json` no longer leaves a temp file behind** ([#4924](https://github.com/dathere/qsv/issues/4924)). Each run left a `.tmpXXXXXX.csv` copy of the converted data in the system temp directory, readable under the default umask. The intermediate CSV was deleted as soon as it was created and then re-created by name, so nothing removed it. It is now written through the temp file's own owner-only handle and deleted when `json` finishes or fails.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **deps: Luau bumped to [0.744](https://github.com/luau-lang/luau/releases/tag/0.744)** (from 0.740, [#4919](https://github.com/dathere/qsv/pull/4919)). The released mlua 0.12.2 rejects Luau 0.744's bytecode version, which made every qsv command panic at startup, so `mlua` is pinned to upstream rev [`ff96ed7`](https://github.com/mlua-rs/mlua/commit/ff96ed786295cae96f43ef1372bd22be0fbf7866), which includes the fix ([mlua-rs/mlua@bca1afe](https://github.com/mlua-rs/mlua/commit/bca1afedd)), until a release has it. Also a lock-file refresh, notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a831b79f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71221647` are properly handled with clean fallback behavior.

@@ -5185,3 +5185,6 @@ Every entry in this ledger must capture:
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `cde13dc1` | Multi-dimensional audit evidence | 2026-10-26T18:05:30.095Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `2052f24e` | Multi-dimensional audit evidence | 2026-10-26T18:05:34.223Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7d8341a4` | Multi-dimensional audit evidence | 2026-10-26T18:05:35.287Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `437d18a6` | Multi-dimensional audit evidence | 2026-10-26T18:12:30.843Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `17b07077` | Multi-dimensional audit evidence | 2026-10-26T18:12:34.584Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `71221647` | Multi-dimensional audit evidence | 2026-10-26T18:12:35.366Z |
