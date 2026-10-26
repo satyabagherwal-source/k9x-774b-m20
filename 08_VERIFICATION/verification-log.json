@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-FOJ0",
-    "timestamp": "2026-10-24T20:48:38.124Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "ff9e0140a51dabe509ad315726f3e10fd6fa1f706629a718437538b0344e8d24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-FOSE",
-    "timestamp": "2026-10-24T20:48:38.462Z",
-    "repository": "crawlseo/crawlseo",
-    "learningId": "learn-github-crawlseo-crawlseo",
-    "contentHash": "85f6f41da6f0d34ba14306e3734935132a88aa7b008ba08dc6da2e08acbc42f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-FUXB",
-    "timestamp": "2026-10-24T20:48:46.415Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "4174bbd5dce25c940af029f6d175a6747fb08fbfd4769e247d2025dc65cfc266",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-NVCP",
-    "timestamp": "2026-10-24T20:55:00.217Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "f434ad81a164d71fb3e970bb221b7fd15984cde339bd6240372a31f541711e60",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-NYGP",
     "timestamp": "2026-10-24T20:55:04.249Z",
     "repository": "envoyproxy/envoy",
@@ -7492,6 +7432,66 @@
     "contentHash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-TCSY",
+    "timestamp": "2026-10-26T02:50:51.538Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "4b38ab4dd438440dcfa99e243d8c3de387069145f05823906377937bb427c375",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-TF9U",
+    "timestamp": "2026-10-26T02:50:54.738Z",
+    "repository": "JeffLi1993/seo-audit-skill",
+    "learningId": "learn-github-jeffli1993-seo-audit-skill",
+    "contentHash": "de3227854b73e7d4aa3c05deda3117175d9f3b7fe2552684fb536c02c4895a21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-TJE3",
+    "timestamp": "2026-10-26T02:51:00.075Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "3eaf606e0d01a2fa7d242a1e9eb3e7393b7baca61f757008b5171a43a575bef1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-TL3A",
+    "timestamp": "2026-10-26T02:51:02.278Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "11715ad404f817e11861dc107cb2ad214bad18c48cae76234fd4e1af373c36e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

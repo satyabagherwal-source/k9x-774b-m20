@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "da0c371b",
+    "sourceVersion": "86040b77",
     "license": "MIT",
-    "contentHash": "91737705ccf88e51650bd0408c018aa3154a876592d91e8b90ea5d2a834f4c61",
-    "lastHarvestedAt": "2026-10-25T15:03:18.556Z",
+    "contentHash": "4b38ab4dd438440dcfa99e243d8c3de387069145f05823906377937bb427c375",
+    "lastHarvestedAt": "2026-10-26T02:50:51.541Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "ba036280",
+    "sourceVersion": "6c7a3d4e",
     "license": "NOASSERTION",
-    "contentHash": "b1b2657f26f4cb6a41bf626ece934b7204ad5a31746b266a029971b17b4853b9",
-    "lastHarvestedAt": "2026-10-25T22:54:40.127Z",
+    "contentHash": "11715ad404f817e11861dc107cb2ad214bad18c48cae76234fd4e1af373c36e1",
+    "lastHarvestedAt": "2026-10-26T02:51:02.281Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "7e12743d",
+    "sourceVersion": "6c8c05f7",
     "license": "Apache-2.0",
-    "contentHash": "160c89bfce4b14b76b2091282cc76d6ff753655aaed62f05a4c8569b8fb9299c",
-    "lastHarvestedAt": "2026-10-25T13:57:17.456Z",
+    "contentHash": "3eaf606e0d01a2fa7d242a1e9eb3e7393b7baca61f757008b5171a43a575bef1",
+    "lastHarvestedAt": "2026-10-26T02:51:00.078Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -8395,8 +8395,8 @@
     "sourceUrl": "https://github.com/JeffLi1993/seo-audit-skill",
     "sourceVersion": "523bdfb2",
     "license": "MIT",
-    "contentHash": "a34599761919690ead621ce199babd7e6fb3d9be52571e71409d346d7b8143bd",
-    "lastHarvestedAt": "2026-10-21T06:00:57.841Z",
+    "contentHash": "de3227854b73e7d4aa3c05deda3117175d9f3b7fe2552684fb536c02c4895a21",
+    "lastHarvestedAt": "2026-10-26T02:50:54.741Z",
     "learningId": "learn-github-jeffli1993-seo-audit-skill"
   },
   "dimillian-redditos": {

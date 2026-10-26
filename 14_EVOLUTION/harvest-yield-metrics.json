@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T02:44:41.436Z",
-  "total_cycles_completed": 5070,
-  "total_learnings_persisted": 5070,
-  "total_rules_promoted": 4443,
+  "last_updated": "2026-10-26T02:51:02.285Z",
+  "total_cycles_completed": 5074,
+  "total_learnings_persisted": 5074,
+  "total_rules_promoted": 4447,
   "history": [
-    {
-      "timestamp": "2026-10-25T16:09:09.933Z",
-      "repository": "SeekStorm/SeekStorm",
-      "learningId": "learn-github-seekstorm-seekstorm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T16:15:24.213Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T16:15:24.437Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T16:21:49.899Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T16:28:20.866Z",
       "repository": "canberkkkkkk/ema-lightning",
@@ -1403,6 +1375,34 @@
       "repository": "yattee/yattee",
       "learningId": "learn-github-yattee-yattee",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T02:50:51.545Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T02:50:54.746Z",
+      "repository": "JeffLi1993/seo-audit-skill",
+      "learningId": "learn-github-jeffli1993-seo-audit-skill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T02:51:00.082Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T02:51:02.285Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

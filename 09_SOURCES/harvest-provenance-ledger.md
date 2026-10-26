@@ -5100,3 +5100,7 @@ Every entry in this ledger must capture:
 | `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-26T02:26:58.300Z |
 | `learn-github-serpapi-google-search-results-python` | `https://github.com/serpapi/google-search-results-python` | `345d31a9` | Multi-dimensional audit evidence | 2026-10-26T02:33:55.759Z |
 | `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `55b6c63d` | Multi-dimensional audit evidence | 2026-10-26T02:44:41.433Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `86040b77` | Multi-dimensional audit evidence | 2026-10-26T02:50:51.541Z |
+| `learn-github-jeffli1993-seo-audit-skill` | `https://github.com/JeffLi1993/seo-audit-skill` | `523bdfb2` | Multi-dimensional audit evidence | 2026-10-26T02:50:54.741Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6c8c05f7` | Multi-dimensional audit evidence | 2026-10-26T02:51:00.078Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6c7a3d4e` | Multi-dimensional audit evidence | 2026-10-26T02:51:02.281Z |

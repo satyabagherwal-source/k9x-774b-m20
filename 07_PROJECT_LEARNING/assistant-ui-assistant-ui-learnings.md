@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source**: github ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
-> **Source Version**: `da0c371b`  
+> **Source Version**: `86040b77`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:03:18.298Z  
+> **Timestamp**: 2026-10-26T02:50:51.214Z  
 > **Learning ID**: `learn-github-assistant-ui-assistant-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:03:17.606Z  
+> **Harvest Timestamp**: 2026-10-26T02:50:49.928Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Typescript/React Library for AI Chat 💬🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12736 stars
+- **Stars / Engagement**: 12742 stars
 
 ---
 
@@ -1433,140 +1433,233 @@ export function createAnonymousSessionFetch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86d482d5` (2026-10-23)
-**Commit Message**: docs(react-streamdown): set defaultOrigin in the security examples (#10075)
+### Incident Patch 1: `86040b77` (2026-10-25)
+**Commit Message**: fix(assistant-stream): replace stale model content in tool responses (#10107)
 
-**File**: `.changeset/streamdown-security-default-origin.md` (added, +5/-0)
+**File**: `.changeset/final-tool-model-content.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@assistant-ui/react-streamdown": patch
++"assistant-stream": patch
 +---
 +
-+docs: set `defaultOrigin` in the security examples, which rehype-harden requires once a prefix list is specific.
++fix: discard stale model content when a later tool response omits it so the model receives the latest result
 ```
 
-**File**: `packages/react-streamdown/src/types.ts` (modified, +3/-1)
+**File**: `packages/assistant-stream/src/core/accumulators/assistant-message-accumulator.test.ts` (modified, +37/-0)
 ```diff
-@@ -159,6 +159,7 @@ export type AllowedTags = Record<string, string[]>;
-  *   allowedLinkPrefixes: ["https://example.com", "https://docs.example.com"],
-  *   allowedImagePrefixes: ["https://cdn.example.com"],
-  *   allowedProtocols: ["https", "mailto"],
-+ *   defaultOrigin: "https://example.com",
-  * }}
-  */
- export type SecurityConfig = {
-@@ -170,7 +171,7 @@ export type SecurityConfig = {
-   allowedProtocols?: string[];
-   /** Allow base64 data images. Default: true */
-   allowDataImages?: boolean;
--  /** Default origin for relative URLs */
-+  /** Origin that relative URLs resolve against. Required when `allowedLinkPrefixes` or `allowedImagePrefixes` lists anything other than `"*"`. */
-   defaultOrigin?: string;
-   /** CSS class for blocked links */
-   blockedLinkClass?: string;
-@@ -387,6 +388,7 @@ export type StreamdownTextPrimitiveProps = Omit<
-    *   allowedLinkPrefixes: ["https://trusted.com"],
-    *   allowedImagePrefixes: ["https://cdn.trusted.com"],
-    *   allowedProtocols: ["https"],
-+   *   defaultOrigin: "https://trusted.com",
-    * }}
-    */
-   security?: SecurityConfig | undefined;
-```
-
----
-
-### Incident Patch 2: `c8d3bb55` (2026-10-24)
-**Commit Message**: fix(docs): improve thread-list error layout (#10102)
-
-**File**: `apps/docs/components/pages/home/demo/sidebar.tsx` (modified, +6/-5)
-```diff
-@@ -1,7 +1,7 @@
- "use client";
+@@ -131,6 +131,7 @@ describe("AssistantMessageAccumulator tool argument status", () => {
+         result: "interim",
+         isError: false,
+         isPreliminary: true,
++        modelContent: [{ type: "text", text: "Search in progress" }],
+       },
+       { type: "part-finish", path: [0] },
+       { type: "result", path: [0], result: "done", isError: false },
+@@ -146,6 +147,7 @@ describe("AssistantMessageAccumulator tool argument status", () => {
+       state: "call",
+       result: "interim",
+       isPreliminary: true,
++      modelContent: [{ type: "text", text: "Search in progress" }],
+       status: { type: "running", isArgsComplete: true },
+     });
+     expect(messages.at(-1)?.parts[0]).toMatchObject({
+@@ -154,6 +156,41 @@ describe("AssistantMessageAccumulator tool argument status", () => {
+       status: { type: "complete" },
+     });
+     expect(messages.at(-1)?.parts[0]).not.toHaveProperty("isPreliminary");
++    expect(messages.at(-1)?.parts[0]).not.toHaveProperty("modelContent");
++  });
++
++  it("clears model content when a later preliminary result omits it", async () => {
++    const messages = await collectStream([
++      {
++        type: "part-start",
++        path: [],
++        part: { type: "tool-call", toolCallId: "tc-1", toolName: "search" },
++      },
++      { type: "tool-call-args-text-finish", path: [0] },
++      {
++        type: "result",
++        path: [0],
++        result: "searching",
++        isError: false,
++        isPreliminary: true,
++        modelContent: [{ type: "text", text: "Search in progress" }],
++      },
++      {
++        type: "result",
++        path: [0],
++        result: "one match so far",
++        isError: false,
++        isPreliminary: true,
++      },
++    ]);
++
++    expect(messages.at(-1)?.parts[0]).toMatchObject({
++      state: "call",
++      result: "one match so far",
++      isPreliminary: true,
++      status: { type: "running", isArgsComplete: true },
++    });
++    expect(messages.at(-1)?.parts[0]).not.toHaveProperty("modelContent");
+   });
  
- import { ThreadListPrimitive, useAui, useAuiState } from "@assistant-ui/react";
--import { ChevronDownIcon, PlusIcon } from "lucide-react";
-+import { ChevronDownIcon, PlusIcon, RotateCcwIcon } from "lucide-react";
- import { Fragment, useMemo, useState, type ReactNode } from "react";
- import { ThreadListSearch } from "@/components/assistant-ui/elements/thread-list.aui";
- import { useDemoThreadListGroups } from "./thread-list-groups";
-@@ -94,16 +94,17 @@ function ThreadList({ search }: { search: string }): ReactNode {
-       ) : showLoadError ? (
-         <div
-           role="alert"
--          className="mt-1 flex h-8 shrink-0 items-center justify-between px-2 text-[13px]"
-+          className="mt-4 flex flex-col items-start gap-2 px-2 text-[13px]"
-         >
--          <span className="text-muted-foreground">
-+          <p className="text-muted-foreground leading-5">
-             Threads could not be loaded
--          </span>
-+          </p>
-           <button
-             type="button"
-             onClick={() => void aui.threads.reload()}
--            className="text-muted-foreground hover:text-foreground rounded-control -me-2 h-8 px-2 transition-colors"
-+            className="border-foreground/10 bg-background hover:border-foreground/25 hover:bg-foreground/[0.04] focus-visible:outline-ring rounded-control inline-flex h-8 cursor-pointer items-center gap-1.5 border px-2.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
-           >
-+            <RotateCcwIcon aria-hidden className="size-3.5" />
-             Retry
-           </button>
-         </div>
+   it("ignores a preliminary result after the final one", async () => {
+```
+
+**File**: `packages/assistant-stream/src/core/accumulators/assistant-message-accumulator.ts` (modified, +8/-4)
+```diff
+@@ -274,6 +274,12 @@ const handleResult = (
+   return updatePartForPath(message, chunk, warnOnce, (part) => {
+     if (part.type === "tool-call") {
+       const isPreliminary = chunk.isPreliminary === true;
++      if (isPreliminary && part.state === "result") return part;
++      const {
++        isPreliminary: _isPreliminary,
++        modelContent: _modelContent,
++        ...basePart
++      } = part;
+       const runningStatus =
+         part.status.type === "running"
+           ? part.status
+@@ -282,9 +288,8 @@ const handleResult = (
+               isArgsComplete: part.state !== "partial-call",
+             };
+       if (isPreliminary) {
+-        if (part.state === "result") return part;
+         return {
+-          ...part,
++          ...basePart,
+           state: part.state === "partial-call" ? "partial-call" : "call",
+           ...(chunk.artifact !== undefined ? { artifact: chunk.artifact } : {}),
+           result: chunk.result,
+@@ -298,9 +303,8 @@ const handleResult = (
+         };
+       }
+ 
+-      const { isPreliminary: _isPreliminary, ...partWithoutPreliminary } = part;
+       return {
+-        ...partWithoutPreliminary,
++        ...basePart,
+         state: "result",
+         ...(part.timing !== undefined
+           ? {
 ```
 
 ---
 
-### Incident Patch 3: `16b59dfd` (2026-10-25)
-**Commit Message**: ci(expo): skip native bundles for web-only UI changes (#10099)
+### Incident Patch 2: `b8baa3d7` (2026-10-25)
+**Commit Message**: fix(assistant-stream): preserve results when tool call IDs are reused (#10106)
 
-**File**: `.github/workflows/expo-native-bundle.yaml` (modified, +4/-0)
+**File**: `.changeset/pending-tool-result-identity.md` (added, +5/-0)
 ```diff
-@@ -14,6 +14,8 @@ on:
-       - packages/store/**
-       - packages/tap/**
-       - packages/ui/**
-+      - "!packages/ui/src/components/react/**"
-+      - "!packages/ui/src/components/vue/**"
-       - packages/x-buildutils/**
-       - packages/x-generative-compiler/**
-       - "!packages/**/*.test.ts"
-@@ -38,6 +40,8 @@ on:
-       - packages/store/**
-       - packages/tap/**
-       - packages/ui/**
-+      - "!packages/ui/src/components/react/**"
-+      - "!packages/ui/src/components/vue/**"
-       - packages/x-buildutils/**
-       - packages/x-generative-compiler/**
-       - "!packages/**/*.test.ts"
+@@ -0,0 +1,5 @@
++---
++"assistant-stream": patch
++---
++
++fix: keep pending tool results attached to their original calls when tool call IDs are reused
 ```
 
-**File**: `scripts/deploy-examples-changes.test.mjs` (modified, +7/-0)
+**File**: `packages/assistant-stream/src/core/tool/toolResultStream.test.ts` (modified, +34/-2)
 ```diff
-@@ -340,6 +340,13 @@ test("the Expo native bundle watches bundle inputs but skips isolated package te
-       ),
-       false,
-     );
-+    for (const file of [
-+      "packages/ui/src/components/react/assistant-ui/elements/thread.aui.tsx",
-+      "packages/ui/src/components/react/ui/radix/button.tsx",
-+      "packages/ui/src/components/vue/assistant-ui/thread.vue",
-+    ]) {
-+      assert.equal(matches(file), false, file);
-+    }
-     assert.equal(
-       matches(
-         "packages/ui/src/components/react-native/assistant-ui/thread.test.tsx",
+@@ -89,6 +89,38 @@ describe("unstable_runPendingTools", () => {
+     },
+   );
+ 
++  it("keeps each pending call's result when tool call IDs are reused", async () => {
++    const message = await AssistantMessageStream.fromAssistantStream(
++      createAssistantStream(async (controller) => {
++        for (const city of ["Paris", "Tokyo"]) {
++          const call = controller.addToolCallPart({
++            toolCallId: "reused",
++            toolName: "lookup",
++          });
++          call.argsText.append(JSON.stringify({ city }));
++          await call.close();
++        }
++      }),
++    ).unstable_result();
++
++    const settled = await unstable_runPendingTools(
++      message,
++      {
++        lookup: {
++          parameters: { type: "object" },
++          execute: (args) => `weather for ${args.city}`,
++        },
++      },
++      new AbortController().signal,
++      async () => {},
++    );
++
++    expect(settled.parts).toMatchObject([
++      { state: "result", result: "weather for Paris" },
++      { state: "result", result: "weather for Tokyo" },
++    ]);
++  });
++
+   it("keeps provider messages when a pending tool settles", async () => {
+     const settled = await unstable_runPendingTools(
+       createPendingToolMessage("messages"),
+@@ -114,8 +146,8 @@ describe("unstable_runPendingTools", () => {
+     expect(settled.content).toEqual(settled.parts);
+   });
+ 
+-  it.each(["constructor", "toString", "__proto__"])(
+-    "does not assign inherited results to a %s tool call ID",
++  it.each(["constructor", "toString", "__proto__", "executed"])(
++    "leaves an unavailable call with ID %s pending",
+     async (toolCallId) => {
+       const message = createPendingToolMessage("executed");
+       const unavailablePart = {
+```
+
+**File**: `packages/assistant-stream/src/core/tool/toolResultStream.ts` (modified, +5/-5)
+```diff
+@@ -238,7 +238,7 @@ export async function unstable_runPendingTools(
+       if (promiseOrUndefined) {
+         const result = await promiseOrUndefined;
+         return {
+-          toolCallId: part.toolCallId,
++          part,
+           result,
+         };
+       }
+@@ -247,19 +247,19 @@ export async function unstable_runPendingTools(
+ 
+   const toolCallResults = (await Promise.all(toolCallPromises)).filter(
+     (result) => result !== null,
+-  ) as { toolCallId: string; result: ToolResponse<ReadonlyJSONValue> }[];
++  ) as { part: ToolCallPart; result: ToolResponse<ReadonlyJSONValue> }[];
+ 
+   if (toolCallResults.length === 0) {
+     return message;
+   }
+ 
+-  const toolCallResultsById = new Map(
+-    toolCallResults.map(({ toolCallId, result }) => [toolCallId, result]),
++  const toolCallResultsByPart = new Map(
++    toolCallResults.map(({ part, result }) => [part, result]),
+   );
+ 
+   const updatedParts = message.parts.map((p) => {
+     if (isPendingToolCall(p)) {
+-      const toolResponse = toolCallResultsById.get(p.toolCallId);
++      const toolResponse = toolCallResultsByPart.get(p);
+       if (toolResponse) {
+         return {
+           ...p,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #10113** (2026-10-25): fix(docs): let Discord play the home link preview video (@Kinfe123)
 - **PR #10112** (2026-10-25): feat(docs): animate the home link preview with og:video (@Kinfe123)
 - **PR #10110** (2026-10-25): fix(docs): align setup wizard Cancel button to the left (@Kinfe123)
+- **PR #10107** (2026-10-25): fix(assistant-stream): replace stale model content in tool responses (@Kinfe123)
+- **PR #10106** (2026-10-25): fix(assistant-stream): preserve results when tool call IDs are reused (@Kinfe123)
 - **PR #10102** (2026-10-24): fix(docs): improve thread-list error layout (@Kinfe123)
-- **PR #10101** (2026-10-25): fix(core): restore rejected edits without replacing newer drafts (@Kinfe123)
-- **PR #10099** (2026-10-25): ci(expo): skip native bundles for web-only UI changes (@Kinfe123)
 
 ---
 
@@ -1586,25 +1679,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(react-streamdown): set defaultOrigin in the security examples (#10075)
+## X. assistant-stream): replace stale model content in tool responses (#10107)
 
 **RULE**:
-When implementing operations in `.changeset/streamdown-security-default-origin.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/final-tool-model-content.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86d482d5`: docs(react-streamdown): set defaultOrigin in the security examples (#10075). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86040b77`: assistant-stream): replace stale model content in tool responses (#10107). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/streamdown-security-default-origin.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/final-tool-model-content.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"@assistant-ui/react-streamdown": patch
+"assistant-stream": patch
 ---
 
-docs: set `defaultOrigin` in the security examples, which rehype-harden requires once a prefix list is specific.
+fix: discard stale model content when a later tool response omits it so the model receives the latest result
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1614,4 +1707,4 @@ docs: set `defaultOrigin` in the security examples, which rehype-harden requires
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86d482d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86040b77` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `7e12743d`  
+> **Source Version**: `6c8c05f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:57:17.224Z  
+> **Timestamp**: 2026-10-26T02:50:59.742Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:57:16.566Z  
+> **Harvest Timestamp**: 2026-10-26T02:50:59.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25816 stars
+- **Stars / Engagement**: 25815 stars
 
 ---
 
@@ -1721,399 +1721,142 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `389f8bf6` (2026-10-23)
-**Commit Message**: Add a PCL resourceExists builtin (#25321)
+### Incident Patch 1: `6c8c05f7` (2026-10-25)
+**Commit Message**: Switch Call and Invoke to use property.Map (#25383)
 
-Splitting up #24806. This PR adds `resourceExists(type, id, state?)` to
-PCL. It also makes the engine's `ExistsResource` pass the given
-properties to `Read` as inputs only, not as state.
+This switches over all the `Call` and `Invoke` code to `property.Map`
+except for one call to `errorToMessage` in `Call`.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+We duplicate the `extendOutputDependencies` and `addOutputDependencies`
+methods to work with `property.Value` with just a 2 suffix. This
+duplication should be short-lived such that we can remove the old
+methods and the 2 suffix shortly.
 
----------
-
-Co-authored-by: Pat Gavlin <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/20261022--pcl--resource-exists.yaml` (added, +4/-0)
+**File**: `pkg/resource/deploy/source_eval.go` (modified, +38/-13)
 ```diff
-@@ -0,0 +1,4 @@
-+component: pcl
-+kind: feat
-+body: Add a `resourceExists` builtin that checks whether a resource with a given ID exists without adopting it into the stack
-+time: 2026-10-22T14:32:18.722323+02:00
-```
-
-**File**: `changelog/pending/20261023--engine--exists-read-inputs-only.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: engine
-+kind: fix
-+body: Pass only inputs, not state, to the provider's `Read` when checking whether a resource exists
-+time: 2026-10-23T14:16:53.973811+02:00
-```
-
-**File**: `docs/architecture/resources/README.md` (modified, +35/-0)
-```diff
-@@ -42,3 +42,38 @@ externally to Pulumi. These can e.g. be resources set up through
- OpenTofu, but as part of a Pulumi Program.  Pulumi doesn't manage the
- lifecycle of this type of resource itself, but rather defers to the
- provider to do so.
-+
-+## Resource Existence Checks
-+
-+Pulumi provides an `exists` method on custom resource types that
-+checks whether a resource with a given ID currently exists in the
-+provider. Unlike `get` (which reads and imports the resource into
-+state), `exists` performs a read-only check and returns
-+`Output<bool>` without registering the resource in the deployment
-+state.
-+
-+The `exists` method is implemented using the provider's `Read` RPC,
-+passing the ID (an import ID, as for `get`) and any state given to
-+`exists`. If `Read` returns output properties, the resource exists;
-+if it returns nil outputs, the resource does not exist. If existence
-+can't be determined, for example because the ID is unknown during a
-+preview, the result is unknown.
-+
-+### SDK Usage
-+
-+Each language SDK exposes `exists` on resource types:
-+
-+- **Go**: `ResourceExists(ctx, id, state, opts...)`
-+- **Node.js**: `Resource.exists(id, state?, opts?)`
-+- **Python**: `Resource.exists(id, opts=None, **state)`
-+
-+PCL programs use the `resourceExists(type, id, state?)` builtin.
-+
-+### Engine Implementation
-+
-+The `ExistsResource` RPC is handled directly in the resource
-+monitor without going through the step pipeline. It resolves the
-+provider (including default provider registration if needed),
-+calls `provider.Read()`, and returns a boolean result. No
-+resources are registered in the deployment snapshot as a result of
-+this call.
-```
-
-**File**: `pkg/cmd/pulumi/do/do_shared.go` (modified, +3/-0)
-```diff
-@@ -292,6 +292,9 @@ func evaluatePCL(
- 		func(context.Context, *pulumirpc.ResourceCallRequest) (*pulumirpc.CallResponse, error) {
- 			return nil, notSupported("call functions")
- 		},
-+		func(context.Context, *pulumirpc.ExistsResourceRequest) (*pulumirpc.ExistsResourceResponse, error) {
-+			return nil, notSupported("resourceExists")
-+		},
- 	)
+@@ -1115,8 +1115,8 @@ func (rm *resmon) Invoke(
+ 		}
+ 		rootSet.Add(urn)
+ 	}
+-	for _, v := range resource.ToResourcePropertyMap(args) {
+-		addOutputDependencies(rootSet, v)
++	for _, v := range args.All {
++		addOutputDependencies2(rootSet, v)
+ 	}
  
- 	result, poison, diags := ectx.EvaluateObject(attrs, inputType, properties)
-```
-
-**File**: `pkg/codegen/pcl/functions.go` (modified, +17/-0)
-```diff
-@@ -615,6 +615,23 @@ func pulumiBuiltins(options bindOptions) map[string]*model.Function {
- 		// "resource type" as we do for `call` expressions.
- 		"pulumiResourceType": newResourceFunction("pulumiResourceType"),
- 		"pulumiResourceName": newResourceFunction("pulumiResourceName"),
-+		"resourceExists": model.NewFunction(model.StaticFunctionSignature{
-+			Parameters: []model.Parameter{
-+				{
-+					Name: "type",
-+					Type: model.StringType,
-+				},
-+				{
-+					Name: "id",
-+					Type: model.NewOutputType(model.StringType),
-+				},
-+				{
-+					Name: "state",
-+					Type: model.NewOptionalType(model.DynamicType),
-+				},
-+			},
-+			ReturnType: model.NewOutputType(model.BoolType),
-+		}),
+ 	if rootSet.Cardinality() > 0 && rm.registrations.HasUnresolved(rootSet) {
+@@ -1314,7 +1314,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to unmarshal %v args: %w", tok, err)
+ 	}
+-	filteredArgs, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
++	args, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
+ 		KeepUnknowns:     true,
+ 		KeepSecrets:      true,
+ 		KeepResources:    true,
+@@ -1324,7 +1324,6 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to unmarshal %v args: %w", tok, err)
+ 	}
+-	args := resource.ToResourcePropertyMap(filteredArgs)
+ 
+ 	argDependencies := map[resource.PropertyKey][]resource.URN{}
+ 	for name, deps := range req.GetArgDependencies() {
+@@ -1343,8 +1342,9 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 	defer stackTraceHandle.Release()
+ 
+ 	// If we have output values we can add the dependencies from them to the args dependencies map we send to the provider.
+-	for key, output := range args {
+-		argDependencies[key] = extendOutputDependencies(argDependencies[key], output)
++	for key, output := range args.All {
++		pk := resource.PropertyKey(key)
++		argDependencies[pk] = extendOutputDependencies2(argDependencies[pk], output)
+ 	}
+ 
+ 	info := plugin.CallInfo{
+@@ -1365,11 +1365,11 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 	loggedInfo.Config = nil
+ 	logging.V(5).Infof(
+ 		"ResourceMonitor.Call received: tok=%v #args=%v #info=%v config=%v #options=%v",
+-		tok, len(args), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
++		tok, args.Len(), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
+ 	)
+ 	ret, err := prov.Call(ctx, plugin.CallRequest{
+ 		Tok:     tok,
+-		Args:    resource.FromResourcePropertyMap(args),
++		Args:    args,
+ 		Info:    info,
+ 		Options: options,
+ 	})
+@@ -1380,7 +1380,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 			rpcError = err
+ 		}
+ 
+-		message := errorToMessage(rpcError, args, rm.opts.ShowSecrets)
++		message := errorToMessage(rpcError, resource.ToResourcePropertyMap(args), rm.opts.ShowSecrets)
+ 		rm.diagnostics.Errorf(diag.GetCallFailedError(), tok, message)
+ 
+ 		rm.abortChan <- true
+@@ -1391,9 +1391,9 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 	if ret.ReturnDependencies == nil {
+ 		ret.ReturnDependencies = map[resource.PropertyKey][]resource.URN{}
+ 	}
+-	retReturn := resource.ToResourcePropertyMap(ret.Return)
+-	for k, v := range retReturn {
+-		ret.ReturnDependencies[k] = extendOutputDependencies(ret.ReturnDependencies[k], v)
++	for k, v := range ret.Return.All {
++		pk := resource.PropertyKey(k)
++		ret.ReturnDependencies[pk] = extendOutputDependencies2(ret.ReturnDependencies[pk], v)
+ 	}
+ 
+ 	returnDependencies := map[string]*pulumirpc.CallResponse_ReturnDependencies{}
+@@ -1405,7 +1405,7 @@ func (rm *resmon) Call(ctx context.Context, req *pulumirpc.ResourceCallRequest)
+ 		returnDependencies[string(name)] = &pulumirpc.CallResponse_ReturnDependencies{Urns: urns}
+ 	}
+ 
+-	filteredRet, err := plugin.FilterProperties(resource.FromResourcePropertyMap(retReturn), plugin.FilterOptions{
++	filteredRet, err := plugin.FilterProperties(ret.Return, plugin.FilterOptions{
+ 		KeepUnknowns:         true,
+ 		KeepSecrets:          true,
+ 		KeepResources:        true,
+@@ -3698,3 +3698,28 @@ func addOutputDependencies(deps mapset.Set[resource.URN], v resource.PropertyVal
+ 		addOutputDependencies(deps, v.SecretValue().Element)
  	}
  }
- 
-```
-
-**File**: `pkg/engine/lifecycletest/step_generator_test.go` (modified, +6/-3)
-```diff
-@@ -631,13 +631,16 @@ func TestExistsResourceWithProperties(t *testing.T) {
- 		WithProvider("pkgA", "1.0.0", &deploytest.Provider{
- 			ReadF: func(_ context.Context, req plugin.ReadRequest) (plugin.ReadResponse, error) {
- 				readCalled = true
--				// Verify that properties were passed through.
--				if foo := req.State.Get("foo"); !foo.IsString() || foo.AsString() != "bar" {
-+				// Verify that properties were passed through as inputs, with no state.
-+				if foo := req.Inputs.Get("foo"); !foo.IsString() || foo.AsString() != "bar" {
- 					return plugin.ReadResponse{}, fmt.Errorf("expected foo=bar, got %v", foo)
- 				}
-+				if req.State.Len() != 0 {
-+					return plugin.ReadResponse{}, fmt.Errorf("expected no state, got %v", req.State)
-+				}
- 				return plugin.ReadResponse{
- 					ReadResult: plugin.ReadResult{
--						Outputs: &req.State,
-+						Outputs: &req.Inputs,
- 					},
- 					Status: resource.StatusOK,
- 				}, nil
-```
-
-**File**: `pkg/pcl/runtime/builtinFunctions.go` (modified, +54/-0)
-```diff
-@@ -670,6 +670,59 @@ func (ectx *EvalContext) builtinFunctions() map[string]function.Function {
- 		},
- 	})
- 
-+	// resourceExists reports whether a resource of the given type with the given ID exists, passing any state to the
-+	// provider's Read. A resource being checked for existence has no logical identity, so no name is required. If the
-+	// ID is unknown (e.g. during preview), or the engine can't determine existence, the result is unknown.
-+	existsResourceFn := function.New(&function.Spec{
-+		Params: []function.Parameter{
-+			{
-+				Name: "type",
-+				Type: cty.String,
-+			},
-+			{
-+				Name:        "id",
-+				Type:        cty.String,
-+				AllowMarked: true,
-+			},
-+		},
-+		VarParam: &function.Parameter{
-+			Name:        "state",
-+			Type:        cty.DynamicPseudoType,
-+			AllowMarked: true,
-+			AllowNull:   true,
-+		},
-+		Type: function.StaticReturnType(cty.Bool),
-+		Impl: func(args []cty.Value, retType cty.Type) (cty.Value, error) {
-+			// The ID is typically an output of the resource being checked, so it carries secret and dependency
-+			// marks. Strip them before reading the underlying string.
-+			id, _ := args[1].Unmark()
-+			// During preview the ID of a resource that has not yet been created is unknown; the runtime represents
-+			// this as an empty string. We can't check existence without an ID, so the result is unknown.
-+			if !id.IsKnown() || id.AsString() == "" {
-+				return cty.UnknownVal(cty.Bool), nil
-+			}
-+			req := &pulumirpc.ExistsResourceRequest{
-+				Type: args[0].AsString(),
-+				Id:   id.AsString(),
-+			}
-+			if len(args) == 3 && !args[2].IsNull() {
-+				state, err := ctyToPropertyValue(args[2])
-+				if err != nil {
-+					return cty.NilVal, fmt.Errorf("resourceExists: invalid state: %w", err)
-+				}
-+				req.Properties = propertyrpc.Marshal(stripOutputs(state).AsMap())
-+			}
-+			resp, err := ectx.existsResource(context.TODO(), req)
-+			if err != nil {
-+				return cty.NilVal, fmt.Errorf("resourceExists: %w", err)
-+			}
-+			if resp.GetUnknown() {
-+				return cty.UnknownVal(cty.Bool), nil
-+			}
-+			return cty.BoolVal(resp.GetExists()), nil
-+		},
-+	})
 +
- 	fileAssetFn := function.New(&function.Spec{
- 		Params: []function.Parameter{
- 			{
-@@ -1219,6 +1272,7 @@ func (ectx *EvalContext) builtinFunctions() map[string]function.Function {
- 		"getOutput":          getOutputFn,
- 		"invoke":             invokeFn,
- 		"call":               callFn,
-+		"resourceExists":     existsResourceFn,
- 		"fileAsset":          fileAssetFn,
- 		"fileArchive":        fileArchiveFn,
- 		"assetArchive":       assetArchiveFn,
-```
-
-**File**: `pkg/pcl/runtime/builtinFunctions_test.go` (modified, +49/-1)
-```diff
-@@ -15,6 +15,7 @@
- package runtime
- 
- import (
-+	"context"
- 	"strings"
- 	"testing"
- 
-@@ -25,6 +26,7 @@ import (
- 	"github.com/pulumi/pulumi/pkg/v3/codegen/pcl"
- 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
- 	"github.com/pulumi/pulumi/sdk/v3/go/property"
-+	pulumirpc "github.com/pulumi/pulumi/sdk/v3/proto/go"
- )
- 
- // evaluateLocals binds a program of local variables and evaluates each one with no
-@@ -37,7 +39,7 @@ func evaluateLocals(t *testing.T, source string) map[string]property.Value {
- 	require.NoError(t, err)
- 	require.False(t, diags.HasErrors(), diags.Error())
- 
--	ectx := NewEvalContext("", "", "", "", "", nil, nil, nil, nil, nil)
-+	ectx := NewEvalContext("", "", "", "", "", nil, nil, nil, nil, nil, nil)
- 	values := map[string]property.Value{}
- 	for _, node := range program.Nodes {
- 		local := node.(*pcl.LocalVariable)
-@@ -170,3 +172,49 @@ reversed = range(5, 2)
- 		"reversed": list(5, 4, 3),
- 	}, values)
- }
++func extendOutputDependencies2(deps []resource.URN, v property.Value) []resource.URN {
++	set := mapset.NewSet(deps...)
++	addOutputDependencies2(set, v)
++	return set.ToSlice()
++}
 +
-+func TestResourceExists(t *testing.T) {
-+	t.Parallel()
++func addOutputDependencies2(deps mapset.Set[resource.URN], v property.Value) {
++	deps.Append(v.Dependencies()...)
 +
-+	parser := syntax.NewParser()
-+	require.NoError(t, parser.ParseFile(strings.NewReader(`
-+exists = resourceExists("pkg:index:Resource", "existing")
-+withState = resourceExists("pkg:index:Resource", "missing", { value = false })
-+unknown = resourceExists("pkg:index:Resource", "unknowable")
-+`), "main.pp"))
-+	program, diags, err := pcl.BindProgram(parser.Files, schema.NewNullLoader())
-+	require.NoError(t, err)
-+	require.False(t, diags.HasErrors(), diags.Error())
-+
-+	requests := map[string]*pulumirpc.ExistsResourceRequest{}
-+	existsResource := func(
-+		_ context.Context, req *pulumirpc.ExistsResourceRequest,
-+	) (*pulumirpc.ExistsResourceResponse, error) {
-+		requests[req.GetId()] = req
-+		switch req.GetId() {
-+		case "existing":
-+			return &pulumirpc.ExistsResourceResponse{Exists: true}, nil
-+		case "unknowable":
-+			return &pulumirpc.ExistsResourceResponse{Unknown: true}, nil
-+		default:
-+			return &pulumirpc.ExistsResourceResponse{}, nil
++	if v.IsResourceReference() {
++		ref := v.AsResourceReference()
++		addOutputDependencies2(deps, ref.ID)
++	}
++	if v.IsMap() {
++		for _, elem := range v.AsMap().All {
++			addOutputDependencies2(deps, elem)
 +		}
 +	}
-+	ectx := NewEvalContext("", "", "", "", "", nil, nil, nil, nil, nil, existsResource)
-+
-+	values := map[string]property.Value{}
-+	for _, node := range program.Nodes {
-+		local := node.(*pcl.LocalVariable)
-+		value, _, diags := ectx.Evaluate(local.Definition.Value)
-+		require.False(t, diags.HasErrors(), "%s: %s", local.Name(), diags.Error())
-+		values[local.Name()] = value
++	if v.IsArray() {
++		for _, elem := range v.AsArray().All {
++			addOutputDependencies2(deps, elem)
++		}
 +	}
-+
-+	assert.Equal(t, property.New(true), values["exists"])
-+	assert.Equal(t, property.New(false), values["withState"])
-+	assert.True(t, values["unknown"].IsComputed())
-+
-+	assert.Equal(t, "pkg:index:Resource", requests["missing"].GetType())
-+	assert.Equal(t, map[string]any{"value": false}, requests["missing"].GetProperties().AsMap())
-+	assert.Empty(t, requests["existing"].GetProperties().AsMap())
 +}
-```
-
----
-
-### Incident Patch 2: `14dad6f9` (2026-10-23)
-**Commit Message**: Allow `length` of a conditional that gives `null` or a list (#25327)
-
-The type of a `null` literal is a constant type whose underlying type is
-`none`. `UnwrapOption` compared union elements to `model.NoneType`
-directly, so it did not unwrap the `union(null, T)` type of `cond ? null
-: [x]`. As a result, PCL binding rejected `length(cond ? null : [x])`.
-
-`UnwrapOption` now treats a `none` constant type as `none`. The other
-callers of `UnwrapOption` (program codegen and the PCL interpreter) get
-the same fix.
-
-Fixes https://github.com/pulumi/pulumi/issues/25324
-
-**File**: `changelog/pending/20261022--pcl--length-of-null-conditional.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: pcl
-+kind: fix
-+body: Allow `length` of a conditional expression whose branches are `null` and a list
-+time: 2026-10-22T00:00:00Z
-```
-
-**File**: `pkg/codegen/pcl/functions_test.go` (modified, +2/-0)
-```diff
-@@ -387,6 +387,8 @@ func TestLengthOfTupleWithOutputs(t *testing.T) {
- 		{source: "value = length([false, secret(false)])", typ: model.NewOutputType(model.IntType)},
- 		{source: "value = length([[secret(false)]])", typ: model.NewOutputType(model.IntType)},
- 		{source: "value = length([false])", typ: model.IntType},
-+		{source: "value = length(true ? null : [1])", typ: model.IntType},
-+		{source: "value = length(true ? null : [secret(1)])", typ: model.NewOutputType(model.IntType)},
- 	}
- 	for _, c := range cases {
- 		t.Run(c.source, func(t *testing.T) {
-```
-
-**File**: `pkg/codegen/pcl/utilities.go` (modified, +10/-2)
-```diff
-@@ -318,9 +318,9 @@ func GenerateMultiArguments(
- func UnwrapOption(exprType model.Type) model.Type {
- 	switch exprType := exprType.(type) {
- 	case *model.UnionType:
--		if len(exprType.ElementTypes) == 2 && exprType.ElementTypes[0] == model.NoneType {
-+		if len(exprType.ElementTypes) == 2 && isNoneType(exprType.ElementTypes[0]) {
- 			return exprType.ElementTypes[1]
--		} else if len(exprType.ElementTypes) == 2 && exprType.ElementTypes[1] == model.NoneType {
-+		} else if len(exprType.ElementTypes) == 2 && isNoneType(exprType.ElementTypes[1]) {
- 			return exprType.ElementTypes[0]
- 		}
- 		return exprType
-@@ -329,6 +329,14 @@ func UnwrapOption(exprType model.Type) model.Type {
- 	}
- }
- 
-+// isNoneType returns true if t is the none type or the type of a `null` literal.
-+func isNoneType(t model.Type) bool {
-+	if c, ok := t.(*model.ConstType); ok {
-+		t = c.Type
-+	}
-+	return t == model.NoneType
-+}
-+
- // VariableAccessed returns whether the given variable name is accessed in the given expression.
- func VariableAccessed(variableName string, expr model.Expression) bool {
- 	accessed := false
-```
-
-**File**: `pkg/pcl/runtime/builtinFunctions_test.go` (modified, +7/-5)
-```diff
-@@ -58,13 +58,15 @@ tuple = length([1, 2, 3])
- object = length({"a" = 1, "b" = 2})
- emptyObject = length({})
- map = length({for k, v in {"a" = 1, "b" = 2, "c" = 3} : k => v})
-+optionalList = length(false ? null : [1])
- `)
- 	assert.Equal(t, map[string]property.Value{
--		"string":      property.New(3.0),
--		"tuple":       property.New(3.0),
--		"object":      property.New(2.0),
--		"emptyObject": property.New(0.0),
--		"map":         property.New(3.0),
-+		"string":       property.New(3.0),
-+		"tuple":        property.New(3.0),
-+		"object":       property.New(2.0),
-+		"emptyObject":  property.New(0.0),
-+		"map":          property.New(3.0),
-+		"optionalList": property.New(1.0),
- 	}, values)
- }
- 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25383** (2026-10-25): Switch Call and Invoke to use property.Map (@Frassle)
 - **PR #25378** (2026-10-25): Migrate URNRegistration to property.Map (@Frassle)
 - **PR #25370** (2026-10-25): Migrate resource transforms to property.Map (@Frassle)
 - **PR #25365** (2026-10-23): Migrate invoke transforms to property.Map (@Frassle)
 - **PR #25364** (2026-10-23): Migrate Exists to use property.Map (@Frassle)
 - **PR #25363** (2026-10-23): Update first-party Pulumi dependencies (@pulumi-renovate[bot])
-- **PR #25362** (closed): Pass only inputs to Read in ExistsResource (@i-am-tom)
 
 ---
 
@@ -2133,31 +1876,69 @@ Fixes https://github.com/pulumi/pulumi/issues/25324
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a PCL resourceExists builtin (#25321)
+## X. Switch Call and Invoke to use property.Map (#25383)
 
 **RULE**:
-When implementing operations in `changelog/pending/20261022--pcl--resource-exists.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/resource/deploy/source_eval.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `389f8bf6`: Add a PCL resourceExists builtin (#25321). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c8c05f7`: Switch Call and Invoke to use property.Map (#25383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261022--pcl--resource-exists.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/resource/deploy/source_eval.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: pcl
-kind: feat
-body: Add a `resourceExists` builtin that checks whether a resource with a given ID exists without adopting it into the stack
-time: 2026-10-22T14:32:18.722323+02:00
+	for _, v := range args.All {
+		addOutputDependencies2(rootSet, v)
+	args, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
+	for key, output := range args.All {
+		pk := resource.PropertyKey(key)
+		argDependencies[pk] = extendOutputDependencies2(argDependencies[pk], output)
+		tok, args.Len(), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
+		Args:    args,
+		message := errorToMessage(rpcError, resource.ToResourcePropertyMap(args), rm.opts.ShowSecrets)
+	for k, v := range ret.Return.All {
+		pk := resource.PropertyKey(k)
+		ret.ReturnDependencies[pk] = extendOutputDependencies2(ret.ReturnDependencies[pk], v)
+	filteredRet, err := plugin.FilterProperties(ret.Return, plugin.FilterOptions{
+
+func extendOutputDependencies2(deps []resource.URN, v property.Value) []resource.URN {
+	set := mapset.NewSet(deps...)
+	addOutputDependencies2(set, v)
+	return set.ToSlice()
+}
+
+func addOutputDependencies2(deps mapset.Set[resource.URN], v property.Value) {
+	deps.Append(v.Dependencies()...)
+
+	if v.IsResourceReference() {
+		ref := v.AsResourceReference()
+		addOutputDependencies2(deps, ref.ID)
+	}
+	if v.IsMap() {
+		for _, elem := range v.AsMap().All {
+			addOutpu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	for _, v := range resource.ToResourcePropertyMap(args) {
+		addOutputDependencies(rootSet, v)
+	filteredArgs, err := plugin.FilterProperties(rawArgs, plugin.FilterOptions{
+	args := resource.ToResourcePropertyMap(filteredArgs)
+	for key, output := range args {
+		argDependencies[key] = extendOutputDependencies(argDependencies[key], output)
+		tok, len(args), loggedInfo, configLogValue(info.Config, rm.constructInfo.ConfigSecretKeys), options,
+		Args:    resource.FromResourcePropertyMap(args),
+		message := errorToMessage(rpcError, args, rm.opts.ShowSecrets)
+	retReturn := resource.ToResourcePropertyMap(ret.Return)
+	for k, v := range retReturn {
+		ret.ReturnDependencies[k] = extendOutputDependencies(ret.ReturnDependencies[k], v)
+	filteredRet, err := plugin.FilterProperties(resource.FromResourcePropertyMap(retReturn), plugin.FilterOptions{
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `389f8bf6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c8c05f7` are properly handled with clean fallback behavior.
