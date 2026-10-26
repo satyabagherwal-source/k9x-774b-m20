@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:51:49.860Z",
+  "last_updated": "2026-10-26T13:58:25.494Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2851,6 +2851,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-llphant-llphant"
+    },
+    {
+      "id": "CD-NUMT",
+      "directive_title": "Integrate v1.21.4 patch release (#9423)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "open-policy-agent/opa",
+      "source_commit": "83df76a5",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-open-policy-agent-opa"
     }
   ]
 }

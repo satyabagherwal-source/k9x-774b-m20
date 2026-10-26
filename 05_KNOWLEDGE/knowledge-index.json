@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:51:49.783Z",
+  "last_updated": "2026-10-26T14:03:28.963Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39498,8 +39498,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "71deabab",
-      "content_hash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
+      "source_version": "83df76a5",
+      "content_hash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -39544,7 +39544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:31:21.081Z",
+      "verified_at": "2026-10-26T13:58:25.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40091,8 +40091,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "66e63611",
-      "content_hash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
+      "source_version": "7e5c9d63",
+      "content_hash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -40120,6 +40120,11 @@
           "number": 4337,
           "title": "Refacto on CurlCmd to prevent secrets leaks and malicious shell command construc",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4618,
+          "title": "Minor stylistic fix.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40127,7 +40132,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:25:10.809Z",
+      "verified_at": "2026-10-26T13:58:18.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72743,15 +72748,15 @@
       "learning_id": "rule-737",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 737,
-      "title": "Hybrid Attention Interval Invariant for Long-Context Efficiency",
-      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
-      "source_version": "hf-autotrust-jev-27b-vl",
+      "title": "Hybrid Attention Interval Invariant",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T13:27:36.604Z"
+      "verified_at": "2026-10-26T14:03:28.950Z"
     },
     "rule-738": {
       "learning_id": "rule-738",
@@ -78455,15 +78460,15 @@
       "learning_id": "rule-1145",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1145,
-      "title": "MoE Expert Load Balancing Invariant (Harvested from meta-models/Muse-Spark-Open-816B-A42B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "MoE Expert Load Balancing Invariant",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.817Z"
+      "verified_at": "2026-10-26T14:03:28.950Z"
     },
     "rule-1146": {
       "learning_id": "rule-1146",
@@ -114206,16 +114211,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "0d074c984406adf014c3bcec71aed868e5c58f1aeac184e21d311b73fc57ee85",
+      "content_hash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 737,
+          "title": "Hybrid Attention Interval Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1145,
+          "title": "MoE Expert Load Balancing Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4619,
+          "title": "Multimodal Rotary Embedding Section Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:28:49.737Z",
+      "verified_at": "2026-10-26T14:03:28.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129416,6 +129437,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:51:48.855Z"
+    },
+    "rule-4618": {
+      "learning_id": "rule-4618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4618,
+      "title": "Minor stylistic fix.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "7e5c9d63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:58:18.175Z"
+    },
+    "rule-4619": {
+      "learning_id": "rule-4619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4619,
+      "title": "Multimodal Rotary Embedding Section Alignment",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:03:28.950Z"
     }
   },
   "aliases": {

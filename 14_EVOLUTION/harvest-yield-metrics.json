@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:51:49.866Z",
-  "total_cycles_completed": 5134,
-  "total_learnings_persisted": 5134,
-  "total_rules_promoted": 4516,
+  "last_updated": "2026-10-26T14:03:29.031Z",
+  "total_cycles_completed": 5137,
+  "total_learnings_persisted": 5137,
+  "total_rules_promoted": 4520,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:19:10.409Z",
-      "repository": "vinceglb/FileKit",
-      "learningId": "learn-github-vinceglb-filekit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:19:13.335Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:25:30.973Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:31:57.710Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1403,6 +1382,27 @@
       "repository": "LLPhant/LLPhant",
       "learningId": "learn-github-llphant-llphant",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:58:18.255Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:58:25.498Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:03:29.031Z",
+      "repository": "InternScience/Sage-A1.5",
+      "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T13:51:49.870Z",
+  "last_updated": "2026-10-26T14:03:29.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
-      "verified_at": "2026-10-25T14:25:10.887Z",
+      "content_hash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
+      "verified_at": "2026-10-26T13:58:18.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:25:10.887Z"
+      "last_updated": "2026-10-26T13:58:18.258Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
-      "verified_at": "2026-10-24T20:31:21.166Z",
+      "content_hash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
+      "verified_at": "2026-10-26T13:58:25.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:31:21.166Z"
+      "last_updated": "2026-10-26T13:58:25.501Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "0d074c984406adf014c3bcec71aed868e5c58f1aeac184e21d311b73fc57ee85",
-      "verified_at": "2026-10-22T15:28:49.827Z",
+      "content_hash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
+      "verified_at": "2026-10-26T14:03:29.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:28:49.827Z"
+      "last_updated": "2026-10-26T14:03:29.034Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",

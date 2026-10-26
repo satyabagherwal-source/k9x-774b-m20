@@ -5157,3 +5157,6 @@
 | `CYCLE-20261026-FBBN` | `2026-10-26T13:51:47.219Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4615` | Yes (`802f1662...`) |
 | `CYCLE-20261026-FCN2` | `2026-10-26T13:51:48.926Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 4616, Rule 4617` | Yes (`41f20dbd...`) |
 | `CYCLE-20261026-FDCS` | `2026-10-26T13:51:49.852Z` | `LLPhant/LLPhant` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/llphant-llphant-learnings.md` | Yes (`3767525e...`) |
+| `CYCLE-20261026-NP1I` | `2026-10-26T13:58:18.246Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4618` | Yes (`fdd9e5c6...`) |
+| `CYCLE-20261026-NUML` | `2026-10-26T13:58:25.485Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`8cc1a8cf...`) |
+| `CYCLE-20261026-UCU6` | `2026-10-26T14:03:29.022Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 1145, Rule 4619` | Yes (`2c53b7d3...`) |

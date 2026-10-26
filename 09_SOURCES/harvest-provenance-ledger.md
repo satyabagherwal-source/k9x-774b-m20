@@ -5164,3 +5164,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `259984cd` | Multi-dimensional audit evidence | 2026-10-26T13:51:47.223Z |
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-10-26T13:51:48.929Z |
 | `learn-github-llphant-llphant` | `https://github.com/LLPhant/LLPhant` | `6305ae46` | Multi-dimensional audit evidence | 2026-10-26T13:51:49.855Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `7e5c9d63` | Multi-dimensional audit evidence | 2026-10-26T13:58:18.250Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `83df76a5` | Multi-dimensional audit evidence | 2026-10-26T13:58:25.488Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-10-26T14:03:29.026Z |

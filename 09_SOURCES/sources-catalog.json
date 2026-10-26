@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "66e63611",
+    "sourceVersion": "7e5c9d63",
     "license": "Apache-2.0",
-    "contentHash": "a79045076b4103650ec94b4dd8b0e11a05c7d98a1d0b4f8abfa0b32ff641f425",
-    "lastHarvestedAt": "2026-10-25T14:25:10.879Z",
+    "contentHash": "fdd9e5c62dc8baf761da530a7f630d5c4ab6a24bd980675a177b054cde4514c9",
+    "lastHarvestedAt": "2026-10-26T13:58:18.250Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "71deabab",
+    "sourceVersion": "83df76a5",
     "license": "Apache-2.0",
-    "contentHash": "963ee2a9b82f04d4da6bf7d912248fb14057e23f27d2f62653cb2da1edebe08b",
-    "lastHarvestedAt": "2026-10-24T20:31:21.154Z",
+    "contentHash": "8cc1a8cfedde90ae3851a416aafadc46b5ebec3fb6e7c860bc59f2dc3017a9ad",
+    "lastHarvestedAt": "2026-10-26T13:58:25.488Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "0d074c984406adf014c3bcec71aed868e5c58f1aeac184e21d311b73fc57ee85",
-    "lastHarvestedAt": "2026-10-22T15:28:49.819Z",
+    "contentHash": "2c53b7d3c37e253d8e320898fe8e7185a2a897bfd7652882144a1637594e09c2",
+    "lastHarvestedAt": "2026-10-26T14:03:29.026Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {
