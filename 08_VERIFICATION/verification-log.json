@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-NYGP",
-    "timestamp": "2026-10-24T20:55:04.249Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "7de1988ffb5d9c624c2c1219b9efb47c72992f43ebd8e87af98fd0ead143c9ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-NZET",
-    "timestamp": "2026-10-24T20:55:05.477Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-QTH4",
     "timestamp": "2026-10-25T02:05:13.528Z",
     "repository": "ShiGuangSchedule/shiguangschedule",
@@ -7492,6 +7462,36 @@
     "contentHash": "11715ad404f817e11861dc107cb2ad214bad18c48cae76234fd4e1af373c36e1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-1PIW",
+    "timestamp": "2026-10-26T02:57:21.272Z",
+    "repository": "tamagui/tamagui",
+    "learningId": "learn-github-tamagui-tamagui",
+    "contentHash": "5d30a16be8d055d89dfd1e88eaceb61281c48ab93fc4f93f63723011ecee0ab9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-1PKM",
+    "timestamp": "2026-10-26T02:57:21.334Z",
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

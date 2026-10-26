@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T02:51:02.289Z",
+  "last_updated": "2026-10-26T02:57:21.351Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3816,14 +3816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tamagui-tamagui",
-      "content_hash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
-      "verified_at": "2026-10-25T15:09:45.743Z",
+      "content_hash": "5d30a16be8d055d89dfd1e88eaceb61281c48ab93fc4f93f63723011ecee0ab9",
+      "verified_at": "2026-10-26T02:57:21.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:09:45.743Z"
+      "last_updated": "2026-10-26T02:57:21.283Z"
     },
     "BurntSushi/ripgrep": {
       "repository": "BurntSushi/ripgrep",
@@ -15681,14 +15681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "content_hash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
-      "verified_at": "2026-10-21T15:09:53.642Z",
+      "content_hash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
+      "verified_at": "2026-10-26T02:57:21.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:09:53.642Z"
+      "last_updated": "2026-10-26T02:57:21.345Z"
     },
     "Ryder-Sun/Meldwork": {
       "repository": "Ryder-Sun/Meldwork",

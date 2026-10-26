@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T02:51:02.216Z",
+  "last_updated": "2026-10-26T02:57:21.277Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112872,7 +112872,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
+      "content_hash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [
@@ -112892,7 +112892,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:09:53.551Z",
+      "verified_at": "2026-10-26T02:57:21.263Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

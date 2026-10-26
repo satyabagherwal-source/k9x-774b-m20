@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source**: github ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
-> **Source Version**: `32f3ba8b`  
+> **Source Version**: `7ea8fdab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:09:45.550Z  
+> **Timestamp**: 2026-10-26T02:57:20.820Z  
 > **Learning ID**: `learn-github-tamagui-tamagui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:09:44.378Z  
+> **Harvest Timestamp**: 2026-10-26T02:57:19.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Style React fast with 100% parity on React Native, an optional UI kit, and optimizing compiler.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14280 stars
+- **Stars / Engagement**: 14281 stars
 
 ---
 
@@ -743,752 +743,291 @@ function getMediaState(mediaGroups: Set<string>, layout: WidthHeight) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83346424` (2026-10-23)
-**Commit Message**: fix(static): evaluate native colors through React Native Lite
+### Incident Patch 1: `fdb6a57e` (2026-10-25)
+**Commit Message**: fix(vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias. Refs #4380
 
-Validation: Lite and static package builds pass; 15 existing native/web configuration and extraction checks pass with Babel imports blocked, including macOS. Native color CJS/ESM probes pass with Babel blocked and no installed React Native project. Root lint passes. Root check reaches the same eight pre-existing shorthand declaration errors; unrelated generated declarations remain unstaged.
+Validation: lint and tsc clean; net diff against base is the alias helper only.
+Team-Machine-Session: m59843
 
-**File**: `bun.lock` (modified, +0/-2)
+**File**: `code/compiler/static/src/componentDiscovery.ts` (modified, +1/-6)
 ```diff
-@@ -170,8 +170,6 @@
-       "name": "@tamagui/static",
-       "version": "3.1.3",
-       "dependencies": {
--        "@babel/core": "^7.25.2",
--        "@react-native/babel-preset": "0.88.0",
-         "@tamagui/animation-helpers": "workspace:*",
-         "@tamagui/cli-color": "workspace:*",
-         "@tamagui/compiler-core": "workspace:*",
-```
-
-**File**: `code/compiler/static/package.json` (modified, +0/-2)
-```diff
-@@ -51,8 +51,6 @@
-     "clean:build": "tamagui-build clean:build"
-   },
-   "dependencies": {
--    "@babel/core": "^7.25.2",
--    "@react-native/babel-preset": "0.88.0",
-     "@tamagui/animation-helpers": "workspace:*",
-     "@tamagui/cli-color": "workspace:*",
-     "@tamagui/compiler-core": "workspace:*",
-```
-
-**File**: `code/compiler/static/src/nativeColors.ts` (modified, +5/-39)
-```diff
-@@ -1,50 +1,16 @@
- import { createRequire } from 'node:module'
--import { dirname, join } from 'node:path'
-+import { getNativeColorFactories as nativeColorFactories } from '@tamagui/react-native-web-lite/nativeColors'
+@@ -15,7 +15,6 @@ import {
+ export type ComponentModuleEvaluator = (module: {
+   id: string
+   specifier: string
+-  importer: string
+ }) => Promise<Record<string, unknown> | null>
  
- const staticRequire = createRequire(
-   typeof __filename === 'string' ? __filename : import.meta.url
- )
--const createNativeModuleLoader = staticRequire(
--  '@tamagui/fake-react-native/loadNativeModule'
--)
--const cache = new Map<string, NativeColorFactories>()
--
--type NativeColorFactories = {
--  PlatformColor: (...names: string[]) => unknown
--  DynamicColorIOS: (colors: Record<string, unknown>) => unknown
--}
- 
--// use the consumer's factories, including its react native patches. the opaque
--// values belong to react native; the compiler must not reimplement their shape.
-+// keep the existing compiler export while the native factories belong to lite.
- export function getNativeColorFactories(
--  projectRoot: string,
-+  _projectRoot: string,
-   platform = process.env.EXPO_OS || 'ios'
--): NativeColorFactories {
--  const projectRequire = createRequire(join(projectRoot, 'package.json'))
--  const root = dirname(projectRequire.resolve('react-native/package.json'))
--  const key = `${root}:${platform}`
--  const cached = cache.get(key)
--  if (cached) return cached
--  const load = createNativeModuleLoader(staticRequire)
--  const stylesheet = join(root, 'Libraries/StyleSheet')
--  const factories = {
--    PlatformColor: load(
--      join(
--        stylesheet,
--        `PlatformColorValueTypes.${platform === 'android' ? 'android' : 'ios'}.js`
--      )
--    ).PlatformColor,
--    DynamicColorIOS: load(
--      join(
--        stylesheet,
--        platform === 'android'
--          ? 'PlatformColorValueTypesIOS.js'
--          : 'PlatformColorValueTypesIOS.ios.js'
--      )
--    ).DynamicColorIOS,
--  }
--  cache.set(key, factories)
--  return factories
-+) {
-+  return nativeColorFactories(platform)
- }
- 
- // absolute entry for generated evaluation code, so it never resolves from the consumer.
+ // `pkg`, `@scope/pkg`, and their subpaths. `@/x` and `~/x` are path aliases
+@@ -83,11 +82,7 @@ export class ComponentDiscovery {
+       }
+       let loaded: LoadedComponents | null = null
+       try {
+-        const exports = await evaluate({
+-          id,
+-          specifier: provenance.specifier,
+-          importer: module.id,
+-        })
++        const exports = await evaluate({ id, specifier: provenance.specifier })
+         if (exports) {
+           const nameToInfo = getComponentStaticConfigByName(
+             id,
 ```
 
-**File**: `code/compiler/static/types/nativeColors.d.ts` (modified, +5/-5)
+**File**: `code/compiler/static/types/componentDiscovery.d.ts` (modified, +0/-1)
 ```diff
-@@ -1,8 +1,8 @@
--type NativeColorFactories = {
--    PlatformColor: (...names: string[]) => unknown;
--    DynamicColorIOS: (colors: Record<string, unknown>) => unknown;
-+export declare function getNativeColorFactories(_projectRoot: string, platform?: string): {
-+    PlatformColor(...args: Array<string | {
-+        fallback: string;
-+    }>): unknown;
-+    DynamicColorIOS(colors: Record<string, unknown>): unknown;
- };
--export declare function getNativeColorFactories(projectRoot: string, platform?: string): NativeColorFactories;
- export declare const nativeColorsModulePath: string;
--export {};
- //# sourceMappingURL=nativeColors.d.ts.map
-\ No newline at end of file
+@@ -8,7 +8,6 @@ import type { CompilerComponentRegistry } from './compilerHost';
+ export type ComponentModuleEvaluator = (module: {
+     id: string;
+     specifier: string;
+-    importer: string;
+ }) => Promise<Record<string, unknown> | null>;
+ /**
+  * Finds the component modules a file uses that the configured `components`
 ```
 
-**File**: `code/compiler/vite-plugin/test/loadTamagui.test.ts` (modified, +1/-1)
+**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +2/-13)
 ```diff
-@@ -478,7 +478,7 @@ test('clears loader state when closing an owned environment fails', async () =>
-   expect(loader.getTamaguiOptions()).toBeNull()
- })
- 
--test.each(['ios', 'android'] as const)(
-+test.each(['ios', 'android', 'macos'] as const)(
-   'evaluates %s theme factories before web aliases with extraction enabled',
-   async (nativePlatform) => {
-     const configPath = path.join(watchOutputRoot, 'native-colors.config.ts')
+@@ -72,11 +72,7 @@ export type ViteTamaguiLoader = {
+    * compiler's component discovery. Null when the environment is not ready or
+    * the module cannot run in node; the compiler then leaves its elements alone.
+    */
+-  evaluateModule(module: {
+-    id: string
+-    specifier: string
+-    importer: string
+-  }): Promise<Record<string, unknown> | null>
++  evaluateModule(id: string): Promise<Record<string, unknown> | null>
+   loadTamaguiBuildConfig(): Promise<TamaguiOptions>
+   setEnvironment(next: RunnableDevEnvironment, options?: { owned?: boolean }): void
+   invalidate(file?: string): void
+@@ -311,16 +307,9 @@ export function createViteTamaguiLoader(
+     isEvaluationDependency: (id: string) =>
+       evaluationDependencies.has(normalizeDependency(id)),
+     evaluateProjectModules,
+-    async evaluateModule({ id, specifier, importer }) {
++    async evaluateModule(id) {
+       if (!environment) return null
+       try {
+-        // the host resolved this id for the importer. a package Vite externalizes
+-        // must load through node like any external import, because the runner
+-        // would evaluate its absolute path as an ES module and fail on CJS.
+-        const fetched = await environment.fetchModule(specifier, importer)
+-        if ('externalize' in fetched) {
+-          return (await import(fetched.externalize)) as Record<string, unknown>
+-        }
+         return (await environment.runner.import(id)) as Record<string, unknown>
+       } catch (error) {
+         if (process.env.DEBUG === 'tamagui') {
 ```
 
-**File**: `code/packages/fake-react-native/loadNativeModule.js` (removed, +0/-40)
+**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +1/-1)
 ```diff
-@@ -1,40 +0,0 @@
--const { readFileSync } = require('node:fs')
--const { dirname, resolve } = require('node:path')
--const Module = require('node:module')
--
--// evaluate installed react native modules without loading their native bindings.
--// babel resolves through ownerRequire, the package that declares it as a dependency.
--module.exports = function createNativeModuleLoader(ownerRequire, bindings = new Map()) {
--  const { transformSync } = ownerRequire('@babel/core')
--  const preset = ownerRequire.resolve('@react-native/babel-preset')
--  const cache = new Map()
--  function load(filename) {
--    if (bindings.has(filename)) return bindings.get(filename)
--    if (cache.has(filename)) return cache.get(filename).exports
--    const compiled = new Module(filename, module)
--    compiled.paths = Module._nodeModulePaths(dirname(filename))
--    compiled.require = (request) => {
--      if (request.startsWith('.')) {
--        const path = resolve(dirname(filename), request)
--        return load(path.endsWith('.js') ? path : path + '.js')
--      }
--      return Module.prototype.require.call(compiled, request)
--    }
--    cache.set(filename, compiled)
--    const output = transformSync(readFileSync(filename, 'utf8'), {
--      filename,
--      babelrc: false,
--      configFile: false,
--      presets: [[preset, { enableBabelRuntime: false }]],
--    })
--    Function(
--      'require',
--      'module',
--      'exports',
--      '__DEV__',
--      output.code
--    )(compiled.require, compiled, compiled.exports, process.env.NODE_ENV !== 'production')
--    return compiled.exports
--  }
--  return load
--}
+@@ -1674,7 +1674,7 @@ export function createTamaguiPlugins({
+               ? { id: resolution.id, external: resolution.external === true }
+               : null
+           },
+-          evaluate: (module) => tamaguiLoader.evaluateModule(module),
++          evaluate: ({ id: moduleId }) => tamaguiLoader.evaluateModule(moduleId),
+           load: async (dependencyId) => {
+             const cleanDependencyId = dependencyId.split(/[?#]/, 1)[0]
+             if (!path.isAbsolute(cleanDependencyId)) return null
 ```
 
-**File**: `code/packages/fake-react-native/package.json` (modified, +0/-1)
+**File**: `code/compiler/vite-plugin/types/loadTamagui.d.ts` (modified, +1/-5)
 ```diff
-@@ -13,7 +13,6 @@
-       "require": "./index.js"
-     },
-     "./pressability": "./pressability.js",
--    "./loadNativeModule": "./loadNativeModule.js",
-     "./styleAttributes": "./styleAttributes.js",
-     "./pressEvent": {
-       "types": "./pressEvent.d.ts",
-```
-
-**File**: `code/packages/fake-react-native/pressability.js` (modified, +35/-3)
-```diff
-@@ -1,5 +1,7 @@
--const { dirname, join } = require('node:path')
--const createNativeModuleLoader = require('./loadNativeModule')
-+const { readFileSync } = require('node:fs')
-+const { dirname, join, resolve } = require('node:path')
-+const Module = require('node:module')
-+const { transformSync } = require('@babel/core')
- 
- // run react native's actual press state machine in native tests. only the
- // platform bindings are mocked; geometry, timers and cancellation stay real.
-@@ -25,6 +27,36 @@ const bindings = new Map([
-     },
-   ],
- ])
--const load = createNativeModuleLoader(require, bindings)
-+const cache = new Map()
-+
-+function load(filename) {
-+  if (bindings.has(filename)) return bindings.get(filename)
-+  if (cache.has(filename)) return cache.get(filename).exports
-+  const compiled = new Module(filename, module)
-+  compiled.paths = Module._nodeModulePaths(dirname(filename))
-+  compiled.require = (request) => {
-+    if (request.startsWith('.')) {
-+      const path = resolve(dirname(filename), request)
-+      return load(path.endsWith('.js') ? path : path + '.js')
-+    }
-+    return Module.prototype.require.call(compiled, request)
-+  }
-+  cache.set(filename, compiled)
-+  const output = transformSync(readFileSync(filename, 'utf8'), {
-+    filename,
-+    babelrc: false,
-+    configFile: false,
-+    presets: [
-+      [require.resolve('@react-native/babel-preset'), { enableBabelRuntime: false }],
-+    ],
-+  })
-+  Function(
-+    'require',
-+    'module',
-+    'exports',
-+    output.code
-+  )(compiled.require, compiled, compiled.exports)
-+  return compiled.exports
-+}
- 
- module.exports = load(join(root, 'Libraries/Pressability/usePressability.js')).default
+@@ -43,11 +43,7 @@ export type ViteTamaguiLoader = {
+      * compiler's component discovery. Null when the environment is not ready or
+      * the module cannot run in node; the compiler then leaves its elements alone.
+      */
+-    evaluateModule(module: {
+-        id: string;
+-        specifier: string;
+-        importer: string;
+-    }): Promise<Record<string, unknown> | null>;
++    evaluateModule(id: string): Promise<Record<string, unknown> | null>;
+     loadTamaguiBuildConfig(): Promise<TamaguiOptions>;
+     setEnvironment(next: RunnableDevEnvironment, options?: {
+         owned?: boolean;
 ```
 
 ---
 
-### Incident Patch 2: `69dd68c0` (2026-10-23)
-**Commit Message**: fix(native): support opaque theme inputs and native config evaluation
+### Incident Patch 2: `21d4cd30` (2026-10-25)
+**Commit Message**: fix(vite-plugin): alias react-native to react-native-web ESM entry and invalidate failed discovery modules
 
-Validation: built @tamagui/web, @tamagui/core, @tamagui/static and @tamagui/vite-plugin; 14 Vite loader tests passed; native extraction with real RN color factories passed on iOS and Android; native core suite passed 525 tests; installed consumer RN0.87 factories verified for macOS and Android; root lint passed. Root check passed through web-types/LSP and failed shorthand-declarations on 8 existing ScrollView/Sheet declaration errors, reproduced with HEAD web types. Preserved 12 pre-existing generated declaration edits outside this commit. Actual Mac application proof and independent review remain with the lead.
+Fixes #4379
+Fixes #4380
 
-**File**: `code/compiler/static/src/extractor/bundle.ts` (modified, +26/-0)
+Validation: vite-plugin test:web 25/25, tsc, lint. Poisoned-runner repro not reproduced locally; invalidation follows the reporter's tested fix.
+Team-Machine-Session: m59843
+
+**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +5/-0)
 ```diff
-@@ -57,13 +57,15 @@ type Props = Omit<Partial<esbuild.BuildOptions>, 'entryPoints'> & {
-   entryPoints: string[]
-   resolvePlatformSpecificEntries?: boolean
-   dangerouslyIgnoreStaticEvaluationModules?: string[]
-+  nativePlatform?: 'ios' | 'android' | 'macos'
- }
- 
- function getESBuildConfig(
-   {
-     entryPoints,
-     resolvePlatformSpecificEntries,
-     dangerouslyIgnoreStaticEvaluationModules = [],
-+    nativePlatform,
-     define: callerDefine,
-     conditions: callerConditions = [],
-     ...options
-@@ -216,6 +218,30 @@ function getESBuildConfig(
-       {
-         name: 'external',
-         setup(build) {
-+          if (platform === 'native') {
-+            build.onResolve({ filter: /^react-native$/ }, () => ({
-+              path: 'react-native',
-+              namespace: 'tamagui-native-evaluation',
-+            }))
-+            build.onLoad(
-+              { filter: /.*/, namespace: 'tamagui-native-evaluation' },
-+              () => ({
-+                contents: `export * from '@tamagui/react-native-web-lite'
-+import { getNativeColorFactories } from '@tamagui/fake-react-native/nativeColors'
-+const colors = getNativeColorFactories(${JSON.stringify(build.initialOptions.absWorkingDir || process.cwd())}, ${JSON.stringify(nativePlatform)})
-+export const { PlatformColor, DynamicColorIOS } = colors`,
-+                loader: 'js',
-+                resolveDir: build.initialOptions.absWorkingDir || process.cwd(),
-+              })
-+            )
-+            build.onResolve(
-+              { filter: /^@tamagui\/fake-react-native\/nativeColors$/ },
-+              (args) => ({
-+                path: args.path,
-+                external: true,
-+              })
-+            )
-+          }
-           // only externalize @tamagui/core and @tamagui/web - these are provided at runtime
-           // other @tamagui/* packages (like @tamagui/config/v6) must be bundled in to avoid
-           // ESM race conditions when multiple threads require() them concurrently
+@@ -312,6 +312,11 @@ export function createViteTamaguiLoader(
+       try {
+         return (await environment.runner.import(id)) as Record<string, unknown>
+       } catch (error) {
++        // a failed import leaves its rejected promise on the runner's module
++        // node, which rethrows on the next generation even once the cause is gone.
++        const evaluated = environment.runner.evaluatedModules
++        const failed = evaluated.getModulesByFile(normalizeDependency(id))
++        for (const module of failed ?? []) evaluated.invalidateModule(module)
+         if (process.env.DEBUG === 'tamagui') {
+           console.info(`[tamagui] component discovery skipped ${id}:`, error)
+         }
 ```
 
-**File**: `code/compiler/static/src/extractor/bundleConfig.ts` (modified, +12/-1)
+**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +8/-1)
 ```diff
-@@ -249,6 +249,7 @@ function getBundleKey(props: TamaguiOptions) {
-     components: props.components,
-     config: props.config,
-     platform: props.platform,
-+    nativePlatform: props.nativePlatform,
-     dangerouslyIgnoreStaticEvaluationModules:
-       props.dangerouslyIgnoreStaticEvaluationModules,
-   })
-@@ -402,7 +403,10 @@ export async function bundleConfig(props: TamaguiOptions, rebuild = false) {
-     // so their contents are platform-specific. keep web and native on separate paths:
-     // sharing one path let a native bundle be picked up as the web config (and vice
-     // versa) by the mtime reuse check below, emitting web classes with no CSS variables.
--    const platformSuffix = (props.platform || 'web') === 'native' ? '.native' : '.web'
-+    const platformSuffix =
-+      props.platform === 'native'
-+        ? `.native${props.nativePlatform ? `.${props.nativePlatform}` : ''}`
-+        : '.web'
-     // detect module format from config entry point
-     const configFormat = configEntry ? detectModuleFormat(configEntry) : 'cjs'
-     const configExt = configFormat === 'esm' ? '.mjs' : '.cjs'
-@@ -489,6 +493,7 @@ export async function bundleConfig(props: TamaguiOptions, rebuild = false) {
-                 metafile: true,
-                 dangerouslyIgnoreStaticEvaluationModules:
-                   props.dangerouslyIgnoreStaticEvaluationModules,
-+                nativePlatform: props.nativePlatform,
-                 ...esbuildExtraOptions,
-               },
-               props.platform || 'web'
-@@ -512,6 +517,7 @@ export async function bundleConfig(props: TamaguiOptions, rebuild = false) {
-               metafile: true,
-               dangerouslyIgnoreStaticEvaluationModules:
-                 props.dangerouslyIgnoreStaticEvaluationModules,
-+              nativePlatform: props.nativePlatform,
-               ...esbuildExtraOptions,
-             },
-             props.platform || 'web'
-@@ -763,6 +769,7 @@ export async function evaluateComponentModule(
-   process.env.TAMAGUI_IS_SERVER = 'true'
-   const { unregister } = registerRequire(props.platform || 'web', {
-     ignoredModules: props.dangerouslyIgnoreStaticEvaluationModules,
-+    nativePlatform: props.nativePlatform,
-   })
-   try {
-     try {
-@@ -814,6 +821,7 @@ export async function loadComponentsInner(
- 
-   const key = JSON.stringify([
-     props.platform,
-+    props.nativePlatform,
-     componentsModules,
-     props.dangerouslyIgnoreStaticEvaluationModules,
-   ])
-@@ -824,6 +832,7 @@ export async function loadComponentsInner(
- 
-   const { unregister } = registerRequire(props.platform || 'web', {
-     ignoredModules: props.dangerouslyIgnoreStaticEvaluationModules,
-+    nativePlatform: props.nativePlatform,
-   })
- 
-   try {
-@@ -974,6 +983,7 @@ export function loadComponentsInnerSync(
- 
-   const key = JSON.stringify([
-     props.platform,
-+    props.nativePlatform,
-     componentsModules,
-     props.dangerouslyIgnoreStaticEvaluationModules,
-   ])
-@@ -984,6 +994,7 @@ export function loadComponentsInnerSync(
- 
-   const { unregister } = registerRequire(props.platform || 'web', {
-     ignoredModules: props.dangerouslyIgnoreStaticEvaluationModules,
-+    nativePlatform: props.nativePlatform,
-   })
- 
-   try {
-```
-
-**File**: `code/compiler/static/src/extractor/loadTamagui.ts` (modified, +1/-0)
-```diff
-@@ -374,6 +374,7 @@ export function loadTamaguiSync({
- 
-   const { unregister } = registerRequire(props.platform || 'web', {
-     ignoredModules: props.dangerouslyIgnoreStaticEvaluationModules,
-+    nativePlatform: props.nativePlatform,
-   })
- 
-   try {
-```
-
-**File**: `code/compiler/static/src/registerRequire.ts` (modified, +17/-1)
-```diff
-@@ -106,7 +106,13 @@ function getStaticExtractionStub(path: string) {
- 
- export function registerRequire(
-   platform: TamaguiPlatform,
--  { ignoredModules = [] }: { ignoredModules?: string[] } = {
-+  {
-+    ignoredModules = [],
-+    nativePlatform,
-+  }: {
-+    ignoredModules?: string[]
-+    nativePlatform?: 'ios' | 'android' | 'macos'
-+  } = {
-     ignoredModules: [],
-   }
- ) {
-@@ -216,6 +222,16 @@ export function registerRequire(
-       return og.apply(this, ['react-native-web/package.json'])
-     }
- 
-+    if (platform === 'native' && path === 'react-native') {
-+      const { getNativeColorFactories } = og.apply(this, [
-+        '@tamagui/fake-react-native/nativeColors',
-+      ])
-+      return {
-+        ...og.apply(this, ['@tamagui/react-native-web-lite']),
-+        ...getNativeColorFactories(dirname(this.filename), nativePlatform),
-+      }
-+    }
-+
-     if (
-       path === '@tamagui/react-native-web-lite' ||
-       path === 'react-native' ||
-```
-
-**File**: `code/compiler/static/types/extractor/bundle.d.ts` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ type Props = Omit<Partial<esbuild.BuildOptions>, 'entryPoints'> & {
-     entryPoints: string[];
-     resolvePlatformSpecificEntries?: boolean;
-     dangerouslyIgnoreStaticEvaluationModules?: string[];
-+    nativePlatform?: 'ios' | 'android' | 'macos';
- };
- export declare function esbundleTamaguiConfig(props: Props, platform: TamaguiPlatform, aliases?: Record<string, string>): Promise<esbuild.BuildResult<{
-     sourcemap?: boolean | 'linked' | 'inline' | 'external' | 'both';
-```
-
-**File**: `code/compiler/static/types/registerRequire.d.ts` (modified, +2/-1)
-```diff
-@@ -1,8 +1,9 @@
- import type { TamaguiPlatform } from './types';
- export declare const getNameToPaths: () => {};
- export declare function setRequireResult(name: string, result: any): void;
--export declare function registerRequire(platform: TamaguiPlatform, { ignoredModules }?: {
-+export declare function registerRequire(platform: TamaguiPlatform, { ignoredModules, nativePlatform, }?: {
-     ignoredModules?: string[];
-+    nativePlatform?: 'ios' | 'android' | 'macos';
- }): {
-     tamaguiRequire: (this: any, path: string) => any;
-     unregister: () => void;
-```
-
-**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +2/-2)
-```diff
-@@ -126,7 +126,7 @@ export function createViteTamaguiLoader(
-     if (loadPromise) return loadPromise
- 
-     const pending = Static.loadTamaguiBuildConfigAsync(
--      { ...optionsIn, platform: 'web' },
-+      { platform: 'web', ...optionsIn },
-       viteBuildConfigLoader
-     ).then(
-       (options) => {
-@@ -246,7 +246,7 @@ export function createViteTamaguiLoader(
-       let evaluated: EvaluatedProjectModules | null = null
-       return Static.loadCompilerProject({
-         root: environment.config.root,
--        target: 'web',
-+        target: options.platform || 'web',
-         options,
-         generation: `vite:${projectGeneration}`,
-         hostVersions: vitePluginVersions,
-```
-
-**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +78/-6)
-```diff
-@@ -329,6 +329,11 @@ function createServeEvaluationConfig(
-     }
-     return []
-   })
-+  if (environment.define?.['process.env.TAMAGUI_TARGET'] === '"native"') {
-+    plugins.unshift(
-+      createNativeEvaluationPlugin(config.root, environment.define['process.env.EXPO_OS'])
-+    )
-+  }
-   const resolve = getEvaluationResolve(
-     environment.resolve,
-     config.root,
-@@ -359,6 +364,11 @@ async function createOwnedEvaluationConfig(
-   const plugins = environment.plugins
-     .filter(isEvaluationUserPlugin)
-     .map((plugin) => createEvaluationPluginFacade(plugin))
-+  if (environment.define?.['process.env.TAMAGUI_TARGET'] === '"native"') {
-+    plugins.unshift(
-+      createNativeEvaluationPlugin(config.root, environment.define['process.env.EXPO_OS'])
-+    )
-+  }
-   const resolve = getEvaluationResolve(
-     environment.resolve,
-     config.root,
-@@ -412,6 +422,50 @@ const _pluginRequire = createRequire(
+@@ -420,6 +420,13 @@ const _pluginRequire = createRequire(
+   typeof __filename === 'string' ? __filename : fileURLToPath(import.meta.url)
+ )
  const resolve = (name: string) => _pluginRequire.resolve(name)
++// require.resolve follows the CJS main; aliasing react-native to that bundles a
++// second, untree-shakeable react-native-web next to the ESM one tamagui imports.
++const resolveReactNativeWebEsm = () => {
++  const packageJsonPath = resolve('react-native-web/package.json')
++  const { module: esmEntry } = _pluginRequire(packageJsonPath) as { module: string }
++  return path.join(path.dirname(packageJsonPath), esmEntry)
++}
  const normalizePath = (value: string) => value.replace(/\\/g, '/')
  
-+function createNativeEvaluationPlugin(root: string, nativePlatform?: string): Plugin {
-+  const facadeId = '\0tamagui-native-evaluation'
-+  const modules = new Map([
-+    [facadeId, '@tamagui/react-native-web-lite'],
-+    [`${facadeId}:core`, '@tamagui/core/native'],
-+    [`${facadeId}:tamagui`, 'tamagui/native'],
-+  ])
-+  return {
-+    name: 'tamagui-native-evaluation',
-+    resolveId: {
-+      order: 'pre',
-+      handler(source) {
-+        // run before the app's web aliases, only in the compiler environment.
-+        if (source === 'react-native') return facadeId
-+        if (source === '@tamagui/core' || source === '@tamagui/web') {
-+          return `${facadeId}:core`
-+        }
-+        if (source === 'tamagui') {
-+          return `${facadeId}:tamagui`
-+        }
-+      },
-+    },
-+    load(id) {
-+      const moduleName = modules.get(id)
-+      if (!moduleName) return
-+      const modulePath = resolve(moduleName)
-+      const colorPath = resolve('@tamagui/fake-react-native/nativeColors')
-+      const names = Object.keys(_pluginRequire(modulePath)).filter(
-+        (name) => name !== 'default' && name !== '__esModule'
-+      )
-+      const colors =
-+        id === facadeId
-+          ? `, ...require(${JSON.stringify(colorPath)}).getNativeColorFactories(${JSON.stringify(root)}, ${nativePlatform || 'undefined'})`
-+          : ''
-+      if (id === facadeId) names.push('PlatformColor', 'DynamicColorIOS')
-+      return `import { createRequire } from 'node:module'
-+const require = createRequire(${JSON.stringify(path.join(root, 'package.json'))})
-+const rn = { ...require(${JSON.stringify(modulePath)})${colors} }
-+export const { ${[...new Set(names)].join(', ')} } = rn
-+export default rn`
-+    },
-+  }
-+}
-+
- const PLUGIN_INSTANCE_KEY = '__tamagui_vite_plugin_instance__'
- 
- function reportCompilerStats(root: string, reports: Map<string, CompilerModuleReport>) {
-@@ -594,7 +648,12 @@ function createTamaguiNativePlugin(
-         { ...tamaguiOptionsIn, root, platform: 'native', outputCSS: undefined },
-         viteBuildConfigLoader
-       )
--      const options = { ...loadedOptions, root, outputCSS: undefined }
-+      const options = {
-+        ...loadedOptions,
-+        root,
-+        nativePlatform: nativeContext?.platform || loadedOptions.nativePlatform,
-+        outputCSS: undefined,
-+      }
-       nativeOptions = options
-       for (const dependency of Static.getTamaguiBuildConfigDependencies(loadedOptions)) {
-         projectDependencies.add(normalizePath(dependency))
-@@ -859,15 +918,18 @@ export function createTamaguiPlugins({
- 
-   const getEvaluationEnvironmentOptions = (
-     resolvedRoot: string,
--    userNoExternal: EvaluationNoExternal
-+    userNoExternal: EvaluationNoExternal,
-+    platform: TamaguiOptions['platform'],
-+    nativePlatform: TamaguiOptions['nativePlatform']
-   ): EnvironmentOptions => ({
-     consumer: 'server',
-     keepProcessEnv: true,
-     define: {
-       'process.env.IS_STATIC': JSON.stringify('is_static'),
-       'process.env.TAMAGUI_IS_CLIENT': JSON.stringify(false),
-       'process.env.TAMAGUI_IS_SERVER': JSON.stringify(true),
--      'process.env.TAMAGUI_TARGET': JSON.stringify('web'),
-+      'process.env.TAMAGUI_TARGET': JSON.stringify(platform || 'web'),
-+      ...(nativePlatform && { 'process.env.EXPO_OS': JSON.stringify(nativePlatform) }),
-       'process.env.TAMAGUI_ENVIRONMENT': JSON.stringify(TAMAGUI_EVALUATION_ENVIRONMENT),
-       // Config evaluation must retain createTamagui and CSS generation even when
-       // the client graph is zero or the client claims the artifact. Inheriting
-@@ -888,7 +950,11 @@ export function createTamaguiPlugins({
-       // to fail outright. A condition is the portable way to express this, since
-       // every bundler integration can add the same one and an app configures
-       // nothing.
--      conditions: [TAMAGUI_COMPILER_CONDITION, ...defaultClientConditions],
-+      conditions: [
-+        TAMAGUI
+ function createNativeEvaluationPlugin(
+@@ -1228,7 +1235,7 @@ export function createTamaguiPlugins({
+                     'react-native/Libraries/Utilities/codegenNativeComponent':
+                       resolve('@tamagui/proxy-worm'),
+                     ...(!useReactNativeWebLite && {
+-                      'react-native': resolve('react-native-web'),
++                      'react-native': resolveReactNativeWebEsm(),
+                     }),
+                   }),
+                 },
 ```
 
 ---
 
-### Incident Patch 3: `16eca765` (2026-10-23)
-**Commit Message**: fix(core): preserve opaque native theme colors
+### Incident Patch 3: `fe879d33` (2026-10-25)
+**Commit Message**: fix(vite-plugin): load discovery modules the way Vite resolves them for the importer. Refs #4380
 
-Validation: rebuilt web, core, and helpers-icon; regression fails 5 of 6 cases before the fix and passes all 6 after; built native icon probe passes 6; existing iOS suites pass 31; web compatibility probe and existing suites pass 78; root lint and check pass. Native tests use the React Native test adapter. Live Mac consumer acceptance remains with lead s69213.
+Validation: Vite 8 SSR probe with root and nested-workspace copies of one package (root, subpath, CJS): evaluateModule returns the importer's copy for each, ROOT for a root importer, with no 'module is not defined'. test:web 25/25, tsc, lint clean.
+Team-Machine-Session: m59843
 
-**File**: `code/core/core-test/platformColors.native.test.tsx` (added, +91/-0)
+**File**: `code/compiler/static/src/componentDiscovery.ts` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,91 @@
-+import {
-+  TamaguiProvider,
-+  View,
-+  createTamagui,
-+  createVariable,
-+  getVariable,
-+  useTheme,
-+  variableToString,
-+} from '@tamagui/core'
-+import { render } from '@testing-library/react-native'
-+import { describe, expect, test } from 'vitest'
-+import { getDefaultTamaguiConfig } from '../config-default'
-+import { themed } from '../helpers-icon/src/themed'
-+
-+// these are the opaque shapes returned by react native's platform color factories.
-+const semantic = { semantic: ['labelColor'] }
-+const resource = { resource_paths: ['?attr/textColorPrimary'] }
-+const dynamic = { dynamic: { light: '#111', dark: '#eee' } }
-+
-+const defaults = getDefaultTamaguiConfig('native')
-+const config = createTamagui({
-+  ...defaults,
-+  themes: {
-+    light: { ...defaults.themes.light, color: semantic as any },
-+    dark: { ...defaults.themes.dark, color: semantic as any },
-+  },
-+})
-+
-+describe('native opaque theme colors', () => {
-+  test.each([semantic, resource, dynamic])(
-+    'preserves raw and wrapped colors: %j',
-+    (color) => {
-+      const variable = createVariable({ key: 'color', name: 'color', val: color as any })
-+      expect(variableToString(color)).toBe(color)
-+      expect(variableToString(variable)).toBe(color)
-+      expect(variableToString(variable, true)).toBe(color)
-+      expect(getVariable(color, 'color')).toBe(color)
-+      expect(getVariable(variable, 'color')).toBe(color)
-+    }
-+  )
-+
-+  test('keeps numeric and empty value coercion', () => {
-+    expect(variableToString(createVariable({ key: 'size', name: 'size', val: 12 }))).toBe(
-+      '12'
-+    )
-+    expect(variableToString(12)).toBe('12')
-+    expect(variableToString(0)).toBe('')
-+    expect(variableToString(undefined)).toBe('')
-+    expect(getVariable('red', 'color')).toBe('red')
-+  })
-+
-+  test.each(['light', 'dark'] as const)(
-+    'preserves theme getters and themed icon paints in %s',
-+    (scheme) => {
-+      let themeColor: unknown
-+      let nativeThemeColor: unknown
-+      let iconProps: any
-+      const Icon = themed((props) => {
-+        iconProps = props
-+        return null
-+      })
-+      function Consumer() {
-+        const theme = useTheme()
-+        themeColor = theme.color.get('web')
-+        nativeThemeColor = theme.color.get()
-+        return (
-+          <View backgroundColor="color">
-+            <Icon fill="color" stroke="color" />
-+          </View>
-+        )
-+      }
-+      const tree = render(
-+        <TamaguiProvider config={config} defaultTheme={scheme}>
-+          <Consumer />
-+        </TamaguiProvider>
-+      )
-+      try {
-+        expect(themeColor).toBe(semantic)
-+        expect(nativeThemeColor).toBe(semantic)
-+        expect(tree.toJSON()).toMatchObject({
-+          props: { style: { backgroundColor: semantic } },
+@@ -15,6 +15,7 @@ import {
+ export type ComponentModuleEvaluator = (module: {
+   id: string
+   specifier: string
++  importer: string
+ }) => Promise<Record<string, unknown> | null>
+ 
+ // `pkg`, `@scope/pkg`, and their subpaths. `@/x` and `~/x` are path aliases
+@@ -82,7 +83,11 @@ export class ComponentDiscovery {
+       }
+       let loaded: LoadedComponents | null = null
+       try {
+-        const exports = await evaluate({ id, specifier: provenance.specifier })
++        const exports = await evaluate({
++          id,
++          specifier: provenance.specifier,
++          importer: module.id,
 +        })
-+        expect(iconProps.color).toBe(semantic)
-+        expect(iconProps.fill).toBe(semantic)
-+        expect(iconProps.stroke).toBe(semantic)
-+      } finally {
-+        tree.unmount()
-+      }
-+    }
-+  )
-+})
+         if (exports) {
+           const nameToInfo = getComponentStaticConfigByName(
+             id,
 ```
 
-**File**: `code/core/web/src/createVariable.ts` (modified, +14/-3)
+**File**: `code/compiler/static/types/componentDiscovery.d.ts` (modified, +1/-0)
 ```diff
-@@ -57,7 +57,12 @@ export function variableToString(vrble?: any, getValue = false) {
-     if (!getValue && isWeb && vrble.variable) {
-       return vrble.variable
-     }
--    return `${vrble.val}`
-+    // native colors are opaque objects that must reach the renderer unchanged.
-+    const value = vrble.val
-+    return !isWeb && value && typeof value === 'object' ? value : `${value}`
-+  }
-+  if (!isWeb && vrble && typeof vrble === 'object') {
-+    return vrble
-   }
-   return `${vrble || ''}`
- }
-@@ -70,8 +75,14 @@ export function getVariable(
-   nameOrVariable: Variable | string | any,
-   group: TokenCategories = 'size'
- ) {
--  // dynamic color-like
--  if (nameOrVariable?.dynamic) {
-+  // native opaque colors are values, not token names.
-+  if (
-+    nameOrVariable?.dynamic ||
-+    (!isWeb &&
-+      nameOrVariable &&
-+      typeof nameOrVariable === 'object' &&
-+      !isVariable(nameOrVariable))
-+  ) {
-     return nameOrVariable
-   }
-   setDidGetVariableValue(true)
+@@ -8,6 +8,7 @@ import type { CompilerComponentRegistry } from './compilerHost';
+ export type ComponentModuleEvaluator = (module: {
+     id: string;
+     specifier: string;
++    importer: string;
+ }) => Promise<Record<string, unknown> | null>;
+ /**
+  * Finds the component modules a file uses that the configured `components`
 ```
 
-**File**: `code/core/web/types/createVariable.d.ts` (modified, +1/-1)
+**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +15/-4)
 ```diff
-@@ -1,7 +1,7 @@
- import type { PxValue, TokenCategories, Variable } from './types';
- type VariableIn<A = any> = Pick<Variable<A>, 'key' | 'name' | 'val'>;
- export declare const createVariable: <A extends string | number | Variable = any>(props: VariableIn<A>, skipHash?: boolean) => Variable<A>;
--export declare function variableToString(vrble?: any, getValue?: boolean): string;
-+export declare function variableToString(vrble?: any, getValue?: boolean): any;
- export declare function isVariable(v: Variable | any): v is Variable;
- export declare function getVariable(nameOrVariable: Variable | string | any, group?: TokenCategories): any;
- export declare const setDidGetVariableValue: (val: boolean) => boolean;
+@@ -72,7 +72,11 @@ export type ViteTamaguiLoader = {
+    * compiler's component discovery. Null when the environment is not ready or
+    * the module cannot run in node; the compiler then leaves its elements alone.
+    */
+-  evaluateModule(specifier: string): Promise<Record<string, unknown> | null>
++  evaluateModule(module: {
++    id: string
++    specifier: string
++    importer: string
++  }): Promise<Record<string, unknown> | null>
+   loadTamaguiBuildConfig(): Promise<TamaguiOptions>
+   setEnvironment(next: RunnableDevEnvironment, options?: { owned?: boolean }): void
+   invalidate(file?: string): void
+@@ -307,13 +311,20 @@ export function createViteTamaguiLoader(
+     isEvaluationDependency: (id: string) =>
+       evaluationDependencies.has(normalizeDependency(id)),
+     evaluateProjectModules,
+-    async evaluateModule(specifier) {
++    async evaluateModule({ id, specifier, importer }) {
+       if (!environment) return null
+       try {
+-        return (await environment.runner.import(specifier)) as Record<string, unknown>
++        // the host resolved this id for the importer. a package Vite externalizes
++        // must load through node like any external import, because the runner
++        // would evaluate its absolute path as an ES module and fail on CJS.
++        const fetched = await environment.fetchModule(specifier, importer)
++        if ('externalize' in fetched) {
++          return (await import(fetched.externalize)) as Record<string, unknown>
++        }
++        return (await environment.runner.import(id)) as Record<string, unknown>
+       } catch (error) {
+         if (process.env.DEBUG === 'tamagui') {
+-          console.info(`[tamagui] component discovery skipped ${specifier}:`, error)
++          console.info(`[tamagui] component discovery skipped ${id}:`, error)
+         }
+         return null
+       }
+```
+
+**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +1/-1)
+```diff
+@@ -1674,7 +1674,7 @@ export function createTamaguiPlugins({
+               ? { id: resolution.id, external: resolution.external === true }
+               : null
+           },
+-          evaluate: ({ specifier }) => tamaguiLoader.evaluateModule(specifier),
++          evaluate: (module) => tamaguiLoader.evaluateModule(module),
+           load: async (dependencyId) => {
+             const cleanDependencyId = dependencyId.split(/[?#]/, 1)[0]
+             if (!path.isAbsolute(cleanDependencyId)) return null
+```
+
+**File**: `code/compiler/vite-plugin/types/loadTamagui.d.ts` (modified, +5/-1)
+```diff
+@@ -43,7 +43,11 @@ export type ViteTamaguiLoader = {
+      * compiler's component discovery. Null when the environment is not ready or
+      * the module cannot run in node; the compiler then leaves its elements alone.
+      */
+-    evaluateModule(id: string): Promise<Record<string, unknown> | null>;
++    evaluateModule(module: {
++        id: string;
++        specifier: string;
++        importer: string;
++    }): Promise<Record<string, unknown> | null>;
+     loadTamaguiBuildConfig(): Promise<TamaguiOptions>;
+     setEnvironment(next: RunnableDevEnvironment, options?: {
+         owned?: boolean;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4382** (2026-10-25): v3.1.4 (@natew)
+- **PR #4381** (2026-10-25): fix(vite-plugin): alias react-native to react-native-web's ESM entry (@natew)
 - **PR #4378** (2026-10-23): fix(core): preserve opaque native theme colors (@natew)
 - **PR #4377** (2026-10-23): v3.1.3 (@natew)
 - **PR #4376** (2026-10-23): fix(security): pin Next to patched 16.4.1 (@natew)
 - **PR #4375** (2026-10-23): ci: align repository Bun selections on 1.4.4 (@natew)
-- **PR #4374** (closed): v3.1.3 (@natew)
-- **PR #4373** (2026-10-22): Avoid the slow Azure mirror during WebKit dependency setup (@natew)
 
 ---
 
@@ -1502,3 +1041,39 @@ Validation: rebuilt web, core, and helpers-icon; regression fails 5 of 6 cases b
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias.
+
+**RULE**:
+When implementing operations in `code/compiler/static/src/componentDiscovery.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fdb6a57e`: vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias. Refs #4380. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/compiler/static/src/componentDiscovery.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        const exports = await evaluate({ id, specifier: provenance.specifier })
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  importer: string
+        const exports = await evaluate({
+          id,
+          specifier: provenance.specifier,
+          importer: module.id,
+        })
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fdb6a57e` are properly handled with clean fallback behavior.

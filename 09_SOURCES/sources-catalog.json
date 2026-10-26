@@ -2453,10 +2453,10 @@
     "repository": "tamagui/tamagui",
     "platform": "github",
     "sourceUrl": "https://github.com/tamagui/tamagui",
-    "sourceVersion": "32f3ba8b",
+    "sourceVersion": "7ea8fdab",
     "license": "MIT",
-    "contentHash": "7a3183da86dfc5510dfb76ae5b44b808f6c8a9e68e30c253f0c9cbd5ede69015",
-    "lastHarvestedAt": "2026-10-25T15:09:45.735Z",
+    "contentHash": "5d30a16be8d055d89dfd1e88eaceb61281c48ab93fc4f93f63723011ecee0ab9",
+    "lastHarvestedAt": "2026-10-26T02:57:21.275Z",
     "learningId": "learn-github-tamagui-tamagui"
   },
   "burntsushi-ripgrep": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "99f8fdfa3c0e75e80844e7506955883a65039e92df35e0ccaf73666f1779442e",
-    "lastHarvestedAt": "2026-10-21T15:09:53.628Z",
+    "contentHash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
+    "lastHarvestedAt": "2026-10-26T02:57:21.337Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

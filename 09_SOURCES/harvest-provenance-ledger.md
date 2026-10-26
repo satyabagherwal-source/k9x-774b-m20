@@ -5104,3 +5104,5 @@ Every entry in this ledger must capture:
 | `learn-github-jeffli1993-seo-audit-skill` | `https://github.com/JeffLi1993/seo-audit-skill` | `523bdfb2` | Multi-dimensional audit evidence | 2026-10-26T02:50:54.741Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `6c8c05f7` | Multi-dimensional audit evidence | 2026-10-26T02:51:00.078Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6c7a3d4e` | Multi-dimensional audit evidence | 2026-10-26T02:51:02.281Z |
+| `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `7ea8fdab` | Multi-dimensional audit evidence | 2026-10-26T02:57:21.275Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-26T02:57:21.337Z |
