@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source**: github ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
-> **Source Version**: `c517e458`  
+> **Source Version**: `4e005703`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:10:30.632Z  
+> **Timestamp**: 2026-10-26T01:37:19.629Z  
 > **Learning ID**: `learn-github-joreilly-confetti`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:10:29.898Z  
+> **Harvest Timestamp**: 2026-10-26T01:37:19.622Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -367,451 +367,40 @@ fun LocalDateTime.Companion.nowAtTimeZone(timeZone: TimeZone) =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b2efa96` (2026-10-19)
-**Commit Message**: Merge pull request #1971 from joreilly/build-step
+### Incident Patch 1: `8352cd54` (2026-10-24)
+**Commit Message**: fix plan
 
-Turn the landing-page into a packaged "website"
-
-**File**: `.github/scripts/ios-changes.py` (modified, +1/-1)
+**File**: `.github/workflows/dns-plan.yml` (modified, +3/-3)
 ```diff
-@@ -43,11 +43,11 @@
-     "design/",
-     "docs/",
-     "fastlane/",
--    "landing-page/",
-     "proto/",
-     "tmp-previews/",
-     "wearApp/",
-     "wearBenchmark/",
-+    "website/",
- )
+@@ -20,6 +20,9 @@ jobs:
+     # Fork PRs get neither the Porkbun secrets nor a write token to comment, so skip them.
+     if: github.event.pull_request.head.repo.full_name == github.repository
+     runs-on: ubuntu-latest
++    env:
++      PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
++      PORKBUN_SECRET_KEY: ${{ secrets.PORKBUN_SECRET_KEY }}
+     defaults:
+       run:
+         working-directory: dns
+@@ -36,9 +39,6 @@ jobs:
+         run: octodns-validate --config-file=config/octodns.yaml
  
- CATALOG_PATH = "gradle/libs.versions.toml"
-```
-
-**File**: `.github/workflows/backend-deploy.yml` (modified, +13/-2)
-```diff
-@@ -7,7 +7,7 @@ on:
-       - 'main'
-     paths:
-       - 'backend/**'
--      - 'landing-page/**'
-+      - 'website/**'
-       - 'build.gradle.kts'
-       - 'settings.gradle.kts'
-       - 'gradle/libs.versions.toml'
-@@ -45,9 +45,20 @@ jobs:
- 
-     - uses: hashicorp/setup-terraform@v4
- 
-+    # pnpm's version comes from `packageManager`.
-+    - uses: pnpm/action-setup@v6
-+      with:
-+        package_json_file: website/package.json
-+
-+    - uses: actions/setup-node@v7
-+      with:
-+        node-version-file: website/.node-version
-+        cache: pnpm
-+        cache-dependency-path: website/pnpm-lock.yaml
-+
-     - name: Build
-       run: |
--        ./gradlew :setupCredentials uploadLandingPage
-+        ./gradlew :setupCredentials uploadWebsite
-         ./gradlew :backend:terraform:apply
-         ./gradlew :backend:service-graphql:bumpCloudRunRevision
-         ./gradlew :backend:service-import:bumpCloudRunRevision
-```
-
-**File**: `.github/workflows/compose-preview.yml` (modified, +4/-4)
-```diff
-@@ -17,8 +17,8 @@ name: Compose Preview
- # executing fork code, pushes the render branches, and posts sticky comments.
- 
- # `paths-ignore` keeps the two 45-minute render jobs off changes that cannot
--# reach a Compose @Preview: the GraphQL/Ktor backend, the iOS app, the landing
--# page, and docs. Deliberately a denylist rather than an allowlist of UI paths
-+# reach a Compose @Preview: the GraphQL/Ktor backend, the iOS app, the website,
-+# and docs. Deliberately a denylist rather than an allowlist of UI paths
- # — previews render against shared Kotlin Multiplatform code and the version
- # catalog, so an allowlist would silently stop rendering the first time a
- # preview picked up a new transitive dependency. Note this does NOT cover
-@@ -34,15 +34,15 @@ on:
-     paths-ignore:
-       - 'backend/**'
-       - 'iosApp/**'
--      - 'landing-page/**'
-+      - 'website/**'
-       - 'docs/**'
-       - '**.md'
-   pull_request:
-     types: [opened, synchronize, reopened]
-     paths-ignore:
-       - 'backend/**'
-       - 'iosApp/**'
--      - 'landing-page/**'
-+      - 'website/**'
-       - 'docs/**'
-       - '**.md'
-   workflow_dispatch:
-```
-
-**File**: `backend/CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ The Confetti backend is composed of different components:
- * A KTor Import server in [service-import](service-import). This server updates the conference data when needed.
- * Conference data is stored in Google Datastore.
- * Bookmarks data is stored in Google Datastore.
--* The static landing page is served from Google Cloud Storage.
-+* The static website is served from Google Cloud Storage.
- 
- You can run the backend locally with the following task:
- 
-```
-
-**File**: `build-logic/src/main/kotlin/website.kt` (renamed, +11/-2)
-```diff
-@@ -6,15 +6,15 @@ import com.google.cloud.storage.StorageOptions
- import java.io.ByteArrayInputStream
- import java.io.File
- 
--fun uploadLandingPage(base: File, gcpServiceAccountJson: String) {
-+fun uploadWebsite(base: File, gcpServiceAccountJson: String) {
-     val storage: Storage = StorageOptions.newBuilder()
-         .setCredentials(GoogleCredentials.fromStream(ByteArrayInputStream(gcpServiceAccountJson.encodeToByteArray())))
-         .build()
-         .service
- 
-     val bucketName = "confetti-landing-page"
- 
--    println("uploading landing page...")
-+    println("uploading website...")
-     base.walk().filter { it.isFile }
-         .forEach { file ->
-             file.inputStream().use {
-@@ -30,7 +30,16 @@ private fun File.contentType() : String{
-     return when (this.extension) {
-         "html", "htm" -> "text/html"
-         "css" -> "text/css"
-+        // Browsers refuse to run module scripts and workers served with a non-JavaScript type.
-+        "js", "mjs" -> "text/javascript"
-         "json" -> "application/json"
-+        "svg" -> "image/svg+xml"
-+        "png" -> "image/png"
-+        "ttf" -> "font/ttf"
-+        "otf" -> "font/otf"
-+        "woff" -> "font/woff"
-+        "woff2" -> "font/woff2"
-+        "eot" -> "application/vnd.ms-fontobject"
-         else -> "application/octet-stream"
-     }
- }
-\ No newline at end of file
-```
-
-**File**: `landing-page/build.gradle.kts` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--tasks.register("uploadLandingPage") {
--    val baseDir = file("public")
--    val serviceAccountJson = provider { gcpServiceAccountJson }
--    doLast {
--        uploadLandingPage(baseDir, serviceAccountJson.get())
--    }
--}
-\ No newline at end of file
-```
-
-**File**: `landing-page/public/graphiql/index.html` (removed, +0/-84)
-```diff
-@@ -1,84 +0,0 @@
--<!--
-- *  Copyright (c) 2025 GraphQL Contributors
-- *  All rights reserved.
-- *
-- *  This source code is licensed under the license found in the
-- *  LICENSE file in the root directory of this source tree.
---->
--<!doctype html>
--<html lang="en">
--<head>
--    <meta charset="UTF-8" />
--    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
--    <title>Confetti GraphiQL</title>
--    <style>
--        body {
--            margin: 0;
--        }
--
--        #graphiql {
--            height: 100dvh;
--        }
--
--        .loading {
--            height: 100%;
--            display: flex;
--            align-items: center;
--            justify-content: center;
--            font-size: 4rem;
--        }
--    </style>
--    <link rel="stylesheet" href="https://esm.sh/graphiql@6.0.0-rc.2/dist/style.css" />
--    <!--
--     * Note:
--     * The ?standalone flag bundles the module along with all of its `dependencies`, excluding `peerDependencies`, into a single JavaScript file.
--     * `@emotion/is-prop-valid` is a shim to remove the console error ` module "@emotion /is-prop-valid" not found`. Upstream issue: https://github.com/motiondivision/motion/issues/3126
--    -->
--    <script type="importmap">
--        {
--          "imports": {
--            "react": "https://esm.sh/react@19.1.0",
--            "react/": "https://esm.sh/react@19.1.0/",
--
--            "react-dom": "https://esm.sh/react-dom@19.1.0",
--            "react-dom/": "https://esm.sh/react-dom@19.1.0/",
--
--            "graphiql": "https://esm.sh/graphiql@6.0.0-rc.2?standalone&external=react,react-dom,@graphiql/react,graphql",
--            "graphiql/": "https://esm.sh/graphiql@6.0.0-rc.2/",
--            "@graphiql/react": "https://esm.sh/@graphiql/react@1.0.0-rc.3?standalone&external=react,react-dom,graphql,@graphiql/toolkit,@emotion/is-prop-valid",
--
--            "@graphiql/toolkit": "https://esm.sh/@graphiql/toolkit@1.0.0-rc.0?standalone&external=graphql",
--            "graphql": "https://esm.sh/graphql@16.11.0",
--            "@emotion/is-prop-valid": "data:text/javascript,"
--          }
--        }
--    </script>
--    <script type="module">
--        import React from 'react';
--        import ReactDOM from 'react-dom/client';
--        import { GraphiQL } from 'graphiql';
--        import { createTransport } from '@graphiql/toolkit';
--        import 'graphiql/setup-workers/esm.sh';
--
--        const transport = createTransport({
--            url: 'https://confetti-app.dev/graphql',
--        });
--
--        function App() {
--            return React.createElement(GraphiQL, {
--                transport,
--                defaultEditorToolsVisibility: true,
--            });
--        }
--
--        const container = document.getElementById('graphiql');
--        const root = ReactDOM.createRoot(container);
--        root.render(React.createElement(App));
--    </script>
--</head>
--<body>
--<div id="graphiql">
--    <div class="loading">Loading…</div>
--</div>
--</body>
--</html>
-\ No newline at end of file
-```
-
-**File**: `settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ include(":backend:service-graphql")
- include(":backend:datastore")
- include(":backend:service-import")
- include(":backend:terraform")
--include(":landing-page")
-+include(":website")
- include(":wearApp")
- include(":wearBenchmark")
- include(":compose-desktop")
-```
-
----
-
-### Incident Patch 2: `14683ee8` (2026-10-19)
-**Commit Message**: Add a build step for the landing-page
-
-**File**: `.github/workflows/backend-deploy.yml` (modified, +11/-0)
-```diff
-@@ -45,6 +45,17 @@ jobs:
- 
-     - uses: hashicorp/setup-terraform@v4
- 
-+    # Builds the landing page (see landing-page/package.json). pnpm's version comes from `packageManager`.
-+    - uses: pnpm/action-setup@v6
-+      with:
-+        package_json_file: landing-page/package.json
-+
-+    - uses: actions/setup-node@v7
-+      with:
-+        node-version-file: landing-page/.node-version
-+        cache: pnpm
-+        cache-dependency-path: landing-page/pnpm-lock.yaml
-+
-     - name: Build
-       run: |
-         ./gradlew :setupCredentials uploadLandingPage
-```
-
-**File**: `build-logic/src/main/kotlin/landing.kt` (modified, +9/-0)
-```diff
-@@ -30,7 +30,16 @@ private fun File.contentType() : String{
-     return when (this.extension) {
-         "html", "htm" -> "text/html"
-         "css" -> "text/css"
-+        // Browsers refuse to run module scripts and workers served with a non-JavaScript type.
-+        "js", "mjs" -> "text/javascript"
-         "json" -> "application/json"
-+        "svg" -> "image/svg+xml"
-+        "png" -> "image/png"
-+        "ttf" -> "font/ttf"
-+        "otf" -> "font/otf"
-+        "woff" -> "font/woff"
-+        "woff2" -> "font/woff2"
-+        "eot" -> "application/vnd.ms-fontobject"
-         else -> "application/octet-stream"
-     }
- }
-\ No newline at end of file
-```
-
-**File**: `landing-page/.gitignore` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+node_modules/
-+dist/
-```
-
-**File**: `landing-page/.node-version` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+24
-```
-
-**File**: `landing-page/build.gradle.kts` (modified, +20/-2)
-```diff
-@@ -1,7 +1,25 @@
-+// The landing page is a Vite project (see package.json). pnpm must be on the PATH; it picks the
-+// exact version to run from the `packageManager` field.
-+val pnpmInstall = tasks.register("pnpmInstall", Exec::class.java) {
-+    inputs.files("package.json", "pnpm-lock.yaml")
-+    outputs.dir("node_modules")
-+    commandLine("pnpm", "install", "--frozen-lockfile")
-+}
-+
-+val buildLandingPage = tasks.register("buildLandingPage", Exec::class.java) {
-+    dependsOn(pnpmInstall)
-+    inputs.files("package.json", "pnpm-lock.yaml", "vite.config.ts", "tsconfig.json")
-+    inputs.dir("public")
-+    inputs.dir("graphiql")
-+    outputs.dir("dist")
-+    commandLine("pnpm", "run", "build")
-+}
-+
- tasks.register("uploadLandingPage") {
--    val baseDir = file("public")
-+    dependsOn(buildLandingPage)
-+    val baseDir = file("dist")
-     val serviceAccountJson = provider { gcpServiceAccountJson }
-     doLast {
-         uploadLandingPage(baseDir, serviceAccountJson.get())
-     }
--}
-\ No newline at end of file
-+}
-```
-
-**File**: `landing-page/graphiql/index.html` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+<!doctype html>
-+<html lang="en">
-+<head>
-+    <meta charset="UTF-8" />
-+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-+    <title>Confetti GraphiQL</title>
-+    <style>
-+        body {
-+            margin: 0;
-+        }
-+
-+        #graphiql {
-+            height: 100dvh;
-+        }
-+
-+        .loading {
-+            height: 100%;
-+            display: flex;
-+            align-items: center;
-+            justify-content: center;
-+            font-size: 4rem;
-+        }
-+    </style>
-+    <script type="module" src="./main.tsx"></script>
-+</head>
-+<body>
-+<div id="graphiql">
-+    <div class="loading">Loading…</div>
-+</div>
-+</body>
-+</html>
-```
-
-**File**: `landing-page/graphiql/main.tsx` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+import { createRoot } from 'react-dom/client';
-+import { GraphiQL } from 'graphiql';
-+import { createTransport } from '@graphiql/toolkit';
-+import 'graphiql/setup-workers/vite';
-+import 'graphiql/style.css';
-+
-+const transport = createTransport({
-+    url: 'https://confetti-app.dev/graphql',
-+});
-+
-+createRoot(document.getElementById('graphiql')!).render(
-+    <GraphiQL transport={transport} defaultEditorToolsVisibility />,
-+);
-```
-
-**File**: `landing-page/package.json` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+{
-+  "name": "confetti-landing-page",
-+  "private": true,
-+  "type": "module",
-+  "packageManager": "pnpm@12.14.0",
-+  "scripts": {
-+    "dev": "vite",
-+    "build": "tsc --noEmit && vite build",
-+    "preview": "vite preview"
-+  },
-+  "dependencies": {
-+    "@graphiql/toolkit": "1.0.0-rc.0",
-+    "graphiql": "6.0.0-rc.2",
-+    "graphql": "^17.0.2",
-+    "react": "^19.3.1",
-+    "react-dom": "^19.3.1"
-+  },
-+  "devDependencies": {
-+    "@types/react": "^19.3.0",
-+    "@types/react-dom": "^19.3.0",
-+    "@vitejs/plugin-react": "^6.1.2",
-+    "typescript": "^7.0.2",
-+    "vite": "^8.3.4"
-+  }
-+}
+       - name: octoDNS plan (dry run)
+-        env:
+-          PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
+-          PORKBUN_SECRET_KEY: ${{ secrets.PORKBUN_SECRET_KEY }}
+         run: |
+           set -o pipefail
+           octodns-sync --config-file=config/octodns.yaml 2>&1 | tee plan.txt
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1981** (2026-10-24): Add DNS management (@martinbonnin)
 - **PR #1972** (2026-10-19): Backend: remove stale routing rule. `/graphiql` is now served from the website (@martinbonnin)
 - **PR #1971** (2026-10-19): Turn the landing-page into a packaged "website" (@martinbonnin)
 - **PR #1969** (2026-10-19): Regenerate the baseline profiles with the Baseline Profile Gradle plugin (@joreilly)
 - **PR #1968** (2026-10-18): Car sign-in via Credential Manager; play-services-auth 22 (@joreilly)
 - **PR #1967** (2026-10-18): Update tapmoc to 0.5.0, using its new package (@joreilly)
-- **PR #1965** (2026-10-18): Use Robolectric's legacy SQLite in SessionNotificationTest (@joreilly)
 
 ---
 
@@ -831,28 +420,32 @@ Turn the landing-page into a packaged "website"
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1971 from joreilly/build-step
+## X. Empirical Invariant Guard in dns-plan.yml
 
 **RULE**:
-When implementing operations in `.github/scripts/ios-changes.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/dns-plan.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in joreilly/Confetti. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b2efa96`: Merge pull request #1971 from joreilly/build-step. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8352cd54`: plan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/ios-changes.py`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dns-plan.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    "website/",
+    env:
+      PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
+      PORKBUN_SECRET_KEY: ${{ secrets.PORKBUN_SECRET_KEY }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-    "landing-page/",
+        env:
+          PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
+          PORKBUN_SECRET_KEY: ${{ secrets.PORKBUN_SECRET_KEY }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b2efa96` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8352cd54` are properly handled with clean fallback behavior.

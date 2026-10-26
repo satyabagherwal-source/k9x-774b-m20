@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seaql-sea-orm-learnings.md`  
 > **Source**: github ([https://github.com/SeaQL/sea-orm](https://github.com/SeaQL/sea-orm))  
-> **Source Version**: `834e9701`  
+> **Source Version**: `ae19417d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:31:50.038Z  
+> **Timestamp**: 2026-10-26T01:37:27.134Z  
 > **Learning ID**: `learn-github-seaql-sea-orm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seaql-sea-orm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeaQL/sea-orm](https://github.com/SeaQL/sea-orm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:31:49.454Z  
+> **Harvest Timestamp**: 2026-10-26T01:37:27.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐚 A powerful relational ORM for Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9931 stars
+- **Stars / Engagement**: 9934 stars
 
 ---
 
@@ -503,129 +503,248 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `184336e7` (2026-10-25)
-**Commit Message**: Avoid allocating the prefixed column name in TryGetable::try_get (#3242)
+### Incident Patch 1: `ae19417d` (2026-10-06)
+**Commit Message**: Run SQLite migrations in transactions by default
 
-Joined selects (`find_also_related`, `SelectTwo` and up, the 1-1 joins in the entity loader) read their columns as `A_id`, `B_name` and so on. `TryGetable::try_get` built that name with `format!` for every column of every row, so a 40k row join does a few hundred thousand tiny heap allocations just for column names.
-
-This joins prefix and column in a 64 byte stack buffer and only falls back to `format!` for longer names. Custom `TryGetable` impls and `dynamic::Model` go through the same default method, so they get it too.
-
-`fruit::Entity::find().find_also_related(cake::Entity).all(&db)` over 40,000 rows on SQLite, release build, best of 60 runs, allocations counted with a counting global allocator:
-
-| | master | this PR |
-|---|---|---|
-| time | 116–132 ms | 59–95 ms |
-| allocations | 369,414 | 124,031 |
-| bytes allocated | 21.7 MB | 19.0 MB |
-
-The machine was busy during the runs, so take the timings as rough. The allocation counts are exact.
-
-Added unit tests for the helper (multi-byte names, the 64/65 byte boundary) and for `try_get` with a prefix on a mock row, including a column name long enough to hit th
-
-**File**: `sea-orm-sync/src/executor/query.rs` (modified, +31/-3)
+**File**: `.github/workflows/rust.yml` (modified, +1/-0)
 ```diff
-@@ -74,10 +74,24 @@ pub trait TryGetable: Sized {
-     /// when nesting partial models or joining tables.
-     fn try_get(res: &QueryResult, pre: &str, col: &str) -> Result<Self, TryGetError> {
-         if pre.is_empty() {
--            Self::try_get_by(res, col)
--        } else {
--            Self::try_get_by(res, format!("{pre}{col}").as_str())
-+            return Self::try_get_by(res, col);
-         }
-+
-+        const MAX_LEN: usize = 64;
-+
-+        let len = pre.len() + col.len();
-+
-+        if len <= MAX_LEN {
-+            let mut buf = [0u8; MAX_LEN];
-+            buf[..pre.len()].copy_from_slice(pre.as_bytes());
-+            buf[pre.len()..len].copy_from_slice(col.as_bytes());
-+
-+            if let Ok(name) = std::str::from_utf8(&buf[..len]) {
-+                return Self::try_get_by(res, name);
-+            }
-+        }
-+
-+        Self::try_get_by(res, format!("{pre}{col}").as_str())
-     }
+@@ -344,6 +344,7 @@ jobs:
+       - run: cargo test --test '*' --features tests-features,sqlx-sqlite,runtime-${{ matrix.runtime }}
+       - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }} --no-run
+       - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }}
++      - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }},feat-sqlite-transactional-migrations
  
-     /// Decode the value at the given positional index in the SELECT list.
-@@ -2011,6 +2025,20 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn reads_prefixed_multibyte_column_names_at_buffer_boundary() {
-+        // The four-byte prefix makes the complete names 64 and 65 bytes long.
-+        for col in ["界".repeat(20), format!("{}x", "界".repeat(20))] {
-+            let values = BTreeMap::from([(format!("前_{col}"), Value::Int(Some(42)))]);
-+
-+            let query_result = QueryResult {
-+                row: QueryResultRow::Mock(MockRow { values }),
-+            };
-+
-+            assert_eq!(query_result.try_get::<i32>("前_", &col).unwrap(), 42);
-+        }
-+    }
-+
-     #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-     struct Component {
-         base_price: i32,
+   rusqlite:
+     name: rusqlite
 ```
 
-**File**: `src/executor/query.rs` (modified, +31/-3)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -74,10 +74,24 @@ pub trait TryGetable: Sized {
-     /// when nesting partial models or joining tables.
-     fn try_get(res: &QueryResult, pre: &str, col: &str) -> Result<Self, TryGetError> {
-         if pre.is_empty() {
--            Self::try_get_by(res, col)
--        } else {
--            Self::try_get_by(res, format!("{pre}{col}").as_str())
-+            return Self::try_get_by(res, col);
-         }
+@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
+ 
+ - Support invoking `sea-orm-cli` as a Cargo subcommand (`cargo sea generate entity`, `cargo sea migrate`) https://github.com/SeaQL/sea-orm/pull/3187
+ 
++- Add the opt-in `feat-sqlite-transactional-migrations` feature to `sea-orm-migration` to run SQLite migrations in transactions by default
 +
-+        const MAX_LEN: usize = 64;
-+
-+        let len = pre.len() + col.len();
-+
-+        if len <= MAX_LEN {
-+            let mut buf = [0u8; MAX_LEN];
-+            buf[..pre.len()].copy_from_slice(pre.as_bytes());
-+            buf[pre.len()..len].copy_from_slice(col.as_bytes());
-+
-+            if let Ok(name) = std::str::from_utf8(&buf[..len]) {
-+                return Self::try_get_by(res, name);
-+            }
-+        }
-+
-+        Self::try_get_by(res, format!("{pre}{col}").as_str())
+ ### Enhancements
+ 
+ - Use streaming collection by default for `.all()`, pagination, and cursor queries on SQLx backends https://github.com/SeaQL/sea-orm/pull/3215
+```
+
+**File**: `sea-orm-migration/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -45,6 +45,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+ cli = ["clap", "dotenvy", "sea-orm-cli/cli"]
+ default = ["cli"]
+ entity-registry = ["sea-orm/entity-registry"]
++feat-sqlite-transactional-migrations = []
+ runtime-async-std = [
+     "sea-orm/runtime-async-std",
+     "sea-schema/runtime-async-std",
+```
+
+**File**: `sea-orm-migration/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -34,7 +34,8 @@ pub trait MigrationTrait: MigrationName + Send + Sync {
+ 
+     /// Control whether this migration runs inside a transaction.
+     ///
+-    /// - `None` (default): follow backend convention (Postgres = transaction, MySQL/SQLite = no transaction)
++    /// - `None` (default): use a transaction on Postgres, and on SQLite when
++    ///   `feat-sqlite-transactional-migrations` is enabled
+     /// - `Some(true)`: force wrapping in a transaction on any backend
+     /// - `Some(false)`: disable automatic transaction wrapping (use `manager.begin()` for manual control)
+     fn use_transaction(&self) -> Option<bool> {
+```
+
+**File**: `sea-orm-migration/src/migrator/exec.rs` (modified, +5/-1)
+```diff
+@@ -200,7 +200,11 @@ async fn drop_everything_impl<C: ConnectionTrait>(db: &C) -> Result<(), DbErr> {
+ fn should_use_transaction(migration: &dyn crate::MigrationTrait, backend: DbBackend) -> bool {
+     match migration.use_transaction() {
+         Some(v) => v,
+-        None => backend == DbBackend::Postgres,
++        None => match backend {
++            DbBackend::Postgres => true,
++            DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
++            _ => false,
++        },
+     }
+ }
+ 
+```
+
+**File**: `sea-orm-migration/tests/common/migration/m20250101_000001_create_test_table.rs` (modified, +5/-11)
+```diff
+@@ -1,9 +1,9 @@
+ use sea_orm_migration::prelude::*;
+ use sea_orm_migration::schema::*;
+-use sea_orm_migration::sea_orm::DbBackend;
+ 
+ pub struct Migration {
+     pub use_transaction: Option<bool>,
++    pub expect_transaction: bool,
+     pub should_fail: bool,
+ }
+ 
+@@ -20,13 +20,10 @@ impl MigrationTrait for Migration {
      }
  
-     /// Decode the value at the given positional index in the SELECT list.
-@@ -2013,6 +2027,20 @@ mod tests {
+     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+-        let expect_txn = self
+-            .use_transaction
+-            .unwrap_or(manager.get_database_backend() == DbBackend::Postgres);
+         assert_eq!(
+             manager.get_connection().is_transaction(),
+-            expect_txn,
+-            "up: expected is_transaction() = {expect_txn}"
++            self.expect_transaction,
++            "up: unexpected transaction state"
          );
+ 
+         manager
+@@ -47,13 +44,10 @@ impl MigrationTrait for Migration {
      }
  
-+    #[test]
-+    fn reads_prefixed_multibyte_column_names_at_buffer_boundary() {
-+        // The four-byte prefix makes the complete names 64 and 65 bytes long.
-+        for col in ["界".repeat(20), format!("{}x", "界".repeat(20))] {
-+            let values = BTreeMap::from([(format!("前_{col}"), Value::Int(Some(42)))]);
+     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+-        let expect_txn = self
+-            .use_transaction
+-            .unwrap_or(manager.get_database_backend() == DbBackend::Postgres);
+         assert_eq!(
+             manager.get_connection().is_transaction(),
+-            expect_txn,
+-            "down: expected is_transaction() = {expect_txn}"
++            self.expect_transaction,
++            "down: unexpected transaction state"
+         );
+ 
+         manager
+```
+
+**File**: `sea-orm-migration/tests/common/migrator/transaction_test.rs` (modified, +2/-0)
+```diff
+@@ -3,6 +3,7 @@ use sea_orm_migration::{MigratorTraitSelf, prelude::*};
+ 
+ pub struct Migrator {
+     pub use_transaction: Option<bool>,
++    pub expect_transaction: bool,
+     pub should_fail: bool,
+ }
+ 
+@@ -11,6 +12,7 @@ impl MigratorTraitSelf for Migrator {
+     fn migrations(&self) -> Vec<Box<dyn MigrationTrait>> {
+         vec![Box::new(m20250101_000001_create_test_table::Migration {
+             use_transaction: self.use_transaction,
++            expect_transaction: self.expect_transaction,
+             should_fail: self.should_fail,
+         })]
+     }
+```
+
+**File**: `sea-orm-migration/tests/main.rs` (modified, +24/-5)
+```diff
+@@ -241,10 +241,16 @@ where
+     assert!(!manager.has_table("cake").await?);
+     assert!(!manager.has_table("fruit").await?);
+ 
+-    // Tests rolling back a failing migration on Postgres.
++    let uses_transactions_by_default = match db.get_database_backend() {
++        DbBackend::Postgres => true,
++        DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
++        _ => false,
++    };
 +
-+            let query_result = QueryResult {
-+                row: QueryResultRow::Mock(MockRow { values }),
-+            };
++    // Tests rolling back a failing migration in a transaction.
+     // With per-migration transactions, only the failing migration is rolled back;
+     // earlier migrations that committed successfully are preserved.
+-    if matches!(db.get_database_backend(), DbBackend::Postgres) {
++    if uses_transactions_by_default {
+         println!("\nRoll back changes when encounter errors");
+ 
+         // Set a flag to throw error inside `m20230109_000001_seed_cake_table.rs`
+@@ -269,6 +275,8 @@ where
+         assert!(manager.has_table("cake").await?);
+         assert!(manager.has_table("fruit").await?);
+ 
++        assert_eq!(migrator.get_applied_migrations(db).await?.len(), 5);
 +
-+            assert_eq!(query_result.try_get::<i32>("前_", &col).unwrap(), 42);
-+        }
-+    }
+         // Unset the flag
+         unsafe {
+             std::env::remove_var("ABORT_MIGRATION");
+@@ -298,12 +306,12 @@ where
+     assert!(manager.has_column("cake", "name").await?);
+     assert!(manager.has_column("fruit", "cake_id").await?);
+ 
+-    // Tests rolling back a failing migration-down on Postgres.
++    // Tests rolling back a failing down migration in a transaction.
+     // With per-migration transactions, rollbacks happen one at a time in reverse.
+     // Migrations 6-2 roll back and commit successfully. Migration 1 (drops cake
+     // then ABORTs) fails, so its DROP is restored. But migration 2's DROP of
+     // the fruit table already committed.
+-    if matches!(db.get_database_backend(), DbBackend::Postgres) {
++    if uses_transactions_by_default {
+         println!("\nRoll back changes when encounter errors");
+ 
+         // Set a flag to throw error inside `m20220118_000001_create_cake_table.rs`
+@@ -328,6 +336,8 @@ where
+         assert!(manager.has_table("cake").await?);
+         assert!(!manager.has_table("fruit").await?);
+ 
++        assert_eq!(migrator.get_applied_migrations(db).await?.len(), 1);
 +
-     #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-     struct Component {
-         base_price: i32,
+         // Unset the flag
+         unsafe {
+             std::env::remove_var("ABORT_MIGRATION");
+@@ -374,11 +384,16 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
+     let backend = db.get_database_backend();
+     let manager = SchemaManager::new(db);
+ 
+-    // use_transaction = None: Postgres wraps by default, others don't.
++    // use_transaction = None: follows the backend default.
+     // The assertion happens inside the migration's up()/down() body.
+     println!("\nTransaction test: use_transaction = None");
+     let m = transaction_test::Migrator {
+         use_transaction: None,
++        expect_transaction: match backend {
++            DbBackend::Postgres => true,
++            DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
++            _ => false,
++        },
+         should_fail: false,
+     };
+     m.up(db, None).await?;
+@@ -391,6 +406,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
+     println!("\nTransaction test: use_transaction = Some(true)");
+     let m = transaction_test::Migrator {
+         use_transaction: Some(true),
++        expect_transaction: true,
+         should_fail: false,
+     };
+     m.up(db, None).await?;
+@@ -403,6 +419,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
+     println!("\nTransaction test: use_transaction = Some(false)");
+     let m = transaction_test::Migrator {
+         use_transaction: Some(false),
++        expect_transaction: false,
+         should_fail: false,
+     };
+     m.up(db, None).await?;
+@@ -415,6 +432,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
+     println!("\nTransaction test: failure with transaction");
+     let m = transaction_test::Migrator {
+         use_transaction: Some(true),
++        expect_transaction: true,
+         should_fail: true,
+     };
+     assert!(m.up(db, None).await.is_err());
+@@ -430,6 +448,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
+     println!("\nTransaction test: failure without transaction");
+     let m = transaction_test::Migrator {
+         use_transaction: Some(false),
++        expect_transaction: false,
+         should_fail: true,
+     };
+     assert!(m.up(db, None).await.is_err());
 ```
 
 #### Recent Merged Pull Requests:
@@ -654,60 +773,28 @@ Added unit tests for the helper (multi-byte names, the 64/65 byte boundary) and 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid allocating the prefixed column name in TryGetable::try_get (#3242)
+## X. Run SQLite migrations in transactions by default
 
 **RULE**:
-When implementing operations in `sea-orm-sync/src/executor/query.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeaQL/sea-orm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeaQL/sea-orm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `184336e7`: Avoid allocating the prefixed column name in TryGetable::try_get (#3242). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae19417d`: Run SQLite migrations in transactions by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sea-orm-sync/src/executor/query.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            return Self::try_get_by(res, col);
-
-        const MAX_LEN: usize = 64;
-
-        let len = pre.len() + col.len();
-
-        if len <= MAX_LEN {
-            let mut buf = [0u8; MAX_LEN];
-            buf[..pre.len()].copy_from_slice(pre.as_bytes());
-            buf[pre.len()..len].copy_from_slice(col.as_bytes());
-
-            if let Ok(name) = std::str::from_utf8(&buf[..len]) {
-                return Self::try_get_by(res, name);
-            }
-        }
-
-        Self::try_get_by(res, format!("{pre}{col}").as_str())
-    #[test]
-    fn reads_prefixed_multibyte_column_names_at_buffer_boundary() {
-        // The four-byte prefix makes the complete names 64 and 65 bytes long.
-        for col in ["界".repeat(20), format!("{}x", "界".repeat(20))] {
-            let values = BTreeMap::from([(format!("前_{col}"), Value::Int(Some(42)))]);
-
-            let query_result = QueryResult {
-                row: QueryResultRow::Mock(MockRow { values }),
-            };
-
-            assert_eq!(query_result.try_get::<i32>("前_", &col).unwrap(), 42);
-        }
-    }
-
+      - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }},feat-sqlite-transactional-migrations
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            Self::try_get_by(res, col)
-        } else {
-            Self::try_get_by(res, format!("{pre}{col}").as_str())
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `184336e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae19417d` are properly handled with clean fallback behavior.

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T01:25:49.501Z",
-  "total_cycles_completed": 5052,
-  "total_learnings_persisted": 5052,
-  "total_rules_promoted": 4415,
+  "last_updated": "2026-10-26T01:37:30.282Z",
+  "total_cycles_completed": 5057,
+  "total_learnings_persisted": 5057,
+  "total_rules_promoted": 4419,
   "history": [
-    {
-      "timestamp": "2026-10-25T15:15:56.939Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:16:04.396Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:16:11.451Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:26:52.769Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:38:16.818Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T15:38:20.239Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1403,6 +1368,41 @@
       "repository": "vuetifyjs/vuetify",
       "learningId": "learn-github-vuetifyjs-vuetify",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:37:17.637Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:37:18.166Z",
+      "repository": "ISTIFANO/seo-auditor",
+      "learningId": "learn-github-istifano-seo-auditor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:37:19.843Z",
+      "repository": "joreilly/Confetti",
+      "learningId": "learn-github-joreilly-confetti",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:37:27.551Z",
+      "repository": "SeaQL/sea-orm",
+      "learningId": "learn-github-seaql-sea-orm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:37:30.282Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

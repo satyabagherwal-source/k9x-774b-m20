@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T01:25:49.505Z",
+  "last_updated": "2026-10-26T01:37:30.287Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2796,14 +2796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-istifano-seo-auditor",
-      "content_hash": "2b80526a3794e34d2006c600416cb9086f7dc9a512008b53fdeb0902a1c4e8a3",
-      "verified_at": "2026-10-21T05:02:53.650Z",
+      "content_hash": "e977839347cd3eca14dd96c5b6a0b67c35346d69ac675bbd087efcf1001f81b3",
+      "verified_at": "2026-10-26T01:37:18.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T05:02:53.650Z"
+      "last_updated": "2026-10-26T01:37:18.170Z"
     },
     "code-forge-io/seo-tools": {
       "repository": "code-forge-io/seo-tools",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3efeb7edf5dda197ed34b0a6057bafa76d5c3d7d5fd20214cf0848ae8466320d",
-      "verified_at": "2026-10-26T00:54:50.701Z",
+      "content_hash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
+      "verified_at": "2026-10-26T01:37:30.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:54:50.701Z"
+      "last_updated": "2026-10-26T01:37:30.286Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -10911,14 +10911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seaql-sea-orm",
-      "content_hash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
-      "verified_at": "2026-10-25T11:31:50.435Z",
+      "content_hash": "89eb108f427f8e95e06fbc5b13a196f6fc62d3615f28be538afc1eaeae032677",
+      "verified_at": "2026-10-26T01:37:27.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:31:50.435Z"
+      "last_updated": "2026-10-26T01:37:27.554Z"
     },
     "MobileNativeFoundation/Store": {
       "repository": "MobileNativeFoundation/Store",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
-      "verified_at": "2026-10-25T07:06:22.196Z",
+      "content_hash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
+      "verified_at": "2026-10-26T01:37:17.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:06:22.196Z"
+      "last_updated": "2026-10-26T01:37:17.641Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
-      "verified_at": "2026-10-19T20:10:30.882Z",
+      "content_hash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
+      "verified_at": "2026-10-26T01:37:19.846Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:10:30.882Z"
+      "last_updated": "2026-10-26T01:37:19.846Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",

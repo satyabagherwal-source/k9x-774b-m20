@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T01:25:49.438Z",
+  "last_updated": "2026-10-26T01:37:30.212Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7871,8 +7871,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "57e72b32",
-      "content_hash": "3efeb7edf5dda197ed34b0a6057bafa76d5c3d7d5fd20214cf0848ae8466320d",
+      "source_version": "f4fde713",
+      "content_hash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8080,6 +8080,11 @@
           "number": 4513,
           "title": "datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (#4920",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4527,
+          "title": "deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8087,7 +8092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:54:50.651Z",
+      "verified_at": "2026-10-26T01:37:30.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30194,8 +30199,8 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "c517e458",
-      "content_hash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
+      "source_version": "4e005703",
+      "content_hash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
@@ -30210,7 +30215,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:10:30.821Z",
+      "verified_at": "2026-10-26T01:37:19.736Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44526,8 +44531,8 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "834e9701",
-      "content_hash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
+      "source_version": "ae19417d",
+      "content_hash": "89eb108f427f8e95e06fbc5b13a196f6fc62d3615f28be538afc1eaeae032677",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
@@ -44550,6 +44555,11 @@
           "number": 4266,
           "title": "Avoid allocating the prefixed column name in TryGetable::try_get (#3242)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4526,
+          "title": "Run SQLite migrations in transactions by default",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44557,7 +44567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:31:50.355Z",
+      "verified_at": "2026-10-26T01:37:27.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53284,8 +53294,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "347f171a",
-      "content_hash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
+      "source_version": "08cbb88a",
+      "content_hash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -53323,6 +53333,11 @@
           "number": 4138,
           "title": "Asymmetric Subagent Cardinality Mapping in Transcripts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4525,
+          "title": "removal of unloaded project groups (#66127)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53330,7 +53345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:06:22.122Z",
+      "verified_at": "2026-10-26T01:37:17.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62842,7 +62857,7 @@
       "platform": "github",
       "source_url": "https://github.com/ISTIFANO/seo-auditor",
       "source_version": "87ba51e6",
-      "content_hash": "2b80526a3794e34d2006c600416cb9086f7dc9a512008b53fdeb0902a1c4e8a3",
+      "content_hash": "e977839347cd3eca14dd96c5b6a0b67c35346d69ac675bbd087efcf1001f81b3",
       "dossier_path": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
       "promoted_rules": [
@@ -62857,7 +62872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:02:53.585Z",
+      "verified_at": "2026-10-26T01:37:18.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99745,7 +99760,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T05:02:53.585Z"
+      "verified_at": "2026-10-26T01:37:18.084Z"
     },
     "rule-2663": {
       "learning_id": "rule-2663",
@@ -127515,6 +127530,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T01:25:49.426Z"
+    },
+    "rule-4525": {
+      "learning_id": "rule-4525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4525,
+      "title": "removal of unloaded project groups (#66127)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "08cbb88a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:37:17.548Z"
+    },
+    "rule-4526": {
+      "learning_id": "rule-4526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4526,
+      "title": "Run SQLite migrations in transactions by default",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "ae19417d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:37:27.469Z"
+    },
+    "rule-4527": {
+      "learning_id": "rule-4527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4527,
+      "title": "deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "f4fde713",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:37:30.199Z"
     }
   },
   "aliases": {

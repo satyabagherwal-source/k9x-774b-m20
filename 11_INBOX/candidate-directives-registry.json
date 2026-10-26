@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-25T18:08:55.765Z",
+  "last_updated": "2026-10-26T01:37:19.842Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2785,6 +2785,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-alin23-lunar"
+    },
+    {
+      "id": "CD-6SPU",
+      "directive_title": "Empirical Invariant Guard in dns-plan.yml",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "joreilly/Confetti",
+      "source_commit": "4e005703",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-joreilly-confetti"
     }
   ]
 }

@@ -1775,8 +1775,8 @@
     "sourceUrl": "https://github.com/ISTIFANO/seo-auditor",
     "sourceVersion": "87ba51e6",
     "license": "MIT",
-    "contentHash": "2b80526a3794e34d2006c600416cb9086f7dc9a512008b53fdeb0902a1c4e8a3",
-    "lastHarvestedAt": "2026-10-21T05:02:53.639Z",
+    "contentHash": "e977839347cd3eca14dd96c5b6a0b67c35346d69ac675bbd087efcf1001f81b3",
+    "lastHarvestedAt": "2026-10-26T01:37:18.161Z",
     "learningId": "learn-github-istifano-seo-auditor"
   },
   "code-forge-io-seo-tools": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "57e72b32",
+    "sourceVersion": "f4fde713",
     "license": "NOASSERTION",
-    "contentHash": "3efeb7edf5dda197ed34b0a6057bafa76d5c3d7d5fd20214cf0848ae8466320d",
-    "lastHarvestedAt": "2026-10-26T00:54:50.692Z",
+    "contentHash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
+    "lastHarvestedAt": "2026-10-26T01:37:30.277Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "834e9701",
+    "sourceVersion": "ae19417d",
     "license": "Apache-2.0",
-    "contentHash": "5e8f2d6762c52b56e40adcf069942be4eea7d0871ea2b70e476d861203e0ca7b",
-    "lastHarvestedAt": "2026-10-25T11:31:50.427Z",
+    "contentHash": "89eb108f427f8e95e06fbc5b13a196f6fc62d3615f28be538afc1eaeae032677",
+    "lastHarvestedAt": "2026-10-26T01:37:27.546Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "347f171a",
+    "sourceVersion": "08cbb88a",
     "license": "NOASSERTION",
-    "contentHash": "972ebfcd523d3eb7f591fde86040afd44775cfa65f1a5aedbb46cc4d66367415",
-    "lastHarvestedAt": "2026-10-25T07:06:22.186Z",
+    "contentHash": "4c0aff132484985500e25f8b4b2695e2c89b2be29e23a432540bc41b7d4cf439",
+    "lastHarvestedAt": "2026-10-26T01:37:17.632Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "c517e458",
+    "sourceVersion": "4e005703",
     "license": "Apache-2.0",
-    "contentHash": "e2b6f70d35313e8c277e3d1316a674c023ac43992b2fa77508ce52c03639ff06",
-    "lastHarvestedAt": "2026-10-19T20:10:30.876Z",
+    "contentHash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
+    "lastHarvestedAt": "2026-10-26T01:37:19.836Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {

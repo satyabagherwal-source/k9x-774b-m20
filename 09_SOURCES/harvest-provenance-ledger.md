@@ -5082,3 +5082,8 @@ Every entry in this ledger must capture:
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6e3d753f` | Multi-dimensional audit evidence | 2026-10-26T01:22:51.829Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `6c30c500` | Multi-dimensional audit evidence | 2026-10-26T01:22:55.891Z |
 | `learn-github-vuetifyjs-vuetify` | `https://github.com/vuetifyjs/vuetify` | `195e522f` | Multi-dimensional audit evidence | 2026-10-26T01:25:49.497Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `08cbb88a` | Multi-dimensional audit evidence | 2026-10-26T01:37:17.632Z |
+| `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `87ba51e6` | Multi-dimensional audit evidence | 2026-10-26T01:37:18.161Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `4e005703` | Multi-dimensional audit evidence | 2026-10-26T01:37:19.836Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `ae19417d` | Multi-dimensional audit evidence | 2026-10-26T01:37:27.546Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f4fde713` | Multi-dimensional audit evidence | 2026-10-26T01:37:30.277Z |
