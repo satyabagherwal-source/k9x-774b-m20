@@ -5059,3 +5059,6 @@
 | `CYCLE-20261026-7GG5` | `2026-10-26T00:41:51.365Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`48b89959...`) |
 | `CYCLE-20261026-7H6C` | `2026-10-26T00:41:52.308Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4507` | Yes (`ba6657c3...`) |
 | `CYCLE-20261026-7LR5` | `2026-10-26T00:41:58.241Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4508` | Yes (`2cead0ed...`) |
+| `CYCLE-20261026-FUK0` | `2026-10-26T00:48:22.896Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`63dcd370...`) |
+| `CYCLE-20261026-G35I` | `2026-10-26T00:48:34.038Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4509` | Yes (`88700fa9...`) |
+| `CYCLE-20261026-G5MH` | `2026-10-26T00:48:37.241Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4510` | Yes (`6c8a53c3...`) |

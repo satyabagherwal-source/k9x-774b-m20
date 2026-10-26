@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:41:58.252Z",
+  "last_updated": "2026-10-26T00:48:37.254Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
-      "verified_at": "2026-10-21T04:27:57.732Z",
+      "content_hash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
+      "verified_at": "2026-10-26T00:48:22.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:27:57.732Z"
+      "last_updated": "2026-10-26T00:48:22.907Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
-      "verified_at": "2026-10-24T20:55:05.491Z",
+      "content_hash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
+      "verified_at": "2026-10-26T00:48:34.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:55:05.491Z"
+      "last_updated": "2026-10-26T00:48:34.050Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
-      "verified_at": "2026-10-25T22:38:51.212Z",
+      "content_hash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
+      "verified_at": "2026-10-26T00:48:37.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:38:51.212Z"
+      "last_updated": "2026-10-26T00:48:37.253Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

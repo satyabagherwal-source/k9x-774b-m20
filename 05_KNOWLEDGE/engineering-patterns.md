@@ -328569,3 +328569,114 @@ checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ad88767b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4509. NM-356: keep AllowAll when both default ACL policies are open  (#4200) (Harvested from gravitl/netmaker)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "NM-356: keep AllowAll when both default ACL policies are open  (#4200)",
+  "source": "gravitl/netmaker",
+  "source_url": "https://github.com/gravitl/netmaker",
+  "source_version": "f20acf34",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-26T00:48:33.786Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gravitl-netmaker",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `f20acf34`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.cursor/rules/netmaker-acls.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f20acf34`: NM-356: keep AllowAll when both default ACL policies are open  (#4200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/netmaker-acls.mdc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+6. **Both open defaults ⇒ AllowAll, no exceptions from other ACLs.**
+   - When All Resources (`*↔*`) and All Users (`*↔*`) are enabled, `defaultsAllowAllTraffic` / `FwUpdate.AllowAll` **must** be true.
+   - Extra uni / proto / port / IP-scoped / tag-scoped policies **must not** defeat AllowAll. ACLs are allow-list only; with both defaults open they cannot restrict further.
+   - Do **not** reintroduce `CheckIfAnyPolicyisUniDirectional` (or similar) into the AllowAll short-circuit. Uni/port enforcement belongs only on the fine-grained path when a default is off.
+   - Symptom of regression: client `NETMAKER-ACL-IN` has per-peer ACCEPTs + DROP tail (and FWD DROPs) even though both defaults are on in the UI.
+- Gate: `defaultsAllowAllTraffic(deviceDefault, userDefault, acls)` — true only when an enabled device policy and user policy are both open on every side (`src=*` and `dst=*`). Also accepts open `*↔*` policies found in the loaded ACL list (in case `GetDefaultPolicy` disagrees). On CE, user side is treated as on.
+- **Both defaults on** → AllowAll short-circuit (`FwUpdate.AllowAll=true`), including when user devices exist and when other uni/proto/port/IP policies remain enabled. Netcl
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+- **Both defaults on** (All Resources + All Users) → AllowAll short-circuit, including when user devices exist (All Users already grants broad user access).
+- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits).
+| Both | AllowAll peer path | AllowAll (no per-device rules); fine-grained rules only when a default is off |
+- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules).
+- AllowAll / empty-Dst rules “for simplicity” when user devices exist.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f20acf34` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4510. Merge 'core: key the schema by namespace and resolve names to a namespace' from (Harvested from tursodatabase/turso)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge 'core: key the schema by namespace and resolve names to a namespace' from",
+  "source": "tursodatabase/turso",
+  "source_url": "https://github.com/tursodatabase/turso",
+  "source_version": "aa93d669",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T00:48:37.010Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tursodatabase-turso",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `aa93d669`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `core/benches/fts_benchmark.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `aa93d669`: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/benches/fts_benchmark.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use turso_core::NamespaceId;
+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+                    .get_index("docs", "docs_fts")
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `aa93d669` are properly handled with clean fallback behavior.

@@ -5066,3 +5066,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-26T00:41:51.368Z |
 | `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `b11ea7ea` | Multi-dimensional audit evidence | 2026-10-26T00:41:52.311Z |
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `ad88767b` | Multi-dimensional audit evidence | 2026-10-26T00:41:58.244Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-26T00:48:22.899Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `f20acf34` | Multi-dimensional audit evidence | 2026-10-26T00:48:34.042Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `aa93d669` | Multi-dimensional audit evidence | 2026-10-26T00:48:37.245Z |

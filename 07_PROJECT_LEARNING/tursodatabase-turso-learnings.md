@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `5f377584`  
+> **Source Version**: `aa93d669`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:36:25.007Z  
+> **Timestamp**: 2026-10-26T00:48:36.744Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:36:24.270Z  
+> **Harvest Timestamp**: 2026-10-26T00:48:36.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25017 stars
+- **Stars / Engagement**: 25043 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10714** (2026-10-25): **postgres: keep mod() integer when both arguments are integers**
-  *Symptoms*: ## Description  `mod()` in tursopg always returned a float, while PostgreSQL keeps integer arguments integer:  ```sql SELECT mod(67, 100);  -- tursopg: 67.0   postgres: 67 ```  `mod` is SQLite's built-in math function, which always computes a float remainder and returns a REAL. That is right for SQLite but not for PostgreSQL.  A new `Dialect::mod_of_integers_is_integer()` (false by default, true in `PostgresDialect`) makes `mod` return the integer remainder when both arguments are integers (`mod(-9223372036854775808, -1)` is 0, as in PostgreSQL). Otherwise it returns the float remainder, so `mod(7.5, 2)` is still 1.5. This works like the existing `errors_on_zero_divisor()`, which already gives PostgreSQL's division by zero error for `mod`. `mod` still resolves to the same math function, so it keeps working in CHECK constraints on PostgreSQL's STRICT tables. SQLite's `mod` is unchanged.  ## Motivation and context  Fixes #10704  ## Description of AI Usage  Autofixer wrote this change with Claude Code in an isolated sandbox. A separate verifier agent tested and reviewed it in its own container before this PR was opened. A maintainer must review it before merge.  To have Autofixer address review feedback, leave your comments and then mention @turso-github-handyman; it handles all unanswered comments from maintainers in one round.
+- **Issue #10721** (2026-10-25): **core: key the schema by namespace and resolve names to a namespace**
+  *Symptoms*: ## Description  Key the schema by namespace. A `Schema` keeps its objects per `NamespaceId`: every database has the root namespace, and a schema can have more, each with its own tables, views, indexes, triggers and sequences. Every object lookup on `Schema` takes a namespace id, and the resolver turns a written name into a `NamespaceRef`, the database and the namespace of the object, instead of a bare database id. The search order of unqualified names is a list of namespaces, and the scope of a view or trigger body is its namespace.  This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed by `(relname, relnamespace)` and `namespace.c` walks a list of namespace ids, probing each. Core now has the same split. `Schema` is the catalog keyed by namespace, the resolver is the policy that picks the namespace, and the connection owns the names it knows. The follow-up, #10585, stores PostgreSQL schemas as namespaces of the main database, and nothing above `Schema` has to learn how they are stored.  Nothing changes in behavior. Only the root namespace exists, so every namespace is the root of a database and every lookup finds what it found before. The maps of a namespace are private to `schema.rs`; the code that used to reach into `schema.tables` and friends goes through named methods such as `tables`, `views`, `indices_including_backing`, `add_sequence`, `take_triggers` and `table_with_indices_mut`. Each method treats its name argument exactly as the map access it repla
 
-- **Issue #10713** (2026-10-25): **postgres: expose empty pg_seclabels catalog**
-  *Symptoms*: pg_dump stops during security-label discovery because `pg_catalog.pg_seclabels` is missing. Expose its eight columns through the existing empty-catalog implementation, returning no rows because security labels are unsupported.  Register the catalog name so unqualified queries also resolve with an empty `search_path`, and document its availability. The column layout follows the [PostgreSQL documentation](https://www.postgresql.org/docs/17/view-pg-seclabels.html). 
+- **Issue #10719** (2026-10-25): **postgres: support timestamptz and date/time types**
+  *Symptoms*: Part 3 of 3: #10717 → #10718 → #10719. Replaces #10668.  ## What this does  tursopg gets PostgreSQL's date/time types: `timestamptz`, `timestamp`, `date`, `time` and `interval`. Input, output, arithmetic, `to_char` and error codes all follow PostgreSQL.  ```sql SELECT '2026-10-08 12:34:56.123456+02'::timestamptz;   -- 2026-10-08 10:34:56.123456+00 SELECT 'infinity'::timestamptz, 'epoch'::timestamptz;  -- infinity | 1970-01-01 00:00:00+00 SELECT '2026-01-31'::date + interval '1 month';        -- 2026-02-28 00:00:00 SELECT '2026-10-08'::date = '2026-10-08 00:00'::timestamp;  -- true SELECT 'garbage'::timestamptz;                         -- ERROR 22007 SELECT '2026-10-08 25:00'::timestamptz;                -- ERROR 22008 ```  It works the same in CAST, INSERT, WHERE and bind parameters. A parameter sent with a date OID is a date, so `$1 + 1` adds a day.  Also: - `now()` and `CURRENT_TIMESTAMP` give the transaction start time. `statement_timestamp()` and `clock_timestamp()` work as in PostgreSQL. - `interval * n` and `interval / n` work. - timestamptz is stored as UTC text, the same as before. `+00` is added when the value is shown.  Fixes #10262.  ## Dialect method  - `takes_operand_type_names`: `time` and `interval` values are both stored as text like `'01:00:00'`. For `a + b`, `datetime_pl` can't tell which is which from the value. With this method on, core passes each column's declared type to the function, so `time_col + interval_col` works in joins and with any column name.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,783 +1397,622 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09f919bc` (2026-10-25)
-**Commit Message**: Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Saurio
+### Incident Patch 1: `aa93d669` (2026-10-25)
+**Commit Message**: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg
 
-Our Antithesis runs have found nothing lately. Part of the reason is
-that the stress tool could not notice many kinds of bugs, and rarely
-reached the states where bugs hide.
+Key the schema by namespace. A `Schema` keeps its objects per
+`NamespaceId`: every database has the root namespace, and a schema can
+have more, each with its own tables, views, indexes, triggers and
+sequences. Every object lookup on `Schema` takes a namespace id, and the
+resolver turns a written name into a `NamespaceRef`, the database and
+the namespace of the object, instead of a bare database id. The search
+order of unqualified names is a list of namespaces, and the scope of a
+view or trigger body is its namespace.
 
-This PR has four commits.
+This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
+by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
+ids, probing each. Core now has the same split. `Schema` is the catalog
+keyed by namespace, the resolver is the policy that picks the namespace,
+and the connection owns the names it knows. The follow-up, #10585,
+stores PostgreSQL schemas as namespaces of the main database, and
+nothing above `Schema` has to learn how they are stored.
 
----
+Nothing changes in behavior. Only the root namespace exists, so every
+namespace is the root of a datab
 
-## 1. Fail the run when a statement returns an internal error
-
-**Before:** stress ignored every error except `Corrupt`, and never
-looked at the result of `BEGIN`, `COMMIT`, `ROLLBACK` or `SAVEPOINT`.
-
-**Example:** if `COMMIT` fails with `Internal error: page not loaded`,
-the old stress logs it and keeps going. Antithesis reports nothing. Now
-the run fails.
-
-**Checked:** I planted a fake bug in core (every 500th insert returns an
-internal error). The stress tool on `main` passed with the bug hit 3
-times. This branch fails on the first one. Busy, constraint, conflict
-and I/O errors still count as normal.
-
----
-
-## 2. Random page size, cache size and checkpoint thresholds
-
-**Before:** every run used 4096-byte pages, a 2000 KiB cache and default
-checkpoint settings.
-
-**Example:** with 4096-byte pages and a few hundred small rows, a table
-is one or two B-tree levels deep and the cache never fills. Co
-
-**File**: `Dockerfile.antithesis` (modified, +2/-1)
+**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
 ```diff
-@@ -86,8 +86,9 @@ COPY ./testing/antithesis/stress-io_uring /opt/antithesis/test/v1/stress-io_urin
- COPY ./testing/antithesis/stress-mvcc /opt/antithesis/test/v1/stress-mvcc
- COPY ./testing/antithesis/stress-io_uring-mvcc /opt/antithesis/test/v1/stress-io_uring-mvcc
- COPY ./testing/antithesis/stress-unreliable /opt/antithesis/test/v1/stress-unreliable
-+COPY ./testing/antithesis/stress-crash /opt/antithesis/test/v1/stress-crash
- RUN chmod 777 -R /opt/antithesis/test/v1
--RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py
-+RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py
+@@ -12,6 +12,7 @@
  
- RUN mkdir /opt/antithesis/catalog
- RUN ln -s /opt/antithesis/test/v1/bank-test/*.py /opt/antithesis/catalog
-```
-
-**File**: `testing/antithesis/stress-crash/helper_recovery_check.py` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+#!/usr/bin/env -S python3 -u
-+
-+import sqlite3
-+import sys
-+
-+import turso
-+from antithesis.assertions import always
-+
-+db_path = sys.argv[1]
-+
-+
-+def turso_integrity_check():
-+    # Opening the database makes Turso recover it from the WAL or the MVCC log.
-+    con = turso.connect(db_path)
-+    cur = con.cursor()
-+    rows = [row[0] for row in cur.execute("PRAGMA integrity_check").fetchall()]
-+    # SQLite cannot read MVCC databases. Switching to WAL moves the MVCC log
-+    # into the database file, and is a no-op for databases already in WAL mode.
-+    cur.execute("PRAGMA journal_mode = wal").fetchall()
-+    con.close()
-+    return rows
-+
-+
-+def sqlite_integrity_check():
-+    con = sqlite3.connect(db_path)
-+    rows = con.execute("PRAGMA integrity_check").fetchall()
-+    return [row[0] for row in rows]
-+
-+
-+ok = True
-+for engine, check in (("turso", turso_integrity_check), ("sqlite", sqlite_integrity_check)):
-+    try:
-+        rows = check()
-+    except Exception as e:
-+        always(False, f"[{engine}] database opens after the stress process is killed", {"error": str(e)})
-+        ok = False
-+        break
-+    passed = rows == ["ok"]
-+    always(passed, f"[{engine}] integrity check passes after the stress process is killed", {"rows": rows[:20]})
-+    print(f"{engine} integrity check: {rows[:20]}")
-+    ok = ok and passed
-+
-+sys.exit(0 if ok else 1)
-```
-
-**File**: `testing/antithesis/stress-crash/singleton_driver_stress.sh` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+#!/usr/bin/env bash
-+
-+# Kill the stress workload with SIGKILL at a random moment, then check that
-+# Turso can open the database, recover it, and pass integrity checks.
-+
-+db_file=$(mktemp /tmp/stress-crash.XXXXXX.db)
-+tx_mode=$(python3 -c 'from antithesis.random import random_choice; print(random_choice(["sqlite", "concurrent"]))')
-+kill_after=$(python3 -c 'from antithesis.random import get_random; print(get_random() % 60 + 1)')
-+
-+/bin/turso_stress --nr-threads 2 --nr-iterations 100000 --tx-mode "$tx_mode" --db-file "$db_file" &
-+stress_pid=$!
-+sleep "$kill_after"
-+kill -9 "$stress_pid"
-+wait "$stress_pid"
-+stress_status=$?
-+
-+# 137 means the process died from our SIGKILL. 0 means it finished before
-+# the kill. Anything else is a failure inside the workload.
-+if [ "$stress_status" -ne 0 ] && [ "$stress_status" -ne 137 ]; then
-+    exit "$stress_status"
-+fi
-+
-+exec python3 /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py "$db_file"
-```
-
-**File**: `testing/stress/checkpoint.rs` (modified, +3/-7)
-```diff
-@@ -5,7 +5,7 @@ use rand::Rng;
- use turso::Value;
- use turso_stress::ThreadId;
+ #[cfg(not(feature = "codspeed"))]
+ use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
++use turso_core::NamespaceId;
+ use turso_core::SqliteDialect;
  
--use crate::conn::StressConn;
-+use crate::conn::{assert_not_engine_bug, StressConn};
- use crate::opts::TxMode;
- use crate::sql_logging::SqlLogger;
- use crate::ThreadRng;
-@@ -54,11 +54,9 @@ pub async fn run_wal_checkpoint(
-                 turso::Error::Busy(_) | turso::Error::BusySnapshot(_) => {
-                     sql_logger.log(thread, &sql, "SKIPPED: database busy");
-                 }
--                turso::Error::Corrupt(e) => {
--                    turso_macros::turso_assert_unreachable!("corrupt error running checkpoint", { "thread": thread, "mode": mode, "error": e });
+ #[cfg(feature = "codspeed")]
+@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
+         let attachment = conn
+             .with_schema_mut(|schema| {
+                 schema
+-                    .get_index("docs", "docs_fts")
++                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
+                     .unwrap()
+                     .index_method
+                     .clone()
+```
+
+**File**: `core/btree_dump.rs` (modified, +5/-6)
+```diff
+@@ -1,3 +1,4 @@
++use crate::namespace::NamespaceId;
+ use crate::schema::Schema;
+ use crate::storage::btree::BTreeCursor;
+ use crate::storage::btree::CursorTrait;
+@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
+     /// Look up the root page for a given name (index first, then table).
+     fn find_root_page(&self, name: &str) -> Option<i64> {
+         // Search indexes first (indexes are stored by table name, so iterate all)
+-        for indexes in self.schema.indexes.values() {
+-            for index in indexes {
+-                if index.name.eq_ignore_ascii_case(name) {
+-                    return Some(index.root_page);
 -                }
-                 e => {
-                     sql_logger.log(thread, &sql, &format!("ERROR: {e}"));
-+                    assert_not_engine_bug(thread, &sql, &e);
-                 }
++        for index in self.schema.indexes(NamespaceId::ROOT) {
++            if index.name.eq_ignore_ascii_case(name) {
++                return Some(index.root_page);
              }
-             return;
-@@ -109,11 +107,9 @@ pub async fn run_wal_checkpoint(
-         Err(turso::Error::Busy(_) | turso::Error::BusySnapshot(_)) => {
-             sql_logger.log(thread, &sql, "SKIPPED: database busy");
          }
--        Err(turso::Error::Corrupt(e)) => {
--            turso_macros::turso_assert_unreachable!("corrupt error reading checkpoint result", { "thread": thread, "mode": mode, "error": e });
--        }
-         Err(e) => {
-             sql_logger.log(thread, &sql, &format!("ERROR: {e}"));
-+            assert_not_engine_bug(thread, &sql, &e);
+         // Then search tables
+-        if let Some(table) = self.schema.get_table(name) {
++        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
+             return table.get_root_page().ok();
          }
-     }
- }
+         None
 ```
 
-**File**: `testing/stress/conn.rs` (modified, +95/-0)
+**File**: `core/connection.rs` (modified, +32/-17)
 ```diff
-@@ -1,4 +1,6 @@
-+use crate::opts::TxMode;
- use crate::sql_logging::SqlLogger;
-+use crate::ThreadRng;
- use turso::{Builder, Connection, IntoParams, Row, Rows};
- use turso_stress::sync::Arc;
- use turso_stress::sync::AsyncMutex as Mutex;
-@@ -86,9 +88,52 @@ impl StressConn {
-     ) -> turso::connection::Result<u64> {
-         let result = self.conn.execute(sql, params).await;
-         self.sql_logger.log_result(&self.thread, sql, &result);
-+        if let Err(error) = &result {
-+            assert_not_engine_bug(&self.thread, sql, error);
-+        }
-+        result
-+    }
-+
-+    /// Run a query and read all of its rows, so that errors hit while
-+    /// scanning are seen too.
-+    pub async fn query_all(&self, sql: &str) -> turso::Result<()> {
-+        let result = async {
-+            let mut rows = self.conn.query(sql, ()).await?;
-+            while rows.next().await?.is_some() {}
-+            Ok(())
-+        }
-+        .await;
-+        self.sql_logger.log_result(&self.thread, sql, &result);
-+        if let Err(error) = &result {
-+            assert_not_engine_bug(&self.thread, sql, error);
-+        }
-         result
-     }
- 
-+    /// Give this connection a random cache size and checkpoint threshold.
-+    /// Small values make cache spills and checkpoints happen far more often
-+    /// than the defaults would.
-+    pub async fn apply_random_settings(
-+        &self,
-+        rng: &mut ThreadRng,
-+        tx_mode: TxMode,
-+    ) -> turso::Result<()> {
-+        let cache_size = rng.choose(&[10, 100, 1000, -2000]);
-+        self.pragma_update("cache_size", cache_size).await?;
-+        match tx_mode {
-+            TxMode::SQLite => {
-+                let frames = rng.choose(&[0, 10, 100, 1000]);
-+                self.pragma_update("wal_autocheckpoint", frames).await?;
-+            }
-+            TxMode::Concurrent => {
-+                let bytes = rng.choose(&[0, 4096, 65536, 4_120_000]);
-+                self.pragma_update("mvcc_checkpoint_threshold", bytes)
-+                    .await?;
-+            }
-+        }
-+        Ok(())
-+    }
-+
-     pub async fn rollback_if_open(&self) -> turso::Result<()> {
-         if !self.conn.is_autocommit()? {
-             self.execute("ROLLBACK", ()).await?;
-@@ -116,3 +161,53 @@ impl StressConn {
-         self.conn.query(sql, params).await
-     }
- }
-+
-+/// Fail the run on errors that only a broken engine returns. Busy, constraint,
-+/// conflict and I/O errors are normal under this workload and pass through.
-+pub fn assert_not_engine_bug(thread: &ThreadId, sql: &str, error: &turso::Error) {
-+    if is_engine_bug(error) {
-+        turso_macros::turso_assert_unreachable!("statement failed with an engine bug error", { "thread": thread, "sql": sql, "error": error });
-+    }
-+}
-+
-+fn is_engine_bug(error: &turso::Error) -> bool {
-+    match error {
-+        turso::Error::Corrupt(_) | turso::Error::NotAdb(_) => true,
-+        turso::Error::Error(message) => message.starts_with("Internal error:"),
-+        _ => false,
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::is_engine_bug;
-+
-+    #[test]
-+    fn internal_and_corruption_errors_are_engine_bugs() {
-+        assert!(is_engine_bug(&turso::Error::Error(
-+            "Internal error: page not loaded".into()
-+        )));
-+        assert!(is_engine_bug(&turso::Error::Corrupt(
-+            "Invalid page type: 0".into()
-+        )));
-+        assert!(is_engine_bug(&turso::Error::NotAdb(
-+            "file is not a database".into()
-+        )));
-+    }
-+
-+    #[test]
-+    fn errors_the_workload_expects_are_not_engine_bugs() {
-+        assert!(!is_engine_bug(&turso::Error::Busy(
-+            "database is locked".into()
-+        )));
-+        assert!(!is_engine_bug(&turso::Error::Constraint(
-+            "UNIQUE constraint failed".into()
-+        )));
-+        assert!(!is_engine_bug(&turso::Error::Error(
-+            "Write-write conflict".into()
-+        )));
-+        assert!(!is_engine_bug(&turso::Error::Error(
-+            "Transaction error: cannot start a transaction within a transaction".into()
-+        )));
-+    }
-+}
-```
-
-**File**: `testing/stress/main.rs` (modified, +64/-19)
-```diff
-@@ -24,7 +24,7 @@ use turso_stress::sync::Arc;
- use turso_stress::sync::AsyncBarrier as Barrier;
- use turso_stress::sync::AsyncMutex as Mutex;
- 
--use crate::conn::StressDb;
-+use crate::conn::{StressConn, StressDb};
- use crate::counter::StressCounter;
- use crate::logging::Tracer;
- use crate::progress::ProgressBars;
-@@ -277,7 +277,16 @@ fn generate_random_value(rng: &mut ThreadRng, data_type: &DataType) -> String {
-     match data_type {
-         DataType::Integer => rng.random_range(0..1000).to_string(),
-         DataType::Real => format!("{:.2}", rng.random_range(0f32..100f32)),
--        DataType::Text => format!("'{}'", generate_random_identifier(rng)),
-+        DataType::Text => {
-+            // 10% chance of a text value large enough to spill into overflow
-+            // pages, also as a primary key or UNIQUE index key.
-+            if rng.random_ratio(1, 10) {
-+                let repeat = rng.random_range(20..400);
-+                format!("'{}'", generate_random_identifier(rng).repeat(repeat))
-+            } else {
-+                format!("'{}'", generate_random_identifier(rng))
-+            }
-+        }
-         DataType::Blob => {
-             // 20% chance of generating a large blob via zeroblob() to trigger
-             // page allocation (the pattern that exposed the savepoint rollback
-@@ -399,13 +408,50 @@ fn generate_delete(rng: &mut ThreadRng, table: &Table) -> String {
-     format!("DELETE FROM {} WHERE {};", table.name, where_clause)
- }
- 
--/// Generate a random SQL statement for a schema
--fn generate_random_statement(rng: &mut ThreadRng, schema: &ArbitrarySchema) -> String {
-+/// Run a random write or read against a random table. Errors are ignored
-+/// here; `StressConn` fails the run on errors that point to an engine bug.
-+async fn run_random_statement(conn: &StressConn, rng: &mut ThreadRng, schema: &ArbitrarySchema) {
-     let table = rng.choose(&schema.tables);
--    match rng.random_range(0..=2) {
--        0 => generate_insert(rng, table),
--        1 => generate_update(rng, table),
--        _ => generate_delete(rng, table),
-+    let _ = match rng.random_range(0..=3) {
-+        0 => conn
-+            .execute(&generate_insert(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        1 => conn
-+            .execute(&generate_update(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        2 => conn
-+            .execute(&generate_delete(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        _ => conn.query_all(&generate_read(rng, table)).await,
-+    };
-+}
-+
-+/// Generate a read that scans many rows of a table.
-+fn generate_read(rng: &mut ThreadRng, table: &Table) -> String {
-+    let column = rng.choose(&table.columns);
-+    if rng.random_ratio(1, 2) {
-+        format!(
-+            "SELECT count(*), sum(length({})) FROM {};",
-+            column.name, table.name
-+        )
-+    } else {
-+        let pk_column = table
-+            .columns
-+            .iter()
-+            .find(|col| col.constraints.contains(&Constraint::PrimaryKey))
-+            .expect("Table should have a primary key");
-+        format!(
-+            "SELECT count(*), sum(length({})) FROM (SELECT * FROM {} WHERE {} >= {} ORDER BY {} LIMIT {});",
-+            column.name,
-+            table.name,
-+            pk_column.name,
-+            generate_random_value(rng, &pk_column.data_type),
-+            pk_column.name,
-+            rng.random_range(1..200)
-+        )
-     }
- }
- 
-@@ -644,6 +690,11 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
-         .collect();
- 
-     let conn = StressDb::connect(&db, ThreadId::new(usize::MAX), opts.busy_timeout).await?;
-+    // The page size can only change while the database is empty.
-+    if opts.db_ref.is_none() {
-+        let page_size = main_rng.choose(&[512, 1024, 4096, 65536]);
-+        conn.pragma_update("page_size", page_size).await?;
-+    }
-     'stmts: for stmt in &ddl_statements {
-         let mut retry_counter = 0;
-         while retry_counter < 10 {
-@@ -707,12 +758,13 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
-             let stress_counter = stress_counter.clone();
- 
-             let handle = turso_stress::future::spawn(async move {
--                let mut conn = StressDb::connect(&db, thread.clone(), opts.busy_timeout).await?;
-                 let mut rng = ThreadRng::new(
-                     global_seed
-                         .wrapping_add(thread_idx as u64)
-                         .wrapping_add(batch_idx.wrapping_mul(1000)),
-                 );
-+                let mut conn = StressDb::connect(&db, thread.clone(), opts.busy_timeout).await?;
-+                conn.apply_random_settings(&mut rng, opts.tx_mode).await?;
-                 let mut iteration_count_this_batch = 0;
- 
-                 all_threads_ready.wait().await;
-@@ -721,6 +773,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
-                 
-```
-
----
-
-### Incident Patch 2: `f446d465` (2026-10-25)
-**Commit Message**: testing/stress: add reads and overflow-sized text values
-
-The workload only ran INSERT, UPDATE and DELETE, so nothing scanned a
-table while other threads wrote to it and checkpoints ran. Text values
-were short identifiers, so text never reached overflow pages and index
-keys stayed small.
-
-A quarter of the random statements are now reads: a full table scan or a
-primary key range scan that sums the length of a random column, which
-reads overflow pages too. Reads go through StressConn::query_all, which
-reads every row and applies the same engine bug check as writes. One in
-ten text values is now large enough to spill into overflow pages,
-including when used as a primary key or UNIQUE index key.
-
-Tests: stress sweep over WAL, memory_yield, MVCC and FTS modes; the SQL
-log shows reads succeed.
-
-**File**: `testing/stress/conn.rs` (modified, +16/-0)
-```diff
-@@ -94,6 +94,22 @@ impl StressConn {
-         result
-     }
- 
-+    /// Run a query and read all of its rows, so that errors hit while
-+    /// scanning are seen too.
-+    pub async fn query_all(&self, sql: &str) -> turso::Result<()> {
-+        let result = async {
-+            let mut rows = self.conn.query(sql, ()).await?;
-+            while rows.next().await?.is_some() {}
-+            Ok(())
-+        }
-+        .await;
-+        self.sql_logger.log_result(&self.thread, sql, &result);
-+        if let Err(error) = &result {
-+            assert_not_engine_bug(&self.thread, sql, error);
-+        }
-+        result
-+    }
-+
-     /// Give this connection a random cache size and checkpoint threshold.
-     /// Small values make cache spills and checkpoints happen far more often
-     /// than the defaults would.
-```
-
-**File**: `testing/stress/main.rs` (modified, +56/-12)
-```diff
-@@ -24,7 +24,7 @@ use turso_stress::sync::Arc;
- use turso_stress::sync::AsyncBarrier as Barrier;
- use turso_stress::sync::AsyncMutex as Mutex;
- 
--use crate::conn::StressDb;
-+use crate::conn::{StressConn, StressDb};
- use crate::counter::StressCounter;
- use crate::logging::Tracer;
- use crate::progress::ProgressBars;
-@@ -277,7 +277,16 @@ fn generate_random_value(rng: &mut ThreadRng, data_type: &DataType) -> String {
-     match data_type {
-         DataType::Integer => rng.random_range(0..1000).to_string(),
-         DataType::Real => format!("{:.2}", rng.random_range(0f32..100f32)),
--        DataType::Text => format!("'{}'", generate_random_identifier(rng)),
-+        DataType::Text => {
-+            // 10% chance of a text value large enough to spill into overflow
-+            // pages, also as a primary key or UNIQUE index key.
-+            if rng.random_ratio(1, 10) {
-+                let repeat = rng.random_range(20..400);
-+                format!("'{}'", generate_random_identifier(rng).repeat(repeat))
-+            } else {
-+                format!("'{}'", generate_random_identifier(rng))
-+            }
-+        }
-         DataType::Blob => {
-             // 20% chance of generating a large blob via zeroblob() to trigger
-             // page allocation (the pattern that exposed the savepoint rollback
-@@ -399,13 +408,50 @@ fn generate_delete(rng: &mut ThreadRng, table: &Table) -> String {
-     format!("DELETE FROM {} WHERE {};", table.name, where_clause)
- }
- 
--/// Generate a random SQL statement for a schema
--fn generate_random_statement(rng: &mut ThreadRng, schema: &ArbitrarySchema) -> String {
-+/// Run a random write or read against a random table. Errors are ignored
-+/// here; `StressConn` fails the run on errors that point to an engine bug.
-+async fn run_random_statement(conn: &StressConn, rng: &mut ThreadRng, schema: &ArbitrarySchema) {
-     let table = rng.choose(&schema.tables);
--    match rng.random_range(0..=2) {
--        0 => generate_insert(rng, table),
--        1 => generate_update(rng, table),
--        _ => generate_delete(rng, table),
-+    let _ = match rng.random_range(0..=3) {
-+        0 => conn
-+            .execute(&generate_insert(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        1 => conn
-+            .execute(&generate_update(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        2 => conn
-+            .execute(&generate_delete(rng, table), ())
-+            .await
-+            .map(|_| ()),
-+        _ => conn.query_all(&generate_read(rng, table)).await,
-+    };
-+}
-+
-+/// Generate a read that scans many rows of a table.
-+fn generate_read(rng: &mut ThreadRng, table: &Table) -> String {
-+    let column = rng.choose(&table.columns);
-+    if rng.random_ratio(1, 2) {
-+        format!(
-+            "SELECT count(*), sum(length({})) FROM {};",
-+            column.name, table.name
-+        )
-+    } else {
-+        let pk_column = table
-+            .columns
-+            .iter()
-+            .find(|col| col.constraints.contains(&Constraint::PrimaryKey))
-+            .expect("Table should have a primary key");
-+        format!(
-+            "SELECT count(*), sum(length({})) FROM (SELECT * FROM {} WHERE {} >= {} ORDER BY {} LIMIT {});",
-+            column.name,
-+            table.name,
-+            pk_column.name,
-+            generate_random_value(rng, &pk_column.data_type),
-+            pk_column.name,
-+            rng.random_range(1..200)
-+        )
-     }
- }
- 
-@@ -751,8 +797,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
-                         )
-                         .await;
-                     } else {
--                        let sql = generate_random_statement(&mut rng, &schema_for_task);
--                        let _ = conn.execute(&sql, ()).await;
-+                        run_random_statement(&conn, &mut rng, &schema_for_task).await;
-                     }
- 
-                     // When inside a transaction, 30% chance to exercise savepoints.
-@@ -777,8 +822,7 @@ async fn async_main(opts: Opts) -> Result<(), Box<dyn std::error::Error + Send +
-                                 )
-                                 .await;
-                             } else {
--                                let sp_sql = generate_random_statement(&mut rng, &schema_for_task);
--                                let _ = conn.execute(&sp_sql, ()).await;
-+                                run_random_statement(&conn, &mut rng, &schema_for_task).await;
-                             }
+@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
+ use crate::error::io_error;
+ #[cfg(any(test, injected_yields))]
+ use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
++use crate::namespace::NamespaceId;
+ use crate::state_machine::StateMachine;
+ use crate::statement::StatementOrigin;
+ use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
+@@ -1519,7 +1520,7 @@ impl Connection {
+                     // descriptor SELECTs can resolve the backing tables.
+                     if pending.is_none() {
+                         if let Some(sequences) = inner.preserved_sequences.take() {
+-                            inner.fresh.sequences = sequences;
++                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
+                             *pending = Some(crate::alloc::vec![]);
+                         } else {
+                             let work = inner.fresh.sequence_backing_table_names();
+@@ -1548,7 +1549,11 @@ impl Connection {
+                         };
+                         let (backing_table_name, seq_name) = entry;
+                         let normalized = crate::util::normalize_ident(&seq_name);
+-                        if inner.fresh.sequences.contains_key(&normalized) {
++                        if inner
++                            .fresh
++                            .get_sequence(NamespaceId::ROOT, &normalized)
++                            .is_some()
++                        {
+                             *idx += 1;
+                             *stmt = None;
+                             *meta = None;
+@@ -1588,7 +1593,11 @@ impl Connection {
+                             mv_store.set_sequence_watermark(&normalized, watermark);
                          }
+                         let sequence = seq.take().expect("sequence set above");
+-                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
++                        inner.fresh.insert_sequence(
++                            NamespaceId::ROOT,
++                            normalized,
++                            Arc::new(sequence),
++                        );
+                         *idx += 1;
+                         *stmt = None;
+                         *meta = None;
+@@ -1600,8 +1609,7 @@ impl Connection {
+                     if self.experimental_custom_types_enabled()
+                         && inner
+                             .fresh
+-                            .tables
+-                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
++                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
+                     {
+                         // Temporarily install the schema so we can query against it.
+                         self.with_schema_mut(|schema| {
+@@ -1646,7 +1654,7 @@ impl Connection {
+                     tracing::debug!(
+                         "reparse_schema: schema_version={}, tables={:?}",
+                         fresh.schema_version,
+-                        fresh.tables.keys()
++                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
+                     );
+                     self.with_schema_mut(|schema| {
+                         *schema = fresh;
+@@ -1937,7 +1945,7 @@ impl Connection {
+     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
+         let has_types_table = {
+             let s = self.schema.read();
+-            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
++            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
+         };
+         if !has_types_table {
+             return Ok(Vec::new());
+@@ -3301,7 +3309,7 @@ impl Connection {
+         let entry = attached_dbs
+             .index_to_data
+             .get(&database_id)
+-            .expect("Database ID should be valid after resolve_database_id");
++            .expect("Database ID should be valid after resolve_namespace");
+         let schema = entry.db.schema.lock().clone();
+         schema
+     }
+@@ -3602,7 +3610,9 @@ impl Connection {
+         };
+         let get = |db_id: usize, seq_name: &str| {
+             self.with_schema(db_id, |schema| {
+-                schema.get_sequence(seq_name).map(Arc::clone)
++                schema
++                    .get_sequence(NamespaceId::ROOT, seq_name)
++                    .map(Arc::clone)
+             })
+             .map(|sequence| (db_id, sequence))
+         };
+@@ -3734,8 +3744,9 @@ impl Connection {
+                     };
+                     let (backing_table_name, seq_name) = entry;
+                     let normalized = crate::util::normalize_ident(&seq_name);
+-                    let already_present =
+-                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
++                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
++                        s.get_sequence(Names
+```
+
+**File**: `core/database.rs` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@
+ //! attached databases.
  
+ use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
++use crate::namespace::NamespaceId;
+ use crate::types::IOResultOr;
+ use crate::util::IOExt;
+ #[cfg(feature = "io_memory_yield")]
+@@ -3474,7 +3475,7 @@ impl Database {
+ 
+     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
+         let name = table.name.clone();
+-        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
++        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
+         Ok(name)
+     }
+ 
+```
+
+**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
+```diff
+@@ -9,6 +9,7 @@
+ //! SQLite one namespace per database, are in [`attach`].
+ 
+ pub mod attach;
++use crate::namespace::NamespaceId;
+ use crate::pragma::PragmaVirtualTable;
+ use crate::schema::{BTreeTable, Schema, Table};
+ use crate::sync::Arc;
+@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
+     enable_custom_types: bool,
+ ) -> crate::Result<()> {
+     for vtab in pragma_vtabs() {
+-        schema.tables.insert(
++        schema.insert_table(
++            NamespaceId::ROOT,
+             vtab.name.to_owned(),
+             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
+         );
+```
+
+**File**: `core/ext/mod.rs` (modified, +2/-1)
+```diff
+@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
+ use crate::index_method::{
+     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
+ };
++use crate::namespace::NamespaceId;
+ use crate::schema::{Schema, Table};
+ use crate::sync::atomic::{AtomicU64, Ordering};
+ use crate::sync::Mutex;
+@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
+                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
+                     return ResultCode::Error;
+                 };
+-                schema.tables.insert(name_str, table);
++                schema.insert_table(NamespaceId::ROOT, name_str, table);
+             } else {
+                 return ResultCode::Error;
+             }
+```
+
+**File**: `core/incremental/cursor.rs` (modified, +2/-1)
+```diff
+@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::namespace::NamespaceId;
+     use crate::storage::btree::BTreeCursor;
+     use crate::sync::Arc;
+     use crate::util::IOExt;
+@@ -325,7 +326,7 @@ mod tests {
+         let view_mutex = conn
+             .schema
+             .read()
+-            .get_materialized_view(view_name)
++            .get_materialized_view(NamespaceId::ROOT, view_name)
+             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
+ 
+         // Get the view's root page
+```
+
+**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
+```diff
+@@ -24,6 +24,7 @@
+ //! completion (or before an in-statement view read), or inside the CREATE
+ //! MATERIALIZED VIEW statement for initial population.
+ 
++use crate::namespace::NamespaceRef;
+ use rustc_hash::FxHashMap;
+ use turso_parser::ast;
+ 
+@@ -219,9 +220,11 @@ impl Connection {
+         view_name: &str,
+     ) -> Result<Vec<Option<String>>> {
+         let schema = self.schema.read().clone();
+-        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
+-            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
+-        })?;
++        let view = schema
++            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
++            .ok_or_else(|| {
++                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
++            })?;
+         let select = view.lock().select_stmt.clone();
+         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
+         Ok(plan
+@@ -256,9 +259,11 @@ fn build_plan_for_connection(
+     // names the same way CREATE did: within the view's own database, never
+     // through a TEMP table that happens to share a source table's name
+     // (#9456). Materialized views always live in main.
+-    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
+-        plan_view(view_name, select, &resolver, connection)
+-    })
++    resolver.with_view_scope(
++        NamespaceRef::root_of(crate::MAIN_DB_ID),
++        view_name.to_string(),
++        || plan_view(view_name, select, &resolver, connection),
++    )
+ }
+ 
+ /// Emit every node once in DAG topological order.
 ```
 
 ---
 
-### Incident Patch 3: `95617d89` (2026-10-25)
-**Commit Message**: Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from app/turso-github-handyman
+### Incident Patch 2: `3eece806` (2026-10-24)
+**Commit Message**: core: key the schema by namespace and resolve names to a namespace
 
-For a STRICT table, INSERT reported a column type error before a NOT
-NULL error, unlike SQLite. Because `OR IGNORE` does not apply to type
-errors, a row that SQLite skips made the whole statement fail:
+A schema keeps its objects per namespace. Every database has the root
+namespace; a schema can have more, each with its own tables, views,
+indexes, triggers and sequences. Every object lookup on `Schema` takes a
+`NamespaceId`, and the resolver turns a written name into a
+`NamespaceRef`, the database and the namespace of the object, instead
+of a bare database id. The search order of unqualified names is a list
+of namespaces, and the scope of a view or trigger body is its
+namespace.
 
-```sql
-CREATE TABLE t(a INT, b REAL NOT NULL) STRICT;
-INSERT OR IGNORE INTO t(a) VALUES ('x');  -- turso: cannot store TEXT value in INT column t.a; sqlite: row skipped
-INSERT INTO t(a) VALUES ('x');            -- turso: cannot store TEXT value in INT column t.a; sqlite: NOT NULL constraint failed: t.b
+This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
+by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
+ids, probing each. Core now has the same split: `Schema` is the catalog
+keyed by namespace, the resolver is the policy that picks the namespace,
+and the connection owns the names it knows. A later change stores
+PostgreSQL schemas as namespaces of the main database and nothing above
+`Schema` has to learn how they are stored.
+
+Nothing changes in behavior: only the root namespace exists, so every
+namespace is the root of a database and every lookup finds what it found
+before. The maps of a namespace 
+
+**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
+```diff
+@@ -12,6 +12,7 @@
+ 
+ #[cfg(not(feature = "codspeed"))]
+ use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
++use turso_core::NamespaceId;
+ use turso_core::SqliteDialect;
+ 
+ #[cfg(feature = "codspeed")]
+@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
+         let attachment = conn
+             .with_schema_mut(|schema| {
+                 schema
+-                    .get_index("docs", "docs_fts")
++                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
+                     .unwrap()
+                     .index_method
+                     .clone()
 ```
 
-`translate_insert` emitted the STRICT `TypeCheck` instructions and the
-custom-type encode step before the first `emit_notnulls`. SQLite checks
-NOT NULL first and type-checks the row later. The exception is a table
-with generated columns or BEFORE triggers: there SQLite type-checks the
-row first, before computing the generated columns or firing the
-triggers.
-
-The type checks now go after the NOT NULL checks of stored columns,
-except when the table has generated columns or BEFORE INSERT triggers.
-In those two cases the order stays as before, which already matches
-SQLite. Colu
-
-**File**: `core/schema.rs` (modified, +8/-2)
+**File**: `core/btree_dump.rs` (modified, +5/-6)
 ```diff
-@@ -999,6 +999,12 @@ impl Schema {
-         self.type_registry.get(&type_registry_key(type_name))
+@@ -1,3 +1,4 @@
++use crate::namespace::NamespaceId;
+ use crate::schema::Schema;
+ use crate::storage::btree::BTreeCursor;
+ use crate::storage::btree::CursorTrait;
+@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
+     /// Look up the root page for a given name (index first, then table).
+     fn find_root_page(&self, name: &str) -> Option<i64> {
+         // Search indexes first (indexes are stored by table name, so iterate all)
+-        for indexes in self.schema.indexes.values() {
+-            for index in indexes {
+-                if index.name.eq_ignore_ascii_case(name) {
+-                    return Some(index.root_page);
+-                }
++        for index in self.schema.indexes(NamespaceId::ROOT) {
++            if index.name.eq_ignore_ascii_case(name) {
++                return Some(index.root_page);
+             }
+         }
+         // Then search tables
+-        if let Some(table) = self.schema.get_table(name) {
++        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
+             return table.get_root_page().ok();
+         }
+         None
+```
+
+**File**: `core/connection.rs` (modified, +32/-17)
+```diff
+@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
+ use crate::error::io_error;
+ #[cfg(any(test, injected_yields))]
+ use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
++use crate::namespace::NamespaceId;
+ use crate::state_machine::StateMachine;
+ use crate::statement::StatementOrigin;
+ use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
+@@ -1519,7 +1520,7 @@ impl Connection {
+                     // descriptor SELECTs can resolve the backing tables.
+                     if pending.is_none() {
+                         if let Some(sequences) = inner.preserved_sequences.take() {
+-                            inner.fresh.sequences = sequences;
++                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
+                             *pending = Some(crate::alloc::vec![]);
+                         } else {
+                             let work = inner.fresh.sequence_backing_table_names();
+@@ -1548,7 +1549,11 @@ impl Connection {
+                         };
+                         let (backing_table_name, seq_name) = entry;
+                         let normalized = crate::util::normalize_ident(&seq_name);
+-                        if inner.fresh.sequences.contains_key(&normalized) {
++                        if inner
++                            .fresh
++                            .get_sequence(NamespaceId::ROOT, &normalized)
++                            .is_some()
++                        {
+                             *idx += 1;
+                             *stmt = None;
+                             *meta = None;
+@@ -1588,7 +1593,11 @@ impl Connection {
+                             mv_store.set_sequence_watermark(&normalized, watermark);
+                         }
+                         let sequence = seq.take().expect("sequence set above");
+-                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
++                        inner.fresh.insert_sequence(
++                            NamespaceId::ROOT,
++                            normalized,
++                            Arc::new(sequence),
++                        );
+                         *idx += 1;
+                         *stmt = None;
+                         *meta = None;
+@@ -1600,8 +1609,7 @@ impl Connection {
+                     if self.experimental_custom_types_enabled()
+                         && inner
+                             .fresh
+-                            .tables
+-                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
++                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
+                     {
+                         // Temporarily install the schema so we can query against it.
+                         self.with_schema_mut(|schema| {
+@@ -1646,7 +1654,7 @@ impl Connection {
+                     tracing::debug!(
+                         "reparse_schema: schema_version={}, tables={:?}",
+                         fresh.schema_version,
+-                        fresh.tables.keys()
++                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
+                     );
+                     self.with_schema_mut(|schema| {
+                         *schema = fresh;
+@@ -1937,7 +1945,7 @@ impl Connection {
+     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
+         let has_types_table = {
+             let s = self.schema.read();
+-            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
++            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
+         };
+         if !has_types_table {
+             return Ok(Vec::new());
+@@ -3290,7 +3298,7 @@ impl Connection {
+         let entry = attached_dbs
+             .index_to_data
+             .get(&database_id)
+-            .expect("Database ID should be valid after resolve_database_id");
++            .expect("Database ID should be valid after resolve_namespace");
+         let schema = entry.db.schema.lock().clone();
+         schema
+     }
+@@ -3591,7 +3599,9 @@ impl Connection {
+         };
+         let get = |db_id: usize, seq_name: &str| {
+             self.with_schema(db_id, |schema| {
+-                schema.get_sequence(seq_name).map(Arc::clone)
++                schema
++                    .get_sequence(NamespaceId::ROOT, seq_name)
++                    .map(Arc::clone)
+             })
+             .map(|sequence| (db_id, sequence))
+         };
+@@ -3723,8 +3733,9 @@ impl Connection {
+                     };
+                     let (backing_table_name, seq_name) = entry;
+                     let normalized = crate::util::normalize_ident(&seq_name);
+-                    let already_present =
+-                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
++                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
++                        s.get_sequence(Names
+```
+
+**File**: `core/database.rs` (modified, +2/-1)
+```diff
+@@ -4,6 +4,7 @@
+ //! attached databases.
+ 
+ use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
++use crate::namespace::NamespaceId;
+ use crate::types::IOResultOr;
+ use crate::util::IOExt;
+ #[cfg(feature = "io_memory_yield")]
+@@ -3474,7 +3475,7 @@ impl Database {
+ 
+     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
+         let name = table.name.clone();
+-        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
++        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
+         Ok(name)
      }
  
-+    /// Whether the column's values are encoded before they are stored: an array column, or a
-+    /// column whose type is a custom type of a STRICT table.
-+    pub fn column_has_custom_type(&self, column: &Column, is_strict: bool) -> bool {
-+        column.is_array() || self.get_type_def(&column.ty_str, is_strict).is_some()
-+    }
-+
-     /// Look up a custom type definition by name without a strictness check.
-     /// Only use this for operations that aren't column-scoped (e.g. DROP TYPE,
-     /// CREATE TABLE validation, CAST).
-@@ -3871,7 +3877,7 @@ impl BTreeTable {
-         let has_custom = table
-             .columns
-             .iter()
--            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
-+            .any(|c| schema.column_has_custom_type(c, table.is_strict));
-         if !has_custom {
-             return Arc::clone(table);
-         }
-@@ -3901,7 +3907,7 @@ impl BTreeTable {
-         let has_custom = table
-             .columns
-             .iter()
--            .any(|c| c.is_array() || schema.get_type_def(&c.ty_str, table.is_strict).is_some());
-+            .any(|c| schema.column_has_custom_type(c, table.is_strict));
-         if !has_custom {
-             return Ok(Arc::clone(table));
-         }
 ```
 
-**File**: `core/translate/insert.rs` (modified, +60/-38)
+**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
 ```diff
-@@ -681,40 +681,6 @@ pub fn translate_insert(
+@@ -9,6 +9,7 @@
+ //! SQLite one namespace per database, are in [`attach`].
  
-     program.preassign_label_to_next_insn(ctx.key_labels.key_ready_for_check);
- 
--    //TODO building the type-check table is expensive, we should cache it somehow.
--    let maybe_type_check_table = ctx
--        .table
--        .is_strict
--        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
--    if let Some(type_check_table) = &maybe_type_check_table {
--        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
--        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
--        program.emit_insn(Insn::TypeCheck {
--            start_reg: insertion.first_col_register(),
--            count: insertion.num_non_virtual_cols,
--            check_generated: false,
--            table_reference: BTreeTable::input_type_check_table_ref(
--                ctx.table,
--                resolver.schema(),
--                None,
--            )?,
--        });
--
--        // Encode values for columns with custom types.
--        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
--
--        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
--        // We don't check generated columns in this initial pass because their dependencies could
--        // still be REPLACEd.
--        program.emit_insn(Insn::TypeCheck {
--            start_reg: insertion.first_col_register(),
--            count: insertion.num_non_virtual_cols,
--            check_generated: false,
--            table_reference: Arc::clone(type_check_table),
--        });
--    }
--    // Non-STRICT tables: Affinity was already emitted earlier (before BEFORE triggers).
--
-     // For AUTOINCREMENT tables with an explicit rowid, record it before CHECK
-     // constraints. SQLite advances sqlite_sequence even when INSERT OR IGNORE
-     // skips the row due to a CHECK failure.
-@@ -768,7 +734,57 @@ pub fn translate_insert(
-     //    1. replace `a` with 5 (the NOT NULL REPLACE action)
-     //    2. compute `b`
-     //    3. check that `b` isn't null (the NOT NULL constraint)
--    emit_notnulls(program, &ctx, &insertion, resolver, false)?;
-+    //
-+    // SQLite checks NOT NULL before the STRICT types, unless the table has generated columns or
-+    // BEFORE triggers: then the row is type checked first, before computing the generated
-+    // columns or firing the triggers. Columns with a custom type are always checked for NOT NULL
-+    // after encoding, because their NOT NULL check looks at the decoded value.
-+    //TODO building the type-check table is expensive, we should cache it somehow.
-+    let maybe_type_check_table = ctx
-+        .table
-+        .is_strict
-+        .then(|| BTreeTable::type_check_table_ref(ctx.table, resolver.schema()));
-+    let has_custom_type = |column: &Column| {
-+        resolver
-+            .schema()
-+            .column_has_custom_type(column, ctx.table.is_strict)
-+    };
-+    let types_checked_first = has_before_triggers || insertion.has_virtual_columns();
-+    if !types_checked_first {
-+        emit_notnulls(program, &ctx, &insertion, resolver, |column| {
-+            !column.is_virtual_generated() && !has_custom_type(column)
-+        })?;
-+    }
-+    if let Some(type_check_table) = &maybe_type_check_table {
-+        // Pre-encoding TypeCheck: validate input types match the custom type's declared value type
-+        // to catch things like a TEXT value inserted into an INTEGER-based custom type.
-+        program.emit_insn(Insn::TypeCheck {
-+            start_reg: insertion.first_col_register(),
-+            count: insertion.num_non_virtual_cols,
-+            check_generated: false,
-+            table_reference: BTreeTable::input_type_check_table_ref(
-+                ctx.table,
-+                resolver.schema(),
-+                None,
-+            )?,
-+        });
-+
-+        // Encode values for columns with custom types.
-+        emit_custom_type_encode(program, resolver, &insertion, &ctx.table.name)?;
-+
-+        // Post-encode TypeCheck: validate that encode produced the correct storage type (BASE).
-+        // We don't check generated columns in this initial pass because their dependencies could
-+        // still be REPLACEd.
-+        program.emit_insn(Insn::TypeCheck {
-+            start_reg: insertion.first_col_register(),
-+            count: insertion.num_non_virtual_cols,
-+            check_generated: false,
-+            table_reference: Arc::clone(type_check_table),
-+        });
-+    }
-+    emit_notnulls(program, &ctx, &insertion, resolver, |column| {
-+        !column.is_virtual_generated() && (types_checked_first || has_custom_type(column))
-+    })?;
- 
-     if insertion.has_virtual_columns() {
-         //TODO only compute the necessary virtual columns for CHECK and NOT NULL evaluation
-@@ -791,7 +807,13 @@ pub fn translate_insert(
-             });
-         }
- 
--        emit_notnulls(program, &ctx, &insertion, resolver, true)?;
-+      
+ pub mod attach;
++use crate::namespace::NamespaceId;
+ use crate::pragma::PragmaVirtualTable;
+ use crate::schema::{BTreeTable, Schema, Table};
+ use crate::sync::Arc;
+@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
+     enable_custom_types: bool,
+ ) -> crate::Result<()> {
+     for vtab in pragma_vtabs() {
+-        schema.tables.insert(
++        schema.insert_table(
++            NamespaceId::ROOT,
+             vtab.name.to_owned(),
+             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
+         );
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/strict.sqltest` (modified, +35/-0)
+**File**: `core/ext/mod.rs` (modified, +2/-1)
 ```diff
-@@ -99,3 +99,38 @@ test strict-primary-key-schema-sql-after-add-column {
- expect {
-     CREATE TABLE pk1 (code TEXT PRIMARY KEY, n INT, z INT) STRICT
+@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
+ use crate::index_method::{
+     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
+ };
++use crate::namespace::NamespaceId;
+ use crate::schema::{Schema, Table};
+ use crate::sync::atomic::{AtomicU64, Ordering};
+ use crate::sync::Mutex;
+@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
+                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
+                     return ResultCode::Error;
+                 };
+-                schema.tables.insert(name_str, table);
++                schema.insert_table(NamespaceId::ROOT, name_str, table);
+             } else {
+                 return ResultCode::Error;
+             }
+```
+
+**File**: `core/incremental/cursor.rs` (modified, +2/-1)
+```diff
+@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::namespace::NamespaceId;
+     use crate::storage::btree::BTreeCursor;
+     use crate::sync::Arc;
+     use crate::util::IOExt;
+@@ -325,7 +326,7 @@ mod tests {
+         let view_mutex = conn
+             .schema
+             .read()
+-            .get_materialized_view(view_name)
++            .get_materialized_view(NamespaceId::ROOT, view_name)
+             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
+ 
+         // Get the view's root page
+```
+
+**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
+```diff
+@@ -24,6 +24,7 @@
+ //! completion (or before an in-statement view read), or inside the CREATE
+ //! MATERIALIZED VIEW statement for initial population.
+ 
++use crate::namespace::NamespaceRef;
+ use rustc_hash::FxHashMap;
+ use turso_parser::ast;
+ 
+@@ -219,9 +220,11 @@ impl Connection {
+         view_name: &str,
+     ) -> Result<Vec<Option<String>>> {
+         let schema = self.schema.read().clone();
+-        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
+-            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
+-        })?;
++        let view = schema
++            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
++            .ok_or_else(|| {
++                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
++            })?;
+         let select = view.lock().select_stmt.clone();
+         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
+         Ok(plan
+@@ -256,9 +259,11 @@ fn build_plan_for_connection(
+     // names the same way CREATE did: within the view's own database, never
+     // through a TEMP table that happens to share a source table's name
+     // (#9456). Materialized views always live in main.
+-    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
+-        plan_view(view_name, select, &resolver, connection)
+-    })
++    resolver.with_view_scope(
++        NamespaceRef::root_of(crate::MAIN_DB_ID),
++        view_name.to_string(),
++        || plan_view(view_name, select, &resolver, connection),
++    )
  }
-+
-+@cross-check-integrity
-+test strict-insert-or-ignore-not-null-checked-before-type {
-+    CREATE TABLE t7 (a INT, b REAL NOT NULL) STRICT;
-+    INSERT OR IGNORE INTO t7 (a) VALUES ('x');
-+    SELECT count(*) FROM t7;
-+}
-+expect {
-+    0
-+}
-+
-+test strict-insert-not-null-error-before-type-error {
-+    CREATE TABLE t8 (a INT, b REAL NOT NULL) STRICT;
-+    INSERT INTO t8 (a) VALUES ('x');
-+}
-+expect error {
-+    NOT NULL constraint failed: t8.b
-+}
-+
-+test strict-insert-generated-column-type-error-before-not-null {
-+    CREATE TABLE t9 (a INT, b TEXT NOT NULL, c INT AS (a + 1)) STRICT;
-+    INSERT OR IGNORE INTO t9 (a) VALUES ('x');
-+}
-+expect error {
-+    cannot store TEXT value in INT column t9.a
-+}
-+
-+test strict-insert-before-trigger-type-error-before-not-null {
-+    CREATE TABLE t10 (a INT, b TEXT NOT NULL) STRICT;
-+    CREATE TRIGGER t10_before BEFORE INSERT ON t10 BEGIN SELECT 1; END;
-+    INSERT OR IGNORE INTO t10 (a) VALUES ('x');
-+}
-+expect error {
-+    cannot store TEXT value in INT column t10.a
-+}
+ 
+ /// Emit every node once in DAG topological order.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10721** (2026-10-25): core: key the schema by namespace and resolve names to a namespace (@penberg)
+- **PR #10719** (closed): postgres: support timestamptz and date/time types (@jussisaurio)
+- **PR #10718** (closed): postgres: support casts to boolean, uuid and varchar(n) (@jussisaurio)
+- **PR #10717** (closed): core: convert literals and text compared with custom type columns (@jussisaurio)
 - **PR #10714** (2026-10-25): postgres: keep mod() integer when both arguments are integers (@turso-github-handyman[bot])
 - **PR #10713** (2026-10-25): postgres: expose empty pg_seclabels catalog (@pedrocarlo)
-- **PR #10712** (2026-10-25): docs: replace absolute prohibitions in AGENTS.md with their reasons (@jussisaurio)
-- **PR #10708** (2026-10-25): antithesis: make the stress harness able to find more bugs (@jussisaurio)
-- **PR #10703** (2026-10-25): core/storage: step back past the divider when a backward index scan leaves a forward-seeked child (@turso-github-handyman[bot])
-- **PR #10694** (2026-10-25): postgres: defer prepare side effects until statement execution (@ryder777777)
 
 ---
 
@@ -2193,29 +2032,29 @@ SQLite. Colu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Sa
+## X. Merge 'core: key the schema by namespace and resolve names to a namespace' from 
 
 **RULE**:
-When implementing operations in `Dockerfile.antithesis`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/benches/fts_benchmark.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09f919bc`: Merge 'antithesis: make the stress harness able to find more bugs' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa93d669`: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile.antithesis`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/benches/fts_benchmark.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-COPY ./testing/antithesis/stress-crash /opt/antithesis/test/v1/stress-crash
-RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py /opt/antithesis/test/v1/stress-crash/helper_recovery_check.py
+use turso_core::NamespaceId;
+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-RUN chmod -x /opt/antithesis/test/v1/multiprocess/helper_*.py /opt/antithesis/test/v1/stress-composer/helper_utils.py /opt/antithesis/test/v1/stress-unreliable/helper_integrity_check.py
+                    .get_index("docs", "docs_fts")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09f919bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa93d669` are properly handled with clean fallback behavior.

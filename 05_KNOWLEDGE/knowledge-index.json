@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:41:58.198Z",
+  "last_updated": "2026-10-26T00:48:37.179Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13650,8 +13650,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "7b74cb41",
-      "content_hash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
+      "source_version": "f20acf34",
+      "content_hash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -13679,6 +13679,11 @@
           "number": 3967,
           "title": "Fixes: Pre-Release v1.8.0 (#4197)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4509,
+          "title": "NM-356: keep AllowAll when both default ACL policies are open  (#4200)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13686,7 +13691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T20:55:05.423Z",
+      "verified_at": "2026-10-26T00:48:33.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25165,7 +25170,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
+      "content_hash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "promoted_rules": [
@@ -25202,7 +25207,7 @@
         "learn-huggingface-hf-qwen-qwen3-8b-mv407vz0",
         "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig"
       ],
-      "verified_at": "2026-10-21T04:27:57.690Z",
+      "verified_at": "2026-10-26T00:48:22.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50046,13 +50051,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_url": "https://github.com/tursodatabase/turso",
       "source_version": "aa93d669",
-      "content_hash": "e329dc2908d8195a47dbd08367bb3f142c76ced82b94bcd2a612381d4ba8f272",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "content_hash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -50103,6 +50108,11 @@
           "number": 4475,
           "title": "Merge 'core/translate: check NOT NULL before STRICT column types in INSERT' from",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4510,
+          "title": "Merge 'core: key the schema by namespace and resolve names to a namespace' from",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50110,7 +50120,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:38:51.119Z",
+      "verified_at": "2026-10-26T00:48:37.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127211,6 +127221,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:41:58.188Z"
+    },
+    "rule-4509": {
+      "learning_id": "rule-4509",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4509,
+      "title": "NM-356: keep AllowAll when both default ACL policies are open  (#4200)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "f20acf34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:48:33.948Z"
+    },
+    "rule-4510": {
+      "learning_id": "rule-4510",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4510,
+      "title": "Merge 'core: key the schema by namespace and resolve names to a namespace' from",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "aa93d669",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:48:37.159Z"
     }
   },
   "aliases": {

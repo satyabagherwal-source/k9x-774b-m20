@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "912edbbb3ed5d8afe82bb5af18e53c51e6646904b6071e4383a65fd0df85f20c",
-    "lastHarvestedAt": "2026-10-21T04:27:57.726Z",
+    "contentHash": "63dcd370fb5440bb5923b912785b038d70d845115d4ee4a3b13173143e110505",
+    "lastHarvestedAt": "2026-10-26T00:48:22.899Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "7b74cb41",
+    "sourceVersion": "f20acf34",
     "license": "NOASSERTION",
-    "contentHash": "4b04e7c201ed1c209d17726984d1cf0c2307135cf362dba1698f930263dede6a",
-    "lastHarvestedAt": "2026-10-24T20:55:05.480Z",
+    "contentHash": "88700fa9445c680a202626394a741a43542246bf52757bb537c551153e0fe717",
+    "lastHarvestedAt": "2026-10-26T00:48:34.042Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "5f377584",
+    "sourceVersion": "aa93d669",
     "license": "MIT",
-    "contentHash": "2e9744e529d6c61820464ae9fc8e1636471e8ec9dd9009efc45f33311eb92a67",
-    "lastHarvestedAt": "2026-10-25T10:36:25.276Z",
+    "contentHash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
+    "lastHarvestedAt": "2026-10-26T00:48:37.245Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
