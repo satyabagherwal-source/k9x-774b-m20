@@ -5141,3 +5141,4 @@ Every entry in this ledger must capture:
 | `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `8bb1677b` | Multi-dimensional audit evidence | 2026-10-26T11:20:25.794Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `4fc541b2` | Multi-dimensional audit evidence | 2026-10-26T11:25:33.611Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-26T11:32:00.847Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6e35860f` | Multi-dimensional audit evidence | 2026-10-26T11:46:45.014Z |

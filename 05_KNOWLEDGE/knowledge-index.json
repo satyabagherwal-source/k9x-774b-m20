@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T11:32:00.798Z",
+  "last_updated": "2026-10-26T11:46:44.952Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7941,8 +7941,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5293992f",
-      "content_hash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
+      "source_version": "6e35860f",
+      "content_hash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8160,6 +8160,11 @@
           "number": 4585,
           "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4598,
+          "title": "deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8167,7 +8172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:33:24.912Z",
+      "verified_at": "2026-10-26T11:46:44.940Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128997,6 +129002,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T11:32:00.788Z"
+    },
+    "rule-4598": {
+      "learning_id": "rule-4598",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4598,
+      "title": "deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (#",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "6e35860f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:46:44.940Z"
     }
   },
   "aliases": {

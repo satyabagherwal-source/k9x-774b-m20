@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-2QNT",
-    "timestamp": "2026-10-25T03:38:28.601Z",
-    "repository": "microsoft/fluentui",
-    "learningId": "learn-github-microsoft-fluentui",
-    "contentHash": "1a665bd028fdc2c50ff2fbee72184611030f3ad9ced9c7406e530a52eb189e37",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2TIM",
     "timestamp": "2026-10-25T03:38:32.302Z",
     "repository": "CrawlCove/hreflang-checker",
@@ -7492,6 +7477,21 @@
     "contentHash": "4ec04b8099b630255e8249c0640f4da2d01cebf30011f579c80c410516c65d2b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-YIKY",
+    "timestamp": "2026-10-26T11:46:45.010Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
