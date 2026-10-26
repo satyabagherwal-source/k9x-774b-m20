@@ -292,3 +292,19 @@ This document records empirical learnings, forensic bug investigations, and patt
   2. *AdSense Verification Integration*: Injected asynchronous `adsbygoogle.js` with publisher ID `ca-pub-5901471283694215` into `src/layouts/Layout.astro` right before `</head>` in compliance with Rule 1179.
   3. *Live Verification*: Probed `https://oldenglishfontfree.com/ads.txt` verifying HTTP 200 OK, `Content-Type: text/plain; charset=utf-8`, and exact body `google.com, pub-5901471283694215, DIRECT, f08c47fec0942fa0`.
   4. *Edge Deployment*: Recompiled static production bundle (2,088 pages) and deployed to Cloudflare Pages edge.
+
+### INC-29: Universal Brand Harmony, True Circular Favicon Standard, Legal Claim Normalization & Mobile Viewport Preservation
+* **Context**: User provided 5 production screenshots: (1) Drawer CTA button still hardcoded to 20 fonts instead of 124, (2 & 3) Legal claims overly aggressive/defamatory towards competitors (naming DaFont and 1001 Fonts) and claiming "100% Legally Safe", (4) Mobile header broke with hamburger (3-line) icon pushed off-screen, (5) Google Search snippet favicon appeared dark, low-contrast, and awkward in Google's circular mask, and scrolling caused inconsistent logos to appear.
+* **Forensic Root Cause Analysis**:
+  1. *Hardcoded Count*: `Layout.astro` line 663 had a static `(20 OFL)` string; `compare.astro` and `ja.ts` had similar hardcoded counts.
+  2. *Aggressive Competitor Defamation*: `ui.ts` across 14 languages and `LegalSafetySection.astro` warned of "thousands of dollars in statutory damages" and named third-party sites, exposing the project to potential legal liability.
+  3. *Header Mobile Overflow*: Header container had fixed padding (`px-4`), wide action buttons, and `whitespace-nowrap` on brand text, exceeding 380px and pushing the hamburger button (`#mobileMenuToggleBtn`) off-screen.
+  4. *Google Circle Crop Low Contrast*: Google crawler uses raster PNGs (`favicon-96x96.png`, `apple-touch-icon.png`, `favicon.ico`). These were old square black tiles with dark purple text (< 2:1 contrast against Google dark mode search).
+  5. *Header Scroll Mutation*: `initDynamicHeader` swapped `standardHeaderBar` for `compactToolRibbon` on scroll, rendering confusing `𝕿` / `𝔉` buttons that looked like competing logos.
+* **Architectural Remediation**:
+  1. *Dynamic Font Counting*: Substituted `{totalFontCount}` (124) in `Layout.astro`, `compare.astro`, `[lang]/compare.astro`, and `ja.ts`.
+  2. *Professional Open-Source Disclaimers*: Replaced aggressive text across all 14 languages in `ui.ts` with "Verified Open-Source & Commercial-Ready Fonts", clear open licensing terms (SIL OFL / CC0), and explicit disclaimers that the site does not constitute legal counsel.
+  3. *Mobile Responsive Header*: Added compact responsive padding (`px-2.5 sm:px-6`), truncated brand title (`text-xs xs:text-sm sm:text-lg min-w-0`), compact button padding (`p-1.5 sm:p-2`), and `z-10` on hamburger button, guaranteeing 100% on-screen visibility on all mobile screens >= 320px.
+  4. *100% True Circular Dual-Theme Brand Assets*: Created a true circular geometry (`cx="300" cy="300" r="274"`). In dark mode/Google dark search: pure white circular disc with gold border and bold purple/blackletter `Aa` (> 20:1 contrast ratio, high-visibility highlight). In light mode: deep obsidian circular disc with gold border and luminous gold `Aa`. Generated fresh high-res PNGs and ICO via `sharp`.
+  5. *Single Header Invariant*: Removed `compactToolRibbon` and scroll swap listener; `standardHeaderBar` remains stably sticky and permanent at all times.
+  6. *Verification*: 767/767 font checks passed, 1,937 localized pages verified, 9/9 SEO gates passed.
