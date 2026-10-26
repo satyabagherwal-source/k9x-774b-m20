@@ -5108,3 +5108,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-26T02:57:21.337Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9dc4f03b` | Multi-dimensional audit evidence | 2026-10-26T03:03:41.354Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `a4d9f092` | Multi-dimensional audit evidence | 2026-10-26T03:03:50.738Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `255dee03` | Multi-dimensional audit evidence | 2026-10-26T03:10:14.067Z |
+| `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `11326ef3` | Multi-dimensional audit evidence | 2026-10-26T03:10:15.958Z |

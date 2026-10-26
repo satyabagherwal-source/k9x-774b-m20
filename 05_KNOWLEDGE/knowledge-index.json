@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T03:03:50.692Z",
+  "last_updated": "2026-10-26T03:10:15.896Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3622,8 +3622,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "566bc371",
-      "content_hash": "9a9cff4f5bd5866b07998c8a1c9385df0ba614d0f3faef44f2df7ad8dd485ae2",
+      "source_version": "255dee03",
+      "content_hash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -3656,6 +3656,11 @@
           "number": 4227,
           "title": "popup): refine UI layout, animated controls, and form ergonomics (#4541)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4556,
+          "title": "add undergo/underwent/undergone to `irregular_verbs.json` (#4689)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3663,7 +3668,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:10:49.261Z",
+      "verified_at": "2026-10-26T03:10:13.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63197,7 +63202,7 @@
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-ruby",
       "source_version": "11326ef3",
-      "content_hash": "84eac5bb226dc21659874b19712af61404ac49143ea2b7fa00856c9ccaf700b5",
+      "content_hash": "aa068441c21a8f1e599545d65884aa89725eed48318c6025ed416f75c086379b",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
       "promoted_rules": [
@@ -63219,7 +63224,7 @@
         {
           "number": 3543,
           "title": "#6 by improving exception handling",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63227,7 +63232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:20.830Z",
+      "verified_at": "2026-10-26T03:10:15.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -112951,7 +112956,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T15:16:20.830Z"
+      "verified_at": "2026-10-26T03:10:15.885Z"
     },
     "rule-3544": {
       "learning_id": "rule-3544",
@@ -128085,6 +128090,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T03:03:50.682Z"
+    },
+    "rule-4556": {
+      "learning_id": "rule-4556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4556,
+      "title": "add undergo/underwent/undergone to `irregular_verbs.json` (#4689)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "255dee03",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T03:10:13.992Z"
     }
   },
   "aliases": {

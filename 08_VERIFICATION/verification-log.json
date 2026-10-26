@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-YNO1",
-    "timestamp": "2026-10-25T02:11:19.249Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "f4d446086325dc54b5f06f1276c893a3de074ca9583956177fb6612ae46fda49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YQ5P",
-    "timestamp": "2026-10-25T02:11:22.477Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "0180c7a53059a6724258a74814f0d569ea6a5f6b05fc4f8432b399747e0d671a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-8D7S",
     "timestamp": "2026-10-25T02:18:52.264Z",
     "repository": "aws-amplify/amplify-js",
@@ -7490,6 +7460,36 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-I9TB",
+    "timestamp": "2026-10-26T03:10:14.063Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-IB9V",
+    "timestamp": "2026-10-26T03:10:15.955Z",
+    "repository": "serpapi/google-search-results-ruby",
+    "learningId": "learn-github-serpapi-google-search-results-ruby",
+    "contentHash": "aa068441c21a8f1e599545d65884aa89725eed48318c6025ed416f75c086379b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

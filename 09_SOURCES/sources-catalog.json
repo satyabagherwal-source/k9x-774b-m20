@@ -1845,8 +1845,8 @@
     "sourceUrl": "https://github.com/serpapi/google-search-results-ruby",
     "sourceVersion": "11326ef3",
     "license": "MIT",
-    "contentHash": "84eac5bb226dc21659874b19712af61404ac49143ea2b7fa00856c9ccaf700b5",
-    "lastHarvestedAt": "2026-10-21T15:16:20.949Z",
+    "contentHash": "aa068441c21a8f1e599545d65884aa89725eed48318c6025ed416f75c086379b",
+    "lastHarvestedAt": "2026-10-26T03:10:15.958Z",
     "learningId": "learn-github-serpapi-google-search-results-ruby"
   },
   "crawlcove-crawlcove-sitemap-validator": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "566bc371",
+    "sourceVersion": "255dee03",
     "license": "Apache-2.0",
-    "contentHash": "9a9cff4f5bd5866b07998c8a1c9385df0ba614d0f3faef44f2df7ad8dd485ae2",
-    "lastHarvestedAt": "2026-10-25T10:10:49.323Z",
+    "contentHash": "aabd0041d1bbc165e59dac7fbb708e2e3c6a513b8292b25cd8c65bba5f1480d8",
+    "lastHarvestedAt": "2026-10-26T03:10:14.067Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
