@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `b84473a7`  
+> **Source Version**: `4fc541b2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T19:03:14.366Z  
+> **Timestamp**: 2026-10-26T11:25:33.190Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T19:03:13.795Z  
+> **Harvest Timestamp**: 2026-10-26T11:15:31.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10498 stars
+- **Stars / Engagement**: 10492 stars
 
 ---
 
@@ -2305,11 +2305,11 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3429** (2026-10-22): **server process dies (SIGSEGV) when a non-boolean list predicate is followed by a further stage**
-  *Symptoms*: ## Summary  A 42-byte query terminates the FalkorDB server process:  ```cypher MATCH () WHERE [1, 2] WITH 1 AS x RETURN x ```  The module crashes: the client loses the connection and the container exits with code **139 (SIGSEGV)**, `OOMKilled=false`.  The predicate `[1, 2]` is a list, not a boolean. The engine returns a proper `ResponseError` for the same predicate when the query ends at that stage (`... RETURN 1`); when the query continues into a later stage (`WITH`, `MERGE`), the process is terminated instead of producing an error.  **Scope of the trigger.** The table below shows every shape that was tested. It establishes that the tested list-predicate shapes crash when a further stage follows; it does **not** establish that a list is *necessary* — only a few predicate kinds were tried.  ## Environment  - image: `falkordb/falkordb:v4.18.11` - standalone container, no compose file, no mounted data - client: `redis-py` 6.x over the Redis protocol; `socket_timeout` is a **client-side** read timeout, no server-side configuration is involved - host: Ubuntu 24.04, 48 cores, 125 GB RAM, no memory limit on the container  ## Reproduce  ```bash docker run -d --name fk-repro \   -p 6383:6379 \   -e REDIS_ARGS="--requirepass password" \   falkordb/falkordb:v4.18.11 sleep 10 python - <<'PY' import redis r = redis.Redis(host="127.0.0.1", port=6383, password="password", socket_timeout=15) print(r.ping())                       # True: the instance is healthy r.execute_command("GRAPH.QUERY
+- **Issue #3478** (2026-10-23): **MATCH accepts a scalar already bound to a node variable**
+  *Symptoms*: **Affected versions:** FalkorDB 6.0.3 , 4.22.0 and 4.22.2   ## Summary  FalkorDB accepts a node pattern when the corresponding variable has already been bound to a non-node value. Instead of reporting a variable type conflict, the query returns the original scalar value.  The issue reproduces with integers, booleans, and strings, and has been observed on both the Rust and C engine implementations.  ## Steps to reproduce  Start a fresh FalkorDB 6.0.3 container:  ```bash docker run -d --name fk \   -p 127.0.0.1:6379:6379 \   falkordb/falkordb:6.0.3 ```  Run the following queries:  ```bash docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 1 AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH true AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 'x' AS n MATCH (n) RETURN n" ```  The same behavior reproduces on FalkorDB 4.22.0 and 4.22.2.  ## Actual behavior  The queries are accepted and return the previously bound scalar values:  | Query binding | Returned value | |---|---| | `WITH 1 AS n` | `1` | | `WITH true AS n` | `true` | | `WITH 'x' AS n` | `'x'` |  The `MATCH (n)` clause does not reject the incompatible binding. The variable retains its original scalar value rather than being validated as a node.  ## Expected behavior  The corresponding scenario, **"Fail when matching a node variable bound to a value"**, in `tests/tck/features/clauses/match/Match1.feature` specifies a compile-time `SyntaxError` with `VariableTypeC
 
-- **Issue #3427** (2026-10-21): **[C engine] Redis crashes on a two-hop variable-length path query**
-  *Symptoms*:   ## Environment  - Image: `falkordb/falkordb:edge-c` - Tested image digest: `sha256:9d1333f0b545329f3a5929ee0cf501327c855e239af914f97f35e73ef5dcccab` - Run each attempt in a fresh container  ## Reproduction  Create this graph:  ```cypher CREATE (a:l7:l8:l10)-[:rt0]->(b:mid)-[:rt0]->(c:l4:l1:l11 {k11:"o", k2:534057338}) ```  Then run:  ```cypher MATCH p=(a:l7:l8:l10)-[*2]-(c:l4:l1:l11 {k11:'o', k2:534057338}) RETURN count(p) ```  ## Expected behavior  The query returns `count(p) = 1`, and the Redis server remains available.  ## Actual behavior  The Redis process exits with code `139` while executing the query. The client reports that the server closed the connection. Docker reports `OOMKilled=false`.  This reproduced in 4 of 4 fresh-container runs.  ## Control  Replacing the variable-length pattern with an equivalent fixed-length pattern returns `count(p) = 1` and leaves the server running:  ```cypher MATCH p=(a:l7:l8:l10)-[:rt0]->(b:mid)-[:rt0]->(c:l4:l1:l11 {k11:'o', k2:534057338}) RETURN count(p) ```
+- **Issue #3477** (2026-10-23): **duration equality treats distinct calendar components as equal**
+  *Symptoms*: ## Summary  FalkorDB 4.14.8 returns `true` when comparing two durations that differ in their day and seconds components. The openCypher TCK expects `false` for this case.  This reproduces a failure in Temporal7, Scenario [6], "Should compare durations for equality". The same query returns the expected result on Neo4j.  ## Environment  - FalkorDB: 4.14.8 - Docker image: `falkordb/falkordb:v4.14.8` - Image digest: `sha256:3ec1d09889d6c9711de120a02edcea3c8312d915a86e10e48a7d6d177b9dde1b` - Control: Neo4j 2026.08.1 Community - Reproduction: 3/3 runs on FalkorDB  ## Reproduction  Run the following query on a fresh or existing database. No graph data is required.  ```cypher RETURN duration({   years: 12, months: 5, days: 14,   hours: 16, minutes: 12, seconds: 70 }) = duration({   years: 12, months: 5, days: 13,   hours: 40, minutes: 13, seconds: 10 }) AS eq ```  ## Expected vs. Actual  | Engine | Result | |---|---| | openCypher TCK, Temporal7 Scenario [6] | `false` | | FalkorDB 4.14.8 | `true` | | Neo4j 2026.08.1 | `false` |  The operands have identical year and month components but differ in their day and seconds components. Their elapsed lengths coincide only if a day can be exchanged for 24 hours. The TCK expects these duration values to compare as unequal.  ## Additional Reproducer  The following query also returns different results on FalkorDB and Neo4j:  ```cypher RETURN duration({months: 5})      = duration({seconds: 13046400}) AS eq ```  | Engine | Result | |---|---| | Falk
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2326,278 +2326,396 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b97da5a1` (2026-10-21)
-**Commit Message**: fix: error replies keep UTF-8 and never panic on '一' (#3185) (#3428)
+### Incident Patch 1: `06e6ca30` (2026-10-25)
+**Commit Message**: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
 
-* fix: error replies keep UTF-8 and never panic on '一' (#3185)
+* ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix
 
-redismodule-rs built error replies with `c as u8` per char, so a code
-point whose low byte is 0 ('一' U+4E00, 'Ā' U+0100) became a NUL and
-`CString::new(..).unwrap()` panicked, killing Redis; every other
-non-ASCII character was truncated to a garbage byte. Point redis-module
-at the fork branch that keeps the message bytes verbatim
-(AviAvni/redismodule-rs#1) and add a flow test.
+rust-pr.yml now builds its images through the reusable _ci-pipeline.yml,
+so the jobs preflight waits for are named
+"ci-pipeline / build-rc-image / build (...)". The wait step matched
+`startswith("build-rc-image")`, found nothing, read that as "not
+scheduled yet" and polled to its 15-minute timeout with the image
+already published, so no labelled PR got a benchmark.
+
+Match `build-rc-image` as a path segment, so the lookup works whether or
+not the job is nested under a caller. It also picks up
+`build-rc-image / manifest`, the job that publishes the multi-arch tag.
+It does not match `build-rc-asan-image`.
+
+Fixes #3472
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test: move the #3185 UTF-8 error-reply test into test_query_validation
+* ci(benchmark-cov): fix the jobs the wait used to hide
 
-assert_error_reply (error reply + server still answers) goes to common.py
-for reuse.
+With preflight no longer stuck, the jobs behind it ran for the first time
+in a while and three of them failed:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- measure (pr), measure (base): `scalar iterables` ran
+  `[y IN 6 | y]`, which #2954 made a type error on purpose, so the
+  harness reported a failed query and exited 1. Keep the query to
+  UNWIND's scalar a
+
+**File**: `.github/workflows/benchmark-cov.yml` (modified, +21/-3)
+```diff
+@@ -158,9 +158,16 @@ jobs:
+                           | sort_by(.run_number) | last | .id // empty')
+             if [ -n "$RUN" ]; then
+               # `build-rc-image` calls a reusable workflow, so its jobs surface as
+-              # "build-rc-image / build (...)" — match on the prefix.
++              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
++              # through `_ci-pipeline.yml`, which adds one more caller prefix:
++              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
++              # segment, so the wait survives being nested one level deeper (or
++              # less) again. A bare prefix match on the old name found nothing,
++              # read that as "not scheduled yet", and polled to the timeout with
++              # the image already published (#3472). The segment form does not
++              # match `build-rc-asan-image`, a different image.
+               STATES=$(gh api "repos/$REPO/actions/runs/$RUN/jobs?per_page=100" --paginate \
+-                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
++                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
+                                 | .conclusion // "pending"] | join(",")')
+               case "$STATES" in
+                 "")            echo "run $RUN has not scheduled build-rc-image yet" ;;
+@@ -430,9 +437,14 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     steps:
++      # Submodules: this job compiles the engine, and native-deps builds
++      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
++      # prebuilt archives do not match the current key — e.g. after a dep bump.
++      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+           persist-credentials: false
++          submodules: recursive
+ 
+       # coverage is the one job that cannot use the prebaked measurement image: it
+       # needs cargo and llvm-tools to build an instrumented module, which only the
+@@ -457,7 +469,13 @@ jobs:
+           # `rustup default stable`: the toolchain image ships rustup without a
+           # default, so a bare `cargo` fails with "could not choose a version of
+           # cargo to run".
+-          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
++          #
++          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
++          # (clang-23 / clang++-23, build/Dockerfile) and ships no bare
++          # `clang++`. Overriding it to `clang++` broke the first build that had
++          # to compile a native dep from source: LAGraph's CMake could not find
++          # the C++ compiler.
++          docker run --rm -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
+             set -e
+             # /w/.bin, not /w: prepending the checkout root would put every
+             # root-level script ahead of /usr/bin for cargo and all its children.
+```
+
+**File**: `bench/src/falkorbench/coverage.py` (modified, +13/-1)
+```diff
+@@ -116,7 +116,19 @@ def _llvm_tool(name: str) -> Path:
+     path `./llvm-profdata` and failed with a confusing "No such file or
+     directory" — hence the explicit error below.
+     """
+-    roots = [Path.home() / ".rustup/toolchains"]
++    # The *active* toolchain's sysroot comes first: `~/.rustup/toolchains` holds
++    # every installed toolchain, and globbing it picks whichever sorts first — an
++    # old 1.85 there read a 1.99 build's profiles as "raw profile version
++    # mismatch" and the whole coverage run failed after the query pass.
++    roots = []
++    try:
++        sysroot = subprocess.run(
++            ["rustc", "--print", "sysroot"], capture_output=True, text=True, check=True
++        ).stdout.strip()
++        roots.append(Path(sysroot) / "lib/rustlib")
++    except (OSError, subprocess.CalledProcessError):
++        pass
++    roots.append(Path.home() / ".rustup/toolchains")
+     rustc = shutil.which("rustc")
+     if rustc:
+         # rustup shims resolve to ~/.rustup/toolchains/<tc>/bin/rustc, so the
+```
+
+**File**: `bench/src/falkorbench/queries.py` (modified, +1/-2)
+```diff
+@@ -503,7 +503,7 @@
+     Q("MSF nodes yield",     False, "CALL algo.MSF({relationshipTypes: ['SIMILAR'], weightAttribute: 'weight'}) YIELD nodes, edges RETURN size(nodes), size(edges)", 200),
+     Q("maxFlow KNOWS",       False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) CALL algo.maxFlow({sourceNodes: [a], targetNodes: [b], relationshipTypes: ['KNOWS'], capacityProperty: 'weight', defaultCapacity: 1.0}) YIELD maxFlow RETURN maxFlow", 200),
+ 
+-    # ---- round 10: comprehension-body (Row-context) eval, null/scalar
++    # ---- round 10: comprehension-body (Row-context) eval, null
+     # iterables, chained-compare null arms, temporal component accessors,
+     # value ordering arms, CALL{}+UNION binder, pending-entity reads,
+     # label predicate, label-filtered algo matrices, lexer corners ----------
+@@ -518,7 +518,6 @@
+     Q("rel subscript",       False, "MATCH (a:Person {id: 1})-[r:KNOWS]->() RETURN r['weight'] LIMIT 5"),
+     Q("list null subscript", False, "RETURN [1, 2, 3][null]"),
+     Q("null iterable",       False, "RETURN [x IN null | x], all(x IN null WHERE x > 0), any(x IN null WHERE x > 0), none(x IN null WHERE x > 0), single(x IN null WHERE x > 0)"),
+-    Q("scalar iterables",    False, "UNWIND 5 AS x RETURN x, [y IN 6 | y]"),
+     Q("single multi true",   False, "RETURN single(x IN [1, 2, 3] WHERE x > 1)"),
+     Q("unary minus null",    False, "MATCH (p:Person {id: 1}) RETURN -p.noSuchProp"),
+     Q("untyped shortestPath", False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) RETURN shortestPath((a)-[*..5]->(b))"),
+```
+
+---
+
+### Incident Patch 2: `23397304` (2026-10-26)
+**Commit Message**: fix: slow log keeps its cached minimum fresh on an entry update (#3442) (#3456)
+
+SlowLog::add returned from the existing-entry branch without recomputing
+min_latency. Once the log was full, a query faster than every retained
+entry passed the admission check against the stale minimum and evicted a
+slower entry. The update arm now falls through to the shared recompute,
+as C's SlowLog_Add does via cleanup.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/slow_log.rs` (modified, +32/-42)
+```diff
+@@ -119,54 +119,44 @@ impl SlowLog {
+ 
+         // Check for existing entry with same hash.
+         if let Some(existing) = inner.entries.iter_mut().find(|e| e.hash == hash) {
+-            if latency_ms > existing.latency {
+-                // Update latency, timestamp, and params.
+-                existing.latency = latency_ms;
+-                existing.timestamp = unix_now();
+-                existing.params = if params_text.is_empty() {
+-                    None
+-                } else {
+-                    Some(truncate(params_text))
+-                };
++            if latency_ms <= existing.latency {
++                return;
+             }
+-            return;
+-        }
+-
+-        // Build truncated strings.
+-        let truncated_query = truncate(query_text);
+-        let truncated_params = if params_text.is_empty() {
+-            None
+-        } else {
+-            Some(truncate(params_text))
+-        };
+-        let timestamp = unix_now();
+-
+-        if inner.entries.len() < MAX_ENTRIES {
+-            inner.entries.push(SlowLogEntry {
+-                cmd: cmd.to_owned(),
+-                query: truncated_query,
+-                params: truncated_params,
+-                latency: latency_ms,
+-                timestamp,
+-                hash,
+-            });
++            // Update latency, timestamp, and params. This can raise the
++            // minimum, so fall through to recompute it (#3442).
++            existing.latency = latency_ms;
++            existing.timestamp = unix_now();
++            existing.params = if params_text.is_empty() {
++                None
++            } else {
++                Some(truncate(params_text))
++            };
+         } else {
+-            // Replace the fastest (min-latency) entry.
+-            let idx = inner
+-                .entries
+-                .iter()
+-                .enumerate()
+-                .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
+-                .map(|(i, _)| i)
+-                .unwrap();
+-            inner.entries[idx] = SlowLogEntry {
++            let entry = SlowLogEntry {
+                 cmd: cmd.to_owned(),
+-                query: truncated_query,
+-                params: truncated_params,
++                query: truncate(query_text),
++                params: if params_text.is_empty() {
++                    None
++                } else {
++                    Some(truncate(params_text))
++                },
+                 latency: latency_ms,
+-                timestamp,
++                timestamp: unix_now(),
+                 hash,
+             };
++            if inner.entries.len() < MAX_ENTRIES {
++                inner.entries.push(entry);
++            } else {
++                // Replace the fastest (min-latency) entry.
++                let idx = inner
++                    .entries
++                    .iter()
++                    .enumerate()
++                    .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
++                    .map(|(i, _)| i)
++                    .unwrap();
++                inner.entries[idx] = entry;
++            }
+         }
+ 
+         // Recompute min_latency.
+```
+
+**File**: `tests/flow/test_slowlog.py` (modified, +40/-0)
+```diff
+@@ -351,3 +351,43 @@ def test07_truncate_on_char_boundary(self):
+             logged = {e[2]: e[4] for e in entries}
+             self.env.assertContains(query[:STR_MAX_LEN - 1] + "...", logged)
+             self.env.assertEqual(logged[body], params[:STR_MAX_LEN - 1] + "...")
++
++    def test08_update_refreshes_min_latency(self):
++        # Re-running a logged query slower updates its entry in place. That
++        # update used to leave the log's cached minimum latency stale (#3442):
++        # once the log was full, a query faster than every retained entry
++        # passed the admission check against the stale minimum and evicted a
++        # slower one. C recomputes the minimum on the update path too.
++
++        # make sure the graph key exists, so RESET works when run on its own
++        self.graph.query("RETURN 1")
++        self.redis_con.execute_command("GRAPH.SLOWLOG", GRAPH_ID, "RESET")
++
++        # Each tier is 4x the rows of the one below it, so the latency order
++        # Q1 < Q11 < Q2..Q10 < Q1-again holds with a 4x margin.
++        rows = 1_000_000
++
++        # Q1: the fastest entry, and so the log's cached minimum.
++        q1 = "UNWIND range(0, $n) AS x WITH x WHERE x % 1 = 0 RETURN count(x)"
++        self.graph.query(q1, {'n': rows})
++
++        # Q2..Q10 fill the log.
++        for d in range(2, 11):
++            self.graph.query(slow_query(rows * 16, d))
++        self.env.assertEqual(len(self.graph.slowlog()), 10)
++
++        # Q1 again, now the slowest: its entry is updated in place, and the
++        # true minimum moves up to the fastest of Q2..Q10.
++        self.graph.query(q1, {'n': rows * 64})
++
++        # Q11 is slower than Q1 was but faster than every retained entry: it
++        # must be rejected rather than evict one of Q2..Q10.
++        q11 = slow_query(rows * 4, 1)
++        self.graph.query(q11)
++
++        queries = [entry[2] for entry in self.graph.slowlog()]
++        self.env.assertEqual(len(queries), 10)
++        self.env.assertNotContains(q11, queries)
++        self.env.assertContains(q1, queries)
++        for d in range(2, 11):
++            self.env.assertContains(slow_query(rows * 16, d), queries)
+```
+
+---
+
+### Incident Patch 3: `773a333d` (2026-10-26)
+**Commit Message**: fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2988)
+
+* fix: temporal constructors never panic on out-of-range components (#2930)
+
+Range-check week (1-53), quarter (1-4) and dayOfQuarter (1-92) with C's
+error message before any chrono arithmetic, convert year/month/day with
+try_from instead of truncating casts, add the week offset with
+checked_add_signed, and split the week string with split_at_checked so a
+multi-byte character errors instead of panicking.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2936)
+
+The map form took 0..6 with 0 = Sunday while the string form, C and
+openCypher use 1..7. Accept 1..=7 and reject anything else with C's
+'Invalid value for dayOfWeek (valid values 1 - 7)'.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `graph/src/runtime/functions/temporal.rs` (modified, +21/-6)
 ```diff
-@@ -253,7 +253,7 @@ dependencies = [
- [[package]]
- name = "common"
- version = "0.1.0"
--source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+@@ -93,15 +93,12 @@ fn date_from_components(
  
- [[package]]
- name = "convert_case"
-@@ -1191,7 +1191,7 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
- [[package]]
- name = "redis-module"
- version = "99.99.99"
--source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
- dependencies = [
-  "backtrace",
-  "bindgen",
-@@ -1213,7 +1213,7 @@ dependencies = [
- [[package]]
- name = "redis-module-macros"
- version = "99.99.99"
--source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
- dependencies = [
-  "common",
-  "proc-macro2",
-@@ -1224,7 +1224,7 @@ dependencies = [
- [[package]]
- name = "redis-module-macros-internals"
- version = "99.99.99"
--source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-+source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
- dependencies = [
-  "lazy_static",
-  "proc-macro2",
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -32,7 +32,7 @@ graph = { path = "graph", version = "0.1.0" }
- lazy_static = "1.5.0"
- libc = "0.2"
- parking_lot = { version = "0.12.5", features = ["arc_lock"] }
--redis-module = { git = "https://github.com/AviAvni/redismodule-rs", branch = "master" }
-+redis-module = { git = "https://github.com/AviAvni/redismodule-rs", branch = "fix/resp-string-bytes" }
- # Pinned exactly, not caret-matched. Two engines have to serialize the same
- # ids to the same bytes (#2698), and roaring's output is not stable across
- # releases by contract: `optimize()` is path-dependent, and the container
-@@ -46,7 +46,7 @@ thin-vec = "0.2.18"
- orx-tree = "2.2.0"
- 
- [build-dependencies]
--redis-module-macros = { git = "https://github.com/AviAvni/redismodule-rs", branch = "master" }
-+redis-module-macros = { git = "https://github.com/AviAvni/redismodule-rs", branch = "fix/resp-string-bytes" }
- 
- [profile.dev]
- opt-level = 2
-```
-
-**File**: `tests/flow/common.py` (modified, +13/-0)
-```diff
-@@ -843,3 +843,16 @@ def wrapper(x, *args, **kwargs):
-             return f(x, *args, **kwargs)
-         return wrapper
-     return decorate
-+
-+
-+def assert_error_reply(env, conn, *cmd):
-+    """Run `cmd`, require an error reply, and require the server to still answer
-+    afterwards. Returns the error message, so callers can check its text too."""
-+    try:
-+        conn.execute_command(*cmd)
-+        env.assertTrue(False, message=f"expected an error reply from {cmd!r}")
-+        return None
-+    except ResponseError as e:
-+        msg = str(e)
-+    env.assertTrue(conn.ping())
-+    return msg
-```
-
-**File**: `tests/flow/test_query_validation.py` (modified, +14/-0)
-```diff
-@@ -1169,3 +1169,17 @@ def test51_pattern_comprehension_reading_a_loop_variable(self):
-             self.env.assertEqual(actual, [['a', 1], ['b', 0]])
-         finally:
-             g.delete()
-+
-+    # An error reply used to be built one `char` at a time with `c as u8`, so any
-+    # code point whose low byte is 0 -- '一' (U+4E00), 'Ā' (U+0100) -- became a NUL,
-+    # and the `CString::new(..).unwrap()` that followed panicked and took Redis down
-+    # (#3185); every other non-ASCII character came back as a garbage byte. An error
-+    # reply must keep its message's UTF-8 verbatim and never take the server down.
-+    def test52_error_reply_keeps_utf8_and_never_crashes(self):
-+        con = self.redis_con
-+        for cmd in ("GRAPH.QUERY", "GRAPH.RO_QUERY", "GRAPH.EXPLAIN"):
-+            msg = assert_error_reply(self.env, con, cmd, GRAPH_ID,
-+                                     "MATCH (n:Person {name:'一'}) RETURN n +")
-+            self.env.assertContains("'一'", msg)
-+            msg = assert_error_reply(self.env, con, cmd, GRAPH_ID, "RETURN 'Ā中文' +")
-+            self.env.assertContains("Ā中文", msg)
-```
-
----
-
-### Incident Patch 2: `b774fdfa` (2026-10-21)
-**Commit Message**: fix: validate the clauses that follow a procedure CALL (#3297)
-
-The `Call` arm of `inner_validate` returned `Ok(())` without validating
-the clauses after it, so `CALL db.labels() YIELD label MATCH (n)`
-reached the planner and panicked in `utilize_node_by_id`, a trailing
-UNWIND ran, and CREATE accepted two relationship types. Continue
-validation like every other arm does.
-
-Closes #3279
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `graph/src/parser/ast.rs` (modified, +2/-1)
-```diff
-@@ -1258,7 +1258,8 @@ impl<TVar: Eq + Hash + Display> QueryIR<TVar> {
-                         "The first argument of db.idx.fulltext.drop must be a string literal",
-                     ));
-                 }
--                Ok(())
-+                iter.next()
-+                    .map_or(Ok(()), |first| first.inner_validate(iter))
-             }
-             Self::Match { pattern, .. } => {
-                 Self::validate_inlined_properties(pattern)?;
-```
-
-**File**: `tests/flow/test_procedures.py` (modified, +34/-0)
-```diff
-@@ -467,3 +467,37 @@ def test12_list_functions(self):
-         self.env.assertEqual(reducible, True)
-         self.env.assertEqual(aggregation, False)
-         self.env.assertEqual(variable_len, True)
-+
-+    def test13_clauses_after_call_are_validated(self):
-+        # the clauses that follow a procedure call get the same checks as
-+        # anywhere else; a trailing MATCH used to crash the server
-+        # https://github.com/FalkorDB/FalkorDB/issues/3279
-+        g = self.db.select_graph("validate_after_call")
-+        g.query("CREATE (:N)")
-+
-+        queries = [
-+            ("CALL db.labels() YIELD label MATCH (n)",
-+             "Query cannot conclude with MATCH"),
-+            ("CALL db.labels() YIELD label WITH label MATCH (n)",
-+             "Query cannot conclude with MATCH"),
-+            ("CALL db.labels() YIELD label OPTIONAL MATCH (n)",
-+             "Query cannot conclude with MATCH"),
-+            ("CALL db.labels() YIELD label UNWIND [1] AS x",
-+             "Query cannot conclude with UNWIND"),
-+            ("CALL db.labels() YIELD label CREATE (a)-[:R|S]->(b)",
-+             "Exactly one relationship type must be specified for each relation in a CREATE pattern"),
-+            ("CALL db.labels() YIELD label MERGE (a)-[:R|S]->(b)",
-+             "Exactly one relationship type must be specified for each relation in a MERGE pattern"),
-+        ]
-+        for query, error in queries:
-+            try:
-+                g.query(query)
-+                self.env.assertTrue(False, message=query)
-+            except redis.ResponseError as e:
-+                self.env.assertContains(error, str(e))
-+
-+        # nothing was created, and valid queries after a CALL still run
-+        self.env.assertEqual(g.query("MATCH ()-[r]->() RETURN count(r)").result_set, [[0]])
-+        result = g.query("CALL db.labels() YIELD label MATCH (n) RETURN label, labels(n)")
-+        self.env.assertEqual(result.result_set, [['N', ['N']]])
-+        g.delete()
-```
-
----
-
-### Incident Patch 3: `9212add3` (2026-10-21)
-**Commit Message**: fix: an id seek on a graph without nodes no longer returns node 0 (#3353) (#3394)
-
-`evaluate_id_filter` caps the seek range at `max_node_id()`, which is 0
-both when id 0 is the only id and when no id was ever handed out. On a
-graph that never had a node, `id(n) = 0`, `id(n) >= 0` and `id(n) < 3`
-therefore yielded a phantom node 0, and `DELETE` on it failed with an
-internal "never allocated" error. Return no range when the graph has no
-live nodes.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/runtime.rs` (modified, +6/-0)
-```diff
-@@ -1361,6 +1361,12 @@ impl<'a> Runtime<'a> {
-                 }
-             }
+     if let Some(week) = week {
+         check_range("week", Some(week), 1, 53)?;
+-        let dow_raw = day_of_week.unwrap_or(1);
+-        if !(0..=6).contains(&dow_raw) {
+-            return Err(format!("Invalid dayOfWeek: {dow_raw}, expected 0..6"));
+-        }
+-        let dow = dow_raw as u32;
++        // ISO day of week, as in the string form and C: 1 = Monday .. 7 = Sunday
++        check_range("dayOfWeek", day_of_week, 1, 7)?;
++        let day_offset = day_of_week.unwrap_or(1) - 1;
+         let jan4 =
+             NaiveDate::from_ymd_opt(year, 1, 4).ok_or_else(|| format!("Invalid year: {year}"))?;
+         let weekday_of_jan4 = jan4.weekday().num_days_from_monday();
+-        let day_offset = if dow == 0 { 6 } else { i64::from(dow) - 1 };
+         // week is in 1..=53, so the offset is at most 370 days
+         let days = (week - 1) * 7 + day_offset - i64::from(weekday_of_jan4);
+         return jan4
+@@ -955,6 +952,24 @@ mod tests {
          }
-+        // `max_node_id()` is 0 both when id 0 is the only id and when no id
-+        // was ever handed out, so `min..=max` would seek a node 0 that was
-+        // never created.
-+        if self.g.borrow().node_count() == 0 {
-+            return Ok(None);
+     }
+ 
++    // dayOfWeek is ISO 1..=7 (7 = Sunday), like the string form and C.
++    #[test]
++    fn date_day_of_week_is_iso() {
++        let sunday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 7)])]).unwrap();
++        assert_eq!(
++            sunday,
++            date_pure(&[Value::String(Arc::new("2021-W01-7".to_string()))]).unwrap()
++        );
++        let monday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 1)])]).unwrap();
++        assert_eq!(
++            monday,
++            date_pure(&[Value::String(Arc::new("2021-W01-1".to_string()))]).unwrap()
++        );
++        for dow in [0, 8, -1] {
++            assert!(date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", dow)])]).is_err());
 +        }
-         let mut result = RoaringTreemap::new();
-         result.insert_range(min..=max);
-         Ok(Some(result))
++    }
++
+     #[test]
+     fn date_in_range_components_still_work() {
+         let d = |y: i32, m: u32, day: u32| {
 ```
 
-**File**: `tests/flow/test_node_by_id.py` (modified, +25/-0)
+**File**: `tests/flow/test_temporal.py` (modified, +8/-0)
 ```diff
-@@ -278,3 +278,28 @@ def test_parenthesised_id_predicates(self):
-             self.env.assertNotContains("All Node Scan", plan, message=q)
-             self.env.assertNotContains("Filter", plan, message=q)
-             self.env.assertEqual(self.graph.query(q, params).result_set, expected, message=q)
+@@ -193,6 +193,8 @@ def test_date_out_of_range_components(self):
+             ("RETURN date({year: 2021, quarter: 1, dayOfQuarter: 200})", "dayOfQuarter"),
+             ("RETURN date({year: 2020, quarter: 4294967297})", "quarter"),
+             ("RETURN date('2020W1é')", "week"),
++            ("RETURN date({year: 2021, week: 1, dayOfWeek: 0})", "dayOfWeek"),
++            ("RETURN date({year: 2021, week: 1, dayOfWeek: 8})", "dayOfWeek"),
+         ]
+         for q, msg in queries:
+             try:
+@@ -207,6 +209,12 @@ def test_date_out_of_range_components(self):
+         res = self.graph.query(q)
+         self.env.assertEqual(res.result_set[0], ['1984-12-31', '1984-12-31'])
+ 
++        # dayOfWeek is ISO 1..7 with 7 = Sunday, like the string form
++        q = """RETURN toString(date({year: 2021, week: 1, dayOfWeek: 7})),
++                      toString(date('2021-W01-7'))"""
++        res = self.graph.query(q)
++        self.env.assertEqual(res.result_set[0], ['2021-01-10', '2021-01-10'])
 +
-+    def test_seek_on_a_graph_without_nodes(self):
-+        # #3353: id 0 was sought on a graph that never had a node.
-+        g = self.db.select_graph("node_by_id_empty")
-+        queries = [
-+            "MATCH (n) WHERE id(n) = 0 RETURN n",
-+            "MATCH (n) WHERE id(n) >= 0 RETURN n",
-+            "MATCH (n) WHERE id(n) < 3 RETURN n",
-+            "MATCH (n) WHERE id(n) = 0 DELETE n",
-+        ]
-+        g.query("RETURN 1")
-+        for q in queries:
-+            self.env.assertContains("NodeByIdSeek", str(g.explain(q)), message=q)
-+            self.env.assertEqual(g.query(q).result_set, [], message=q)
-+
-+        # Nor once every node it had is deleted.
-+        g.query("CREATE (), ()")
-+        g.query("MATCH (n) DELETE n")
-+        for q in queries:
-+            self.env.assertEqual(g.query(q).result_set, [], message=q)
-+
-+        # A node created in the same query is still found.
-+        res = g.query("CREATE (a) WITH a MATCH (n) WHERE id(n) = id(a) RETURN count(n)")
-+        self.env.assertEqual(res.result_set, [[1]])
-+        g.delete()
+     def test_date_compare(self):
+         q = """WITH date({year: 1980, month: 12, day: 24}) AS x,
+                     date({year: 1984, month: 10, day: 11}) AS d
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3488** (2026-10-25): chore(deps): bump the github-actions group across 1 directory with 5 updates (@dependabot[bot])
 - **PR #3474** (2026-10-22): fix(optional-traverse): guard NULL GraphBLAS vectors in CondTraverseReset (@swilly22)
+- **PR #3473** (2026-10-25): ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (@AviAvni)
 - **PR #3465** (2026-10-22): [6.0] Batch backport (56 commits) (@github-actions[bot])
-- **PR #3440** (2026-10-21): chore(deps): bump the cargo-deps group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #3428** (2026-10-21): fix: error replies keep UTF-8 and never panic on '一' (#3185) (@AviAvni)
-- **PR #3422** (2026-10-21): reentrant write lock (@swilly22)
-- **PR #3420** (2026-10-21): Bump GraphBLAS to 10.5.2-beta2 and regenerate PreJIT kernels (@GomezGab)
+- **PR #3462** (2026-10-26): fix: GRAPH.RECORD no longer panics on deleted or uncommitted relationships (#3449) (@AviAvni)
+- **PR #3458** (2026-10-26): fix: LOAD CSV follows no redirects and fetches over https only (#3443) (@AviAvni)
 
 ---
 
@@ -2617,34 +2735,46 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. error replies keep UTF-8 and never panic on '一' (#3185) (#3428)
+## X. ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmark-cov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b97da5a1`: error replies keep UTF-8 and never panic on '一' (#3185) (#3428). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06e6ca30`: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark-cov.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=fix%2Fresp-string-bytes#324aa42bd4c0f1b2953b79fae2f3bfb373aa1903"
+              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
+              # through `_ci-pipeline.yml`, which adds one more caller prefix:
+              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
+              # segment, so the wait survives being nested one level deeper (or
+              # less) again. A bare prefix match on the old name found nothing,
+              # read that as "not scheduled yet", and polled to the timeout with
+              # the image already published (#3472). The segment form does not
+              # match `build-rc-asan-image`, a different image.
+                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
+      # Submodules: this job compiles the engine, and native-deps builds
+      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
+      # prebuilt archives do not match the current key — e.g. after a dep bump.
+      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
+          submodules: recursive
+          #
+          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
+          # (clang-23 / clang++-23, build/Dockerfile) and shi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
-source = "git+https://github.com/AviAvni/redismodule-rs?branch=master#91a39b5dfa08dcbd18626ec4906b2f474891a03a"
+              # "build-rc-image / build (...)" — match on the prefix.
+                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
+          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b97da5a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06e6ca30` are properly handled with clean fallback behavior.

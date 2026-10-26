@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `8f6b18ba`  
+> **Source Version**: `18d1103e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:50.119Z  
+> **Timestamp**: 2026-10-26T11:15:45.902Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:50.113Z  
+> **Harvest Timestamp**: 2026-10-26T11:15:45.894Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,6 +43,8 @@ use indexmap::IndexMap;
 use std::fmt;
 use std::sync::Arc;
 
+use crate::history::{History, HistoryKey};
+use crate::lang::ast::VersionSelector;
 use crate::lang::ast::generator::generate_all;
 use crate::lang::ast::{Expr, Function, Parameter, Stmt};
 use crate::runtime::Runtime;
@@ -138,6 +140,7 @@ pub struct State {
     objects: IndexMap<ObjectId, ObjectData>,
     classes: IndexMap<String, ClassData>,
     functions: IndexMap<String, Arc<Function>>,
+    histories: IndexMap<HistoryKey, History>,
 }
 
 impl State {
@@ -151,6 +154,22 @@ impl State {
 
     pub fn has_variable(&self, name: &str) -> bool {
         self.variables.contains_key(name)
+    }
+
+    pub(crate) fn version(&self, key: &HistoryKey, selector: VersionSelector) -> Option<&Value> {
+        self.histories.get(key)?.get(selector)
+    }
+
+    pub(crate) fn truncate_history(&mut self, key: &HistoryKey, length: usize) {
+        if length == 0 {
+            self.histories.shift_remove(key);
+        } else if let Some(history) = self.histories.get_mut(key) {
+            history.truncate(length);
+        }
+    }
+
+    pub(crate) fn restore_history(&mut self, key: HistoryKey, history: History) {
+        self.histories.insert(key, history);
     }
 
     pub fn has_object(&self, id: &ObjectId) -> bool {
@@ -252,6 +271,7 @@ impl State {
         self.objects.clear();
         self.classes.clear();
         self.functions.clear();
+        self.histories.clear();
     }
 }
 
@@ -263,6 +283,18 @@ impl State {
 /// Variables and properties use separate operations because their graph keys
 /// differ.
 impl Runtime {
+    fn append_history(&mut self, key: HistoryKey, value: &Value) {
+        let history = self.state.histories.entry(key.clone()).or_default();
+        self.transaction.record_history_append(&key, history.len());
+        history.push(value.clone());
+    }
+
+    fn remove_history(&mut self, key: HistoryKey) {
+        if let Some(history) = self.state.histories.shift_remove(&key) {
+            self.transaction.record_history_removal(key, history);
+        }
+    }
+
     pub(crate) fn assign(&mut self, name: &str, value: Value) -> bool {
         if let Some(before) = self.state.functions.get(name).cloned() {
             self.transaction.record_function(name, Some(before));
@@ -274,6 +306,9 @@ impl Runtime {
             .as_ref()
             .is_none_or(|before| !before.same_value(&value));
         self.transaction.record_variable(name, before);
+        if changed {
+            self.append_history(HistoryKey::Variable(name.to_string()), &value);
+        }
         self.state.variables.insert(name.to_string(), value);
         changed
     }
@@ -293,6 +328,12 @@ impl Runtime {
             .as_ref()
             .is_none_or(|before| !before.same_value(&value));
         self.transaction.record_property(object, property, before);
+        if changed {
+            self.append_history(
+                HistoryKey::Property(object.clone(), property.to_string()),
+                &value,
+            );
+        }
 
         if let Some(data) = self.state.object_mut(object) {
             data.properties.insert(property.to_string(), value);
@@ -305,51 +346,11 @@ impl Runtime {
         let before = self.state.variables.get(name).cloned();
         self.transaction.record_variable(name, before.clone());
         self.state.variables.shift_remove(name);
+        self.remove_history(HistoryKey::Variable(name.to_string()));
         before
     }
 
-    /// `state.delete` for a property.
-    pub(crate) fn remove_property(&mut self, object: &ObjectId, property: &str) -> Option<Value> {
-        let before = self.state.property(object, property).cloned();
-        self.transaction
-            .record_property(object, property, before.clone());
-
-        if let Some(data) = self.state.object_mut(object) {
-            data.properties.shift_remove(property);
-        }
-
-        before
-    }
-
-    pub(crate) fn insert_object(&mut self, id: ObjectId, data: ObjectData) {
-        if self.transaction.needs_object(&id) {
-            let before = self.state.objects.get(&id).cloned();
-            self.transaction.record_object(&id, before);
-        }
-
-        self.state.objects.insert(id, data);
-    }
-
-    pub(crate) fn remove_object(&mut self, id: &ObjectId) -> Option<ObjectData> {
-        let before = self.state.objects.get(id).cloned();
-        self.transaction.record_object(id, before.clone());
-        self.state.objects.shift_remove(id);
-        before
-    }
-
-    pub(crate) fn insert_class(&mut self, name: &str, data: ClassData) {
-        if self.transaction.needs_class(name) {
-            let before = self.state.classes.get(name).cloned();
-            self.transaction.record_class(name, before);
-        }
-
-        self.state.classes.insert(name.to_string(), data);
-    }
-
-    /// Changes a class in place â€” gaining an instance, or gaining a rule.
-    pub(crate) fn update_class(&mut self, name: &str, update: impl FnOnce(&mut ClassData)) {
-        if self.transaction.needs_class(name) {
- 
+    /// `
 ```
 
 ### Core Architecture Module: `src/statement.rs`
@@ -385,44 +386,22 @@ import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
 import * as terminal from "./lib/terminal";
-import * as responseFormat from "./lib/response_format";
 
-export async function declarations({
-  train_dataset,
-}: {
-  train_dataset: {
-    dataset: {
-      input_matrix: number[][];
-      output_matrix: number[][];
-      instances: {
-        instance_name: string;
-        input_instance_matrix: number[][];
-        output_instance_matrix: number[][];
-        implementation: string;
-        input_value: object;
-        output_value: object;
-      }[];
-    }[];
-  };
-}) {
+export async function declarations({ train_dataset }) {
   terminal.step("Inferring declarations");
 
-  const { declarations } = await llm.generate<{ declarations: string[] }>({
+  const { declarations } = await llm.generate({
     messages: [
       {
         role: "user",
-        content: JSON.stringify({
-          train_dataset,
-        }),
+        content: `
+          train_dataset:
+          ${JSON.stringify(train_dataset)}
+          json_format:
+          { "declarations": <DECLARATIONS> }
+        `,
       },
     ],
-    response_format: responseFormat.create("analyzer_declarations", {
-      declarations: {
-        type: "array",
-        minItems: 1,
-        items: responseFormat.code,
-      },
-    }),
   });
 
   terminal.code("Declarations", declarations);
@@ -430,51 +409,35 @@ export async function declarations({
   return { declarations };
 }
 
-export async function instances({
-  declarations,
-  input_matrix,
-  output_matrix,
-}: {
-  declarations: string[];
-  input_matrix: number[][];
-  output_matrix: number[][];
-}) {
+export async function instances({ declarations, input_matrix, output_matrix }) {
   terminal.step("Segmenting training objects");
 
-  const { instances } = await llm.generate<{
-    instances: {
-      input_instance_matrix: number[][];
-      output_instance_matrix: number[][];
-    }[];
-  }>({
+  const { instances } = await llm.generate({
     messages: [
       {
         role: "user",
-        content: JSON.stringify({
-          declarations,
-          input_matrix,
-          output_matrix,
-        }),
+        content: `
+          declarations:
+          ${JSON.stringify(declarations)}
+          input_matrix:
+          ${JSON.stringify(input_matrix)}
+          output_matrix:
+          ${JSON.stringify(output_matrix)}
+          query:
+          Obj;
+          json_format:
+          {
+            "instances": [{
+              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+            }]
+          }
+        `,
       },
     ],
-    response_format: responseFormat.create("analyzer_instances", {
-      instances: {
-        type: "array",
-        items: responseFormat.object({
-          input_instance_matrix: responseFormat.grid(
-            input_matrix.length,
-            input_matrix[0].length
-          ),
-          output_instance_matrix: responseFormat.grid(
-            output_matrix.length,
-            output_matrix[0].length
-          ),
-        }),
-      },
-    }),
   });
 
-  instances.forEach((instance, index: number) => {
+  instances.forEach((instance, index) => {
     terminal.grid(
       `Object ${index + 1} · Input`,
       instance.input_instance_matrix
@@ -493,37 +456,35 @@ export async function value({
   declarations,
   input_instance_matrix,
   output_instance_matrix,
-}: {
-  instance_name: string;
-  declarations: string[];
-  input_instance_matrix: number[][];
-  output_instance_matrix: number[][];
 }) {
   terminal.step(`Constructing ${instance_name}`);
 
-  const { implementation } = await llm.generate<{ implementation: string }>({
+  const { implementation } = await llm.generate({
     messages: [
       {
         role: "user",
-        content: JSON.stringify({
-          instance_name,
-          declarations,
-          input_instance_matrix,
-          output_instance_matrix,
-        }),
+        content: `
+          instance_name:
+          ${instance_name}
+          declarations:
+          ${JSON.stringify(declarations)}
+          input_instance_matrix:
+          ${JSON.stringify(input_instance_matrix)}
+          output_instance_matrix:
+          ${JSON.stringify(output_instance_matrix)}
+          json_format:
+          { "implementation": <IMPLEMENTATION> }
+        `,
       },
     ],
-    response_format: responseFormat.create("analyzer_value", {
-      implementation: responseFormat.code,
-    }),
   });
 
   terminal.step("Evaluating declarative rules");
-  const input_value = nucleoid.snapshot(
-    await nucleoid.run([declarations[0], implementation].join("\n\n"))
+  const input_value = await nucleoid.run(
+    [declarations[0], implementation].join("\n\n")
   );
-  const output_value = nucleoid.snapshot(
-    await nucleoid.run([...declarations, implementation].join("\n\n"))
+  const output_value = await nucleoid.run(
+    [...declarations, implementation].join("\n\n")
   );
 
   terminal.grid("Input crop", Matrix.crop(input_instance_matrix));
@@ -544,30 +505,16 @@ import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as terminal from "./lib/terminal";
-import puzzle from "./data/training/3aa6fb7a.json";
+import puzzle from "./data/training/0ca9ddb6.json";
 // Completed:
 // 3aa6fb7a
-// 0ca9ddb6
 
 const {
   train,
   test: [{ input: test_input_matrix, output: test_output_matrix }],
 } = puzzle;
 
-const training_input: {
-  dataset: {
-    input_matrix: number[][];
-    output_matrix: number[][];
-    instances: {
-      instance_name: string;
-      input_instance_matrix: number[][];
-      output_instance_matrix: number[][];
-      implementation: string;
-      input_value: { [property: string]: unknown };
-      output_value: { [property: string]: unknown };
-    }[];
-  }[];
-} = {
+const training_input = {
   dataset: train.map(({ input, output }) => ({
     input_matrix: input,
     output_matrix: output,
@@ -576,7 +523,7 @@ const training_input: {
 };
 
 export async function start() {
-  const startedAt: number = performance.now();
+  const startedAt = performance.now();
   terminal.header({ version: await nucleoid.version() });
   terminal.puzzle({ train, testInput: test_input_matrix });
   terminal.section(
@@ -585,7 +532,7 @@ export async function start() {
     "Infer reusable objects and transformation rules"
   );
 
-  let instance_index: number = 0;
+  let instance_index = 0;
 
   const { declarations } = await analyzer.declarations({
     train_dataset: training_input,
@@ -608,10 +555,7 @@ export async function start() {
     });
 
     for (const { input_instance_matrix, output_instance_matrix } of instances) {
-      const instance_name: string = `obj${String(instance_index++).padStart(
-        12,
-        "0"
-      )}`;
+      const instance_name = `obj${String(instance_index++).padStart(12, "0")}`;
 
       const { implementation, input_value, output_value } =
         await analyzer.value({
@@ -644,19 +588,13 @@ export async function start() {
     test_input_matrix,
   });
 
-  let test_index: number = 0;
+  let test_index = 0;
 
-  let result_matrix: number[][] = Array.from(
-    { length: test_output_matrix.length },
-    () => Array<number>(test_output_matrix[0].length).fill(0)
+  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
+    Array(test_output_matrix[0].length).fill(0)
   );
 
-  const input_instances: {
-    input_value: { [property: string]: unknown };
-    input_instance_matrix: number[][];
-    output_value: { [property: string]: unknown };
-    output_instance_matrix: number[][];
-  }[] = [];
+  const input_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const { input_value, output_value } = await visualizer.value({
@@ -709,7 +647,7 @@ export { document } from "./instruct_dataset";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export function document(): unknown[] {
+export function document() {
   const files = readdirSync(__dirname, { withFileTypes: true })
     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
     .map((entry) => entry.name)
@@ -719,8 +657,8 @@ export function document(): unknown[] {
     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
   }
 
-  const datasets = files.map((file: string): unknown => {
-    const source: string = readFileSync(join(__dirname, file), "utf8");
+  const datasets = files.map((file) => {
+    const source = readFileSync(join(__dirname, file), "utf8");
 
     try {
       return JSON.parse(source);
@@ -740,19 +678,31 @@ export function document(): unknown[] {
 
 ```
 
+### Core Architecture Module: `arc/src/lib/Markdown.ts`
+```
+export function json(markdown) {
+  const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
+
+  if (matches.length > 0) {
+    const lastMatch = matches[matches.length - 1];
+    return JSON.parse(lastMatch[1]);
+  }
+}
+
+```
+
 ### Core Architecture Module: `arc/src/lib/Matrix.ts`
 ```
-export function crop(matrix: number[][]): number[][] {
+export function crop(matrix) {
   return locate(matrix).matrix;
 }
 
-export function locate(matrix: number[][]): {
-  matrix: number[][];
-  x: number;
-  y: number;
-} {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0]?.length ?? 0;
+export function locate(matrix) {
+  if (!Array.isArray(matrix)) {
+    throw new Error("Matrix must be an array for cropping");
+  }
+  const rows = matrix.length;
+  const cols = matrix[0]?.length ?? 0;
   let top = rows;
   let bottom = -1;
   let left = cols;
@@ -760,11 +710,11 @@ export function locate(matrix: number[][]): {
 
   for (let y = 0; y < rows; y++) {
     const row = matrix[y];
-    if (row.length !== cols) {
+    if (!Array.isArray(row) || row.length !== cols) {
       throw new Error("Matrix must be rectangular for cropping");
     }
     for (let x = 0; x < cols; x++) {
-      const value: number = row[x];
+      const value = row[x];
       if (!Number.isFinite(value)) {
         throw new Error("Matrix must contain finite numbers for cropping");
       }
@@ -786,13 +736,10 @@ export function locate(matrix: number[][]): {
   };
 }
 
-export function pad(
-  matrix: number[][],
-  rows: number,
-  cols: number,
-  left: number,
-  top: number
-): number[][] {
+export function pad(matrix, rows, cols, left, top) {
+  if (!Array.isArray(matrix)) {
+    throw new Error("Matrix must be an array for padding");
+  }
   if (
     !Number.isSafeInteger(rows) ||
     !Number.isSafeInteger(cols) ||
@@ -809,24 +756,24 @@ export function pad(
   ) {
     throw new Error("Padding offsets must be non-negative safe integers");
   }
-  const sourceRows: number = matrix.length;
-  const sourceCols: number = matrix[0]?.length ?? 0;
+  const sourceRows = matrix.length;
+  const sourceCols = matrix[0]?.length ?? 0;
   const paddedRows = Math.max(rows, top + sourceRows);
   const paddedCols = Math.max(cols, left + sourceCols);
   if (!Number.isSafeInteger(paddedRows) || !Number.isSafeInteger(paddedCols)) {
     throw new Error("Expanded padding dimensions must be safe integers");
   }
   const result = Array.from({ length: paddedRows }, () =>
-    Array.from({ length: paddedCols }, () => 0)
+    Array(paddedCols).fill(0)
   );
 
   for (let y = 0; y < sourceRows; y++) {
     const row = matrix[y];
-    if (row.length !== sourceCols) {
+    if (!Array.isArray(row) || row.length !== sourceCols) {
       throw new Error("Matrix must be rectangular for padding");
     }
     for (let x = 0; x < sourceCols; x++) {
-      const value: number = row[x];
+      const value = row[x];
       if (!Number.isFinite(value)) {
         throw new Error("Matrix must contain finite numbers for padding");
       }
@@ -837,18 +784,14 @@ export function pad(
   return result;
 }
 
-export function merge(...matrices: number[][][]): number[][] {
+export function merge(...matrices) {
   if (matrices.length === 0) {
     throw new Error("At least one matrix is required for merging");
   }
-  const numRows = Math.max(...matrices.map((matrix): number => matrix.length));
-  const numCols = Math.max(
-    ...matrices.map((matrix): number => matrix[0]?.length ?? 0)
-  );
+  const numRows = Math.max(...matrices.map((matrix) => matrix.length));
+  const numCols = Math.max(...matrices.map((matrix) => matrix[0]?.length ?? 0));
 
-  const result = Array.from({ length: numRows }, () =>
-    Array.from({ length: numCols }, () => 0)
-  );
+  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
 
   for (const matrix of matrices) {
     const padded = pad(matrix, numRows, numCols, 0, 0);
@@ -864,7 +807,7 @@ export function merge(...matrices: number[][][]): number[][] {
   return result;
 }
 
-export function difference(matrix1: number[][], matrix2: number[][]): number {
+export function difference(matrix1, matrix2) {
   let mismatches = 0;
   const rows = Math.max(matrix1.length, matrix2.length);
 
@@ -890,7 +833,7 @@ export function difference(matrix1: number[][], matrix2: number[][]): number {
   return mismatches;
 }
 
-export function toString(matrix: number[][]): void {
+export function toString(matrix) {
   matrix.forEach((row) => {
     console.debug(`[${row.join(",")}]`);
   });
@@ -900,13 +843,9 @@ export function toString(matrix: number[][]): void {
 
 ### Core Architecture Module: `arc/src/lib/Zoom.ts`
 ```
-export function focus(matrix: number[][]): {
-  x_position: number;
-  y_position: number;
-  object_matrix: number[][];
-} {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0].length;
+export function focus(matrix) {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
 
   let xOffset = -1,
     yOffset = -1,
@@ -940,20 +879,10 @@ export function focus(matrix: number[][]): {
   };
 }
 
-export function enlarge(
-  matrix: {
-    x_position: number;
-    y_position: number;
-    object_matrix: number[][];
-  },
-  rows: number,
-  cols: number
-): number[][] {
+export function enlarge(matrix, rows, cols) {
   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
 
-  const originalArray = Array.from({ length: rows }, () =>
-    Array<number>(cols).fill(0)
-  );
+  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
 
   for (let i = 0; i < object_matrix.length; i++) {
     for (let j = 0; j < object_matrix[i].length; j++) {
@@ -962,16 +891,6 @@ export function enlarge(
   }
 
   return originalArray;
-}
-
-```
-
-### Core Architecture Module: `arc/src/lib/json.ts`
-```
-export function isObject(value: unknown): value is {
-  [property: string]: unknown;
-} {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 ```
@@ -1003,412 +922,1018 @@ export function isObject(value: unknown): value is {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd1f7fdb` (2026-10-25)
-**Commit Message**: Accept NUC 49 colon-free conditional suites
+### Incident Patch 1: `18d1103e` (2026-10-26)
+**Commit Message**: Revert "Use strict JSON Schema responses for ARC LLM calls"
 
-Allow optional conditional-header colons only before genuine indented bodies, including native CLI continuation. Independent evaluation measured 8 shorter cases, 625 unchanged and no increases, preserving complete ASTs and accepted syntax.
+This reverts commit 10b3583f2c7d9b6e55bcf3e79822c18da98215d6.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +12/-6)
+**File**: `arc/README.md` (modified, +5/-48)
 ```diff
-@@ -650,8 +650,10 @@ assert(display, 5)
+@@ -3,13 +3,8 @@
+ ## Development
  
- - Accepted [NUC 34](docs/nuc-0034.md) permits this optional final-`else` spelling
-   only before a real indented body. `else:` remains valid and equivalent.
--- `if` and `else if` keep their colons; inline, semicolon-separated and braced
--  alternatives still need `else:`. A same-line semicolon cannot enable omission.
-+- This legacy control deliberately retains its condition colon.
-+  [NUC 49](docs/nuc-0049.md) also permits omission for genuine-indented
-+  `if`/`else if` suites; inline, semicolon-separated and braced alternatives
-+  still require their accepted colons. A header-line semicolon cannot qualify.
- - Nested branch association, live inputs, scope, returns and rollback are
-   unchanged. Strings and comments containing `else:` are not rewritten.
+ The application keeps `.ts` source files and runs directly on Node.js using
+-`tsx`, without generating JavaScript files. Explicit types must be inline
+-primitive annotations, such as `string`, `number`, and `boolean`, on scalar
+-parameters and return values. Infer arrays, object shapes, callbacks, and async
+-return types instead of declaring interfaces, type aliases, generic types, or
+-separate type files. The TypeScript check uses non-strict inference.
+-Avoid redundant primitive type checks inside typed helpers. Retain numeric
+-constraints and validation of matrices and external data.
++`tsx`, without generating JavaScript files. Sources use JavaScript syntax without
++explicit TypeScript types; the TypeScript check uses non-strict inference.
+ Use Bun to install dependencies from the committed lockfile:
  
-@@ -841,9 +843,9 @@ assert(source, "todo:three")
+ ```sh
+@@ -24,8 +19,7 @@ Keep puzzle datasets, instruction examples, and training/held-out scoring intact
  
- ```nuc
- def label(state):
--    if state == "done":
-+    if state == "done"
-         return "archive"
--    else state == "ready":
-+    else state == "ready"
-         return "send"
-     else:
-         return "wait"
-@@ -857,16 +859,20 @@ assert(result, "wait")
- ```
+ OpenRouter is the only LLM provider. Set `OPENROUTER_API_KEY` in `.env`.
+ Optionally set `OPENROUTER_MODEL` (default: `qwen/qwen3.8-27b`) to a model that
+-supports JSON Schema structured outputs. A request's `model` argument overrides
+-that setting.
++supports JSON output. A request's `model` argument overrides that setting.
+ The legacy `LLM` selector is no longer needed.
  
- - [NUC 43](docs/nuc-0043.md) optionally omits the second `if` only
--  before a complete colon-bearing condition with a genuine indented body.
-+  before a complete condition with a genuine indented body.
-   `elif condition:` is the same optional spelling through the existing
-   `elif` alias for `else`.
-+- [NUC 49](docs/nuc-0049.md) additionally makes the header colon optional
-+  for initial `if`, explicit `else if`/`elif if`, and these direct alternatives,
-+  only before a genuine indented suite. The CLI recognizes initial colon-free
-+  headers and autoindents without treating literal/comment punctuation as syntax.
- - Explicit `else if` remains supported, including inline/braced bodies.
-   Final `else:`/`elif:` and genuine-indented colon-free final alternatives
-   retain their unconditional meaning. No standalone or inline direct
-   conditional alternative is added.
- - Parsing lowers to the same nested conditional, keeping first-match
-   evaluation, live dependencies, scopes, returns and rollback unchanged.
--  See the [root contract](nucleoid.spec.md#direct-conditional-alternatives).
-+  See the [root contract](nucleoid.spec.md#colon-free-indented-conditional-suites).
+ Sampling defaults to `temperature: 0`, `top_k: 1`, `top_p: 1`, and `seed: 42`,
+@@ -46,42 +40,6 @@ documentation for the distinction.
+ Run the ARC example with `bun run start`. This makes live OpenRouter calls;
+ type checking, linting, and offline inspection do not require model calls.
  
- ## Comma-free explicit object properties
+-## Structured responses
+-
+-Each analyzer and visualizer call supplies its own named `response_format`
+-using `type: "json_schema"` and `strict: true`, rather than embedding
+-pseudo-JSON format hints in message text. Every schema requires its declared
+-fields and rejects unknown fields, including inside instance objects.
+-Declarations and implementations must contain non-whitespace code. Instance
+-grids contain integer colors from `0` through `9`; segmentation masks must match
+-the supplied canvas dimensions. Rendered output crops retain their existing
+-placement behavior and ARC dimension limits.
+-
+-The shared wrapper forwards each format unchanged. The OpenRouter client uses
+-Ajv, a shared JSON Schema validator, to validate parsed responses against that
+-same schema before returning them for execution or composition. Code fields use
+-plain JSON strings in the provider schema, with nonblank-source checks applied
+-locally after schema validation. Some grammar decoders treat `pattern` as a
+-whole-string match or restrict JSON escapes in length-constrained strings;
+-avoiding those constraints on the wire permits multiline Nucleoid programs,
+-quotes, and backslashes. The client neither coerces invalid values nor repairs
+-malformed JSON. All outgoing message content, including control IDs and
+-instruction examples, is serialized as complete JSON.
+-
+-Responses must finish with `finish_reason: "stop"`. Truncated, filtered, refused,
+-errored, and unfinished completions fail before parsing or execution, even when
+-their content happens to be valid JSON. Response errors include the schema name,
+-generation ID, model, provider, normalized and native finish reasons, and
+-completion-token count. Invalid JSON also includes the raw reply for diagnosis.
+-There is no automatic retry or response-healing fallback, so an operation keeps
+-its existing one-request budget.
+-
+-The existing provider allow-list and sampling settings still apply.
+-`provider.require_parameters: true` prevents routing to endpoints that do not
+-support the requested parameters; unsupported structured-output requests fail
+-explicitly instead of silently falling back to generic JSON mode. See
+-[OpenRouter structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs).
+-
+ ## Terminal presentation
+ 
+ The terminal uses light and dark grey styling with a small bright green `nuc` wordmark
+@@ -130,9 +88,8 @@ prompts, programs, matrices, provider settings, or scoring.
+ 
+ The synchronous `document()` function reads every JSON file in `src\dataset`,
+ alongside `instruct_dataset.ts`, on each call, independently of the working directory.
+-Files are sorted by name and returned as an array, with a separate entry per file.
+-The LLM wrapper serializes that array as one
+-`{"operation": "instruction_examples", "datasets": [...]}` message.
++Files are sorted by name and serialized as one
++`{"datasets": [...]}` document, with a separate array entry per file.
+ New files, including `dataset.core.2.json`, need no additional imports.
+ Non-JSON files and subdirectories are ignored. An empty dataset directory,
+ unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
+```
+
+**File**: `arc/bun.lock` (modified, +2/-15)
+```diff
+@@ -6,7 +6,6 @@
+       "name": "nuc-arc",
+       "dependencies": {
+         "@nucleoidai/expert": "^1.0.3",
+-        "ajv": "^8.17.1",
+         "axios": "^1.7.7",
+         "dotenv": "^16.4.5",
+         "string-width": "^4.2.3",
+@@ -155,7 +154,7 @@
+ 
+     "agentkeepalive": ["agentkeepalive@4.6.0", "", { "dependencies": { "humanize-ms": "^1.2.1" } }, "sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ=="],
+ 
+-    "ajv": ["ajv@8.20.0", "", { "dependencies": { "fast-deep-equal": "^3.1.3", "fast-uri": "^3.0.1", "json-schema-traverse": "^1.0.0", "require-from-string": "^2.0.2" } }, "sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA=="],
++    "ajv": ["ajv@6.15.0", "", { "dependencies": { "fast-deep-equal": "^3.1.1", "fast-json-stable-stringify": "^2.0.0", "json-schema-traverse": "^0.4.1", "uri-js": "^4.2.2" } }, "sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw=="],
+ 
+     "ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
+ 
+@@ -285,8 +284,6 @@
+ 
+     "fast-levenshtein": ["fast-levenshtein@2.0.6", "", {}, "sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw=="],
+ 
+-    "fast-uri": ["fast-uri@3.1.9", "", {}, "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ=="],
+-
+     "fastq": ["fastq@1.20.3", "", { "dependencies": { "reusify": "^1.0.4" } }, "sha512-XKv5nnLs6nLF71NgiKJLIZFLkPyIEuOselLG7ujZnGrRfQK8HpvY+WqKhAJUAdLomwVHErVS4LfxFlPq0/FTAw=="],
+ 
+     "fdir": ["fdir@6.5.0", "", { "peerDependencies": { "picomatch": "^3 || ^4" }, "optionalPeers": ["picomatch"] }, "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg=="],
+@@ -395,7 +392,7 @@
+ 
+     "json-buffer": ["json-buffer@3.0.1", "", {}, "sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ=="],
+ 
+-    "json-schema-traverse": ["json-schema-traverse@1.0.0", "", {}, "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="],
++    "json-schema-traverse": ["json-schema-traverse@0.4.1", "", {}, "sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg=="],
+ 
+     "json-stable-stringify-without-jsonify": ["json-stable-stringify-without-jsonify@1.0.1", "", {}, "sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw=="],
+ 
+@@ -489,8 +486,6 @@
+ 
+     "raw-body": ["raw-body@2.5.3", "", { "dependencies": { "bytes": "~3.1.2", "http-errors": "~2.0.1", "iconv-lite": "~0.4.24", "unpipe": "~1.0.0" } }, "sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA=="],
+ 
+-    "require-from-string": ["require-from-string@2.0.2", "", {}, "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw=="],
+-
+     "resolve-from": ["resolve-from@4.0.0", "", {}, "sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g=="],
+ 
+     "reusify": ["reusify@1.1.0", "", {}, "sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw=="],
+@@ -589,8 +584,6 @@
+ 
+     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
+ 
+-    "@eslint/eslintrc/ajv": ["ajv@6.15.0", "", { "dependencies": { "fast-deep-equal": "^3.1.1", "fast-json-stable-stringify": "^2.0.0", "json-schema-traverse": "^0.4.1", "uri-js": "^4.2.2" } }, "sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw=="],
+-
+     "@eslint/eslintrc/ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
+ 
+     "@nucleoidai/expert/@types/node": ["@types/node@20.19.43", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA=="],
+@@ -605,8 +598,6 @@
+ 
+     "body-parser/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
+ 
+-    "eslint/ajv": ["ajv@6.15.0", "", { "dependencies": { "fast-deep-equal": "^3.1.1", "fast-json-stable-stringify": "^2.0.0", "json-schema-traverse": "^0.4.1", "uri-js": "^4.2.2" } }, "sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw=="],
+-
+     "eslint/ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
+ 
+     "express/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeA
+```
+
+**File**: `arc/package.json` (modified, +0/-1)
+```diff
+@@ -26,7 +26,6 @@
+   },
+   "dependencies": {
+     "@nucleoidai/expert": "^1.0.3",
+-    "ajv": "^8.17.1",
+     "axios": "^1.7.7",
+     "dotenv": "^16.4.5",
+     "string-width": "^4.2.3",
+```
+
+**File**: `arc/src/analyzer.ts` (modified, +36/-45)
+```diff
+@@ -2,7 +2,6 @@ import * as Matrix from "./lib/Matrix";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as llm from "./lib/llm";
+ import * as terminal from "./lib/terminal";
+-import * as responseFormat from "./lib/response_format";
+ 
+ export async function declarations({ train_dataset }) {
+   terminal.step("Inferring declarations");
+@@ -11,19 +10,14 @@ export async function declarations({ train_dataset }) {
+     messages: [
+       {
+         role: "user",
+-        content: JSON.stringify({
+-          operation: "infer_declarations",
+-          train_dataset,
+-        }),
++        content: `
++          train_dataset:
++          ${JSON.stringify(train_dataset)}
++          json_format:
++          { "declarations": <DECLARATIONS> }
++        `,
+       },
+     ],
+-    response_format: responseFormat.create("analyzer_declarations", {
+-      declarations: {
+-        type: "array",
+-        minItems: 1,
+-        items: responseFormat.code,
+-      },
+-    }),
+   });
+ 
+   terminal.code("Declarations", declarations);
+@@ -38,33 +32,28 @@ export async function instances({ declarations, input_matrix, output_matrix }) {
+     messages: [
+       {
+         role: "user",
+-        content: JSON.stringify({
+-          operation: "segment_training_instances",
+-          declarations,
+-          input_matrix,
+-          output_matrix,
+-          query: { class: "Obj" },
+-        }),
++        content: `
++          declarations:
++          ${JSON.stringify(declarations)}
++          input_matrix:
++          ${JSON.stringify(input_matrix)}
++          output_matrix:
++          ${JSON.stringify(output_matrix)}
++          query:
++          Obj;
++          json_format:
++          {
++            "instances": [{
++              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
++              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
++            }]
++          }
++        `,
+       },
+     ],
+-    response_format: responseFormat.create("analyzer_instances", {
+-      instances: {
+-        type: "array",
+-        items: responseFormat.object({
+-          input_instance_matrix: responseFormat.grid(
+-            input_matrix.length,
+-            input_matrix[0].length
+-          ),
+-          output_instance_matrix: responseFormat.grid(
+-            output_matrix.length,
+-            output_matrix[0].length
+-          ),
+-        }),
+-      },
+-    }),
+   });
+ 
+-  instances.forEach((instance, index: number) => {
++  instances.forEach((instance, index) => {
+     terminal.grid(
+       `Object ${index + 1} · Input`,
+       instance.input_instance_matrix
+@@ -90,18 +79,20 @@ export async function value({
+     messages: [
+       {
+         role: "user",
+-        content: JSON.stringify({
+-          operation: "construct_training_instance",
+-          instance_name,
+-          declarations,
+-          input_instance_matrix,
+-          output_instance_matrix,
+-        }),
++        content: `
++          instance_name:
++          ${instance_name}
++          declarations:
++          ${JSON.stringify(declarations)}
++          input_instance_matrix:
++          ${JSON.stringify(input_instance_matrix)}
++          output_instance_matrix:
++          ${JSON.stringify(output_instance_matrix)}
++          json_format:
++          { "implementation": <IMPLEMENTATION> }
++        `,
+       },
+     ],
+-    response_format: responseFormat.create("analyzer_value", {
+-      implementation: responseFormat.code,
+-    }),
+   });
+ 
+   terminal.step("Evaluating declarative rules");
+```
+
+**File**: `arc/src/app.ts` (modified, +1/-2)
+```diff
+@@ -3,10 +3,9 @@ import * as visualizer from "./visualizer";
+ import * as Matrix from "./lib/Matrix";
+ import * as nucleoid from "./lib/nucleoid";
+ import * as terminal from "./lib/terminal";
+-import puzzle from "./data/training/3aa6fb7a.json";
++import puzzle from "./data/training/0ca9ddb6.json";
+ // Completed:
+ // 3aa6fb7a
+-// 0ca9ddb6
+ 
+ const {
+   train,
+```
+
+**File**: `arc/src/lib/Markdown.ts` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-export function json(markdown: string) {
++export function json(markdown) {
+   const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
+ 
+   if (matches.length > 0) {
+```
+
+**File**: `arc/src/lib/Matrix.ts` (modified, +2/-8)
+```diff
+@@ -41,13 +41,7 @@ export function locate(matrix) {
+   };
+ }
+ 
+-export function pad(
+-  matrix,
+-  rows: number,
+-  cols: number,
+-  left: number,
+-  top: number
+-) {
++export function pad(matrix, rows, cols, left, top) {
+   if (!Array.isArray(matrix)) {
+     throw new Error("Matrix must be an array for padding");
+   }
+@@ -118,7 +112,7 @@ export function merge(...matrices) {
+   return result;
+ }
+ 
+-export function difference(matrix1, matrix2): number {
++export function difference(matrix1, matrix2) {
+   let mismatches = 0;
+   const rows = Math.max(matrix1.length, matrix2.length);
  
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-5)
+**File**: `arc/src/lib/Zoom.ts` (modified, +1/-1)
 ```diff
-@@ -386,11 +386,11 @@
- {"id":"spec-0386","description":"Nucleoid keeps literal replacement reactive","code":"text = \"red|blue|red\"\nsearch = \"|\"\nreplacement = \"/\"\nnormalized = text.replaceAll(search, replacement)\nfrozen = normalized.value\nassert(normalized, \"red/blue/red\")\nreplacement = \"-\"\nassert(normalized, \"red-blue-red\")\ntext = \"blue|green\"\nassert(normalized, \"blue-green\")\nsearch = \"blue\"\nassert(normalized, \"-|green\")\nreplacement = \"cyan\"\nassert(normalized, \"cyan|green\")\nassert(frozen, \"red/blue/red\")\nassert(text, \"blue|green\")","return":null}
- {"id":"spec-0387","description":"Nucleoid replaces literal strings in class rules","code":"class Page(title: str):\n    this.title = title\n$Page.slug = $Page.title.replaceAll(\" \", \"-\")\nfirst = Page(\"One Two One\")\nsecond = Page(\"Three Four\")\nslugs = Page.map(page => page.slug)\nassert(first.slug, \"One-Two-One\")\nassert(slugs, [\"One-Two-One\", \"Three-Four\"])\nfirst.title = \"Fresh Page\"\nassert(first.slug, \"Fresh-Page\")\nassert(slugs, [\"Fresh-Page\", \"Three-Four\"])\n$Page.slug = $Page.title.lower().replaceAll(\" \", \"_\")\nassert(first.slug, \"fresh_page\")\nassert(second.slug, \"three_four\")\nassert(slugs, [\"fresh_page\", \"three_four\"])","return":null}
- {"id":"spec-0388","description":"Nucleoid rolls back literal replacement argument failures","code":"source = \"a|b\"\ndef fail():\n    source = \"changed|changed\"\n    throw \"stop\"\ntry:\n    source.replaceAll(\"|\", fail())\ncatch error:\n    assert(error, \"stop\")\nassert(source, \"a|b\")\nrecovered = source.replaceAll(\"|\", \"/\")\nassert(recovered, \"a/b\")","return":null}
--{"id":"spec-0389","description":"Nucleoid selects direct conditional alternatives","code":"def classify(state, urgent):\n    if state == \"blocked\":\n        return \"hold\"\n    else urgent:\n        return \"fast\"\n    elif state == \"ready\":\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nurgent = false\nlabel = classify(state, urgent)\nassert(label, \"send\")\nurgent = true\nassert(label, \"fast\")\nstate = \"blocked\"\nassert(label, \"hold\")\nurgent = false\nassert(label, \"hold\")\nstate = \"queued\"\nassert(label, \"wait\")\nlabel","return":"\"wait\""}
--{"id":"spec-0390","description":"Nucleoid keeps direct conditional class alternatives reactive","code":"class Ticket\nfirst = Ticket()\nfirst.state = \"new\"\nfirst.priority = \"normal\"\nsecond = Ticket()\nsecond.state = \"review\"\nsecond.priority = \"urgent\"\nif $Ticket.state == \"blocked\":\n    $Ticket.queue = \"hold\"\nelse $Ticket.priority == \"urgent\":\n    $Ticket.queue = \"fast\"\nelif $Ticket.state == \"review\":\n    $Ticket.queue = \"review\"\nelse:\n    $Ticket.queue = \"normal\"\nassert(first.queue, \"normal\")\nassert(second.queue, \"fast\")\nfirst.state = \"blocked\"\nassert(first.queue, \"hold\")\nsecond.priority = \"normal\"\nassert(second.queue, \"review\")\nfirst.priority = \"urgent\"\nassert(first.queue, \"hold\")\nfirst.state = \"new\"\nassert(first.queue, \"fast\")\nassert(second.queue, \"review\")\nsecond.state = \"done\"\nassert(second.queue, \"normal\")","return":null}
--{"id":"spec-0391","description":"Nucleoid preserves direct alternative evaluation order","code":"def decide(first, second, third):\n    if first:\n        return \"first\"\n    else second:\n        return \"second\"\n    elif third:\n        return \"third\"\n    else:\n        return \"none\"\nassert(decide(true, true, true), \"first\")\nassert(decide(false, true, true), \"second\")\nassert(decide(false, false, true), \"third\")\nassert(decide(false, false, false), \"none\")\ndef guarded(value):\n    if value:\n        return \"ready\"\n    else missing:\n        return \"bad\"\n    else:\n        return \"other\"\nassert(guarded(true), \"ready\")\ntry:\n    guarded(false)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))","return":null}
--{"id":"spec-0392","description":"Nucleoid preserves direct alternative scope and return flow","code":"class Router:\n    def init(prefix):\n        this.prefix = prefix\n    def choose(status, fallback):\n        if status == \"blocked\":\n            return this.prefix + \"hold\"\n        else status == \"ready\":\n            return this.prefix + \"send\"\n        elif fallback:\n            return this.prefix + \"later\"\n        else:\n            return this.prefix + \"skip\"\nrouter = Router(\"a:\")\nstatus = \"ready\"\nlive = router.choose(status, false)\nsnapshot = live.value\nassert(live, \"a:send\")\nassert(snapshot, \"a:send\")\nassert(router.choose(\"unknown\", false), \"a:skip\")\nassert(router.choose(\"unknown\", true), \"a:later\")\nassert(router.choose(\"blocked\", true), \"a:hold\")\nassert(router.choose(\"ready\", true), \"a:send\")\nassert(status, \"ready\")\nassert(router.prefix, \"a:\")","return":null}
--{"id":"spec-0393","description":"Nucleoid rolls back failed direct alternatives","code":"source 
+@@ -34,7 +34,7 @@ export function focus(matrix) {
+   };
+ }
+ 
+-export function enlarge(matrix, rows: number, cols: number) {
++export function enlarge(matrix, rows, cols) {
+   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
+ 
+   const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
 ```
 
-**File**: `dataset/nucleoid.synth.29.jsonl` (added, +4/-0)
+---
+
+### Incident Patch 2: `efc50578` (2026-10-26)
+**Commit Message**: Revert "Annotate ARC locals and drop operation fields"
+
+This reverts commit 569e6ff9512524e4d5262a5dd9a19a1053b29a15.
+
+**File**: `arc/README.md` (modified, +6/-8)
 ```diff
-@@ -0,0 +1,4 @@
-+{"id":"synth-29-0001","description":"Nucleoid mixes explicit and direct conditional alternatives without indented header colons","code":"def route(state, urgent):\n    if state == \"blocked\"\n        return \"hold\"\n    else if urgent\n        return \"fast\"\n    elif state == \"ready\"\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nurgent = false\nlane = route(state, urgent)\nassert(lane, \"send\")\nurgent = true\nassert(lane, \"fast\")\nstate = \"blocked\"\nassert(lane, \"hold\")\nurgent = false\nstate = \"queued\"\nassert(lane, \"wait\")\nlane","return":"\"wait\""}
-+{"id":"synth-29-0002","description":"Nucleoid keeps colon-free conditional class suites reactive independently per instance","code":"class Parcel\nfirst = Parcel()\nfirst.state = \"queued\"\nsecond = Parcel()\nsecond.state = \"ready\"\nif $Parcel.state == \"blocked\"\n    $Parcel.lane = \"hold\"\nelse $Parcel.state == \"ready\"\n    $Parcel.lane = \"send\"\nelif:\n    $Parcel.lane = \"wait\"\n$Parcel.label = $Parcel.lane + \"!\"\nassert(first.lane, \"wait\")\nassert(second.label, \"send!\")\nfirst.state = \"blocked\"\nassert(first.label, \"hold!\")\nassert(second.lane, \"send\")\nsecond.state = \"queued\"\nassert(first.lane, \"hold\")\nassert(second.label, \"wait!\")\nsecond.label","return":"\"wait!\""}
-+{"id":"synth-29-0003","description":"Nucleoid preserves frozen classifier definitions and live inputs with colon-free conditional suites","code":"def classify(state):\n    if state == \"ready\"\n        return \"send\"\n    else:\n        return \"wait\"\nstate = \"ready\"\nfrozen = classify.value\nlive = classify(state)\nusingFrozen = frozen(state)\nsnapshot = usingFrozen.value\nassert(live, \"send\")\nassert(usingFrozen, \"send\")\ndef classify(state):\n    if state == \"ready\"\n        return \"go\"\n    else:\n        return \"queue\"\nassert(live, \"go\")\nassert(usingFrozen, \"send\")\nstate = \"queued\"\nassert(live, \"queue\")\nassert(usingFrozen, \"wait\")\nassert(snapshot, \"send\")\nlive","return":"\"queue\""}
-+{"id":"synth-29-0004","description":"Nucleoid rolls back failed reactive alternatives while preserving colon-free suite behavior","code":"source = \"ready\"\ndef route(status):\n    if status == \"ready\"\n        return \"send\"\n    else status == \"hold\"\n        return \"wait\"\n    else:\n        return \"skip\"\nlive = route(source)\nassert(live, \"send\")\ntry:\n    source = \"hold\"\n    def route(status):\n        if status == \"ready\"\n            return \"send\"\n        elif status == \"hold\"\n            throw \"blocked\"\n        else:\n            return \"skip\"\ncatch error:\n    assert(error, \"blocked\")\nassert(source, \"ready\")\nassert(live, \"send\")\nsource = \"hold\"\nassert(live, \"wait\")\nsource = \"unknown\"\nassert(live, \"skip\")\nlive","return":"\"skip\""}
+@@ -5,13 +5,11 @@
+ The application keeps `.ts` source files and runs directly on Node.js using
+ `tsx`, without generating JavaScript files. Explicit types must be inline
+ primitive annotations, such as `string`, `number`, and `boolean`, on scalar
+-parameters, local values, and return values. Infer arrays, object shapes,
+-callbacks, and async return types instead of declaring interfaces, type aliases,
+-generic types, or separate type files. The TypeScript check uses non-strict
+-inference. Avoid redundant primitive type checks inside typed helpers. Matrix
+-helpers trust array inputs but retain rectangularity, finite-value, and
+-safe-integer dimension/offset checks. Validate external model responses before
+-passing their grids to these helpers.
++parameters and return values. Infer arrays, object shapes, callbacks, and async
++return types instead of declaring interfaces, type aliases, generic types, or
++separate type files. The TypeScript check uses non-strict inference.
++Avoid redundant primitive type checks inside typed helpers. Retain numeric
++constraints and validation of matrices and external data.
+ Use Bun to install dependencies from the committed lockfile:
+ 
+ ```sh
+@@ -134,7 +132,7 @@ The synchronous `document()` function reads every JSON file in `src\dataset`,
+ alongside `instruct_dataset.ts`, on each call, independently of the working directory.
+ Files are sorted by name and returned as an array, with a separate entry per file.
+ The LLM wrapper serializes that array as one
+-`{"datasets": [...]}` message.
++`{"operation": "instruction_examples", "datasets": [...]}` message.
+ New files, including `dataset.core.2.json`, need no additional imports.
+ Non-JSON files and subdirectories are ignored. An empty dataset directory,
+ unreadable files, or malformed JSON fail explicitly; JSON errors name the file.
 ```
 
-**File**: `docs/README.md` (modified, +24/-9)
+**File**: `arc/src/analyzer.ts` (modified, +4/-0)
 ```diff
-@@ -674,13 +674,18 @@ Full detail: [NUC 6](nuc-0006.md).
- - A conditional can run again when an input changes later in the same cascade. An unchanged write does not restart feedback.
- - Accepted [NUC 34](nuc-0034.md) makes the colon after a final `else` optional
-   only before a genuine indented suite. The unchanged `else:` spelling is
--  equivalent; `if` and `else if` still require their existing colons.
-+  equivalent; final `else`/`elif` remains unconditional.
-+- The [conditional-suite contract](../nucleoid.spec.md#colon-free-indented-conditional-suites)
-+  also allows the colon to be omitted after an initial `if condition`, explicit
-+  `else if condition`/`elif if condition`, or an accepted direct alternative.
-+  Only a genuine indented body qualifies; every colon-bearing spelling remains
-+  supported. [NUC 49](nuc-0049.md) describes this source-only addition.
- - Require immediate newline/indent after `else` and a real indent after only
-   normal newline/semicolon layout. Blank/comment lines create no indent;
-   same-line statements, semicolons and braces cannot qualify for omission.
- - Reuse the whole existing body and nested/dangling-else association. Inline,
-   semicolon-separated and braced alternatives retain their required colon.
--  All other headers, canonical rendering, live rules, scopes, returns, throws,
-+  Unrelated headers, canonical rendering, live rules, scopes, returns, throws,
-   rollback and limits remain unchanged.
- 
- ```
-@@ -720,20 +725,22 @@ assert(signal.output, 8)
-   Same-line `else pass` and `else { pass }` retain their missing-colon errors.
- - The authoritative [colon-free indented else suites](../nucleoid.spec.md#colon-free-indented-else-suites)
-   section records layout, exact inherited diagnostics and executable traces.
--- The CLI already buffers a conditional from its initial colon header.
--  Bare final `else` stays in that buffer until blank-line commit or EOF;
--  no new continuation heuristic or literal/comment delimiter is added.
-+- The CLI buffers initial colon-bearing and lexical colon-free `if` headers,
-+  including lexical comments and balanced condition delimiters. Explicit and
-+  direct alternatives autoindent only in that same submission; blank-line
-+  commit/EOF still uses the real parser and exposes missing-body or other errors.
- - [NUC 43](nuc-0043.md) also permits `else condition:` or
-   `elif condition:` in an existing chain, only with a complete balanced
--  colon-bearing header and a genuine indented suite. Both lower exactly to
-+  condition header and a genuine indented suite. Both lower exactly to
-   the nested conditional of `else if condition:`.
- - `elif` is still the lexical alias for `else`. Explicit `elif if` works
-   just like `else if`; unconditional `elif:` and colon-free indented final
-   `elif` keep their accepted behavior. No new keyword or standalone
-   alternative statement is introduced.
--- Direct conditions cannot use inline/braced bodies, `:;`, a missing colon
--  or header separators. A non-consuming balanced token scan ignores nested
--  colons and checks the existing real-indent predicate. Failed qualification
-+- Direct conditions cannot use inline/braced bodies, `:;` or header separators.
-+  The colon is optional only at genuine indentation. A non-consuming balanced
-+  token scan ignores nested colons and checks the existing real-indent predicate.
-+  Failed qualification
-   leaves the final-else parser and original-source diagnostics untouched;
-   qualified conditions and bodies report ordinary parsing errors.
- - The document/JSONL exporter retains complete `else` and `elif` keywords
-@@ -1906,12 +1913,20 @@ super(arguments)                       explicit parent-constructor arguments
- 
- if condition:                          conditional
-     statement
-+if condition                           same conditional, genuine indentation only (NUC 49)
-+    statement
- else if condition:
-     statement
-+else if condition                      optional colon at genuine indentation
-+    statement
- else condition:                        optional direct alternative, indented only (NUC 43)
-     statement
-+else condition                         same direct alternative without its colon
-+    statement
- elif condition:                        equivalent existing Else alias, indented only
-     statement
-+elif condition                         same direct alternative without its colon
-+    statement
- else:
-     statement
- elif:                                  existing unconditional Else alias
+@@ -12,6 +12,7 @@ export async function declarations({ train_dataset }) {
+       {
+         role: "user",
+         content: JSON.stringify({
++          operation: "infer_declarations",
+           train_dataset,
+         }),
+       },
+@@ -38,9 +39,11 @@ export async function instances({ declarations, input_matrix, output_matrix }) {
+       {
+         role: "user",
+         content: JSON.stringify({
++          operation: "segment_training_instances",
+           declarations,
+           input_matrix,
+           output_matrix,
++          query: { class: "Obj" },
+         }),
+       },
+     ],
+@@ -88,6 +91,7 @@ export async function value({
+       {
+         role: "user",
+         content: JSON.stringify({
++          operation: "construct_training_instance",
+           instance_name,
+           declarations,
+           input_instance_matrix,
 ```
 
-**File**: `docs/examples.md` (modified, +15/-9)
+**File**: `arc/src/app.ts` (modified, +4/-7)
 ```diff
-@@ -1944,8 +1944,10 @@ assert(item.status, "EMPTY")
- ```
+@@ -22,7 +22,7 @@ const training_input = {
+ };
  
- - Accepted [NUC 34](nuc-0034.md) makes only a final real-indented `else` colon
--  optional; the same source with `else:` remains equivalent. Every condition
--  header retains its colon and existing branch order.
-+  optional; the same source with `else:` remains equivalent.
-+- This legacy control deliberately retains every condition colon.
-+  [NUC 49](nuc-0049.md) also permits their omission before genuine indentation,
-+  with unchanged branch order.
+ export async function start() {
+-  const startedAt: number = performance.now();
++  const startedAt = performance.now();
+   terminal.header({ version: await nucleoid.version() });
+   terminal.puzzle({ train, testInput: test_input_matrix });
+   terminal.section(
+@@ -31,7 +31,7 @@ export async function start() {
+     "Infer reusable objects and transformation rules"
+   );
  
- **Smooth quintic transitions preserve clamped endpoints**
+-  let instance_index: number = 0;
++  let instance_index = 0;
  
-@@ -2182,11 +2184,11 @@ assert(snapshot, "archive/notes")
+   const { declarations } = await analyzer.declarations({
+     train_dataset: training_input,
+@@ -54,10 +54,7 @@ export async function start() {
+     });
  
- ```nuc
- def classify(state, urgent):
--    if state == "blocked":
-+    if state == "blocked"
-         return "hold"
--    else urgent:
-+    else urgent
-         return "fast"
--    elif state == "ready":
-+    elif state == "ready"
-         return "send"
-     else:
-         return "wait"
-@@ -2202,11 +2204,11 @@ urgent = true
- assert(live, "fast")
- assert(usingFrozen, "fast")
- def classify(state, urgent):
--    if state == "blocked":
-+    if state == "blocked"
-         return "pause"
--    else urgent:
-+    else urgent
-         return "rush"
--    elif state == "ready":
-+    elif state == "ready"
-         return "go"
-     else:
-         return "queue"
-@@ -2221,12 +2223,16 @@ assert(usingFrozen, "hold")
- - [NUC 43](nuc-0043.md) adds only an optional spelling for genuine
-   indented conditional alternatives. `else condition:` and `elif condition:`
-   retain the complete AST and behavior of `else if condition:`.
-+- [NUC 49](nuc-0049.md) permits the additional colon-free spellings shown
-+  here, including initial and explicit else-if conditions, only at genuine
-+  indentation. Colon-bearing, mixed and legacy inline/braced suites remain
-+  valid wherever previously supported.
- - Function definitions may be live or frozen without freezing their inputs.
-   Ordinary noncapture, explicit returns, receiver scopes and transaction
-   failures are unchanged; no receiver-frame repair is included.
- - Explicit `else if`, unconditional `else:`/`elif:` and their accepted
-   colon-free indented final forms remain supported. See the
--  [root contract](../nucleoid.spec.md#direct-conditional-alternatives) and
-+  [root contract](../nucleoid.spec.md#colon-free-indented-conditional-suites) and
-   [reference](README.md#conditionals) for layout and exact errors.
+     for (const { input_instance_matrix, output_instance_matrix } of instances) {
+-      const instance_name: string = `obj${String(instance_index++).padStart(
+-        12,
+-        "0"
+-      )}`;
++      const instance_name = `obj${String(instance_index++).padStart(12, "0")}`;
  
- ## Comma-free explicit object properties
+       const { implementation, input_value, output_value } =
+         await analyzer.value({
+@@ -90,7 +87,7 @@ export async function start() {
+     test_input_matrix,
+   });
+ 
+-  let test_index: number = 0;
++  let test_index = 0;
+ 
+   let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
+     Array(test_output_matrix[0].length).fill(0)
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +2/-2)
 ```diff
-@@ -51,6 +51,7 @@ Created: 31-Jul-2026
- | [44](nuc-0044.md) | Comma-Free Explicit Object Properties | Accepted |
- | [45](nuc-0045.md) | Colon-Led Assertion Statements | Accepted |
- | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Accepted |
-+| [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Accepted |
+@@ -11,8 +11,8 @@ export function document() {
+     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
+   }
  
- ### Runtime features
+-  const datasets = files.map((file: string) => {
+-    const source: string = readFileSync(join(__dirname, file), "utf8");
++  const datasets = files.map((file) => {
++    const source = readFileSync(join(__dirname, file), "utf8");
  
-@@ -148,6 +149,7 @@ Created: 31-Jul-2026
- | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Standards Track | Syntax enhancement | Accepted |
- | [47](nuc-0047.md) | Default Named Constructors | Standards Track | Runtime features | Accepted |
- | [48](nuc-0048.md) | State-Filtered Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Standards Track | Syntax enhancement | Accepted |
- 
- ## Copyright
- 
+     try {
+       return JSON.parse(source);
 ```
 
-**File**: `docs/nuc-0049.md` (added, +210/-0)
+**File**: `arc/src/lib/Matrix.ts` (modified, +18/-16)
 ```diff
-@@ -0,0 +1,210 @@
-+# NUC 49 -- Colon-Free Indented Conditional Suites
-+
-+```
-+NUC: 49
-+Title: Colon-Free Indented Conditional Suites
-+Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 25-Oct-2026
-+Requires: 34, 43
-+```
-+
-+## Abstract
-+
-+- Make a conditional header's colon optional only before a genuine indented
-+  suite: initial `if`, explicit `else if`/`elif if`, and accepted direct
-+  `else condition`/`elif condition`.
-+- Preserve every accepted spelling, complete conditional AST, canonical
-+  rendering, graph identity, source positions, runtime behavior and limits.
-+- Keep final bare `else`/`elif` unchanged and unconditional.
-+
-+## Motivation
-+
-+- Genuine indentation already identifies the suite boundary without the
-+  redundant colon, as established for final alternatives and exception suites.
-+- Conditional routing should use that optional spelling without requiring a
-+  second control-flow implementation or replacing accepted syntax.
-+- The existing routing, reactive class, evaluation-order, scope, rollback and
-+  frozen-function examples exercise the addition without new measured cases.
-+
-+## Rationale
-+
-+- The caller's single registry-derived uniform draw selected index 0,
-+  `Syntax enhancement`, from the four eligible enhancement categories.
-+- Extend the established genuine-indentation colon-omission pattern to redundant
-+  conditional-header colons without changing control flow; do not redraw.
-+- Reuse `has_indented_body`, `has_indented_suite` and `suite_body`, rather than
-+  making general `suite()` colon-optional or changing unrelated header grammars.
-+- Reject inline/braced colon omission, header-line semicolons, inferred bodies,
-+  speculative expression parsing, caught errors, parser rewinds and fake
-+  continuation success.
-+- Preserve explicit colons for all currently accepted suite forms, and keep
-+  representative legacy forms documented and covered.
-+
-+## Specification
-+
-+- The normative contract is
-+  [Colon-free indented conditional suites](../nucleoid.spec.md#colon-free-indented-conditional-suites),
-+  together with the unchanged conditional semantics and accepted alternatives.
-+- Parse the initial or explicit alternative condition using the existing
-+  expression parser. If a colon follows, use the unchanged `suite()` path.
-+- Otherwise require immediate `Newline` or `Indent`; the first token after only
-+  `Newline`/`Semicolon` layout must be a real `Indent`. Inspect without consuming
-+  tokens; success selects the complete existing `suite_body()` parser.
-+- Direct alternatives first qualify a nonempty balanced header, matching
-+  parentheses, brackets and braces. Its top-level colon or body-layout boundary
-+  must satisfy the same genuine-indentation guard. Mismatches, unbalanced
-+  prefixes, header-line semicolons, dedents and EOF do not qualify.
-+- Nested call/slice/object/function expressions and annotations do not delimit
-+  the header; strings, regexes, templates and lexical comments remain tokens,
-+  not punctuation guesses. LF, CRLF, tabs and delimited multiline expressions
-+  keep existing lexer behavior.
-+- Missing, comment-only and unindented bodies, and colon-free inline/braced
-+  suites, retain the inherited errors and source anchors. Failed direct
-+  qualification consumes nothing and retains the original final-else parser.
-+- Once qualified, ordinary expression/body errors propagate directly. No
-+  speculative parse, catch, rewind, alternate success or runtime path is added.
-+- Final `else`/`elif` retains its unconditional `Stmt::Block`. Every conditional
-+  condition retains the complete existing `Stmt::If` and recursive association.
-+- Preserve canonical generator rendering, graph keys and all node metadata,
-+  ordered actual reads/dependencies, top-level statement positions, truthiness,
-+  first-match and short-circuit order, independent per-instance rules, live and
-+  frozen functions, caller/receiver scopes, returns, rollback and recovery.
-+- Preserve parser nesting and chain bounds and inherited recursive-chain and
-+  queued-method receiver behavior; no unrelated bug fix is implied.
-+- The native CLI lexically recognizes an initial colon-free `if` header for
-+  buffering and autoindent; explicit/direct alternatives only adjust indentation
-+  inside that existing submission. Blank-line commit and EOF use the real parser;
-+  errors remain visible and subsequent commands/submissions recover normally.
-+- The production document/JSONL splitter already groups these complete chains.
-+  Keep it unchanged and verify actual per-statement export execution.
-+- Do not change `for`, class, definition, exception, anonymous-function or other
-+  headers, project versions, release metadata, dependencies or ARC.
-+
-+- The existing `Nucleoid selects direct conditional alternatives` spec entry
-+  contains this complete routing function, with its original protected checks
-+  and expecte
+@@ -3,20 +3,23 @@ export function crop(matrix) {
+ }
+ 
+ export function locate(matrix) {
+-  const rows: number = matrix.length;
+-  const cols: number = matrix[0]?.length ?? 0;
++  if (!Array.isArray(matrix)) {
++    throw new Error("Matrix must be an array for cropping");
++  }
++  const rows = matrix.length;
++  const cols = matrix[0]?.length ?? 0;
+   let top = rows;
+   let bottom = -1;
+   let left = cols;
+   let right = -1;
+ 
+   for (let y = 0; y < rows; y++) {
+     const row = matrix[y];
+-    if (row.length !== cols) {
++    if (!Array.isArray(row) || row.length !== cols) {
+       throw new Error("Matrix must be rectangular for cropping");
+     }
+     for (let x = 0; x < cols; x++) {
+-      const value: number = row[x];
++      const value = row[x];
+       if (!Number.isFinite(value)) {
+         throw new Error("Matrix must contain finite numbers for cropping");
+       }
+@@ -45,6 +48,9 @@ export function pad(
+   left: number,
+   top: number
+ ) {
++  if (!Array.isArray(matrix)) {
++    throw new Error("Matrix must be an array for padding");
++  }
+   if (
+     !Number.isSafeInteger(rows) ||
+     !Number.isSafeInteger(cols) ||
+@@ -61,24 +67,24 @@ export function pad(
+   ) {
+     throw new Error("Padding offsets must be non-negative safe integers");
+   }
+-  const sourceRows: number = matrix.length;
+-  const sourceCols: number = matrix[0]?.length ?? 0;
++  const sourceRows = matrix.length;
++  const sourceCols = matrix[0]?.length ?? 0;
+   const paddedRows = Math.max(rows, top + sourceRows);
+   const paddedCols = Math.max(cols, left + sourceCols);
+   if (!Number.isSafeInteger(paddedRows) || !Number.isSafeInteger(paddedCols)) {
+     throw new Error("Expanded padding dimensions must be safe integers");
+   }
+   const result = Array.from({ length: paddedRows }, () =>
+-    Array.from({ length: paddedCols }, () => 0)
++    Array(paddedCols).fill(0)
+   );
+ 
+   for (let y = 0; y < sourceRows; y++) {
+     const row = matrix[y];
+-    if (row.length !== sourceCols) {
++    if (!Array.isArray(row) || row.length !== sourceCols) {
+       throw new Error("Matrix must be rectangular for padding");
+     }
+     for (let x = 0; x < sourceCols; x++) {
+-      const value: number = row[x];
++      const value = row[x];
+       if (!Number.isFinite(value)) {
+         throw new Error("Matrix must contain finite numbers for padding");
+       }
+@@ -93,14 +99,10 @@ export function merge(...matrices) {
+   if (matrices.length === 0) {
+     throw new Error("At least one matrix is required for merging");
+   }
+-  const numRows = Math.max(...matrices.map((matrix): number => matrix.length));
+-  const numCols = Math.max(
+-    ...matrices.map((matrix): number => matrix[0]?.length ?? 0)
+-  );
++  const numRows = Math.max(...matrices.map((matrix) => matrix.length));
++  const numCols = Math.max(...matrices.map((matrix) => matrix[0]?.length ?? 0));
+ 
+-  const result = Array.from({ length: numRows }, () =>
+-    Array.from({ length: numCols }, () => 0)
+-  );
++  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+ 
+   for (const matrix of matrices) {
+     const padded = pad(matrix, numRows, numCols, 0, 0);
 ```
 
-**File**: `nucleoid.spec.md` (modified, +105/-38)
+**File**: `arc/src/lib/Zoom.ts` (modified, +2/-2)
 ```diff
-@@ -1496,10 +1496,10 @@ statement positions; caught values and transaction recovery are unchanged.
-   all statements, nested suites, optional final `Dedent`, and EOF handling.
-   Blank/comment lines create no indent; LF, CRLF and accepted tabs keep the
-   existing lexer rules. A semicolon on the header line never qualifies.
--- Every `if` and `else if` condition retains its required colon. Other `for`,
--  definition, class, try/catch and anonymous headers keep their accepted
--  grammars. Colon-bearing indented, inline, semicolon-separated and braced
--  alternatives remain valid, with unchanged dangling-else association.
-+- Conditional headers follow the optional-colon rule below; `for`, definition,
-+  class, try/catch and anonymous headers keep their accepted grammars.
-+  Colon-bearing indented, inline, semicolon-separated and braced alternatives
-+  remain valid, with unchanged dangling-else association.
- - Strings, regexes, templates and comments containing `else:` are not headers.
-   No token, keyword, public AST/API, evaluation, scope, frame, graph, return,
-   throw, rollback or resource-limit behavior changes. Canonical rendering
-@@ -1527,9 +1527,10 @@ statement positions; caught values and transaction recovery are unchanged.
+@@ -1,6 +1,6 @@
+ export function focus(matrix) {
+-  const rows: number = matrix.length;
+-  const cols: number = matrix[0].length;
++  const rows = matrix.length;
++  const cols = matrix[0].length;
  
- - Within an existing conditional chain, `else CONDITION:` and
-   `elif CONDITION:` optionally spell `else if CONDITION:` only when the
--  complete condition header ends at a balanced top-level colon followed by
--  a genuine indented suite. Both lower to the same complete nested `Stmt::If`,
--  not an unconditional block or a new runtime operation.
-+  complete balanced condition header precedes a genuine indented suite.
-+  Their suite colon is optional under the conditional-header rule below.
-+  Both lower to the same complete nested `Stmt::If`, not an unconditional
-+  block or a new runtime operation.
- - `elif` remains the existing lexical alias for `else`, not a new keyword.
-   Explicit `else if` and `elif if` keep priority and all their accepted bodies,
-   including inline, semicolon-separated and braced suites. Final `else:` and
-@@ -1538,18 +1539,20 @@ statement positions; caught values and transaction recovery are unchanged.
- - After `Else`, a private, non-consuming token scan qualifies only a nonempty
-   balanced header. Match parentheses, brackets and braces; ignore their nested
-   colons, including slices, object fields, calls and parameter annotations.
--  Stop on mismatched delimiters or top-level logical newline, semicolon,
--  indent, dedent or EOF. Do not skip header separators, parse a speculative
--  expression, catch/rewind an error or evaluate a condition during lookahead.
--- The suite colon requires immediate `Newline` or `Indent`, then a real
--  `Indent` after only the existing newline/semicolon layout. Blank/comment-only
--  lines do not create an indent. LF, CRLF, tabs and delimited multiline
--  expressions retain their existing lexer and suite behavior.
-+  A top-level colon, newline or indent ends the scan and must qualify with the
-+  existing real-indent predicate; mismatched delimiters, semicolons, dedents
-+  and EOF fail. Do not skip header separators, parse a speculative expression,
-+  catch/rewind an error or evaluate a condition during lookahead.
-+- With a colon, require immediate `Newline` or `Indent` after it; without one,
-+  require that same layout immediately after the balanced nonempty condition.
-+  A real `Indent` must follow only the existing newline/semicolon layout.
-+  Blank/comment-only lines do not create an indent. LF, CRLF, tabs and delimited
-+  multiline expressions retain their existing lexer and suite behavior.
- - Qualification does not validate an expression. Once qualified, the ordinary
-   condition and whole-suite parsers report their real errors. If it fails,
-   consume nothing and use the original final-else parser and its original
-   source positions and diagnostics. New direct conditions have no inline,
--  braced or `:;` shortcut, and cannot omit their colon or stand alone.
-+  braced or `:;` shortcut and cannot stand alone.
- - Complete ASTs, canonical graph keys and top-level statement positions match
-   their explicit counterparts. Conditions still use existing truthiness,
-   first-match and short-circuit evaluation, actual reads and dependency
-@@ -1562,7 +1565,7 @@ statement positions; caught values and transaction recovery are unchanged.
-   `ReferenceError("this is not defined")`.
- - Exact `if false: pass\nelse ready: pass`, `else ready: { pass }`,
-   `else ready:;\n    pass`, `else ready:\npass` and
--  `else ready\n    pass` keep
-+  `else ready\n    # no body` keep
-   `SyntaxError("Expected ':' but found identifier 'ready'")` at line 2,
-   column 6. The same `elif` prefixes retain the same diagnostics.
- - Exact `if false: pass\nelse true +:\n    pass` qualifies, then raises
-@@ -1575,21 +1578,85 @@ statement positions; caught values and transaction recovery are unchanged.
- - Expression/statement nesting remains bounded at 64 and op
+   let xOffset = -1,
+     yOffset = -1,
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ export async function generate({
+     messages.unshift({
+       role: "assistant",
+       content: JSON.stringify({
++        operation: "instruction_examples",
+         datasets: dataset.document(),
+       }),
+     });
+```
+
+**File**: `arc/src/lib/nucleoid.ts` (modified, +5/-5)
+```diff
+@@ -7,7 +7,7 @@ import { promisify } from "node:util";
+ const execFileAsync = promisify(execFile);
+ 
+ async function execute(args) {
+-  const executable: string =
++  const executable =
+     process.env.NUCLEOID_EXECUTABLE ??
+     String.raw`C:\Users\canmi\dev\Nucleoid\target\debug\nucleoid.exe`;
+   const { stdout } = await execFileAsync(executable, args, {
+@@ -23,7 +23,7 @@ async function execute(args) {
+ }
+ 
+ export async function version() {
+-  const stdout: string = await execute(["--version"]);
++  const stdout = await execute(["--version"]);
+   const match = /^nucleoid\s+(\S+)\s*$/.exec(stdout);
+   if (!match) {
+     throw new Error("Nucleoid returned invalid version output");
+@@ -32,12 +32,12 @@ export async function version() {
+ }
+ 
+ export async function run(source: string) {
+-  const directory: string = await mkdtemp(join(tmpdir(), "nuc-arc-"));
++  const directory = await mkdtemp(join(tmpdir(), "nuc-arc-"));
+ 
+   try {
+-    const file: string = join(directory, "program.nuc");
++    const file = join(directory, "program.nuc");
+     await writeFile(file, source, "utf8");
+-    const stdout: string = await execute(["--json", file]);
++    const stdout = await execute(["--json", file]);
+ 
+     try {
+       const result = JSON.parse(stdout);
+```
+
+---
+
+### Incident Patch 3: `662286a6` (2026-10-26)
+**Commit Message**: Revert "Add inline types and validate external JSON in ARC"
+
+This reverts commit 8809b7dd94218c05000adab67e575ac999bf0d6b.
+
+**File**: `arc/README.md` (modified, +9/-19)
+```diff
+@@ -3,25 +3,15 @@
+ ## Development
+ 
+ The application keeps `.ts` source files and runs directly on Node.js using
+-`tsx`, without generating JavaScript files. Keep data types literal and inline,
+-including primitives, object shapes, arrays, callback signatures, and synchronous
+-return values. Spell out object fields instead of deriving contracts with
+-`Parameters`, `ReturnType`, `Awaited`, `Omit`, or other utility types. Let
+-TypeScript infer async return types instead of writing `Promise` annotations;
+-async functions still return promises. Do not introduce model interfaces,
+-type aliases, or separate type files.
+-The TypeScript check uses non-strict inference. Avoid redundant type checks
+-inside typed helpers. Matrix helpers trust array inputs but retain
+-rectangularity, finite-value, and safe-integer dimension/offset checks.
+-External JSON remains `unknown` until validated: OpenRouter envelopes and
+-per-call responses are checked before use. Native `input_value` and `output_value`
+-use inline `{ [property: string]: unknown }` maps without predefined properties.
+-Snapshots accept arbitrary JSON objects and preserve all fields; primitives,
+-arrays, and null are rejected. Output placement requires numeric `x` and `y`
+-only at the composition boundary, with dimension/offset constraints retained
+-in the matrix helpers. The generic native JSON bridge still supports primitive
+-results. Validate external model responses before passing their grids to
+-matrix helpers.
++`tsx`, without generating JavaScript files. Explicit types must be inline
++primitive annotations, such as `string`, `number`, and `boolean`, on scalar
++parameters, local values, and return values. Infer arrays, object shapes,
++callbacks, and async return types instead of declaring interfaces, type aliases,
++generic types, or separate type files. The TypeScript check uses non-strict
++inference. Avoid redundant primitive type checks inside typed helpers. Matrix
++helpers trust array inputs but retain rectangularity, finite-value, and
++safe-integer dimension/offset checks. Validate external model responses before
++passing their grids to these helpers.
+ Use Bun to install dependencies from the committed lockfile:
+ 
+ ```sh
+```
+
+**File**: `arc/src/analyzer.ts` (modified, +9/-44)
+```diff
+@@ -4,27 +4,10 @@ import * as llm from "./lib/llm";
+ import * as terminal from "./lib/terminal";
+ import * as responseFormat from "./lib/response_format";
+ 
+-export async function declarations({
+-  train_dataset,
+-}: {
+-  train_dataset: {
+-    dataset: {
+-      input_matrix: number[][];
+-      output_matrix: number[][];
+-      instances: {
+-        instance_name: string;
+-        input_instance_matrix: number[][];
+-        output_instance_matrix: number[][];
+-        implementation: string;
+-        input_value: object;
+-        output_value: object;
+-      }[];
+-    }[];
+-  };
+-}) {
++export async function declarations({ train_dataset }) {
+   terminal.step("Inferring declarations");
+ 
+-  const { declarations } = await llm.generate<{ declarations: string[] }>({
++  const { declarations } = await llm.generate({
+     messages: [
+       {
+         role: "user",
+@@ -47,23 +30,10 @@ export async function declarations({
+   return { declarations };
+ }
+ 
+-export async function instances({
+-  declarations,
+-  input_matrix,
+-  output_matrix,
+-}: {
+-  declarations: string[];
+-  input_matrix: number[][];
+-  output_matrix: number[][];
+-}) {
++export async function instances({ declarations, input_matrix, output_matrix }) {
+   terminal.step("Segmenting training objects");
+ 
+-  const { instances } = await llm.generate<{
+-    instances: {
+-      input_instance_matrix: number[][];
+-      output_instance_matrix: number[][];
+-    }[];
+-  }>({
++  const { instances } = await llm.generate({
+     messages: [
+       {
+         role: "user",
+@@ -110,15 +80,10 @@ export async function value({
+   declarations,
+   input_instance_matrix,
+   output_instance_matrix,
+-}: {
+-  instance_name: string;
+-  declarations: string[];
+-  input_instance_matrix: number[][];
+-  output_instance_matrix: number[][];
+ }) {
+   terminal.step(`Constructing ${instance_name}`);
+ 
+-  const { implementation } = await llm.generate<{ implementation: string }>({
++  const { implementation } = await llm.generate({
+     messages: [
+       {
+         role: "user",
+@@ -136,11 +101,11 @@ export async function value({
+   });
+ 
+   terminal.step("Evaluating declarative rules");
+-  const input_value = nucleoid.snapshot(
+-    await nucleoid.run([declarations[0], implementation].join("\n\n"))
++  const input_value = await nucleoid.run(
++    [declarations[0], implementation].join("\n\n")
+   );
+-  const output_value = nucleoid.snapshot(
+-    await nucleoid.run([...declarations, implementation].join("\n\n"))
++  const output_value = await nucleoid.run(
++    [...declarations, implementation].join("\n\n")
+   );
+ 
+   terminal.grid("Input crop", Matrix.crop(input_instance_matrix));
+```
+
+**File**: `arc/src/app.ts` (modified, +4/-23)
+```diff
+@@ -13,20 +13,7 @@ const {
+   test: [{ input: test_input_matrix, output: test_output_matrix }],
+ } = puzzle;
+ 
+-const training_input: {
+-  dataset: {
+-    input_matrix: number[][];
+-    output_matrix: number[][];
+-    instances: {
+-      instance_name: string;
+-      input_instance_matrix: number[][];
+-      output_instance_matrix: number[][];
+-      implementation: string;
+-      input_value: { [property: string]: unknown };
+-      output_value: { [property: string]: unknown };
+-    }[];
+-  }[];
+-} = {
++const training_input = {
+   dataset: train.map(({ input, output }) => ({
+     input_matrix: input,
+     output_matrix: output,
+@@ -105,17 +92,11 @@ export async function start() {
+ 
+   let test_index: number = 0;
+ 
+-  let result_matrix: number[][] = Array.from(
+-    { length: test_output_matrix.length },
+-    () => Array<number>(test_output_matrix[0].length).fill(0)
++  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
++    Array(test_output_matrix[0].length).fill(0)
+   );
+ 
+-  const input_instances: {
+-    input_value: { [property: string]: unknown };
+-    input_instance_matrix: number[][];
+-    output_value: { [property: string]: unknown };
+-    output_instance_matrix: number[][];
+-  }[] = [];
++  const input_instances = [];
+ 
+   for (const { input_instance_matrix } of instances) {
+     const { input_value, output_value } = await visualizer.value({
+```
+
+**File**: `arc/src/dataset/instruct_dataset.ts` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ import { readdirSync, readFileSync } from "node:fs";
+ import { join } from "node:path";
+ 
+-export function document(): unknown[] {
++export function document() {
+   const files = readdirSync(__dirname, { withFileTypes: true })
+     .filter((entry) => entry.isFile() && /\.json$/i.test(entry.name))
+     .map((entry) => entry.name)
+@@ -11,7 +11,7 @@ export function document(): unknown[] {
+     throw new Error(`No JSON instruction datasets found in ${__dirname}`);
+   }
+ 
+-  const datasets = files.map((file: string): unknown => {
++  const datasets = files.map((file: string) => {
+     const source: string = readFileSync(join(__dirname, file), "utf8");
+ 
+     try {
+```
+
+**File**: `arc/src/lib/Markdown.ts` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++export function json(markdown: string) {
++  const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
++
++  if (matches.length > 0) {
++    const lastMatch = matches[matches.length - 1];
++    return JSON.parse(lastMatch[1]);
++  }
++}
+```
+
+**File**: `arc/src/lib/Matrix.ts` (modified, +7/-11)
+```diff
+@@ -1,12 +1,8 @@
+-export function crop(matrix: number[][]): number[][] {
++export function crop(matrix) {
+   return locate(matrix).matrix;
+ }
+ 
+-export function locate(matrix: number[][]): {
+-  matrix: number[][];
+-  x: number;
+-  y: number;
+-} {
++export function locate(matrix) {
+   const rows: number = matrix.length;
+   const cols: number = matrix[0]?.length ?? 0;
+   let top = rows;
+@@ -43,12 +39,12 @@ export function locate(matrix: number[][]): {
+ }
+ 
+ export function pad(
+-  matrix: number[][],
++  matrix,
+   rows: number,
+   cols: number,
+   left: number,
+   top: number
+-): number[][] {
++) {
+   if (
+     !Number.isSafeInteger(rows) ||
+     !Number.isSafeInteger(cols) ||
+@@ -93,7 +89,7 @@ export function pad(
+   return result;
+ }
+ 
+-export function merge(...matrices: number[][][]): number[][] {
++export function merge(...matrices) {
+   if (matrices.length === 0) {
+     throw new Error("At least one matrix is required for merging");
+   }
+@@ -120,7 +116,7 @@ export function merge(...matrices: number[][][]): number[][] {
+   return result;
+ }
+ 
+-export function difference(matrix1: number[][], matrix2: number[][]): number {
++export function difference(matrix1, matrix2): number {
+   let mismatches = 0;
+   const rows = Math.max(matrix1.length, matrix2.length);
+ 
+@@ -146,7 +142,7 @@ export function difference(matrix1: number[][], matrix2: number[][]): number {
+   return mismatches;
+ }
+ 
+-export function toString(matrix: number[][]): void {
++export function toString(matrix) {
+   matrix.forEach((row) => {
+     console.debug(`[${row.join(",")}]`);
+   });
+```
+
+**File**: `arc/src/lib/Zoom.ts` (modified, +3/-17)
+```diff
+@@ -1,8 +1,4 @@
+-export function focus(matrix: number[][]): {
+-  x_position: number;
+-  y_position: number;
+-  object_matrix: number[][];
+-} {
++export function focus(matrix) {
+   const rows: number = matrix.length;
+   const cols: number = matrix[0].length;
+ 
+@@ -38,20 +34,10 @@ export function focus(matrix: number[][]): {
+   };
+ }
+ 
+-export function enlarge(
+-  matrix: {
+-    x_position: number;
+-    y_position: number;
+-    object_matrix: number[][];
+-  },
+-  rows: number,
+-  cols: number
+-): number[][] {
++export function enlarge(matrix, rows: number, cols: number) {
+   const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
+ 
+-  const originalArray = Array.from({ length: rows }, () =>
+-    Array<number>(cols).fill(0)
+-  );
++  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
+ 
+   for (let i = 0; i < object_matrix.length; i++) {
+     for (let j = 0; j < object_matrix[i].length; j++) {
+```
+
+**File**: `arc/src/lib/llm.ts` (modified, +2/-33)
+```diff
+@@ -1,42 +1,11 @@
+ import { v4 as uuid } from "uuid";
+ import * as dataset from "../dataset";
+ import * as openrouter from "./openrouter";
+-import type { SchemaObject } from "ajv";
+ 
+-export async function generate<
+-  Response extends {
+-    declarations?: string[];
+-    instances?: {
+-      input_instance_matrix: number[][];
+-      output_instance_matrix?: number[][];
+-    }[];
+-    implementation?: string;
+-    orientation?: number;
+-    output_instance_matrix?: number[][];
+-  }
+->({
++export async function generate({
+   messages = [],
+   response_format,
+   document = true,
+-}: {
+-  messages?: {
+-    role: "system" | "user" | "assistant";
+-    content: string;
+-  }[];
+-  response_format: {
+-    type: "json_schema";
+-    json_schema: {
+-      name: string;
+-      strict: true;
+-      schema: {
+-        type: "object";
+-        properties: { [property: string]: SchemaObject };
+-        required: string[];
+-        additionalProperties: false;
+-      };
+-    };
+-  };
+-  document?: boolean;
+ }) {
+   if (document) {
+     messages.unshift({
+@@ -51,7 +20,7 @@ export async function generate<
+     content: JSON.stringify({ control_id: uuid() }),
+   });
+ 
+-  return openrouter.generate<Response>({
++  return openrouter.generate({
+     messages,
+     response_format,
+   });
 ```
 
 #### Recent Merged Pull Requests:
@@ -1437,44 +1962,52 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Accept NUC 49 colon-free conditional suites
+## X. Revert "Use strict JSON Schema responses for ARC LLM calls"
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd1f7fdb`: Accept NUC 49 colon-free conditional suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18d1103e`: Revert "Use strict JSON Schema responses for ARC LLM calls". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- This legacy control deliberately retains its condition colon.
-  [NUC 49](docs/nuc-0049.md) also permits omission for genuine-indented
-  `if`/`else if` suites; inline, semicolon-separated and braced alternatives
-  still require their accepted colons. A header-line semicolon cannot qualify.
-    if state == "done"
-    else state == "ready"
-  before a complete condition with a genuine indented body.
-- [NUC 49](docs/nuc-0049.md) additionally makes the header colon optional
-  for initial `if`, explicit `else if`/`elif if`, and these direct alternatives,
-  only before a genuine indented suite. The CLI recognizes initial colon-free
-  headers and autoindents without treating literal/comment punctuation as syntax.
-  See the [root contract](nucleoid.spec.md#colon-free-indented-conditional-suites).
+`tsx`, without generating JavaScript files. Sources use JavaScript syntax without
+explicit TypeScript types; the TypeScript check uses non-strict inference.
+supports JSON output. A request's `model` argument overrides that setting.
+Files are sorted by name and serialized as one
+`{"datasets": [...]}` document, with a separate array entry per file.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- `if` and `else if` keep their colons; inline, semicolon-separated and braced
-  alternatives still need `else:`. A same-line semicolon cannot enable omission.
-    if state == "done":
-    else state == "ready":
-  before a complete colon-bearing condition with a genuine indented body.
-  See the [root contract](nucleoid.spec.md#direct-conditional-alternatives).
+`tsx`, without generating JavaScript files. Explicit types must be inline
+primitive annotations, such as `string`, `number`, and `boolean`, on scalar
+parameters and return values. Infer arrays, object shapes, callbacks, and async
+return types instead of declaring interfaces, type aliases, generic types, or
+separate type files. The TypeScript check uses non-strict inference.
+Avoid redundant primitive type checks inside typed helpers. Retain numeric
+constraints and validation of matrices and external data.
+supports JSON Schema structured outputs. A request's `model` argument overrides
+that setting.
+## Structured responses
+
+Each analyzer and visualizer call supplies its own named `response_format`
+using `type: "json_schema"` and `strict: true`, rather than embedding
+pseudo-JSON format hints in message text. Every schema requires its declared
+fields and rejects unknown fields, including inside instance objects.
+Declarations and implementations must contain non-whitespace code. Instance
+grids contain integer colors from `0` through `9`; segmentation masks must match
+the supplied canvas dimensions. Rendered output crops retain their existing
+placement behavior and ARC dimension limits.
+
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd1f7fdb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18d1103e` are properly handled with clean fallback behavior.

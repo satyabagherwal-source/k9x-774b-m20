@@ -5134,3 +5134,9 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5293992f` | Multi-dimensional audit evidence | 2026-10-26T10:33:24.999Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `7d3fbffc` | Multi-dimensional audit evidence | 2026-10-26T10:33:27.188Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `291e3f03` | Multi-dimensional audit evidence | 2026-10-26T11:04:09.233Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `ec3d8013` | Multi-dimensional audit evidence | 2026-10-26T11:15:42.613Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `045aada9` | Multi-dimensional audit evidence | 2026-10-26T11:15:43.477Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `18d1103e` | Multi-dimensional audit evidence | 2026-10-26T11:15:46.094Z |
+| `learn-github-melbahja-seo` | `https://github.com/melbahja/seo` | `cd4e4122` | Multi-dimensional audit evidence | 2026-10-26T11:19:43.686Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `8bb1677b` | Multi-dimensional audit evidence | 2026-10-26T11:20:25.794Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `4fc541b2` | Multi-dimensional audit evidence | 2026-10-26T11:25:33.611Z |

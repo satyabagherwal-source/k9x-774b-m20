@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T11:04:09.238Z",
-  "total_cycles_completed": 5104,
-  "total_learnings_persisted": 5104,
-  "total_rules_promoted": 4483,
+  "last_updated": "2026-10-26T11:25:33.616Z",
+  "total_cycles_completed": 5110,
+  "total_learnings_persisted": 5110,
+  "total_rules_promoted": 4491,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:59:11.814Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:59:17.507Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:02:31.547Z",
-      "repository": "honojs/hono",
-      "learningId": "learn-github-honojs-hono",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:08:49.787Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:08:55.767Z",
-      "repository": "alin23/Lunar",
-      "learningId": "learn-github-alin23-lunar",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:08:58.449Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:09:00.610Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-26T11:04:09.238Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:15:42.618Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:15:43.482Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:15:46.101Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:19:43.691Z",
+      "repository": "melbahja/seo",
+      "learningId": "learn-github-melbahja-seo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:20:25.799Z",
+      "repository": "Megabit/Blazorise",
+      "learningId": "learn-github-megabit-blazorise",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T11:25:33.616Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

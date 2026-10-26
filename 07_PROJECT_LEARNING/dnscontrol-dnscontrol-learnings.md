@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `eb029724`  
+> **Source Version**: `ec3d8013`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T16:38:42.382Z  
+> **Timestamp**: 2026-10-26T11:15:42.207Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T16:38:41.097Z  
+> **Harvest Timestamp**: 2026-10-26T11:15:41.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3978 stars
+- **Stars / Engagement**: 3986 stars
 
 ---
 
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5031** (2026-10-21): **chore: update dependencies**
-  *Symptoms*: <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
+- **Issue #5036** (2026-10-25): **fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes**
+  *Symptoms*: Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is and does its own splitting, so the zone ends up with a space at the start of the second segment. The next `preview` sees the difference and wants to push again, and every push breaks it again.  This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is what the provider did before #4811. (#4566 modernized this code, but the TXT upload changed in #4811.)  I tested it on my own domain with a 348-byte TXT record (values shortened):  - before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a MODIFY on every run - after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0 corrections`  I also moved the record building out of `generateRecords()` into `toNative()` so it could get a unit test, like the newer providers have. I haven't run the integration tests. The long-TXT cases in `complex TXT` weren't among the ones skipped in #4635, so they already run for NAMECHEAP and should pass now. 
 
-- **Issue #5030** (2026-10-21): **fix(diff2): MODIFY messages not showing provider-specific fields**
-  *Symptoms*: Fixes #5019  `humanDiff()` prints only the record's RDATA. Fields that a provider adds through its `ComparableFunc` (for example the Cloudflare proxy setting) are not part of the RDATA, so when only such a field changed the MODIFY line showed identical old and new sides, even though the change was applied.  When the provider-added part of the comparable string differs, `humanDiff()` now prints the full `(old) -> (new)` form including those fields, e.g.      ± MODIFY www.example.com CNAME (target.example.net. proxy=false ttl=1) -> (target.example.net. proxy=true ttl=1)  Tests: added `Test_humanDiff_providerFields` (fails without the change); `go test ./pkg/diff2/` passes. I did not run the Cloudflare provider against a live account. 
+- **Issue #5035** (2026-10-25): **fix(LOC): preserve thousandths of arcseconds in coordinates**
+  *Symptoms*: `LOC()` rounds the seconds of latitude and longitude to two decimals, although a LOC record holds thousandths of a second of arc and [RFC 1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them up to `59.999`.  ```js D("foo.com", "none",   LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10)); ```  `dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`, about 6 cm off. When the provider already holds the precise record, `dnscontrol preview` proposes to replace it with the rounded one.  Cause: [`MakeLOC` formats both seconds with `%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218) before it parses the record. This came in with [the dnsv2 refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).  Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go back to the values they had before that refactor.  Test: the existing `045-loc.js` case fails without the fix and passes with it. `go test -p 1 -count=1 ./pkg/js/ ./models/` passes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,271 +709,467 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10292165` (2026-10-21)
-**Commit Message**: fix: make IGNORE_TARGET match HTTPS and SVCB targets (#5028)
+### Incident Patch 1: `ec3d8013` (2026-10-25)
+**Commit Message**: fix(D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
 
-`IGNORE_TARGET` does not match the target of existing HTTPS or SVCB
-records, so `dnscontrol preview` can propose deleting a record that the
-config says to ignore.
+`D_EXTEND()` puts records under the wrong name, or stops with a panic,
+when the empty tag is written on only one of the two names, although
+`example.com` and `example.com!` are documented as equivalent.
 
 ```js
-D("example.com", REG_NONE, DnsProvider(DSP_BIND),
-    IGNORE_TARGET("svc.example.net.", "HTTPS")
-);
+D("example.com!", REG_NONE, DnsProvider(DSP_BIND), A("@", "192.0.2.1"));
+D_EXTEND("sub.example.com", A("www", "192.0.2.2"));
 ```
 
-With `svc IN HTTPS 1 svc.example.net. alpn=h2` already at the provider,
-`dnscontrol preview` prints `- DELETE svc.example.com HTTPS 1
-svc.example.net. alpn="h2" ttl=300`. It should leave the record
-unchanged and report `0 corrections`.
+`dnscontrol print-ir` shows `www.su` instead of `www.sub`. With
+`D("example.com", ...)` and `D_EXTEND("sub.example.com!", ...)`,
+`dnscontrol check` stops with `panic: short (www.sub.) is not supposed
+to end with a dot`.
 
-Cause:
-[`GetTargetField`](https://github.com/DNSControl/dnscontrol/blob/d1823f78f3d066f21016c7497e9a100d9da9f03a/models/target.go#L12-L34)
-falls back to the last RDATA field. For HTTPS and SVCB that field is the
-service parameters, not the target.
+Cause: [the domain match removes the
+tag](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L375-L376)
+from [both
+names](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L380-L383),
+but [the subdomain is cut out by
+length](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L345-L348)
+from names that still carry it.
 
-Fix: return the SVCB target field for both record types. A table test
-covers HTTPS and SVCB:
+Fix: remove the tag from both names before taking the length.
 
-```
-go test -p 1 -count=1 -run '^Test_ignore_target_svcb$' ./pkg/diff2/
-```
+Test: one case per di
 
-Both subtests fail in each of 3 runs before the fix and pass in each of
-3 runs after it. `go test -p 1 -count=1 ./models ./pkg/diff2/` also
-passes.
-
-**File**: `models/target.go` (modified, +2/-0)
+**File**: `pkg/js/helpers.js` (modified, +4/-4)
 ```diff
-@@ -20,6 +20,8 @@ func (rc *RecordConfig) GetTargetField() string {
- 	case "R53_ALIAS":
- 		// R53_ALIAS's target (DNSName) is not the last field of the RDATA.
- 		return rc.AsR53ALIAS().Target
-+	case "HTTPS", "SVCB":
-+		return rc.AsSVCB().Target
- 	}
- 
- 	// Return the last field. Not perfect, but good enough until we get rid of this function.
-```
-
-**File**: `pkg/diff2/handsoff_test.go` (modified, +18/-0)
-```diff
-@@ -243,6 +243,24 @@ FOREIGN:
- 	`)
- }
- 
-+func Test_ignore_target_svcb(t *testing.T) {
-+	for _, rtype := range []string{"HTTPS", "SVCB"} {
-+		t.Run(rtype, func(t *testing.T) {
-+			existingZone := fmt.Sprintf("svc IN %s 1 svc.example.net. alpn=h2\n", rtype)
-+			desiredJs := fmt.Sprintf(`
-+D("f.com", "none",
-+	IGNORE_TARGET("svc.example.net.", %q),
-+{})
-+`, rtype)
-+			handsoffHelper(t, existingZone, desiredJs, false, fmt.Sprintf(`
-+IGNORED:
-+svc %s 1 svc.example.net. alpn="h2"
-+FOREIGN:
-+`, rtype))
-+		})
-+	}
-+}
-+
- // Test_ignore_external_dns tests the IGNORE_EXTERNAL_DNS feature
- // using the full handsoff() function.
- func Test_ignore_external_dns(t *testing.T) {
-```
-
----
-
-### Incident Patch 2: `d392e6e9` (2026-10-21)
-**Commit Message**: fix(diff2): MODIFY messages no showing provider-specific fields (#5030)
-
-Fixes #5019
-
-`humanDiff()` prints only the record's RDATA. Fields that a provider
-adds through its `ComparableFunc` (for example the Cloudflare proxy
-setting) are not part of the RDATA, so when only such a field changed
-the MODIFY line showed identical old and new sides, even though the
-change was applied.
-
-When the provider-added part of the comparable string differs,
-`humanDiff()` now prints the full `(old) -> (new)` form including those
-fields, e.g.
-
-± MODIFY www.example.com CNAME (target.example.net. proxy=false ttl=1)
--> (target.example.net. proxy=true ttl=1)
-
-Tests: added `Test_humanDiff_providerFields` (fails without the change);
-`go test ./pkg/diff2/` passes. I did not run the Cloudflare provider
-against a live account.
-
-Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
-
-**File**: `pkg/diff2/analyze.go` (modified, +23/-0)
-```diff
-@@ -225,10 +225,33 @@ func filterBy(s []targetConfig, m map[string]*targetConfig) []targetConfig {
- 	return s
- }
- 
-+// providerExtra returns the part of t.comparableNoTTL that was added by the
-+// provider's ComparableFunc (if any), i.e. everything after the record's
-+// ComparableV3.
-+func providerExtra(t targetConfig) string {
-+	return strings.TrimSpace(strings.TrimPrefix(t.comparableNoTTL, t.rec.ComparableV3))
-+}
-+
-+func joinNonEmpty(s, extra string) string {
-+	if extra == "" {
-+		return s
-+	}
-+	return s + " " + extra
-+}
-+
- // humanDiff returns a human-friendly string showing what changed
- // between a and b.
- func humanDiff(a, b targetConfig) string {
- 	if a.comparableNoTTL != b.comparableNoTTL {
-+		// The provider's ComparableFunc may add fields that are not part of
-+		// the RDATA (such as Cloudflare's proxy setting). If those differ,
-+		// the RDATA-based output below would hide the change, so show them.
-+		if aExtra, bExtra := providerExtra(a), providerExtra(b); aExtra != bExtra {
-+			return fmt.Sprintf("(%s ttl=%d) -> (%s ttl=%d)",
-+				joinNonEmpty(a.rec.GetRDATA().String(), aExtra), a.rec.TTL,
-+				joinNonEmpty(b.rec.GetRDATA().String(), bExtra), b.rec.TTL)
-+		}
-+
- 		// The recorddata is different. If possible, show just the fields that changed:
- 		if fields, ok := fieldDiff(a.rec.GetRDATA(), b.rec.GetRDATA()); ok {
- 			if a.rec.TTL != b.rec.TTL {
-```
-
-**File**: `pkg/diff2/analyze_test.go` (modified, +31/-0)
-```diff
-@@ -596,6 +596,37 @@ func mkTargetConfigMap(x ...*models.RecordConfig) map[string]*targetConfig {
- 	return m
- }
- 
-+func Test_humanDiff_providerFields(t *testing.T) {
-+	a := makeRec("laba", "CNAME", "target.f.com.")
-+	b := makeRec("laba", "CNAME", "target.f.com.")
-+	mk := func(r *models.RecordConfig, extra string) targetConfig {
-+		ct, cf := mkCompareBlobs(r, func(*models.RecordConfig) string { return extra })
-+		return targetConfig{comparableNoTTL: ct, comparableFull: cf, rec: r}
-+	}
-+	tests := []struct {
-+		name   string
-+		ae, be string
-+		a, b   *models.RecordConfig
-+		want   string
-+	}{
-+		{"only provider field changed", "proxy=false", "proxy=true", a, b,
-+			"(target.f.com. proxy=false ttl=300) -> (target.f.com. proxy=true ttl=300)"},
-+		{"provider field added", "", "proxy=true", a, b,
-+			"(target.f.com. ttl=300) -> (target.f.com. proxy=true ttl=300)"},
-+		{"provider field and ttl changed", "proxy=false", "proxy=true", a, makeRecTTL("laba", "CNAME", "target.f.com.", 1),
-+			"(target.f.com. proxy=false ttl=300) -> (target.f.com. proxy=true ttl=1)"},
-+		{"provider field and rdata changed", "proxy=false", "proxy=true", a, makeRec("laba", "CNAME", "other.f.com."),
-+			"(target.f.com. proxy=false ttl=300) -> (other.f.com. proxy=true ttl=300)"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := humanDiff(mk(tt.a, tt.ae), mk(tt.b, tt.be)); got != tt.want {
-+				t.Errorf("humanDiff() = %q, want %q", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
- func Test_humanDiff(t *testing.T) {
- 	tests := []struct {
- 		name string
-```
-
----
-
-### Incident Patch 3: `3322ff15` (2026-10-21)
-**Commit Message**: fix(LOC_BUILDER_DD): accept zero and reject missing coordinates (#5027)
-
-`LOC_BUILDER_DD({label: "site", x: 51.5, alt: 0})` passes `dnscontrol
-check` and `print-ir` emits a LOC record at longitude zero, although `y`
-is required. Conversely, `{label: "origin", x: 0, y: 0, alt: 0}` stops
-with `LOC_BUILDER_DD requires x and y elements`; it should produce the
-zero-coordinate LOC record.
-
-The [guard treats coordinates as
-booleans](https://github.com/DNSControl/dnscontrol/blob/d1823f78f3d066f21016c7497e9a100d9da9f03a/pkg/js/helpers.js#L1282-L1285),
-and uses `&&`, so it rejects two zero values while accepting either
-missing property.
-
-The fix checks each property for `undefined`.
-`TestLOCBuilderDDCoordinates` covers the valid zero pair and each
-missing property.
-
-```
-go test -p 1 -count=1 -run '^TestLOCBuilderDDCoordinates$' ./pkg/js/
-go test -p 1 -count=1 ./pkg/js/
-```
-
-On the base commit all three regression rows fail. On the final tree the
-focused test passed three of three runs, and the package passed.
-
-**File**: `pkg/js/helpers.js` (modified, +1/-1)
-```diff
-@@ -1280,7 +1280,7 @@ function GIDINET_PREMIUM_NS() {
- // ttl: The time for TTL, integer or string. (default: not defined, using DefaultTTL)
- 
- function LOC_BUILDER_DD(value) {
--    if (!value.x && !value.y) {
-+    if (value.x === undefined || value.y === undefined) {
-         throw "LOC_BUILDER_DD requires x and y elements";
+@@ -342,10 +342,10 @@ function D_EXTEND(name) {
+         name = name.substring(name.indexOf(".") + 1);
      }
  
+-    domain.obj.subdomain = name.substr(
+-        0,
+-        name.length - domain.obj.name.length - 1
+-    );
++    // The empty tag is not part of the name: "example.com!" is "example.com".
++    name = _removeEmptyTag(name)[0];
++    var domainName = _removeEmptyTag(domain.obj.name)[0];
++    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
+ 
+     for (var i = 1; i < arguments.length; i++) {
+         var m = arguments[i];
 ```
 
-**File**: `pkg/js/js_test.go` (modified, +24/-0)
+**File**: `pkg/js/parse_tests/037-splithor.js` (modified, +8/-0)
 ```diff
-@@ -232,6 +232,30 @@ func TestDMARCBuilderValues(t *testing.T) {
- 	}
+@@ -56,3 +56,11 @@ D("example-b.net!", REG, DnsProvider(DNS_OUTSIDE),
+ D_EXTEND("example-b.net",
+     A("main", "203.0.113.12"),
+ );
++
++D_EXTEND("sub.example-b.net",
++    A("main", "203.0.113.12"),
++);
++
++D_EXTEND("sub.empty.example.net!",
++    A("main", "203.0.113.22"),
++);
+```
+
+**File**: `pkg/js/parse_tests/037-splithor.json` (modified, +26/-0)
+```diff
+@@ -252,6 +252,19 @@
+           "type": "A",
+           "typenum": 1
+         },
++        {
++          "comparablev3": "203.0.113.22",
++          "filepos": "[line:65:5]",
++          "name": "main.sub",
++          "name_unicode": "main.sub",
++          "rdata": {
++            "Addr": "203.0.113.22"
++          },
++          "subdomain": "sub",
++          "ttl": 300,
++          "type": "A",
++          "typenum": 1
++        },
+         {
+           "comparablev3": "203.0.113.2",
+           "filepos": "[line:45:5]",
+@@ -286,6 +299,19 @@
+           "type": "A",
+           "typenum": 1
+         },
++        {
++          "comparablev3": "203.0.113.12",
++          "filepos": "[line:61:5]",
++          "name": "main.sub",
++          "name_unicode": "main.sub",
++          "rdata": {
++            "Addr": "203.0.113.12"
++          },
++          "subdomain": "sub",
++          "ttl": 300,
++          "type": "A",
++          "typenum": 1
++        },
+         {
+           "comparablev3": "203.0.113.1",
+           "filepos": "[line:53:5]",
+```
+
+**File**: `pkg/js/parse_tests/037-splithor/empty.example.net.zone` (modified, +1/-0)
+```diff
+@@ -1,3 +1,4 @@
+ $TTL 300
+ main             IN A     203.0.113.22
++main.sub         IN A     203.0.113.22
+ www              IN A     203.0.113.2
+```
+
+**File**: `pkg/js/parse_tests/037-splithor/example-b.net.zone` (modified, +1/-0)
+```diff
+@@ -1,3 +1,4 @@
+ $TTL 300
+ main             IN A     203.0.113.12
++main.sub         IN A     203.0.113.12
+ www              IN A     203.0.113.1
+```
+
+---
+
+### Incident Patch 2: `ee93a555` (2026-10-25)
+**Commit Message**: fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (#5036)
+
+Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks
+it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value
+goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is
+and does its own splitting, so the zone ends up with a space at the
+start of the second segment. The next `preview` sees the difference and
+wants to push again, and every push breaks it again.
+
+This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is
+what the provider did before #4811. (#4566 modernized this code, but the
+TXT upload changed in #4811.)
+
+I tested it on my own domain with a 348-byte TXT record (values
+shortened):
+
+- before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a
+MODIFY on every run
+- after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0
+corrections`
+
+I also moved the record building out of `generateRecords()` into
+`toNative()` so it could get a unit test, like the newer providers have.
+I haven't run the integration tests. The long-TXT cases in `complex TXT`
+weren't among the ones skipped in #4635, so they already run for
+NAMECHEAP and should
+
+**File**: `providers/namecheap/namecheapProvider.go` (modified, +9/-2)
+```diff
+@@ -306,12 +306,12 @@ func toSRVRecords(result *nc.DomainSRVGetRecordsResult, dc *models.DomainConfig)
+ 	return records, nil
  }
  
-+func TestLOCBuilderDDCoordinates(t *testing.T) {
-+	tests := []struct{ desc, opts, want, wantErr string }{
-+		{"zero coordinates", `{label:"origin",x:0,y:0,alt:0}`, "00 00 0.000 S 00 00 0.000 W 0m 0.00m 0.00m 0.00m", ""},
-+		{"missing x", `{label:"site",y:1,alt:0}`, "", "LOC_BUILDER_DD requires x and y elements"},
-+		{"missing y", `{label:"site",x:1,alt:0}`, "", "LOC_BUILDER_DD requires x and y elements"},
-+	}
-+	for _, tst := range tests {
-+		t.Run(tst.desc, func(t *testing.T) {
-+			script := `D("example.com","none",LOC_BUILDER_DD(` + tst.opts + `))`
-+			conf, err := ExecuteJavascriptString([]byte(script), true, nil)
-+			switch {
-+			case tst.wantErr == "" && err != nil:
-+				t.Fatalf("Expected no error but found: %v", err)
-+			case tst.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tst.wantErr)):
-+				t.Fatalf("Expected error %q but found: %v", tst.wantErr, err)
-+			case tst.wantErr == "":
-+				if got := conf.Domains[0].Records[0].ComparableV3; got != tst.want {
-+					t.Fatalf("Expected %q but found %q", tst.want, got)
-+				}
-+			}
-+		})
-+	}
+-func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
++func toNative(records models.Records) ([]nc.DomainDNSHost, []nc.DomainSRVRecord) {
+ 	var recs []nc.DomainDNSHost
+ 	var srvRecs []nc.DomainSRVRecord
+ 
+ 	id := 1
+-	for _, rc := range dc.Records {
++	for _, rc := range records {
+ 
+ 		if rc.Type == "SRV" {
+ 			recServiceAndProtocol := strings.SplitAfterN(rc.GetLabel(), ".", 2)
+@@ -342,6 +342,8 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
+ 				f := rc.AsMX()
+ 				rec.MXPref = int(f.Preference)
+ 				rec.Address = f.Mx
++			case dnsv2.TypeTXT:
++				rec.Address = rc.GetTargetTXTJoined()
+ 			default:
+ 				rec.Address = rc.GetRDATA().String()
+ 			}
+@@ -351,6 +353,11 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
+ 
+ 		id++
+ 	}
++	return recs, srvRecs
 +}
 +
- // TestDKIMBuilderNote checks that a non-ASCII note is written as UTF-8 octets.
- func TestDKIMBuilderNote(t *testing.T) {
- 	tests := []struct{ desc, note, want string }{
++func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
++	recs, srvRecs := toNative(dc.Records)
+ 	sld, tld := splitDomain(dc.Name)
+ 	var err error
+ 	doWithRetry(func() error {
+```
+
+**File**: `providers/namecheap/namecheapProvider_test.go` (modified, +15/-0)
+```diff
+@@ -6,8 +6,10 @@ import (
+ 	"net/http/httptest"
+ 	"net/url"
+ 	"reflect"
++	"strings"
+ 	"testing"
+ 
++	"github.com/DNSControl/dnscontrol/v5/models"
+ 	nc "github.com/willpower232/go-namecheap"
+ )
+ 
+@@ -93,3 +95,16 @@ func TestListZonesPaginates(t *testing.T) {
+ 		t.Fatalf("pages requested = %v, want %v", requests, wantRequests)
+ 	}
+ }
++
++func TestToNativeLongTXT(t *testing.T) {
++	dc := models.MustNewDomainConfig("example.com")
++	rc, err := dc.NewRecordConfig("long", 300, "TXT", strings.Repeat("a", 300))
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	recs, _ := toNative(models.Records{rc})
++	if got := recs[0].Address; got != strings.Repeat("a", 300) {
++		t.Errorf("address = %q, want the joined value", got)
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `d0901a69` (2026-10-25)
+**Commit Message**: fix(LOC): preserve thousandths of arcseconds in coordinates (#5035)
+
+`LOC()` rounds the seconds of latitude and longitude to two decimals,
+although a LOC record holds thousandths of a second of arc and [RFC
+1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them
+up to `59.999`.
+
+```js
+D("foo.com", "none",
+  LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10));
+```
+
+`dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m
+10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`,
+about 6 cm off. When the provider already holds the precise record,
+`dnscontrol preview` proposes to replace it with the rounded one.
+
+Cause: [`MakeLOC` formats both seconds with
+`%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218)
+before it parses the record. This came in with [the dnsv2
+refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).
+
+Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go
+back to the values they had before that refactor.
+
+Test: the existing `045-loc.js` case fails without the fix and passes
+with it. `
+
+**File**: `models/makers.go` (modified, +1/-1)
+```diff
+@@ -215,7 +215,7 @@ func MakeLOC(origin string, _ map[string]string, isEnabled nrc.Flags, args ...an
+ 	// The 12-item version needs to be turned into the 7-item packed version.
+ 	// The easiest way to do that is to let dnsv2 do it for us.
+ 	// It is a little extra parsing, but why re-invent the wheel?
+-	x := fmt.Sprintf("%d %d %.2f %s %d %d %.2f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
++	x := fmt.Sprintf("%d %d %.3f %s %d %d %.3f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
+ 	// y := fmt.Sprintf("0=%d 1=%d 2=%.2f 3=%s 4=%d 5=%d 6=%.2f 7=%s 8=%.2f 9=%.2f 10=%0.2f 11=%0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
+ 	// fmt.Printf("DEBUG: loc y=%q\n", y)
+ 	rd, err := dnsv2.NewData(dnsv2.TypeLOC, x, origin)
+```
+
+**File**: `pkg/js/parse_tests/045-loc.json` (modified, +27/-27)
+```diff
+@@ -24,15 +24,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m",
++          "comparablev3": "42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m",
+           "filepos": "[line:4:5]",
+           "name": "a",
+           "name_unicode": "a",
+           "rdata": {
+             "Altitude": 9997599,
+             "HorizPre": 36,
+-            "Latitude": 2299987598,
+-            "Longitude": 1891577308,
++            "Latitude": 2299987600,
++            "Longitude": 1891577304,
+             "Size": 18,
+             "Version": 0,
+             "VertPre": 19
+@@ -60,15 +60,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m",
++          "comparablev3": "51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m",
+           "filepos": "[line:23:5]",
+           "name": "big-ben",
+           "name_unicode": "big-ben",
+           "rdata": {
+             "Altitude": 10000600,
+             "HorizPre": 0,
+-            "Latitude": 2332886678,
+-            "Longitude": 2147034998,
++            "Latitude": 2332886681,
++            "Longitude": 2147034997,
+             "Size": 0,
+             "Version": 0,
+             "VertPre": 0
+@@ -96,15 +96,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m",
+           "filepos": "[line:7:5]",
+           "name": "d",
+           "name_unicode": "d",
+           "rdata": {
+             "Altitude": 9995600,
+             "HorizPre": 0,
+-            "Latitude": 2299972408,
+-            "Longitude": 1891832028,
++            "Latitude": 2299972412,
++            "Longitude": 1891832031,
+             "Size": 37,
+             "Version": 0,
+             "VertPre": 0
+@@ -114,15 +114,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m",
+           "filepos": "[line:8:5]",
+           "name": "d-alt-highest",
+           "name_unicode": "d-alt-highest",
+           "rdata": {
+             "Altitude": 4294967295,
+             "HorizPre": 0,
+-            "Latitude": 2299972408,
+-            "Longitude": 1891832028,
++            "Latitude": 2299972412,
++            "Longitude": 1891832031,
+             "Size": 37,
+             "Version": 0,
+             "VertPre": 0
+@@ -132,15 +132,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m",
+           "filepos": "[line:9:5]",
+           "name": "d-alt-lowest",
+           "name_unicode": "d-alt-lowest",
+           "rdata": {
+             "Altitude": 0,
+             "HorizPre": 0,
+-            "Latitude": 2299972408,
+-            "Longitude": 1891832028,
++            "Latitude": 2299972412,
++            "Longitude": 1891832031,
+             "Size": 37,
+             "Version": 0,
+             "VertPre": 0
+@@ -150,15 +150,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m",
+           "filepos": "[line:12:5]",
+           "name": "d-horizprecision-hi",
+           "name_unicode": "d-horizprecision-hi",
+           "rdata": {
+             "Altitude": 10000000,
+             "HorizPre": 153,
+-            "Latitude": 2299972408,
+-            "Longitude": 1891832028,
++            "Latitude": 2299972412,
++            "Longitude": 1891832031,
+             "Size": 18,
+             "Version": 0,
+             "VertPre": 0
+@@ -168,15 +168,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m",
+           "filepos": "[line:17:5]",
+           "name": "d-size-hi",
+           "name_unicode": "d-size-hi",
+           "rdata": {
+             "Altitude": 10000000,
+             "HorizPre": 0,
+-            "Latitude": 2299972408,
+-            "Longitude": 1891832028,
++            "Latitude": 2299972412,
++            "Longitude": 1891832031,
+             "Size": 153,
+             "Version": 0,
+             "VertPre": 0
+@@ -186,15 +186,15 @@
+           "typenum": 29
+         },
+         {
+-          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m",
++          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m",
+           "filepos": "[line:18:5]",
+           "name": "d-vertprecision-hi",
+           "name_unicode": "d-vertprecision-hi",
+           "rdata": {
+             "
+```
+
+**File**: `pkg/js/parse_tests/045-loc/foo.com.zone` (modified, +9/-9)
+```diff
+@@ -1,15 +1,15 @@
+ $TTL 300
+ @                IN LOC   42 21 54.000 N 71 06 18.000 W -24m 30m 0.00m 0.00m
+-a                IN LOC   42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m
++a                IN LOC   42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m
+ b                IN LOC   52 14 5.000 N 00 08 50.000 E 10.33m 0.00m 0.00m 0.00m
+-big-ben          IN LOC   51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m
++big-ben          IN LOC   51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m
+ c                IN LOC   32 07 19.000 S 116 02 25.000 E 10m 0.00m 0.00m 0.00m
+-d                IN LOC   42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m
+-d-alt-highest    IN LOC   42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m
+-d-alt-lowest     IN LOC   42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m
+-d-horizprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m
+-d-size-hi        IN LOC   42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m
+-d-vertprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m
++d                IN LOC   42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m
++d-alt-highest    IN LOC   42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m
++d-alt-lowest     IN LOC   42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m
++d-horizprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m
++d-size-hi        IN LOC   42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m
++d-vertprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m
+ fraser-island    IN LOC   25 14 24.000 S 153 09 0.000 E 3m 0.00m 0.00m 0.00m
+ guinness-brewery IN LOC   53 20 40.000 N 06 17 20.000 W 300m 0.00m 0.00m 0.00m
+ hawaii           IN LOC   21 30 0.000 N 158 00 0.000 W 920m 0.00m 0.00m 0.00m
+@@ -20,4 +20,4 @@ opera-house3     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
+ opera-house4     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
+ ribblehead-viaduct IN LOC 54 12 38.000 N 02 22 13.000 W 300m 0.00m 0.00m 0.00m
+ tasmania         IN LOC   42 00 0.000 S 147 00 0.000 E 3m 0.00m 0.00m 0.00m
+-white-house      IN LOC   38 53 51.940 N 77 02 11.580 W 19m 0.00m 0.00m 0.00m
++white-house      IN LOC   38 53 51.935 N 77 02 11.584 W 19m 0.00m 0.00m 0.00m
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5036** (2026-10-25): fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (@louneskmt)
+- **PR #5035** (2026-10-25): fix(LOC): preserve thousandths of arcseconds in coordinates (@spicysharkco)
+- **PR #5034** (2026-10-25): fix(D_EXTEND): ignore the empty tag when extending a subdomain (@spicysharkco)
 - **PR #5031** (2026-10-21): chore: update dependencies (@TomOnTime)
 - **PR #5030** (2026-10-21): fix(diff2): MODIFY messages not showing provider-specific fields (@cvas22)
 - **PR #5029** (2026-10-21): feat(p/CONSTELLIX): add Constellix DNS provider (@ZeroClover)
-- **PR #5028** (2026-10-21): fix: make IGNORE_TARGET match HTTPS and SVCB targets (@spicysharkco)
-- **PR #5027** (2026-10-21): fix(LOC_BUILDER_DD): accept zero and reject missing coordinates (@spicysharkco)
-- **PR #5026** (2026-10-20): fix(p/BIND): Improve GetZones when filenameformat includes %f or %F (@spicysharkco)
 
 ---
 
@@ -993,29 +1189,34 @@ focused test passed three of three runs, and the package passed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make IGNORE_TARGET match HTTPS and SVCB targets (#5028)
+## X. D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
 
 **RULE**:
-When implementing operations in `models/target.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/js/helpers.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10292165`: make IGNORE_TARGET match HTTPS and SVCB targets (#5028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec3d8013`: D_EXTEND): ignore the empty tag when extending a subdomain (#5034). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `models/target.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/helpers.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	case "HTTPS", "SVCB":
-		return rc.AsSVCB().Target
+    // The empty tag is not part of the name: "example.com!" is "example.com".
+    name = _removeEmptyTag(name)[0];
+    var domainName = _removeEmptyTag(domain.obj.name)[0];
+    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    domain.obj.subdomain = name.substr(
+        0,
+        name.length - domain.obj.name.length - 1
+    );
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10292165` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec3d8013` are properly handled with clean fallback behavior.

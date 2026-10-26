@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T11:04:09.175Z",
+  "last_updated": "2026-10-26T11:25:33.549Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8867,8 +8867,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "eb029724",
-      "content_hash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
+      "source_version": "ec3d8013",
+      "content_hash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -8886,6 +8886,11 @@
           "number": 3562,
           "title": "make IGNORE_TARGET match HTTPS and SVCB targets (#5028)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4588,
+          "title": "D_EXTEND): ignore the empty tag when extending a subdomain (#5034)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8893,7 +8898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T16:38:42.646Z",
+      "verified_at": "2026-10-26T11:15:42.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11124,8 +11129,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "b84473a7",
-      "content_hash": "e3ddaff10241e0f1042e48282e667977a7ed62e0cbb3dbed87fd2c7c19addc0e",
+      "source_version": "4fc541b2",
+      "content_hash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -11153,6 +11158,11 @@
           "number": 3704,
           "title": "error replies keep UTF-8 and never panic on '一' (#3185) (#3428)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4595,
+          "title": "ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11160,7 +11170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:03:14.639Z",
+      "verified_at": "2026-10-26T11:25:33.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34613,8 +34623,8 @@
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "a9c6c06b",
-      "content_hash": "b38b096cbc6d6cb1e2f6fae6f28cc01a97474dce89408adfcdcdfe882d132488",
+      "source_version": "8bb1677b",
+      "content_hash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "promoted_rules": [
@@ -34637,6 +34647,21 @@
           "number": 4379,
           "title": "Tests: fix merge conflict errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4592,
+          "title": "Two-Tier Symbolic-Over-Field Identifier Resolution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4593,
+          "title": "Disconnect-Resilient DOM Stacking & Attribute Restoration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4594,
+          "title": "Virtualized Placeholder Sizing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34644,7 +34669,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:34:36.791Z",
+      "verified_at": "2026-10-26T11:20:25.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38413,8 +38438,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8f6b18ba",
-      "content_hash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
+      "source_version": "18d1103e",
+      "content_hash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -38479,7 +38504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:00:50.390Z",
+      "verified_at": "2026-10-26T11:15:46.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52460,8 +52485,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "d6ef7fbb",
-      "content_hash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
+      "source_version": "045aada9",
+      "content_hash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -52509,6 +52534,11 @@
           "number": 4355,
           "title": "Batch: land 11 reviewed fixes (rc.100) (#2377)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4589,
+          "title": "engine): background merges skip the zstd-19 stored encode (ingest ~5x regression",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52516,7 +52546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:50:59.137Z",
+      "verified_at": "2026-10-26T11:15:43.405Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -63926,7 +63956,7 @@
       "platform": "github",
       "source_url": "https://github.com/melbahja/seo",
       "source_version": "cd4e4122",
-      "content_hash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
+      "content_hash": "61723c697e75f439479dd2e16949e75ddb37eb6b9eba921d85bbcde9d0c950d5",
       "dossier_path": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
       "promoted_rules": [
@@ -63949,6 +63979,16 @@
           "number": 3576,
           "title": "Environment Variable Access with Fallback and Explicit Exception Handling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4590,
+          "title": "Dual-Path Constant-Memory XML Streaming Across Runtime Versions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4591,
+          "title": "Isolation of OpenGraph Sub-Namespaces from Direct Method Proxies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63956,7 +63996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:07:55.354Z",
+      "verified_at": "2026-10-26T11:19:43.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128807,6 +128847,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T11:04:09.163Z"
+    },
+    "rule-4588": {
+      "learning_id": "rule-4588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4588,
+      "title": "D_EXTEND): ignore the empty tag when extending a subdomain (#5034)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "ec3d8013",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:15:42.541Z"
+    },
+    "rule-4589": {
+      "learning_id": "rule-4589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4589,
+      "title": "engine): background merges skip the zstd-19 stored encode (ingest ~5x regression",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "045aada9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:15:43.405Z"
+    },
+    "rule-4590": {
+      "learning_id": "rule-4590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4590,
+      "title": "Dual-Path Constant-Memory XML Streaming Across Runtime Versions",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:19:43.595Z"
+    },
+    "rule-4591": {
+      "learning_id": "rule-4591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4591,
+      "title": "Isolation of OpenGraph Sub-Namespaces from Direct Method Proxies",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:19:43.595Z"
+    },
+    "rule-4592": {
+      "learning_id": "rule-4592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4592,
+      "title": "Two-Tier Symbolic-Over-Field Identifier Resolution Invariant",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "8bb1677b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:20:25.720Z"
+    },
+    "rule-4593": {
+      "learning_id": "rule-4593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4593,
+      "title": "Disconnect-Resilient DOM Stacking & Attribute Restoration Invariant",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "8bb1677b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:20:25.720Z"
+    },
+    "rule-4594": {
+      "learning_id": "rule-4594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4594,
+      "title": "Virtualized Placeholder Sizing Invariant",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "8bb1677b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:20:25.720Z"
+    },
+    "rule-4595": {
+      "learning_id": "rule-4595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4595,
+      "title": "ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "4fc541b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T11:25:33.537Z"
     }
   },
   "aliases": {

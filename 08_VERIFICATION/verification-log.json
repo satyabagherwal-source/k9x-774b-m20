@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-993U",
-    "timestamp": "2026-10-25T03:15:32.826Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "9602a20d31adb0bd95ee1b8730a20bf71946031e75467c813efd558b68679d8d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HPDK",
-    "timestamp": "2026-10-25T03:22:07.160Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "eccfab8c72409fcbbffd29960ec72df478f14366d37168cd4ce4edaf8099d6a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-HUK8",
-    "timestamp": "2026-10-25T03:22:13.880Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "9232c672923a83064f8bae492f2d936291506c062f4f8e49402eaf0a68cc662e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-U3PF",
-    "timestamp": "2026-10-25T03:31:45.603Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "f6041b35a9eeaae02deab226d907ae324e3bd4ce4d22a65fb4585294b9bb2112",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-U5YQ",
-    "timestamp": "2026-10-25T03:31:48.530Z",
-    "repository": "DylanVann/react-native-fast-image",
-    "learningId": "learn-github-dylanvann-react-native-fast-image",
-    "contentHash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-UCHR",
-    "timestamp": "2026-10-25T03:31:56.991Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "13e167b5951c090d34535d5a9b4331b1f318c18e51d470f44376ddf605fd2a0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2QNR",
     "timestamp": "2026-10-25T03:38:28.599Z",
     "repository": "jhspetersson/fselect",
@@ -7490,6 +7400,96 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "f5dfabad03f4713f0087fcaf3f0eccac29d1125d4e8f600f8fcb908c9fd36665",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-ULJM",
+    "timestamp": "2026-10-26T11:15:42.610Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-UM7M",
+    "timestamp": "2026-10-26T11:15:43.474Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-UO8B",
+    "timestamp": "2026-10-26T11:15:46.091Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-ZRK3",
+    "timestamp": "2026-10-26T11:19:43.683Z",
+    "repository": "melbahja/seo",
+    "learningId": "learn-github-melbahja-seo",
+    "contentHash": "61723c697e75f439479dd2e16949e75ddb37eb6b9eba921d85bbcde9d0c950d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-0O1R",
+    "timestamp": "2026-10-26T11:20:25.791Z",
+    "repository": "Megabit/Blazorise",
+    "learningId": "learn-github-megabit-blazorise",
+    "contentHash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-79K8",
+    "timestamp": "2026-10-26T11:25:33.608Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

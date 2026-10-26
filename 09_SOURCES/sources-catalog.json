@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8f6b18ba",
+    "sourceVersion": "18d1103e",
     "license": "Apache-2.0",
-    "contentHash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
-    "lastHarvestedAt": "2026-10-25T22:00:50.452Z",
+    "contentHash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
+    "lastHarvestedAt": "2026-10-26T11:15:46.094Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "d6ef7fbb",
+    "sourceVersion": "045aada9",
     "license": "Apache-2.0",
-    "contentHash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
-    "lastHarvestedAt": "2026-10-25T14:50:59.212Z",
+    "contentHash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
+    "lastHarvestedAt": "2026-10-26T11:15:43.477Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "b84473a7",
+    "sourceVersion": "4fc541b2",
     "license": "NOASSERTION",
-    "contentHash": "e3ddaff10241e0f1042e48282e667977a7ed62e0cbb3dbed87fd2c7c19addc0e",
-    "lastHarvestedAt": "2026-10-22T19:03:14.703Z",
+    "contentHash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
+    "lastHarvestedAt": "2026-10-26T11:25:33.611Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3003,10 +3003,10 @@
     "repository": "Megabit/Blazorise",
     "platform": "github",
     "sourceUrl": "https://github.com/Megabit/Blazorise",
-    "sourceVersion": "a9c6c06b",
+    "sourceVersion": "8bb1677b",
     "license": "NOASSERTION",
-    "contentHash": "b38b096cbc6d6cb1e2f6fae6f28cc01a97474dce89408adfcdcdfe882d132488",
-    "lastHarvestedAt": "2026-10-25T16:34:36.832Z",
+    "contentHash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
+    "lastHarvestedAt": "2026-10-26T11:20:25.794Z",
     "learningId": "learn-github-megabit-blazorise"
   },
   "metalbear-co-mirrord": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "eb029724",
+    "sourceVersion": "ec3d8013",
     "license": "MIT",
-    "contentHash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
-    "lastHarvestedAt": "2026-10-21T16:38:42.709Z",
+    "contentHash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
+    "lastHarvestedAt": "2026-10-26T11:15:42.613Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -8545,8 +8545,8 @@
     "sourceUrl": "https://github.com/melbahja/seo",
     "sourceVersion": "cd4e4122",
     "license": "MIT",
-    "contentHash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
-    "lastHarvestedAt": "2026-10-21T18:07:55.696Z",
+    "contentHash": "61723c697e75f439479dd2e16949e75ddb37eb6b9eba921d85bbcde9d0c950d5",
+    "lastHarvestedAt": "2026-10-26T11:19:43.686Z",
     "learningId": "learn-github-melbahja-seo"
   },
   "kdchang-reactjs101": {

@@ -5127,3 +5127,9 @@
 | `CYCLE-20261026-C7IC` | `2026-10-26T10:33:24.996Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4585` | Yes (`30da0198...`) |
 | `CYCLE-20261026-C974` | `2026-10-26T10:33:27.184Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4586` | Yes (`002f05a2...`) |
 | `CYCLE-20261026-FQJ2` | `2026-10-26T11:04:09.230Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4587` | Yes (`f5dfabad...`) |
+| `CYCLE-20261026-ULJM` | `2026-10-26T11:15:42.610Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4588` | Yes (`a95bd6ff...`) |
+| `CYCLE-20261026-UM7M` | `2026-10-26T11:15:43.474Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4589` | Yes (`95334b12...`) |
+| `CYCLE-20261026-UO8B` | `2026-10-26T11:15:46.091Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`957a2487...`) |
+| `CYCLE-20261026-ZRK3` | `2026-10-26T11:19:43.683Z` | `melbahja/seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4590, Rule 4591` | Yes (`61723c69...`) |
+| `CYCLE-20261026-0O1R` | `2026-10-26T11:20:25.791Z` | `Megabit/Blazorise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4592, Rule 4593, Rule 4594` | Yes (`0dce72eb...`) |
+| `CYCLE-20261026-79K8` | `2026-10-26T11:25:33.608Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4595` | Yes (`ebc55e6f...`) |

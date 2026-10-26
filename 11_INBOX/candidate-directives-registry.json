@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T01:37:19.842Z",
+  "last_updated": "2026-10-26T11:15:46.100Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2796,6 +2796,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-joreilly-confetti"
+    },
+    {
+      "id": "CD-UO8K",
+      "directive_title": "Revert \"Use strict JSON Schema responses for ARC LLM calls\"",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "18d1103e",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFICATION METHOD** automated verification protocol",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

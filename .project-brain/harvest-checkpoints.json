@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T11:04:09.242Z",
+  "last_updated": "2026-10-26T11:25:33.620Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "a33dee874b5dd8b0d4ccae59c389f9b95b09f2229f9dbe07a40e4049e077fa01",
-      "verified_at": "2026-10-25T22:00:50.459Z",
+      "content_hash": "957a248795f2a833154cb01877253c78f744e3e4718a87787f2734fbe329227a",
+      "verified_at": "2026-10-26T11:15:46.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:00:50.459Z"
+      "last_updated": "2026-10-26T11:15:46.108Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "d159dfdbdbdbf0158b110e60e288e510327178fab197e338cace2ade0e9d3fdf",
-      "verified_at": "2026-10-25T14:50:59.220Z",
+      "content_hash": "95334b12138597f8b484f7aa11c9da9f1e664431955c81d7d00481f640556086",
+      "verified_at": "2026-10-26T11:15:43.485Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:50:59.220Z"
+      "last_updated": "2026-10-26T11:15:43.485Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "e3ddaff10241e0f1042e48282e667977a7ed62e0cbb3dbed87fd2c7c19addc0e",
-      "verified_at": "2026-10-22T19:03:14.716Z",
+      "content_hash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
+      "verified_at": "2026-10-26T11:25:33.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:03:14.716Z"
+      "last_updated": "2026-10-26T11:25:33.619Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -4626,14 +4626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-megabit-blazorise",
-      "content_hash": "b38b096cbc6d6cb1e2f6fae6f28cc01a97474dce89408adfcdcdfe882d132488",
-      "verified_at": "2026-10-25T16:34:36.837Z",
+      "content_hash": "0dce72eb90231aedc005cf0c8c35ff0d68e4102ff3829a1da2c88bbdcb758830",
+      "verified_at": "2026-10-26T11:20:25.802Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:34:36.837Z"
+      "last_updated": "2026-10-26T11:20:25.802Z"
     },
     "metalbear-co/mirrord": {
       "repository": "metalbear-co/mirrord",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "b8764a4dde5fc44514971efa781d4e090f20991ee830e6567198aea90da4d1f3",
-      "verified_at": "2026-10-21T16:38:42.728Z",
+      "content_hash": "a95bd6ff1e2aba908b129746af2e5fb316ffaecdfc4785f5e9961c8a3056a8c4",
+      "verified_at": "2026-10-26T11:15:42.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T16:38:42.728Z"
+      "last_updated": "2026-10-26T11:15:42.621Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -12861,14 +12861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-melbahja-seo",
-      "content_hash": "35536f457baf17d0399e899cd1a54d0da252c0d17a47387558ad53346542fd53",
-      "verified_at": "2026-10-21T18:07:55.703Z",
+      "content_hash": "61723c697e75f439479dd2e16949e75ddb37eb6b9eba921d85bbcde9d0c950d5",
+      "verified_at": "2026-10-26T11:19:43.694Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T18:07:55.703Z"
+      "last_updated": "2026-10-26T11:19:43.694Z"
     },
     "kdchang/reactjs101": {
       "repository": "kdchang/reactjs101",
