@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-2TIM",
-    "timestamp": "2026-10-25T03:38:32.302Z",
-    "repository": "CrawlCove/hreflang-checker",
-    "learningId": "learn-github-crawlcove-hreflang-checker",
-    "contentHash": "0dc6ea340024db54c4badaf650a757b26452437772aaa86efee814ce35fc60a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2W7S",
     "timestamp": "2026-10-25T03:38:35.800Z",
     "repository": "wcandillon/react-native-skia",
@@ -7492,6 +7477,21 @@
     "contentHash": "274e5ac8b645ee6607d310d27b388b8c9edd35ab5ff99f75d25f4d026bcacdb1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-P1EJ",
+    "timestamp": "2026-10-26T12:07:22.459Z",
+    "repository": "LifeSciForge/seo-auditor",
+    "learningId": "learn-github-lifesciforge-seo-auditor",
+    "contentHash": "8389e1549694bac45afa376d3bb5478a9779fd97f424821fdd33ebedbc1b1b35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

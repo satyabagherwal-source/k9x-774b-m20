@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T11:46:44.952Z",
+  "last_updated": "2026-10-26T12:07:22.400Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64037,7 +64037,7 @@
       "platform": "github",
       "source_url": "https://github.com/LifeSciForge/seo-auditor",
       "source_version": "cb5dbfbf",
-      "content_hash": "1cf29fd1d6763cd778460ad0027beb432a85e2be0003bb9afa8d668b9847c74b",
+      "content_hash": "8389e1549694bac45afa376d3bb5478a9779fd97f424821fdd33ebedbc1b1b35",
       "dossier_path": "07_PROJECT_LEARNING/lifesciforge-seo-auditor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lifesciforge-seo-auditor-learnings.md",
       "promoted_rules": [],
@@ -64046,7 +64046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T18:27:06.138Z",
+      "verified_at": "2026-10-26T12:07:22.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
