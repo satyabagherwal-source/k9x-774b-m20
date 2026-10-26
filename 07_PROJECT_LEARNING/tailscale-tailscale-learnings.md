@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `de16943c`  
+> **Source Version**: `eba00ab3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:32:43.412Z  
+> **Timestamp**: 2026-10-26T10:33:19.558Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:32:43.404Z  
+> **Harvest Timestamp**: 2026-10-26T10:33:18.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38069 stars
+- **Stars / Engagement**: 38099 stars
 
 ---
 
@@ -821,86 +821,726 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f40a062` (2026-10-25)
-**Commit Message**: go.mod: update gliderssh for resource exhaustion fixes
+### Incident Patch 1: `eba00ab3` (2026-10-24)
+**Commit Message**: ssh/tailssh: route SSH forwarding through the privileged monitor
 
-Updates tailscale/corp#50380
+Route tailssh's forwarding through the per-connection ssh-monitor, so
+on unix forwarded sockets are dialed and bound by children with the
+authenticated local user's credentials, never by root tailscaled.
 
-Signed-off-by: James Tucker <[REDACTED_EMAIL]>
+- unix -L, direct-streamlocal: the lexical allowlist check stays in
+  tailscaled as coarse policy. The allowlist is home, /tmp, and
+  /run/user/<uid>. Relative and abstract paths are rejected. The dial
+  then runs as the user through the monitor. The EvalSymlinks
+  re-validation is dropped, and the kernel's DAC is the boundary. The
+  allowlist is capped. A home directory that cleans to "/" or is empty
+  would prefix-match every absolute path, and such an entry is dropped
+  instead. Paths at or beyond the sun_path capacity reject lexically
+  rather than dying at bind or dial with a generic EINVAL.
+- unix -R, streamlocal-forward: the listener is created by a user-cred
+  child with umask-at-bind 0600 and unlink-if-owned. Closing it does
+  not unlink the socket, and the stale file on cancel is accepted.
+- TCP -R, tcpip-forward: a tailssh-owned handler replaces gliderssh's
+  ForwardedTCPHandler. The bind goes through the
 
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `ssh/tailssh/fwdchild.go` (modified, +37/-3)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
+@@ -19,6 +19,14 @@
+ //	err <reason>      the op failed, with the reason preserved in
+ //	                 the reply
+ //
++// After a successful send the child holds its descriptor copy and stays
++// alive until the monitor closes the result channel, its receipt
++// acknowledgment, and only then closes the descriptor and exits. On
++// darwin the kernel's unix-socket GC reclaims a socket whose only
++// reference is an in-flight SCM_RIGHTS message, so the sender's copy
++// must cover the handoff until the receiver owns the descriptor; see
++// beFwdChild and the monitor_rpc.go header.
++//
+ // The monitor side of the protocol, fwdSpawnChild and fwdReadResult
+ // below, drives these children. The op handlers live in monitor.go.
+ 
+@@ -48,6 +56,20 @@ import (
+ // agent dir is created before the umask change, so it keeps 0700.
+ const fwdUmask = 0o177
+ 
++// fwdResultAckWait bounds the child's wait for the monitor's receipt
++// acknowledgment after sending its result descriptor. The monitor
++// closes the result channel immediately after taking ownership, so the
++// wait normally ends at once; the deadline only covers a monitor that
++// died without closing.
++const fwdResultAckWait = 30 * time.Second
++
++// agentDirRoot is the only parent an agent-forwarding directory is
++// created under. The child runs with no environment, so os.TempDir
++// cannot redirect it, and it names the parent explicitly anyway;
++// tailscaled's removal pins the same root. See removeAgentForwardingDir
++// and checkAgentSocketPath.
++const agentDirRoot = "/tmp"
++
+ // fwdMaxStatus caps the child's status line. Anything longer is a broken
+ // child, not a long error message.
+ const fwdMaxStatus = 4096
+@@ -292,8 +314,20 @@ func beFwdChild(args []string) error {
+ 		f.Close()
+ 		return fmt.Errorf("ssh-fwd: sending result: %w", err)
+ 	}
+-	// Close our dup. The kernel holds its own reference from the sendmsg,
+-	// so the monitor's copy survives.
++	// Hold the descriptor, and this process, until the monitor has
++	// received the relayed socket. On darwin, a socket whose only
++	// reference is an in-flight SCM_RIGHTS message is reclaimed by the
++	// kernel's unix-socket garbage collector before the receiver's
++	// recvmsg: the receive side is flushed and buffered data discarded,
++	// while recvmsg still returns a usable-looking descriptor that then
++	// reads EOF with its peer alive. The monitor closes its end of the
++	// result channel right after taking ownership of the descriptor, so
++	// the EOF here is the receipt acknowledgment. The deadline bounds
++	// the wait against a monitor that died without closing; the
++	// monitor's teardown SIGHUP also ends this process.
++	c.SetReadDeadline(time.Now().Add(fwdResultAckWait))
++	var ack [1]byte
++	c.Read(ack[:]) // EOF on receipt, or deadline: exit either way
+ 	f.Close()
+ 	return nil
  }
--# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
-\ No newline at end of file
+@@ -335,7 +369,7 @@ func fwdChildWork(fa fwdArgs) (*os.File, string, error) {
+ 	case fa.op == "listen" && fa.agent:
+ 		// Agent-forwarding socket. See fwdUmask and ListenAgent. The
+ 		// dir's cleanup is the caller's.
+-		dir, err := os.MkdirTemp("", "auth-agent")
++		dir, err := os.MkdirTemp(agentDirRoot, "auth-agent")
+ 		if err != nil {
+ 			return nil, "", err
+ 		}
 ```
 
-**File**: `flakehashes.json` (modified, +2/-2)
+**File**: `ssh/tailssh/fwdmonitor.go` (added, +536/-0)
 ```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
-   },
-   "vendor": {
--    "goModSum": "sha256-Egyb1sq9KWK7VjoNdoC2wnB1RvKlMpwHwPIfC6HSUbs=",
--    "sri": "sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY="
-+    "goModSum": "sha256-c6skz9VfdqDE2R9d7TScija/jid2r6+bHdpWObt4ls0=",
-+    "sri": "sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk="
-   }
+@@ -0,0 +1,536 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd
++
++// The monitor-backed forwarding paths. On unix, all forwarded sockets are
++// dialed and bound by one-shot children of the per-connection ssh-monitor
++// running with the authenticated local user's credentials.
++//
++//   - unix -L, direct-streamlocal: the lexical allowlist check stays in
++//     tailscaled as coarse policy, then the dial runs as the user. See
++//     conn.fwdAllowedSocketPath for the path policy.
++//   - unix -R, streamlocal-forward: the listener child binds with
++//     umask-at-bind and unlink-if-owned semantics. The socket is 0600 and
++//     user-owned from the moment it exists.
++//   - TCP -R, tcpip-forward: the bind goes through the monitor's listen
++//     op, run by a user-cred listener child. Privileged ports fail with
++//     EACCES for non-root-mapped users. Bind addresses are
++//     loopback-only unless TS_SSH_FORWARD_GATEWAY_PORTS is set.
++//   - agent forwarding: the socket and its containing directory are
++//     created by a user-cred child. The socket is 0600 in a 0700
++//     user-owned directory.
++//
++
++package tailssh
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"io"
++	"net"
++	"os"
++	"path/filepath"
++	"strconv"
++	"strings"
++	"sync"
++	"syscall"
++
++	"golang.org/x/sys/unix"
++
++	"tailscale.com/types/logger"
++
++	gliderssh "github.com/tailscale/gliderssh"
++	gossh "golang.org/x/crypto/ssh"
++)
++
++// fwdState is the conn's forwarding state. It holds the per-connection
++// monitor, spawned lazily on the first forwarding or agent need and
++// closed when the conn is torn down. The monitor's identity is bound at
++// spawn to the conn's localUser, with the uid, gid, and groups from
++// clientAuth.
++type fwdState struct {
++	mu  sync.Mutex
++	mon *monitorClient
++
++	// closed is set by closeFwdMonitor, before the lock is dropped. Once
++	// the conn's teardown has run, fwdMonitor refuses to spawn.
++	// fwdMonitorIfAny is unaffected and read-only.
++	closed bool
++}
++
++// fwdMonitor returns the conn's monitor, spawning it on first use with
++// the spawn-bound identity documented on fwdState.
++func (c *conn) fwdMonitor() (*monitorClient, error) {
++	c.fwd.mu.Lock()
++	defer c.fwd.mu.Unlock()
++	if c.fwd.mon != nil {
++		return c.fwd.mon, nil
++	}
++	if c.fwd.closed {
++		return nil, errors.New("monitor closed at connection teardown")
++	}
++	uid, gid, groups, err := c.fwdCreds()
++	if err != nil {
++		return nil, err
++	}
++	// The monitor is exec'd from the tailscaled binary; in tests
++	// os.Executable() is the test binary. The incubator spawn takes the
++	// same path from srv.tailscaledPath.
++	exe := c.srv.tailscaledPath
++	if exe == "" {
++		exe, err = os.Executable()
++		if err != nil {
++			return nil, fmt.Errorf("ssh-monitor: executable: %w", err)
++		}
++	}
++	mc, err := spawnMonitor(exe, uid, gid, groups, c.localUser.Username)
++	if err != nil {
++		return nil, fmt.Errorf("spawning ssh-monitor for forwarding as %q: %w", c.localUser.Username, err)
++	}
++	c.fwd.mon = mc
++	return mc, nil
++}
++
++// fwdMonitorIfAny returns the conn's monitor without spawning one.
++// Callers that can race the conn's teardown must use it instead of the
++// lazy fwdMonitor. See fwdState.closed. Nil means the monitor is already
++// gone.
++func (c *conn) fwdMonitorIfAny() *monitorClient {
++	c.fwd.mu.Lock()
++	defer c.fwd.mu.Unlock()
++	return c.fwd.mon
++}
++
++// fwdCreds returns the monitor's spawn identity, parsing like the
++// incubator's argv does. The ids are carried at their 32-bit ABI width.
++func (c *conn) fwdCreds() (uid, gid uint32, groups []uint32, err error) {
++	u64, err := strconv.ParseUint(c.localUser.Uid, 10, 32)
++	if err != nil {
++		return 0, 0, nil, fmt.Errorf("forwarding: parsing local user uid %q: %w", c.localUser.Uid, err)
++	}
++	g64, err := strconv.ParseUint(c.localUser.Gid, 10, 32)
++	if err != nil {
++		return 0, 0, nil, fmt.Errorf("forwarding: parsing local user gid %q: %w", c.localUser.Gid, err)
++	}
++	for _, g := range c.userGroupIDs {
++		v, err := strconv.ParseUint(g, 10, 32)
++		if err != nil {
++			return 0, 0, nil, fmt.Errorf("forwarding: parsing local user group %q: %w", g, err)
++		}
++		groups = append(groups, uint32(v))
++	}
++	return uint32(u64), uint32(g64), groups, nil
++}
++
++// closeFwdMonitor closes the conn's monitor, if one was spawned. It
++// runs from HandleSSHConn's defer after the SSH connection is done.
++// Closing the RPC channel triggers the monitor's teardown in monitor.go.
++// Closing a second time is a no-op.
++func (c *conn) closeFwdMonitor() {
++	c.fwd.mu.Lock()
++	mc := c.fwd.mon
++	c.fwd.mon = nil
++	c.fwd.closed = true
++	c.fwd.mu.Unlock()
++	if mc == nil {
++		return
++	}
++	if err := mc.Close(); err != nil {
++		c.logf("ssh: closing forwarding monitor: %v", err)
++	}
++}
++
++// fwdMaxSunPathLen is the sun_path capacity. It is the lexical length
++// cap on unix socket paths, the same one gliderssh's path validator
++// en
+```
+
+**File**: `ssh/tailssh/fwdmonitor_test.go` (added, +1269/-0)
+```diff
+@@ -0,0 +1,1269 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd
++
++// Conn-level tests for the monitor-backed forwarding paths: unix -L,
++// unix -R, TCP -R, and agent forwarding. The tested entry points are
++// mayForwardLocalUnixTo, mayReverseUnixForwardTo, fwdTCPHandler, and
++// handleSSHAgentForwarding. The forwarding-path tests drive a real conn
++// with a real monitor and real one-shot fwd children through the
++// self-exec seams in fwdchild_test.go. TestFwdAllowedSocketPathCaps and
++// TestFwdMonitorClosedRefusesRespawn exercise the lexical policy and
++// the closed flag directly. Under root the conn binds to the non-root
++// test user, so the cross-uid closures are pinned: socket ownership,
++// permission-denied dials, and kernel privileged-port refusal. Non-root
++// runs bind to the current user.
++
++package tailssh
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"fmt"
++	"io"
++	"net"
++	"net/netip"
++	"os"
++	"os/user"
++	"path/filepath"
++	"runtime"
++	"strconv"
++	"strings"
++	"sync"
++	"sync/atomic"
++	"syscall"
++	"testing"
++	"time"
++
++	gliderssh "github.com/tailscale/gliderssh"
++	gossh "golang.org/x/crypto/ssh"
++	"tailscale.com/envknob"
++	"tailscale.com/net/memnet"
++	"tailscale.com/tailcfg"
++	testssh "tailscale.com/tempfork/sshtest/ssh"
++)
++
++// fwdTestIdentity returns the local user the conn binds its monitor to.
++// Under root it is the non-root test user, so sockets created by the
++// forwarding children are owned by the session user. Otherwise it is the
++// current user, where a non-root tailscaled binds the monitor to itself.
++func fwdTestIdentity(t *testing.T) *userMeta {
++	t.Helper()
++	if os.Getuid() == 0 {
++		uid, gid := ensureFwdTestUser(t)
++		return &userMeta{User: user.User{
++			Username: fwdTestUser,
++			Uid:      strconv.Itoa(uid),
++			Gid:      strconv.Itoa(gid),
++			HomeDir:  "/nonexistent", // no home needed. Tests use /tmp paths.
++		}}
++	}
++	u, err := user.Current()
++	if err != nil {
++		t.Fatalf("user.Current: %v", err)
++	}
++	return &userMeta{User: *u}
++}
++
++// newFwdTestConn returns a conn whose forwarding paths go through a real
++// monitor (spawned lazily on first use), bound to lu's identity, with the
++// given final action. It registers the monitor self-exec seams and closes
++// the monitor on cleanup.
++func newFwdTestConn(t *testing.T, lu *userMeta, final *tailcfg.SSHAction) *conn {
++	t.Helper()
++	exe := makeExecutableReachable(t)
++	// The override must reach the monitor process, which spawns the fwd
++	// children. It therefore travels through the environment.
++	t.Setenv("TS_TEST_SSH_FWD_PREFIX", strings.Join(testFwdPrefix, " "))
++	old := monitorSpawnPrefix
++	monitorSpawnPrefix = testMonitorPrefix
++	t.Cleanup(func() { monitorSpawnPrefix = old })
++
++	groups := []string{}
++	if g, err := os.Getgroups(); err == nil {
++		for _, v := range g {
++			groups = append(groups, strconv.Itoa(v))
++		}
++	} else {
++		t.Fatalf("os.Getgroups: %v", err)
++	}
++	c := &conn{
++		// t.Logf so bind/spawn failures are visible in test output.
++		// tailscaledPath is the reachable copy of the test binary: the
++		// monitor exec'd from it spawns the fwd children from the same
++		// path, and under a root run the bound user can exec the copy
++		// but not the original.
++		srv:          &server{logf: t.Logf, tailscaledPath: exe},
++		localUser:    lu,
++		userGroupIDs: groups,
++		finalAction:  final,
++	}
++	t.Cleanup(c.closeFwdMonitor)
++	return c
++}
++
++// fwdTestCtx returns a gliderssh.Context for driving the conn callbacks and
++// handlers directly, whose ContextKeyConn value is sshConn and which is
++// canceled by the returned cancel func. Every other Value lookup returns
++// true, matching process_unix_test.go's agentFwdContext.
++func fwdTestCtx(sshConn gossh.Conn) (gliderssh.Context, context.CancelFunc) {
++	ctx, cancel := context.WithCancel(context.Background())
++	return fwdTestContext{Context: ctx, Mutex: &sync.Mutex{}, conn: sshConn}, cancel
++}
++
++// fwdTestContext implements gliderssh.Context. Value serves ContextKeyConn
++// and returns true otherwise. Everything else is inert. The embedded mutex
++// satisfies the interface's Locker requirement, like process_unix_test.go's
++// agentFwdContext.
++type fwdTestContext struct {
++	context.Context
++	*sync.Mutex
++	conn gossh.Conn
++}
++
++func (c fwdTestContext) Value(key any) any {
++	if key == gliderssh.ContextKeyConn {
++		return c.conn
++	}
++	return true
++}
++func (fwdTestContext) User() string                        { return "test" }
++func (fwdTestContext) SessionID() string                   { return "test" }
++func (fwdTestContext) ClientVersion() string               { return "2.0" }
++func (fwdTestContext) ServerVersion() string               { return "2.0" }
++func (fwdTestContext) RemoteAddr() net.Addr                { return nil }
++func (fwdTestContext) LocalAddr() net.Addr                 { return nil }
++func (fwdTestContext) Permissions() *gliderss
+```
+
+**File**: `ssh/tailssh/fwdplan9.go` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build plan9
++
++// The plan9 forwarding seam. plan9 keeps today's forwarding behavior:
++// tailscaled binds and dials forwarded sockets itself, with no monitor
++// because SysProcAttr.Credential and SCM_RIGHTS are unavailable. Reverse
++// TCP forwarding keeps gliderssh's ForwardedTCPHandler with the
++// mayReversePortForwardTo policy callback.
++
++package tailssh
++
++import (
++	"net"
++	"os"
++	"path/filepath"
++	"strconv"
++
++	"tailscale.com/types/logger"
++
++	gliderssh "github.com/tailscale/gliderssh"
++)
++
++// fwdState is the conn's forwarding state. On plan9 there is no monitor,
++// so it carries nothing.
++type fwdState struct{}
++
++// fwdDialUnix is the unix -L path. The gliderssh callback rejects on
++// plan9. See the file comment.
++func (c *conn) fwdDialUnix(ctx gliderssh.Context, socketPath string) (net.Conn, error) {
++	cb := gliderssh.NewLocalUnixForwardingCallback(c.unixForwardingOptions())
++	return cb(ctx, socketPath)
++}
++
++// fwdListenUnix is the unix -R path. The gliderssh callback rejects on
++// plan9. See the file comment.
++func (c *conn) fwdListenUnix(ctx gliderssh.Context, socketPath string) (net.Listener, error) {
++	cb := gliderssh.NewReverseUnixForwardingCallback(c.unixForwardingOptions())
++	return cb(ctx, socketPath)
++}
++
++// fwdListenAgent returns the agent-forwarding listener and socket path.
++// plan9 keeps today's behavior. tailscaled creates the socket with
++// gliderssh.NewAgentListener and hands it, and its containing directory,
++// to the session user with explicit chmod/chown.
++func (c *conn) fwdListenAgent(ctx gliderssh.Context, lu *userMeta) (net.Listener, string, error) {
++	ln, err := gliderssh.NewAgentListener()
++	if err != nil {
++		return nil, "", err
++	}
++	defer func() {
++		if err != nil && ln != nil {
++			ln.Close()
++		}
++	}()
++
++	// 31 bits so that the values fit an int on every platform.
++	uid, err := strconv.ParseUint(lu.Uid, 10, 31)
++	if err != nil {
++		return nil, "", err
++	}
++	gid, err := strconv.ParseUint(lu.Gid, 10, 31)
++	if err != nil {
++		return nil, "", err
++	}
++	socket := ln.Addr().String()
++	dir := filepath.Dir(socket)
++	// Hand the socket and its containing directory to the user, like
++	// sshd's agent forwarding. The dir stays 0700 as MkdirTemp created it
++	// until the socket is in place and owned by the user, then it is
++	// chowned to the user too so the session can reach its socket.
++	if err := os.Chmod(socket, 0o600); err != nil {
++		return nil, "", err
++	}
++	if err := os.Chown(socket, int(uid), int(gid)); err != nil {
++		return nil, "", err
++	}
++	if err := os.Chown(dir, int(uid), int(gid)); err != nil {
++		return nil, "", err
++	}
++	// Defensively restore the 0700 mode.
++	if err := os.Chmod(dir, 0o700); err != nil {
++		return nil, "", err
++	}
++	return ln, socket, nil
++}
++
++// removeAgentForwardingDir removes the agent-forwarding directory dir.
++// plan9 has no monitor: tailscaled created the directory itself and
++// handed it to the session user, and the removal runs with the same
++// credentials, so there is no privilege boundary to defend.
++func removeAgentForwardingDir(dir string, lu *userMeta, logf logger.Logf) {
++	if err := os.RemoveAll(dir); err != nil {
++		logf("ssh: removing agent forwarding dir: %v", err)
++	}
++}
++
++// closeFwdMonitor is a no-op on plan9 because there is no monitor.
++func (c *conn) closeFwdMonitor() {}
++
++// wireReverseForwarding installs plan9's reverse TCP forwarding
++// handlers. They are today's gliderssh ForwardedTCPHandler plus the
++// mayReversePortForwardTo policy callback.
++func (c *conn) wireReverseForwarding(ss *gliderssh.Server) {
++	ss.ReversePortForwardingCallback = c.mayReversePortForwardTo
++	fwdHandler := &gliderssh.ForwardedTCPHandler{}
++	ss.RequestHandlers["tcpip-forward"] = fwdHandler.HandleSSHRequest
++	ss.RequestHandlers["cancel-tcpip-forward"] = fwdHandler.HandleSSHRequest
++}
++
++// unixForwardingOptions returns the Unix forwarding options scoped to
++// the authenticated local user. Socket paths are restricted to the
++// user's home directory, /tmp, and /run/user/<uid>.
++func (c *conn) unixForwardingOptions() gliderssh.UnixForwardingOptions {
++	return gliderssh.UnixForwardingOptions{
++		AllowedDirectories: gliderssh.UserSocketDirectories(c.localUser.HomeDir, c.localUser.Uid),
++		BindUnlink:         true,
++	}
++}
+```
+
+**File**: `ssh/tailssh/monitor.go` (modified, +43/-12)
+```diff
+@@ -67,6 +67,12 @@ type monitor struct {
+ 	children map[int]*monChild
+ 	hup      chan os.Signal
+ 	broken   bool // a reply or notification write failed. Leave the loop.
++
++	// pendingFds holds relayed dial/listen descriptors, keyed by request
++	// ID, from the reply write until tailscaled's fdack receipt. See
++	// replyFD and the monitor_rpc.go header for the darwin kernel
++	// behavior this coverage exists for.
++	pendingFds map[int64]int
  }
+ 
+ // monitorArgs are the monitor's spawn arguments, in the style of
+@@ -164,10 +170,11 @@ func beMonitor(args []string) error {
+ 	defer signal.Stop(hup)
+ 
+ 	m := &monitor{
+-		conn:     newRPCConn(conn),
+-		args:     ma,
+-		children: make(map[int]*monChild),
+-		hup:      hup,
++		conn:       newRPCConn(conn),
++		args:       ma,
++		children:   make(map[int]*monChild),
++		pendingFds: make(map[int64]int),
++		hup:        hup,
+ 	}
+ 	return m.loop()
+ }
+@@ -290,6 +297,12 @@ func (m *monitor) handle(f rpcFrame, fds []int) {
+ 	case opSignal:
+ 		closeFds(fds)
+ 		m.handleSignal(f)
++	case opFdAck:
++		closeFds(fds)
++		if fd, ok := m.pendingFds[f.ID]; ok {
++			delete(m.pendingFds, f.ID)
++			unix.Close(fd)
++		}
+ 	case opDial:
+ 		closeFds(fds)
+ 		m.handleDial(f)
+@@ -489,16 +502,21 @@ func (m *monitor) handleListen(f rpcFrame) {
+ // reports for the agent-forwarding listen op. The child runs as the
+ // connection's user, and tailscaled removes the socket's directory as
+ // root when the session closes, so a misbehaving child must not be able
+-// to steer that removal elsewhere: the path must be an absolute
+-// listener.sock inside an auth-agent temp directory.
++// to steer that removal elsewhere: the path must be a listener.sock
++// directly inside an auth-agent temp directory directly inside
++// agentDirRoot.
+ func checkAgentSocketPath(p string) error {
+ 	if !filepath.IsAbs(p) {
+ 		return fmt.Errorf("agent socket path %q is not absolute", p)
+ 	}
+ 	if filepath.Base(p) != "listener.sock" {
+ 		return fmt.Errorf("agent socket path %q does not name listener.sock", p)
+ 	}
+-	if dir := filepath.Base(filepath.Dir(p)); !strings.HasPrefix(dir, "auth-agent") {
++	dir := filepath.Dir(p)
++	if filepath.Dir(dir) != agentDirRoot {
++		return fmt.Errorf("agent socket %q is not directly inside %s", p, agentDirRoot)
++	}
++	if base := filepath.Base(dir); !strings.HasPrefix(base, "auth-agent") {
+ 		return fmt.Errorf("agent socket %q is not inside an auth-agent directory", p)
+ 	}
+ 	return nil
+@@ -546,16 +564,23 @@ func (m *monitor) killChild(c *monChild) {
+ 	}
+ }
+ 
+-// replyFD writes a reply carrying one descriptor and closes the
+-// monitor's copy after the write. After sendmsg the kernel holds its
+-// own reference to the passed file, so the peer's copy survives ours
+-// closing.
++// replyFD writes a reply carrying one descriptor. On success the
++// descriptor stays open, parked in pendingFds until tailscaled's fdack:
++// on darwin, closing the sender's copy while the descriptor's only
++// reference is the in-flight SCM_RIGHTS message lets the kernel's
++// unix-socket GC reclaim the socket (receive side flushed, buffered
++// data discarded) before the receiver's recvmsg, producing a relayed
++// socket that reads EOF with its peer still alive. The receiver's
++// acknowledgment is what releases the hold. On a write failure the
++// channel is broken and the descriptor is closed here.
+ func (m *monitor) replyFD(f rpcFrame, fd int) {
+ 	err := m.conn.writeFrame(f, fd)
+-	unix.Close(fd)
+ 	if err != nil {
++		unix.Close(fd)
+ 		m.broken = true
++		return
+ 	}
++	m.pendingFds[f.ID] = fd
+ }
+ 
+ // sweep reaps exited children with wait4(WNOHANG) and drops them from
+@@ -629,6 +654,12 @@ func (m *monitor) notifyExit(pid, code int) {
+ // survived the HUP and reaps again. Children that survive even the
+ // SIGKILL are abandoned in their own groups.
+ func (m *monitor) teardown() {
++	// Release every descriptor parked for an fdack: the peer is going
++	// away or gone, so no acknowledgment will arrive.
++	for id, fd := range m.pendingFds {
++		unix.Close(fd)
++		delete(m.pendingFds, id)
++	}
+ 	// Snapshot the pgid set at teardown entry. A group member can
+ 	// outlive its reaped leader, so the SIGKILL pass keys on this
+ 	// remembered set rather than on surviving table entries.
 ```
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `ssh/tailssh/monitor_client.go` (modified, +13/-0)
 ```diff
-@@ -112,7 +112,7 @@ require (
- 	github.com/studio-b12/gowebdav v0.13.0
- 	github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d
- 	github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6
--	github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0
-+	github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f
- 	github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55
- 	github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41
- 	github.com/tailscale/golang-x-crypto v0.0.0-20260720160339-c86ca1284b96
+@@ -107,6 +107,17 @@ func (mc *monitorClient) readLoop() {
+ 		if err != nil {
+ 			return
+ 		}
++		// Acknowledge receipt of any relayed descriptors so the monitor
++		// releases its hold on its copies. The recvmsg in readFrame is
++		// what transfers ownership; see the monitor_rpc.go header for
++		// the darwin kernel behavior the acknowledgment covers. A write
++		// failure means the channel is going away; the monitor's
++		// teardown closes its parked copies either way.
++		if len(fds) > 0 {
++			mc.writeMu.Lock()
++			_ = mc.rpc.writeFrame(rpcFdAckReq(f.ID))
++			mc.writeMu.Unlock()
++		}
+ 		mc.dispatch(f, fds)
+ 	}
+ }
+@@ -242,6 +253,8 @@ func (mc *monitorClient) Signal(ctx context.Context, pid int, sig string) error
+ 
+ // Dial dials a unix socket through a one-shot child running with the
+ // connection's bound identity and returns the connected socket.
++// The returned socket is acknowledged to the monitor on receipt, which
++// releases the monitor's held copy; see the monitor_rpc.go header.
+ func (mc *monitorClient) Dial(ctx context.Context, addr string) (*net.UnixConn, error) {
+ 	_, fds, err := mc.call(ctx, rpcDialReq(0, addr))
+ 	if err != nil {
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `ssh/tailssh/monitor_rpc.go` (modified, +17/-0)
 ```diff
-@@ -1126,8 +1126,8 @@ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d h1:JcGKBZAL7
- github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d/go.mod h1:XrBNfAFN+pwoWuksbFS9Ccxnopa15zJGgXRFN90l3K4=
- github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6 h1:5Fr4ItdQ3LDbyuRmDAoDO29xu33QdFYo/2K+l+FTtiw=
- github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6/go.mod h1:F4qVQ0ffCtHizbxsWWCMGl8OIieayJWw8XetPiILDNA=
--github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0 h1:Xae/QS1NlbdG4CDrvI0Jw1pM0VMYPZWl4/NIfFMZCuk=
--github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
-+github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f h1:9XxzXnE8gJ9d2E8JF6Lau5z/czQG+1W8pO7z9z65dcY=
-+github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
- github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55 h1:Gzfnfk2TWrk8Jj4P4c1a3CtQyMaTVCznlkLZI++hok4=
- github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55/go.mod h1:4k4QO+dQ3R5FofL+SanAUZe+/QfeK0+OIuwDIRu2vSg=
- github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41 h1:/V2rCMMWcsjYaYO2MeovLw+ClP63OtXgCF2Y1eb8+Ns=
+@@ -25,6 +25,15 @@
+ // line that follows it, regardless of how the kernel shapes reads. See
+ // recvFdSets, sendFds and rpcMaxLine for the descriptor and line-size
+ // rules.
++//
++// A dial or listen reply's descriptor is held open by its sender until
++// the receiver acknowledges it with an fdack frame naming the reply's
++// request ID. On darwin, a socket whose only reference is an in-flight
++// SCM_RIGHTS message is reclaimed by the kernel's unix-socket garbage
++// collector: its receive side is flushed and buffered data discarded
++// while recvmsg still returns a usable descriptor. Continuous
++// process-owned coverage across the handoff, released only on receipt,
++// closes that window.
+ 
+ package tailssh
+ 
+@@ -49,6 +58,7 @@ const (
+ 	opSignal = "signal" // request {pid, sig}. reply {ok}
+ 	opPing   = "ping"   // request {}. reply {ok}
+ 	opExit   = "exit"   // unsolicited notification {pid, code}. no ID
++	opFdAck  = "fdack"  // request {id of the reply whose descriptors were received}. no fds, no reply
+ )
+ 
+ const (
+@@ -157,6 +167,13 @@ func rpcExitNotify(pid, code int) rpcFrame {
+ 	return rpcFrame{Op: opExit, Pid: pid, Code: code}
+ }
+ 
++// rpcFdAckReq acknowledges receipt of the descriptors a reply with the
++// given request ID carried. The sender of those descriptors holds its own
++// copies until this arrives; see replyFD in monitor.go for why.
++func rpcFdAckReq(replyID int64) rpcFrame {
++	return rpcFrame{ID: replyID, Op: opFdAck}
++}
++
+ // maxFdsForOp reports the maximum number of SCM_RIGHTS descriptors a
+ // frame of op may carry in either direction. Exec carries child stdio.
+ // Dial and listen replies carry the connected or bound socket.
 ```
 
-**File**: `shell.nix` (modified, +1/-1)
+**File**: `ssh/tailssh/monitor_test.go` (modified, +2/-0)
 ```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
-\ No newline at end of file
-+# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
-\ No newline at end of file
+@@ -351,6 +351,8 @@ func TestCheckAgentSocketPath(t *testing.T) {
+ 		{"/tmp/auth-agent123456/listener.sock", true},
+ 		{"/tmp/auth-agent/listener.sock", true},
+ 		{"/tmp/auth-agent123/inner/listener.sock", false},     // nested dir
++		{"/home/u/auth-agent123/listener.sock", false},        // outside agentDirRoot
++		{"/var/run/auth-agent123/listener.sock", false},       // outside agentDirRoot
+ 		{"tmp/auth-agent123/listener.sock", false},            // not absolute
+ 		{"/tmp/auth-agent123/other.sock", false},              // wrong file name
+ 		{"/tmp/other123/listener.sock", false},                // wrong dir name
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #21945** (2026-10-25): go.mod: update gliderssh for resource exhaustion fixes (@raggi)
+- **PR #21942** (2026-10-26): ssh/tailssh: route SSH forwarding through the privileged monitor (@raggi)
 - **PR #21941** (2026-10-26): ssh/tailssh: add user-credential forwarding children and monitor dial/listen ops (@raggi)
 - **PR #21939** (closed): ssh/tailssh: add ssh-monitor process and client (@raggi)
 - **PR #21937** (2026-10-25): ssh/tailssh: add monitor RPC codec and SCM_RIGHTS fd passing (@raggi)
 - **PR #21936** (2026-10-25): ssh/tailssh: drain the sftp test helper's stderr copier (@raggi)
-- **PR #21933** (2026-10-25): go.mod: update gliderssh to remove data race on timeouts (@raggi)
 
 ---
 
@@ -920,28 +1560,52 @@ Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: update gliderssh for resource exhaustion fixes
+## X. ssh/tailssh: route SSH forwarding through the privileged monitor
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ssh/tailssh/fwdchild.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f40a062`: go.mod: update gliderssh for resource exhaustion fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eba00ab3`: ssh/tailssh: route SSH forwarding through the privileged monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ssh/tailssh/fwdchild.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
+// After a successful send the child holds its descriptor copy and stays
+// alive until the monitor closes the result channel, its receipt
+// acknowledgment, and only then closes the descriptor and exits. On
+// darwin the kernel's unix-socket GC reclaims a socket whose only
+// reference is an in-flight SCM_RIGHTS message, so the sender's copy
+// must cover the handoff until the receiver owns the descriptor; see
+// beFwdChild and the monitor_rpc.go header.
+//
+// fwdResultAckWait bounds the child's wait for the monitor's receipt
+// acknowledgment after sending its result descriptor. The monitor
+// closes the result channel immediately after taking ownership, so the
+// wait normally ends at once; the deadline only covers a monitor that
+// died without closing.
+const fwdResultAckWait = 30 * time.Second
+
+// agentDirRoot is the only parent an agent-forwarding directory is
+// created under. The child runs with no environment, so os.TempDir
+// cannot redirect it, and it names the parent explicitly anyway;
+// tailscaled's removal pins the same root. See removeAgentForwardingDir
+// and checkAgentSocketPath.
+const agentDirRoot = "/tmp"
+
+	// Hold the descriptor, and this process, until the mon
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
+	// Close our dup. The kernel holds its own reference from the sendmsg,
+	// so the monitor's copy survives.
+		dir, err := os.MkdirTemp("", "auth-agent")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f40a062` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eba00ab3` are properly handled with clean fallback behavior.

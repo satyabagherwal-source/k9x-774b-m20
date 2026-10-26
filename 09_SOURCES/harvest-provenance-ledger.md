@@ -5129,3 +5129,7 @@ Every entry in this ledger must capture:
 | `learn-github-markmead-hyperui` | `https://github.com/markmead/hyperui` | `637323c8` | Multi-dimensional audit evidence | 2026-10-26T10:21:30.900Z |
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `8f305ae3` | Multi-dimensional audit evidence | 2026-10-26T10:21:37.728Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `ef56e699` | Multi-dimensional audit evidence | 2026-10-26T10:21:41.678Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `eba00ab3` | Multi-dimensional audit evidence | 2026-10-26T10:33:19.975Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `47d1c2da` | Multi-dimensional audit evidence | 2026-10-26T10:33:20.687Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5293992f` | Multi-dimensional audit evidence | 2026-10-26T10:33:24.999Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `7d3fbffc` | Multi-dimensional audit evidence | 2026-10-26T10:33:27.188Z |

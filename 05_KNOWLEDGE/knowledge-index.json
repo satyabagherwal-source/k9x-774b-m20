@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T10:21:41.629Z",
+  "last_updated": "2026-10-26T10:33:27.127Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5030,8 +5030,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "80591248",
-      "content_hash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
+      "source_version": "7d3fbffc",
+      "content_hash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -5069,6 +5069,11 @@
           "number": 4273,
           "title": "npm install lock (#3315)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4586,
+          "title": "deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5076,7 +5081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:53:45.261Z",
+      "verified_at": "2026-10-26T10:33:27.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7936,8 +7941,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "f4fde713",
-      "content_hash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
+      "source_version": "5293992f",
+      "content_hash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8150,6 +8155,11 @@
           "number": 4527,
           "title": "deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4585,
+          "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8157,7 +8167,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:37:30.199Z",
+      "verified_at": "2026-10-26T10:33:24.912Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33532,14 +33542,19 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "ddc16857",
-      "content_hash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
+      "source_version": "47d1c2da",
+      "content_hash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
         {
           "number": 2856,
           "title": "a crash: the thermal state change arrives off the main thread",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4584,
+          "title": "Windows/Linux: keep Mochi whole after a monitor change",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33548,7 +33563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:32:21.186Z",
+      "verified_at": "2026-10-26T10:33:20.615Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48210,8 +48225,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "de16943c",
-      "content_hash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
+      "source_version": "eba00ab3",
+      "content_hash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -48279,6 +48294,11 @@
           "number": 4503,
           "title": "go.mod: update gliderssh for resource exhaustion fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4583,
+          "title": "ssh/tailssh: route SSH forwarding through the privileged monitor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48286,7 +48306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:32:43.723Z",
+      "verified_at": "2026-10-26T10:33:19.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128712,6 +128732,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T10:21:41.619Z"
+    },
+    "rule-4583": {
+      "learning_id": "rule-4583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4583,
+      "title": "ssh/tailssh: route SSH forwarding through the privileged monitor",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "eba00ab3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:33:19.891Z"
+    },
+    "rule-4584": {
+      "learning_id": "rule-4584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4584,
+      "title": "Windows/Linux: keep Mochi whole after a monitor change",
+      "source_url": "https://github.com/Louis-CFM/coucou",
+      "source_version": "47d1c2da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:33:20.615Z"
+    },
+    "rule-4585": {
+      "learning_id": "rule-4585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4585,
+      "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "5293992f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:33:24.912Z"
+    },
+    "rule-4586": {
+      "learning_id": "rule-4586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4586,
+      "title": "deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "7d3fbffc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:33:27.116Z"
     }
   },
   "aliases": {

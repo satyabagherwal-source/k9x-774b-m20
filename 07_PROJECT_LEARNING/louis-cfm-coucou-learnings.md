@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `ddc16857`  
+> **Source Version**: `47d1c2da`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:32:21.116Z  
+> **Timestamp**: 2026-10-26T10:33:20.274Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:32:20.595Z  
+> **Harvest Timestamp**: 2026-10-26T10:33:14.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6198 stars
+- **Stars / Engagement**: 6505 stars
 
 ---
 
@@ -1980,7 +1980,11 @@ final class VoiceEngine: ObservableObject {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- *No recent closed bug issues fetched.*
+- **Issue #901** (2026-10-23): **WhatsApp pill shows a conversation ("David") that doesn't exist anywhere on my phone/account**
+  *Symptoms*: **What happened**  Coucou's WhatsApp pill showed a conversation with a contact named "David" that does not exist anywhere in my real WhatsApp — not in the main chat list, not in Archived. I confirmed Archived chats actually works (I archived a real old chat as a test, and only that one showed up there — "David" wasn't there either). I have no contact saved as "David", and normally an unsaved number shows as a phone number in WhatsApp, not a name — this showed a name with no number anywhere.  I also searched "David" across my entire WhatsApp (global search, not just chats) — the only match was an unrelated saved contact, "David Jóvenes" (someone from my church group, different full name), with no chat/message history shown for him either. No contact or chat matching plain "David" exists anywhere in my account.  The pill showed: a TikTok link, then (about an hour later) "Video" with a 😂 reaction, as a new unread message. I never clicked the link or opened the video (the island doesn't let you open it directly, and there's no real chat to check it from on my phone).  I logged out the Coucou/GOWA linked device from WhatsApp as a precaution. I also checked my phone's Linked Devices list — only expected devices were there (phone, the Coucou link, my laptop's Chrome), nothing unrecognized.  **What I expected**  The pill should only ever show conversations that genuinely exist on my linked WhatsApp account, since it's supposed to just mirror it.  **How to reproduce**  Unclear — happ
+
+- **Issue #803** (2026-10-19): **Streaming chat uses hard-coded 'Bearer ollama' header — DeepSeek authentication fails**
+  *Symptoms*: **What happened**  When using DeepSeek as the chat provider and asking a streaming chat request, the streaming code path sends a hard-coded Authorization header of `Bearer ollama`. DeepSeek rejects this token and the UI shows an authentication error (e.g. "Authentication Fails, Your api key: ****lama is invalid (request_id: d329d268-498e-4311-a019-66ad591365d7)").  Non-streaming model fetch and non-streaming chat calls succeed when using the correct DeepSeek API key.  **What you expected**  Streaming requests to OpenAI-compatible providers (DeepSeek, Qwen, Moonshot, etc.) should use the same computed Authorization header that the non-streaming requests use (i.e. `Bearer <provider-key>` retrieved from KeychainStore), not the hard-coded `Bearer ollama` value.  **How to reproduce**  1. Configure Coucou Settings → Chat and save a valid DeepSeek API key into the DeepSeek field. 2. Select DeepSeek as the chat provider and pick a streaming-capable model. 3. Ask a question that triggers the streaming path (chat with streaming enabled for DeepSeek). 4. Observe the authentication error in the UI (or check logs under ~/Library/Logs/NotchBuddy/nb.log). Example message previously seen:  ``` Authentication Fails, Your api key: ****lama is invalid (request_id: d329d268-498e-4311-a019-66ad591365d7) ```  5. (Optional) Verify the API key is valid by calling DeepSeek directly from the terminal:  ``` curl -v -H "Authorization: Bearer <YOUR_DEEPSEEK_KEY>" https://api.deepseek.com/v1/models ```  *
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1997,346 +2001,195 @@ final class VoiceEngine: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b6f2136` (2026-10-22)
-**Commit Message**: Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new
+### Incident Patch 1: `852df6f5` (2026-10-22)
+**Commit Message**: Windows/Linux: keep Mochi whole after a monitor change
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+The canvas bitmaps were sized once for the pixel ratio of the monitor the
+window started on, but drawn at the current one: moved to a monitor with
+another scale, Mochi came out too big and cut (or too small). The island's
+Mochi, the greeting, the mini Mochis, the desktop Mochi and the wardrobe
+icons now resize their bitmap when the ratio changes.
 
-**File**: `CHANGELOG.md` (modified, +15/-2)
+The resolution media query was made once, for the first ratio: after one
+change it never fired again, so the zoom correction missed the next
+monitor. It now re-arms itself after every change, and wakes the island's
+frame loop so Mochi is redrawn at once, even while idle.
+
+**File**: `windows/src/desktop/main.ts` (modified, +5/-0)
 ```diff
-@@ -2,8 +2,6 @@
- 
- ## Unreleased
- 
--- **Mochi turns blue when a new version waits** *(macOS GitHub build, Windows, Linux)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
--- **What's new, after the update** — once Coucou updated itself, the island shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the island, words dictated and time saved with Flow, calls transcribed. All of it is counted on your computer and never leaves it. And, if Coucou saves you time, **Buy Mochi a coffee**
- - **Coucou for Android 0.3.0**, by @Rhytam23 — a bigger release (versionCode 3). It works with Coucou 0.5.0 on Windows and Linux; the weekly recap needs the next Windows and Linux build.
-   - **Clearer link** — Home names the likely cause when the computer is out of reach (computer closed, other network, phone link off); predictive back; the ongoing notification is updated only when its text changes.
-   - **Permission requests** — choose the vibration (default, short, off) and whether a request wakes the screen (off by default). Allow still needs your fingerprint or screen lock, and approvals are never muted or hidden.
-@@ -13,6 +11,21 @@
-   - **Weekly recap and history** — last week's counts on Home (optional, off by default, behind its own switch on the computer), search and export of recent decisions as text, and a per-agent mute for finished, failed and limit notices (requests and questions are never muted).
-   - Fixes #629: the *Away from home Wi-Fi* section only shows when the pairing carries a relay (#682 by @Rhytam23)
- 
-+## 0.5.3 — October 22, 2026
-+
-+Mochi tells you a new version waits, and after the update he shows you what it brings.
-+
-+- **Mochi turns blue when a new version waits** *(macOS, GitHub build)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, in the notch and in the menu bar, and opening the notch shows **Update now** first (it is also the first line of the menu). Later hides it for a day. Approvals and questions always come first
-+- **What's new, after the update** — once Coucou updated itself, the notch shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the notch, words dictated and time saved with Flow, calls transcribed. All of it is counted on your Mac and never leaves it
-+- **Buy Mochi a coffee** — Coucou stays free and open source; if it saves you time, the last step of What's new has a coffee for Mochi (Stripe, the same page as Coucou's website)
-+
-+## Windows and Linux 0.5.2 — October 22, 2026
-+
-+- **Mochi turns blue when a new version waits** — once you agreed to look for updates, a newer version turns Mochi blue with a little up arrow, in the island and in the tray, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
-+- **What's new, after the update** — the island shows once what the new version brings, then *Your Coucou so far* (counted on your computer, never sent) and **Buy Mochi a coffee**
-+- **GitLab and Gitea** — two new pills like GitHub's: open merge and pull requests, reviews asked of you, the default branch's CI and your activity, for gitlab.com or your own instance; tokens stay in the system's credential store (#831 by @Andrey89711, from #591 and #585)
-+- **Weekly recap on Coucou for Android** — Settings → Android phone → *Show my weekly recap on the phone*: last week's counts only, off by default (#682 by @Rhytam23)
-+
- ## 0.5.2 — October 20, 2026
- 
- New versions now come to you: Mochi says it in the notch and one click installs it. Plus four new languages and a round of community work.
+@@ -210,6 +210,11 @@ class DesktopMochi {
+     engine.setDancing(this.snap.dancing && !this.asleep);
+     engine.update(dt);
+     const dpr = this.dpr();
++    // Dragged onto a monitor of another scale, the bitmap follows the ratio.
++    if (this.canvas.width !== Math.round(PANEL_SIZE * dpr)) {
++      this.canvas.width = Math.round(PANEL_SIZE * dpr);
++      this.canvas.height = Math.round(PANEL_SIZE * dpr);
++    }
+     ctx.setTransform(dpr, 0, 0, dpr, SIDE * dpr, 0);
+     ctx.clearRect(-SIDE, 0, PANEL_SIZE, PANEL_SIZE);
+     ctx.save();
 ```
 
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
+**File**: `windows/src/island/island.ts` (modified, +10/-1)
 ```diff
-@@ -34,9 +34,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.5.2</string>
-+	<string>0.5.3</string>
- 	<key>CFBundleVersion</key>
--	<string>19</string>
-+	<string>20</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
+@@ -85,6 +85,8 @@ export class Island {
+   private lastFrame = 0;
+   private dirty = true;
+   private canvasPx = 0;
++  /** The pixel ratio Mochi's bitmap was sized for: it changes with the monitor. */
++  private canvasDpr = 0;
+ 
+   // Rust starts the window at full size so the launch greeting has room.
+   private collapsed = false;
+@@ -1015,6 +1017,10 @@ export class Island {
+       const gctx = this.greetingCanvas.getContext("2d");
+       if (gctx) {
+         const dpr = Math.min(2, window.devicePixelRatio || 1);
++        if (this.greetingCanvas.width !== Math.round(EXPANDED_W * dpr)) {
++          this.greetingCanvas.width = Math.round(EXPANDED_W * dpr);
++          this.greetingCanvas.height = Math.round(150 * dpr);
++        }
+         gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+         this.greeting.draw(gctx);
+       }
+@@ -1091,8 +1097,11 @@ export class Island {
+     const hCss = w + BOT_OVERHANG;
+     const wCss = w + BOT_SIDE * 2;
+     const dpr = Math.min(2, window.devicePixelRatio || 1);
+-    if (this.canvasPx !== w) {
++    // Drawn at the current ratio, so a bitmap sized for another monitor's
++    // would show Mochi too big and cut, or too small.
++    if (this.canvasPx !== w || this.canvasDpr !== dpr) {
+       this.canvasPx = w;
++      this.canvasDpr = dpr;
+       this.botCanvas.width = Math.round(wCss * dpr);
+       this.botCanvas.height = Math.round(hCss * dpr);
+       this.botCanvas.style.width = `${wCss}px`;
 ```
 
-**File**: `NotchBuddy/Resources/whats-new.json` (modified, +110/-0)
+**File**: `windows/src/main.ts` (modified, +14/-2)
 ```diff
-@@ -1,6 +1,116 @@
- {
-   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-   "releases": [
-+    {
-+      "version": "0.5.3",
-+      "items": [
-+        {
-+          "icon": "update",
-+          "title": {
-+            "en": "Mochi turns blue for updates",
-+            "fr": "Mochi bleu pour les mises à jour",
-+            "es": "Mochi azul cuando hay versión nueva",
-+            "pt-BR": "Mochi azul quando há versão nova",
-+            "ru": "Синий Mochi — есть обновление",
-+            "zh-Hans": "有更新时 Mochi 变蓝",
-+            "hi": "अपडेट पर Mochi नीला",
-+            "ar": "Mochi يتحول للأزرق عند التحديث",
-+            "bn": "আপডেটে Mochi নীল",
-+            "id": "Mochi biru saat ada pembaruan",
-+            "de": "Mochi wird blau bei Updates",
-+            "tr": "Güncellemede Mochi maviye döner",
-+            "th": "Mochi เป็นสีฟ้าเมื่อมีอัปเดต",
-+            "zh-Hant": "有更新時 Mochi 變藍"
-+          },
-+          "detail": {
-+            "en": "A new Coucou turns him blue, in the notch and the menu bar. One click installs it.",
-+            "fr": "Un nouveau Coucou le rend bleu, dans le notch et la barre des menus. Un clic l’installe.",
-+            "es": "Un Coucou nuevo lo vuelve azul, en el notch y la barra de menús. Un clic lo instala.",
-+            "pt-BR": "Um Coucou novo o deixa azul, no notch e na barra de menus. Um clique instala.",
-+            "ru": "Новый Coucou делает его синим — в вырезе и в строке меню. Один клик — и готово.",
-+            "zh-Hans": "有新版 Coucou 时，刘海和菜单栏中的它会变蓝，一键安装。",
-+            "hi": "नया Coucou आने पर वह नॉच और मेन्यू बार में नीला हो जाता है। एक क्लिक में इंस्टॉल।",
-+            "ar": "عند صدور Coucou جديد يصبح أزرق في النوتش وشريط القوائم. نقرة واحدة تثبّته.",
-+            "bn": "নতুন Coucou এলে নচ ও মেনু বারে সে নীল হয়। এক ক্লিকে ইনস্টল।",
-+            "id": "Coucou baru membuatnya biru, di notch dan bilah menu. Sekali klik untuk memasang.",
-+            "de": "Ein neues Coucou macht ihn blau, in der Notch und der Menüleiste. Ein Klick installiert es.",
-+            "tr": "Yeni Coucou onu çentikte ve menü çubuğunda maviye çevirir. Tek tıkla kurulur.",
-+            "th": "เมื่อมี Coucou ใหม่ เขาจะเป็นสีฟ้าในรอยบากและแถบเมนู คลิกเดียวติดตั้ง",
-+            "zh-Hant": "有新版 Coucou 時，瀏海和選單列中的它會變藍，一鍵安裝。"
-+          }
-+        },
-+        {
-+          "icon": "sparkles",
-+          "title": {
-+            "en": "What’s new, right here",
-+            "fr": "Les nouveautés, ici même",
-+            "es": "Las novedades, aquí mismo",
-+            "pt-BR": "As novidades, aqui mesmo",
-+            "ru": "Что нового — прямо здесь",
-+            "zh-Hans": "更新内容，就在这里",
-+            "hi": "नया क्या है, यहीं",
-+            "ar": "الجديد، هنا مباشرة",
-+            "bn": "নতুন কী, এখানেই",
-+            "id": "Yang baru, langsung di sini",
-+            "de": "Neuigkeiten, direkt hier",
-+            "tr": "Yenilikler, tam burada",
-+            "th": "มีอะไรใหม่ ดูได้ที่นี่",
-+            "zh-Hant": "更新內容，就在這裡"
-+          },
-+          "detail": {
-+            "en": "After each update: what it brings, then your Coucou so far.",
-+            "fr": "Après chaque mise à jour : ce qu’elle apporte, puis ton Coucou jusqu’ici.",
-+            "es": "Tras cada actualización: lo que trae y luego tu Coucou hasta ahora.",
-+            "pt-BR": "Após cada atualização: o que ela traz e depois seu Coucou até agora.",
-+            "ru": "После каждого обновления — что нового, а затем ваш Coucou на сегодня.",
-+            "zh-Hans": "每次更新后：先看新内容，再看你的 Coucou 至今。",
-+            "hi": "हर अपडेट के बाद: उसमें क्या नया है, फिर अब तक आपका Coucou।",
-+            "ar": "بعد كل تحديث: ما الجديد فيه، ثم Coucou الخاص بك حتى الآن.",
-+            "bn": "প্রতিটি আপডেটের পর: কী নতুন, তারপর এ পর্যন্ত আপনার Coucou।",
-+            "id": "Setelah tiap pembaruan: isinya, lalu Coucou-mu sejauh ini.",
-+            "de": "Nach jedem Update: was es bringt, dann dein Coucou bisher.",
-+            "tr": "Her güncellemeden sonra: getirdikleri, ardından şimdiye kadar Coucou’n.",
-+            "th": "หลังอัปเดตแต่ละครั้ง: ดูของใหม่ แล้วดู Coucou ของคุณจนถึงตอนนี้",
-+            "zh-Hant": "每次更新後：先看新內容，再看你的 Coucou 至今。"
-+          }
-+        },
-+        {
-+          "icon": "heart",
-+          "title": {
-+            "en": "Buy Mochi a coffee",
-+            "fr": "Offrir un café à Mochi",
-+            "es": "Invitar a Mochi a un café",
-+            "pt-BR": "Pagar um café para o Mochi",
-+            "ru": "Угостить Mochi кофе",
-+            "zh-Hans": "请 Mochi 喝咖啡",
-+            "hi": "Mochi को कॉफ़ी पिलाएँ",
-+            "ar": "ادعُ Mochi إلى قهوة",
-+            "bn": "Mochi-কে কফি খাওয়ান",
-+            "id": "Traktir Mochi kopi",
-+            "de": "Mochi einen Kaffee spendieren",
-+   
+@@ -108,10 +108,22 @@ async function main() {
+   await onEvent<null>("screen-changed", async () => {
+     await checkZoom();
+     void Bridge.reposition();
++    island.ensureRunning();
+   });
+ 
+-  const mediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+-  mediaQuery.addEventListener?.("change", () => void checkZoom());
++  // A query only matches the ratio it was made for: once it changes, watch the
++  // new one, or the next monitor's scale goes unnoticed and the zoom stays wrong.
++  // One frame redraws Mochi at the new ratio, even while the loop is idle.
++  const watchRatio = () => {
++    window
++      .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
++      .addEventListener?.("change", () => {
++        watchRatio();
++        void checkZoom();
++        island.ensureRunning();
++      }, { once: true });
++  };
++  watchRatio();
+ 
+   window.addEventListener(
+     "wheel",
 ```
 
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+**File**: `windows/src/mochi/minibots.ts` (modified, +6/-0)
 ```diff
-@@ -140,8 +140,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "19"
--        CFBundleShortVersionString: "0.5.2"
-+        CFBundleVersion: "20"
-+        CFBundleShortVersionString: "0.5.3"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
+@@ -81,6 +81,12 @@ export function tickMiniBots(dt: number) {
+     if (!ctx) continue;
+     mb.engine.setDancing(mb.dancing?.() ?? false);
+     mb.engine.update(dt);
++    // Sized at creation: the island may have moved to a monitor of another scale.
++    const px = Math.round(mb.cssSize * dpr);
++    if (mb.canvas.width !== px) {
++      mb.canvas.width = px;
++      mb.canvas.height = px;
++    }
+     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+     ctx.clearRect(0, 0, mb.cssSize, mb.cssSize);
+     ctx.save();
 ```
 
-**File**: `README.md` (modified, +3/-1)
+**File**: `windows/src/views/wardrobe.ts` (modified, +6/-3)
 ```diff
-@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
+@@ -35,6 +35,7 @@ export function buildWardrobe(actions: ViewActions): ViewHost {
+   let hovered: OutfitSelection | null = null;
+   let drawnSeason: Outfit | null = null;
+   let drawnLanguage = language();
++  let drawnDpr = 0;
+   const items = new Map<OutfitSelection, { button: HTMLButtonElement; canvas: HTMLCanvasElement }>();
  
- | Version | Date | Highlights |
- |---------|------|------------|
-+| [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
- | [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
- | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
- | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.0) | Oct 18, 2026 | WhatsApp in the notch (experimental), Mochi feels your Mac, a screen capture for Claude, dictation that writes prompts or translates |
-@@ -172,6 +173,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
- 
- | Windows & Linux | Date | Highlights |
- |---------|------|------------|
-+| 0.5.2 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.2) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.2) | Oct 22, 2026 | Mochi turns blue when a new version waits, What's new after each update; GitLab and Gitea pills; the weekly recap on Android |
- | 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
- | 0.5.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0) | Oct 15, 2026 | Catches up with the Mac: the Coucou window, Flow dictation with Parakeet offline (X11 and Wayland), the Notetaker, « OK Coucou » |
- | 0.4.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.4.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.4.0) | Oct 11, 2026 | Your Android phone: the link for Coucou for Android, by @Rhytam23 — approvals with your fingerprint, answers, chat, off by default |
-@@ -245,7 +247,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
- 
- This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
- 
--**Windows and Linux 0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
-+**Windows and Linux 0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents
-```
-
-**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- pkgname=coucou-git
- _pkgname=coucou
--pkgver=0.5.1
-+pkgver=0.5.2
- pkgrel=1
- pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
- arch=('x86_64' 'aarch64')
-```
-
-**File**: `windows/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -719,7 +719,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou"
--version = "0.5.1"
-+version = "0.5.2"
- dependencies = [
-  "arboard",
-  "cpal",
-@@ -754,7 +754,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou-hook"
--version = "0.5.1"
-+version = "0.5.2"
- dependencies = [
-  "libc",
-  "serde_json",
-```
-
-**File**: `windows/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
- resolver = "2"
- 
- [workspace.package]
--version = "0.5.1"
-+version = "0.5.2"
- edition = "2021"
- license = "MIT"
- 
+   const updateNote = () => {
+@@ -67,11 +68,13 @@ export function buildWardrobe(actions: ViewActions): ViewHost {
+   /** Icons are drawn once; only "auto" changes, with the season and its badge's language. */
+   const drawIcons = () => {
+     const season = seasonalOutfit(new Date());
+-    if (season === drawnSeason && drawnLanguage === language()) return;
+-    const first = drawnSeason == null;
++    const dpr = Math.min(2, window.devicePixelRatio || 1);
++    if (season === drawnSeason && drawnLanguage === language() && drawnDpr === dpr) return;
++    // On a monitor of another scale every icon is drawn again, sharp and whole.
++    const first = drawnSeason == null || drawnDpr !== dpr;
+     drawnSeason = season;
+     drawnLanguage = language();
+-    const dpr = Math.min(2, window.devicePixelRatio || 1);
++    drawnDpr = dpr;
+     for (const [sel, { canvas }] of items) {
+       if (!first && sel !== "auto") continue;
+       canvas.width = Math.round(ICON * dpr);
 ```
 
 ---
 
-### Incident Patch 2: `d50f32b8` (2026-10-20)
-**Commit Message**: Mac 0.5.2, Windows and Linux 0.5.1: CHANGELOG, README, versions
+### Incident Patch 2: `45d4bd6f` (2026-10-22)
+**Commit Message**: Windows and Linux 0.5.3: CHANGELOG, README, versions, What's new
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +25/-0)
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -1,5 +1,30 @@
+@@ -1,5 +1,12 @@
  # Changelog
  
-+## 0.5.2 — October 20, 2026
++## Windows and Linux 0.5.3 — October 22, 2026
 +
-+New versions now come to you: Mochi says it in the notch and one click installs it. Plus four new languages and a round of community work.
++WhatsApp comes to Windows and Linux, as on the Mac.
 +
-+- **New version in the notch** *(macOS, GitHub build)* — Coucou asks once whether it may look at its releases on GitHub; then, a few times a day, Mochi tells you when a new Coucou is out: **Update now**, What's new, Later. The click downloads it from GitHub, checks it is Coucou at the announced version, signed with its developer's Developer ID and notarized by Apple, swaps the app and restarts. Also in the menu bar and in Settings → General → Updates (Check now). Nothing is checked before you say yes, and nothing about you is sent
-+- **Four new languages** — German and Turkish (by @Ohualtex), Thai (by @XBalanceZ) and Traditional Chinese (by @shawn-t516): 14 languages in Settings → General → Language
-+- **Homebrew** — `brew tap louis-cfm/coucou https://github.com/Louis-CFM/coucou`, then `brew install --cask coucou` (#340 by @espensgr)
-+- **Plan approval from the notch** — when Claude Code has a plan ready, the card offers the terminal's own choices: Auto mode, Manual, or Change plan, which brings the terminal forward to type the change (#703 by @orrrrli)
-+- **The pill's name** — a Claude Code session's pill is named after its `/rename` title, else the folder it started in (no longer the subfolder it moved into), and with several sessions it follows the one that is working (#761 by @orrrrli)
-+- **Quiet when you're watching** — a turn that ends while its terminal is in front only takes a badge: no sound, no reveal (#719 by @orrrrli)
-+- **Alerts from every pill** — Settings → General → Behavior → *Open for every pill's alerts*: another pill that finishes or fails opens the notch for a moment, then the pill you had comes back (#683, asked by @Arochell). Off by default
-+- **Claude Desktop chats** *(GitHub build, experimental)* — Mochi jumps when a regular chat reply is ready in the Claude app, while you're elsewhere (#686, idea by @GreGCerisier). Settings → Agents → Claude Desktop chats, off by default; it uses Accessibility and reads nothing of the chat
-+- **Antigravity questions** — when Antigravity asks you something, its pill says so with a sound (#709 by @Ohualtex, #690)
-+- **Conductor** — Claude Code sessions run from Conductor land on the Claude Code pill, and Open terminal brings Conductor forward (#793, asked by @victorlohezic)
-+- DeepSeek, Qwen and Moonshot chats work again: streaming sent the wrong key (#803 and #730 by @itgoodojo, fix from #667 by @pedrozampiroli)
++- **WhatsApp in the island** *(experimental)* — your incoming WhatsApp messages in a green pill, one row per conversation with initials, name, the last message and the unread count; photos, voice messages and documents show as a label. Click a conversation to read its last ten messages and reply: Enter sends, Shift+Enter starts a new line, Esc goes back. Mochi smiles at a new message. Groups stay quiet unless you're mentioned, chats you ignore never show, and read receipts go only when you open a conversation or reply. Off by default: Settings → Integrations → WhatsApp
++- **Install WhatsApp in one click** — Coucou downloads GOWA, the open-source gateway, from its GitHub page, checks it against the SHA-256 GOWA publishes, starts it on this computer only and shows the QR code to scan; **Update** fetches GOWA's latest version, and your own GOWA or OpenWA goes under **Advanced**. Messages stay in memory, are never logged or saved, and are forgotten when Coucou quits. Use it on your own account only: WhatsApp may restrict accounts that abuse it
 +
-+## Windows and Linux 0.5.1 — October 20, 2026
-+
-+- **New version in the island** — Coucou asks once whether it may look at its releases on GitHub, then tells you when a new one is out. On Windows, **Update now** downloads the installer that matches how you installed Coucou (setup.exe or MSI), checks its SHA-256 against the one GitHub publishes, installs it and comes back by itself; the portable exe and Linux get the release page. Settings → General → Updates and the tray menu too (#812, plan by @afpruivo)
-+- **German and Turkish** (by @Ohualtex): 12 languages
-+- **Optional clock** in the middle of the compact island, for the place a Mac has its notch: Settings → General → Show clock in the island (#788 by @eduardo-qts)
-+- **Antigravity questions** — the pill turns to a question with a sound and the island shows up (#709 by @Ohualtex)
-+- **Linux**: the Coucou window no longer keeps a core busy once closed, on KDE and other desktops whose webview doesn't report it hidden (#792, reported by @Michael-1103)
-+- The island's error view shows the real error and who stopped
-+
- ## 0.5.1 — October 18, 2026
+ ## Android 0.3.0 — October 22, 2026
  
- - **WhatsApp in one click** *(macOS, GitHub build)* — no more GitHub, zip or Terminal: Settings → Integrations → WhatsApp → **Install WhatsApp**. Coucou downloads GOWA, the open-source gateway, for your Mac (about 15 MB, once), checks it against the SHA-256 GOWA publishes, starts it, and shows the QR code to scan. It starts and stops with Coucou, and **Update** fetches GOWA's latest version. Your own gateway (GOWA by hand, OpenWA, another address) moves under **Advanced**
+ - **Coucou for Android 0.3.0**, by @Rhytam23 — a bigger release (versionCode 3). It works with Coucou 0.5.0 or later on Windows and Linux; the weekly recap needs Coucou 0.5.2 on Windows or Linux.
 ```
 
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
+**File**: `README.md` (modified, +5/-4)
 ```diff
-@@ -34,9 +34,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.5.1</string>
-+	<string>0.5.2</string>
- 	<key>CFBundleVersion</key>
--	<string>18</string>
-+	<string>19</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
-```diff
-@@ -137,8 +137,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "18"
--        CFBundleShortVersionString: "0.5.1"
-+        CFBundleVersion: "19"
-+        CFBundleShortVersionString: "0.5.2"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
-```
-
-**File**: `README.md` (modified, +4/-2)
-```diff
-@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
- 
- | Version | Date | Highlights |
- |---------|------|------------|
-+| [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
- | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
- | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.0) | Oct 18, 2026 | WhatsApp in the notch (experimental), Mochi feels your Mac, a screen capture for Claude, dictation that writes prompts or translates |
- | [0.4.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.4.0) | Oct 14, 2026 | Coucou becomes an app: Flow dictation anywhere, Parakeet offline, the Notetaker, a window in the Dock |
-@@ -171,6 +172,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+@@ -173,6 +173,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
  
  | Windows & Linux | Date | Highlights |
  |---------|------|------------|
-+| 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
++| 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | WhatsApp in the island (experimental): one-click gateway install, your chats and replies |
+ | 0.5.2 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.2) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.2) | Oct 22, 2026 | Mochi turns blue when a new version waits, What's new after each update; GitLab and Gitea pills; the weekly recap on Android |
+ | 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
  | 0.5.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0) | Oct 15, 2026 | Catches up with the Mac: the Coucou window, Flow dictation with Parakeet offline (X11 and Wayland), the Notetaker, « OK Coucou » |
- | 0.4.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.4.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.4.0) | Oct 11, 2026 | Your Android phone: the link for Coucou for Android, by @Rhytam23 — approvals with your fingerprint, answers, chat, off by default |
- | 0.3.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.3.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.3.0) | Oct 9, 2026 | Linux catches up: Spotify with Mochi dancing, global shortcuts on Wayland, Open terminal brings the terminal back; open on hover, your own sounds, a colour per Mochi |
-@@ -243,7 +245,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
+@@ -248,7 +249,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
  
  This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
  
--**Windows and Linux 0.5.0** catch up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
-+**Windows and Linux 0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CH
+-**Windows and Linux 0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
++**Windows and Linux 0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
+ 
+ There is no notch on a PC, so the island slides out of the top edge of the screen
+ instead of hiding inside one. See [`windows/README.md`](windows/README.md) for the
+@@ -334,13 +335,13 @@ On the Mac, open Coucou from the Dock or the menu bar: its window has every sett
+ | **Flow dictation** *(macOS, GitHub build)* | hold a key, speak, the words are pasted | Coucou → Flow → Settings · the Accessibility and Microphone permissions |
+ | **Parakeet** *(macOS, Apple silicon)* | offline dictation, more accurate | Coucou → Flow 
 ```
 
 **File**: `linux/arch/PKGBUILD` (modified, +1/-1)
@@ -2345,8 +2198,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  pkgname=coucou-git
  _pkgname=coucou
--pkgver=0.5.0
-+pkgver=0.5.1
+-pkgver=0.5.2
++pkgver=0.5.3
  pkgrel=1
  pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
  arch=('x86_64' 'aarch64')
@@ -2358,17 +2211,17 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  [[package]]
  name = "coucou"
--version = "0.5.0"
-+version = "0.5.1"
+-version = "0.5.2"
++version = "0.5.3"
  dependencies = [
   "arboard",
   "cpal",
-@@ -754,7 +754,7 @@ dependencies = [
+@@ -755,7 +755,7 @@ dependencies = [
  
  [[package]]
  name = "coucou-hook"
--version = "0.5.0"
-+version = "0.5.1"
+-version = "0.5.2"
++version = "0.5.3"
  dependencies = [
   "libc",
   "serde_json",
@@ -2380,8 +2233,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  resolver = "2"
  
  [workspace.package]
--version = "0.5.0"
-+version = "0.5.1"
+-version = "0.5.2"
++version = "0.5.3"
  edition = "2021"
  license = "MIT"
  
@@ -2392,380 +2245,103 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 @@ -1,12 +1,12 @@
  {
    "name": "coucou-windows",
--  "version": "0.5.0",
-+  "version": "0.5.1",
+-  "version": "0.5.2",
++  "version": "0.5.3",
    "lockfileVersion": 3,
    "requires": true,
    "packages": {
      "": {
        "name": "coucou-windows",
--      "version": "0.5.0",
-+      "version": "0.5.1",
+-      "version": "0.5.2",
++      "version": "0.5.3",
        "dependencies": {
          "@tauri-apps/api": "^2"
        },
 ```
 
+**File**: `windows/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "coucou-windows",
+   "private": true,
+-  "version": "0.5.2",
++  "version": "0.5.3",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+```
+
+**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://schema.tauri.app/config/2",
+   "productName": "Coucou",
+-  "version": "0.5.2",
++  "version": "0.5.3",
+   "identifier": "fr.louisraille.coucou",
+   "build": {
+     "beforeDevCommand": "npm run dev",
+```
+
 ---
 
-### Incident Patch 3: `5075a204` (2026-10-22)
-**Commit Message**: What's new data for the Mac and Windows/Linux, and its check
+### Incident Patch 3: `01f3198e` (2026-10-23)
+**Commit Message**: Merge branch 'fix/whatsapp-status' into integ-910-892
 
-Each release brings its own short What's new (icon, title, one line, in
-every language the app speaks). scripts/test-whats-new.py fails when the
-version about to ship has no complete entry.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `NotchBuddy/Resources/whats-new.json` (added, +150/-0)
+**File**: `NotchBuddy/Sources/App/WhatsAppModels.swift` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,150 @@
-+{
-+  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-+  "releases": [
-+    {
-+      "version": "0.5.2",
-+      "items": [
-+        {
-+          "icon": "update",
-+          "title": {
-+            "en": "New version in the notch",
-+            "fr": "Nouvelle version dans le notch",
-+            "es": "Nueva versión en el notch",
-+            "pt-BR": "Nova versão no notch",
-+            "ru": "Новая версия в вырезе",
-+            "zh-Hans": "刘海中的新版本",
-+            "hi": "नॉच में नया वर्ज़न",
-+            "ar": "إصدار جديد في النوتش",
-+            "bn": "নচে নতুন ভার্সন",
-+            "id": "Versi baru di notch",
-+            "de": "Neue Version in der Notch",
-+            "tr": "Çentikte yeni sürüm",
-+            "th": "เวอร์ชันใหม่ในรอยบาก",
-+            "zh-Hant": "瀏海中的新版本"
-+          },
-+          "detail": {
-+            "en": "Mochi tells you when a new Coucou is out. One click installs it.",
-+            "fr": "Mochi te prévient quand un nouveau Coucou sort. Un clic l'installe.",
-+            "es": "Mochi te avisa cuando sale un nuevo Coucou. Un clic lo instala.",
-+            "pt-BR": "O Mochi avisa quando sai um novo Coucou. Um clique instala.",
-+            "ru": "Mochi сообщит о новом Coucou. Один клик — и он установлен.",
-+            "zh-Hans": "有新版 Coucou 时 Mochi 会告诉你，一键即可安装。",
-+            "hi": "नया Coucou आने पर Mochi बताता है। एक क्लिक में इंस्टॉल।",
-+            "ar": "يخبرك Mochi بصدور Coucou جديد. نقرة واحدة تثبّته.",
-+            "bn": "নতুন Coucou এলে Mochi জানায়। এক ক্লিকে ইনস্টল।",
-+            "id": "Mochi memberi tahu saat Coucou baru keluar. Sekali klik untuk memasang.",
-+            "de": "Mochi sagt dir, wenn ein neues Coucou da ist. Ein Klick installiert es.",
-+            "tr": "Yeni Coucou çıkınca Mochi haber verir. Tek tıkla kurulur.",
-+            "th": "Mochi บอกเมื่อมี Coucou ใหม่ คลิกเดียวก็ติดตั้งได้",
-+            "zh-Hant": "有新版 Coucou 時 Mochi 會告訴你，一鍵即可安裝。"
-+          }
-+        },
-+        {
-+          "icon": "languages",
-+          "title": {
-+            "en": "Four new languages",
-+            "fr": "Quatre nouvelles langues",
-+            "es": "Cuatro idiomas nuevos",
-+            "pt-BR": "Quatro novos idiomas",
-+            "ru": "Четыре новых языка",
-+            "zh-Hans": "新增四种语言",
-+            "hi": "चार नई भाषाएँ",
-+            "ar": "أربع لغات جديدة",
-+            "bn": "চারটি নতুন ভাষা",
-+            "id": "Empat bahasa baru",
-+            "de": "Vier neue Sprachen",
-+            "tr": "Dört yeni dil",
-+            "th": "เพิ่มสี่ภาษาใหม่",
-+            "zh-Hant": "新增四種語言"
-+          },
-+          "detail": {
-+            "en": "German, Turkish, Thai and Traditional Chinese: 14 in all.",
-+            "fr": "Allemand, turc, thaï et chinois traditionnel : 14 en tout.",
-+            "es": "Alemán, turco, tailandés y chino tradicional: 14 en total.",
-+            "pt-BR": "Alemão, turco, tailandês e chinês tradicional: 14 no total.",
-+            "ru": "Немецкий, турецкий, тайский и традиционный китайский: всего 14.",
-+            "zh-Hans": "德语、土耳其语、泰语和繁体中文：共 14 种。",
-+            "hi": "जर्मन, तुर्की, थाई और पारंपरिक चीनी: कुल 14।",
-+            "ar": "الألمانية والتركية والتايلاندية والصينية التقليدية: 14 لغة.",
-+            "bn": "জার্মান, তুর্কি, থাই ও প্রথাগত চীনা: মোট ১৪টি।",
-+            "id": "Jerman, Turki, Thai, dan Mandarin Tradisional: total 14.",
-+            "de": "Deutsch, Türkisch, Thai und traditionelles Chinesisch: 14 insgesamt.",
-+            "tr": "Almanca, Türkçe, Tayca ve Geleneksel Çince: toplam 14.",
-+            "th": "เยอรมัน ตุรกี ไทย และจีนตัวเต็ม รวม 14 ภาษา",
-+            "zh-Hant": "德文、土耳其文、泰文和繁體中文：共 14 種。"
-+          }
-+        },
-+        {
-+          "icon": "checklist",
-+          "title": {
-+            "en": "Plans from the notch",
-+            "fr": "Les plans depuis le notch",
-+            "es": "Planes desde el notch",
-+            "pt-BR": "Planos pelo notch",
-+            "ru": "Планы прямо из выреза",
-+            "zh-Hans": "在刘海中处理计划",
-+            "hi": "नॉच से प्लान",
-+            "ar": "الخطط من النوتش",
-+            "bn": "নচ থেকেই প্ল্যান",
-+            "id": "Rencana dari notch",
-+            "de": "Pläne aus der Notch",
-+            "tr": "Planlar çentikten",
-+            "th": "จัดการแผนจากรอยบาก",
-+            "zh-Hant": "在瀏海中處理計畫"
-+          },
-+          "detail": {
-+            "en": "Approve Claude Code's plan in Auto or Manual mode, or change it.",
-+            "fr": "Valide le plan de Claude Code en mode Auto ou Manuel, ou modifie-le.",
-+            "es": "Aprueba el plan de Claude Code en modo Auto o Manual, o cámbialo.",
-+            "pt-BR": "Aprove o plano do Claude Code no modo Auto ou Manual, ou mude-o.",
-+            "
+@@ -74,6 +74,10 @@ struct WAFilters: Equatable, Sendable {
+ enum WAJID {
+     static func isGroup(_ jid: String) -> Bool { jid.hasSuffix("@g.us") }
+ 
++    /// Status updates (status@broadcast), broadcast lists and channels (…@newsletter) come in as
++    /// messages too, but they are not conversations: a contact's Status would become a chat named after them (#901).
++    static func isConversation(_ jid: String) -> Bool { !jid.hasSuffix("@broadcast") && !jid.hasSuffix("@newsletter") }
++
+     /// "33612345678@s.whatsapp.net" → "+33 6 12 34 56 78"-ish: the digits with a plus.
+     static func displayNumber(_ jid: String) -> String {
+         let user = jid.split(separator: "@").first.map(String.init) ?? jid
+@@ -130,7 +134,7 @@ struct WAInbox: Equatable, Sendable {
+     mutating func add(_ message: WAMessage, filters: WAFilters, name: String? = nil, history: Bool = false) -> Outcome {
+         guard !seenIds.contains(message.id) else { return .duplicate }
+         let chat = WAJID.normalized(message.chat)
+-        guard !filters.ignored.contains(chat) else { return .ignored }
++        guard WAJID.isConversation(chat), !filters.ignored.contains(chat) else { return .ignored }
+         seenIds.insert(message.id)
+         seenOrder.append(message.id)
+         if seenOrder.count > 2_000 {
 ```
 
-**File**: `scripts/test-whats-new.py` (added, +126/-0)
+**File**: `tests/WhatsAppTests.swift` (modified, +10/-0)
 ```diff
-@@ -0,0 +1,126 @@
-+#!/usr/bin/env python3
-+"""What's new after an update: every release must bring its entry.
+@@ -52,6 +52,16 @@ enum WhatsAppTests {
+             check("groups heard when not muted", inbox.add(msg("g3", chat: group, from: "336@s.whatsapp.net"), filters: f) == .notify)
+         }
+ 
++        print("\nStatus updates and channels are not conversations (#901)")
++        do {
++            var inbox = WAInbox()
++            let f = WAFilters()
++            check("a contact's Status is left out", inbox.add(msg("s1", chat: "status@broadcast", from: "33600000001@s.whatsapp.net", text: "https://vm.tiktok.com/x"), filters: f) == .ignored)
++            check("a channel post is left out", inbox.add(msg("n1", chat: "120363000000000001@newsletter"), filters: f) == .ignored)
++            check("nothing shows", inbox.visible(filters: f).isEmpty)
++            check("people and groups still are", WAJID.isConversation("33600000001@s.whatsapp.net") && WAJID.isConversation("120363@g.us") && WAJID.isConversation("251556368777322@lid"))
++        }
 +
-+Coucou shows, once after it updated itself, what the new version brings (an icon, a title and a
-+line per item, in every language the app speaks). The entries live in
-+  NotchBuddy/Resources/whats-new.json   (Mac, the 14 languages of Localizable.xcstrings)
-+  windows/src/whats-new/whats-new.json  (Windows and Linux, the 12 languages of strings.json)
-+This test fails when the version the app is about to ship has no entry, or an entry is
-+incomplete. release.sh runs it too, so a release can't go out without its "What's new".
-+
-+    python3 scripts/test-whats-new.py
-+"""
-+import json
-+import re
-+import sys
-+from pathlib import Path
-+
-+ROOT = Path(__file__).resolve().parent.parent
-+
-+# The icons both apps know (WhatsNew.swift maps them to SF Symbols, src/whats-new/icons.ts to SVG).
-+ICONS = {
-+    "update", "languages", "terminal", "checklist", "bell", "chat", "mic", "phone", "shield",
-+    "sparkles", "bolt", "puzzle", "paint", "eye", "keyboard", "heart", "clock", "download", "bug",
-+}
-+
-+MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant"]
-+
-+MAX_ITEMS = 4
-+MAX_TITLE = 48     # characters, any language: one line in the card
-+MAX_DETAIL = 110   # characters: two short lines at most
-+
-+failures = []
-+
-+
-+def fail(msg):
-+    failures.append(msg)
-+    print(f"  ✗ {msg}")
-+
-+
-+def mac_version():
-+    text = (ROOT / "NotchBuddy/project.yml").read_text(encoding="utf-8")
-+    # The first target is the GitHub app (NotchBuddy); the App Store build has its own numbers.
-+    m = re.search(r'CFBundleShortVersionString:\s*"([0-9.]+)"', text)
-+    return m.group(1)
-+
-+
-+def windows_version():
-+    return json.loads((ROOT / "windows/package.json").read_text(encoding="utf-8"))["version"]
-+
-+
-+def windows_langs():
-+    return json.loads((ROOT / "windows/src/i18n/strings.json").read_text(encoding="utf-8"))["languages"]
-+
-+
-+def vkey(v):
-+    return tuple(int(x) for x in v.split("."))
-+
-+
-+def check(label, path, version, langs):
-+    print(f"\n{label}: {path.relative_to(ROOT)} for {version}")
-+    before = len(failures)
-+    try:
-+        data = json.loads(path.read_text(encoding="utf-8"))
-+    except Exception as e:  # noqa: BLE001
-+        fail(f"{path.name} does not read as JSON: {e}")
-+        return
-+    releases = data.get("releases")
-+    if not isinstance(releases, list) or not releases:
-+        fail("no releases")
-+        return
-+    versions = [r.get("version", "") for r in releases]
-+    if len(set(versions)) != len(versions):
-+        fail(f"a version appears twice: {versions}")
-+    if any(not re.fullmatch(r"\d+(\.\d+){1,3}", v) for v in versions):
-+        fail(f"a version is not numbers and dots: {versions}")
-+        return
-+    if versions != sorted(versions, key=vkey, reverse=True):
-+        fail(f"newest first, please: {versions}")
-+    current = next((r for r in releases if r["version"] == version), None)
-+    if current is None:
-+        fail(f"no entry for {version}: add it to {path.relative_to(ROOT)} (see CLAUDE.md, Releases)")
-+        return
-+    for r in releases:
-+        items = r.get("items")
-+        where = r["version"]
-+        if not isinstance(items, list) or not (1 <= len(items) <= MAX_ITEMS):
-+            fail(f"{where}: 1 to {MAX_ITEMS} items")
-+            continue
-+        for i, item in enumerate(items, 1):
-+            if item.get("icon") not in ICONS:
-+                fail(f"{where} item {i}: icon {item.get('icon')!r} is not one of {sorted(ICONS)}")
-+            for field, limit in (("title", MAX_TITLE), ("detail", MAX_DETAIL)):
-+                values = item.get(field)
-+                if not isinstance(values, dict):
-+                    fail(f"{where} item {i}: no {field}")
-+                    continue
-+                # Older entries may miss a language added later (English is shown instead);
-+                # the version being shipped must have them all.
-+                needed = langs if r is current else ["en"]
-+                for lang in needed:
-+                    v = values.get(lang)
-+                    if not isinstance(v, str) or not v.strip():
-+                        fail(f"{where} item {i}: {field} has no {lang}")
-+                    elif len(v) > limit:
-+                        fail(f"{where} item {i}: {field} in {lang} is {len(v)} characters (at most {limit})")
-+                for lang in values:
-+                    if lang not in langs:
-+                        fail(f"{where} item {i}: {field} has {lang!r}, which the app does not speak")
-+    if len(failures) == before:
-+        print(f"  ✓ {version}: {len(current['items'])} items in {len(langs)} languages")
-+
-+
-+def main():
-+    only = sys.argv[1] if len(sys.argv) > 1 else None
-+    if only in (None, "mac"):
-+        check("Mac", ROOT / "NotchBuddy/Resources/whats-new.json", mac_version(), MAC_LANGS)
-+    if only in (None, "windows"):
-+      
-```
-
-**File**: `windows/src/whats-new/whats-new.json` (added, +134/-0)
-```diff
-@@ -0,0 +1,134 @@
-+{
-+  "about": "What's new, shown once in the island after Coucou updates itself (src/whats-new/). Every Windows and Linux release adds its entry here, in the 12 languages: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-+  "releases": [
-+    {
-+      "version": "0.5.1",
-+      "items": [
-+        {
-+          "icon": "update",
-+          "title": {
-+            "en": "New version in the island",
-+            "zh-Hans": "岛中的新版本",
-+            "hi": "आइलैंड में नया वर्ज़न",
-+            "es": "Nueva versión en la isla",
-+            "ar": "إصدار جديد في الشريط",
-+            "fr": "Nouvelle version dans l'île",
-+            "bn": "আইল্যান্ডে নতুন ভার্সন",
-+            "pt-BR": "Nova versão na ilha",
-+            "ru": "Новая версия на острове",
-+            "id": "Versi baru di pulau",
-+            "de": "Neue Version in der Insel",
-+            "tr": "Adada yeni sürüm"
-+          },
-+          "detail": {
-+            "en": "Coucou tells you when a new version is out. On Windows, one click installs it.",
-+            "zh-Hans": "有新版本时 Coucou 会告诉你。在 Windows 上一键即可安装。",
-+            "hi": "नया वर्ज़न आने पर Coucou बताता है। Windows पर एक क्लिक में इंस्टॉल।",
-+            "es": "Coucou te avisa cuando sale una versión nueva. En Windows, un clic la instala.",
-+            "ar": "يخبرك Coucou بصدور إصدار جديد. على Windows تثبّته نقرة واحدة.",
-+            "fr": "Coucou te prévient quand une nouvelle version sort. Sur Windows, un clic l'installe.",
-+            "bn": "নতুন ভার্সন এলে Coucou জানায়। Windows-এ এক ক্লিকে ইনস্টল।",
-+            "pt-BR": "O Coucou avisa quando sai uma nova versão. No Windows, um clique instala.",
-+            "ru": "Coucou сообщит о новой версии. В Windows она ставится одним кликом.",
-+            "id": "Coucou memberi tahu saat versi baru keluar. Di Windows, sekali klik untuk memasang.",
-+            "de": "Coucou sagt dir, wenn eine neue Version da ist. Unter Windows installiert sie ein Klick.",
-+            "tr": "Yeni sürüm çıkınca Coucou haber verir. Windows'ta tek tıkla kurulur."
-+          }
-+        },
-+        {
-+          "icon": "languages",
-+          "title": {
-+            "en": "German and Turkish",
-+            "zh-Hans": "德语和土耳其语",
-+            "hi": "जर्मन और तुर्की",
-+            "es": "Alemán y turco",
-+            "ar": "الألمانية والتركية",
-+            "fr": "Allemand et turc",
-+            "bn": "জার্মান ও তুর্কি",
-+            "pt-BR": "Alemão e turco",
-+            "ru": "Немецкий и турецкий",
-+            "id": "Jerman dan Turki",
-+            "de": "Deutsch und Türkisch",
-+            "tr": "Almanca ve Türkçe"
-+          },
-+          "detail": {
-+            "en": "Coucou now speaks 12 languages.",
-+            "zh-Hans": "Coucou 现在支持 12 种语言。",
-+            "hi": "Coucou अब 12 भाषाएँ बोलता है।",
-+            "es": "Coucou ya habla 12 idiomas.",
-+            "ar": "يتحدث Coucou الآن 12 لغة.",
-+            "fr": "Coucou parle maintenant 12 langues.",
-+            "bn": "Coucou এখন ১২টি ভাষায় কথা বলে।",
-+            "pt-BR": "O Coucou agora fala 12 idiomas.",
-+            "ru": "Теперь Coucou говорит на 12 языках.",
-+            "id": "Coucou kini berbicara 12 bahasa.",
-+            "de": "Coucou spricht jetzt 12 Sprachen.",
-+            "tr": "Coucou artık 12 dil konuşuyor."
-+          }
-+        },
-+        {
-+          "icon": "clock",
-+          "title": {
-+            "en": "A clock in the island",
-+            "zh-Hans": "岛中的时钟",
-+            "hi": "आइलैंड में घड़ी",
-+            "es": "Un reloj en la isla",
-+            "ar": "ساعة في الشريط",
-+            "fr": "Une horloge dans l'île",
-+            "bn": "আইল্যান্ডে ঘড়ি",
-+            "pt-BR": "Um relógio na ilha",
-+            "ru": "Часы на острове",
-+            "id": "Jam di pulau",
-+            "de": "Eine Uhr in der Insel",
-+            "tr": "Adada saat"
-+          },
-+          "detail": {
-+            "en": "Optional, in the middle of the compact island.",
-+            "zh-Hans": "可选，显示在紧凑岛的中间。",
-+            "hi": "वैकल्पिक, कॉम्पैक्ट आइलैंड के बीच में।",
-+            "es": "Opcional, en el centro de la isla compacta.",
-+            "ar": "اختيارية، في منتصف الشريط المصغّر.",
-+            "fr": "En option, au milieu de l'île compacte.",
-+            "bn": "ঐচ্ছিক, ছোট আইল্যান্ডের মাঝখানে।",
-+            "pt-BR": "Opcional, no meio da ilha compacta.",
-+            "ru": "По желанию, в центре компактного острова.",
-+            "id": "Opsional, di tengah pulau ringkas.",
-+            "de": "Optional, in der Mitte der kompakten Insel.",
-+            "tr": "İsteğe bağlı, kompakt adanın ortasında."
-+          }
-+        },
-+        {
-+          "icon": "bolt",
-+          "title": {
-+            "en": "Lighter on Linux",
-+            "zh-Hans": "Linux 上更轻快",
-+            "hi": "Linux पर हल्का",
-+            "es": "Más ligero en Linux",
-+            "ar": "أخف على Linux",
-+            "fr": "Pl
+         print("\nOnly the last messages are kept")
+         do {
+             var inbox = WAInbox()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #924** (closed): cargo config to limit build jobs and set dev profile debug level for windows (@SahrulRD-Smatel)
+- **PR #915** (closed): Fix/lyrics lrclib 503 (@Fahmiady11)
+- **PR #910** (2026-10-23): fix(windows): WhatsApp Status updates and channels no longer show as chats (#901) (@afpruivo)
+- **PR #892** (2026-10-23): Windows/Linux: keep Mochi whole after a monitor change (@ZouaouiB)
+- **PR #887** (2026-10-22): Windows and Linux: WhatsApp (experimental), as on the Mac; 0.5.3 (@Louis-CFM)
 - **PR #885** (2026-10-22): Blue Mochi while an update waits, What's new after the update (Mac, Windows, Linux) (@Louis-CFM)
-- **PR #866** (closed): Orca data in the island: agent counters and workspace list (@henriquefps)
-- **PR #847** (closed): Windows: no black rectangle at login, no plan pills of dashes (@umarjavaid4335)
-- **PR #832** (2026-10-20): CI check: #831 on current main (@Louis-CFM)
-- **PR #831** (2026-10-20): feat: add GitLab and Gitea integration pulses (Windows/Linux) (@Andrey89711)
-- **PR #824** (2026-10-20): Mac 0.5.2, Windows and Linux 0.5.1 (@Louis-CFM)
 
 ---
 
@@ -2785,39 +2361,32 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new
+## X. Windows/Linux: keep Mochi whole after a monitor change
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `windows/src/desktop/main.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b6f2136`: Mac 0.5.3, Windows and Linux 0.5.2: CHANGELOG, README, versions, What's new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `852df6f5`: Windows/Linux: keep Mochi whole after a monitor change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/desktop/main.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-## 0.5.3 — October 22, 2026
-
-Mochi tells you a new version waits, and after the update he shows you what it brings.
-
-- **Mochi turns blue when a new version waits** *(macOS, GitHub build)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, in the notch and in the menu bar, and opening the notch shows **Update now** first (it is also the first line of the menu). Later hides it for a day. Approvals and questions always come first
-- **What's new, after the update** — once Coucou updated itself, the notch shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the notch, words dictated and time saved with Flow, calls transcribed. All of it is counted on your Mac and never leaves it
-- **Buy Mochi a coffee** — Coucou stays free and open source; if it saves you time, the last step of What's new has a coffee for Mochi (Stripe, the same page as Coucou's website)
-
-## Windows and Linux 0.5.2 — October 22, 2026
-
-- **Mochi turns blue when a new version waits** — once you agreed to look for updates, a
+    // Dragged onto a monitor of another scale, the bitmap follows the ratio.
+    if (this.canvas.width !== Math.round(PANEL_SIZE * dpr)) {
+      this.canvas.width = Math.round(PANEL_SIZE * dpr);
+      this.canvas.height = Math.round(PANEL_SIZE * dpr);
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-- **Mochi turns blue when a new version waits** *(macOS GitHub build, Windows, Linux)* — once you agreed to look for updates, a newer Coucou turns Mochi blue with a little up arrow whenever he has nothing else to tell you, and opening the island shows **Update now** first. Later hides it for a day. Approvals and questions always come first
-- **What's new, after the update** — once Coucou updated itself, the island shows what the new version brings (with an icon each, in your language), then *Your Coucou so far*: agent sessions, time with your agents, lines written, approvals from the island, words dictated and time saved with Flow, calls transcribed. All of it is counted on your computer and never leaves it. And, if Coucou saves you time, **Buy Mochi a coffee**
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b6f2136` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `852df6f5` are properly handled with clean fallback behavior.

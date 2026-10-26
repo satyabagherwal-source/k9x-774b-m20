@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T10:21:41.685Z",
+  "last_updated": "2026-10-26T10:33:27.196Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
-      "verified_at": "2026-10-26T01:37:30.286Z",
+      "content_hash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
+      "verified_at": "2026-10-26T10:33:25.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:37:30.286Z"
+      "last_updated": "2026-10-26T10:33:25.007Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
-      "verified_at": "2026-10-25T11:53:45.337Z",
+      "content_hash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
+      "verified_at": "2026-10-26T10:33:27.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:53:45.337Z"
+      "last_updated": "2026-10-26T10:33:27.196Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
-      "verified_at": "2026-10-26T00:32:43.801Z",
+      "content_hash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
+      "verified_at": "2026-10-26T10:33:19.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:32:43.801Z"
+      "last_updated": "2026-10-26T10:33:19.984Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
-      "verified_at": "2026-10-22T16:32:21.256Z",
+      "content_hash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
+      "verified_at": "2026-10-26T10:33:20.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:32:21.256Z"
+      "last_updated": "2026-10-26T10:33:20.695Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",

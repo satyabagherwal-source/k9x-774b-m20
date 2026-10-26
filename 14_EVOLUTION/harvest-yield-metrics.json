@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T10:21:41.682Z",
-  "total_cycles_completed": 5099,
-  "total_learnings_persisted": 5099,
-  "total_rules_promoted": 4478,
+  "last_updated": "2026-10-26T10:33:27.192Z",
+  "total_cycles_completed": 5103,
+  "total_learnings_persisted": 5103,
+  "total_rules_promoted": 4482,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:42:47.050Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:42:51.607Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:49:07.833Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:49:09.061Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T17:49:18.667Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-26T10:21:41.682Z",
       "repository": "sigstore/cosign",
       "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:33:19.980Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:33:20.692Z",
+      "repository": "Louis-CFM/coucou",
+      "learningId": "learn-github-louis-cfm-coucou",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:33:25.004Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:33:27.192Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

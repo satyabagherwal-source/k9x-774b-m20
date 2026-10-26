@@ -5122,3 +5122,7 @@
 | `CYCLE-20261026-WWI8` | `2026-10-26T10:21:30.896Z` | `markmead/hyperui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4580` | Yes (`de1c5666...`) |
 | `CYCLE-20261026-X1RX` | `2026-10-26T10:21:37.725Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4581` | Yes (`9486cfb7...`) |
 | `CYCLE-20261026-X4TN` | `2026-10-26T10:21:41.675Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4582` | Yes (`2fb268b6...`) |
+| `CYCLE-20261026-C3MS` | `2026-10-26T10:33:19.972Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4583` | Yes (`2891ee2b...`) |
+| `CYCLE-20261026-C46K` | `2026-10-26T10:33:20.684Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4584` | Yes (`2ec8392b...`) |
+| `CYCLE-20261026-C7IC` | `2026-10-26T10:33:24.996Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4585` | Yes (`30da0198...`) |
+| `CYCLE-20261026-C974` | `2026-10-26T10:33:27.184Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4586` | Yes (`002f05a2...`) |

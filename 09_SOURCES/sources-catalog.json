@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "f4fde713",
+    "sourceVersion": "5293992f",
     "license": "NOASSERTION",
-    "contentHash": "2e9b909ef7a9d324423ebd5a37243568281ed09fe7f23ef9b1eaca82584ceb4b",
-    "lastHarvestedAt": "2026-10-26T01:37:30.277Z",
+    "contentHash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
+    "lastHarvestedAt": "2026-10-26T10:33:24.999Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "80591248",
+    "sourceVersion": "7d3fbffc",
     "license": "Apache-2.0",
-    "contentHash": "94b160fb181074953b3019383e19a0b9549a05b50da4e950e2a098dd5ae18622",
-    "lastHarvestedAt": "2026-10-25T11:53:45.329Z",
+    "contentHash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
+    "lastHarvestedAt": "2026-10-26T10:33:27.188Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "de16943c",
+    "sourceVersion": "eba00ab3",
     "license": "BSD-3-Clause",
-    "contentHash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
-    "lastHarvestedAt": "2026-10-26T00:32:43.794Z",
+    "contentHash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
+    "lastHarvestedAt": "2026-10-26T10:33:19.975Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "ddc16857",
+    "sourceVersion": "47d1c2da",
     "license": "MIT",
-    "contentHash": "845b4426c3c815bbb1d05f738c39ac63f82b5ef10eab67466ae01c93208a8443",
-    "lastHarvestedAt": "2026-10-22T16:32:21.249Z",
+    "contentHash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
+    "lastHarvestedAt": "2026-10-26T10:33:20.687Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

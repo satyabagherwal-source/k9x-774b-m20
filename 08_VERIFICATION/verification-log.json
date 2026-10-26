@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-X4RU",
-    "timestamp": "2026-10-25T03:06:07.338Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "36c7f9231e71ac8d2bc4a37f5751cfcfaf689c896778af5d25de3aade83f4d38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-XA12",
-    "timestamp": "2026-10-25T03:06:14.150Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "e71325c1c96c6f72301bac6cfda1238136b4b210694ea27d8822b6d321049d52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-XDRN",
-    "timestamp": "2026-10-25T03:06:18.995Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "1f005ead0f4b056db2eb98a86c8a6be26c5343f4bd09bda811e75bc2c3029744",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7OEK",
-    "timestamp": "2026-10-25T03:14:19.340Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "42e8b8efdc7bb406bbdc4b0110eb5af7b741a601381ad18da333512a58178eb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-7SX1",
     "timestamp": "2026-10-25T03:14:25.189Z",
     "repository": "apple/foundationdb",
@@ -7490,6 +7430,66 @@
     "repository": "sigstore/cosign",
     "learningId": "learn-github-sigstore-cosign",
     "contentHash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-C3MS",
+    "timestamp": "2026-10-26T10:33:19.972Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "2891ee2bd99445b71e30a554fa03db36694af26fd59beb5ecf2bd177133634f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-C46K",
+    "timestamp": "2026-10-26T10:33:20.684Z",
+    "repository": "Louis-CFM/coucou",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-C7IC",
+    "timestamp": "2026-10-26T10:33:24.996Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "30da01981244f55b9803eeaf919c7fc79b1e20943c6dda0293ae37baebf13b7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-C974",
+    "timestamp": "2026-10-26T10:33:27.184Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "002f05a275b0ec80650e8c9532a395639447a215f421580af0de7134af833cf5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

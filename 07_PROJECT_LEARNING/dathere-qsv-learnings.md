@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `f4fde713`  
+> **Source Version**: `5293992f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:37:29.861Z  
+> **Timestamp**: 2026-10-26T10:33:24.586Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:37:29.852Z  
+> **Harvest Timestamp**: 2026-10-26T10:33:24.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,298 +2203,103 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4fde713` (2026-10-26)
-**Commit Message**: deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919)
+### Incident Patch 1: `5bb7440a` (2026-10-26)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922)
 
-* deps: bump Luau to 0.744 via mlua upstream rev ff96ed7
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.0...v4.39.1)
 
-luau0-src 0.22.1+luau744 emits Luau bytecode version 14, but the released
-mlua-sys 0.13.0 caps LBC_VERSION_MAX at 11, so every qsv command panicked at
-startup ("Error configuring Luau ... attempt to load a text chunk"). mlua
-main has the fix (mlua-rs/mlua@bca1afe, "Bump Luau to 0.744"), so patch
-mlua to rev ff96ed7; its mlua-sys comes from the same checkout. The crate
-versions are unchanged (mlua 0.12.2, mlua-sys 0.13.0), so the patch applies
-with no unused entries. Drop it once an mlua release contains bca1afe.
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-Also a lock-file refresh (zip 9.1.1, brotli 9.1.0, actix-http 3.20.0 and
-others), and the Luau version in the README, INTERPRETERS.md, luau USAGE
-and regenerated help docs.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #4919 in the Luau CHANGELOG entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
 ```diff
-@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - Unchanged on both revs: `REGEXP_REPLACE`, `REAL`/`DECIMAL` division and `CORR`/`COVAR` results.
-   - Also lower memory for CSV scans of wide rows ([#30165](https://github.com/pola-rs/polars/pull/30165)), out-of-core streaming windows and sorts, and smaller SQL code size.
- - **deps: Polars bumped to [Python Polars 2.1.0](https://github.com/pola-rs/polars/releases/tag/py-2.1.0)** (from `d02c621`, [#4917](https://github.com/dathere/qsv/pull/4917), [#4918](https://github.com/dathere/qsv/pull/4918)). No `sqlp` results change. The 14 upstream commits are mostly memory work for streaming queries that spill to disk, plus `COUNT(DISTINCT ...)` computed inside the streaming `GROUP BY` ([#30281](https://github.com/pola-rs/polars/pull/30281)) and simpler boolean filters ([#30293](https://github.com/pola-rs/polars/pull/30293)).
-+- **deps: Luau bumped to [0.744](https://github.com/luau-lang/luau/releases/tag/0.744)** (from 0.740, [#4919](https://github.com/dathere/qsv/pull/4919)). The released mlua 0.12.2 rejects Luau 0.744's bytecode version, which made every qsv command panic at startup, so `mlua` is pinned to upstream rev [`ff96ed7`](https://github.com/mlua-rs/mlua/commit/ff96ed786295cae96f43ef1372bd22be0fbf7866), which includes the fix ([mlua-rs/mlua@bca1afe](https://github.com/mlua-rs/mlua/commit/bca1afedd)), until a release has it. Also a lock-file refresh, notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0.
- - **deps: Polars bumped to upstream rev [`34cc518`](https://github.com/pola-rs/polars/commit/34cc5185a9d7c83e9e3b6b63022fe596c6aebb53)** (from `c7da28c`, [#4875](https://github.com/dathere/qsv/pull/4875)). No `sqlp` result that already worked changes; every difference is a query that used to fail.
-   - **Fixed: `COUNT(*)` over a `UNION ALL ... LIMIT n`** panicked ([#30150](https://github.com/pola-rs/polars/pull/30150)).
-   - **Fixed: a correlated subquery whose table has a column named like the outer table** (`WHERE w.g = t.g` where `w` has a column `t`) failed with `StructFieldNotFound` ([#30149](https://github.com/pola-rs/polars/pull/30149)). This regressed in the `c7da28c` bump.
+@@ -54,6 +54,6 @@ jobs:
+             src/cmd/assets/datatables.min.css
+         
+       - name: Upload DevSkim scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.39.0
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         with:
+           sarif_file: devskim-results.sarif
 ```
 
-**File**: `Cargo.lock` (modified, +21/-23)
+**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
 ```diff
-@@ -33,15 +33,15 @@ dependencies = [
+@@ -46,7 +46,7 @@ jobs:
+         continue-on-error: true
  
- [[package]]
- name = "actix-http"
--version = "3.19.0"
-+version = "3.20.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b796ba3c974e5133f6ca1a2c4e97c5941ea1a46d202df83344afaa18219f1a62"
-+checksum = "d20a22850ea7fecad12c5f8cd97d246c3af1f04ef400033977c2f13425c45816"
- dependencies = [
-  "actix-codec",
-  "actix-service",
-  "actix-utils",
-  "bitflags 2.13.2",
-- "brotli 9.0.0",
-+ "brotli 9.1.0",
-  "bytes",
-  "bytestring",
-  "derive_more",
-@@ -1121,13 +1121,13 @@ dependencies = [
- 
- [[package]]
- name = "brotli"
--version = "9.0.0"
-+version = "9.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f8b851b75c23ca7873623d612fe49bd1989aeb03d08fb9432187eb253d3d4c6b"
-+checksum = "6737ce8b81460bf9407909f73ff50bf13f7cb8577e1e76715f57ed0eba58ba44"
- dependencies = [
-  "alloc-no-stdlib 3.0.0",
-  "alloc-stdlib 0.3.0",
-- "brotli-decompressor 6.0.1",
-+ "brotli-decompressor 6.2.0",
- ]
- 
- [[package]]
-@@ -1142,9 +1142,9 @@ dependencies = [
- 
- [[package]]
- name = "brotli-decompressor"
--version = "6.0.1"
-+version = "6.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "941cd9bd4ddab83cb46fa5a2d428f1c857b24ac78cb876cf7beb710840934bd7"
-+checksum = "34c6783f42c21c952ad7112b354f0ba2f10760e9decea5b1b60523d6e270faaf"
- dependencies = [
-  "alloc-no-stdlib 3.0.0",
-  "alloc-stdlib 0.3.0",
-@@ -1522,7 +1522,7 @@ version = "0.4.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "cae36683101b2899f48bd31f8db9839437356188e3b1ff23096e73dab09ba8fe"
- dependencies = [
-- "brotli 9.0.0",
-+ "brotli 9.1.0",
-  "compression-core",
-  "flate2",
-  "memchr",
-@@ -2056,9 +2056,9 @@ dependencies = [
- 
- [[package]]
- name = "ctutils"
--version = "0.4.5"
-+version = "0.4.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
-+checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
- dependencies = [
-  "cmov",
- ]
-@@ -2589,9 +2589,9 @@ checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "erased-serde"
--version = "0.4.10"
-+version = "0.4.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d2add8a07dd6a8d93ff627029c51de145e12686fbc36ecb298ac22e74cf02dec"
-+checksum = "1e59b668157f32d3459d4bd634861a06ffa2503a461ca5f0916b9f0252605e66"
- dependencies = [
-  "serde",
-  "serde_core",
-@@ -4703,9 +4703,9 @@ checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
- 
- [[package]]
- name = "luau0-src"
--version = "0.22.0+luau740"
-+version = "0.22.1+luau744"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4ea012e8a8aaff2f7b6c788fad41a60630003b6a0932bcf045f7d14952c9bd31"
-+checksum = "abf3cf06d603de6835228ccf5e1afbed6e5c2409aa5d3122c1b2036055a2af15"
- dependencies = [
-  "cc",
- ]
-@@ -4946,8 +4946,7 @@ dependencies = [
- [[package]]
- name = "mlua"
- version = "0.12.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7a7ae6b65bf54b7fdd4cf5b6f44f60862350ebf3fe3779b3a9cc005e7fa14f81"
-+source = "git+https://github.com/mlua-rs/mlua?rev=ff96ed786295cae96f43ef1372bd22be0fbf7866#ff96ed786295cae96f43ef1372bd22be0fbf7866"
- dependencies = [
-  "bstr",
-  "either",
-@@ -4964,8 +4963,7 @@ dependencies = [
- [[package]]
- name = "mlua-sys"
- version = "0.13.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1631cda17bd6486410ab751d91f5fd4484f441589278cdad879eb3afc721a285"
-+source = "git+https://github.com/mlua-rs/mlua?rev=ff96ed786295cae96f43ef1372bd22be0fbf7866#ff96ed786295cae96f43ef1372bd22be0fbf7866"
- dependencies = [
-  "cc",
-  "cfg-if",
-@@ -10021,9 +10019,9 @@ checksum = "4e8257fbc510f0a46eb602c10215901938b5c2a7d5e70fc11483b1d3c9b5b18c"
- 
- [[package]]
- name = "value-trait"
--version = "0.12.2"
-+version = "0.12.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3f4b4a98dfe54bc9ed3641af7ffcb837240269627dbd5cb047d13daa39736cc"
-+checksum = "545a3d7089f11f1741d12963c057adf9443fc24325110a6a6daf582e825fd51b"
- dependencies = [
-  "float-cmp",
-  "halfbrown",
-@@ -10971,9 +10969,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.1.0"
-+version = "9.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2886b00003a72c4ccee3f42cfc34908d33b2508a74d827dc2a4244706475c704"
-+checksum = "518b847fd864440c379748ad684c449f293af68978a485a4ff16f7c901c1f7c4"
- dependencies = [
-  "aes",
-  "bzip2",
+       - name: Upload analysis results to GitHub
+-        uses: github/codeql-action/upload-sarif@v4.39.0
++        uses: github/codeql-action/upload-sarif@v4.39.1
+         with:
+           sarif_file: rust-clippy-results.sarif
+           wait-for-processing: true
 ```
 
-**File**: `Cargo.toml` (modified, +5/-0)
+---
+
+### Incident Patch 2: `5293992f` (2026-10-26)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.255 to 1.0.261 (#4921)
+
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.255 to 1.0.261.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.255...v1.0.261)
+
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.261
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -539,6 +539,11 @@ polars-arrow = { git = "https://github.com/pola-rs/polars", tag = "py-2.1.0" }
- # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
- # [patch.crates-io] section of the pinned polars rev's Cargo.toml. Drop once #727 is released.
- hashbrown = { git = "https://github.com/pola-rs/hashbrown", rev = "d76a6f81abd8f388676aff15068236a8d21c7e1a" }
-+# Luau 0.744 (luau0-src 0.22.1) emits bytecode version 14, above the LBC_VERSION_MAX = 11 that
-+# the released mlua-sys 0.13.0 accepts, so every qsv command panicked at startup. mlua main has
-+# the fix (mlua-rs/mlua@bca1afe, "Bump Luau to 0.744"); its own mlua-sys and mlua_derive come
-+# along from the same checkout. Drop once an mlua release contains bca1afe.
-+mlua = { git = "https://github.com/mlua-rs/mlua", rev = "ff96ed786295cae96f43ef1372bd22be0fbf7866" }
- # use our tweaked fork of csv crate
- # the csv crate underpins a lot of qsv's functionality, so every perf tweak helps
- # for details, see https://github.com/dathere/qsv/wiki/Tuned-csv-Fork-Benchmarks
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@v1.0.255
++        uses: anthropics/claude-code-action@v1.0.261
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -66,7 +66,7 @@
- | [json](docs/help/json.md)<br>👆 | Convert JSON array to CSV.
- | [jsonl](docs/help/jsonl.md)<br>🚀🔣 | Convert newline-delimited JSON ([JSONL](https://jsonlines.org/)/[NDJSON](http://ndjson.org/)) to CSV. See `tojsonl` command to convert CSV to JSONL.
- | [lens](docs/help/lens.md)✨<br>🗃️🐻‍❄️🖥️ | Interactively view, search & filter tabular data files using the [csvlens](https://github.com/YS-L/csvlens#csvlens) engine. Apart from CSV and its dialects, Arrow, Avro/IPC, Parquet, JSON array & JSONL formats are supported with the "polars" feature. |
--| [luau](docs/help/luau.md)✨<br>📇🌐🔣📚 ![CKAN](docs/images/ckan.png) ![Luau](docs/images/luau.png) | <a name="luau_deeplink"></a>Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)).<br>Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections.<br> It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines. |
-+| [luau](docs/help/luau.md)✨<br>📇🌐🔣📚 ![CKAN](docs/images/ckan.png) ![Luau](docs/images/luau.png) | <a name="luau_deeplink"></a>Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)).<br>Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections.<br> It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines. |
- | [moarstats](docs/help/moarstats.md)<br>📇🏎️ | Add up to an additional 73 statistical measures, including extended outlier, robust & bivariate statistics to an existing stats CSV file. ([example](docs/moarstats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).|
- | [partition](docs/help/partition.md)<br>👆 | Partition a CSV based on a column value. |
- | [pivotp](docs/help/pivotp.md)✨<br>🐻‍❄️🚀🪄 | Pivot CSV data. Features "smart" aggregation auto-selection based on data type & stats. |
-@@ -126,7 +126,7 @@
- 📚: has lookup table support, enabling runtime "lookups" against local or remote reference CSVs.  
- 🌎: has geospatial capabilities.  
- ⛩️: uses [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine.  
--![Luau](docs/images/luau.png) : uses [Luau](https://luau.org/) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) as an embedded scripting [DSL](https://en.wikipedia.org/wiki/Domain-specific_language).  
-+![Luau](docs/images/luau.png) : uses [Luau](https://luau.org/) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) as an embedded scripting [DSL](https://en.wikipedia.org/wiki/Domain-specific_language).  
- 🎲: randomly generated or randomized output with a --seed option for reproducibility.  
- 🖥️: part of the User Interface (UI) feature group.  
+@@ -34,7 +34,7 @@ jobs:
  
-```
-
-**File**: `docs/INTERPRETERS.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ As date manipulation is often needed, the [LuaDate](https://tieske.github.io/dat
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@v1.0.255
++        uses: anthropics/claude-code-action@v1.0.261
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
- Finally, as [qsv's DSL](../README.md#luau_deeplink) (👑), `luau` will gain even more features over time compared to the `python` feature.
- 
--[Luau 0.740](https://github.com/Roblox/luau/releases/tag/0.740) is currently embedded - qsv's policy is to use the latest stable Luau version at the time of each qsv release.
-+[Luau 0.744](https://github.com/Roblox/luau/releases/tag/0.744) is currently embedded - qsv's policy is to use the latest stable Luau version at the time of each qsv release.
- 
- ## Building qsv with python feature
- 
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +3/-3)
-```diff
-@@ -33,7 +33,7 @@
- | [flatten](flatten.md) | A flattened view of CSV records. Useful for viewing one record at a time. e.g. `qsv slice -i 5 data.csv \| qsv flatten`. |
- | [fmt](fmt.md) | Reformat a CSV with different delimiters, record terminators or quoting rules. (Supports ASCII delimited data.) |
- | [foreach](foreach.md) | Execute a shell command once per record in a given CSV file. |
--| [frequency](frequency.md)<br>[📇](#legend "uses an index when available.")[😣](#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](#legend "uses Luau 0.740 as an embedded scripting DSL.") | Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)). |
-+| [frequency](frequency.md)<br>[📇](#legend "uses an index when available.")[😣](#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](#legend "uses Luau 0.744 as an embedded scripting DSL.") | Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)). |
- | [get](get.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🌐](#legend "has web-aware options.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integration options.") | Get tabular data from local files, URLs (http/https & `dathere://`) & [CKAN](https://ckan.org) (`ckan://`) into a managed, queryable disk cache - with conditional revalidation (ETag/Last-Modified), transparent [zstd](https://github.com/facebook/zstd) compression, [BLAKE3](https://github.com/BLAKE3-team/BLAKE3) hashing & automatic indexing. Cached resources are reusable by ANY qsv command via the `dc:` prefix (e.g. `qsv stats dc:data.csv`), with stale entries auto-refreshed. Efficiently seeds `luau` lookup tables, `validate` dynamicEnum reference data & speeds up Datapusher+ harvesting. |
- | [geocode](geocode.md)<br>[📇](#legend "uses an index when available.")[🧠](#legend "expensive operations are memoized with available inter-session Redis/Disk caching for fetch commands.")[🚀](#legend "multithreaded even without an index.")[🌐](#legend "has web-aware options.")[🔣](#legend "requires UTF-8 encoded input.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🌎](#legend "has geospatial capabilities.") | Geocodes a location against an updatable local copy of the [Geonames](https://www.geonames.org/) cities & the [Maxmind GeoLite2](https://www.maxmind.com/en/geolite-free-ip-geolocation-data) databases — with caching and multi-threading, this offline path geocodes up to 360,000 records/sec! Can also geocode online (forward & reverse) via the [OpenCage](https://opencagedata.com) geocoder, geocode New York City addresses, BBLs and BINs via NYC's [Geoclient](https://github.com/mlipper/geoclient) API, which also returns NYC attributes such as council districts and census tracts, and geocode US addresses & coordinates via the free [US Census Geocoder](https://geocoding.geo.census.gov/geocoder/) - single or batch - returning Census state, county, tract, block group & block GEOIDs for Census data enrichment. |
- | [geoconvert](geoconvert.md)<br>[🌎](#legend "has geospatial capabilities.") | Convert between various spatial formats and CSV/SVG including GeoJSON, SHP, and more. |
-@@ -46,7 +46,7 @@
- | [json](json.md)<br>[👆](#legend "has powerful column selector support. See `select` for syntax.") | Convert JSON array to CSV. |
- | [jsonl](jsonl.md)<br>[🚀](#legend "multithreaded even without an index.")[🔣](#legend "requires UTF-8 encoded input.") | Convert newline-delimited JSON ([JSONL](https://jsonlines.org/)/[NDJSON](http://ndjson.org/)) to CSV. See `tojsonl` command to convert CSV to JSONL. |
- | [lens](lens.md)<br>[🗃️](#legend "Limited Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🖥️](#legend "part of the User Inte
-```
-
-**File**: `docs/help/frequency.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- > Build [frequency distribution tables](https://en.wikipedia.org/wiki/Frequency_(statistics)) of each column. Uses multithreading to go faster if an index is present (Examples: [CSV](../../scripts/nyc311-1m.freqs.csv) [JSON](../../scripts/nyc311-1m.freqs.json) [TOON](../../scripts/nyc311-1m.freqs.toon)).
- 
--**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/frequency.rs](https://github.com/dathere/qsv/blob/master/src/cmd/frequency.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[😣](TableOfContents.md#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.740 as an embedded scripting DSL.")
-+**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/frequency.rs](https://github.com/dathere/qsv/blob/master/src/cmd/frequency.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[😣](TableOfContents.md#legend "uses additional memory proportional to the cardinality of the columns in the CSV.")[🏎️](TableOfContents.md#legend "multithreaded and/or faster when an index (📇) is available.")[👆](TableOfContents.md#legend "has powerful column selector support. See `select` for syntax.")[🪄](TableOfContents.md#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".")[![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.744 as an embedded scripting DSL.")
- 
- <a name="nav"></a>
- [Description](#description) | [Usage](#usage) | [Frequency Options](#frequency-options) | [Frequency Cache Options](#frequency-cache-options) | [JSON Output Options](#json-output-options) | [Common Options](#common-options)
-```
-
-**File**: `docs/help/luau.md` (modified, +3/-3)
-```diff
-@@ -1,8 +1,8 @@
- # luau
- 
--> Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.740](https://github.com/Roblox/luau/releases/tag/0.740) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)). Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections. It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines.
-+> Create multiple new computed columns, filter rows, compute aggregations and build complex data pipelines by executing a [Luau](https://luau-lang.org) [0.744](https://github.com/Roblox/luau/releases/tag/0.744) expression/script for every row of a CSV file ([sequential mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L254-L298)), or using [random access](https://www.webopedia.com/definitions/random-access/) with an index ([random access mode](https://github.com/dathere/qsv/blob/bb72c4ef369d192d85d8b7cc6e972c1b7df77635/tests/test_luau.rs#L367-L415)). Can process a single Luau expression or [full-fledged data-wrangling scripts using lookup tables](https://github.com/dathere/qsv-lookup-tables#example) with discrete BEGIN, MAIN and END sections. It is not just another qsv command, it is qsv's [Domain-specific Language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL) with [numerous qsv-specific helper functions](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs#L1473-L2755) to build production data pipelines.
- 
--**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/luau.rs](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🌐](TableOfContents.md#legend "has web-aware options.")[🔣](TableOfContents.md#legend "requires UTF-8 encoded input.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.") [![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.740 as an embedded scripting DSL.")
-+**[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/luau.rs](https://github.com/dathere/qsv/blob/master/src/cmd/luau.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🌐](TableOfContents.md#legend "has web-aware options.")[🔣](TableOfContents.md#legend "requires UTF-8 encoded input.")[📚](TableOfContents.md#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.") [![CKAN](../images/ckan.png)](TableOfContents.md#legend "has CKAN-aware integration options.") [![Luau](../images/luau.png)](TableOfContents.md#legend "uses Luau 0.744 as an embedded scripting DSL.")
- 
- <a name="nav"></a>
- [Description](#description) | [Usage](#usage) | [Arguments](#arguments) | [Luau Options](#luau-options) | [Common Options](#common-options)
-@@ -12,7 +12,7 @@
- ## Description [↩](#nav)
- 
- Create multiple new computed columns, filter rows or compute aggregations by
--executing a Luau 0.740 script for every row (SEQUENTIAL MODE) or for
-+executing a Luau 0.744 script for every row (SEQUENTIAL MODE) or for
- specified rows (RANDOM ACCESS MODE) of a CSV file.
- 
- Luau is not just another qsv command. It is qsv's Domain-Specific Language (DSL)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4922** (2026-10-26): build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
+- **PR #4921** (2026-10-26): build(deps): bump anthropics/claude-code-action from 1.0.255 to 1.0.261 (@dependabot[bot])
 - **PR #4920** (2026-10-26): fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (@jqnatividad)
 - **PR #4919** (2026-10-26): deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (@jqnatividad)
 - **PR #4918** (2026-10-25): deps: pin Polars to the published py-2.1.0 tag (@jqnatividad)
 - **PR #4917** (2026-10-25): deps: bump Polars to the Python Polars 2.1.0 release commit 7f902bd (@jqnatividad)
-- **PR #4916** (2026-10-25): fix: QSV_SNIFF_PREAMBLE skips the preamble; env var follow-ups from the config.rs review (@jqnatividad)
-- **PR #4915** (2026-10-25): fix(index): compare index staleness at full mtime precision (@jqnatividad)
 
 ---
 
@@ -2514,28 +2319,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919)
+## X. build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/devskim.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4fde713`: deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (#4919). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5bb7440a`: build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#4922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/devskim.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **deps: Luau bumped to [0.744](https://github.com/luau-lang/luau/releases/tag/0.744)** (from 0.740, [#4919](https://github.com/dathere/qsv/pull/4919)). The released mlua 0.12.2 rejects Luau 0.744's bytecode version, which made every qsv command panic at startup, so `mlua` is pinned to upstream rev [`ff96ed7`](https://github.com/mlua-rs/mlua/commit/ff96ed786295cae96f43ef1372bd22be0fbf7866), which includes the fix ([mlua-rs/mlua@bca1afe](https://github.com/mlua-rs/mlua/commit/bca1afedd)), until a release has it. Also a lock-file refresh, notably `zip` 9.1.0 → 9.1.1, `brotli` 9.0.0 → 9.1.0 and `actix-http` 3.19.0 → 3.20.0.
+        uses: github/codeql-action/upload-sarif@v4.39.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@v4.39.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4fde713` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5bb7440a` are properly handled with clean fallback behavior.

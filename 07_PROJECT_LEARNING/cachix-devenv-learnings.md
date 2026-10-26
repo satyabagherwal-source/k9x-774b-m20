@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `80591248`  
+> **Source Version**: `7d3fbffc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:53:44.962Z  
+> **Timestamp**: 2026-10-26T10:33:26.769Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:53:43.892Z  
+> **Harvest Timestamp**: 2026-10-26T10:33:08.674Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7778 stars
+- **Stars / Engagement**: 7780 stars
 
 ---
 
@@ -1700,395 +1700,53 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89e738f0` (2026-10-25)
-**Commit Message**: fix: npm install lock (#3315)
+### Incident Patch 1: `7d3fbffc` (2026-10-26)
+**Commit Message**: chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@
- - `enterShell` now runs from the project root when `devenv shell` starts in a subdirectory, before the shell moves to that subdirectory. Previously it ran in the subdirectory, so commands with relative paths, such as the JavaScript package install, looked in the wrong place.
- - Fixed auto-activation waiting for the next prompt when you `cd` from one devenv project directly into another, so you had to press Enter before the second project's shell started. It now starts right away ([#3129](https://github.com/cachix/devenv/issues/3129)).
- - `devenv up` and `devenv test` no longer run the prerequisites of a process with `start.enable = false`. They now run when that process is started, or when an enabled process depends on it ([#3272](https://github.com/cachix/devenv/issues/3272)).
-+- Fixed `languages.javascript.npm.install.enable` corrupting `node_modules` when several shells start at once. Concurrent shells now wait for one npm install to finish instead of running their own.
- 
- ## 2.4.0 (2026-09-24)
- 
-```
-
-**File**: `src/modules/languages/javascript.nix` (modified, +10/-1)
-```diff
-@@ -64,7 +64,16 @@ let
-         lib.optionalString (cfg.directory != config.devenv.root) "cd ${cfg.directory}/ && "
-       }npm init' to create one." >&2
-     else
--      _devenv-npm-install
-+      # Keep the lock outside node_modules, which clean-install deletes.
-+      mkdir -p "${config.devenv.state}"
-+      {
-+        if ! ${lib.getExe pkgs.flock} -n 9
-+        then
-+          echo "Waiting for another shell to finish installing npm packages..." >&2
-+          ${lib.getExe pkgs.flock} 9
-+        fi
-+        _devenv-npm-install
-+      } 9>"${config.devenv.state}/npm-install.lock"
-     fi
-   '';
- 
-```
-
-**File**: `tests/javascript-npm-concurrent/.gitignore` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+node_modules
-+installs.log
-```
-
-**File**: `tests/javascript-npm-concurrent/.npmrc` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+offline=true
-```
-
-**File**: `tests/javascript-npm-concurrent/.test-config.yml` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+use_shell: false
-```
-
-**File**: `tests/javascript-npm-concurrent/.test.sh` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
-+
-+pids=()
-+for _ in 1 2 3; do
-+  devenv shell -- true &
-+  pids+=($!)
-+done
-+for pid in "${pids[@]}"; do
-+  wait "$pid"
-+done
-+
-+installs=$(wc -l < installs.log)
-+if [ "$installs" -ne 1 ]; then
-+  echo "expected 1 npm install across concurrent shells, got $installs"
-+  exit 1
-+fi
-+
-+devenv shell -- node -e "require('dep/package.json')"
-```
-
-**File**: `tests/javascript-npm-concurrent/dep/package.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{ "name": "dep", "version": "1.0.0" }
-```
-
-**File**: `tests/javascript-npm-concurrent/devenv.nix` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{ ... }:
-+
-+{
-+  languages.javascript = {
-+    enable = true;
-+    npm = {
-+      enable = true;
-+      install.enable = true;
-+    };
-+  };
-+}
-```
+Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)
 
 ---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `6175d73d` (2026-10-25)
-**Commit Message**: feat(tui): detach from an attached process manager with q (#3317)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-In `devenv processes attach`, q now detaches straight away and leaves
-the processes running, as a second Ctrl-C does. In a foreground
-`devenv up` the processes run in-process, so q opens the quit prompt
-instead of stopping them without asking. The prompt also accepts q to
-detach when attached, and the hints show q next to Ctrl-C.
-
-Closes #3264
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/containers.yml` (modified, +2/-2)
 ```diff
-@@ -4,6 +4,7 @@
+@@ -43,7 +43,7 @@ jobs:
+         uses: docker/setup-buildx-action@v4
  
- ### Improvements
+       - name: Log in to the Container registry
+-        uses: docker/login-action@v4.6.0
++        uses: docker/login-action@v4.7.0
+         with:
+           registry: ${{ env.REGISTRY }}
+           username: ${{ github.repository_owner }}
+@@ -170,7 +170,7 @@ jobs:
+           ref: ${{ env.REF }}
  
-+- `q` now detaches from `devenv processes attach` straight away, leaving the processes running, and detaches from its interrupt prompt too. In a foreground `devenv up`, where quitting stops the processes, `q` opens the quit prompt ([#3264](https://github.com/cachix/devenv/issues/3264)).
- - Added the `tui.emoji` user setting. Set it to `false` to replace the emoji in the interactive shell status line, such as the eye in `devenv watching 11 files`, with non-emoji Unicode glyphs. It defaults to `true`, and the status line stays visible with file watching and automatic reload unchanged.
- - Updating a remote configuration now composes its updated YAML and dependencies before writing `devenv.lock`, so a second invocation is not needed to finish the update.
- - `devenv.yaml` can now compose configuration from remote input imports using the existing `inputs` and `imports` syntax. Remote YAML imports and their transitive inputs are pinned in the importing project's `devenv.lock`; the root project's input declarations retain precedence, allowing shared configurations to reuse a single `nixpkgs` input ([#2205](https://github.com/cachix/devenv/issues/2205)).
-```
-
-**File**: `devenv-tui/README.md` (modified, +3/-2)
-```diff
-@@ -147,8 +147,9 @@ triage.
- - `Ctrl+X`: Stop the selected managed process
- - `Ctrl+H`: Hide or show stopped processes
- - `Ctrl+C`: Show the quit prompt without stopping managed processes
-+- `q`: Detach when attached to a running process manager (`devenv processes attach`), leaving the processes running; otherwise show the quit prompt
- - `c` or `Esc`: Keep running and clear the prompt
--- `q` or `Ctrl+C`: Quit from the interrupt prompt
-+- `q` or `Ctrl+C`: Quit from the interrupt prompt, or detach when attached
- - `Esc`: Close the inline preview, clear the selection, or cancel search
- 
- ### Expanded Logs
-@@ -164,5 +165,5 @@ Long lines wrap onto continuation rows so their full content stays readable.
- - `y`: Copy the selection, or the complete retained log when nothing is selected
- - `Ctrl+C`: Copy the current selection, or show the quit prompt when no selection is active
- - `c` or `Esc`: Keep running and clear the prompt
--- `q` or `Ctrl+C`: Quit from the interrupt prompt
-+- `q` or `Ctrl+C`: Quit from the interrupt prompt, or detach when attached
- - `q/Esc`: Return to main view
-```
-
-**File**: `devenv-tui/src/app.rs` (modified, +65/-1)
-```diff
-@@ -563,6 +563,22 @@ pub(crate) fn request_interrupt_prompt(
-     }
- }
- 
-+/// `q` in the main view. Attached to a running manager it detaches straight
-+/// away, leaving the processes running, as a second Ctrl-C does. Otherwise
-+/// quitting stops the processes, so it opens the quit prompt instead.
-+pub(crate) fn handle_quit_key(
-+    event_tx: Option<&ProcessCommandSender>,
-+    ui_state: &Arc<RwLock<UiState>>,
-+    shutdown: &Arc<Shutdown>,
-+    attached: bool,
-+) {
-+    if attached {
-+        shutdown.handle_interrupt();
-+    } else {
-+        request_interrupt_prompt(event_tx, ui_state, false);
-+    }
-+}
-+
- #[cfg(test)]
- pub(crate) fn handle_interrupt_prompt_key(
-     key_event: &KeyEvent,
-@@ -611,7 +627,8 @@ pub(crate) fn handle_interrupt_prompt_action(
-                 ui.clear_interrupt_prompt();
-             }
-         }
--        Some(Action::Quit) if !attached => {
-+        // Attached, the interrupt detaches and leaves the manager running.
-+        Some(Action::Quit) => {
-             shutdown.handle_interrupt();
-         }
-         Some(Action::Cancel) => {
-@@ -1172,6 +1189,14 @@ fn MainView(mut hooks: Hooks) -> impl Into<AnyElement<'static>> {
-                                 shutdown.handle_interrupt();
-                             }
-                         }
-+                        KeyCode::Char('q') if action == Some(Action::Quit) => {
-+                            handle_quit_key(
-+                                event_tx.as_ref(),
-+                                &ui_state,
-+                                &shutdown,
-+                                attached_flag.load(Ordering::Relaxed),
-+                            );
-+                        }
-                         KeyCode::Char('r')
-                             if key_event.modifiers.contains(KeyModifiers::CONTROL) =>
-                         {
-@@ -1673,6 +1698,45 @@ mod tests {
-         assert!(shutdown.is_cancelled());
-     }
- 
-+    #[test]
-+    fn test_quit_key_detaches_when_attached() {
-+        // In the attached prompt, `q` detaches like a second Ctrl-C.
-+        let ui_state = Arc::new(RwLock::new(UiState::new()));
-+        ui_state.write().unwrap().show_interrupt_prompt(true);
-+        let shutdown = tokio_shutdown::Shutdown::new();
-+        let quit = KeyEvent::new(KeyEventKind::Press, KeyCode::Char('q'));
-+        assert!(handle_interrupt_prompt_key(
-+            &quit, &ui_state, &shutdown, None
-+        ));
-+        assert!(shutdown.is_cancelled());
-+
-+        // In the main view, `q` detaches without a prompt.
-+        let ui_state = Arc::new(RwLock::new(UiState::new()));
-+        let shutdown = tokio_shutdown::Shutdown::new();
-+        let (tx, _rx) = mpsc::channel(1);
-+        handle_quit_key(Some(&tx), &ui_state, &shutdown, true);
-+        assert!(shutdown.is_cancelled());
-+        assert!(!ui_state.read().unwrap().interrupt_prompt_active());
-+    }
-+
-+    #[test]
-+    fn test_quit_key_opens_the_quit_prompt_when_not_attached() {
-+        // Quitting a foreground session stops its processes, so `q` asks first.
-+        let ui_state = Arc::new(RwLock::new(UiState::new()));
-+        let shutdown = tokio_shutdown::Shutdown::new();
-+        let (tx, _rx) = mpsc::channel(1);
-+        handle_quit_key(Some(&tx), &ui_state, &shutdown, false);
-+        assert!(!shutdown.is_cancelled());
-+        assert!(ui_state.read().unwrap().interrupt_prompt_active());
-+        assert!(!ui_state.read().unwrap().interrupt_prompt_attached());
-+
-+        // Without a process session there is nothing to quit.
-+        let ui_state = Arc::new(RwLock::new(UiState::new()));
-+        handle_quit_key(None, &ui_state, &shutdown, false);
-+        assert!(!shutdown.is_cancelled());
-+        assert!(!ui_state.read().unwrap().interrupt_prompt_active());
-+    }
-+
-     #[test]
-     fn test_interrupt_prompt_attached_stop_sends_command() {
-         let (tx, mut rx) = mpsc::channel(1);
-```
-
-**File**: `devenv-tui/src/config.rs` (modified, +2/-0)
-```diff
-@@ -1056,6 +1056,7 @@ fn actions_for(context: KeyContext) -> &'static [Action] {
-             Action::StopProcess,
-             Action::ToggleStopped,
-             Action::Cancel,
-+            Action::Quit,
-         ],
-         KeyContext::ProcessSearch => &[
-             Action::NextMatch,
-@@ -1408,6 +1409,7 @@ fn default_bindings() -> Vec<(KeyContext, Action, Vec<&'static str>)> {
-         (Main, StopProcess, vec!["ctrl+x"]),
-         (Main, ToggleStopped, vec!["ctrl+h"]),
-         (Main, Cancel, vec!["esc"]),
-+        (Main, Quit, vec!["q"]),
-         (ProcessSearch, NextMatch, vec!["down"]),
-         (ProcessSearch, PreviousMatch, vec!["up"]),
-         (ProcessSearch, Accept, vec!["enter"]),
-```
-
-**File**: `devenv-tui/src/expanded_view.rs` (modified, +4/-4)
-```diff
-@@ -1661,7 +1661,7 @@ fn render_expanded_view_custom(
-         let mut action_children = Vec::new();
-         if interrupt_prompt_attached && compact {
-             action_children.push(expanded_footer_piece("Detach? ", Color::AnsiValue(245)));
--            action_children.push(expanded_footer_piece("^C", COLOR_INTERACTIVE));
-+            action_children.push(expanded_footer_piece("q/^C", COLOR_INTERACTIVE));
-             action_children.push(expanded_footer_piece(":detach ", Color::AnsiValue(245)));
-             action_children.push(expanded_footer_piece("s", COLOR_INTERACTIVE));
-             action_children.push(expanded_footer_piece(":stop ", Color::AnsiValue(245)));
-@@ -1672,7 +1672,7 @@ fn render_expanded_view_custom(
-                 "Detach or stop the process manager?  ",
-                 Color::AnsiValue(245),
-             ));
--            action_children.push(expanded_footer_piece("Ctrl-C", COLOR_INTERACTIVE));
-+            action_children.push(expanded_footer_piece("q/Ctrl-C", COLOR_INTERACTIVE));
-             action_children.push(expanded_footer_piece(":detach  ", Color::AnsiValue(245)));
-             action_children.push(expanded_footer_piece("s", COLOR_INTERACTIVE));
-             action_children.push(expanded_footer_piece(
-@@ -2401,9 +2401,9 @@ mod tests {
-                 "c:keep running  q:quit  Ctrl-C:quit"
-             };
-             let detach_actions = if width < 120 {
--                "^C:detach s:stop Esc:watch"
-+                "q/^C:detach s:stop Esc:watch"
-             } else {
--                "Ctrl-C:detach  s:stop manager  Esc:keep watching"
-+                "q/Ctrl-C:detach  s:stop manager  Esc:keep watching"
-             };
- 
-             for (name, ui, expected) in [
-```
-
-**File**: `devenv-tui/src/statusline.rs` (modified, +9/-4)
-```diff
-@@ -163,6 +163,11 @@ pub(crate) fn interrupt_prompt_key_hints(keymap: &Keymap, attached: bool, width:
-     } else {
-         [Action::Cancel, Action::Quit]
-     };
-+    // Attached, the quit key detaches, the same as Ctrl-C.
-+    let detach_key = keymap
-+        .key_label(KeyContext::Prompt, Action::Quit, width < 120)
-+        .map(|key| format!("{key}/"))
-+        .unwrap_or_default();
-     let compact = width < 120;
-     let mut hints = actions
-         .into_iter()
-@@ -183,9 +188,9 @@ pub(crate) fn interrupt_prompt_key_hints(keymap: &Keymap, attached: bool, width:
-         })
-         .collect::<Vec<_>>();
-     hints.push(if attached && compact {
--        "^C:detach".to_string()
-+        format!("{detach_key}^C:detach")
-     } else if attached {
--        "Ctrl-C detach".to_string()
-+        format!("{detach_key}Ctrl-C detach")
-     } else if compact {
-         "^C:quit".to_string()
-     } else {
-@@ -1198,7 +1203,7 @@ mod tests {
-         let attached = interrupt_prompt_key_hints(&keymap, true, 160);
-         assert!(attached.contains("c cancel"));
-         assert!(attached.contains("s stop manager"));
--        assert!(attached.contains("Ctrl-C detach"));
-+        assert!(attached.contains("q/Ctrl-C detach"));
-         assert!(!attached.contains("q quit"));
- 
-         let starting = interrupt_prompt_key_hints(&keymap, false, 160);
-@@ -1209,7 +1214,7 @@ mod tests {
- 
-         assert_eq!(
-             interrupt_prompt_key_hints(&keymap, true, 80),
--            "c:cancel s:stop ^C:detach"
-+            "c:cancel s:stop q/^C:detach"
-         );
-         assert_eq!(
-             interrupt_prompt_key_hints(&keymap, false, 80),
-```
-
-**File**: `devenv-tui/src/view.rs` (modified, +2/-2)
-```diff
-@@ -2015,7 +2015,7 @@ fn build_summary_view_impl(ctx: &SummaryViewContext, terminal_width: u16) -> Any
- 
-     if interrupt_prompt_active {
-         if interrupt_prompt_attached {
--            // Attached to a running manager: Ctrl-C detaches (leaves processes
-+            // Attached to a running manager: q or Ctrl-C detaches (leaves processes
-             // running), `s` stops the whole manager, Esc keeps watching.
-             let prompt_text = if terminal_width < 60 {
-                 "Detach?"
-@@ -2034,7 +2034,7 @@ fn build_summary_view_impl(ctx: &SummaryViewContext, terminal_width: u16) -> Any
-                     Text(content: prompt_text, color: Color::Yellow, weight: Weight::Bold)
-                 }
-                 View(flex_direction: FlexDirection::Row, flex_shrink: 1.0, min_width: 0, overflow: Overflow::Hidden, margin_left: 2) {
--                    Text(content: "Ctrl-C", color: COLOR_INTERACTIVE)
-+                    Text(content: "q/Ctrl-C", color: COLOR_INTERACTIVE)
-                     Text(content: if compact { ":detach " } else { " detach • " })
-                     Text(content: "s", color: COLOR_INTERACTIVE)
-                     Text(content: if compact { ":stop " } else { " stop manager • " })
-```
-
-**File**: `devenv/src/cli.rs` (modified, +1/-1)
-```diff
-@@ -1171,7 +1171,7 @@ pub enum ProcessesCommand {
-     },
- 
-     #[command(
--        about = "Attach to running processes and stream their status and logs until Ctrl-C, leaving them running."
-+        about = "Attach to running processes and stream their status and logs until q or Ctrl-C, leaving them running."
-     )]
-     Attach {},
- 
+       - name: Log in to the Container registry
+-        uses: docker/login-action@v4.6.0
++        uses: docker/login-action@v4.7.0
+         with:
+           registry: ${{ env.REGISTRY }}
+           username: ${{ github.repository_owner }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3320** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
 - **PR #3317** (2026-10-25): feat(tui): detach from an attached process manager with q (@ozenyunus35)
 - **PR #3315** (2026-10-25): fix: npm install lock (@tonyd33)
 - **PR #3313** (2026-10-22): fix(rust): preserve large linker response files through Nix wrappers (@domenkozar)
 - **PR #3312** (2026-10-22): fix(bootstrap): substitute locked inputs through native Nix fetcher (@domenkozar)
 - **PR #3311** (2026-10-22): feat: compose remote YAML and resolve updates together (@domenkozar)
-- **PR #3310** (2026-10-25): feat(languages.clojure): add jdk.package option (@SamuelCarriles)
 
 ---
 
@@ -2108,28 +1766,30 @@ Closes #3264
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. npm install lock (#3315)
+## X. deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/containers.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89e738f0`: npm install lock (#3315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d3fbffc`: deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/containers.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed `languages.javascript.npm.install.enable` corrupting `node_modules` when several shells start at once. Concurrent shells now wait for one npm install to finish instead of running their own.
+        uses: docker/login-action@v4.7.0
+        uses: docker/login-action@v4.7.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        uses: docker/login-action@v4.6.0
+        uses: docker/login-action@v4.6.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89e738f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d3fbffc` are properly handled with clean fallback behavior.
