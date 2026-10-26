@@ -5147,3 +5147,6 @@
 | `CYCLE-20261026-45JL` | `2026-10-26T13:15:06.897Z` | `chakra-ui/zag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4604` | Yes (`2d881075...`) |
 | `CYCLE-20261026-46OT` | `2026-10-26T13:15:08.381Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4605` | Yes (`be973912...`) |
 | `CYCLE-20261026-4GDV` | `2026-10-26T13:15:20.947Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4606` | Yes (`2951255f...`) |
+| `CYCLE-20261026-LY1P` | `2026-10-26T13:28:56.989Z` | `ant-design/pro-components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4607` | Yes (`36a3ceb2...`) |
+| `CYCLE-20261026-M1OL` | `2026-10-26T13:29:01.701Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4608` | Yes (`eb85ffa9...`) |
+| `CYCLE-20261026-M43A` | `2026-10-26T13:29:04.822Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4609` | Yes (`3f9a2096...`) |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-TPVD",
-    "timestamp": "2026-10-25T03:59:27.289Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TRRC",
-    "timestamp": "2026-10-25T03:59:29.736Z",
-    "repository": "fastify/fastify",
-    "learningId": "learn-github-fastify-fastify",
-    "contentHash": "80df53976bb41362a23b66f54adf3402754c7a8a90a671b061050b1e737488cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TVL8",
-    "timestamp": "2026-10-25T03:59:34.700Z",
-    "repository": "flux-iac/tofu-controller",
-    "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "753974fd94470642633bc566014dbc18488dab99058f9ca54b5608c2012c11bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-1Z7O",
     "timestamp": "2026-10-25T04:05:52.644Z",
     "repository": "google/gemma-4-31B-it",
@@ -7490,6 +7445,51 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "2951255f6d06ffc60e1feb458934e3223c5840d4dae66e824454cdd23c2c6066",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-LY1P",
+    "timestamp": "2026-10-26T13:28:56.989Z",
+    "repository": "ant-design/pro-components",
+    "learningId": "learn-github-ant-design-pro-components",
+    "contentHash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-M1OL",
+    "timestamp": "2026-10-26T13:29:01.701Z",
+    "repository": "superhighfives/pika",
+    "learningId": "learn-github-superhighfives-pika",
+    "contentHash": "eb85ffa9bafae230442a9b076186c756ec070e1fdc89732adcfdf66e78cf682d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-M43A",
+    "timestamp": "2026-10-26T13:29:04.822Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "3f9a20965a59684ae62b3744e0af0cee0846614c0303cf6acfc450a48e7aedbe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

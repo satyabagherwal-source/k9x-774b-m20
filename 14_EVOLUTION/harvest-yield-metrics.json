@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:15:20.956Z",
-  "total_cycles_completed": 5124,
-  "total_learnings_persisted": 5124,
-  "total_rules_promoted": 4503,
+  "last_updated": "2026-10-26T13:29:04.831Z",
+  "total_cycles_completed": 5127,
+  "total_learnings_persisted": 5127,
+  "total_rules_promoted": 4506,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:47:17.548Z",
-      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:54:05.185Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:00:00.284Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:06:27.354Z",
       "repository": "vllm-sr/d3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T13:15:20.956Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:28:56.997Z",
+      "repository": "ant-design/pro-components",
+      "learningId": "learn-github-ant-design-pro-components",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:29:01.710Z",
+      "repository": "superhighfives/pika",
+      "learningId": "learn-github-superhighfives-pika",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:29:04.831Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

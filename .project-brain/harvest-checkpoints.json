@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T13:15:20.961Z",
+  "last_updated": "2026-10-26T13:29:04.835Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5436,14 +5436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ant-design-pro-components",
-      "content_hash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
-      "verified_at": "2026-10-25T02:36:08.699Z",
+      "content_hash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
+      "verified_at": "2026-10-26T13:28:57.001Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:36:08.699Z"
+      "last_updated": "2026-10-26T13:28:57.001Z"
     },
     "ratatui/ratatui": {
       "repository": "ratatui/ratatui",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "ba106c4f45bda12e3f69dbb11629846e06ca26d9557a4746f60d4bcaa2bfd6a4",
-      "verified_at": "2026-10-24T19:58:56.704Z",
+      "content_hash": "3f9a20965a59684ae62b3744e0af0cee0846614c0303cf6acfc450a48e7aedbe",
+      "verified_at": "2026-10-26T13:29:04.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:58:56.704Z"
+      "last_updated": "2026-10-26T13:29:04.834Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -14346,14 +14346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-superhighfives-pika",
-      "content_hash": "cb3fba2de944d2a73f42c341fb30559df781bdd918efb52ff68e379d6d850ca3",
-      "verified_at": "2026-10-22T17:51:45.651Z",
+      "content_hash": "eb85ffa9bafae230442a9b076186c756ec070e1fdc89732adcfdf66e78cf682d",
+      "verified_at": "2026-10-26T13:29:01.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:51:45.651Z"
+      "last_updated": "2026-10-26T13:29:01.713Z"
     },
     "wooorm/parse-entities": {
       "repository": "wooorm/parse-entities",

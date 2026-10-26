@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:15:20.886Z",
+  "last_updated": "2026-10-26T13:29:04.735Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1946,8 +1946,8 @@
       "slug": "ant-design-pro-components",
       "platform": "github",
       "source_url": "https://github.com/ant-design/pro-components",
-      "source_version": "060dad9d",
-      "content_hash": "a9464a27b4069180c7966e0ec1f3f5bb42435abb79feebc21471e89e5b581d0b",
+      "source_version": "0e181a77",
+      "content_hash": "36a3ceb2aa7397d9744ba9098f0a11d512f75cdd50e609f387d6a96b0d20050c",
       "dossier_path": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ant-design-pro-components-learnings.md",
       "promoted_rules": [
@@ -1960,6 +1960,11 @@
           "number": 3985,
           "title": "table): remove duplicate selection column z-index rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4607,
+          "title": "table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1967,7 +1972,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:36:08.622Z",
+      "verified_at": "2026-10-26T13:28:56.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -2929,8 +2934,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "82ad6f10",
-      "content_hash": "ba106c4f45bda12e3f69dbb11629846e06ca26d9557a4746f60d4bcaa2bfd6a4",
+      "source_version": "6acf1e16",
+      "content_hash": "3f9a20965a59684ae62b3744e0af0cee0846614c0303cf6acfc450a48e7aedbe",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -2958,6 +2963,11 @@
           "number": 3934,
           "title": "test(controller): move first operator fixtures into testdata (#17240)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4609,
+          "title": "deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2965,7 +2975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:58:56.651Z",
+      "verified_at": "2026-10-26T13:29:04.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47517,14 +47527,19 @@
       "slug": "superhighfives-pika",
       "platform": "github",
       "source_url": "https://github.com/superhighfives/pika",
-      "source_version": "d28d2ecc",
-      "content_hash": "cb3fba2de944d2a73f42c341fb30559df781bdd918efb52ff68e379d6d850ca3",
+      "source_version": "48edc688",
+      "content_hash": "eb85ffa9bafae230442a9b076186c756ec070e1fdc89732adcfdf66e78cf682d",
       "dossier_path": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "promoted_rules": [
         {
           "number": 2899,
           "title": "Drop the build from the review so it actually posts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4608,
+          "title": "Bump version to 2.0.2 (build 111/112)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -47533,7 +47548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:51:45.566Z",
+      "verified_at": "2026-10-26T13:29:01.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129196,6 +129211,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:15:20.873Z"
+    },
+    "rule-4607": {
+      "learning_id": "rule-4607",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4607,
+      "title": "table): 更新 ellipsis 属性描述以更清晰地说明内容省略行为 (#9776)",
+      "source_url": "https://github.com/ant-design/pro-components",
+      "source_version": "0e181a77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:28:56.878Z"
+    },
+    "rule-4608": {
+      "learning_id": "rule-4608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4608,
+      "title": "Bump version to 2.0.2 (build 111/112)",
+      "source_url": "https://github.com/superhighfives/pika",
+      "source_version": "48edc688",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:29:01.617Z"
+    },
+    "rule-4609": {
+      "learning_id": "rule-4609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4609,
+      "title": "deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "6acf1e16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:29:04.714Z"
     }
   },
   "aliases": {

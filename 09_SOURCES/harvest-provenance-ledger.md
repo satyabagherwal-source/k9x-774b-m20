@@ -5154,3 +5154,6 @@ Every entry in this ledger must capture:
 | `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `50bdafda` | Multi-dimensional audit evidence | 2026-10-26T13:15:06.901Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `325384d8` | Multi-dimensional audit evidence | 2026-10-26T13:15:08.385Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `25308324` | Multi-dimensional audit evidence | 2026-10-26T13:15:20.950Z |
+| `learn-github-ant-design-pro-components` | `https://github.com/ant-design/pro-components` | `0e181a77` | Multi-dimensional audit evidence | 2026-10-26T13:28:56.992Z |
+| `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `48edc688` | Multi-dimensional audit evidence | 2026-10-26T13:29:01.705Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `6acf1e16` | Multi-dimensional audit evidence | 2026-10-26T13:29:04.826Z |

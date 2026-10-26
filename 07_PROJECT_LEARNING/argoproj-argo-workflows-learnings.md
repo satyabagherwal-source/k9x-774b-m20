@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `82ad6f10`  
+> **Source Version**: `6acf1e16`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:58:56.462Z  
+> **Timestamp**: 2026-10-26T13:29:04.274Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:58:56.457Z  
+> **Harvest Timestamp**: 2026-10-26T13:29:03.765Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17050 stars
+- **Stars / Engagement**: 17054 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17274** (2026-10-22): **docs: update CHANGELOG.md for v4.0.15**
-  *Symptoms*: Automated changes by [create-pull-request](https://github.com/peter-evans/create-pull-request) GitHub action
+- **Issue #17299** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0)**
+  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
 
-- **Issue #17273** (2026-10-22): **fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1)**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  The v4.0.14 release's [Windows image build failed](https://github.com/argoproj/argo-workflows/actions/runs/39745755462/job/119713661389). #17262 set `GOLANG_VERSION=1.26.10` in `Dockerfile.windows`, but Chocolatey's `golang` package stops publishing patches for a Go minor once the next minor ships, and its 1.26 line ends at 1.26.7. `choco install golang --version=1.26.10` reported "The package was not found", so Go was never installed and `make dist/argoexec` failed with Error 127.  Before #17262 this was `1.25`. choco installed 1.25.0, and Go's toolchain switching downloaded the go.mod version during the build (the v4.0.13 log shows `go: downloading go1.25.12`).  release-4.1 still has `1.25`, which works through toolchain switching. This just moves it to the branch's own Go minor.  ### Modifications  `Docker
+- **Issue #17298** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1)**
+  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)  Signed-off-by: YoungjuKim <fjvbn2003@gmail.com>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,1207 +788,619 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `584be861` (2026-10-22)
-**Commit Message**: test(controller): move first operator fixtures into testdata (#17240)
+### Incident Patch 1: `6acf1e16` (2026-10-26)
+**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
 
-Signed-off-by: Jeffery Lofoneh Asamani <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `workflow/controller/operator_test.go` (modified, +31/-883)
+**File**: `ui/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -145,22 +145,7 @@ func Test_wfOperationCtx_reapplyUpdate(t *testing.T) {
- }
+@@ -8386,9 +8386,9 @@ send@~0.19.0, send@~0.19.1:
+     statuses "~2.0.2"
  
- func TestResourcesDuration(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-wf
--  namespace: my-ns
--spec:
--  entrypoint: main
--  templates:
--   - name: main
--     dag:
--       tasks:
--       - name: pod
--         template: pod
--   - name: pod
--     container:
--       image: my-image
--`)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/resources-duration.yaml")
- 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
- 	defer cancel()
+ serialize-javascript@^6.0.2, serialize-javascript@^7.0.5:
+-  version "7.1.2"
+-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
+-  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
++  version "7.1.4"
++  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
++  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
  
-@@ -179,22 +164,7 @@ spec:
- }
- 
- func TestGlobalParamDuration(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-wf
--  namespace: my-ns
--spec:
--  entrypoint: main
--  templates:
--   - name: main
--     dag:
--       tasks:
--       - name: pod
--         template: pod
--   - name: pod
--     container:
--       image: my-image
--`)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/global-param-duration.yaml")
- 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
- 	defer cancel()
- 
-@@ -210,36 +180,8 @@ spec:
- }
- 
- func TestEstimatedDuration(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-wf
--  namespace: my-ns
--  labels:
--    workflows.argoproj.io/workflow-template: my-wftmpl
--spec:
--  entrypoint: main
--  templates:
--   - name: main
--     dag:
--       tasks:
--       - name: pod
--         template: pod
--   - name: pod
--     container:
--       image: my-image
--`)
--	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-baseline-wf
--  namespace: my-ns
--status:
--  startedAt: "1970-01-01T00:00:00Z"
--  finishedAt: "1970-01-01T00:01:00Z"
--  nodes:
--    my-baseline-wf:
--      startedAt: "1970-01-01T00:00:00Z"
--      finishedAt: "1970-01-01T00:01:00Z"
--`), wf)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-workflow.yaml")
-+	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-baseline-workflow.yaml"), wf)
- 	defer cancel()
- 
- 	ctx := logging.TestContext(t.Context())
-@@ -257,22 +199,7 @@ status:
- }
- 
- func TestDefaultProgress(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-wf
--  namespace: my-ns
--spec:
--  entrypoint: main
--  templates:
--   - name: main
--     dag:
--       tasks:
--       - name: pod
--         template: pod
--   - name: pod
--     container:
--       image: my-image
--`)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/default-progress.yaml")
- 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
- 	defer cancel()
- 
-@@ -294,25 +221,7 @@ spec:
- }
- 
- func TestLoggedProgress(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(`
--metadata:
--  name: my-wf
--  namespace: my-ns
--spec:
--  entrypoint: main
--  templates:
--   - name: main
--     dag:
--       tasks:
--       - name: pod
--         template: pod
--   - name: pod
--     metadata:
--        annotations:
--          workflows.argoproj.io/progress: 0/100
--     container:
--       image: my-image
--`)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/logged-progress.yaml")
- 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
- 	defer cancel()
- 
-@@ -341,45 +250,6 @@ spec:
- 	assert.Equal(t, wfv1.Progress("100/100"), pod.Progress)
- }
- 
--var sidecarWithVol = `
--# Verifies sidecars can reference volumeClaimTemplates
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  name: sidecar-with-volumes
--spec:
--  entrypoint: sidecar-with-volumes
--  volumeClaimTemplates:
--  - metadata:
--      name: claim-vol
--    spec:
--      accessModes: [ "ReadWriteOnce" ]
--      resources:
--        requests:
--          storage: 1Gi
--  volumes:
--  - name: existing-vol
--    persistentVolumeClaim:
--      claimName: my-existing-volume
--  templates:
--  - name: sidecar-with-volumes
--    script:
--      image: python:alpine3.23
--      command: [python]
--      source: |
--        print("hello world")
--    sidecars:
--    - name: sidevol
--      image: docker/whalesay:latest
--      command: [sh, -c]
--      args: ["echo generating message in volume; cowsay hello world | tee /mnt/vol/hello_world.txt; sleep 9999"]
--      volumeMounts:
--      - name: claim-vol
--        mountPath: /mnt/vol
--      - name: existing-vol
--        mountPath: /mnt/existing-vol
--`
--
- func TestGlobalParams(t *testing.T) {
- 	wf := wfv1.MustUnmarshalWorkflow(helloWorldWf)
- 	cancel, controller := newController(logging.TestContext(t.Context()), wf)
-@@ -413,7 +283,7 @@ func TestGlobalParams(t *testing.T) {
- 
- // TestSidecarWithVolume verifies ia sidecar can have a volumeMount reference to both existing or volumeClaimTemplate volumes
- func TestSidecarWithVolume(t *testing.T) {
--	wf := wfv1.MustUnmarshalWorkflow(sidecarWithVol)
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/sidecar-with-vol.yaml")
- 	cancel, controller := newController(logging.Te
+ serve-index@^1.9.1:
+   version "1.9.2"
 ```
 
-**File**: `workflow/controller/testdata/operator/backoff-message.yaml` (added, +123/-0)
+---
+
+### Incident Patch 2: `750c81fc` (2026-10-26)
+**Commit Message**: docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
+
+Signed-off-by: YoungjuKim <[REDACTED_EMAIL]>
+
+**File**: `.cspell.json` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,123 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  creationTimestamp: "2020-05-05T15:18:40Z"
-+  generateName: retry-backoff-
-+  generation: 21
-+  labels:
-+    workflows.argoproj.io/completed: "true"
-+    workflows.argoproj.io/phase: Failed
-+  name: retry-backoff-s69z6
-+  namespace: argo
-+  resourceVersion: "348670"
-+  selfLink: /apis/argoproj.io/v1alpha1/namespaces/argo/workflows/retry-backoff-s69z6
-+  uid: 110dbef4-c54b-4963-9739-03e9878810d9
-+spec:
+@@ -91,6 +91,7 @@
+     "workflowkey",
+     "workflowtemplate",
+     "workflowtemplates",
+-    "zstd"
++    "zstd",
++    "pgsty"
+   ]
+ }
+```
+
+**File**: `docs/configure-artifact-repository.md` (modified, +11/-22)
+```diff
+@@ -100,38 +100,27 @@ aliyun oss lifecycle --method put oss://my-artifact-bucket lifecycle.json
+ 
+ ## Configuring MinIO
+ 
+-You can install MinIO into your cluster via Helm.
+-
+-First, [install `helm`](https://helm.sh/docs/intro/install/). Then, install MinIO with the below commands:
++For a test setup, you can install the S3 compatible server that the [quick start](quick-start.md) uses.
++It runs `docker.io/pgsty/silo`, a fork of the MinIO server that keeps the S3 API and the `MINIO_*` settings:
+ 
+ ```bash
+-helm repo add minio https://charts.min.io/ # official minio Helm charts
+-helm repo update
+-helm install argo-artifacts minio/minio --set service.type=LoadBalancer --set fullnameOverride=argo-artifacts
++kubectl apply -n argo -k "https://github.com/argoproj/argo-workflows//manifests/quick-start/base/minio?ref=v4.1.5"
+ ```
+ 
+-Login to the MinIO UI using a web browser (port 9000) after obtaining the
+-external IP using `kubectl`.
++This creates:
+ 
+-```bash
+-kubectl get service argo-artifacts
+-```
++- a Deployment and a Service named `minio`, with the S3 API on port 9000 and the web console on port 9001
++- a bucket named `my-bucket`
++- a Secret named `my-minio-cred` with the keys `accesskey` and `secretkey`, which you can reference from the [artifact repository configuration](artifact-repository-ref.md)
 +
-+  entrypoint: retry-backoff
-+  templates:
-+  -
-+    container:
-+      args:
-+      - import random; import sys; exit_code = random.choice([1, 1]); sys.exit(exit_code)
-+      command:
-+      - python
-+      - -c
-+      image: python:alpine3.23
-+      name: ""
-+      resources: {}
-+    inputs: {}
-+    metadata: {}
-+    name: retry-backoff
-+    outputs: {}
-+    retryStrategy:
-+      backoff:
-+        duration: "2"
-+        factor: 2
-+        maxDuration: 1m
-+      limit: 10
-+status:
-+  nodes:
-+    retry-backoff-s69z6:
-+      children:
-+      - retry-backoff-s69z6-1807967148
-+      - retry-backoff-s69z6-130058153
-+      displayName: retry-backoff-s69z6
-+      id: retry-backoff-s69z6
-+      name: retry-backoff-s69z6
-+      phase: Running
-+      startedAt: "2020-05-05T15:18:40Z"
-+      templateName: retry-backoff
-+      templateScope: local/retry-backoff-s69z6
-+      type: Retry
-+    retry-backoff-s69z6-130058153:
-+      displayName: retry-backoff-s69z6(1)
-+      finishedAt: "2020-05-05T15:18:43Z"
-+      hostNodeName: minikube
-+      id: retry-backoff-s69z6-130058153
-+      message: failed with exit code 1
-+      name: retry-backoff-s69z6(1)
-+      outputs:
-+        artifacts:
-+        - archiveLogs: true
-+          name: main-logs
-+          s3:
-+            accessKeySecret:
-+              key: accesskey
-+              name: my-minio-cred
-+            bucket: my-bucket
-+            endpoint: minio:9000
-+            insecure: true
-+            key: retry-backoff-s69z6/retry-backoff-s69z6-130058153/main.log
-+            secretKeySecret:
-+              key: secretkey
-+              name: my-minio-cred
-+        exitCode: "1"
-+      phase: Failed
-+      resourcesDuration:
-+        cpu: 1
-+        memory: 0
-+      startedAt: "2020-05-05T15:18:45Z"
-+      templateName: retry-backoff
-+      templateScope: local/retry-backoff-s69z6
-+      type: Pod
-+      nodeFlag:
-+        retried: true
-+    retry-backoff-s69z6-1807967148:
-+      displayName: retry-backoff-s69z6(0)
-+      finishedAt: "2020-05-05T15:18:43Z"
-+      hostNodeName: minikube
-+      id: retry-backoff-s69z6-1807967148
-+      message: failed with exit code 1
-+      name: retry-backoff-s69z6(0)
-+      outputs:
-+        artifacts:
-+        - archiveLogs: true
-+          name: main-logs
-+          s3:
-+            accessKeySecret:
-+              key: accesskey
-+              name: my-minio-cred
-+            bucket: my-bucket
-+            endpoint: minio:9000
-+            insecure: true
-+            key: retry-backoff-s69z6/retry-backoff-s69z6-1807967148/main.log
-+            secretKeySecret:
-+              key: secretkey
-+              name: my-minio-cred
-+        exitCode: "1"
-+      phase: Failed
-+      resourcesDuration:
-+        cpu: 2
-+        memory: 0
-+      startedAt: "2020-05-05T15:18:40Z"
-+      templateName: retry-backoff
-+      templateScope: local/retry-backoff-s69z6
-+      type: Pod
-+      nodeFlag:
-+        retried: true
-+  phase: Running
-+  resourcesDuration:
-+    cpu: 5
-+    memory: 0
-+  startedAt: "2020-05-05T15:18:40Z"
-```
-
-**File**: `workflow/controller/testdata/operator/daemon-container-set-steps-wf.yaml` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: daemon-cs-steps
-+spec:
-+  entrypoint: main
-+  templates:
-+  - name: main
-+    steps:
-+    - - name: daemon
-+        template: cs
-+    - - name: after
-+        template: noop
-+  - name: cs
-+    daemon: true
-+    containerSet:
-+      containers:
-+      - name: step-1
-+        image: alpine
-+        command: [sh, -c, sleep 999999]
-+      - name: step-2
-+        image: alpine
-+        command: [sh, -c, sleep 999999]
-+  - name: noop
-+    container:
-+      image: alpine
-+      command: [sh, -c, "true"]
-```
-
-**File**: `workflow/controller/testdata/operator/daemon-container-set-wf.yaml` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: daemon-container-set
-+spec:
-+  entrypoint: main
-+  templates:
-+  - name: main
-+    daemon: true
-+    containerSet:
-+      containers:
-+      - name: step-1
-+        image: alpine
-+        command: [sh, -c, sleep 999999]
-+      - name: step-2
-+        image: alpine
-+        command: [sh, -c, sleep 999999]
-```
-
-**File**: `workflow/controller/testdata/operator/daemon-script-steps-wf.yaml` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: daemon-script-steps
-+spec:
-+  entrypoint: main
-+  templates:
-+  - name: main
-+    steps:
-+    - - name: daemon
-+        template: script
-+    - - name: after
-+        template: noop
-+  - name: script
-+    daemon: true
-+    script:
-+      image: alpine
-+      command: [sh]
-+      source: |
-+        sleep 999999
-+  - name: noop
-+    container:
-+      image: alpine
-+      command: [sh, -c, "true"]
-```
-
-**File**: `workflow/controller/testdata/operator/dag-template-parallelism-limit.yaml` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  name: dag-parallelism-limit
-+spec:
-+  entrypoint: dag-parallelism-limit
-+  templates:
-+  - name: dag-parallelism-limit
-+    parallelism: 2
-+    dag:
-+      tasks:
-+      - name: a
-+        template: sleep
-+      - name: b
-+        template: sleep
-+      - name: c
-+        template: sleep
-+      - name: d
-+        template: sleep
-+      - name: e
-+        template: sleep
-+  - name: sleep
-+    container:
-+      image: alpine:3.23
-+      command: [sh, -c, sleep 10]
-```
-
-**File**: `workflow/controller/testdata/operator/default-progress.yaml` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+metadata:
-+  name: my-wf
-+  namespace: my-ns
-+spec:
-+  entrypoint: main
-+  templates:
-+   - name: main
-+     dag:
-+       tasks:
-+       - name: pod
-+         template: pod
-+   - name: pod
-+     container:
-+       image: my-image
-```
-
-**File**: `workflow/controller/testdata/operator/estimated-duration-baseline-workflow.yaml` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+metadata:
-+  name: my-baseline-wf
-+  namespace: my-ns
-+status:
-+  startedAt: "1970-01-01T00:00:00Z"
-+  finishedAt: "1970-01-01T00:01:00Z"
-+  nodes:
-+    my-baseline-wf:
-+      startedAt: "1970-01-01T00:00:00Z"
-+      finishedAt: "1970-01-01T00:01:00Z"
++The server stores data in the container file system and uses the fixed credentials `admin` and `password`, so do not use it for production artifacts.
+ 
+-On Minikube:
++To open the web console, forward the port and log in with these credentials:
+ 
+ ```bash
+-minikube service --url argo-artifacts
++kubectl -n argo port-forward svc/minio 9001:9001
+ ```
+ 
+-NOTE: When MinIO is installed via Helm, it generates
+-credentials, which you will use to login to the UI:
+-Use the commands shown below to see the credentials
+-
+-- `AccessKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.accesskey}' | base64 --decode`
+-- `SecretKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.secretkey}' | base64 --decode`
+-
+-Create a bucket named `my-bucket` from the MinIO UI.
+-
+ If MinIO is configured to use TLS you need to set the parameter `insecure` to `false`. Additionally, if MinIO is protected by certificates generated by a custom CA, you first need to save the CA certificate in a Kubernetes secret, then set the `caSecret` parameter accordingly. This will allow Argo to correctly verify the server certificate presented by MinIO. For example:
+ 
+ ```bash
 ```
 
 ---
 
-### Incident Patch 2: `69d8d197` (2026-10-22)
-**Commit Message**: test(controller): move workflow default fixtures into testdata (#17209)
+### Incident Patch 3: `f484e700` (2026-10-26)
+**Commit Message**: fix(executor): bound task result retries by time, not by backoff steps (#17212)
 
-Signed-off-by: bnspopi <[REDACTED_EMAIL]>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Co-authored-by: Tim Collins <[REDACTED_EMAIL]>
+Co-authored-by: Mason Malone <[REDACTED_EMAIL]>
 
-**File**: `workflow/controller/operator_wfdefault_test.go` (modified, +11/-188)
+**File**: `cmd/argoexec/executor/init.go` (modified, +1/-0)
 ```diff
-@@ -10,195 +10,15 @@ import (
- 	"github.com/argoproj/argo-workflows/v4/util/logging"
+@@ -85,6 +85,7 @@ func InitProcess(ctx context.Context, clientConfig clientcmd.ClientConfig) *exec
+ 			InitlessPod:                  common.IsInitlessPod(),
+ 			RetryBackoff:                 retry.ExecutorRetry(ctx),
+ 			ResourceStateCheckInterval:   env.LookupEnvDurationOr(ctx, "RESOURCE_STATE_CHECK_INTERVAL", 5*time.Second),
++			TaskResultRetryTimeout:       retry.ExecutorTaskResultRetryTimeout(ctx),
+ 		},
+ 	)
+ 	CheckErr(err)
+```
+
+**File**: `docs/environment-variables.md` (modified, +1/-0)
+```diff
+@@ -136,6 +136,7 @@ Gains may vary under load: if the workflow informer is behind the controller's l
+ | `EXECUTOR_RETRY_BACKOFF_FACTOR`        | `float`         | `1.6`   | The retry back-off factor when the workflow executor performs retries.                                 |
+ | `EXECUTOR_RETRY_BACKOFF_JITTER`        | `float`         | `0.5`   | The retry back-off jitter when the workflow executor performs retries.                                 |
+ | `EXECUTOR_RETRY_BACKOFF_STEPS`         | `int`           | `5`     | The retry back-off steps when the workflow executor performs retries.                                  |
++| `EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS` | `int` | `600` | How long, in seconds, the workflow executor retries each final task result write (outputs, completion) through transient errors before giving up; the placeholder write when the pod starts gives up after 30 seconds whatever this is set to, and progress writes give up after 30 seconds and the executor tries again on the next update; the backoff schedule is fixed and not affected by `EXECUTOR_RETRY_BACKOFF_*`; the value must be positive, and non-positive values use the default. |
+ | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
+ | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
+ 
+```
+
+**File**: `util/retry/retry.go` (modified, +23/-0)
+```diff
+@@ -2,11 +2,13 @@ package retry
+ 
+ import (
+ 	"context"
++	"math"
+ 	"time"
+ 
+ 	"k8s.io/apimachinery/pkg/util/wait"
+ 
+ 	envutil "github.com/argoproj/argo-workflows/v4/util/env"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
  )
  
--var wfDefaults = `
--  metadata: 
--    annotations: 
--      testAnnotation: test
--    labels: 
--      testLabel: test
--  spec: 
--    entrypoint: whalesay
--    activeDeadlineSeconds: 7200
--    arguments:
--      parameters: 
--        - 
--          name: message
--          value: "hello world"
--    onExit: whalesay-exit
--    serviceAccountName: default
--    templates: 
--      - 
--        container: 
--          args: 
--            - "hello from the default exit handler"
--          command: 
--            - cowsay
--          image: docker/whalesay
--        name: whalesay-exit
--    ttlStrategy: 
--      secondsAfterCompletion: 60
--    volumes: 
--      - 
--        name: test
--        secret: 
--          secretName: test
--`
--
--var simpleWf = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: hello-world-
--  labels:
--    workflows.argoproj.io/archive-strategy: "false"
--spec:
--  entrypoint: whalesay
--  templates:
--  - name: whalesay
--    container:
--      image: docker/whalesay:latest
--      command: [cowsay]
--      args: ["hello world"]
--`
--
--var wfDefaultResult = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata: 
--  annotations: 
--    testAnnotation: test
--  generateName: hello-world-
--  labels: 
--    testLabel: test
--    workflows.argoproj.io/archive-strategy: "false"
--spec: 
--  activeDeadlineSeconds: 7200
--  arguments:
--    parameters: 
--      - 
--        name: message
--        value: "hello world"
--  entrypoint: whalesay
--  onExit: whalesay-exit
--  serviceAccountName: default
--  templates: 
--    - 
--      container: 
--        args: 
--          - "hello world"
--        command: 
--          - cowsay
--        image: "docker/whalesay:latest"
--      name: whalesay
--    - 
--      container: 
--        args: 
--          - "hello from the default exit handler"
--        command: 
--          - cowsay
--        image: docker/whalesay
--      name: whalesay-exit
--  ttlStrategy: 
--    secondsAfterCompletion: 60
--  volumes: 
--    - 
--      name: test
--      secret: 
--        secretName: test
--`
--
--var simpleWFT = `
--apiVersion: argoproj.io/v1alpha1
--kind: WorkflowTemplate
--metadata:
--  name: workflow-template-submittable
--  namespace: default
--spec:
--  entrypoint: whalesay-template
--  arguments:
--    parameters:
--      - name: message
--        value: hello world
--  templates:
--    - name: whalesay-template
--      inputs:
--        parameters:
--          - name: message
--      container:
--        image: docker/whalesay
--        command: [cowsay]
--        args: ["{{inputs.parameters.message}}"]
--`
--
--var storedSpecResult = `
--{
--   "activeDeadlineSeconds": 7200,
--   "arguments": {
--      "parameters": [
--         {
--            "name": "message",
--            "value": "hello world"
--         }
--      ]
--   },
--   "entrypoint": "whalesay-template",
--   "onExit": "whalesay-exit",
--   "serviceAccountName": "default",
--   "templates": [
--      {
--         "container": {
--            "args": [
--               "{{inputs.parameters.message}}"
--            ],
--            "command": [
--               "cowsay"
--            ],
--            "image": "docker/whalesay"
--            
--         },
--		"inputs": {
--				"parameters": [
--				   {
--					  "name": "message"
--				   }
--				]
--			},
--         "name": "whalesay-template"
--      },
--      {
--         "container": {
--            "args": [
--               "hello from the default exit handler"
--            ],
--            "command": [
--               "cowsay"
--            ],
--            "image": "docker/whalesay"
--         },
--         "name": "whalesay-exit"
--      }
--   ],
--   "ttlStrategy": {
--      "secondsAfterCompletion": 60
--   },
--   "volumes": [
--      {
--         "name": "test",
--         "secret": {
--            "secretName": "test"
--         }
--      }
--   ]
--}
--`
--
-+// TestWFDefaultsWithWorkflow checks that the configured workflow defaults are merged into a
-+// submitted Workflow, both when it sets its own entrypoint and when it leaves it to the default.
- func TestWFDefaultsWithWorkflow(t *testing.T) {
- 	assert := assert.New(t)
+ // DefaultRetry is a default retry backoff settings when retrying API calls
+@@ -39,3 +41,24 @@ func ExecutorRetry(ctx context.Context) wait.Backoff {
+ 	jitter := envutil.LookupEnvFloatOr(ctx, "EXECUTOR_RETRY_BACKOFF_JITTER", 0.5)
+ 	return wait.Backoff{Steps: steps, Duration: duration, Factor: factor, Jitter: jitter}
+ }
++
++// DefaultExecutorTaskResultRetryTimeout is the default for
++// ExecutorTaskResultRetryTimeout.
++const DefaultExecutorTaskResultRetryTimeout = 10 * time.Minute
++
++// ExecutorTaskResultRetryTimeout is how long the WorkflowExecutor keeps
++// retrying transient errors when writing its task result. Values that are
++// not positive, or too large for a time.Duration, use the default.
++func ExecutorTaskResultRetryTimeout(ctx context.Context) time.Duration {
++	const maxSeconds = math.MaxInt64 / int64(time.Second)
++	seconds := envutil.LookupEnvIntOr(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", int(DefaultExecutorTaskResultRetryTimeout/time.Second))
++	if seconds <= 0 || int64(seconds) > maxSeconds {
++		logging.RequireLoggerFromContext(ctx).WithFields(logging.Fields{
++			"EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS": seconds,
++			"max":     maxSeconds,
++			"default": DefaultExecutorTaskResultRetryTimeout,
++		}).Warn(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS is out of range (1 to max), using the default")
++		return DefaultExecutorTaskResultRetryTimeout
++	}
++	return time.Duration(seconds) * time.Second
++}
+```
+
+**File**: `util/retry/retry_test.go` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++package retry
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++
++	"github.com/argoproj/argo-workflows/v4/util/logging"
++)
++
++func TestExecutorTaskResultRetryTimeout(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++	t.Run("Default", func(t *testing.T) {
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "")
++		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
++	})
++	t.Run("FromEnv", func(t *testing.T) {
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "90")
++		assert.Equal(t, 90*time.Second, ExecutorTaskResultRetryTimeout(ctx))
++	})
++	t.Run("NegativeUsesDefault", func(t *testing.T) {
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "-1")
++		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
++	})
++	t.Run("ZeroUsesDefault", func(t *testing.T) {
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "0")
++		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
++	})
++	t.Run("TooLargeUsesDefault", func(t *testing.T) {
++		// 1e10 seconds overflows time.Duration, which tops out near 9.2e9.
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "10000000000")
++		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
++	})
++	t.Run("LargestAllowed", func(t *testing.T) {
++		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "9223372036")
++		assert.Equal(t, 9223372036*time.Second, ExecutorTaskResultRetryTimeout(ctx))
++	})
++}
+```
+
+**File**: `workflow/executor/executor.go` (modified, +96/-41)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"archive/tar"
+ 	"archive/zip"
+ 	"bufio"
++	"cmp"
+ 	"compress/gzip"
+ 	"context"
+ 	"encoding/json"
+@@ -53,6 +54,27 @@ const (
+ 	tempOutArtDir = "/tmp/argo/outputs/artifacts"
+ )
  
--	wfDefault := wfv1.MustUnmarshalWorkflow(wfDefaults)
--	wf := wfv1.MustUnmarshalWorkflow(simpleWf)
-+	wfDefault := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/workflow-defaults.yaml")
-+	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/simple-workflow.yaml")
- 	wf1 := wf.DeepCopy()
--	wfResult := wfv1.MustUnmarshalWorkflow(wfDefaultResult)
-+	wfResult := wfv1.MustUnmarshalWorkflow("@testdata/operator_wfdefault/simple-workflow-with-defaults.yaml")
- 	ctx := logging.TestContext(t.Context())
- 	cancel, controller := newControllerWithDefaults(ctx)
- 	defer cancel()
-@@ -218,12 +38,15 @@ func TestWFDefaultsWithWorkflow(t *testing.T) {
- 	assert.Contains(woc.wf.Annotations, "testAnnotation")
++// defaultTaskResultBackoff spaces out task result retries: the delay grows
++// until it reaches Cap and then stays there. Only the retry timeout ends
++// the retries.
++var defaultTaskResultBackoff = wait.Backoff{
++	Duration: time.Second,
++	Factor:   2,
++	Jitter:   0.1,
++	Steps:    math.MaxInt32, // the delay only grows while steps remain
++	Cap:      30 * time.Second,
++}
++
++// defaultInterimResultRetryTimeout limits the retries of the task result
++// writes before the final ones: InitializeOutput's placeholder and the
++// progress reports. Neither waits long: a failed placeholder write errors
++// the step, as it always has, and the progress monitor sends the latest
++// progress again on its next tick. Waiting would hold up the
++// deadline monitor and the resource action, which start after
++// InitializeOutput. 30s is about what every write got before the retry
++// timeout existed, when the backoff gave up on reaching its cap.
++const defaultInterimResultRetryTimeout = 30 * time.Second
++
+ // Process holds the state shared by every task an argoexec process runs:
+ // API clients, the container runtime, tracing and pod-scoped settings. It
+ // is built once per process by NewProcess; the per-task state lives in the
+@@ -84,6 +106,13 @@ type Process struct {
+ 	initlessPod                  bool
+ 	retryBackoff                 wait.Backoff
+ 	resourceStateCheckInterval   time.Duration
++	// taskResultRetryTimeout limits the retries of the final task result
++	// writes and interimResultRetryTimeout those of the writes before
++	// them; taskResultBackoff spaces out the retries of both. NewProcess
++	// resolves their defaults.
++	taskResultRetryTimeout    time.Duration
++	interimResultRetryTimeout time.Duration
++	taskResultBackoff         wait.Backoff
  }
  
-+// TestWFDefaultWithWFTAndWf checks that the workflow defaults are merged into the spec stored for
-+// a Workflow that 
+ // WorkflowExecutor runs one task (one template on one node) within a
+@@ -162,6 +191,10 @@ type ProcessConfig struct {
+ 	// ResourceStateCheckInterval is the poll interval for resource template
+ 	// state checks (RESOURCE_STATE_CHECK_INTERVAL).
+ 	ResourceStateCheckInterval time.Duration
++	// TaskResultRetryTimeout bounds how long writes to the task result retry
++	// transient errors (EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS); zero means
++	// retry.DefaultExecutorTaskResultRetryTimeout.
++	TaskResultRetryTimeout time.Duration
+ }
+ 
+ // TaskConfig carries the per-task values a WorkflowExecutor is constructed
+@@ -259,6 +292,9 @@ func NewProcess(
+ 		initlessPod:                  cfg.InitlessPod,
+ 		retryBackoff:                 cfg.RetryBackoff,
+ 		resourceStateCheckInterval:   cfg.ResourceStateCheckInterval,
++		taskResultRetryTimeout:       cmp.Or(cfg.TaskResultRetryTimeout, retry.DefaultExecutorTaskResultRetryTimeout),
++		interimResultRetryTimeout:    defaultInterimResultRetryTimeout,
++		taskResultBackoff:            defaultTaskResultBackoff,
+ 	}, nil
+ }
+ 
+@@ -1039,15 +1075,7 @@ func (we *WorkflowExecutor) CaptureScriptResult(ctx context.Context) error {
+ func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
+ 	logger := logging.RequireLoggerFromContext(ctx)
+ 	var count uint64
+-	err := retryutil.OnError(wait.Backoff{
+-		Duration: time.Second,
+-		Factor:   2,
+-		Jitter:   0.1,
+-		Steps:    math.MaxInt32, // effectively infinite retries
+-		Cap:      30 * time.Second,
+-	}, func(err error) bool {
+-		return errorsutil.IsTransientErr(ctx, err)
+-	}, func() error {
++	err := we.retryTaskResult(ctx, we.taskResultRetryTimeout, func(ctx context.Context) error {
+ 		err := we.patchTaskResultLabels(ctx, map[string]string{
+ 			common.LabelKeyReportOutputsCompleted: "true",
+ 		})
+@@ -1065,27 +1093,7 @@ func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
+ }
+ 
+ func (we *WorkflowExecutor) InitializeOutput(ctx context.Context) {
+-	logger := logging.RequireLoggerFromContext(ctx)
+-	var count uint64
+-	err := retryutil.OnError(wait.Backoff{
+-		Duration: time.Second,
+-		Factor:   2,
+-		Jitter:   0.1,
+-		Steps:    math.MaxInt32, // effectively infinite retries
+-		Cap:      30 * time.Second,
+-	}, func(err error) bool {
+-		return errorsutil.IsTransientErr(ctx, err)
+-	}, func() error {
+-		err := we.upsertTaskResult(ctx, wfv1.NodeResult{})
+-		if apierr.IsForbidden(err) {
+-			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result, see https://argo-workflows.readthedocs.io/en/latest/workflow-rbac/")
+-		} else if err != nil && count%20 == 0 {
+-			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result")
+-		}
+-		count++
+-		return err
+-	})
+-	if err != nil {
++	if err := we.reportResultWithin(ctx, we.interimResultRetryTimeout, wfv1.NodeResult{}); err != nil {
+ 		we.AddError(ctx, err)
+ 	}
+ }
+@@ -1107,18 +1115,17 @@ func (we *WorkflowExecutor) ReportOutputsLogs(ctx context.Context) error {
+ 	return we.reportResult(ctx, w
 ```
 
-**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow-template.yaml` (added, +20/-0)
+**File**: `workflow/executor/executor_test.go` (modified, +174/-3)
 ```diff
-@@ -0,0 +1,20 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: WorkflowTemplate
-+metadata:
-+  name: workflow-template-submittable
-+  namespace: default
-+spec:
-+  entrypoint: whalesay-template
-+  arguments:
-+    parameters:
-+      - name: message
-+        value: hello world
-+  templates:
-+    - name: whalesay-template
-+      inputs:
-+        parameters:
-+          - name: message
-+      container:
-+        image: docker/whalesay
-+        command: [cowsay]
-+        args: ["{{inputs.parameters.message}}"]
-```
-
-**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow-with-defaults.yaml` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata: 
-+  annotations: 
-+    testAnnotation: test
-+  generateName: hello-world-
-+  labels: 
-+    testLabel: test
-+    workflows.argoproj.io/archive-strategy: "false"
-+spec: 
-+  activeDeadlineSeconds: 7200
-+  arguments:
-+    parameters: 
-+      - 
-+        name: message
-+        value: "hello world"
-+  entrypoint: whalesay
-+  onExit: whalesay-exit
-+  serviceAccountName: default
-+  templates: 
-+    - 
-+      container: 
-+        args: 
-+          - "hello world"
-+        command: 
-+          - cowsay
-+        image: "docker/whalesay:latest"
-+      name: whalesay
-+    - 
-+      container: 
-+        args: 
-+          - "hello from the default exit handler"
-+        command: 
-+          - cowsay
-+        image: docker/whalesay
-+      name: whalesay-exit
-+  ttlStrategy: 
-+    secondsAfterCompletion: 60
-+  volumes: 
-+    - 
-+      name: test
-+      secret: 
-+        secretName: test
-```
-
-**File**: `workflow/controller/testdata/operator_wfdefault/simple-workflow.yaml` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  generateName: hello-world-
-+  labels:
-+    workflows.argoproj.io/archive-strategy: "false"
-+spec:
-+  entrypoint: whalesay
-+  templates:
-+  - name: whalesay
-+    container:
-+      image: docker/whalesay:latest
-+      command: [cowsay]
-+      args: ["hello world"]
-```
-
-**File**: `workflow/controller/testdata/operator_wfdefault/stored-workflow-spec.yaml` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+activeDeadlineSeconds: 7200
-+arguments:
-+  parameters:
-+    - name: message
-+      value: "hello world"
-+entrypoint: whalesay-template
-+onExit: whalesay-exit
-+serviceAccountName: default
-+templates:
-+  - container:
-+      args:
-+        - "{{inputs.parameters.message}}"
-+      command:
-+        - cowsay
-+      image: docker/whalesay
-+    inputs:
-+      parameters:
-+        - name: message
-+    name: whalesay-template
-+  - container:
-+      args:
-+        - "hello from the default exit handler"
-+      command:
-+        - cowsay
-+      image: docker/whalesay
-+    name: whalesay-exit
-+ttlStrategy:
-+  secondsAfterCompletion: 60
-+volumes:
-+  - name: test
-+    secret:
-+      secretName: test
-```
-
-**File**: `workflow/controller/testdata/operator_wfdefault/workflow-defaults.yaml` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+  metadata: 
-+    annotations: 
-+      testAnnotation: test
-+    labels: 
-+      testLabel: test
-+  spec: 
-+    entrypoint: whalesay
-+    activeDeadlineSeconds: 7200
-+    arguments:
-+      parameters: 
-+        - 
-+          name: message
-+          value: "hello world"
-+    onExit: whalesay-exit
-+    serviceAccountName: default
-+    templates: 
-+      - 
-+        container: 
-+          args: 
-+            - "hello from the default exit handler"
-+          command: 
-+            - cowsay
-+          image: docker/whalesay
-+        name: whalesay-exit
-+    ttlStrategy: 
-+      secondsAfterCompletion: 60
-+    volumes: 
-+      - 
-+        name: test
-+        secret: 
-+          secretName: test
-```
-
----
-
-### Incident Patch 3: `e2ee093a` (2026-10-22)
-**Commit Message**: test(util): move merge fixtures into testdata (#17270)
-
-Signed-off-by: Mistyheart <[REDACTED_EMAIL]>
-
-**File**: `workflow/util/merge_test.go` (modified, +29/-461)
-```diff
-@@ -13,38 +13,6 @@ import (
+@@ -4,8 +4,10 @@ import (
+ 	"archive/tar"
+ 	"archive/zip"
+ 	"compress/gzip"
++	"context"
+ 	"fmt"
+ 	"io"
++	"math"
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
+@@ -18,8 +20,12 @@ import (
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/require"
+ 	corev1 "k8s.io/api/core/v1"
++	apierr "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	k8sruntime "k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/wait"
+ 	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
+ 
  	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- )
- 
--var origWF = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: workflow-template-hello-world-
--spec:
--  arguments:
--    parameters:
--    - name: message
--      value: original
--  entrypoint: start
--  onExit: end
--  serviceAccountName: default
--  workflowTemplateRef:
--    name: workflow-template-submittable
--`
--
--var patchWF = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: workflow-template-hello-world-
--spec:
--  arguments:
--    parameters:
--    - name: message
--      value: patch
--  serviceAccountName: argo1
--  podGC:
--    strategy: OnPodSuccess
--`
--
- func TestParseUserOverrideAllowlist(t *testing.T) {
- 	for _, env := range []string{"", "  "} {
- 		got, err := parseUserOverrideAllowlist(env)
-@@ -66,8 +34,8 @@ func TestParseUserOverrideAllowlist(t *testing.T) {
- }
- 
- func TestMergeWorkflows(t *testing.T) {
--	patchWf := wfv1.MustUnmarshalWorkflow(origWF)
--	targetWf := wfv1.MustUnmarshalWorkflow(patchWF)
-+	patchWf := wfv1.MustUnmarshalWorkflow("@testdata/merge/orig-wf.yaml")
-+	targetWf := wfv1.MustUnmarshalWorkflow("@testdata/merge/patch.yaml")
- 
- 	err := MergeTo(patchWf, targetWf)
+ 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
+@@ -649,9 +655,12 @@ func TestMonitorProgress(t *testing.T) {
+ 			Namespace:                    fakeNamespace,
+ 			AnnotationPatchTickDuration:  annotationPackTickDuration,
+ 			ReadProgressFileTickDuration: readProgressFileTickDuration,
++			TaskResultRetryTimeout:       90 * time.Second,
+ 		},
+ 	)
  	require.NoError(t, err)
-@@ -101,296 +69,13 @@ func TestMergeMetaDataTo(t *testing.T) {
- 	assert.NotContains(meta2.Labels, "test")
++	assert.Equal(t, 90*time.Second, process.taskResultRetryTimeout)
++	assert.Equal(t, defaultTaskResultBackoff, process.taskResultBackoff)
+ 	we := process.NewExecutor(TaskConfig{
+ 		WorkflowName:        fakeWorkflow,
+ 		WorkflowUID:         fakeWorkflowUID,
+@@ -748,9 +757,11 @@ func TestReportOutputs(t *testing.T) {
+ 		require.NoError(t, err)
+ 		we := WorkflowExecutor{
+ 			Process: &Process{
+-				RuntimeExecutor:  &mockRuntimeExecutor,
+-				taskResultClient: mockTaskResultClient,
+-				Tracing:          tracing,
++				RuntimeExecutor:        &mockRuntimeExecutor,
++				taskResultClient:       mockTaskResultClient,
++				Tracing:                tracing,
++				taskResultRetryTimeout: time.Minute,
++				taskResultBackoff:      defaultTaskResultBackoff,
+ 			},
+ 			Template: templateWithArtifacts,
+ 		}
+@@ -762,6 +773,166 @@ func TestReportOutputs(t *testing.T) {
+ 	})
  }
  
--var wfDefault = `
--metadata:
--  annotations:
--    testAnnotation: default
--  labels:
--    testLabel: default
--spec:
--  entrypoint: whalesay
--  activeDeadlineSeconds: 7200
--  arguments:
--    artifacts:
--      -
--        name: message
--        path: /tmp/message
--    parameters:
--      -
--        name: message
--        value: "hello world"
--  onExit: whalesay-exit
--  serviceAccountName: default
--  templates:
--    -
--      container:
--        args:
--          - "hello from the default exit handler"
--        command:
--          - cowsay
--        image: docker/whalesay
--      name: whalesay-exit
--  ttlStrategy:
--    secondsAfterCompletion: 60
--  volumes:
--    -
--      name: test
--      secret:
--        secretName: test
--`
--
--var wft = `
--apiVersion: argoproj.io/v1alpha1
--kind: WorkflowTemplate
--metadata:
--  name: workflow-template-submittable
--  namespace: default
--spec:
--  workflowMetaData:
--    annotations:
--      testAnnotation: wft
--    labels:
--      testLabel: wft
--  entrypoint: whalesay-template
--  arguments:
--    parameters:
--      - name: message
--        value: hello world
--  templates:
--    - name: whalesay-template
--      inputs:
--        parameters:
--          - name: message
--      container:
--        image: docker/whalesay
--        command: [cowsay]
--        args: ["{{inputs.parameters.message}}"]
--`
--
--var wf = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: hello-world-
--spec:
--  entrypoint: whalesay
--  templates:
--    -
--      container:
--        args:
--          - "hello world"
--        command:
--          - cowsay
--        image: "docker/whalesay:latest"
--      name: whalesay
--`
--
--var resultSpec = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: hello-world-
--spec:
--  activeDeadlineSeconds: 7200
--  workflowMetadata:
--    annotations:
--      testAnnotation: wft
--    labels:
--      testLabel: wft
--  arguments:
--    artifacts:
--      -
--        name: message
--        path: /tmp/message
--    parameters:
--      -
--        name: message
--        value: "hello world"
--  entrypoint: whalesay
--  onExit: whalesay-exit
--  serviceAccountName: default
--  templates:
--    -
--      container:
--        args:
--          - "hello world"
--        command:
--          - cowsay
--        image: "docker/whalesay:latest"
--      name: whalesay
--    -
--      container:
--        args:
--          - "{{inputs.parameters.message}}"
--        command:
--          - cowsay
--        image: docker/whalesay
--      inputs:
--        parameters:
--          -
--            name: message
--      name: whalesay-template
--    -
--      container:
--        args:
--          - "hello from the default exit handler"
--        command:
--          - cowsay
--        image: docker/whalesay
--      name: whalesay-exit
--  ttlStrategy:
--    secondsAfterCompletion: 60
--  volumes:
--    -
--      name: test
--      secret:
--        secretName: test
--
--`
--
--var wfArguments = `
--apiVersion: argoproj.io/v1alpha1
--kind: Workflow
--metadata:
--  generateName: test-workflow
--spec:
--  workflowTemplateRef:
--    name: test-workflow-template
--  arguments:
--    parameters:
--      - name: PARAM1
--        valueFrom:
--          configMapKeyRef:
--            name: test-config-map
--            key: PARAM1
--      - name: PARAM2
--        valueFrom:
--          configMapKeyRef:
--            name: test-config-map
--            key: PARAM2
--      - name: PARAM4
--        valueFrom:
--          configMapKeyRef:
--            name: test-config-map
--            key: PARAM4
--      - name: PARAM5
--        value: "Workflow value 5"`
--
--var wfArgumentsTe
++// newFlakyTaskResultExecutor returns an executor whose task result API
++// fails with a transient error until outage has passed (forever if
++// outage is negative). Retries are scaled down to milliseconds: the
++// backoff reaches its cap after 15ms.
++func newFlakyTaskResultExecutor(t *testing.T, outage, retryTimeout time.Duration) (*WorkflowExecutor, *argofake.Clientset) {
++	t.Helper()
++	ctx := logging.TestContext(t.Context())
++	tr, err := tracing.New(ctx, `argoexec`)
++	require.NoError(t, err)
++	clientset := argofake.NewClientset()
++	start := time.Now()
++	clientset.PrependReactor("*", "workflowtaskresults", func(k8stesting.Action) (bool, k8sruntime.Object, error) {
++		if outage < 0 || time.Since(start) < outage {
++			return true, nil, apierr.NewServiceUnavailable("API server unavailable")
++		}
++		return false, nil, nil
++	})
++	return &WorkflowExecutor{
++		Process: &Process{
++			taskResultClient:          clientset.ArgoprojV1alpha1().WorkflowTaskResults(fakeNamespace),
++			Tracing:                   tr,
++			taskResultRetryTimeout:    retryTimeout,
++			interimResultRetryTimeout: retryTimeout,
++			taskResultBackoff:         wait.Backoff{Duration: time.Millisecond, Factor: 2, Steps: math.MaxInt32, Cap: 10 * time.Millisecond},
++		},
++		workflow: fakeWorkflow,
++		nodeID:   fakeNodeID,
++	}, clientset
++}
++
++func TestDefaultTaskResultBackoff(t *testing.T) {
++	backoff := defaultTaskResultBackoff
++	backoff.Jitter = 0
++	delay := backoff.DelayFunc()
++	var delays []time.Duration
++	for range 8 {
++		delays = append(delays, delay())
++	}
++	s := time.Second
++	assert.Equal(t, []time.Duration{1 * s, 2 * s, 4 * s, 8 * s, 16 * s, 30 * s, 30 * s, 30 * s}, delays)
++}
++
++func TestTaskResultRetries(t *testing.T) {
++	t.Run("OutageLongerThanTimeoutFails", func(t *testing.T) {
++		ctx := logging.TestContext(t.Context())
++		we, _ := newFlakyTaskResultExecutor(t, -1, 100*time.Millisecond)
++
++		start := time.Now()
++		err := we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"})
++		require.Error(t, err)
++		assert.True(t, apierr.IsServiceUnavailable(err), "returns the last API error, got %v", err)
++		require.ErrorContains(t, err, "gave up writing task result after 100ms: ")
++		assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
++
++		we.InitializeOutput(ctx)
++		we.FinalizeOutput(ctx)
++		assert.Len(t, we.errors, 2)
++	})
++	t.Run("InterimWritesUseTheirOwnLimit", func(t *testing.T) {
++		ctx := logging.TestContext(t.Context())
++		we, _ := newFlakyTaskResultExecutor(t, -1, time.Minute)
++		we.interimResultRetryTimeout = 50 * time.Millisecond
++
++		start := time.Now()
++		we.InitializeOutput(ctx)
++		assert.Less(t, time.Since(start), 10*time.Second)
++		require.Len(t, we.errors, 1)
++		assert.True(t, apierr.IsServiceUnavailable(we.errors[0]), "got %v", we.errors[0])
++	})
++	t.Run("OutagePastBackoffCapButShorterThanTimeoutSucceeds", func(t *testing.T) {
++		ctx := logging.TestContext(t.Context())
++		we, clientset := newFlakyTaskResultExecutor(t, 200*time.Millisecond, time.Minute)
++
++		require.NoError(t, we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"}))
++		result, err := clien
 ```
 
-**File**: `workflow/util/testdata/merge/base-hook.yaml` (added, +9/-0)
+**File**: `workflow/executor/postmain_test.go` (modified, +104/-0)
 ```diff
-@@ -0,0 +1,9 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  generateName: workflow-template-hello-world-
-+spec:
-+  hooks:
-+    foo:
-+      template: a
-+      expression: workflow.status == "Pending"
-```
-
-**File**: `workflow/util/testdata/merge/base-labels-from.yaml` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+spec:
-+  workflowMetadata:
-+    labelsFrom:
-+      foo:
-+        expression: BASE
-+      baz:
-+        expression: BASE
-```
-
-**File**: `workflow/util/testdata/merge/base-nil.yaml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  generateName: workflow-template-hello-world-
-+spec:
-```
-
-**File**: `workflow/util/testdata/merge/orig-wf.yaml` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+metadata:
-+  generateName: workflow-template-hello-world-
-+spec:
-+  arguments:
-+    parameters:
-+    - name: message
-+      value: original
-+  entrypoint: start
-+  onExit: end
-+  serviceAccountName: default
-+  workflowTemplateRef:
-+    name: workflow-template-submittable
-```
-
-**File**: `workflow/util/testdata/merge/patch-hook.yaml` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+spec:
-+  hooks:
-+    foo:
-+      template: c
-+      expression: workflow.status == "Pending"
-+    bar:
-+      template: b
-+      expression: workflow.status == "Pending"
-```
-
-**File**: `workflow/util/testdata/merge/patch-labels-from.yaml` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+spec:
-+  workflowMetadata:
-+    labelsFrom:
-+      foo:
-+        expression: PATCH
-+      bar:
-+        expression: PATCH
-```
-
-**File**: `workflow/util/testdata/merge/patch-nil-hook.yaml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+apiVersion: argoproj.io/v1alpha1
-+kind: Workflow
-+spec:
+@@ -1,16 +1,25 @@
+ package executor
+ 
+ import (
++	"bytes"
++	"context"
++	"os"
++	"path/filepath"
++	"sync"
++	"sync/atomic"
+ 	"testing"
++	"time"
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/require"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/client-go/kubernetes/fake"
+ 
+ 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
+ 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
++	typedv1alpha1 "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/typed/workflow/v1alpha1"
+ 	"github.com/argoproj/argo-workflows/v4/util/logging"
+ 	utilretry "github.com/argoproj/argo-workflows/v4/util/retry"
+ 	"github.com/argoproj/argo-workflows/v4/workflow/executor/mocks"
+@@ -33,6 +42,10 @@ func newTestPostMainExecutor(t *testing.T, tmpl wfv1.Template, mockRuntime *mock
+ 			Tracing:            tracingObj,
+ 			memoizedConfigMaps: map[string]string{},
+ 			retryBackoff:       utilretry.ExecutorRetry(ctx),
++			// The defaults NewProcess would set.
++			taskResultRetryTimeout:    utilretry.DefaultExecutorTaskResultRetryTimeout,
++			interimResultRetryTimeout: defaultInterimResultRetryTimeout,
++			taskResultBackoff:         defaultTaskResultBackoff,
+ 		},
+ 		workflow:    fakeWorkflow,
+ 		workflowUID: types.UID(fakeWorkflowUID),
+@@ -135,3 +148,94 @@ func TestPostMain_WaitErrorIsAggregated(t *testing.T) {
+ 	err := we.PostMain(ctx, ctx, false)
+ 	require.Error(t, err, "Wait error must surface via HasError")
+ }
++
++// serialTaskResults wraps a task result client and records how many writes
++// were in flight at once. Progress writes stall until their ctx ends, as
++// they would against an API server that has stopped answering.
++type serialTaskResults struct {
++	typedv1alpha1.WorkflowTaskResultInterface
++	progressStarted chan struct{}
++	startOnce       sync.Once
++	progressWrites  atomic.Int32
++
++	mu          sync.Mutex
++	inFlight    int
++	maxInFlight int
++}
++
++func (c *serialTaskResults) begin() (end func()) {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	c.inFlight++
++	c.maxInFlight = max(c.maxInFlight, c.inFlight)
++	return func() {
++		c.mu.Lock()
++		defer c.mu.Unlock()
++		c.inFlight--
++	}
++}
++
++func (c *serialTaskResults) stallProgress(ctx context.Context) error {
++	c.progressWrites.Add(1)
++	c.startOnce.Do(func() { close(c.progressStarted) })
++	<-ctx.Done()
++	return ctx.Err()
++}
++
++func (c *serialTaskResults) Create(ctx context.Context, tr *wfv1.WorkflowTaskResult, opts metav1.CreateOptions) (*wfv1.WorkflowTaskResult, error) {
++	end := c.begin()
++	defer end()
++	if tr.Progress != "" {
++		return nil, c.stallProgress(ctx)
++	}
++	return c.WorkflowTaskResultInterface.Create(ctx, tr, opts)
++}
++
++func (c *serialTaskResults) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (*wfv1.WorkflowTaskResult, error) {
++	end := c.begin()
++	defer end()
++	if bytes.Contains(data, []byte(`"progress"`)) {
++		return nil, c.stallProgress(ctx)
++	}
++	return c.WorkflowTaskResultInterface.Patch(ctx, name, pt, data, opts, subresources...)
++}
++
++// TestPostMain_ProgressReportsStopBeforeFinalReports verifies that main
++// exiting while a progress report is stuck retrying stops the progress
++// monitor, and cuts off the stuck report, before the final reports write
++// the same task result. Both Collect variants are covered; the pod layouts
++// differ only in Prepare.
++func TestPostMain_ProgressReportsStopBeforeFinalReports(t *testing.T) {
++	for name, tmpl := range map[string]wfv1.Template{
++		"Container": {Name: "container-tmpl"},
++		"Resource":  {Name: "resource-tmpl", Resource: &wfv1.ResourceTemplate{Action: "get"}},
++	} {
++		t.Run(name, func(t *testing.T) {
++			ctx := logging.TestContext(t.Context())
++			mockRuntime := &mocks.ContainerRuntimeExecutor{}
++			we := newTestPostMainExecutor(t, tmpl, mockRuntime)
++			taskResults := &serialTaskResults{WorkflowTaskResultInterface: we.taskResultClient, progressStarted: make(chan struct{})}
++			we.taskResultClient = taskResults
++			we.annotationPatchTickDuration = time.Millisecond
++			we.readProgressFileTickDuration = time.Millisecond
++			we.progressFile = filepath.Join(t.TempDir(), "progress")
++			require.NoError(t, os.WriteFile(we.progressFile, []byte("1/2\n"), 0o600))
++			// main exits while a progress report is stuck.
++			mockRuntime.On("Wait", mock.Anything, []string{"main"}).Run(func(mock.Arguments) {
++				select {
++				case <-taskResults.progressStarted:
++				case <-time.After(10 * time.Second):
++				}
++			}).Return(nil)
++
++			require.NoError(t, we.PostMain(ctx, ctx, false))
++			we.FinalizeOutput(ctx)
++			progressWrites := taskResults.progressWrites.Load()
++			require.Positive(t, progressWrites, "no progress report was made")
++			time.Sleep(20 * time.Millisecond) // many progress ticks
++			assert.Equal(t, progressWrites, taskResults.progressWrites.Load(), "progress reports continued afte
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17299** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0) (@Joibel)
+- **PR #17298** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1) (@argo-cd-cherry-pick-bot[bot])
+- **PR #17297** (2026-10-26): chore(deps): update dependency serialize-javascript to v7.1.3 [security] (main) (@renovate[bot])
 - **PR #17274** (2026-10-22): docs: update CHANGELOG.md for v4.0.15 (@github-actions[bot])
 - **PR #17273** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1) (@Joibel)
 - **PR #17271** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.0) (@Joibel)
-- **PR #17270** (2026-10-22): test(util): move merge fixtures into testdata (@Mistyheart)
-- **PR #17269** (2026-10-22): docs: update CHANGELOG.md for v4.1.6 (@github-actions[bot])
-- **PR #17264** (2026-10-21): chore: Update MAINTAINERS.md (@terrytangyuan)
 
 ---
 
@@ -2008,96 +1420,32 @@ Signed-off-by: Mistyheart <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(controller): move first operator fixtures into testdata (#17240)
+## X. deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
 
 **RULE**:
-When implementing operations in `workflow/controller/operator_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `584be861`: test(controller): move first operator fixtures into testdata (#17240). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6acf1e16`: deps): update dependency serialize-javascript to v7.1.3 [security] (#17297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/operator_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/resources-duration.yaml")
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/global-param-duration.yaml")
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-workflow.yaml")
-	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow("@testdata/operator/estimated-duration-baseline-workflow.yaml"), wf)
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/default-progress.yaml")
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/logged-progress.yaml")
-	wf := wfv1.MustUnmarshalWorkflow("@testdata/operator/sidecar-with-vol.yaml")
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
+  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	wf := wfv1.MustUnmarshalWorkflow(`
-metadata:
-  name: my-wf
-  namespace: my-ns
-spec:
-  entrypoint: main
-  templates:
-   - name: main
-     dag:
-       tasks:
-       - name: pod
-         template: pod
-   - name: pod
-     container:
-       image: my-image
-`)
-	wf := wfv1.MustUnmarshalWorkflow(`
-metadata:
-  name: my-wf
-  namespace: my-ns
-spec:
-  entrypoint: main
-  templates:
-   - name: main
-     dag:
-       tasks:
-       - name: pod
-         template: pod
-   - name: pod
-     container:
-       image: my-image
-`)
-	wf := wfv1.MustUnmarshalWorkflow(`
-metadata:
-  name: my-wf
-  namespace: my-ns
-  labels:
-    workflows.argoproj.io/workflow-template: my-wftmpl
-spec:
-  entrypoint: main
-  templates:
-   - name: main
-     dag:
-       tasks:
-       - name: pod
-         template: pod
-   - name: pod
-     container:
-       image: my-image
-`)
-	cancel, controller := newController(logging.TestContext(t.Context()), wfv1.MustUnmarshalWorkflow(`
-metadata:
-  name: my-baseline-wf
-  namespace: my-ns
-status:
-  startedAt: "1970-01-01T00:00:00Z"
-  finishedAt: "1970-01-01T00:01:00Z"
-  nodes:
-    my-baseline-wf:
-      startedAt: "1970-01-01T00:00:00Z"
-      finishedAt: "1970-01-01T00:01:00Z"
-`), wf)
-	wf := wfv1.Must
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
+  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `584be861` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6acf1e16` are properly handled with clean fallback behavior.
