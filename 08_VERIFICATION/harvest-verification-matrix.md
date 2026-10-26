@@ -5167,3 +5167,4 @@
 | `CYCLE-20261026-JZ54` | `2026-10-26T14:23:24.328Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4626` | Yes (`8642fa35...`) |
 | `CYCLE-20261026-K11E` | `2026-10-26T14:23:26.786Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4627` | Yes (`eaa34984...`) |
 | `CYCLE-20261026-SBZG` | `2026-10-26T14:29:54.220Z` | `microsoft/fluentui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4628` | Yes (`375db551...`) |
+| `CYCLE-20261026-0DNB` | `2026-10-26T17:52:06.935Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4629` | Yes (`a87f6d82...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-FCRW",
-    "timestamp": "2026-10-25T04:44:16.364Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "700603ba3dcd07968a86aee49678fc8085893f400779a8e7487311477ee75f6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-FE67",
     "timestamp": "2026-10-25T04:44:18.175Z",
     "repository": "projectdiscovery/nuclei",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/fluentui",
     "learningId": "learn-github-microsoft-fluentui",
     "contentHash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-0DNB",
+    "timestamp": "2026-10-26T17:52:06.935Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

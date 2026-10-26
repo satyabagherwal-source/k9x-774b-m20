@@ -5174,3 +5174,4 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `5277f015` | Multi-dimensional audit evidence | 2026-10-26T14:23:24.331Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `84409045` | Multi-dimensional audit evidence | 2026-10-26T14:23:26.789Z |
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `c7b45497` | Multi-dimensional audit evidence | 2026-10-26T14:29:54.224Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `aa0f14f5` | Multi-dimensional audit evidence | 2026-10-26T17:52:06.938Z |

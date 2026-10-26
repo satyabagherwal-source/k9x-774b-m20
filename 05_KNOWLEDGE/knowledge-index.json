@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T14:29:54.165Z",
+  "last_updated": "2026-10-26T17:52:06.872Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39902,8 +39902,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "8830c516",
-      "content_hash": "866ac00d65f98c0279a609fba0271e08c079fd5663e75881746e4be5414e6bf5",
+      "source_version": "aa0f14f5",
+      "content_hash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -39931,6 +39931,11 @@
           "number": 3971,
           "title": "Add support for provider functions in tofu console",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4629,
+          "title": "plugin: Test ProviderMeta is sent as msgpack null",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39938,7 +39943,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:11:17.442Z",
+      "verified_at": "2026-10-26T17:52:06.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129637,6 +129642,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T14:29:54.153Z"
+    },
+    "rule-4629": {
+      "learning_id": "rule-4629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4629,
+      "title": "plugin: Test ProviderMeta is sent as msgpack null",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "aa0f14f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T17:52:06.862Z"
     }
   },
   "aliases": {

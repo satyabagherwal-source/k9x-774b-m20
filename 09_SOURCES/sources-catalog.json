@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "8830c516",
+    "sourceVersion": "aa0f14f5",
     "license": "MPL-2.0",
-    "contentHash": "866ac00d65f98c0279a609fba0271e08c079fd5663e75881746e4be5414e6bf5",
-    "lastHarvestedAt": "2026-10-25T02:11:17.483Z",
+    "contentHash": "a87f6d8231b886d09e429ffe3a5767569940befeb558e65852f1cfd16f9fe03b",
+    "lastHarvestedAt": "2026-10-26T17:52:06.938Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

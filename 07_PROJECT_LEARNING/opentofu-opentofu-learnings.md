@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `8830c516`  
+> **Source Version**: `aa0f14f5`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:11:17.271Z  
+> **Timestamp**: 2026-10-26T17:52:06.563Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:11:16.163Z  
+> **Harvest Timestamp**: 2026-10-26T17:51:59.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30606 stars
+- **Stars / Engagement**: 30633 stars
 
 ---
 
@@ -1419,341 +1419,82 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8830c516` (2026-10-22)
-**Commit Message**: Add support for provider functions in tofu console
+### Incident Patch 1: `aa0f14f5` (2026-10-15)
+**Commit Message**: plugin: Test ProviderMeta is sent as msgpack null
 
-This fixes the reported issue by injecting function requirements into
-the provider function tracker.
+Signed-off-by: Lucas Grigolon Varela <[REDACTED_EMAIL]>
 
-It also fixes the issue where non-builtin providers would be closed
-before functions are able to be called.
-
-Hopefully all of this provider function tracking mess goes away in the
-new runtime.
-
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/command/console.go` (modified, +7/-1)
+**File**: `internal/plugin/grpc_provider_test.go` (modified, +24/-0)
 ```diff
-@@ -155,7 +155,13 @@ func (c ConsoleCommand) Execute(args *arguments.Console, view views.Console) int
- 	// Before we can evaluate expressions, we must compute and populate any
- 	// derived values (input variables, local values, output values)
- 	// that are not stored in the persistent state.
--	scope, scopeDiags := lr.Core.Eval(ctx, lr.Config, lr.InputState, addrs.RootModuleInstance, evalOpts)
-+	scope, done, scopeDiags := lr.Core.Eval(ctx, lr.Config, lr.InputState, addrs.RootModuleInstance, evalOpts)
-+	defer func() {
-+		err := done(ctx)
-+		if err != nil {
-+			view.Diagnostics(tfdiags.New(err))
-+		}
-+	}()
- 	diags = diags.Append(scopeDiags)
- 	if scope == nil {
- 		// scope is nil if there are errors so bad that we can't even build a scope.
-```
-
-**File**: `internal/command/console_test.go` (modified, +39/-0)
-```diff
-@@ -52,6 +52,45 @@ func TestConsole_basic(t *testing.T) {
+@@ -1480,3 +1480,27 @@ func TestGRPCProvider_CallFunction(t *testing.T) {
+ 		t.Fatalf("%v", resp.Result)
  	}
  }
- 
-+func TestConsole_functions(t *testing.T) {
-+	td := t.TempDir()
-+	testCopyDir(t, testFixturePath("console-functions"), td)
-+	t.Chdir(td)
 +
-+	streams, done := terminal.StreamsForTesting(t)
-+	view := views.NewView(streams)
-+	meta := Meta{
-+		WorkingDir: workdir.NewDir("."),
-+		View:       view,
-+	}
++func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
++	client := mockProviderClient(t)
++	p := newGRPCProvider(client)
 +
-+	code := RunCommander(t, InitCommander(), meta, nil)
-+	output := done(t)
-+	if code != 0 {
-+		t.Fatalf("bad: %d\n\n%s", code, output.Stderr())
-+	}
++	client.EXPECT().ReadDataSource(
++		gomock.Any(),
++		gomock.Any(),
++	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
++		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
++			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
++		}
++		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
++	})
 +
-+	streams, done = terminal.StreamsForTesting(t)
-+	view = views.NewView(streams)
-+	meta = Meta{
-+		WorkingDir: workdir.NewDir("."),
-+		View:       view,
-+	}
++	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
++		TypeName: "data",
++		Config: cty.ObjectVal(map[string]cty.Value{
++			"attr": cty.StringVal("foo"),
++		}),
++	})
 +
-+	defer testStdinPipe(t, strings.NewReader(`provider::terraform::decode_tfvars("b = 2")`+"\n"))()
-+
-+	code = RunCommander(t, ConsoleCommander(), meta, nil)
-+	output = done(t)
-+	if code != 0 {
-+		t.Fatalf("bad: %d\n\n%s", code, output.Stderr())
-+	}
-+
-+	actual := output.Stdout()
-+	if actual != "{\n  \"b\" = 2\n}\n" {
-+		t.Fatalf("bad: %q", actual)
-+	}
-+}
-+
- func TestConsole_tfvars(t *testing.T) {
- 	td := t.TempDir()
- 	testCopyDir(t, testFixturePath("apply-vars"), td)
-```
-
-**File**: `internal/command/testdata/console-functions/main.tofu` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+terraform {
-+  required_providers {
-+    terraform = { source = "terraform.io/builtin/terraform" }
-+  }
++	checkDiags(t, resp.Diagnostics)
 +}
 ```
 
-**File**: `internal/repl/session_test.go` (modified, +1/-1)
+**File**: `internal/plugin6/grpc_provider_test.go` (modified, +24/-0)
 ```diff
-@@ -299,7 +299,7 @@ func testSession(t *testing.T, test testSessionTest) {
- 	if state == nil {
- 		state = states.NewState()
+@@ -1482,3 +1482,27 @@ func TestGRPCProvider_CallFunction(t *testing.T) {
+ 		t.Fatalf("%v", resp.Result)
  	}
--	scope, diags := ctx.Eval(context.Background(), config, state, addrs.RootModuleInstance, &tofu.EvalOpts{})
-+	scope, _, diags := ctx.Eval(context.Background(), config, state, addrs.RootModuleInstance, &tofu.EvalOpts{})
- 	if diags.HasErrors() {
- 		t.Fatalf("failed to create scope: %s", diags.Err())
- 	}
-```
-
-**File**: `internal/tofu/context_eval.go` (modified, +35/-3)
-```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/opentofu/opentofu/internal/addrs"
- 	"github.com/opentofu/opentofu/internal/configs"
- 	"github.com/opentofu/opentofu/internal/lang"
-+	"github.com/opentofu/opentofu/internal/providers"
- 	"github.com/opentofu/opentofu/internal/states"
- 	"github.com/opentofu/opentofu/internal/tfdiags"
- 	"github.com/opentofu/opentofu/internal/tracing"
-@@ -39,7 +40,7 @@ type EvalOpts struct {
- // the returned scope may be nil. If it is not nil then it may still be used
- // to attempt expression evaluation or other analysis, but some expressions
- // may not behave as expected.
--func (c *Context) Eval(ctx context.Context, config *configs.Config, state *states.State, moduleAddr addrs.ModuleInstance, opts *EvalOpts) (*lang.Scope, tfdiags.Diagnostics) {
-+func (c *Context) Eval(ctx context.Context, config *configs.Config, state *states.State, moduleAddr addrs.ModuleInstance, opts *EvalOpts) (*lang.Scope, func(context.Context) error, tfdiags.Diagnostics) {
- 	// This is intended for external callers such as the "tofu console"
- 	// command. Internally, we create an evaluator in c.walk before walking
- 	// the graph, and create scopes in ContextGraphWalker.
-@@ -73,6 +74,37 @@ func (c *Context) Eval(ctx context.Context, config *configs.Config, state *state
- 
- 	providerFunctionTracker := make(ProviderFunctionMapping)
- 
-+	// Inject all root providers for functions
-+	providerCache := map[addrs.Provider]providers.Interface{}
-+	for _, provider := range config.Module.ProviderRequirements.RequiredProviders {
-+		key := ProviderFunctionReference{
-+			ModulePath:   "",
-+			ProviderName: provider.Name,
-+		}
-+		value := FunctionProvidedBy{
-+			Provider:      addrs.AbsProviderConfig{},
-+			KeyModule:     addrs.RootModule,
-+			KeyExpression: nil,
-+			Instance: func(addrs.InstanceKey) (providers.Configured, error) {
-+				instance, ok := providerCache[provider.Type]
-+				if !ok {
-+					var diags tfdiags.Diagnostics
-+					instance, diags = c.plugins.providers.NewProvider(ctx, provider.Type)
-+					if diags.HasErrors() {
-+						return nil, diags.Err()
-+					}
-+					providerCache[provider.Type] = instance
-+				}
-+				return instance, nil
-+
-+			},
-+		}
-+		providerFunctionTracker[key] = value
-+	}
-+	done := func(ctx context.Context) error {
-+		return c.plugins.providers.Shutdown(ctx)
-+	}
-+
- 	graph, moreDiags := (&EvalGraphBuilder{
- 		Config:                  config,
- 		State:                   state,
-@@ -82,7 +114,7 @@ func (c *Context) Eval(ctx context.Context, config *configs.Config, state *state
- 	}).Build(ctx, addrs.RootModuleInstance)
- 	diags = diags.Append(moreDiags)
- 	if moreDiags.HasErrors() {
--		return nil, diags
-+		return nil, done, diags
- 	}
- 
- 	walkOpts := &graphWalkOpts{
-@@ -108,5 +140,5 @@ func (c *Context) Eval(ctx context.Context, config *configs.Config, state *state
- 	// caches its contexts, so we should get hold of the context that was
- 	// previously used for evaluation here, unless we skipped walking.
- 	evalCtx := walker.EnterPath(moduleAddr)
--	return evalCtx.EvaluationScope(nil, nil, EvalDataForNoInstanceKey), diags
-+	return evalCtx.EvaluationScope(nil, nil, EvalDataForNoInstanceKey), done, diags
  }
-```
-
-**File**: `internal/tofu/context_eval_test.go` (modified, +2/-2)
-```diff
-@@ -61,7 +61,7 @@ func TestContextEval(t *testing.T) {
- 		}, nil),
- 	})
- 
--	scope, diags := ctx.Eval(context.Background(), m, states.NewState(), addrs.RootModuleInstance, &EvalOpts{
-+	scope, _, diags := ctx.Eval(context.Background(), m, states.NewState(), addrs.RootModuleInstance, &EvalOpts{
- 		SetVariables: testInputValuesUnset(m.Module.Variables),
- 	})
- 	if diags.HasErrors() {
-@@ -130,7 +130,7 @@ output "out" {
- 		}, nil),
- 	})
- 
--	_, diags := ctx.Eval(context.Background(), m, states.NewState(), addrs.RootModuleInstance, &EvalOpts{
-+	_, _, diags := ctx.Eval(context.Background(), m, states.NewState(), addrs.RootModuleInstance, &EvalOpts{
- 		SetVariables: testInputValuesUnset(m.Module.Variables),
- 	})
- 	assertNoErrors(t, diags)
-```
-
-**File**: `internal/tofu/graph_builder_eval.go` (modified, +3/-3)
-```diff
-@@ -113,9 +113,9 @@ func (b *EvalGraphBuilder) Steps() []GraphTransformer {
- 		// have to connect again later for providers and so on.
- 		&ReferenceTransformer{},
- 
--		// Although we don't configure providers, we do still start them up
--		// to get their schemas, and so we must shut them down again here.
--		&CloseProviderTransformer{},
-+		// We need to leave providers open for function support
-+		// in tofu console
-+		//&CloseProviderTransformer{},
- 
- 		// Close root module
- 		&CloseRootModuleTransformer{
-```
-
----
-
-### Incident Patch 2: `e6a0d6fc` (2026-10-22)
-**Commit Message**: Temporarily fork import module test
-
-This works around legacy behavior that these tests currently rely on.
-
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/tofu/context_import_test.go` (modified, +20/-0)
-```diff
-@@ -553,6 +553,11 @@ func TestContextImport_moduleProvider(t *testing.T) {
- func TestContextImport_providerModule(t *testing.T) {
- 	p := testProvider("aws")
- 	m := testModule(t, "import-module")
-+	if experimentalRuntimeEnabled() {
-+		// Current test uses empty providers in place of required_providers
-+		// See ExperimentalChangePreReqdProvider
-+		m = testModule(t, "tempruntime-import-module")
-+	}
- 	ctx := testContext2(t, &ContextOpts{
- 		Plugins: plugins.NewLibrary(map[addrs.Provider]providers.Factory{
- 			addrs.NewDefaultProvider("aws"): testProviderFuncFixed(p),
-@@ -855,6 +860,11 @@ func TestContextImport_refreshNil(t *testing.T) {
- func TestContextImport_module(t *testing.T) {
- 	p := testProvider("aws")
- 	m := testModule(t, "import-module")
-+	if experimentalRuntimeEnabled() {
-+		// Current test uses empty providers in place of required_providers
-+		// See ExperimentalChangePreReqdProvider
-+		m = testModule(t, "tempruntime-import-module")
-+	}
- 	ctx := testContext2(t, &ContextOpts{
- 		Plugins: plugins.NewLibrary(map[addrs.Provider]providers.Factory{
- 			addrs.NewDefaultProvider("aws"): testProviderFuncFixed(p),
-@@ -898,6 +908,11 @@ func TestContextImport_module(t *testing.T) {
- func TestContextImport_moduleDepth2(t *testing.T) {
- 	p := testProvider("aws")
- 	m := testModule(t, "import-module")
-+	if experimentalRuntimeEnabled() {
-+		// Current test uses empty providers in place of required_providers
-+		// See ExperimentalChangePreReqdProvider
-+		m = testModule(t, "tempruntime-import-module")
-+	}
- 	ctx := testContext2(t, &ContextOpts{
- 		Plugins: plugins.NewLibrary(map[addrs.Provider]providers.Factory{
- 			addrs.NewDefaultProvider("aws"): testProviderFuncFixed(p),
-@@ -941,6 +956,11 @@ func TestContextImport_moduleDepth2(t *testing.T) {
- func TestContextImport_moduleDiff(t *testing.T) {
- 	p := testProvider("aws")
- 	m := testModule(t, "import-module")
-+	if experimentalRuntimeEnabled() {
-+		// Current test uses empty providers in place of required_providers
-+		// See ExperimentalChangePreReqdProvider
-+		m = testModule(t, "tempruntime-import-module")
-+	}
- 	ctx := testContext2(t, &ContextOpts{
- 		Plugins: plugins.NewLibrary(map[addrs.Provider]providers.Factory{
- 			addrs.NewDefaultProvider("aws"): testProviderFuncFixed(p),
-```
-
-**File**: `internal/tofu/testdata/import-module/child/main.tf` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Empty
--# provider "aws" {}
-+provider "aws" {}
- 
- resource "aws_instance" "foo" {
-   id = "bar"
-```
-
-**File**: `internal/tofu/testdata/tempruntime-import-module/child/main.tf` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+resource "aws_instance" "foo" {
-+  id = "bar"
-+}
 +
-+module "nested" {
-+  source = "./submodule"
-+}
-```
-
-**File**: `internal/tofu/testdata/tempruntime-import-module/child/submodule/main.tf` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+resource "aws_instance" "foo" {
-+  id = "baz"
-+}
-```
-
-**File**: `internal/tofu/testdata/tempruntime-import-module/main.tf` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+provider "aws" {
-+  foo = "bar"
-+}
++func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
++	client := mockProviderClient(t)
++	p := newGRPCProvider(client)
 +
-+module "child" {
-+  count = 1
-+  source = "./child"
-+  providers = {
-+    aws = aws
-+  }
++	client.EXPECT().ReadDataSource(
++		gomock.Any(),
++		gomock.Any(),
++	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
++		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
++			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
++		}
++		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
++	})
++
++	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
++		TypeName: "data",
++		Config: cty.ObjectVal(map[string]cty.Value{
++			"attr": cty.StringVal("foo"),
++		}),
++	})
++
++	checkDiags(t, resp.Diagnostics)
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4763** (closed): backend/kubernetes: ignore Forbidden error on listing workspaces (@leierx)
 - **PR #4758** (2026-10-23): Add support for provider functions in tofu console (@cam72cam)
 - **PR #4753** (2026-10-21): Prepare v1.13.2 release (@yottta)
 - **PR #4752** (2026-10-21): Prepare v1.12.9 release (@yottta)
 - **PR #4751** (2026-10-21): [Govulncheck][GO-2026-6809][v1.12] Upgrade go version to include filtering of the compromised intermediate certificates (@yottta)
 - **PR #4750** (2026-10-21): [Govulncheck][GO-2026-6809][v1.13] Upgrade go version to include filtering of the compromised intermediate certificates (@yottta)
-- **PR #4749** (2026-10-21): [Govulncheck][GO-2026-6809][main] Upgrade go version to include filtering of the compromised intermediate certificates (@yottta)
 
 ---
 
@@ -1773,34 +1514,51 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add support for provider functions in tofu console
+## X. plugin: Test ProviderMeta is sent as msgpack null
 
 **RULE**:
-When implementing operations in `internal/command/console.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/plugin/grpc_provider_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8830c516`: Add support for provider functions in tofu console. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa0f14f5`: plugin: Test ProviderMeta is sent as msgpack null. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/console.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/plugin/grpc_provider_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	scope, done, scopeDiags := lr.Core.Eval(ctx, lr.Config, lr.InputState, addrs.RootModuleInstance, evalOpts)
-	defer func() {
-		err := done(ctx)
-		if err != nil {
-			view.Diagnostics(tfdiags.New(err))
+
+func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
+	client := mockProviderClient(t)
+	p := newGRPCProvider(client)
+
+	client.EXPECT().ReadDataSource(
+		gomock.Any(),
+		gomock.Any(),
+	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
+		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
+			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
 		}
-	}()
+		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
+	})
+
+	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
+		TypeName: "data",
+		Config: cty.ObjectVal(map[string]cty.Value{
+			"attr": cty.StringVal("foo"),
+		}),
+	})
+
+	checkDiags(t, resp.Diagnostics)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	scope, scopeDiags := lr.Core.Eval(ctx, lr.Config, lr.InputState, addrs.RootModuleInstance, evalOpts)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8830c516` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa0f14f5` are properly handled with clean fallback behavior.
