@@ -5046,3 +5046,5 @@
 | `CYCLE-20261025-H4E4` | `2026-10-25T23:53:23.068Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`fe240841...`) |
 | `CYCLE-20261025-HBOM` | `2026-10-25T23:53:32.518Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4494` | Yes (`f5717861...`) |
 | `CYCLE-20261026-XDJI` | `2026-10-26T00:06:01.422Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`e9fc7b11...`) |
+| `CYCLE-20261026-56N4` | `2026-10-26T00:12:05.728Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`6443a7a5...`) |
+| `CYCLE-20261026-5FRL` | `2026-10-26T00:12:17.553Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4495` | Yes (`065515d4...`) |

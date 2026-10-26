@@ -5053,3 +5053,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-25T23:53:23.071Z |
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `478079e6` | Multi-dimensional audit evidence | 2026-10-25T23:53:32.521Z |
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-26T00:06:01.428Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-26T00:12:05.731Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `e139573e` | Multi-dimensional audit evidence | 2026-10-26T00:12:17.556Z |

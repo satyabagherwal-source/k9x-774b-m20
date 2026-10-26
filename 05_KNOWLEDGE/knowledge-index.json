@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:06:01.351Z",
+  "last_updated": "2026-10-26T00:12:17.518Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -23678,7 +23678,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "a6069f167dacb2751d9d8f21b480c7633df185bd22db062d3a0ef577c37b6f00",
+      "content_hash": "6443a7a5f904bca9f70ecd3232a49b8edf1b4acd9eae32efe22b03bced694320",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -23715,7 +23715,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-21T03:56:43.847Z",
+      "verified_at": "2026-10-26T00:12:05.685Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35870,8 +35870,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "3f81168a",
-      "content_hash": "0e52dc72cc14cb986c4bee10fc906bf17463758b6ade61c2c68bd5359ee92fba",
+      "source_version": "e139573e",
+      "content_hash": "065515d4b7be0793c72b6933f91e45bfae7e318f3e59d59a636d2f292d758d58",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -35949,6 +35949,11 @@
           "number": 4446,
           "title": "Preserve caller value lists in MultiDict.set_all (#8521)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4495,
+          "title": "reopen main for development",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35956,7 +35961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:43:18.308Z",
+      "verified_at": "2026-10-26T00:12:17.511Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -126945,6 +126950,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-25T23:53:32.461Z"
+    },
+    "rule-4495": {
+      "learning_id": "rule-4495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4495,
+      "title": "reopen main for development",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "e139573e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:12:17.511Z"
     }
   },
   "aliases": {

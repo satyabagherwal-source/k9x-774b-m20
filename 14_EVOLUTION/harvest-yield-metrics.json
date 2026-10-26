@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:06:01.433Z",
-  "total_cycles_completed": 5023,
-  "total_learnings_persisted": 5023,
-  "total_rules_promoted": 4385,
+  "last_updated": "2026-10-26T00:12:17.560Z",
+  "total_cycles_completed": 5025,
+  "total_learnings_persisted": 5025,
+  "total_rules_promoted": 4386,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:18:50.674Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:18:54.245Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:18:54.738Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1389,20 @@
       "repository": "tencent/Hy-Memory-30B-A3B",
       "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:12:05.734Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:12:17.560Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

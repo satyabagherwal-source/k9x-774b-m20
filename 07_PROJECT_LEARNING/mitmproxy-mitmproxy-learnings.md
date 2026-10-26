@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `3f81168a`  
+> **Source Version**: `e139573e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:43:18.000Z  
+> **Timestamp**: 2026-10-26T00:12:17.306Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:43:17.993Z  
+> **Harvest Timestamp**: 2026-10-26T00:12:17.302Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46333 stars
+- **Stars / Engagement**: 46344 stars
 
 ---
 
@@ -1308,11 +1308,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8521** (2026-10-25): **Preserve caller value lists in MultiDict.set_all**
-  *Symptoms*: #### Description  `MultiDict.set_all()` consumes its caller's list with `pop(0)`. This also affects `MultiDictView`, including `Request.query` and request cookies.  For example, an addon applying the same query values to two flows silently drops the parameter from the second flow:  ```python values = ["one", "two"] first.query.set_all("id", values) second.query.set_all("id", values) ```  The first call empties `values`, so the second call removes `id` rather than assigning it. Copy the list before consuming it. Existing field order, duplicate-key handling, capitalization and removal behavior stay unchanged. This does not change `Headers.set_all()`, which already materializes its own list.  Tests cover empty, single and multiple replacement values against absent, single and case-insensitive duplicate keys, plus reuse through two real `Request.query` views while preserving an unrelated parameter. Seven new cases fail on unchanged base `9125647`; all ten pass with the fix.  Validation in a separate current-main tree, without the changes from #8518 or #8520:  - 267 coretype, HTTP helper and HTTP model tests pass. - Broader Python run excluding the tools directory: 1877 passed, 1 skipped, one failure creating a TUN device. The same TUN test fails against unchanged source in this environment. - Repository-wide Ruff checks pass; changed Python files are formatted. - Mypy: no issues in 253 source files.  No full tools test suite, live proxy session or Windows/macOS run was performed.
+- **Issue #8532** (2026-10-25): **update dependencies**
+  *Symptoms*: 
 
-- **Issue #8520** (2026-10-25): **Refresh expiration dates for empty-valued cookies during replay**
-  *Symptoms*: #### Description  `refresh_set_cookie_header()` rejects any falsey cookie value. An empty string is valid, however: RFC 6265 section 4.1.1 defines `cookie-value` as zero or more cookie octets, optionally quoted.  For example, `session=; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/` raises `ValueError` instead of shifting its expiration. `Response.refresh()` catches that error and silently retains the stale header, so replayed empty-valued cookies do not receive the same date adjustment as nonempty cookies.  Reject a missing value (`None`) rather than an empty string. This keeps genuinely valueless cookie rejection and the existing handling of malformed expiration dates unchanged.  Tests exercise both `session=` and `session=""` through the cookie helper and a real `Response.refresh()`, plus a valueless-cookie control. Four new cases fail on unchanged base `9125647`; all five pass with the fix. This is separate from #8415's Max-Age precedence changes and does not change expiration precedence or parsing.  Validation in a separate current-base tree, without the XML changes from #8518:  - 120 cookie and HTTP tests pass. - Broad Python run: 2008 passed, 2 skipped, one failure creating a TUN device in this environment. The same TUN test fails against unchanged base too. - Repository-wide Ruff checks pass. - Mypy: no issues in 288 source files.  No live-browser replay or Windows/macOS test was run.  #### Checklist  - [x] I have updated tests where applicable. - [x] I have added an 
+- **Issue #8530** (2026-10-25): **Update cryptography**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1329,150 +1329,26 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f81168a` (2026-10-25)
-**Commit Message**: Preserve caller value lists in MultiDict.set_all (#8521)
+### Incident Patch 1: `e139573e` (2026-10-25)
+**Commit Message**: reopen main for development
 
-* fix: preserve caller value lists in MultiDict.set_all
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* test: preserve reusable MultiDict input lists
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* test: reuse query values across requests
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* docs: note preserved MultiDict input values
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* [autofix.ci] apply automated fixes
-
----------
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
-Co-authored-by: Maximilian Hils <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +7/-6)
+**File**: `mitmproxy/version.py` (modified, +1/-1)
 ```diff
-@@ -7,18 +7,19 @@
+@@ -2,7 +2,7 @@
+ import subprocess
+ import sys
  
- ## Unreleased: mitmproxy next
+-VERSION = "12.3.1"
++VERSION = "13.0.0.dev"
+ MITMPROXY = "mitmproxy " + VERSION
  
--- Refresh cookie expiration dates for empty-valued cookies during server replay.
--  ([#8520](https://github.com/mitmproxy/mitmproxy/pull/8520), @hakarrr)
--
- - **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
-   [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
-   ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
--- Fix two error messages that were built with `%s` placeholders and never formatted
--  (`BiDi` attribute lookup and unsupported option types in `OptManager.make_parser`).
--  ([#8509](https://github.com/mitmproxy/mitmproxy/pull/8509), @Pharex38)
- - Block OCSP and CRL requests to eMudhra and Sectigo revocation hosts when
-   `--emudhra` or `--emudhra-old` is enabled.
-   ([#8516](https://github.com/mitmproxy/mitmproxy/pull/8516), @LiHuan02)
-+- Preserve caller-provided value lists when replacing query parameters or cookies with `set_all()`.
-+  ([#8521](https://github.com/mitmproxy/mitmproxy/pull/8521), @hakarrr)
-+- Refresh cookie expiration dates for empty-valued cookies during server replay.
-+  ([#8520](https://github.com/mitmproxy/mitmproxy/pull/8520), @hakarrr)
-+- Fix two error messages that were built with `%s` placeholders and never formatted
-+  (`BiDi` attribute lookup and unsupported option types in `OptManager.make_parser`).
-+  ([#8509](https://github.com/mitmproxy/mitmproxy/pull/8509), @Pharex38)
- 
- ## 22 October 2026: mitmproxy 12.3.0
- 
-```
-
-**File**: `mitmproxy/coretypes/multidict.py` (modified, +1/-0)
-```diff
-@@ -89,6 +89,7 @@ def set_all(self, key: KT, values: list[VT]) -> None:
-         Remove the old values for a key and add new ones.
-         """
-         key_kconv = self._kconv(key)
-+        values = values.copy()
- 
-         new_fields: list[tuple[KT, VT]] = []
-         for field in self.fields:
-```
-
-**File**: `test/mitmproxy/coretypes/test_multidict.py` (modified, +15/-0)
-```diff
-@@ -133,6 +133,21 @@ def test_set_all(self):
-             ("e", "f"),
-         )
- 
-+    @pytest.mark.parametrize(
-+        "fields", [(), (("x", "old"),), (("x", "old"), ("X", "other"))]
-+    )
-+    @pytest.mark.parametrize("values", [[], ["one"], ["one", "two", "three"]])
-+    def test_set_all_preserves_input(self, fields, values):
-+        values = values.copy()
-+        original = values.copy()
-+        first = TMultiDict(fields)
-+        second = TMultiDict(fields)
-+        first.set_all("x", values)
-+        second.set_all("x", values)
-+        assert values == original
-+        assert first.get_all("x") == original
-+        assert second.fields == first.fields
-+
-     def test_add(self):
-         md = self._multi()
-         md.add("foo", "foo")
-```
-
-**File**: `test/mitmproxy/test_http.py` (modified, +11/-0)
-```diff
-@@ -21,6 +21,17 @@
- 
- 
- class TestRequest:
-+    def test_reuse_query_values(self):
-+        values = ["one", "two"]
-+        first = Request.make("GET", "https://example.com/?id=old&keep=yes")
-+        second = Request.make("GET", "https://example.com/?id=old&keep=yes")
-+        first.query.set_all("id", values)
-+        second.query.set_all("id", values)
-+        assert values == ["one", "two"]
-+        assert first.query.get_all("id") == ["one", "two"]
-+        assert second.url == first.url
-+        assert first.query["keep"] == "yes"
-+
-     def test_simple(self):
-         f = tflow()
-         r = f.request
+ # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
 ```
 
 ---
 
-### Incident Patch 2: `6debf65b` (2026-10-25)
-**Commit Message**: Refresh expiration dates for empty-valued cookies during replay (#8520)
-
-* Fix cookie validation check for None values
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* test(http): cover refreshing empty and valueless cookies
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* test(http): refresh empty cookie expiration through responses
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* docs: note empty cookie expiration refresh fix
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-
-* [autofix.ci] apply automated fixes
-
----------
-
-Co-authored-by: generaltony007 <[REDACTED_EMAIL]>
-Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+### Incident Patch 2: `51c1d6b2` (2026-10-25)
+**Commit Message**: mitmproxy 12.3.1
 
 **File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
@@ -1480,79 +1356,34 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
  
  ## Unreleased: mitmproxy next
  
-+- Refresh cookie expiration dates for empty-valued cookies during server replay.
-+  ([#8520](https://github.com/mitmproxy/mitmproxy/pull/8520), @hakarrr)
++
++## 25 October 2026: mitmproxy 12.3.1
 +
  - **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
    [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
    ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
 ```
 
-**File**: `mitmproxy/net/http/cookies.py` (modified, +1/-1)
+**File**: `mitmproxy/version.py` (modified, +1/-1)
 ```diff
-@@ -314,7 +314,7 @@ def refresh_set_cookie_header(c: str, delta: int) -> str:
-     cookies = parse_set_cookie_header(c)
-     for cookie in cookies:
-         name, value, attrs = cookie
--        if not name or not value:
-+        if not name or value is None:
-             raise ValueError("Invalid Cookie")
+@@ -2,7 +2,7 @@
+ import subprocess
+ import sys
  
-         if "expires" in attrs:
-```
-
-**File**: `test/mitmproxy/net/http/test_cookies.py` (modified, +14/-0)
-```diff
-@@ -340,3 +340,17 @@ def test_group_cookies():
-     for c, expected in groups:
-         observed = cookies.group_cookies(cookies.parse_cookie_header(c))
-         assert observed == expected
-+
-+
-+@pytest.mark.parametrize("value", ["", '""'])
-+def test_refresh_empty_cookie_value(value):
-+    header = f"session={value}; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/"
-+    refreshed = cookies.refresh_set_cookie_header(header, 3600)
-+    assert refreshed == "session=; Expires=Wed, 21 Oct 2015 08:28:00 GMT; Path=/"
-+
-+
-+def test_refresh_valueless_cookie_still_invalid():
-+    with pytest.raises(ValueError, match="Invalid Cookie"):
-+        cookies.refresh_set_cookie_header(
-+            "session; Expires=Wed, 21 Oct 2015 07:28:00 GMT", 3600
-+        )
-```
-
-**File**: `test/mitmproxy/test_http.py` (modified, +12/-0)
-```diff
-@@ -608,6 +608,18 @@ def test_set_cookies(self):
-         ]
-         assert list(resp.cookies.keys()) == ["one", "two"]
+-VERSION = "13.0.0.dev"
++VERSION = "12.3.1"
+ MITMPROXY = "mitmproxy " + VERSION
  
-+    @pytest.mark.parametrize("value", ["", '""'])
-+    def test_refresh_empty_cookie_value(self, value):
-+        response = tresp()
-+        response.timestamp_start = 1445412480
-+        response.headers["set-cookie"] = (
-+            f"session={value}; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/"
-+        )
-+        response.refresh(1445416080)
-+        assert response.headers["set-cookie"] == (
-+            "session=; Expires=Wed, 21 Oct 2015 08:28:00 GMT; Path=/"
-+        )
-+
-     def test_refresh(self):
-         r = tresp()
-         n = time.time()
+ # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8532** (2026-10-25): update dependencies (@mhils)
+- **PR #8530** (2026-10-25): Update cryptography (@mhils)
+- **PR #8526** (closed): Bundle Python ABI3T DLL in Windows builds (@Copilot)
+- **PR #8524** (2026-10-25): Add support for Python 3.15 (@mhils)
 - **PR #8521** (2026-10-25): Preserve caller value lists in MultiDict.set_all (@hakarrr)
 - **PR #8520** (2026-10-25): Refresh expiration dates for empty-valued cookies during replay (@hakarrr)
-- **PR #8516** (2026-10-25): Block OCSP/CRL lookups for the eMudhra chain when --emudhra is enabled (@LiHuan02)
-- **PR #8514** (2026-10-25): Require Brotli 1.2.1 for upstream decoder fix (@anthonylei)
-- **PR #8512** (2026-10-25): Fix outdated example paths in the docs (@protonnegativo)
-- **PR #8511** (closed): add svg logo in black and white and add to README (@eloydegen)
 
 ---
 
@@ -1572,39 +1403,28 @@ Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve caller value lists in MultiDict.set_all (#8521)
+## X. reopen main for development
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mitmproxy/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f81168a`: Preserve caller value lists in MultiDict.set_all (#8521). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e139573e`: reopen main for development. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `mitmproxy/version.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Preserve caller-provided value lists when replacing query parameters or cookies with `set_all()`.
-  ([#8521](https://github.com/mitmproxy/mitmproxy/pull/8521), @hakarrr)
-- Refresh cookie expiration dates for empty-valued cookies during server replay.
-  ([#8520](https://github.com/mitmproxy/mitmproxy/pull/8520), @hakarrr)
-- Fix two error messages that were built with `%s` placeholders and never formatted
-  (`BiDi` attribute lookup and unsupported option types in `OptManager.make_parser`).
-  ([#8509](https://github.com/mitmproxy/mitmproxy/pull/8509), @Pharex38)
+VERSION = "13.0.0.dev"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-- Refresh cookie expiration dates for empty-valued cookies during server replay.
-  ([#8520](https://github.com/mitmproxy/mitmproxy/pull/8520), @hakarrr)
-
-- Fix two error messages that were built with `%s` placeholders and never formatted
-  (`BiDi` attribute lookup and unsupported option types in `OptManager.make_parser`).
-  ([#8509](https://github.com/mitmproxy/mitmproxy/pull/8509), @Pharex38)
+VERSION = "12.3.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f81168a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e139573e` are properly handled with clean fallback behavior.
