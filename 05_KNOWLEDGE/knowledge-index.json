@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T18:19:11.695Z",
+  "last_updated": "2026-10-26T18:25:35.131Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32060,14 +32060,19 @@
       "slug": "kuberwastaken-claurst",
       "platform": "github",
       "source_url": "https://github.com/Kuberwastaken/claurst",
-      "source_version": "85ebb868",
-      "content_hash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
+      "source_version": "e4228cc6",
+      "content_hash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
       "dossier_path": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
       "promoted_rules": [
         {
           "number": 1941,
           "title": "Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4645,
+          "title": "Integrate validated shell timeout fixture repair",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -32076,7 +32081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:54:31.443Z",
+      "verified_at": "2026-10-26T18:25:28.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33142,8 +33147,8 @@
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "460f89a4",
-      "content_hash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
+      "source_version": "2527a65b",
+      "content_hash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "promoted_rules": [
@@ -33181,6 +33186,11 @@
           "number": 4039,
           "title": "vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4644,
+          "title": "look up placeholder values, default variables and Trans elements as own properti",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33188,7 +33198,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T04:18:45.412Z",
+      "verified_at": "2026-10-26T18:25:27.151Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52556,14 +52566,19 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "5a36d344",
-      "content_hash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
+      "source_version": "412290e7",
+      "content_hash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
         {
           "number": 2959,
           "title": "clear update protection locks on any app location change",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4646,
+          "title": "migration): 修正进度阶段与重试范围并优化微小文件复制",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -52572,7 +52587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T19:22:41.252Z",
+      "verified_at": "2026-10-26T18:25:35.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129922,6 +129937,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T18:19:11.676Z"
+    },
+    "rule-4644": {
+      "learning_id": "rule-4644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4644,
+      "title": "look up placeholder values, default variables and Trans elements as own properti",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "2527a65b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:25:27.151Z"
+    },
+    "rule-4645": {
+      "learning_id": "rule-4645",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4645,
+      "title": "Integrate validated shell timeout fixture repair",
+      "source_url": "https://github.com/Kuberwastaken/claurst",
+      "source_version": "e4228cc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:25:28.322Z"
+    },
+    "rule-4646": {
+      "learning_id": "rule-4646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4646,
+      "title": "migration): 修正进度阶段与重试范围并优化微小文件复制",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "412290e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:25:35.120Z"
     }
   },
   "aliases": {

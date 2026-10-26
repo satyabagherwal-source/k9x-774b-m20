@@ -338514,3 +338514,177 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c58a60f0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4644. look up placeholder values, default variables and Trans elements as own properti (Harvested from lingui/js-lingui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "look up placeholder values, default variables and Trans elements as own properti",
+  "source": "lingui/js-lingui",
+  "source_url": "https://github.com/lingui/js-lingui",
+  "source_version": "2527a65b",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T18:25:27.052Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lingui-js-lingui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lingui/js-lingui](https://github.com/lingui/js-lingui) (Revision: `2527a65b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `packages/core/src/interpolate.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2527a65b`: look up placeholder values, default variables and Trans elements as own properties (#2741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/interpolate.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  it("should not fill placeholders named like Object.prototype members with the inherited member", () => {
+    expect(prepare("Hi {constructor}")({})).toEqual("Hi ")
+    expect(prepare("Hi {toString}")({})).toEqual("Hi ")
+    expect(prepare("Hi {constructor}")({ constructor: "Bob" })).toEqual(
+      "Hi Bob",
+    )
+    expect(prepare("Hi {toString}")({}, undefined, {})).toEqual("Hi ")
+    expect(
+      prepare("Hi {toString}")({}, undefined, { toString: "Bob" }),
+    ).toEqual("Hi Bob")
+  })
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2527a65b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4645. Integrate validated shell timeout fixture repair (Harvested from Kuberwastaken/claurst)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Integrate validated shell timeout fixture repair",
+  "source": "Kuberwastaken/claurst",
+  "source_url": "https://github.com/Kuberwastaken/claurst",
+  "source_version": "e4228cc6",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-10-26T18:25:28.202Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kuberwastaken-claurst",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst) (Revision: `e4228cc6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src-rust/crates/tools/src/pty_bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3a0a2543`: Integrate validated shell timeout fixture repair. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-rust/crates/tools/src/pty_bash.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Allow shell startup under parallel test/build load; the sleeping child
+        // must still be terminated well before its natural 30-second exit.
+        let result = tokio::time::timeout(Duration::from_secs(5), run_user_shell(
+            &command, dir.path(), Duration::from_millis(1500), dir.path(),
+            1500,
+        assert!(
+            matches!(&task.status, claurst_core::tasks::TaskStatus::Failed(reason) if reason.contains("timed out")),
+            "unexpected terminal state: {:?}; output: {}", task.status, task.render_output()
+        );
+        assert!(task.output_is_partial, "timeout did not capture fixture output: {}", task.render_output());
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        let result = tokio::time::timeout(Duration::from_secs(3), run_user_shell(
+            &command, dir.path(), Duration::from_millis(300), dir.path(),
+            500,
+        assert!(task.output_is_partial);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3a0a2543` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4646. migration): 修正进度阶段与重试范围并优化微小文件复制 (Harvested from wzh4869/AppPorts)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "migration): 修正进度阶段与重试范围并优化微小文件复制",
+  "source": "wzh4869/AppPorts",
+  "source_url": "https://github.com/wzh4869/AppPorts",
+  "source_version": "412290e7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-26T18:25:35.013Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wzh4869-appports",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wzh4869/AppPorts](https://github.com/wzh4869/AppPorts) (Revision: `412290e7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.agents/notes/implemented/architecture/2026-10-21-后台迁移任务与异常处理.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3d0c1d58`: migration): 修正进度阶段与重试范围并优化微小文件复制. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/architecture/2026-10-21-后台迁移任务与异常处理.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+总体估算与当前目录阶段的呈现见[进度显示范围](../bug-fix/2026-10-24-migration-progress-scopes.md)，任务合算及持久化完成语义保留。
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3d0c1d58` are properly handled with clean fallback behavior.

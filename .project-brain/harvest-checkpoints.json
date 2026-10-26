@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T18:19:11.762Z",
+  "last_updated": "2026-10-26T18:25:35.189Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6486,14 +6486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuberwastaken-claurst",
-      "content_hash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
-      "verified_at": "2026-10-19T00:54:31.498Z",
+      "content_hash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
+      "verified_at": "2026-10-26T18:25:28.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:54:31.498Z"
+      "last_updated": "2026-10-26T18:25:28.387Z"
     },
     "aws-amplify/amplify-js": {
       "repository": "aws-amplify/amplify-js",
@@ -6546,14 +6546,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lingui-js-lingui",
-      "content_hash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
-      "verified_at": "2026-10-25T04:18:45.480Z",
+      "content_hash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
+      "verified_at": "2026-10-26T18:25:27.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T04:18:45.480Z"
+      "last_updated": "2026-10-26T18:25:27.217Z"
     },
     "Nasiko-Labs/nasiko": {
       "repository": "Nasiko-Labs/nasiko",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
-      "verified_at": "2026-10-22T19:22:41.320Z",
+      "content_hash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
+      "verified_at": "2026-10-26T18:25:35.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T19:22:41.320Z"
+      "last_updated": "2026-10-26T18:25:35.188Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",

@@ -5189,3 +5189,6 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `17b07077` | Multi-dimensional audit evidence | 2026-10-26T18:12:34.584Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `71221647` | Multi-dimensional audit evidence | 2026-10-26T18:12:35.366Z |
 | `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `c58a60f0` | Multi-dimensional audit evidence | 2026-10-26T18:19:11.754Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `2527a65b` | Multi-dimensional audit evidence | 2026-10-26T18:25:27.210Z |
+| `learn-github-kuberwastaken-claurst` | `https://github.com/Kuberwastaken/claurst` | `e4228cc6` | Multi-dimensional audit evidence | 2026-10-26T18:25:28.380Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `412290e7` | Multi-dimensional audit evidence | 2026-10-26T18:25:35.181Z |

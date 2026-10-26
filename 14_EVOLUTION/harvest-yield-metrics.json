@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T18:19:11.759Z",
-  "total_cycles_completed": 5159,
-  "total_learnings_persisted": 5159,
-  "total_rules_promoted": 4544,
+  "last_updated": "2026-10-26T18:25:35.185Z",
+  "total_cycles_completed": 5162,
+  "total_learnings_persisted": 5162,
+  "total_rules_promoted": 4547,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:30:15.384Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:36:41.694Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:36:46.654Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:43:05.909Z",
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T18:19:11.759Z",
       "repository": "bitnami/sealed-secrets",
       "learningId": "learn-github-bitnami-sealed-secrets",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:25:27.214Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:25:28.385Z",
+      "repository": "Kuberwastaken/claurst",
+      "learningId": "learn-github-kuberwastaken-claurst",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:25:35.185Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

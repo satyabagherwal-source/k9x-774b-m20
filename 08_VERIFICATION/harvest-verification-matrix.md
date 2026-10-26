@@ -5182,3 +5182,6 @@
 | `CYCLE-20261026-QOWJ` | `2026-10-26T18:12:34.579Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4641` | Yes (`9859e3d3...`) |
 | `CYCLE-20261026-QPI9` | `2026-10-26T18:12:35.361Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4642` | Yes (`757f4926...`) |
 | `CYCLE-20261026-Z7D4` | `2026-10-26T18:19:11.752Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4643` | Yes (`ed66db44...`) |
+| `CYCLE-20261026-792F` | `2026-10-26T18:25:27.207Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4644` | Yes (`2847b606...`) |
+| `CYCLE-20261026-79YY` | `2026-10-26T18:25:28.378Z` | `Kuberwastaken/claurst` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4645` | Yes (`faa72653...`) |
+| `CYCLE-20261026-7F7U` | `2026-10-26T18:25:35.178Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4646` | Yes (`5f35440c...`) |

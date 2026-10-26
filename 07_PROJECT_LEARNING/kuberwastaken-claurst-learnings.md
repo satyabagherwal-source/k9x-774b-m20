@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
 > **Source**: github ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
-> **Source Version**: `85ebb868`  
+> **Source Version**: `e4228cc6`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:54:31.279Z  
+> **Timestamp**: 2026-10-26T18:25:28.026Z  
 > **Learning ID**: `learn-github-kuberwastaken-claurst`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:54:31.269Z  
+> **Harvest Timestamp**: 2026-10-26T18:25:28.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Agentic Coding for Builders who Ship
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10323 stars
+- **Stars / Engagement**: 10329 stars
 
 ---
 
@@ -2370,1059 +2370,516 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `465be88f` (2026-10-16)
-**Commit Message**: Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder
+### Incident Patch 1: `3a0a2543` (2026-10-26)
+**Commit Message**: Integrate validated shell timeout fixture repair
 
-fix(keybindings): Ctrl+V block-visual, Shift+Insert wiring, globalSearch alias, single /keybindings open
-
-**File**: `docs/keybindings.md` (modified, +4/-4)
+**File**: `src-rust/crates/tools/src/pty_bash.rs` (modified, +10/-4)
 ```diff
-@@ -77,13 +77,13 @@ These bindings are active when focus is in the chat input field.
- 
- `Shift+Tab` (`reverseIndent`) cycles the permission mode (Default, Accept edits, Bypass permissions, back to Default; Plan goes to Default); it does not remove indentation. Most terminals send `Ctrl+I` as `Tab`, so `historyNext` on `Ctrl+I` only fires when the terminal reports it separately (kitty keyboard protocol).
- 
--The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+Shift+F` (`globalSearch`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but these actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. The `openSearch` action (no default key) also opens project search and can be bound; the default `globalSearch` name does nothing.
-+The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but those actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. `Ctrl+Shift+F` works: its default action is listed as `globalSearch`, an alias of the `openSearch` action — both names open the project search, so either can be bound in `keybindings.json`.
- 
- > `Ctrl+A` previously opened the model picker; it now moves the cursor to the line start (matching Emacs/readline). The model picker is now `Ctrl+Shift+A`. Old `keybindings.json` files are auto-migrated.
- 
- ### Fixed Keys
- 
--These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1` and `Shift+Insert`) takes precedence over them.
-+These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1`, which never reaches the binding table) takes precedence over them.
- 
- | Key | Effect |
- |-----|--------|
-@@ -96,7 +96,7 @@ These keys are hard-coded in the prompt and have no action names, so they cannot
- | `Alt+Delete` / `Ctrl+Delete` | Delete the word after the cursor |
- | `Alt+Up` / `Alt+Down` | Scroll the transcript 20 lines (`Alt+Up` edits the last queued message instead when one is pending) |
- | `Ctrl+V` / `Cmd+V` | Paste: an image from the clipboard if there is one, otherwise text |
--| `Shift+Insert` | Paste text |
-+| `Shift+Insert` | Paste text (the `insert` key name reaches the binding table, so it can also be rebound) |
- | `Alt+V` | Start / stop voice recording (when `/voice` is on) |
- 
- ### Confirmation Context
-@@ -263,7 +263,7 @@ The action names behind the fixed keys still exist and can be bound to other cho
- 
- ## Vim Mode
- 
--The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
-+The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
- 
- ### Enabling Vim Mode
- 
-```
-
-**File**: `src-rust/crates/core/src/keybindings.rs` (modified, +53/-0)
-```diff
-@@ -121,6 +121,7 @@ fn normalize_key(k: &str) -> String {
-         "pageup" | "pgup" => "pageup".to_string(),
-         "pagedown" | "pgdn" | "pgdown" => "pagedown".to_string(),
-         "home" => "home".to_string(),
-+        "ins" | "insert" => "insert".to_string(),
-         "end" => "end".to_string(),
-         "tab" => "tab".to_string(),
-         k => k.to_string(),
-@@ -707,6 +708,39 @@ mod tests {
-         assert!(parse_keystroke("").is_none());
-     }
- 
-+    #[test]
-+    fn test_parse_keystroke_insert_aliases() {
-+        // #495: `insert` (used by Shift+Insert) had no key-name mapping, so
-+        // the shell-level binding table could never reference it.
-+        let ks = parse_keystroke("shift+insert").unwrap();
-+        assert_eq!(ks.key, "insert");
-+        assert!(ks.shift);
-+        let alias = parse_keystroke("ins").unwrap();
-+        assert_eq!(alias.key, "insert");
-+    }
-+
-+    #[test]
-+    fn test_resolver_reaches_shift_insert_binding() {
-+        // A Shift+Insert binding must resolve now that the key name is wired
-+        // (previously no lookup ever produced the "insert" key name).
-+        let user = UserKeybindings::from_json_str(
-+            r#"{
-+  "bindings": [
-+    {
-+      "context": "Chat",
-+      "bindings": {
-+        "shift+insert": "openHelp"
-+      }
-+    }
-+  ]
-+}"#,
-+        );
-+        let mut resolver = KeybindingResolver::new(&user);
-+        let ks = parse_keystroke("shift+insert").unwrap();
-+        let result = resolver.process(ks, &KeyContext::Chat);
-+        assert!(matches!(result, KeybindingResult::Action(ref a) if a == "openHelp"));
-+    }
-+
-     #[test]
-     fn test_parse_chord_single() {
-         let chord = parse_chord("ctrl+c").unwrap();
-@@ -780,6 +814,25 @@ mod tests {
+@@ -2072,8 +2072,10 @@ mod tests {
+             "sleep 30 & child=$!; printf '%s' \"$child\" > '{}'; echo before-deadline; wait \"$child\"",
+             pid_file.display()
          );
-     }
- 
-+    #[test]
-+    fn test_default_ctrl_shift_f_maps_to_global_search_alias() {
-+        // #495: ctrl+shift+f defaults to "globalSearch", which the TUI treats
-+        // as an alias of "openSearch". Keep this contract test so the alias
-+        // is not dropped in favour of the dead name (or vice versa).
-+        let bindings = default_bindings();
-+        let action = bindings
-+            .iter()
-+            .find(|b| {
-+                b.chord.len() == 1
-+                    && b.chord[0].ctrl
-+                    && b.chord[0].shift
-+                    && b.chord[0].key == "f"
-+                    && b.context == KeyContext::Chat
-+            })
-+            .and_then(|b| b.action.as_deref());
-+        assert_eq!(action, Some("globalSearch"));
-+    }
-+
-     #[test]
-     fn test_resolver_simple_action() {
-         let user = UserKeybindings::default();
-```
-
-**File**: `src-rust/crates/tui/src/app/commands.rs` (modified, +7/-8)
-```diff
-@@ -5,7 +5,6 @@ use claurst_core::types::Role;
- use crate::notifications::NotificationKind;
- use crate::overlays::HelpEntry;
- use super::App;
--use super::run::open_file_externally;
- use super::try_copy_to_clipboard;
- 
- pub(super) const PROMPT_SLASH_COMMANDS: &[(&str, &str)] = &[
-@@ -472,13 +471,13 @@ impl App {
-                 false
-             }
-             "keybindings" => {
--                // Open the keybindings.json file in the external editor
--                let keybindings_path = claurst_core::config::Settings::config_dir().join("keybindings.json");
--
--                if let Err(e) = open_file_externally(&keybindings_path) {
--                    eprintln!("Failed to open keybindings file: {}", e);
--                }
--                true
-+                // The CLI layer owns `/keybindings`:
-+                // `claurst_commands::KeybindingsCommand` writes the template
-+                // on first use and opens the file in the system editor.
-+                // This TUI intercept must NOT open it a second time for the
-+                // same command (issue #495) — fall through to the CLI layer
-+                // like /doctor, /init, /login, /logout do.
-+                false
-             }
-             "help" => {
-                 // Open the help overlay (same as pressing `?` or F1).
-```
-
-**File**: `src-rust/crates/tui/src/app/keys.rs` (modified, +21/-2)
-```diff
-@@ -112,6 +112,7 @@ pub(super) fn key_event_to_keystroke(key: &KeyEvent) -> Option<ParsedKeystroke>
-         KeyCode::Enter     => "enter".to_string(),
-         KeyCode::Esc       => "escape".to_string(),
-         KeyCode::Home      => "home".to_string(),
-+        KeyCode::Insert    => "insert".to_string(),
-         KeyCode::Left      => "left".to_string(),
-         KeyCode::PageDown  => "pagedown".to_string(),
-         KeyCode::PageUp    => "pageup".to_string(),
-@@ -1524,7 +1525,21 @@ impl App {
-             KeyCode::Char(c) => {
-                 let c = self.shift_normalize(c, key.modifiers);
-                 if self.prompt_input.vim_enabled && self.prompt_input.vim_mode != VimMode::Insert {
--                    self.prompt_input.vim_command(&c.to_string());
-+                    // Ctrl+V is vim's block-visual key: feed the vim state
-+                    // machine the \x16 control code instead of the plain 'v'
-+                    // character so it reaches the `key == "\x16"` branch in
-+                    // `vim_command` (issue #495). In insert mode the clipboard
-+                    // paste handler earlier in this function consumed it
-+                    // instead.
-+                    let vim_key = if key.modifiers.contains(KeyModifiers::CONTROL)
-+                        && c == 'v'
-+                        && self.prompt_input.vim_mode == VimMode::Normal
-+                    {
-+                        "\x16".to_string()
-+                    } else {
-+                        c.to_string()
-+                    };
-+                    self.prompt_input.vim_command(&vim_key);
-                 } else {
-                     self.prompt_input.insert_char(c);
-                 }
-@@ -2136,7 +2151,11 @@ impl App {
-                 self.history_search = Some(hs);
-                 false
-             }
--            "openSearch" => {
-+            // `globalSearch` is the legacy/default action name and
-+            // `openSearch` is the live one; both open project search
-+            // (issue #495). Keep them aliased so old keybindings.json
-+            // files and the default ctrl+shift+f binding keep working.
-+            "openSearch" | "globalSearch" => {
-                 self.global_search.open();
-                 self.refresh_global_search();
-                 false
-```
-
-**File**: `src-rust/crates/tui/src/app/run.rs` (modified, +0/-43)
-```diff
-@@ -16,49 +16,6 @@ use super::turns::format_elapsed_ms;
- use super::types::{RecentSession, ToolStatus, ToolUseBlock, recent_session_label};
- use crate::session_browser::SessionEntry;
- 
--pub(super) fn open_file_externally(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
--    // Try to open with the system's default application
--    #[cfg(target_os = "macos")]
--    {
--        std::process::Command::new("open")
--            .arg(path)
--            .spawn()?;
--        Ok(())
--    }
--
--    #[cfg(target_os = "linux")]
--    {
--        std::process::Command::new("xdg-open")
--            .arg(path)
--            .spawn()?;
--        Ok(())
--    }
--
--    #[cfg(target_os = "windows")]
--    {
--        std::process::Command::new("cmd")
--            .args(&["/C", "start", ""])
--            .arg(path)
--            .spawn()?;
--        Ok(())
--    }
--
--    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
--    {
--        // Fallback for other systems: try common editors in order
--        for editor in &["nano", "vi", "vim", "emacs"] {
--            match std::process::Command::new(editor)
--                .arg(path)
--                .spawn()
--            {
--                Ok(_) => return Ok(()),
--                Err(_) => continue,
--            }
--        }
--        Err("No suitable editor found".into())
--    }
--}
--
- /// Load the `/session` / `/resume` browser entries from the store that
- /// `history::save_session` writes (`<config_dir>/sessions/`), newest first.
- pub(super) async fn load_session_entries() -> Vec<SessionEntry> {
-```
-
-**File**: `src-rust/crates/tui/src/app/tests.rs` (modified, +83/-0)
-```diff
-@@ -555,6 +555,15 @@ use super::types::{ContextMenuItem, ContextMenuState};
-         assert!(!app.mcp_view.visible);
-     }
- 
-+    #[test]
-+    fn test_keybindings_slash_command_left_to_cli_layer() {
-+        // The commands crate owns /keybindings (template creation + open);
-+        // the TUI intercept used to open the file too, popping it twice for
-+        // one command (issue #495). It must fall through instead.
-+        let mut app = make_app();
-+        assert!(!app.intercept_slash_command("keybindings"));
-+    }
-+
-     #[test]
-     fn test_clear_slash_command_clears_messages() {
-         let mut app = make_app();
-@@ -583,6 +592,38 @@ use super::types::{ContextMenuItem, ContextMenuState};
-         assert!(!app.prompt_input.vim_enabled);
-     }
- 
-+    // ---- Ctrl+V reaches the vim state machine as block-visual (issue #495) --
-+
-+    #[test]
-+    fn ctrl_v_in_vim_normal_enters_visual_block() {
-+        let mut app = make_app();
-+        app.prompt_input.vim_enabled = true;
-+        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
-+        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::CONTROL));
-+        assert!(!handled);
-+        assert_eq!(
-+            app.prompt_input.vim_mode,
-+            crate::prompt_input::VimMode::VisualBlock,
-+            "Ctrl+V must report the \x16 block-visual key to the vim handler"
+-        let result = tokio::time::timeout(Duration::from_secs(3), run_user_shell(
+-            &command, dir.path(), Duration::from_millis(300), dir.path(),
++        // Allow shell startup under parallel test/build load; the sleeping child
++        // must still be terminated well before its natural 30-second exit.
++        let result = tokio::time::timeout(Duration::from_secs(5), run_user_shell(
++            &command, dir.path(), Duration::from_millis(1500), dir.path(),
+         )).await.expect("explicit user shell must respect its deadline");
+         assert!(result.is_error);
+         assert!(result.content.contains("timed out"), "{}", result.content);
+@@ -2494,7 +2496,7 @@ mod tests {
+         let started = run_in_background(
+             "printf short; { sleep 10 & }; wait".to_string(),
+             std::env::temp_dir(),
+-            500,
++            1500,
+             spill_dir.path(),
+             None,
+             None,
+@@ -2516,7 +2518,11 @@ mod tests {
+         })
+         .await
+         .expect("timeout must finish after the drain grace");
+-        assert!(task.output_is_partial);
++        assert!(
++            matches!(&task.status, claurst_core::tasks::TaskStatus::Failed(reason) if reason.contains("timed out")),
++            "unexpected terminal state: {:?}; output: {}", task.status, task.render_output()
 +        );
-+        assert_eq!(
-+            app.prompt_input.visual_anchor,
-+            Some(app.prompt_input.cursor),
-+            "block-visual anchors the selection at the cursor"
-+        );
-+    }
++        assert!(task.output_is_partial, "timeout did not capture fixture output: {}", task.render_output());
+         assert!(task.render_output().contains("Partial output:"));
+         let path = task
+             .output_file
+```
+
+---
+
+### Incident Patch 2: `e4228cc6` (2026-10-26)
+**Commit Message**: fix(release): inherit workspace version for schema dialect
+
+**File**: `src-rust/crates/schema_dialect/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "claurst-schema-dialect"
+-version = "0.2.0"
++version.workspace = true
+ edition = "2024"
+ publish = false
+ 
+```
+
+---
+
+### Incident Patch 3: `4be2c68d` (2026-10-26)
+**Commit Message**: Reconcile shell commands with merged memory and session filtering
+
+**File**: `docs/commands.md` (modified, +11/-0)
+```diff
+@@ -168,6 +168,17 @@ title, last-updated time, message count, and cost. In the overlay:
+ 
+ ---
+ 
++### /sessions
 +
-+    #[test]
-+    fn plain_v_in_vim_normal_still_enters_charwise_visual() {
-+        // The Ctrl+V special case must not disturb the printable-key path.
-+        let mut app = make_app();
-+        app.prompt_input.vim_enabled = true;
-+        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
-+        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::NONE));
-+        assert!(!handled);
-+        assert_eq!(app.prompt_input.vim_mode, crate::prompt_input::VimMode::Visual);
-+    }
++Open the session browser overlay with an optional pre-applied filter. While the browser is open, press `/` to type a filter live, `Ctrl+U` to clear it, and `Esc` to close. Matching is case-insensitive against the session title and id.
 +
-     #[test]
-     fn test_model_slash_command_opens_picker() {
-         let mut app = make_app();
-@@ -831,6 +872,22 @@ use super::types::{ContextMenuItem, ContextMenuState};
-         assert!(!ks.ctrl && !ks.alt);
++```
++/sessions
++/sessions <query>
++```
++
++---
++
+ ### /fork
+ 
+ Save the conversation up to message index N (default: all of it) as a new session titled "Fork of ...", with the current session as its parent. The current session stays active; switch with `/resume <id>`.
+```
+
+**File**: `docs/configuration.md` (modified, +2/-0)
+```diff
+@@ -326,6 +326,8 @@ Inside `config`:
+ | `fileAutocompleteShowHiddenFiles` | boolean | false | Include hidden files in `@` suggestions. |
+ | `fileInjectionEnabled` | boolean | true | Inject the contents of `@file` references into the message. |
+ | `fileInjectionMaxSize` | integer | 100 | Size limit in KB for an injected file; `0` means no limit. |
++| `memoryExtractionEnabled` | boolean | false | After a turn ends, run one extra request through the active provider/model to extract facts worth remembering into the project memory store. Global-only: a project `.claurst/settings.json` cannot enable it. |
++| `autoMemoryEnabled` | boolean \| null | null (on) | Master switch for the automatic memory system. `false` disables both the memory prompt injection and turn-end extraction. |
+ 
+ Top-level:
+ 
+```
+
+**File**: `src-rust/crates/acp/src/lib.rs` (modified, +15/-1)
+```diff
+@@ -34,7 +34,7 @@ mod sessions;
+ mod e2e_tests;
+ 
+ use tokio::sync::mpsc;
+-use tracing::{error, info};
++use tracing::{error, info, warn};
+ 
+ pub use connection::Connection;
+ pub use runtime::AgentRuntime;
+@@ -77,6 +77,20 @@ pub async fn run_acp_server() -> anyhow::Result<()> {
+         error!(?e, "ACP: reader loop failed");
      }
  
-+    #[test]
-+    fn test_key_event_to_keystroke_maps_insert_key_name() {
-+        // Shift+Insert must reach the binding table as the "insert" key name
-+        // with the SHIFT flag preserved (issue #495); before the fix the two
-+        // keys returned no keystroke at all.
-+        let ks = key_event_to_keystroke(&press_key(KeyCode::Insert, KeyModifiers::SHIFT))
-+            .expect("keystroke");
-+        assert_eq!(ks.key, "insert");
-+        assert!(ks.shift);
-+        assert!(!ks.ctrl);
-+
-+        let ks = key_event_to_keystroke(&press_key(KeyCode::Insert, KeyModifiers::NONE))
-+            .expect("keystroke");
-+        assert_eq!(ks.key, "insert");
-+    }
-+
-     #[test]
-     fn test_normalize_layout_shortcut_key_rewrites_pure_ctrl() {
-         // Pure Ctrl + Cyrillic → Latin letter at the same physical position.
-@@ -1328,3 +1385,29 @@ use super::types::{ContextMenuItem, ContextMenuState};
-         // Selecting the tool_result would orphan the tool_use: cut before it.
-         assert_eq!(rewind_cut_index(&history, 2), 1);
-     }
-+
-+    // ---- globalSearch / openSearch aliases open project search (#495) ------
-+
-+    #[test]
-+    fn ctrl_shift_f_default_binding_opens_project_search() {
-+        // The default ctrl+shift+f binding maps to the legacy "globalSearch"
-+        // action name, which used to be dead code.
-+        let mut app = make_app();
-+        let handled = app.handle_key_event(press_key(
-+            KeyCode::Char('f'),
-+            KeyModifiers::CONTROL | KeyModifiers::SHIFT,
-+        ));
-+        assert!(!handled);
-+        assert!(app.global_search.visible);
-+    }
-+
-+    #[test]
-+    fn global_search_action_aliases_are_equivalent() {
-+        // "openSearch" is the live handler; "globalSearch" is the legacy
-+        // default action name. Both must open project search.
-+        for action in ["openSearch", "globalSearch"] {
-+            let mut app = make_app();
-+            app.handle_keybinding_action(action);
-+            assert!(app.global_search.visible, "{action} must open project search");
++    // Let turn-end memory extraction tasks finish before shutdown: ACP
++    // clients disconnect right after the last turn response, and the
++    // detached extraction spawn would die with the runtime.
++    {
++        let unfinished =
++            claurst_query::await_pending_extractions(std::time::Duration::from_secs(30)).await;
++        if unfinished > 0 {
++            warn!(
++                count = unfinished,
++                "memory extraction tasks dropped at ACP shutdown"
++            );
 +        }
 +    }
-```
-
-**File**: `src-rust/crates/tui/src/prompt_input.rs` (modified, +12/-0)
-```diff
-@@ -4343,6 +4343,18 @@ mod tests {
-         assert_eq!(s.vim_mode, VimMode::Normal);
-     }
- 
-+    #[test]
-+    fn prompt_input_visual_block_via_ctrl_v_code() {
-+        // Ctrl+V arrives at the vim state machine as the \x16 control code.
-+        let mut s = PromptInputState::new();
-+        s.vim_enabled = true;
-+        s.vim_mode = VimMode::Normal;
-+        s.cursor = 0;
-+        s.vim_command("\x16");
-+        assert_eq!(s.vim_mode, VimMode::VisualBlock);
-+        assert_eq!(s.visual_anchor, Some(0));
-+    }
 +
-     // ---- Named registers ------------------------------------------------
- 
-     #[test]
+     info!("ACP: server shutdown");
+     Ok(())
+ }
 ```
 
----
-
-### Incident Patch 2: `603cbd19` (2026-10-16)
-**Commit Message**: fix(tui): deliver ctrl+v to vim as the block-visual key
-
-Ctrl+V used to be indistinguishable from a plain 'v' in the vim path of
-handle_key_event, so the key == \x16 branch in PromptInput::vim_command
-that enters blockwise-visual mode was unreachable. In non-insert vim
-mode the Ctrl-modified 'v' now maps to the \x16 control code; plain 'v'
-keeps entering charwise visual and the Ctrl+V clipboard-paste path is
-untouched in insert mode and in plain editing.
-
-Part of #495
-
-**File**: `docs/keybindings.md` (modified, +1/-1)
+**File**: `src-rust/crates/cli/src/main.rs` (modified, +120/-87)
 ```diff
-@@ -263,7 +263,7 @@ The action names behind the fixed keys still exist and can be bound to other cho
+@@ -12,9 +12,9 @@
+ // parameters; grouping them into structs is a larger refactor out of scope here.
+ #![allow(clippy::too_many_arguments)]
  
- ## Vim Mode
+-mod oauth_flow;
+ mod codex_oauth_flow;
+ mod headless;
++mod oauth_flow;
+ mod prompt_dispatch;
+ mod session_resume;
+ mod upgrade;
+@@ -39,16 +39,16 @@ pub const FEEDBACK_CHANNEL: &str = env!("FEEDBACK_CHANNEL");
+ pub const ISSUES_EXPLAINER: &str = env!("ISSUES_EXPLAINER");
  
--The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
-+The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
- 
- ### Enabling Vim Mode
- 
-```
-
-**File**: `src-rust/crates/tui/src/app/keys.rs` (modified, +15/-1)
-```diff
-@@ -1524,7 +1524,21 @@ impl App {
-             KeyCode::Char(c) => {
-                 let c = self.shift_normalize(c, key.modifiers);
-                 if self.prompt_input.vim_enabled && self.prompt_input.vim_mode != VimMode::Insert {
--                    self.prompt_input.vim_command(&c.to_string());
-+                    // Ctrl+V is vim's block-visual key: feed the vim state
-+                    // machine the \x16 control code instead of the plain 'v'
-+                    // character so it reaches the `key == "\x16"` branch in
-+                    // `vim_command` (issue #495). In insert mode the clipboard
-+                    // paste handler earlier in this function consumed it
-+                    // instead.
-+                    let vim_key = if key.modifiers.contains(KeyModifiers::CONTROL)
-+                        && c == 'v'
-+                        && self.prompt_input.vim_mode == VimMode::Normal
-+                    {
-+                        "\x16".to_string()
-+                    } else {
-+                        c.to_string()
-+                    };
-+                    self.prompt_input.vim_command(&vim_key);
-                 } else {
-                     self.prompt_input.insert_char(c);
-                 }
-```
-
-**File**: `src-rust/crates/tui/src/app/tests.rs` (modified, +32/-0)
-```diff
-@@ -583,6 +583,38 @@ use super::types::{ContextMenuItem, ContextMenuState};
-         assert!(!app.prompt_input.vim_enabled);
-     }
- 
-+    // ---- Ctrl+V reaches the vim state machine as block-visual (issue #495) --
-+
-+    #[test]
-+    fn ctrl_v_in_vim_normal_enters_visual_block() {
-+        let mut app = make_app();
-+        app.prompt_input.vim_enabled = true;
-+        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
-+        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::CONTROL));
-+        assert!(!handled);
-+        assert_eq!(
-+            app.prompt_input.vim_mode,
-+            crate::prompt_input::VimMode::VisualBlock,
-+            "Ctrl+V must report the \x16 block-visual key to the vim handler"
-+        );
-+        assert_eq!(
-+            app.prompt_input.visual_anchor,
-+            Some(app.prompt_input.cursor),
-+            "block-visual anchors the selection at the cursor"
-+        );
-+    }
-+
-+    #[test]
-+    fn plain_v_in_vim_normal_still_enters_charwise_visual() {
-+        // The Ctrl+V special case must not disturb the printable-key path.
-+        let mut app = make_app();
-+        app.prompt_input.vim_enabled = true;
-+        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
-+        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::NONE));
-+        assert!(!handled);
-+        assert_eq!(app.prompt_input.vim_mode, crate::prompt_input::VimMode::Visual);
-+    }
-+
-     #[test]
-     fn test_model_slash_command_opens_picker() {
-         let mut app = make_app();
-```
-
-**File**: `src-rust/crates/tui/src/prompt_input.rs` (modified, +12/-0)
-```diff
-@@ -4343,6 +4343,18 @@ mod tests {
-         assert_eq!(s.vim_mode, VimMode::Normal);
-     }
- 
-+    #[test]
-+    fn prompt_input_visual_block_via_ctrl_v_code() {
-+        // Ctrl+V arrives at the vim state machine as the \x16 control code.
-+        let mut s = PromptInputState::new();
-+        s.vim_enabled = true;
-+        s.vim_mode = VimMode::Normal;
-+        s.cursor = 0;
-+        s.vim_command("\x16");
-+        assert_eq!(s.vim_mode, VimMode::VisualBlock);
-+        assert_eq!(s.visual_anchor, Some(0));
-+    }
-+
-     // ---- Named registers ------------------------------------------------
- 
-     #[test]
-```
-
----
-
-### Incident Patch 3: `85ebb868` (2026-10-16)
-**Commit Message**: Merge pull request #506 from Kuberwastaken/fix/499-cost-reporting
-
-fix(cost): zero cost for subscription providers; no invented rates for unknown models
-
-**File**: `src-rust/crates/api/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ pub use providers::OpenAiProvider;
- pub use model_registry::{
-     CostBreakdown, CostTier, CostTierCondition, ExperimentalMode, InterleavedReasoning, Modality,
-     ModelEntry, ModelRegistry, ModelStatus, ProviderEntry, ProviderOverride,
--    effective_model_for_config,
-+    apply_session_cost_pricing, catalog_pricing, effective_model_for_config,
+ use anyhow::Context;
++use clap::{ArgAction, Parser, ValueEnum};
++use claurst_core::hooks::{HookEventData, SessionEndReason, SessionStartSource};
+ use claurst_core::{
+     config::{Config, PermissionMode, Settings},
+     constants::APP_VERSION,
+     context::ContextBuilder,
+     cost::CostTracker,
+     permissions::{AutoPermissionHandler, InteractivePermissionHandler, PermissionManager},
  };
- pub use effort_support::{
-     anthropic_reasoning, model_is_reasoning, supported_efforts, variant_ladder, AnthropicReasoning,
+-use claurst_core::hooks::{HookEventData, SessionEndReason, SessionStartSource};
+ use claurst_tools::ToolContext;
+-use clap::{ArgAction, Parser, ValueEnum};
+ use parking_lot::Mutex as ParkingMutex;
+ use std::{path::PathBuf, sync::Arc};
+ use tracing::{debug, info, warn};
+@@ -416,12 +416,12 @@ async fn main() -> anyhow::Result<()> {
+     let base_filter = EnvFilter::try_from_default_env()
+         .unwrap_or_else(|_| EnvFilter::new(log_level));
+     let log_filter = base_filter
+-        .add_directive("rmcp::service::client=error".parse().expect("valid rmcp directive"))
++        .add_directive("rmcp::service::client=error".parse().expect("valid rmcp directive"),)
+         // Suppress error/warn logs from providers and query — errors are already shown as error modals
+-        .add_directive("claurst_api::providers::free=off".parse().expect("valid directive"))
++        .add_directive("claurst_api::providers::free=off".parse().expect("valid directive"),)
+         .add_directive("claurst_query=off".parse().expect("valid directive"))
+         // Unreadable system cert files are recoverable (other roots still load).
+-        .add_directive("rustls_platform_verifier=error".parse().expect("valid directive"));
++        .add_directive("rustls_platform_verifier=error".parse().expect("valid directive"),);
+ 
+     // Determine mode early (needed for log routing, settings error reporting,
+     // auth error handling, and permission handler selection).
+@@ -530,8 +530,8 @@ async fn main() -> anyhow::Result<()> {
+     // --allowed-tools / --disallowed-tools extend the configured lists for
+     // this session only; the permission manager turns them into rules.
+     for (flag, list, target) in [
+-        ("--allowed-tools", cli.allowed_tools.as_deref(), &mut config.allowed_tools),
+-        ("--disallowed-tools", cli.disallowed_tools.as_deref(), &mut config.disallowed_tools),
++        ("--allowed-tools", cli.allowed_tools.as_deref(), &mut config.allowed_tools,),
++        ("--disallowed-tools", cli.disallowed_tools.as_deref(), &mut config.disallowed_tools,),
+     ] {
+         for spec in list.map(claurst_core::permissions::split_rule_specs).unwrap_or_default() {
+             if claurst_core::permissions::parse_rule_spec(
+@@ -596,7 +596,7 @@ async fn main() -> anyhow::Result<()> {
+     // (it lands in the cached system block); `system_ctx` (git status, IDE
+     // context) is passed separately as `session_context` and sent in the
+     // dynamic block.
+-    let system_prompt = [config.custom_system_prompt.clone(), config.append_system_prompt.clone()]
++    let system_prompt = [config.custom_system_prompt.clone(), config.append_system_prompt.clone(),]
+         .into_iter()
+         .flatten()
+         .filter(|part| !part.is_empty())
+@@ -701,15 +701,15 @@ async fn main() -> anyhow::Result<()> {
+             claurst_core::permissions::project_approvals_path(
+                 &claurst_core::config::Settings::config_dir(),
+                 &claurst_core::permissions::approvals_project_root(&cwd),
+-            ),
++            )
+         );
+     permission_manager.sync_config(&config);
+     let permission_manager = Arc::new(std::sync::Mutex::new(permission_manager));
+ 
+     let permission_handler: Arc<dyn claurst_core::PermissionHandler> = if is_headless {
+-        Arc::new(AutoPermissionHandler::with_manager(permission_manager.clone()))
++        Arc::new(AutoPermissionHandler::with_manager(permission_manager.clone(),))
+     } else {
+-        Arc::new(InteractivePermissionHandler::with_manager(permission_manager.clone()))
++        Arc::new(InteractivePermissionHandler::with_manager(permission_manager.clone(),))
+     };
+     let cost_tracker = CostTracker::new();
+     // Use --session-id if provided, otherwise generate a fresh UUID.
+@@ -971,7 +971,8 @@ async fn main() -> anyhow::Result<()> {
+     let skill_discovery = {
+         let cwd = cwd.clone();
+         let skills_config = config.skills.clone();
+-        tokio::task::spawn_blocking(move || claurst_core::SkillRegistry::discover(&cwd, &skills_config))
++        tokio::task::spawn_blocking(move || { claurst_core::SkillRegistry::discover(&cwd, &skills_config)
++        })
+     };
+     let ski
 ```
 
-**File**: `src-rust/crates/api/src/model_registry.rs` (modified, +143/-0)
+**File**: `src-rust/crates/core/src/keybindings.rs` (modified, +11/-0)
 ```diff
-@@ -1604,6 +1604,75 @@ pub fn effective_model_for_config(
-     config.effective_model().to_string()
+@@ -28,6 +28,7 @@ pub enum KeyContext {
+     Select,
+     Plugin,
+     SessionBrowser,
++    SessionFilter,
+ }
+ 
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+@@ -360,6 +361,16 @@ pub fn default_bindings() -> Vec<ParsedBinding> {
+         ("r", "removeAttachment", KeyContext::Attachments),
+ 
+         // ========== SESSION BROWSER ==========
++        ("/", "startSessionFilter", KeyContext::SessionBrowser),
++        ("ctrl+u", "clearSessionFilter", KeyContext::SessionBrowser),
++        ("enter", "applySessionFilter", KeyContext::SessionFilter),
++        ("escape", "applySessionFilter", KeyContext::SessionFilter),
++        ("ctrl+u", "clearSessionFilter", KeyContext::SessionFilter),
++        ("backspace", "eraseSessionFilter", KeyContext::SessionFilter),
++        ("up", "prevSession", KeyContext::SessionFilter),
++        ("down", "nextSession", KeyContext::SessionFilter),
++        ("pageup", "prevSessionPage", KeyContext::SessionFilter),
++        ("pagedown", "nextSessionPage", KeyContext::SessionFilter),
+         ("up", "prevSession", KeyContext::SessionBrowser),
+         ("down", "nextSession", KeyContext::SessionBrowser),
+         ("k", "prevSession", KeyContext::SessionBrowser),
+```
+
+**File**: `src-rust/crates/core/src/lib.rs` (modified, +112/-79)
+```diff
+@@ -13,7 +13,7 @@
+ 
+ // Branded provider / model identifier newtypes.
+ pub mod provider_id;
+-pub use provider_id::{ProviderId, ModelId};
++pub use provider_id::{ModelId,ProviderId};
+ 
+ // Session transcript persistence (JSONL, matches TS sessionStorage.ts schema).
+ pub mod session_storage;
+@@ -23,7 +23,7 @@ pub mod session_journal;
+ 
+ // SQLite-backed session storage (faster alternative to JSONL).
+ pub mod sqlite_storage;
+-pub use sqlite_storage::{SqliteSessionStore, SessionSummary};
++pub use sqlite_storage::{SessionSummary,SqliteSessionStore};
+ 
+ // Attachment pipeline — assembles per-turn context attachments (T1-6).
+ pub mod attachments;
+@@ -39,18 +39,19 @@ pub use auth_store::{AuthStore, StoredCredential};
+ pub mod device_code;
+ 
+ // Utility modules ported from src/utils/
+-pub mod token_budget;
+-pub mod truncate;
+-pub mod format_utils;
+-pub mod crypto_utils;
+-pub mod status_notices;
+ pub mod auto_mode;
++pub mod crypto_utils;
++pub mod format_utils;
+ pub mod spinner;
+-pub use spinner::{SPINNER_VERBS, TURN_COMPLETION_VERBS, sample_spinner_verb, sample_completion_verb};
++pub mod status_notices;
++pub mod token_budget;
++pub mod truncate;
++pub use spinner::{
++    sample_completion_verb, sample_spinner_verb,SPINNER_VERBS, TURN_COMPLETION_VERBS,};
+ 
+ // Remote session sync and cloud session API (T3-1, T3-2).
+-pub mod remote_session;
+ pub mod cloud_session;
++pub mod remote_session;
+ 
+ // AGENTS.md / CLAUDE.md instruction files for the system prompt.
+ pub mod claudemd;
+@@ -66,8 +67,8 @@ pub mod snapshot;
+ 
+ // Per-session durable objectives (/goal feature).
+ pub mod goal;
+-pub use goal::{Goal, GoalError, GoalStatus, GoalStore, MAX_GOAL_TURNS, MAX_OBJECTIVE_CHARS,
+-               goal_continuation_message, goal_kickoff_message, goal_system_prompt_addendum, goals_enabled};
++pub use goal::{
++    goal_continuation_message, goal_kickoff_message, goal_system_prompt_addendum, goals_enabled,Goal, GoalError, GoalStatus, GoalStore, MAX_GOAL_TURNS, MAX_OBJECTIVE_CHARS,};
+ 
+ // Feature flag management via GrowthBook.
+ pub mod feature_flags;
+@@ -77,7 +78,7 @@ pub mod mcp_templates;
+ 
+ // IDE environment detection (VS Code, Cursor, JetBrains, …).
+ pub mod ide;
+-pub use ide::{IdeKind, detect_ide};
++pub use ide::{detect_ide,IdeKind};
+ 
+ // Background update checker — compares running version against GitHub releases.
+ pub mod update_check;
+@@ -87,35 +88,39 @@ pub use update_check::{check_for_updates, UpdateInfo};
+ pub mod share_export;
+ 
+ // Re-export commonly used types at the crate root
++pub use config::{
++    builtin_managed_agent_presets, default_agents, strip_jsonc_comments, substitute_env_vars,AgentDefinition, BudgetSplitPolicy, CommandTemplate, Config, FormatterConfig, ManagedAgentConfig, ManagedAgentPreset, McpServerConfig, McpServerOrigin, OutputFormat, PermissionMode, ProviderConfig, Settings, SkillsConfig, Theme,
++};
+ pub use error::{ClaudeError, Result};
+-pub use types::{
+-    ContentBlock, ImageSource, DocumentSource, CitationsConfig, Message, MessageContent,
+-    MessageCost, Role, ToolDefinition, ToolResultContent, UsageInfo,
++pub use import_config::{
++    build_import_preview, execute_import, summarize_import_result,ClaudeMdPreview, ImportExecutionResult, ImportPaths, ImportPreview, ImportSelection, PreviewAction, PreviewField, SettingsPreview,
+ };
+-pub use config::{AgentDefinition, BudgetSplitPolicy, Config, CommandTemplate, FormatterConfig, ManagedAgentConfig, ManagedAgentPreset, McpServerConfig, McpServerOrigin, OutputFormat, PermissionMode, ProviderConfig, Settings, SkillsConfig, Theme, builtin_managed_agent_presets, default_agents, strip_jsonc_comments, substitute_env_vars};
+-pub use import_config::{ClaudeMdPreview, ImportExecutionResult, ImportPaths, ImportPreview, ImportSelection, PreviewAction, PreviewField, SettingsPreview, build_import_preview, execute_import, summarize_import_result};
++pub use types::{
++    CitationsConfig, ContentBlock, DocumentSource, ImageSource, Message, MessageContent,
++    MessageCost, Role, ToolDefinition, ToolResultContent, UsageInfo,};
+ 
+ // Durable queue for mid-turn steering input (soft interrupts).
+ pub mod soft_interrupt_store;
+ pub use soft_interrupt_store::PersistedSoftInterrupt;
+ 
+ // Skill discovery: filesystem and git URL skill loading.
+ pub mod skill_discovery;
+-pub use skill_discovery::{DiscoveredSkill, RegisteredSkill, SkillRegistry, discover_skills, parse_skill_file};
++pub use skill_discovery::{
++    discover_skills, parse_skill_file,DiscoveredSkill, RegisteredSkill, SkillRegistry,};
+ 
+ // Skills compiled into the binary; one source of the skill registry.
+ pub mod bundled_skills;
+ pub use cost::CostTracker;
+-pub use history::ConversationSession;
+ pub use feature_flags::FeatureFlagManager;
++pub use history::ConversationSession;
+ pub use paths::claurst_home;
+ pub use permissions::{
++    format_permission_reason,
+     AutoPermissionHandler, InteractivePermissionHandler,
+     ManagedAutoPermissionHandler, ManagedInteractivePermissionHandler,
+     PermissionAction, Permiss
+```
+
+**File**: `src-rust/crates/core/src/memdir.rs` (modified, +468/-1)
+```diff
+@@ -7,9 +7,10 @@
+ //!   - `memdir.ts`       → `build_memory_prompt_content`, `load_memory_index`, `ensure_memory_dir_exists`
+ //!   - `paths.ts`        → `auto_memory_path`, `is_auto_memory_enabled`
+ 
++use serde::{Deserialize, Serialize};
++
+ use std::path::{Path, PathBuf};
+ use std::time::{SystemTime, UNIX_EPOCH};
+-use serde::{Deserialize, Serialize};
+ 
+ // ---------------------------------------------------------------------------
+ // Memory type taxonomy
+@@ -592,6 +593,272 @@ pub fn team_memory_path(auto_memory_dir: &Path) -> PathBuf {
+     auto_memory_dir.join("team")
  }
  
 +// ---------------------------------------------------------------------------
-+// Cost-tracker pricing resolution (issue #499)
++// Auto-memory store (write side of the memdir system)
 +// ---------------------------------------------------------------------------
++//
++// Extraction results persist here as ordinary memdir files so the existing
++// read path (`load_memory_index` -> `build_memory_prompt_content`) serves
++// them with no parallel store. Writers take a per-directory `fslock` and
++// publish every file through a same-directory temp file + rename, so two
++// sessions (or a subagent) writing concurrently never lose an entry.
 +
-+/// Map a catalog entry's per-token prices onto the tracker's [`ModelPricing`].
++/// One extracted fact destined for the memdir store.
++#[derive(Debug, Clone, PartialEq)]
++pub struct AutoMemoryEntry {
++    /// Human-readable topic label (frontmatter `name`).
++    pub name: String,
++    /// One-line hook for the `MEMORY.md` index (frontmatter `description`).
++    pub description: String,
++    /// The fact body.
++    pub content: String,
++    /// Canonical memdir type tag for the frontmatter.
++    pub memory_type: MemoryType,
++}
++
++/// Persist a batch of extracted memories into the memdir store `dir`.
 +///
-+/// Returns `None` when the entry has no usable prices at all: a price the
-+/// catalog doesn't record must surface as zero cost, not as a guessed rate.
-+fn model_pricing_from_entry(entry: &ModelEntry) -> Option<claurst_core::cost::ModelPricing> {
-+    let cost = &entry.cost;
-+    if cost.input.is_none() && cost.output.is_none() {
-+        return None;
-+    }
-+    Some(claurst_core::cost::ModelPricing {
-+        input_per_mtk: cost.input.unwrap_or(0.0),
-+        output_per_mtk: cost.output.unwrap_or(0.0),
-+        cache_creation_per_mtk: cost.cache_write.unwrap_or(0.0),
-+        cache_read_per_mtk: cost.cache_read.unwrap_or(0.0),
-+    })
-+}
-+
-+/// Look up `model`'s per-token prices in the catalog, first served through
-+/// `provider_id` (the usual keyed path), then by bare model id across the
-+/// whole catalog.
-+pub fn catalog_pricing(
-+    registry: Option<&ModelRegistry>,
-+    provider_id: &str,
-+    model: &str,
-+) -> Option<claurst_core::cost::ModelPricing> {
-+    let registry = registry?;
-+    let entry = registry.resolve_entry(provider_id, model).or_else(|| {
-+        registry
-+            .find_provider_for_model(model)
-+            .and_then(|p| registry.get(&p, model))
-+    });
-+    entry.and_then(model_pricing_from_entry)
-+}
-+
-+/// Configure a [`CostTracker`] for the active session so the headless `result`
-+/// event, `/cost` and the TUI footer all report the same figure (issue #499):
++/// Each entry lands in its own topic file under `auto/<seq>-<slug>.md` and
++/// `MEMORY.md` gains one index line per file. Writing is atomic (temp +
++/// rename) and serialized against other writers by a lock file in `dir`, so
++/// overlapping turns, subagents or a second session in the same repository
++/// cannot wipe the store. A busy or failing writer returns an error so
++/// extraction can leave its cursor unchanged and retry the same window.
 +///
-+/// * Subscription providers (`codex` / `openai-codex` ChatGPT plans,
-+///   Anthropic OAuth with Bearer auth = Claude Pro/Max) report zero cost.
-+/// * Known models are priced from the catalog, falling back to the curated
-+///   Claude/free heuristics.
-+/// * Unknown models get no invented default rate: cost reports zero.
-+pub fn apply_session_cost_pricing(
-+    tracker: &claurst_core::cost::CostTracker,
-+    registry: Option<&ModelRegistry>,
-+    provider_id: &str,
-+    model: &str,
-+    anthropic_bearer_auth: bool,
-+) {
-+    let subscription = claurst_core::cost::is_subscription_provider(provider_id)
-+        || (provider_id == claurst_core::ProviderId::ANTHROPIC && anthropic_bearer_auth);
-+    tracker.set_subscription(subscription);
-+    if subscription {
-+        // Zero cost regardless of any per-token price the catalog still
-+        // records for ChatGPT-served models (issue #499).
-+        tracker.set_pricing(None);
-+        return;
++/// Returns paths written; an empty successful batch contains only duplicates.
++pub fn append_auto_memories(
++    dir: &Path,
++    entries: &[AutoMemoryEntry],
++) -> std::io::Result<Vec<PathBuf>> {
++    if entries.is_empty() {
++        return Ok(Vec::new());
 +    }
-+    // Catalog first (it knows exact per-model rates), then the curated
-+    // Claude/free heuristics; unknown models resolve to `None` — no default.
-+    let pricing = catalog_pricing(registry, provider_id, model)
-+        .or_else(|| claurst_core::cost::ModelPricing::for_model(model));
-+    tracker.set_pricing(pricing);
++    std::fs::create_dir_all(dir)?;
++    let mut lock = fslock::LockFile::open(&dir.join(".memdir.lock"))?;
++    if !lock.try_lock_with_pid()? {
++        return Err(std::io::Error::new(
++            std::io::ErrorKind::WouldBlock,
++            "memdir store busy",
++        ));
++    }
++    let mut written = Vec::new();
++    for entry in entries {
++        if let Some(path) = write_entry_locked(dir, entry)? {
++            written.push(path);
++        }
++    }
++    Ok(written)
 +}
 +
- // ---------------------------------------------------------------------------
- // Tests
- // ---------------------------------------------------------------------------
-@@ -2219,4 +2288,78 @@ mod tests {
-         assert_eq!(reg.len(), before, "malformed/empty overrides must not add entries");
-         assert!(reg.get("custom-openai", "noop").is_none());
-     }
++/// Cross-process ownership of a project's extraction transaction. The caller
++/// keeps this handle alive through the request, memory writes and cursor commit.
++pub fn try_lock_extraction(dir: &Path) -> std::io::Result<Option<fslock::LockFile>> {
++    std::fs::create_dir_all(dir)?;
++    let mut lock = fslock::LockFile::open(&dir.join(".extraction.lock"))?;
++    Ok(lock.try_lock_with_pid()?.then_some(lock))
++}
 +
-+    // ---- Session cost pricing (issue #499) -----------------------------------
++/// Session ids never become path components directly, including ids supplied
++/// by embedding clients. Each session's progress is independent within a project.
++pub fn extraction_cursor_path(dir: &Path, session_id: &str) -> PathBuf {
++    use sha2::{Digest, Sha256};
++    dir.join(".extraction-cursors").join(format!(
++        "{}.json",
++        hex::encode(Sha256::digest(session_id.as_bytes()))
++    ))
++}
 +
-+    #[test]
-+    fn session_cost_pricing_zeroes_subscription_providers() {
-+        for provider in ["codex", "openai-codex"] {
-+            let tracker = claurst_core::cost::CostTracker::new();
-+            tracker.add_usage(10_074, 5, 0, 0);
-+            apply_session_cost_pricing(&tracker, None, provider, "gpt-5.6-sol", false);
-+            assert!(tracker.is_subscription());
-+            assert_eq!(tracker.total_cost_usd(), 0.0, "{provider} must report zero cost");
++/// None means the fact was already stored. Errors must not consume an
++/// extraction cursor: the same window needs to remain eligible for a retry.
++fn write_entry_locked(dir: &Path, entry: &AutoMemoryEntry) -> std::io::Result<Option<PathBuf>> {
++    let auto_dir = dir.join("auto");
++    std::fs::create_dir_all(&auto_dir)?;
++    let slug = slug_for(&entry.name);
++    let topic_files = matching_topic_files(&auto_dir, &slug);
++    if let Some(oldest) = topic_files.first() {
++        let existing_bodies = topic_files
++            .iter()
++            .map(std::fs::read_to_string)
++            .collect::<std::io::Result<Vec<_>>>()?;
++        let duplicate = existing_bodies
++            .iter()
++            .any(|body| body.contains(&entry.content));
++        if !duplicate {
++            let body = format!("{}\n{}\n", existing_bodies[0].trim_end(), entry.content);
++            atomic_write(oldest, body.as_bytes())?;
 +        }
-+
-+        // Anthropic with Bearer (claude.ai OAuth) = Claude Pro/Max subscription.
-+        let tracker = claurst_core::cost::CostTracker::new();
-+        tracker.add_usage(10_074, 5, 0, 0);
-+        apply_session_cost_pricing(&tracker, None, "anthropic", "claude-sonnet-4-5", true);
-+        assert!(tracker.is_subscription());
-+        assert_eq!(tracker.total_cost_usd(), 0.0);
-+
-+        // But an Anthropic API-key session stays priced.
-+        let tracker = claurst_core::cost::CostTracker::new();
-+        apply_session_cost_pricing(&tracker, None, "anthropic", "claude-sonnet-4-5", false);
-+        assert!(!tracker.is_subscription());
-+        assert!(tracker.total_cost_usd() >= 0.0);
-+    }
-+
-+    #[test]
-+    fn session_cost_pricing_unknown_model_gets_no_default() {
-+        let reg = ModelRegistry::new();
-+        let tracker = claurst_core::cost::CostTracker::new();
-+        tracker.add_usage(10_074, 5, 0, 0);
-+       
-```
-
-**File**: `src-rust/crates/cli/src/main.rs` (modified, +31/-0)
-```diff
-@@ -906,6 +906,19 @@ async fn main() -> anyhow::Result<()> {
-     // from the models.dev cache if available.
-     let model_registry = load_cached_model_registry(&config);
- 
-+    // Cost reporting seed (issue #499): configure the shared tracker for the
-+    // active provider/model — zero cost for subscription providers (ChatGPT
-+    // Codex, Claude Pro/Max OAuth), catalog pricing for known models, and no
-+    // invented default rate for unknown ones. The headless `result` event,
-+    // `/cost` and the TUI footer all read this same tracker.
-+    claurst_api::apply_session_cost_pricing(
-+        &cost_tracker,
-+        Some(&model_registry),
-+        config.selected_provider_id(),
-+        config.effective_model(),
-+        use_bearer_auth,
-+    );
-+
-     // Build query config
-     let mut query_config = claurst_query::QueryConfig::from_config_with_registry(&config, &model_registry);
-     query_config.model_registry = Some(model_registry.clone());
-@@ -1037,6 +1050,7 @@ async fn main() -> anyhow::Result<()> {
-             bridge_config,
-             has_credentials,
-             model_registry,
-+            use_bearer_auth,
-             user_question_rx,
-             pending_project_mcp,
-             mcp_project_root,
-@@ -1470,6 +1484,9 @@ struct RefreshedProviderRuntime {
-     provider_registry: Arc<claurst_api::ProviderRegistry>,
-     model_registry: Arc<claurst_api::ModelRegistry>,
-     auth_store: claurst_core::AuthStore,
-+    /// Anthropic auth mode resolved for `config` (Bearer = Claude Pro/Max
-+    /// OAuth subscription); feeds the cost tracker (issue #499).
-+    use_bearer_auth: bool,
- }
- 
- async fn refresh_provider_runtime_state(
-@@ -1534,6 +1551,7 @@ async fn refresh_provider_runtime_state(
-         provider_registry,
-         model_registry,
-         auth_store: claurst_core::AuthStore::default(),
-+        use_bearer_auth,
-     })
- }
- 
-@@ -1578,6 +1596,7 @@ async fn reload_provider_runtime_state(
-         provider_registry,
-         model_registry,
-         auth_store: claurst_core::AuthStore::default(),
-+        use_bearer_auth,
-     })
- }
- 
-@@ -1990,6 +2009,7 @@ async fn run_interactive(
-     bridge_config: Option<claurst_bridge::BridgeConfig>,
-     has_credentials: bool,
-     model_registry: Arc<claurst_api::ModelRegistry>,
-+    anthropic_bearer_auth: bool,
-     user_question_rx: Option<tokio::sync::mpsc::UnboundedReceiver<claurst_tools::UserQuestionEvent>>,
-     pending_project_mcp: Vec<claurst_core::config::McpServerConfig>,
-     mcp_project_root: Option<PathBuf>,
-@@ -2130,6 +2150,10 @@ async fn run_interactive(
-     claurst_tui::spawn_signal_restore_watchers();
-     let mut app = App::new(live_config.clone(), cost_tracker.clone());
-     app.command_queue = Some(command_queue.clone());
-+    // Propagate the startup auth mode into cost reporting: a Claude Pro/Max
-+    // OAuth session must report zero cost (issue #499).
-+    app.anthropic_bearer_auth = anthropic_bearer_auth;
-+    app.sync_cost_pricing();
-     // Startup skill discovery runs on the blocking pool so a cold
-     // `skills.urls` clone never holds the terminal. When it finishes, the
-     // main loop installs the slash commands for autocomplete and every query
-@@ -2995,6 +3019,9 @@ async fn run_interactive(
-                                                     "Saved provider state cleared. Run /connect to reconnect."
-                                                         .to_string(),
-                                                 );
-+                                                app.anthropic_bearer_auth =
-+                                                    refreshed.use_bearer_auth;
-+                                                app.sync_cost_pricing();
-                                             }
-                                             Err(err) => {
-                                                 app.status_message = Some(format!(
-@@ -4704,6 +4731,10 @@ async fn run_interactive(
-                     );
-                     app.provider_registry = Some(refreshed.provider_registry);
-                     app.has_credentials = true;
-+                    // A fresh Claude Pro/Max OAuth login switches usage to
-+                    // flat subscription billing — zero reported cost (#499).
-+                    app.anthropic_bearer_auth = refreshed.use_bearer_auth;
-+                    app.sync_cost_pricing();
-                 }
-                 Err(err) => {
-                     app.status_message =
-```
-
-**File**: `src-rust/crates/commands/src/lib.rs` (modified, +34/-8)
-```diff
-@@ -746,7 +746,6 @@ impl SlashCommand for CostCommand {
-     async fn execute(&self, _args: &str, ctx: &mut CommandContext) -> CommandResult {
-         let tracker = &ctx.cost_tracker;
-         let model = ctx.config.effective_model();
--        let pricing = claurst_core::cost::ModelPricing::for_model(model);
- 
-         let input = tracker.input_tokens();
-         let output = tracker.output_tokens();
-@@ -755,20 +754,47 @@ impl SlashCommand for CostCommand {
-         let total = tracker.total_tokens();
-         let cost = tracker.total_cost_usd();
- 
-+        // Flat-subscription providers (ChatGPT Plus/Pro for Codex, Claude
-+        // Pro/Max OAuth) are not billed per token, so the tracker reports
-+        // zero and no rates apply (issue #499).
-+        if tracker.is_subscription() {
-+            return CommandResult::Message(format!(
-+                "Session Cost — {model}\n\
-+                 ──────────────────────────────\n\
-+                 Billed through a flat subscription (ChatGPT Plus/Pro or\n\
-+                 Claude Pro/Max) — usage is not billed per token.\n\n\
-+                 \n\
-+                 Total tokens:   {total:>10}\n\n\
-+                 Use /usage for quota info · /extra-usage for per-call breakdown",
-+                model = model,
-+                total = total,
-+            ));
++        if let Some(filename) = oldest.file_name().and_then(|name| name.to_str()) {
++            append_to_index(dir, &format!("auto/{filename}"), &entry.description)?;
 +        }
-+
-+        // Read pricing from the tracker itself (catalog-resolved at session
-+        // start and on model switches) so these figures match the tracker's
-+        // total instead of guessing a rate (issue #499).
-+        let pricing_opt = tracker.pricing();
-+        let pricing = pricing_opt.unwrap_or(claurst_core::cost::ModelPricing::FREE);
-+
-         // Per-category cost breakdown.
-         let input_cost    = (input as f64 * pricing.input_per_mtk) / 1_000_000.0;
-         let output_cost   = (output as f64 * pricing.output_per_mtk) / 1_000_000.0;
-         let cc_cost       = (cache_create as f64 * pricing.cache_creation_per_mtk) / 1_000_000.0;
-         let cr_cost       = (cache_read as f64 * pricing.cache_read_per_mtk) / 1_000_000.0;
- 
-         // Pricing info line.
--        let pricing_line = format!(
--            "  Rates ($/MTok): input ${:.2} | output ${:.2} | cache-write ${:.3} | cache-read ${:.3}",
--            pricing.input_per_mtk,
--            pricing.output_per_mtk,
--            pricing.cache_creation_per_mtk,
--            pricing.cache_read_per_mtk,
--        );
-+        let pricing_line = match pricing_opt {
-+            Some(p) => format!(
-+                "  Rates ($/MTok): input ${:.2} | output ${:.2} | cache-write ${:.3} | cache-read ${:.3}",
-+                p.input_per_mtk,
-+                p.output_per_mtk,
-+                p.cache_creation_per_mtk,
-+                p.cache_read_per_mtk,
-+            ),
-+            // Unknown model: no invented default rate — cost reports $0.00.
-+            None => "  No per-token rates known for this model — cost reports $0.00.".to_string(),
-+        };
- 
-         // Cache savings note: how much input cost was avoided by using cache-read
-         // instead of re-sending those tokens as normal input.
++        return Ok(
 ```
 
-**File**: `src-rust/crates/core/src/lib.rs` (modified, +152/-44)
+**File**: `src-rust/crates/query/src/agent_tool.rs` (modified, +3/-0)
 ```diff
-@@ -5344,7 +5344,7 @@ pub mod history {
- // cost module
- // ---------------------------------------------------------------------------
- pub mod cost {
--    use std::sync::atomic::{AtomicU64, Ordering};
-+    use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
-     use std::sync::Arc;
- 
-     /// Free upstream provider IDs used in the free provider system.
-@@ -5365,6 +5365,23 @@ pub mod cost {
-         "zhipuai",
-     ];
- 
-+    /// Providers whose usage is billed through a flat subscription instead of
-+    /// per-token rates:
-+    ///
-+    /// * `codex` / `openai-codex` — ChatGPT Plus/Pro subscription (the Codex
-+    ///   provider is OAuth-only, so this id always means the subscription).
-+    /// * `anthropic-oauth` — the connect-picker alias for Claude Pro/Max
-+    ///   OAuth; at request time it dispatches as `anthropic` with Bearer auth.
-+    ///
-+    /// Issue #499: subscription usage must report zero cost, never a made-up
-+    /// per-token price.
-+    pub fn is_subscription_provider(provider_id: &str) -> bool {
-+        matches!(
-+            provider_id,
-+            crate::ProviderId::CODEX | "openai-codex" | "anthropic-oauth"
-+        )
-+    }
-+
-     /// Check if a model name is an upstream-prefixed free model (e.g., "groq/llama-3.3-70b-versatile").
-     fn is_free_upstream_model(model: &str) -> bool {
-         for upstream_id in FREE_UPSTREAM_IDS {
-@@ -5417,50 +5434,48 @@ pub mod cost {
-             cache_read_per_mtk: 0.0,
-         };
- 
--        /// Default pricing is Opus (most capable, highest cost).
--        pub fn default_pricing() -> Self {
--            Self::OPUS
--        }
--
-         /// Pick pricing based on model name substring matching.
--        pub fn for_model(model: &str) -> Self {
-+        ///
-+        /// Returns `None` for models we have no price for (issue #499): callers
-+        /// should resolve the price from the model catalog instead, and the
-+        /// tracker reports zero cost rather than inventing a default rate.
-+        /// Only the Claude families (and free models) are priced here — these
-+        /// are the models that work with no catalog entry at all.
-+        pub fn for_model(model: &str) -> Option<Self> {
-             // Check for free models first (those with "-free" suffix, "free/" prefix, or upstream-prefixed free model)
-             if model.ends_with("-free") || model.starts_with("free/") || is_free_upstream_model(model) {
--                Self::FREE
-+                Some(Self::FREE)
-             } else if model.contains("opus") {
--                Self::OPUS
-+                Some(Self::OPUS)
-+            } else if model.contains("sonnet") {
-+                Some(Self::SONNET)
-             } else if model.contains("haiku") {
--                Self::HAIKU
-+                Some(Self::HAIKU)
-             } else {
--                // Default to Sonnet pricing for unknown models
--                Self::SONNET
-+                // Unknown model: no default pricing (issue #499).
-+                None
-             }
-         }
-     }
- 
--    impl Default for ModelPricing {
--        fn default() -> Self {
--            Self::OPUS
--        }
--    }
--
-     /// Thread-safe, lock-free cost tracker that accumulates token usage.
-+    ///
-+    /// Pricing starts unknown (`None`) so a model without a catalog price
-+    /// reports zero cost instead of an invented default rate (issue #499);
-+    /// subscription providers report zero regardless.
-     #[derive(Debug, Default)]
-     pub struct CostTracker {
-         input_tokens: AtomicU64,
-         output_tokens: AtomicU64,
-         cache_creation_tokens: AtomicU64,
-         cache_read_tokens: AtomicU64,
--        pricing: parking_lot::RwLock<ModelPricing>,
-+        pricing: parking_lot::RwLock<Option<ModelPricing>>,
-+        subscription: AtomicBool,
-     }
- 
--    // We need a default for RwLock<ModelPricing> -- use Opus as default.
-     impl CostTracker {
-         pub fn new() -> Arc<Self> {
--            Arc::new(Self {
--                pricing: parking_lot::RwLock::new(ModelPricing::OPUS),
--                ..Default::default()
--            })
-+            Arc::new(Self::default())
-         }
- 
-         pub fn with_model(model: &str) -> Arc<Self> {
-@@ -5474,6 +5489,30 @@ pub mod cost {
-             *self.pricing.write() = ModelPricing::for_model(model);
-         }
- 
-+        /// Override pricing directly (e.g. resolved from the model catalog).
-+        /// `None` marks the price as known to be absent: cost reports zero.
-+        pub fn set_pricing(&self, pricing: Option<ModelPricing>) {
-+            *self.pricing.write() = pricing;
-+        }
-+
-+        /// The pricing currently configured on this tracker, if any. `None`
-+        /// means "no per-token price known" (unknown model, issue #499) —
-+        /// consumers must not fall back to an invented default rate.
-+        pub fn pricing(&self) -> Option<ModelPricing> {
-+            *self.pricing.read()
-+        }
-+
-+        /// Set whether usage is billed through a flat s
-```
-
-**File**: `src-rust/crates/tui/src/app/mod.rs` (modified, +5/-0)
-```diff
-@@ -162,6 +162,10 @@ pub struct App {
-     /// Maximum token budget (from env var or model context window) — P2 feature flag
-     pub token_budget: Option<u32>,
-     pub cost_usd: f64,
-+    /// Anthropic session authenticated via Bearer (claude.ai OAuth, i.e. a
-+    /// Claude Pro/Max subscription) rather than an API key. Feeds the cost
-+    /// tracker's subscription detection (issue #499).
-+    pub anthropic_bearer_auth: bool,
-     pub model_name: String,
-     /// Whether the app has valid API credentials configured.
-     /// False = show the in-TUI provider setup dialog on startup.
-@@ -651,6 +655,7 @@ impl App {
-             token_count: 0,
-             token_budget: Self::load_token_budget(),
-             cost_usd: 0.0,
-+            anthropic_bearer_auth: false,
-             model_name,
-             has_credentials: true, // overridden by caller when no key is configured
-             effort_level: EffortLevel::Medium,
-```
-
-**File**: `src-rust/crates/tui/src/app/providers.rs` (modified, +20/-4)
-```diff
-@@ -211,7 +211,7 @@ impl App {
-                 let imported_mcp = result.imported_fields.iter().any(|f| f == "mcpServers");
-                 self.config = new_config.clone();
-                 self.model_name = self.config.effective_model().to_string();
--                self.cost_tracker.set_model(&self.model_name);
-+                self.sync_cost_pricing();
-                 self.refresh_context_window_size();
-                 self.context_used_tokens = 0;
-                 self.has_credentials = self.config.resolve_api_key().is_some();
-@@ -384,25 +384,40 @@ impl App {
-         self.config.model = None;
- 
-         let model = self.display_default_model_for_provider(&provider_id);
--        self.cost_tracker.set_model(&model);
-         self.model_name = model;
-+        self.sync_cost_pricing();
-         self.refresh_context_window_size();
-         self.context_used_tokens = 0;
-     }
- 
-     /// Update the active model name (also updates config + cost tracker).
-     pub fn set_model(&mut self, model: String) {
--        self.cost_tracker.set_model(&model);
-         self.model_name = model.clone();
-         self.config.model = Some(model.clone());
-         if let Some(provider) = Self::infer_provider_from_model(&model) {
-             self.config.provider = Some(provider);
-         }
-+        self.sync_cost_pricing();
-         self.refresh_context_window_size();
-         // Reset used tokens when switching models (context is fresh).
-         self.context_used_tokens = 0;
-     }
- 
-+    /// Re-apply session cost pricing to the shared tracker (issue #499):
-+    /// zero cost for subscription providers (ChatGPT Codex, Claude Pro/Max
-+    /// OAuth), catalog pricing for known models, and no invented default
-+    /// rate for unknown ones. Keeps the TUI footer agreeing with the
-+    /// headless `result` event and `/cost`.
-+    pub fn sync_cost_pricing(&self) {
-+        claurst_api::apply_session_cost_pricing(
-+            &self.cost_tracker,
-+            Some(&self.model_registry),
-+            self.config.selected_provider_id(),
-+            &self.model_name,
-+            self.anthropic_bearer_auth,
-+        );
-+    }
-+
-     pub fn apply_provider_refresh(
-         &mut self,
-         config: Config,
-@@ -433,7 +448,8 @@ impl App {
-         self.has_credentials = has_credentials;
-         self.fast_mode = false;
-         self.model_name = self.config.effective_model().to_string();
--        self.cost_tracker.set_model(&self.model_name);
-+        self.anthropic_bearer_auth = false;
-+        self.sync_cost_pricing();
-         self.status_message = Some(status_message);
-         self.clear_prompt();
-     }
-```
-
-**File**: `src-rust/crates/tui/src/render.rs` (modified, +4/-2)
-```diff
-@@ -2747,8 +2747,10 @@ fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
-         }
- 
-         // 3. Cost — mirrors TS formatCost: 4 decimal places for costs < $0.50, else 2.
--        // Display cost if it's >= 0.0, so free models show $0.00
--        if app.cost_usd >= 0.0 {
-+        // Display cost if it's >= 0.0, so free models show $0.00. Subscription
-+        // providers (ChatGPT Codex, Claude Pro/Max OAuth) show no dollar
-+        // figure at all because usage isn't billed per token (issue #499).
-+        if app.cost_usd >= 0.0 && !app.cost_tracker.is_subscription() {
-             if !parts.is_empty() {
-                 parts.push(Span::raw("  "));
-             }
+@@ -356,6 +356,9 @@ impl Tool for AgentTool {
+             system_prompt: Some(system_prompt),
+             append_system_prompt: None,
+             session_context: None,
++            // Sub-agents build their own first-turn memory from the store
++            // via the loop's per-turn refresh; no seed here.
++            memory_content: String::new(),
+             output_style: ctx.config.effective_output_style(),
+             output_style_prompt: ctx.config.resolve_output_style_prompt(),
+             working_directory: Some(working_dir_str),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #523** (closed): test(core): make write_chain fixture hermetic with one sync write (@alecuba16)
-- **PR #506** (2026-10-16): fix(cost): zero cost for subscription providers; no invented rates for unknown models (@Kuberwastaken)
-- **PR #505** (2026-10-16): fix(keybindings): Ctrl+V block-visual, Shift+Insert wiring, globalSearch alias, single /keybindings open (@Kuberwastaken)
-- **PR #504** (2026-10-16): fix(api): resolve the 	ogetherai provider alias in the registry (@PiUnknown)
-- **PR #503** (2026-10-16): fix(keybindings): normalize chords before the protected-key check (@PiUnknown)
-- **PR #502** (2026-10-16): fix: fall back to parsing final JSON text when StructuredOutput tool is not called (fixes #498) (@PiUnknown)
+- **PR #535** (2026-10-26): Integrate reviewed shell, continuation, compaction, MCP and Windows edit repairs (@Kuberwastaken)
+- **PR #534** (2026-10-26): fix(tools): stabilize Windows edit locks and own atomic-write temporaries (@Kuberwastaken)
+- **PR #533** (2026-10-26): fix(mcp): rebuild plugin server rosters at startup and reload (@Kuberwastaken)
+- **PR #532** (2026-10-26): fix(core): retain session lock conflicts and rotate durable journals (@Kuberwastaken)
+- **PR #531** (2026-10-26): fix(query): honor compaction settings and bound summary budgets (@Kuberwastaken)
+- **PR #530** (2026-10-26): fix(tools): bind multi-file edits and protect policy files (@Kuberwastaken)
 
 ---
 
@@ -3442,34 +2899,40 @@ fix(cost): zero cost for subscription providers; no invented rates for unknown m
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder
+## X. Integrate validated shell timeout fixture repair
 
 **RULE**:
-When implementing operations in `docs/keybindings.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-rust/crates/tools/src/pty_bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `465be88f`: Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a0a2543`: Integrate validated shell timeout fixture repair. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/keybindings.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-rust/crates/tools/src/pty_bash.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but those actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. `Ctrl+Shift+F` works: its default action is listed as `globalSearch`, an alias of the `openSearch` action — both names open the project search, so either can be bound in `keybindings.json`.
-These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1`, which never reaches the binding table) takes precedence over them.
-| `Shift+Insert` | Paste text (the `insert` key name reaches the binding table, so it can also be rebound) |
-The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
+        // Allow shell startup under parallel test/build load; the sleeping child
+        // must still be terminated well before its natural 30-second exit.
+        let result = tokio::time::timeout(Duration::from_secs(5), run_user_shell(
+            &command, dir.path(), Duration::from_millis(1500), dir.path(),
+            1500,
+        assert!(
+            matches!(&task.status, claurst_core::tasks::TaskStatus::Failed(reason) if reason.contains("timed out")),
+            "unexpected terminal state: {:?}; output: {}", task.status, task.render_output()
+        );
+        assert!(task.output_is_partial, "timeout did not capture fixture output: {}", task.render_output());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+Shift+F` (`globalSearch`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but these actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. The `openSearch` action (no default key) also opens project search and can be bound; the default `globalSearch` name does nothing.
-These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1` and `Shift+Insert`) takes precedence over them.
-| `Shift+Insert` | Paste text |
-The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
+        let result = tokio::time::timeout(Duration::from_secs(3), run_user_shell(
+            &command, dir.path(), Duration::from_millis(300), dir.path(),
+            500,
+        assert!(task.output_is_partial);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `465be88f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a0a2543` are properly handled with clean fallback behavior.

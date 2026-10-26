@@ -4243,10 +4243,10 @@
     "repository": "Kuberwastaken/claurst",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuberwastaken/claurst",
-    "sourceVersion": "85ebb868",
+    "sourceVersion": "e4228cc6",
     "license": "GPL-3.0",
-    "contentHash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
-    "lastHarvestedAt": "2026-10-19T00:54:31.494Z",
+    "contentHash": "faa726537fa2739e8e4ce4b9a20c237b465171c7c494798801711b34f147683f",
+    "lastHarvestedAt": "2026-10-26T18:25:28.380Z",
     "learningId": "learn-github-kuberwastaken-claurst"
   },
   "aws-amplify-amplify-js": {
@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "460f89a4",
+    "sourceVersion": "2527a65b",
     "license": "MIT",
-    "contentHash": "0303a814fe39221df4b8e1f908ca3cfa02cab664965dfebe0bf4b0a378eef395",
-    "lastHarvestedAt": "2026-10-25T04:18:45.469Z",
+    "contentHash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
+    "lastHarvestedAt": "2026-10-26T18:25:27.210Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "5a36d344",
+    "sourceVersion": "412290e7",
     "license": "Apache-2.0",
-    "contentHash": "954d37237b61d27856b3d6c20b676edba03290a693eabcae383372c20c70236d",
-    "lastHarvestedAt": "2026-10-22T19:22:41.312Z",
+    "contentHash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
+    "lastHarvestedAt": "2026-10-26T18:25:35.181Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source**: github ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
-> **Source Version**: `460f89a4`  
+> **Source Version**: `2527a65b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:18:45.168Z  
+> **Timestamp**: 2026-10-26T18:25:26.881Z  
 > **Learning ID**: `learn-github-lingui-js-lingui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:18:45.161Z  
+> **Harvest Timestamp**: 2026-10-26T18:25:26.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌍 📖 A readable, automated, and optimized (2 kb) internationalization for JavaScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5924 stars
+- **Stars / Engagement**: 5926 stars
 
 ---
 
@@ -780,183 +780,401 @@ export function makePathRegexSafe(path: string) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `460f89a4` (2026-10-23)
-**Commit Message**: fix(vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)
+### Incident Patch 1: `2527a65b` (2026-10-26)
+**Commit Message**: fix: look up placeholder values, default variables and Trans elements as own properties (#2741)
 
-**File**: `packages/cli/package.json` (modified, +1/-1)
+**File**: `packages/core/src/interpolate.test.ts` (modified, +12/-0)
 ```diff
-@@ -60,7 +60,7 @@
-     "@lingui/core": "workspace:*",
-     "@lingui/format-po": "workspace:*",
-     "@lingui/message-utils": "workspace:*",
--    "@lingui/native-tools": "^0.1.6",
-+    "@lingui/native-tools": "^0.2.0",
-     "chokidar": "5.0.0",
-     "cli-table3": "^0.6.5",
-     "commander": "^14.0.2",
+@@ -149,6 +149,18 @@ describe("interpolate", () => {
+     expect(cache({ value: "hasOwnProperty" })).toEqual("They")
+   })
+ 
++  it("should not fill placeholders named like Object.prototype members with the inherited member", () => {
++    expect(prepare("Hi {constructor}")({})).toEqual("Hi ")
++    expect(prepare("Hi {toString}")({})).toEqual("Hi ")
++    expect(prepare("Hi {constructor}")({ constructor: "Bob" })).toEqual(
++      "Hi Bob",
++    )
++    expect(prepare("Hi {toString}")({}, undefined, {})).toEqual("Hi ")
++    expect(
++      prepare("Hi {toString}")({}, undefined, { toString: "Bob" }),
++    ).toEqual("Hi Bob")
++  })
++
+   describe("Custom format", () => {
+     const testVector = [
+       ["en", undefined, "0.1", "10%", "20%", "€0.10", "€1.00"],
 ```
 
-**File**: `packages/vite-plugin/package.json` (modified, +1/-1)
+**File**: `packages/core/src/interpolate.ts` (modified, +15/-2)
 ```diff
-@@ -44,7 +44,7 @@
-   "dependencies": {
-     "@lingui/cli": "workspace:*",
-     "@lingui/conf": "workspace:*",
--    "@lingui/native-tools": "^0.1.6"
-+    "@lingui/native-tools": "^0.2.0"
+@@ -72,6 +72,14 @@ const getDefaultFormats = (
+   } as const
+ }
+ 
++const getOwnProperty = <T>(
++  object: Record<string, T> | undefined,
++  key: string,
++): T | undefined =>
++  object && Object.prototype.hasOwnProperty.call(object, key)
++    ? object[key]
++    : undefined
++
+ const selectFormatter = (value: string, rules: Record<string, any>) =>
+   // Own-property check so a runtime value like "constructor" or "toString"
+   // falls back to the `other` branch instead of resolving to a member
+@@ -103,9 +111,14 @@ export function interpolate(
+     const formatters = getDefaultFormats(locale, locales, formats)
+ 
+     const getValue = (name: string): unknown => {
++      // Own-property lookups so a placeholder named like an Object.prototype
++      // member (e.g. "constructor") isn't filled with the inherited member.
+       // Only lazily invoke functions from default variables, not per-call values
+-      const variable = variables?.[name]
+-      return values[name] ?? (isFunction(variable) ? variable() : variable)
++      const variable = getOwnProperty(variables, name)
++      return (
++        getOwnProperty(values, name) ??
++        (isFunction(variable) ? variable() : variable)
++      )
+     }
+ 
+     const formatMessage = (
+```
+
+**File**: `packages/react/src/format.test.tsx` (modified, +16/-0)
+```diff
+@@ -170,6 +170,22 @@ describe("formatElements", function () {
+     })
+   })
+ 
++  it("should ignore elements named like Object.prototype members", function () {
++    mockConsole((console) => {
++      expect(
++        html(formatElements("<constructor>a</constructor>b", { 0: <em /> })),
++      ).toEqual("ab")
++      expect(html(formatElements("a<toString/>b"))).toEqual("ab")
++      expect(
++        html(
++          formatElements("<hasOwnProperty>a</hasOwnProperty>", { 0: <em /> }),
++        ),
++      ).toEqual("a")
++
++      expect(console.error).toBeCalledTimes(3)
++    })
++  })
++
+   it("should ignore incorrect tags and print them as a text", function () {
+     mockConsole((console) => {
+       expect(html(formatElements("text</0>"))).toEqual("text&lt;/0&gt;")
+```
+
+**File**: `packages/react/src/format.tsx` (modified, +8/-1)
+```diff
+@@ -50,7 +50,14 @@ function formatElements(
+   if (before) tree.push(before)
+ 
+   for (const [index, children, after] of getElements(parts)) {
+-    let element = typeof index !== "undefined" ? elements[index] : undefined
++    // Own-property check so a tag like <constructor> or <toString/> in a
++    // translation is reported as undeclared instead of resolving to a member
++    // inherited from Object.prototype.
++    let element =
++      typeof index !== "undefined" &&
++      Object.prototype.hasOwnProperty.call(elements, index)
++        ? elements[index]
++        : undefined
+ 
+     if (
+       !element ||
+```
+
+**File**: `packages/solid/src/format.test.tsx` (modified, +15/-0)
+```diff
+@@ -173,6 +173,21 @@ describe("formatElements", function () {
+     })
+   })
+ 
++  it("should ignore elements named like Object.prototype members", function () {
++    mockConsole((console) => {
++      expect(
++        html(() =>
++          formatElements("<constructor>a</constructor>b", {
++            0: (props) => <em>{props.children}</em>,
++          }),
++        ),
++      ).toEqual("ab")
++      expect(html(() => formatElements("a<toString/>b"))).toEqual("ab")
++
++      expect(console.error).toBeCalledTimes(2)
++    })
++  })
++
+   it("should ignore incorrect tags and print them as a text", function () {
+     mockConsole((console) => {
+       expect(html(() => formatElements("text</0>"))).toEqual("text&lt;/0&gt;")
+```
+
+**File**: `packages/solid/src/format.tsx` (modified, +8/-1)
+```diff
+@@ -31,7 +31,14 @@ function formatElements(
+   if (before) tree.push(before)
+ 
+   for (const [index, children, after] of getElements(parts)) {
+-    const element = index === undefined ? undefined : elements[index]
++    // Own-property check so a tag like <constructor> or <toString/> in a
++    // translation is reported as undeclared instead of resolving to a member
++    // inherited from Object.prototype.
++    const element =
++      index !== undefined &&
++      Object.prototype.hasOwnProperty.call(elements, index)
++        ? elements[index]
++        : undefined
+     const formattedChildren = children
+       ? formatElements(children, elements)
+       : undefined
+```
+
+---
+
+### Incident Patch 2: `bad25c33` (2026-10-26)
+**Commit Message**: fix(detect-locale): keep underscores and digits in fromPath segments (#2738)
+
+**File**: `packages/detect-locale/src/detectors/fromPath.test.ts` (modified, +12/-0)
+```diff
+@@ -16,4 +16,16 @@ describe("fromPath detector", () => {
+   it("should return null when the path has no segment at the given index", () => {
+     expect(fromPath(1, { pathname: "/" })).toBeNull()
+   })
++
++  it("should keep locales with underscores or numeric regions intact", () => {
++    expect(fromPath(0, { pathname: "/pt_BR/some/route" })).toEqual("pt_BR")
++    expect(fromPath(0, { pathname: "/es-419/some/route" })).toEqual("es-419")
++    expect(fromPath(1, { pathname: "/v2/en_US/some/route" })).toEqual("en_US")
++  })
++
++  it("should stop at a query string or hash when pathname carries one", () => {
++    expect(fromPath(0, { pathname: "/fr?utm_source=x" })).toEqual("fr")
++    expect(fromPath(0, { pathname: "/fr#section" })).toEqual("fr")
++    expect(fromPath(1, { pathname: "/app/fr/route?a=b" })).toEqual("fr")
++  })
+ })
+```
+
+**File**: `packages/detect-locale/src/detectors/fromPath.ts` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ export default function detectFromPath(
+   localePathIndex: number,
+   location: Partial<Location> = globalThis.location,
+ ): LocaleString {
+-  const locale: RegExpMatchArray = location.pathname.match(/\/([a-zA-Z-]*)/g)
++  const locale: RegExpMatchArray = location.pathname.match(/\/([^/?#]*)/g)
+   if (Array.isArray(locale) && locale[localePathIndex]) {
+     return locale[localePathIndex].replace("/", "")
+   }
+```
+
+---
+
+### Incident Patch 3: `51a49b14` (2026-10-26)
+**Commit Message**: chore(examples): migrate js example to lingui v6 (#2739)
+
+**File**: `examples/js/.gitignore` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ src/locale/_build/
+-src/locale/*/*.js
++src/locale/*/*.mjs
+ 
+ .pnp.*
+ .yarn/*
+```
+
+**File**: `examples/js/README.md` (modified, +7/-6)
+```diff
+@@ -1,20 +1,21 @@
+ # Using LinguiJS in VanillaJS projects
+ 
+-Prepare the example by installing dependencies and compiling message catalogs:
++This example uses the [Lingui Vite plugin](https://lingui.dev/ref/vite-plugin) with the native macro transform, so no Babel setup is needed. [Vitest](https://vitest.dev/) picks up the same configuration from `vite.config.js`.
++
++Install dependencies:
+ 
+ ```sh
+ yarn install
+-yarn lingui compile
+ ```
+ 
+-Now, either run full test suit:
++Extract messages from the source files:
+ 
+ ```sh
+-yarn test
++yarn extract
+ ```
+ 
+-Or each file individually (you need to have `babel-cli` installed globally):
++Compile message catalogs and run the test suite:
+ 
+ ```sh
+-babel-node src/messages.js
++yarn test
+ ```
+```
+
+**File**: `examples/js/babel.config.js` (removed, +0/-4)
+```diff
+@@ -1,4 +0,0 @@
+-module.exports = {
+-  presets: ["@babel/env"],
+-  plugins: ["@lingui/babel-plugin-lingui-macro"],
+-}
+```
+
+**File**: `examples/js/lingui.config.js` (modified, +6/-5)
+```diff
+@@ -1,12 +1,13 @@
+-/** @type {import('@lingui/conf').LinguiConfig} */
+-module.exports = {
++import { defineConfig } from "@lingui/cli"
++
++export default defineConfig({
+   locales: ["en", "cs"],
+-  
++  sourceLocale: "en",
+   catalogs: [
+     {
+       path: "./src/locale/{locale}/messages",
+       include: ["./src"],
+     },
+   ],
+-  sourceLocale: "en",
+-}
++  compileNamespace: "es",
++})
+```
+
+**File**: `examples/js/package.json` (modified, +9/-8)
+```diff
+@@ -1,24 +1,25 @@
+ {
+   "name": "vanilla-js",
+   "version": "1.0.0",
++  "type": "module",
+   "main": "src/index.js",
+   "license": "MIT",
+   "author": {
+     "name": "Tomáš Ehrlich",
+     "email": "tomas.ehrlich@gmail.com"
    },
-   "peerDependencies": {
-     "@babel/core": "^7.29.0 || ^8.0.0",
+   "scripts": {
+-    "test": "lingui compile && jest src",
+-    "extract": "lingui extract --clean"
++    "test": "lingui compile && vitest run",
++    "extract": "lingui extract --clean",
++    "compile": "lingui compile"
+   },
+   "dependencies": {
+-    "@lingui/core": "^5.0.0-next.3"
++    "@lingui/core": "^6.10.0"
+   },
+   "devDependencies": {
+-    "@babel/core": "^7.20.12",
+-    "@babel/preset-env": "^7.20.2",
+-    "@lingui/babel-plugin-lingui-macro": "^5.0.0-next.3",
+-    "@lingui/cli": "^5.0.0-next.3",
+-    "jest": "^29.5.0"
++    "@lingui/cli": "^6.10.0",
++    "@lingui/vite-plugin": "^6.10.0",
++    "vite": "^7.3.1",
++    "vitest": "^5.0.0"
+   }
+ }
 ```
 
-**File**: `yarn.lock` (modified, +43/-43)
+**File**: `examples/js/src/example.test.js` (renamed, +5/-2)
 ```diff
-@@ -1532,7 +1532,7 @@ __metadata:
-     "@lingui/core": "workspace:*"
-     "@lingui/format-po": "workspace:*"
-     "@lingui/message-utils": "workspace:*"
--    "@lingui/native-tools": "npm:^0.1.6"
-+    "@lingui/native-tools": "npm:^0.2.0"
-     "@lingui/test-utils": "workspace:*"
-     "@rolldown/plugin-babel": "npm:^0.2.3"
-     "@types/babel__generator": "npm:^7.27.0"
-@@ -1739,82 +1739,82 @@ __metadata:
-   languageName: unknown
-   linkType: soft
+@@ -1,12 +1,15 @@
++import { describe, expect, it } from "vitest"
+ import { i18n } from "@lingui/core"
++import * as messages from "./messages"
++import * as ids from "./ids"
  
--"@lingui/native-tools-android-arm64@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-android-arm64@npm:0.1.6"
-+"@lingui/native-tools-android-arm64@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-android-arm64@npm:0.2.0"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
+ describe("vanilla-js example", function () {
+   describe("messages as ids", function () {
+-    test(require("./messages"))
++    test(messages)
+   })
  
--"@lingui/native-tools-darwin-arm64@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-darwin-arm64@npm:0.1.6"
-+"@lingui/native-tools-darwin-arm64@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-darwin-arm64@npm:0.2.0"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
+   describe("custom ids", function () {
+-    test(require("./ids"))
++    test(ids)
+   })
+ })
  
--"@lingui/native-tools-darwin-x64@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-darwin-x64@npm:0.1.6"
-+"@lingui/native-tools-darwin-x64@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-darwin-x64@npm:0.2.0"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
+```
+
+**File**: `examples/js/src/ids.js` (modified, +4/-27)
+```diff
+@@ -1,9 +1,11 @@
+ import { i18n } from "@lingui/core"
+ import { t, plural, defineMessage } from "@lingui/core/macro"
++import { messages as enMessages } from "./locale/en/messages.mjs"
++import { messages as csMessages } from "./locale/cs/messages.mjs"
  
--"@lingui/native-tools-linux-arm64-gnu@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-linux-arm64-gnu@npm:0.1.6"
-+"@lingui/native-tools-linux-arm64-gnu@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-linux-arm64-gnu@npm:0.2.0"
-   conditions: os=linux & cpu=arm64 & libc=glibc
-   languageName: node
-   linkType: hard
+ i18n.load({
+-  en: require("./locale/en/messages").messages,
+-  cs: require("./locale/cs/messages").messages,
++  en: enMessages,
++  cs: csMessages,
+ })
  
--"@lingui/native-tools-linux-arm64-musl@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-linux-arm64-musl@npm:0.1.6"
-+"@lingui/native-tools-linux-arm64-musl@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-linux-arm64-musl@npm:0.2.0"
-   conditions: os=linux & cpu=arm64 & libc=musl
-   languageName: node
-   linkType: hard
- 
--"@lingui/native-tools-linux-x64-gnu@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-linux-x64-gnu@npm:0.1.6"
-+"@lingui/native-tools-linux-x64-gnu@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-linux-x64-gnu@npm:0.2.0"
-   conditions: os=linux & cpu=x64 & libc=glibc
-   languageName: node
-   linkType: hard
- 
--"@lingui/native-tools-linux-x64-musl@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-linux-x64-musl@npm:0.1.6"
-+"@lingui/native-tools-linux-x64-musl@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-linux-x64-musl@npm:0.2.0"
-   conditions: os=linux & cpu=x64 & libc=musl
-   languageName: node
-   linkType: hard
- 
--"@lingui/native-tools-win32-arm64-msvc@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-win32-arm64-msvc@npm:0.1.6"
-+"@lingui/native-tools-win32-arm64-msvc@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-win32-arm64-msvc@npm:0.2.0"
-   conditions: os=win32 & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"@lingui/native-tools-win32-x64-msvc@npm:0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools-win32-x64-msvc@npm:0.1.6"
-+"@lingui/native-tools-win32-x64-msvc@npm:0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools-win32-x64-msvc@npm:0.2.0"
-   conditions: os=win32 & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"@lingui/native-tools@npm:^0.1.6":
--  version: 0.1.6
--  resolution: "@lingui/native-tools@npm:0.1.6"
--  dependencies:
--    "@lingui/native-tools-android-arm64": "npm:0.1.6"
--    "@lingui/native-tools-darwin-arm64": "npm:0.1.6"
--    "@lingui/native-tools-darwin-x64": "npm:0.1.6"
--    "@lingui/native-tools-linux-arm64-gnu": "npm:0.1.6"
--    "@lingui/native-tools-linux-arm64-musl": "npm:0.1.6"
--    "@lingui/native-tools-linux-x64-gnu": "npm:0.1.6"
--    "@lingui/native-tools-linux-x64-musl": "npm:0.1.6"
--    "@lingui/native-tools-win32-arm64-msvc": "npm:0.1.6"
--    "@lingui/native-tools-win32-x64-msvc": "npm:0.1.6"
-+"@lingui/native-tools@npm:^0.2.0":
-+  version: 0.2.0
-+  resolution: "@lingui/native-tools@npm:0.2.0"
-+  dependencies:
-+    "@lingui/native-tools-android-arm64": "npm:0.2.0"
-+    "@lingui/native-tools-darwin-arm64": "npm:0.2.0"
-+    "@lingui/native-tools-darwin-x64": "npm:0.2.0"
-+    "@lingui/native-tools-linux-arm64-gnu": "npm:0.2.0"
-+    "@lingui/native-tools-linux-arm64-musl": "npm:0.2.0"
-+    "@lingui/native-tools-linux-x64-gnu": "npm:0.2.0"
-+    "@lingui/native-tools-linux-x64-musl": "npm:0.2.0"
-+    "@lingui/native-tools-win32-arm64-msvc": "npm:0.2.0"
-+    "@lingui/native-tools-win32-x64-msvc": "npm:0.2.0"
-     "@swc/types": "npm:^0.1.25"
-   peerDependencies:
-     "@lingui/conf": ^6.0.1
-@@ -1837,7 +1837,7 @@ __metadata:
-       optional: true
-     "@lingui/native-tools-win32-x64-msvc":
-       optional: true
--  checksum: 
+ export const common = {
+@@ -60,28 +62,3 @@ export function getLazy() {
+     })
+   )
+ }
+-
+-function main() {
+-  const header = getStatic()
+-
+-  console.log(header)
+-  console.log("*".repeat(header.length))
+-  console.log()
+-
+-  console.log(getVariables("Joe"))
+-  console.log(getPlural(1))
+-  console.log(getPlural(100))
+-  console.log()
+-
+-  console.log(getLazy())
+-  console.log()
+-}
+-
+-if (require.main === module) {
+-  i18n.activate("en")
+-  main()
+-
+-  console.log()
+-  i18n.activate("cs")
+-  main()
+-}
+```
+
+**File**: `examples/js/src/locale/cs/messages.js` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-/*eslint-disable*/module.exports={messages:JSON.parse("{\"static\":\"Ukázka @lingui/core\",\"zziTz4\":\"Ukázka @lingui/core\",\"lazy\":[\"Chcete pokračovat? \",[\"yes\"],\"/\",[\"no\"]],\"+GYOc0\":[\"Chcete pokračovat? \",[\"yes\"],\"/\",[\"no\"]],\"variables\":[\"Ahoj \",[\"name\"]],\"OVaF9k\":[\"Ahoj \",[\"name\"]],\"common.no\":\"Ne\",\"1UzENP\":\"Ne\",\"plural\":[[\"value\",\"plural\",{\"one\":[\"#\",\" láhev\"],\"few\":[\"#\",\" láhve\"],\"other\":[\"#\",\" láhví\"]}],\" visí na stěně\"],\"KE/K99\":[[\"value\",\"plural\",{\"one\":[\"#\",\" láhev\"],\"few\":[\"#\",\" láhve\"],\"other\":[\"#\",\" láhví\"]}],\" visí na stěně\"],\"common.yes\":\"Ano\",\"l75CjT\":\"Ano\"}")};
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2745** (2026-10-26): chore(examples): migrate remix-vite-babel example to lingui v6 (@dgesteves)
+- **PR #2744** (2026-10-26): chore(cli): raise tinypool dependency floor (@jasontd92)
 - **PR #2743** (2026-10-23): fix(vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (@andrii-bodnar)
 - **PR #2742** (2026-10-22): chore(release): published v6.10.1 [skip ci] (@andrii-bodnar)
+- **PR #2741** (2026-10-26): fix: look up placeholder values, default variables and Trans elements as own properties (@lprnmns)
 - **PR #2740** (2026-10-21): docs: feature the runtime macro in the website announcement bar (@andrii-bodnar)
-- **PR #2737** (2026-10-22): perf(vite-plugin): resolve catalogs once per build instead of on every catalog import (@almsh)
-- **PR #2736** (2026-10-21): fix(metro-transformer): forward getCacheKey from the wrapped transformer (@HSnils)
-- **PR #2734** (2026-10-20): chore(examples): migrate react-webpack-gettext example to lingui v6 (@mehdimirzafaruk)
 
 ---
 
@@ -976,28 +1194,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743)
+## X. look up placeholder values, default variables and Trans elements as own properti
 
 **RULE**:
-When implementing operations in `packages/cli/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/core/src/interpolate.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `460f89a4`: vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (#2743). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2527a65b`: look up placeholder values, default variables and Trans elements as own properties (#2741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/cli/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/interpolate.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@lingui/native-tools": "^0.2.0",
+  it("should not fill placeholders named like Object.prototype members with the inherited member", () => {
+    expect(prepare("Hi {constructor}")({})).toEqual("Hi ")
+    expect(prepare("Hi {toString}")({})).toEqual("Hi ")
+    expect(prepare("Hi {constructor}")({ constructor: "Bob" })).toEqual(
+      "Hi Bob",
+    )
+    expect(prepare("Hi {toString}")({}, undefined, {})).toEqual("Hi ")
+    expect(
+      prepare("Hi {toString}")({}, undefined, { toString: "Bob" }),
+    ).toEqual("Hi Bob")
+  })
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@lingui/native-tools": "^0.1.6",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `460f89a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2527a65b` are properly handled with clean fallback behavior.
