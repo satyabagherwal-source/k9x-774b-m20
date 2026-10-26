@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-4TPP",
-    "timestamp": "2026-10-24T19:44:12.397Z",
-    "repository": "nitrojs/nitro",
-    "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "af195f25875f4c5e73093ec56641d1a9df1b7ce546fe8cf3109276d0ba13e34a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-CK7O",
-    "timestamp": "2026-10-24T19:50:13.332Z",
-    "repository": "h3js/h3",
-    "learningId": "learn-github-h3js-h3",
-    "contentHash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-FX2K",
-    "timestamp": "2026-10-24T19:52:49.964Z",
-    "repository": "nezhahq/nezha",
-    "learningId": "learn-github-nezhahq-nezha",
-    "contentHash": "668f4f2a9e4973edc684a114ed781a9a919d8c3daf7336e737fc3b674ef42b6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-NEB9",
-    "timestamp": "2026-10-24T19:58:38.901Z",
-    "repository": "ornith-ai/Ornith-1.5-122B",
-    "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-    "contentHash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-NJKO",
     "timestamp": "2026-10-24T19:58:45.720Z",
     "repository": "u-root/u-root",
@@ -7492,6 +7432,66 @@
     "contentHash": "11e900cdd46e1207bdfb2d7646fc4896a3f5873be4ebb84e1e58793211ecfd93",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-814G",
+    "timestamp": "2026-10-26T01:10:17.776Z",
+    "repository": "cosscom/ui",
+    "learningId": "learn-github-cosscom-ui",
+    "contentHash": "445fe59039825c2ef88de96ee488f60c0e00796b72a32fcabf9cb103b2b8ba25",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-81JK",
+    "timestamp": "2026-10-26T01:10:18.320Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "470112a05500432bcac49c0444cecfc7d3eb51902c0cfef65cc91b223cc4f5a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-81MP",
+    "timestamp": "2026-10-26T01:10:18.433Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "c5336b981c79df7f2067eb3766c95b6d533f441e728f61626ea480593afc980d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-871H",
+    "timestamp": "2026-10-26T01:10:25.445Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

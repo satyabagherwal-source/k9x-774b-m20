@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T01:01:11.255Z",
+  "last_updated": "2026-10-26T01:10:25.457Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2082,14 +2082,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "6f54a28b0436c89d6bff4321927144a121b94ca9643f46e7645a48557b633613",
-      "verified_at": "2026-10-25T13:30:47.757Z",
+      "content_hash": "445fe59039825c2ef88de96ee488f60c0e00796b72a32fcabf9cb103b2b8ba25",
+      "verified_at": "2026-10-26T01:10:17.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:30:47.757Z"
+      "last_updated": "2026-10-26T01:10:17.786Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "c791a12dbdba80724c4a8503b7adf9b0873a646ddf953cdc9582291a58dbcffb",
-      "verified_at": "2026-10-25T11:11:17.453Z",
+      "content_hash": "b51fbef7c2f8c996fff4fbda399c9be043f55dc54b3ab135f9e3aee67c87a8c2",
+      "verified_at": "2026-10-26T01:10:25.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:11:17.453Z"
+      "last_updated": "2026-10-26T01:10:25.456Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "633b583c7961d0eef188a2c2d7ba9d1eae038a14d8e0b1a1f322b7b8de327240",
-      "verified_at": "2026-10-25T06:44:48.578Z",
+      "content_hash": "c5336b981c79df7f2067eb3766c95b6d533f441e728f61626ea480593afc980d",
+      "verified_at": "2026-10-26T01:10:18.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:44:48.578Z"
+      "last_updated": "2026-10-26T01:10:18.445Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -13311,14 +13311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kamgurgul-cpu-info",
-      "content_hash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
-      "verified_at": "2026-10-19T19:58:19.664Z",
+      "content_hash": "470112a05500432bcac49c0444cecfc7d3eb51902c0cfef65cc91b223cc4f5a4",
+      "verified_at": "2026-10-26T01:10:18.331Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T19:58:19.664Z"
+      "last_updated": "2026-10-26T01:10:18.331Z"
     },
     "ugolbck/seofordev": {
       "repository": "ugolbck/seofordev",

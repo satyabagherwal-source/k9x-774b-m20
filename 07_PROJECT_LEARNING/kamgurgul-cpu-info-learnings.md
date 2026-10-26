@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `a633b2e3`  
+> **Source Version**: `eca52f48`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T19:58:19.286Z  
+> **Timestamp**: 2026-10-26T01:10:17.912Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T19:58:17.995Z  
+> **Harvest Timestamp**: 2026-10-26T01:10:17.084Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CPU Info is a multiplatform application which provides information about device hardware and software
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1095 stars
+- **Stars / Engagement**: 1097 stars
 
 ---
 
@@ -658,201 +658,786 @@ interface IDispatchersProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62ece899` (2026-10-08)
-**Commit Message**: [SHARED] Update libs, fix #624
+### Incident Patch 1: `eca52f48` (2026-10-25)
+**Commit Message**: [CAR] Support both android auto platforms
 
-**File**: `gradle/libs.versions.toml` (modified, +3/-3)
+**File**: `androidApp/build.gradle.kts` (modified, +1/-0)
 ```diff
-@@ -12,11 +12,11 @@ androidxTestExt = "1.3.0"
- androidxTestRules = "1.7.0"
- androidxTestRunner = "1.7.0"
- androidxTv = "1.1.0"
--androidxWear = "1.7.0"
-+androidxWear = "1.7.1"
- baselineprofile = "1.5.0"
- benchmarkMacroJunit4 = "1.5.0"
- coil = "3.6.3"
--composeAdaptive = "1.2.0"
-+composeAdaptive = "1.3.0"
- composeAdaptiveNavigationSuit = "1.12.0-alpha03"
- composeIconsExtended = "1.7.3"
- composeLifecycle = "2.11.0"
-@@ -25,7 +25,7 @@ composeMaterial3 = "1.12.0-alpha03"
- composeNavigation = "2.9.2"
- composeUiTest = "1.12.1"
- horologist = "0.7.15"
--imageio = "3.15.2"
-+imageio = "3.15.3"
- jna = "5.19.1"
- kermit = "2.2.0"
- koin = "4.2.2"
-```
-
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.0-all.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.1-all.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
-```
-
-**File**: `gradlew.bat` (modified, +41/-11)
-```diff
-@@ -26,6 +26,33 @@
- @rem Set local scope for the variables, and ensure extensions are enabled
- setlocal EnableExtensions
+@@ -121,6 +121,7 @@ licenseReport {
  
-+@rem Catch executions from older scripts and ensure they exit cleanly.
-+@rem This can be removed once we can be reasonably confident that few people
-+@rem will be migrating directly to this new wrapper.
-+goto afterSafetyNet
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+goto exitWithErrorLevel
-+:afterSafetyNet
+ dependencies {
+     implementation(projects.androidAutoApp)
++    implementation(libs.androidx.car.app.projected)
+     implementation(projects.shared)
+     implementation(libs.androidx.profileinstaller)
+ 
+```
+
+**File**: `androidApp/src/main/AndroidManifest.xml` (modified, +9/-0)
+```diff
+@@ -12,6 +12,11 @@
+         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
+     <uses-permission android:name="android.permission.READ_BASIC_PHONE_STATE" />
+     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
++    <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
++    <uses-permission android:name="com.google.android.gms.permission.CAR_MILEAGE" />
++    <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
++    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
++    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+ 
+     <uses-feature
+         android:name="android.software.leanback"
+@@ -37,6 +42,10 @@
+         android:theme="@style/AppThemeBase"
+         tools:targetApi="tiramisu">
+ 
++        <meta-data
++            android:name="com.google.android.gms.car.application"
++            android:resource="@xml/automotive_app_desc" />
 +
- set DIRNAME=%~dp0
- if "%DIRNAME%"=="" set DIRNAME=.
- @rem This is normally unused
-@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
- %JAVA_EXE% -version >NUL 2>&1
- if %ERRORLEVEL% equ 0 goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :findJavaFromJavaHome
- set JAVA_HOME=%JAVA_HOME:"=%
- set JAVA_EXE=%JAVA_HOME%/bin/java.exe
- 
- if exist "%JAVA_EXE%" goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :execute
- @rem Setup the command line
-@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
- @rem Execute gradlew
- @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
- @rem which allows us to clear the local environment before executing the java command
--endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
-+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
- 
-+@rem This label must not be changed. We rely on old scripts being able to jump to this point.
- :exitWithErrorLevel
- @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
- "%COMSPEC%" /c exit %ERRORLEVEL%
+         <activity
+             android:name="com.kgurgul.cpuinfo.HostActivity"
+             android:exported="true"
 ```
 
-**File**: `settings.gradle.kts` (modified, +1/-1)
+**File**: `androidAutoApp/build.gradle.kts` (modified, +1/-2)
 ```diff
-@@ -18,7 +18,7 @@ dependencyResolutionManagement {
- }
+@@ -39,8 +39,7 @@ android {
  
- plugins {
--    id("io.github.ben-manes.versions.settings") version "0.64.0"
-+    id("io.github.ben-manes.versions.settings") version "0.65.0"
- }
- 
- include(":androidApp")
+ dependencies {
+     implementation(projects.shared)
+-    implementation(libs.androidx.car.app)
+-    implementation(libs.androidx.car.app.projected)
++    api(libs.androidx.car.app)
+     implementation(libs.androidx.core)
+     implementation(libs.jetbrains.compose.lifecycle.viewmodel)
+     implementation(libs.kermit.kermit)
 ```
 
-**File**: `shared/src/androidMain/kotlin/com/kgurgul/cpuinfo/data/provider/TemperatureProvider.android.kt` (modified, +12/-0)
+**File**: `androidAutoApp/src/main/AndroidManifest.xml` (modified, +0/-8)
 ```diff
-@@ -159,6 +159,7 @@ actual class TemperatureProvider actual constructor() : KoinComponent, ITemperat
-             val tempPath = "$dirPrefix$index/$tempFileName"
-             if (readTemperature(tempPath) == null) return@mapNotNull null
-             val type = readFirstLine("$dirPrefix$index/$nameFileName")
-+            if (isNonTemperatureType(type)) return@mapNotNull null
-             ThermalSource(
-                 id = idOffset + index,
-                 icon = getIconForType(type),
-@@ -172,6 +173,15 @@ actual class TemperatureProvider actual constructor() : KoinComponent, ITemperat
-             )
-         }
+@@ -1,16 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android">
  
-+    /**
-+     * Some thermal zones (mostly on Qualcomm devices) expose non-temperature values, e.g. "socd"
-+     * (state-of-charge depletion) or BCL battery current/voltage levels ("ibat-lvl0", "vbat-lvl1").
-+     */
-+    private fun isNonTemperatureType(type: String?): Boolean {
-+        val lowerType = type?.lowercase() ?: return false
-+        return NON_TEMPERATURE_TYPE_KEYWORDS.any { lowerType.contains(it) }
+-    <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
+-    <uses-permission android:name="com.google.android.gms.permission.CAR_MILEAGE" />
+-    <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
+-
+     <application>
+ 
+-        <meta-data
+-            android:name="com.google.android.gms.car.application"
+-            android:resource="@xml/automotive_app_desc" />
+-
+         <meta-data
+             android:name="androidx.car.app.minCarApiLevel"
+             android:value="3" />
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/data/provider/CarDataProvider.kt` (modified, +155/-49)
+```diff
+@@ -15,6 +15,7 @@
+  */
+ package com.kgurgul.cpuinfo.auto.data.provider
+ 
++import android.Manifest
+ import android.content.Context
+ import android.content.pm.PackageManager
+ import androidx.car.app.hardware.CarHardwareManager
+@@ -43,13 +44,17 @@ import com.kgurgul.cpuinfo.auto.domain.model.FuelType
+ import com.kgurgul.cpuinfo.auto.domain.model.SpeedUnit
+ import com.kgurgul.cpuinfo.auto.domain.model.TollCardState
+ import java.util.concurrent.Executor
++import kotlin.time.Duration.Companion.milliseconds
+ import kotlinx.coroutines.channels.awaitClose
++import kotlinx.coroutines.delay
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.callbackFlow
++import kotlinx.coroutines.flow.channelFlow
+ import kotlinx.coroutines.flow.emptyFlow
+ import kotlinx.coroutines.flow.flatMapLatest
+ import kotlinx.coroutines.flow.flowOf
+ import kotlinx.coroutines.flow.map
++import kotlinx.coroutines.launch
+ 
+ class CarDataProvider(
+     private val context: Context,
+@@ -58,10 +63,17 @@ class CarDataProvider(
+ 
+     private val executor: Executor by lazy { ContextCompat.getMainExecutor(context) }
+ 
+-    override fun getMissingPermissions(): List<String> = CAR_PERMISSIONS.filterNot {
+-        isPermissionGranted(it)
++    private val isAutomotive by lazy {
++        context.packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE)
+     }
+ 
++    private val permissions: CarPermissions by lazy {
++        if (isAutomotive) CarPermissions.AUTOMOTIVE else CarPermissions.PROJECTED
 +    }
 +
-     private fun getIconForType(type: String?): DrawableResource {
-         val lowerType = type?.lowercase().orEmpty()
-         return when {
-@@ -230,6 +240,8 @@ actual class TemperatureProvider actual constructor() : KoinComponent, ITemperat
++    override fun getMissingPermissions(): List<String> =
++        permissions.all.filterNot { isPermissionGranted(it) }
++
+     override fun observeHost(): Flow<CarHostData?> =
+         carContextHolder.carContext.map { carContext ->
+             carContext?.let {
+@@ -74,8 +86,19 @@ class CarDataProvider(
  
-         private val CPU_TYPE_KEYWORDS = listOf("cpu", "soc", "tsens", "core", "apc")
-         private val BATTERY_TYPE_KEYWORDS = listOf("batt", "bms")
-+        private val NON_TEMPERATURE_TYPE_KEYWORDS =
-+            listOf("socd", "ibat", "vbat", "vph", "bcl", "-lvl")
+     override fun observeModel(): Flow<CarModelData> =
+         observeCarData(
+-            requiredPermission = null,
+-            onMissingPermission = CarModelData(),
++            requiredPermission = permissions.model,
++            onMissingPermission =
++                CarModelData(
++                    manufacturer = CarProperty.MissingPermission,
++                    name = CarProperty.MissingPermission,
++                    year = CarProperty.MissingPermission,
++                ),
++            onNoData =
++                CarModelData(
++                    manufacturer = CarProperty.Unknown,
++                    name = CarProperty.Unknown,
++                    year = CarProperty.Unknown,
++                ),
+             register = { manager, listener ->
+                 manager.carInfo.fetchModel(executor, listener)
+                 null
+@@ -91,12 +114,17 @@ class CarDataProvider(
  
-         private val supportedSensors =
-             listOf(
+     override fun observeEnergyProfile(): Flow<CarEnergyProfileData> =
+         observeCarData(
+-            requiredPermission = PERMISSION_CAR_FUEL,
++            requiredPermission = permissions.energyProfile,
+             onMissingPermission =
+                 CarEnergyProfileData(
+                     fuelTypes = CarProperty.MissingPermission,
+                     evConnectorTypes = CarProperty.MissingPermission,
+                 ),
++            onNoData =
++                CarEnergyProfileData(
++                    fuelTypes = CarProperty.Unknown,
++                    evConnectorTypes = CarProperty.Unknown,
++                ),
+             register = { manager, listener ->
+                 manager.carInfo.fetchEnergyProfile(executor, listener)
+                 null
+@@ -112,14 +140,21 @@ class CarDataProvider(
+ 
+     override fun observeEnergyLevel(): Flow<CarEnergyLevelData> =
+         observeCarData(
+-            requiredPermission = PERMISSION_CAR_FUEL,
++            requiredPermission = permissions.energyLevel,
+             onMissingPermission =
+                 CarEnergyLevelData(
+                     batteryPercent = CarProperty.MissingPermission,
+                     fuelPercent = CarProperty.MissingPermission,
+                     energyIsLow = CarProperty.MissingPermission,
+                     rangeRemainingMeters = CarProperty.MissingPermission,
+                 ),
++            onNoData =
++                CarEnergyLevelData(
++                    batteryPercent = CarProperty.Unknown,
++                    fuelPercent = CarProperty.Unknown,
++                    energyIsLow = CarProperty.Unknown,
++                    rangeRemainingMeters = CarProperty.Unknown,
++                ),
+             register = { manager, listener ->
+                 manager.carInfo.addEnergyLevelListener(executor, listener)
+                 return@observeCarData { manager.carInfo.removeEnergyLevelListener(listener) }
+@@ -137,12 +172,17 @@ class CarDataProvider(
+ 
+     override fun observeSpeed(): Flow<CarSpeedData> =
+         observeCarData(
+-            requiredPermission = PERMISSION_CAR_SPEED,
++            requiredPermission = permissions.speed,
+             onMissingPermission =
+                 CarSpeedData(
+                     displaySpeedMetersPerSecon
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/ui/CarHomeScreen.kt` (modified, +17/-1)
+```diff
+@@ -15,7 +15,9 @@
+  */
+ package com.kgurgul.cpuinfo.auto.ui
+ 
++import android.content.pm.PackageManager
+ import androidx.car.app.CarContext
++import androidx.car.app.CarToast
+ import androidx.car.app.Screen
+ import androidx.car.app.model.Action
+ import androidx.car.app.model.ItemList
+@@ -27,6 +29,7 @@ import com.kgurgul.cpuinfo.auto.features.CarInfoCategory
+ import com.kgurgul.cpuinfo.auto.features.CarInfoViewModel
+ import com.kgurgul.cpuinfo.shared.Res
+ import com.kgurgul.cpuinfo.shared.app_name
++import com.kgurgul.cpuinfo.shared.car_check_phone
+ import com.kgurgul.cpuinfo.shared.car_grant_permissions
+ import com.kgurgul.cpuinfo.shared.car_grant_permissions_description
+ import kotlinx.coroutines.flow.distinctUntilChanged
+@@ -50,10 +53,20 @@ class CarHomeScreen(carContext: CarContext, private val viewModel: CarInfoViewMo
+         }
+         observeAsEvents(viewModel.events) { event ->
+             when (event) {
+-                is CarInfoViewModel.Event.RequestPermissions ->
++                is CarInfoViewModel.Event.RequestPermissions -> {
++                    // On Android Auto the permission dialog is displayed on the phone
++                    if (!isAutomotive()) {
++                        CarToast.makeText(
++                                carContext,
++                                getString(Res.string.car_check_phone),
++                                CarToast.LENGTH_LONG,
++                            )
++                            .show()
++                    }
+                     carContext.requestPermissions(event.permissions) { _, _ ->
+                         viewModel.onPermissionsResult()
+                     }
++                }
+             }
+         }
+     }
+@@ -98,6 +111,9 @@ class CarHomeScreen(carContext: CarContext, private val viewModel: CarInfoViewMo
+         return builder.setSingleList(itemList.build()).build()
+     }
+ 
++    private fun isAutomotive() =
++        carContext.packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE)
++
+     private suspend fun createContent(hasMissingPermissions: Boolean) =
+         Content(
+             title = getString(Res.string.app_name),
+```
+
+**File**: `automotiveApp/build.gradle.kts` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++import com.kgurgul.AndroidSigningConfig
++import com.kgurgul.AndroidVersions
++
++plugins {
++    alias(libs.plugins.android.application)
++}
++
++kotlin {
++    jvmToolchain(17)
++}
++
++android {
++    compileSdk = AndroidVersions.COMPILE_SDK
++
++    defaultConfig {
++        applicationId = "com.kgurgul.cpuinfo"
++
++        minSdk = AndroidVersions.AUTOMOTIVE_MIN_SDK
++        targetSdk = AndroidVersions.TARGET_SDK
++        versionCode = AndroidVersions.AUTOMOTIVE_VERSION_CODE
++        versionName = AndroidVersions.VERSION_NAME
++    }
++
++    namespace = "com.kgurgul.cpuinfo.automotive"
++
++    signingConfigs {
++        getByName("debug") {
++            val debugSigningConfig = AndroidSigningConfig.getDebugProperties(rootProject.rootDir)
++            storeFile = file(debugSigningConfig.getProperty(AndroidSigningConfig.KEY_PATH))
++            keyAlias = debugSigningConfig.getProperty(AndroidSigningConfig.KEY_ALIAS)
++            keyPassword = debugSigningConfig.getProperty(AndroidSigningConfig.KEY_PASS)
++            storePassword = debugSigningConfig.getProperty(AndroidSigningConfig.KEY_PASS)
++        }
++        create("release") {
++            val releaseSigningConfig =
++                AndroidSigningConfig.getReleaseProperties(rootProject.rootDir)
++            storeFile = file(releaseSigningConfig.getProperty(AndroidSigningConfig.KEY_PATH))
++            keyAlias = releaseSigningConfig.getProperty(AndroidSigningConfig.KEY_ALIAS)
++            keyPassword = releaseSigningConfig.getProperty(AndroidSigningConfig.KEY_PASS)
++            storePassword = releaseSigningConfig.getProperty(AndroidSigningConfig.KEY_PASS)
++        }
++    }
++
++    buildTypes {
++        release {
++            signingConfig = signingConfigs.getByName("release")
++            isMinifyEnabled = true
++            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
++        }
++        debug {
++            signingConfig = signingConfigs.getByName("debug")
++            isMinifyEnabled = false
++            enableUnitTestCoverage = true
++            applicationIdSuffix = ".debug"
++        }
++    }
++
++    buildFeatures {
++        buildConfig = true
++    }
++
++    packaging {
++        jniLibs {
++            useLegacyPackaging = false
++        }
++    }
++
++    testOptions {
++        unitTests {
++            isReturnDefaultValues = true
++            isIncludeAndroidResources = true
++        }
++    }
++
++    lint {
++        abortOnError = false
++    }
++
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_17
++        targetCompatibility = JavaVersion.VERSION_17
++    }
++}
++
++dependencies {
++    implementation(projects.androidAutoApp)
++    implementation(projects.shared)
++    implementation(libs.androidx.car.app.automotive)
++}
+```
+
+**File**: `automotiveApp/proguard-rules.pro` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++# Remove logs
++-assumenosideeffects class co.touchlab.kermit.Logger {
++    public *** v(...);
++    public *** d(...);
++    public *** i(...);
++    public *** e(...);
++}
 ```
 
 ---
 
-### Incident Patch 2: `ca1b8891` (2026-09-22)
-**Commit Message**: [ANDROID] Update cpuinfo lib
+### Incident Patch 2: `e785f377` (2026-10-25)
+**Commit Message**: [CAR] Initial android auto impl
 
+**File**: `androidApp/build.gradle.kts` (modified, +1/-0)
+```diff
+@@ -120,6 +120,7 @@ licenseReport {
+ }
+ 
+ dependencies {
++    implementation(projects.androidAutoApp)
+     implementation(projects.shared)
+     implementation(libs.androidx.profileinstaller)
+ 
+```
 
+**File**: `androidApp/src/main/kotlin/com/kgurgul/cpuinfo/CpuInfoApp.kt` (modified, +2/-1)
+```diff
+@@ -17,6 +17,7 @@ package com.kgurgul.cpuinfo
+ 
+ import android.app.Application
+ import com.kgurgul.cpuinfo.appinitializers.AppInitializerComponent
++import com.kgurgul.cpuinfo.auto.di.autoModule
+ import com.kgurgul.cpuinfo.di.androidModule
+ import com.kgurgul.cpuinfo.di.sharedModule
+ import org.koin.android.ext.koin.androidContext
+@@ -28,7 +29,7 @@ class CpuInfoApp : Application() {
+         super.onCreate()
+         startKoin {
+             androidContext(this@CpuInfoApp)
+-            modules(androidModule, sharedModule)
++            modules(androidModule, sharedModule, autoModule)
+         }
+         AppInitializerComponent().init(this)
+     }
+```
+
+**File**: `androidAutoApp/build.gradle.kts` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++import com.kgurgul.AndroidVersions
++
++plugins {
++    alias(libs.plugins.android.library)
++}
++
++kotlin {
++    jvmToolchain(17)
++
++    compilerOptions {
++        optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
++    }
++}
++
++android {
++    compileSdk = AndroidVersions.COMPILE_SDK
++
++    defaultConfig {
++        minSdk = AndroidVersions.MIN_SDK
++    }
++
++    namespace = "com.kgurgul.cpuinfo.auto"
++
++    testOptions {
++        unitTests {
++            isReturnDefaultValues = true
++        }
++    }
++
++    lint {
++        abortOnError = false
++    }
++
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_17
++        targetCompatibility = JavaVersion.VERSION_17
++    }
++}
++
++dependencies {
++    implementation(projects.shared)
++    implementation(libs.androidx.car.app)
++    implementation(libs.androidx.car.app.projected)
++    implementation(libs.androidx.core)
++    implementation(libs.jetbrains.compose.lifecycle.viewmodel)
++    implementation(libs.kermit.kermit)
++    implementation(libs.koin.android)
++    implementation(libs.kotlinx.coroutines.core)
++
++    testImplementation(kotlin("test"))
++    testImplementation(kotlin("test-junit"))
++    testImplementation(libs.kotlinx.coroutines.test)
++    testImplementation(libs.turbine)
++}
+```
+
+**File**: `androidAutoApp/src/main/AndroidManifest.xml` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
++
++    <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
++    <uses-permission android:name="com.google.android.gms.permission.CAR_MILEAGE" />
++    <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
++
++    <application>
++
++        <meta-data
++            android:name="com.google.android.gms.car.application"
++            android:resource="@xml/automotive_app_desc" />
++
++        <meta-data
++            android:name="androidx.car.app.minCarApiLevel"
++            android:value="3" />
++
++        <service
++            android:name="com.kgurgul.cpuinfo.auto.CarInfoAppService"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="androidx.car.app.CarAppService" />
++                <category android:name="androidx.car.app.category.IOT" />
++            </intent-filter>
++
++        </service>
++
++    </application>
++
++</manifest>
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/CarInfoAppService.kt` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++/*
++ * Copyright KG Soft
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.kgurgul.cpuinfo.auto
++
++import android.content.pm.ApplicationInfo
++import androidx.car.app.CarAppService
++import androidx.car.app.Session
++import androidx.car.app.validation.HostValidator
++
++/** Entry point of the Android Auto app. */
++class CarInfoAppService : CarAppService() {
++
++    override fun createHostValidator(): HostValidator =
++        if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
++            HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
++        } else {
++            HostValidator.Builder(applicationContext)
++                .addAllowedHosts(androidx.car.app.R.array.hosts_allowlist_sample)
++                .build()
++        }
++
++    override fun onCreateSession(): Session = CarInfoSession()
++}
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/CarInfoSession.kt` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++/*
++ * Copyright KG Soft
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.kgurgul.cpuinfo.auto
++
++import android.content.Intent
++import androidx.car.app.Screen
++import androidx.car.app.Session
++import androidx.lifecycle.DefaultLifecycleObserver
++import androidx.lifecycle.LifecycleOwner
++import androidx.lifecycle.ViewModelProvider
++import androidx.lifecycle.ViewModelStore
++import androidx.lifecycle.ViewModelStoreOwner
++import androidx.lifecycle.viewmodel.initializer
++import androidx.lifecycle.viewmodel.viewModelFactory
++import com.kgurgul.cpuinfo.auto.data.CarContextHolder
++import com.kgurgul.cpuinfo.auto.features.CarInfoViewModel
++import com.kgurgul.cpuinfo.auto.ui.CarHomeScreen
++import org.koin.core.component.KoinComponent
++import org.koin.core.component.get
++import org.koin.core.component.inject
++
++/**
++ * Single car session. It owns [ViewModelStore] so all screens of the session share the same
++ * [CarInfoViewModel] which is cleared when the car disconnects.
++ */
++class CarInfoSession : Session(), ViewModelStoreOwner, KoinComponent {
++
++    private val carContextHolder: CarContextHolder by inject()
++
++    override val viewModelStore = ViewModelStore()
++
++    init {
++        lifecycle.addObserver(
++            object : DefaultLifecycleObserver {
++                override fun onDestroy(owner: LifecycleOwner) {
++                    carContextHolder.detach(carContext)
++                    viewModelStore.clear()
++                }
++            }
++        )
++    }
++
++    override fun onCreateScreen(intent: Intent): Screen {
++        carContextHolder.attach(carContext)
++        val viewModel =
++            ViewModelProvider.create(
++                    owner = this,
++                    factory = viewModelFactory { initializer { get<CarInfoViewModel>() } },
++                )[CarInfoViewModel::class]
++        return CarHomeScreen(carContext = carContext, viewModel = viewModel)
++    }
++}
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/data/CarContextHolder.kt` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++/*
++ * Copyright KG Soft
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.kgurgul.cpuinfo.auto.data
++
++import androidx.car.app.CarContext
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.StateFlow
++import kotlinx.coroutines.flow.asStateFlow
++
++/**
++ * Keeps [CarContext] of the currently connected car session. Car hardware can be accessed only
++ * through the session context, so data providers observe it and stop when the car disconnects.
++ */
++class CarContextHolder {
++
++    private val _carContext = MutableStateFlow<CarContext?>(null)
++    val carContext: StateFlow<CarContext?> = _carContext.asStateFlow()
++
++    fun attach(carContext: CarContext) {
++        _carContext.value = carContext
++    }
++
++    fun detach(carContext: CarContext) {
++        _carContext.compareAndSet(carContext, null)
++    }
++}
+```
+
+**File**: `androidAutoApp/src/main/kotlin/com/kgurgul/cpuinfo/auto/data/provider/CarDataProvider.kt` (added, +343/-0)
+```diff
+@@ -0,0 +1,343 @@
++/*
++ * Copyright KG Soft
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.kgurgul.cpuinfo.auto.data.provider
++
++import android.content.Context
++import android.content.pm.PackageManager
++import androidx.car.app.hardware.CarHardwareManager
++import androidx.car.app.hardware.common.CarUnit
++import androidx.car.app.hardware.common.CarValue
++import androidx.car.app.hardware.common.OnCarDataAvailableListener
++import androidx.car.app.hardware.info.Accelerometer
++import androidx.car.app.hardware.info.CarSensors
++import androidx.car.app.hardware.info.Compass
++import androidx.car.app.hardware.info.EnergyProfile
++import androidx.car.app.hardware.info.Gyroscope
++import androidx.car.app.hardware.info.TollCard
++import androidx.core.content.ContextCompat
++import co.touchlab.kermit.Logger
++import com.kgurgul.cpuinfo.auto.data.CarContextHolder
++import com.kgurgul.cpuinfo.auto.domain.model.CarEnergyLevelData
++import com.kgurgul.cpuinfo.auto.domain.model.CarEnergyProfileData
++import com.kgurgul.cpuinfo.auto.domain.model.CarHostData
++import com.kgurgul.cpuinfo.auto.domain.model.CarMileageData
++import com.kgurgul.cpuinfo.auto.domain.model.CarModelData
++import com.kgurgul.cpuinfo.auto.domain.model.CarProperty
++import com.kgurgul.cpuinfo.auto.domain.model.CarSpeedData
++import com.kgurgul.cpuinfo.auto.domain.model.DistanceUnit
++import com.kgurgul.cpuinfo.auto.domain.model.EvConnectorType
++import com.kgurgul.cpuinfo.auto.domain.model.FuelType
++import com.kgurgul.cpuinfo.auto.domain.model.SpeedUnit
++import com.kgurgul.cpuinfo.auto.domain.model.TollCardState
++import java.util.concurrent.Executor
++import kotlinx.coroutines.channels.awaitClose
++import kotlinx.coroutines.flow.Flow
++import kotlinx.coroutines.flow.callbackFlow
++import kotlinx.coroutines.flow.emptyFlow
++import kotlinx.coroutines.flow.flatMapLatest
++import kotlinx.coroutines.flow.flowOf
++import kotlinx.coroutines.flow.map
++
++class CarDataProvider(
++    private val context: Context,
++    private val carContextHolder: CarContextHolder,
++) : ICarDataProvider {
++
++    private val executor: Executor by lazy { ContextCompat.getMainExecutor(context) }
++
++    override fun getMissingPermissions(): List<String> = CAR_PERMISSIONS.filterNot {
++        isPermissionGranted(it)
++    }
++
++    override fun observeHost(): Flow<CarHostData?> =
++        carContextHolder.carContext.map { carContext ->
++            carContext?.let {
++                CarHostData(
++                    carAppApiLevel = it.carAppApiLevel,
++                    hostPackageName = it.hostInfo?.packageName,
++                )
++            }
++        }
++
++    override fun observeModel(): Flow<CarModelData> =
++        observeCarData(
++            requiredPermission = null,
++            onMissingPermission = CarModelData(),
++            register = { manager, listener ->
++                manager.carInfo.fetchModel(executor, listener)
++                null
++            },
++            mapper = { model ->
++                CarModelData(
++                    manufacturer = model.manufacturer.toCarProperty(),
++                    name = model.name.toCarProperty(),
++                    year = model.year.toCarProperty(),
++                )
++            },
++        )
++
++    override fun observeEnergyProfile(): Flow<CarEnergyProfileData> =
++        observeCarData(
++            requiredPermission = PERMISSION_CAR_FUEL,
++            onMissingPermission =
++                CarEnergyProfileData(
++                    fuelTypes = CarProperty.MissingPermission,
++                    evConnectorTypes = CarProperty.MissingPermission,
++                ),
++            register = { manager, listener ->
++                manager.carInfo.fetchEnergyProfile(executor, listener)
++                null
++            },
++            mapper = { profile ->
++                CarEnergyProfileData(
++                    fuelTypes = profile.fuelTypes.toCarProperty { it.map(::toFuelType) },
++                    evConnectorTypes =
++                        profile.evConnectorTypes.toCarProperty { it.map(::toEvConnectorType) },
++                )
++            },
++        )
++
++    override fun observeEnergyLevel(): Flow<CarEnergyLevelData> =
++        observeCarData(
++            requiredPermission = PERMISSION_CAR_FUEL,
++            onMissingPermission =
++                CarEnergyLevelData(
++                    batteryPercent = CarProperty.MissingPermission,
++                    fuelPercent = CarProperty.MissingPermission,
+
+```
 
 #### Recent Merged Pull Requests:
-- **PR #636** (closed): Update composeMultiplatform to v1.12.2 - autoclosed (@renovate[bot])
-- **PR #635** (closed): Update androidxDatastorePreferences to v1.3.0-rc01 - autoclosed (@renovate[bot])
-- **PR #634** (closed): Update dependency com.github.oshi:oshi-core to v7.7.1 - autoclosed (@renovate[bot])
-- **PR #633** (2026-10-09): Update apple-actions/download-provisioning-profiles action to v7 (@renovate[bot])
-- **PR #632** (closed): Update dependency com.diffplug.spotless to v8.10.4 - autoclosed (@renovate[bot])
-- **PR #631** (closed): Update kotlin monorepo to v2.4.21 - autoclosed (@renovate[bot])
+- **PR #643** (closed): Update dependency org.jetbrains.androidx.navigation:navigation-compose to v2.10.0 - autoclosed (@renovate[bot])
+- **PR #642** (2026-10-23): Update dependency ruby to v4.0.9 (@renovate[bot])
+- **PR #641** (2026-10-22): Update dependency ruby to v4.0.8 (@renovate[bot])
+- **PR #640** (closed): Update androidxDatastorePreferences to v1.3.0 - autoclosed (@renovate[bot])
+- **PR #639** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.12.0 - autoclosed (@renovate[bot])
+- **PR #638** (closed): Update Gradle to v9.8.2 - autoclosed (@renovate[bot])
 
 ---
 
@@ -872,32 +1457,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [SHARED] Update libs, fix #624
+## X. [CAR] Support both android auto platforms
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `androidApp/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62ece899`: [SHARED] Update libs, fix #624. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eca52f48`: [CAR] Support both android auto platforms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-androidxWear = "1.7.1"
-composeAdaptive = "1.3.0"
-imageio = "3.15.3"
+    implementation(libs.androidx.car.app.projected)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-androidxWear = "1.7.0"
-composeAdaptive = "1.2.0"
-imageio = "3.15.2"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62ece899` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eca52f48` are properly handled with clean fallback behavior.

@@ -5075,3 +5075,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `57e72b32` | Multi-dimensional audit evidence | 2026-10-26T00:54:50.692Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `3fbef5ba` | Multi-dimensional audit evidence | 2026-10-26T01:01:04.453Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-26T01:01:11.249Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `3d8ca28e` | Multi-dimensional audit evidence | 2026-10-26T01:10:17.779Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `eca52f48` | Multi-dimensional audit evidence | 2026-10-26T01:10:18.323Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `7f902bd3` | Multi-dimensional audit evidence | 2026-10-26T01:10:18.436Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `febdfe08` | Multi-dimensional audit evidence | 2026-10-26T01:10:25.448Z |

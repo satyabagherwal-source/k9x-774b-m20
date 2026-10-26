@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T01:01:11.252Z",
-  "total_cycles_completed": 5045,
-  "total_learnings_persisted": 5045,
-  "total_rules_promoted": 4407,
+  "last_updated": "2026-10-26T01:10:25.453Z",
+  "total_cycles_completed": 5049,
+  "total_learnings_persisted": 5049,
+  "total_rules_promoted": 4410,
   "history": [
-    {
-      "timestamp": "2026-10-25T15:03:18.560Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:03:20.172Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:03:27.206Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:09:45.740Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T15:09:53.921Z",
       "repository": "goss-org/goss",
@@ -1403,6 +1375,34 @@
       "repository": "google/vit-base-patch16-224",
       "learningId": "learn-huggingface-google-vit-base-patch16-224",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:10:17.783Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:10:18.328Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:10:18.441Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:10:25.453Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

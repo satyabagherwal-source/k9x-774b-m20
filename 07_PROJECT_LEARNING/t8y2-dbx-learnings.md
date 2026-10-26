@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `827d551c`  
+> **Source Version**: `febdfe08`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:11:17.074Z  
+> **Timestamp**: 2026-10-26T01:10:25.067Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:11:15.552Z  
+> **Harvest Timestamp**: 2026-10-26T01:10:25.058Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27714 stars
+- **Stars / Engagement**: 27740 stars
 
 ---
 
@@ -291,6 +291,8 @@ mod tests {
 ```
 use std::collections::{HashMap, HashSet};
 use std::future::Future;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, LazyLock, Mutex as StdMutex};
 use std::time::{Duration, Instant};
 
 use anyhow::{anyhow, bail, Context, Result};
@@ -311,7 +313,26 @@ use crate::model::{
 };
 use crate::value::borrowed_value_to_json;
 
-const TABLE_CACHE_TTL: Duration = Duration::from_secs(10);
+/// 表列表快照的兜底有效期。
+///
+/// 本进程内执行的可能改变元数据的 SQL 会立刻让快照失效，这里只兜住「其他客户端/其他
+/// 实例」造成的元数据变化：最长延迟一分钟能看到新表。大库扫描很贵，不能按每次翻页重扫。
+const TABLE_CACHE_TTL: Duration = Duration::from_secs(60);
+
+/// 进程级表快照缓存。
+///
+/// core 的侧栏翻页会为每次请求新开一个 ephemeral metadata session（随机 session id，
+/// 请求结束即关闭，见 `crates/dbx-core/src/schema/mod.rs` 的 `EphemeralAgentMetadataSession`），
+/// driver 随该会话创建和销毁，实例级缓存无法跨请求命中。快照因此放到进程级，按
+/// 「连接指纹 + 数据库」复用；键里带连接指纹，避免多个连接共用同一 agent 进程时串数据。
+static TABLE_SNAPSHOTS: LazyLock<StdMutex<HashMap<String, TableSnapshot>>> = LazyLock::new(Default::default);
+
+/// 元数据代数。
+///
+/// 任一会话执行 CREATE/DROP/ALTER 等语句后自增，使其他会话里已缓存的快照立即失效，
+/// 避免「在 SQL 编辑器里建了表，侧栏却要等 TTL 才看得到」。
+static METADATA_GENERATION: AtomicU64 = AtomicU64::new(0);
+
 const QUERY_SESSION_IDLE_TIMEOUT: Duration = Duration::from_secs(10 * 60);
 const DEFAULT_CONNECT_TIMEOUT: Duration = Duration::from_secs(15);
 
@@ -322,13 +343,14 @@ pub struct TdengineDriver {
     session_timezone: Option<Tz>,
     current_database: String,
     query_sessions: HashMap<String, QueryCursor>,
-    table_cache: Option<TableCache>,
 }
 
-struct TableCache {
-    database: String,
+struct TableSnapshot {
     loaded_at: Instant,
-    tables: Vec<TableInfo>,
+    /// 生成该快照时的 `METADATA_GENERATION`，与当前值不一致即视为过期。
+    generation: u64,
+    /// 共享给所有分页请求，命中缓存时只增加引用计数，不复制整份列表。
+    tables: Arc<Vec<TableInfo>>,
 }
 
 struct QueryCursor {
@@ -355,7 +377,6 @@ impl TdengineDriver {
             session_timezone: None,
             current_database: String::new(),
             query_sessions: HashMap::new(),
-            table_cache: None,
         }
     }
 
@@ -392,7 +413,6 @@ impl TdengineDriver {
 
     pub async fn disconnect(&mut self) {
         self.query_sessions.clear();
-        self.table_cache = None;
         self.server_version = None;
         self.session_timezone = None;
         self.current_database.clear();
@@ -449,11 +469,10 @@ impl TdengineDriver {
             return Ok(Vec::new());
         }
         let database = effective_database(database, &self.current_database)?.to_string();
-        // `SHOW <db>.TABLES` / `SHOW <db>.STABLES` are unordered, so a server-side page
-        // offset can skip or repeat rows between two requests. Always read the full
-        // (sorted, cached) list and slice it locally instead.
+        // 元数据接口的返回顺序没有保证，服务端翻页会让 offset 在两次请求间跳行；
+        // 这里始终读取完整列表（进程级快照），在本地排序切片。
         let tables = self.all_tables(&database, token).await?;
-        Ok(filter_tables(tables, &constraints))
+        Ok(filter_tables(tables.as_slice(), &constraints))
     }
 
     pub async fn list_objects(
@@ -529,19 +548,7 @@ impl TdengineDriver {
         let include_databases = allowed.contains("database") || allowed.contains("schema");
         let include_tables = allowed.is_empty() || allowed.contains("table") || allowed.contains("view");
         let include_columns = allowed.contains("column");
-        let max_results = if request.max_results == 0 { 100 } else { request.max_results.min(1000) };
-        let mut candidates = Vec::new();
-        let requested_database = if !request.parent_schema.trim().is_empty() {
-            request.parent_schema.trim()
-        } else if !request.schema.trim().is_empty() {
-            request.schema.trim()
-        } else {
-            request.database.trim()
-        };
-        let databases = if request.global_search || (include_databases && requested_database.is_empty()) {
-            self.list_databases(token).await?.into_iter().map(|database| database.name).collect()
-        } else {
-            vec![effective_database(requested_database, &self.current_database)?.t
+        let max_results = if request.max_results == 0 { 100 } else { request.max_results.min(1000
 ```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/lib.rs`
@@ -2090,673 +2097,502 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `403e4fe8` (2026-10-25)
-**Commit Message**: fix(kafka): parallelize legacy group queries and recover failed agents
+### Incident Patch 1: `afc9374f` (2026-10-25)
+**Commit Message**: fix(sql): keep top-level SQL Server BEGIN blocks as one batch
 
-**File**: `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java` (modified, +68/-36)
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +79/-0)
 ```diff
-@@ -41,6 +41,8 @@ public final class KafkaAgent {
-     private static final PrintStream JSON_RPC_OUT = System.out;
-     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
-     private static final int DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
-+    private static final int MAX_GROUP_QUERY_ADMINS = 12;
-+    private static final int GROUPS_PER_QUERY_ADMIN = 16;
-     private static final int MAX_PEEK_MESSAGE_COUNT = 100;
-     private static final int MAX_PEEK_SCAN_RECORDS = 1_000;
-     private static final int DEFAULT_SESSION_TIMEOUT_MS = 30_000;
-@@ -66,6 +68,7 @@ public final class KafkaAgent {
-     ));
+@@ -2510,6 +2510,85 @@ WHERE t2.product_name = '12345'
+     expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRAN", "UPDATE dbo.T SET x = 1", "COMMIT"]);
+   });
  
-     private static AdminClient adminClient;
-+    private static final List<AdminClient> groupQueryAdmins = new ArrayList<>();
-     private static KafkaProducer<String, byte[]> producer;
-     private static JsonObject activeConnection;
-     private static volatile boolean shutdownRequested;
-@@ -160,8 +163,8 @@ private static Object dispatch(String method, JsonObject params) throws Exceptio
-             case "mq_get_topic_config" -> getTopicConfig(params);
-             case "mq_alter_topic_config" -> alterTopicConfig(params);
-             // Consumer groups
--            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin());
--            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin());
-+            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
-+            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
-             case "mq_describe_consumer_group" -> describeConsumerGroup(params);
-             case "mq_delete_consumer_group" -> deleteConsumerGroup(params);
-             case "mq_reset_consumer_group_offsets" -> resetConsumerGroupOffsets(params);
-@@ -283,6 +286,10 @@ static boolean isAclDisabledError(Throwable error) {
-     }
- 
-     private static void closeClients() {
-+        for (AdminClient groupAdmin : groupQueryAdmins) {
-+            groupAdmin.close(Duration.ZERO);
-+        }
-+        groupQueryAdmins.clear();
-         if (adminClient != null) {
-             adminClient.close(Duration.ofSeconds(5));
-             adminClient = null;
-@@ -1035,7 +1042,56 @@ static Map<String, ConsumerGroupDescription> awaitGroupDescriptions(
-         return descriptions;
-     }
- 
-+    private static List<Admin> consumerGroupAdmins(int groupCount) {
-+        int count = Math.min(MAX_GROUP_QUERY_ADMINS, (groupCount + GROUPS_PER_QUERY_ADMIN - 1) / GROUPS_PER_QUERY_ADMIN);
-+        while (groupQueryAdmins.size() < count - 1) {
-+            groupQueryAdmins.add(buildAdminClient(activeConnection));
-+        }
-+        List<Admin> admins = new ArrayList<>();
-+        admins.add(adminClient);
-+        admins.addAll(groupQueryAdmins.subList(0, count - 1));
-+        return admins;
-+    }
++  const sqlServerTryCatchBatch = [
++    "SET XACT_ABORT ON;",
++    "",
++    "BEGIN TRY",
++    "    BEGIN TRANSACTION;",
++    "",
++    "    UPDATE [dbo].[Documents]",
++    "    SET [Deleted] = 0",
++    "    WHERE [Deleted] = 1;",
++    "",
++    "    DECLARE @Updated int = @@ROWCOUNT;",
++    "",
++    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
++    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
++    "",
++    "    COMMIT TRANSACTION;",
++    "",
++    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
++    "END TRY",
++    "BEGIN CATCH",
++    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
++    "    THROW;",
++    "END CATCH;",
++  ].join("\n");
++  // The batch range starts at the real `BEGIN TRY` token, so the blank line
++  // and semicolon around the statement are not part of it.
++  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
 +
-+    private record ConsumerGroupQueries(
-+        DescribeConsumerGroupsResult descriptions,
-+        Map<String, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> offsets
-+    ) {}
++  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
++  // must execute as one batch — splitting it at the top-level `;` sends
++  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
++  it("keeps a SQL Server top-level TRY/CATCH script as one batch after the leading statement", () => {
++    const ranges = executableStatementRanges(sqlServerTryCatchBatch, "sqlserver");
 +
-+    private static ConsumerGroupQueries startConsumerGroupQueries(List<String> groupIds, List<Admin> admins, long deadline) {
-+        Map<String, KafkaFuture<ConsumerGroupDescription>> descriptions = new LinkedHashMap<>();
-+        Map<String, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> offsets = new LinkedHashMap<>();
-+        // Older brokers cannot batch coordinator lookups or offset fetches, and
-+        // Kafka Admin allows one in-flight request per connection. Independent
-+        // clients bound that otherwise sequential work for large group lists.
-+        for (int index = 0; index < admins.size(); index++) {
-+            List<String> shard = new ArrayList<>();
-+            Map<String, ListConsumerGroupOffsetsSpec> specs = new LinkedHashMap<>();
-+            for (int groupIndex = index; groupIndex < groupIds.size(); groupIndex += admins.size()) {
-+                String groupId = groupIds.get(groupIndex);
-+                shard.add(groupId);
-+                specs.put(groupId, new ListConsumerGroupOffsetsSpec());
-+            }
-+            if (shard.isEmpty()) continue;
-+            Admin admin = admins.get(index);
-+            ListConsumerGroupOffsetsResult result = admin.listConsumerGroupOffsets(
-+                specs, new ListConsumerGroupOffsetsOptions().timeoutMs((int) remainingMillis(deadline))
-+            );
-+            descriptions.putAll(admin.describeConsumerGroups(
-+                shard, new DescribeConsumerGroupsOptions().timeoutMs((int) remainingMillis(deadline))
-+            ).describedGroups());
-+            for (String groupId : shard) {
-+                offsets.put(groupId, result.partitionsToOffsetAndMetadata(groupId));
-+            }
-+        }
-+        return new ConsumerGroupQueries(new DescribeConsumerGroupsResult(descriptions), offsets);
-+    }
++    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange]);
++  });
 +
-     static Object listConsumerGroups(JsonObje
++  it("keeps the statement after END CATCH as its own SQL Server range", () => {
++    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\nSELECT 999;`, "sqlserver");
++
++    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SELECT 999"]);
++  });
++
++  it("keeps two consecutive SQL Server TRY/CATCH scripts as two ranges", () => {
++    const second = sqlServerTryCatchBatch.replace(/\[dbo\]\.\[Documents\]/g, "[dbo].[Docs]");
++    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\n${second};`, "sqlserver");
++
++    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SET XACT_ABORT ON", second.slice(second.indexOf("BEGIN TRY")).replace(/;$/, "")]);
++  });
++
++  it("keeps a SQL Server top-level plain BEGIN/END block whole", () => {
++    const sql = ["BEGIN", "    SELECT 1;", "    SELECT 2;", "END"].join("\n");
++    const ranges = executableStatementRanges(sql, "sqlserver");
++
++    expect(rangeSqlTexts(ranges)).toEqual([sql]);
++  });
++
++  // A bare `BEGIN` is the first keystroke of every SQL Server block: the merge
++  // reads the word after `BEGIN` to tell a block from `BEGIN TRAN`, and a
++  // missing token must not be treated as one (it crashed the splitter).
++  it("splits a lone SQL Server BEGIN without merging", () => {
++    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN", "sqlserver"))).toEqual(["BEGIN"]);
++  });
++
++  it("splits a SQL Server BEGIN terminated by a semicolon without merging", () => {
++    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN;", "sqlserver"))).toEqual(["BEGIN"]);
++  });
++
++  it("splits a SQL Server BEGIN followed by a comment without merging", () => {
++    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN -- draft block", "sqlserver"))).toEqual(["BEGIN"]);
++  });
++
++  it("ends a SQL Server TRY batch without a CATCH at END TRY", () => {
++    const sql = ["BEGIN TRY", "    SELECT 1;", "END TRY", "SELECT 999;"].join("\n");
++    const ranges = executableStatementRanges(sql, "sqlserver");
++
++    expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRY\n    SELECT 1;\nEND TRY", "SELECT 999"]);
++  });
++
+   // The depth carried across fragments decides where a batch ends: fragments
+   // after the closing `END` are independent statements, so every following
+   // statement keeps its own execution icon.
 ```
 
-**File**: `agents/drivers/kafka/src/test/java/com/dbx/agent/kafka/KafkaAgentTest.java` (modified, +125/-18)
+**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +48/-10)
 ```diff
-@@ -187,8 +187,21 @@ void groupDescriptionsShareOneDeadlineInsteadOfOneTimeoutPerGroup() {
- 
-     @ParameterizedTest
-     @ValueSource(booleans = {true, false})
--    void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snapshot) throws Exception {
-+    void consumerGroupQueriesKeepCommittedTopicsWhenManyDescriptionsTimeOut(boolean snapshot) throws Exception {
-         TopicPartition partition = new TopicPartition("orders", 0);
-+        List<ConsumerGroupListing> listings = new ArrayList<>();
-+        Map<String, KafkaFuture<ConsumerGroupDescription>> descriptions = new LinkedHashMap<>();
-+        for (int index = 0; index < 197; index++) {
-+            String groupId = index == 0 ? "orders-service" : String.format("slow-group-%03d", index);
-+            listings.add(new ConsumerGroupListing(groupId, false));
-+            descriptions.put(groupId, index == 0
-+                ? KafkaFuture.completedFuture(new ConsumerGroupDescription(
-+                    groupId, false, List.of(), "", ConsumerGroupState.EMPTY, Node.noNode()
-+                ))
-+                : new KafkaFutureImpl<>());
-+        }
-+        AtomicInteger descriptionRequests = new AtomicInteger();
-+        AtomicInteger offsetRequests = new AtomicInteger();
-         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-         try {
-             Admin admin = (Admin) Proxy.newProxyInstance(Admin.class.getClassLoader(), new Class<?>[] {Admin.class},
-@@ -197,18 +210,16 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
-                         case "listConsumerGroups" -> {
-                             var constructor = ListConsumerGroupsResult.class.getDeclaredConstructor(KafkaFuture.class);
-                             constructor.setAccessible(true);
--                            yield constructor.newInstance(KafkaFuture.completedFuture(List.of(
--                                new ConsumerGroupListing("orders-service", false),
--                                new ConsumerGroupListing("slow-group", false)
--                            )));
-+                            yield constructor.newInstance(KafkaFuture.completedFuture(listings));
-+                        }
-+                        case "describeConsumerGroups" -> {
-+                            descriptionRequests.incrementAndGet();
-+                            assertEquals(197, ((java.util.Collection<?>) args[0]).size());
-+                            yield new DescribeConsumerGroupsResult(descriptions);
-                         }
--                        case "describeConsumerGroups" -> new DescribeConsumerGroupsResult(Map.of(
--                            "orders-service", KafkaFuture.completedFuture(new ConsumerGroupDescription(
--                                "orders-service", false, List.of(), "", ConsumerGroupState.EMPTY, Node.noNode()
--                            )),
--                            "slow-group", new KafkaFutureImpl<>()
--                        ));
-                         case "listConsumerGroupOffsets" -> {
-+                            offsetRequests.incrementAndGet();
-+                            assertEquals(197, ((Map<?, ?>) args[0]).size());
-                             // Model an offsets response that needs a small amount of network time.
-                             // If descriptions consumed the deadline before this request was sent,
-                             // the broker cannot return even these independently available offsets.
-@@ -223,10 +234,11 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
-                             }, Math.min(50, timeout), TimeUnit.MILLISECONDS);
-                             var constructor = ListConsumerGroupOffsetsResult.class.getDeclaredConstructor(Map.class);
-                             constructor.setAccessible(true);
--                            yield constructor.newInstance(Map.of(
--                                CoordinatorKey.byGroupId("orders-service"), offsets,
--                                CoordinatorKey.byGroupId("slow-group"), offsets
--                            ));
-+                            Map<CoordinatorKey, KafkaFuture<Map<TopicPartition, OffsetAndMetadata>>> groupOffsets = new LinkedHashMap<>();
-+                            for (ConsumerGroupListing listing : listings) {
-+                                groupOffsets.put(CoordinatorKey.byGroupId(listing.groupId()), offsets);
-+                            }
-+                            yield constructor.newInstance(groupOffsets);
-                         }
-                         case "listOffsets" -> new ListOffsetsResult(Map.of(
-                             partition, KafkaFuture.completedFuture(new ListOffsetsResult.ListOffsetsResultInfo(5, -1, Optional.empty()))
-@@ -237,23 +249,28 @@ void consumerGroupQueriesKeepCommittedTopicsWhenDescriptionsTimeOut(boolean snap
-             JsonObject params = new JsonObject();
-             par
-```
-
-**File**: `crates/dbx-core/src/admin/mq/adapters/kafka.rs` (modified, +162/-35)
-```diff
-@@ -10,12 +10,13 @@
- 
- use std::collections::HashMap;
- use std::sync::Arc;
-+use std::time::Duration;
- 
- use async_trait::async_trait;
- use serde::de::DeserializeOwned;
- use tokio::sync::Mutex;
- 
--use crate::db::agent_driver::{AgentDriverClient, AgentLaunchSpec};
-+use crate::db::agent_driver::{AgentCallError, AgentDriverClient, AgentLaunchSpec};
- use crate::mq::auth::MqAuth;
- use crate::mq::config::MqAdminConfig;
- use crate::mq::port::MessageQueueAdmin;
-@@ -59,27 +60,26 @@ const KAFKA_CAPABILITIES: MqCapabilities = MqCapabilities {
- };
- 
- pub struct KafkaAdmin {
--    client: Arc<Mutex<AgentDriverClient>>,
-+    client: Arc<Mutex<Option<AgentDriverClient>>>,
-     config: MqAdminConfig,
-+    launch: AgentLaunchSpec,
+@@ -1025,6 +1025,13 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
+     if (word === "END") {
+       if (next !== undefined && SQLSERVER_NON_BLOCK_END_KEYWORDS.has(next)) continue;
+       openBlocks -= 1;
++      // `END TRY` must be followed by `BEGIN CATCH` within the same batch
++      // (#13051): when the carried TRY block closes right where a CATCH block
++      // opens, the batch continues instead of ending at the pair — the
++      // following `BEGIN` re-opens the depth in its own branch below.
++      if (initialOpenBlocks > 0 && openBlocks === 0 && next === "TRY" && words[index + 2] === "BEGIN" && words[index + 3] === "CATCH") {
++        continue;
++      }
+       // Only the closure of the *carried* block is a statement boundary: a
+       // block opened and closed inside this fragment (`IF ... BEGIN ... END`
+       // in one piece) belongs to the statement that contains it. A closure
+@@ -1033,8 +1040,11 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
+       // branch tail carries no semicolon) must still be able to replace it;
+       // a closure followed by anything else is final.
+       if (initialOpenBlocks > 0 && openBlocks === 0 && (closedAt === null || wordAfterClose === "ELSE")) {
+-        closedAt = ends[index];
+-        wordAfterClose = next ?? "";
++        // `END TRY`/`END CATCH` are two-token closers; the statement boundary
++        // sits after the pair, not between `END` and its keyword.
++        const closesPairedKeyword = next === "TRY" || next === "CATCH";
++        closedAt = closesPairedKeyword ? (ends[index + 1] ?? ends[index]) : ends[index];
++        wordAfterClose = (closesPairedKeyword ? words[index + 2] : next) ?? "";
+       }
+       continue;
+     }
+@@ -1046,36 +1056,64 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
+   return { openBlocks, closedAt, wordAfterClose, sawBlockBegin, hasControlFlowElse };
  }
  
- impl KafkaAdmin {
-     /// Spawn the Kafka Java agent, perform handshake, and connect.
-     pub async fn new(cfg: MqAdminConfig, launch: AgentLaunchSpec) -> Result<Self, String> {
--        let mut client = AgentDriverClient::spawn(launch).await?;
-+        let client = Self::spawn_connected_client(&cfg, launch.clone()).await?;
-+        log::info!("Kafka admin connected via agent (bootstrap servers: {})", bootstrap_servers(&cfg));
-+        Ok(Self { client: Arc::new(Mutex::new(Some(client))), config: cfg, launch })
-+    }
- 
--        // Handshake
-+    async fn spawn_connected_client(cfg: &MqAdminConfig, launch: AgentLaunchSpec) -> Result<AgentDriverClient, String> {
-+        let mut client = AgentDriverClient::spawn(launch).await?;
-         let _: serde_json::Value =
-             client.call_with_timeout("handshake", serde_json::json!({}), cfg.rpc_timeout()).await?;
--
--        // Build the connection params from MqAdminConfig
--        let conn_params = build_connection_params(&cfg);
--        let connect_params = serde_json::json!({ "connection": conn_params });
-+        let connect_params = serde_json::json!({ "connection": build_connection_params(cfg) });
-         let _: serde_json::Value = client.call_with_timeout("connect", connect_params, cfg.rpc_timeout()).await?;
--
--        log::info!("Kafka admin connected via agent (bootstrap servers: {})", bootstrap_servers(&cfg));
--
--        Ok(Self { client: Arc::new(Mutex::new(client)), config: cfg })
-+        Ok(client)
-     }
- 
-     /// Send a JSON-RPC call to the Kafka agent and deserialize the result.
-@@ -88,19 +88,42 @@ impl KafkaAdmin {
-         method: &str,
-         params: serde_json::Value,
-     ) -> Result<T, String> {
--        let mut client = self.client.lock().await;
--        client.call_with_timeout(method, params, self.config.rpc_timeout()).await
-+        self.call_with_rpc_timeout(method, params, self.config.rpc_timeout()).await
-     }
- 
--    /// The Kafka agent bounds these operations with its configured request timeout.
--    /// Do not preempt that with the driver's generic RPC timeout.
--    async fn call_with_agent_timeout<T: DeserializeOwned + Send + 'static>(
-+    /// Consumer-group RPCs share one agent deadline. Allow time to serialize
-+    /// partial results, while still bounding an unresponsive agent process.
-+    async fn call_with_consumer_group_timeout<T: DeserializeOwned + Send + 'static>(
-+        &self,
-+        method: &str,
-+        mut params: serde_json::Value,
-+    ) -> Result<T, String> {
-+        let request_timeout_ms = self.config.request_timeout_ms();
-+        params["timeout_ms"] = serde_json::json!(request_timeout_ms);
-+        let timeout = Duration::from_millis(request_timeout_ms).saturating_add(Duration::from_secs(5));
-+        self.call_with_rpc_timeout(method, params, Some(timeout)).await
-+    }
++/**
++ * True when the first word is `BEGIN` followed by a keyword that opens a real
++ * block — a plain `BEGIN ... END`, `BEGIN TRY`, `BEGIN CATCH` — rather than a
++ * transaction or conversation, which has no matching `END` (#13051).
++ */
++function opensSqlServerTopLevelBlock(sql: string, from: number, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
++  const firstToken = nextSqlWordToken(sql, from, databaseType, parameterOptions);
++  if (firstToken?.word !== "BEGIN") return false;
++  const secondToken = nextSqlWordToken(sql, firstToken.end, databaseType, parameterOptions);
++  return secondToken != null && !SQLSERVER_NON_BLOCK_BEGIN_KEYWORDS.has(secondToken.word);
++}
 +
-+    async fn call_with_rpc_timeout<T: DeserializeOwned + Send + 'static>(
-         &self,
-         method: &str,
-         params: serde_json::Value,
-+        timeout: Option<Duration>,
-     ) -> Result<T, String> {
-         let mut client = self.client.lock().await;
--        client.call_with_timeout(method, params, None).await
-+        if client.is_none() {
-+            *client = Some(Self::spawn_connected_client(&self.config, self.launch.clone()).await?);
-+        }
-+        let result = client.as_mut().unwrap().call_typed_with_timeout(method, params, timeout).await;
-+        if matches!(
-+            &result,
-+            Err(AgentCallError::Transport { .. } | AgentCallError::Timeout { .. } | AgentCallError::Canceled { .. })
-+        ) {
-+            // Reconnect before the next operation. Never replay a request whose
-+            // outcome is unknown, especially topic/offset mutations or sends.
-+            client.take();
-+        }
-+        result.map_err(AgentCallError::into_legacy_string)
-     }
+ /**
+  * True when `statement` is a whole T-SQL control-flow batch: an `IF`/`WHILE`
+  * whose body is a `BEGIN ... END` block or whose branches are plain statements
+- * with an `ELSE`. Such a batch contains no independent statements, so it must
+- * stay one execution range instead of being split at the line-oriented
+- * `BEGIN`/`EXEC`/`END` tokens.
++ * with an `ELSE`, or a top-level block statement (`BEGIN ... END`, `BEGIN TRY
++ * ... END TRY BEGIN CATCH ... END CATCH`). Such a batch contains no
++ * independent statements, so it must stay one execution range instead of
++ * being split at the line-oriented `BEGIN`/`EXEC`/`END` tokens.
+  */
+ function isSqlServerControlFlowBatch(sql: string, statement: RawStatement, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
+   if (databaseType !== "sqlserver") return false;
+   const firstWord = nextSqlWordToken(sql, statement.from, databaseType, parameterOptions)?.word;
+-  if (firstWord !== "IF" && firstWord !== "WHILE") return false;
++  const opensTopLevelBlock = opensSqlServerTopLevelBlock(sql, statement.from, databaseType, parameterOptions);
++  if (firstWord !== "IF" && firstWord !== "WHILE" && !opensTopLevelBlock) return false;
  
-     /// Send a JSON-RPC call that returns `{ok: true}` on success.
-@@ -192,7 +215,8 @@ impl MessageQueueAdmin for KafkaAdmin {
-     // ---- Topics ----
+   const scan = scanSqlServerControlFlow(sql, statement.from, statement.to, databaseType, parameterOptions);
+-  return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
++  if (firstWord === "IF" || firstWord === "WHILE") {
++    return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
++  }
++  // A top-level `BEGIN` block is one batch by itself: keep it whole whether
++  // the block is balanced or still open mid-typing. `BEGIN TRAN[SACTION]` and
++  // friends never reach this branch.
++  return true;
+ }
  
-     async fn list_topics(&self, _ns: &NamespaceRef, _opts: ListTopicsOpts) -> Result<Vec<TopicInfo>, String> {
--        let result: serde_json::Value = self.call_with_agent_timeout("mq_list_topics", serde_json::json!({})).await?;
-+        let result: serde
+ /**
+  * T-SQL does not end a `BEGIN ... END` block at a semicolon, so splitting on
+  * every top-level `;` cuts `IF ... BEGIN ... ; ... END` batches into fragments
+  * whose `BEGIN`/`EXEC`/`END` lines then look like independent statements
+- * (#9336). Re-join the fragments of such a batch so it stays one range.
++ * (#9336). Top-level block statements — a plain `BEGIN ... END`, `BEGIN TRY
++ * ... END TRY` plus its mandatory `BEGIN CATCH ... END CATCH` — hit the same
++ * split and are re-joined here too (#13051); only `BEGIN` 
 ```
 
----
-
-### Incident Patch 2: `827d551c` (2026-10-25)
-**Commit Message**: fix(mongodb): connect the legacy driver to old TLS servers
-
-**File**: `agents/drivers/mongodb/src/main/java/com/dbx/agent/mongodb/MongoAgent.java` (modified, +235/-9)
+**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +378/-11)
 ```diff
-@@ -60,8 +60,10 @@
- import java.security.KeyStore;
- import java.security.PrivateKey;
- import java.security.SecureRandom;
-+import java.security.Security;
- import java.security.cert.Certificate;
- import java.security.cert.CertificateFactory;
-+import java.security.cert.X509Certificate;
- import java.security.spec.PKCS8EncodedKeySpec;
- import java.time.Instant;
- import java.time.ZoneOffset;
-@@ -74,7 +76,9 @@
- import java.util.HashSet;
- import java.util.LinkedHashMap;
- import java.util.List;
-+import java.util.Locale;
- import java.util.Map;
-+import java.util.Objects;
- import java.util.Set;
- import java.util.TreeSet;
- import java.util.UUID;
-@@ -88,6 +92,7 @@
- import javax.net.ssl.SSLContext;
- import javax.net.ssl.TrustManager;
- import javax.net.ssl.TrustManagerFactory;
-+import javax.net.ssl.X509TrustManager;
- import org.bson.Document;
- import org.bson.json.JsonMode;
- import org.bson.json.JsonWriterSettings;
-@@ -115,6 +120,23 @@ public final class MongoAgent {
-     private static final int MAX_SESSIONS = 256;
-     /** MongoDB error code 13 (Unauthorized), returned when the account may not run listDatabases. */
-     private static final int LIST_DATABASES_UNAUTHORIZED_CODE = 13;
-+    private static final int MAX_SERVER_SELECTION_TIMEOUT_SECS = 20;
-+    private static final String TLS_DISABLED_ALGORITHMS_KEY = "jdk.tls.disabledAlgorithms";
-+    private static final String TLS_LEGACY_ALGORITHMS_KEY = "jdk.tls.legacyAlgorithms";
-+    // MongoDB 3.x servers built against older OpenSSL only offer static RSA key exchange
-+    // (and the oldest only TLS 1.0), which current JREs disable by default.
-+    private static final Set<String> LEGACY_TLS_ALGORITHMS_TO_ALLOW = Set.of(
-+        "TLSV1",
-+        "TLSV1.1",
-+        "TLS_RSA_*",
-+        "RSA_PKCS1_SHA1 USAGE HANDSHAKESIGNATURE");
-+    // The static-RSA entries are demoted into jdk.tls.legacyAlgorithms instead of silently
-+    // vanishing. JSSE consults that property only when it picks cipher suites as a TLS
-+    // server (sun.security.ssl.ServerHello), never on the client side and never for
-+    // protocol versions, so TLSv1/TLSv1.1 can only leave the disabled list outright.
-+    private static final Set<String> LEGACY_TLS_ALGORITHMS_TO_DEMOTE = Set.of(
-+        "TLS_RSA_*",
-+        "RSA_PKCS1_SHA1 USAGE HANDSHAKESIGNATURE");
-     private static final ThreadLocal<MongoClient> CURRENT_CLIENT = new ThreadLocal<>();
-     private static final ThreadLocal<Set<String>> CURRENT_FIND_CURSOR_OWNER = new ThreadLocal<>();
-     private static final ConcurrentHashMap<String, MongoCursor<Document>> FIND_CURSORS = new ConcurrentHashMap<>();
-@@ -152,9 +174,24 @@ static MongoClientSettings.Builder configureBuilder(JsonObject connObj) {
-             throw new IllegalArgumentException("Client certificate and key must be provided together");
-         }
+@@ -1832,22 +1832,29 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
  
-+        Map<String, String> params = new LinkedHashMap<>();
-+        if (connectionString != null && !connectionString.isBlank()) {
-+            params.putAll(parseQueryParams(connectionString));
-+        }
-+        String urlParams = stringOrNull(connObj, "url_params");
-+        if (urlParams != null && !urlParams.isBlank()) {
-+            params.putAll(parseQueryParams(urlParams));
-+        }
-+
-+        boolean allowInvalidCertificates = hasAllowInvalidCertificates(params);
-+        // Per the connection-string spec only tlsInsecure relaxes both checks;
-+        // tlsAllowInvalidCertificates on its own must keep hostname verification.
-+        boolean allowInvalidHostnames = isTruthy(params.get("tlsinsecure")) || hasAllowInvalidHostnames(params);
-+
-         MongoClientSettings.Builder builder = MongoClientSettings.builder();
-+        ConnectionString cs = null;
-         if (connectionString != null && !connectionString.isBlank()) {
--            ConnectionString cs = new ConnectionString(connectionString);
-+            cs = new ConnectionString(connectionString);
-             builder.applyConnectionString(cs);
-             // Driver 3.12 predates the directConnection URI option (introduced in driver 4.x)
-             // and silently ignores it. When directConnection=true is present in the query of a
-@@ -173,8 +210,39 @@ static MongoClientSettings.Builder configureBuilder(JsonObject connObj) {
+     for (idx, batch) in batches.iter().enumerate() {
+         if cursor >= batch.start && cursor <= batch.end {
+-            if starts_with_sqlserver_control_flow_batch(&batch.text)
+-                || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text))
+-            {
++            // Module DDL is checked before the block scan: a procedure body is
++            // itself a `BEGIN ... END` block, and the whole `CREATE`/`ALTER`
++            // batch is the execution unit there.
++            if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text) {
+                 return batch.text.clone();
              }
++            if let Some(statement) =
++                sqlserver_control_flow_statement_at(&batch.text, Some(cursor.saturating_sub(batch.start)))
++            {
++                return statement;
++            }
+             let relative_cursor = sql[..cursor].encode_utf16().count() - sql[..batch.start].encode_utf16().count();
+             return find_statement_at_cursor_with_options(&batch.text, relative_cursor, SqlParsingOptions::default());
          }
  
--        if (ssl) {
--            applyTlsSettings(builder, caCertPath, clientCertPath, clientKeyPath);
-+        // Driver 3.12 has no tlsAllowInvalidCertificates option and form mode never parsed the URL
-+        // params, so the "skip certificate verification" setting has to be applied here.
-+        boolean enableTls = ssl
-+            || (cs != null && Boolean.TRUE.equals(cs.getSslEnabled()))
-+            || isTruthy(params.get("ssl"))
-+            || isTruthy(params.get("tls"));
-+        if (enableTls) {
-+            // Old MongoDB TLS servers need policy entries that current JREs disable. The
-+            // relaxation cannot be scoped per connection (JSSE caches the policy once
-+            // initialized),
-```
-
-**File**: `agents/drivers/mongodb/src/test/java/com/dbx/agent/mongodb/MongoAgentTest.java` (modified, +388/-0)
-```diff
-@@ -1,9 +1,12 @@
- package com.dbx.agent.mongodb;
+         if cursor < batch.start {
+             if let Some(prev) = idx.checked_sub(1).and_then(|prev_idx| batches.get(prev_idx)) {
+-                if starts_with_sqlserver_control_flow_batch(&prev.text)
+-                    || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text))
+-                {
++                if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text) {
+                     return prev.text.clone();
+                 }
++                if let Some(statement) = sqlserver_control_flow_statement_at(&prev.text, None) {
++                    return statement;
++                }
+                 let relative_cursor = prev.text.encode_utf16().count();
+                 return find_statement_at_cursor_with_options(
+                     &prev.text,
+@@ -1862,12 +1869,271 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
+     batches.last().map(|batch| batch.text.clone()).unwrap_or_else(|| sql.trim().to_string())
+ }
  
- import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
- import static org.junit.jupiter.api.Assertions.assertEquals;
- import static org.junit.jupiter.api.Assertions.assertFalse;
-+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
- import static org.junit.jupiter.api.Assertions.assertNotNull;
-+import static org.junit.jupiter.api.Assertions.assertNull;
- import static org.junit.jupiter.api.Assertions.assertThrows;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- 
-@@ -43,18 +46,32 @@
- import com.mongodb.client.model.WriteModel;
- import com.mongodb.client.result.UpdateResult;
- import java.io.FileInputStream;
-+import java.io.InputStream;
- import java.lang.reflect.Proxy;
-+import java.net.InetAddress;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.security.KeyStore;
- import java.security.PrivateKey;
-+import java.security.Security;
-+import java.security.cert.CertificateFactory;
-+import java.security.cert.X509Certificate;
- import java.util.ArrayList;
- import java.util.Base64;
- import java.util.Collections;
- import java.util.Date;
-+import java.util.HashSet;
- import java.util.List;
-+import java.util.Locale;
- import java.util.Map;
-+import java.util.Set;
- import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.atomic.AtomicReference;
-+import javax.net.ssl.SSLContext;
-+import javax.net.ssl.SSLServerSocket;
-+import javax.net.ssl.SSLSocket;
-+import javax.net.ssl.TrustManager;
-+import javax.net.ssl.X509TrustManager;
- import org.bson.BsonDocument;
- import org.bson.BsonRegularExpression;
- import org.bson.Document;
-@@ -1739,6 +1756,377 @@ void createsSslContextWithAllCertPaths() throws Exception {
-         assertNotNull(ctx);
-     }
- 
-+    // ─── TLS: URL params and timeouts (issue #10657) ───
++/// A top-level token of a SQL Server batch: a word or a `;` terminator outside
++/// string literals, quoted identifiers, comments and parentheses. `CASE ... END`
++/// inside a condition or select list therefore never looks like a block.
++struct SqlServerTopLevelToken<'a> {
++    text: &'a str,
++    start: usize,
++    end: usize,
++}
 +
-+    @Test
-+    void formModeWithTlsAllowInvalidCertificatesEnablesSslAndTrustsSelfSignedCert() throws Exception {
-+        JsonObject connection = minimalConnection();
-+        connection.addProperty("ssl", true);
-+        connection.addProperty("url_params", "tlsAllowInvalidCertificates=true");
-+
-+        MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
-+
-+        assertTrue(settings.getSslSettings().isEnabled());
-+        // Only tlsInsecure skips hostname verification; cert-only skips just the chain check.
-+        assertFalse(settings.getSslSettings().isInvalidHostNameAllowed());
-+        assertNotNull(settings.getSslSettings().getContext());
-+
-+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-+        X509Certificate selfSignedCert;
-+        try (InputStream is = new FileInputStream(caPemPath.toFile())) {
-+            selfSignedCert = (X509Certificate) cf.generateCertificate(is);
-+        }
-+        TrustManager[] trustManagers = MongoAgent.createTrustAllTrustManagers();
-+        assertNotNull(trustManagers);
-+        assertTrue(trustManagers.length > 0);
-+        assertInstanceOf(X509TrustManager.class, trustManagers[0]);
-+        X509TrustManager tm = (X509TrustManager) trustManagers[0];
-+        assertDoesNotThrow(() -> tm.checkServerTrusted(new X509Certificate[] {selfSignedCert}, "RSA"));
-+        assertDoesNotThrow(() -> tm.checkClientTrusted(new X509Certificate[] {selfSignedCert}, "RSA"));
-+        assertEquals(0, tm.getAcceptedIssuers().length);
++impl SqlServerTopLevelToken<'_> {
++    fn is_word(&self, keyword: &str) -> bool {
++        self.text.eq_ignore_ascii_case(keyword)
 +    }
++}
 +
-+    @Test
-+    void formModeWithoutInvalidCertParamKeepsDefaultVerification() {
-+        JsonObject connection = minimalConnection();
-+        connection.addProperty("ssl", true);
++fn sqlserver_top_level_tokens(sql: &str) -> Vec<SqlServerTopLevelToken<'_>> {
++    let bytes = sql.as_bytes();
++    let mut tokens = Vec::new();
++    let mut paren_depth = 0usize;
++    let mut index = 0usize;
 +
-+        MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
-+
-+        assertTrue(settings.getSslSettings().isEnabled());
-+        assertFalse(settings.getSslSettings().isInvalidHostNameAllowed());
-+        assertNull(settings.getSslSettings().getContext());
-+    }
-+
-+    @Test
-+    void formModeWithTruthyUrlParamVariants() {
-+        for (String param : List.of(
-+            "tlsAllowInvalidCertificates=1",
-+            "sslAllowInvalidCertificates=yes",
-+            "TLSALLOWINVALIDCERTIFICATES=TRUE")) {
-+            JsonObject connection = minimalConnection();
-+            connection.addProperty("ssl", true);
-+            connection.addProperty("url_params", "retryWrites=false&" + param);
-+
-+            MongoClientSettings settings = MongoAgent.configureBuilder(connection).build();
-+            assertTrue(settings.getSslSettings().isEnabled(), "Failed for " + param);
-+            assertFalse(settings.getSslSettings().isInvalidHostNameAllowed(), "Failed for " + param);
-+            assertNotNull(settings.getSslSettings().getContext(), "Failed for " + param);
-+        }
-+    }
-+
-+    @Test
-+    void formModeWithTlsInsecureSkipsCertificateAndHostnameChecks() {
-+        JsonObject connection = minimalConnection();
-+        connection.addProperty("ssl", true);
-+        connection.addProperty("url_params", "tlsInsecure=true");
-
++    while index < bytes.len() {
++        match bytes[index] {
++            quote @ (b'\'' | b'"') => {
++                index += 1;
++                while index < bytes.len() {
++                    if bytes[index] == quote {
++                        if bytes.get(index + 1) == Some(&quote) {
++                            index += 2;
++                            continue;
++                        }
++                        index += 1;
++                        break;
++                    }
++                    index += 1;
++                }
++            }
++            b'[' => {
++                index += 1;
++                while index < bytes.len() {
++                    if bytes[index] == b']' {
++                        if bytes.get(index + 1) == Some(&b']') {
++                            index += 2;
++                            continue;
++                        }
++                        index += 1;
++                        break;
++                    }
++                    index += 1;
++                }
++            }
++            b'-' if bytes.get(index + 1) == Some(&b'-') => {
++                index += 2;
++                while index < bytes.len() && bytes[index] != b'\n' {
++                    index += 1;
++                }
++            }
++            b'/' if bytes.get(index + 1) == Some(&b'*') => {
++                index += 2;
++                while index < bytes.len() && !(bytes[index] == b'*' && bytes.get(index + 1) == Some(&b'/')) {
++                    index += 1;
++                }
++                index = (index + 2).min(bytes.len());
++            }
++            b'(' => {
++                paren_depth += 1;
++                index += 1;
++            }
++            b')' => {
++                paren_depth = paren_depth.saturating_sub(1);
++                index += 1;
++            }
++            b';' if paren_depth == 0 => {
++                tokens.push(SqlServerTopLevelToken { text: ";", start: index, end: index + 1 });
++                index +=
 ```
 
 ---
 
-### Incident Patch 3: `e053f1b4` (2026-10-25)
-**Commit Message**: fix(oracle): include triggers in transfer object listing
+### Incident Patch 2: `0566e0db` (2026-10-25)
+**Commit Message**: fix(mcp): clear readonly attribute on replacement temp cleanup
 
-**File**: `agents/drivers/oracle-go/main.go` (modified, +2/-2)
+**File**: `.github/scripts/install-mcp-powershell.test.ps1` (modified, +7/-0)
 ```diff
-@@ -186,7 +186,7 @@ FROM ALL_OBJECTS o
- LEFT JOIN ALL_INDEXES i
-   ON o.OBJECT_TYPE = 'INDEX' AND i.OWNER = o.OWNER AND i.INDEX_NAME = o.OBJECT_NAME
- WHERE o.OWNER = :2
--  AND o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')
-+  AND o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')
- UNION ALL
- SELECT s.SYNONYM_NAME AS OBJECT_NAME,
-        'SYNONYM' AS OBJECT_TYPE,
-@@ -225,7 +225,7 @@ SELECT o.OBJECT_NAME,
-        i.TABLE_NAME AS PARENT_NAME
- FROM USER_OBJECTS o
- LEFT JOIN USER_INDEXES i ON o.OBJECT_TYPE = 'INDEX' AND i.INDEX_NAME = o.OBJECT_NAME
--WHERE o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX', 'TYPE', 'TYPE BODY')
-+WHERE o.OBJECT_TYPE IN ('VIEW', 'MATERIALIZED VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX', 'TYPE', 'TYPE BODY')
- UNION ALL
- SELECT s.SYNONYM_NAME AS OBJECT_NAME,
-        'SYNONYM' AS OBJECT_TYPE,
+@@ -134,6 +134,13 @@ try {
+     Remove-McpReplacementTempFiles (Join-Path $testRoot 'missing')
+     $script:count++
+     Write-Output 'PASS cleanup preserves active binary, marker, unrelated files and directories'
++    $readonlyPath = Join-Path $installDir 'dbx-mcp.exe~RF8c73e4f.TMP'
++    [IO.File]::WriteAllText($readonlyPath, 'readonly leftover')
++    [IO.File]::SetAttributes($readonlyPath, [IO.FileAttributes]::ReadOnly)
++    Remove-McpReplacementTempFiles $installDir
++    Assert-True (!(Test-Path -LiteralPath $readonlyPath)) 'Cleanup kept a read-only replacement temp file'
++    $script:count++
++    Write-Output 'PASS cleanup removes read-only replacement temp files'
+     $linkTarget = Join-Path $testRoot 'linked-target'
+     [IO.Directory]::CreateDirectory($linkTarget) | Out-Null
+     $targetFile = Join-Path $linkTarget 'dbx-mcp.exe~RF789.TMP'
 ```
 
-**File**: `agents/drivers/oracle-go/main_test.go` (modified, +7/-1)
+**File**: `docs/public/install-mcp.ps1` (modified, +3/-0)
 ```diff
-@@ -2365,6 +2365,9 @@ func TestListObjectsSQLUsesSplitDictionaryQuery(t *testing.T) {
- 	if !strings.Contains(sqlText, "'SEQUENCE'") {
- 		t.Fatalf("object listing should include sequences, got: %s", query.SQL)
- 	}
-+	if !strings.Contains(sqlText, "'TRIGGER'") {
-+		t.Fatalf("object listing must expose triggers for data transfer selection, got: %s", query.SQL)
-+	}
- 	if !strings.Contains(sqlText, "'TYPE BODY'") || !strings.Contains(sqlText, "TYPE_BODY") || !strings.Contains(sqlText, "'TYPE'") {
- 		t.Fatalf("object listing should include TYPE and normalize TYPE BODY, got: %s", query.SQL)
- 	}
-@@ -2462,11 +2465,14 @@ func TestExactTableDDLDoesNotBuildAnotherTargetAfterMetadataFailure(t *testing.T
- 	}
- }
- 
--func TestListSessionUserObjectsSQLIncludesSequences(t *testing.T) {
-+func TestListSessionUserObjectsSQLIncludesSequencesAndTriggers(t *testing.T) {
- 	sqlText := strings.ToUpper(oracleListObjectsSessionUserBaseSQL)
- 	if !strings.Contains(sqlText, "FROM USER_OBJECTS") || !strings.Contains(sqlText, "'SEQUENCE'") || !strings.Contains(sqlText, "'TYPE BODY'") || !strings.Contains(sqlText, "'TYPE'") {
- 		t.Fatalf("session-user object listing should include sequences, got: %s", oracleListObjectsSessionUserBaseSQL)
- 	}
-+	if !strings.Contains(sqlText, "'TRIGGER'") {
-+		t.Fatalf("session-user object listing must expose triggers for data transfer selection, got: %s", oracleListObjectsSessionUserBaseSQL)
-+	}
- }
- 
- func TestGetOracleTypeSourceUsesExactIdentityAndCollectionDDLFallback(t *testing.T) {
+@@ -50,6 +50,9 @@ function Remove-McpReplacementTempFiles([string]$Directory) {
+             $_.Name -imatch '\Adbx-mcp\.exe~RF[0-9a-f]+\.TMP\z'
+         } | ForEach-Object {
+             # A running MCP process may still hold the old executable; retry on the next run.
++            # A READONLY attribute makes [IO.File]::Delete throw, so one read-only
++            # leftover would otherwise survive every install; clear it first.
++            try { $_.Attributes = $_.Attributes -band (-bnot [IO.FileAttributes]::ReadOnly) } catch {}
+             try { [IO.File]::Delete($_.FullName) } catch {}
+         }
+     } catch {}
 ```
 
-**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +32/-1)
+**File**: `src-tauri/src/commands/mcp_cleanup.rs` (modified, +32/-2)
 ```diff
-@@ -12611,7 +12611,7 @@ fn oracle_list_objects_sql_for_owner(owner: &str, type_owner: &str) -> String {
-         "SELECT o.object_name, CASE o.object_type WHEN 'PACKAGE BODY' THEN 'PACKAGE_BODY' WHEN 'TYPE BODY' THEN 'TYPE_BODY' ELSE o.object_type END AS object_type, o.owner, \
-          i.table_owner AS parent_schema, i.table_name AS parent_name \
-          FROM all_objects o LEFT JOIN all_indexes i ON o.object_type = 'INDEX' AND i.owner = o.owner AND i.index_name = o.object_name \
--         WHERE ((o.owner = {owner} AND o.object_type IN ('TABLE', 'VIEW', 'PROCEDURE', 'FUNCTION', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')) \
-+         WHERE ((o.owner = {owner} AND o.object_type IN ('TABLE', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'SEQUENCE', 'PACKAGE', 'PACKAGE BODY', 'INDEX')) \
-             OR (o.owner = {type_owner} AND o.object_type IN ('TYPE', 'TYPE BODY'))) \
-          AND (o.object_type <> 'INDEX' OR i.generated = 'N' OR i.generated IS NULL) \
-          ORDER BY CASE o.object_type WHEN 'TABLE' THEN 0 WHEN 'VIEW' THEN 1 WHEN 'PROCEDURE' THEN 2 WHEN 'FUNCTION' THEN 3 WHEN 'SEQUENCE' THEN 4 WHEN 'PACKAGE' THEN 5 WHEN 'PACKAGE BODY' THEN 6 ELSE 7 END, o.object_name, o.object_type"
-@@ -13852,6 +13852,37 @@ mod object_source_tests {
-         assert!(sql.contains("i.table_owner AS parent_schema, i.table_name AS parent_name"));
+@@ -39,8 +39,24 @@ pub(super) fn cleanup_directory(directory: &Path) -> io::Result<usize> {
+         }
+         let path = entry.path();
+         let Ok(metadata) = fs::symlink_metadata(&path) else { continue };
+-        // Never recurse or follow links; locked/read-only leftovers can be retried next launch.
+-        if metadata.is_file() && !is_link(&metadata) && fs::remove_file(&path).is_ok() {
++        // Never recurse or follow links; locked leftovers can be retried next launch.
++        if !metadata.is_file() || is_link(&metadata) {
++            continue;
++        }
++        // A READONLY attribute makes fs::remove_file fail with Access Denied on
++        // Windows, so one read-only leftover would otherwise survive every
++        // startup pass. Clear the attribute (the name pattern is strict enough)
++        // before deleting. This is Windows-only: on Unix unlinking only needs a
++        // writable directory, and clearing the write bits would widen the mode
++        // to 0666 if the delete failed. The clear is best-effort so a failed
++        // attribute write never skips the delete attempt.
++        #[cfg(windows)]
++        if metadata.permissions().readonly() {
++            let mut permissions = metadata.permissions();
++            permissions.set_readonly(false);
++            let _ = fs::set_permissions(&path, permissions);
++        }
++        if fs::remove_file(&path).is_ok() {
+             removed += 1;
+         }
+     }
+@@ -124,6 +140,20 @@ mod tests {
+         assert!(!missing.exists());
      }
  
 +    #[test]
-+    fn oracle_object_list_returns_triggers_only_from_the_selected_owner() {
-+        // Execute the dictionary query against fixture rows so a missing object
-+        // kind or a widened owner predicate cannot silently empty the transfer list.
-+        let conn = rusqlite::Connection::open_in_memory().unwrap();
-+        conn.execute_batch(
-+            "CREATE TABLE all_objects (owner TEXT, object_name TEXT, object_type TEXT);
-+             CREATE TABLE all_indexes (owner TEXT, index_name TEXT, table_owner TEXT, table_name TEXT, generated TEXT);
-+             INSERT INTO all_objects VALUES
-+               ('APP', 'QR_CODE_MAIL_TEMPLATE', 'TABLE'),
-+               ('APP', 'SEQ_QR_CODE_MAIL_TEMPLATE', 'SEQUENCE'),
-+               ('APP', 'TRIGGER_QR_CODE_MAIL_TEMPLATE', 'TRIGGER'),
-+               ('OTHER', 'TRIGGER_QR_CODE_MAIL_TEMPLATE', 'TRIGGER');",
-+        )
-+        .unwrap();
++    fn removes_read_only_leftovers() {
++        let directory = TestDirectory::new();
++        let readonly_path = directory.0.join("dbx-mcp.exe~RF8c73e4f.TMP");
++        fs::write(&readonly_path, b"readonly leftover").unwrap();
++        let mut permissions = fs::metadata(&readonly_path).unwrap().permissions();
++        permissions.set_readonly(true);
++        fs::set_permissions(&readonly_path, permissions).unwrap();
++        assert!(fs::metadata(&readonly_path).unwrap().permissions().readonly());
 +
-+        for owner in ["APP", "OTHER"] {
-+            let sql = format!(
-+                "SELECT object_name, owner FROM ({}) WHERE object_type = 'TRIGGER'",
-+                oracle_list_objects_sql(owner)
-+            );
-+            let mut statement = conn.prepare(&sql).unwrap();
-+            let triggers = statement
-+                .query_map([], |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)))
-+                .unwrap()
-+                .collect::<Result<Vec<_>, _>>()
-+                .unwrap();
-+            assert_eq!(triggers, vec![("TRIGGER_QR_CODE_MAIL_TEMPLATE".to_string(), owner.to_string())]);
-+        }
++        assert_eq!(cleanup_directory(&directory.0).unwrap(), 1);
++        assert!(!readonly_path.exists());
 +    }
 +
+     #[cfg(unix)]
      #[test]
-     fn appends_oracle_table_and_column_comments_to_ddl() {
-         let column = db::ColumnInfo {
+     fn skips_symlinked_files_and_directories() {
 ```
 
-**File**: `crates/dbx-core/tests/live_oracle_transfer.rs` (modified, +26/-4)
+---
+
+### Incident Patch 3: `7e2c6e20` (2026-10-25)
+**Commit Message**: fix(deps): update gson to 2.15.0
+
+**File**: `agents/common/build.gradle` (modified, +1/-1)
 ```diff
-@@ -92,6 +92,31 @@ async fn live_oracle_transfer_creates_table_with_index_comment_and_trigger() {
-         source(sql).await.expect("source setup");
-     }
+@@ -1,5 +1,5 @@
+ dependencies {
+-    implementation 'com.google.code.gson:gson:2.14.0'
++    implementation 'com.google.code.gson:gson:2.15.0'
+     compileOnly 'com.zaxxer:HikariCP:7.1.0'
+     testImplementation 'com.zaxxer:HikariCP:7.1.0'
+     testImplementation 'com.h2database:h2:2.3.232'
+```
+
+**File**: `agents/drivers/dameng/build.gradle` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     // DmJdbcDriver8 supports JDK 8+ (compatible with JRE 21 used by DAMENG agent).
+     implementation 'com.dameng:DmJdbcDriver8:8.1.5.45'
+-    testImplementation 'com.google.code.gson:gson:2.14.0'
++    testImplementation 'com.google.code.gson:gson:2.15.0'
+ }
  
-+    // Match the transfer dialog: selections must come from list_objects, rather
-+    // than supplying known trigger names and bypassing metadata discovery.
-+    let mut selections = Vec::new();
-+    for (kind, object_type, expected_name) in
-+        [(TransferObjectKind::Sequence, "SEQUENCE", &sequence), (TransferObjectKind::Trigger, "TRIGGER", &trigger)]
-+    {
-+        let objects = dbx_core::schema::list_objects_core(
-+            &state,
-+            &source_id,
-+            &service,
-+            &source_schema,
-+            None,
-+            None,
-+            None,
-+            Some(&[object_type.to_string()]),
-+            None,
-+        )
-+        .await
-+        .expect("discover transferable objects");
-+        let names: Vec<_> =
-+            objects.into_iter().filter(|object| &object.name == expected_name).map(|object| object.name).collect();
-+        assert_eq!(names, vec![expected_name.clone()], "missing {object_type} in transfer selection");
-+        selections.push(TransferObjectSelection { object_type: kind, names });
-+    }
-+
-     let request = TransferRequest {
-         table_filters: Default::default(),
-         transfer_id: format!("live-oracle-transfer-{suffix}"),
-@@ -109,10 +134,7 @@ async fn live_oracle_transfer_creates_table_with_index_comment_and_trigger() {
-         drop_target_confirmed: false,
-         oracle_packages: None,
-         content: TransferContent::StructureAndData,
--        objects: Some(vec![
--            TransferObjectSelection { object_type: TransferObjectKind::Sequence, names: vec![sequence.clone()] },
--            TransferObjectSelection { object_type: TransferObjectKind::Trigger, names: vec![trigger.clone()] },
--        ]),
-+        objects: Some(selections),
-         mode: TransferMode::Append,
-         target_table_name_case: TransferTableNameCase::Preserve,
-         target_column_name_case: TransferColumnNameCase::Preserve,
+ tasks.named('shadowJar') {
+```
+
+**File**: `agents/drivers/db2/build.gradle` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ dependencies {
+-    implementation 'com.google.code.gson:gson:2.14.0'
++    implementation 'com.google.code.gson:gson:2.15.0'
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     implementation 'com.ibm.db2:jcc:11.5.9.0'
+ }
+```
+
+**File**: `agents/drivers/h2/build.gradle` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ dependencies {
+     h2V1 'com.h2database:h2:1.4.200'
+     h2V2 'com.h2database:h2:2.1.214'
+     h2V3 'com.h2database:h2:2.4.240'
+-    testImplementation 'com.google.code.gson:gson:2.14.0'
++    testImplementation 'com.google.code.gson:gson:2.15.0'
+ }
+ 
+ tasks.named('processResources') {
+```
+
+**File**: `agents/drivers/kafka/build.gradle` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ dependencies {
+-    implementation 'com.google.code.gson:gson:2.14.0'
++    implementation 'com.google.code.gson:gson:2.15.0'
+     implementation 'org.apache.kafka:kafka-clients:3.9.2'
+     implementation('org.apache.zookeeper:zookeeper:3.8.4') {
+         exclude group: 'log4j', module: 'log4j'
+```
+
+**File**: `agents/drivers/mongodb/build.gradle` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ dependencies {
+     implementation project(':common')
+     implementation 'org.mongodb:mongodb-driver-sync:3.12.14'
+-    implementation 'com.google.code.gson:gson:2.14.0'
++    implementation 'com.google.code.gson:gson:2.15.0'
+ }
+ 
+ tasks.named('shadowJar') {
+```
+
+**File**: `agents/drivers/oceanbase-oracle/build.gradle` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     implementation 'com.oceanbase:oceanbase-client:2.4.19'
+-    testImplementation 'com.google.code.gson:gson:2.14.0'
++    testImplementation 'com.google.code.gson:gson:2.15.0'
+ }
+ 
+ tasks.named('shadowJar') {
+```
+
+**File**: `agents/drivers/transwarp/build.gradle` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ dependencies {
+     implementation files('libs/inceptor-sdk-transwarp-6.1.0-SNAPSHOT.jar')
+     testImplementation 'com.h2database:h2:2.4.240'
+-    testImplementation 'com.google.code.gson:gson:2.14.0'
++    testImplementation 'com.google.code.gson:gson:2.15.0'
+ }
+ 
+ tasks.named('shadowJar') {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13417** (closed): feat(editor): persist sql file and library search modes and add locate file in library (@lxk955)
-- **PR #13416** (2026-10-25): feat(sql): remember search scope and locate active library file (@heeeex100)
-- **PR #13415** (2026-10-25): fix(grid): scale canvas scroll height beyond browser element layout limit (@lxk955)
-- **PR #13413** (2026-10-25): fix(mongodb): connect the legacy driver to old TLS servers (@thailoc-dev)
-- **PR #13410** (2026-10-25): fix(kafka): parallelize legacy group queries and recover failed agents (@lcq928)
-- **PR #13409** (2026-10-25): fix(oracle): 修复数据迁移时触发器列表缺失的问题 (@Acd-kk)
+- **PR #13441** (2026-10-25): feat(export): queue manual desktop exports (@efeire)
+- **PR #13440** (2026-10-25): fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (@renovate[bot])
+- **PR #13439** (2026-10-25): fix(sql): keep top-level SQL Server BEGIN blocks as one execution batch (@caiyq925-cell)
+- **PR #13438** (closed): fix(deps): update dependency com.databricks:databricks-jdbc to v3.4.4 - autoclosed (@renovate[bot])
+- **PR #13437** (2026-10-25): fix(mcp): clear the READONLY attribute when cleaning replacement temp files (@caiyq925-cell)
+- **PR #13435** (2026-10-25): docs(database-docs): match zh-CN UI labels and explain the notes file (@dienaso)
 
 ---
 
@@ -2776,51 +2612,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kafka): parallelize legacy group queries and recover failed agents
+## X. sql): keep top-level SQL Server BEGIN blocks as one batch
 
 **RULE**:
-When implementing operations in `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `403e4fe8`: kafka): parallelize legacy group queries and recover failed agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `afc9374f`: sql): keep top-level SQL Server BEGIN blocks as one batch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `agents/drivers/kafka/src/main/java/com/dbx/agent/kafka/KafkaAgent.java`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    private static final int MAX_GROUP_QUERY_ADMINS = 12;
-    private static final int GROUPS_PER_QUERY_ADMIN = 16;
-    private static final List<AdminClient> groupQueryAdmins = new ArrayList<>();
-            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
-            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin(), KafkaAgent::consumerGroupAdmins);
-        for (AdminClient groupAdmin : groupQueryAdmins) {
-            groupAdmin.close(Duration.ZERO);
-        }
-        groupQueryAdmins.clear();
-    private static List<Admin> consumerGroupAdmins(int groupCount) {
-        int count = Math.min(MAX_GROUP_QUERY_ADMINS, (groupCount + GROUPS_PER_QUERY_ADMIN - 1) / GROUPS_PER_QUERY_ADMIN);
-        while (groupQueryAdmins.size() < count - 1) {
-            groupQueryAdmins.add(buildAdminClient(activeConnection));
-        }
-        List<Admin> admins = new ArrayList<>();
-        admins.add(adminClient);
-        admins.addAll(groupQueryAdmins.subList(0, count - 1));
-        return admins;
-    }
+  const sqlServerTryCatchBatch = [
+    "SET XACT_ABORT ON;",
+    "",
+    "BEGIN TRY",
+    "    BEGIN TRANSACTION;",
+    "",
+    "    UPDATE [dbo].[Documents]",
+    "    SET [Deleted] = 0",
+    "    WHERE [Deleted] = 1;",
+    "",
+    "    DECLARE @Updated int = @@ROWCOUNT;",
+    "",
+    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
+    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
+    "",
+    "    COMMIT TRANSACTION;",
+    "",
+    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
+    "END TRY",
+    "BEGIN CATCH",
+    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
+    "    THROW;",
+    "END CATCH;",
+  ].join("\n");
+  // The batch range starts at the real `BEGIN TRY` token, so the blank line
+  // and semicolon around the statement are not part of it.
+  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
 
-    private record ConsumerGroupQueries(
-        DescribeConsumerGroupsResult descriptions,
-      
+  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
+  // must execute as one batch — splitting it at the top-level `;` sends
+  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
+  it("keeps a SQL Server top-level 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            case "mq_list_consumer_groups" -> listConsumerGroups(params, requireAdmin());
-            case "mq_get_consumer_group_snapshot" -> getConsumerGroupSnapshot(params, requireAdmin());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `403e4fe8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `afc9374f` are properly handled with clean fallback behavior.
