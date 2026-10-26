@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T01:49:16.207Z",
-  "total_cycles_completed": 5059,
-  "total_learnings_persisted": 5059,
-  "total_rules_promoted": 4425,
+  "last_updated": "2026-10-26T01:55:36.407Z",
+  "total_cycles_completed": 5061,
+  "total_learnings_persisted": 5061,
+  "total_rules_promoted": 4427,
   "history": [
-    {
-      "timestamp": "2026-10-25T15:43:06.880Z",
-      "repository": "kajisho5/ffmpeg-skill",
-      "learningId": "learn-github-kajisho5-ffmpeg-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T15:49:29.468Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T15:49:35.891Z",
       "repository": "thaw-app/Thaw",
@@ -1403,6 +1389,20 @@
       "repository": "code-forge-io/seo-tools",
       "learningId": "learn-github-code-forge-io-seo-tools",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:55:35.231Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T01:55:36.407Z",
+      "repository": "hartemyaakoub/seo-toolkit",
+      "learningId": "learn-github-hartemyaakoub-seo-toolkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

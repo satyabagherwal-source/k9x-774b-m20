@@ -5089,3 +5089,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f4fde713` | Multi-dimensional audit evidence | 2026-10-26T01:37:30.277Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `bf028bcc` | Multi-dimensional audit evidence | 2026-10-26T01:49:13.541Z |
 | `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `e1e672b3` | Multi-dimensional audit evidence | 2026-10-26T01:49:16.202Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `656d02b6` | Multi-dimensional audit evidence | 2026-10-26T01:55:35.225Z |
+| `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-26T01:55:36.402Z |

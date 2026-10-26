@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T01:49:16.143Z",
+  "last_updated": "2026-10-26T01:55:36.340Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3342,8 +3342,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "6fe4f0f5",
-      "content_hash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
+      "source_version": "656d02b6",
+      "content_hash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3391,6 +3391,11 @@
           "number": 4159,
           "title": "Filter-Before-Allocate Lookahead Pruning with Cow Invariance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4534,
+          "title": "Disable automatic rebase scans in uv-dev (#22918)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3398,7 +3403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:38:48.699Z",
+      "verified_at": "2026-10-26T01:55:35.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -62953,7 +62958,7 @@
       "platform": "github",
       "source_url": "https://github.com/hartemyaakoub/seo-toolkit",
       "source_version": "e1126c75",
-      "content_hash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
+      "content_hash": "4f7b2e2d411e2d7946cd5cdf80e34c8c827e003e471c8d375754dc3bd6dddb43",
       "dossier_path": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
       "promoted_rules": [
@@ -62968,7 +62973,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:15:21.336Z",
+      "verified_at": "2026-10-26T01:55:36.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -99874,7 +99879,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T05:15:21.336Z"
+      "verified_at": "2026-10-26T01:55:36.327Z"
     },
     "rule-2669": {
       "learning_id": "rule-2669",
@@ -127686,6 +127691,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T01:49:16.132Z"
+    },
+    "rule-4534": {
+      "learning_id": "rule-4534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4534,
+      "title": "Disable automatic rebase scans in uv-dev (#22918)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "656d02b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T01:55:35.148Z"
     }
   },
   "aliases": {

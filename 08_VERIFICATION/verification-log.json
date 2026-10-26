@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-3NAC",
-    "timestamp": "2026-10-24T20:11:17.028Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "7a9665dc086b730983d645df63a59850e7d958a9f53bb84c4b4817dc5ff188c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-3PLT",
-    "timestamp": "2026-10-24T20:11:20.033Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "e60eb7a28c9ae9c11b4e3a17962f6ec589dba48bb2d1bced17f05b41e7868600",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-3UGR",
     "timestamp": "2026-10-24T20:11:26.331Z",
     "repository": "malisper/pgrust",
@@ -7492,6 +7462,36 @@
     "contentHash": "a6cb0d0d16f078c4dbef2d75fc60960ffc9c225804df5ef685da98f981a2cea8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-U9X2",
+    "timestamp": "2026-10-26T01:55:35.222Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-UATQ",
+    "timestamp": "2026-10-26T01:55:36.398Z",
+    "repository": "hartemyaakoub/seo-toolkit",
+    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
+    "contentHash": "4f7b2e2d411e2d7946cd5cdf80e34c8c827e003e471c8d375754dc3bd6dddb43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1795,8 +1795,8 @@
     "sourceUrl": "https://github.com/hartemyaakoub/seo-toolkit",
     "sourceVersion": "e1126c75",
     "license": "MIT",
-    "contentHash": "cedf0ad66619dd294faf7cfc2422f080b928c3468900c4fa8e610e869da9f1c2",
-    "lastHarvestedAt": "2026-10-21T05:15:21.389Z",
+    "contentHash": "4f7b2e2d411e2d7946cd5cdf80e34c8c827e003e471c8d375754dc3bd6dddb43",
+    "lastHarvestedAt": "2026-10-26T01:55:36.402Z",
     "learningId": "learn-github-hartemyaakoub-seo-toolkit"
   },
   "maatify-seo": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "6fe4f0f5",
+    "sourceVersion": "656d02b6",
     "license": "Apache-2.0",
-    "contentHash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
-    "lastHarvestedAt": "2026-10-25T07:38:48.771Z",
+    "contentHash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
+    "lastHarvestedAt": "2026-10-26T01:55:35.225Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
