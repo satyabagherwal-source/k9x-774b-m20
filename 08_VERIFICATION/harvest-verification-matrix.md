@@ -5140,3 +5140,5 @@
 | `CYCLE-20261026-X354` | `2026-10-26T12:13:37.960Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`1c6f2341...`) |
 | `CYCLE-20261026-5CTL` | `2026-10-26T12:20:03.753Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4600` | Yes (`cb096ca0...`) |
 | `CYCLE-20261026-VQLP` | `2026-10-26T12:40:34.669Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4601` | Yes (`0258b7e2...`) |
+| `CYCLE-20261026-GVYY` | `2026-10-26T12:57:01.402Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`50c8444c...`) |
+| `CYCLE-20261026-N1M4` | `2026-10-26T13:01:48.652Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4602` | Yes (`3fbb1616...`) |

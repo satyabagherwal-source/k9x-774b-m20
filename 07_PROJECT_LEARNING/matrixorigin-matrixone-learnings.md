@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `9dcd26be`  
+> **Source Version**: `e033d4a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:49:43.455Z  
+> **Timestamp**: 2026-10-26T12:57:01.191Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:49:43.446Z  
+> **Harvest Timestamp**: 2026-10-26T12:56:47.837Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2057 stars
+- **Stars / Engagement**: 2058 stars
 
 ---
 
@@ -2270,11 +2270,11 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31124** (2026-10-25): **fix(python-sdk): preserve OR predicate grouping**
-  *Symptoms*: 由 LW 授权的 ChatGPT Personal 智能体提交。  ## What type of PR is this? - [x] BUG - [x] Test and CI  ## Which issue(s) this PR fixes Related to #31123; no automatic issue closure requested.  ## What this PR does / why we need it where_or('kind = 1', 'kind = 2').where_eq('tenant', 7) produces WHERE (kind = 1) OR (kind = 2) AND tenant = ?. AND precedence lets the first OR arm escape the tenant filter. Reversing the call order exposes the other arm. The same builder composition affects UPDATE and DELETE.  Wrap the complete OR expression as one predicate before the existing AND composition. This preserves explicit caller filters; it does not change database authorization or add tenant policy.  ## Validation Base: 1732bb3297f598bc9a90a41b8c5e4c9557cf0e9c. Product: 8e4d5ee738a812b64605e303680cdad303bc2c1f; tree 0f61c920e9d26299220d0e44eb3597d34a5490ad. - Original: all six new tests fail. Fixed focused tests: 6 passed. - Full offline: 1524 passed, 95 subtests passed, 2 existing SQLite binding deprecation warnings. - Command: cd clients/python && PYTHONPATH=. python -m pytest tests/offline -o addopts='' -q --tb=short. - SELECT/UPDATE/DELETE × both ordering combinations execute generated SQL against SQLite with synthetic matching/nonmatching rows across two tenant values. - Black on changed files, fatal-error flake8, git diff --check: passed. - python -m build and twine check: wheel and sdist passed. - Independent review: Approve; separately reproduced base behavior and ran 57 regression/existi
+- **Issue #31287** (2026-10-26): **docs(skills): shutdown-only upgrade contract for agent reviews**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #31286  ## What this PR does / why we need it:  MatrixOne now upgrades by full-cluster shutdown only: old and new binaries never serve one cluster together. The agent skills still required mixed-version/rolling-upgrade coverage, so Codex-driven reviews kept asking for a new `MORPCVersion` and per-feature capability gates on every PR. That produced recurring `MORPCLatestVersion` merge collisions and dead compatibility code.  Changes (`.agents/skills`, mirrored in `.claude/skills`):  - **New `mo-dev/references/upgrade-compatibility.md`**, the single source of truth:   - in-cluster RPC has no mixed-version obligations: no per-feature `MORPCVersion`, `AllCNsSupportProtocol`/capability gate, or old-peer fallback;   - when to bump `MORPCVersion`: only for an incompatible RPC framing/handshake change, or a deliberate return to mixed-version operation;   - what must stay compatible: persisted state, upgrade steps, backup/restore and external protocols. - **`mo-dev/SKILL.md`**: adds a resource-map entry pointing to the reference. - **`mo-dev/references/feature-design-review.md`**: the design triggers, compatibility section and request-changes rule no longer require mixed-version, downgrade or rollback stories. - **`mo-self-review/SKILL.md`**:   - a new blocker-calibration rule says "an older CN can
 
-- **Issue #31116** (2026-10-25): **fix(disttae): backport exclusive relation handles to 4.1.6 hotfix**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Backport of #25634 (related to #25627) to `4.1.6-hotfix`.  Addresses the prepared UPDATE JOIN race seen in [PR #30977 CI](https://github.com/matrixorigin/matrixone/actions/runs/40170643192/job/121160646002?pr=30977). The same three conflicting writes reproduce on the clean hotfix base `d315e9c993`, independently of #30977.  ## What this PR does / why we need it:  A second execution of a prepared UPDATE JOIN lets Insert.Prepare and Deletion.Prepare concurrently reset the same transaction-cached relation. Reset overwrites its transaction operator, creation flag and snapshot, violating shared-relation ownership and triggering the race detector.  Backport the coherent ownership fix from main commit `7b34bfeb10ff645428af8284fa060912d086717b`: keep canonical relations bound to their opening transaction and give each retaining operator an exclusive reusable handle. Reset resolves the current transaction's canonical relation and rebinds only the private handle; direct shared Reset is rejected. Migrate retained DML, scan, lock-metadata and multi-update relation consumers together, including reset-error propagation and partial initialization cleanup/retry. Preserve hotfix-specific partition and commit behavior.  Regression coverage includes concurrent independent handles, unchanged shared state, catalog m
+- **Issue #31286** (2026-10-26): **[Tech Request]: Agent skills: shutdown-only upgrade contract, stop per-feature MORPCVersion gates**
+  *Symptoms*: ### Is there an existing issue for the same tech request?  - [x] I have checked the existing issues.  ### Does this tech request not affect user experience?  - [x] This tech request doesn't affect user experience.  ### What would you like to be added ?  Update the in-repo agent skills (`.agents/skills`, mirrored in `.claude/skills`: `mo-dev`, `mo-self-review`) to state MatrixOne's upgrade contract: **shutdown upgrade only**, no rolling upgrade.  - In-cluster RPC never mixes binary versions, so reviews must not request a per-feature `MORPCVersion` bump, an `AllCNsSupportProtocol`/capability gate, or an old-peer fallback, and must not block a change for lacking one. - `MORPCVersion` becomes a protocol generation, like the NFS major version. It is bumped only for an incompatible RPC framing/handshake change, or if mixed-version operation is deliberately reintroduced. - These compatibility obligations stay hard requirements:   - a new binary reads everything an older one persisted (catalog, storage, WAL, persisted views and plans, index files, config);   - upgrade steps are idempotent and restart-safe;   - an older backup restores on a newer binary;   - external protocols keep their rules: the MySQL client and cross-cluster publication/subscription and CDC.  ### Why is this needed ?  The project has moved to shutdown-only upgrades. The current skills still require mixed-version/rolling-upgrade coverage, so Codex-driven reviews keep asking for a new `MORPCVersion` and per-feature 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2291,822 +2291,1282 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9728d699` (2026-10-25)
-**Commit Message**: fix(python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)
-
-A declarative model can specify its database through tuple-form __table_args__ or MetaData(schema=...). Clone and branch builders previously ignored those forms and emitted a bare table name, resolving the source/target in the active database. BLANK_SCHEMA was rendered as a literal sentinel instead of an unqualified name.
-
-Use the model's resolved SQLAlchemy Table.fullname at the shared get_table_name owner. Preserve qualified strings and lightweight legacy-model fallback. The change introduces no extra SQL, cache, connection, transaction, authorization rule, wire/schema format, or generated artifact.
-
-Three files, +60/-6. Extend the existing lightweight offline clone-builder tests with actual mapped models and the existing cross-database online fixture with clone/branch builders; one source row and explicit database cleanup checks suffice.
-
-### Validation
-
-- Product head: e412fbde9c9543beeee386ac3eff4dd65960c788; base: 3878a13ef00fc85b1bced8a58a4f7d17df848806. Product tree 2ca522c8b617483cbfd83ba0a1d1ddf889f1712b equals tested local a353ed954b9bccb2d4194d91648f69efc85b3f05. Fresh upstream ac4ec31
-
-**File**: `clients/python/matrixone/_utils.py` (modified, +6/-1)
-```diff
-@@ -3,6 +3,7 @@
- from typing import Optional, Union, Type
- 
- try:
-+    from sqlalchemy import Table
-     from sqlalchemy.orm import DeclarativeMeta as _unused  # noqa: F401
- 
-     SQLALCHEMY_AVAILABLE = True
-@@ -16,10 +17,14 @@ def get_table_name(table: Union[str, Type]) -> str:
-     Supports:
-     - "table_name"
-     - "db.table_name"
--    - ORM model with optional __table_args__['schema'] for db.table
-+    - ORM model's resolved table name and schema for db.table
-     """
-     if isinstance(table, str):
-         return table
-+    if SQLALCHEMY_AVAILABLE:
-+        mapped_table = getattr(table, '__table__', None)
-+        if isinstance(mapped_table, Table):
-+            return mapped_table.fullname
-     if SQLALCHEMY_AVAILABLE and hasattr(table, '__tablename__'):
-         name = table.__tablename__
-         if hasattr(table, '__table_args__'):
-```
-
-**File**: `clients/python/tests/offline/test_clone_builder.py` (modified, +26/-0)
-```diff
-@@ -1,6 +1,10 @@
- """Offline tests for clone statement builders."""
- 
- import pytest
-+from sqlalchemy import Column, Integer, MetaData, UniqueConstraint
-+from sqlalchemy.orm import declarative_base
-+from sqlalchemy.schema import BLANK_SCHEMA
-+from matrixone.branch_builder import create_table_branch, delete_table_branch
- from matrixone.clone_builder import (
-     clone_table,
-     clone_database,
-@@ -27,6 +31,28 @@ class NoTableModel:
- 
- class TestCloneTable:
- 
-+    @pytest.mark.parametrize('schema_style', ['dict', 'tuple', 'metadata', 'blank', 'none'])
-+    def test_mapped_table_schema(self, schema_style):
-+        base = declarative_base(metadata=MetaData(schema='mydb' if schema_style in ('metadata', 'blank') else None))
-+        table_args = {
-+            'dict': {'schema': 'mydb'},
-+            'tuple': (UniqueConstraint('id'), {'schema': 'mydb'}),
-+            'metadata': {},
-+            'blank': {'schema': BLANK_SCHEMA},
-+            'none': {},
-+        }[schema_style]
-+
-+        class Model(base):
-+            __tablename__ = 'mapped_table'
-+            __table_args__ = table_args
-+            id = Column(Integer, primary_key=True)
-+
-+        name = 'mapped_table' if schema_style in ('blank', 'none') else 'mydb.mapped_table'
-+        assert clone_table('copy').from_table(Model).compile() == f'CREATE TABLE copy CLONE {name}'
-+        assert clone_table(Model).from_table('source').compile() == f'CREATE TABLE {name} CLONE source'
-+        assert create_table_branch(Model).from_table(Model).compile() == f'data branch create table {name} from {name}'
-+        assert delete_table_branch(Model).compile() == f'data branch delete table {name}'
-+
-     def test_basic(self):
-         sql = clone_table('tgt').from_table('src').compile()
-         assert sql == "CREATE TABLE tgt CLONE src"
-```
-
-**File**: `clients/python/tests/online/test_clone_builder_online.py` (modified, +28/-5)
-```diff
-@@ -7,6 +7,9 @@
- 
- import pytest
- import time
-+from sqlalchemy import Column, Integer, MetaData, UniqueConstraint
-+from sqlalchemy.orm import declarative_base
-+from matrixone.branch_builder import create_table_branch
- from matrixone.clone_builder import clone_table, clone_database
- from .test_config import online_config
- 
-@@ -82,8 +85,10 @@ def test_with_snapshot(self, test_client):
-             except Exception:
-                 pass
- 
--    def test_cross_database(self, test_client):
--        """Clone using 'db.table' qualified names."""
-+    @pytest.mark.parametrize('schema_style', ['string', 'tuple', 'metadata'])
-+    @pytest.mark.parametrize('builder', [clone_table, create_table_branch])
-+    def test_cross_database(self, test_client, schema_style, builder):
-+        """Clone/branch using resolved ORM schemas as well as qualified strings."""
-         src_db = f"cb_xdb_src_{_uid()}"
-         tgt_db = f"cb_xdb_tgt_{_uid()}"
-         try:
-@@ -93,15 +98,33 @@ def test_cross_database(self, test_client):
- 
-             test_client.execute(f"CREATE DATABASE {tgt_db}")
- 
--            stmt = clone_table(f'{tgt_db}.t1').from_table(f'{src_db}.t1')
-+            def table_model(database):
-+                base = declarative_base(metadata=MetaData(schema=database if schema_style == 'metadata' else None))
-+
-+                class Model(base):
-+                    __tablename__ = 't1'
-+                    __table_args__ = (UniqueConstraint('id'), {'schema': database}) if schema_style == 'tuple' else {}
-+                    id = Column(Integer, primary_key=True)
-+                    val = Column(Integer)
-+
-+                return Model
-+
-+            source, target = f'{src_db}.t1', f'{tgt_db}.t1'
-+            if schema_style != 'string':
-+                source, target = table_model(src_db), table_model(tgt_db)
-+            stmt = builder(target).from_table(source)
-             test_client.execute(str(stmt))
- 
-             rows = test_client.execute(f"SELECT * FROM {tgt_db}.t1").fetchall()
-             assert len(rows) == 1
-             assert rows[0][1] == 42
-         finally:
--            test_client.execute(f"DROP DATABASE IF EXISTS {tgt_db}")
--            test_client.execute(f"DROP DATABASE IF EXISTS {src_db}")
-+            try:
-+                test_client.execute(f"DROP DATABASE IF EXISTS {tgt_db}")
-+            finally:
-+                test_client.execute(f"DROP DATABASE IF EXISTS {src_db}")
-+            databases = {row[0] for row in test_client.execute('SHOW DATABASES').fetchall()}
-+            assert src_db not in databases and tgt_db not in databases
- 
-     def test_clone_nonexistent_source_fails(self, test_client):
-         """Cloning from a non-existent table should raise an error."""
-```
-
----
-
-### Incident Patch 2: `f5232bc2` (2026-10-25)
-**Commit Message**: fix(function): preserve jq result framing and integer precision (#31060)
+### Incident Patch 1: `83c1e235` (2026-10-26)
+**Commit Message**: fix(view): preserve restore semantics and extend S5 conformance (#30953)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
 - [ ] Improvement
-- [ ] Documentation
+- [x] Documentation
 - [ ] Feature
 - [x] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Fixes #30924
+Related to #29440, under #29433.
 
 ## What this PR does / why we need it:
 
-`jq()` encoded every JSON input number through float64, rounding
-integers above 2^53, and concatenated multiple jq outputs without a
-delimiter.
+**Partial S5 delivery; keep this PR Draft and #29440 open. Full S5
+acceptance is not complete, and S8 rollout remains NO-GO.**
 
-Parse with `json.Decoder.UseNumber`, preserve legacy JSON syntax/range
-errors, and separate successive jq results with `\n`. Keep zero results
-empty and one result unchanged.
+### Changes
 
-Validation:
-- Pre-fix focused regression: large integer rounded; multiple results
-concatenated.
-- Reviewer-found overflow regression before compatibility fix: expected
-legacy range error but got nil.
-- Focused regression: PASS.
-- Complete `pkg/sql/plan/function`: PASS.
-- `go vet -mod=readonly ./pkg/sql/plan/function`: PASS.
-- Incremental golangci-lint: 0 issues.
-- `func_jq.sql` against exact-head mo-service: 71/71 twice on the same
-instance.
-- Prepared/public SQL probe: 10/10; exact positive/negative >2^53
-values, preserved strict overflow error, `try_jq` overf
+- Preserve restored View security, creation context, unknown JSON
+fields, legacy absence/null distinctions, and the greater
+original/rebuilt protocol requirement. Admin replay must not silently
+turn INVOKER into DEFINER or qualify an unfrozen legacy star.
+- Bind the saved creation database and identifier policy before
+generating physical columns/dependencies, including all three restore
+dependency-sort owners. A View's containing database is not necessarily
+its creation database.
+- Let the clone owner remap only its explicit source-to-target creation
+database; preserve external dependencies and saved SQL parser policy.
+- Extend explicit S3/S4 conformance across INPLACE/COPY/recreation, RC
+statement advancement, histor
 
-**File**: `pkg/sql/plan/function/func_builtin_jq.go` (modified, +74/-2)
+**File**: `docs/design/CLAUDE_20261023-view-s5-conformance.md` (added, +178/-0)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"cmp"
- 	"encoding/json"
+@@ -0,0 +1,178 @@
++# 普通 View 元数据 S5：合同、恢复修复与验收证据
++
++所属：[#29440](https://github.com/matrixorigin/matrixone/issues/29440)，父任务 [#29433](https://github.com/matrixorigin/matrixone/issues/29433)，Draft PR [#30953](https://github.com/matrixorigin/matrixone/pull/30953)。
++
++**完整 S5 尚未验收，S8 rollout 为 NO-GO。** 默认 S3/S4 激活仍关闭。独立可做的协议、授权、历史、恢复与多 CN 验证不能笼统归为“等待激活”；另一方面，真实 L/A/B 切换不能由 mock、同 binary 多 CN 或 integration 接线代替。
++
++## 1. 基线与批准边界
++
++当前合并基线为 `mo/main@be663676872edf6d42695bba41757af0a3251758`，本地 merge `78618cf66941e95eb67879a2e7c47f967fb85b06`。首次部分交付 `22b48b77dffaaeeb9f773f47e561ae1d3d0a1728` 只有测试/文档；**续作已经包含生产恢复修复，不再适用“无生产改动”或“覆盖率门禁不适用”的描述。**
++
++批准依据：
++
++- [S1 设计及精确审批](CLAUDE_20260922-view-metadata-on-demand.md#s1-批准与-e1-勘误)。
++- [S2 v2.1](CLAUDE_20261005-view-s2-scope-revision.md)：不恢复已撤销的全链路 128 MiB 逐对象证明。
++- [S3](CLAUDE_20261018-view-s3-consumers.md)、[S4](CLAUDE_20261019-view-metadata-s4-consumers.md)、[S4 对账](CLAUDE_2026-10-20-view-metadata-s4-reconciliation.md)。
++- [既有生命周期验证范围](CLAUDE_VIEW_METADATA_LIFECYCLE_CONFORMANCE_29007.md)。
++- [独立 RC 生命周期升级约束](20260929-rc-lifecycle-protocol.md)：停服、drain、成员替换和旧进程禁入要求不能被 View 测试豁免。
++
++默认排除 partition、stored procedure、UDF 功能及 warning 文案/数量兼容。没有 S8 部署、refresh 退役、S9 catalog 清理或新激活状态机。既有协议/授权检查不能为了通过测试而降低。
++
++## 2. 判定规则
++
++同一身份、合法 catalog/statement snapshot、workspace、创建环境和授权域产生相同 schema；并非任何历史查询都必须得到“最新 schema”。
++
++- 验证类型、宽度、顺序、default 和 nullability 的语义。View 的 default `7` 与 CTAS 按现有规则生成的 `0` 可以不同。
++- 固定旧 statement 与已物化 cursor 保持旧代；新 statement、重绑及 retry 使用其合法的新代。FETCH 不重新推导。
++- 根 View ID/version 不变不能证明传递来源未变；COPY、同名重建、内层 View 变化仍须失效。
++- RC snapshot 推进属于真实 statement owner；旧请求必须拒绝跨 stamp 复用。
++- 根授权与查找每次执行；失败不能回退 warm memo 的成功。固定合法 snapshot 下，memo 命中无需重新读每个传递叶子。
++- 描述只读，不执行 View 数据、不刷新目录、不接管父事务。`mo_catalog.mo_columns` 仍是 D03 物理/MVCC 表面，不是唯一派生 schema oracle。
++- 历史 schema 的解析与当前访问资格是两件事；caller authorizer 不能只检查角色而忽略 publication 当前资格。
++
++## 3. 发现的恢复缺陷及最小修复
++
++### 3.1 不能用恢复管理员的会话重造定义属性
++
++真实跨账户恢复反例：reader 只有 View grant，没有 underlying table grant；源 View 为 INVOKER，管理员恢复后却按当前会话的 DEFINER 重建，从拒绝变为允许。原失败保留于 `remaining-account-restore.*`。
++
++`WithRestoredViewDefinition` 仅绑定恢复 owner 的目标库、View 名和原始 replay SQL。CREATE 的既有 admission、语法、授权及持久协议检查照常执行。新生成目标 SQL/definition/dependencies，保留原 security、check option、SQL mode、大小写环境与未知 JSON 字段；required protocol 取原始/新生成的较大值。
++
++原始 replay SQL 在 star 展开前保留：不能把旧 `*` 伪造成创建时已冻结的投影；缺失、null、空 legacy payload 的环境也不能被恢复会话补成“已知”。
++
++### 3.2 创建数据库不等于 View 所在数据库
++
++反例：`USE creation_env; CREATE VIEW app.v AS SELECT id FROM origin`。`creation_env.origin` 为 bigint，`app.origin` 为 int。只修补最终 JSON 不足够：恢复时首次生成的物理列和依赖也必须在正确环境绑定。
++
++- 通用恢复在目标账户中复用 `viewRegenerationContext`，在列/依赖生成前使用原始创建数据库和标识符策略。
++- snapshot、PITR、timestamp restore 的三个依赖排序 owner 同样使用该环境。临时 compiler context 在成功、错误时均恢复；只操作既有 isolated binder。
++- 后台 parser 仅在精确 replay SQL 匹配时使用保存的大小写策略；不改 session/global 变量，不污染内层目录查询。
++- **clone 是独立的映射 owner，但会间接调用 restoreViews。** `rewriteCloneViewInfos` 按明确的 source→target 映射重写匹配的创建数据库，外部创建数据库不变；SQL 重写使用保存的 SQL mode/大小写策略。不能把所有非空 DefaultDatabase 都改为 View 所在库，也不能完全忽略 clone 映射。
++
++真实失败分别保留于 `acceptance-native.*`（创建域错绑）和 `delivery-native.*`（clone 错指原库，期望宽度 20，得到 80）。修复加入同名 decoy、跨库 nested View、原账户后续变化不污染目标等反例。BVT 使用两个不同值的最小数据行验证真实读取域及 metadata，不只比较空结果。
++
++## 4. 默认关闭的验证接线
++
++普通构建的两个 frontend hook 返回常量 false，没有 registry、配置或 SQL 开关。`integration` 构建也默认关闭；仅 `_test.go` 能为测试拥有的 CN/数据库注册 route，background session 不选中。
++
++- 通用 SELECT/PREPARE 经过原统计、prepare normalization 与最终授权 owner，再显式使用 S3。
++- 参数化 EXECUTE/compile-retry 另走 `buildPreparedBoundQuery`，不能只接通用入口就声称每个执行代使用 S3。该 owner 也有默认关闭的验证 hook。
++- S3 的 admission、root authorization、依赖收集、取消、代号检查和 cleanup 保留一个公共内部壳；integration 的 prepared bridge 调用既有参数域 binder，不复制其类型/优化语义。
++- private binding process 只在绑定期间借用当前参数向量，并复制其类型/二进制来源属性；返回前撤销借用，不能释放父载荷。S3 请求在返回 plan 前关闭，不进入 cursor 或 reusable-plan 生命周期。
++- S4 的直接执行 fixture 持有请求直到 Compile/Run、结果读取和释放完成，再关闭请求；父事务/执行代仍存活。
++
++这只是可执行候选的局部验证入口，不是 durable capability、tenant activation 或生产 authorizer 的完整实现。
++
++## 5. 合同与证据入口
++
++源码入口存在不等于当前修订已经跑完；终态单独列于第 7 节。
++
++| 合同 | 入口与独立 oracle | 边界 |
++| --- | --- | --- |
++| INPLACE/COPY/同名重建、frozen star | `testNativeViewMetadataDDLTransitions`；真实物理 ID、根 View ID、20/40/60 宽度、default、固定 snapshot | 不靠 SQL 拼写猜 DDL 算法，不强迫旧 snapshot 读新 schema |
++| S3/S4 各表面 | 同一父事务中的 SELECT/CTAS typed plan、DESC/SHOW/FULL、I_S 实际执行；memo-on/off | CTAS 该组证明的是规划，不冒充其真实执行 |
++| RC 语句推进 | 真实 SQLExecutor statement owner 更新 snapshot；旧请求 `ErrViewSchemaChanged`，新请求正确 | 不是伪造 parent stamp 的 mock |
++| 授权链 | `view_metadata_security_conformance_test.go`；DEFINER/INVOKER、基表 grant/revoke/recovery、不可见根、真实最终授权 owner | 测试 authorizer 不是全部生产 SHOW/安全策略 |
++| publication 变化 | 当前 membership withdrawal/restoration、drop/recreate、同名 remap、历史资格拒绝、来源 ID 变化 | 当前资格与历史解析分别处理；完整历史 remap/table-list/生产权限组合尚不能声称全部闭合 |
++| clone/PITR/snapshot/account restore | `view_metadata_recovery_conformance_test.go`；target independence、table/database PITR、database snapshot、跨账户 security/创建域/nested View | PITR 用实际数据库时钟跨边界，不用固定 sleep；全版本恢复矩阵仍有缺口 |
++| 真实 wire/cursor | `v
+```
+
+**File**: `pkg/frontend/back_exec.go` (modified, +11/-1)
+```diff
+@@ -213,7 +213,11 @@ func (back *backExec) exec(ctx context.Context, sql string, sqlMode string, useS
+ 
+ 	var statements []tree.Statement
+ 	if useSQLMode {
+-		statements, err = parsers.ParseWithSQLMode(ctx, dialect.MYSQL, sql, v.(int64), sqlMode)
++		lowerCase, modeErr := plan2.RestoredViewLowerCaseTableNames(ctx, sql, v.(int64))
++		if modeErr != nil {
++			return modeErr
++		}
++		statements, err = parsers.ParseWithSQLMode(ctx, dialect.MYSQL, sql, lowerCase, sqlMode)
+ 	} else {
+ 		statements, err = mysql.Parse(ctx, sql, v.(int64))
+ 	}
+@@ -946,6 +950,12 @@ var GetComputationWrapperInBack = func(execCtx *ExecCtx, db string, input *UserI
+ 			lowerCaseTableNames = 0
+ 		}
+ 		if input.useParserSQLMode {
++			// This parse produces the executed AST; preliminary classification
++			// in back.exec is not sufficient to preserve restored identifiers.
++			lowerCaseTableNames, err = plan2.RestoredViewLowerCaseTableNames(execCtx.reqCtx, input.getSql(), lowerCaseTableNames)
++			if err != nil {
++				return nil, err
++			}
+ 			stmts, err = parsers.ParseWithSQLMode(
+ 				execCtx.reqCtx,
+ 				dialect.MYSQL,
+```
+
+**File**: `pkg/frontend/clone.go` (modified, +48/-7)
+```diff
+@@ -16,6 +16,7 @@ package frontend
+ 
+ import (
+ 	"context"
++	"encoding/json"
  	"fmt"
-+	"io"
- 	"math"
- 	"math/big"
- 	"slices"
-@@ -237,12 +238,39 @@ func (op *opBuiltInJq) appendJqConstResult(
- func (op *opBuiltInJq) jqImpl(jsonStr []byte, code *gojq.Code) error {
- 	// first, turn jsonstr to any
- 	var jv any
--	err := json.Unmarshal(jsonStr, &jv)
--	if err != nil {
-+	decoder := json.NewDecoder(bytes.NewReader(jsonStr))
-+	decoder.UseNumber()
-+	if err := decoder.Decode(&jv); err != nil {
-+		var validated any
-+		if syntaxErr := json.Unmarshal(jsonStr, &validated); syntaxErr != nil {
-+			return syntaxErr
+ 	"sort"
+ 	"strconv"
+@@ -1575,34 +1576,73 @@ func rewriteCloneViewInfos(
+ 		} else if dbName == srcDBName {
+ 			key = genKey(dstDBName, tblName)
+ 		}
+-		createSQL, err := rewriteCloneCreateSQL(
+-			info.createSql,
+-			srcDBName,
+-			dstDBName,
+-			lowerCaseTableNames,
+-		)
++		mode, err := viewParserSQLModeForRestore(info.viewDef)
++		if err != nil {
++			return nil, nil, err
 +		}
++		ctx := plan.WithRestoredViewDefinition(context.Background(), info.dbName, info.tblName, info.viewDef, info.createSql)
++		lower, err := plan.RestoredViewLowerCaseTableNames(ctx, info.createSql, lowerCaseTableNames)
++		if err != nil {
++			return nil, nil, err
++		}
++		createSQL, err := rewriteCloneCreateSQLWithMode(info.createSql, srcDBName, dstDBName, lower, mode)
+ 		if err != nil {
+ 			return nil, nil, err
+ 		}
+ 
+ 		clonedInfo := *info
+ 		clonedInfo.dbName = dstDBName
+ 		clonedInfo.createSql = createSQL
++		clonedInfo.viewDef, err = rebindCloneViewCreationDatabase(info.viewDef, srcDBName, dstDBName, lower)
++		if err != nil {
++			return nil, nil, err
++		}
+ 		rewrittenViewMap[key] = &clonedInfo
+ 	}
+ 
+ 	return rewrittenViewMap, rewrittenViews, nil
+ }
+ 
++// Only the clone owner knows the logical database remapping. A creation database
++// outside that mapping is an external dependency, not the View's target database.
++func rebindCloneViewCreationDatabase(definition, source, target string, lowerCaseTableNames int64) (string, error) {
++	if definition == "" || source == "" || source == target {
++		return definition, nil
++	}
++	var fields map[string]json.RawMessage
++	if err := json.Unmarshal([]byte(definition), &fields); err != nil {
++		return "", err
++	}
++	value, present := fields["DefaultDatabase"]
++	if !present {
++		return definition, nil
++	}
++	var database string
++	if err := json.Unmarshal(value, &database); err != nil {
++		return "", err
++	}
++	if tree.NewCStr(database, lowerCaseTableNames).Compare() != tree.NewCStr(source, lowerCaseTableNames).Compare() {
++		return definition, nil
++	}
++	fields["DefaultDatabase"], _ = json.Marshal(target)
++	encoded, err := json.Marshal(fields)
++	return string(encoded), err
++}
++
+ func rewriteCloneCreateSQL(sql, srcDBName, dstDBName string, lowerCaseTableNames int64) (string, error) {
++	return rewriteCloneCreateSQLWithMode(sql, srcDBName, dstDBName, lowerCaseTableNames, "")
++}
++
++func rewriteCloneCreateSQLWithMode(sql, srcDBName, dstDBName string, lowerCaseTableNames int64, sqlMode string) (string, error) {
+ 	if srcDBName == "" || srcDBName == dstDBName {
+ 		return sql, nil
+ 	}
+ 
+-	stmt, err := parsers.ParseOne(context.Background(), dialect.MYSQL, sql, lowerCaseTableNames)
++	stmt, err := parsers.ParseOneWithSQLMode(context.Background(), dialect.MYSQL, sql, lowerCaseTableNames, sqlMode)
+ 	if err != nil {
+ 		return "", err
+ 	}
++	defer stmt.Free()
+ 	createView, ok := stmt.(*tree.CreateView)
+ 	if !ok {
+ 		return "", moerr.NewInternalErrorNoCtxf("clone view SQL is %T, expected *tree.CreateView", stmt)
+@@ -1629,6 +1669,7 @@ func rewriteCloneCreateSQL(sql, srcDBName, dstDBName string, lowerCaseTableNames
+ 			if parseErr != nil {
+ 				return "", parseErr
+ 			}
++			defer localStmt.Free()
+ 			localCreateView, localOK := localStmt.(*tree.CreateView)
+ 			if !localOK {
+ 				return "", moerr.NewInternalErrorNoCtxf(
+```
+
+**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +24/-18)
+```diff
+@@ -4256,26 +4256,32 @@ func buildPlanWithPrepareMode(
+ 			return ret, err
+ 		}
+ 
+-		// Default handling of various statements
+-		switch stmt := stmt.(type) {
+-		case *tree.Select, *tree.ParenSelect, *tree.ValuesStatement,
+-			*tree.Update, *tree.Delete, *tree.Insert, *tree.MultiInsert,
+-			*tree.ShowDatabases, *tree.ShowTables, *tree.ShowSequences, *tree.ShowColumns, *tree.ShowColumnNumber,
+-			*tree.ShowTableNumber, *tree.ShowCreateDatabase, *tree.ShowCreateTable, *tree.ShowIndex,
+-			*tree.ExplainStmt, *tree.ExplainAnalyze, *tree.ExplainPhyPlan:
+-			opt := plan2.NewBaseOptimizer(ctx)
+-			optimized, err := opt.Optimize(stmt, isPrepareStmt)
+-			if err != nil {
+-				return nil, err
+-			}
++		// The integration-only route exercises the same PREPARE/rebuild owner.
++		// Ordinary builds inline a constant false and have no activation switch.
++		var validationSelected bool
++		ret, validationSelected, err = buildViewSchemaValidationPlan(reqCtx, ses, ctx, stmt, isPrepareStmt)
++		if !validationSelected {
++			// Default handling of various statements
++			switch stmt := stmt.(type) {
++			case *tree.Select, *tree.ParenSelect, *tree.ValuesStatement,
++				*tree.Update, *tree.Delete, *tree.Insert, *tree.MultiInsert,
++				*tree.ShowDatabases, *tree.ShowTables, *tree.ShowSequences, *tree.ShowColumns, *tree.ShowColumnNumber,
++				*tree.ShowTableNumber, *tree.ShowCreateDatabase, *tree.ShowCreateTable, *tree.ShowIndex,
++				*tree.ExplainStmt, *tree.ExplainAnalyze, *tree.ExplainPhyPlan:
++				opt := plan2.NewBaseOptimizer(ctx)
++				optimized, err := opt.Optimize(stmt, isPrepareStmt)
++				if err != nil {
++					return nil, err
++				}
+ 
+-			ret = &plan2.Plan{
+-				Plan: &plan2.Plan_Query{
+-					Query: optimized,
+-				},
++				ret = &plan2.Plan{
++					Plan: &plan2.Plan_Query{
++						Query: optimized,
++					},
++				}
++			default:
++				ret, err = plan2.BuildPlan(ctx, stmt, isPrepareStmt)
+ 			}
+-		default:
+-			ret, err = plan2.BuildPlan(ctx, stmt, isPrepareStmt)
+ 		}
+ 
+ 		if ret != nil {
+```
+
+**File**: `pkg/frontend/pitr.go` (modified, +2/-2)
+```diff
+@@ -1955,14 +1955,14 @@ func restoreViewsWithPitr(
+ 
+ 		compCtx.SetDatabase(viewEntry.dbName)
+ 		// build create sql to find dependent views
+-		_, err = plan.BuildPlan(compCtx, stmts[0], false)
++		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 		freeStatements(stmts)
+ 		if err != nil {
+ 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
+ 			if err != nil {
+ 				return err
+ 			}
+-			_, err = plan.BuildPlan(compCtx, stmts[0], false)
++			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 			freeStatements(stmts)
+ 			if err != nil {
+ 				// The dependency sort plans every view BEFORE the restore loop, so the
+```
+
+**File**: `pkg/frontend/prepared_execution.go` (modified, +5/-1)
+```diff
+@@ -169,7 +169,11 @@ func buildPreparedBoundQuery(ctx context.Context, ses FeSession, compiler plan2.
+ 	var bound *plan2.PreparedExecutionPlan
+ 	_, err := buildPlanWithStats(planning, ses, compiler, func() (*plan2.Plan, error) {
+ 		var buildErr error
+-		bound, buildErr = plan2.BuildPreparedExecutionPlan(compiler, stmt, bindings, values)
++		var selected bool
++		bound, selected, buildErr = buildViewSchemaValidationPreparedPlan(planning, ses, compiler, stmt, bindings, values)
++		if !selected {
++			bound, buildErr = plan2.BuildPreparedExecutionPlan(compiler, stmt, bindings, values)
++		}
+ 		if buildErr != nil {
+ 			return nil, buildErr
+ 		}
+```
+
+**File**: `pkg/frontend/snapshot.go` (modified, +17/-2)
+```diff
+@@ -2142,15 +2142,15 @@ func sortedViewInfos(
+ 
+ 		viewCtx.SetDatabase(viewEntry.dbName)
+ 		// build create sql to find dependent views
+-		_, err = plan.BuildPlan(compCtx, stmts[0], false)
++		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 		freeStatements(stmts)
+ 		if err != nil {
+ 			getLogger(ses.GetService()).Debug(fmt.Sprintf("try to build view %v failed, try to build it again", viewEntry.tblName))
+ 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
+ 			if err != nil {
+ 				return nil, err
+ 			}
+-			_, err = plan.BuildPlan(compCtx, stmts[0], false)
++			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 			freeStatements(stmts)
+ 			if err != nil {
+ 				// The dependency sort plans every view BEFORE the restore loop, so the
+@@ -3005,9 +3005,23 @@ func parseViewCreateSQLForRestore(ctx context.Context, tblInfo *tableInfo, lower
+ 		return nil, err
+ 	}
+ 
++	ctx = plan.WithRestoredViewDefinition(ctx, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql)
++	lowerCaseTableNames, err = plan.RestoredViewLowerCaseTableNames(ctx, tblInfo.createSql, lowerCaseTableNames)
++	if err != nil {
++		return nil, err
++	}
+ 	return parsers.ParseWithSQLMode(ctx, dialect.MYSQL, tblInfo.createSql, lowerCaseTableNames, parserSQLMode)
+ }
+ 
++// The three restore dependency sorts own isolated mutable compiler contexts.
++// Their dependency discovery must use the same creation environment as replay.
++func buildViewCreatePlanForRestore(compCtx plan.CompilerContext, tblInfo *tableInfo, stmt tree.Statement) (*pbplan.Plan, error) {
++	original := compCtx.GetContext()
++	compCtx.SetContext(plan.WithRestoredViewDefinition(original, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql))
++	defer compCtx.SetContext(original)
++	return plan.BuildPlan(compCtx, stmt, false)
++}
++
+ func executeViewCreateSQLForRestore(ctx context.Context, bh BackgroundExec, tblInfo *tableInfo) error {
+ 	ctx, err := restoreDDLContext(ctx, tblInfo.dbName, tblInfo.tblName)
+ 	if err != nil {
+@@ -3020,6 +3034,7 @@ func executeViewCreateSQLForRestore(ctx context.Context, bh BackgroundExec, tblI
+ 	if err != nil {
  		return err
  	}
-+	// json.Decoder accepts multiple top-level values, while jq() accepts one
-+	// JSON document. Preserve that contract and its existing syntax errors.
-+	var trailing any
-+	if err := decoder.Decode(&trailing); err != io.EOF {
-+		var validated any
-+		if syntaxErr := json.Unmarshal(jsonStr, &validated); syntaxErr != nil {
-+			return syntaxErr
-+		}
-+		if err == nil {
-+			return moerr.NewInvalidInputNoCtx("multiple top-level JSON values")
-+		}
-+		return err
-+	}
-+	if jqJSONNumberOutOfFloat64Range(jsonStr) {
-+		// Keep json.Unmarshal's historical range error while retaining the
-+		// original json.Number values for integers that float64 can represent.
-+		var validated any
-+		if err := json.Unmarshal(jsonStr, &validated); err != nil {
-+			return err
-+		}
-+	}
- 
- 	iter := code.Run(jv)
-+	first := true
- 	for {
- 		v, ok := iter.Next()
- 		if !ok {
-@@ -253,14 +281,58 @@ func (op *opBuiltInJq) jqImpl(jsonStr []byte, code *gojq.Code) error {
- 			return verr
- 		}
- 
-+		if !first {
-+			op.enc.w.WriteByte('\n')
-+		}
- 		if err := op.enc.encode(v); err != nil {
- 			op.enc.done()
- 			return err
- 		}
-+		first = false
- 	}
- 	return nil
++	ctx = plan.WithRestoredViewDefinition(ctx, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql)
+ 	return bh.ExecWithSQLMode(ctx, tblInfo.createSql, parserSQLMode)
  }
  
-+func jqJSONNumberOutOfFloat64Range(data []byte) bool {
-+	// The decoder above has already validated the JSON grammar. Scan the source
-+	// so duplicate object keys cannot discard an out-of-range number before it
-+	// is checked, while avoiding a second decoded object tree on the common path.
-+	for i := 0; i < len(data); {
-+		if data[i] == '"' {
-+			i++
-+			for i < len(data) {
-+				if data[i] == '\\' {
-+					i += 2
-+					continue
-+				}
-+				if data[i] == '"' {
-+					i++
-+					break
-+				}
-+				i++
-+			}
-+			continue
-+		}
-+		if data[i] != '-' && (data[i] < '0' || data[i] > '9') {
-+			i++
-+			continue
-+		}
-+
-+		start := i
-+		for i < len(data) {
-+			b := data[i]
-+			if (b < '0' || b > '9') && b != '-' && b != '+' && b != '.' && b != 'e' && b != 'E' {
-+				break
-+			}
-+			i++
-+		}
-+		if _, err := strconv.ParseFloat(string(data[start:i]), 64); err != nil {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
- func (op *opBuiltInJq) getJqCode(jq string) (*gojq.Code, error) {
- 	code, ok := op.jqCache[jq]
- 	if ok {
 ```
 
-**File**: `pkg/sql/plan/function/func_builtin_jq_test.go` (modified, +94/-0)
+**File**: `pkg/frontend/snapshot_restore_with_ts.go` (modified, +2/-2)
 ```diff
-@@ -253,6 +253,100 @@ func TestJqVarlenaProducerMatrix(t *testing.T) {
- 	})
- }
+@@ -783,15 +783,15 @@ func restoreViewsFromTS(
  
-+func TestJqFramesMultipleResultsAndPreservesLargeIntegers(t *testing.T) {
-+	proc := testutil.NewProcess(t)
-+	op := newOpBuiltInJq()
-+
-+	tests := []struct {
-+		name  string
-+		json  string
-+		query string
-+		want  string
-+		isTry bool
-+	}{
-+		{name: "zero results", json: `[]`, query: `.[]`, want: ""},
-+		{name: "safe integer boundary", json: `9007199254740991`, query: `.`, want: `9007199254740991`},
-+		{name: "positive integer beyond boundary", json: `9007199254740993`, query: `.`, want: `9007199254740993`},
-+		{name: "negative integer beyond boundary", json: `-9007199254740993`, query: `.`, want: `-9007199254740993`},
-+		{
-+			name:  "multiple results",
-+			json:  `[1, -9007199254740993, 9007199254740993]`,
-+			query: `.[]`,
-+			want:  "1\n-9007199254740993\n9007199254740993",
-+		},
-+		{
-+			name:  "try multiple results",
-+			json:  `[1, 2, 3]`,
-+			query: `.[]`,
-+			want:  "1\n2\n3",
-+			isTry: true,
-+		},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			result, err := evalJqForTest(t, proc, op, []FunctionTestInput{
-+				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
-+				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{test.query}, nil),
-+			}, nil, test.isTry)
-+			require.NoError(t, err)
-+			requireJqResult(t, result, []string{test.want}, []bool{false})
-+		})
-+	}
-+
-+	_, err := evalJqForTest(t, proc, op, []FunctionTestInput{
-+		NewFunctionTestInput(types.T_varchar.ToType(), []string{""}, nil),
-+		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
-+	}, nil, false)
-+	require.EqualError(t, err, "unexpected end of JSON input")
-+
-+	_, err = evalJqForTest(t, proc, op, []FunctionTestInput{
-+		NewFunctionTestInput(types.T_varchar.ToType(), []string{"1e1000"}, nil),
-+		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
-+	}, nil, false)
-+	require.EqualError(t, err, "json: cannot unmarshal number 1e1000 into Go value of type float64")
-+
-+	result, err := evalJqForTest(t, proc, op, []FunctionTestInput{
-+		NewFunctionTestInput(types.T_varchar.ToType(), []string{`{"value":-1e1000}`}, nil),
-+		NewFunctionTestConstInput(types.T_varchar.ToType(), []string{".value"}, nil),
-+	}, nil, true)
-+	require.NoError(t, err)
-+	requireJqResult(t, result, []string{""}, []bool{true})
-+}
-+
-+func TestJqRejectsOutOfRangeNumbersBeforeDuplicateKeysOverwriteThem(t *testing.T) {
-+	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"1e1000"}`)))
-+	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"\"1e1000"}`)))
-+	require.False(t, jqJSONNumberOutOfFloat64Range([]byte(`{"text":"\\1e1000"}`)))
-+
-+	proc := testutil.NewProcess(t)
-+	tests := []struct {
-+		name string
-+		json string
-+		want string
-+	}{
-+		{name: "positive", json: `{"n":1e1000,"n":1}`, want: "json: cannot unmarshal number 1e1000 into Go struct field .n of type float64"},
-+		{name: "negative", json: `{"n":-1e1000,"n":1}`, want: "json: cannot unmarshal number -1e1000 into Go struct field .n of type float64"},
-+		{name: "nested object", json: `{"outer":{"n":1e1000,"n":1}}`, want: "json: cannot unmarshal number 1e1000 into Go struct field .outer.n of type float64"},
-+		{name: "nested array", json: `{"outer":[{"n":-1e1000,"n":1}]}`, want: "json: cannot unmarshal number -1e1000 into Go struct field .outer.0.n of type float64"},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			_, err := evalJqForTest(t, proc, newOpBuiltInJq(), []FunctionTestInput{
-+				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
-+				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
-+			}, nil, false)
-+			require.EqualError(t, err, test.want)
-+
-+			result, err := evalJqForTest(t, proc, newOpBuiltInJq(), []FunctionTestInput{
-+				NewFunctionTestInput(types.T_varchar.ToType(), []string{test.json}, nil),
-+				NewFunctionTestConstInput(types.T_varchar.ToType(), []string{"."}, nil),
-+			}, nil, true)
-+			require.NoError(t, err)
-+			requireJqResult(t, result, []string{""}, []bool{true})
-+		})
-+	}
-+}
-+
- func TestJsonRowPropagatesResultAllocationFailureAndResetsEncoder(t *testing.T) {
- 	for _, masked := range []bool{false, true} {
- 		t.Run(strconv.FormatBool(masked), func(t *testing.T) {
-```
-
-**File**: `test/distributed/cases/function/func_jq.result` (modified, +12/-12)
-```diff
-@@ -27,15 +27,15 @@ jq({"id": "sample", "10": {"b": 42}}, {(.id): .["10"].b})
- {"sample":42}
- select jq('[{"id":1},{"id":2},{"id":3}]', '.[] | .id');
- jq([{"id":1},{"id":2},{"id":3}], .[] | .id)
--123
-+1\n2\n3
- select jq('{"a":1, "b":2}', '.a += 1 | .b *= 2');
- jq({"a":1, "b":2}, .a += 1 | .b *= 2)
- {"a":2,"b":4}
- select jq('{"a":1} [2] 3', '. as {$a} ?// [$a] ?// $a | $a');
- invalid character '[' after top-level value
- select jq('{"foo": 4722366482869645213696}', '.foo');
- jq({"foo": 4722366482869645213696}, .foo)
--4.722366482869645e+21
-+4722366482869645213696
- select jq('1', 'def fact($n): if $n < 1 then 1 else $n * fact($n - 1) end; fact(50)');
- jq(1, def fact($n): if $n < 1 then 1 else $n * fact($n - 1) end; fact(50))
- 30414093201713378043612608166064768844377641568960512000000000000
-@@ -84,22 +84,22 @@ jq(["a", "b", "c", "d", "e"], .[-2:])
- ["d","e"]
- select jq('["a", "b", "c", "d", "e"]', '.[]');
- jq(["a", "b", "c", "d", "e"], .[])
--"a""b""c""d""e"
-+"a"\n"b"\n"c"\n"d"\n"e"
- select jq('[]', '.[]');
- jq([], .[])
- 
- select jq('{"foo": ["a", "b", "c", "d", "e"]}', '.foo[]');
- jq({"foo": ["a", "b", "c", "d", "e"]}, .foo[])
--"a""b""c""d""e"
-+"a"\n"b"\n"c"\n"d"\n"e"
- select jq('{"a":1, "b":2}', '.[]');
- jq({"a":1, "b":2}, .[])
--12
-+1\n2
- select jq('{"a":1, "b":2}', '.a, .b');
- jq({"a":1, "b":2}, .a, .b)
--12
-+1\n2
- select jq('["a", "b", "c", "d", "e"]', '.[4,2]');
- jq(["a", "b", "c", "d", "e"], .[4,2])
--"e""c"
-+"e"\n"c"
- select jq('{"a": 1, "b": [2, 3]}', '[.a, .b[]]');
- jq({"a": 1, "b": [2, 3]}, [.a, .b[]])
- [1,2,3]
-@@ -111,7 +111,7 @@ jq({"a":1, "b":2}, {aa: .a, bb: .b})
- {"aa":1,"bb":2}
- select jq('{"user":"stedolan","titles":["JQ Primer", "More JQ"]}', '{user, title: .titles[]}');
- jq({"user":"stedolan","titles":["JQ Primer", "More JQ"]}, {user, title: .titles[]})
--{"title":"JQ Primer","user":"stedolan"}{"title":"More JQ","user":"stedolan"}
-+{"title":"JQ Primer","user":"stedolan"}\n{"title":"More JQ","user":"stedolan"}
- select jq('[[{"a":1}]]', '.. | .a');
- expected an object but got: array ([[{"a":1}]])
- select jq('{"a":1, "b":2}', '.a + .b');
-@@ -149,7 +149,7 @@ jq([1, 2, 3], reduce .[] as $item (0; + $item))
- 3
- select jq('[1, 2, 3]', 'foreach .[] as $item(0; . + $item; [$item, . * 2])');
- jq([1, 2, 3], foreach .[] as $item(0; . + $item; [$item, . * 2]))
--[1,2][2,6][3,12]
-+[1,2]\n[2,6]\n[3,12]
- create table jqt(id int, data varchar(255), jq varchar(255));
- insert into jqt values
- (1, '{"foo": 128}', '.foo'),
-@@ -201,7 +201,7 @@ id    try_jq(data, .)
- 8    [{"id":1},{"id":2},{"id":3}]
- 9    {"a":1,"b":2}
- 10    null
--11    {"foo":4.722366482869645e+21}
-+11    {"foo":4722366482869645213696}
- 12    1
- 100    [1,2,3]
- 101    [1,2,3]
-@@ -284,10 +284,10 @@ id    try_jq(data, jq)
- 5    null
- 6    null
- 7    {"sample":42}
--8    123
-+8    1\n2\n3
- 9    {"a":2,"b":4}
- 10    null
--11    4.722366482869645e+21
-+11    4722366482869645213696
- 12    30414093201713378043612608166064768844377641568960512000000000000
- 100    null
- 101    null
+ 		compCtx.SetDatabase(viewEntry.dbName)
+ 		// build create sql to find dependent views
+-		_, err = plan.BuildPlan(compCtx, stmts[0], false)
++		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 		freeStatements(stmts)
+ 		if err != nil {
+ 			getLogger(ses.GetService()).Info(fmt.Sprintf("try to build view %v failed, try to build it again", viewEntry.tblName))
+ 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
+ 			if err != nil {
+ 				return err
+ 			}
+-			_, err = plan.BuildPlan(compCtx, stmts[0], false)
++			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
+ 			freeStatements(stmts)
+ 			if err != nil {
+ 				if markUnservableViewInSort(ses, fmt.Sprintf("%d:%d", restoreAccount, snapshotTs), viewEntry, &g, key, err) {
 ```
 
 ---
 
-### Incident Patch 3: `e3f4b642` (2026-10-24)
-**Commit Message**: fix(logservice): preserve CN mutation budgets; test grouped SUM (#30886)
+### Incident Patch 2: `3de2ee56` (2026-10-26)
+**Commit Message**: fix(sql): enforce DECIMAL width for integer assignments (#30367) (#30639)
 
-## What type of PR is this?
+Signed/unsigned integer, hexnum and bit sources converted to `DECIMAL` skipped the declared width check, while string and decimal sources enforced it via `ParseDecimal64/128`. In strict SQL mode, `INSERT INTO t VALUES (1, 2)` into `DECIMAL(2,2)` persisted `2.00` (max `0.99`), and the same gap let `ALTER TABLE ... ALGORITHM=COPY` keep out-of-range rows when narrowing an INT column to `DECIMAL`.
 
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [ ] Code Refactoring
+Two layers had the gap:
 
-## Which issue(s) this PR fixes:
+1. **Runtime casts** (`pkg/sql/plan/function/func_cast.go`): `signedToDecimal64/128/256` and `unsignedToDecimal64/128/256` scaled integers into the target decimal without a width check and silently dropped `Scale` errors (raised by 64/128-bit scale overflow). Unsigned magnitudes beyond `MaxInt64` additionally wrapped negative inside `Decimal64`, escaping every bound.
+2. **VALUES literal fast path** (`pkg/sql/util/eval_expr_util.go`): `SetInsertValueDecimal64/128` applied `Scale()` directly to integer literals at plan time; string literals in the same code path already went through precision-aware parsing.
 
-Related to #30847 and #30337; umbrella #30838.
+Fix: enforce `-10^width < value < 10^width` for every integer-family source in both laye
 
-## What this PR does / why we need it:
-
-CN label update, patch and deletion detached their preflight
-checker-state reads into a fresh background deadline even when the
-caller supplied a bounded context. Use the caller context for both read
-and proposal, matching CN work-state updates. Reuse the existing store
-fixture to distinguish rejection of an expired request from a missing-CN
-error or successful no-op deletion. Keep the CDC takeover cleanup and
-ownership/checkpoint assertions intact; the original timeout was not
-reproduced locally, so this does not claim to eliminate every HAKeeper
-stall.
-
-The grouped SUM portion adds correctness tests and caller-sized
-benchmark controls only. Production SUM code is identical to main. Group
-invokes BatchFill in hashmap.UnitLimit-sized chunks (256 rows), so cover
-those calls with original vector offsets, 4/254/255/256 groups,
-sequential/permute
-
-**File**: `docs/design/tpch-sum-local-table-validation.md` (added, +59/-0)
+**File**: `optools/ut_embedded_schedule_test.go` (modified, +12/-6)
 ```diff
-@@ -0,0 +1,59 @@
-+# Caller-sized validation for grouped decimal SUM
-+
-+Owner: #30847; umbrella #30838.
-+
-+## Final scope
-+
-+The grouped SUM change adds tests and benchmarks only. Production SUM code is identical to main; its cache, executor state, arithmetic and update/scatter order are unchanged.
-+
-+## Regression disposition
-+
-+The frozen comparison of main `517a0a412b` with the rejected implementation
-+`f4beca75c7` measured +14.65% for caller-sized permuted groups and +155.68% for
-+the large-call permuted control. Those results are failures, not accepted
-+tradeoffs or performance claims for the current head. The range index was
-+removed before the current test-only SUM revision; the final diff against
-+main contains no production file under `pkg/sql/colexec/aggexec`.
-+
-+The remaining production change belongs to HAKeeper CN mutation deadlines,
-+not SUM execution. The retained tests/benchmarks preserve the real caller's
-+256-row boundary and the reordered-ID controls for future optimization work.
-+
-+## Review finding and correction
-+
-+The initial range-rejection optimization built a min/max and empty-slot index once a 255-entry local table filled. Its 8192-row single-call benchmark showed a gain, but group.buildOneBatch calls BatchFill with at most hashmap.UnitLimit (256) rows. In such a call the index can be built for at most the last row, cannot amortize its scans, and regresses reordered group IDs. The initially claimed 5.07x kernel gain does not describe normal grouped execution and is withdrawn.
-+
-+The range index and all production probe changes are removed. An index-free contiguous-membership alternative also failed the caller-sized benchmark and is not retained. Future optimization of #30847 requires a design grounded in the real caller's work and state lifecycle.
-+
-+## Matched current-source check
-+
-+A separate current-source comparison used main `6fb6531432` and the
-+PR source `5affe39d58`. Both production SUM blobs are
-+`e282f8d3188a3d172fe5209104117648dea7c938`; no non-test aggexec file differs.
-+Ten balanced process pairs used one physical CPU, GOMAXPROCS=1, GOAMD64=v3 and
-+GOEXPERIMENT=simd. Each case ran twice per process; the first result was excluded.
-+The complete controls, samples and uncertainty are retained in the PR discussion.
-+
-+The large-call permuted control measured 400.272 versus 404.339 microseconds per
-+8192 rows; the paired estimate is +0.95% with ratio interval [0.9958, 1.0228].
-+Caller-sized permuted calls measured 130.859 versus 131.376 microseconds, with
-+paired estimate +0.40% and interval [0.9863, 1.0119]. These uncertain differences
-+are not the removed implementation's +155.68% and +14.65% results. Every scored
-+control reported zero allocations. No current SUM optimization or speedup is
-+claimed; this check confirms which source the historical failure describes.
-+
-+## Validation contract
-+
-+Benchmark public aggregate dispatch with 8192 rows consumed in hashmap.UnitLimit-sized calls, original vector offsets, and state allocated outside timing. Include cardinalities 4/254/255/256, sequential and permuted high-cardinality IDs, and a high endpoint. Keep explicitly named large-call sequential/permuted controls to expose the misleading amortization assumption. Allocation counts and timing belong to benchmarks, not wall-clock assertions in unit tests.
-+
-+Extend the existing small boundary fixture for both caller-sized chunks and a whole call, with independent expected sums/NULLs, constants, offsets, unmatched IDs, repeated local groups and sparse group IDs. Retain the physical-overflow-order witness because it protects direct updates and deferred scatter. No service, cluster, input dataset, sleeps or benchmark result-verification script is needed. The SUM changes introduce no new SQL-visible behavior requiring BVT. Current validation must be tied to the rebased source; historical passing runs do not establish a green pipeline.
-+
-+## Review classification
-+
-+Focused removal of an unsuccessful optimization and correction of test coverage; no new feature or major refactor. Design gate is exempt for this review fix. Original approved optimization design is superseded by the final test-only scope above.
-+
-+## HAKeeper caller-budget correction
-+
-+The CI failure in `TestCDCNoFullPublicTakeoverLifecycle` occurred while its deferred CN C label cleanup returned a Dragonboat timeout. CN label update, patch and deletion each detached their preflight checker-state read into a background context with a fixed two-second deadline, even though the mutation already had a caller-owned deadline. They now use that context for both the read and proposal, matching CN work-state updates. The CDC cleanup and takeover assertions remain intact. No retry loop, global deadline change, new hook or wire change is introduced.
-+
-+The existing store fixture checks all four mutations with an already-expired deadline and an unknown CN. This distinguishes deadline rejection from the detached read's missing-CN 
+@@ -20,6 +20,7 @@ import (
+ 	"os/exec"
+ 	"strings"
+ 	"testing"
++	"time"
+ )
+ 
+ const embeddedSetup = `source ./run_ut.sh UT
+@@ -329,6 +330,7 @@ func TestEmbeddedPrebuiltAdmission(t *testing.T) {
+ 		{"serial", "1", "success"},
+ 		{"pool", "2", "success"},
+ 		{"heavy-failure", "2", "heavy-failure"},
++		{"slow-prebuild", "1", "slow-prebuild"},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			script := embeddedSetup + `
+@@ -347,25 +349,27 @@ artifact_dir=$CLUSTER_PREBUILD_DIR
+ (
+  trap release_children EXIT
+  trap 'exit 143' TERM INT
++ # The harness deadline bounds the fixture, including prebuild and metadata
++ # discovery. FIFO reads assert event ordering, not preparation latency.
+  for heavy in embed bootstrap; do
+-  read -r -t 5 leaf pid <&8 || exit 100
++  read -r leaf pid <&8 || exit 100
+   [[ "$leaf" == "$heavy" ]] || exit 101
+   kill -0 "$pid" || exit 102
+   printf 'release\n' >&10
+  done
+  if [[ "$UT_EMBEDDED_PACKAGE_PARALLEL" == 2 ]]; then
+-  read -r -t 5 first first_pid <&8 || exit 103
+-  read -r -t 5 second second_pid <&8 || exit 104
++  read -r first first_pid <&8 || exit 103
++  read -r second second_pid <&8 || exit 104
+   [[ "$first $second" == 'arrowload dml' || "$first $second" == 'dml arrowload' ]] || exit 105
+   [[ "$first_pid" != "$second_pid" ]] || exit 106
+   kill -0 "$first_pid" && kill -0 "$second_pid" || exit 107
+   printf 'release\nrelease\n' >&11
+-  read -r -t 5 leaf pid <&8 || exit 108
++  read -r leaf pid <&8 || exit 108
+   [[ "$leaf" == sqlintegration ]] || exit 109
+   printf 'release\n' >&10
+  else
+   for next in arrowload sqlintegration dml; do
+-   read -r -t 5 leaf pid <&8 || exit 110
++   read -r leaf pid <&8 || exit 110
+    [[ "$leaf" == "$next" ]] || exit 111
+    if [[ "$leaf" == sqlintegration ]]; then printf 'release\n' >&10; else printf 'release\n' >&11; fi
+   done
+@@ -409,6 +413,8 @@ fi
+ if [[ "$1" == test ]]; then
+  package=${!#}; leaf=${package##*/}
+  [[ " $* " == *' -c '* ]] || exit 120
++ # Exceed the old per-event timeout before execution can publish any event.
++ if [[ "$MODE" == slow-prebuild && "$leaf" == bootstrap ]]; then sleep 6; fi
+  while [[ "$1" != -o ]]; do shift; done
+  output=$2
+  printf '%s\n' "$output" > "$CASE_DIR/binary-$leaf"
+@@ -433,7 +439,7 @@ if [[ "$1" == tool && "$2" == test2json ]]; then
+ fi
+ exit 125
+ `
+-			out, err := scheduleHarnessWithMock(t, script, mock,
++			out, err := scheduleHarnessWithMockTimeout(t, 30*time.Second, script, mock, nil,
+ 				"MODE="+tc.mode, "UT_EMBEDDED_PACKAGE_PARALLEL="+tc.parallel)
+ 			if err != nil {
+ 				t.Fatalf("prebuilt entry admission %s: %v\n%s", tc.name, err, out)
 ```
 
-**File**: `pkg/logservice/store.go` (modified, +3/-3)
+**File**: `optools/ut_schedule_test.go` (modified, +6/-1)
 ```diff
-@@ -1335,7 +1335,7 @@ func (l *store) addScheduleCommands(ctx context.Context,
- }
+@@ -86,6 +86,11 @@ const scheduleFixturePID = `function fixture_self_pid() {
+ `
  
- func (l *store) updateCNLabel(ctx context.Context, label pb.CNStoreLabel) error {
--	state, err := l.getCheckerState()
-+	state, err := l.getCheckerStateWithContext(ctx)
- 	if err != nil {
- 		return err
- 	}
-@@ -1379,7 +1379,7 @@ func (l *store) updateCNWorkState(ctx context.Context, workState pb.CNWorkState)
- }
- 
- func (l *store) patchCNStore(ctx context.Context, stateLabel pb.CNStateLabel) error {
--	state, err := l.getCheckerState()
-+	state, err := l.getCheckerStateWithContext(ctx)
- 	if err != nil {
- 		return err
- 	}
-@@ -1401,7 +1401,7 @@ func (l *store) patchCNStore(ctx context.Context, stateLabel pb.CNStateLabel) er
- }
- 
- func (l *store) deleteCNStore(ctx context.Context, cnStore pb.DeleteCNStore) error {
--	state, err := l.getCheckerState()
-+	state, err := l.getCheckerStateWithContext(ctx)
- 	if err != nil {
- 		return err
- 	}
-```
-
-**File**: `pkg/logservice/store_test.go` (modified, +27/-0)
-```diff
-@@ -1225,6 +1225,33 @@ func TestUpdateCNLabel(t *testing.T) {
- 		assert.Equal(t, labels1.Labels, []string{"a", "b"})
- 		_, ok3 = info.Labels["role"]
- 		assert.False(t, ok3)
+ func scheduleHarnessWithMockTransform(t *testing.T, script, mock string, transform func(string) string, variables ...string) ([]byte, error) {
++	t.Helper()
++	return scheduleHarnessWithMockTimeout(t, 15*time.Second, script, mock, transform, variables...)
++}
 +
-+		// The preflight read belongs to the mutation's caller budget too.
-+		// An unknown CN distinguishes a detached read (missing-CN error or
-+		// successful no-op deletion) from rejection of the expired request.
-+		expired, cancelExpired := context.WithDeadline(context.Background(), time.Unix(1, 0))
-+		defer cancelExpired()
-+		for _, tc := range []struct {
-+			name string
-+			run  func(context.Context) error
-+		}{
-+			{"label", func(ctx context.Context) error {
-+				return store.updateCNLabel(ctx, pb.CNStoreLabel{UUID: "missing-cn"})
-+			}},
-+			{"work_state", func(ctx context.Context) error {
-+				return store.updateCNWorkState(ctx, pb.CNWorkState{UUID: "missing-cn"})
-+			}},
-+			{"patch", func(ctx context.Context) error {
-+				return store.patchCNStore(ctx, pb.CNStateLabel{UUID: "missing-cn"})
-+			}},
-+			{"delete", func(ctx context.Context) error {
-+				return store.deleteCNStore(ctx, pb.DeleteCNStore{StoreID: "missing-cn"})
-+			}},
-+		} {
-+			t.Run("expired_"+tc.name, func(t *testing.T) {
-+				require.ErrorIs(t, tc.run(expired), dragonboat.ErrInvalidDeadline)
-+			})
-+		}
++func scheduleHarnessWithMockTimeout(t *testing.T, timeout time.Duration, script, mock string, transform func(string) string, variables ...string) ([]byte, error) {
+ 	t.Helper()
+ 	script = scheduleFixturePID + script
+ 	mock = strings.Replace(mock, "#!/bin/bash\n", "#!/bin/bash\n"+scheduleFixturePID, 1)
+@@ -118,7 +123,7 @@ func scheduleHarnessWithMockTransform(t *testing.T, script, mock string, transfo
+ 	if err := os.WriteFile(filepath.Join(dir, "go"), []byte(mock), 0755); err != nil {
+ 		t.Fatal(err)
  	}
- 	runStoreTest(t, fn)
+-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
++	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+ 	defer cancel()
+ 	cmd := exec.CommandContext(ctx, "bash", "-c", script)
+ 	cmd.Dir = dir
+```
+
+**File**: `pkg/cdc/reader_v2_txn_manager_test.go` (modified, +60/-36)
+```diff
+@@ -1010,45 +1010,39 @@ func TestTransactionManager_EnsureCleanup_WatermarkMismatch_Concurrent(t *testin
+ 	require.False(t, tm.tracker.NeedsRollback(), "tracker should be clean after EnsureCleanup")
+ }
+ 
+-// slowRecordingSinker injects small delays to simulate slow downstream without causing deadlocks.
+-type slowRecordingSinker struct {
++// blockingRollbackSinker holds the first rollback until the test explicitly
++// releases it, simulating a slow downstream without scheduler-dependent sleeps.
++type blockingRollbackSinker struct {
+ 	*recordingSinker
+-	delay time.Duration
++	rollbackEntered chan struct{}
++	releaseRollback <-chan struct{}
++	once            sync.Once
+ }
+ 
+-func newSlowRecordingSinker(delay time.Duration) *slowRecordingSinker {
+-	return &slowRecordingSinker{
+-		recordingSinker: newRecordingSinker(),
+-		delay:           delay,
+-	}
+-}
+-
+-func (s *slowRecordingSinker) SendBegin() {
+-	time.Sleep(s.delay)
+-	s.record("begin")
+-}
+-
+-func (s *slowRecordingSinker) SendCommit() {
+-	time.Sleep(s.delay)
+-	s.record("commit")
+-}
+-
+-func (s *slowRecordingSinker) SendRollback() {
+-	time.Sleep(s.delay)
+-	s.record("rollback")
+-}
+-
+-func (s *slowRecordingSinker) SendDummy() {
+-	time.Sleep(s.delay / 2)
+-	s.record("dummy")
++func (s *blockingRollbackSinker) SendRollback() {
++	s.once.Do(func() {
++		close(s.rollbackEntered)
++		<-s.releaseRollback
++	})
++	s.recordingSinker.SendRollback()
+ }
+ 
+ // TestTransactionManager_SlowSinker_NoDeadlock ensures that even with a slow sinker,
+ // concurrent begins do not deadlock; at worst, they serialize and take slightly longer.
+ func TestTransactionManager_SlowSinker_NoDeadlock(t *testing.T) {
+ 	t.Parallel()
+-	ctx := context.Background()
+-	sinker := newSlowRecordingSinker(5 * time.Millisecond)
++	// This deadline is only a deadlock watchdog, not a throughput assertion.
++	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
++	defer cancel()
++	releaseRollback := make(chan struct{})
++	var releaseOnce sync.Once
++	release := func() { releaseOnce.Do(func() { close(releaseRollback) }) }
++	t.Cleanup(release)
++	sinker := &blockingRollbackSinker{
++		recordingSinker: newRecordingSinker(),
++		rollbackEntered: make(chan struct{}),
++		releaseRollback: releaseRollback,
++	}
+ 	updater := newMockWatermarkUpdater()
+ 	tm := NewTransactionManager(sinker, updater, 1, "task1", "db1", "table1")
+ 
+@@ -1064,27 +1058,57 @@ func TestTransactionManager_SlowSinker_NoDeadlock(t *testing.T) {
+ 	wg.Add(numGoroutines)
+ 
+ 	done := make(chan struct{})
+-	start := time.Now()
++	start := make(chan struct{})
++	errCh := make(chan error, numGoroutines)
+ 
+ 	for i := 0; i < numGoroutines; i++ {
+ 		go func() {
+ 			defer wg.Done()
++			<-start
+ 			// Repeatedly attempt begin on a new range; should not deadlock
+-			_ = tm.BeginTransaction(ctx, toTs1, toTs2)
++			errCh <- tm.BeginTransaction(ctx, toTs1, toTs2)
+ 		}()
+ 	}
++	close(start)
+ 
+ 	go func() {
+ 		wg.Wait()
+ 		close(done)
+ 	}()
+ 
++	select {
++	case <-sinker.rollbackEntered:
++	case <-ctx.Done():
++		t.Fatal("concurrent begin did not reach rollback; possible recursive-lock deadlock")
++	}
++	// The slow rollback must retain the manager lock. No caller may finish
++	// or emit another transaction operation until the downstream is released.
++	if tm.mu.TryLock() {
++		tm.mu.Unlock()
++		t.Fatal("transaction manager lock was released during rollback")
++	}
++	require.Equal(t, []string{"clear"}, sinker.opsSnapshot())
++	select {
++	case err := <-errCh:
++		t.Fatalf("begin completed before rollback was released: %v", err)
++	default:
++	}
++	release()
++
+ 	select {
+ 	case <-done:
+-		// Completed; assert time bound is reasonable (no deadlock)
+-		elapsed := time.Since(start)
+-		require.Less(t, elapsed, 500*time.Millisecond, "should not take too long; no deadlock expected")
+-	case <-time.After(2 * time.Second):
++	case <-ctx.Done():
+ 		t.Fatal("timeout indicates potential deadlock with slow sinker")
+ 	}
++	for range numGoroutines {
++		require.NoError(t, <-errCh)
++	}
++	expected := make([]string, 0, 4*numGoroutines)
++	for range numGoroutines {
++		expected = append(expected, "clear", "rollback", "dummy", "begin")
++	}
++	require.Equal(t, expected, sinker.opsSnapshot(), "each begin must serialize rollback and its next begin")
++	require.Equal(t, toTs1, tm.tracker.GetFromTs())
++	require.Equal(t, toTs2, tm.tracker.GetToTs())
++	require.True(t, tm.tracker.NeedsRollback(), "the final begin remains active")
  }
 ```
 
-**File**: `pkg/sql/colexec/aggexec/sum_local_table_test.go` (added, +199/-0)
+**File**: `pkg/embed/catalog_decimal_context_test.go` (added, +69/-0)
 ```diff
-@@ -0,0 +1,199 @@
+@@ -0,0 +1,69 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
++// http://www.apache.org/licenses/LICENSE-2.0
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
 +// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package aggexec
++package embed
 +
 +import (
++	"context"
 +	"fmt"
 +	"testing"
++	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/common/hashmap"
-+	"github.com/matrixorigin/matrixone/pkg/common/mpool"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestSumFullLocalTablePreservesGroups(t *testing.T) {
-+	for _, distinctGroups := range []int{254, 255, 256} {
-+		for _, constant := range []bool{false, true} {
-+			for _, chunk := range []int{hashmap.UnitLimit, 1024} {
-+				t.Run(fmt.Sprintf("groups_%d/constant_%t/chunk_%d", distinctGroups, constant, chunk), func(t *testing.T) {
-+					mp := mpool.MustNewZero()
-+					t.Cleanup(func() { require.Zero(t, mp.CurrNB()); mpool.DeleteMPool(mp) })
-+					param := types.New(types.T_decimal128, 38, 0)
-+					exec := makeSumAvgExec(mp, true, AggIdOfSum, false, param)
-+					t.Cleanup(exec.Free)
-+					require.IsType(t, &sumAvgDecExec[types.Decimal128, types.Decimal256]{}, exec)
-+					require.NoError(t, exec.GroupGrow(901))
-+					groups := make([]uint64, distinctGroups, distinctGroups+8)
-+					for i := range groups {
-+						groups[i] = uint64(100 + i*2)
-+					}
-+					// Both outside-range directions, an in-range hole, both endpoints,
-+					// and a repeated existing group after the table became full.
-+					groups = append(groups, 50, 900, 101, 100, 608, 100, GroupNotMatched, 899)
-+					const offset = 2
-+					values := make([]types.Decimal128, len(groups)+offset)
-+					want := make([]int64, 901)
-+					for i, group := range groups {
-+						n := int64(i%7 - 3)
-+						if constant {
-+							n = 5
-+						}
-+						values[i+offset] = types.Decimal128FromInt64(n)
-+						if group != GroupNotMatched && (constant || i != len(groups)-1) {
-+							want[group-1] += n
-+						}
-+					}
-+					var input *vector.Vector
-+					if constant {
-+						var err error
-+						input, err = vector.NewConstFixed(param, types.Decimal128FromInt64(5), len(values), mp)
-+						require.NoError(t, err)
-+					} else {
-+						input = vector.NewVec(param)
-+					}
-+					t.Cleanup(func() { input.Free(mp) })
-+					if !constant {
-+						for i, value := range values {
-+							require.NoError(t, vector.AppendFixed(input, value, i == len(values)-1, mp))
-+						}
-+					}
-+					for start := 0; start < len(groups); start += chunk {
-+						require.NoError(t, exec.BatchFill(offset+start, groups[start:min(start+chunk, len(groups))], []*vector.Vector{input}))
-+					}
-+					results, err := exec.Flush()
-+					t.Cleanup(func() {
-+						for _, result := range results {
-+							result.Free(mp)
-+						}
-+					})
-+					require.NoError(t, err)
-+					require.Len(t, results, 1)
-+					got := vector.MustFixedColNoTypeCheck[types.Decimal256](results[0])
-+					seen := make(map[uint64]bool)
-+					for i, g := range groups {
-+						if g != 0 && (constant || i != len(groups)-1) {
-+							seen[g] = true
-+						}
-+					}
-+					for i := range want {
-+						if !seen[uint64(i+1)] {
-+							require.True(t, results[0].IsNull(uint64(i)))
-+							continue
-+						}
-+						require.False(t, results[0].IsNull(uint64(i)))
-+						require.Equal(t, fmt.Sprint(want[i]), got[i].Format(0), "group %d", i+1)
-+					}
-+				})
++func TestCatalogDecimalMigrationUsesCurrentStatementContext(t *testing.T) {
++	// Share the canonical SQL fixture; starting a separate two-CN fixture
++	// prevents later single-CN catalog regressions from obtaining admission.
++	RunSingleCNBaseClusterTests(t, func(c Cluster) {
++		db := openIcebergTestDB(t, c)
++		defer db.Close()
++		ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
++		defer cancel()
++		conn, err := db.Conn(ctx)
++		require.NoError(t, err)
++		defer conn.Close()
++		exec := func(query string) {
++			t.Helper()
++			_, err := conn.ExecContext(ctx, query)
++			require.NoError(t, err, query)
++		}
++		exec("create database catalog_decimal_context")
++		defer func() {
++			_, err := conn.ExecContext(t.Context(), "drop database catalog_decimal_context")
++			require.NoError(t, err)
++		}()
++		for i := range 3 {
++			var one int
++			require.NoError(t, conn.QueryRowContext(ctx, "select 1").Scan(&one))
++			require.Equal(t, 1, one)
++			table := fmt.Sprintf("catalog_decimal_context.t%d", i)
++			exec(fmt.Sprintf("create table %s(id int auto_increment primary key, i bigint, tm time(0), constraint ck_%d check(i>tm))", table, i))
++			exec("insert into " + table + "(i,tm) values(1000000000000000000,'00:00:00')")
++			var value int64
++			require.NoError(t, conn.QueryRowContext(ctx, "select i from "+table).Scan(&value))
++			require.Equal(t, int64(1000000000000000000), value)
++		}
++		for _, value := range []string{"999999999999999999", "1000000000000000000", "-1000000000000000000", "9223372036854775807", "-9223372036854775808"} {
++			for _, reverse := range []bool{false, true} {
++				left, right := "cast("+value+" as signed)", "1.0"
++				if reverse {
++					left, right = right, left
++				}
++				query := "select " + left + " * " + right
++				var got string
++				require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&got), query)
++				require.Equal(t, value+".0", got, query)
 +			}
 +		}
-+	}
++	})
 +}
-+
-+// Mirror group.buildOneBatch: state grows once, BatchFill receives at most
-+// hashmap.UnitLimit rows, with offsets into the original input vector.
-+func BenchmarkSumFullLocalTable(b *testing.B) {
-+	for _, tc := range []struct {
-+		name               string
-+		cardinality, chunk int
-+		order              string
-+	}{
-+		{"groups_4", 4, hashmap.UnitLimit, "sequential"},
-+		{"groups_254", 254, hashmap.UnitLimit, "sequential"},
-+		{"groups_255", 255, hashmap.UnitLimit, "sequential"},
-+		{"groups_256", 256, hashmap.UnitLimit, "sequential"},
-+		{"sequential", 8192, hashmap.UnitLimit, "sequential"},
-+		{"permuted", 8192, hashmap.UnitLimit, "permuted"},
-+		{"one_endpoint", 8192, hashmap.UnitLimit, "endpoint"},
-+		{"large_call_sequential", 8192, 8192, "sequential"},
-+		{"large_call_permuted", 8192, 8192, "permuted"},
-+	} {
-+		b.Run(tc.name, func(b *testing.B) {
-+			mp := mpool.MustNewZero()
-+			defer mpool.DeleteMPool(mp)
-+			param := types.New(types.T_decimal128, 38, 0)
-+			input := vector.NewVec(param)
-+			defer input.Free(mp)
-+			groups := make([]uint64, 8192)
-+			for i := range groups {
-+				group := i%tc.cardinality + 1
-+				switch tc.order {
-+			
+```
+
+**File**: `pkg/embed/check_constraint_namespace_test.go` (modified, +4/-2)
+```diff
+@@ -427,7 +427,9 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 			var originalSnapshot, finalSnapshot timestamp.Timestamp
+ 			var grants []lock.Result
+ 			var grantsMu sync.Mutex
+-			const statement = "create table si_after_snapshot(x int, constraint si_after_snapshot_ck check(x>0))"
++			// Namespace admission, not hidden auto-increment maintenance, is
++			// under test. Keep both empty tables free of allocator side effects.
++			const statement = "create table si_after_snapshot(x int primary key, constraint si_after_snapshot_ck check(x>0))"
+ 			err = svc.GetSQLExecutor().ExecTxn(defines.AttachAccountId(ctx, 0), func(tx executor.TxnExecutor) error {
+ 				op := tx.Txn()
+ 				id := append([]byte(nil), op.Txn().ID...)
+@@ -441,7 +443,7 @@ func TestCheckConstraintNamespace(t *testing.T) {
+ 					previousBefore(txnID, tableID)
+ 					if tableID == catalog.MO_TABLES_ID && bytes.Equal(txnID, id) {
+ 						inject.Do(func() {
+-							_, injectedErr = other.ExecContext(ctx, "create table "+database+".si_unrelated(x int)")
++							_, injectedErr = other.ExecContext(ctx, "create table "+database+".si_unrelated(x int primary key)")
+ 						})
+ 					}
+ 				})
+```
+
+**File**: `pkg/embed/load_inline_format_test.go` (modified, +3/-1)
+```diff
+@@ -38,7 +38,9 @@ func TestLoadInlineFormatOverMySQLProtocol(t *testing.T) {
+ 				_, err := db.ExecContext(ctx, "create database "+database)
+ 				require.NoError(t, err)
+ 				defer func() {
+-					cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
++					// DROP is cleanup, not a five-second DDL latency assertion.
++					// Keep it bounded and independent of the workload's context.
++					cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), time.Minute)
+ 					defer cleanupCancel()
+ 					_, err := db.ExecContext(cleanupCtx, "drop database "+database)
+ 					require.NoError(t, err)
+```
+
+**File**: `pkg/embed/prepared_time_arithmetic_test.go` (modified, +37/-43)
+```diff
+@@ -17,13 +17,12 @@ package embed
+ import (
+ 	"context"
+ 	"database/sql"
+-	"errors"
+ 	"fmt"
+ 	"strings"
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/go-sql-driver/mysql"
++	_ "github.com/go-sql-driver/mysql"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -121,11 +120,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
+ 			require.NoError(t, err, statement)
+ 			assertPreparedTimeResult(t, rows, want, wantNull, 38, scale)
+ 		}
+-		queryDecimal64Text := func(statement, want string) {
++		queryIntegerTimeText := func(statement, want string, precision int64) {
+ 			t.Helper()
+ 			rows, err := conn.QueryContext(ctx, statement)
+ 			require.NoError(t, err, statement)
+-			assertPreparedTimeResult(t, rows, want, false, 18, 0)
++			assertPreparedTimeResult(t, rows, want, false, precision, 0)
+ 		}
+ 		for _, temporal := range []struct {
+ 			literal, want string
+@@ -152,34 +151,26 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
+ 							return conn.QueryContext(ctx, "execute fallback_time_abs using @fallback_time_abs_value")
+ 						}
+ 					}
+-					// Query may expose an execution error immediately or through Rows.Err.
+-					queryError := func(query func() (*sql.Rows, error)) error {
+-						rows, err := query()
+-						if err != nil {
+-							return err
+-						}
+-						defer rows.Close()
+-						require.False(t, rows.Next(), "overflow must not produce a row")
+-						return rows.Err()
+-					}
+ 					for _, value := range []any{int64(10), nil, int64(10), int64(9223372036854775807), int64(10)} {
+ 						if value == int64(9223372036854775807) {
+-							wantErr := queryError(func() (*sql.Rows, error) {
+-								return conn.QueryContext(ctx,
+-									strings.ReplaceAll(expression, "?", "cast(9223372036854775807 as signed)"))
+-							})
+-							gotErr := queryError(func() (*sql.Rows, error) { return query(value) })
+-							var wantMySQL, gotMySQL *mysql.MySQLError
+-							require.True(t, errors.As(wantErr, &wantMySQL), "%v", wantErr)
+-							require.True(t, errors.As(gotErr, &gotMySQL), "%v", gotErr)
+-							require.Equal(t, wantMySQL.Number, gotMySQL.Number)
++							want := "9223372036854775808"
++							if temporal.scale == 6 {
++								want = "9223372036854806212.123456"
++							}
++							rows, err := conn.QueryContext(ctx,
++								strings.ReplaceAll(expression, "?", "cast(9223372036854775807 as signed)"))
++							require.NoError(t, err)
++							assertPreparedTimeResult(t, rows, want, false, 38, temporal.scale)
++							rows, err = query(value)
++							require.NoError(t, err)
++							assertPreparedTimeResult(t, rows, want, false, 38, temporal.scale)
+ 							continue
+ 						}
+ 						func() {
+ 							rows, err := query(value)
+ 							require.NoError(t, err)
+ 							if value != nil {
+-								assertPreparedTimeResult(t, rows, temporal.want, false, 18, temporal.scale)
++								assertPreparedTimeResult(t, rows, temporal.want, false, 38, temporal.scale)
+ 								return
+ 							}
+ 							defer rows.Close()
+@@ -291,7 +282,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
+ 			statementName := "issue28963_time_sql_" + tc.name
+ 			exec("prepare " + statementName + " from 'select cast(''00:00:01'' as time(0)) " + tc.op + " ? as result'")
+ 			exec("set @issue28963_time_value = cast(10 as signed)")
+-			queryDecimal64Text("execute "+statementName+" using @issue28963_time_value", tc.want)
++			precision := int64(38)
++			if tc.op == "%" {
++				precision = 19
++			}
++			queryIntegerTimeText("execute "+statementName+" using @issue28963_time_value", tc.want, precision)
+ 			exec("deallocate prepare " + statementName)
+ 		}
+ 
+@@ -365,13 +360,17 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
+ 			{name: "mod", op: "%", want: "1"},
+ 		} {
+ 			t.Run("binary/"+tc.name, func(t *testing.T) {
++				precision := int64(38)
++				if tc.op == "%" {
++					precision = 19
++				}
+ 				statement := "select cast('00:00:01' as time(0)) " + tc.op + " ? as result"
+ 				stmt, err := conn.PrepareContext(ctx, statement)
+ 				require.NoError(t, err)
+ 				defer stmt.Close()
+ 				rows, err := stmt.QueryContext(ctx, int64(10))
+ 				require.NoError(t, err)
+-				assertPreparedTimeResult(t, rows, tc.want, false, 18, 0)
++				assertPreparedTimeResult(t, rows, tc.want, false, precision, 0)
+ 			})
+ 		}
+ 
+@@ -383,20 +382,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
+ 
+ 			rows, err := stmt.QueryContext(ctx, int64(10))
+ 			require.NoError(t, err)
+-			assertPreparedTimeResult(t, rows, "30415.123456", false, 18, 6)
++			assertPreparedTimeResult(t, rows, "30415.123456", false, 38, 6)
+ 
+ 			rows, err = stmt.QueryContext(ctx, int64(9223372036854775807))
+-			if err == nil {
+-				defer rows.Close()
+-				if rows.Next() {
+-					var value any
+-					err = rows.Scan(&value)
+-				}
+-				if err == nil {
+-					err = rows.Err()
+-				}
+-			}
+-			require.Error(t, err)
++			require.NoError(t, err)
++			assertPreparedTimeResult(t, rows, "9223372036854806212.123456", false, 38, 6)
+ 		})
+ 
+ 		for _, tc := range []struct {
+@@ 
+```
+
+**File**: `pkg/frontend/compiler_context.go` (modified, +1/-1)
+```diff
+@@ -629,7 +629,7 @@ func (tcc *TxnCompilerContext) recoverLegacyTinyText(
+ 	}); err != nil {
+ 		return err
+ 	}
+-	return plan2.MigrateLegacyHexTableDef(tcc.GetProcess(), tableDef)
++	return plan2.MigrateLegacyCatalogTableDef(ctx, tcc.GetProcess(), tableDef)
+ }
+ 
+ func (tcc *TxnCompilerContext) ensureDatabaseIsNotEmpty(dbName string, checkSub bool, snapshot *plan2.Snapshot) (string, *plan.SubscriptionMeta, error) {
+```
+
+---
+
+### Incident Patch 3: `5fe08a33` (2026-10-26)
+**Commit Message**: fix(ci): preserve SCA compatibility and explain full-scan fallback (#31142)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [x] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to #29562.
+
+## What this PR does / why we need it:
+
+Recent [SCA job
+121193349037](https://github.com/matrixorigin/matrixone/actions/runs/40201453562/job/121193349037)
+silently ran a full graph because Node was missing from the shell PATH,
+despite an existing incremental selector. Its frozen PR inputs would
+have selected 34 of 507 packages.
+
+- Preserve compatibility with deployed CI: when Node is absent,
+explicitly report the reason, validate the complete graph and run both
+analyzers over `./...`. Node-present CI retains incremental selection;
+selector failures stay fatal. Local invocations still run the complete
+graph.
+- Explain conservative fallback decisions and report selected/total
+package counts on stderr, keeping stdout exclusively package arguments.
+- Reuse existing immutable-input selection, package ownership and
+reverse-import graph. Preserve full-scan overrides, discovery failures,
+analyzer failures and both
+
+**File**: `.github/ci/README.md` (modified, +12/-2)
+```diff
+@@ -36,10 +36,20 @@ Changes to analyzer versions/rules require reviewing this package-local contract
+ ## Full checks and rollout
+ 
+ - `make static-check` remains the complete local/release gate.
+-- `make static-check-analysis` remains full outside GitHub Actions or without Node.
++- `make static-check-analysis` remains full outside GitHub Actions. CI without
++  Node on PATH also runs complete graph validation and both analyzers, with an
++  explicit fallback reason. This supports older CI during rollout.
++- The SCA job can expose its existing runner-provided Node 24 runtime on PATH
++  without downloading another SDK, enabling incremental analysis. Once Node is
++  available, selector errors remain fatal.
++- Selection and conservative fallback reasons are printed on stderr; stdout
++  from the selector contains only package arguments.
+ - `SCA_FULL=1 make static-check-analysis` forces complete PR analysis.
+ - `make static-check-golangci` still populates the complete trusted analysis cache.
+-- Existing license selection and the final required-check gate remain unchanged.
++- License exemptions require the frozen checkout and PR head/base to match
++  before and after file pagination, plus the validated configuration/tool recipe.
++  Unavailable or changed inputs retain complete checks. The final required-check
++  gate remains unchanged.
+ 
+ The first optimization keeps complete complementary BVT groups. General SQL
+ selection is deliberately deferred: existing logging verifiers consume other
+```
+
+**File**: `.github/ci/change-scope.cjs` (modified, +9/-8)
+```diff
+@@ -124,45 +124,46 @@ function verifyResults(scope, needs) {
+ 
+ // Shared by the analyzer and BVT consumers, after checkout. No API pagination,
+ // mutable branch comparison, or remembered plan can change the tested revision.
+-function immutableChanges({ cwd = process.cwd(), env = process.env, git } = {}) {
++function immutableChanges({ cwd = process.cwd(), env = process.env, git, report = () => {} } = {}) {
++  const full = reason => { report(reason); return null; };
+   const fs = require('node:fs');
+   const { execFileSync } = require('node:child_process');
+   git ||= args => execFileSync('git', args, {
+     cwd, encoding: 'utf8', timeout: 30000, maxBuffer: 8 * 1024 * 1024,
+     stdio: ['ignore', 'pipe', 'pipe'],
+   });
+   if (env.GITHUB_ACTIONS !== 'true' || !env.GITHUB_EVENT_PATH ||
+-      !['pull_request', 'pull_request_target'].includes(env.GITHUB_EVENT_NAME)) return null;
++      !['pull_request', 'pull_request_target'].includes(env.GITHUB_EVENT_NAME)) return full('immutable PR event unavailable');
+   try {
+     const pr = JSON.parse(fs.readFileSync(env.GITHUB_EVENT_PATH, 'utf8')).pull_request;
+     const base = pr?.base?.sha;
+     const head = pr?.head?.sha;
+     if (![base, head].every(sha => /^[0-9a-f]{40}$/.test(sha || '')) ||
+-        git(['rev-parse', 'HEAD']).trim() !== head) return null;
++        git(['rev-parse', 'HEAD']).trim() !== head) return full('invalid PR revision or checkout head mismatch');
+     // Local edits cannot use a committed-input exemption. Include untracked
+     // inputs too; ignored native outputs and runner reports are not source.
+-    if (git(['status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none']).trim()) return null;
++    if (git(['status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none']).trim()) return full('checkout contains uncommitted inputs');
+     try {
+       git(['cat-file', '-e', `${base}^{commit}`]);
+     } catch {
+       // Fetch the immutable object only. Do not move a checkout or local ref.
+-      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(env.GITHUB_REPOSITORY || '')) return null;
++      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(env.GITHUB_REPOSITORY || '')) return full('base unavailable and repository identity invalid');
+       git(['fetch', '--no-tags', '--depth=1',
+         `https://github.com/${env.GITHUB_REPOSITORY}.git`, base]);
+     }
+     // Tree comparison also works when a shallow checkout lacks ancestry. Both
+     // sides of a rename are roots; do not hide removals behind rename matching.
+     const raw = git(['diff', '--no-ext-diff', '--no-renames', '--ignore-submodules=none', '--name-status', '-z', base, head]);
+     const fields = raw.split('\0');
+-    if (fields.pop() !== '' || fields.length === 0 || fields.length % 2) return null;
++    if (fields.pop() !== '' || fields.length === 0 || fields.length % 2) return full('empty or malformed immutable diff');
+     const files = [];
+     for (let i = 0; i < fields.length; i += 2) {
+-      if (!['A', 'M', 'D', 'T'].includes(fields[i]) || !validPath(fields[i + 1])) return null;
++      if (!['A', 'M', 'D', 'T'].includes(fields[i]) || !validPath(fields[i + 1])) return full('unsupported immutable diff entry');
+       files.push({ status: fields[i], filename: fields[i + 1] });
+     }
+     return files;
+   } catch {
+-    return null;
++    return full('immutable event, Git status, base fetch or diff unavailable');
+   }
+ }
+ 
+```
+
+**File**: `.github/ci/static-analysis.cjs` (modified, +21/-12)
+```diff
+@@ -60,34 +60,37 @@ function inventory(text) {
+   return records;
+ }
+ 
+-function goChanges(files) {
+-  if (!files?.length) return null;
++function goChanges(files, report = () => {}) {
++  if (!files?.length) { report('no verified changed inputs'); return null; }
+   const changed = [];
+   for (const file of files) {
+-    if (file.status === 'T') return null;
++    if (file.status === 'T') { report(`file type changed: ${JSON.stringify(file.filename.slice(0, 200))}`); return null; }
+     if (/^pkg\/.*\.go$/.test(file.filename) &&
+         !/(^|\/)(testdata|fixtures)\//i.test(file.filename)) {
+       changed.push(file.filename);
+     } else if (!['docs', 'bvt'].includes(category(file.filename))) {
++      report(`input requires full analysis: ${JSON.stringify(file.filename.slice(0, 200))}`);
+       return null;
+     }
+   }
+   // No Go change means the cheap policy check still runs, but these analyzers
+   // have no changed inputs. Keep a nonempty full scan rather than inventing a
+   // separate successful-empty mode in this first increment.
++  if (!changed.length) report('no changed Go inputs');
+   return changed.length ? changed : null;
+ }
+ 
+-function selectPackages(files, records, root) {
+-  const changed = goChanges(files);
++function selectPackages(files, records, root, report = () => {}) {
++  const full = reason => { report(reason); return ['./...']; };
++  const changed = goChanges(files, report);
+   if (!changed || !records.length) return ['./...'];
+   const owners = new Map();
+   const variants = new Map();
+   const reverse = new Map();
+   for (const record of records) {
+     const relative = path.relative(root, record.dir);
+     if (!relative || relative.startsWith('..') || path.isAbsolute(relative) ||
+-        !/^[\w./-]+$/.test(relative)) return ['./...'];
++        !/^[\w./-]+$/.test(relative)) return full('package owner is outside the supported source layout');
+     const owner = `./${relative}`;
+     owners.set(relative, owner);
+     variants.set(record.id, owner);
+@@ -100,7 +103,7 @@ function selectPackages(files, records, root) {
+       if (!dependency) {
+         // A main-module test variant missing from discovery is not a known
+         // external dependency. Do not guess how its package ID maps.
+-        if (imported.includes(' [')) return ['./...'];
++        if (imported.includes(' [')) return full('test variant is missing from the verified graph');
+         continue;
+       }
+       if (!reverse.has(dependency)) reverse.set(dependency, new Set());
+@@ -111,7 +114,7 @@ function selectPackages(files, records, root) {
+   const production = [];
+   for (const file of changed) {
+     const owner = owners.get(path.posix.dirname(file));
+-    if (!owner) return ['./...']; // includes an entirely removed package
++    if (!owner) return full('changed package is missing from the verified graph');
+     selected.add(owner);
+     if (!file.endsWith('_test.go')) production.push(owner);
+   }
+@@ -125,7 +128,8 @@ function selectPackages(files, records, root) {
+       }
+     }
+   }
+-  return selected.size && selected.size < owners.size / 2 ? [...selected].sort() : ['./...'];
++  return selected.size && selected.size < owners.size / 2 ? [...selected].sort() :
++    full(`affected closure reaches full-scan threshold (${selected.size}/${owners.size} packages)`);
+ }
+ 
+ function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {}) {
+@@ -136,7 +140,9 @@ function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {
+     env: { ...env, GOWORK: 'off' }, stdio: ['ignore', 'pipe', 'inherit'],
+   });
+   const records = inventory(text);
+-  let files = env.SCA_FULL === '1' ? null : immutableChanges({ cwd, env });
++  const report = reason => console.error(`SCA full-scan reason: ${reason}`);
++  let files = env.SCA_FULL === '1' ? null : immutableChanges({ cwd, env, report });
++  if (env.SCA_FULL === '1') report('SCA_FULL=1');
+   if (files) {
+     // Git status omits ignored files, but Go still compiles an ignored .go
+     // file inside a package. Require every real source input to be committed
+@@ -152,14 +158,17 @@ function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {
+       }));
+       if (records.some(p => p.sources.some(source =>
+         !tracked.has(path.relative(cwd, path.resolve(p.dir, source)).split(path.sep).join('/'))))) {
++        report('Go graph contains untracked, generated or nonregular source inputs');
+         files = null;
+       }
+     } catch {
++      report('tracked source inventory unavailable');
+       files = null;
+     }
+   }
+-  const selected = selectPackages(files, records, cwd);
+-  console.error(`SCA selection: ${selected[0] === './...' ? 'full graph' : `${selected.length} packages`}`);
++  const selected = selectPackages(files, records, cwd, report);
++  const total = new Set(records.map(p => p.dir)).size;
++  console.error(`SCA selection: ${selected[0] === './...' ? 'full graph' : `${selected.length}/${total} packages`}`);
+   return selecte
+```
+
+**File**: `.github/ci/static-analysis.test.cjs` (modified, +35/-3)
+```diff
+@@ -28,13 +28,15 @@ const records = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map(name => ({
+ }));
+ records[1].imports = [records[0].id];
+ records.push({ id: `${records[2].id}_test [${records[2].id}.test]`, dir: records[2].dir,
+-  imports: [records[0].id] });
++  imports: [records[1].id] });
+ const file = (filename, status = 'M') => ({ filename, status });
+ 
+ test('complete package selection follows production and test imports, not test reverse imports', () => {
+   assert.deepEqual(selectPackages([file('pkg/a/a.go')], records, root), ['./pkg/a', './pkg/b', './pkg/c']);
+   assert.deepEqual(selectPackages([file('pkg/a/a_test.go')], records, root), ['./pkg/a']);
+-  assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D'), file('pkg/d/a.go', 'A')], records, root), ['./...']);
++  const reasons = [];
++  assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D'), file('pkg/d/a.go', 'A')], records, root, reason => reasons.push(reason)), ['./...']);
++  assert.match(reasons.join('\n'), /threshold \(4\/8 packages\)/);
+   assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D')], records, root), ['./pkg/a', './pkg/b', './pkg/c']);
+ });
+ 
+@@ -90,7 +92,9 @@ test('immutable tree comparison handles shallow bases, moves, dirt and unavailab
+       return git(args);
+     } }), null);
+   }
+-  assert.equal(immutableChanges({ env, git: args => args[0] === 'status' ? ' M pkg/a/a.go' : git(args) }), null);
++  const reasons = [];
++  assert.equal(immutableChanges({ env, git: args => args[0] === 'status' ? ' M pkg/a/a.go' : git(args), report: reason => reasons.push(reason) }), null);
++  assert.deepEqual(reasons, ['checkout contains uncommitted inputs']);
+   assert.equal(immutableChanges({ env, git: args => args[0] === 'rev-parse' ? base : git(args) }), null);
+   assert.equal(immutableChanges({ env: { ...env, GITHUB_EVENT_NAME: 'push' }, git }), null);
+ });
+@@ -144,24 +148,52 @@ test('real Make consumer shares selection, keeps full override, and propagates a
+   const first = run();
+   assert.equal(first.result.status, 0, first.result.stderr + first.result.stdout);
+   assert.equal(first.commands.length, 2);
++  assert.match(first.result.stderr, /SCA selection: 3\/8 packages/);
+   for (const command of first.commands) assert.ok(command.endsWith('./pkg/a ./pkg/b ./pkg/c'), command);
+   assert.ok(first.commands[1].includes('--concurrency 1'));
+   const ignored = path.join(repo, 'pkg/h/ignored.go');
+   fs.writeFileSync(ignored, 'package h\nvar GeneratedInput = 1\n');
+   const generated = run();
+   fs.unlinkSync(ignored);
+   assert.equal(generated.result.status, 0, generated.result.stderr);
++  assert.match(generated.result.stderr, /untracked, generated or nonregular source inputs/);
+   assert.ok(generated.commands.every(command => command.endsWith('./...')),
+     'Go consumes ignored inputs too; Git status alone cannot exempt their packages');
+   const full = run({ SCA_FULL: '1' });
+   assert.equal(full.result.status, 0, full.result.stderr);
++  assert.match(full.result.stderr, /SCA_FULL=1/);
+   assert.ok(full.commands.every(command => command.endsWith('./...')));
+   const vetFailure = run({ FAIL_VET: '7' });
+   assert.notEqual(vetFailure.result.status, 0);
+   assert.equal(vetFailure.commands.length, 1);
+   assert.notEqual(run({ FAIL_LINT: '9' }).result.status, 0);
++  const noNode = path.join(dir, 'without-node');
++  fs.mkdirSync(noNode);
++  for (const command of ['make', 'grep', 'git', 'which']) {
++    const executable = execFileSync('which', [command], { encoding: 'utf8' }).trim();
++    fs.symlinkSync(executable, path.join(noNode, command));
++  }
++  for (const command of Object.keys(tools)) fs.symlinkSync(path.join(bin, command), path.join(noNode, command));
++  const missingNode = run({ PATH: noNode });
++  assert.equal(missingNode.result.status, 0, missingNode.result.stderr);
++  assert.match(missingNode.result.stderr, /full graph \(Node unavailable on PATH in CI\)/);
++  assert.equal(missingNode.commands.length, 2);
++  assert.ok(missingNode.commands.every(command => command.endsWith('./...')));
++  const missingNodeVetFailure = run({ PATH: noNode, FAIL_VET: '7' });
++  assert.notEqual(missingNodeVetFailure.result.status, 0);
++  assert.equal(missingNodeVetFailure.commands.length, 1);
++  const missingNodeLintFailure = run({ PATH: noNode, FAIL_LINT: '9' });
++  assert.notEqual(missingNodeLintFailure.result.status, 0);
++  assert.equal(missingNodeLintFailure.commands.length, 2);
++  const local = run({ PATH: noNode, GITHUB_ACTIONS: 'false' });
++  assert.equal(local.result.status, 0, local.result.stderr);
++  assert.match(local.result.stderr, /full graph \(local invocation\)/);
++  assert.ok(local.commands.every(command => command.endsWith('./...')));
+   fs.writeFileSync(path.join(repo, 'pkg/a/a.go'), 'not a Go package\n');
+   const invalid = run();
+   assert.notEqual(invalid.result.status, 0);
+   assert.equal(invalid.commands.length, 0);
++  const missingNodeInvalid = run({ PATH: noNode });
++  assert.notEqual(missingNodeInvalid.result.status, 0);
++  assert.
+```
+
+**File**: `Makefile` (modified, +6/-1)
+```diff
+@@ -1572,13 +1572,18 @@ static-check: config err-check
+ 	$(STATIC_CHECK_GOLANGCI)
+ 
+ # PR CI selects complete affected packages using the verified Go test/import
+-# graph. Local use (including hosts without Node) retains the full checks.
++# graph. Local use and CI hosts without Node retain the full checks.
+ # Both analyzers consume the same package list and their failures stay fatal.
+ static-check-analysis: err-check
+ 	@set -e; packages='./...'; \
+ 	if [ "$${GITHUB_ACTIONS:-}" = true ] && command -v node >/dev/null 2>&1; then \
+ 		packages=$$($(CGO_OPTS) node .github/ci/static-analysis.cjs); \
+ 	else \
++		if [ "$${GITHUB_ACTIONS:-}" = true ]; then \
++			echo "SCA selection: full graph (Node unavailable on PATH in CI)" >&2; \
++		else \
++			echo "SCA selection: full graph (local invocation)" >&2; \
++		fi; \
+ 		$(MAKE) --no-print-directory config; \
+ 	fi; \
+ 	$(MAKE) --no-print-directory static-check-selected STATIC_CHECK_PACKAGES="$$packages"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31124** (2026-10-25): fix(python-sdk): preserve OR predicate grouping (@MatrixAdventurer)
-- **PR #31116** (2026-10-25): fix(disttae): backport exclusive relation handles to 4.1.6 hotfix (@XuPeng-SH)
-- **PR #31115** (2026-10-25): fix(shuffle): preserve unsigned range routing with NULLs on 4.1.6 hotfix (@XuPeng-SH)
-- **PR #31113** (closed): fix: bound repeated-import memory on 4.1.6 hotfix (@aptend)
-- **PR #31112** (closed): fix: bound repeated-import memory on 4.1.6 hotfix (@slyunnn)
-- **PR #31107** (2026-10-25): fix(python-sdk): reject silently discarded INSERT fields (@MatrixAdventurer)
+- **PR #31287** (2026-10-26): docs(skills): shutdown-only upgrade contract for agent reviews (@cpegeric)
+- **PR #31257** (2026-10-26): perf(sql): reduce exact integer IN and NOT IN evaluation cost (@XuPeng-SH)
+- **PR #31256** (2026-10-26): docs: propose scoped case-insensitive database defaults design (@ck89119)
+- **PR #31250** (2026-10-26): fix(plan): preserve DISTINCT statistics and reuse aggregate partitions (@XuPeng-SH)
+- **PR #31237** (2026-10-26): fix(iscp): preserve fresh init jobs and shorten embedded test waits (@XuPeng-SH)
+- **PR #31196** (2026-10-26): fix(python-sdk): preserve DML ordering and row limits (@MatrixAdventurer)
 
 ---
 
@@ -3126,33 +3586,46 @@ sequential/permute
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062)
+## X. view): preserve restore semantics and extend S5 conformance (#30953)
 
 **RULE**:
-When implementing operations in `clients/python/matrixone/_utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/CLAUDE_20261023-view-s5-conformance.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9728d699`: python-sdk): preserve resolved ORM schemas in clone and branch builders (#31062). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83c1e235`: view): preserve restore semantics and extend S5 conformance (#30953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clients/python/matrixone/_utils.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/CLAUDE_20261023-view-s5-conformance.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    from sqlalchemy import Table
-    - ORM model's resolved table name and schema for db.table
-    if SQLALCHEMY_AVAILABLE:
-        mapped_table = getattr(table, '__table__', None)
-        if isinstance(mapped_table, Table):
-            return mapped_table.fullname
+# 普通 View 元数据 S5：合同、恢复修复与验收证据
+
+所属：[#29440](https://github.com/matrixorigin/matrixone/issues/29440)，父任务 [#29433](https://github.com/matrixorigin/matrixone/issues/29433)，Draft PR [#30953](https://github.com/matrixorigin/matrixone/pull/30953)。
+
+**完整 S5 尚未验收，S8 rollout 为 NO-GO。** 默认 S3/S4 激活仍关闭。独立可做的协议、授权、历史、恢复与多 CN 验证不能笼统归为“等待激活”；另一方面，真实 L/A/B 切换不能由 mock、同 binary 多 CN 或 integration 接线代替。
+
+## 1. 基线与批准边界
+
+当前合并基线为 `mo/main@be663676872edf6d42695bba41757af0a3251758`，本地 merge `78618cf66941e95eb67879a2e7c47f967fb85b06`。首次部分交付 `22b48b77dffaaeeb9f773f47e561ae1d3d0a1728` 只有测试/文档；**续作已经包含生产恢复修复，不再适用“无生产改动”或“覆盖率门禁不适用”的描述。**
+
+批准依据：
+
+- [S1 设计及精确审批](CLAUDE_20260922-view-metadata-on-demand.md#s1-批准与-e1-勘误)。
+- [S2 v2.1](CLAUDE_20261005-view-s2-scope-revision.md)：不恢复已撤销的全链路 128 MiB 逐对象证明。
+- [S3](CLAUDE_20261018-view-s3-consumers.md)、[S4](CLAUDE_20261019-view-metadata-s4-consumers.md)、[S4 对账](CLAUDE_2026-10-20-view-metadata-s4-reconciliation.md)。
+- [既有生命周期验证范围](CLAUDE_VIEW_METADATA_LIFECYCLE_CONFORMANCE_29007.md)。
+- [独立 RC 生命周期升级约束](20260929-rc-lifecycle-protocol.md)：停服、drain、成员替换和旧进程禁入要求不能被 View 测试豁免。
+
+默认排除 partition、stored procedure、UDF 功能及 warning 文案/数量兼容。没有 S8 部署、refresh 退役、S9 catalog 清理或新激活状态机。既有协议
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    - ORM model with optional __table_args__['schema'] for db.table
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9728d699` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83c1e235` are properly handled with clean fallback behavior.

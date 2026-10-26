@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T12:40:34.619Z",
+  "last_updated": "2026-10-26T13:01:48.593Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8390,8 +8390,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "307c73a4",
-      "content_hash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
+      "source_version": "8efdae0f",
+      "content_hash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -8414,6 +8414,11 @@
           "number": 3892,
           "title": "Update security patches [SECURITY] (#3937)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4602,
+          "title": "Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8421,7 +8426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:54:27.946Z",
+      "verified_at": "2026-10-26T13:01:48.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34255,8 +34260,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "9dcd26be",
-      "content_hash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
+      "source_version": "e033d4a5",
+      "content_hash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -34286,7 +34291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:49:43.774Z",
+      "verified_at": "2026-10-26T12:57:01.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129073,6 +129078,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T12:40:34.612Z"
+    },
+    "rule-4602": {
+      "learning_id": "rule-4602",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4602,
+      "title": "Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "8efdae0f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:01:48.580Z"
     }
   },
   "aliases": {

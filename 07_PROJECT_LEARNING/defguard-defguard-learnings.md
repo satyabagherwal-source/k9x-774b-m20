@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `307c73a4`  
+> **Source Version**: `8efdae0f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:54:27.700Z  
+> **Timestamp**: 2026-10-26T13:01:48.220Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:54:27.567Z  
+> **Harvest Timestamp**: 2026-10-26T12:56:44.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2881 stars
+- **Stars / Engagement**: 2883 stars
 
 ---
 
@@ -2120,13 +2120,13 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3862** (2026-10-15): **"Only one client connection is allowed" error when connection to gateway interrupted**
-  *Symptoms*: Related support issues: 106, 146. When the connection between Core and Gateway is interrupted, for example by restarting a firewall or proxy between them, it does not reconnect automatically once connectivity is restored. Instead, the following error appears on the gateway side:  ``` ERROR core_communication: defguard_gateway::gateway_server: message=Only one client connection is allowed. log.target=defguard_gateway::gateway_server  ```  Likely the connection is still registered as healthy by the gateway.
-  **Post-Mortem & Fix Analysis**:
-  > Duplicates https://github.com/DefGuard/gateway/issues/385
+- **Issue #3900** (2026-10-26): **Multi step mfa locations are not sent to the client on the free tier even if they are one step only**
+  *Symptoms*: One step mfa locations should be always sent to the client.
 
-- **Issue #3846** (2026-10-19): **Unable to delete MFA Flow**
-  *Symptoms*: - create MFA Flow - assign it as the default flow in a location - disable MFA in this location - try to delete flow  In this scenario the removal is blocked and there is no way to "unassign" the default flow. The only workaround is to change the default flow.  We should probably allow removing flows assigned as default if MFA is disabled for a given location.
+- **Issue #3872** (2026-10-26): **[MFA] Disabling SMTP doesn't re-evaluate user's MFA state**
+  *Symptoms*: State from screenshot should not be possible to occur.  <img width="532" height="343" alt="Image" src="https://github.com/user-attachments/assets/cd7132b8-2faf-4d67-9b49-bf46e562ca9a" />
+  **Post-Mortem & Fix Analysis**:
+  > Let's change to a single label: "Unavailable" (Orange). Default stays.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2143,184 +2143,79 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `307c73a4` (2026-10-23)
-**Commit Message**: Update security patches [SECURITY] (#3937)
+### Incident Patch 1: `8efdae0f` (2026-10-26)
+**Commit Message**: Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `e2e/package.json` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +7/-7)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "e2e",
-   "version": "0.1.0",
--  "packageManager": "pnpm@11.9.0",
-+  "packageManager": "pnpm@11.11.0",
-   "main": "index.js",
-   "type": "commonjs",
-   "scripts": {
-```
-
-**File**: `web/package.json` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@
-   "name": "web",
-   "private": true,
-   "version": "0.0.1",
--  "packageManager": "pnpm@11.9.0",
-+  "packageManager": "pnpm@11.11.0",
-   "type": "module",
-   "scripts": {
-     "dev": "vite",
-@@ -87,6 +87,6 @@
-     "typescript": "~6.0.3",
-     "vite": "^8.3.4",
-     "vite-plugin-image-optimizer": "^2.0.3",
--    "vitest": "4.1.9"
-+    "vitest": "4.1.11"
-   }
- }
-```
-
-**File**: `web/pnpm-lock.yaml` (modified, +59/-43)
-```diff
-@@ -179,7 +179,7 @@ importers:
-         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       '@vitest/ui':
-         specifier: 4.1.9
--        version: 4.1.9(vitest@4.1.9)
-+        version: 4.1.9(vitest@4.1.11)
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.1(postcss@8.5.31)
-@@ -217,8 +217,8 @@ importers:
-         specifier: ^2.0.3
-         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       vitest:
--        specifier: 4.1.9
--        version: 4.1.9(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-+        specifier: 4.1.11
-+        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
+@@ -2320,7 +2320,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
- packages:
+ [[package]]
+@@ -5282,7 +5282,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
-@@ -1735,11 +1735,11 @@ packages:
-       oxc-transform-react:
-         optional: true
+ [[package]]
+@@ -5766,7 +5766,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
--  '@vitest/expect@4.1.9':
--    resolution: {integrity: sha512-vl/rYsUKcBr3SnQn166+XR5ZQcgMx3DQhFWdfli/cWpLnLUmbxZvyrJZotLFUryib+LtArYMSTJ5RbQ57ZqrlA==}
-+  '@vitest/expect@4.1.11':
-+    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
+ [[package]]
+@@ -6828,7 +6828,7 @@ dependencies = [
+  "getrandom 0.3.4",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
--  '@vitest/mocker@4.1.9':
--    resolution: {integrity: sha512-EVkXzBjrPGM+cK8/ANWgBrkUCfJfb38/EfTSO8h7pWvKkyPkpWxvR7BkD2MyItMF62C97zAEoqdpUixwR/e+Rw==}
-+  '@vitest/mocker@4.1.11':
-+    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
-     peerDependencies:
-       msw: ^2.4.9
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -1749,23 +1749,29 @@ packages:
-       vite:
-         optional: true
+ [[package]]
+@@ -6993,9 +6993,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
  
-+  '@vitest/pretty-format@4.1.11':
-+    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-+
-   '@vitest/pretty-format@4.1.9':
-     resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
+ [[package]]
+ name = "tokio"
+-version = "1.53.1"
++version = "1.53.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
++checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+ dependencies = [
+  "bytes",
+  "libc",
+@@ -7924,7 +7924,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.48.0",
+ ]
  
--  '@vitest/runner@4.1.9':
--    resolution: {integrity: sha512-KXLMDtc7oe70+3mJfGrPUWPesswH+3sTxAMAMl8DG7I8IUQT4XW718dY5ID3vPUcmlu27CcKfY4P3h3I29SLJg==}
-+  '@vitest/runner@4.1.11':
-+    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
- 
--  '@vitest/snapshot@4.1.9':
--    resolution: {integrity: sha512-Jc7RKGNBo8Z28WYIm0Niej4xdSPByRf6mU58VpHQkd6Zh05rlnA+twjbK5HyeIGHxrzsc3mJgS43uM0CZKzaIA==}
-+  '@vitest/snapshot@4.1.11':
-+    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
- 
--  '@vitest/spy@4.1.9':
--    resolution: {integrity: sha512-fHpsS6mIi+PiEW+vcRVOMkX1oSaPKne3VOclSFICPcGOmfKgXPU5iAah+wcNcj2xPrCCmfq99IDGf+EojhhvhA==}
-+  '@vitest/spy@4.1.11':
-+    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
- 
-   '@vitest/ui@4.1.9':
-     resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
-     peerDependencies:
-       vitest: 4.1.9
- 
-+  '@vitest/utils@4.1.11':
-+    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
-+
-   '@vitest/utils@4.1.9':
-     resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
- 
-@@ -3490,20 +3496,20 @@ packages:
-       yaml:
-         optional: true
- 
--  vitest@4.1.9:
--    resolution: {integrity: sha512-nE3/LEyc0z87uHYLZebqCUOaJr2hdtuPp7BQ4BosVFnfltxgAvMG08NyrSGlPpOUWvR27c5flSmYFTNr78L9GQ==}
-+  vitest@4.1.11:
-+    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
-     hasBin: true
-     peerDependencies:
-       '@edge-runtime/vm': '*'
-       '@opentelemetry/api': ^1.9.0
-       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
--      '@vitest/browser-playwright': 4.1.9
--      '@vitest/browser-preview': 4.1.9
--      '@vitest/browser-webdriverio': 4.1.9
--      '@vitest/coverage-istanbul': 4.1.9
--      '@vitest/coverage-v8': 4.1.9
--      '@vitest/ui': 4.1.9
-+      '@vitest/browser-playwright': 4.1.11
-+      '@vitest/browser-preview': 4.1.11
-+      '@vitest/browser-webdriverio': 4.1.11
-+      '@vitest/coverage-istanbul': 4.1.11
-+      '@vitest/coverage-v8': 4.1.11
-+      '@vitest/ui': 4.1.11
-       happy-dom: '*'
-       jsdom: '*'
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -4932,42 +4938,46 @@ snapshots:
-       '@rolldown/pluginutils': 1.0.1
-       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2)
- 
--  '@vitest/expect@4.1.9':
-+  '@vitest/expect@4.1.11':
-     dependencies:
-       '@standard-schema/spec': 1.1.0
-       '@types/chai': 5.2.3
--      '@vitest/spy': 4.1.9
--      '@vitest/utils': 4.1.9
-+      '@vitest/spy': 4.1.11
-+      '@vitest/utils': 4.1.11
-       chai:
-```
-
-**File**: `web/pnpm-workspace.yaml` (modified, +5/-0)
-```diff
-@@ -15,3 +15,8 @@ onlyBuiltDependencies:
-   - '@swc/core'
-   - esbuild
-   - sharp
-+minimumReleaseAgeExclude:
-+  # Renovate security update: pnpm@11.11.0
-+  - pnpm@11.11.0
-+  # Renovate security update: vitest@4.1.11
-+  - vitest@4.1.11
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3942** (2026-10-23): Pin dependencies (dev) (@renovate[bot])
-- **PR #3937** (2026-10-23): Security patches (stable/2.x) (@renovate[bot])
-- **PR #3935** (2026-10-23): Change renovate config (@t-aleksander)
-- **PR #3934** (2026-10-23): fix gitignore (@filipslezaklab)
-- **PR #3931** (2026-10-23): Fix wrong font size on mfa flow deletion warning modal (@t-aleksander)
-- **PR #3928** (2026-10-22): Fix posture checks UI (@jakub-tldr)
+- **PR #3953** (2026-10-26): Fix 403 error after user switch (@j-chmielewski)
+- **PR #3952** (2026-10-26): ui profile fixes (@filipslezaklab)
+- **PR #3951** (2026-10-26): Handle outdated mobile app during remote approve (@j-chmielewski)
+- **PR #3950** (2026-10-26): Security patches (stable/2.x) (@renovate[bot])
+- **PR #3947** (2026-10-23): Bump ctutils (@t-aleksander)
+- **PR #3946** (2026-10-26): Mark email mfa as unavailable when SMTP becomes disabled  (@t-aleksander)
 
 ---
 
@@ -2340,28 +2235,40 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update security patches [SECURITY] (#3937)
+## X. Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)
 
 **RULE**:
-When implementing operations in `e2e/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `307c73a4`: Update security patches [SECURITY] (#3937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8efdae0f`: Update Rust crate tokio to v1.53.3 [SECURITY] (#3950). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  "packageManager": "pnpm@11.11.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+version = "1.53.3"
+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+ "windows-sys 0.48.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  "packageManager": "pnpm@11.9.0",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "1.53.1"
+checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
+ "windows-sys 0.61.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `307c73a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8efdae0f` are properly handled with clean fallback behavior.

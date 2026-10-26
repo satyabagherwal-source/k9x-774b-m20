@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T12:40:34.675Z",
-  "total_cycles_completed": 5117,
-  "total_learnings_persisted": 5117,
-  "total_rules_promoted": 4498,
+  "last_updated": "2026-10-26T13:01:48.661Z",
+  "total_cycles_completed": 5119,
+  "total_learnings_persisted": 5119,
+  "total_rules_promoted": 4499,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:28:18.796Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:28:18.827Z",
-      "repository": "react-bootstrap/react-bootstrap",
-      "learningId": "learn-github-react-bootstrap-react-bootstrap",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:28:20.545Z",
       "repository": "grpc/grpc-rust",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-26T12:40:34.675Z",
       "repository": "kcl-lang/kcl",
       "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T12:57:01.413Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:01:48.661Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

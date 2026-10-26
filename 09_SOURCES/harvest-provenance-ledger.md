@@ -5147,3 +5147,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `b98e4117` | Multi-dimensional audit evidence | 2026-10-26T12:13:37.963Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `f2d8b806` | Multi-dimensional audit evidence | 2026-10-26T12:20:03.757Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `4728f94f` | Multi-dimensional audit evidence | 2026-10-26T12:40:34.672Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e033d4a5` | Multi-dimensional audit evidence | 2026-10-26T12:57:01.405Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `8efdae0f` | Multi-dimensional audit evidence | 2026-10-26T13:01:48.656Z |

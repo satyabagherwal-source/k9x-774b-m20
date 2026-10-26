@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T12:13:37.967Z",
+  "last_updated": "2026-10-26T12:57:01.411Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2818,6 +2818,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-GVZ7",
+      "directive_title": "view): preserve restore semantics and extend S5 conformance (#30953)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "e033d4a5",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-matrixorigin-matrixone"
     }
   ]
 }

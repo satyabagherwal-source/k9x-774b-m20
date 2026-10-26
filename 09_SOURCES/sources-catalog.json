@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "307c73a4",
+    "sourceVersion": "8efdae0f",
     "license": "NOASSERTION",
-    "contentHash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
-    "lastHarvestedAt": "2026-10-23T10:54:28.008Z",
+    "contentHash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
+    "lastHarvestedAt": "2026-10-26T13:01:48.656Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "9dcd26be",
+    "sourceVersion": "e033d4a5",
     "license": "Apache-2.0",
-    "contentHash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
-    "lastHarvestedAt": "2026-10-25T15:49:43.842Z",
+    "contentHash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
+    "lastHarvestedAt": "2026-10-26T12:57:01.405Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {

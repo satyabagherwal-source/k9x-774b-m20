@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T12:40:34.678Z",
+  "last_updated": "2026-10-26T13:01:48.665Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "91bcaf14c6758ad8c447d82831011a64aeef72ab118ee8033d9ab2bd6c48f643",
-      "verified_at": "2026-10-23T10:54:28.021Z",
+      "content_hash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
+      "verified_at": "2026-10-26T13:01:48.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:54:28.021Z"
+      "last_updated": "2026-10-26T13:01:48.664Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "edd967d9ff6f54f4cc9c36fd31f7681fa9bba67f2d6667e7d414db2e05d475b6",
-      "verified_at": "2026-10-25T15:49:43.850Z",
+      "content_hash": "50c8444cd070847b46f2af464e8171967aa2dc0b979ca221f32b2f4d32149864",
+      "verified_at": "2026-10-26T12:57:01.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:49:43.850Z"
+      "last_updated": "2026-10-26T12:57:01.420Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
