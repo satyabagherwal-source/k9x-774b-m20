@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-7DKU",
-    "timestamp": "2026-10-25T05:34:03.390Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "c6be5f00c37cf47c4e2e17d1df38c311f70a5df8347eb03d971f9f49c83f8703",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-7HMN",
     "timestamp": "2026-10-25T05:34:08.639Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7475,21 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "0045ab93d5452137cdc90a291de955d3300bf1a0414a236961c697a173519510",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-3HWT",
+    "timestamp": "2026-10-26T21:10:29.741Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

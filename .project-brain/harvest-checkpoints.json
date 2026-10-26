@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T18:32:20.247Z",
+  "last_updated": "2026-10-26T21:10:29.754Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "f5dfabad03f4713f0087fcaf3f0eccac29d1125d4e8f600f8fcb908c9fd36665",
-      "verified_at": "2026-10-26T11:04:09.241Z",
+      "content_hash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
+      "verified_at": "2026-10-26T21:10:29.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:04:09.241Z"
+      "last_updated": "2026-10-26T21:10:29.753Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",

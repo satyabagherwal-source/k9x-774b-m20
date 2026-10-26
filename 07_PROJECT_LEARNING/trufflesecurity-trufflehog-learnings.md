@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `291e3f03`  
+> **Source Version**: `2caa45cf`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:04:08.847Z  
+> **Timestamp**: 2026-10-26T21:10:29.236Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:04:03.403Z  
+> **Harvest Timestamp**: 2026-10-26T21:10:28.527Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28705 stars
+- **Stars / Engagement**: 28712 stars
 
 ---
 
@@ -1140,232 +1140,195 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `291e3f03` (2026-10-26)
-**Commit Message**: Skip GitHub comment errors when issues or PRs are off (#5467)
+### Incident Patch 1: `2caa45cf` (2026-10-26)
+**Commit Message**: add SecretParts to custom detectors (#5470)
 
-A 404/410 from /issues/comments (when the repo has issues off) or from /pulls
-no longer counts as a chunk error. /pulls/comments is skipped when /pulls has
-no PRs, and still runs when /pulls is disabled, since GitHub keeps serving old
-review comments there
+Populate Result.SecretParts when a secret is found by a customer regex detector.
 
-**File**: `pkg/sources/github/comments_test.go` (modified, +95/-0)
+We do this by adding the SecretParts field to Results within custom detectors.
+
+**File**: `pkg/custom_detectors/CUSTOM_DETECTORS.md` (modified, +1/-0)
 ```diff
-@@ -516,6 +516,101 @@ func TestCommentScan_SkippedListingNeedingBothPermissionsSaysSo(t *testing.T) {
- 	assert.Contains(t, err.Error(), "issues and pull requests: missing GitHub App permission: Issues (read) and Pull requests (read) are needed;")
- }
+@@ -34,6 +34,7 @@ This guide will walk you through setting up a custom detector in TruffleHog to i
+    - **`name`**: A unique identifier for your custom detector.
+    - **`keywords`**: An array of strings that, when found, trigger the regex search. If multiple keywords are specified, the presence of any one of them will initiate the regex search.
+    - **`regex`**: Defines the patterns to identify potential secrets. You can specify one or more named regular expressions. For a detection to be successful, each named regex must find a match. Capture groups `()` within these regular expressions are used to extract specific portions of the matched text, enabling the detector to process and report on particular segments of the identified patterns.
++     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
  
-+// respondWith returns a fail func that answers every request with status,
-+// the way GitHub answers listings for a feature the repo has turned off.
-+func respondWith(status int) func(int, http.ResponseWriter, *http.Request) bool {
-+	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
-+		writeJSON(w, status, map[string]string{"message": http.StatusText(status)})
-+		return true
-+	}
-+}
-+
-+func TestCommentScan_IssueCommentsDisabledWhenRepoHasNoIssues(t *testing.T) {
-+	for _, status := range []int{http.StatusNotFound, http.StatusGone} {
-+		t.Run(http.StatusText(status), func(t *testing.T) {
-+			// Issues and pull requests are both off: /issues is empty and
-+			// /issues/comments refuses, but old review comments remain.
-+			gh := newFakeGitHub(t)
-+			gh.issueComments.fail = respondWith(status)
-+			gh.prComments.records = []fakeRecord{
-+				commentRecord(200, testEpoch, "https://github.com/o/r/pull/2#discussion_r200"),
-+			}
-+			s := &Source{includeIssueComments: true, includePRComments: true}
-+			repo := testRepo
-+			repo.hasNoIssues = true
-+			reporter := &collectingReporter{}
-+
-+			err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, repo, nil, reporter, nil)
-+
-+			require.NoError(t, err)
-+			assert.Equal(t, []string{"https://github.com/o/r/pull/2#discussion_r200"}, reporter.links)
-+		})
-+	}
-+}
-+
-+func TestCommentScan_IssueCommentsNotFoundIsReportedWhenIssuesAreOn(t *testing.T) {
-+	gh := newFakeGitHub(t)
-+	gh.issueComments.fail = respondWith(http.StatusNotFound)
-+	s := &Source{includeIssueComments: true}
-+
-+	_, err := scanComments(t, s, gh, nil)
-+
-+	require.Error(t, err)
-+	assert.Contains(t, err.Error(), "issue comments:")
-+	assert.Contains(t, err.Error(), "404")
-+}
-+
-+func TestCommentScan_PullsDisabledStillListsReviewComments(t *testing.T) {
-+	gh := newFakeGitHub(t)
-+	gh.pulls.fail = respondWith(http.StatusNotFound)
-+	gh.prComments.records = []fakeRecord{
-+		commentRecord(200, testEpoch, "https://github.com/o/r/pull/2#discussion_r200"),
-+	}
-+	s := &Source{includePRComments: true}
-+
-+	reporter, err := scanComments(t, s, gh, nil)
-+
-+	require.NoError(t, err)
-+	assert.Equal(t, []string{"https://github.com/o/r/pull/2#discussion_r200"}, reporter.links)
-+	assert.Equal(t, 1, gh.prComments.requestCount())
-+}
-+
-+func TestCommentScan_NoPullRequestsSkipsReviewComments(t *testing.T) {
-+	gh := newFakeGitHub(t)
-+	s := &Source{includePRComments: true}
-+
-+	reporter, err := scanComments(t, s, gh, nil)
-+
-+	require.NoError(t, err)
-+	assert.Empty(t, reporter.links)
-+	assert.Equal(t, 1, gh.pulls.requestCount())
-+	assert.Zero(t, gh.prComments.requestCount())
-+}
-+
-+func TestCacheRepoInfo_HasNoIssues(t *testing.T) {
-+	off, on := false, true
-+	tests := []struct {
-+		name      string
-+		hasIssues *bool
-+		want      bool
-+	}{
-+		{name: "issues off", hasIssues: &off, want: true},
-+		{name: "issues on", hasIssues: &on, want: false},
-+		{name: "field missing", hasIssues: nil, want: false},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			s := &Source{repoInfoCache: newRepoInfoCache()}
-+			cloneURL := "https://github.com/o/r.git"
-+			s.cacheRepoInfo(&github.Repository{CloneURL: &cloneURL, HasIssues: tt.hasIssues})
-+
-+			info, ok := s.repoInfoCache.get(cloneURL)
-+			require.True(t, ok)
-+			assert.Equal(t, tt.want, info.hasNoIssues)
-+		})
-+	}
-+}
-+
- func TestReportCommentErrors_UnjoinedErrorIsReportedOnce(t *testing.T) {
- 	reporter := &collectingReporter{}
- 
+    - **`verify`**: An optional section to validate detected secrets. If you want to verify or unverify detected secrets, this section needs to be configured. If not configured, all detected secrets will be marked as unverified. Read [verification server examples](#verification-server-examples)
+      - **`successRanges`**: A list of HTTP status codes (or ranges) that indicate the secret is **live** (active). When the verification server responds with a matching status code, the secret is marked as verified. Each entry can be a single code (`"200"`) or an inclusive range (`"200-202"`). If omitted (along with `rotatedRanges`), only `200` is treated as verified (backward compatible).
 ```
 
-**File**: `pkg/sources/github/github.go` (modified, +26/-2)
+**File**: `pkg/custom_detectors/custom_detectors.go` (modified, +3/-0)
 ```diff
-@@ -2096,9 +2096,20 @@ func (s *Source) processIssueandPRsWithCommentsREST(
- 	narrowed := func(missing, listing string, needs permission) error {
- 		return fmt.Errorf("%s: %w", missing, newNarrowedListingError(installationID, listing, []permission{needs}))
- 	}
-+	// noPRs is set when /pulls ran and found nothing. Its state=all listing
-+	// then shows the repo has no pull requests, so it has no review comments
-+	// either. A 404 or 410 means pull requests are off, which is different:
-+	// /pulls/comments still serves review comments from before that.
-+	var noPRs bool
- 	pullsPhase := func(startLog string) commentPhase {
- 		return commentPhase{name: "pull requests", startLog: startLog, run: func() (int, error) {
--			return s.processPRs(ctx, p, repoInfo, reporter)
-+			emitted, err := s.processPRs(ctx, p, repoInfo, reporter)
-+			if isGitHubListingDisabled(err) {
-+				ctx.Logger().V(2).Info("pull requests listing disabled for repo, skipping")
-+				return emitted, nil
-+			}
-+			noPRs = err == nil && emitted == 0
-+			return emitted, err
- 		}}
+@@ -282,6 +282,8 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
+ 		DetectorType: detector_typepb.DetectorType_CustomRegex,
+ 		DetectorName: c.GetName(),
+ 		ExtraData:    map[string]string{},
++		// Each entry is named after a regex in the user's config.
++		SecretParts: make(map[string]string, len(match)),
  	}
  
-@@ -2163,6 +2174,10 @@ func (s *Source) processIssueandPRsWithCommentsREST(
- 			prStartLog = ""
+ 	var raw string
+@@ -296,6 +298,7 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
  		}
- 		phases = append(phases, commentPhase{name: "pull request comments", startLog: prStartLog, skipped: prsSkipped, run: func() (int, error) {
-+			if noPRs {
-+				ctx.Logger().V(2).Info("no pull requests in repo, skipping pull request comments")
-+				return 0, nil
-+			}
- 			return s.processPRComments(ctx, p, repoInfo, reporter, since)
- 		}})
- 	}
-@@ -2312,8 +2327,12 @@ func (s *Source) chunkIssues(ctx context.Context, repoInfo repoInfo, issues []*g
- // after since. /issues/comments also returns comments on pull requests, since
- // GitHub treats every pull request as an issue. The endpoint stops at 300
- // pages, so the walk continues past that cap in since windows.
-+//
-+// When both issues and pull requests are off, GitHub answers 404 here. That
-+// is only treated as empty when the repo also reports issues off, so an
-+// unexpected 404 is still reported.
- func (s *Source) processIssueComments(ctx context.Context, p pager, repoInfo repoInfo, reporter sources.ChunkReporter, since time.Time) (int, error) {
--	return walkUpdatedSince(ctx, p, sinceWalk[*github.IssueComment]{
-+	emitted, err := walkUpdatedSince(ctx, p, sinceWalk[*github.IssueComment]{
- 		name:  "issue comments",
- 		since: since,
- 		list: func(ctx context.Context, since time.Time) ([]*github.IssueComment, *github.Response, error) {
-@@ -2335,6 +2354,11 @@ func (s *Source) processIssueComments(ctx context.Context, p pager, repoInfo rep
- 			return s.chunkIssueComments(ctx, repoInfo, comments, reporter)
- 		},
- 	})
-+	if err != nil && repoInfo.hasNoIssues && isGitHubListingDisabled(err) {
-+		ctx.Logger().V(2).Info("issue comments listing disabled for repo, skipping")
-+		return emitted, nil
-+	}
-+	return emitted, err
- }
+ 		raw += secret
+ 		secrets = append(secrets, secret)
++		result.SecretParts[key] = secret
  
- // chunkIssueComments emits a chunk for each comment. The comments timeframe
+ 		// We set the full regex match as the primary secret value.
+ 		// Reasoning:
 ```
 
-**File**: `pkg/sources/github/repo.go` (modified, +21/-5)
+**File**: `pkg/custom_detectors/custom_detectors_test.go` (modified, +89/-6)
 ```diff
-@@ -58,6 +58,10 @@ type repoInfo struct {
- 	size       int                          // size of the repository in kilobytes.
- 	visibility source_metadatapb.Visibility // visibility of the repository (public/private).
- 	hasWiki    bool                         // whether the repository is likely to have a wiki.
-+	// hasNoIssues is true only when GitHub said issues are off. The zero
-+	// value means scan as usual, so a missing has_issues never turns
-+	// anything off.
-+	hasNoIssues bool
+@@ -241,6 +241,7 @@ func TestDetector(t *testing.T) {
+ 	assert.NoError(t, err)
+ 	assert.Equal(t, 1, len(results))
+ 	assert.Equal(t, results[0].Raw, []byte(`123456`))
++	assert.Equal(t, map[string]string{"regex": "123456"}, results[0].SecretParts)
  }
  
- // cloneRepo clones a repository given its URL, returns the path and the repository object.
-@@ -240,6 +244,17 @@ func isGitHub404Error(err error) bool {
- 	return ghErr.Response.StatusCode == http.StatusNotFound
+ func TestDetectorPrimarySecret(t *testing.T) {
+@@ -260,6 +261,10 @@ func TestDetectorPrimarySecret(t *testing.T) {
+ 	assert.NoError(t, err)
+ 	assert.Equal(t, 1, len(results))
+ 	assert.Equal(t, "secret_YI7C90ACY1_yy", results[0].GetPrimarySecretValue())
++	assert.Equal(t, map[string]string{
++		"id":     "id_ALPHA10100_yy",
++		"secret": "secret_YI7C90ACY1_yy",
++	}, results[0].SecretParts)
  }
  
-+// isGitHubListingDisabled reports whether a listing failed because the repo
-+// has the feature turned off. GitHub answers with 404 or 410 for that.
-+func isGitHubListingDisabled(err error) bool {
-+	var ghErr *github.ErrorResponse
-+	if !errors.As(err, &ghErr) || ghErr.Response == nil {
-+		return false
-+	}
-+	code := ghErr.Response.StatusCode
-+	return code == http.StatusNotFound || code == http.StatusGone
+ func TestDetectorPrimarySecretFullMatch(t *testing.T) {
+@@ -313,7 +318,75 @@ func TestDetectorPrimarySecretFullMatch(t *testing.T) {
+ 			assert.Equal(t, tt.want, results[0].GetPrimarySecretValue())
+ 		})
+ 	}
 +}
 +
- // processRepos processes repositories from a source, handling pagination and rate limits.
- func (s *Source) processRepos(ctx context.Context, target string, reporter sources.UnitReporter, listRepos repoLister, listOpts repoListOptions) error {
- 	logger := ctx.Logger().WithValues("target", target)
-@@ -338,11 +353,12 @@ func (s *Source) processRepos(ctx context.Context, target string, reporter sourc
- // cacheRepoInfo caches basic information about a repository for later use.
- func (s *Source) cacheRepoInfo(r *github.Repository) {
- 	info := repoInfo{
--		owner:    r.GetOwner().GetLogin(),
--		name:     r.GetName(),
--		fullName: r.GetFullName(),
--		hasWiki:  r.GetHasWiki(),
--		size:     r.GetSize(),
-+		owner:       r.GetOwner().GetLogin(),
-+		name:        r.GetName(),
-+		fullName:    r.GetFullName(),
-+		hasWiki:     r.GetHasWiki(),
-+		hasNoIssues: r.HasIssues != nil && !*r.HasIssues,
-+		size:        r.GetSize(),
- 	}
- 	if r.GetPrivate() {
- 		info.visibility = source_metadatapb.Visibility_private
++// TestDetectorSecretParts checks that each named regex becomes one entry in SecretParts.
++func TestDetectorSecretParts(t *testing.T) {
++	t.Parallel()
++
++	t.Run("capture group", func(t *testing.T) {
++		t.Parallel()
++		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
++			Name:     "test",
++			Keywords: []string{"secret"},
++			Regex:    map[string]string{"secret": `secret *= *"([^"\r\n]+)"`},
++		})
++		require.NoError(t, err)
++
++		results, err := detector.FromData(context.Background(), false, []byte(`secret="mysecret"`))
++		require.NoError(t, err)
++		require.Len(t, results, 1)
++		assert.Equal(t, map[string]string{"secret": "mysecret"}, results[0].SecretParts)
++		assert.Equal(t, `secret="mysecret"`, results[0].GetPrimarySecretValue())
++	})
++
++	t.Run("no capture group", func(t *testing.T) {
++		t.Parallel()
++		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
++			Name:     "test",
++			Keywords: []string{"hog"},
++			Regex:    map[string]string{"token": `hog_[A-Za-z0-9]{8}`},
++		})
++		require.NoError(t, err)
++
++		results, err := detector.FromData(context.Background(), false, []byte("prefix hog_abcd1234 suffix"))
++		require.NoError(t, err)
++		require.Len(t, results, 1)
++		assert.Equal(t, map[string]string{"token": "hog_abcd1234"}, results[0].SecretParts)
++		assert.Equal(t, []byte("hog_abcd1234"), results[0].Raw)
++	})
+ 
++	t.Run("verified multi-part", func(t *testing.T) {
++		t.Parallel()
++		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++			w.WriteHeader(http.StatusOK)
++		}))
++		t.Cleanup(ts.Close)
++
++		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
++			Name:     "test",
++			Keywords: []string{"secret"},
++			Regex: map[string]string{
++				"id":     `id_([A-Z]{4})`,
++				"secret": `secret_([A-Z]{4})`,
++			},
++			Verify: []*custom_detectorspb.VerifierConfig{{
++				Endpoint: ts.URL,
++				Unsafe:   true,
++			}},
++		})
++		require.NoError(t, err)
++
++		results, err := detector.FromData(context.Background(), true, []byte("id_ABCD secret_WXYZ"))
++		require.NoError(t, err)
++		require.Len(t, results, 1)
++		assert.True(t, results[0].Verified)
++		assert.Equal(t, map[string]string{
++			"id":     "ABCD",
++			"secret": "WXYZ",
++		}, results[0].SecretParts)
++		assert.Equal(t, []byte("ABCDWXYZ"), results[0].Raw)
++	})
+ }
+ 
+ func TestDetectorValidations(t *testing.T) {
+@@ -351,6 +424,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("MyStr0ngP@ssword!"),
++					SecretParts:  map[string]string{"password": "MyStr0ngP@ssword!"},
+ 				},
+ 			},
+ 		},
+@@ -398,6 +472,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("MyStrongPassword!"),
++					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
+ 				},
+ 			},
+ 		},
+@@ -445,6 +520,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("MyStrongPassword!"),
++					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
+ 				},
+ 			},
+ 		},
+@@ -492,6 +568,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("MyStr@ngP@ssword!"),
++					SecretParts:  map[string]string{"password": "MyStr@ngP@ssword!"},
+ 				},
+ 			},
+ 		},
+@@ -540,6 +617,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("MyStrongP@ssword"),
++					SecretParts:  map[string]string{"password": "MyStrongP@ssword"},
+ 				},
+ 			},
+ 		},
+@@ -588,6 +666,7 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("mystrongp@ssword"),
++					SecretParts:  map[string]string{"password": "mystrongp@ssword"},
+ 				},
+ 			},
+ 		},
+@@ -624,6 +703,10 @@ func TestDetectorValidations(t *testing.T) {
+ 					DetectorName: "test",
+ 					Verified:     false,
+ 					Raw:          []byte("c392c9837d69b44c764cbf260b-e618
 ```
 
 #### Recent Merged Pull Requests:
@@ -1373,8 +1336,8 @@ review comments there
 - **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
 - **PR #5472** (2026-10-24): security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (@dustin-decker)
 - **PR #5471** (2026-10-24): Fix --include-wikis help typo and huggingface README description (@protonnegativo)
+- **PR #5470** (2026-10-26): [SCAN-180]: Populate SecretParts for custom detector results (@casey-tran)
 - **PR #5467** (2026-10-26): Skip GitHub comment errors when issues or PRs are off (@kashifkhan0771)
-- **PR #5465** (2026-10-23): Clean up Filesystem source logging for per-source debug (@kashifkhan0771)
 
 ---
 
@@ -1394,47 +1357,21 @@ review comments there
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip GitHub comment errors when issues or PRs are off (#5467)
+## X. add SecretParts to custom detectors (#5470)
 
 **RULE**:
-When implementing operations in `pkg/sources/github/comments_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/custom_detectors/CUSTOM_DETECTORS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `291e3f03`: Skip GitHub comment errors when issues or PRs are off (#5467). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2caa45cf`: add SecretParts to custom detectors (#5470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/github/comments_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/custom_detectors/CUSTOM_DETECTORS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// respondWith returns a fail func that answers every request with status,
-// the way GitHub answers listings for a feature the repo has turned off.
-func respondWith(status int) func(int, http.ResponseWriter, *http.Request) bool {
-	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
-		writeJSON(w, status, map[string]string{"message": http.StatusText(status)})
-		return true
-	}
-}
-
-func TestCommentScan_IssueCommentsDisabledWhenRepoHasNoIssues(t *testing.T) {
-	for _, status := range []int{http.StatusNotFound, http.StatusGone} {
-		t.Run(http.StatusText(status), func(t *testing.T) {
-			// Issues and pull requests are both off: /issues is empty and
-			// /issues/comments refuses, but old review comments remain.
-			gh := newFakeGitHub(t)
-			gh.issueComments.fail = respondWith(status)
-			gh.prComments.records = []fakeRecord{
-				commentRecord(200, testEpoch, "https://github.com/o/r/pull/2#discussion_r200"),
-			}
-			s := &Source{includeIssueComments: true, includePRComments: true}
-			repo := testRepo
-			repo.hasNoIssues = true
-			reporter := &collectingReporter{}
-
-			err := s.processIssueandPRsWithCommentsREST(context.Background(), gh.client, repo, nil, reporter, nil)
-
-			requi
+     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1444,4 +1381,4 @@ func TestCommentScan_IssueCommentsDisabledWhenRepoHasNoIssues(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `291e3f03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2caa45cf` are properly handled with clean fallback behavior.

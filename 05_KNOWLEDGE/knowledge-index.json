@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T18:32:20.180Z",
+  "last_updated": "2026-10-26T21:10:29.674Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50353,8 +50353,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "291e3f03",
-      "content_hash": "f5dfabad03f4713f0087fcaf3f0eccac29d1125d4e8f600f8fcb908c9fd36665",
+      "source_version": "2caa45cf",
+      "content_hash": "d66b972baa59eb46c76d59d4c13e4635b3c51918cc28fc8b12cd23a095ee8d9b",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -50412,6 +50412,11 @@
           "number": 4587,
           "title": "Skip GitHub comment errors when issues or PRs are off (#5467)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4648,
+          "title": "add SecretParts to custom detectors (#5470)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50419,7 +50424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:04:09.163Z",
+      "verified_at": "2026-10-26T21:10:29.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129998,6 +130003,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T18:32:20.169Z"
+    },
+    "rule-4648": {
+      "learning_id": "rule-4648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4648,
+      "title": "add SecretParts to custom detectors (#5470)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "2caa45cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T21:10:29.655Z"
     }
   },
   "aliases": {

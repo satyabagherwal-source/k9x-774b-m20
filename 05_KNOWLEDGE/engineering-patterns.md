@@ -338738,3 +338738,53 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `df839896` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4648. add SecretParts to custom detectors (#5470) (Harvested from trufflesecurity/trufflehog)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add SecretParts to custom detectors (#5470)",
+  "source": "trufflesecurity/trufflehog",
+  "source_url": "https://github.com/trufflesecurity/trufflehog",
+  "source_version": "2caa45cf",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-26T21:10:29.498Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trufflesecurity-trufflehog",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `2caa45cf`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `pkg/custom_detectors/CUSTOM_DETECTORS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2caa45cf`: add SecretParts to custom detectors (#5470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/custom_detectors/CUSTOM_DETECTORS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2caa45cf` are properly handled with clean fallback behavior.

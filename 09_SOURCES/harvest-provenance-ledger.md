@@ -5193,3 +5193,4 @@ Every entry in this ledger must capture:
 | `learn-github-kuberwastaken-claurst` | `https://github.com/Kuberwastaken/claurst` | `e4228cc6` | Multi-dimensional audit evidence | 2026-10-26T18:25:28.380Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `412290e7` | Multi-dimensional audit evidence | 2026-10-26T18:25:35.181Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `7a365049` | Multi-dimensional audit evidence | 2026-10-26T18:32:20.239Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2caa45cf` | Multi-dimensional audit evidence | 2026-10-26T21:10:29.745Z |
