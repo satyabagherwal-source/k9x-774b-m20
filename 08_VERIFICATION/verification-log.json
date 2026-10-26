@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-2ZVK",
-    "timestamp": "2026-10-25T03:38:40.544Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "8282a93062d14a118d8a6930442b216082000b8f28416f87496ba27c6c24dc54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-B5VQ",
     "timestamp": "2026-10-25T03:45:01.574Z",
     "repository": "CrawlCove/robots-txt-tester",
@@ -7492,6 +7477,21 @@
     "contentHash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-5CTL",
+    "timestamp": "2026-10-26T12:20:03.753Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

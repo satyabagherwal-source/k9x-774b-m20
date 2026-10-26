@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T12:13:37.968Z",
-  "total_cycles_completed": 5115,
-  "total_learnings_persisted": 5115,
-  "total_rules_promoted": 4496,
+  "last_updated": "2026-10-26T12:20:03.762Z",
+  "total_cycles_completed": 5116,
+  "total_learnings_persisted": 5116,
+  "total_rules_promoted": 4497,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:15:34.604Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:21:51.066Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1403,6 +1396,13 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T12:20:03.762Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

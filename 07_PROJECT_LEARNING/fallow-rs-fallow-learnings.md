@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `9c6fc8a2`  
+> **Source Version**: `f2d8b806`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:45:30.078Z  
+> **Timestamp**: 2026-10-26T12:20:03.348Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:45:29.288Z  
+> **Harvest Timestamp**: 2026-10-26T12:20:01.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5241 stars
+- **Stars / Engagement**: 5250 stars
 
 ---
 
@@ -1288,20 +1288,547 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38469b53` (2026-10-23)
-**Commit Message**: chore(security): drop the stale GHSA-vfj7-8cjw-p6xm osv-scanner ignore (#3845)
+### Incident Patch 1: `658cdad3` (2026-10-25)
+**Commit Message**: fix(cli): name the unenforced failing gates of a bare machine run (#3875)
 
-The advisory no longer matches a package in editors/vscode/pnpm-lock.yaml, so the osv-scanner ignores check failed on main. Remove the entry and regenerate the VEX document.
+* fix(cli): name the unenforced failing gates of a bare machine run
+
+Bare fallow in a machine format exits 0 on findings, while fallow
+dead-code exits 1 on the same findings. The run gave no sign of this.
+Now a bare machine run that exits 0 with a failing findings gate prints
+one stderr line, also under --quiet. The line names each gate, the
+--format value and --fail-on-issues. The exit code and stdout do not
+change.
+
+Closes #3826
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* docs: say what exit 0 means for a bare machine run
+
+The schema exit codes, the skill, AGENTS.md and the npm README said that
+exit 0 means no error-severity findings. Bare fallow in a machine format
+exits 0 on findings unless --fail-on-issues is set, so an agent that
+followed the contract read a failing run as clean. Define 0 as no
+enforced gate failed, say that 1 means findings and not a tool failure,
+and tell agents how to gate.
+
+Refs #3826
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `.agents/skills/fallow/SKILL.md` (modified, +2/-2)
+```diff
+@@ -42,7 +42,7 @@ cargo install fallow-cli   # build from source
+ 
+ ## Agent Rules
+ 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
+-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
++2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
+ 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
+ 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
+ 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
+@@ -375,7 +375,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
+ 
+ ## Exit Codes
+ 
+-Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
++Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
+ 
+ When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
+ ```json
+```
+
+**File**: `.agents/skills/fallow/references/gotchas.md` (modified, +2/-0)
+```diff
+@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
+ 
+ Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
+ 
++Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
++
+ ---
+ 
+ ## `--fail-on-issues` Promotes Warn to Error
+```
+
+**File**: `.claude/skills/fallow/SKILL.md` (modified, +2/-2)
+```diff
+@@ -43,7 +43,7 @@ cargo install fallow-cli   # build from source
+ 
+ ## Agent Rules
+ 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
+-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
++2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
+ 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
+ 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
+ 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
+@@ -376,7 +376,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
+ 
+ ## Exit Codes
+ 
+-Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
++Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
+ 
+ When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
+ ```json
+```
+
+**File**: `.claude/skills/fallow/references/gotchas.md` (modified, +2/-0)
+```diff
+@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
+ 
+ Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
+ 
++Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
++
+ ---
+ 
+ ## `--fail-on-issues` Promotes Warn to Error
+```
+
+**File**: `AGENTS.md` (modified, +4/-2)
+```diff
+@@ -76,8 +76,10 @@ ownership and high-value paths. Important invariants:
+ - Resolve current flags and commands from `fallow --help` and
+   `fallow <command> --help`, not from copied flag catalogues.
+ 
+-Exit codes are `0` for success without error-severity findings, `1` for
+-error-severity findings, and `2` for invalid input or execution errors. Some
++Exit codes are `0` when no enforced gate failed, `1` when an enforced gate
++failed (findings, not a tool failure), and `2` for invalid input or execution
++errors. Bare `fallow` in a machine format exits 0 on findings unless you pass
++`--fail-on-issues`. To gate, pass that flag or read `gate_outcomes`. Some
+ runtime workflows define additional documented exit codes.
+ 
+ ## Validation
+```
+
+**File**: `changelog.d/fix-bare-machine-exit-note.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++### Changed
++
++- **A bare machine run that exits 0 on a failing gate now says so on stderr.** Bare `fallow` in `--format json`, `sarif`, `codeclimate`, the GitHub formats and the comment and review formats exits 0 on findings, while `fallow dead-code --format json` exits 1 on the same findings. Before, nothing showed why. Now such a run prints one stderr line, also under `--quiet`, that names each failing findings gate and the flag that enforces it: `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` The exit code and stdout do not change. Thanks [@Smrtnyk](https://github.com/Smrtnyk) for the report. (Closes [#3826](https://github.com/fallow-rs/fallow/issues/3826))
++
++- **The exit-code contract no longer says that exit 0 means a clean run.** `fallow schema` (`exit_codes`), the fallow skill, `AGENTS.md` and the npm README said that 0 means no error-severity findings. For bare `fallow` in a machine format, that was false. They now say that 0 means no enforced gate failed, that 1 means findings and not a tool failure, and that a bare machine run gates on findings only with `--fail-on-issues`. To see a failing gate that did not set the exit code, read `gate_outcomes`.
+```
+
+**File**: `crates/cli/src/combined/output.rs` (modified, +34/-1)
+```diff
+@@ -878,10 +878,13 @@ pub(super) fn print_combined_exit_reason(
+     health_result: Option<&HealthResult>,
+     code: u8,
+ ) {
++    let machine = combined_machine_format(opts.output);
+     if code == 0 {
++        if machine && !opts.fail_on_issues {
++            print_unenforced_gates_line(opts, check_result, dupes_result, health_result);
++        }
+         return;
+     }
+-    let machine = combined_machine_format(opts.output);
+     let mut gates = combined_gate_outcomes(
+         check_result,
+         dupes_result,
+@@ -905,6 +908,36 @@ pub(super) fn print_combined_exit_reason(
+     });
+ }
+ 
++/// Print the line that names the failing findings gates a bare machine run
++/// exits 0 on. Printed also under `--quiet`, like the exit-reason line: an
++/// agent that runs `--format json --quiet` is the reader who sees only the
++/// exit code.
++fn print_unenforced_gates_line(
++    opts: &CombinedOptions<'_>,
++    check_result: Option<&CheckResult>,
++    dupes_result: Option<&DupesResult>,
++    health_result: Option<&HealthResult>,
++) {
++    let gates = combined_gate_outcomes(
++        check_result,
++        dupes_result,
++        health_result,
++        CombinedGateFlags {
++            fail_on_stale_baseline: opts.fail_on_stale_baseline,
++            fail_on_issues: false,
++        },
++    );
++    if let Some(line) = crate::report::gate_outcome_text::unenforced_gates_line(
++        gates.as_ref(),
++        opts.output.flag_label(),
++    ) {
++        eprintln!(
++            "{}",
++            crate::report::human_status_line(crate::report::HumanStatus::Warning, line)
++        );
++    }
++}
++
+ /// The section prints of the human path fail the run on the findings rules
+ /// and on the duplication threshold also without `--fail-on-issues`. The
+ /// envelope of the machine path keeps `enforced: false` for them, so the
+```
+
+**File**: `crates/cli/src/report/gate_outcome_text.rs` (modified, +87/-0)
+```diff
+@@ -328,6 +328,45 @@ pub fn exit_reason_line(
+     Some(line)
+ }
+ 
++/// The stderr line of a bare machine run that exits 0 although a findings gate
++/// failed, or `None` when no such gate failed.
++///
++/// Without `--fail-on-issues`, bare `fallow` in a machine format publishes the
++/// findings gates with `enforced: false` and exits 0, while `fallow dead-code`
++/// exits 1 on the same findings. Without this line, the exit code looks like a
++/// pass (#3826). `format` is the `--format` spelling, so the line names the
++/// run the way the user typed it.
++pub fn unenforced_gates_line(
++    gates: Option<&fallow_output::GateOutcomes>,
++    format: &str,
++) -> Option<String> {
++    let envelope = serde_json::json!({ "gate_outcomes": gates? });
++    let failed: Vec<GateLine> = read_gate_outcomes(&envelope)
++        .into_iter()
++        .filter(|gate| {
++            gate.status == "fail"
++                && !gate.enforced
++                && crate::gates::FAIL_ON_ISSUES_GATES
++                    .iter()
++                    .any(|name| name.as_str() == gate.name)
++        })
++        .collect();
++    if failed.is_empty() {
++        return None;
++    }
++    let refs: Vec<&GateLine> = failed.iter().collect();
++    let (noun, pronoun) = if refs.len() == 1 {
++        ("gate", "it")
++    } else {
++        ("gates", "them")
++    };
++    Some(format!(
++        "Exit code 0: {noun} {} failed, but bare fallow does not enforce {pronoun} in \
++         --format {format}. To exit 1 on {pronoun}, pass --fail-on-issues.",
++        join(&refs)
++    ))
++}
++
+ /// The hint for a findings gate under `--fail-on-issues` or `--ci`. A rule
+ /// set to `warn` does not help there, because the flag promotes it to `error`.
+ const FAIL_ON_ISSUES_HINT: &str = "Under --fail-on-issues (also set by --ci), a rule set to \
+@@ -940,4 +979,52 @@ mod tests {
+             exit_reason_line(Some(&only_regression), 1, false, &[GateName::Regression]).is_none()
+         );
+     }
++
++    #[test]
++    fn the_unenforced_line_names_only_failing_findings_gates_that_are_not_enforced() {
++        use fallow_output::{GateName, GateOutcome, GateStatus};
++        let gates = typed_gates(&[
++            (
++                GateName::ErrorSeverityFindings,
++                crate::gates::error_severity_outcome(2, false),
++            ),
++            (
++                GateName::HealthFindings,
++                crate::gates::health_findings_outcome(0, false),
++            ),
++            (
++                GateName::StaleBaseline,
++                GateOutcome::measured(GateStatus::Fail, false, 1.0, 0.0),
++            ),
++        ]);
++        assert_eq!(
++            unenforced_gates_line(Some(&gates), "sarif").as_deref(),
++            Some(
++                "Exit code 0: gate error-severity-findings (2 at or above error) failed, but \
++                 bare fallow does not enforce it in --format sarif. To exit 1 on it, pass \
++                 --fail-on-issues."
++            )
++        );
++
++        let both = typed_gates(&[
++            (
++                GateName::ErrorSeverityFindings,
++                crate::gates::error_severity_outcome(2, false),
++            ),
++            (
++                GateName::HealthFindings,
++                crate::gates::health_findings_outcome(3, false),
++            ),
++        ]);
++        let line = unenforced_gates_line(Some(&both), "json").expect("two gates failed");
++        assert!(line.contains("gates error-severity-findings"), "{line}");
++        assert!(line.contains("enforce them"), "{line}");
++
++        let enforced = typed_gates(&[(
++            GateName::ErrorSeverityFindings,
++            crate::gates::error_severity_outcome(2, true),
++        )]);
++        assert!(unenforced_gates_line(Some(&enforced), "json").is_none());
++        assert!(unenforced_gates_line(None, "json").is_none());
++    }
+ }
+```
+
+---
+
+### Incident Patch 2: `316fe600` (2026-10-26)
+**Commit Message**: fix(deps): patch publisher and test dependency vulnerabilities (#3881)
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `.github/dependabot.yml` (modified, +24/-0)
+```diff
+@@ -71,6 +71,30 @@ updates:
+       - dependency-name: mocha
+         update-types: ["version-update:semver-major"]
+ 
++  - package-ecosystem: npm
++    directory: /.github/publishers/marketplace
++    schedule:
++      interval: weekly
++    cooldown:
++      default-days: 7
++    open-pull-requests-limit: 5
++
++  - package-ecosystem: npm
++    directory: /.github/publishers/open-vsx
++    schedule:
++      interval: weekly
++    cooldown:
++      default-days: 7
++    open-pull-requests-limit: 5
++
++  - package-ecosystem: npm
++    directory: /tools/mutation-runner
++    schedule:
++      interval: weekly
++    cooldown:
++      default-days: 7
++    open-pull-requests-limit: 5
++
+   - package-ecosystem: npm
+     directory: /npm/fallow
+     schedule:
+```
+
+**File**: `.github/publishers/marketplace/package-lock.json` (modified, +7/-7)
+```diff
+@@ -169,22 +169,22 @@
+       }
+     },
+     "node_modules/@azure/msal-node": {
+-      "version": "6.0.1",
+-      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
+-      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
++      "version": "7.1.1",
++      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
++      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
+       "license": "MIT",
+       "dependencies": {
+-        "@azure/msal-common": "16.14.1",
++        "@azure/msal-common": "16.14.3",
+         "jsonwebtoken": "^9.0.0"
+       },
+       "engines": {
+         "node": ">=20"
+       }
+     },
+     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
+-      "version": "16.14.1",
+-      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
+-      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
++      "version": "16.14.3",
++      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
++      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.8.0"
+```
+
+**File**: `.github/publishers/marketplace/package.json` (modified, +3/-0)
+```diff
+@@ -7,5 +7,8 @@
+   },
+   "dependencies": {
+     "@vscode/vsce": "4.0.0"
++  },
++  "overrides": {
++    "@azure/msal-node": "7.1.1"
+   }
+ }
+```
+
+**File**: `.github/publishers/open-vsx/package-lock.json` (modified, +17/-58)
+```diff
+@@ -8,7 +8,7 @@
+       "name": "fallow-open-vsx-publisher",
+       "version": "1.0.0",
+       "dependencies": {
+-        "ovsx": "1.2.0"
++        "ovsx": "1.3.0"
+       },
+       "engines": {
+         "node": ">=22"
+@@ -169,22 +169,22 @@
+       }
+     },
+     "node_modules/@azure/msal-node": {
+-      "version": "6.0.1",
+-      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
+-      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
++      "version": "7.1.1",
++      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
++      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
+       "license": "MIT",
+       "dependencies": {
+-        "@azure/msal-common": "16.14.1",
++        "@azure/msal-common": "16.14.3",
+         "jsonwebtoken": "^9.0.0"
+       },
+       "engines": {
+         "node": ">=20"
+       }
+     },
+     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
+-      "version": "16.14.1",
+-      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
+-      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
++      "version": "16.14.3",
++      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
++      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.8.0"
+@@ -1452,12 +1452,12 @@
+       "license": "MIT"
+     },
+     "node_modules/commander": {
+-      "version": "6.2.1",
+-      "resolved": "https://registry.npmjs.org/commander/-/commander-6.2.1.tgz",
+-      "integrity": "sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==",
++      "version": "14.0.3",
++      "resolved": "https://registry.npmjs.org/commander/-/commander-14.0.3.tgz",
++      "integrity": "sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==",
+       "license": "MIT",
+       "engines": {
+-        "node": ">= 6"
++        "node": ">=20"
+       }
+     },
+     "node_modules/cross-keychain": {
+@@ -1674,26 +1674,6 @@
+         }
+       }
+     },
+-    "node_modules/follow-redirects": {
+-      "version": "1.16.1",
+-      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
+-      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
+-      "funding": [
+-        {
+-          "type": "individual",
+-          "url": "https://github.com/sponsors/RubenVerborgh"
+-        }
+-      ],
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">=4.0"
+-      },
+-      "peerDependenciesMeta": {
+-        "debug": {
+-          "optional": true
+-        }
+-      }
+-    },
+     "node_modules/function-bind": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
+@@ -2011,15 +1991,6 @@
+         "safe-buffer": "^5.0.1"
+       }
+     },
+-    "node_modules/leven": {
+-      "version": "3.1.0",
+-      "resolved": "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz",
+-      "integrity": "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">=6"
+-      }
+-    },
+     "node_modules/lodash.includes": {
+       "version": "4.3.0",
+       "resolved": "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz",
+@@ -2189,20 +2160,17 @@
+       }
+     },
+     "node_modules/ovsx": {
+-      "version": "1.2.0",
+-      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.2.0.tgz",
+-      "integrity": "sha512-12mauBqsLehlJ0cRiroQz4uKYVjblVS5OobgSJ278CdCtkDfRQD+SI3NQ00GNalDqzp5PDN11yx84miFUojeMw==",
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.3.0.tgz",
++      "integrity": "sha512-U5B1YCo+6knEipsEF9O+iO+uwK+vTm8qNQyvc5zzE/2P6Zfzjhw4Xj4UJ7WZ1aU/kVGI70FuUWxv/GVXK5JmXw==",
+       "license": "EPL-2.0",
+       "dependencies": {
+         "@inquirer/prompts": "^7.10.1",
+-        "@vscode/vsce": "^3.7.1",
+-        "commander": "^6.2.1",
++        "@vscode/vsce": "^4.0.0",
++        "commander": "^14.0.3",
+         "cross-keychain": "^1.1.0",
+-        "follow-redirects": "^1.16.0",
+         "is-ci": "^2.0.0",
+-        "leven": "^3.1.0",
+         "semver": "^7.6.0",
+-        "tmp": "^0.2.3",
+         "yauzl-promise": "^4.0.0"
+       },
+       "bin": {
+@@ -2529,15 +2497,6 @@
+         "url": "https://github.com/sponsors/SuperchupuDev"
+       }
+     },
+-    "node_modules/tmp": {
+-      "version": "0.2.7",
+-      "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.2.7.tgz",
+-      "integrity": "sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13Z
+```
+
+**File**: `.github/publishers/open-vsx/package.json` (modified, +3/-2)
+```diff
+@@ -6,9 +6,10 @@
+     "node": ">=22"
+   },
+   "dependencies": {
+-    "ovsx": "1.2.0"
++    "ovsx": "1.3.0"
+   },
+   "overrides": {
+-    "@vscode/vsce": "4.0.0"
++    "@vscode/vsce": "4.0.0",
++    "@azure/msal-node": "7.1.1"
+   }
+ }
+```
 
 **File**: `.vex/openvex.json` (modified, +0/-13)
 ```diff
-@@ -18,19 +18,6 @@
-       "justification": "vulnerable_code_not_in_execute_path",
-       "impact_statement": "Development dependency, not in the bundled extension; the parent package range blocks the patched version. Source: editors/vscode/osv-scanner.toml"
-     },
+@@ -5,19 +5,6 @@
+   "timestamp": "2026-10-19T00:00:00Z",
+   "version": 1,
+   "statements": [
 -    {
 -      "vulnerability": {
--        "name": "GHSA-vfj7-8cjw-p6xm"
+-        "name": "GHSA-73rr-hh4g-fpgx"
 -      },
 -      "products": [
 -        {
@@ -1317,797 +1844,45 @@ The advisory no longer matches a package in editors/vscode/pnpm-lock.yaml, so th
          "name": "RUSTSEC-2024-0436"
 ```
 
-**File**: `editors/vscode/osv-scanner.toml` (modified, +0/-5)
+**File**: `changelog.d/fix-security-dependency-updates.md` (added, +3/-0)
 ```diff
-@@ -1,11 +1,6 @@
- # These packages are development and build tools. The bundled extension
- # ships only vscode-languageclient and vscode-languageserver-protocol.
+@@ -0,0 +1,3 @@
++### Security
++
++- **Update vulnerable development and publication dependencies.** Patch the VS Code tools, extension publishers and mutation-runner tests. Add Dependabot coverage for the isolated publishers and mutation runner.
+```
+
+**File**: `docs/development/dependency-updates.md` (modified, +13/-0)
+```diff
+@@ -58,6 +58,19 @@ These causes made a person act on a Dependabot pull request in the past:
+ - `github/codeql-action` sub-actions on different versions. The
+   `codeql-action` group in `.github/dependabot.yml` prevents this.
  
--[[IgnoredVulns]]
--id = "GHSA-vfj7-8cjw-p6xm"
--ignoreUntil = 2027-01-15T00:00:00Z
--reason = "Development dependency, not in the bundled extension; the parent package range blocks the patched version."
--
- [[IgnoredVulns]]
- id = "GHSA-73rr-hh4g-fpgx"
- ignoreUntil = 2027-01-15T00:00:00Z
-```
-
----
-
-### Incident Patch 2: `abb52e1f` (2026-10-23)
-**Commit Message**: fix(scripts): credit the npm alias that installs a script binary (#3846)
-
-* fix(scripts): credit the npm alias that installs a script binary
-
-A dependency such as @typescript/native: npm:typescript@~7.0.2 provides
-the binaries of typescript. A tsc script resolved to typescript only, so
-the alias was reported as unused.
-
-After script analysis, credit each npm alias whose aliased package a
-script uses. A plain declaration of the aliased package keeps priority,
-so a side-by-side alias such as typescript-5: npm:typescript@5 stays
-reportable.
-
-Fixes #3844
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(scripts): check the plain declaration per manifest for npm alias credit
-
-The check that blocks credit for an npm alias used the dependency names of all manifests. A plain typescript in one workspace therefore blocked the credit for an alias of typescript in another workspace, and that alias stayed reported as unused.
-
-Compare the alias target with the dependency names of the manifest that declares the alias. Add a workspace fixture with a plain typescript in one workspace and an alias in another.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* docs(changelog): move the n
-
-**File**: `changelog.d/fix-npm-alias-dependency-binaries.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+### Fixed
++## Security overrides
 +
-+- **A script binary now credits the npm alias that installs it.** A
-+  dependency such as `"@typescript/native": "npm:typescript@~7.0.2"` provides
-+  the binaries of `typescript`, so a `tsc` script no longer reports the alias
-+  as unused. When the same manifest also declares the aliased package under
-+  its own name, that declaration provides the binary, and an alias that
-+  nothing else uses is still reported. A plain declaration in another
-+  workspace does not change the result. Thanks @waldoluisribeiro for the
-+  report. (Closes [#3844](https://github.com/fallow-rs/fallow/issues/3844))
-```
-
-**File**: `crates/config/src/workspace/package_json.rs` (modified, +73/-1)
-```diff
-@@ -414,6 +414,33 @@ impl PackageJson {
-         .find_map(|deps| deps.get(name))
-         .and_then(|spec| workspace_alias_name(spec))
-     }
++The isolated Marketplace and Open VSX publishers override `@azure/msal-node`
++to the patched major because Azure Identity still requests the vulnerable
++major. The extension applies the same override in `pnpm-workspace.yaml`.
++Remove these overrides when Azure Identity's supported range includes the
++patched release, and rerun the publisher authentication and extension suites.
 +
-+    /// Every dependency that the manifest installs under an npm alias, as
-+    /// `(alias, aliased package)` pairs.
-+    ///
-+    /// `"@typescript/native": "npm:typescript@~7.0.2"` installs the package
-+    /// `typescript` in `node_modules/@typescript/native`, so the alias
-+    /// provides the binaries of `typescript`.
-+    #[must_use]
-+    pub fn npm_aliases(&self) -> Vec<(String, String)> {
-+        let mut aliases: Vec<(String, String)> = [
-+            &self.dependencies,
-+            &self.dev_dependencies,
-+            &self.optional_dependencies,
-+            &self.peer_dependencies,
-+        ]
-+        .into_iter()
-+        .flatten()
-+        .flat_map(|deps| deps.iter())
-+        .filter_map(|(name, spec)| {
-+            let target = npm_alias_name(spec)?;
-+            (target != name).then(|| (name.clone(), target.to_string()))
-+        })
-+        .collect();
-+        aliases.sort_unstable();
-+        aliases.dedup();
-+        aliases
-+    }
- }
++The extension also overrides Mocha's `diff` and `serialize-javascript`
++dependencies. Keep Mocha compatible with the VS Code engine floor. Remove an
++override when Mocha requests a patched version, then run the extension's
++integration suites in the oldest supported host.
++
+ ## Setup
  
- /// The package name in a `workspace:<name>@<range>` dependency spec.
-@@ -424,7 +451,23 @@ fn workspace_alias_name(spec: &str) -> Option<&str> {
-     } else {
-         rest.find('@')?
-     };
--    let name = &rest[..separator];
-+    valid_package_name(&rest[..separator])
-+}
-+
-+/// The package name in an `npm:<name>@<range>` or `npm:<name>` dependency
-+/// spec.
-+fn npm_alias_name(spec: &str) -> Option<&str> {
-+    let rest = spec.trim().strip_prefix("npm:")?;
-+    let separator = if let Some(scoped) = rest.strip_prefix('@') {
-+        scoped.find('@').map_or(rest.len(), |at| at + 1)
-+    } else {
-+        rest.find('@').unwrap_or(rest.len())
-+    };
-+    valid_package_name(&rest[..separator])
-+}
-+
-+/// `name` when it has the shape of a package name: `name` or `@scope/name`.
-+fn valid_package_name(name: &str) -> Option<&str> {
-     let is_package_name = !name.is_empty()
-         && !name.starts_with('.')
-         && match name.strip_prefix('@') {
-@@ -1037,6 +1080,35 @@ mod tests {
-         assert!(pkg.exports_subdirectories().is_empty());
-     }
- 
-+    #[test]
-+    fn npm_aliases_read_the_aliased_package_name() {
-+        let pkg: PackageJson = serde_json::from_str(
-+            r#"{
-+                "dependencies": {"plain": "npm:left-pad@^1.3.0", "range": "^1.0.0"},
-+                "devDependencies": {
-+                    "@typescript/native": "npm:typescript@~7.0.2",
-+                    "typescript": "npm:@typescript/typescript6@^6.0.2",
-+                    "bare": "npm:eslint",
-+                    "same": "npm:same@1.0.0",
-+                    "path": "npm:./local",
-+                    "bad-scope": "npm:@scope@1.0.0",
-+                    "workspace": "workspace:@scope/core@*"
-+                }
-+            }"#,
-+        )
-+        .unwrap();
-+        assert_eq!(
-+            pkg.npm_aliases(),
-+            [
-+                ("@typescript/native", "typescript"),
-+                ("bare", "eslint"),
-+                ("plain", "left-pad"),
-+                ("typescript", "@typescript/typescript6"),
-+            ]
-+            .map(|(alias, target)| (alias.to_string(), target.to_string()))
-+        );
-+    }
-+
-     #[test]
-     fn workspace_alias_target_reads_the_aliased_package_name() {
-         let pkg: PackageJson = serde_json::from_str(
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +9/-22)
-```diff
-@@ -2261,7 +2261,11 @@ fn analyze_all_scripts(
-     workspace_pkgs: &[LoadedWorkspacePackage],
-     plugin_result: &mut plugins::AggregatedPluginResult,
- ) {
--    let all_dep_names = collect_all_dependency_names(root_pkg, workspace_pkgs);
-+    let manifests: Vec<&PackageJson> = root_pkg
-+        .into_iter()
-+        .chain(workspace_pkgs.iter().map(|(_, ws_pkg)| ws_pkg))
-+        .collect();
-+    let all_dep_names = scripts::all_dependency_names(&manifests);
-     let all_dep_set: FxHashSet<String> = all_dep_names.iter().cloned().collect();
-     let workspace_packages =
-         discover::collect_workspace_packages(&config.root, root_pkg, workspace_pkgs);
-@@ -2291,12 +2295,12 @@ fn analyze_all_scripts(
-         },
-         plugin_result,
-     );
-+    scripts::credit_npm_aliases(&mut plugin_result.script_used_packages, &manifests);
-     plugin_result.dependency_binaries =
-         scripts::DependencyBinaries::new(config.root.clone(), bin_map, all_dep_set);
--    plugin_result.dev_dependency_names = root_pkg
--        .into_iter()
--        .chain(workspace_pkgs.iter().map(|(_, ws_pkg)| ws_pkg))
--        .flat_map(PackageJson::dev_dependency_names)
-+    plugin_result.dev_dependency_names = manifests
-+        .iter()
-+        .flat_map(|pkg| pkg.dev_dependency_names())
-         .collect();
- 
-     plugin_result
-@@ -2309,23 +2313,6 @@ fn analyze_all_scripts(
-         .or_insert(EntryPointRole::Test);
- }
- 
--/// Gather sorted, deduped dependency names across the root and workspace packages.
--fn collect_all_dependency_names(
--    root_pkg: Option<&PackageJson>,
--    workspace_pkgs: &[LoadedWorkspacePackage],
--) -> Vec<String> {
--    let mut all_dep_names: Vec<String> = Vec::new();
--    if let Some(pkg) = root_pkg {
--        all_dep_names.extend(pkg.all_dependency_names());
--    }
--    for (_, ws_pkg) in workspace_pkgs {
--        all_dep_names.extend(ws_pkg.all_dependency_names());
--    }
--    all_dep_names.sort_unstable();
--    all_dep_names.dedup();
--    all_dep_names
--}
--
- /// The binaries, dependencies, and workspace packages that script analysis
- /// resolves commands against.
- struct ScriptDependencyContext<'a> {
-```
-
-**File**: `crates/core/src/scripts/mod.rs` (modified, +2/-2)
-```diff
-@@ -39,8 +39,8 @@ use command_wrappers::{command_wrapper_child_index, skip_command_wrappers};
- pub use config_tasks::config_task_scripts;
- use file_target_tools::file_target_tool;
- pub use resolve::{
--    DependencyBinaries, build_bin_to_package_map, project_bin_map, resolve_binary_to_packages,
--    resolve_known_dependency_binary,
-+    DependencyBinaries, all_dependency_names, build_bin_to_package_map, credit_npm_aliases,
-+    project_bin_map, resolve_binary_to_packages, resolve_known_dependency_binary,
- };
- pub use shell::command_substitutions;
- pub use workspace_selection::WorkspacePackages;
-```
-
-**File**: `crates/core/src/scripts/resolve.rs` (modified, +91/-0)
-```diff
-@@ -186,6 +186,52 @@ pub fn resolve_binary_to_packages(
-     candidates.iter().map(|pkg| (*pkg).to_string()).collect()
- }
- 
-+/// Gather sorted, deduped dependency names across the root and workspace
-+/// manifests.
-+#[must_use]
-+pub fn all_dependency_names(manifests: &[&fallow_config::PackageJson]) -> Vec<String> {
-+    let mut names: Vec<String> = manifests
-+        .iter()
-+        .flat_map(|pkg| pkg.all_dependency_names())
-+        .collect();
-+    names.sort_unstable();
-+    names.dedup();
-+    names
-+}
-+
-+/// Credit each npm alias whose aliased package `used` already holds.
-+///
-+/// A script binary resolves to the package that ships it, for example `tsc`
-+/// to `typescript`. A project that installs that package as
-+/// `"@typescript/native": "npm:typescript@7"` declares only the alias, so the
-+/// alias is the dependency in use.
-+///
-+/// When the manifest that declares the alias also declares the aliased
-+/// package under its own name, and that name is not itself an alias, the
-+/// plain declaration provides the binary and the alias gets no credit. This
-+/// keeps a side-by-side alias such as `"typescript-5": "npm:typescript@5"`
-+/// reportable. A plain declaration in another workspace does not block the
-+/// credit, because that workspace does not install the binary for the alias.
-+pub fn credit_npm_aliases(used: &mut FxHashSet<String>, manifests: &[&fallow_config::PackageJson]) {
-+    let mut credited: Vec<String> = Vec::new();
-+    for pkg in manifests {
-+        let aliases = pkg.npm_aliases();
-+        if aliases.is_empty() {
-+            continue;
-+        }
-+        let declared: FxHashSet<String> = pkg.all_dependency_names().into_iter().collect();
-+        let is_alias = |name: &str| aliases.iter().any(|(alias, _)| alias == name);
-+        credited.extend(
-+            aliases
-+                .iter()
-+                .filter(|(_, target)| used.contains(target))
-+                .filter(|(_, target)| !declared.contains(target) || is_alias(target))
-+                .map(|(alias, _)| alias.clone()),
-+        );
-+    }
-+    used.extend(credited);
-+}
-+
- /// Resolve a binary only when it is known to belong to a declared dependency.
- #[must_use]
- pub fn resolve_known_dependency_binary(
-@@ -485,6 +531,51 @@ mod tests {
-         assert_eq!(pkg, None);
-     }
- 
-+    fn credit(used: &[&str], dev_dependencies: &str) -> FxHashSet<String> {
-+        let pkg = workspace_package(&format!(r#"{{"devDependencies": {dev_dependencies}}}"#));
-+        let mut used = declared(used);
-+        credit_npm_aliases(&mut used, &[&pkg]);
-+        used
-+    }
-+
-+    #[test]
-+    fn npm_alias_is_credited_when_another_manifest_declares_the_target_plainly() {
-+        let root = workspace_package(r#"{"devDependencies": {"typescript": "^5.0.0"}}"#);
-+        let ws = workspace_package(
-+            r#"{"devDependencies": {"@typescript/native": "npm:typescript@~7.0.2"}}"#,
-+        );
-+        let mut used = declared(&["typescript"]);
-+        credit_npm_aliases(&mut used, &[&root, &ws]);
-+        assert_eq!(used, declared(&["typescript", "@typescript/native"]));
-+    }
-+
-+    #[test]
-+    fn npm_alias_of_a_used_package_is_credited() {
-+        let used = credit(
-+            &["typescript"],
-+            r#"{"@typescript/native": "npm:typescript@~7.0.2", "idle": "npm:left-pad@1"}"#,
-+        );
-+        assert_eq!(used, declared(&["typescript", "@typescript/native"]));
-+    }
-+
-+    #[test]
-+    fn npm_alias_is_credited_when_the_target_name_is_another_alias() {
-+        let used = credit(
-+            &["typescript"],
-+            r#"{"@typescript/native": "npm:typescript@7", "typescript": "npm:@typescript/typescript6@6"}"#,
-+        );
-+        assert!(used.contains("@typescript/native"));
-+    }
-+
-+    #[test]
-+    fn npm_alias_is_not_credited_when_the_target_is_declared_plainly() {
-+        let used = credit(
-+            &["typescript"],
-+            r#"{"typescript": "^7.0.2", "typescript-5": "npm:typescript@5"}"#,
-+        );
-+        assert_eq!(used, declared(&["typescript"]));
-+    }
-+
-     #[test]
-     fn jest_identity_without_symlink() {
-         let pkg = resolve_binary_to_packages("jest", Path::new("/nonexistent"), &empty_map());
-```
-
-**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
-```diff
-@@ -676,6 +676,8 @@ mod namespace_class_static_member;
- mod namespace_spy_call_member;
- #[path = "integration_test/node_modules_bin_path.rs"]
- mod node_modules_bin_path;
-+#[path = "integration_test/npm_alias_dependency_binaries.rs"]
-+mod npm_alias_dependency_binaries;
- #[path = "integration_test/osls_plugin.rs"]
- mod osls_plugin;
- #[path = "integration_test/pkg_utils_plugin.rs"]
-```
-
-**File**: `crates/core/tests/integration_test/npm_alias_dependency_binaries.rs` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+//! A dependency installed under an npm alias, such as
-+//! `"@typescript/native": "npm:typescript@~7.0.2"`, provides the binaries of
-+//! the aliased package. A script that runs such a binary credits the alias.
-+//! An alias that no script or import uses is still reported, and so is an
-+//! alias next to a plain declaration of the same package, because the plain
-+//! declaration provides the binary.
-+
-+use super::common::{create_config, fixture_path};
-+
-+#[cfg_attr(miri, ignore)]
-+#[test]
-+fn script_binary_credits_the_npm_alias_that_installs_it() {
-+    let root = fixture_path("npm-alias-dependency-binaries");
-+    let config = create_config(root);
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+
-+    let unused: Vec<&str> = results
-+        .unused_dev_dependencies
-+        .iter()
-+        .map(|finding| finding.dep.package_name.as_str())
-+        .collect();
-+    assert_eq!(
-+        unused,
-+        ["vite-6", "idle-alias"],
-+        "a script binary credits the npm alias of the package that provides it"
-+    );
-+}
-+
-+#[cfg_attr(miri, ignore)]
-+#[test]
-+fn plain_declaration_in_another_workspace_keeps_the_alias_credit() {
-+    let root = fixture_path("npm-alias-workspace-binaries");
-+    let config = create_config(root);
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+
-+    let unused: Vec<&str> = results
-+        .unused_dev_dependencies
-+        .iter()
-+        .map(|finding| finding.dep.package_name.as_str())
-+        .collect();
-+    assert!(
-+        !unused.contains(&"@typescript/native"),
-+        "a plain declaration in another workspace must not block the alias credit, got {unused:?}"
-+    );
-+}
-```
-
-**File**: `tests/fixtures/npm-alias-dependency-binaries/package.json` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+{
-+  "name": "npm-alias-dependency-binaries",
-+  "private": true,
-+  "type": "module",
-+  "main": "src/index.ts",
-+  "scripts": {
-+    "types": "tsc --noEmit",
-+    "lint": "eslint .",
-+    "build": "vite build"
-+  },
-+  "devDependencies": {
-+    "@typescript/native": "npm:typescript@~7.0.2",
-+    "linter": "npm:eslint@^9.0.0",
-+    "vite": "^7.0.0",
-+    "vite-6": "npm:vite@^6.0.0",
-+    "idle-alias": "npm:left-pad@^1.3.0"
-+  }
-+}
-```
-
----
-
-### Incident Patch 3: `c030eb19` (2026-10-24)
-**Commit Message**: fix(hooks): audit only the pushed worktree when a push cannot send the session branch (#3857)
-
-A strict push from a linked worktree of the session repository also
-audited the session tree, because linked worktrees share refs. Untracked
-build output in the session thus blocked every push from a clean
-worktree.
-
-The gate now audits only the worktree when git shows that the push cannot
-send the session branch. gate_push_spares_session accepts the push only
-when all of these hold:
-
-- The options are only -u, -q, --set-upstream, --force-with-lease and
-  --force-if-includes.
-- Each refspec source has a name, and git rev-parse --symbolic-full-name
-  in the worktree gives the ref of the worktree HEAD for it. That ref is
-  not the session branch. A commit name gives no ref, so it fails.
-- A push without a refspec needs push.default unset or simple, current,
-  upstream or nothing, and no remote push or mirror setting.
-
-Any other result and any git error keep the session audit. The function
-runs in a subshell, so an error under set -u also keeps it. The strict
-push form also accepts --force-if-includes.
-
-The differential test skips a reviewed list of narrowed commands, and a
-separate test che
-
-**File**: `.agents/skills/fallow/references/patterns.md` (modified, +1/-1)
-```diff
-@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
- Behavior you can rely on:
- - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
- - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
--- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
-+- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
- - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
- - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
- - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
-```
-
-**File**: `.claude/skills/fallow/references/patterns.md` (modified, +1/-1)
-```diff
-@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
- Behavior you can rely on:
- - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
- - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
--- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
-+- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
- - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
- - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
- - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
-```
-
-**File**: `changelog.d/fix-gate-worktree-push.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+### Fixed
-+
-+- **The agent gate audits only the worktree for a push that cannot send the
-+  session branch.** A strict `git push` from a linked worktree of the session
-+  repository also audited the session tree, because linked worktrees share
-+  refs. Untracked build output in the session thus blocked every push from a
-+  clean worktree. The gate now audits only the worktree when git shows that
-+  the push cannot send the session branch: the options are only `-u`, `-q`,
-+  `--set-upstream`, `--force-with-lease` and `--force-if-includes`, each
-+  refspec source is the checked-out branch of the worktree and not the
-+  session branch, and a push without a refspec has `push.default` unset or
-+  `simple`, `current`, `upstream` or `nothing` and no remote `push` or
-+  `mirror` setting. Any other push from a linked worktree, and any git error
-+  during the check, keeps the session audit. The strict push form now also
-+  accepts `--force-if-includes`. Run `fallow agent install` again to update an
-+  installed gate.
-```
-
-**File**: `crates/cli/src/setup_hooks/fallow-gate.sh` (modified, +101/-8)
-```diff
-@@ -316,12 +316,87 @@ gate_git_identity() {
- }
- SESSION_IDENTITY="$(gate_git_identity "$BASE_DIR" || true)"
- 
-+# Returns 0 only when the strict push in STRICT_ARGS, run in the linked
-+# worktree $1, cannot send the branch of the session. All of these must hold:
-+# - The options are only -u, -q, --set-upstream, --force-with-lease and
-+#   --force-if-includes.
-+# - The words after the options are [<repository>] [<refspec>...]. The source
-+#   of each refspec (without a leading + and before the first :) is not empty.
-+#   For each source, git rev-parse --symbolic-full-name in $1 gives the same
-+#   ref as for HEAD in $1, and that ref is not the session branch. A commit
-+#   name, `feat~0` or `@{-1}` gives no ref, so it fails.
-+# - A push without a refspec needs push.default (read in $1) unset or one of
-+#   simple, current, upstream and nothing, and no remote with a push or mirror
-+#   setting.
-+# Every other result and every git error return 1. The function runs in a
-+# subshell, so an error under set -u also returns 1 and the session is
-+# audited.
-+gate_push_spares_session() (
-+  local target="$1" word src ref head session_ref push_default rc
-+  local positionals=0 refspecs=0
-+  if ! head="$(git -C "$target" rev-parse --symbolic-full-name HEAD 2>/dev/null)"; then
-+    return 1
-+  fi
-+  [ -n "$head" ] || return 1
-+  # Exit 1 means a detached HEAD: no session branch, so no ref can match it.
-+  if session_ref="$(git -C "$BASE_DIR" symbolic-ref -q HEAD 2>/dev/null)"; then
-+    :
-+  else
-+    rc=$?
-+    [ "$rc" -eq 1 ] || return 1
-+    session_ref=""
-+  fi
-+  [ "$head" != "$session_ref" ] || return 1
-+  for word in ${STRICT_ARGS[@]+"${STRICT_ARGS[@]}"}; do
-+    case "$word" in
-+      -u | -q | --set-upstream | --force-with-lease | --force-if-includes) continue ;;
-+      -*) return 1 ;;
-+    esac
-+    positionals=$((positionals + 1))
-+    # The first word is the repository.
-+    [ "$positionals" -gt 1 ] || continue
-+    refspecs=$((refspecs + 1))
-+    src="${word#+}"
-+    src="${src%%:*}"
-+    case "$src" in
-+      '' | -*) return 1 ;;
-+    esac
-+    if ! ref="$(git -C "$target" rev-parse --symbolic-full-name "$src" 2>/dev/null)"; then
-+      return 1
-+    fi
-+    [ -n "$ref" ] && [ "$ref" = "$head" ] && [ "$ref" != "$session_ref" ] || return 1
-+  done
-+  if [ "$refspecs" -eq 0 ]; then
-+    # Exit 1 means that push.default is not set.
-+    if push_default="$(git -C "$target" config --get push.default 2>/dev/null)"; then
-+      :
-+    else
-+      rc=$?
-+      [ "$rc" -eq 1 ] || return 1
-+      push_default=""
-+    fi
-+    case "$push_default" in
-+      '' | simple | current | upstream | nothing) ;;
-+      *) return 1 ;;
-+    esac
-+    # Exit 1 means that no remote has a push or mirror setting.
-+    if git -C "$target" config --get-regexp '^remote\..*\.(push|mirror)$' >/dev/null 2>&1; then
-+      return 1
-+    else
-+      rc=$?
-+      [ "$rc" -eq 1 ] || return 1
-+    fi
-+  fi
-+  return 0
-+)
-+
- # Returns 0 when git reports another work tree for a directory than for the
- # session directory: both the top level and the git directory differ. With
- # `push` as the second argument, the common git directory must differ too,
- # because linked worktrees share refs: a push from one of them can send the
--# branch or tags of the session. A directory in the same work tree, or a git
--# error, returns 1.
-+# branch or tags of the session. The one exception is a push that
-+# gate_push_spares_session accepts. A directory in the same work tree, or a
-+# git error, returns 1.
- gate_other_work_tree() {
-   local identity top git_dir common session_top session_git_dir session_common rest
-   [ -n "$SESSION_IDENTITY" ] || return 1
-@@ -336,7 +411,7 @@ gate_other_work_tree() {
-   session_common="${rest#*"$GATE_NL"}"
-   [ "$top" != "$session_top" ] && [ "$git_dir" != "$session_git_dir" ] || return 1
-   if [ "${2:-}" = push ] && [ "$common" = "$session_common" ]; then
--    return 1
-+    gate_push_spares_session "$1" || return 1
-   fi
-   return 0
- }
-@@ -354,7 +429,8 @@ gate_other_work_tree() {
- # gate_inert_option are allowed; a quoted word is allowed only as the value of
- # `-m` or `--message`. Nothing else is allowed: no other operator, expansion,
- # redirection, environment prefix or git option such as `-c`. Each directory
--# must exist. Returns 1 for any other command.
-+# must exist. For a push, the words after the subcommand follow, one on each
-+# line. Returns 1 for any other command.
- gate_allowlisted_target() {
-   local cmd="$1" rest dir="$BASE_DIR" subcommand word
-   # The letters are listed, not given as a range, so that no locale can make
-@@ -363,7 +439,7 @@ gate_allowlisted_target() {
-   local sq_dir=$'\'[^\'\n]*\'' dq_dir=$'"[^"$`\\\\\n]*"'
-   local sq_arg="'[^']*'" dq_arg='"[^"$`\\]*"'
-   local blank=$'[ \t]' sp re word_re dir_re arg_re
--  local -a words=()
-+  local -a words=() args=()
-   sp="$blank+"
-   dir_re="($plain|$sq_dir|$dq_dir)"
-   arg_re="($plain|$sq_arg|$dq_arg)"
-@@ -401,8 +477,12 @@ gate_allowlisted_target() {
-         
-```
-
-**File**: `crates/cli/src/setup_hooks_gate_tests.rs` (modified, +351/-2)
-```diff
-@@ -1450,7 +1450,7 @@ fn gate_resolves_the_strict_target_physically() {
-         ),
-         (
-             "push with names",
--            "git -C ../../wt-c push -u --force-with-lease origin HEAD:main".to_owned(),
-+            "git -C ../../wt-c push -u --force origin HEAD:main".to_owned(),
-             vec![a, c],
-         ),
-         (
-@@ -1559,6 +1559,306 @@ fn gate_resolves_git_c_physically_through_a_symlink() {
-     assert_cases(&trees, &cases);
- }
- 
-+/// Two linked worktrees on their own branches: the session works in `a` on
-+/// `feat-a` with untracked build output, and `b` holds `feat-b`.
-+fn branch_worktrees() -> TwoWorktrees {
-+    let trees = two_worktrees();
-+    git(&trees.a, &["switch", "-q", "-c", "feat-a"]);
-+    git(&trees.b, &["switch", "-q", "-c", "feat-b"]);
-+    std::fs::write(trees.a.join("build-output.js"), "export const x = 1;\n").unwrap();
-+    trees
-+}
-+
-+/// The full path of the host git.
-+fn host_git() -> PathBuf {
-+    std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default())
-+        .map(|dir| dir.join("git"))
-+        .find(|path| path.is_file())
-+        .expect("git on PATH")
-+}
-+
-+/// Runs a strict push from worktree `b` with a session in `a/src`.
-+/// `fail` names a word: each git call with that word fails with exit 128.
-+fn run_linked_push(trees: &TwoWorktrees, command: &str, fail: &str) -> GateRun {
-+    use std::os::unix::fs::PermissionsExt;
-+
-+    let session = trees.a.join("src");
-+    std::fs::create_dir_all(&session).unwrap();
-+    let wrapper_dir = trees.root.join("git-wrapper");
-+    std::fs::create_dir_all(&wrapper_dir).unwrap();
-+    for (name, body) in [
-+        (
-+            "git",
-+            format!(
-+                "#!/bin/sh\ncase \" $* \" in *\"$GIT_STUB_FAIL\"*) exit 128 ;; esac\nexec '{}' \"$@\"\n",
-+                host_git().display()
-+            ),
-+        ),
-+        ("fallow", STUB_FALLOW.to_owned()),
-+    ] {
-+        let path = wrapper_dir.join(name);
-+        std::fs::write(&path, body).unwrap();
-+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
-+    }
-+    let path = format!(
-+        "{}:{}",
-+        wrapper_dir.display(),
-+        std::env::var("PATH").unwrap_or_default()
-+    );
-+    run_gate_with_env(
-+        &trees.gate,
-+        &trees.main,
-+        &trees.root.join("home"),
-+        &command_payload(&session, command),
-+        &[("PATH", path.as_str()), ("GIT_STUB_FAIL", fail)],
-+    )
-+}
-+
-+/// A config key and value to set before a case runs.
-+type ConfigSetting<'a> = Option<(&'a str, &'a str)>;
-+
-+/// A word that no git call of the gate holds.
-+const NO_FAILURE: &str = " no-such-word ";
-+
-+/// Sets a value in the shared config of the repository of `trees`.
-+fn set_config(trees: &TwoWorktrees, key: &str, value: &str) {
-+    git(&trees.main, &["config", key, value]);
-+}
-+
-+/// A strict push from a linked worktree that cannot send the session branch
-+/// audits only that worktree, also with untracked build output in the
-+/// session tree.
-+#[test]
-+fn gate_audits_only_the_worktree_for_a_push_of_its_own_branch() {
-+    if skip_without_tools() {
-+        return;
-+    }
-+    let cases: &[(&str, &str, ConfigSetting)] = &[
-+        ("branch", "git -C '../../wt b' push origin feat-b", None),
-+        ("-u", "git -C '../../wt b' push -u origin feat-b", None),
-+        (
-+            "--set-upstream -q",
-+            "git -C '../../wt b' push --set-upstream -q origin feat-b",
-+            None,
-+        ),
-+        ("HEAD", "git -C '../../wt b' push origin HEAD", None),
-+        (
-+            "HEAD to the branch",
-+            "git -C '../../wt b' push origin HEAD:refs/heads/feat-b",
-+            None,
-+        ),
-+        (
-+            "--force-with-lease",
-+            "git -C '../../wt b' push --force-with-lease origin feat-b",
-+            None,
-+        ),
-+        (
-+            "--force-with-lease --force-if-includes",
-+            "git -C '../../wt b' push --force-with-lease --force-if-includes origin +feat-b",
-+            None,
-+        ),
-+        (
-+            "no refspec, push.default simple",
-+            "git -C '../../wt b' push",
-+            Some(("push.default", "simple")),
-+        ),
-+        (
-+            "no refspec, push.default unset",
-+            "git -C '../../wt b' push origin",
-+            None,
-+        ),
-+        ("cd", "cd '../../wt b' && git push origin feat-b", None),
-+    ];
-+    for (case, command, config) in cases {
-+        let trees = branch_worktrees();
-+        if let Some((key, value)) = config {
-+            set_config(&trees, key, value);
-+        }
-+        let run = run_linked_push(&trees, command, NO_FAILURE);
-+        assert_eq!(
-+            run.output.status.code(),
-+            Some(0),
-+            "{case}: stderr={}",
-+            String::from_utf8_lossy(&run.output.stderr)
-+        );
-+        assert_eq!(
-+            run.audit_dirs,
-+            [trees.b.as_path()],
-+            "{case}: {command:?} must audit only the w
-```
-
-**File**: `npm/fallow/skills/fallow/references/patterns.md` (modified, +1/-1)
-```diff
-@@ -784,7 +784,7 @@ Prefer `fallow hooks install --target agent` to install this file. The script is
- Behavior you can rely on:
- - The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
- - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
--- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
-+- A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
- - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
- - Resolves `fallow` from PATH first, then `npx --no-install fallow` as a fallback. Skips with a stderr notice if neither is available or if `jq` is missing.
- - Enforces a version floor via `FALLOW_GATE_MIN_VERSION`. The installed gate script holds the default floor (currently `2.85.0`). Fallow maintainers raise that default by hand; `fallow hooks install` does not set it to the installed version. Binaries below the floor are blocked with an upgrade hint. Set the env var to the empty string to disable the check.
+ | Setting | Scope | Use |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3866** (2026-10-25): chore: sync napi, Docker pins and the schema baseline to v3.36.0 (@BartWaardenburg)
-- **PR #3864** (2026-10-25): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in the npm_and_yarn group across 1 directory (@dependabot[bot])
-- **PR #3863** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #3862** (2026-10-24): fix(release): read platform package names from workspace paths (@BartWaardenburg)
-- **PR #3861** (2026-10-24): chore: release v3.36.0 (@BartWaardenburg)
-- **PR #3860** (2026-10-24): fix(codeowners): keep an escaped space in a CODEOWNERS pattern (@BartWaardenburg)
+- **PR #3902** (2026-10-26): chore(deps): bump CodSpeedHQ/action from 5.4.2 to 5.5.0 (@dependabot[bot])
+- **PR #3896** (2026-10-26): chore(deps-dev): bump vitest from 5.0.4 to 5.0.5 in /viz-frontend (@dependabot[bot])
+- **PR #3892** (2026-10-26): chore(deps): bump knip from 6.41.0 to 6.42.0 in /benchmarks (@dependabot[bot])
+- **PR #3890** (2026-10-26): chore(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (@dependabot[bot])
+- **PR #3889** (2026-10-26): chore(deps-dev): bump @commitlint/config-conventional from 21.2.3 to 21.2.4 (@dependabot[bot])
+- **PR #3881** (2026-10-26): fix(deps): patch publisher and test dependency vulnerabilities (@BartWaardenburg)
 
 ---
 
@@ -2121,3 +1896,36 @@ separate test che
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. cli): name the unenforced failing gates of a bare machine run (#3875)
+
+**RULE**:
+When implementing operations in `.agents/skills/fallow/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `658cdad3`: cli): name the unenforced failing gates of a bare machine run (#3875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/fallow/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
+Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures in
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
+Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `658cdad3` are properly handled with clean fallback behavior.

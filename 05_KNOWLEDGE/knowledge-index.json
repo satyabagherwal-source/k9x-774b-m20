@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T12:13:37.902Z",
+  "last_updated": "2026-10-26T12:20:03.692Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11192,8 +11192,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "9c6fc8a2",
-      "content_hash": "8d95ae1fe2718ba7d7d43f8c200a18a919f737c69f0981e82dcca68ed406701d",
+      "source_version": "f2d8b806",
+      "content_hash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -11231,6 +11231,11 @@
           "number": 3715,
           "title": "extract): stop deeply nested brackets from aborting the run (#3790)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4600,
+          "title": "cli): name the unenforced failing gates of a bare machine run (#3875)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11238,7 +11243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:45:30.188Z",
+      "verified_at": "2026-10-26T12:20:03.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129035,6 +129040,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T12:13:27.358Z"
+    },
+    "rule-4600": {
+      "learning_id": "rule-4600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4600,
+      "title": "cli): name the unenforced failing gates of a bare machine run (#3875)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "f2d8b806",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T12:20:03.680Z"
     }
   },
   "aliases": {

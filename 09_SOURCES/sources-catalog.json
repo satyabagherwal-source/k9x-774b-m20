@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "9c6fc8a2",
+    "sourceVersion": "f2d8b806",
     "license": "MIT",
-    "contentHash": "8d95ae1fe2718ba7d7d43f8c200a18a919f737c69f0981e82dcca68ed406701d",
-    "lastHarvestedAt": "2026-10-25T12:45:30.289Z",
+    "contentHash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
+    "lastHarvestedAt": "2026-10-26T12:20:03.757Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
