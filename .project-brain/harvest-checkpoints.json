@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T10:15:18.902Z",
+  "last_updated": "2026-10-26T10:21:41.685Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4296,14 +4296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-markmead-hyperui",
-      "content_hash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
-      "verified_at": "2026-10-18T22:10:07.638Z",
+      "content_hash": "de1c56668b8d836984d37372084e7403ddbcd8de6909d335f00ea293cb0cd26e",
+      "verified_at": "2026-10-26T10:21:30.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:10:07.638Z"
+      "last_updated": "2026-10-26T10:21:30.907Z"
     },
     "cachix/devenv": {
       "repository": "cachix/devenv",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
-      "verified_at": "2026-10-23T08:42:03.413Z",
+      "content_hash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
+      "verified_at": "2026-10-26T10:21:41.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T08:42:03.413Z"
+      "last_updated": "2026-10-26T10:21:41.684Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "de8a26ff6e1fdba3393e20b0d0a186e7ebdf9d349d42914052e64fc8105556cf",
-      "verified_at": "2026-10-22T16:26:08.580Z",
+      "content_hash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
+      "verified_at": "2026-10-26T10:21:37.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:26:08.580Z"
+      "last_updated": "2026-10-26T10:21:37.734Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",

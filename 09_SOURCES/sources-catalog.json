@@ -2773,10 +2773,10 @@
     "repository": "markmead/hyperui",
     "platform": "github",
     "sourceUrl": "https://github.com/markmead/hyperui",
-    "sourceVersion": "252efcfe",
+    "sourceVersion": "637323c8",
     "license": "MIT",
-    "contentHash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
-    "lastHarvestedAt": "2026-10-18T22:10:07.636Z",
+    "contentHash": "de1c56668b8d836984d37372084e7403ddbcd8de6909d335f00ea293cb0cd26e",
+    "lastHarvestedAt": "2026-10-26T10:21:30.900Z",
     "learningId": "learn-github-markmead-hyperui"
   },
   "cachix-devenv": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "a1a30f35",
+    "sourceVersion": "ef56e699",
     "license": "Apache-2.0",
-    "contentHash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
-    "lastHarvestedAt": "2026-10-23T08:42:03.404Z",
+    "contentHash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
+    "lastHarvestedAt": "2026-10-26T10:21:41.678Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "3b85896c",
+    "sourceVersion": "8f305ae3",
     "license": "GPL-3.0",
-    "contentHash": "de8a26ff6e1fdba3393e20b0d0a186e7ebdf9d349d42914052e64fc8105556cf",
-    "lastHarvestedAt": "2026-10-22T16:26:08.572Z",
+    "contentHash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
+    "lastHarvestedAt": "2026-10-26T10:21:37.728Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {

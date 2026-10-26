@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T10:15:18.835Z",
+  "last_updated": "2026-10-26T10:21:41.629Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,14 +34,19 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "3b85896c",
-      "content_hash": "de8a26ff6e1fdba3393e20b0d0a186e7ebdf9d349d42914052e64fc8105556cf",
+      "source_version": "8f305ae3",
+      "content_hash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
         {
           "number": 3636,
           "title": "popup): show why the popup failed to load",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4581,
+          "title": "filters): restore Fanboy's Social Blocking List",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -50,7 +55,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:26:08.497Z",
+      "verified_at": "2026-10-26T10:21:37.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34054,17 +34059,23 @@
       "slug": "markmead-hyperui",
       "platform": "github",
       "source_url": "https://github.com/markmead/hyperui",
-      "source_version": "252efcfe",
-      "content_hash": "e753c037e74585da730ff74b1e33d3e8887c2f87726655e8793e9b928b0dde35",
+      "source_version": "637323c8",
+      "content_hash": "de1c56668b8d836984d37372084e7403ddbcd8de6909d335f00ea293cb0cd26e",
       "dossier_path": "07_PROJECT_LEARNING/markmead-hyperui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/markmead-hyperui-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4580,
+          "title": "Bump packages",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:10:07.605Z",
+      "verified_at": "2026-10-26T10:21:30.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45623,8 +45634,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "a1a30f35",
-      "content_hash": "ad9cdf773448abf55bc1041a619998b7afe953daef11718e9258d857c0ad77d5",
+      "source_version": "ef56e699",
+      "content_hash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -45677,6 +45688,11 @@
           "number": 3840,
           "title": "Verification Metadata Precedence Over Command-Line Defaults in Self-Describing Bundles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4582,
+          "title": "Unify attach signature and attestation under new bundle format (#5141)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45684,7 +45700,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:42:03.363Z",
+      "verified_at": "2026-10-26T10:21:41.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128654,6 +128670,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T10:15:18.823Z"
+    },
+    "rule-4580": {
+      "learning_id": "rule-4580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4580,
+      "title": "Bump packages",
+      "source_url": "https://github.com/markmead/hyperui",
+      "source_version": "637323c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:21:30.831Z"
+    },
+    "rule-4581": {
+      "learning_id": "rule-4581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4581,
+      "title": "filters): restore Fanboy's Social Blocking List",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "8f305ae3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:21:37.669Z"
+    },
+    "rule-4582": {
+      "learning_id": "rule-4582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4582,
+      "title": "Unify attach signature and attestation under new bundle format (#5141)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "ef56e699",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T10:21:41.619Z"
     }
   },
   "aliases": {

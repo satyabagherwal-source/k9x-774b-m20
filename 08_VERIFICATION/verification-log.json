@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-D15N",
-    "timestamp": "2026-10-25T02:50:29.531Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "6b36cfa9aa1f9a5b0a68784a77bb33e543a103713600e6c3bb884f924d588a92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-N8MR",
-    "timestamp": "2026-10-25T02:58:25.779Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-NDXQ",
-    "timestamp": "2026-10-25T02:58:32.654Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "df4dee240e30b63e81ba96ad5fd28a0bb373921668ad9ee7c95dbe3ccf3257ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-X4RU",
     "timestamp": "2026-10-25T03:06:07.338Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7445,51 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "c795260ee83d098ae0e853ef0a1588f0c0f2a51290340e3c8917e00642158d3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-WWI8",
+    "timestamp": "2026-10-26T10:21:30.896Z",
+    "repository": "markmead/hyperui",
+    "learningId": "learn-github-markmead-hyperui",
+    "contentHash": "de1c56668b8d836984d37372084e7403ddbcd8de6909d335f00ea293cb0cd26e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-X1RX",
+    "timestamp": "2026-10-26T10:21:37.725Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-X4TN",
+    "timestamp": "2026-10-26T10:21:41.675Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "2fb268b6fc6c3564a5cc18981922a792e310e7aa67bdba3e1438df16d2acbe9d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

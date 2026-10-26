@@ -5119,3 +5119,6 @@
 | `CYCLE-20261026-XS94` | `2026-10-26T09:54:12.424Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4576` | Yes (`7b7d707a...`) |
 | `CYCLE-20261026-OR2O` | `2026-10-26T10:15:10.608Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4577, Rule 4578` | Yes (`32d2a2a5...`) |
 | `CYCLE-20261026-OXGQ` | `2026-10-26T10:15:18.890Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4579` | Yes (`c795260e...`) |
+| `CYCLE-20261026-WWI8` | `2026-10-26T10:21:30.896Z` | `markmead/hyperui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4580` | Yes (`de1c5666...`) |
+| `CYCLE-20261026-X1RX` | `2026-10-26T10:21:37.725Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4581` | Yes (`9486cfb7...`) |
+| `CYCLE-20261026-X4TN` | `2026-10-26T10:21:41.675Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4582` | Yes (`2fb268b6...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source**: github ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
-> **Source Version**: `3b85896c`  
+> **Source Version**: `8f305ae3`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:26:08.120Z  
+> **Timestamp**: 2026-10-26T10:21:37.365Z  
 > **Learning ID**: `learn-github-0xcub3-wblock`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/0xcub3-wblock-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/0xCUB3/wBlock](https://github.com/0xCUB3/wBlock))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:26:07.053Z  
+> **Harvest Timestamp**: 2026-10-26T10:21:37.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `0xCUB3/wBlock`
-- **Description**: The next-generation ad blocker for Safari. Free and open source on macOS, iOS, iPadOS, and visionOS, with 750,000 rules, userscripts, userstyles, and an element zapper.
+- **Description**: Free, open-source Safari ad blocker for macOS, iOS, iPadOS and visionOS. Up to 750,000 rules, custom filter lists, userscripts and userstyles. No subscription.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3094 stars
+- **Stars / Engagement**: 3133 stars
 
 ---
 
@@ -1261,11 +1261,11 @@ enum BuiltInUserScripts {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1029** (2026-10-22): **[BUG] 3.2.1 corrupts #$# rules whose selector starts with an ID (#$##id …)**
-  *Symptoms*: ### Describe the bug  Since 3.2.1, a CSS injection rule whose selector list starts with an ID selector is no longer applied at all. The same rule works in AdGuard for iOS, which uses the same SafariConverterLib 4.3.0 commit.  Example rule: ``` example.com#$##mainheader, .search { top: 0px !important; transition: none !important; } ```  **Cause:** this appears to be a regression from 3a3b3cd4 (the #918 fix that rewrites `##selector { style }` to `#$#`).  `FilterRuleAnalysis.adGuardEquivalent` locates the marker with `RuleText.range(of: "##")`, which returns the first byte-for-byte match. It does not check whether that match is the rule's actual marker. In `#$##mainheader`, the `##` formed by the end of `#$#` and the start of `#mainheader` is mistaken for an element hiding marker. Since 3a3b3cd4 added `{` to the entry guard, every `#$#` rule (which always has a style block) now reaches this branch, and the rule is rewritten:  ``` in:  example.com#$##mainheader, .search { top: 0px !important; transition: none !important; } out: example.com#$#$#mainheader, .search { top: 0px !important; transition: none !important; } ```  The converter then reads the first `#$#` as the marker, so the selector becomes `$#mainheader, .search`. Because `$#mainheader` is invalid, the whole selector list is discarded when the CSS is inserted, and `.search` is not applied either.  I confirmed this by porting the cosmetic branch of `adGuardEquivalent` (at 90552a0) and running it on the rule above. Check
+- **Issue #1045** (2026-10-25): **[BUG]—Turning off Picture in Picture fails on music.youtube.com (music videos still appear as PiP)**
+  *Symptoms*: ### Describe the bug  I don't like Picture in Picture, so I've turned it off in Player Cleaner _and_ Tube Cleaner:  <img width="231" height="151" alt="Image" src="https://github.com/user-attachments/assets/439109e6-9d96-4c8a-b799-a6712a1b326b" />  <img width="383" height="256" alt="Image" src="https://github.com/user-attachments/assets/73ea8d21-165c-4a65-a02e-d3303f6af68c" />  If I go to a music.youtube.com playlist with a video in it or a YouTube music video on music.youtube.com and play it, then I switch to another tab, Automatic Picture in Picture still activates. This is very frustrating.  ### To reproduce  Steps to reproduce the behavior: 1. Turn off Picture in Picture in Player Cleaner and Tube Cleaner 2. Play a music video on music.youtube.com — for example: https://music.youtube.com/watch?v=xRzaFgSsgH4 3. Switch to another Safari tab 4. See error  <img width="1613" height="827" alt="Image" src="https://github.com/user-attachments/assets/6a50877b-8976-4fb2-98b7-afa00f36fe7c" />  ### Expected behavior  Picture in Picture should not activate.  ### Screenshot or video  _No response_  ### Environment  Apple M4 Max 27.0.1 (26A434)  ### Troubleshooting checklist  - [x] I have enabled all 5 wBlock Content Blocker extensions in Safari _(including Profiles, if applicable)_. - [x] I have enabled `wBlock Scripts` and set it to `Allow` on all websites (`Always Allow on Every Website`) in Safari settings. - [x] I have enabled `Allow in Private Browsing` for `wBlock Scripts` and all
 
-- **Issue #1028** (2026-10-22): **[Feature Request] Build 1436**
-  *Symptoms*: ### Is your feature request related to a problem? Please describe.  I know I have been requesting a lot of this stuff but I do think some of it can be removed: a) specifically controlling what to pause b) the jump to section button in settings c) background diagnostics could be merged into logs d) check for updates and update now button in settings (redundant) e) background update agent, since this can be disabled by users who want to via apple settings f) merge help and about sections (except open safari settings) into one page g) i do think that safari settings button could be removed, but up to you h) GPC/blocked requests moved to advanced, since GPC can be used for fingerprinting, and blocked requests is not fully accurate i) controlling automatic updates for specific filter lists and userscripts j) controlling which sites filter lists and userscripts should/shouldn't run on from the info pop-up/context menu, as filter lists do not need to be site specific and userscripts can already be controlled from the site settings/popover k) applies to/URL patterns for userscripts l) autoplay on this site toggle in popover and even the autoplay feature entirely (why is this an option in an adblocker?) m) "Turn on All" for Tube and Player cleaner n) removing original thumbnail channels for DeArrow o) "Hide Shorts" since it does not have to do with the native player p) **Remove the display/appearance settings since those are already controlled by system settings**  In the regional lan
+- **Issue #1041** (2026-10-25): **[BUG]Failed to load popup(native measage relay failed)**
+  *Symptoms*: ### Describe the bug  Hi, I've created an issue about this a couple days ago, and you said post a screenshot when the next update comes out so I did. At first everything happened normally, I can go into web and the popup worked! But in the app when I tried to update the filters, it said something about can't load Wblock2 and said that I need to close safari(which isn't even open). Eventhough the extension still work(I haven't tried the element zapper at that points), I decided that maybe my phone needed a restart for full effectiveness(I was just updated the app at that point and opened it immediately after), then the popup isn't working anymore, nor the error in the app disapear! I've attached screenshots of both, along with the log from the app. I hope it can help identifying the bug. The app is able to convert the rule but not reload the extensions, before(last version right before this) I can update the list but unable to open the popup.  ### To reproduce  Steps to reproduce the web behavior: 1. Go to any web 2. Click on Wblock extension 3. See error  Steps to reproduce the app behavior: 1. Open the app 2. Click on Apply(Update filter) 3. Wait for a moment 4. See error  ### Expected behavior  The app is able to reload Wblock2 and the web extension is function normally  ### Screenshot or video  <img width="1125" height="2259" alt="Image" src="https://github.com/user-attachments/assets/d83bf604-28ea-4e18-9a57-232db027d01c" /> <img width="1125" height="1290" alt="Image" src=
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,277 +1282,279 @@ enum BuiltInUserScripts {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cb64d5a` (2026-10-21)
-**Commit Message**: fix(popup): show why the popup failed to load
+### Incident Patch 1: `cfefc9c3` (2026-10-26)
+**Commit Message**: fix(filters): restore Fanboy's Social Blocking List
 
-Safari 17 drops a runtime.onMessage reply whose promise has already
-settled when the listener returns, so every background error reached the
-popup as undefined. Defer the reply one microtask and append the reason,
-including the rejected sender's shape, to "Failed to load popup."
+Only about 4% of its rules are in AdGuard Social Media, and most of the rest are generic hiding rules AdGuard lacks. Refs #877
 
-Refs #1025
-
-**File**: `extension-src/background.js` (modified, +8/-3)
+**File**: `wBlock/FilterListLoader.swift` (modified, +5/-1)
 ```diff
-@@ -26821,8 +26821,12 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e =
-       // Safari 17 sends popup messages as { origin: "null" } with no URL (#896).
-       const isPopupSender = sender && !sender.tab && (sender.url === browser.runtime.getURL("pages/popup/popup.html")
-           || (sender.url === undefined && sender.origin === "null" && sender.frameId === undefined));
--      if (!isPopupSender
--          || !nativeRequest || !allowedActions.has(nativeRequest.action)) {
-+      if (!isPopupSender) {
-+        // Echo the sender's shape so a popup error screenshot shows what Safari sent.
-+        const shape = sender ? { tab: Boolean(sender.tab), url: sender.url, origin: sender.origin, frameId: sender.frameId } : null;
-+        return { ok: false, error: `Invalid popup sender ${JSON.stringify(shape)}` };
-+      }
-+      if (!nativeRequest || !allowedActions.has(nativeRequest.action)) {
-         return { ok: false, error: "Invalid popup native request" };
-       }
-       try {
-@@ -28307,6 +28311,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e =
-         if (active) injectNoAutoplay({ tabId: sender.tab.id, frameIds: [sender.frameId] });
-       }, () => {});
-     }
--    return handleMessages(request, sender);
-+    // Safari 17 drops a reply whose promise has already settled when the listener returns.
-+    return Promise.resolve().then(() => handleMessages(request, sender));
-   });
- })(browser);
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +56/-56)
-```diff
-@@ -1132,59 +1132,59 @@ lay.js"],matches:["<all_urls>"],allFrames:!0,runAt:"document_start"},en=!!(Fe.sc
- id,allFrames:!0})}),()=>{}))}).catch(t=>console.warn("[wBlock] No Autoplay setup failed:",t))),tn),Ar={id:17e5,priority:2,action:{type:"modifyHeaders",requestHeaders:[{header:"Sec-GPC",operation:"set",value:"1"}]},condition:{resourceTypes:["main_frame","sub_frame","stylesheet","script","image","font","xmlhttprequest","ping","media","websocket","other"]}},Zn={id:"wblock-gpc",js:["gpc.js"],matches:["<all_urls>"],allFrames:!0,runAt:"document_start",world:"MAIN"};let Er=Promise.resolve(),ea=0;const ta=()=>{
- const e=Fe.declarativeNetRequest;return!en||!e||typeof e.getDynamicRules!="function"||Date.now()-ea<Jr||(ea=Date.now(),Er=Er.then(async()=>{const t=await sr({action:"getGlobalPrivacyControlState"}).catch(()=>null);if(!t||typeof t.enabled!="boolean")return;const I=[Zn.id],D=(await e.getDynamicRules()).find(T=>T&&T.id===Ar.id),L=!!D,z=(await Fe.scripting.getRegisteredContentScripts({ids:I})).length>0;if(!t.enabled){z&&await Fe.scripting.unregisterContentScripts({ids:I}),L&&await e.updateDynamicRules(
- {removeRuleIds:[Ar.id]});return}(!L||D.priority!==Ar.priority)&&await e.updateDynamicRules({removeRuleIds:L?[Ar.id]:[],addRules:[Ar]}),z||await Fe.scripting.registerContentScripts([Zn])}).catch(t=>console.warn("[wBlock] Global Privacy Control setup failed:",t))),Er},qi=async(e,t)=>{var I,D;let L=e;if(L&&L.action==="wblock:popup:nativeMessage"){const i=new Set(["logExtensionDiagnostic","syncZapperRules","getZapperRules","getBlockingPausedState","getResumeRequestStatus","resumeBlocking","getSiteDi\
--sabledState","setSiteDisabledState","setSiteZapperDisabled","getSiteFilterDisabledState","setSiteFilterDisabledState","setUserScriptsSiteDisabled","getPageUserScripts","setUserScriptSiteDisabledState","getNoAutoplayState","setNoAutoplaySiteAllowed","setNoAutoplayEnabled"]),n=L.message;if(!(t&&!t.tab&&(t.url===Fe.runtime.getURL("pages/popup/popup.html")||t.url===void 0&&t.origin==="null"&&t.frameId===void 0))||!n||!i.has(n.action))return{ok:!1,error:"Invalid popup native request"};try{const f=await Tt(
--n);return/^setNoAutoplay/.test(n.action)&&await Sn(!0),{ok:!0,response:f}}catch(f){return{ok:!1,error:String(f&&f.message?f.message:f)}}}if(L&&new Set(["getUserScripts","validateUserScriptExecution","getUserScriptContentChunk","getUserScriptResourceChunk","setUserScriptStorageValue","deleteUserScriptStorageValue"]).has(L.action)){if(!t||!Number.isSafeInteger(t.frameId)||t.frameId<0||typeof t.url!="string"||!/^https?:\/\//.test(t.url))return{ok:!1,error:"Userscript request requires a verified fra\
--me"};L={...L,url:t.url,pageURL:t.url,isTopFrame:t.frameId===0}}if(L&&L.action==="wblock:noAutoplay:injectGate"){const i=t&&t.tab?t.tab.id:void 0;if(typeof i!="number"||!Fe.scripting||typeof globalThis.__wblockNoAutoplayGate!="function"||typeof L.token!="string")return{ok:!1};try{return await Fe.scripting.executeScript({target:{tabId:i,frameIds:[t.frameId??0]},func:globalThis.__wblockNoAutoplayGate,args:[L.token],world:"MAIN",injectImmediately:!0}),{ok:!0}}catch(n){return{ok:!1,error:String(n&&n.
--message?n.message:n)}}}if(L&&L.action==="wblock:filterUpdate:start")try{return await Tt({action:"startFilterUpdate"})}catch(i){return{ok:!1,state:"failed",error:String(i&&i.message?i.message:i)}}if(L&&L.action==="wblock:filterUpdate:getStatus")try{return await Tt({action:"getFilterUpdateStatus"})}catch(i){return{ok:!1,state:"failed",error:String(i&&i.message?i.message:i)}}if(L&&L.action==="wblock:clearCache")return or+=1,Rt.clear(),ur(),pr=0,yr.clear(),await Promise.all([Ri(),hr()]),await gr(!0),
--await oa(),{ok:!0};if(L&&L.action==="wblock:installRemoveParamDNRRules")return await gr(!0),{ok:!0};if(L&&L.action==="wblock:getCleanURL"){const i=typeof L.url=="string"?L.url:"";return{ok:!0,cleanUrl:await So(i)}}if(L&&L.action==="wblock:getSiteDisabledState"){const i=wr(L.host);if(!i)return{ok:!1,disabled:!1,error:"Missing host"};try{const n=await Jn(i);return{ok:!0,disabled:!!(n&&n.disabled)}}catch(n){return console.warn("[wBlock] Failed to resolve site disabled state for",i,n),{ok:!1,disabled:!1,
--error:String(n&&n.message?n.message:n)}}}if(L&&L.action==="wblock:noAutoplay:getState"){const i=wr(L.host);if(!i)return{ok:!1,error:"Missing host"};try{const n=await sr({action:"getNoAutoplayState",host:i});if(!n||typeof n.enabled!="boolean"||typeof n.siteAllowed!="boolean")throw new Error("Invalid No Autoplay state from native host");return{ok:!0,enabled:n.enabled,siteAllowed:n.siteAllowed}}catch(n){return{ok:!1,error:String(n&&n.message?n.message:n)}}}if(L&&L.action==="wblock:zapper:syncRules"){
--const i=typeof L.hostname=="string"?L.hostname:"",n=Array.isArray(L.rules)?L.rules:[];if(!i)return{ok:!1,error:"Missing hostname",rules:[]};try{return await Dt({action:"syncZapperRules",hostname:i,rules:n})||{ok:!1,rules:[]}}catch(u){const f=String(u&&u.message?u.message:u);return console.error(`[wBlock] Failed to sync zapper rules via background 
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/pages/popup/popup.js` (modified, +4/-3)
-```diff
-@@ -866,7 +866,7 @@ async function getBlockingPausedState() {
-         return response;
-     } catch (error) {
-         console.error('[wBlock] Failed to get pause state:', error);
--        return null;
-+        return { error: String((error && error.message) || error) };
-     }
- }
- 
-@@ -1897,9 +1897,10 @@ async function refreshUi() {
-         contentScriptReachablePromise,
-         noAutoplayStatePromise,
-     ]);
--    if (pauseState === null) {
-+    if (pauseState.error !== undefined) {
-         setStatus(t('popup_status_error', undefined, 'Error'), 'disabled');
--        setError(t('popup_error_load_popup', undefined, 'Failed to load popup.'));
-+        // The raw reason is what tells a support screenshot apart from #896.
-+        setError(`${t('popup_error_load_popup', undefined, 'Failed to load popup.')} (${pauseState.error})`);
-         if (disableToggle) disableToggle.disabled = true;
-         if (zapperEnabledToggle) zapperEnabledToggle.disabled = true;
-         if (zapperActivate) zapperActivate.disabled = true;
+@@ -161,7 +161,6 @@ class FilterListLoader {
+         "d3ward/toolz",
+         "platforms/extension/safari/filters/208_optimized.txt",  // Online Malicious URL Blocklist (#864)
+         "platforms/extension/safari/filters/122_optimized.txt",  // Fanboy's Annoyances Filter (#877)
+-        "easylist.to/easylist/fanboy-social.txt",  // Fanboy's Social Blocking List (#877)
+         "raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt",  // CJX's Annoyances List (#882)
+         "raw.githubusercontent.com/easylist/easylistchina/master/easylistchina.txt",  // EasyList China (#882)
+         "easylist-downloads.adblockplus.org/easylistdutch.txt",  // EasyList Dutch (#882)
+@@ -390,6 +389,11 @@ class FilterListLoader {
+                         "https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/platforms/extension/safari/filters/4_optimized.txt"
+                 )!, category: FilterListCategory.annoyances,
+                 description: "Filter for social media widgets such as 'Like' and 'Share' buttons and more."),
++            FilterList(
++                id: UUID(), name: "Fanboy's Social Blocking List",
++                url: URL(string: "https://easylist.to/easylist/fanboy-social.txt")!,
++                category: FilterListCategory.annoyances,
++                description: "Blocks social media content on webpages."),
+             FilterList(
+                 id: UUID(), name: "Stevo's AI Blocklist",
+                 url: Self.stevoAIBlocklistURL, category: FilterListCategory.annoyances,
 ```
 
 ---
 
-### Incident Patch 2: `3b85896c` (2026-10-22)
-**Commit Message**: fix(safari): ship 19pt toolbar icon sizes
+### Incident Patch 2: `d390f730` (2026-10-24)
+**Commit Message**: fix(userscripts): flag a URL that's already in wBlock when adding (#1039)
 
-Mac Safari draws the toolbar icon at 19pt and only had 48px and up to pick from, so it scaled 48px down to 38px. Render 16, 19, 32 and 38 px icons that fill the full height with pixel-aligned sides, so Safari uses them without resampling.
-
-**File**: `extension-src/background.js` (modified, +8/-0)
+**File**: `wBlock/UserScriptManagerView.swift` (modified, +18/-2)
 ```diff
-@@ -27373,13 +27373,21 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e =
-   const POPUP_PATH = "pages/popup/popup.html";
-   const SUPPORTED_PAGE_PROTOCOLS = new Set(["http:", "https:"]);
-   const DEFAULT_ACTION_ICON = {
-+    16: "assets/images/icon-16.png",
-+    19: "assets/images/icon-19.png",
-+    32: "assets/images/icon-32.png",
-+    38: "assets/images/icon-38.png",
-     48: "assets/images/icon-48.png",
-     96: "assets/images/icon-96.png",
-     128: "assets/images/icon-128.png",
-     256: "assets/images/icon-256.png",
-     512: "assets/images/icon-512.png"
-   };
-   const DISABLED_ACTION_ICON = {
-+    16: "assets/images/icon-disabled-16.png",
-+    19: "assets/images/icon-disabled-19.png",
-+    32: "assets/images/icon-disabled-32.png",
-+    38: "assets/images/icon-disabled-38.png",
-     48: "assets/images/icon-disabled-48.png",
-     96: "assets/images/icon-disabled-96.png",
-     128: "assets/images/icon-disabled-128.png",
-```
-
-**File**: `scripts/render_action_icons.swift` (modified, +21/-13)
-```diff
-@@ -3,8 +3,9 @@
- import AppKit
+@@ -1679,6 +1679,8 @@ struct AddUserScriptView: View {
+     @State private var metadataRefreshGeneration = 0
+     @State private var addMode: AddMode = .url
+     @StateObject private var editorController: CodeMirrorEditorController
++    /// Taken when the sheet opens, so a URL it adds doesn't flag itself while it closes.
++    @State private var existingURLKeys: Set<String>
+     @FocusState private var urlFieldFocused: Bool
+     @FocusState private var textInputFocused: Bool
  
- // Run from the repository root: swift scripts/render_action_icons.swift
--// Draws the toolbar shield from vector geometry at every size so Retina
--// toolbars stay sharp. Safari tints toolbar icons using their alpha mask, so
-+// Draws the toolbar shield from vector geometry at every size. Mac Safari crops
-+// a toolbar icon to its opaque bounds and scales that square to 19pt, so the
-+// shield spans the full height and its sides sit on pixel boundaries. Safari tints toolbar icons using their alpha mask, so
- // gray alone cannot distinguish disabled protection; the disabled variant cuts
- // a gap around a diagonal slash instead.
- let directory = URL(fileURLWithPath: "wBlock Scripts (iOS)/Resources/assets/images", isDirectory: true)
-@@ -18,26 +19,33 @@ func write(_ context: CGContext, _ name: String) throws {
-     try png.write(to: directory.appendingPathComponent(name))
- }
- 
--for size in [48, 96, 128, 256, 512] {
-+for size in [16, 19, 32, 38, 48, 96, 128, 256, 512] {
-     guard let context = CGContext(
-         data: nil, width: size, height: size, bitsPerComponent: 8,
-         bytesPerRow: size * 4, space: CGColorSpaceCreateDeviceRGB(),
-         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-     ) else { fatalError("Cannot render icon at \(size)px") }
- 
--    // Shield outline in a 512-unit, top-left-origin design space.
-+    // Shield outline in a 512-unit, top-left-origin design space, mapped so
-+    // the stroke's outer edge touches the top and bottom rows.
-     let side = CGFloat(size)
-+    let stroke = max(1, (side * 38 / 512).rounded())
-+    let half = stroke / 2
-+    let left = (side * 74 / 512 - half).rounded() + half
-+    func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-+        CGPoint(x: left + (x - 74) * (side - 2 * left) / 377,
-+                y: side - half - (y - 32) * (side - stroke) / 446)
-+    }
-     let shield = CGMutablePath()
--    shield.move(to: CGPoint(x: 262, y: 32))
--    shield.addLine(to: CGPoint(x: 451, y: 104))
--    shield.addLine(to: CGPoint(x: 451, y: 318))
--    shield.addQuadCurve(to: CGPoint(x: 262, y: 478), control: CGPoint(x: 440, y: 390))
--    shield.addQuadCurve(to: CGPoint(x: 74, y: 318), control: CGPoint(x: 84, y: 390))
--    shield.addLine(to: CGPoint(x: 74, y: 104))
-+    shield.move(to: point(262.5, 32))
-+    shield.addLine(to: point(451, 104))
-+    shield.addLine(to: point(451, 318))
-+    shield.addQuadCurve(to: point(262.5, 478), control: point(440, 390))
-+    shield.addQuadCurve(to: point(74, 318), control: point(85, 390))
-+    shield.addLine(to: point(74, 104))
-     shield.closeSubpath()
--    var transform = CGAffineTransform(a: side / 512, b: 0, c: 0, d: -side / 512, tx: 0, ty: side)
--    context.addPath(shield.copy(using: &transform)!)
--    context.setLineWidth(side * 38 / 512)
-+    context.addPath(shield)
-+    context.setLineWidth(stroke)
-     context.setLineJoin(.round)
-     context.setStrokeColor(CGColor(gray: 0, alpha: 0.85))
-     context.strokePath()
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/background.js` (modified, +34/-33)
-```diff
-@@ -1155,36 +1155,37 @@ action==="getUserScriptContentChunk"||L.action==="getUserScriptResourceChunk")){
- t chunk:",n),{error:String(n&&n.message?n.message:n)}}}if(L&&["gmXmlhttpRequestNative","getUserScriptRequestPolicy"].includes(L.action))return{error:"Native userscript networking is only available through the authorized GM bridge"};const T=((I=t.tab)===null||I===void 0?void 0:I.id)??0,k=t.frameId??0;let P=!1,x=t.url||"";const d=k===0||(D=t.tab)===null||D===void 0?void 0:D.url;!x.startsWith("http")&&d&&(x=d,P=!0);let m;try{m=await Ii(L,x,d)}catch(i){const n=String(i&&i.message?i.message:i);return dr.
- error("Native configuration lookup failed for ",x,n),{type:ir.InitContentScript,state:"error",error:n}}if(!m||!m.configuration){const i="Native configuration unavailable";return dr.error(i,x),{type:ir.InitContentScript,state:"error",error:i}}const{configuration:y,fromCache:l,fresh:s}=m;let a=y,o=null;if(s)o={disabled:!1,paused:!1},a={...y,disabled:!1,paused:!1};else if(l){let i="";try{i=new URL(x).hostname}catch{}try{const n=await Mi(i);if(!n||typeof n.disabled!="boolean"||typeof n.paused!="bool\
- ean")throw new Error("Invalid blocking state from native host");o=n}catch(n){const u=String(n&&n.message?n.message:n);return dr.error("Cached configuration state lookup failed for ",x,u),{type:ir.InitContentScript,state:"error",error:u}}o.disabled||o.paused?(ur(),a=Vn(o.disabled,o.paused)):a={...y,disabled:!1,paused:!1}}else(a.disabled===!0||a.paused===!0)&&(a=Vn(a.disabled===!0,a.paused===!0));const r={type:ir.InitContentScript,...l?o:typeof a.disabled=="boolean"&&typeof a.paused=="boolean"?{disabled:a.
--disabled,paused:a.paused}:{}};if(!P&&T){if(!l||!(o.disabled||o.paused))try{await wi.applyConfiguration(T,k,a)}catch(i){dr.error("Failed to apply configuration for ",x,String(i&&i.message?i.message:i))}}else r.payload=Ai(a);return r},Li="pages/popup/popup.html",Bi=new Set(["http:","https:"]),Ui={48:"assets/images/icon-48.png",96:"assets/images/icon-96.png",128:"assets/images/icon-128.png",256:"assets/images/icon-256.png",512:"assets/images/icon-512.png"},Vi={48:"assets/images/icon-disabled-48.png",
--96:"assets/images/icon-disabled-96.png",128:"assets/images/icon-disabled-128.png",256:"assets/images/icon-disabled-256.png",512:"assets/images/icon-disabled-512.png"},Hi=typeof Fe<"u"&&!!(Fe.action&&Fe.action.enable&&Fe.action.disable),Gi=typeof Fe<"u"&&!!(Fe.action&&Fe.action.setPopup),Xi=typeof Fe<"u"&&!!(Fe.action&&Fe.action.setIcon),Ji=typeof Fe<"u"&&!!(Fe.action&&Fe.action.setTitle),Ki=typeof Fe<"u"&&!!(Fe.action&&Fe.action.setBadgeText),zi=typeof Fe<"u"&&!!(Fe.action&&Fe.action.setBadgeBackgroundColor),
--ra=typeof Fe<"u"&&!!Fe.tabs,na=typeof Fe<"u"&&!!(Fe.declarativeNetRequest&&Fe.declarativeNetRequest.setExtensionActionOptions),$n=new Map,rn=new Map,Kt=new Map,aa=e=>Array.isArray(e)?e.filter(t=>t&&typeof t=="object").map(t=>({bridgeId:typeof t.bridgeId=="string"?t.bridgeId:"",commandId:typeof t.commandId=="string"?t.commandId:"",caption:typeof t.caption=="string"?t.caption:"",title:typeof t.title=="string"?t.title:"",accessKey:typeof t.accessKey=="string"?t.accessKey:"",scriptName:typeof t.scriptName==
--"string"?t.scriptName:"",sortOrder:Number.isFinite(Number(t.sortOrder))?Number(t.sortOrder):0})).filter(t=>t.bridgeId&&t.commandId&&t.caption.trim()):[],Yi=(e,t,I)=>{if(typeof e!="number")return;const D=aa(I).map(z=>({...z,frameId:t})),L=Kt.get(e)||new Map;D.length===0?L.delete(t):L.set(t,D),L.size===0?Kt.delete(e):Kt.set(e,L)},ia=e=>{if(typeof e!="number")return[];const t=Kt.get(e);if(!t)return[];const I=[];return t.forEach(D=>{I.push(...D)}),I.sort((D,L)=>{const z=D.frameId===0?0:1,T=L.frameId===
--0?0:1;return z!==T?z-T:D.frameId!==L.frameId?D.frameId-L.frameId:D.sortOrder!==L.sortOrder?D.sortOrder-L.sortOrder:D.caption.localeCompare(L.caption)}),I},Qi=async e=>{if(!Fe.scripting||!Fe.scripting.executeScript||typeof e!="number"||!e)return null;try{const t=await Fe.scripting.executeScript({target:{tabId:e,allFrames:!0},func:()=>Array.isArray(window.__wBlockUserscriptMenuState)?window.__wBlockUserscriptMenuState:[]}),I=new Map;for(const D of t||[]){const L=typeof D.frameId=="number"?D.frameId:
--0,z=aa(D.result).map(T=>({...T,frameId:L}));z.length>0&&I.set(L,z)}return I.size===0?Kt.delete(e):Kt.set(e,I),ia(e)}catch(t){return console.warn("[wBlock] Failed to query live menu commands:",t),null}},Zi=e=>{const t=Object.entries(e).filter(([,I])=>I!=null&&I!=="");return Object.fromEntries(t.map(([I,D])=>[I,String(D)]))},Rn=async e=>{const t=Zi(e);console.info("[wBlock] Support diagnostic",t);try{await Dt({action:"logExtensionDiagnostic",fields:t})}catch(I){console.warn("[wBlock] Failed to for\
--ward support diagnostic to native log:",I,t)}},eo=e=>{if(typeof e!="string"||e.length===0)return{supported:!1,reason:"missing_url",url:""};try{const t=new URL(e);return Bi.has(t.protocol)?t.hostname.length===0?{supported:!1,reason:"missing_hostname",url:e,protocol:t.protocol}:{supported:!0,reason:"url_supported",url:e,protocol:t.p
-```
-
-**File**: `wBlock Scripts (iOS)/Resources/manifest.json` (modified, +4/-0)
-```diff
-@@ -47,6 +47,10 @@
-     "action": {
-         "default_popup": "pages/popup/popup.html",
-         "default_icon": {
-+            "16": "assets/images/icon-16.png",
-+            "19": "assets/images/icon-19.png",
-+            "32": "assets/images/icon-32.png",
-+            "38": "assets/images/icon-38.png",
-             "48": "assets/images/icon-48.png",
-             "96": "assets/images/icon-96.png",
-             "128": "assets/images/icon-128.png",
-```
-
----
-
-### Incident Patch 3: `8d9951ca` (2026-10-22)
-**Commit Message**: fix(ui): use the Site Settings field in every site list
-
-**File**: `wBlock/SiteSettingsView.swift` (modified, +1/-3)
-```diff
-@@ -143,13 +143,11 @@ struct SiteSettingsView: View {
-         VStack(alignment: .leading, spacing: 6) {
-             HStack(spacing: 12) {
-                 TextField("example.com", text: $newDomain)
--                    .textFieldStyle(.plain)
-                     .focused($isTextFieldFocused)
-                     .onSubmit {
-                         addDomain()
-                     }
--                    .padding(12)
--                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-+                    .listEntryField()
- 
-                 AddItemButton(canAdd: addableDomain != nil, isBusy: isAddingDomain, action: addDomain)
-             }
-```
-
-**File**: `wBlock/StringListEditor.swift` (modified, +16/-7)
-```diff
-@@ -18,18 +18,13 @@ struct StringListEditor: View {
-     var body: some View {
-         VStack(alignment: .leading, spacing: 4) {
-             if let title { Text(title).font(.callout.weight(.medium)) }
--            HStack {
-+            HStack(spacing: 12) {
-                 // onSubmit rather than onCommit: on macOS the onCommit closure kept
-                 // the list from the first render, so a second Return replaced the
-                 // first site instead of adding to it (#948).
-                 TextField(placeholder, text: $input)
-                     .onSubmit(addItem)
--                    .textFieldStyle(.roundedBorder)
--                    .disableAutocorrection(true)
--                    #if os(iOS)
--                    .keyboardType(.URL)
--                    .textInputAutocapitalization(.never)
--                    #endif
-+                    .listEntryField()
-                 AddItemButton(canAdd: candidate != nil && !isSaving, action: addItem)
-             }
-             ForEach(items, id: \.self) { item in
-@@ -61,6 +56,20 @@ struct StringListEditor: View {
+@@ -1704,6 +1706,7 @@ struct AddUserScriptView: View {
+         self.kind = kind
+         self.onScriptAdded = onScriptAdded
+         _editorController = StateObject(wrappedValue: CodeMirrorEditorController(text: "", language: kind == .style ? .css : .javascript))
++        _existingURLKeys = State(initialValue: Set(userScriptManager.userScripts.compactMap(\.url).map(FilterListURLSupport.identityKey(for:))))
      }
- }
  
-+extension View {
-+    /// The site field Site Settings opens with, shared by every site list (#1028).
-+    func listEntryField() -> some View {
-+        textFieldStyle(.plain)
-+            .disableAutocorrection(true)
-+            #if os(iOS)
-+            .keyboardType(.URL)
-+            .textInputAutocapitalization(.never)
-+            #endif
-+            .padding(12)
-+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+     private struct StagedScriptFile {
+@@ -1728,8 +1731,14 @@ struct AddUserScriptView: View {
+         }
+     }
+ 
++    /// Leaves out URLs already in wBlock. Adding one would replace that
++    /// script and move it to this sheet's category (#1039).
+     private var parsedURLs: [URL] {
+-        UserScriptURLSupport.parseRemoteURLs(from: urlInput)
++        newURLs(in: UserScriptURLSupport.parseRemoteURLs(from: urlInput))
 +    }
-+}
 +
- /// The round + beside a site field. It turns secondary while there is nothing
- /// to add, so an empty field reads as disabled on every sheet (#999).
- struct AddItemButton: View {
++    private func newURLs(in urls: [URL]) -> [URL] {
++        urls.filter { !existingURLKeys.contains(FilterListURLSupport.identityKey(for: $0)) }
+     }
+ 
+     var body: some View {
+@@ -2245,7 +2254,14 @@ struct AddUserScriptView: View {
+             return
+         }
+ 
+-        validationState = .valid(urls)
++        let newURLs = newURLs(in: urls)
++        guard !newURLs.isEmpty else {
++            validationState = .invalid(urls.count == 1
++                ? String(localized: "A userscript or userstyle with this URL already exists in wBlock.")
++                : String(localized: "All of these userscripts and userstyles are already in wBlock."))
++            return
++        }
++        validationState = .valid(newURLs)
+     }
+ 
+     private func pasteFromClipboard() {
+```
+
+**File**: `wBlock/ar.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "قائمة فلاتر لمواقع الويب باللغات الصربية والمونتينيغرية والكرواتية والبوسنية.";
+ "A filter list with this name already exists." = "توجد قائمة فلاتر بهذا الاسم بالفعل.";
+ "A filter list with this URL already exists in wBlock." = "توجد بالفعل قائمة فلاتر بهذا الرابط في wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "يوجد بالفعل سكربت مستخدم أو نمط مستخدم بهذا الرابط في wBlock.";
++"All of these userscripts and userstyles are already in wBlock." = "كل سكربتات المستخدم وأنماط المستخدم هذه موجودة بالفعل في wBlock.";
+ "About" = "حول";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/de.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "Eine Filterliste für Websites auf Serbisch, Montenegrinisch, Kroatisch und Bosnisch.";
+ "A filter list with this name already exists." = "Eine Filterliste mit diesem Namen existiert bereits.";
+ "A filter list with this URL already exists in wBlock." = "Eine Filterliste mit dieser URL existiert bereits in wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "Ein Userscript oder Userstyle mit dieser URL existiert bereits in wBlock.";
++"All of these userscripts and userstyles are already in wBlock." = "Alle diese Userscripts und Userstyles sind bereits in wBlock.";
+ "About" = "Über";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/el.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "Μια λίστα φίλτρων για ιστότοπους στα σερβικά, μαυροβουνιακά, κροατικά και βοσνιακά.";
+ "A filter list with this name already exists." = "Υπάρχει ήδη μια λίστα φίλτρων με αυτό το όνομα.";
+ "A filter list with this URL already exists in wBlock." = "Υπάρχει ήδη μια λίστα φίλτρων με αυτήν τη διεύθυνση URL στο wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "Ένα userscript ή userstyle με αυτό το URL υπάρχει ήδη στο wBlock.";
++"All of these userscripts and userstyles are already in wBlock." = "Όλα αυτά τα userscripts και userstyles υπάρχουν ήδη στο wBlock.";
+ "About" = "Σχετικά";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/en.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "Blocks ads on websites in Serbian, Montenegrin, Croatian, and Bosnian.";
+ "A filter list with this name already exists." = "A filter list with this name already exists.";
+ "A filter list with this URL already exists in wBlock." = "A filter list with this URL already exists in wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "A userscript or userstyle with this URL already exists in wBlock.";
++"All of these userscripts and userstyles are already in wBlock." = "All of these userscripts and userstyles are already in wBlock.";
+ "About" = "About";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/es.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "Una lista de filtros para sitios web en serbio, montenegrino, croata y bosnio.";
+ "A filter list with this name already exists." = "Ya existe una lista de filtros con este nombre.";
+ "A filter list with this URL already exists in wBlock." = "Ya existe una lista de filtros con esta URL en wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "Ya existe en wBlock un userscript o userstyle con esta URL.";
++"All of these userscripts and userstyles are already in wBlock." = "Todos estos userscripts y userstyles ya están en wBlock.";
+ "About" = "Acerca de";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/fa.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "فهرست فیلتر برای وب‌سایت‌های به زبان‌های صربی، مونته‌نگرویی، کرواتی و بوسنیایی.";
+ "A filter list with this name already exists." = "فهرست فیلتری با این نام از قبل وجود دارد.";
+ "A filter list with this URL already exists in wBlock." = "فهرست فیلتری با این URL از قبل در wBlock وجود دارد.";
++"A userscript or userstyle with this URL already exists in wBlock." = "یک اسکریپت کاربر یا سبک کاربر با این نشانی از قبل در wBlock وجود دارد.";
++"All of these userscripts and userstyles are already in wBlock." = "همه این اسکریپت‌ها و سبک‌های کاربر از قبل در wBlock هستند.";
+ "About" = "درباره";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+**File**: `wBlock/fr.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@
+ "A filter list for websites in Serbian, Montenegrin, Croatian, and Bosnian." = "Une liste de filtres pour les sites web en serbe, monténégrin, croate et bosniaque.";
+ "A filter list with this name already exists." = "Une liste de filtres portant ce nom existe déjà.";
+ "A filter list with this URL already exists in wBlock." = "Une liste de filtres avec cette URL existe déjà dans wBlock.";
++"A userscript or userstyle with this URL already exists in wBlock." = "Un userscript ou userstyle avec cette URL existe déjà dans wBlock.";
++"All of these userscripts and userstyles are already in wBlock." = "Tous ces userscripts et userstyles sont déjà dans wBlock.";
+ "About" = "À propos";
+ "ABPindo" = "ABPindo";
+ "ABPVN List" = "ABPVN List";
+```
+
+---
+
+### Incident Patch 3: `4cf93fb2` (2026-10-25)
+**Commit Message**: fix(ios): prevent info sheets from scrolling behind their headers
+
+**File**: `wBlock/SheetDesignSystem.swift` (modified, +5/-49)
+```diff
+@@ -87,9 +87,6 @@ extension View {
+ struct InfoSheetContainer<Header: View, Content: View>: View {
+     let header: () -> Header
+     let content: () -> Content
+-    #if os(iOS)
+-    @State private var isScrolled = false
+-    #endif
+ 
+     init(@ViewBuilder header: @escaping () -> Header, @ViewBuilder content: @escaping () -> Content) {
+         self.header = header
+@@ -98,35 +95,17 @@ struct InfoSheetContainer<Header: View, Content: View>: View {
+ 
+     var body: some View {
+         VStack(spacing: 0) {
+-            #if os(macOS)
+             header()
+                 .frame(maxWidth: .infinity, alignment: .leading)
+-            ScrollView { scrollContent }
+-            #else
+             ScrollView {
+                 scrollContent
++                    #if os(iOS)
+                     .padding(.top, 4)
+-                    .background(GeometryReader { proxy in
+-                        Color.clear.preference(
+-                            key: InfoSheetScrollOffset.self,
+-                            value: proxy.frame(in: .named(InfoSheetScrollOffset.space)).minY
+-                        )
+-                    })
+-            }
+-            .coordinateSpace(name: InfoSheetScrollOffset.space)
+-            .onPreferenceChange(InfoSheetScrollOffset.self) { top in
+-                if #unavailable(iOS 18.0) { isScrolled = top < -1 }
+-            }
+-            .infoSheetScrolledCompat($isScrolled)
+-            .safeAreaInset(edge: .top, spacing: 0) {
+-                // Frosted only once content scrolls beneath it, so the title and
+-                // description do not sit against a divider at rest.
+-                header()
+-                    .frame(maxWidth: .infinity, alignment: .leading)
+-                    .background(isScrolled ? AnyShapeStyle(.bar) : AnyShapeStyle(Color.clear))
+-                    .animation(.easeInOut(duration: 0.15), value: isScrolled)
++                    #endif
+             }
+-            #endif
++            // An inset reserves space but still lets rows draw behind the
++            // header. Keep the viewport below it, including Duo's side bars.
++            .clipped()
+         }
+         #if os(macOS)
+         .infoPopoverHeightCap()
+@@ -144,12 +123,6 @@ struct InfoSheetContainer<Header: View, Content: View>: View {
+ }
+ 
+ #if os(iOS)
+-private struct InfoSheetScrollOffset: PreferenceKey {
+-    static let space = "InfoSheetScroll"
+-    static let defaultValue: CGFloat = 0
+-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+-}
+-
+ extension View {
+     /// iPad form sheets are glass on iOS 26, so the green toggles beneath tinted
+     /// them in dark mode, and their text flashed from gray to its real color as
+@@ -164,23 +137,6 @@ extension View {
+     }
+ }
+ 
+-private extension View {
+-    /// Content offset measured against the top inset. On iPad form sheets the
+-    /// content's frame never goes negative while the header inset covers it,
+-    /// so the frame test alone left the title unfrosted over the rows (#916).
+-    @ViewBuilder
+-    func infoSheetScrolledCompat(_ isScrolled: Binding<Bool>) -> some View {
+-        if #available(iOS 18.0, *) {
+-            onScrollGeometryChange(for: Bool.self) { geometry in
+-                geometry.contentOffset.y + geometry.contentInsets.top > 1
+-            } action: { _, scrolled in
+-                isScrolled.wrappedValue = scrolled
+-            }
+-        } else {
+-            self
+-        }
+-    }
+-}
+ #endif
+ 
+ struct InfoSheetHeader<Title: View>: View {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1581,37 +1583,32 @@ Mac Safari draws the toolbar icon at 19pt and only had 48px and up to pick from,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. popup): show why the popup failed to load
+## X. filters): restore Fanboy's Social Blocking List
 
 **RULE**:
-When implementing operations in `extension-src/background.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wBlock/FilterListLoader.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 0xCUB3/wBlock. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2cb64d5a`: popup): show why the popup failed to load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfefc9c3`: filters): restore Fanboy's Social Blocking List. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension-src/background.js`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `wBlock/FilterListLoader.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      if (!isPopupSender) {
-        // Echo the sender's shape so a popup error screenshot shows what Safari sent.
-        const shape = sender ? { tab: Boolean(sender.tab), url: sender.url, origin: sender.origin, frameId: sender.frameId } : null;
-        return { ok: false, error: `Invalid popup sender ${JSON.stringify(shape)}` };
-      }
-      if (!nativeRequest || !allowedActions.has(nativeRequest.action)) {
-    // Safari 17 drops a reply whose promise has already settled when the listener returns.
-    return Promise.resolve().then(() => handleMessages(request, sender));
+            FilterList(
+                id: UUID(), name: "Fanboy's Social Blocking List",
+                url: URL(string: "https://easylist.to/easylist/fanboy-social.txt")!,
+                category: FilterListCategory.annoyances,
+                description: "Blocks social media content on webpages."),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-      if (!isPopupSender
-          || !nativeRequest || !allowedActions.has(nativeRequest.action)) {
-    return handleMessages(request, sender);
+        "easylist.to/easylist/fanboy-social.txt",  // Fanboy's Social Blocking List (#877)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cb64d5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfefc9c3` are properly handled with clean fallback behavior.

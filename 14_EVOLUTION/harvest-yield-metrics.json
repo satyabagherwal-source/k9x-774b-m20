@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T10:15:18.898Z",
-  "total_cycles_completed": 5096,
-  "total_learnings_persisted": 5096,
-  "total_rules_promoted": 4475,
+  "last_updated": "2026-10-26T10:21:41.682Z",
+  "total_cycles_completed": 5099,
+  "total_learnings_persisted": 5099,
+  "total_rules_promoted": 4478,
   "history": [
-    {
-      "timestamp": "2026-10-25T17:36:31.834Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:42:43.082Z",
-      "repository": "TableProApp/TablePro",
-      "learningId": "learn-github-tableproapp-tablepro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T17:42:45.045Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T17:42:47.050Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T10:15:18.898Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:21:30.904Z",
+      "repository": "markmead/hyperui",
+      "learningId": "learn-github-markmead-hyperui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:21:37.731Z",
+      "repository": "0xCUB3/wBlock",
+      "learningId": "learn-github-0xcub3-wblock",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T10:21:41.682Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

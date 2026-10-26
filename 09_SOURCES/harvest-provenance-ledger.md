@@ -5126,3 +5126,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4a5b9e47` | Multi-dimensional audit evidence | 2026-10-26T09:54:12.427Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-10-26T10:15:10.611Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `263bc134` | Multi-dimensional audit evidence | 2026-10-26T10:15:18.894Z |
+| `learn-github-markmead-hyperui` | `https://github.com/markmead/hyperui` | `637323c8` | Multi-dimensional audit evidence | 2026-10-26T10:21:30.900Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `8f305ae3` | Multi-dimensional audit evidence | 2026-10-26T10:21:37.728Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `ef56e699` | Multi-dimensional audit evidence | 2026-10-26T10:21:41.678Z |
