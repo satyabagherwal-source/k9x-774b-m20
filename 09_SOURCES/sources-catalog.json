@@ -1785,8 +1785,8 @@
     "sourceUrl": "https://github.com/code-forge-io/seo-tools",
     "sourceVersion": "e1e672b3",
     "license": "MIT",
-    "contentHash": "46ad57498f9aad70bbf2d93de26d0f938722955604335994c74646769f45d3ef",
-    "lastHarvestedAt": "2026-10-21T05:09:19.753Z",
+    "contentHash": "a6cb0d0d16f078c4dbef2d75fc60960ffc9c225804df5ef685da98f981a2cea8",
+    "lastHarvestedAt": "2026-10-26T01:49:16.202Z",
     "learningId": "learn-github-code-forge-io-seo-tools"
   },
   "hartemyaakoub-seo-toolkit": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "2947e4c5",
+    "sourceVersion": "bf028bcc",
     "license": "MIT",
-    "contentHash": "f4f076c82c2139a6f2b01ca58d725f9a0c4e4635d58731ec33deb6196f428cd4",
-    "lastHarvestedAt": "2026-10-25T07:19:16.659Z",
+    "contentHash": "08fc9d507fc72feec96321c59f2c765636b2575af0310ea0bbd38c9ffe626e15",
+    "lastHarvestedAt": "2026-10-26T01:49:13.541Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

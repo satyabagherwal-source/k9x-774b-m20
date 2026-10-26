@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `2947e4c5`  
+> **Source Version**: `bf028bcc`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T07:19:15.887Z  
+> **Timestamp**: 2026-10-26T01:49:12.701Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,71 +18,71 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`codewhale-hq/Codewhale` is an enterprise-grade, local-first autonomous coding agent and multi-agent orchestrator written in Rust. It exposes multiple operator surfaces: a Ratatui-based Terminal User Interface (TUI), a headless daemon/app-server exposing JSON-RPC over stdio and Unix domain sockets, and a full HTTP/Server-Sent Events (SSE) control engine (`/v1/*`).
+### Exact Technical Problem Solved
+`codewhale` is an industrial-grade, local-first autonomous terminal coding agent and multi-agent orchestrator written in Rust. It executes continuous tool-assisted software engineering loops: reading repository state, planning execution paths, modifying files via atomic diffs, executing build/test commands, orchestrating subagents with non-escalating security envelopes, and communicating with 40+ LLM providers. 
+
+The core challenge it solves is **deterministic, safe execution across non-deterministic LLM providers without context thrashing, privilege escalation, or silent corruption**. Specifically, it eliminates:
+1. **Provider Prefix-Cache Invalidation**: Preventing provider KV-cache misses caused by unstable tool schemas, shifting system prompts, and non-deterministic serialization.
+2. **Subagent Privilege Escalation**: Ensuring child workers and subagents cannot execute tools, access files, or perform network requests beyond the capabilities granted to their parents.
+3. **Context Boundary Violations**: Preventing token blowouts, prompt injection via instruction files, and uncontrolled memory leaks through strict token/byte caps and character boundary truncation.
+4. **Environment Isolation Breaches**: Enforcing sandboxed home directory resolution (`$CODEWHALE_HOME`) to prevent cross-tenant/cross-workspace prompt history contamination.
 
 ```
-                    ┌────────────────────────────────────────────────────────┐
-                    │                   OPERATOR SURFACES                    │
-                    │   Ratatui TUI   │  JSON-RPC stdio  │  Daemon Socket    │
-                    └────────┬────────┴────────┬─────────┴────────┬──────────┘
-                             │                 │                  │
-                             ▼                 ▼                  ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                             CRATES/APP-SERVER                              │
-│   Compatibility Admission Guard: Enforces allowed_tools: [] for stdio/sock │
-│   JSON-RPC Dispatcher ──► Maps ThreadRequest / PromptRequest               │
-└─────────────────────────────────────┬──────────────────────────────────────┘
-                                      │
-                                      ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        CANONICAL ENGINE & RUNTIME                          │
-│   RuntimeThreadManager │ Event Journal (Append-only tree) │ StateStore     │
-│   PrefixStabilityManager: Immutable KV Prefix (System + Ordered Tool Schemas)│
-└───────────────────┬──────────────────────────────────┬─────────────────────┘
-                    │                                  │
-                    ▼                                  ▼
-┌──────────────────────────────────────┐  ┌──────────────────────────────────┐
-│         SUB-AGENT DELEGATION         │  │         TOOL EXECUTION           │
-│  crates/agent-contract/worker_profile│  │  Bubblewrap Linux Sandbox        │
-│  ChildGrant Lattice Intersection:    │  │  PTY Session Isolation (setsid)  │
-│  FileGrant ∩ ShellGrant ∩ Tools      │  │  Approval Engine & Policy Engine │
-└──────────────────────────────────────┘  └──────────────────────────────────┘
+                           ┌───────────────────────────────────────────────┐
+                           │            CLI / TUI Host Layer               │
+                           │   (ratatui, crossterm, composer, history)     │
+                           └──────────────────────┬────────────────────────┘
+                                                  │
+                 ┌────────────────────────────────┴────────────────────────────────┐
+                 ▼                                                                 ▼
+   ┌───────────────────────────┐                                     ┌───────────────────────────┐
+   │    App Server & RPC       │                                     │    Interactive Engine     │
+   │  (JSON-RPC, threads, ACP) │                                     │  (Turn loop, Watchdog)    │
+   └─────────────┬─────────────┘                                     └─────────────┬─────────────┘
+                 │                                                                 │
+                 └────────────────────────────────┬────────────────────────────────┘
+                                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    Engine Runtime Core                                           │
+│  ┌───────────────────────┐  ┌─────────────────────────┐  ┌────────────────────────────────────┐  │
+│  │     Tool Catalog      │  │ Prefix Stability Manager│  │        Session Tree Journal        │  │
+│  │ (Filtering, Shims)    │  │ (SHA-256 Fingerprinter) │  │  (Append-Only Tree Projection)     │  │
+│  └───────────┬───────────┘  └────────────┬────────────┘  └─────────────────┬──────────────────┘  │
+└──────────────┼───────────────────────────┼─────────────────────────────────┼─────────────────────┘
+               │                           │                                 │
+               ▼                           ▼                                 ▼
+┌─────────────────────────────┐ ┌─────────────────────────────┐ ┌──────────────────────────────────┐
+│       Agent Contract        │ │        Config Layer         │ │          Execution Policy        │
+│  ┌───────────────────────┐  │ │  ┌───────────────────────┐  │ │  ┌────────────────────────────┐  │
+│  │      ChildGrant       │  │ │  │   Atomic Sidecars     │  │ │  │      Approval Mode         │  │
+│  │ (Ord::min Intersection│  │ │  │ (setup_state.json)    │  │ │  │ (Trust, Sandbox, Network)  │  │
+│  └───────────────────────┘  │ │  └───────────────────────┘  │ │  └────────────────────────────┘  │
+└─────────────────────────────┘ └─────────────────────────────┘ └──────────────────────────────────┘
 ```
 
-### Core Architectural Boundaries
-
-1. **The Transport vs. Authority Boundary (`crates/app-server` vs. `crates/runtime`)**:
-   Compatibility transports (stdio JSON-RPC, daemon sockets, legacy port 8787 HTTP) lack bidirectional interactive authorization channels. The architecture strictly quarantines these transports from executing arbitrary tool mutations or autonomous goals. They are constrained to read-only turns with an explicit `allowed_tools: []` contract. All tool invocations, approval prompts, and streaming interactions must execute via the canonical HTTP/SSE engine on port 7878 (`codewhale app-server --http`).
-
-2. **Lattice-Based Capability Non-Escalation (`crates/agent-contract/src/worker_profile.rs`)**:
-   Detached subagents (Fleet workers, explorer scouts, verifiers) operate under a monotonic non-escalation capability lattice. Child authorities are computed by performing an intersection operation ($\text{Child} = \text{Parent} \sqcap \text{Requested}$). Process authority (`ShellGrant`: `None < Inspect < Verify < Full`) and filesystem authority (`FileGrant`: `None < Read < Write`) derive via `Ord::min`. A child can never widen privileges beyond its parent.
-
-3. **Prefix Stability & KV-Cache Economics (`crates/core/src/prefix_cache.rs`)**:
-   To minimize LLM token costs and inference latency with models like DeepSeek V4.1, the engine enforces strict byte-level prefix stability. The prefix (System Prompt + Tool Definitions serialized to JSON in stable wire order) is fingerprinted via SHA-256. Request preparation maintains three contiguous memory regions:
-   - *Region 1*: Frozen Immutable Prefix (system + tool schemas).
-   - *Region 2*: Append-only turn history.
-   - *Region 3*: Volatile latest user message.
-   Any prefix drift is flagged and prevents silent cache invalidation.
-
-4. **Append-Only Tree Journaling (`crates/core/src/journal.rs`)**:
-   Thread history avoids in-place mutation. Every event (user, assistant, tool result, compaction) is recorded as a directed node referencing a `parent_id`. Thread state tracks an active `leaf_id`. Branching and rollbacks simply redirect the `leaf_id` pointer.
-
-5. **Sandbox & PTY Isolation (`crates/cli`, `crates/tui`, Bubblewrap)**:
-   Host execution occurs inside isolated Linux Bubblewrap containers. To prevent standard shell job control signals (`SIGINT`, `Ctrl-C`) from terminating the supervisor wrapper instead of the spawned process, the runtime allocates a controlling terminal within the PID namespace using `setsid`, ensuring clean process tree teardown.
+### Architectural Boundaries & State Ownership
+1. **`crates/agent-contract` (Authority Substrate)**: Owns the immutable, non-escalating permission contracts (`PermissionSet`, `ShellPolicy`, `FileGrant`, `ShellGrant`, `ChildGrant`). All role profiles are monotonic downward projections of the parent session.
+2. **`crates/core` (Domain Primitives & Engine Foundation)**:
+   - `prefix_cache.rs`: Pinned SHA-256 fingerprinting of immutable system prompts and tool schemas to preserve upstream provider KV-cache hits.
+   - `fragments.rs`: Enforces hard caps on context fragments (10,000 tokens / 40,000 bytes) with character-boundary-safe slicing.
+   - `journal.rs`: Append-only, content-addressed session tree where branching moves `leaf_id` without historical message rewriting.
+   - `context_reference.rs`: Parser for `@path` and `[Attached <kind>: <path>]` references using absolute path recognition heuristics.
+3. **`crates/config` (Configuration Authority)**: Decoupled direct ownership of provider kinds, routes, and atomic sidecars (`setup_state.json`), fully retiring consumer-facing re-export facades.
+4. **`crates/execpolicy` & `crates/runtime`**: Enforces strict sandbox isolation, approval traps for mutating commands, and thread management.
 
 ---
 
-## 2. Net-New Universal Engineering Rules
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Monotonic Capability Derivation via Lattice Intersections
+### 1. Lattice-Bounded Non-Escalation Authority Derivation
 **RULE**:
-When an autonomous system delegates tasks to child agents, background workers, or sandboxed sub-processes, the child's effective capability set MUST be derived strictly through a mathematical intersection ($\sqcap$) against the parent's current grant. The runtime MUST NOT permit an explicit allowlist or configuration object to widen any capability beyond the parent's bounds.
+When spawning child tasks, subagents, or worker processes, the child's capability envelope MUST be computed via a monotonic meet operation (`Ord::min` or bitwise `AND`) over the parent's effective grant and the requested role envelope. The system MUST NOT allow any child configuration to widen, bypass, or default outside the parent's boundary.
 
 **WHY**:
-Allowing subagent spawn routines to accept raw permission configurations without checking against the parent creates privilege escalation vulnerabilities. If a read-only "Reviewer" agent spawns a helper to run tests, and the helper configuration defaults to `allow_shell = true`, the child escalates beyond the parent's sandbox boundaries.
+Dynamic subagent frameworks frequently suffer from privilege escalation when child processes are granted permissive defaults (e.g., full shell or network access) that the parent runner lacked, or when role presets are evaluated independently of the calling context.
 
 **WHEN TO APPLY**:
-Apply in any multi-agent runtime, plugin architecture, sub-process launcher, or role-based delegation system across Rust, Go, Python, or TypeScript.
+Any multi-agent framework, process supervisor, container delegator, or capability-based security model in Rust, Go, or TypeScript where tasks delegate to background or child workers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -102,320 +102,274 @@ pub enum ShellGrant {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CapabilityProfile {
+pub struct ChildGrant {
     pub files: FileGrant,
     pub shell: ShellGrant,
     pub network: bool,
-    pub allowed_tools: Option<Vec<String>>,
+    pub spawn: bool,
+    pub scope: Option<Vec<String>>,
 }
 
-impl CapabilityProfile {
+impl ChildGrant {
+    /// Monotonically bounds `requested` by `parent`.
+    /// Guaranteed: child capabilities <= parent capabilities across every axis.
     #[must_use]
-    pub fn derive_child(&self, requested: &CapabilityProfile) -> Self {
-        // Enforce lattice lower-bound (Ord::min guarantees non-escalation)
-        let effective_files = self.files.min(requested.files);
-        let effective_shell = self.shell.min(requested.shell);
-        let effective_network = self.network && requested.network;
-
-        // Tool allowlist intersection
-        let effective_tools = match (&self.allowed_tools, &requested.allowed_tools) {
-            (Some(parent_tools), Some(req_tools)) => {
-                Some(req_tools.iter().filter(|t| parent_tools.contains(t)).cloned().collect())
+    pub fn derive_bounded(parent: &ChildGrant, requested: &ChildGrant) -> Self {
+        let files = parent.files.min(requested.files);
+        let shell = parent.shell.min(requested.shell);
+        let network = parent.network && requested.network;
+        let spawn = parent.spawn && requested.spawn;
+        
+        let scope = match (&parent.scope, &requested.scope) {
+            (Some(p_scope), Some(r_scope)) => {
+                let filtered: Vec<String> = r_scope
+                    .iter()
+                    .filter(|tool| p_scope.contains(tool))
+                    .cloned()
+                    .collect();
+                Some(filtered)
             }
-            (Some(parent_tools), None) => Some(parent_tools.clone()),
-            (None, Some(req_tools)) => Some(req_tools.clone()),
+            (Some(p_scope), None) => Some(p_scope.clone()),
+            (None, Some(r_scope)) => Some(r_scope.clone()),
             (None, None) => None,
         };
 
-        Self {
-            files: effective_files,
-            shell: effective_shell,
-            network: effective_network,
-            allowed_tools: effective_tools,
-        }
+        Self { files, shell, network, spawn, scope }
     }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Blindly assigning requested permissions if set,
-// or falling back to default permissive capabilities.
-pub fn spawn_child_insecure(parent: &CapabilityProfile, req: &SpawnRequest) -> CapabilityProfile {
-    CapabilityProfile {
-        // ESCALATION HAZARD: Child becomes Write even if Parent is Read!
-        files: req.files.unwrap_or(FileGrant::Write),
-        shell: req.shell.unwrap_or(parent.shell),
-        network: req.network.unwrap_or(true),
-        allowed_tools: req.tools.clone(),
-    }
+// CRITICAL VULNERABILITY: Constructing child grants directly from role presets
+// without intersecting with the parent executor's actual runtime grant.
+pub fn spawn_subagent(parent: &Worker, role: FleetRole) -> ChildGrant {
+    // ANTI-PATTERN: If parent was Read-Only, a "Builder" role escalates to Write + Shell!
+    ChildGrant::for_role(&role) 
 }
 ```
 
 **VERIFICATION METHOD**:
-Enforce compliance using a property-based test (e.g., `proptest` or `quickcheck`) asserting that for all arbitrary pairs `(p, r)`:
+Property test asserting non-escalation invariants:
 ```rust
-assert!(p.derive_child(&r).files <= p.files);
-assert!(p.derive_child(&r).shell <= p.shell);
-if !p.network { assert!(!p.derive_child(&r).network); }
-```
-
----
-
-### 2. Transport Admission Quarantine for Interactive Capabilities
-**RULE**:
-A protocol transport or API endpoint MUST explicitly reject requests that require operator approvals, human clarifications, or tool executions UNLESS the transport implements a full bidirectional interactive communication channel. The server MUST fail closed during request admission rather than stalling mid-execution or dropping interactions silently.
-
-**WHY**:
-Exposing tool-running or goal-seeking APIs across unidirectional or non-interactive transports (like stdio JSON-RPC or simplified HTTP webhooks) leads to deadlock states. When an autonomous agent attempts to execute a command that triggers an approval prompt or requests disambiguation, the non-interactive transport cannot reply. The agent hangs until a timeout occurs, leaking system resources and worker threads.
-
-**WHEN TO APPLY**:
-Apply whenever an engine supports multiple RPC layers (e.g., CLI stdio pipes, VSCode ACP protocol, headless daemons, and full WebSockets/SSE endpoints).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-pub async fn validate_turn_admission(
-    is_interactive_transport: bool,
-    allowed_tools: Option<&[String]>,
-    is_goal_execution: bool,
-) -> Result<(), TransportAdmissionError> {
-    if !is_interactive_transport {
-        // Enforce tool-free, non-goal admission on compatibility transports
-        let has_empty_tools = matches!(allowed_tools, Some([]));
-        if !has_empty_tools || is_goal_execution {
-            return Err(TransportAdmissionError::InteractiveExecutionUnsupported {
-                code: -32602,
-                message: "Compatibility transports cannot answer approvals or clarification requests. \
-                          Interactive execution requires a bidirectional SSE/WebSocket transport. \
-                          Tool-free turns require explicit allowed_tools: [].".into(),
-            });
-        }
-    }
-    Ok(())
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// ANTI-PATTERN: Accepting requests on any transport and discovering
-// downstream during turn execution that approvals cannot be gathered.
-pub async fn execute_turn(req: TurnRequest, transport: &Transport) {
-    let result = run_agent_loop(&req).await;
-    if let AgentState::NeedsApproval(prompt) = result {
-        // Transport cannot deliver or await response; fails silently or deadlocks!
-        if transport.is_unidirectional() {
-            log::warn!("Cannot ask for approval on this channel; skipping.");
-        }
-    }
-}
-```
-
-**VERIFICATION METHOD**:
-Automated integration test verifying that all compatibility entrypoints reject non-empty `allowed_tools` and interactive actions with JSON-RPC `-32602`:
-```rust
-#[tokio::test]
-async fn test_compatibility_transport_refuses_tools() {
-    let client = TestStdioClient::spawn().await;
-    let err = client.call("prompt/run", json!({"prompt": "ls", "allowed_tools": ["bash"]})).await.unwrap_err();
-    assert_eq!(err.code, -32602);
+#[test]
+fn test_child_grant_non_escalation_property() {
+    let parent = ChildGrant {
+        files: FileGrant::Read,
+        shell: ShellGrant::Inspect,
+        network: false,
+        spawn: false,
+        scope: Some(vec!["read_file".into()]),
+    };
+    let unconstrained_request = ChildGrant {
+        files: FileGrant::Write,
+        shell: ShellGrant::Full,
+        network: true,
+        spawn: true,
+        scope: Some(vec!["write_file".into(), "read_file".into()]),
+    };
+    let derived = ChildGrant::derive_bounded(&parent, &unconstrained_request);
+    assert!(derived.files <= parent.files);
+    assert!(derived.shell <= parent.shell);
+    assert!(!derived.network);
+    assert!(!derived.spawn);
+    assert_eq!(derived.scope.unwrap(), vec!["read_file".to_string()]);
 }
 ```
 
 ---
 
-### 3. Stable Byte Order Serialization for Prefix-Cache Fingerprints
+### 2. Provider Wire Prefix-Stability Invariant
 **RULE**:
-When generating cryptographic hashes or tracking cache stability for LLM KV caches (e.g., DeepSeek, Anthropic prompt caching), tool catalog schemas and system prompts MUST NOT be serialized from unordered maps or sorted arbitrarily. They MUST be serialized strictly in the deterministic wire order presented to the LLM backend.
+Before dispatching LLM chat requests, the immutable request prefix (system instructions, format markers, and serialized tool definitions in exact wire order) MUST be fingerprinted with a cryptographically secure hash (SHA-256). Any mutation across turns MUST be explicitly categorized as an intentional re-pin (with logged provenance) or flagged as cache drift.
 
 **WHY**:
-Modern frontier LLMs utilize prefix KV-caching that operates on sequential token bytes. Sorting a tool catalog lexicographically before hashing creates a false-positive cache hit internally, while the provider backend experiences a total cache bust if its actual request payload serialized tools in registration order.
+Modern frontier LLMs (e.g., DeepSeek, Anthropic, OpenAI) implement KV-cache reuse keyed strictly to matching byte prefixes. An unintentional change in tool definitions, schema key ordering, or dynamic timestamps in system prompts resets the KV cache for the entire context, causing 10x–50x cost inflation and massive TTFT latency spikes.
 
 **WHEN TO APPLY**:
-Apply in any context caching system, LLM client library, prompt optimizer, or caching reverse-proxy.
+All agentic request construction pipelines and LLM client dispatch engines interacting with prefix-cached APIs.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 use sha2::{Digest, Sha256};
 use serde_json::Value;
 
-pub fn compute_provider_prefix_hash(system_prompt: &str, raw_tool_json: &[Value]) -> String {
-    let mut hasher = Sha256::new();
-    // 1. Hash system prompt
-    hasher.update(system_prompt.as_bytes());
-    hasher.update(b":");
-    
-    // 2. Hash tools IN EXACT WIRE ORDER (never sort by name)
-    for tool in raw_tool_json {
-        let serialized = serde_json::to_vec(tool).expect("valid tool json");
-        hasher.update(&serialized);
-        hasher.update(b",");
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PrefixFingerprint {
+    pub system_sha256: String,
+    pub tools_sha256: String,
+    pub combined_sha256: String,
+}
+
+impl PrefixFingerprint {
+    pub fn compute(system_text: &str, tools: &[Value]) -> Self {
+        let mut hasher = Sha256::new();
+        hasher.update(system_text.as_bytes());
+        let system_sha256 = format!("{:x}", hasher.finalize());
+
+        let mut hasher = Sha256::new();
+        for tool in tools {
+            // Must preserve exact wire order and normalized serialization
+            let serialized = serde_json::to_vec(tool).expect("Tool serialization invariant");
+            hasher.update(&serialized);
+            hasher.update(b"\n");
+        }
+        let tools_sha256 = format!("{:x}", hasher.finalize());
+
+        let mut hasher = Sha256::new();
+        hasher.update(format!("{}:{}", system_sha256, tools_sha256).as_bytes());
+        let combined_sha256 = format!("{:x}", hasher.finalize());
+
+        Self { system_sha256, tools_sha256, combined_sha256 }
     }
-    format!("{:x}", hasher.finalize())
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// ANTI-PATTERN: Sorting keys or tool vectors to make hashes 'canonical'.
-// This diverges from the provider's actual received byte stream!
-pub fn compute_hash_insecure(tools: &mut [Tool]) -> String {
-    tools.sort_by(|a, b| a.name.cmp(&b.name)); // BUSTS CACHE SYNC!
-    serde_json::to_string(tools).unwrap()
+// ANTI-PATTERN: Dynamically interpolating timestamps or reordering tool maps
+// inside the system prompt or tool catalog on every turn.
+pub fn build_bad_system_prompt(base_prompt: &str) -> String {
+    format!("{}\nCurrent time: {}", base_prompt, chrono::Utc::now()) // Destroys KV cache every second!
 }
 ```
 
 **VERIFICATION METHOD**:
-Run an assert verifying that rearranging the tool definition array produces a different cache fingerprint:
 ```rust
-let tools_a = vec![tool_read(), tool_write()];
-let tools_b = vec![tool_write(), tool_read()];
-assert_ne!(
-    compute_provider_prefix_hash("prompt", &tools_a),
-    compute_provider_prefix_hash("prompt", &tools_b)
-);
+#[test]
+fn test_prefix_fingerprint_stability() {
+    let system = "You are a senior software engineer.";
+    let tool_a = serde_json::json!({"type": "function", "function": {"name": "read"}});
+    let tool_b = serde_json::json!({"type": "function", "function": {"name": "write"}});
+
+    let fp1 = PrefixFingerprint::compute(system, &[tool_a.clone(), tool_b.clone()]);
+    let fp2 = PrefixFingerprint::compute(system, &[tool_a, tool_b]);
+    assert_eq!(fp1, fp2, "Prefix fingerprint must be deterministic across identical inputs");
+}
+```
+
+---
+
+### 3. UTF-8 Char Boundary Slicing on Bounded Buffer Caps
+**RULE**:
+When truncating arbitrary context files, logs, or prompt fragments to a hard byte ceiling, the system MUST NOT split a multi-byte UTF-8 character. The truncation index MUST be validated against `str::is_char_boundary(index)` and decremented to the preceding valid scalar boundary.
+
+**WHY**:
+Naively slicing strings via byte indexing (`&text[..MAX_BYTES]`) panics at runtime with `byte index X is not a char boundary` if the ceiling falls within a UTF-8 code point sequence (common in multi-language prompts, CJK text, emojis, or specialized symbols).
+
+**WHEN TO APPLY**:
+Any text truncation, token ceiling clamping, log truncation, or byte-bounded context loader in Rust.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub fn truncate_to_char_boundary(text: &str, max_bytes: usize) -> &str {
+    if text.len() <= max_bytes {
+        return text;
+    }
+    let mut end = max_bytes;
+    while end > 0 && !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    &text[..end]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct byte slicing without character boundary verification
+pub fn unsafe_truncate(text: &str, max_bytes: usize) -> &str {
+    &text[..max_bytes.min(text.len())] // WILL PANIC on multi-byte UTF-8 characters!
+}
+```
+
+**VERIFICATION METHOD**:
+```rust
+#[test]
+fn test_char_boundary_truncation_safety() {
+    let multi_byte = "你好世界，Hello World! 🦀🦀🦀";
+    for cut_point in 0..multi_byte.len() {
+        let sliced = truncate_to_char_boundary(multi_byte, cut_point);
+        assert!(sliced.len() <= cut_point);
+        assert!(std::str::from_utf8(sliced.as_bytes()).is_ok());
+    }
+}
 ```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Compatibility Transport Deadlock on Interactive Tool Approval
-- **Context**: `crates/app-server/src/lib.rs`, `crates/protocol/src/lib.rs`
-- **What Was Expected**: Legacy JSON-RPC stdio and Unix daemon sockets should execute tool-free completion turns cleanly without hanging on approval prompts.
-- **What Actually Happened**: External scripts and SDKs initiated turns through compatibility transports without declaring tool allowlists. When tasks triggered tool invocations or interactive approval checkpoints, the compatibility transports—having no interactive approval endpoints—deadlocked or hung indefinitely.
-- **Evidence in Repo**: Commit `109d0a3f`, Files: `crates/app-server/src/lib.rs`, `crates/protocol/src/lib.rs`.
-- **Root Cause**: The engine did not enforce admission gating on incoming requests over compatibility transports. It admitted arbitrary turns without validating if the requested tools could be approved through the transport.
+### Incident 1: Leaked DeepSeek DSML Tool Markup Treated as Code Review Findings (BUG-DEEPSEEK-01)
+- **Context**: `crates/tui/src/tools/review_core.rs`, `crates/tui/src/core/engine/streaming.rs`
+- **What Was Expected**: Running `codewhale review` on clean, low-risk diffs (where 0 tools are offered to the model) should analyze code, produce a structured findings tally `<!-- codewhale-review: ... -->`, or output "Checked, nothing wrong" and exit 0.
+- **What Actually Happened**: DeepSeek-Flash, when offered zero tools, leaked its raw, internal DSML tool markup verbatim: `<｜｜DSML｜｜ calls> <｜｜DSML｜｜ invoke name="read_file">...`. The review subsystem treated this output as the final valid review text and exited 0 with no review tally, suppressing all code quality checks (Issue #7072).
+- **Evidence in Repo**: Issue #7072; commit references in `crates/tui/src/core/engine/streaming.rs:717` (`TOOL_CALL_MARKER_PAIRS`, `contains_fake_tool_wrapper`).
+- **Root Cause**: The streaming chat engine had sanitizers for fake/leaked tool markup (`contains_fake_tool_wrapper`), but the newly isolated `review_core.rs` built its own HTTP requests directly without routing the output through the core engine's markup-stripping sanitizer.
 - **Remediation Code Diff**:
 ```rust
-// crates/app-server/src/lib.rs
-@@ -1618,6 +1645,9 @@ async fn run_bridged_turn<W: AsyncWrite + Unpin>(
-     turn: BridgedTurn<'_>,
-     transcript: Option<&mut TurnTranscript>,
- ) -> std::result::Result<Value, JsonRpcError> {
-+// Refuse execution before turn admission if allowed_tools is not explicitly empty
-+    if !matches!(turn.allowed_tools, Some([])) {
-+        return Err(JsonRpcError::unsupported_interactive_execution());
-+    }
+// - Direct unvalidated assignment in review_core.rs
+// let review_text = response.text;
+
+// + Sanitize and detect fake tool calls before finalizing review output
+if contains_fake_tool_wrapper(&response.text) {
+    let sanitized = sanitize_leaked_tool_markup(&response.text);
+    if sanitized.trim().is_empty() {
+        anyhow::bail!("Model emitted leaked tool markers instead of review output");
+    }
+    review_text = sanitized;
+} else {
+    review_text = response.text;
+}
 ```
-- **Lesson**: Gate protocol requests at the transport edge. If a transport does not implement interactive callbacks, require explicit proof of non-interactivity (`allowed_tools: []`) before scheduling work.
+- **Lesson**: Subsystem specialization must not bypass core output sanitization filters. All model generation outputs must pass through universal protocol-level sanitization before being exposed to domain logic.
 
 ---
 
-### Incident 2: Bubblewrap Sandboxed Terminal SIGINT Self-Termination
-- **Context**: `crates/cli/src/lib.rs`, Linux PTY Executor
-- **What Was Expected**: Pressing `Ctrl-C` (`SIGINT`) in an interactive terminal session running inside a Bubblewrap container should cancel the foreground child command (e.g., `make`, `pytest`) while preserving the terminal session and sandbox container.
-- **What Actually Happened**: `SIGINT` was broadcast to the entire process group, immediately killing the Bubblewrap wrapper process itself. This abruptly dropped the PTY connection and orphaned running child processes.
-- **Evidence in Repo**: Commit `109d0a3f`, Files: `CHANGELOG.md`, `crates/tui/CHANGELOG.md`.
-- **Root Cause**: The sandboxed PTY process was spawned without assigning a new controlling terminal inside its isolated PID namespace. Consequently, terminal line-discipline signals were delivered to the parent wrapper rather than isolated to the child process session.
-- **Remediation Code Diff**:
-```bash
-# ExecEnv Linux launch harness execution
-# - bwrap --ro-bind / / ... "$SHELL"
-# + bwrap --ro-bind / / ... setsid -c "$SHELL"
-```
-```rust
-// Linux bubblewrap launches assign the controlling terminal inside 
-// the PID namespace using util-linux setsid to isolate terminal signals:
-cmd.arg("setsid").arg("-c").arg(command);
-```
-- **Lesson**: Linux containers utilizing PTYs must invoke `setsid` inside the PID namespace to ensure terminal signals target the session leader rather than container supervisors.
-
----
-
-### Incident 3: Destructive Installer Failure During Forced Reinstall
-- **Context**: `scripts/release/install.sh`, `web/public/install.sh`
-- **What Was Expected**: Installing or re-installing Codewhale via `curl | sh` with `CODEWHALE_FORCE_REINSTALL=1` should be atomic. If unpacking or binary verification fails, any existing installation should remain intact.
-- **What Actually Happened**: The installer moved existing binaries (`codewhale`, `codew`) into temporary backup files before downloading and verifying the new release. When downloads failed or were aborted, the backup files were not restored, leaving the user with an empty `~/.local/bin`.
-- **Evidence in Repo**: Commit `b63e5af3`, Files: `scripts/release/install.sh`, `web/public/install.sh`.
-- **Root Cause**: Missing rollback trap handlers. Backups were performed sequentially in-place without registering an `EXIT`/`INT`/`TERM` recovery stack.
-- **Remediation Code Diff**:
-```bash
-// web/public/install.sh
-@@ -245,6 +245,15 @@ esac
- tmpdir="$(mktemp -d 2>/dev/null || mktemp -d -t codewhale-install)"
- trap 'rm -rf "$tmpdir"' EXIT INT TERM
-+forced_backups="$tmpdir/.forced-backups"
-+: > "$forced_backups"
-+
-+restore_forced_backups() {
-+  while IFS= read -r backup; do
-+    [ -n "$backup" ] || continue
-+    [ -e "$backup" ] || continue
-+    destination="$(printf '%s' "$backup" | sed 's/\.bak-[0-9TZ]*\(-[0-9][0-9]*\)\{0,1\}$//')"
-+    if [ ! -e "$destination" ] && [ ! -L "$destination" ]; then
-+      mv "$backup" "$destination" && echo "Restored $destination" >&2
-+    fi
-+  done < "$forced_backups"
-+}
-+trap 'restore_forced_backups; rm -rf "$tmpdir"' EXIT INT TERM
-```
-- **Lesson**: Destructive deployment scripts must maintain a manifest of relocated assets and bind a restoration pass to shell exit/interrupt signal traps.
-
----
-
-### Incident 4: Silent Model Refresh Inconsistency from Unseeded Remote Providers
-- **Context**: `crates/config/assets/provider_descriptors.json`, `scripts/catalog_models_dev.py`
-- **What Was Expected**: Offline and freshly initialized installations should have access to standard models across all 52 supported providers.
-- **What Actually Happened**: The model catalog contained seed information for only 23 providers. The remaining 24 remote providers had no static offline seed facts. In air-gapped or newly provisioned systems, calls to remote providers crashed or failed model resolution because the catalog was empty.
-- **Evidence in Repo**: Issue `#7058`: "v0.11: Model refresh can still drift — 24 unseeded remote providers".
-- **Root Cause**: The catalog update architecture relied on live network discovery without enforcing a complete compile-time offline baseline for all declared provider descriptors.
-- **Remediation Code Diff**:
-```python
-# scripts/catalog/models_dev_seed.py
-# Automated static verification enforcing 1:1 parity between declared 
-# providers in provider_descriptors.json and static seed entries:
-def verify_provider_seeds():
-    descriptors = json.load(open("crates/config/assets/provider_descriptors.json"))
-    seeds = toml.load(open("scripts/catalog/models_dev_seed.toml"))
-    for p in descriptors["providers"]:
-        if p["kind"] not in seeds and not p["is_loopback"]:
-            raise AssertionError(f"Provider {p['kind']} has no offline seed facts!")
-```
-- **Lesson**: Any system implementing dynamic external catalog refreshes must maintain a statically verified offline baseline that passes 100% coverage checks in CI.
-
----
-
-### Incident 5: Signal Eradication in Job Control Suspend Handler
-- **Context**: `crates/tui/src/tui/ui/job_control_guard.rs`
-- **What Was Expected**: Suspending the agent process with `Ctrl-Z` (`SIGTSTP`) or receiving background input (`SIGTTIN`) should allow standard job control restoration via `fg`, and output clear diagnostics.
-- **What Actually Happened**: The process stopped, but shells reported `zsh: suspended (signal)` rather than `suspended (tty input)`. The application left no logs, generated no crash markers, and displayed a confusing prompt to run `codewhale --continue` (which creates a second competing process) rather than informing the user to type `fg`.
-- **Evidence in Repo**: Issue `#7051`: "bug(tui): a job-control suspend leaves no receipt".
-- **Root Cause**: The signal handler intercepted `SIGTSTP` and `SIGTTIN`, reset the terminal modes, and terminated by invoking `libc::raise(libc::SIGSTOP)`. Raising raw `SIGSTOP` overrode the original signal cause in the parent shell's process status table, erasing the distinction between user-requested suspension and background terminal contention.
+### Incident 2: Environment Variable Bypass in Composer History Path Resolution (BUG-ENV-02)
+- **Context**: `crates/tui/src/composer_history.rs:43-72`
+- **What Was Expected**: Setting `CODEWHALE_HOME=/tmp/cw-isolated` isolates all prompt history, sidecars, and state into that directory, preventing cross-tenant leakage in CI and multi-tenant environments.
+- **What Actually Happened**: Up-arrow prompt history continued reading and writing from `$HOME/.codewhale/composer_history.jsonl`. Prompts containing secrets and proprietary code were leaked to the ambient home directory across isolated sandboxes (Issue #7069).
+- **Evidence in Repo**: Issue #7069 closed on 2026-10-25; commits cleaning up `session_manager.rs` and `composer_history.rs`.
+- **Root Cause**: `composer_history::default_history_path()` directly invoked `effective_home_dir()` (which resolved to `dirs::home_dir()`) instead of checking the configuration priority ladder: `CODEWHALE_HOME -> config path -> effective_home_dir()`. Furthermore, it unconditionally included a legacy fallback to `~/.deepseek/composer_history.jsonl`.
 - **Remediation Code Diff**:
 ```rust
-// crates/tui/src/tui/ui/job_control_guard.rs
-// - libc::raise(libc::SIGSTOP);
-// + // Re-raise original caught signal so parent shell retains exact suspension context
-// + match caught_sig {
-// +     libc::SIGTSTP => {
-// +         signal(libc::SIGTSTP, libc::SIG_DFL);
-// +         libc::raise(libc::SIGTSTP);
-// +     }
-// +     libc::SIGTTIN => {
-// +         signal(libc::SIGTTIN, libc::SIG_DFL);
-// +         libc::raise(libc::SIGTTIN);
-// +     }
-// +     _ => libc::raise(libc::SIGSTOP),
-// + }
+// - In composer_history.rs:
+// pub fn default_history_path() -> PathBuf {
+//     effective_home_dir().join(".codewhale").join("composer_history.jsonl")
+// }
+
+// + Enforce strict CODEWHALE_HOME isolation without fallback
+pub fn default_history_path() -> PathBuf {
+    if let Ok(explicit_home) = std::env::var("CODEWHALE_HOME") {
+        if !explicit_home.trim().is_empty() {
+            return PathBuf::from(explicit_home).join("composer_history.jsonl");
+        }
+    }
+    codewhale_paths::ambient_home_dir()
+        .join(".codewhale")
+        .join("composer_history.jsonl")
+}
 ```
-- **Lesson**: When handling POSIX job-control signals, restore default handlers (`SIG_DFL`) and re-raise the specific intercepted signal rather than flattening them to generic `SIGSTOP`.
+- **Lesson**: Isolated test/enterprise runner environments require environment variable prioritization over OS-level user directory helpers. When an explicit home override is active, all legacy ambient directory fallbacks must be disabled.
 
 ---
 
-## 4. Microscopic Code-Level Invariants
-
-### 1. Micro-Syntax & Token-Level Precision
-
-#### Ambiguous Path Boundary Parsing
-Paths with spaces and separator words (e.g., macOS screenshots containing `at`) break naive string splits.
+### Incident 3: File Attachment Path Splitting Broken by Timestamps with " at " (BUG-PATH-03)
+- **Context**: `crates/core/src/context_reference.rs:65-88`
+- **What Was Expected**: Media attachments matching `[Attached image: <desc> at <path>]` should parse the exact file path even if the description or filename contains the word " at ".
+- **What Actually Happened**: macOS screenshot filenames containing timestamps (e.g., `Screenshot 2026-09-28 at 9.18.11 AM.png`) caused `rsplit_once(" at ")` to split on the timestamp's " at ", corrupting the path to `9.18.11 AM.png` and crashing context hydration.
+- **Evidence in Repo**: Test case `attachment_paths_may_contain_at` and commits in `crates/core/src/context_reference.rs`.
+- **Root Cause**: The parser assumed that the separator `" at "` would only appear once between the description and the path, choosing naive `rsplit_once`.
+- **Remediation Code Diff**:
 ```rust
-// crates/core/src/context_reference.rs
+// Naive implementation:
+// let path = rest.rsplit_once(" at ").map(|(_, path)| path).unwrap_or(rest);
+
+// Fixed invariant: scan for first " at " followed by an absolute path candidate
 fn attachment_path(rest: &str) -> &str {
     if looks_absolute(rest) {
         return rest;
     }
-    // Hazard: splitting on the last " at " fails on "Screenshot 2026 at 9 AM at /tmp/img.png"
-    // Fix: Match first occurrence of " at " that is followed by an absolute path
     rest.match_indices(" at ")
         .map(|(idx, sep)| &rest[idx + sep.len()..])
         .find(|candidate| looks_absolute(candidate))
@@ -432,155 +386,143 @@ fn looks_absolute(path: &str) -> bool {
             && matches!(bytes[2], b'\\' | b'/'))
 }
 ```
-
-#### Linear History Overlap Matching (Avoiding $O(N \cdot M)$ Pitfalls)
-When checking if offered history matches existing persisted records, naive nested scans cause exponential slowdowns during large context synchronization. Codewhale implements a Knuth-Morris-Pratt (KMP) failure table over slice tokens:
-```rust
-// crates/core/src/lib.rs
-pub fn persisted_overlap<T: PartialEq>(persisted: &[T], offered: &[T]) -> usize {
-    if offered.is_empty() { return 0; }
-    let mut failure = vec![0; offered.len()];
-    for index in 1..offered.len() {
-        let mut matched = failure[index - 1];
-        while matched > 0 && offered[index] != offered[matched] {
-            matched = failure[matched - 1];
-        }
-        if offered[index] == offered[matched] { matched += 1; }
-        failure[index] = matched;
-    }
-    let mut matched = 0;
-    for item in persisted {
-        if matched == offered.len() { matched = failure[matched - 1]; }
-        while matched > 0 && *item != offered[matched] {
-            matched = failure[matched - 1];
-        }
-        if *item == offered[matched] { matched += 1; }
-    }
-    matched
-}
-```
+- **Lesson**: Parsing structural delimiters out of human-generated filenames requires domain-aware path heuristics (e.g., matching root separators or drive letters) rather than naive string splitting.
 
 ---
+
+### Incident 4: Cyclic Dependency Bloat via TUI Configuration Re-Export Facades (BUG-REFACTOR-04)
+- **Context**: `crates/tui/src/config.rs`, `crates/tui/src/client.rs`, `crates/config`
+- **What Was Expected**: Low-level configuration, model constants, and provider definitions should be directly imported from `codewhale-config` to maintain clean subsystem boundaries.
+- **What Actually Happened**: The TUI crate created a massive upstream re-export facade (`crate::config::{ProviderKind, ...}`) re-exporting 229 root items and 213 model constants across 143 files, causing circular crate dependencies and 20+ minute incremental build times.
+- **Evidence in Repo**: Commit `478b29ea`: "refactor(config): retire the TUI upstream re-export facade [skip ci]". 1,124 lines changed across 143 files.
+- **Root Cause**: Convenience re-exports in intermediate crates hide architectural layering violations, creating tightly coupled compile-time graphs where every leaf consumer depends on the heaviest UI crate.
+- **Remediation Code Diff**:
+```rust
+// - Import from heavy intermediate TUI re-export facade:
+// use crate::config::{Config, ProviderKind, DEFAULT_DEEPSEEK_BASE_URL};
+
+// + Import directly from decoupled domain crate:
+use crate::config::Config;
+use codewhale_config::ProviderKind;
+use codewhale_config::descriptors::defaults::DEFAULT_DEEPSEEK_BASE_URL;
+```
+- **Lesson**: Ban umbrella re-export facades across workspace crate boundaries. Consumers must import domain primitives directly from their owning crates to minimize compilation graphs and prevent circular dependencies.
+
+---
+
+### Incident 5: Dead-Code Ratchet Failure via Attribute Synonym Obfuscation (BUG-GATE-05)
+- **Context**: `scripts/dead-code-budget.json`, `scripts/check-dead-code-budget.py`
+- **What Was Expected**: The dead-code budget CI gate must ratchet down dead code across the repository over time.
+- **What Actually Happened**: Developers bypassed the dead-code ceiling by switching `#[allow(dead_code)]` to `#[expect(dead_code)]`. The CI script counted only `allow`, permitting dead code to proliferate unchecked.
+- **Evidence in Repo**: Commit `995f2a88` and `scripts/dead-code-budget.json`: comment notes that prior to #6241 the gate counted only the `allow` spelling, obscuring 71 instances.
+- **Root Cause**: CI enforcement scripts targeted specific syntax tokens rather than the semantic intent of compiler attributes.
+- **Remediation Code Diff**:
+```python
+# - In check-dead-code-budget.py:
+# dead_count = count_regex(r'#\[allow\(dead_code\)\]')
+
+# + Count both compiler attributes and ratchet the unified total:
+dead_allow = count_regex(r'#\[allow\(dead_code\)\]')
+dead_expect = count_regex(r'#\[expect\(dead_code\)\]')
+total_dead = dead_allow + dead_expect
+assert total_dead <= budget["total"], f"Dead code exceeded budget: {total_dead} > {budget['total']}"
+```
+- **Lesson**: Static analysis metrics and CI ratchets must account for semantic synonyms and compiler attribute variants to prevent enforcement drift.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Longest Common Overlap Algorithm**:
+  In `crates/core/src/lib.rs`, the engine deduplicates session history across reconnects using a linear KMP-style failure-function computation (`persisted_overlap`) rather than an $O(N \cdot M)$ nested slice search:
+  ```rust
+  pub fn persisted_overlap<T: PartialEq>(persisted: &[T], offered: &[T]) -> usize {
+      if offered.is_empty() { return 0; }
+      let mut failure = vec![0; offered.len()];
+      for index in 1..offered.len() {
+          let mut matched = failure[index - 1];
+          while matched > 0 && offered[index] != offered[matched] {
+              matched = failure[matched - 1];
+          }
+          if offered[index] == offered[matched] { matched += 1; }
+          failure[index] = matched;
+      }
+      let mut matched = 0;
+      for item in persisted {
+          if matched == offered.len() { matched = failure[matched - 1]; }
+          while matched > 0 && *item != offered[matched] {
+              matched = failure[matched - 1];
+          }
+          if *item == offered[matched] { matched += 1; }
+      }
+      matched
+  }
+  ```
+- **Strict IEEE-754 and JSON Coercion Hazards**:
+  In `crates/config`, when comparing reasoning effort or token counts, never compare raw floats or assume missing values mean zero:
+  ```rust
+  // Safe: explicitly differentiates between unconfigured (None) vs zero (Some(0))
+  let max_tokens: Option<u32> = request.max_tokens;
+  let is_unconstrained = max_tokens.is_none();
+  ```
 
 ### 2. Infinite Loop & Recursion Guards
-
-#### UTF-8 Character Boundary Safe Truncation
-When reading external context files (e.g., `AGENTS.md`) up to a hard byte cap (e.g., 100KB), truncating blindly at the byte index will panic if it falls within a multi-byte UTF-8 sequence.
-```rust
-// crates/core/src/fragments.rs
-let mut end = INSTRUCTIONS_FILE_MAX_BYTES.min(text.len());
-while end > 0 && !text.is_char_boundary(end) {
-    end -= 1; // Safely back up to valid UTF-8 boundary
-}
-text.truncate(end);
-```
-
-#### Monotonic Recursion Budget on Subagent Spawns
-To prevent autonomous agents from recursively spawning infinite subagent hierarchies:
-```rust
-pub struct ChildGrant {
-    pub spawn: bool, // Set to false when remaining depth <= 1
-}
-
-pub fn derive_spawn_authority(current_depth: usize, max_depth: usize) -> bool {
-    current_depth < max_depth
-}
-```
-
----
+- **Subagent Delegation Recursion Cap**:
+  When a subagent delegates to another worker, execution depth is tracked via `ChildGrant::spawn`. Once `spawn == false`, child processes cannot instantiate another subagent runtime, mathematically terminating recursive delegation:
+  ```rust
+  if !current_grant.spawn {
+      anyhow::bail!("Subagent delegation denied: maximum delegation depth reached");
+  }
+  ```
+- **Context Fragment Byte & Count Ceilings**:
+  In `crates/core/src/fragments.rs`, context injection loops are strictly bounded by hard constants:
+  - `MAX_FRAGMENTS_PER_CONTEXT = 16`
+  - `MAX_FRAGMENT_TOKENS = 10_000`
+  - `MAX_FRAGMENT_BYTES = 40_000`
+  - `INSTRUCTIONS_FILE_MAX_BYTES = 102_400` (100 KB)
 
 ### 3. UI & UX Micro-Mechanics
-
-#### Terminal Job Control & Suspension Receipt
-When suspending the terminal UI, terminal states (raw mode, alternate screens) must be cleared immediately. The application must avoid race conditions where input read operations consume partial escape sequences after resume:
-```rust
-// Job control state machine must execute in strictly synchronized sequence:
-// 1. Enter Mutex guard
-// 2. Disable raw mode (cbreak -> normal)
-// 3. Show cursor, leave alternate screen buffer
-// 4. Reset signal disposition to SIG_DFL
-// 5. Raise caught signal
-// 6. On resumption: Re-enter alternate screen, enable raw mode, redraw immediately
-```
-
----
+- **TUI Terminal Alternate Screen Restoration**:
+  The Ratatui terminal session lifecycle must register panic hooks to ensure that terminal raw mode is deactivated and the alternate screen buffer is restored on unexpected crashes:
+  ```rust
+  let original_hook = std::panic::take_hook();
+  std::panic::set_hook(Box::new(move |panic_info| {
+      let _ = crossterm::terminal::disable_raw_mode();
+      let _ = crossterm::execute!(std::io::stdout(), crossterm::terminal::LeaveAlternateScreen);
+      original_hook(panic_info);
+  }));
+  ```
 
 ### 4. Backend Concurrency & Memory Safety
-
-#### Bounded History Queues to Prevent Memory Leaks
-Dynamic tracking of cache prefix changes uses a fixed-capacity ring buffer (`VecDeque`) to guarantee bounded memory allocation over sessions lasting days:
-```rust
-// crates/core/src/prefix_cache.rs
-const PREFIX_HISTORY_CAP: usize = 32;
-
-if self.history.len() >= PREFIX_HISTORY_CAP {
-    self.history.pop_front();
-}
-self.history.push_back(entry);
-```
-
-#### Sidecar Atomic Write Isolation
-Configuration and state persistence operations must never write directly to their targets, avoiding corrupted half-written files on sudden power loss or process kill:
-```rust
-// crates/config/src/setup_state.rs
-// Atomic persistence writes to a temporary file in the same filesystem,
-// calls fsync, then renames over the target atomically via crate::persistence.
-```
-
----
+- **Watchdog Latch vs Cancellation Token**:
+  In `crates/tui/src/core/engine.rs`, `tokio_util::sync::CancellationToken` cancels active worker futures. However, because tokens carry no payload, an engine sibling latch stores a strongly-typed `CancelReason`:
+  ```rust
+  #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+  pub enum CancelReason {
+      User,
+      External,
+      Internal,
+      Stalled,
+  }
+  ```
+- **Atomic File Persistence Invariant**:
+  In `crates/config/src/setup_state.rs`, writing `setup_state.json` uses atomic file replacement (writing to `.tmp` file and executing `std::fs::rename`) to prevent partial corruption during process crashes or power interrupts.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-
-#### MCP Configuration Validation in Adapters
-When adapting different agent standards (e.g., Anthropic Client Protocol / ACP into Codewhale), unsupported configuration options must be validated and rejected early:
-```rust
-// crates/tui/src/acp_server.rs
-fn validate_mcp_servers(params: &Value) -> std::result::Result<(), AcpError> {
-    match params.get("mcpServers") {
-        None => Ok(()),
-        Some(Value::Array(servers)) if servers.is_empty() => Ok(()),
-        Some(Value::Array(_)) => Err(AcpError::invalid_params(
-            "Client-supplied MCP servers are unsupported by Codewhale's ACP adapter. \
-             Use an empty mcpServers list, or configure MCP through codewhale app-server --http."
-        )),
-        Some(_) => Err(AcpError::invalid_params("mcpServers must be an array")),
-    }
-}
-```
+- **Symlink Traversal Prevention on Instruction Loading**:
+  When importing project instruction files (`AGENTS.md`, `.cursorrules`), the loader explicitly verifies `!is_symlink(path)` before reading to prevent symlink traversal attacks outside the repository boundary:
+  ```rust
+  fn is_symlink(p: &Path) -> bool {
+      std::fs::symlink_metadata(p)
+          .map(|m| m.file_type().is_symlink())
+          .unwrap_or(false)
+  }
+  ```
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
 ### 1. Architecture
-- **Boundary Layout**: Strict separation between core protocol types (`crates/protocol`), engine primitives (`crates/core`), execution contracts (`crates/agent-contract`), transport listeners (`crates/app-server`), and UI orchestrators (`crates/tui`).
-- **State Ownership**: Single-writer principle. Only the canonical `RuntimeThreadManager` writes to the active transcript and journal. Read-only recovery instances open read-only database connections.
-
-### 2. Core Abstractions
-- **`ChildGrant`**: Complete authority projection containing `FileGrant`, `ShellGrant`, `network`, `desktop`, and `ToolSurface`.
-- **`BoundedFragment`**: Context injection container enforcing hard token ceilings ($\le 10,000$ tokens) and byte caps ($40,000$ bytes) with content hashing.
-- **`PrefixFingerprint`**: SHA-256 compound structure (`system_sha256:tools_sha256`) maintaining byte-exact KV cache alignment.
-
-### 3. Error Handling
-- **Categorized Fault Domains**: JSON-RPC errors map server availability faults (`-32000..-32099`, retryable) separately from protocol validation failures (`-32602`, client-side rejection).
-- **Graceful Truncation**: Context ingestion errors do not drop whole files; they clamp to byte ceilings, align to character boundaries, and append informational truncation notices.
-
-### 4. Testing
-- **Multi-surface Verification**: Portable configuration and session harnesses test Linux, macOS, and Windows compatibility across discrete workspaces.
-- **Contract Tests**: TypeScript integration suites (`public-installer-contract.test.ts`) assert external installer behavior against release bundles.
-
-### 5. Security
-- **Strict Capability Minimization**: Subagent roles default to minimal required permissions (e.g., `Consultant` has `ShellGrant::None`, `Scout` has `FileGrant::Read`).
-- **Environment Sanitization**: Bubblewrap containers clean host environment variables before spawning tools to prevent leaking tokens or keys.
-
-### 6. Performance
-- **KMP Suffix Overlap**: Longest overlapping history suffix matching executes in $O(N + M)$ linear time instead of quadratic scan.
-- **Tool Catalog Serialization Caching**: `ToolCatalogCache` hashes serialized tool JSON once, avoiding microsecond serialization penalties on every conversation turn.
-
-### 7. Deployment
-- **Multi-Stage Container Builds**: Docker builds compile via cross-compilation toolchains with architecture-specific cargo cache mounts, yielding small distribution images.
-- **Atomic Self-Update Recovery**: Installers register POSIX trap routines restoring original binaries if package unpacking fails mid-run.
-
-### 8. Agent Patterns
-- **Three-Region Request Model**: Prompts partition into Immutable Prefix, Append-Only History, and Volatile Turn Content to maximize provider cache hit rates.
-- **Evidence-Only Scopes**: Investigative agents run with tool scopes that prevent
+- **Boundary Layout**: Strict

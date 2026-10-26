@@ -329798,3 +329798,578 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f4fde713` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4528. Lattice-Bounded Non-Escalation Authority Derivation (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lattice-Bounded Non-Escalation Authority Derivation",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "bf028bcc",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:12.918Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `bf028bcc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When spawning child tasks, subagents, or worker processes, the child's capability envelope MUST be computed via a monotonic meet operation (`Ord::min` or bitwise `AND`) over the parent's effective grant and the requested role envelope. The system MUST NOT allow any child configuration to widen, bypass, or default outside the parent's boundary.
+
+**WHY**:
+Dynamic subagent frameworks frequently suffer from privilege escalation when child processes are granted permissive defaults (e.g., full shell or network access) that the parent runner lacked, or when role presets are evaluated independently of the calling context.
+
+**WHEN TO APPLY**:
+Any multi-agent framework, process supervisor, container delegator, or capability-based security model in Rust, Go, or TypeScript where tasks delegate to background or child workers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum FileGrant {
+    None = 0,
+    Read = 1,
+    Write = 2,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ShellGrant {
+    None = 0,
+    Inspect = 1,
+    Verify = 2,
+    Full = 3,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ChildGrant {
+    pub files: FileGrant,
+    pub shell: ShellGrant,
+    pub network: bool,
+    pub spawn: bool,
+    pub scope: Option<Vec<String>>,
+}
+
+impl ChildGrant {
+    /// Monotonically bounds `requested` by `parent`.
+    /// Guaranteed: child capabilities <= parent capabilities across every axis.
+    #[must_use]
+    pub fn derive_bounded(parent: &ChildGrant, requested: &ChildGrant) -> Self {
+        let files = parent.files.min(requested.files);
+        let shell = parent.shell.min(requested.shell);
+        let network = parent.network && requested.network;
+        let spawn = parent.spawn && requested.spawn;
+        
+        let scope = match (&parent.scope, &requested.scope) {
+            (Some(p_scope), Some(r_scope)) => {
+                let filtered: Vec<String> = r_scope
+                    .iter()
+                    .filter(|tool| p_scope.contains(tool))
+                    .cloned()
+                    .collect();
+                Some(filtered)
+            }
+            (Some(p_scope), None) => Some(p_scope.clone()),
+            (None, Some(r_scope)) => Some(r_scope.clone()),
+            (None, None) => None,
+        };
+
+        Self { files, shell, network, spawn, scope }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL VULNERABILITY: Constructing child grants directly from role presets
+// without intersecting with the parent executor's actual runtime grant.
+pub fn spawn_subagent(parent: &Worker, role: FleetRole) -> ChildGrant {
+    // ANTI-PATTERN: If parent was Read-Only, a "Builder" role escalates to Write + Shell!
+    ChildGrant::for_role(&role) 
+}
+```
+
+**VERIFICATION METHOD**:
+Property test asserting non-escalation invariants:
+```rust
+#[test]
+fn test_child_grant_non_escalation_property() {
+    let parent = ChildGrant {
+        files: FileGrant::Read,
+        shell: ShellGrant::Inspect,
+        network: false,
+        spawn: false,
+        scope: Some(vec!["read_file".into()]),
+    };
+    let unconstrained_request = ChildGrant {
+        files: FileGrant::Write,
+        shell: ShellGrant::Full,
+        network: true,
+        spawn: true,
+        scope: Some(vec!["write_file".into(), "read_file".into()]),
+    };
+    let derived = ChildGrant::derive_bounded(&parent, &unconstrained_request);
+    assert!(derived.files <= parent.files);
+    assert!(derived.shell <= parent.shell);
+    assert!(!derived.network);
+    assert!(!derived.spawn);
+    assert_eq!(derived.scope.unwrap(), vec!["read_file".to_string()]);
+}
+```
+
+---
+
+
+---
+
+## 4529. Provider Wire Prefix-Stability Invariant (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Provider Wire Prefix-Stability Invariant",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "bf028bcc",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:13.136Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `bf028bcc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before dispatching LLM chat requests, the immutable request prefix (system instructions, format markers, and serialized tool definitions in exact wire order) MUST be fingerprinted with a cryptographically secure hash (SHA-256). Any mutation across turns MUST be explicitly categorized as an intentional re-pin (with logged provenance) or flagged as cache drift.
+
+**WHY**:
+Modern frontier LLMs (e.g., DeepSeek, Anthropic, OpenAI) implement KV-cache reuse keyed strictly to matching byte prefixes. An unintentional change in tool definitions, schema key ordering, or dynamic timestamps in system prompts resets the KV cache for the entire context, causing 10x–50x cost inflation and massive TTFT latency spikes.
+
+**WHEN TO APPLY**:
+All agentic request construction pipelines and LLM client dispatch engines interacting with prefix-cached APIs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use sha2::{Digest, Sha256};
+use serde_json::Value;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PrefixFingerprint {
+    pub system_sha256: String,
+    pub tools_sha256: String,
+    pub combined_sha256: String,
+}
+
+impl PrefixFingerprint {
+    pub fn compute(system_text: &str, tools: &[Value]) -> Self {
+        let mut hasher = Sha256::new();
+        hasher.update(system_text.as_bytes());
+        let system_sha256 = format!("{:x}", hasher.finalize());
+
+        let mut hasher = Sha256::new();
+        for tool in tools {
+            // Must preserve exact wire order and normalized serialization
+            let serialized = serde_json::to_vec(tool).expect("Tool serialization invariant");
+            hasher.update(&serialized);
+            hasher.update(b"\n");
+        }
+        let tools_sha256 = format!("{:x}", hasher.finalize());
+
+        let mut hasher = Sha256::new();
+        hasher.update(format!("{}:{}", system_sha256, tools_sha256).as_bytes());
+        let combined_sha256 = format!("{:x}", hasher.finalize());
+
+        Self { system_sha256, tools_sha256, combined_sha256 }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Dynamically interpolating timestamps or reordering tool maps
+// inside the system prompt or tool catalog on every turn.
+pub fn build_bad_system_prompt(base_prompt: &str) -> String {
+    format!("{}\nCurrent time: {}", base_prompt, chrono::Utc::now()) // Destroys KV cache every second!
+}
+```
+
+**VERIFICATION METHOD**:
+```rust
+#[test]
+fn test_prefix_fingerprint_stability() {
+    let system = "You are a senior software engineer.";
+    let tool_a = serde_json::json!({"type": "function", "function": {"name": "read"}});
+    let tool_b = serde_json::json!({"type": "function", "function": {"name": "write"}});
+
+    let fp1 = PrefixFingerprint::compute(system, &[tool_a.clone(), tool_b.clone()]);
+    let fp2 = PrefixFingerprint::compute(system, &[tool_a, tool_b]);
+    assert_eq!(fp1, fp2, "Prefix fingerprint must be deterministic across identical inputs");
+}
+```
+
+---
+
+
+---
+
+## 4530. UTF-8 Char Boundary Slicing on Bounded Buffer Caps (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "UTF-8 Char Boundary Slicing on Bounded Buffer Caps",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/codewhale-hq/Codewhale",
+  "source_version": "bf028bcc",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:13.351Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `bf028bcc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When truncating arbitrary context files, logs, or prompt fragments to a hard byte ceiling, the system MUST NOT split a multi-byte UTF-8 character. The truncation index MUST be validated against `str::is_char_boundary(index)` and decremented to the preceding valid scalar boundary.
+
+**WHY**:
+Naively slicing strings via byte indexing (`&text[..MAX_BYTES]`) panics at runtime with `byte index X is not a char boundary` if the ceiling falls within a UTF-8 code point sequence (common in multi-language prompts, CJK text, emojis, or specialized symbols).
+
+**WHEN TO APPLY**:
+Any text truncation, token ceiling clamping, log truncation, or byte-bounded context loader in Rust.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub fn truncate_to_char_boundary(text: &str, max_bytes: usize) -> &str {
+    if text.len() <= max_bytes {
+        return text;
+    }
+    let mut end = max_bytes;
+    while end > 0 && !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    &text[..end]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct byte slicing without character boundary verification
+pub fn unsafe_truncate(text: &str, max_bytes: usize) -> &str {
+    &text[..max_bytes.min(text.len())] // WILL PANIC on multi-byte UTF-8 characters!
+}
+```
+
+**VERIFICATION METHOD**:
+```rust
+#[test]
+fn test_char_boundary_truncation_safety() {
+    let multi_byte = "你好世界，Hello World! 🦀🦀🦀";
+    for cut_point in 0..multi_byte.len() {
+        let sliced = truncate_to_char_boundary(multi_byte, cut_point);
+        assert!(sliced.len() <= cut_point);
+        assert!(std::str::from_utf8(sliced.as_bytes()).is_ok());
+    }
+}
+```
+
+---
+
+
+---
+
+## 4531. Optional Dependency Platform Triple Verification Rule (Harvested from code-forge-io/seo-tools)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Optional Dependency Platform Triple Verification Rule",
+  "source": "code-forge-io/seo-tools",
+  "source_url": "https://github.com/code-forge-io/seo-tools",
+  "source_version": "e1e672b3",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:15.600Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-code-forge-io-seo-tools",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [code-forge-io/seo-tools](https://github.com/code-forge-io/seo-tools) (Revision: `e1e672b3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring platform-specific binary wrappers or compilation outputs in `package.json#optionalDependencies`, every declared package key MUST correspond to a published, downloadable artifact on the target registry (e.g., npm) for the specified version range. Target architecture strings MUST match target operating systems and libc variants exactly (e.g., `darwin-x64`, `darwin-arm64`, `linux-x64-gnu`, `linux-x64-musl`, `win32-x64-msvc`). Sub-architectures that do not exist (e.g., `darwin-x64-gnu`, `darwin-x64-musl`, `win32-x64-musl`) MUST NEVER be added to `optionalDependencies`.
+
+**WHY**:
+Modern package managers (Yarn v3/v4 Berry and Bun) attempt to resolve the full dependency tree, including `optionalDependencies`, during the initial resolution and lockfile computation phases. When a package references a non-existent package-version tuple on npm, the registry responds with HTTP 404 (`YN0035: The remote server failed to provide the requested resource`). Yarn Berry and Bun abort the entire installation process before runtime architecture filtering occurs, completely breaking downstream installations on unaffected operating systems (e.g., macOS M1/M2/M3 failing because of invalid Windows or Darwin libc configurations).
+
+**WHEN TO APPLY**:
+Apply to any library utilizing native binaries, Rust/C++ addons (e.g., Rollup, esbuild, SWC, Biome, Turbopack, Sharp), or packages managing target platforms via multi-package publishing patterns.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "name": "@forge42/seo-tools",
+  "optionalDependencies": {
+    "@remix-run/server-runtime": ">=2",
+    "@rollup/rollup-darwin-arm64": "^4.18.1",
+    "@rollup/rollup-darwin-x64": "^4.18.1",
+    "@rollup/rollup-linux-arm64-gnu": "4.18.1",
+    "@rollup/rollup-linux-x64-gnu": "^4.18.1",
+    "@rollup/rollup-linux-x64-musl": "^4.18.1",
+    "@rollup/rollup-win32-arm64-msvc": "4.18.1",
+    "@rollup/rollup-win32-x64-msvc": "4.18.1"
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// NEVER publish phantom triples: macOS uses Mach-O / BSD libc, not GNU libc or musl libc.
+// Windows does not use musl libc.
+{
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-x64-gnu": "^4.18.1",
+    "@rollup/rollup-darwin-x64-musl": "^4.18.1",
+    "@rollup/rollup-win32-x64-musl": "4.18.1"
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce a pre-publish CI audit script that queries the npm registry via `npm view` for every entry in `optionalDependencies`:
+```bash
+node -e '
+const pkg = require("./package.json");
+const deps = Object.keys(pkg.optionalDependencies || {});
+for (const dep of deps) {
+  const version = pkg.optionalDependencies[dep];
+  try {
+    require("child_process").execSync(`npm view "${dep}@${version}" version`, { stdio: "pipe" });
+  } catch (e) {
+    console.error(`FATAL: optionalDependency "${dep}@${version}" does not exist on npm.`);
+    process.exit(1);
+  }
+}
+'
+```
+
+---
+
+
+---
+
+## 4532. Acyclic Route Manifest Path Traversal Invariant (Harvested from code-forge-io/seo-tools)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Acyclic Route Manifest Path Traversal Invariant",
+  "source": "code-forge-io/seo-tools",
+  "source_url": "https://github.com/code-forge-io/seo-tools",
+  "source_version": "e1e672b3",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:15.800Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-code-forge-io-seo-tools",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [code-forge-io/seo-tools](https://github.com/code-forge-io/seo-tools) (Revision: `e1e672b3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When traversing hierarchical router manifests (such as Remix `RouteManifest` or nested router tables) using parent pointer chains (`currentRoute = routes[currentRoute.parentId]`), the traversal loop MUST enforce strict termination guarantees:
+1. It MUST check for empty string or nullish `parentId`.
+2. It MUST verify that `parentId !== currentRoute.id` (self-referential loop protection).
+3. It MUST maintain a `Set<string>` of visited route identifiers to prevent execution hangs or stack overflows in the event of malformed circular manifest graphs.
+
+**WHY**:
+Dynamic route generators, plugins, or runtime manifest merges can introduce cyclical references or parent IDs that point back to themselves or an ancestor. An unshielded `while (currentRoute)` loop without cycle detection blocks the Node.js event loop indefinitely, causing HTTP request timeouts and 100% CPU exhaustion across worker threads during sitemap rendering.
+
+**WHEN TO APPLY**:
+Apply to all tree-walking, AST traversal, or parent-pointer hierarchical path reconstruction algorithms in web framework adapters (Next.js, Remix, React Router, Nuxt, SvelteKit).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+interface Route {
+  id: string;
+  parentId?: string | null;
+  path?: string;
+}
+
+type RouteManifest<T extends Route> = Record<string, T | undefined>;
+
+export const convertManifestPathToUrl = (
+  routes: RouteManifest<Route>,
+  startRoute: Route | undefined
+): string => {
+  if (!startRoute) return "/";
+
+  let currentRoute: Route | undefined | null = startRoute;
+  const segments: string[] = [];
+  const visitedRouteIds = new Set<string>();
+
+  while (currentRoute) {
+    if (visitedRouteIds.has(currentRoute.id)) {
+      throw new Error(`[ManifestCycleError] Circular parent reference detected at route ID: ${currentRoute.id}`);
+    }
+    visitedRouteIds.add(currentRoute.id);
+
+    if (currentRoute.path) {
+      segments.push(currentRoute.path);
+    }
+
+    const nextParentId = currentRoute.parentId;
+    if (!nextParentId || nextParentId === currentRoute.id) {
+      break;
+    }
+
+    currentRoute = routes[nextParentId];
+  }
+
+  const output = segments.reverse().filter(Boolean).join("/");
+  return output.startsWith("/") ? output : `/${output}`;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER walk parent pointer chains without cycle tracking or self-reference guard:
+const convertRemixPathToUrl = (routes: RouteManifest<Route | undefined>, route: Route | undefined) => {
+  let currentRoute = route;
+  const path = [];
+  while (currentRoute) { // HAZARD: If routes contains a cycle (A -> B -> A), this hangs forever
+    path.push(currentRoute.path);
+    if (!currentRoute.parentId) break;
+    if (!routes[currentRoute.parentId]) break;
+    currentRoute = routes[currentRoute.parentId];
+  }
+  return path.reverse().filter(Boolean).join("/") || "/";
+};
+```
+
+**VERIFICATION METHOD**:
+Implement a unit test asserting termination on cyclical manifests:
+```typescript
+import { test, expect } from "vitest";
+
+test("terminates gracefully when manifest contains cyclic parentId references", () => {
+  const cyclicRoutes = {
+    "leaf": { id: "leaf", parentId: "parent", path: "child" },
+    "parent": { id: "parent", parentId: "leaf", path: "parent" }
+  };
+  expect(() => convertManifestPathToUrl(cyclicRoutes, cyclicRoutes["leaf"])).toThrowError(/Circular/);
+});
+```
+
+---
+
+
+---
+
+## 4533. ML CDATA & Strict Entity Sanitization Invariant (Harvested from code-forge-io/seo-tools)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ML CDATA & Strict Entity Sanitization Invariant",
+  "source": "code-forge-io/seo-tools",
+  "source_url": "https://github.com/code-forge-io/seo-tools",
+  "source_version": "e1e672b3",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T01:49:16.013Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-code-forge-io-seo-tools",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [code-forge-io/seo-tools](https://github.com/code-forge-io/seo-tools) (Revision: `e1e672b3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When composing XML documents (sitemaps, news/video feeds, RSS, ATOM) via raw template string interpolation, every dynamically inserted string value MUST be sanitized against XML reserved characters (`&`, `<`, `>`, `"`, `'`) or enclosed within standard `<![CDATA[ ... ]]>` blocks. Raw, unsanitized user or database values MUST NOT be directly concatenated into XML nodes.
+
+**WHY**:
+Characters such as `&` (common in URLs with query parameters like `?foo=1&bar=2`), `<`, and `>` violate the W3C XML 1.0 specification. If injected directly into `<loc>`, `<video:title>`, or `<xhtml:link>` nodes, XML parsers (including Googlebot and Bingbot crawlers) encounter fatal parse errors (`XML Parsing Error: not well-formed`), rejecting the entire sitemap and dropping URL indexing. Furthermore, unescaped user input can lead to XML injection attacks.
+
+**WHEN TO APPLY**:
+All string-based XML serializers, RSS/Atom feed generators, and SVG generators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+const XML_ESCAPE_MAP: Readonly<Record<string, string>> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&apos;",
+};
+
+export const escapeXml = (unsafe: string): string => {
+  return unsafe.replace(/[&<>"']/g, (match) => XML_ESCAPE_MAP[match] ?? match);
+};
+
+export const generateAlternateLinkXml = (link: { hreflang: string; href: string }): string => {
+  return `<xhtml:link rel="alternate" hreflang="${escapeXml(link.hreflang)}" href="${escapeXml(link.href)}" />`;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER concatenate raw query strings or user titles into XML tags:
+export const generateAlternateLinks = (links: { hreflang: string; href: string }[]) => {
+  return links
+    .map((link) => `<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`) // HAZARD: "&" in query breaks XML
+    .join("\n");
+};
+```
+
+**VERIFICATION METHOD**:
+Run an automated test verifying that URL parameters containing `&` and `<` do not break XML parsing using `DOMParser`:
+```typescript
+import { test, expect } from "vitest";
+
+test("escapes XML reserved characters in sitemap URLs", () => {
+  const rawHref = "https://example.com/search?category=books&sort=desc";
+  const output = generateAlternateLinkXml({ hreflang: "en", href: rawHref });
+  expect(output).toContain("category=books&amp;sort=desc");
+  expect(output).not.toContain("&sort");
+});
+```
+
+---
