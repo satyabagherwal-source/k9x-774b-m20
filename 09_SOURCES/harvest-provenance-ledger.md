@@ -5057,3 +5057,6 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `e139573e` | Multi-dimensional audit evidence | 2026-10-26T00:12:17.556Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-26T00:18:22.977Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `731d4383` | Multi-dimensional audit evidence | 2026-10-26T00:18:23.957Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-26T00:24:41.770Z |
+| `learn-github-mantinedev-mantine` | `https://github.com/mantinedev/mantine` | `1d8c524f` | Multi-dimensional audit evidence | 2026-10-26T00:24:42.005Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `e139fbd6` | Multi-dimensional audit evidence | 2026-10-26T00:24:44.109Z |

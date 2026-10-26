@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:18:23.920Z",
+  "last_updated": "2026-10-26T00:24:44.052Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3284,8 +3284,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "157caa55",
-      "content_hash": "83a65d65bf07cafe616eecc0f2f9268a2ce79d5119601ecf2f908509c29b695e",
+      "source_version": "e139fbd6",
+      "content_hash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -3313,6 +3313,11 @@
           "number": 4084,
           "title": "[ty] Short-circuit top/bottom signature comparisons (#29537)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4501,
+          "title": "[ty] Reuse each generic context's inferable type variables (#29700)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3320,7 +3325,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:46:04.394Z",
+      "verified_at": "2026-10-26T00:24:44.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21060,7 +21065,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "79f072da1346f703f33dde38b35e8e4c53292041c39f9c4d0f397d8f1e8dbb4d",
+      "content_hash": "26627e25d050ec65ac623b6eb6a2cdeac83f9cc4548d97a036d7c318460a904a",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "promoted_rules": [
@@ -21097,7 +21102,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-10-21T04:09:31.490Z",
+      "verified_at": "2026-10-26T00:24:41.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33698,8 +33703,8 @@
       "slug": "mantinedev-mantine",
       "platform": "github",
       "source_url": "https://github.com/mantinedev/mantine",
-      "source_version": "194d6524",
-      "content_hash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
+      "source_version": "1d8c524f",
+      "content_hash": "65652df768789b8f5dd82910cce1629911f0d67f8caa6bc7db4306722340a411",
       "dossier_path": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
       "promoted_rules": [
@@ -33712,6 +33717,11 @@
           "number": 3799,
           "title": "Surrogate-Pair Preserving String Truncation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4500,
+          "title": "[@mantine/core] ScrollArea: Stop thumb animation loop on cleanup (#9314)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33719,7 +33729,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:05:10.243Z",
+      "verified_at": "2026-10-26T00:24:41.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127040,6 +127050,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:18:23.912Z"
+    },
+    "rule-4500": {
+      "learning_id": "rule-4500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4500,
+      "title": "[@mantine/core] ScrollArea: Stop thumb animation loop on cleanup (#9314)",
+      "source_url": "https://github.com/mantinedev/mantine",
+      "source_version": "1d8c524f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:24:41.915Z"
+    },
+    "rule-4501": {
+      "learning_id": "rule-4501",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4501,
+      "title": "[ty] Reuse each generic context's inferable type variables (#29700)",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "e139fbd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:24:44.041Z"
     }
   },
   "aliases": {

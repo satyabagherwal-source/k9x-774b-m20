@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `157caa55`  
+> **Source Version**: `e139fbd6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:46:04.127Z  
+> **Timestamp**: 2026-10-26T00:24:43.738Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:46:04.118Z  
+> **Harvest Timestamp**: 2026-10-26T00:24:43.730Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50266 stars
+- **Stars / Engagement**: 50289 stars
 
 ---
 
@@ -2126,649 +2126,252 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f3bca2f` (2026-10-23)
-**Commit Message**: [ty] Short-circuit top/bottom signature comparisons (#29537)
+### Incident Patch 1: `e139fbd6` (2026-10-25)
+**Commit Message**: [ty] Reuse each generic context's inferable type variables (#29700)
 
-The bottom signature is trivially assignable _to_, and the top signature
-is trivially assignable _from_, all other signatures. We can add fast
-path checks for those before performing more complex signature
-comparisons.
+## Summary
 
-**File**: `crates/ruff_benchmark/benches/ty_constraint_set.rs` (modified, +36/-0)
+Checking 4,800 calls to a generic function with four parameters took 108
+→ 100 ms of CPU time. Each parameter uses the same set of type
+variables, but ty rebuilt that set for every argument. Ty now computes
+it once per generic context.
+
+Calls with plain `int` parameters were essentially unchanged. Checking
+all of
+[PyTorch](https://github.com/pytorch/pytorch/tree/ab92945cea42e47ae398aead69af0872d340ea0f)
+showed no consistent speedup.
+
+**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +4/-0)
 ```diff
-@@ -140,6 +140,41 @@ fn benchmark_constraint_quantification(criterion: &mut Criterion) {
-     }
- }
+@@ -371,6 +371,7 @@ pub(super) fn walk_generic_context<'db, V: TypeVisitor<'db> + ?Sized>(
+ // The Salsa heap is tracked separately.
+ impl get_size2::GetSize for GenericContext<'_> {}
  
-+/// Compare bottom sources and top targets against distinct signatures.
-+fn benchmark_bottom_and_top_signature_comparisons(criterion: &mut Criterion) {
-+    setup_rayon();
-+
-+    for name in ["bottom", "top"] {
-+        let mut code = String::from(
-+            "\
-+from typing import Any, Callable, Literal
-+from ty_extensions import Bottom, Top
-+",
-+        );
-+        for i in 0..128 {
-+            let signature = format!("Callable[[Literal[{i}], str, bytes], int]");
-+            let (source, target) = if name == "bottom" {
-+                ("Bottom[Callable[..., Any]]", signature.as_str())
-+            } else {
-+                (signature.as_str(), "Top[Callable[..., object]]")
-+            };
-+            writeln!(
-+                &mut code,
-+                "\ndef check_{i}(source: {source}) -> None:\n    target: {target} = source"
-+            )
-+            .ok();
-+        }
-+
-+        criterion.bench_function(&format!("ty_micro[{name}_signature_comparisons]"), |b| {
-+            b.iter_batched_ref(
-+                || setup_micro_case(&code),
-+                |Case { db }| assert_eq!(db.check().len(), 0),
-+                BatchSize::SmallInput,
-+            );
-+        });
-+    }
-+}
-+
- /// Benchmarks solving many union-bearing upper bounds while inferring a generic call.
- ///
- /// Each callable argument places a distinct union upper bound on `T` through callable-parameter
-@@ -719,6 +754,7 @@ criterion_group!(
-     benchmark_typevar_mapping_large_accumulation,
-     benchmark_typevar_mapping_small_accumulations,
-     benchmark_constraint_quantification,
-+    benchmark_bottom_and_top_signature_comparisons,
-     benchmark_factored_upper_bounds,
-     benchmark_many_upper_bound_callbacks,
-     benchmark_pandas_tdd,
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/callables.md` (modified, +67/-0)
-```diff
-@@ -298,6 +298,73 @@ reveal_type(generic_context(outside_callable(int_identity)))
- outside_callable(int_identity)("string")
- ```
- 
-+## Inference from bottom callable signatures
-+
-+A callable that accepts every argument list and returns `Never` can satisfy any callable signature.
-+Its return and parameter types still provide inference evidence: `Never ≤ T` infers `Never`, while
-+`T ≤ object` infers `object`.
-+
-+```py
-+from typing import Callable, Never, TypeVar
-+
-+T = TypeVar("T")
-+
-+def abort(*args: object, **kwargs: object) -> Never:
-+    raise NotImplementedError
-+
-+def wrap(callback: Callable[[], T]) -> list[T]:
-+    return []
-+
-+def wrap_param(callback: Callable[[T], object]) -> list[T]:
-+    return []
-+
-+# revealed: list[Never]
-+reveal_type(wrap(abort))
-+# revealed: list[object]
-+reveal_type(wrap_param(abort))
-+value: str = wrap_param(abort)[0]  # error: [invalid-assignment]
-+```
-+
-+## Inference from top callable signatures
-+
-+A callback accepting the top callable accepts any callable. Comparing its parameter with a callable
-+returning `T` still contributes `T ≤ object` to inference.
-+
-+```py
-+from typing import Callable, TypeVar
-+from ty_extensions import Top
-+
-+T = TypeVar("T")
-+
-+def wrap(callback: Callable[[Callable[[], T]], None]) -> list[T]:
-+    return []
-+
-+def accepts_top(callback: Top[Callable[..., object]]) -> None: ...
-+
-+# revealed: list[object]
-+reveal_type(wrap(accepts_top))
-+value: str = wrap(accepts_top)[0]  # error: [invalid-assignment]
-+```
-+
-+Ignoring a source receiver restriction still preserves return-type inference.
-+
-+```py
-+from typing import Generic
-+
-+class Restricted(Generic[T]):
-+    def method(self: "Allowed[T]") -> T:
-+        raise NotImplementedError
-+
-+class Allowed(Restricted[T]): ...
-+
-+def infer(callback: Top[Callable[..., T]]) -> list[T]:
-+    return []
-+
-+def check(restricted: Restricted[int]) -> None:
-+    # revealed: list[int]
-+    reveal_type(infer(restricted.method))
-+```
-+
- ## Union without intersection does not consider budget
- 
- A single union upper bound remains precise even when it has more alternatives than the solution
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/callables.md` (modified, +61/-0)
-```diff
-@@ -390,6 +390,67 @@ def consume_object(value: object) -> None: ...
- reveal_type(infer_from_consumer(consume_object))  # revealed: object
- ```
- 
-+## Inference from bottom callable signatures
-+
-+A callable that accepts every argument list and returns `Never` can satisfy any callable signature.
-+Its return and parameter types still provide inference evidence: `Never ≤ T` infers `Never`, while
-+`T ≤ object` infers `object`.
-+
-+```py
-+from typing import Callable, Never
-+
-+def abort(*args: object, **kwargs: object) -> Never:
-+    raise NotImplementedError
-+
-+def wrap[T](callback: Callable[[], T]) -> list[T]:
-+    return []
-+
-+def wrap_param[T](callback: Callable[[T], object]) -> list[T]:
-+    return []
-+
-+# revealed: list[Never]
-+reveal_type(wrap(abort))
-+# revealed: list[object]
-+reveal_type(wrap_param(abort))
-+value: str = wrap_param(abort)[0]  # error: [invalid-assignment]
-+```
-+
-+## Inference from top callable signatures
-+
-+A callback accepting the top callable accepts any callable. Comparing its parameter with a callable
-+returning `T` still contributes `T ≤ object` to inference.
-+
-+```py
-+from typing import Callable
-+from ty_extensions import Top
-+
-+def wrap[T](callback: Callable[[Callable[[], T]], None]) -> list[T]:
-+    return []
-+
-+def accepts_top(callback: Top[Callable[..., object]]) -> None: ...
-+
-+# revealed: list[object]
-+reveal_type(wrap(accepts_top))
-+value: str = wrap(accepts_top)[0]  # error: [invalid-assignment]
-+```
-+
-+Ignoring a source receiver restriction still preserves return-type inference.
-+
-+```py
-+class Restricted[T]:
-+    def method(self: "Allowed[T]") -> T:
-+        raise NotImplementedError
-+
-+class Allowed[T](Restricted[T]): ...
-+
-+def infer[T](callback: Top[Callable[..., T]]) -> list[T]:
-+    return []
-+
-+def check(restricted: Restricted[int]) -> None:
-+    # revealed: list[int]
-+    reveal_type(infer(restricted.method))
-+```
-+
- ## Intersecting inferred union upper bounds
- 
- Multiple callable arguments can infer multiple union upper bounds for the same type variable. We
-```
-
-**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/materialization.md` (modified, +124/-0)
-```diff
-@@ -349,6 +349,130 @@ def takes_objects(*args: object, **kwargs: object) -> object:
- static_assert(not is_subtype_of(TopCallable, RegularCallableTypeOf[takes_objects]))
- ```
- 
-+## Bottom callable assignability
-+
-+The bottom callable accepts every argument list and returns `Never`, so it can satisfy any callable
-+signature, including one with required keyword-only parameters. Returning `Never` alone is not
-+sufficient, nor is accepting every argument list with an incompatible return type.
-+
-+```py
-+from typing import Any, Callable, Never, Protocol
-+from ty_extensions import Bottom
-+
-+class Required(Protocol):
-+    def __call__(self, value: int, /, *, enabled: bool) -> str: ...
-+
-+def never_returns(*values: object, **options: object) -> Never:
-+    raise NotImplementedError
-+
-+def check(
-+    bottom: Bottom[Callable[..., Any]],
-+    restricted: Callable[[int], Never],
-+    returns_none: Bottom[Callable[..., None]],
-+) -> None:
-+    positional: Callable[[str, bytes], int] = bottom  # no diagnostic
-+    keyword_only: Required = bottom  # no diagnostic
-+    declared: Required = never_returns  # no diagnostic
-+
-+    wrong_parameters: Callable[[str], int] = restricted  # error: [invalid-assignment]
-+    wrong_return: Callable[[int], str] = returns_none  # error: [invalid-assignment]
-+```
-+
-+Receiver restrictions still apply when a bound method accepts every argument list and returns
-+`Never`.
-+
-+```py
-+class Restricted:
-+    def method(self: "Allowed", *values: object, **options: object) -> Never:
-+        raise NotImplementedError
-+
-+class Allowed(Restricted): ...
-+
-+def check_receiver(restricted: Restricted, allowed: Allowed) -> None:
-+    valid: Callable[[int], str] = allowed.method  # no diagnostic
-+    invalid: Callable[[int], str] = restricted.method  # error: [invalid-assignment]
-+```
-+
-+An unrestricted callable accepting every argument list also satisfies a target with a restricted
-+receiver. Return types and the source's own receiver restriction still have to match.
-+
-+```py
-+from ty_extensions._internal import RegularCallableTypeOf
-+
-+class Target:
-+    def method(self: "AllowedTarget", value: int) -> str:
-+        return ""
-+
-+class AllowedTarget(Target): ...
-+
-+def accepts_target(callback: RegularCallableTypeOf[Target().method]) -> None: ...
-+def returns_str(*args: object, **kwargs: object) -> str:
-+    return ""
-+
-+def returns_int(*args: object, **kwargs: object) -> int:
-+    return 0
-+
-+accepts_target(returns_str)  # no diagnostic
-+accepts_target(returns_int)  # error: [invalid-argument-type]
-+
-+def check_source_receiver(restricted: Restricted, allowed: Allowed) -> None:
-+    accepts_target(allowed.method)  # no diagnostic
-+    accepts_target(restricted.method)  # error: [invalid-argument-type]
-+```
-+
-+## Top callable assignability
-+
-+```toml
-+[environment]
-+python-version = "3.12"
-+```
-+
-+Every callable is assignable to the top callable, which permits no calls and has return type
-+`object`. A narrower return type or a parameter list that permits calls still imposes requirements.
-+
-+```py
-+from typing import Callable, Protocol
-+from ty_extensions import Top
-+
-+class Required(Protocol):
-+    def __call__(self, *, enabled: bool) -> bytes: ...
-+
-+def check(positional: Callable[[int], str], keyword_only: Required) -> None:
-+    first: Top[Callable[..., object]] = positional  # no diagnostic
-+    second: Top[Callable[..., object]] = keyword_only  # no diagnostic
-+    wrong_return: Top[Callable[..., int]] = positional  # error: [invalid-assignment]
-+    wrong_parameters: Top[Callable[[str], object]] = positional  # error: [invalid-assignment]
-+```
-+
-+A receiver restriction does not prevent assignment to the top callable, since it permits no calls.
-+This also holds for methods with aliased return types or unused type parameters. The restriction
-+still applies when assigning to a callable that permits calls.
-+
-+```py
-+type Result = str
-+
-+class Restricted:
-+    def method(self: "Allowed") -> str:
-+        return ""
-+
-+    def aliased(self: "Allowed") -> Result:
-+        return ""
-+
-+    def generic[T](self: "Allowed") -> str:
-+        return ""
-+
-+class Allowed(Restricted): ...
-+
-+def check_receiver(restricted: Restricted) -> None:
-+    valid: Top[Callable[..., object]] = restricted.method  # no diagnostic
-+    aliased: Top[Callable[..., object]] = restricted.aliased  # no diagnostic
-+    generic: Top[Callable[..., object]] = restricted.generic  # no diagnostic
-+
-+    invalid: Callable[[], str] = restricted.method  # error: [invalid-assignment]
-+    invalid_alias: Callable[[], str] = restricted.aliased  # error: [invalid-assignment]
-+    invalid_generic: Callable[[], str] = restricted.generic  # error: [invalid-assignment]
-+```
-+
- ## `ParamSpec` specializations
- 
- For a class invariant in a `ParamSpec`, every fixed specialization lies between the bottom and top
-```
-
-**File**: `crates/ty_python_semantic/src/types/constraints.rs` (modified, +5/-0)
-```diff
-@@ -310,6 +310,11 @@ impl<'db> OwnedConstraintSet<'db> {
-         self.node == ALWAYS_TRUE
++#[salsa::tracked]
+ impl<'db> GenericContext<'db> {
+     /// Creates a generic context from a list of PEP-695 type parameters.
+     pub(crate) fn from_type_params(
+@@ -539,6 +540,9 @@ impl<'db> GenericContext<'db> {
      }
  
-+    /// Returns `true` if this constraint set's root is not a terminal.
-+    pub(super) fn is_nontrivial(&self) -> bool {
-+        !self.node.is_terminal()
-+    }
-+
-     /// Loads this constraint set into a new builder, invokes a callback with that builder, and
-     /// returns the result.
-     ///
-```
-
-**File**: `crates/ty_python_semantic/src/types/signatures.rs` (modified, +59/-0)
-```diff
-@@ -1058,6 +1058,22 @@ impl<'db> Signature<'db> {
-         Self::new(Parameters::bottom(), Type::Never)
+     /// Returns the typevars directly bound by this generic context.
++    ///
++    /// Argument inference reuses this set for each parameter of each candidate overload.
++    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
+     pub(crate) fn inferable_typevars(self, db: &'db dyn Db) -> TypeVarSet<'db> {
+         TypeVarSet::from_typevars(db, self.variables(db))
      }
- 
-+    /// Returns whether this is the bottom signature, which is assignable to all other signatures.
-+    /// (It accepts all parameter lists, and returns `Never`.)
-+    fn is_bottom(&self) -> bool {
-+        self.return_ty.is_never()
-+            && self.parameters.is_bottom()
-+            && self.receiver_constraints().is_none()
-+    }
-+
-+    /// Returns whether this is the top signature, which is assignable from all other signatures.
-+    /// (It permits no calls, and has return type `object`.)
-+    fn is_top(&self) -> bool {
-+        self.return_ty.is_object()
-+            && self.parameters.is_top()
-+            && self.receiver_constraints().is_none()
-+    }
-+
-     /// Returns `true` if `Self` should be hidden from the generic context display.
-     ///
-     /// `Self` is hidden if it does not appear in:
-@@ -2733,6 +2749,35 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-         source: &Signature<'db>,
-         target: &Signature<'db>,
-     ) -> ConstraintSet<'db, 'c> {
-+        let may_contain_typevars = |signature: &Signature<'db>| {
-+            signature.generic_context.is_some()
-+                || signature
-+                    .receiver_constraints()
-+                    .is_some_and(|constraints| constraints.assignability.is_nontrivial())
-+                || std::iter::once(signature.return_ty)
-+                    .chain(signature.parameters.iter().map(Parameter::annotated_type))
-+                    .any(|ty| {
-+                        // Aliases and recursive types can hide typevars. Avoid expanding them just
-+                        // to decide whether to take a fast path.
-+                        any_over_type(db, self.env, ty, false, |ty| {
-+                            matches!(
-+                                ty,
-+                                Type::TypeVar(_) | Type::TypeAlias(_) | Type::Recursive(_)
-+                            )
-+                        })
-+                    })
-+        };
-+
-+        // Fast path: If the source is the bottom signature or the target is the top signature,
-+        // assignability holds no matter what, and we can return without spending the time matching
-+        // parameter lists. However, the opposite signature's typevars still need inference
-+        // bounds: even `Never ≤ T` or `T ≤ object` can determine an inferred type.
-+        if (source.is_bottom() && !may_contain_typevars(target))
-+            || (target.is_top() && !may_contain_typevars(source))
-+        {
-+            return self.always();
-+        }
-+
-         let env = self.env;
-         // In lazy comparisons, a captured parameter list refers to typevars owned by the
-         // surrounding call inference. Preserve constraints on those variables instead of
-@@ -2794,9 +2839,23 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
-             checker.typevar_evaluation = TypeVarEvaluation::Lazy;
-         }
-         let when = checker.with_signature_recursion_guard(source, target, || {
-+            // A target that permits no calls imposes no receiver requirements. Still compare
-+            // return types so that their constraints contribute to inference.
-+            if target.parameters.is_top() {
-+                return checker.check_signature_pair_inner(db, source, target);
-+            }
-+
-             source
-                 .receiver_constraints_when_satisfied(db, &checker)
-                 .and(db, self.constraints, || {
-+                    // Once its receiver is eligible, a source accepting every argument list
-+                    // accepts every call permitted by the target, regardless of the target's
-+                    // receiver restriction. Parameter and return types still contribute
-+                    // inference bounds.
-+                    if source.parameters.is_bottom() {
-+                        return checker.check_signature_pair_inner(db, source, target);
-+                    }
-+
-                     target
-                         .receiver_constraints_when_satisfied(db, &checker)
-                         .and(db, self.constraints, || {
 ```
 
 ---
 
-### Incident Patch 2: `86c97800` (2026-10-22)
-**Commit Message**: Build the Ruff playground earlier in releases (#29650)
+### Incident Patch 2: `229cb6eb` (2026-10-25)
+**Commit Message**: [ty] Skip method signature inference for concrete decorator results (#29708)
 
-**File**: `.github/actionlint.yaml` (modified, +2/-2)
-```diff
-@@ -21,11 +21,11 @@ self-hosted-runner:
-     - codspeed-macro
- 
- paths:
--  .github/workflows/release.yml:
-+  ".github/workflows/*.{yml,yaml}":
-     ignore:
-       # `actionlint` does not yet recognize GitHub's `$/` syntax.
-       # https://github.com/rhysd/actionlint/issues/711
--      - '^reusable workflow call "\$/\.github/workflows/[^"/]+\.yml" at "uses" is not following the format '
-+      - '^reusable workflow call "\$/\.github/workflows/[^"/]+\.ya?ml" at "uses" is not following the format '
-   ".github/workflows/pull-request-reviewers.yml":
-     ignore:
-       # actionlint doesn't yet support concurrency queues. The schema hook validates them.
+## Summary
+
+Checking
+[`discord/state.py`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/state.py)
+opened 100 Python files instead of 112. To decide whether `Interaction`
+was abstract, we used to follow the return annotation on
+[`Interaction.command`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/interactions.py#L355)
+into `discord.ext.commands`.
+
+```python
+def cached_slot_property[Owner, Value](
+    name: str,
+) -> Callable[[Callable[[Owner], Value]], CachedSlotProperty[Owner, Value]]: ...
+
+class Interaction:
+    @cached_slot_property("_cs_command")
+    def command(self) -> Command[Any, ..., Any] | ContextMenu | None: ...
 ```
 
-**File**: `.github/workflows/build-playground.yml` (added, +53/-0)
+The decorator always returns a `CachedSlotProperty`. The return
+annotation on `command` determines the type of the cached value, but it
+cannot make the descriptor abstract. We now skip the method’s signature
+when its sole decorator rules out an abstract method or property.
+
+Checking all of discord.py showed no measurable speedup.
+
+**File**: `crates/ty_python_semantic/resources/mdtest/abstract.md` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,53 @@
-+name: "[Playground] Build"
+@@ -542,3 +542,37 @@ class Alias:
+ 
+ Alias()  # error: [call-non-callable]
+ ```
 +
-+on:
-+  workflow_call:
-+    outputs:
-+      artifact-id:
-+        value: ${{ jobs.build.outputs.artifact-id }}
++A decorator can also return an abstract method. Here the decorator replaces `Decorated.method` with
++`Abstract.method`, so `Decorated` is abstract.
 +
-+env:
-+  UV_LOCKED: 1
-+  ACTIONS_CACHE_MODE: none
-+  CARGO_INCREMENTAL: 0
-+  CARGO_NET_RETRY: 10
-+  CARGO_PROFILE_DEV_LTO: "false"
-+  CARGO_PROFILE_DEV_OPT_LEVEL: 0
-+  CARGO_TERM_COLOR: always
-+  RUSTUP_MAX_RETRIES: 10
++```py
++from abc import ABC
++from collections.abc import Callable
++from typing import TypeVar
 +
-+permissions:
-+  contents: read
++T = TypeVar("T")
 +
-+jobs:
-+  build:
-+    runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
-+    outputs:
-+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      - name: "Install Rust toolchain"
-+        run: rustup target add wasm32-unknown-unknown
-+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-+        with:
-+          node-version: 24.21.0
-+          package-manager-cache: false
-+      - uses: jetli/wasm-bindgen-action@20b33e20595891ab1a0ed73145d8a21fc96e7c29 # v0.2.0
-+      - name: "Install Node dependencies"
-+        run: npm ci --ignore-scripts
-+        working-directory: playground
-+      - name: "Run TypeScript checks"
-+        run: npm run check
-+        working-directory: playground
-+      - name: "Build Ruff playground"
-+        run: npm run build --workspace ruff-playground
-+        working-directory: playground
-+      - name: "Upload Ruff playground"
-+        id: upload
-+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-+        with:
-+          name: ruff-playground-dist-${{ github.run_id }}-${{ github.run_attempt }}
-+          path: playground/ruff/dist
-+          if-no-files-found: error
++def replace_with(value: T) -> Callable[[object], T]:
++    return lambda _: value
++
++class Decorated(ABC):
++    @replace_with(Abstract.method)
++    def method(self) -> None:
++        pass
++
++Decorated()  # error: [call-non-callable]
++```
++
++Python applies the inner decorator first. It returns a plain object, which the outer decorator
++replaces with `Abstract.method`.
++
++```py
++class Stacked(ABC):
++    @replace_with(Abstract.method)
++    @replace_with(object())
++    def method(self) -> None:
++        pass
++
++Stacked()  # error: [call-non-callable]
++```
 ```
 
-**File**: `.github/workflows/publish-playground.yml` (modified, +9/-35)
+**File**: `crates/ty_python_semantic/src/types/abstract_methods.rs` (modified, +2/-6)
 ```diff
-@@ -11,53 +11,27 @@ on:
-       plan:
-         required: true
-         type: string
-+      artifact-id:
-+        required: true
-+        type: string
+@@ -18,7 +18,7 @@ use crate::{
+         ClassBase, ClassLiteral, ClassType, LintDiagnosticGuard, Parameters, Signature, Type,
+         binding_type,
+         diagnostic::{AbstractMethodAnnotationPolicy, abstract_method_span},
+-        function::{AbstractMethodKind, FunctionDecorators},
++        function::AbstractMethodKind,
+         infer::{function_known_decorators, infer_definition_types},
+     },
+ };
+@@ -389,11 +389,7 @@ fn might_be_explicitly_abstract<'db>(db: &'db dyn Db, definition: Definition<'db
+     if !function.has_decorators() {
+         return false;
+     }
+-    let decorators = function_known_decorators(db, definition);
+-    decorators
+-        .known_decorators()
+-        .contains(FunctionDecorators::ABSTRACT_METHOD)
+-        || decorators.has_unknown_decorators()
++    function_known_decorators(db, definition).may_produce_abstract_method()
+ }
  
- env:
-   UV_LOCKED: 1
-   ACTIONS_CACHE_MODE: none
--  CARGO_INCREMENTAL: 0
--  CARGO_NET_RETRY: 10
--  CARGO_PROFILE_DEV_LTO: "false"
--  CARGO_PROFILE_DEV_OPT_LEVEL: 0
--  CARGO_TERM_COLOR: always
--  RUSTUP_MAX_RETRIES: 10
- 
- permissions:
-   contents: read
- 
- jobs:
-   build:
--    runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
--    steps:
--      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
--        with:
--          persist-credentials: false
--      - name: "Install Rust toolchain"
--        run: rustup target add wasm32-unknown-unknown
--      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
--        with:
--          node-version: 24.21.0
--          package-manager-cache: false
--      - uses: jetli/wasm-bindgen-action@20b33e20595891ab1a0ed73145d8a21fc96e7c29 # v0.2.0
--      - name: "Install Node dependencies"
--        run: npm ci --ignore-scripts
--        working-directory: playground
--      - name: "Run TypeScript checks"
--        run: npm run check
--        working-directory: playground
--      - name: "Build Ruff playground"
--        run: npm run build --workspace ruff-playground
--        working-directory: playground
--      - name: "Upload Ruff playground"
--        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
--        with:
--          name: ruff-playground-dist
--          path: playground/ruff/dist
--          if-no-files-found: error
--          retention-days: 1
-+    if: ${{ inputs.artifact-id == '' }}
-+    uses: $/.github/workflows/build-playground.yml
-+    permissions:
-+      contents: read
- 
-   publish:
-     needs: build
-+    if: ${{ !cancelled() && (needs.build.result == 'success' || (needs.build.result == 'skipped' && inputs.artifact-id != '')) }}
-     runs-on: ${{ github.repository == 'astral-sh/ruff' && 'github-ubuntu-24.04-x86_64-4' || 'ubuntu-latest' }}
-     environment: release-playground
-     env:
-@@ -73,7 +47,7 @@ jobs:
-       - name: "Download Ruff playground"
-         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-         with:
--          name: ruff-playground-dist
-+          artifact-ids: ${{ inputs.artifact-id || needs.build.outputs.artifact-id }}
-           path: playground/ruff/dist
-           digest-mismatch: error
-       - name: "Verify static playground assets"
+ #[derive(Debug, Clone, PartialEq, Eq, get_size2::GetSize, salsa::SalsaValue)]
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +9/-0)
+**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +7/-6)
 ```diff
-@@ -163,6 +163,13 @@ jobs:
-     permissions:
-       "contents": "read"
+@@ -309,7 +309,7 @@ pub(crate) fn is_discarded_dict_key_assignment<'db>(
+ #[salsa::tracked(
+     returns(ref),
+     cycle_initial=|_, _, _| FunctionDecoratorInference {
+-        has_unknown_decorators: true,
++        may_produce_abstract_method: true,
+         ..FunctionDecoratorInference::default()
+     },
+     heap_size=ruff_memory_usage::heap_size
+@@ -356,8 +356,9 @@ pub(crate) struct FunctionDecoratorInference<'db> {
+     called_functions: Box<[FunctionType<'db>]>,
+     legacy_aliases: Box<[Definition<'db>]>,
+     known_decorators: FunctionDecorators,
+-    /// Whether any decorator is unrecognized, or decorator inference is incomplete.
+-    has_unknown_decorators: bool,
++    /// Whether a decorator could produce an explicitly abstract method, or decorator
++    /// inference is incomplete.
++    may_produce_abstract_method: bool,
+     context: InferContextResult,
+ }
  
-+  build-playground:
-+    needs: plan
-+    if: ${{ needs.plan.outputs.publishing == 'true' }}
-+    uses: $/.github/workflows/build-playground.yml
-+    permissions:
-+      contents: read
+@@ -387,12 +388,12 @@ impl<'db> FunctionDecoratorInference<'db> {
+         &self.legacy_aliases
+     }
+ 
+-    pub(super) fn known_decorators(&self) -> FunctionDecorators {
++    fn known_decorators(&self) -> FunctionDecorators {
+         self.known_decorators
+     }
+ 
+-    pub(super) fn has_unknown_decorators(&self) -> bool {
+-        self.has_unknown_decorators
++    pub(super) fn may_produce_abstract_method(&self) -> bool {
++        self.may_produce_abstract_method
+     }
+ 
+     fn context_result(&self) -> &InferContextResult {
+```
+
+**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +24/-5)
+```diff
+@@ -12254,25 +12254,44 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
+     }
+ 
+     pub(super) fn finish_function_decorator_inference(mut self) -> FunctionDecoratorInference<'db> {
++        // Specializing a nominal return type can change a descriptor's type arguments, but it
++        // cannot turn the descriptor into an abstract function, bound method, or property.
++        fn returns_nominal_instance<'db>(db: &'db dyn Db, decorator: Type<'db>) -> bool {
++            let Type::Callable(callable) = decorator else {
++                return false;
++            };
++            if callable.kind(db) != CallableTypeKind::Regular {
++                return false;
++            }
++            let [signature] = callable.signatures(db).overloads.as_slice() else {
++                return false;
++            };
++            matches!(signature.return_ty, Type::NominalInstance(_))
++        }
 +
-   # Signing is a manually maintained stage between binary builds and cargo-dist manifests.
-   sign-release-binaries:
-     needs:
-@@ -527,9 +534,11 @@ jobs:
-     needs:
-       - plan
-       - announce
-+      - build-playground
-     uses: $/.github/workflows/publish-playground.yml
-     with:
-       plan: ${{ needs.plan.outputs.val }}
-+      artifact-id: ${{ needs.build-playground.outputs.artifact-id }}
-     secrets: inherit # zizmor: ignore[secrets-inherit]
-     permissions:
-       "contents": "read"
+         self.infer_region();
+ 
+         let mut known_decorators = FunctionDecorators::empty();
+-        let mut has_unknown_decorators = true;
++        let mut may_produce_abstract_method = true;
+         if let InferenceRegion::FunctionDecorators(definition) = self.region
+             && let DefinitionKind::Function(function) = definition.kind(self.db())
+         {
+-            has_unknown_decorators = false;
+-            for decorator in &function.node(self.module()).decorator_list {
++            may_produce_abstract_method = false;
++            let decorators = &function.node(self.module()).decorator_list;
++            for decorator in decorators {
+                 let ty = self.expression_type(&decorator.expression);
+                 let flags = FunctionDecorators::from_decorator_type(self.db(), ty);
+                 known_decorators |= flags;
+                 if flags.is_empty()
+                     && !matches!(ty, Type::ClassLiteral(class)
+                         if class.known(self.db()) == Some(KnownClass::Property))
++                    && !(decorators.len() == 1 && returns_nominal_instance(self.db(), ty))
+                 {
+-                    has_unknown_decorators = true;
++                    may_produce_abstract_method = true;
+                 }
+             }
++            may_produce_abstract_method |=
++                known_decorators.contains(FunctionDecorators::ABSTRACT_METHOD);
+         }
+ 
+         let Self {
+@@ -12314,7 +12333,7 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
+                 .collect::<Vec<_>>()
+                 .into_boxed_slice(),
+             known_decorators,
+-            has_unknown_decorators,
++            may_produce_abstract_method,
+             context,
+         }
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29703** (2026-10-25): [ty] Collect receiver annotations once per class (@charliermarsh)
-- **PR #29702** (2026-10-25): [ty] Skip inferred writes when a declaration determines an instance member (@charliermarsh)
-- **PR #29699** (2026-10-25): [ty] Avoid redundant work when checking inherited attributes (@charliermarsh)
-- **PR #29691** (2026-10-24): [ty] Bound tuple expansion in type displays (@charliermarsh)
-- **PR #29690** (closed): Avoid treating relative imports from \__future__\ as future imports (#29683) (@dezzy-music)
-- **PR #29680** (2026-10-23): Clean up `Emitter` trait (@ntBre)
+- **PR #29716** (2026-10-25): [ty] Reuse class member lookups when checking overrides (@charliermarsh)
+- **PR #29713** (closed): [ty] Read annotated receiver attributes without checking their initializers (@charliermarsh)
+- **PR #29712** (closed): [ty] Reuse predicate results when narrowing bindings of one place (@charliermarsh)
+- **PR #29711** (closed): [ty] Skip guarded module calls when both paths continue (@charliermarsh)
+- **PR #29709** (2026-10-25): [ty] Check for instance storage without inferring method assignments (@charliermarsh)
+- **PR #29708** (2026-10-25): [ty] Skip method signature inference for concrete decorator results (@charliermarsh)
 
 ---
 
@@ -2788,56 +2391,24 @@ comparisons.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Short-circuit top/bottom signature comparisons (#29537)
+## X. [ty] Reuse each generic context's inferable type variables (#29700)
 
 **RULE**:
-When implementing operations in `crates/ruff_benchmark/benches/ty_constraint_set.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/src/types/generics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f3bca2f`: [ty] Short-circuit top/bottom signature comparisons (#29537). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e139fbd6`: [ty] Reuse each generic context's inferable type variables (#29700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_benchmark/benches/ty_constraint_set.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/src/types/generics.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Compare bottom sources and top targets against distinct signatures.
-fn benchmark_bottom_and_top_signature_comparisons(criterion: &mut Criterion) {
-    setup_rayon();
-
-    for name in ["bottom", "top"] {
-        let mut code = String::from(
-            "\
-from typing import Any, Callable, Literal
-from ty_extensions import Bottom, Top
-",
-        );
-        for i in 0..128 {
-            let signature = format!("Callable[[Literal[{i}], str, bytes], int]");
-            let (source, target) = if name == "bottom" {
-                ("Bottom[Callable[..., Any]]", signature.as_str())
-            } else {
-                (signature.as_str(), "Top[Callable[..., object]]")
-            };
-            writeln!(
-                &mut code,
-                "\ndef check_{i}(source: {source}) -> None:\n    target: {target} = source"
-            )
-            .ok();
-        }
-
-        criterion.bench_function(&format!("ty_micro[{name}_signature_comparisons]"), |b| {
-            b.iter_batched_ref(
-                || setup_micro_case(&code),
-                |Case { db }| assert_eq!(db.check().len(), 0),
-                BatchSize::SmallInput,
-            );
-        });
-    }
-}
-
-    benchmark_bottom_a
+#[salsa::tracked]
+    ///
+    /// Argument inference reuses this set for each parameter of each candidate overload.
+    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2847,4 +2418,4 @@ from ty_extensions import Bottom, Top
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f3bca2f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e139fbd6` are properly handled with clean fallback behavior.

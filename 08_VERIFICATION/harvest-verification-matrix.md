@@ -5050,3 +5050,6 @@
 | `CYCLE-20261026-5FRL` | `2026-10-26T00:12:17.553Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4495` | Yes (`065515d4...`) |
 | `CYCLE-20261026-D9Q6` | `2026-10-26T00:18:22.974Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4496, Rule 4497, Rule 4498` | Yes (`6081141d...`) |
 | `CYCLE-20261026-DAHF` | `2026-10-26T00:18:23.955Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4499` | Yes (`24f02408...`) |
+| `CYCLE-20261026-LE07` | `2026-10-26T00:24:41.767Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`26627e25...`) |
+| `CYCLE-20261026-LE6Q` | `2026-10-26T00:24:42.002Z` | `mantinedev/mantine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4500` | Yes (`65652df7...`) |
+| `CYCLE-20261026-LFT6` | `2026-10-26T00:24:44.106Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4501` | Yes (`3ec6e6ad...`) |

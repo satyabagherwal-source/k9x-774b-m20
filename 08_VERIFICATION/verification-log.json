@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-BBEV",
-    "timestamp": "2026-10-23T11:37:41.767Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "0f65d4d6bf1486288f380059138312bda470ece2de148b5005be76b4b65d8bd5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-BEQF",
-    "timestamp": "2026-10-23T11:37:46.071Z",
-    "repository": "openreplay/openreplay",
-    "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "da576fefb5ec209e15464843774bc91c713209c7b9f4a98dfdfbf880d3283cf0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-BKYU",
-    "timestamp": "2026-10-23T11:37:54.150Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "ecc2341595fd8ad95934e85fc34bf2c235f5b27bf1b402048759686437679783",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261023-JI73",
     "timestamp": "2026-10-23T11:44:03.807Z",
     "repository": "fastapi/fastapi",
@@ -7490,6 +7445,51 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "24f024080e65c9d02408a65ad6246699382eabfaabc79f833d6c3df6e3e7981b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-LE07",
+    "timestamp": "2026-10-26T00:24:41.767Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "26627e25d050ec65ac623b6eb6a2cdeac83f9cc4548d97a036d7c318460a904a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-LE6Q",
+    "timestamp": "2026-10-26T00:24:42.002Z",
+    "repository": "mantinedev/mantine",
+    "learningId": "learn-github-mantinedev-mantine",
+    "contentHash": "65652df768789b8f5dd82910cce1629911f0d67f8caa6bc7db4306722340a411",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-LFT6",
+    "timestamp": "2026-10-26T00:24:44.106Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

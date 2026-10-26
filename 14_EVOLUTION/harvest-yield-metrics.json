@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T00:18:23.961Z",
-  "total_cycles_completed": 5027,
-  "total_learnings_persisted": 5027,
-  "total_rules_promoted": 4390,
+  "last_updated": "2026-10-26T00:24:44.114Z",
+  "total_cycles_completed": 5030,
+  "total_learnings_persisted": 5030,
+  "total_rules_promoted": 4392,
   "history": [
-    {
-      "timestamp": "2026-10-25T14:25:10.884Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:25:16.151Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T14:25:20.226Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T14:31:39.177Z",
       "repository": "angular/angular",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-26T00:18:23.961Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:24:41.776Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:24:42.010Z",
+      "repository": "mantinedev/mantine",
+      "learningId": "learn-github-mantinedev-mantine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T00:24:44.114Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

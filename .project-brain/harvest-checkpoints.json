@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:18:23.964Z",
+  "last_updated": "2026-10-26T00:24:44.117Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1565,14 +1565,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "79f072da1346f703f33dde38b35e8e4c53292041c39f9c4d0f397d8f1e8dbb4d",
-      "verified_at": "2026-10-21T04:09:31.583Z",
+      "content_hash": "26627e25d050ec65ac623b6eb6a2cdeac83f9cc4548d97a036d7c318460a904a",
+      "verified_at": "2026-10-26T00:24:41.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:09:31.583Z"
+      "last_updated": "2026-10-26T00:24:41.779Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
@@ -9666,14 +9666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mantinedev-mantine",
-      "content_hash": "4accf04aa32327580b566a2af8b997d8d0c153f686a77bcaeb00117fcee8a412",
-      "verified_at": "2026-10-23T07:05:10.321Z",
+      "content_hash": "65652df768789b8f5dd82910cce1629911f0d67f8caa6bc7db4306722340a411",
+      "verified_at": "2026-10-26T00:24:42.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T07:05:10.331Z"
+      "last_updated": "2026-10-26T00:24:42.013Z"
     },
     "sentrux/sentrux": {
       "repository": "sentrux/sentrux",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "83a65d65bf07cafe616eecc0f2f9268a2ce79d5119601ecf2f908509c29b695e",
-      "verified_at": "2026-10-25T05:46:04.454Z",
+      "content_hash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
+      "verified_at": "2026-10-26T00:24:44.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:46:04.454Z"
+      "last_updated": "2026-10-26T00:24:44.117Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
