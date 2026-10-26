@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T14:16:46.813Z",
-  "total_cycles_completed": 5139,
-  "total_learnings_persisted": 5139,
-  "total_rules_promoted": 4524,
+  "last_updated": "2026-10-26T14:23:26.794Z",
+  "total_cycles_completed": 5143,
+  "total_learnings_persisted": 5143,
+  "total_rules_promoted": 4528,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:38:29.236Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:38:36.259Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:45:00.082Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T19:45:01.841Z",
-      "repository": "nezhahq/nezha",
-      "learningId": "learn-github-nezhahq-nezha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:45:11.437Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-26T14:16:46.813Z",
       "repository": "berkaycubuk/kitsune",
       "learningId": "learn-github-berkaycubuk-kitsune",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:23:12.851Z",
+      "repository": "react-bootstrap/react-bootstrap",
+      "learningId": "learn-github-react-bootstrap-react-bootstrap",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:23:21.257Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:23:24.336Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:23:26.794Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

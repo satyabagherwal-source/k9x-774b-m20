@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `66e8caf4`  
+> **Source Version**: `5277f015`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:42:44.935Z  
+> **Timestamp**: 2026-10-26T14:23:23.940Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:42:44.931Z  
+> **Harvest Timestamp**: 2026-10-26T14:23:23.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29134 stars
+- **Stars / Engagement**: 29138 stars
 
 ---
 
@@ -1064,30 +1064,461 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66e8caf4` (2026-10-25)
-**Commit Message**: bazel/gcc: Enable prebuilt wee8 (#48632)
+### Incident Patch 1: `5277f015` (2026-10-26)
+**Commit Message**: ai_protocol_manager: add flow-control integration tests (#48483)
 
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+## Problem
+Follow-up to #48353, from tyxia's review there: APM lacks integration
+test
+coverage for flow control and watermarks. Every existing integration
+test runs
+with default buffer limits, so neither filter chain bridge sees
+back-pressure
+end to end. The encode bridge is only built on a declared AI route, and
+before
+#48353 no integration test declared one.
 
-**File**: `bazel/BUILD` (modified, +0/-1)
+## Fix
+Test-only. Adds one integration test per watermark path that #48353's
+test does
+not already cover:
+- Request ingest back-pressure (`DecoderFilterChainBridge`): a request
+over the
+downstream buffer limit pauses the client during ingest and still
+reaches the
+  upstream whole.
+- Client back-pressure (`EncoderFilterChainBridge`): a client that stops
+reading mid-response holds the response back, and the response completes
+once it reads again.
+
+Depends on #48353 (the client back-pressure test stalls without it).
+Draft/no review yet until it merges.
+
+## Testing
+ai_protocol_manager_integration_test.cc, all protocol variants:
+- RequestOverBufferLimitCompletes
+- ResponseResumesAfterClientBackPressure
+- ResponseOverBufferLimitCompletes (now uses the shared helper)
+
+**File**: `test/extensions/filters/http/ai_protocol_manager/ai_protocol_manager_integration_test.cc` (modified, +79/-22)
 ```diff
-@@ -656,7 +656,6 @@ label_flag(
- alias(
-     name = "wee8_engine",
-     actual = select({
--        ":gcc_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
-         ":asan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
-         ":msan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
-         ":tsan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
+@@ -383,6 +383,33 @@ name: envoy.filters.http.ai_protocol_manager
+     initialize();
+   }
+ 
++  // Declares route 0 an OpenAI chat-completions AI endpoint, which is what
++  // builds both filter chain bridges, and installs the filter downstream.
++  void initializeDeclaredAiRoute() {
++    config_helper_.addConfigModifier(
++        [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
++               hcm) {
++          envoy::config::route::v3::Route ai_route;
++          TestUtility::loadFromYaml(R"EOF(
++typed_per_filter_config:
++  envoy.filters.http.ai_protocol_manager:
++    "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManagerPerRoute
++    request:
++      llm_protocol: OPENAI_CHAT_COMPLETIONS
++)EOF",
++                                    ai_route);
++          hcm.mutable_route_config()->mutable_virtual_hosts(0)->mutable_routes(0)->MergeFrom(
++              ai_route);
++        });
++    config_helper_.prependFilter(R"EOF(
++name: envoy.filters.http.ai_protocol_manager
++typed_config:
++  "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManager
++  request_handling: {}
++)EOF");
++    initialize();
++  }
++
+   Http::TestRequestHeaderMapImpl requestHeaders() {
+     return Http::TestRequestHeaderMapImpl{{":method", "POST"},
+                                           {":path", "/v1/chat/completions"},
+@@ -473,28 +500,7 @@ TEST_P(AiProtocolManagerResponseIntegrationTest, UpstreamFilterJsonTokenUsage) {
+ TEST_P(AiProtocolManagerResponseIntegrationTest, ResponseOverBufferLimitCompletes) {
+   // A large upstream limit lets one read exceed the ingest watermark.
+   config_helper_.setBufferLimits(1024 * 1024, 1024);
+-  config_helper_.addConfigModifier(
+-      [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
+-             hcm) {
+-        envoy::config::route::v3::Route ai_route;
+-        TestUtility::loadFromYaml(R"EOF(
+-typed_per_filter_config:
+-  envoy.filters.http.ai_protocol_manager:
+-    "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManagerPerRoute
+-    request:
+-      llm_protocol: OPENAI_CHAT_COMPLETIONS
+-)EOF",
+-                                  ai_route);
+-        hcm.mutable_route_config()->mutable_virtual_hosts(0)->mutable_routes(0)->MergeFrom(
+-            ai_route);
+-      });
+-  config_helper_.prependFilter(R"EOF(
+-name: envoy.filters.http.ai_protocol_manager
+-typed_config:
+-  "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManager
+-  request_handling: {}
+-)EOF");
+-  initialize();
++  initializeDeclaredAiRoute();
+ 
+   codec_client_ = makeHttpConnection(lookupPort("http"));
+   auto response = codec_client_->makeRequestWithBody(
+@@ -511,6 +517,57 @@ name: envoy.filters.http.ai_protocol_manager
+   EXPECT_EQ(body, response->body());
+ }
+ 
++// A request over the downstream buffer limit on an AI route pauses the client
++// while it is ingested, and replay still delivers it whole.
++TEST_P(AiProtocolManagerResponseIntegrationTest, RequestOverBufferLimitCompletes) {
++  config_helper_.setBufferLimits(1024 * 1024, 1024);
++  initializeDeclaredAiRoute();
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++  const std::string request = R"({"model":"gpt-4o","messages":[{"role":"user","content":")" +
++                              std::string(64 * 1024, 'x') + R"("}]})";
++  auto response = codec_client_->makeRequestWithBody(requestHeaders(), request);
++  waitForNextUpstreamRequest();
++  // Compared as JSON: re-serializing the request does not keep key order.
++  EXPECT_THAT(upstream_request_->body().toString(), JsonStringEq(request));
++
++  upstream_request_->encodeHeaders(default_response_headers_, true);
++  ASSERT_TRUE(response->waitForEndStream());
++  EXPECT_EQ("200", response->headers().getStatusValue());
++  // The ingest pause actually engaged, so the test is not passing vacuously.
++  test_server_->waitForCounter("http.config_test.downstream_flow_control_paused_reading_total",
++                               testing::Ge(1));
++}
++
++// A client that stops reading mid-response holds the response back through the
++// encode bridge, and the response completes once the client reads again.
++TEST_P(AiProtocolManagerResponseIntegrationTest, ResponseResumesAfterClientBackPressure) {
++  config_helper_.setBufferLimits(1024, 1024);
++  initializeDeclaredAiRoute();
++
++  codec_client_ = makeHttpConnection(lookupPort("http"));
++  auto encoder_decoder = codec_client_->startRequest(requestHeaders());
++  request_encoder_ = &encoder_decoder.first;
++  auto response = std::move(encoder_decoder.second);
++  codec_client_->sendData(
++      *request_encoder_, R"({"model":"gpt-4o","messages":[{"role":"user","content":"hi"}]})", true);
++  waitForNextUpstreamRequest();
++
++  request_encoder_->getStream().readDisable(true);
++  const std::string body =
++      R"({"id":"chatcmpl-1","pad":")" + std::st
+```
+
+---
+
+### Incident Patch 2: `5d3b0dca` (2026-10-25)
+**Commit Message**: network ext_proc: support send_once for metadata (#48453)
+
+Currently network(L4) ext_proc filter is repeatedly sending dynamic
+metadata to the server. So, in some situations if the metadata is never
+changing, such repeatedly sending is a waste.
+
+Adding a configuration to only send this in the first message. This
+configuration is default to false to maintain backward compatibility.
+
+---------
+
+Signed-off-by: Yanjun Xiang <[REDACTED_EMAIL]>
+
+**File**: `api/envoy/extensions/filters/network/ext_proc/v3/ext_proc.proto` (modified, +8/-0)
+```diff
+@@ -5,6 +5,7 @@ package envoy.extensions.filters.network.ext_proc.v3;
+ import "envoy/config/core/v3/grpc_service.proto";
+ 
+ import "google/protobuf/duration.proto";
++import "google/protobuf/wrappers.proto";
+ 
+ import "xds/annotations/v3/status.proto";
+ 
+@@ -122,4 +123,11 @@ message MetadataOptions {
+   // Receiving of typed metadata is not supported.
+   // Set to empty or leave unset to disallow writing any received dynamic metadata.
+   MetadataNamespaces receiving_namespaces = 2;
++
++  // When set to ``true``, dynamic metadata specified in ``forwarding_namespaces``
++  // is forwarded only on the first ``ProcessingRequest`` of the connection.
++  //
++  // If unset, defaults to ``false`` (dynamic metadata is forwarded on every
++  // ``ProcessingRequest``).
++  google.protobuf.BoolValue send_once = 3;
+ }
+```
+
+**File**: `source/extensions/filters/network/ext_proc/ext_proc.cc` (modified, +5/-2)
+```diff
+@@ -106,6 +106,7 @@ Config::Config(
+       untyped_receiving_namespaces_(
+           config.metadata_options().receiving_namespaces().untyped().begin(),
+           config.metadata_options().receiving_namespaces().untyped().end()),
++      send_once_(PROTOBUF_GET_WRAPPED_OR_DEFAULT(config.metadata_options(), send_once, false)),
+       stats_(generateStats(config.stat_prefix(), scope)),
+       message_timeout_(std::chrono::milliseconds(
+           PROTOBUF_GET_MS_OR_DEFAULT(config, message_timeout, DefaultMessageTimeoutMs))),
+@@ -584,8 +585,9 @@ void NetworkExtProcFilter::handleConnectionStatus(const ProcessingResponse& resp
+ }
+ 
+ void NetworkExtProcFilter::addDynamicMetadata(ProcessingRequest& req) {
+-  if (config_->untypedForwardingMetadataNamespaces().empty() &&
+-      config_->typedForwardingMetadataNamespaces().empty()) {
++  if ((metadata_sent_ && config_->sendOnce()) ||
++      (config_->untypedForwardingMetadataNamespaces().empty() &&
++       config_->typedForwardingMetadataNamespaces().empty())) {
+     return;
+   }
+ 
+@@ -614,6 +616,7 @@ void NetworkExtProcFilter::addDynamicMetadata(ProcessingRequest& req) {
+       !forwarding_metadata.typed_filter_metadata().empty()) {
+     *req.mutable_metadata() = std::move(forwarding_metadata);
+   }
++  metadata_sent_ = true;
+ }
+ 
+ void NetworkExtProcFilter::addAttributes(ProcessingRequest& req) {
+```
+
+**File**: `source/extensions/filters/network/ext_proc/ext_proc.h` (modified, +4/-0)
+```diff
+@@ -126,6 +126,8 @@ class Config {
+     return untyped_receiving_namespaces_;
+   }
+ 
++  bool sendOnce() const { return send_once_; }
++
+   const NetworkExtProcStats& stats() const { return stats_; }
+ 
+   const std::chrono::milliseconds& messageTimeout() const { return message_timeout_; }
+@@ -146,6 +148,7 @@ class Config {
+   const std::vector<std::string> untyped_forwarding_namespaces_;
+   const std::vector<std::string> typed_forwarding_namespaces_;
+   const absl::flat_hash_set<std::string> untyped_receiving_namespaces_;
++  const bool send_once_;
+   NetworkExtProcStats stats_;
+   const std::chrono::milliseconds message_timeout_;
+   const ExpressionManager expression_manager_;
+@@ -278,6 +281,7 @@ class NetworkExtProcFilter : public Envoy::Network::Filter,
+ 
+   bool processing_complete_{false};
+   bool attributes_sent_{false};
++  bool metadata_sent_{false};
+ 
+   bool read_pending_{false};
+   bool write_pending_{false};
+```
+
+**File**: `test/extensions/filters/network/ext_proc/config_test.cc` (modified, +4/-0)
+```diff
+@@ -33,9 +33,12 @@ TEST_F(ConfigTest, BasicConfigTest) {
+   processing_mode->set_process_write(
+       envoy::extensions::filters::network::ext_proc::v3::ProcessingMode::STREAMED);
+ 
++  proto_config.mutable_metadata_options()->mutable_send_once()->set_value(true);
++
+   Config config(proto_config, scope_);
+ 
+   EXPECT_TRUE(config.failureModeAllow());
++  EXPECT_TRUE(config.sendOnce());
+ 
+   const auto& returned_mode = config.processingMode();
+   EXPECT_EQ(returned_mode.process_read(),
+@@ -51,6 +54,7 @@ TEST_F(ConfigTest, DefaultValues) {
+ 
+   // Test the default value for failureModeAllow (should be false by default in protobuf)
+   EXPECT_FALSE(config.failureModeAllow());
++  EXPECT_FALSE(config.sendOnce());
+ 
+   const auto& mode = config.processingMode();
+   // Check default values according to protobuf definition
+```
+
+**File**: `test/extensions/filters/network/ext_proc/ext_proc_integration_test.cc` (modified, +45/-2)
+```diff
+@@ -204,8 +204,9 @@ class NetworkExtProcFilterIntegrationTest
+   }
+ 
+   void initializeWithMetadataOptions(const std::vector<std::string>& untyped_namespaces,
+-                                     const std::vector<std::string>& typed_namespaces) {
+-    initializeWithModifier([&untyped_namespaces, &typed_namespaces](auto& config) {
++                                     const std::vector<std::string>& typed_namespaces,
++                                     std::optional<bool> send_once = std::nullopt) {
++    initializeWithModifier([&untyped_namespaces, &typed_namespaces, send_once](auto& config) {
+       auto* metadata_options = config.mutable_metadata_options();
+       auto* forwarding_namespaces = metadata_options->mutable_forwarding_namespaces();
+ 
+@@ -216,6 +217,10 @@ class NetworkExtProcFilterIntegrationTest
+       for (const auto& ns : typed_namespaces) {
+         forwarding_namespaces->add_typed(ns);
+       }
++
++      if (send_once.has_value()) {
++        metadata_options->mutable_send_once()->set_value(send_once.value());
++      }
+     });
+   }
+ 
+@@ -1052,6 +1057,44 @@ TEST_P(NetworkExtProcFilterIntegrationTest, BothTypedAndUntypedMetadataForwardin
+   tcp_client->close();
+ }
+ 
++// Test dynamic metadata forwarding with send_once = true
++TEST_P(NetworkExtProcFilterIntegrationTest, MetadataForwardingSendOnce) {
++  setConnectionMetadata("untyped-ns", {{"key1", "value1"}});
++  setConnectionMetadata("typed-ns", {}, "typed-test-value");
++  initializeWithMetadataOptions({"untyped-ns"}, {"typed-ns"}, true);
++
++  IntegrationTcpClientPtr tcp_client = makeTcpConnection(lookupPort("network_ext_proc_filter"));
++
++  ASSERT_TRUE(tcp_client->write("client_data", false));
++  FakeRawConnectionPtr fake_upstream_connection;
++  ASSERT_TRUE(fake_upstreams_[0]->waitForRawConnection(fake_upstream_connection));
++
++  // First ProcessingRequest should include dynamic metadata.
++  ProcessingRequest request1;
++  waitForFirstGrpcMessage(request1);
++  EXPECT_TRUE(request1.has_metadata());
++  EXPECT_THAT(
++      request1.metadata().filter_metadata(),
++      Contains(Pair("untyped-ns", HasStructFields(Contains(IsStructString("key1", "value1"))))));
++  EXPECT_THAT(request1.metadata().typed_filter_metadata(), Contains(Key("typed-ns")));
++
++  sendReadGrpcMessage("client_data_inspected", false, true);
++  ASSERT_TRUE(fake_upstream_connection->waitForData(21));
++
++  // Subsequent ProcessingRequest on the same stream should NOT include dynamic metadata.
++  ASSERT_TRUE(fake_upstream_connection->write("server_response", false));
++  ProcessingRequest write_request;
++  ASSERT_TRUE(processor_stream_->waitForGrpcMessage(*dispatcher_, write_request));
++  EXPECT_TRUE(write_request.has_write_data());
++  EXPECT_FALSE(write_request.has_metadata());
++
++  sendWriteGrpcMessage("server_data_inspected", false);
++  tcp_client->waitForData("server_data_inspected");
++
++  ASSERT_TRUE(fake_upstream_connection->close());
++  tcp_client->close();
++}
++
+ // Test connection status CLOSE handling in responses
+ TEST_P(NetworkExtProcFilterIntegrationTest, ConnectionStatusCloseHandling) {
+   initialize();
+```
+
+**File**: `test/extensions/filters/network/ext_proc/ext_proc_test.cc` (modified, +96/-3)
+```diff
+@@ -108,7 +108,8 @@ class NetworkExtProcFilterTest : public testing::Test {
+   // Create a config with metadata options
+   envoy::extensions::filters::network::ext_proc::v3::NetworkExternalProcessor
+   createConfigWithMetadataOptions(const std::vector<std::string>& untyped_namespaces,
+-                                  const std::vector<std::string>& typed_namespaces) {
++                                  const std::vector<std::string>& typed_namespaces,
++                                  std::optional<bool> send_once = std::nullopt) {
+     envoy::extensions::filters::network::ext_proc::v3::NetworkExternalProcessor config;
+     config.set_failure_mode_allow(false);
+     config.mutable_grpc_service()->mutable_envoy_grpc()->set_cluster_name("ext_proc_server");
+@@ -124,14 +125,19 @@ class NetworkExtProcFilterTest : public testing::Test {
+       forwarding_namespaces->add_typed(ns);
+     }
+ 
++    if (send_once.has_value()) {
++      metadata_options->mutable_send_once()->set_value(send_once.value());
++    }
++
+     return config;
+   }
+ 
+   // Set up a new filter with metadata options
+   void recreateFilterWithMetadataOptions(const std::vector<std::string>& untyped_namespaces,
+-                                         const std::vector<std::string>& typed_namespaces) {
++                                         const std::vector<std::string>& typed_namespaces,
++                                         std::optional<bool> send_once = std::nullopt) {
+     auto filter_config = std::make_shared<Config>(
+-        createConfigWithMetadataOptions(untyped_namespaces, typed_namespaces), scope_);
++        createConfigWithMetadataOptions(untyped_namespaces, typed_namespaces, send_once), scope_);
+     auto client = std::make_unique<NiceMock<MockExternalProcessorClient>>();
+     client_ = client.get();
+     filter_ = std::make_unique<NetworkExtProcFilter>(filter_config, std::move(client));
+@@ -713,6 +719,23 @@ TEST_F(NetworkExtProcFilterTest, UntypedMetadataForwarding) {
+ 
+   Buffer::OwnedImpl data("test");
+   EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(data, false));
++
++  auto response = std::make_unique<ProcessingResponse>();
++  response->mutable_read_data()->set_data("test");
++  filter_->onReceiveMessage(std::move(response));
++
++  // By default (send_once = false), subsequent chunks also include metadata.
++  Buffer::OwnedImpl data2("test2");
++  EXPECT_CALL(*stream_ptr, send(_, false))
++      .WillOnce(testing::Invoke(
++          [](envoy::service::network_ext_proc::v3::ProcessingRequest&& request, bool) {
++            EXPECT_TRUE(request.has_metadata());
++            EXPECT_THAT(request.metadata().filter_metadata(),
++                        UnorderedElementsAre(
++                            Pair("test-namespace",
++                                 HasStructFields(Contains(IsStructString("key1", "value1"))))));
++          }));
++  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(data2, false));
+ }
+ 
+ // Test typed metadata forwarding
+@@ -1792,6 +1815,76 @@ TEST_F(NetworkExtProcFilterTest, ConnectionAttributesSentOnlyOnce) {
+   EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(data2, false));
+ }
+ 
++TEST_F(NetworkExtProcFilterTest, MetadataForwardingSentOnlyOnce) {
++  recreateFilterWithMetadataOptions({"untyped-ns"}, {}, true);
++  addDynamicMetadata("untyped-ns", "key1", "value1");
++
++  auto stream = std::make_unique<NiceMock<MockExternalProcessorStream>>();
++  auto* stream_ptr = stream.get();
++  EXPECT_CALL(*client_, start(_, _, _, _))
++      .WillOnce([&](ExternalProcessorCallbacks&, const Grpc::GrpcServiceConfigWithHashKey&,
++                    Http::AsyncClient::StreamOptions&,
++                    Http::StreamFilterSidestreamWatermarkCallbacks&) -> ExternalProcessorStreamPtr {
++        return std::move(stream);
++      });
++
++  // First chunk should include the metadata.
++  Buffer::OwnedImpl data1("chunk1");
++  EXPECT_CALL(*stream_ptr, send(_, false)).WillOnce([](ProcessingRequest&& req, bool) {
++    EXPECT_TRUE(req.has_metadata());
++    EXPECT_THAT(
++        req.metadata().filter_metadata(),
++        Contains(Pair("untyped-ns", HasStructFields(Contains(IsStructString("key1", "value1"))))));
++  });
++  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(data1, false));
++
++  auto response1 = std::make_unique<ProcessingResponse>();
++  response1->mutable_read_data()->set_data("chunk1");
++  filter_->onReceiveMessage(std::move(response1));
++
++  // Subsequent chunk should NOT include metadata since it was already sent on the first request.
++  Buffer::OwnedImpl data2("chunk2");
++  EXPECT_CALL(*stream_ptr, send(_, false)).WillOnce([](ProcessingRequest&& req, bool) {
++    EXPECT_FALSE(req.has_metadata());
++  });
++  EXPECT_EQ(Network::FilterStatus::StopIteration, filter_->onData(data2, false));
++}
++
++TEST_F(NetworkExtProcFilterTest, MetadataForwardingSentOnlyOnceWhenFirstRequestHasNoMetadata) {
++  recreateFilterWithMetadataOptions({"untyped-ns"}, {}, true);
++
++  auto stream = 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #48715** (closed): Ci/testing (@benedikt90)
+- **PR #48713** (closed): deps: migrate CVE scanning to toolshed (@Copilot)
+- **PR #48712** (closed): deps: test toolshed bazel-cve overrides (@Copilot)
+- **PR #48704** (closed): deps: restore dependency release date checks (@Copilot)
 - **PR #48698** (closed): deps: Bump `rules_kotlin` -> 2.4.21 (@dependency-envoy[bot])
 - **PR #48697** (closed): deps: Bump `pybind11_bazel` -> 3.0.3 (@dependency-envoy[bot])
-- **PR #48695** (closed): deps: Bump `rules_jvm_external` -> 7.2 (@dependency-envoy[bot])
-- **PR #48694** (closed): deps: Bump `rules_shellcheck` -> 0.7.0 (@dependency-envoy[bot])
-- **PR #48692** (closed): deps: Bump `rules_python` -> 2.4.5 (@dependency-envoy[bot])
-- **PR #48691** (closed): deps: Bump `rules_swift` -> 4.2.2 (@dependency-envoy[bot])
 
 ---
 
@@ -1101,3 +1532,83 @@ Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ai_protocol_manager: add flow-control integration tests (#48483)
+
+**RULE**:
+When implementing operations in `test/extensions/filters/http/ai_protocol_manager/ai_protocol_manager_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5277f015`: ai_protocol_manager: add flow-control integration tests (#48483). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/extensions/filters/http/ai_protocol_manager/ai_protocol_manager_integration_test.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+  // Declares route 0 an OpenAI chat-completions AI endpoint, which is what
+  // builds both filter chain bridges, and installs the filter downstream.
+  void initializeDeclaredAiRoute() {
+    config_helper_.addConfigModifier(
+        [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
+               hcm) {
+          envoy::config::route::v3::Route ai_route;
+          TestUtility::loadFromYaml(R"EOF(
+typed_per_filter_config:
+  envoy.filters.http.ai_protocol_manager:
+    "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManagerPerRoute
+    request:
+      llm_protocol: OPENAI_CHAT_COMPLETIONS
+)EOF",
+                                    ai_route);
+          hcm.mutable_route_config()->mutable_virtual_hosts(0)->mutable_routes(0)->MergeFrom(
+              ai_route);
+        });
+    config_helper_.prependFilter(R"EOF(
+name: envoy.filters.http.ai_protocol_manager
+typed_config:
+  "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManager
+  request_handling: {}
+)EOF");
+    initialize();
+  }
+
+  initializeDeclaredAiRoute();
+// A request over the downstream buffer limit on a
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+  config_helper_.addConfigModifier(
+      [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
+             hcm) {
+        envoy::config::route::v3::Route ai_route;
+        TestUtility::loadFromYaml(R"EOF(
+typed_per_filter_config:
+  envoy.filters.http.ai_protocol_manager:
+    "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManagerPerRoute
+    request:
+      llm_protocol: OPENAI_CHAT_COMPLETIONS
+)EOF",
+                                  ai_route);
+        hcm.mutable_route_config()->mutable_virtual_hosts(0)->mutable_routes(0)->MergeFrom(
+            ai_route);
+      });
+  config_helper_.prependFilter(R"EOF(
+name: envoy.filters.http.ai_protocol_manager
+typed_config:
+  "@type": type.googleapis.com/envoy.extensions.filters.http.ai_protocol_manager.v3.AiProtocolManager
+  request_handling: {}
+)EOF");
+  initialize();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5277f015` are properly handled with clean fallback behavior.

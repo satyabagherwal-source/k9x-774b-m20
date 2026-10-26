@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T14:16:46.748Z",
+  "last_updated": "2026-10-26T14:23:26.729Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10360,8 +10360,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "66e8caf4",
-      "content_hash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
+      "source_version": "5277f015",
+      "content_hash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -10389,6 +10389,11 @@
           "number": 3966,
           "title": "datadog: check the deadline and cluster before building the report (#48480)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4626,
+          "title": "ai_protocol_manager: add flow-control integration tests (#48483)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10396,7 +10401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:42:44.997Z",
+      "verified_at": "2026-10-26T14:23:24.260Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29530,14 +29535,19 @@
       "slug": "iplug2-iplug2",
       "platform": "github",
       "source_url": "https://github.com/iPlug2/iPlug2",
-      "source_version": "39ea73aa",
-      "content_hash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
+      "source_version": "d82b2e99",
+      "content_hash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
       "dossier_path": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iplug2-iplug2-learnings.md",
       "promoted_rules": [
         {
           "number": 2923,
           "title": "Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4625,
+          "title": "Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29546,7 +29556,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:31:49.173Z",
+      "verified_at": "2026-10-26T14:23:21.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42591,8 +42601,8 @@
       "slug": "react-bootstrap-react-bootstrap",
       "platform": "github",
       "source_url": "https://github.com/react-bootstrap/react-bootstrap",
-      "source_version": "6461dcd6",
-      "content_hash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
+      "source_version": "5bc9aa01",
+      "content_hash": "04530f648f4994d1def0473d4dee6493ba4e4018fc403f6e1919e50fd599f8f5",
       "dossier_path": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "promoted_rules": [
@@ -42610,6 +42620,11 @@
           "number": 4411,
           "title": "update to vitest v5 (#7051)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4624,
+          "title": "deps): update actions/checkout action to v7 (#7044)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42617,7 +42632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:28:18.748Z",
+      "verified_at": "2026-10-26T14:23:12.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43636,8 +43651,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "204e2636",
-      "content_hash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
+      "source_version": "84409045",
+      "content_hash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -43670,6 +43685,11 @@
           "number": 4386,
           "title": "sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4627,
+          "title": "optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43677,7 +43697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:54:48.658Z",
+      "verified_at": "2026-10-26T14:23:26.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129542,6 +129562,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T14:16:46.736Z"
+    },
+    "rule-4624": {
+      "learning_id": "rule-4624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4624,
+      "title": "deps): update actions/checkout action to v7 (#7044)",
+      "source_url": "https://github.com/react-bootstrap/react-bootstrap",
+      "source_version": "5bc9aa01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:23:12.760Z"
+    },
+    "rule-4625": {
+      "learning_id": "rule-4625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4625,
+      "title": "Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close",
+      "source_url": "https://github.com/iPlug2/iPlug2",
+      "source_version": "d82b2e99",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:23:21.177Z"
+    },
+    "rule-4626": {
+      "learning_id": "rule-4626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4626,
+      "title": "ai_protocol_manager: add flow-control integration tests (#48483)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "5277f015",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:23:24.260Z"
+    },
+    "rule-4627": {
+      "learning_id": "rule-4627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4627,
+      "title": "optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "84409045",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:23:26.717Z"
     }
   },
   "aliases": {

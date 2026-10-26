@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T14:16:46.817Z",
+  "last_updated": "2026-10-26T14:23:26.798Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
-      "verified_at": "2026-10-25T16:54:48.736Z",
+      "content_hash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
+      "verified_at": "2026-10-26T14:23:26.797Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:54:48.736Z"
+      "last_updated": "2026-10-26T14:23:26.797Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -6021,14 +6021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-bootstrap-react-bootstrap",
-      "content_hash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
-      "verified_at": "2026-10-25T18:28:18.830Z",
+      "content_hash": "04530f648f4994d1def0473d4dee6493ba4e4018fc403f6e1919e50fd599f8f5",
+      "verified_at": "2026-10-26T14:23:12.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:28:18.830Z"
+      "last_updated": "2026-10-26T14:23:12.854Z"
     },
     "orf/gping": {
       "repository": "orf/gping",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
-      "verified_at": "2026-10-25T17:42:45.047Z",
+      "content_hash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
+      "verified_at": "2026-10-26T14:23:24.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:42:45.047Z"
+      "last_updated": "2026-10-26T14:23:24.339Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -14571,14 +14571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iplug2-iplug2",
-      "content_hash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
-      "verified_at": "2026-10-20T00:31:49.240Z",
+      "content_hash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
+      "verified_at": "2026-10-26T14:23:21.261Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:31:49.240Z"
+      "last_updated": "2026-10-26T14:23:21.261Z"
     },
     "digitalbazaar/jsonld.js": {
       "repository": "digitalbazaar/jsonld.js",

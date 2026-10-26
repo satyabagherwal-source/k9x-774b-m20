@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZC7U",
-    "timestamp": "2026-10-25T04:31:49.146Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "ef7421b2cbd134f82d01bccfabfe9c2d825febb84dad85e217f783411a4bbaa6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZEE0",
-    "timestamp": "2026-10-25T04:31:51.960Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "316aa77aaeaac38bf7fcc7b914bd495cb218845f30e61b8e77f8d28b8cf1f8dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7AQ2",
-    "timestamp": "2026-10-25T04:38:00.458Z",
-    "repository": "glincker/thesvg",
-    "learningId": "learn-github-glincker-thesvg",
-    "contentHash": "42ddb249d87efc15b9a6ef561e31d3d11752047fa102ea789d04e823d4b382e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7DBP",
-    "timestamp": "2026-10-25T04:38:03.829Z",
-    "repository": "killercup/cargo-edit",
-    "learningId": "learn-github-killercup-cargo-edit",
-    "contentHash": "d56c7ccc25c993cc56e04fb5bdc11ce4eaca06f9e44dd52db6b22bafe8b77cc2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-7K1R",
     "timestamp": "2026-10-25T04:38:12.543Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7430,66 @@
     "repository": "berkaycubuk/kitsune",
     "learningId": "learn-github-berkaycubuk-kitsune",
     "contentHash": "a09d116f95d8729ef540891ac289a4b429c97979e40255f4735c40e3c4ac014f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-JQA3",
+    "timestamp": "2026-10-26T14:23:12.843Z",
+    "repository": "react-bootstrap/react-bootstrap",
+    "learningId": "learn-github-react-bootstrap-react-bootstrap",
+    "contentHash": "04530f648f4994d1def0473d4dee6493ba4e4018fc403f6e1919e50fd599f8f5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-JWRL",
+    "timestamp": "2026-10-26T14:23:21.249Z",
+    "repository": "iPlug2/iPlug2",
+    "learningId": "learn-github-iplug2-iplug2",
+    "contentHash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-JZ54",
+    "timestamp": "2026-10-26T14:23:24.328Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-K11E",
+    "timestamp": "2026-10-26T14:23:26.786Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

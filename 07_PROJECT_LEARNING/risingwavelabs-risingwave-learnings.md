@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `204e2636`  
+> **Source Version**: `84409045`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:54:48.357Z  
+> **Timestamp**: 2026-10-26T14:23:26.399Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:54:48.234Z  
+> **Harvest Timestamp**: 2026-10-26T14:23:26.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9386 stars
+- **Stars / Engagement**: 9388 stars
 
 ---
 
@@ -1077,620 +1077,266 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c69fba0` (2026-10-23)
-**Commit Message**: fix(sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)
+### Incident Patch 1: `a3472511` (2026-10-26)
+**Commit Message**: fix(optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/connector/src/sink/big_query.rs` (modified, +234/-22)
+**File**: `e2e_test/streaming/bug_fixes/issue_27451.slt` (added, +74/-0)
 ```diff
-@@ -15,6 +15,7 @@
- use core::pin::Pin;
- use core::time::Duration;
- use std::collections::{BTreeMap, HashMap, VecDeque};
-+use std::time::{SystemTime, UNIX_EPOCH};
- 
- use anyhow::{Context, anyhow};
- use async_trait::async_trait;
-@@ -42,6 +43,7 @@ use google_cloud_googleapis::cloud::bigquery::storage::v1::{
- };
- use google_cloud_pubsub::client::google_cloud_auth;
- use google_cloud_pubsub::client::google_cloud_auth::credentials::CredentialsFile;
-+use parking_lot::Mutex;
- use phf::{Set, phf_set};
- use prost_reflect::{FieldDescriptor, MessageDescriptor};
- use prost_types::{
-@@ -51,6 +53,7 @@ use prost_types::{
- use risingwave_common::array::{Op, StreamChunk};
- use risingwave_common::catalog::{Field, Schema};
- use risingwave_common::types::DataType;
-+use risingwave_common::util::iter_util::ZipEqDebug;
- use serde::Deserialize;
- use serde_with::{DisplayFromStr, serde_as};
- use simd_json::prelude::ArrayTrait;
-@@ -72,6 +75,7 @@ use crate::sink::{Result, Sink, SinkParam, SinkWriterParam};
- 
- pub const BIGQUERY_SINK: &str = "bigquery";
- pub const CHANGE_TYPE: &str = "_CHANGE_TYPE";
-+pub const CHANGE_SEQUENCE_NUMBER: &str = "_CHANGE_SEQUENCE_NUMBER";
- const DEFAULT_GRPC_CHANNEL_NUMS: usize = 4;
- const CONNECT_TIMEOUT: Option<Duration> = Some(Duration::from_secs(30));
- const CONNECTION_TIMEOUT: Option<Duration> = None;
-@@ -640,6 +644,7 @@ pub struct BigQuerySinkWriter {
-     message_descriptor: MessageDescriptor,
-     write_stream: String,
-     proto_field: Option<FieldDescriptor>,
-+    change_sequence_number_field: Option<FieldDescriptor>,
- }
- 
- impl TryFrom<SinkParam> for BigQuerySink {
-@@ -664,6 +669,17 @@ impl BigQuerySinkWriter {
-             .common
-             .build_writer_client(&config.aws_auth_props)
-             .await?;
-+        let writer = Self::with_client(config, schema, pk_indices, is_append_only, client)?;
-+        Ok((writer, resp_stream))
-+    }
-+
-+    fn with_client(
-+        config: BigQueryConfig,
-+        schema: Schema,
-+        pk_indices: Vec<usize>,
-+        is_append_only: bool,
-+        client: StorageWriterClient,
-+    ) -> Result<Self> {
-         let mut descriptor_proto = build_protobuf_schema(
-             schema
-                 .fields()
-@@ -680,6 +696,13 @@ impl BigQuerySinkWriter {
-                 ..Default::default()
-             };
-             descriptor_proto.field.push(field);
-+            let field = FieldDescriptorProto {
-+                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
-+                number: Some((schema.len() + 2) as i32),
-+                r#type: Some(field_descriptor_proto::Type::String.into()),
-+                ..Default::default()
-+            };
-+            descriptor_proto.field.push(field);
-         }
- 
-         let descriptor_pool = build_protobuf_descriptor_pool(&descriptor_proto)?;
-@@ -701,32 +724,40 @@ impl BigQuerySinkWriter {
-         } else {
-             None
-         };
-+        let change_sequence_number_field = if !is_append_only {
-+            let field = message_descriptor
-+                .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
-+                .ok_or_else(|| {
-+                    SinkError::BigQuery(anyhow::anyhow!("Can't find {}", CHANGE_SEQUENCE_NUMBER))
-+                })?;
-+            Some(field)
-+        } else {
-+            None
-+        };
-         let row_encoder = ProtoEncoder::new(
-             schema.clone(),
-             None,
-             message_descriptor.clone(),
-             ProtoHeader::None,
-         )?;
--        Ok((
--            Self {
--                write_stream: format!(
--                    "projects/{}/datasets/{}/tables/{}/streams/_default",
--                    config.common.project, config.common.dataset, config.common.table
--                ),
--                config,
--                schema,
--                pk_indices,
--                client,
--                is_append_only,
--                row_encoder,
--                message_descriptor,
--                proto_field,
--                writer_pb_schema: ProtoSchema {
--                    proto_descriptor: Some(descriptor_proto.clone()),
--                },
-+        Ok(Self {
-+            write_stream: format!(
-+                "projects/{}/datasets/{}/tables/{}/streams/_default",
-+                config.common.project, config.common.dataset, config.common.table
-+            ),
-+            config,
-+            schema,
-+            pk_indices,
-+            client,
-+            is_append_only,
-+            row_encoder,
-+            message_descriptor,
-+            proto_field,
-+            change_sequence_number_field,
-+            writer_pb_schema: ProtoSchema {
-+                proto_descriptor: Some(descriptor_proto.clone()),
-             },
--            resp_stream,
--        ))
-+        })
-     }
- 
-     fn append_only(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
-@@ -741,8 +772,9 @@ impl BigQuerySinkWriter {
-     }
- 
-     fn upsert(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
-+        let sequence_numbers = CHANGE_SEQ
-```
-
----
-
-### Incident Patch 2: `204e2636` (2026-10-25)
-**Commit Message**: fix(frontend): bind correlated references to their owning scope (#27540)
-
-**File**: `e2e_test/batch/subquery/lateral_subquery.slt.part` (modified, +159/-0)
-```diff
-@@ -184,3 +184,162 @@ FROM ambiguous_lateral_a;
- 
- statement ok
- DROP TABLE ambiguous_lateral_a;
-+
-+# A lateral item after a left FROM item may reference columns of enclosing queries.
-+statement ok
-+CREATE TABLE lateral_outer_a(a1 INT);
+@@ -0,0 +1,74 @@
++# https://github.com/risingwavelabs/risingwave/issues/27451
++# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
++# which outputs one row instead of zero rows on empty input.
 +
 +statement ok
-+CREATE TABLE lateral_outer_b(b1 INT);
++create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
 +
 +statement ok
-+CREATE TABLE lateral_outer_t1(x INT);
-+
-+statement ok
-+CREATE TABLE lateral_outer_t2(y INT);
-+
-+statement ok
-+INSERT INTO lateral_outer_a VALUES (1), (2);
-+
-+statement ok
-+INSERT INTO lateral_outer_b VALUES (10), (11);
-+
-+statement ok
-+INSERT INTO lateral_outer_t1 VALUES (1), (2);
-+
-+statement ok
-+INSERT INTO lateral_outer_t2 VALUES (10), (20);
-+
-+query I rowsort
-+SELECT (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 + q AS y) z) FROM lateral_outer_a;
-+----
-+101
-+102
-+
-+query I rowsort
-+SELECT (SELECT y FROM (SELECT 100 AS q) t1 CROSS JOIN LATERAL (SELECT a1 + q AS y) z) FROM lateral_outer_a;
-+----
-+101
-+102
-+
-+query I rowsort
-+SELECT (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 AS y) z) FROM lateral_outer_a;
-+----
-+1
-+2
-+
-+query I rowsort
-+SELECT (SELECT y FROM (SELECT 100 AS q) t1 LEFT JOIN LATERAL (SELECT a1 + q AS y) z ON true) FROM lateral_outer_a;
-+----
-+101
-+102
-+
-+query II rowsort
-+SELECT a1, y FROM lateral_outer_a,
-+  LATERAL (SELECT y FROM (SELECT 100 AS q) t1, LATERAL (SELECT a1 + q AS y) z) s;
-+----
-+1 101
-+2 102
-+
-+query II rowsort
-+SELECT a1, y FROM lateral_outer_a,
-+  LATERAL (SELECT y FROM (SELECT 100 AS q) t1, unnest(array[a1 + q]) z(y)) s;
-+----
-+1 101
-+2 102
-+
-+query III rowsort
-+SELECT x, y, s FROM lateral_outer_t1,
-+  LATERAL (SELECT * FROM lateral_outer_t2, LATERAL (SELECT x + y AS s) iz) oz;
-+----
-+1 10 11
-+1 20 21
-+2 10 12
-+2 20 22
-+
-+query III rowsort
-+SELECT x, y, s FROM lateral_outer_t1
-+  CROSS JOIN LATERAL (SELECT * FROM lateral_outer_t2 CROSS JOIN LATERAL (SELECT x + y AS s) iz) oz;
-+----
-+1 10 11
-+1 20 21
-+2 10 12
-+2 20 22
++create materialized view m16 as select col_0 from m6 where false group by col_0;
 +
 +query I
-+SELECT a1 FROM lateral_outer_a
-+WHERE EXISTS (SELECT 1 FROM lateral_outer_b, LATERAL (SELECT a1 + b1 AS s) z WHERE s > 12);
++select * from m16;
 +----
-+2
 +
-+# Left inputs hidden from a non-lateral item or a join condition are not correlation scopes.
-+query II rowsort
-+SELECT a1, (SELECT count(*) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN (SELECT a1 AS v) w) WHERE v = x)
-+FROM lateral_outer_a;
++query I
++select col_0 from m6 where false group by col_0;
 +----
-+1 2
-+2 2
 +
-+query II rowsort
-+SELECT a1, (SELECT count(*) FROM lateral_outer_t1, lateral_outer_t2 JOIN lateral_outer_b ON b1 = a1 + 9)
-+FROM lateral_outer_a;
-+----
-+1 4
-+2 4
-+
-+# Each correlated reference is bound to the join that owns its column, however deep the join tree.
-+query II rowsort
-+SELECT a1, (SELECT max(v) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN
-+  (lateral_outer_b CROSS JOIN LATERAL (SELECT y AS yy) l CROSS JOIN (SELECT a1 AS v) w)))
-+FROM lateral_outer_a;
-+----
-+1 1
-+2 2
-+
-+query II rowsort
-+SELECT a1, (SELECT count(*) FROM lateral_outer_t1, (lateral_outer_t2 CROSS JOIN
-+  (lateral_outer_b CROSS JOIN LATERAL (SELECT y AS yy) l JOIN lateral_outer_b b2 ON b2.b1 = a1 + 9)))
-+FROM lateral_outer_a;
-+----
-+1 8
-+2 8
-+
-+query IIII rowsort
-+SELECT x, y, b1, s FROM lateral_outer_t1,
-+  (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN LATERAL (SELECT x + b1 AS s) q))
-+WHERE y = 10;
-+----
-+1 10 10 11
-+1 10 11 12
-+2 10 10 12
-+2 10 11 13
-+
-+query IIII rowsort
-+SELECT x, y, b1, s FROM lateral_outer_t1
-+  CROSS JOIN (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN unnest(array[x + b1]) q(s)))
-+WHERE y = 10;
-+----
-+1 10 10 11
-+1 10 11 12
-+2 10 10 12
-+2 10 11 13
-+
-+query II rowsort
-+SELECT a1, (SELECT max(s) FROM lateral_outer_t1,
-+  (lateral_outer_t2 CROSS JOIN (lateral_outer_b CROSS JOIN LATERAL (SELECT a1 + b1 AS s) q)))
-+FROM lateral_outer_a;
-+----
-+1 12
-+2 13
++# Multiple group keys on a single-row input whose only row may be filtered out.
++statement ok
++create table t (v int);
 +
 +statement ok
-+DROP TABLE lateral_outer_a;
++create materialized view m_single as select min(v) as a, max(v) as b from t;
 +
 +statement ok
-+DROP TABLE lateral_outer_b;
++create materialized view m_grouped as
++select a, b, count(*) as cnt from m_single where a is not null group by a, b;
++
++query III
++select * from m_grouped;
++----
++
++# The same query in batch mode.
++query III
++select a, b, count(*) from m_single where a is not null group by a, b;
++----
 +
 +statement ok
-+DROP TABLE lateral_outer_t1;
++insert into t values (1), (3);
 +
 +statement ok
-+DROP TABLE lateral_outer_t2;
++flush;
++
++query III
++select * from m_grouped;
++----
++1 3 1
++
++statement ok
++delete from t;
++
++statement ok
++flush;
++
++query III
++select * from m_grouped;
++----
++
++# cleanup
++statement ok
++drop materialized view m_grouped;
++
++statement ok
++drop materialized view m_single;
++
++statement ok
++drop table t;
++
++statement ok
++drop materialized view m16;
++
++statement ok
++drop materialized view m6;
 ```
 
-**File**: `e2e_test/batch/subquery/subquery.slt.part` (modified, +8/-0)
+**File**: `src/frontend/planner_test/tests/testdata/input/agg.yaml` (modified, +19/-0)
 ```diff
-@@ -211,6 +211,14 @@ where exists (select 1 from correlated_ref_t3 where y = x);
- 1
- 3
- 
-+# A correlated CTE keeps its outer reference when it is read from a nested subquery.
-+query II rowsort
-+select x, (with c as (select x as v) select (select v from c)) from correlated_ref_t1;
-+----
-+1 1
-+2 2
-+NULL NULL
-+
- statement ok
- drop table correlated_ref_t1;
- 
-```
-
-**File**: `e2e_test/udf/tests/language_specific/sql_from.slt` (modified, +35/-0)
-```diff
-@@ -74,6 +74,41 @@ select f();
- statement ok
- drop function f;
- 
-+
-+# A parameter referenced inside a lateral subquery of the body, called with a column argument.
-+statement ok
-+create table t0 (x int);
-+
-+statement ok
-+insert into t0 values (1), (2), (3);
-+
-+statement ok
-+create table a (a1 int);
-+
-+statement ok
-+insert into a values (-3), (-2), (-1), (0), (null);
-+
-+statement ok
-+create function f3(v int) returns bigint language sql as $$ select count(*) from t0, lateral (select x + v as s) l where s > 0 $$;
-+
-+query II rowsort
-+select a1, f3(a1) from a;
-+----
-+-1 2
-+-2 1
-+-3 0
-+0 3
-+NULL 0
-+
-+statement ok
-+drop function f3;
-+
-+statement ok
-+drop table a;
-+
-+statement ok
-+drop table t0;
-+
- statement ok
- CREATE FUNCTION jsonb_values_at(data jsonb, grouping_keys TEXT[])
-   RETURNS TEXT[]
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/lateral_subquery.yaml` (modified, +71/-0)
-```diff
-@@ -250,3 +250,74 @@
-   expected_outputs:
+@@ -1173,3 +1173,22 @@
+     - logical_plan
      - batch_plan
      - stream_plan
-+- name: lateral after a left item references an enclosing query
++- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
 +  sql: |
-+    create table a (a1 int);
-+    select (select y from (select 100 as q) t1, lateral (select a1 + q as y) z) from a;
++    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
++    select col_0 from m6 where false group by col_0;
 +  expected_outputs:
++    - logical_plan
++    - optimized_logical_plan_for_batch
++    - optimized_logical_plan_for_stream
 +    - batch_plan
-+- name: explicit join lateral references an enclosing query
++    - stream_plan
++- name: group by multiple columns on a single-row input keeps one group key
 +  sql: |
-+    create table a (a1 int);
-+    select (select y from (select 100 as q) t1 cross join lateral (select a1 + q as y) z) from a;
++    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
++    select a, b, count(*) from m7 where a > 0 group by a, b;
 +  expected_outputs:
++    - optimized_logical_plan_for_batch
++    - optimized_logical_plan_for_stream
 +    - batch_plan
-+- name: nested lateral references the left input of an enclosing lateral
-+  sql: |
-+    create table t1 (x int);
-+    create table t2 (y int);
-+    select * from t1, lateral (select * from t2, lateral (select x + y as s) iz) oz;
-+  expected_outputs:
-+    - batch_plan
-+- name: non-lateral item under a join references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    create table t1 (x int);
-+    create table t2 (y int);
-+    select a1, (select count(*) from t1, (t2 cross join (select a1 as v) w) where v = x) from a;
-+  expected_outputs:
-+    - batch_plan
-+- name: non-lateral item under a nested lateral join references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    create table t0 (x int);
-+    create table t1 (y int);
-+    create table t2 (z int);
-+    select a1, (select max(v) from t0, (t1 cross join (t2 cross join lateral (select y as yy) l cross join (select a1 as v) w))) from a;
-+  expected_outputs:
-+    - batch_plan
-+- name: join condition under a nested lateral join references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    create table b (b1 int);
-+    create table t0 (x int);
-+    create table t1 (y int);
-+    create table t2 (z int);
-+    select a1, (select count(*) from t0, (t1 cross join (t2 cross join lateral (select y as yy) l join b on b1 = a1))) from a;
-+  expected_outputs:
-+    - batch_plan
-+- name: lateral item under an intermediate join references an outer left input
-+  sql: |
-+    create table t0 (x int);
-+    create table t1 (y int);
-+    create table t2 (z int);
-+    select * from t0, (t1 cross join (t2 cross join lateral (select x + z as s) q));
-+  expected_outputs:
-+    - batch_plan
-+- name: lateral table function under an intermediate join references an outer left input
-+  sql: |
-+    create table t0 (x int);
-+    create table t1 (y int);
-+    create table t2 (z int);
-+    select * from t0 cross join (t1 cross join (t2 cross join unnest(array[x, z]) u));
-+  expected_outputs:
-+    - batch_plan
-+- name: lateral item under an intermediate join references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    create table t0 (x int);
-+    create table t1 (y int);
-+    create table t2 (z int);
-+    select a1, (select max(s) from t0, (t1 cross join (t2 cross join lateral (select a1 + z as s) q))) from a;
-+  expected_outputs:
-+    - batch_plan
++    - stream_plan
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/input/subquery_expr_correlated.yaml` (modified, +6/-0)
+**File**: `src/frontend/planner_test/tests/testdata/output/agg.yaml` (modified, +50/-0)
 ```diff
-@@ -614,6 +614,12 @@
-   expected_outputs:
-     - batch_plan
-     - stream_plan
-+- name: correlated CTE referenced from a nested subquery
+@@ -2331,3 +2331,53 @@
+     └─StreamProject { exprs: [null:Struct(a:Int16, b:Float64, c:Time), 995:Int32, '-168:00:00':Interval, 294:Float64, _row_id] }
+       └─StreamFilter { predicate: false:Boolean }
+         └─StreamValues { rows: [[0:Int64]] }
++- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
 +  sql: |
-+    create table t1(x int);
-+    select x, (with cte as (select x as v) select (select v from cte)) from t1;
-+  expected_outputs:
-+    - batch_plan
- - name: subqueries in case when exprs
-   sql: |
-     WITH input AS (
++    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
++    select col_0 from m6 where false group by col_0;
++  logical_plan: |-
++    LogicalProject { exprs: [m6.col_0] }
++    └─LogicalAgg { group_key: [m6.col_0], aggs: [] }
++      └─LogicalProject { exprs: [m6.col_0] }
++        └─LogicalFilter { predicate: false:Boolean }
++          └─LogicalScan { table: m6, columns: [m6.col_0, m6._rw_timestamp], cardinality: 1..=1 }
++  optimized_logical_plan_for_batch: |-
++    LogicalAgg { group_key: [m6.col_0], aggs: [] }
++    └─LogicalValues { rows: [], schema: Schema { fields: [m6.col_0:Int32] } }
++  optimized_logical_plan_for_stream: |-
++    LogicalAgg { group_key: [m6.col_0], aggs: [] }
++    └─LogicalScan { table: m6, columns: [m6.col_0], predicate: false:Boolean, cardinality: 1..=1 }
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashAgg { group_key: [m6.col_0], aggs: [] }
++      └─BatchExchange { order: [], dist: HashShard(m6.col_0) }
++        └─BatchValues { rows: [] }
++  stream_plan: |-
++    StreamMaterialize { columns: [col_0], stream_key: [col_0], pk_columns: [col_0], pk_conflict: NoCheck }
++    └─StreamProject { exprs: [m6.col_0], noop_update_hint: true }
++      └─StreamHashAgg { group_key: [m6.col_0], aggs: [count] }
++        └─StreamExchange { dist: HashShard(m6.col_0) }
++          └─StreamFilter { predicate: false:Boolean }
++            └─StreamTableScan { table: m6, columns: [m6.col_0], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
++- name: group by multiple columns on a single-row input keeps one group key
++  sql: |
++    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
++    select a, b, count(*) from m7 where a > 0 group by a, b;
++  optimized_logical_plan_for_batch: |-
++    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
++    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
++  optimized_logical_plan_for_stream: |-
++    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
++    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
++      └─BatchExchange { order: [], dist: HashShard(m7.a) }
++        └─BatchFilter { predicate: (m7.a > 0:Int32) }
++          └─BatchScan { table: m7, columns: [m7.a, m7.b], distribution: Single }
++  stream_plan: |-
++    StreamMaterialize { columns: [a, b, count], stream_key: [a], pk_columns: [a], pk_conflict: NoCheck }
++    └─StreamHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
++      └─StreamExchange { dist: HashShard(m7.a) }
++        └─StreamFilter { predicate: (m7.a > 0:Int32) }
++          └─StreamTableScan { table: m7, columns: [m7.a, m7.b], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/lateral_subquery.yaml` (modified, +269/-0)
+**File**: `src/frontend/planner_test/tests/testdata/output/subquery_impure_outer.yaml` (modified, +8/-8)
 ```diff
-@@ -555,3 +555,272 @@
-                             │           └─StreamTableScan { table: t2, columns: [t2.ex_date, t2.qid, t2._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t2._row_id], pk: [_row_id], dist: UpstreamHashShard(t2._row_id) }
-                             └─StreamExchange { dist: HashShard(t3.qid) }
-                               └─StreamTableScan { table: t3, columns: [t3.price_at, t3.qid, t3._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t3._row_id], pk: [_row_id], dist: UpstreamHashShard(t3._row_id) }
-+- name: lateral after a left item references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    select (select y from (select 100 as q) t1, lateral (select a1 + q as y) z) from a;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashJoin { type: LeftOuter, predicate: a.a1 IS NOT DISTINCT FROM a.a1, output: [$expr1] }
-+      ├─BatchExchange { order: [], dist: HashShard(a.a1) }
-+      │ └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
-+      └─BatchExchange { order: [], dist: HashShard(a.a1) }
-+        └─BatchProject { exprs: [a.a1, (a.a1 + 100:Int32) as $expr1] }
-+          └─BatchHashJoin { type: Inner, predicate: 100:Int32 IS NOT DISTINCT FROM 100:Int32, output: all }
-+            ├─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+            │ └─BatchValues { rows: [[100:Int32]] }
-+            └─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+              └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
-+                ├─BatchExchange { order: [], dist: Single }
-+                │ └─BatchHashAgg { group_key: [a.a1], aggs: [] }
-+                │   └─BatchExchange { order: [], dist: HashShard(a.a1) }
-+                │     └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
-+                └─BatchExchange { order: [], dist: Single }
-+                  └─BatchHashAgg { group_key: [100:Int32], aggs: [] }
-+                    └─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+                      └─BatchValues { rows: [[100:Int32]] }
-+- name: explicit join lateral references an enclosing query
-+  sql: |
-+    create table a (a1 int);
-+    select (select y from (select 100 as q) t1 cross join lateral (select a1 + q as y) z) from a;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashJoin { type: LeftOuter, predicate: a.a1 IS NOT DISTINCT FROM a.a1, output: [$expr1] }
-+      ├─BatchExchange { order: [], dist: HashShard(a.a1) }
-+      │ └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
-+      └─BatchExchange { order: [], dist: HashShard(a.a1) }
-+        └─BatchProject { exprs: [a.a1, (a.a1 + 100:Int32) as $expr1] }
-+          └─BatchHashJoin { type: Inner, predicate: 100:Int32 IS NOT DISTINCT FROM 100:Int32, output: all }
-+            ├─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+            │ └─BatchValues { rows: [[100:Int32]] }
-+            └─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+              └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
-+                ├─BatchExchange { order: [], dist: Single }
-+                │ └─BatchHashAgg { group_key: [a.a1], aggs: [] }
-+                │   └─BatchExchange { order: [], dist: HashShard(a.a1) }
-+                │     └─BatchScan { table: a, columns: [a.a1], distribution: SomeShard }
-+                └─BatchExchange { order: [], dist: Single }
-+                  └─BatchHashAgg { group_key: [100:Int32], aggs: [] }
-+                    └─BatchExchange { order: [], dist: HashShard(100:Int32) }
-+                      └─BatchValues { rows: [[100:Int32]] }
-+- name: nested lateral references the left input of an enclosing lateral
-+  sql: |
-+    create table t1 (x int);
-+    create table t2 (y int);
-+    select * from t1, lateral (select * from t2, lateral (select x + y as s) iz) oz;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchProject { exprs: [t1.x, t2.y, (t1.x + t2.y) as $expr1] }
-+      └─BatchHashJoin { type: Inner, predicate: t2.y IS NOT DISTINCT FROM t2.y AND t1.x IS NOT DISTINCT FROM t1.x, output: all }
-+        ├─BatchExchange { order: [], dist: HashShard(t1.x, t2.y) }
-+        │ └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
-+        │   ├─BatchExchange { order: [], dist: Single }
-+        │   │ └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
-+        │   └─BatchExchange { order: [], dist: Single }
-+        │     └─BatchScan { table: t2, columns: [t2.y], distribution: SomeShard }
-+        └─BatchExchange { order: [], dist: HashShard(t1.x, t2.y) }
-+          └─BatchNestedLoopJoin { type: Inner, predicate: true, output: all }
-+            ├─BatchExchange { order: [], dist: Single }
-+            │ └─BatchHashAgg { group_key: [t1.x], aggs: [] }
-+            │   └─BatchExchange { order: [], dist: HashShard(t1.x) }
-+            │     └─BatchScan {
+@@ -384,14 +384,14 @@
+     select s.max_id, (select count(*) from t where t.id = s.max_id)
+     from (select max(id) as max_id from (select id from t limit 5) t) s;
+   optimized_logical_plan_for_stream: |-
+-    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
++    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
+     ├─LogicalShare { id: 3 }
+     │ └─LogicalAgg { aggs: [max(t.id)] }
+     │   └─LogicalLimit { limit: 5, offset: 0 }
+     │     └─LogicalScan { table: t, columns: [t.id] }
+-    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
+-      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
+-        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
++    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
++      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
++        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
+         │ └─LogicalShare { id: 3 }
+         │   └─LogicalAgg { aggs: [max(t.id)] }
+         │     └─LogicalLimit { limit: 5, offset: 0 }
+@@ -407,14 +407,14 @@
+     select s.max_id, (select count(*) from t where t.id = s.max_id)
+     from (select max(id) as max_id from (select id from t order by priority limit 5) t) s;
+   optimized_logical_plan_for_stream: |-
+-    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
++    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
+     ├─LogicalShare { id: 3 }
+     │ └─LogicalAgg { aggs: [max(t.id)] }
+     │   └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
+     │     └─LogicalScan { table: t, columns: [t.id, t.priority] }
+-    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
+-      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
+-        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
++    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
++      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
++        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
+         │ └─LogicalShare { id: 3 }
+         │   └─LogicalAgg { aggs: [max(t.id)] }
+         │     └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
 ```
 
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery_expr_correlated.yaml` (modified, +18/-0)
+**File**: `src/frontend/planner_test/tests/testdata/output/topn.yaml` (modified, +6/-4)
 ```diff
-@@ -2398,6 +2398,24 @@
-               └─StreamProject { exprs: [t2.y, t2.x, t2._row_id] }
-                 └─StreamFilter { predicate: IsNotNull(t2.y) }
-                   └─StreamTableScan { table: t2, columns: [t2.x, t2.y, t2._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t2._row_id], pk: [_row_id], dist: UpstreamHashShard(t2._row_id) }
-+- name: correlated CTE referenced from a nested subquery
-+  sql: |
-+    create table t1(x int);
-+    select x, (with cte as (select x as v) select (select v from cte)) from t1;
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashJoin { type: LeftOuter, predicate: t1.x IS NOT DISTINCT FROM t1.x, output: [t1.x, t1.x] }
-+      ├─BatchExchange { order: [], dist: HashShard(t1.x) }
-+      │ └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
-+      └─BatchHashJoin { type: LeftOuter, predicate: t1.x IS NOT DISTINCT FROM t1.x, output: [t1.x, t1.x] }
-+        ├─BatchHashAgg { group_key: [t1.x], aggs: [] }
-+        │ └─BatchExchange { order: [], dist: HashShard(t1.x) }
-+        │   └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
-+        └─BatchExchange { order: [], dist: HashShard(t1.x) }
-+          └─BatchProject { exprs: [t1.x, t1.x] }
-+            └─BatchHashAgg { group_key: [t1.x], aggs: [] }
-+              └─BatchExchange { order: [], dist: HashShard(t1.x) }
-+                └─BatchScan { table: t1, columns: [t1.x], distribution: SomeShard }
- - name: subqueries in case when exprs
-   sql: "WITH input AS (\n    SELECT\n        'Empty JSON item' AS test_case,\n        ('{}'::JSONB) AS item\n)\n\nSELECT\n    test_case,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST(JSONB_PATH_QUERY_FIRST(item, '$.binary_set_attribute'), '$.BS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT DECODE(((nested_item) #>> '{}'), 'base64') AS parsed_item\n                FROM (\n                    SELECT nested_item\n                    FROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.binary_set_attribute')), '$.BS'))\n                    AS t(nested_item)\n                )\n            )\n            ORDER BY parsed_item\n        )\n    END AS binary_set_attribute,\n\n    CASE\n        WHEN JSONB_PATH_QUERY_FIRST(JSONB_PATH_QUERY_FIRST(item, '$.number_set_attribute'), '$.NS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT CAST(nested_item #>> '{}' AS BIGINT) AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n    \t\t\t\tFROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.number_set_attribute')), '$.NS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS number_set_attribute,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.float_set_attribute')), '$.NS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT CAST(nested_item #>> '{}' AS FLOAT)\n                AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n\t\t\t\t    FROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.float_set_attribute')), '$.NS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS float_set_attribute,\n\n    CASE\n\t    WHEN JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.string_set_attribute')), '$.SS') IS NULL THEN NULL\n        ELSE ARRAY(\n            SELECT parsed_item\n            FROM (\n                SELECT nested_item #>> '{}' AS parsed_item\n                FROM (\n    \t\t\t\tSELECT nested_item\n    \t\t\t\tFROM JSONB_ARRAY_ELEMENTS(JSONB_PATH_QUERY_FIRST((JSONB_PATH_QUERY_FIRST(item, '$.string_set_attribute')), '$.SS'))\n    \t\t\t\tAS t(nested_item)\n\t\t\t\t)\n            )\n            ORDER BY parsed_item\n        )\n    END AS string_set_attribute\nFROM input\n"
+@@ -4,10 +4,12 @@
+     CREATE MATERIALIZED VIEW t1_mv AS SELECT SUM(a) as sa, SUM(b) as sb, SUM(c) as sc, SUM(d) as sd FROM t1;
+     SELECT sa, count(*) as cnt2 FROM t1_mv GROUP BY sa ORDER BY cnt2 DESC LIMIT 50 OFFSET 50;
    batch_plan: |-
+-    BatchExchange { order: [], dist: Single }
+-    └─BatchLimit { limit: 50, offset: 50 }
+-      └─BatchSimpleAgg { aggs: [internal_last_seen_value(t1_mv.sa), count] }
+-        └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
++    BatchLimit { limit: 50, offset: 50 }
++    └─BatchExchange { order: [], dist: Single, sequential: true }
++      └─BatchLimit { limit: 100, offset: 0 }
++        └─BatchHashAgg { group_key: [t1_mv.sa], aggs: [count] }
++          └─BatchExchange { order: [], dist: HashShard(t1_mv.sa) }
++            └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
+ - sql: |
+     CREATE TABLE t1 (pk int, a int, b int, c bigint, d int);
+     CREATE MATERIALIZED VIEW t1_mv AS SELECT * from t1;
 ```
 
-**File**: `src/frontend/src/binder/bind_context.rs` (modified, +3/-1)
+**File**: `src/frontend/src/optimizer/rule/agg_group_by_simplify_rule.rs` (modified, +8/-2)
 ```diff
-@@ -24,7 +24,7 @@ use risingwave_sqlparser::ast::{TableAlias, WindowSpec};
- 
- use crate::binder::Relation;
- use crate::error::{ErrorCode, Result};
--use crate::expr::ExprImpl;
-+use crate::expr::{ExprImpl, ScopeId};
- 
- type LiteResult<T> = std::result::Result<T, ErrorCode>;
- 
-@@ -126,6 +126,8 @@ pub struct BindContext {
-     /// Bound arguments for the current SQL UDF, if any.
-     // TODO: use enum for named or positional arguments
-     pub sql_udf_arguments: Option<HashMap<String, ExprImpl>>,
-+    /// Identifies this context as the owner of correlated references to its columns.
-+    pub scope: ScopeId,
- }
- 
- /// Holds the context for the `BindContext`'s `ColumnGroup`s.
+@@ -35,10 +35,16 @@ impl Rule<Logical> for AggGroupBySimplifyRule {
+         }
+         let functional_dependency = agg_input.functional_dependency();
+         let group_key = group_key.to_vec();
+-        if !functional_dependency.is_key(&group_key) {
++        if group_key.is_empty() || !functional_dependency.is_key(&group_key) {
+             return None;
+         }
+-        let minimized_group_key = functional_dependency.minimize_key(&group_key);
++        let mut minimized_group_key = functional_dependency.minimize_key(&group_key);
++        // The minimized key is empty when the input has at most one row. Keep one group key
++        // column, otherwise the grouped agg would become a simple agg, which outputs one row
++        // instead of zero rows on empty input.
++        if minimized_group_key.is_empty() {
++            minimized_group_key.push(group_key[0]);
++        }
+         if minimized_group_key.len() < group_key.len() {
+             let new_group_key = IndexSet::from(minimized_group_key);
+             let new_group_key_len = new_group_key.len();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27662** (closed): fix: batch query epoch readiness and Pub/Sub credentials fixes to release-3.1 (@zwang28)
+- **PR #27661** (2026-10-26): perf(storage): avoid version waits for readable batch query epochs (@zwang28)
+- **PR #27655** (2026-10-26): feat(iceberg): list tables in storage catalog (@chenzl25)
+- **PR #27650** (2026-10-26): cherry-pick refactor(meta): shorten Hummock GC context lock scope (release-3.1) (@zwang28)
+- **PR #27645** (2026-10-26): test(iceberg): wait longer for sink commits in predicate_pushdown bench (@howenyap)
 - **PR #27627** (2026-10-23): fix(frontend): avoid external MySQL access in CDC privilege test (@cyliu0)
-- **PR #27626** (2026-10-23): perf(stream): batch and parallelize iceberg pk-index lookups (@silver-ymz)
-- **PR #27612** (closed): perf(optimizer): compute group keys derived from other group keys above the aggregation (@chenzl25)
-- **PR #27606** (2026-10-22): fix(cdc): escape identifiers in external table snapshot queries (@anlowee)
-- **PR #27604** (closed): fix(connector): restore base64 Pub/Sub source credentials (release-3.1) (@zwang28)
-- **PR #27603** (2026-10-22): fix(connector): restore base64 Pub/Sub source credentials (@zwang28)
 
 ---
 
@@ -1710,73 +1356,85 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587)
+## X. optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
 
 **RULE**:
-When implementing operations in `src/connector/src/sink/big_query.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/streaming/bug_fixes/issue_27451.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c69fba0`: sink): order BigQuery upsert changes with _CHANGE_SEQUENCE_NUMBER (#27587). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3472511`: optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/sink/big_query.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/streaming/bug_fixes/issue_27451.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::{SystemTime, UNIX_EPOCH};
-use parking_lot::Mutex;
-use risingwave_common::util::iter_util::ZipEqDebug;
-pub const CHANGE_SEQUENCE_NUMBER: &str = "_CHANGE_SEQUENCE_NUMBER";
-    change_sequence_number_field: Option<FieldDescriptor>,
-        let writer = Self::with_client(config, schema, pk_indices, is_append_only, client)?;
-        Ok((writer, resp_stream))
-    }
+# https://github.com/risingwavelabs/risingwave/issues/27451
+# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
+# which outputs one row instead of zero rows on empty input.
 
-    fn with_client(
-        config: BigQueryConfig,
-        schema: Schema,
-        pk_indices: Vec<usize>,
-        is_append_only: bool,
-        client: StorageWriterClient,
-    ) -> Result<Self> {
-            let field = FieldDescriptorProto {
-                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
-                number: Some((schema.len() + 2) as i32),
-                r#type: Some(field_descriptor_proto::Type::String.into()),
-                ..Default::default()
-            };
-            descriptor_proto.field.push(field);
-        let change_sequence_number_field = if !is_append_only {
-            let field = message_descriptor
-                .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
-                .ok_or_else(|| {
-                    SinkError::BigQuery(anyhow::anyhow!("Can't find {}", CHANGE_SE
+statement ok
+create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
+
+statement ok
+create materialized view m16 as select col_0 from m6 where false group by col_0;
+
+query I
+select * from m16;
+----
+
+query I
+select col_0 from m6 where false group by col_0;
+----
+
+# Multiple group keys on a single-row input whose only row may be filtered out.
+statement ok
+create table t (v int);
+
+statement ok
+create materialized view m_single as select min(v) as a, max(v) as b from t;
+
+statement ok
+create materialized view m_grouped as
+select a, b, count(*) as cnt from m_single where a is not null group by a, b;
+
+query III
+select * from m_grouped;
+----
+
+# The same query in batch mode.
+query III
+select a, b, count(*) from m_single where a is not null group by a, b;
+----
+
+statement ok
+insert into t values (1), (3);
+
+statement ok
+flush;
+
+query III
+select * from m_grouped;
+----
+1 3 1
+
+statement ok
+delete from t;
+
+statement ok
+flush;
+
+query III
+select * from m_grouped;
+----
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        Ok((
-            Self {
-                write_stream: format!(
-                    "projects/{}/datasets/{}/tables/{}/streams/_default",
-                    config.common.project, config.common.dataset, config.common.table
-                ),
-                config,
-                schema,
-                pk_indices,
-                client,
-                is_append_only,
-                row_encoder,
-                message_descriptor,
-                proto_field,
-                writer_pb_schema: ProtoSchema {
-                    proto_descriptor: Some(descriptor_proto.clone()),
-                },
-            resp_stream,
-        ))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c69fba0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3472511` are properly handled with clean fallback behavior.

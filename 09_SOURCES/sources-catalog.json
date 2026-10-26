@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "204e2636",
+    "sourceVersion": "84409045",
     "license": "Apache-2.0",
-    "contentHash": "b08de740c40af87227cf1047e9ffb68f298ae6cbc2c55268116923a25e99875e",
-    "lastHarvestedAt": "2026-10-25T16:54:48.728Z",
+    "contentHash": "eaa3498455bfffa13eac89b217400cdca04d25b9017ce5854e3a8e15a3877622",
+    "lastHarvestedAt": "2026-10-26T14:23:26.789Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -3933,10 +3933,10 @@
     "repository": "react-bootstrap/react-bootstrap",
     "platform": "github",
     "sourceUrl": "https://github.com/react-bootstrap/react-bootstrap",
-    "sourceVersion": "6461dcd6",
+    "sourceVersion": "5bc9aa01",
     "license": "MIT",
-    "contentHash": "f991a88efa37ff43d16712c775834fa8f7d91b8b98d63903532ac2b73ea2b997",
-    "lastHarvestedAt": "2026-10-25T18:28:18.822Z",
+    "contentHash": "04530f648f4994d1def0473d4dee6493ba4e4018fc403f6e1919e50fd599f8f5",
+    "lastHarvestedAt": "2026-10-26T14:23:12.847Z",
     "learningId": "learn-github-react-bootstrap-react-bootstrap"
   },
   "orf-gping": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "66e8caf4",
+    "sourceVersion": "5277f015",
     "license": "Apache-2.0",
-    "contentHash": "760d8fd10919287c97c56f8bd94160306f1b2b0f83b793ec91e9125956a3a67c",
-    "lastHarvestedAt": "2026-10-25T17:42:45.042Z",
+    "contentHash": "8642fa355bced98c974c29fbc1fb59c356dbd67f195b111ee9e5515d26278b77",
+    "lastHarvestedAt": "2026-10-26T14:23:24.331Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "39ea73aa",
+    "sourceVersion": "d82b2e99",
     "license": "NOASSERTION",
-    "contentHash": "bfdb6887c1be922cb87ca4203a7f570ce9538504e02843ada9e1ecf41879c37c",
-    "lastHarvestedAt": "2026-10-20T00:31:49.233Z",
+    "contentHash": "b0f81c97852e9a337f03701637889780e6dba751aef1e8ca378aec1d280da350",
+    "lastHarvestedAt": "2026-10-26T14:23:21.252Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {

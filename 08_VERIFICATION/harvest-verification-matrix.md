@@ -5162,3 +5162,7 @@
 | `CYCLE-20261026-UCU6` | `2026-10-26T14:03:29.022Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 1145, Rule 4619` | Yes (`2c53b7d3...`) |
 | `CYCLE-20261026-2UOE` | `2026-10-26T14:10:05.390Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4620, Rule 4621, Rule 4622` | Yes (`574e8b4d...`) |
 | `CYCLE-20261026-BGET` | `2026-10-26T14:16:46.805Z` | `berkaycubuk/kitsune` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4623` | Yes (`a09d116f...`) |
+| `CYCLE-20261026-JQA3` | `2026-10-26T14:23:12.843Z` | `react-bootstrap/react-bootstrap` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4624` | Yes (`04530f64...`) |
+| `CYCLE-20261026-JWRL` | `2026-10-26T14:23:21.249Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4625` | Yes (`b0f81c97...`) |
+| `CYCLE-20261026-JZ54` | `2026-10-26T14:23:24.328Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4626` | Yes (`8642fa35...`) |
+| `CYCLE-20261026-K11E` | `2026-10-26T14:23:26.786Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4627` | Yes (`eaa34984...`) |

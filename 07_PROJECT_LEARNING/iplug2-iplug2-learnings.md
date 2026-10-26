@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source**: github ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
-> **Source Version**: `39ea73aa`  
+> **Source Version**: `d82b2e99`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:31:48.940Z  
+> **Timestamp**: 2026-10-26T14:23:20.854Z  
 > **Learning ID**: `learn-github-iplug2-iplug2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:31:48.685Z  
+> **Harvest Timestamp**: 2026-10-26T14:23:20.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2432 stars
+- **Stars / Engagement**: 2437 stars
 
 ---
 
@@ -1452,661 +1452,105 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2ec640f` (2026-10-17)
-**Commit Message**: Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle
+### Incident Patch 1: `f3c104b3` (2026-10-25)
+**Commit Message**: Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close
 
-iOS App: adopt UIScene life cycle (fixes #1420)
+IGraphicsMac: fix CAMetalLayer leak on window close
 
-**File**: `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist` (modified, +19/-2)
+**File**: `IGraphics/Platforms/IGraphicsMac_view.mm` (modified, +5/-3)
 ```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugChunks-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugChunks-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugChunks-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugCocoaUI/resources/IPlugCocoaUI-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugCocoaUI-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugCocoaUI-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugCocoaUI-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugControls/resources/IPlugControls-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugControls-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugControls-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugControls-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugControls-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugConvoEngine/resources/IPlugConvoEngine-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugConvoEngine-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugConvoEngine-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugConvoEngine-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugDrumSynth/resources/IPlugDrumSynth-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugDrumSynth-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugDrumSynth-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugDrumSynth-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugDrumSynth-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugEffect/resources/IPlugEffect-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugEffect-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugEffect-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugEffect-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugInstrument/resources/IPlugInstrument-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugInstrument-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugInstrument-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugInstrument-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugInstrument-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugMidiEffect/resources/IPlugMidiEffect-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugMidiEffect-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugMidiEffect-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugMidiEffect-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugMidiEffect-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
----
-
-### Incident Patch 2: `527222b0` (2026-10-13)
-**Commit Message**: iOS App: adopt UIScene life cycle (fixes #1420)
-
-Apps built with the iOS 27 SDK trap at launch unless they use the
-UIScene life cycle. Add a minimal SceneDelegate (in AppDelegate.h/.m so
-existing Xcode projects and CMake need no new files) and replace
-UIMainStoryboardFile with a UIApplicationSceneManifest in the iOS
-Info.plists. UIKit creates the window and loads the storyboard via
-UISceneStoryboardFile.
-
-Also remove the empty app-delegate life-cycle callbacks deprecated in
-iOS 26.
-
-**File**: `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugChunks-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugChunks-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugChunks-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugCocoaUI/resources/IPlugCocoaUI-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugCocoaUI-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugCocoaUI-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugCocoaUI-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugControls/resources/IPlugControls-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugControls-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugControls-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugControls-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugControls-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugConvoEngine/resources/IPlugConvoEngine-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugConvoEngine-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugConvoEngine-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugConvoEngine-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugDrumSynth/resources/IPlugDrumSynth-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugDrumSynth-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugDrumSynth-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugDrumSynth-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugDrumSynth-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugEffect/resources/IPlugEffect-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -30,14 +30,31 @@
- 	<string>Needs Bluetooth MIDI</string>
- 	<key>NSMicrophoneUsageDescription</key>
- 	<string>Needs microphone access to process audio</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugEffect-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugEffect-iOS-LaunchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugEffect-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
- 	<array>
- 		<string>armv7</string>
-```
-
-**File**: `Examples/IPlugInstrument/resources/IPlugInstrument-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugInstrument-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugInstrument-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugInstrument-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugInstrument-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
-**File**: `Examples/IPlugMidiEffect/resources/IPlugMidiEffect-iOS-Info.plist` (modified, +19/-2)
-```diff
-@@ -28,14 +28,31 @@
- 	<true/>
- 	<key>NSBluetoothAlwaysUsageDescription</key>
- 	<string>Needs Bluetooth MIDI</string>
-+	<key>UIApplicationSceneManifest</key>
-+	<dict>
-+		<key>UIApplicationSupportsMultipleScenes</key>
-+		<false/>
-+		<key>UISceneConfigurations</key>
-+		<dict>
-+			<key>UIWindowSceneSessionRoleApplication</key>
-+			<array>
-+				<dict>
-+					<key>UISceneConfigurationName</key>
-+					<string>Default Configuration</string>
-+					<key>UISceneDelegateClassName</key>
-+					<string>SceneDelegate</string>
-+					<key>UISceneStoryboardFile</key>
-+					<string>IPlugMidiEffect-iOS</string>
-+				</dict>
-+			</array>
-+		</dict>
-+	</dict>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>audio</string>
- 	</array>
- 	<key>UILaunchStoryboardName</key>
- 	<string>IPlugMidiEffect-iOS-launchScreen</string>
--	<key>UIMainStoryboardFile</key>
--	<string>IPlugMidiEffect-iOS</string>
- 	<key>UIMainStoryboardFile~ipad</key>
- 	<string>IPlugMidiEffect-iOS</string>
- 	<key>UIRequiredDeviceCapabilities</key>
-```
-
----
-
-### Incident Patch 3: `d54f6905` (2026-08-19)
-**Commit Message**: Merge pull request #1406 from iPlug2/cmake/fix-surround-effect
-
-Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect
-
-**File**: `Examples/IPlugSurroundEffect/CMakeLists.txt` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ include(${IPLUG2_DIR}/iPlug2.cmake)
- find_package(iPlug2 REQUIRED)
+@@ -384,10 +384,12 @@ @implementation IGRAPHICS_VIEW
+ - (CALayer *)makeBackingLayer
+ {
+   // CAMetalLayer is correct for both Metal and GLES - ANGLE uses Metal backend on macOS
++  // NB: this file is not ARC; the caller retains, so the layer must be autoreleased
++  // or it is stranded (with its drawable pool) every time the window closes
+ #if defined IGRAPHICS_METAL || defined IGRAPHICS_GLES2 || defined IGRAPHICS_GLES3
+-  return [[CAMetalLayer alloc] init];
++  return [[[CAMetalLayer alloc] init] autorelease];
+ #else
+-  return [[CALayer alloc] init];
++  return [[[CALayer alloc] init] autorelease];
+ #endif
+ }
  
- iplug_add_plugin(${PROJECT_NAME}
-+  DEFINES
-+    CUSTOM_BUSTYPE_FUNC
-   SOURCES
-     IPlugSurroundEffect.cpp
-     IPlugSurroundEffect.h
+@@ -410,7 +412,7 @@ - (id) initWithIGraphics: (IGraphicsMac*) pGraphics
+   #if defined IGRAPHICS_METAL || defined IGRAPHICS_GLES2 || defined IGRAPHICS_GLES3
+   CAMetalLayer* mtlLayer = (CAMetalLayer*) self.layer;
+   [mtlLayer setPixelFormat:MTLPixelFormatBGRA8Unorm];
+-  mtlLayer.device = MTLCreateSystemDefaultDevice();
++  mtlLayer.device = [MTLCreateSystemDefaultDevice() autorelease]; // Create-rule +1, property assignment retains
+   mtlLayer.framebufferOnly = YES;
+   #elif defined IGRAPHICS_GL2 || defined IGRAPHICS_GL3
+   NSOpenGLPixelFormatAttribute profile = NSOpenGLProfileVersionLegacy;
+```
+
+---
+
+### Incident Patch 2: `61c5553a` (2026-10-15)
+**Commit Message**: swell-gdi-lice: fix clipping of child windows to parent client rect -- from 2a2d8191 and c0d29442
+
+**File**: `WDL/swell/swell-gdi-lice.cpp` (modified, +18/-4)
+```diff
+@@ -1719,6 +1719,7 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
+   //   we would want to only really use them for top level windows, and on those, only update windows (and children of windows) who had backingstore invalidated.
+   if (hwnd->m_invalidated) forceref=true;
+ 
++  int calced_w = -1, calced_h = -1;
+   if (forceref || hwnd->m_child_invalidated)
+   {
+     swell_gdpLocalContext ctx;
+@@ -1746,6 +1747,8 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
+       p.rgrc[0]=r2;
+       hwnd->m_wndproc(hwnd,WM_NCCALCSIZE,FALSE,(LPARAM)&p);
+       RECT r = p.rgrc[0];
++      calced_w = r.right-r.left;
++      calced_h = r.bottom-r.top;
+       if (forceref) hwnd->m_wndproc(hwnd,WM_NCPAINT,(WPARAM)1,0);
+ 
+       // dx,dy is offset from the window's nonclient root
+@@ -1806,9 +1809,20 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
+     {
+       if (h->m_visible && (forceref || h->m_invalidated||h->m_child_invalidated))
+       {
+-        int width = h->m_position.right - h->m_position.left, 
+-            height = h->m_position.bottom - h->m_position.top; // max width possible for this window
+-        int xp = h->m_position.left - bmout_xpos, yp = h->m_position.top - bmout_ypos;
++        RECT cr = h->m_position;
++        int width = cr.right - cr.left, height = cr.bottom - cr.top; // max width possible for this window
++        int xp = cr.left, yp = cr.top;
++        int extra_xo = 0, extra_yo = 0;
++        if (calced_w >= 0 && calced_h >= 0)
++        {
++          if (xp < 0) { extra_xo = xp; width += extra_xo; xp = 0; }
++          if (yp < 0) { extra_yo = yp; height += extra_yo; yp = 0; }
++          if (xp + width > calced_w) width = calced_w - xp;
++          if (yp + height > calced_h) height = calced_h - yp;
++        }
++
++        xp -= bmout_xpos;
++        yp -= bmout_ypos;
+ 
+         if (okToClearChild && !forceref)
+         {
+@@ -1828,7 +1842,7 @@ void SWELL_internalLICEpaint(HWND hwnd, LICE_IBitmap *bmout, int bmout_xpos, int
+         {
+           LICE_SubBitmap subbm(bmout,subx,suby,width,height); // the right/bottom will automatically be clipped to the clip rect etc
+           if (subbm.getWidth()>0 && subbm.getHeight()>0)
+-            SWELL_internalLICEpaint(h,&subbm,-xp,-yp,forceref);
++            SWELL_internalLICEpaint(h,&subbm,-extra_xo-xp,-extra_yo-yp,forceref);
+         }
+       }
+       h = h->m_next;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1429** (2026-10-25): CI: unpin claude-code-action (back to @v1) (@olilarkin)
 - **PR #1428** (2026-10-18): CI: pin claude-code-action to v1.0.196 (@olilarkin)
+- **PR #1427** (2026-10-25): Bump macOS deployment target to 13.0 (@olilarkin)
 - **PR #1426** (2026-10-17): CI: move macOS runners from macos-14 to macos-15 (@olilarkin)
 - **PR #1425** (2026-10-17): iOS App: adopt UIScene life cycle (fixes #1420) (@olilarkin)
 - **PR #1417** (closed): CLAP: request parameter rescan after state load, fix main ports in audio ports config (@michaelhovedk)
-- **PR #1412** (2026-10-17): ReaperExt: stop REAPER shortcuts firing during IGraphics text entry (@betweentwomidnights)
-- **PR #1406** (2026-08-19): Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect (@olilarkin)
 
 ---
 
@@ -2126,47 +1570,34 @@ Cmake:define CUSTOM_BUSTYPE_FUNC for IPlugSurroundEffect
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle
+## X. Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close
 
 **RULE**:
-When implementing operations in `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `IGraphics/Platforms/IGraphicsMac_view.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2ec640f`: Merge pull request #1425 from iPlug2/ios/uiscene-lifecycle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f3c104b3`: Merge pull request #1387 from iPlug2/fix/macos-metal-layer-leak-on-close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Examples/IPlugChunks/resources/IPlugChunks-iOS-Info.plist`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `IGraphics/Platforms/IGraphicsMac_view.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
-		<key>UISceneConfigurations</key>
-		<dict>
-			<key>UIWindowSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneConfigurationName</key>
-					<string>Default Configuration</string>
-					<key>UISceneDelegateClassName</key>
-					<string>SceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>IPlugChunks-iOS</string>
-				</dict>
-			</array>
-		</dict>
-	</dict>
+  // NB: this file is not ARC; the caller retains, so the layer must be autoreleased
+  // or it is stranded (with its drawable pool) every time the window closes
+  return [[[CAMetalLayer alloc] init] autorelease];
+  return [[[CALayer alloc] init] autorelease];
+  mtlLayer.device = [MTLCreateSystemDefaultDevice() autorelease]; // Create-rule +1, property assignment retains
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-	<key>UIMainStoryboardFile</key>
-	<string>IPlugChunks-iOS</string>
+  return [[CAMetalLayer alloc] init];
+  return [[CALayer alloc] init];
+  mtlLayer.device = MTLCreateSystemDefaultDevice();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2ec640f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f3c104b3` are properly handled with clean fallback behavior.

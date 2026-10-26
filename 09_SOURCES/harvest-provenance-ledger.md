@@ -5169,3 +5169,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-10-26T14:03:29.026Z |
 | `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-26T14:10:05.393Z |
 | `learn-github-berkaycubuk-kitsune` | `https://github.com/berkaycubuk/kitsune` | `616da5b1` | Multi-dimensional audit evidence | 2026-10-26T14:16:46.808Z |
+| `learn-github-react-bootstrap-react-bootstrap` | `https://github.com/react-bootstrap/react-bootstrap` | `5bc9aa01` | Multi-dimensional audit evidence | 2026-10-26T14:23:12.847Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `d82b2e99` | Multi-dimensional audit evidence | 2026-10-26T14:23:21.252Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `5277f015` | Multi-dimensional audit evidence | 2026-10-26T14:23:24.331Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `84409045` | Multi-dimensional audit evidence | 2026-10-26T14:23:26.789Z |
