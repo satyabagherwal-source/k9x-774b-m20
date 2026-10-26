@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261024-TCD2",
-    "timestamp": "2026-10-24T20:31:15.926Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "49ab057325dbbcc7a7a6b6f0b5ec8cdf3a5f415f983131686c3adc5f1ea725c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-TE1H",
     "timestamp": "2026-10-24T20:31:18.101Z",
     "repository": "facebook/docusaurus",
@@ -7490,6 +7475,21 @@
     "repository": "angular/angular",
     "learningId": "learn-github-angular-angular",
     "contentHash": "242156bdc03c77f9efe088229bbbcb166718aa9fed543178845a1b37e4a0dffe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-AYCI",
+    "timestamp": "2026-10-26T02:08:33.378Z",
+    "repository": "davo20019/seo-analysis",
+    "learningId": "learn-github-davo20019-seo-analysis",
+    "contentHash": "1d23ed2a984dbd83f434f97525d891436634b6c767b9dd55cd1b64965ddf6320",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

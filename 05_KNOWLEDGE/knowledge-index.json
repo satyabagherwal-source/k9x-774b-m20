@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T02:02:11.981Z",
+  "last_updated": "2026-10-26T02:08:33.319Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63028,7 +63028,7 @@
       "platform": "github",
       "source_url": "https://github.com/davo20019/seo-analysis",
       "source_version": "902c09fd",
-      "content_hash": "a32ea20561bb1ba1717273f742c96b072451ecf81a94c598f149695092fc9f71",
+      "content_hash": "1d23ed2a984dbd83f434f97525d891436634b6c767b9dd55cd1b64965ddf6320",
       "dossier_path": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/davo20019-seo-analysis-learnings.md",
       "promoted_rules": [
@@ -63043,7 +63043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T05:27:58.402Z",
+      "verified_at": "2026-10-26T02:08:33.306Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100068,7 +100068,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-21T05:27:58.402Z"
+      "verified_at": "2026-10-26T02:08:33.306Z"
     },
     "rule-2678": {
       "learning_id": "rule-2678",
