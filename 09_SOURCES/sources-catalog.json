@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "a930c2b1",
+    "sourceVersion": "25308324",
     "license": "Apache-2.0",
-    "contentHash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
-    "lastHarvestedAt": "2026-10-25T16:02:43.336Z",
+    "contentHash": "2951255f6d06ffc60e1feb458934e3223c5840d4dae66e824454cdd23c2c6066",
+    "lastHarvestedAt": "2026-10-26T13:15:20.950Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "c04e3749",
+    "sourceVersion": "325384d8",
     "license": "MIT",
-    "contentHash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
-    "lastHarvestedAt": "2026-10-25T13:30:49.933Z",
+    "contentHash": "be9739128407f955095f67174afc4169a9b7e8154b51a82f689ac9c4125f1cf4",
+    "lastHarvestedAt": "2026-10-26T13:15:08.385Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -3483,10 +3483,10 @@
     "repository": "chakra-ui/zag",
     "platform": "github",
     "sourceUrl": "https://github.com/chakra-ui/zag",
-    "sourceVersion": "86add962",
+    "sourceVersion": "50bdafda",
     "license": "MIT",
-    "contentHash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
-    "lastHarvestedAt": "2026-10-25T02:26:47.964Z",
+    "contentHash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
+    "lastHarvestedAt": "2026-10-26T13:15:06.901Z",
     "learningId": "learn-github-chakra-ui-zag"
   },
   "sharkdp-hyperfine": {

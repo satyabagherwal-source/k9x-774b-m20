@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T13:11:27.515Z",
+  "last_updated": "2026-10-26T13:15:20.961Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
-      "verified_at": "2026-10-25T16:02:43.344Z",
+      "content_hash": "2951255f6d06ffc60e1feb458934e3223c5840d4dae66e824454cdd23c2c6066",
+      "verified_at": "2026-10-26T13:15:20.960Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T16:02:43.344Z"
+      "last_updated": "2026-10-26T13:15:20.960Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
-      "verified_at": "2026-10-25T13:30:49.941Z",
+      "content_hash": "be9739128407f955095f67174afc4169a9b7e8154b51a82f689ac9c4125f1cf4",
+      "verified_at": "2026-10-26T13:15:08.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T13:30:49.941Z"
+      "last_updated": "2026-10-26T13:15:08.396Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -5346,14 +5346,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chakra-ui-zag",
-      "content_hash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
-      "verified_at": "2026-10-25T02:26:47.977Z",
+      "content_hash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
+      "verified_at": "2026-10-26T13:15:06.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:26:47.977Z"
+      "last_updated": "2026-10-26T13:15:06.910Z"
     },
     "sharkdp/hyperfine": {
       "repository": "sharkdp/hyperfine",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:11:27.433Z",
+  "last_updated": "2026-10-26T13:15:20.886Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5630,8 +5630,8 @@
       "slug": "chakra-ui-zag",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/zag",
-      "source_version": "86add962",
-      "content_hash": "ffd207932c569aad46e54fb41c9b906189413a4e18b5c305d6d313175567c56a",
+      "source_version": "50bdafda",
+      "content_hash": "2d8810755bca27fb9fa9ccf5c6e77d8cc30a4e6133f8f1a3df2cc4450f311b41",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-zag-learnings.md",
       "promoted_rules": [
@@ -5659,6 +5659,11 @@
           "number": 3981,
           "title": "Cross-Browser RTL Scroll Coordinate System Normalization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4604,
+          "title": "toc): only auto-scroll the toc's own scroll container (#3542)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5666,7 +5671,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:26:47.895Z",
+      "verified_at": "2026-10-26T13:15:06.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9139,8 +9144,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "a930c2b1",
-      "content_hash": "be1e498c8843f5a961b3722a5207bce986740e487f3f4aad1891944511cddd2b",
+      "source_version": "25308324",
+      "content_hash": "2951255f6d06ffc60e1feb458934e3223c5840d4dae66e824454cdd23c2c6066",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -9178,6 +9183,11 @@
           "number": 4377,
           "title": "search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4606,
+          "title": "oauth): confine per-store grants to calls that stay in the store (#1690)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9185,7 +9195,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T16:02:43.264Z",
+      "verified_at": "2026-10-26T13:15:20.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53722,8 +53732,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "c04e3749",
-      "content_hash": "9bca7a61ab0b9339430f43e68696c1a68c94e637c5d9b6b25f31c51bf45ba8ba",
+      "source_version": "325384d8",
+      "content_hash": "be9739128407f955095f67174afc4169a9b7e8154b51a82f689ac9c4125f1cf4",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -53746,6 +53756,11 @@
           "number": 4306,
           "title": "Harden every provider: crash and stall detection, Windows-safe launching, and ru",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4605,
+          "title": "Transcript: agent senders and provider switches as captions over the message (#1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53753,7 +53768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:30:49.839Z",
+      "verified_at": "2026-10-26T13:15:08.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129139,6 +129154,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:11:23.719Z"
+    },
+    "rule-4604": {
+      "learning_id": "rule-4604",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4604,
+      "title": "toc): only auto-scroll the toc's own scroll container (#3542)",
+      "source_url": "https://github.com/chakra-ui/zag",
+      "source_version": "50bdafda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:15:06.822Z"
+    },
+    "rule-4605": {
+      "learning_id": "rule-4605",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4605,
+      "title": "Transcript: agent senders and provider switches as captions over the message (#1",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "325384d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:15:08.304Z"
+    },
+    "rule-4606": {
+      "learning_id": "rule-4606",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4606,
+      "title": "oauth): confine per-store grants to calls that stay in the store (#1690)",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "25308324",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:15:20.873Z"
     }
   },
   "aliases": {

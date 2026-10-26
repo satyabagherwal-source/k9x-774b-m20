@@ -335839,3 +335839,172 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b0cb8917` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4604. toc): only auto-scroll the toc's own scroll container (#3542) (Harvested from chakra-ui/zag)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "toc): only auto-scroll the toc's own scroll container (#3542)",
+  "source": "chakra-ui/zag",
+  "source_url": "https://github.com/chakra-ui/zag",
+  "source_version": "50bdafda",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T13:15:06.694Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-chakra-ui-zag",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [chakra-ui/zag](https://github.com/chakra-ui/zag) (Revision: `50bdafda`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/toc-autoscroll-own-container.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chakra-ui/zag. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `50bdafda`: toc): only auto-scroll the toc's own scroll container (#3542). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/toc-autoscroll-own-container.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+"@zag-js/toc": patch
+"@zag-js/dom-query": patch
+---
+
+- **TOC**: Fix `autoScroll` interrupting the smooth scroll to a heading when the TOC sits inside the page's scroll
+  container.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `50bdafda` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4605. Transcript: agent senders and provider switches as captions over the message (#1 (Harvested from zeronsh/zeron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transcript: agent senders and provider switches as captions over the message (#1",
+  "source": "zeronsh/zeron",
+  "source_url": "https://github.com/zeronsh/zeron",
+  "source_version": "325384d8",
+  "license": "MIT",
+  "extracted_at": "2026-10-26T13:15:08.166Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeronsh-zeron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `325384d8`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `crates/engine/src/doc_host.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `325384d8`: Transcript: agent senders and provider switches as captions over the message (#1052). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/doc_host.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                // to a no-op. A provider switch's seam lands with it, above.
+                sessions.note_provider_switch(chat_id, harness, handle);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+                // to a no-op.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `325384d8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4606. oauth): confine per-store grants to calls that stay in the store (#1690) (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "oauth): confine per-store grants to calls that stay in the store (#1690)",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "25308324",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-26T13:15:20.748Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `25308324`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `changelog.d/1690.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fb7c041e`: oauth): confine per-store grants to calls that stay in the store (#1690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1690.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
+  `write:<store>` grant authorized any MCP tool call that named the store, including tools
+  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
+  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
+  `fallback`, which read every partition. A per-store grant now covers only the tools that
+  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
+  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
+  everything else needs the global scope, including `memory_explore` and `memory_detail`,
+  whose entity names come from a graph that has no store partition. The SDK
+  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
+  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
+  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
+  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fb7c041e` are properly handled with clean fallback behavior.

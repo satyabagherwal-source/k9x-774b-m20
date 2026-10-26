@@ -5151,3 +5151,6 @@ Every entry in this ledger must capture:
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `8efdae0f` | Multi-dimensional audit evidence | 2026-10-26T13:01:48.656Z |
 | `learn-github-vincentwei1021-video-shotcraft` | `https://github.com/Vincentwei1021/video-shotcraft` | `43bd349a` | Multi-dimensional audit evidence | 2026-10-26T13:11:23.807Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `404d9173` | Multi-dimensional audit evidence | 2026-10-26T13:11:27.501Z |
+| `learn-github-chakra-ui-zag` | `https://github.com/chakra-ui/zag` | `50bdafda` | Multi-dimensional audit evidence | 2026-10-26T13:15:06.901Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `325384d8` | Multi-dimensional audit evidence | 2026-10-26T13:15:08.385Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `25308324` | Multi-dimensional audit evidence | 2026-10-26T13:15:20.950Z |

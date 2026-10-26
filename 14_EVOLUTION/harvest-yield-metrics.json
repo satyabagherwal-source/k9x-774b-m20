@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:11:27.508Z",
-  "total_cycles_completed": 5121,
-  "total_learnings_persisted": 5121,
-  "total_rules_promoted": 4500,
+  "last_updated": "2026-10-26T13:15:20.956Z",
+  "total_cycles_completed": 5124,
+  "total_learnings_persisted": 5124,
+  "total_rules_promoted": 4503,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:34:44.599Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:40:47.152Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:41:00.222Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:47:17.548Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -1403,6 +1382,27 @@
       "repository": "Kuddev/pebrel",
       "learningId": "learn-github-kuddev-pebrel",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:15:06.906Z",
+      "repository": "chakra-ui/zag",
+      "learningId": "learn-github-chakra-ui-zag",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:15:08.391Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:15:20.956Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

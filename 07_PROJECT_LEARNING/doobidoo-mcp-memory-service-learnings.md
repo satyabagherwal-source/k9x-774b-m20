@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `a930c2b1`  
+> **Source Version**: `25308324`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:02:42.961Z  
+> **Timestamp**: 2026-10-26T13:15:20.525Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:02:42.635Z  
+> **Harvest Timestamp**: 2026-10-26T13:15:19.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2043 stars
+- **Stars / Engagement**: 2048 stars
 
 ---
 
@@ -1778,6 +1778,7 @@ const { analyzeGitContext, buildGitContextQuery } = require('../utilities/git-an
 const { MemoryClient } = require('../utilities/memory-client');
 const { getVersionInfo, formatVersionDisplay } = require('../utilities/version-checker');
 const { detectUserOverrides, logOverride } = require('../utilities/user-override-detector');
+const { collectInboxBlock } = require('../utilities/inbox');
 
 /**
  * Memory Service Configuration
@@ -2010,8 +2011,7 @@ function detectStorageBackendFallback(config) {
                         storageInfo = {
                             backend: 'chromadb',
                             type: 'remote',
-                            location: `${protocol}://${chromaHost}:${chromaPort}`,
-                            description: 'ChromaDB (Re
+                            location: `${protocol}://${chromaHost}:${chromaP
 ```
 
 ### Core Architecture Module: `claude-hooks/core/topic-change.js`
@@ -2932,1327 +2932,1386 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `344f4ae1` (2026-10-23)
-**Commit Message**: feat(search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661)
+### Incident Patch 1: `fb7c041e` (2026-10-26)
+**Commit Message**: fix(oauth): confine per-store grants to calls that stay in the store (#1690)
 
-* feat(search): optional second-stage ONNX rerank flag for memory_search (#1602)
+* fix(oauth): confine per-store grants to calls that stay in the store
 
-Adds a per-call `rerank` boolean to the memory_search arguments, gated by
-MCP_RERANK_ENABLED (default off), MCP_RERANK_CANDIDATES (default 40) and
-MCP_RERANK_MODEL (default Xenova/bge-reranker-base). Inference goes through
-the existing quality/onnx_ranker loader only; load or inference failures
-fail open to the unreranked order with one process-lifetime warning. The
-scorer is a process-wide instance with no shared mutable state, safe
-alongside quality_boost. pyproject deps untouched (no torch).
+A read:<store>/write:<store> grant authorized every MCP tool call that
+named the store, but only some tools confine themselves to it.
+memory_quality, memory_cleanup, memory_resolve, memory_consolidate and the
+mistake-note tools ignore store, so write:projectA plus store="projectA"
+reached every partition. memory_search with include_beliefs or fallback
+read across partitions as well. On cloudflare, milvus and remote_http,
+get_by_hash ignores store, so GET /api/memories/{hash} returned another
+store's memory to a read:projectA token.
 
-Refs: doobidoo/mcp-memory-service#1602
+MemoryServer.store_grant_target now decides which store a per-store
+grant may authorize: only for the eight tools whose handlers confine,
+without the two cross-store arguments, and only on a backend whose
+get_by_hash honours store. The SDK dispatch gate and the /mcp shim both
+use it. On REST, require_store_scope refuses a grant that holds only
+through operation:<store> on a backend that cannot confine. Global
+grants are unchanged. Storage-layer enforcement remains #1683.
 
-* docs(1602): bancada result - ms-marco baseline refuted (-8.3 p.p. @10); bge-int8 registration blocking for PR
+The scope check in mcp_endpoint mo
 
-* feat(quality): register Xenova cross-encoder int8 models in SUPPORTED_MODELS
-
-Config-data registration for the #1602 service-path bench: bge-reranker-base
-(2 inputs: input_ids/attention_mask, Unigram tokenizer) e ms-marco
-MiniLM-L-6-v2 (3 inputs incl. token_type_ids, BERT tokenizer).
-
-The ONNXRankerModel inference paths now honor the model_config['inputs']
-declared in the
-
-**File**: `changelog.d/1602.added.md` (added, +1/-0)
+**File**: `changelog.d/1690.fixed.md` (added, +13/-0)
 ```diff
-@@ -0,0 +1 @@
-+- Add an opt-in `rerank` flag to `memory_search`: a second-stage ONNX cross-encoder reorders the top `MCP_RERANK_CANDIDATES` results when `MCP_RERANK_ENABLED` is set, fails open to the unreranked order, and never touches the default path.
+@@ -0,0 +1,13 @@
++- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
++  `write:<store>` grant authorized any MCP tool call that named the store, including tools
++  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
++  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
++  `fallback`, which read every partition. A per-store grant now covers only the tools that
++  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
++  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
++  everything else needs the global scope, including `memory_explore` and `memory_detail`,
++  whose entity names come from a graph that has no store partition. The SDK
++  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
++  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
++  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
++  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
 ```
 
-**File**: `src/mcp_memory_service/quality/config.py` (modified, +16/-0)
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +37/-4)
 ```diff
-@@ -179,6 +179,22 @@ def can_use_gemini(self) -> bool:
-         'output_classes': ['low', 'medium', 'high'],
-         'description': 'Absolute quality assessment (recommended, eliminates self-matching bias)'
-     },
-+    'Xenova/bge-reranker-base': {
-+        'hf_name': 'Xenova/bge-reranker-base',
-+        'type': 'cross-encoder',
-+        'size_mb': 266,
-+        'inputs': ['input_ids', 'attention_mask'],
-+        'output_classes': None,
-+        'description': 'bge reranker int8 (issue #1602 service-path bench model)'
-+    },
-+    'Xenova/ms-marco-MiniLM-L-6-v2': {
-+        'hf_name': 'Xenova/ms-marco-MiniLM-L-6-v2',
-+        'type': 'cross-encoder',
-+        'size_mb': 23,
-+        'inputs': ['input_ids', 'attention_mask', 'token_type_ids'],
-+        'output_classes': None,
-+        'description': 'ms-marco MiniLM int8 (issue #1602 service-path bench model)'
-+    },
-     'ms-marco-MiniLM-L-6-v2': {
-         'hf_name': 'cross-encoder/ms-marco-MiniLM-L-6-v2',
-         'type': 'cross-encoder',  # Query-document relevance ranking
-```
-
-**File**: `src/mcp_memory_service/quality/onnx_ranker.py` (modified, +28/-3)
-```diff
-@@ -311,8 +311,14 @@ def _init_model(self):
- 
-         # Initialize ONNX session
-         logger.info("Loading ONNX ranker model with providers: %s", self._preferred_providers)
-+        session_options = ort.SessionOptions()
-+        # 0 = ORT default (all physical cores). The knob exists so a deployment
-+        # can cap the intra-op pool when the rerank stage shares the box with
-+        # other CPU-bound work.
-+        session_options.intra_op_num_threads = int(os.environ.get("MCP_ORT_THREADS", "0") or 0)
-         self._model = ort.InferenceSession(
-             str(onnx_path),
-+            sess_options=session_options,
-             providers=self._preferred_providers
+@@ -1613,6 +1613,40 @@ def _rate_limit_error(
+             isError=True,
          )
  
-@@ -411,7 +417,7 @@ def score_quality(self, query: str, memory_content: str) -> float:
-                 return 0.5
- 
-             # Run inference
--            outputs = self._model.run(None, ort_inputs)
-+            outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
-             logits = outputs[0][0]  # Shape: (num_classes,)
- 
-             # Convert logits to score based on model type
-@@ -442,6 +448,25 @@ def score_quality(self, query: str, memory_content: str) -> float:
-             logger.error("Error scoring quality with %s: %s", self.model_name, _sanitize_log_value(str(e)))
-             return 0.5  # Return neutral score on error
- 
-+    def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
-+        """Filter the feed to the inputs the loaded graph declares.
++    # Tools whose handlers keep reads and writes inside the claimed ``store``
++    # on a backend whose get_by_hash honours it. A per-store grant
++    # (read:<s>/write:<s>) authorizes only these: every other tool acts on all
++    # partitions, so naming a store there must not unlock it. memory_explore
++    # and memory_detail are left out: the entity graph is not partitioned, so
++    # their entity names and related entities span every store (#1683).
++    STORE_CONFINED_TOOLS = frozenset({
++        "memory_store", "memory_store_session", "memory_search", "memory_list",
++        "memory_delete", "memory_update",
++    })
++    # memory_search arguments that read outside the claimed store: beliefs are
++    # not partitioned, and the exact/tag fallback queries ignore ``store``.
++    CROSS_STORE_ARGUMENTS = ("include_beliefs", "fallback")
 +
-+        BERT-like exports differ: some graphs accept ``token_type_ids``, others
-+        declare only ``input_ids``/``attention_mask`` (Xenova int8 exports do the
-+        latter). Sending an undeclared input makes onnxruntime raise, the
-+        single-item retry sends the same payload, and the rerank silently falls
-+        back to the unreranked order -- measured on #1661 (Greptile P1).
++    async def store_grant_target(self, name: Optional[str], arguments: Optional[dict] = None) -> Optional[str]:
++        """Return the store a per-store grant may authorize this call for.
++
++        ``None`` means only the global grant will do: the call names no store
++        (or ``all``), the tool ignores ``store``, the call reaches across
++        partitions, or the backend's get_by_hash ignores ``store`` and so cannot
++        prove confinement (storage-layer enforcement is #1683). The SDK dispatch
++        gate and the /mcp shim both ask this, so the transports cannot disagree.
 +        """
-+        try:
-+            accepted = {node.name for node in self._model.get_inputs()}
-+        except (AttributeError, TypeError):
-+            # Test doubles and exotic sessions do not expose get_inputs(); the
-+            # real InferenceSession always does. Fail safe: pass the feed as-is.
-+            return ort_inputs
-+        if not accepted:
-+            return ort_inputs
-+        return {name: value for name, value in ort_inputs.items() if name in accepted}
++        arguments = arguments or {}
++        store = arguments.get("store")
++        if store in (None, "all") or name not in self.STORE_CONFINED_TOOLS:
++            return None
++        if any(arguments.get(key) for key in self.CROSS_STORE_ARGUMENTS):
++            return None
++        storage = await self._ensure_storage_initialized()
++        if not getattr(storage, "get_by_hash_is_store_scoped", False):
++            return None
++        return store
 +
-     # Minimum batch size to use batched ONNX inference on GPU.
-     # Below this threshold, sequential single-item GPU calls are faster
-     # because small batches incur padding + tensor transfer overhead
-@@ -532,7 +557,7 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
-             attention_mask = inputs["attention_mask"].astype(np.int64)
+     async def tool_requires_write(self, name: Optional[str], arguments: Optional[dict] = None) -> bool:
+         """Return True if calling this tool requires the 'write' scope.
  
-         ort_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
--        outputs = self._model.run(None, ort_inputs)
-+        outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
-         logits = outputs[0]  # Shape: (batch_size, num_classes)
+@@ -1738,16 +1772,15 @@ async def call_tool(
+         scope_str = self._caller_scope_str()
+         if scope_str is not None:
+             operation = "write" if await self.tool_requires_write(name, arguments) else "read"
+-            store_arg = (arguments or {}).get("store")
+-            target = None if store_arg in (None, "all") else store_arg
++            target = await self.store_grant_target(name, arguments)
+             if not self._scope_grants(scope_str, operation, target):
+                 logger.warning(
+                     "Refused %s tool for a scope lacking the store grant: %s",
+                     operation, _sanitize_log_value(name),
+                 )
++                required = "'%s' (global)" % operation if target is None else "'%s:%s'" % (operation, target)
+                 raise PermissionError(
+-                    "insufficient_scope: tool '%s' requires '%s%s' access"
+-                    % (name, operation, "" if target is None else ":" + target)
++                    "insufficient_scope: tool '%s' requires %s access" % (name, required)
+                 )
  
-         # Vectorized softmax + weighted score
-@@ -587,7 +612,7 @@ def _score_cross_encoder_batch(self, pairs: List[Tuple[str, str]]) -> List[float
-             "attention_mask": attention_mask,
-             "token_type_ids": token_type_ids,
-         }
--        outputs = self._model.run(None, ort_inputs)
-+        outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
-         logits = outputs[0]  # Shape: (batch_size, num_classes) or (batch_size,)
- 
-         # Vectorized sigmoid
+         # Resolve handler from routing table
 ```
 
-**File**: `src/mcp_memory_service/quality/search_rerank.py` (added, +238/-0)
+**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +33/-32)
 ```diff
-@@ -0,0 +1,238 @@
-+"""Optional ONNX reranker for memory_search (issue #1602).
-+
-+Closed scope: a per-call ``rerank`` boolean on ``memory_search``, gated by the
-+``MCP_RERANK_*`` environment flags. Inference runs through the existing
-+``quality/onnx_ranker.py`` loader — one ONNX path, no second implementation.
-+
-+Contract (specs/1602-rerank-flag.md):
-+
-+- EARS 1/2 — with ``rerank`` absent or false the stage never runs; without
-+  ``MCP_RERANK_ENABLED`` the flag is a total no-op: no model load, no download,
-+  no timing change, byte-identical response ordering.
-+- EARS 3 — active: the candidate pool is inflated to ``MCP_RERANK_CANDIDATES``
-+  (default 40), scored against the query by the model named in
-+  ``MCP_RERANK_MODEL`` (default ``Xenova/bge-reranker-base``), sorted best
-+  first, truncated to the caller's ``limit``.
-+- EARS 4 — fail-open end to end: a missing model, an unresolvable name, or an
-+  inference error degrades to the unreranked order and logs one warning per
-+  process lifetime. It never raises to the caller.
-+- EARS 5 — model resolution goes through ``quality/onnx_ranker.py``'s
-+  ``get_onnx_ranker_model`` exclusively.
-+- EARS 6 — thread-safe alongside ``quality_boost``: the scorer is a
-+  process-wide instance cached behind a double-checked lock, but scoring
-+  runs on a worker thread (``asyncio.to_thread``) so the event loop is never
-+  blocked. ``quality_boost`` keeps its own ranker instance; the two paths
-+  share no mutable state. The only process-wide mutable state is
-+  bookkeeping (the cached instance and the failure latch), which never
-+  affects any result's ORDER — results depend only on the query and the
-+  candidate list.
-+
-+Config is re-read per call (mirrors ``QualityConfig.from_env()``) so tests and
-+host services flip the flags without a process reload.
-+"""
-+
-+import asyncio
-+import logging
-+import os
-+import threading
-+from dataclasses import dataclass
-+from typing import Any, List, Optional
-+
-+from ..compat import _sanitize_log_value
-+from .onnx_ranker import get_onnx_ranker_model
-+
-+logger = logging.getLogger(__name__)
-+
-+#: Default model: the issue's measured cross-encoder, exported ONNX int8.
-+#: Only names resolvable through the existing loader actually load; anything
-+#: unresolvable fails open (EARS 4) -- see the module docstring.
-+DEFAULT_RERANK_MODEL = 'Xenova/bge-reranker-base'
-+
-+DEFAULT_RERANK_CANDIDATES = 40
-+
-+_TRUTHY = frozenset(('true', '1', 'yes', 'on', 'enabled'))
-+
-+
-+@dataclass(frozen=True)
-+class SearchRerankConfig:
-+    """Rerank stage configuration. Re-read per call on purpose."""
-+
-+    enabled: bool = False
-+    candidates: int = DEFAULT_RERANK_CANDIDATES
-+    model: str = DEFAULT_RERANK_MODEL
-+
-+    @classmethod
-+    def from_env(cls) -> 'SearchRerankConfig':
-+        """Read the three flags. Junk falls back to defaults, never raises."""
-+        raw_candidates = (os.getenv('MCP_RERANK_CANDIDATES') or '').strip()
-+        candidates = DEFAULT_RERANK_CANDIDATES
-+        if raw_candidates:
-+            try:
-+                candidates = max(int(raw_candidates), 1)
-+            except ValueError:
-+                logger.warning(
-+                    'Invalid MCP_RERANK_CANDIDATES=%s. Using default %s',
-+                    _sanitize_log_value(raw_candidates),
-+                    DEFAULT_RERANK_CANDIDATES,
-+                )
-+        return cls(
-+            enabled=(os.getenv('MCP_RERANK_ENABLED') or '').strip().lower() in _TRUTHY,
-+            candidates=candidates,
-+            model=(os.getenv('MCP_RERANK_MODEL') or '').strip() or DEFAULT_RERANK_MODEL,
-+        )
-+
-+
-+def rerank_requested(arguments: dict) -> bool:
-+    """True only when the caller explicitly passed rerank=True."""
-+    return arguments.get('rerank') is True
-+
-+
-+def rerank_active(arguments: dict, config: SearchRerankConfig) -> bool:
-+    """Feature gate: per-call flag AND operator env flag."""
-+    return config.enabled and rerank_requested(arguments)
-+
-+
-+def resolve_fetch_limit(arguments: dict, base_limit: int, config: Optional[SearchRerankConfig] = None) -> int:
-+    """Candidate pool size for ``storage.search_memories``.
-+
-+    With the stage inactive this is exactly ``base_limit`` -- the fetch is
-+    byte-identical to today's path. Active: inflate to MCP_RERANK_CANDIDATES
-+    (default 40) so the cross-encoder has something to order.
-+    """
-+    config = config or SearchRerankConfig.from_env()
-+    if rerank_active(arguments, config):
-+        return max(base_limit, config.candidates)
-+    return base_limit
-+
-+
-+_scorer_lock = threading.Lock()
-+_scorer: Optional[Any] = None
-+_load_failed = threading.Event()
-+_failure_logged = threading.Event()
-+
-+
-+def _build_scorer(config: SearchRerankConfig) -> Any:
-+    """Resolve through the existing loader -- the single ONNX path."""
-+    model = get_onnx_ranker_model(model_name=config.model)
-+    if model is None:
-+        raise RuntimeError(
-+            f"ONNX ranker '{config.model}' could not be resolved through the existing loa
-```
-
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +15/-1)
-```diff
-@@ -1205,7 +1205,13 @@ async def _retrieve_search_results(storage, arguments: dict, normalize_tags):
-         store = None
- 
-     query = arguments.get("query")
--    limit = arguments.get("limit", 10)
-+    # Rerank stage (issue #1602): with `rerank=true` on an enabled setup the
-+    # candidate pool inflates to MCP_RERANK_CANDIDATES (default 40) so the
-+    # cross-encoder has something to order; otherwise the fetch is
-+    # byte-identical to today's.
-+    from ...quality.search_rerank import resolve_fetch_limit
-+
-+    limit = resolve_fetch_limit(arguments, arguments.get("limit", 10))
-     result = await storage.search_memories(
-         query=query,
-         mode=arguments.get("mode", "semantic"),
-@@ -1546,6 +1552,14 @@ async def handle_memory_search(server, arguments: dict) -> List[types.TextConten
-         if filter_error:
-             return [types.TextContent(type="text", text=filter_error)]
- 
-+        # Optional second-stage rerank (issue #1602): per-call opt-in, gated by
-+        # MCP_RERANK_ENABLED. Runs after every narrowing stage, so callers see
-+        # the final ordering. Off it is a passthrough -- byte-identical to
-+        # today's response.
-+        from ...quality.search_rerank import apply_search_rerank
-+        memories, total = await apply_search_rerank(
-+            arguments, query, memories, total, result
-+        )
-         # Summarize only after retrieval, filters, and plugins. The helper keeps
-         # raw results intact as a safe fallback when the provider is unavailable.
-         summary_response, summary_warning = await _summarize_memory_search(
-```
-
-**File**: `src/mcp_memory_service/tools/registry.py` (modified, +10/-0)
-```diff
-@@ -274,6 +274,16 @@ class ToolDef:
-                     "default": 0,
-                     "description": "Quality weight for reranking (0.0-1.0)",
-                 },
-+                "rerank": {
-+                    "type": "boolean",
-+                    "default": False,
-+                    "description": (
-+                        "Opt-in second-stage ONNX rerank of the top "
-+                        "MCP_RERANK_CANDIDATES results. Requires "
-+                        "MCP_RERANK_ENABLED on the server; off by default and a "
-+                        "no-op when the server flag is unset."
-+                    ),
-+                },
-                 "ranking_weights": {
-                     "type": "object",
-                     "description": "Custom weights for ranked mode (keys: semantic, time_decay, access_frequency, quality). Values are normalized to sum=1.0.",
-```
-
-**File**: `tests/quality/test_search_rerank_contract.py` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+"""Contract tests for the #1661 review findings (Greptile P1s).
-+
-+Covers what the flag plumbing needs beyond the golden-path tests:
-+- the tool schema advertises ``rerank`` so clients that build calls from
-+  ``tools/list`` can discover the flag;
-+- the scorer build (and any cold-cache export) never runs on the event loop;
-+- a neutral ``0.5`` sentinel from the loader fails open instead of reordering
-+  the top-k with fabricated ties.
-+"""
-+
-+import asyncio
-+from unittest.mock import patch
-+
-+import pytest
-+
-+from mcp_memory_service.quality import search_rerank
-+from mcp_memory_service.quality.search_rerank import (
-+    SearchRerankConfig,
-+    rerank_candidates,
-+    reset_scorer_for_tests,
-+)
-+from mcp_memory_service.tools.registry import TOOL_REGISTRY
-+
-+ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
-+
-+
-+@pytest.fixture(autouse=True)
-+def _clean_state(monkeypatch):
-+    for var in ENV_VARS:
-+        monkeypatch.delenv(var, raising=False)
-+    reset_scorer_for_tests()
-+    yield
-+    reset_scorer_for_tests()
-+
-+
-+class _StubModel:
-+    def __init__(self, scores):
-+        self.scores = scores
-+
-+    def score_quality_batch(self, pairs):
-+        return list(self.scores)
-+
-+
-+def test_tool_schema_advertises_rerank():
-+    """tools/list consumers must see the flag; the handler alone is not enough."""
-+    search = next(tool for tool in TOOL_REGISTRY if tool.name == 'memory_search')
-+    rerank = search.input_schema['properties']['rerank']
-+    assert rerank['type'] == 'boolean'
-+    assert rerank.get('default') is False
-+    assert 'MCP_RERANK_ENABLED' in rerank['description']
-+
-+
-+@pytest.mark.asyncio
-+async def test_scorer_resolution_off_the_event_loop():
-+    """Build runs in a worker thread -- a cold ONNX session must not stall the loop."""
-+    calls = []
-+    real_to_thread = asyncio.to_thread
-+
-+    async def spy(func, *args, **kwargs):
-+        calls.append(getattr(func, '__name__', repr(func)))
-+        return await real_to_thread(func, *args, **kwargs)
-+
-+    model = _StubModel([0.9, 0.1])
-+    with patch.object(search_rerank, '_resolve_scorer', return_value=model), \
-+         patch.object(asyncio, 'to_thread', spy):
-+        result = await rerank_candidates(
-+            'q', [{'content': 'a'}, {'content': 'b'}], SearchRerankConfig(enabled=True)
-+        )
-+
-+    assert result is not None
-+    # MagicMock patches lose __name__; the repr still carries the attribute name.
-+    assert any('_resolve_scorer' in name for name in calls), calls
-+    assert any('score_quality_batch' in name for name in calls), calls
-+
-+
-+@pytest.mark.asyncio
-+async def test_neutral_sentinel_fails_open():
-+    """A swallowed per-item failure must degrade to baseline, not fake an order."""
-+    model = _StubModel([0.91, 0.5, 0.12])
-+    with patch.object(search_rerank, '_resolve_scorer', return_value=model):
-+        result = await rerank_candidates(
-+            'q',
-+            [{'content': 'a'}, {'content': 'b'}, {'content': 'c'}],
-+            SearchRerankConfig(enabled=True),
-+        )
-+
-+    assert result is None
-+
-+
-+@pytest.mark.asyncio
-+async def test_real_scores_still_rerank():
-+    """Guard against the sentinel check turning into a blanket refusal."""
-+    model = _StubModel([0.1, 0.92, 0.4])
-+    memories = [{'content': 'a'}, {'content': 'b'}, {'content': 'c'}]
-+    with patch.object(search_rerank, '_resolve_scorer', return_value=model):
-+        result = await rerank_candidates('q', memories, SearchRerankConfig(enabled=True))
-+
-+    assert result is not None
-+    assert [memory['content'] for memory in result] == ['b', 'c', 'a']
-+
-+
-+def test_ort_input_filter_matches_graph_declaration():
-+    """The graph, not the tokenizer, decides the feed (Greptile P1 on #1661).
-+
-+    A Xenova int8 export declares only input_ids/attention_mask; sending
-+    token_type_ids makes onnxruntime raise and the rerank fail-open forever.
-+    """
-+    from mcp_memory_service.quality.onnx_ranker import ONNXRankerModel
-+
-+    class _Node:
-+        def __init__(self, name):
-+            self.name = name
-+
-+    class _Session:
-+        def get_inputs(self):
-+            return [_Node('input_ids'), _Node('attention_mask')]
-+
-+    instance = ONNXRankerModel.__new__(ONNXRankerModel)
-+    instance._model = _Session()
-+    feed = {'input_ids': 1, 'attention_mask': 2, 'token_type_ids': 3}
-+
-+    assert instance._accepted_ort_inputs(feed) == {'input_ids': 1, 'attention_mask': 2}
-```
-
-**File**: `tests/quality/test_search_rerank_flag.py` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+"""Optional ONNX reranker for memory_search (issue #1602).
-+
-+Contract under test (specs/1602-rerank-flag.md):
-+- E1/AC1: ``rerank`` absent or false -> byte-identical baseline response.
-+- E2: MCP_RERANK_ENABLED unset/off -> ``rerank=true`` is a total no-op (the
-+  loader is never touched, the fetch limit is never inflated).
-+- E3: enabled and model resolvable -> reranked order, MCP_RERANK_CANDIDATES
-+  honored, response truncated to the caller's limit.
-+- E4/AC5: model load failure or inference error -> unreranked order, one
-+  warning line per process lifetime, never an error response.
-+- E5: the model resolves through the existing quality loader only.
-+- E6: concurrent searches keep orders valid; no shared mutable state.
-+"""
-+
-+import asyncio
-+import logging
-+import os
-+from unittest.mock import patch
-+
-+import pytest
-+
-+from mcp_memory_service.quality import search_rerank
-+from mcp_memory_service.quality.search_rerank import (
-+    SearchRerankConfig,
-+    apply_search_rerank,
-+    rerank_active,
-+    reset_scorer_for_tests,
-+    rerank_candidates,
-+    rerank_requested,
-+)
-+
-+LOADER = 'mcp_memory_service.quality.search_rerank.get_onnx_ranker_model'
-+ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
-+
-+
-+@pytest.fixture(autouse=True)
-+def _clean_state(monkeypatch):
-+    for var in ENV_VARS:
-+        monkeypatch.delenv(var, raising=False)
-+    reset_scorer_for_tests()
-+    yield
-+    reset_scorer_for_tests()
-+
-+
-+class _StubModel:
-+    def __init__(self, scores=None, error=None):
-+        self._scores = scores
-+        self._error = error
-+        self.calls = []
-+
-+    def score_quality_batch(self, pairs, max_batch_size=32):
-+        self.calls.append(list(pairs))
-+        if self._error is not None:
-+            raise self._error
-+        return list(self._scores)
-+
-+
-+def _memories(n):
-+    return [{'content': f'memory-{i}', 'content_hash': f'hash-{i}'} for i in range(n)]
-+
-+
-+def _enabled_config(candidates=40, model='ms-marco-MiniLM-L-6-v2'):
-+    return SearchRerankConfig(enabled=True, candidates=candidates, model=model)
-+
-+
-+# --- EARS 1/2: gate ----------------------------------------------------------
-+
-+
-+@pytest.mark.asyncio
-+async def test_off_path_returns_input_byte_identical():
-+    memories = _memories(3)
-+    result = {'memories': memories, 'total': 3}
-+    out, total = await apply_search_rerank({}, 'q', memories, 3, result)
-+    assert out is memories
-+    assert total == 3
-+    assert result['memories'] is memories
-+    assert result['total'] == 3
-+
-+
-+@pytest.mark.asyncio
-+async def test_flag_without_env_never_touches_the_loader():
-+    """rerank=true with MCP_RERANK_ENABLED unset is a total no-op."""
-+    memories = _memories(3)
-+    result = {'memories': memories, 'total': 3}
-+    with patch(LOADER) as loader:
-+        out, total = await apply_search_rerank({'rerank': True}, 'q', memories, 3, result)
-+    loader.assert_not_called()
-+    assert out is memories
-+    assert result['memories'] is memories
-+    assert result['total'] == 3
-+
-+
-+def test_rerank_requested_reads_only_the_flag():
-+    assert rerank_requested({'rerank': True}) is True
-+    assert rerank_requested({'rerank': False}) is False
-+    assert rerank_requested({}) is False
-+    assert rerank_requested({'rerank': 'yes'}) is False
-+
-+
-+def test_gate_requires_both_flag_and_env():
-+    config = _enabled_config()
-+    assert rerank_active({'rerank': True}, config) is True
-+    assert rerank_active({}, config) is False
-+    assert rerank_active({'rerank': True}, SearchRerankConfig(enabled=False)) is False
-+
-+
-+# --- EARS 3: reranked order ---------------------------------------------------
-+
-+
-+def test_from_env_defaults_are_off():
-+    config = SearchRerankConfig.from_env()
-+    assert config.enabled is False
-+    assert config.candidates == 40
-+    assert config.model == 'Xenova/bge-reranker-base'
-+
-+
-+def test_from_env_honors_overrides(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    monkeypatch.setenv('MCP_RERANK_CANDIDATES', '25')
-+    monkeypatch.setenv('MCP_RERANK_MODEL', 'ms-marco-MiniLM-L-6-v2')
-+    config = SearchRerankConfig.from_env()
-+    assert config.enabled is True
-+    assert config.candidates == 25
-+    assert config.model == 'ms-marco-MiniLM-L-6-v2'
-+
-+
-+def test_from_env_rejects_junk_without_raising(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_CANDIDATES', 'ten')
-+    config = SearchRerankConfig.from_env()
-+    assert config.candidates == 40
-+
-+
-+def test_fetch_limit_inflates_only_when_active(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    assert search_rerank.resolve_fetch_limit({'rerank': True}, 10) == 40
-+    assert search_rerank.resolve_fetch_limit({'rerank': False}, 10) == 10
-+
-+
-+@pytest.mark.asyncio
-+async def test_enabled_search_reranks_and_truncates_to_limit(monkeypatch):
-+    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
-+    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(40)])
-+   
-```
-
----
-
-### Incident Patch 2: `a930c2b1` (2026-10-25)
-**Commit Message**: feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval) (#1673)
-
-* docs: link the Discord server from README and CONTRIBUTING
-
-Announcements for releases, good first issues and new Discussions already
-go there, but nothing in the repository pointed at it. Claims, decisions
-and reviews stay on GitHub.
-
-* docs(site): link the Discord server from the start page and footers
-
-Adds a Discord button next to GitHub and Documentation in the Get started
-block and a Discord link in the footer shared by the start page, the demo
-and the remote MCP tutorial.
-
-* feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval)
-
-Implements wave-based semantic memory from:
-'Wave-Based Semantic Memory with Resonance-Based Retrieval'
-arXiv:2509.09691 (submitted Aug 2025)
-
-New features:
-- ResonanceDB class: complex waveform embeddings ψ(x) = A(x)·exp(i·φ(x))
-- Phase-aware similarity via constructive/destructive interference
-- Endpoint: POST /api/memories/resonance-search with hybrid mode
-- Three search modes: resonance (pure), phase (negation detection), hybrid
-- Resolves cosine-blindness for negation (happy vs not_happy problem)
-
-Changes:
-- src/mcp_memory_service
-
-**File**: `changelog.d/1673.added.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+- Experimental `POST /api/memories/resonance-search`: ranks memories by wave interference instead of cosine similarity, after the ResonanceDB approach in arXiv:2509.09691. It converts the stored embeddings to complex waveforms at query time, so no schema change. Modes `resonance`, `phase` and `hybrid` (default), a `store` field like `/api/search`, and superseded memories stay hidden. Works on `sqlite_vec` and `hybrid`, and answers 501 on other backends (#1673).
-```
-
-**File**: `docs/agents/http-generic.md` (modified, +34/-0)
-```diff
-@@ -55,6 +55,40 @@ This table is the subset agents reach for. The authoritative, always-current lis
- > that body with `.get("results", [])` turns a rejected request into "no memories
- > found". Both endpoints return their hits under `results`, not `memories`.
- 
-+### Experimental: resonance search
-+
-+`POST /api/memories/resonance-search` ranks memories by wave interference instead of
-+cosine similarity, after the ResonanceDB idea in arXiv:2509.09691. It turns the stored
-+embeddings into complex waveforms at query time. No schema change, no extra model.
-+
-+```bash
-+curl -X POST http://localhost:8000/api/memories/resonance-search \
-+  -H "Content-Type: application/json" \
-+  -d '{"query": "deploy target", "top_k": 10, "mode": "hybrid", "store": "default"}'
-+```
-+
-+| Field | Default | Meaning |
-+|---|---|---|
-+| `query` | required | Search text |
-+| `top_k` | `10` | 1-100 results |
-+| `mode` | `hybrid` | `resonance` (interference only), `phase` (phase alignment only), `hybrid` (70/30 mix) |
-+| `store` | `default` | Store partition, `all` for every store, as in `/api/search` |
-+
-+Results carry `content_hash`, `score` and `details` (`resonance`, `phase_shift`), not
-+the memory content; fetch that with `GET /api/memories/{hash}?store=<name>`, using the
-+same `store` you searched (`all` included), since that endpoint defaults to `default`.
-+Superseded memories are left out. `total_stored` counts the memories that were actually scored.
-+
-+Limits worth knowing before you build on it:
-+
-+- Only `sqlite_vec` and `hybrid` (via its local SQLite) work. Cloudflare and Milvus get a 501.
-+- Every request scans and scores every eligible memory in the store in pure Python.
-+  Fine at a few thousand memories, slow well before 50k.
-+- Nobody has shown yet that it ranks better than `/api/search`. The phase is derived from
-+  the same embedding values, so it cannot add information the embedding model did not
-+  encode, and that includes negation. Treat it as a research endpoint until the
-+  measurement in #1674 says otherwise.
-+
- ## Authentication Patterns
- 
- ```bash
-```
-
-**File**: `src/mcp_memory_service/storage/resonance_db.py` (added, +398/-0)
-```diff
-@@ -0,0 +1,398 @@
-+"""ResonanceDB — Wave-Based Semantic Memory (Phase-Aware Retrieval)
-+
-+Implements the wave-based memory model from:
-+"Wave-Based Semantic Memory with Resonance-Based Retrieval"
-+arXiv:2509.09691 (submitted Aug 2025)
-+
-+Core idea: Instead of storing memories as static real-valued vectors and
-+comparing with cosine similarity, store them as complex waveforms:
-+
-+    ψ(x) = A(x) · exp(i · φ(x))
-+
-+where:
-+    A(x) = semantic amplitude (magnitude of meaning)
-+    φ(x) = contextual phase (semantic polarity, negation, modality)
-+
-+Similarity is measured via **constructive/destructive interference** instead
-+of distance in a Euclidean space.
-+
-+Key property that solves the "happy" vs "not happy" problem:
-+    Two waves that are in-phase amplify (resonate).
-+    Two waves shifted by π cancel (destructive interference).
-+    Negation naturally produces a phase shift → anti-resonance.
-+"""
-+
-+from __future__ import annotations
-+
-+import math
-+import logging
-+from dataclasses import dataclass
-+from typing import List, Dict, Any, Tuple
-+
-+logger = logging.getLogger(__name__)
-+
-+
-+# ---------------------------------------------------------------------------
-+# Complex waveform math
-+# ---------------------------------------------------------------------------
-+
-+def _complex_dot_product(a: List[complex], b: List[complex]) -> complex:
-+    """Compute <a|b> = Σ a*(x) · b(x) for two complex waveforms."""
-+    result = complex(0, 0)
-+    for ax, bx in zip(a, b):
-+        result += ax.conjugate() * bx
-+    return result
-+
-+
-+def _wave_interference_energy(psi_a: List[complex], psi_b: List[complex]) -> float:
-+    """
-+    Compute constructive interference energy between two waveforms.
-+    
-+    Maximal when in-phase (aligned semantics), minimal when out-of-phase
-+    (contrasting/negated semantics).
-+    
-+    Formula from paper:
-+        E = |Σ A_a(x)·A_b(x)·cos(φ_a(x) - φ_b(x))|
-+    
-+    Returns value in [0, 1] after normalization.
-+    """
-+    if not psi_a or not psi_b:
-+        return 0.0
-+    
-+    n = min(len(psi_a), len(psi_b))
-+    
-+    # Extract amplitude and phase from each waveform
-+    real_part = 0.0
-+    for x in range(n):
-+        ax = psi_a[x]
-+        bx = psi_b[x]
-+        # Amplitude product × phase difference cosine
-+        real_part += ax.real * bx.real + ax.imag * bx.imag
-+    
-+    # Normalize by maximum possible energy (sum of |ψ(x)|²)
-+    energy_a = sum(abs(a) ** 2 for a in psi_a[:n])
-+    energy_b = sum(abs(b) ** 2 for b in psi_b[:n])
-+    
-+    if energy_a == 0 or energy_b == 0:
-+        return 0.0
-+    
-+    max_energy = math.sqrt(energy_a * energy_b)
-+    if max_energy == 0:
-+        return 0.0
-+    
-+    resonance = real_part / max_energy
-+    
-+    # Clamp to [0, 1] for score
-+    return max(0.0, min(1.0, resonance))
-+
-+
-+def _phase_shift_score(psi_a: List[complex], psi_b: List[complex]) -> float:
-+    """
-+    Detect phase-shift patterns (negation, modality inversion).
-+    
-+    Returns the mean phase difference normalized to [0, 1]:
-+    0 = in phase (aligned), 1 = shifted by π (contrast/negation).
-+    """
-+    if not psi_a or not psi_b:
-+        return 0.0
-+    
-+    n = min(len(psi_a), len(psi_b))
-+    if n == 0:
-+        return 0.0
-+    
-+    # Compute mean phase difference
-+    phase_diffs = []
-+    for x in range(n):
-+        phase_a = math.atan2(psi_a[x].imag, psi_a[x].real)
-+        phase_b = math.atan2(psi_b[x].imag, psi_b[x].real)
-+        diff = phase_a - phase_b
-+        # Wrap to [-π, π]
-+        while diff > math.pi:
-+            diff -= 2 * math.pi
-+        while diff < -math.pi:
-+            diff += 2 * math.pi
-+        phase_diffs.append(abs(diff))
-+    
-+    mean_phase_diff = sum(phase_diffs) / len(phase_diffs) if phase_diffs else 0.0
-+    
-+    # 0 → aligned, π → negation; callers rank by (1 - this value)
-+    return abs(mean_phase_diff) / math.pi
-+
-+
-+def _constructive_interference(psi_a: List[complex], psi_b: List[complex]) -> float:
-+    """
-+    Full resonance score: constructive interference.
-+    
-+    When aligned → waves amplify (high score).
-+    When opposed → waves cancel (low score).
-+    This is the CORE similarity metric from the paper.
-+    """
-+    return _wave_interference_energy(psi_a, psi_b)
-+
-+
-+def _destructive_interference(psi_a: List[complex], psi_b: List[complex]) -> float:
-+    """
-+    Anti-resonance score.
-+    
-+    When opposed (e.g. negation) → high destructive score.
-+    When aligned → low destructive score.
-+    """
-+    return _phase_shift_score(psi_a, psi_b)
-+
-+
-+# ---------------------------------------------------------------------------
-+# Phase-aware embedding: real vector → complex waveform
-+# ---------------------------------------------------------------------------
-+
-+def _embed_to_waveform(embedding: List[float], dimension: int) -> List[complex]:
-+    """
-+    Convert a real-valued embedding (e.g. from all-MiniLM) to a complex waveform.
-+    
-+    Strategy: Split embedding into amplitude (magnitude) and p
-```
-
-**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +111/-2)
-```diff
-@@ -16,15 +16,19 @@
- Memory CRUD endpoints for the HTTP interface.
- """
- 
-+import asyncio
-+import heapq
- import logging
- import socket
- from collections import Counter
--from typing import List, Optional, Dict, Any
-+from typing import List, Optional, Dict, Any, Literal
- 
- from fastapi import APIRouter, HTTPException, Depends, Query, Request
- from pydantic import BaseModel, Field
- 
- from ...storage.base import MemoryStorage
-+from ...storage.mixins.base import deserialize_embedding
-+from ...storage.resonance_db import ResonanceDB
- from ...models.memory import Memory
- from ...models.ontology import get_all_types
- from ...services.memory_service import MemoryService
-@@ -586,7 +590,7 @@ async def store_session(
-     All turns are concatenated into '[role] content' lines and stored as
-     memory_type='session' with a 'session:<id>' tag for reliable session-level retrieval.
+@@ -47,6 +47,36 @@ async def _requires_write(server, tool_name: Optional[str], arguments: Optional[
      """
--    import uuid as _uuid
-+    import uuid as _uuid  # inline import
+     return await server.tool_requires_write(tool_name, arguments)
  
-     session_id = request.session_id or str(_uuid.uuid4())
-     lines = [f"[{t.role}] {t.content.strip()}" for t in request.turns if t.content.strip()]
-@@ -632,3 +636,108 @@ async def get_memory_types(
- ) -> List[str]:
-     """Return all valid memory types (built-in + custom from MCP_CUSTOM_MEMORY_TYPES)."""
-     return sorted(get_all_types())
 +
++async def _scope_refusal(server, user, request_id, tool_name: str, arguments: dict) -> Optional[JSONResponse]:
++    """Return the 403 for a tool call the caller's scope does not cover, else None.
 +
-+# ── ResonanceDB — Wave-Based Semantic Search ──────────────────────────────────
-+
-+class ResonanceSearchRequest(BaseModel):
-+    """Request model for ResonanceDB wave-based semantic search."""
-+    query: str = Field(..., description="Search query text")
-+    top_k: int = Field(default=10, ge=1, le=100, description="Max results to return")
-+    mode: Literal["resonance", "phase", "hybrid"] = Field("hybrid", description="Search mode: 'resonance' (pure constructive interference), 'phase' (phase alignment only), 'hybrid' (default)")
-+    store: str = Field(default="default", description="Target store partition (default: 'default'). Use 'all' for every store.")
-+
-+
-+class ResonanceSearchResult(BaseModel):
-+    """Single result from ResonanceDB search."""
-+    content_hash: str
-+    score: float
-+    details: Dict[str, float]
-+
-+
-+class ResonanceSearchResponse(BaseModel):
-+    """Response model for ResonanceDB wave-based search."""
-+    query: str
-+    mode: str
-+    results: List[ResonanceSearchResult]
-+    total_stored: int
-+    backend: str = "resonance"
-+
-+
-+def _fetch_resonance_candidates(conn, store: Optional[str]) -> list:
-+    """Read (content_hash, embedding blob) for every current, searchable memory."""
-+    sql = """
-+        SELECT m.content_hash, e.content_embedding
-+        FROM memories m
-+        JOIN memory_embeddings e ON m.id = e.rowid
-+        WHERE m.deleted_at IS NULL
-+          AND (m.embedding_pending IS NULL OR m.embedding_pending = 0)
-+          AND (m.superseded_by IS NULL OR m.superseded_by = '')
++    Mutating tools require 'write', read-only tools require 'read'
++    (GHSA-2r68-g678-7qr3). A global 'read'/'write' grants every store.
++    'read:<store>'/'write:<store>' grants exactly that store, and only where
++    MemoryServer.store_grant_target says the call stays inside it (the same rule
++    the SDK transports apply); anything else, including a call with no `store`,
++    requires the global operation scope.
 +    """
-+    params: tuple = ()
-+    if store is not None:
-+        sql += " AND m.store = ?"
-+        params = (store,)
-+    return conn.execute(sql, params).fetchall()
++    operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
++    target = await server.store_grant_target(tool_name, arguments)
++    if user.has_store_scope(operation, target):
++        return None
++    required = (
++        f"'{operation}' (global)" if target is None
++        else f"'{operation}' or '{operation}:{target}'"
++    )
++    response = MCPResponse(
++        id=request_id,
++        error={
++            "code": -32003,
++            "message": f"Insufficient scope: tool requires {required} access",
++            "data": {"required_scope": operation, "tool": tool_name, "store": arguments.get("store")},
++        },
++    )
++    return JSONResponse(content=response.model_dump(exclude_none=True), status_code=403)
 +
 +
-+def _score_resonance_candidates(rows: list, query_embedding: List[float], dimension: int, top_k: int, mode: str):
-+    """Score all rows in batches and keep the overall top_k. Returns (results, scored_count)."""
-+    best: list = []
-+    scored = 0
-+    batch_size = 1000
-+    for start in range(0, len(rows), batch_size):
-+        db = ResonanceDB(dimension=dimension)
-+        for content_hash, blob in rows[start:start + batch_size]:
-+            values = deserialize_embedding(blob)
-+            if values is None or len(values) != dimension:
-+                continue
-+            db.add(content_hash, values)
-+        scored += len(db)
-+        best = heapq.nlargest(top_k, best + db.search(query_embedding, top_k=top_k, mode=mode), key=lambda r: r["score"])
-+    return best, scored
-+
-+
-+@router.post("/memories/resonance-search", response_model=ResonanceSearchResponse, tags=["memories", "resonance"])
-+async def resonance_search(
-+    request: ResonanceSearchRequest,
-+    storage: MemoryStorage = Depends(get_storage),
-+    user: AuthenticationResult = Depends(require_read_access),
-+):
-+    """
-+    Wave-based semantic search using ResonanceDB (experimental).
-+
-+    Converts the stored real-valued embeddings to complex waveforms
-+    ψ(x) = A(x) · exp(i · φ(x)) at query time and ranks them by
-+    constructive interference and phase alignment with the query.
-+
-+    Requires a SQLite-backed storage (sqlite_vec, or hybrid via its local
-+    primary). Scans every eligible memory in the selected store.
-+
-+    See: arXiv:2509.09691
-+    """
-+    # Hybrid keeps its SQLite backend in `primary`; Cloudflare and Milvus have no local table to scan.
-+    backend = getattr(storage, "primary", storage)
-+    if getattr(backend, "conn", None) is None or not hasattr(backend, "_execute_with_retry"):
-+        raise HTTPException(status_code=501, detail="Resonance search requires the sqlite_vec or hybrid storage backend.")
-+    if not getattr(backend, "embedd
+ router = APIRouter(prefix="/mcp", tags=["mcp"])
+ 
+ 
+@@ -235,38 +265,9 @@ async def mcp_endpoint(
+                 )
+                 return JSONResponse(content=response.model_dump(exclude_none=True))
+ 
+-            # Scope enforcement, per tool call. Mutating tools require 'write',
+-            # read-only tools require 'read' (GHSA-2r68-g678-7qr3). When the
+-            # call names a `store`, the check is per-store: a global
+-            # 'read'/'write' grants every store, else 'read:<store>'/
+-            # 'write:<store>' grants exactly that store ('all' -> global). A
+-            # call with no `store` targets the implicit default and requires
+-            # the global operation scope.
+-            operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
+-            store_arg = arguments.get("store")
+-            if store_arg is not None:
+-                resolved_store = None if store_arg == "all" else store_arg
+-                authorized = user.has_store_scope(operation, resolved_store)
+-                required = (
+-                    f"'{operation}' (global)" if resolved_store is None
+-                    else f"'{operation}' or '{operation}:{store_arg}'"
+-                )
+-            else:
+-                authorized = user.has_scope(operation)
+-                required = f"'{operation}'"
+-            if not authorized:
+-                response = MCPResponse(
+-                    id=request.id,
+-                    error={
+-                        "code": -32003,
+-                        "message": f"Insufficient scope: tool requires {required} access",
+-                        "data": {"required_scope": operation, "tool": tool_name, "store": store_arg},
+-                    },
+-                )
+-                return JSONResponse(
+-                    content=response.model_dump(exclude_none=True),
+-                    status_code=403,
+-                )
++            refusal = await _scope_refusal(server, user, request.id, tool_name, arguments)
++            if refusal is not None:
++                return refusal
+ 
+             # Resolve the rate-limit identity from the transport BEFORE the
+             # arguments rewrite below: the shim copies X-Agent-ID into
 ```
 
-**File**: `tests/storage/test_resonance_db.py` (added, +109/-0)
+**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +34/-1)
 ```diff
-@@ -0,0 +1,109 @@
-+"""Tests for ResonanceDB scoring and the /api/memories/resonance-search endpoint (PR #1673)."""
+@@ -109,7 +109,27 @@ def has_store_scope(self, operation: str, store: Optional[str]) -> bool:
+         return f"{operation}:{store}" in scopes
+ 
+     def require_store_scope(self, operation: str, store: Optional[str]) -> None:
+-        """Raise 403 if ``operation`` on ``store`` is not permitted."""
++        """Raise 403 if ``operation`` on ``store`` is not permitted.
 +
-+import hashlib
-+import struct
++        A grant that holds only through ``operation:<store>`` additionally needs
++        a backend that confines hash lookups to the store. cloudflare, milvus
++        and remote_http accept ``store`` on get_by_hash and ignore it, so there
++        a store-restricted credential would read or delete another partition's
++        memory by hash; it is refused until the storage layer enforces
++        ``store`` (#1683). Global grants are unaffected.
++        """
++        if self.has_store_scope(operation, store) and not self.has_scope(operation):
++            if not _storage_confines_store():
++                raise HTTPException(
++                    status_code=status.HTTP_403_FORBIDDEN,
++                    detail={
++                        "error": "insufficient_scope",
++                        "error_description": (
++                            "Store-restricted credentials are not supported on this "
++                            f"storage backend; use a global '{operation}' scope"
++                        ),
++                    }
++                )
+         if not self.has_store_scope(operation, store):
+             if store is None:
+                 needed = f"'{operation}' (global, for cross-store access)"
+@@ -124,6 +144,19 @@ def require_store_scope(self, operation: str, store: Optional[str]) -> None:
+             )
+ 
+ 
++def _storage_confines_store() -> bool:
++    """Whether the active backend's get_by_hash honours ``store``.
++
++    Fails closed: no initialized storage counts as not confining.
++    """
++    from ..dependencies import get_storage  # inline import: keeps the storage stack out of OAuth module import
++    try:
++        storage = get_storage()
++    except HTTPException:
++        return False
++    return bool(getattr(storage, "get_by_hash_is_store_scoped", False))
++
++
+ def scope_within_ceiling(requested: Optional[str], ceiling: Optional[str]) -> bool:
+     """Return True if every token in ``requested`` is permitted by ``ceiling``.
+ 
+```
+
+**File**: `tests/unit/test_store_grant_gate.py` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++"""Per-store grants on the native MCP transports (SSE, Streamable HTTP).
++
++The SDK dispatch gate must apply the same rule as the /mcp shim: a
++read:<store>/write:<store> grant authorizes a call only when the tool confines
++itself to that store, the call does not reach across partitions, and the
++backend can prove confinement. Everything else needs the global grant.
++"""
++
 +from types import SimpleNamespace
++from unittest.mock import AsyncMock
++
++import pytest
++from mcp import types
++from mcp.server.lowlevel.server import request_ctx
++from mcp.shared.context import RequestContext
++
++# Via the package: the direct server_impl import races the package __init__.
++from mcp_memory_service.server import MemoryServer
++
++
++@pytest.fixture
++def server(monkeypatch):
++    srv = MemoryServer()
++    srv.remote_transport = True
++    srv.storage = AsyncMock()
++    srv.storage.get_by_hash_is_store_scoped = True
++    monkeypatch.setattr(srv, "_ensure_storage_initialized", AsyncMock(return_value=srv.storage))
++    srv.handled = []
++
++    async def handler(_server, arguments):
++        srv.handled.append(arguments)
++        return [types.TextContent(type="text", text="handled")]
++
++    monkeypatch.setattr("mcp_memory_service.tools.routing.resolve_handler", lambda name: handler)
++    return srv
++
++
++async def _call(server, name, arguments, scope):
++    ctx = RequestContext(
++        request_id=1, meta=None, session=None, lifespan_context=None,
++        request=SimpleNamespace(scope={"mcp_auth_scope": scope}, headers={}, client=None),
++    )
++    token = request_ctx.set(ctx)
++    try:
++        handler = server.server.request_handlers[types.CallToolRequest]
++        req = types.CallToolRequest(
++            method="tools/call",
++            params=types.CallToolRequestParams(name=name, arguments=arguments),
++        )
++        return (await handler(req)).root
++    finally:
++        request_ctx.reset(token)
++
++
++@pytest.mark.asyncio
++async def test_store_grant_cannot_reach_a_tool_that_ignores_store(server):
++    result = await _call(server, "memory_quality",
++                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
++                         "read:projectA write:projectA")
++    assert result.isError
++    assert server.handled == []
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
++async def test_store_grant_cannot_search_across_partitions(server, flag):
++    result = await _call(server, "memory_search", {"query": "x", "store": "projectA", flag: True},
++                         "read:projectA")
++    assert result.isError
++    assert server.handled == []
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("tool, arguments", [
++    ("memory_explore", {"query": "x", "store": "projectA"}),
++    ("memory_detail", {"entity_id": "e", "store": "projectA"}),
++])
++async def test_store_grant_cannot_read_the_unpartitioned_graph(server, tool, arguments):
++    """Entity names and related entities come from a graph with no store, so
++    a per-store grant would see other stores' entities."""
++    result = await _call(server, tool, arguments, "read:projectA")
++    assert result.isError
++    assert server.handled == []
++
++
++@pytest.mark.asyncio
++async def test_store_grant_refused_on_a_backend_that_cannot_confine(server):
++    server.storage.get_by_hash_is_store_scoped = False
++    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
++                         "read:projectA write:projectA")
++    assert result.isError
++    assert server.handled == []
++
++
++@pytest.mark.asyncio
++async def test_store_grant_still_works_for_a_confined_tool(server):
++    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
++                         "read:projectA write:projectA")
++    assert not result.isError
++    assert server.handled == [{"content_hash": "h", "store": "projectA"}]
++
++
++@pytest.mark.asyncio
++async def test_global_grant_is_unchanged(server):
++    server.storage.get_by_hash_is_store_scoped = False
++    result = await _call(server, "memory_quality",
++                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
++                         "read write")
++    assert not result.isError
++    assert len(server.handled) == 1
+```
+
+**File**: `tests/web/api/test_store_grant_confinement.py` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++"""
++A per-store grant (read:<store> / write:<store>) authorizes only calls that
++really stay inside that store.
++
++#1682 introduced per-store scopes and gated every request on the store the
++caller *claims*. Three holes were left behind it:
++
++- tools that ignore ``store`` (memory_quality, memory_cleanup, memory_resolve,
++  ...) accepted a claimed store and then acted on every partition;
++- memory_search's ``include_beliefs`` and ``fallback`` read across partitions
++  even when the main search is store-scoped;
++- on backends whose ``get_by_hash`` ignores ``store`` (cloudflare, milvus,
++  remote_http), hash-addressed REST routes returned another store's memory.
++
++These drive the real /mcp shim and the real REST routes against sqlite-vec,
++with the authenticated user replaced by one holding exactly the given scope.
++"""
++
++import os
++import tempfile
 +
 +import pytest
 +import pytest_asyncio
-+from fastapi import HTTPException
++from fastapi.testclient import TestClient
 +
 +from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.resonance_db import ResonanceDB, _embed_to_waveform, _phase_shift_score
 +from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
-+from mcp_memory_service.web.api.memories import (
-+    ResonanceSearchRequest,
-+    _score_resonance_candidates,
-+    resonance_search,
-+)
-+
-+DIM = 8
-+BASE = [0.9, -0.4, 0.3, -0.8, 0.1, 0.6, -0.2, 0.5]
-+NEAR = [0.8, -0.3, 0.35, -0.7, 0.05, 0.55, -0.25, 0.45]
-+OPPOSITE = [-v for v in BASE]
++from mcp_memory_service.utils.hashing import generate_content_hash
++from mcp_memory_service.web.dependencies import set_storage
 +
 +
-+def _blob(values):
-+    """sqlite-vec stores raw little-endian float32 with no length prefix."""
-+    return struct.pack(f"<{len(values)}f", *values)
-+
-+
-+def test_phase_shift_is_zero_for_identical_waves():
-+    wave = _embed_to_waveform(BASE, DIM)
-+    assert _phase_shift_score(wave, wave) == 0.0
-+    near = _phase_shift_score(wave, _embed_to_waveform(NEAR, DIM))
-+    assert 0.0 < near < _phase_shift_score(wave, _embed_to_waveform(OPPOSITE, DIM)) <= 1.0
-+
-+
-+def test_exact_match_ranks_first_in_every_mode():
-+    db = ResonanceDB(dimension=DIM)
-+    db.add("exact", BASE)
-+    db.add("near", NEAR)
-+    db.add("opposite", OPPOSITE)
-+    for mode in ("resonance", "phase", "hybrid"):
-+        ranked = [r["content_hash"] for r in db.search(BASE, top_k=3, mode=mode)]
-+        assert ranked[0] == "exact", mode
-+        assert ranked[-1] == "opposite", mode
-+
-+
-+def test_candidates_decode_raw_float32_and_skip_wrong_dimension():
-+    rows = [("exact", _blob(BASE)), ("short", _blob(BASE[:4])), ("opposite", _blob(OPPOSITE))]
-+    results, scored = _score_resonance_candidates(rows, BASE, DIM, top_k=10, mode="hybrid")
-+    assert scored == 2
-+    assert [r["content_hash"] for r in results] == ["exact", "opposite"]
-+
-+
-+def test_top_k_survives_batching():
-+    # The best match sits after the first 1000-row batch; it must still be returned.
-+    rows = [(f"far{i}", _blob(OPPOSITE)) for i in range(1500)] + [("exact", _blob(BASE))]
-+    results, scored = _score_resonance_candidates(rows, BASE, DIM, top_k=1, mode="hybrid")
-+    assert scored == 1501
-+    assert results[0]["content_hash"] == "exact"
++@pytest.fixture
++def temp_db():
++    with tempfile.TemporaryDirectory() as tmpdir:
++        yield os.path.join(tmpdir, "test.db")
 +
 +
 +@pytest_asyncio.fixture
-+async def storage(tmp_path):
-+    s = SqliteVecMemoryStorage(str(tmp_path / "resonance.db"))
++async def storage(temp_db, monkeypatch):
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    s = SqliteVecMemoryStorage(temp_db)
 +    await s.initialize()
-+    try:
-+        yield s
-+    finally:
-+        await s.close()
++    yield s
++    await s.close()
 +
 +
-+async def _put(storage, content, store="default"):
-+    content_hash = hashlib.sha256(content.encode()).hexdigest()
-+    ok, msg = await storage.store(Memory(content=content, content_hash=content_hash), store=store)
-+    assert ok, msg
-+    return content_hash
++@pytest_asyncio.fixture
++async def other_store_hash(storage):
++    """A memory that lives in projectB, which a projectA credential must not reach."""
++    content = "belongs to projectB only"
++    memory = Memory(content=content, content_hash=generate_content_hash(content), tags=["b"])
++    ok, _ = await storage.store(memory, store="projectB")
++    assert ok
++    return memory.content_hash
 +
 +
-+@pytest.mark.asyncio
-+async def test_endpoint_scopes_store_hides_superseded_and_unwraps_hybrid(storage):
-+    current = await _put(storage, "The deploy target is the staging cluster in Frankfurt")
-+    replaced = await _put(storage, "The deploy target was the old cluster in Dublin")
-+    other_store = await _put(storage, "Unrelated note kept in a separate store", store="other")
++@pytest.fixture
++def make_client(storage, monkeypatch):
++    from mcp_memory_service.web.app import app
++    from mcp_memory_service.web.oauth import middleware
++    from mcp_memory_service.web.api import mcp
 +
-+    def _supersede():
-+        storage.conn.execute("UPDATE memories SET superseded_by = ? WHERE content_hash = ?", (current, replaced))
-+        storage.conn.commit()
-+    await storage._execute_with_retry(_supersede)
++    monkeypatch.setattr(middleware, "API_KEY", None)
++    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
++    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
++    from mcp_memory_service.web import dependencies
++    # Restored on teardown, so this storage cannot answer later tests' lookups.
++    monkeypatch.setattr(dependencies, "_storage", None)
++    set_storage(storage)
++    monkeypatch.setattr(mcp, "_memory_server", None)
 +
-+    request = ResonanceSearchRequest(query="deploy target cluster", top_k=10)
-+    # Hybrid storage exposes its SQLite backend as `primary`.
-+    response = await resonance_search(request, storage=SimpleNamespace(primary=storage), user=None)
-+    hashes = {r.content_hash for r in response.results}
-+    assert hashes == {current}
-+    assert response.total_stored == 1
++    def _make(scope):
++        async def mock_user():
++            return middleware.AuthenticationResult(
++                authenticated=True, client_id="c", scope=scope, auth_method="test",
++            )
 +
-+    response_all = await resonance_search(
-+        ResonanceSearchRequest(query="deploy target cluster", store="all"), storage=storage, user=None
-+    )
-+    assert {r.content_hash for r in response_all.results} == {current, other_store}
++        app.dependency_overrides[middleware.get_current_user] = mock_user
++        app.dependency_overrides[middleware.require_read_access] = mock_user
++        return TestClient(app)
++
++    yield _make
++    app.dependency_overrides.clear()
 +
 +
-+@pytest.mark.asyncio
-+async def test_endpoint_rejects_backend_without_sqlite():
-+    with pytest.raises(HTTPException) as exc:
-+        await resonance_search(ResonanceSearchRequest(query="x"), storage=SimpleNamespace(), user=None)
-+    assert exc.value.status_code == 501
++def _ignore_store_like_cloudflare(storage, monkeypatch):
++    """Make the sqlite backend behave like cloudflare/milvus/remote_http:
++    get_by_hash accepts ``store`` and ignores it, and says so."""
++    original = storage.get_by_hash
++
++    async def get_by_hash(content_hash, store=None):
++        return await original(content_hash)
++
++    monkeypatch.setattr(storage, "get_by_hash", get_by_hash)
++    monkeypatch.setattr(storage, "get_by_hash_is_store_scoped", False)
++
++
++def _call(client, name, arguments):
++    return client.post("/mcp", json={
++        "jsonrpc": "2.0", "id": 1, "method": "tools/call",
++        "params": {"name": name, "arguments": arguments},
++    })
++
++
++def _refused(response):
++    return response.status_code == 403 and response.json()["error"]["code"] == -32003
++
++
++# --------------------------------------------------------------------------
++# /mcp shim: tool allowlist and cross-store arguments
++# --------------------------------------------------------------------------
++
++@pytest.mark.integration
++def test_store_grant_cannot_reach_a_tool_that_ignores_store(make_client, other_store_hash):
++    """memory_quality has no store parameter: claiming one must not unlock it."""
++    client = make_client("read:projectA write:projectA")
++    response = _call(client, "memory_quality", {
++        "action": "rate", "content_hash": other_store_hash, "rating": "-1", "store": "projectA",
++    })
++    assert _refused(response)
++
++
++@pytest.mark.integration
++@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
++def test_store_grant_cannot_search_across_partitions(make_client, flag):
++    client = make_client("read:projectA")
++    response = _call(client, "memory_search", {"query": "x", "store": "projectA", flag: True})
++    assert _refused(response)
++
++
++@pytest.mark.integration
++def test_store_grant_still_searches_its_own_store
+```
+
+**File**: `tests/web/test_anonymous_scope.py` (modified, +9/-0)
+```diff
+@@ -29,6 +29,15 @@
+ from mcp_memory_service.web.oauth.middleware import AuthenticationResult
+ 
+ 
++@pytest.fixture(autouse=True)
++def _confining_backend(monkeypatch):
++    """The commons store only works on a backend that confines get_by_hash to a
++    store; the refusal elsewhere is covered in
++    tests/web/api/test_store_grant_confinement.py."""
++    from mcp_memory_service.web.oauth import middleware
++    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
++
++
+ # --------------------------------------------------------------------------
+ # config resolution: unset -> full default, set-empty -> nothing, value kept
+ # --------------------------------------------------------------------------
+```
+
+**File**: `tests/web/test_oauth_store_scopes.py` (modified, +9/-0)
+```diff
+@@ -30,6 +30,15 @@
+ )
+ 
+ 
++@pytest.fixture(autouse=True)
++def _confining_backend(monkeypatch):
++    """These test the scope grammar, so the backend counts as one that confines
++    get_by_hash to a store. The refusal on a backend that cannot is covered in
++    tests/web/api/test_store_grant_confinement.py."""
++    from mcp_memory_service.web.oauth import middleware
++    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
++
++
+ def _auth(scope):
+     return AuthenticationResult(authenticated=True, client_id="c", scope=scope, auth_method="oauth")
+ 
 ```
 
 ---
 
-### Incident Patch 3: `c8cd9115` (2026-10-24)
-**Commit Message**: fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666) (#1667)
+### Incident Patch 2: `e15728d6` (2026-10-26)
+**Commit Message**: fix(web): save the dashboard's Quality tab settings (#1671) (#1676)
 
-* fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666)
+* fix(web): save the dashboard's Quality tab settings (#1671)
 
-Apple's fm serve on macOS 27 answers with SSE when a request has no
-stream field, unlike OpenAI's default of false. The quality scorer and
-the harvest rewriter and classifier never sent the field, so their
-response.json() failed on the SSE body and every call fell through to
-the next provider. Send "stream": false explicitly at all three sites.
+The provider dropdown and the boost toggle on the Quality tab were never
+read, the toggle rendered checked although boosting is off by default,
+and the Current Provider box was hardcoded.
 
-Adds docs/guides/apple-foundation-models.md with setup, env blocks and
-measured results per task against fm serve.
+Add an admin-only POST /api/config/quality that writes
+MCP_QUALITY_AI_PROVIDER and MCP_QUALITY_BOOST_ENABLED to .env and
+restarts the server, and wire the tab to it: it now loads both values
+from /api/config/env and has a Save & Restart button.
 
-* docs: name both switches search summaries need in the Apple FM guide (#1666)
+Values are checked against the choices ENV_CATEGORIES already lists. A
+provider whose key is missing is refused before anything is written,
+since QualityConfig.validate() would stop the restarted server from
+starting. The saved values also go into os.environ: load_dotenv copied
+the old .env values there, and the restarted process inherits them.
+
+* fix(web): address review on the Quality tab save (#1671)
+
+Keep the tab's controls and Save disabled until /config/env has answered,
+so a slow or failed load can no longer write the HTML defaults over the
+configured values; a failed load says so and reopening the tab retries.
+
+Read t
+
+**File**: `changelog.d/1671.fixed.md` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++- **The dashboard's Quality tab now saves its settings (#1671).**
++  The AI provider dropdown and the quality-boost toggle were never read by anything, the
++  toggle rendered checked although the boost is off by default, and the "Current Provider"
++  box was hardcoded. A new admin-only `POST /api/config/quality` writes
++  `MCP_QUALITY_AI_PROVIDER` and `MCP_QUALITY_BOOST_ENABLED` to `.env` and restarts the
++  server; the tab loads both from `/api/config/env` and gets a "Save & Restart" button.
++  Values are checked against the choices the Environment tab already lists, and a provider
++  whose API key is missing (groq, gemini) is refused up front, because
++  `QualityConfig.validate()` would otherwise stop the server from coming back. Saved values
++  also apply after the restart when the old value had already been loaded from `.env`.
+```
+
+**File**: `src/mcp_memory_service/web/api/configuration.py` (modified, +113/-3)
+```diff
+@@ -16,7 +16,8 @@
+ Configuration API endpoint for exposing .env parameters.
+ 
+ Provides read-only access to environment configuration with sensitive value masking,
+-plus write access for Cloudflare credentials with connection validation.
++plus write access for Cloudflare credentials with connection validation and for the
++quality settings shown in the dashboard's Quality tab.
+ """
+ 
+ import os
+@@ -512,8 +513,8 @@ async def get_env_configuration(user = Depends(require_read_access)):
+             choices = param_def[2] if len(param_def) > 2 else None
+             sensitive = param_def[3] if len(param_def) > 3 else False
+ 
+-            # Get current value (environment > .env)
+-            value = os.getenv(key) or env_vars.get(key)
++            # Get current value (environment > .env, even when empty, as at startup)
++            value = os.environ[key] if key in os.environ else env_vars.get(key)
+ 
+             # Determine source
+             source = "default"
+@@ -642,6 +643,9 @@ def _write_credential_to_env(env_path: Path, key: str, value: str) -> None:
+             new_lines.append(line)
+ 
+     if not found:
++        # A file that ends without a newline would otherwise get the key glued to its last line
++        if new_lines and not new_lines[-1].endswith("\n"):
++            new_lines[-1] += "\n"
+         new_lines.append(f"{key}={value}\n")
+ 
+     with open(env_path, 'w', encoding='utf-8') as f:
+@@ -799,3 +803,109 @@ def _sanitize(v: str) -> str:
+         message="Credentials saved. Server restarting...",
+         restart_scheduled=True,
+     )
++
++
++# ---------------------------------------------------------------------------
++# Quality settings
++# ---------------------------------------------------------------------------
++
++# Keys the Quality tab may write. Each one is also listed in the "quality"
++# category of ENV_CATEGORIES, which supplies its type and allowed choices.
++QUALITY_WRITABLE_KEYS = ("MCP_QUALITY_AI_PROVIDER", "MCP_QUALITY_BOOST_ENABLED")
++
++# Variables a provider needs before QualityConfig.validate() lets the server start.
++QUALITY_PROVIDER_REQUIREMENTS = {
++    "groq": ("GROQ_API_KEY",),
++    "gemini": ("GEMINI_API_KEY",),
++}
++
++
++class SaveQualitySettingsRequest(BaseModel):
++    settings: dict[str, str]
++
++
++def _normalize_quality_value(key: str, raw: str) -> str:
++    """Strip control characters and check the value against the key's type and choices."""
++    param_type, choices = next(
++        (param_type, choices)
++        for param_key, param_type, choices, _ in ENV_CATEGORIES["quality"]["params"]
++        if param_key == key
++    )
++    value = re.sub(r"[\x00-\x1f\x7f]", "", raw).strip()
++
++    if param_type == "boolean":
++        value = value.lower()
++        if value not in ("true", "false"):
++            raise HTTPException(status_code=400, detail=f"{key} must be true or false")
++    elif param_type == "choice":
++        value = value.lower()
++        if value not in choices:
++            raise HTTPException(
++                status_code=400,
++                detail=f"{key} must be one of: {', '.join(choices)}"
++            )
++    return value
++
++
++def _check_quality_provider_requirements(provider: Optional[str], env_path: Path) -> None:
++    """Refuse a provider whose required variables are not set."""
++    env_vars = _read_env_file_dict(env_path)
++    # Same precedence as load_dotenv(override=False) at startup: a variable present in
++    # the process environment wins over .env even when it is empty.
++    missing = [
++        key for key in QUALITY_PROVIDER_REQUIREMENTS.get(provider, ())
++        if not (os.environ[key] if key in os.environ else env_vars.get(key))
++    ]
++    if missing:
++        raise HTTPException(
++            status_code=400,
++            detail=f"The {provider} provider needs {', '.join(missing)} to be set first"
++        )
++
++
++@router.post("/quality", response_model=SaveCredentialsResponse)
++async def save_quality_settings(
++    request: SaveQualitySettingsRequest,
++    background_tasks: BackgroundTasks,
++    user=Depends(require_admin_access)
++):
++    """
++    Persist the Quality tab settings to .env and schedule a server restart.
++    Only keys in QUALITY_WRITABLE_KEYS are accepted. Requires admin access.
++    """
++    if not request.settings:
++        raise HTTPException(status_code=400, detail="No settings to save")
++
++    unknown = sorted(set(request.settings) - set(QUALITY_WRITABLE_KEYS))
++    if unknown:
++        raise HTTPException(status_code=400, detail=f"Unsupported setting: {', '.join(unknown)}")
++
++    values = {key: _normalize_quality_value(key, raw) for key, raw in request.settings.items()}
++
++    env_path = _find_env_path()
++    _check_quality_provider_requirements(values.get("MCP_QUALITY_AI_PROVIDER"), env_path)
++
++    try:
++        for key, value in values.items():
++            _write_credential_to_env(env_path, key, value)
++    except Exception as e:
++        logger.error("Failed to write quality settings to .env: %s", _sanitize_log_va
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +101/-0)
+```diff
+@@ -4630,6 +4630,11 @@ class MemoryDashboard {
+             this.loadCredentials();
+         }
+ 
++        // Load the configured quality settings when switching to quality tab
++        if (tabName === 'quality') {
++            this.loadQualitySettings();
++        }
++
+         // Load server status + auto-check for updates when switching to server tab
+         // (runs once per modal open to avoid repeated git fetches)
+         if (tabName === 'server') {
+@@ -4734,6 +4739,11 @@ class MemoryDashboard {
+         if (saveBtn) {
+             saveBtn.addEventListener('click', () => this.saveCloudflareCredentials());
+         }
++
++        // Quality tab Save & Restart button
++        document.getElementById('qualitySaveBtn')?.addEventListener('click', () => {
++            this.saveQualitySettings();
++        });
+     }
+ 
+     /**
+@@ -4829,6 +4839,97 @@ class MemoryDashboard {
+         el.style.display = 'block';
+     }
+ 
++    /**
++     * Load the configured quality provider and boost flag into the Quality tab.
++     * Values come from GET /api/config/env, so the tab shows what the server runs with.
++     */
++    async loadQualitySettings() {
++        const resultEl = document.getElementById('qualitySaveResult');
++        if (resultEl) resultEl.style.display = 'none';
++
++        // Nothing can be edited or saved until the configured values are in,
++        // otherwise Save would write the HTML defaults over them
++        const providerSelect = document.getElementById('quality-provider');
++        const boostCheckbox = document.getElementById('quality-boost-enabled');
++        const saveBtn = document.getElementById('qualitySaveBtn');
++        [providerSelect, boostCheckbox, saveBtn].forEach(el => { if (el) el.disabled = true; });
++
++        try {
++            const config = await this.apiCall('/config/env');
++            const params = Object.fromEntries(
++                config.categories.flatMap(category => category.parameters).map(param => [param.key, param])
++            );
++            const provider = params.MCP_QUALITY_AI_PROVIDER;
++            const boost = params.MCP_QUALITY_BOOST_ENABLED;
++
++            const providerValue = (provider?.value || 'local').toLowerCase();
++            const option = Array.from(providerSelect?.options || []).find(opt => opt.value === providerValue);
++            if (providerSelect) {
++                // A provider the dropdown does not offer (e.g. openai-compatible) is left as it is on save
++                providerSelect.disabled = !option;
++                providerSelect.value = providerValue;
++            }
++
++            // Same spellings as safe_get_bool_env(); unset means off, the server default
++            if (boostCheckbox) {
++                boostCheckbox.checked = ['true', '1', 'yes', 'on', 'enabled']
++                    .includes((boost?.value || '').toLowerCase().trim());
++                boostCheckbox.disabled = false;
++            }
++            if (saveBtn) saveBtn.disabled = false;
++
++            const info = document.getElementById('current-provider-info');
++            if (info) info.textContent = option ? option.textContent : providerValue;
++        } catch (e) {
++            console.warn('Failed to load quality settings:', e);
++            this._showQualityResult('error', this.t(
++                'settings.quality.loadFailed',
++                '✗ Could not load the current settings: {error}. Reopen this tab to retry.',
++                { error: e.message }
++            ));
++        }
++    }
++
++    /**
++     * POST /api/config/quality — persist the Quality tab and restart.
++     */
++    async saveQualitySettings() {
++        const saveBtn = document.getElementById('qualitySaveBtn');
++        const providerSelect = document.getElementById('quality-provider');
++        const settings = {
++            MCP_QUALITY_BOOST_ENABLED: document.getElementById('quality-boost-enabled')?.checked ? 'true' : 'false',
++        };
++        if (providerSelect && !providerSelect.disabled) {
++            settings.MCP_QUALITY_AI_PROVIDER = providerSelect.value || 'local';
++        }
++
++        saveBtn.disabled = true;
++        saveBtn.textContent = this.t('settings.quality.saving', 'Saving…');
++
++        try {
++            await this.apiCall('/config/quality', 'POST', { settings });
++            this.closeModal(document.getElementById('settingsModal'));
++            this.showRestartOverlay();
++        } catch (e) {
++            this._showQualityResult('error', this.t(
++                'settings.quality.saveFailed',
++                '✗ Save failed: {error}',
++                { error: e.message }
++            ));
++        } finally {
++            saveBtn.disabled = false;
++            saveBtn.textContent = this.t('settings.quality.save', 'Save & Restart');
++        }
++    }
++
++    _showQualityResult(type, message) {
++        const el = document.getElementById('qualitySaveResult');
++        if (!el) return;
++        el.className = `cred-test-result cred-test-${type}`;
++        el
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +5/-0)
+```diff
+@@ -326,13 +326,18 @@
+   "settings.quality.boost.help": "Ordnet Suchergebnisse neu, um hochwertige Speicher zu priorisieren",
+   "settings.quality.boost.label": "Qualitätsverbesserte Suche Aktivieren",
+   "settings.quality.current.label": "Aktueller Anbieter:",
++  "settings.quality.loadFailed": "✗ Aktuelle Einstellungen konnten nicht geladen werden: {error}. Tab erneut öffnen, um es noch einmal zu versuchen.",
+   "settings.quality.provider.auto": "Automatisch (Alle Verfügbaren)",
+   "settings.quality.provider.gemini": "Gemini API",
+   "settings.quality.provider.groq": "Groq API",
+   "settings.quality.provider.help": "Lokales SLM bietet kostenlose, datenschutzwahrende Qualitätsbewertung",
+   "settings.quality.provider.label": "KI-Anbieter",
+   "settings.quality.provider.local": "Lokales SLM (Datenschutzmodus)",
+   "settings.quality.provider.none": "Nur Implizit (Ohne KI)",
++  "settings.quality.save": "Speichern & Neustarten",
++  "settings.quality.saveFailed": "✗ Speichern fehlgeschlagen: {error}",
++  "settings.quality.saveHint": "Wird in .env gespeichert. Der Server startet neu, um die Änderung zu übernehmen.",
++  "settings.quality.saving": "Speichern…",
+   "stats.tags": "Tags",
+   "stats.thisWeek": "Diese Woche",
+   "stats.total": "Erinnerungen gesamt",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +6/-1)
+```diff
+@@ -414,5 +414,10 @@
+   "settings.quality.provider.help": "Local SLM provides zero-cost, privacy-preserving quality scoring",
+   "settings.quality.boost.label": "Enable Quality-Boosted Search",
+   "settings.quality.boost.help": "Rerank search results to prioritize high-quality memories",
+-  "settings.quality.current.label": "Current Provider:"
++  "settings.quality.current.label": "Current Provider:",
++  "settings.quality.save": "Save & Restart",
++  "settings.quality.saving": "Saving…",
++  "settings.quality.saveFailed": "✗ Save failed: {error}",
++  "settings.quality.loadFailed": "✗ Could not load the current settings: {error}. Reopen this tab to retry.",
++  "settings.quality.saveHint": "Saved to .env. The server restarts to apply the change."
+ }
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +5/-0)
+```diff
+@@ -326,13 +326,18 @@
+   "settings.quality.boost.help": "Reordena los resultados de búsqueda para priorizar memorias de alta calidad",
+   "settings.quality.boost.label": "Habilitar Búsqueda con Mejora de Calidad",
+   "settings.quality.current.label": "Proveedor Actual:",
++  "settings.quality.loadFailed": "✗ No se pudo cargar la configuración actual: {error}. Vuelve a abrir esta pestaña para reintentarlo.",
+   "settings.quality.provider.auto": "Automático (Todos Disponibles)",
+   "settings.quality.provider.gemini": "API Gemini",
+   "settings.quality.provider.groq": "API Groq",
+   "settings.quality.provider.help": "El SLM local proporciona puntuación de calidad sin costo y preservando la privacidad",
+   "settings.quality.provider.label": "Proveedor de IA",
+   "settings.quality.provider.local": "SLM Local (Modo Privacidad)",
+   "settings.quality.provider.none": "Solo Implícito (Sin IA)",
++  "settings.quality.save": "Guardar y reiniciar",
++  "settings.quality.saveFailed": "✗ Error al guardar: {error}",
++  "settings.quality.saveHint": "Se guarda en .env. El servidor se reinicia para aplicar el cambio.",
++  "settings.quality.saving": "Guardando…",
+   "stats.tags": "Etiquetas",
+   "stats.thisWeek": "Esta Semana",
+   "stats.total": "Total de Memorias",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +5/-0)
+```diff
+@@ -326,13 +326,18 @@
+   "settings.quality.boost.help": "Reclasse les résultats de recherche pour prioriser les mémoires de haute qualité",
+   "settings.quality.boost.label": "Activer la Recherche Améliorée par Qualité",
+   "settings.quality.current.label": "Fournisseur Actuel :",
++  "settings.quality.loadFailed": "✗ Impossible de charger les paramètres actuels : {error}. Rouvrez cet onglet pour réessayer.",
+   "settings.quality.provider.auto": "Automatique (Tous Disponibles)",
+   "settings.quality.provider.gemini": "API Gemini",
+   "settings.quality.provider.groq": "API Groq",
+   "settings.quality.provider.help": "Le SLM local offre une notation de qualité sans coût et préservant la confidentialité",
+   "settings.quality.provider.label": "Fournisseur IA",
+   "settings.quality.provider.local": "SLM Local (Mode Confidentialité)",
+   "settings.quality.provider.none": "Implicite Uniquement (Sans IA)",
++  "settings.quality.save": "Enregistrer et redémarrer",
++  "settings.quality.saveFailed": "✗ Échec de l'enregistrement : {error}",
++  "settings.quality.saveHint": "Enregistré dans .env. Le serveur redémarre pour appliquer la modification.",
++  "settings.quality.saving": "Enregistrement…",
+   "stats.tags": "Tags",
+   "stats.thisWeek": "Cette Semaine",
+   "stats.total": "Total des Mémoires",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/ja.json` (modified, +5/-0)
+```diff
+@@ -326,13 +326,18 @@
+   "settings.quality.boost.help": "検索結果を再ランク付けして高品質メモリを優先表示",
+   "settings.quality.boost.label": "品質ブースト検索を有効化",
+   "settings.quality.current.label": "現在のプロバイダー:",
++  "settings.quality.loadFailed": "✗ 現在の設定を読み込めませんでした: {error}。このタブを開き直して再試行してください。",
+   "settings.quality.provider.auto": "自動 (利用可能なすべて)",
+   "settings.quality.provider.gemini": "Gemini API",
+   "settings.quality.provider.groq": "Groq API",
+   "settings.quality.provider.help": "ローカルSLMはゼロコストでプライバシーを保護した品質スコアリングを提供",
+   "settings.quality.provider.label": "AIプロバイダー",
+   "settings.quality.provider.local": "ローカルSLM (プライバシーモード)",
+   "settings.quality.provider.none": "暗黙のみ (AIなし)",
++  "settings.quality.save": "保存して再起動",
++  "settings.quality.saveFailed": "✗ 保存に失敗しました: {error}",
++  "settings.quality.saveHint": ".env に保存されます。変更を反映するためにサーバーが再起動します。",
++  "settings.quality.saving": "保存中…",
+   "stats.tags": "タグ",
+   "stats.thisWeek": "今週",
+   "stats.total": "総メモリー数",
+```
+
+---
+
+### Incident Patch 3: `c36145f5` (2026-10-25)
+**Commit Message**: fix(ingestion): clear the five document loaders of unsanitised log calls (#1146) (#1677)
+
+* fix(ingestion): clear the five document loaders of unsanitised log calls (#1146)
+
+semtools_loader.py, json_loader.py, csv_loader.py, text_loader.py and
+pdf_loader.py logged the caller-provided file path, the parser's error text,
+the semtools stderr and the semtools binary location through f-strings.
+Those go through _sanitize_log_value; the character count and the PDF
+backend name become lazy %-style. The five modules join GUARDED_MODULES,
+file_path joins EXTERNAL_NAMES, and a caplog test per loader forges the
+path and the subprocess error without touching the disk.
+
+* changelog: fragment for #1677
+
+* test(ingestion): build the expected log path from str(forged_path), not a hardcoded '/'
+
+On Windows Path renders the separator as a backslash, so the five tests
+compared the escaped log line against 'docs/report...' and failed even
+when the escaping was right (Greptile P2 on #1677).
 
 ---------
 
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/1666.added.md` (added, +1/-0)
+**File**: `changelog.d/1677.fixed.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1 @@
-+- Apple Foundation Models work as a local LLM provider on macOS 27: point the OpenAI-compatible quality scorer or the harvest provider chain at `fm serve`. The three OpenAI-compatible call sites (quality scorer, harvest rewriter, harvest classifier) now send `"stream": false` explicitly, because `fm serve` streams by default and the requests used to fall through to the next provider. New guide: `docs/guides/apple-foundation-models.md` (#1666).
+@@ -0,0 +1,6 @@
++- **Document loaders logged caller-provided paths and parser errors unsanitised (#1146, #1677, massimiliano1991).**
++  `ingestion/semtools_loader.py`, `json_loader.py`, `csv_loader.py`, `text_loader.py` and
++  `pdf_loader.py` put the path of the file being ingested, the parser's error text and the
++  `semtools` stderr into the log through f-strings, so a newline in any of them forged a log
++  line. They go through `_sanitize_log_value` now; the five modules are in the guard's
++  `GUARDED_MODULES` list and a test per loader fails if the newline comes back.
 ```
 
-**File**: `docs/guides/apple-foundation-models.md` (added, +100/-0)
+**File**: `src/mcp_memory_service/ingestion/csv_loader.py` (modified, +4/-3)
 ```diff
-@@ -0,0 +1,100 @@
-+# Apple Foundation Models as a local LLM provider
-+
-+macOS 27 ships Apple's on-device language model together with a command-line tool,
-+`/usr/bin/fm`. Its `fm serve` subcommand runs an OpenAI-compatible chat completions
-+server. You do not download anything, and you do not need an account or an API key.
-+mcp-memory-service can use that server wherever it already accepts an
-+OpenAI-compatible endpoint:
-+
-+- the quality scorer,
-+- the harvest rewriter and classifier,
-+- the LLM backend of the NLI contradiction check,
-+- search summarization.
-+
-+Embeddings are not covered. The framework has no embeddings API, so embeddings stay
-+on the default ONNX model (CoreML on Apple Silicon) or on an external
-+`/v1/embeddings` server (see [external-embeddings.md](../deployment/external-embeddings.md)).
-+
-+## Requirements
-+
-+- macOS 27 on Apple Silicon.
-+- Apple Intelligence turned on.
-+- mcp-memory-service with #1666 or later. Earlier versions omit `"stream": false`, and
-+  `fm serve` streams by default, so their requests fail and silently fall back to the
-+  next provider.
-+
-+Check that the model is available:
-+
-+```bash
-+fm available          # "System model available"
-+```
-+
-+## Start the server
-+
-+```bash
-+fm serve --port 1976  # binds 127.0.0.1; model id is "system"
-+curl -s http://127.0.0.1:1976/health
-+```
-+
-+The server provides `GET /health`, `GET /v1/models` and `POST /v1/chat/completions`.
-+To start it at login, wrap the same command in a launchd agent with `KeepAlive`.
-+
-+## Configuration
-+
-+Add these to `.env` and run `memory restart`.
-+
-+Quality scoring:
-+
-+```bash
-+MCP_QUALITY_AI_PROVIDER=openai-compatible
-+MCP_QUALITY_AI_BASE_URL=http://127.0.0.1:1976/v1
-+MCP_QUALITY_AI_MODEL=system
-+```
-+
-+Harvest, NLI and search summarization share one provider chain:
-+
-+```bash
-+HARVEST_LLM_PROVIDERS=apple
-+HARVEST_LLM_APPLE_BASE_URL=http://127.0.0.1:1976/v1
-+HARVEST_LLM_APPLE_MODEL=system
-+MCP_NLI_BACKEND=llm            # optional: LLM contradiction check
-+MCP_SEARCH_SUMMARIZE_ENABLED=true  # optional: allow search summaries (off by default)
-+```
-+
-+Search summaries need both switches. `MCP_SEARCH_SUMMARIZE_ENABLED=true` permits them,
-+and each `memory_search` call must also pass `summarize=true`. Without the second one,
-+search returns ordinary results.
-+
-+You can list a second provider after `apple`, for example
-+`HARVEST_LLM_PROVIDERS=apple,groq`. The chain falls through to it when the local
-+model fails.
-+
-+## What it is good at
-+
-+The model is small (about 3B parameters) and its context window is small too. Apple
-+documents 4096 tokens per session. Every call here is a fresh single-turn request, so
-+the limit applies per call, but long inputs still do not fit.
-+
-+The following was measured on an M-series Mac with macOS 27.0.1, against ten sample
-+memories and five NLI pairs. One server served all calls, sequentially.
-+
-+| Task | Result | Latency per call | Recommendation |
-+|------|--------|------------------|----------------|
-+| NLI contradiction check | 5 of 5 correct | 0.3-0.7 s | Good fit |
-+| Harvest classifier (keep/drop, strict JSON) | Every response parsed. Dropped all 3 noise fragments, but also 2 of 7 real decisions or bugs | 0.6-2.0 s | Usable; expect some false drops |
-+| Quality scoring (0-1) | Always returned a parseable number. Scores were weakly differentiated: most samples got 0.2 | about 0.3 s | Keep the default local ONNX scorer |
-+| Harvest rewriter (1-2 sentence insight) | Often answered in the wrong language: English input came back in Portuguese | 0.7-1.3 s | Not recommended for now |
-+| Embeddings | Not available | n/a | Use ONNX or an external embeddings server |
-+
-+These numbers come from a small sample. Treat them as a starting point, not as a
-+benchmark.
-+
-+## Limits
-+
-+- Apple Silicon and macOS 27 only. Linux and Windows users keep Ollama, vLLM or MLX-LM
-+  as their OpenAI-compatible provider.
-+- The weights are closed and the model can change with an OS update. Re-check
-+  behaviour after major macOS updates.
-+- `response_format: {"type": "json_object"}` returns HTTP 400. The server only accepts
-+  `json_schema`. mcp-memory-service does not send either one; JSON comes from the
-+  prompt.
-```
-
-**File**: `docs/mastery/configuration-guide.md` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ TLS:
- - `MCP_QUALITY_SYSTEM_ENABLED`: `true|false` (default `true`).
- - `MCP_QUALITY_AI_PROVIDER`: `local` (ONNX, default), `openai-compatible`, `groq`, `gemini`, `auto`, `none`.
- - `MCP_QUALITY_LOCAL_MODEL` (default `ms-marco-MiniLM-L-6-v2`), `MCP_QUALITY_LOCAL_DEVICE` (`auto|cpu|cuda|mps|directml`).
--- `openai-compatible` requires `MCP_QUALITY_AI_BASE_URL` and `MCP_QUALITY_AI_MODEL`; `MCP_QUALITY_AI_API_KEY` is optional.
-+- `openai-compatible` requires `MCP_QUALITY_AI_BASE_URL` and `MCP_QUALITY_AI_MODEL`; `MCP_QUALITY_AI_API_KEY` is optional. On macOS 27 this can point at Apple's built-in `fm serve`, see [Apple Foundation Models](../guides/apple-foundation-models.md).
- - Cloud providers read `GROQ_API_KEY` and `GEMINI_API_KEY`.
- - Search and storage weighting: `MCP_QUALITY_BOOST_ENABLED`, `MCP_QUALITY_BOOST_WEIGHT`, `MCP_QUALITY_IMPLICIT_BLEND_ENABLED`, `MCP_QUALITY_IMPLICIT_WEIGHT`.
- - Retention by tier: `MCP_QUALITY_RETENTION_HIGH`, `MCP_QUALITY_RETENTION_MEDIUM`, `MCP_QUALITY_RETENTION_LOW_MIN`, `MCP_QUALITY_RETENTION_LOW_MAX`.
-```
-
-**File**: `src/mcp_memory_service/harvest/classifier.py` (modified, +3/-1)
-```diff
-@@ -240,7 +240,9 @@ def _call_openai_compatible(
-             resp = client.post(
-                 f"{base_url}/chat/completions",
-                 headers=headers,
--                json={"model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens},
-+                # stream is explicit: fm serve streams SSE when it is absent (#1666)
-+                json={"model": model, "stream": False, "messages": messages,
-+                      "temperature": temperature, "max_tokens": max_tokens},
+@@ -25,6 +25,7 @@
+ 
+ from .base import DocumentLoader, DocumentChunk
+ from .chunker import TextChunker, ChunkingStrategy
++from ..compat import _sanitize_log_value
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -105,7 +106,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+         max_rows_per_chunk = kwargs.get('max_rows_per_chunk', 50)
+         include_row_numbers = kwargs.get('include_row_numbers', True)
+ 
+-        logger.info(f"Extracting chunks from CSV file: {file_path}")
++        logger.info("Extracting chunks from CSV file: %s", _sanitize_log_value(file_path))
+ 
+         try:
+             # Read CSV data
+@@ -114,7 +115,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
              )
-             if resp.status_code == 429:
-                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+ 
+             if not rows:
+-                logger.warning(f"CSV file {file_path} appears to be empty")
++                logger.warning("CSV file %s appears to be empty", _sanitize_log_value(file_path))
+                 return
+ 
+             # Prepare headers
+@@ -152,7 +153,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                 )
+ 
+         except Exception as e:
+-            logger.error(f"Error extracting from CSV file {file_path}: {type(e).__name__} - {str(e)}")
++            logger.error("Error extracting from CSV file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
+             raise ValueError(f"Failed to extract CSV content: {str(e)}") from e
+ 
+     async def _read_csv_file(
 ```
 
-**File**: `src/mcp_memory_service/harvest/rewriter.py` (modified, +1/-0)
+**File**: `src/mcp_memory_service/ingestion/json_loader.py` (modified, +4/-3)
 ```diff
-@@ -519,6 +519,7 @@ async def _call_openai_compatible(self, base_url: str, model: str, api_key: str,
-                 headers=headers,
-                 json={
-                     "model": model,
-+                    "stream": False,  # fm serve streams SSE when this is absent (#1666)
-                     "messages": [{"role": "user", "content": prompt}],
-                     "temperature": 0.3,
-                     "max_tokens": 200,
+@@ -24,6 +24,7 @@
+ 
+ from .base import DocumentLoader, DocumentChunk
+ from .chunker import TextChunker, ChunkingStrategy
++from ..compat import _sanitize_log_value
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -100,7 +101,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+         include_types = kwargs.get('include_types', False)
+         array_handling = kwargs.get('array_handling', 'expand')
+ 
+-        logger.info(f"Extracting chunks from JSON file: {file_path}")
++        logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))
+ 
+         try:
+             # Read and parse JSON
+@@ -140,10 +141,10 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                 )
+ 
+         except json.JSONDecodeError as e:
+-            logger.error(f"Invalid JSON in file {file_path}: {str(e)}")
++            logger.error("Invalid JSON in file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
+             raise ValueError(f"Invalid JSON format: {str(e)}") from e
+         except Exception as e:
+-            logger.error(f"Error extracting from JSON file {file_path}: {type(e).__name__} - {str(e)}")
++            logger.error("Error extracting from JSON file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
+             raise ValueError(f"Failed to extract JSON content: {str(e)}") from e
+ 
+     async def _read_json_file(self, file_path: Path) -> tuple:
 ```
 
-**File**: `src/mcp_memory_service/quality/ai_evaluator.py` (modified, +3/-0)
+**File**: `src/mcp_memory_service/ingestion/pdf_loader.py` (modified, +3/-2)
 ```diff
-@@ -463,8 +463,11 @@ async def _score_with_openai_compatible(self, query: str, memory: Memory) -> flo
-             "Content-Type": "application/json",
-             "Authorization": f"Bearer {api_key}",
-         }
-+        # stream is sent explicitly: Apple's `fm serve` answers with SSE when it
-+        # is absent, unlike OpenAI's default of false (#1666).
-         payload = {
-             "model": model,
-+            "stream": False,
-             "messages": [
-                 {
-                     "role": "system",
+@@ -9,6 +9,7 @@
+ 
+ from .base import DocumentLoader, DocumentChunk
+ from .chunker import TextChunker, ChunkingStrategy
++from ..compat import _sanitize_log_value
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+         extract_tables = kwargs.get('extract_tables', False)
+         page_range = kwargs.get('page_range', None)
+ 
+-        logger.info(f"Extracting chunks from PDF: {file_path} using {self.backend}")
++        logger.info("Extracting chunks from PDF: %s using %s", _sanitize_log_value(file_path), self.backend)
+ 
+         try:
+             if self.backend == 'pdfplumber':
+@@ -118,7 +119,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                     yield chunk
+ 
+         except Exception as e:
+-            logger.error(f"Error extracting from PDF {file_path}: {str(e)}")
++            logger.error("Error extracting from PDF %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
+             raise ValueError(f"Failed to extract PDF content: {str(e)}") from e
+ 
+     async def _extract_with_pdfplumber(
 ```
 
-**File**: `tests/harvest/test_classifier.py` (modified, +17/-0)
+**File**: `src/mcp_memory_service/ingestion/semtools_loader.py` (modified, +9/-8)
 ```diff
-@@ -358,3 +358,20 @@ def test_use_llm_config_default_false(self):
-         from mcp_memory_service.harvest.models import HarvestConfig
-         config = HarvestConfig()
-         assert config.use_llm is False
-+
-+
-+class TestOpenAICompatiblePayload:
-+    def test_payload_disables_streaming_explicitly(self):
-+        """fm serve streams SSE unless told otherwise; resp.json() would fail (#1666)."""
-+        resp = MagicMock(status_code=200)
-+        resp.json.return_value = {"choices": [{"message": {"content": "{}"}}]}
-+        client = MagicMock()
-+        client.__enter__.return_value.post.return_value = resp
-+
-+        with patch("httpx.Client", return_value=client):
-+            _classifier_without_groq_key()._call_openai_compatible(
-+                "http://127.0.0.1:1976/v1", "system", "", "prompt", "system msg", 50, 0.0
-+            )
-+
-+        payload = client.__enter__.return_value.post.call_args.kwargs["json"]
-+        assert payload["stream"] is False
+@@ -28,6 +28,7 @@
+ 
+ from .base import DocumentLoader, DocumentChunk
+ from .chunker import TextChunker, ChunkingStrategy
++from ..compat import _sanitize_log_value
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -80,7 +81,7 @@ def _check_semtools_availability(self) -> bool:
+         """
+         semtools_path = shutil.which('semtools')
+         if semtools_path:
+-            logger.info(f"Semtools found at: {semtools_path}")
++            logger.info("Semtools found at: %s", _sanitize_log_value(semtools_path))
+             return True
+         else:
+             logger.debug(
+@@ -128,7 +129,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                 "Semtools is not available. Install with: npm i -g @llamaindex/semtools"
+             )
+ 
+-        logger.info(f"Extracting chunks from {file_path} using semtools")
++        logger.info("Extracting chunks from %s using semtools", _sanitize_log_value(file_path))
+ 
+         try:
+             # Parse document to markdown using semtools
+@@ -157,7 +158,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                 chunk_index += 1
+ 
+         except Exception as e:
+-            logger.error(f"Error processing {file_path} with semtools: {e}")
++            logger.error("Error processing %s with semtools: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
+             raise ValueError(f"Failed to parse document: {str(e)}") from e
+ 
+     async def _parse_with_semtools(self, file_path: Path) -> str:
+@@ -198,24 +199,24 @@ async def _parse_with_semtools(self, file_path: Path) -> str:
+ 
+             if process.returncode != 0:
+                 error_msg = stderr.decode('utf-8', errors='replace')
+-                logger.error(f"Semtools parsing failed: {error_msg}")
++                logger.error("Semtools parsing failed: %s", _sanitize_log_value(error_msg))
+                 raise RuntimeError(f"Semtools returned error: {error_msg}")
+ 
+             # Parse markdown output
+             markdown_content = stdout.decode('utf-8', errors='replace')
+ 
+             if not markdown_content.strip():
+-                logger.warning(f"Semtools returned empty content for {file_path}")
++                logger.warning("Semtools returned empty content for %s", _sanitize_log_value(file_path))
+                 raise RuntimeError("Semtools returned empty content")
+ 
+-            logger.debug(f"Successfully parsed {file_path}, extracted {len(markdown_content)} characters")
++            logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))
+             return markdown_content
+ 
+         except asyncio.TimeoutError:
+-            logger.error(f"Semtools parsing timed out for {file_path}")
++            logger.error("Semtools parsing timed out for %s", _sanitize_log_value(file_path))
+             raise RuntimeError("Document parsing timed out after 5 minutes")
+         except Exception as e:
+-            logger.error(f"Error running semtools: {e}")
++            logger.error("Error running semtools: %s", _sanitize_log_value(e))
+             raise
+ 
+ 
 ```
 
-**File**: `tests/harvest/test_rewriter.py` (modified, +30/-0)
+**File**: `src/mcp_memory_service/ingestion/text_loader.py` (modified, +3/-2)
 ```diff
-@@ -327,3 +327,33 @@ def _submit(fn, coro):
-             rewriter.rewrite_batch_sync([{"content": "text", "memory_type": "decision"}])
-             batch_timeout = mock_future.result.call_args.kwargs['timeout']
-             assert batch_timeout == 3 * HarvestRewriter._CALL_TIMEOUT_BATCH + HarvestRewriter._WRAPPER_MARGIN
+@@ -25,6 +25,7 @@
+ 
+ from .base import DocumentLoader, DocumentChunk
+ from .chunker import TextChunker, ChunkingStrategy
++from ..compat import _sanitize_log_value
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+         preserve_structure = kwargs.get('preserve_structure', True)
+         extract_links = kwargs.get('extract_links', False)
+         
+-        logger.info(f"Extracting chunks from text file: {file_path}")
++        logger.info("Extracting chunks from text file: %s", _sanitize_log_value(file_path))
+         
+         try:
+             # Read file content
+@@ -125,7 +126,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
+                     yield chunk
+                     
+         except Exception as e:
+-            logger.error(f"Error extracting from text file {file_path}: {str(e)}")
++            logger.error("Error extracting from text file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
+             raise ValueError(f"Failed to extract text content: {str(e)}") from e
+     
+     async def _read_file_content(self, file_path: Path, encoding: Optional[str]) -> tuple:
+```
+
+**File**: `tests/unit/test_ingestion_loaders_logging.py` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++"""
++Log-injection tests for the ingestion/ document loaders (#1146).
++
++Each loader logs the path of the document it is asked to read when it starts
++and again, with the parser's error text, when it fails; the semtools loader
++also logs where the ``semtools`` binary was found and what it wrote to stderr.
++A newline in any of those must not reach the log as a line break.
++
++Nothing is written to disk and ``semtools`` is not run: ``validate_file`` and
++the per-loader read step are stubbed, and the subprocess is a fake whose
++``communicate`` returns a forged stderr.
++"""
++
++import asyncio
++import logging
++import shutil
++from pathlib import Path
++
++import pytest
++
++from mcp_memory_service.ingestion import pdf_loader as pdf_module
++from mcp_memory_service.ingestion.csv_loader import CSVLoader
++from mcp_memory_service.ingestion.json_loader import JSONLoader
++from mcp_memory_service.ingestion.pdf_loader import PDFLoader
++from mcp_memory_service.ingestion.semtools_loader import SemtoolsLoader
++from mcp_memory_service.ingestion.text_loader import TextLoader
++
++FORGED = "FORGED ingestion verified"
++LOGGERS = "mcp_memory_service.ingestion"
 +
 +
-+class TestOpenAICompatiblePayload:
-+    @pytest.mark.asyncio
-+    async def test_payload_disables_streaming_explicitly(self, monkeypatch):
-+        """fm serve streams SSE unless told otherwise; resp.json() would fail (#1666)."""
-+        captured = {}
++def _messages(caplog):
++    return [record.getMessage() for record in caplog.records]
 +
-+        class _FakeAsyncClient:
-+            def __init__(self, timeout):
-+                pass
 +
-+            async def __aenter__(self):
-+                return self
++def _assert_clean(caplog, *expected):
++    messages = _messages(caplog)
++    for text in expected:
++        assert any(text in m for m in messages), (text, messages)
++    assert not any(f"\n{FORGED}" in m for m in messages), messages
 +
-+            async def __aexit__(self, *exc):
-+                return False
 +
-+            async def post(self, *args, **kwargs):
-+                captured.update(kwargs["json"])
-+                resp = MagicMock(status_code=200)
-+                resp.json.return_value = {"choices": [{"message": {"content": "ok"}}]}
-+                return resp
++async def _no_validation(_file_path):
++    return None
 +
-+        monkeypatch.setattr(httpx, "AsyncClient", _FakeAsyncClient)
 +
-+        await HarvestRewriter()._call_openai_compatible(
-+            "http://127.0.0.1:1976/v1", "system", "", "prompt", 5.0
-+        )
-+        assert captured["stream"] is False
++async def _failing_read(*_args, **_kwargs):
++    raise ValueError(f"parser said\n{FORGED}")
++
++
++async def _drain(loader, file_path):
++    with pytest.raises(ValueError):
++        async for _chunk in loader.extract_chunks(file_path):
++            pass
++
++
++@pytest.fixture
++def forged_path():
++    return Path("docs", f"report\n{FORGED}.ext")
++
++
++def _shown(path):
++    """The path as the sanitised log line shows it: the OS separator, the newline escaped."""
++    return str(path).replace("\n", "\\n")
++
++
++@pytest.mark.asyncio
++async def test_json_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
++    loader = JSONLoader()
++    monkeypatch.setattr(loader, "validate_file", _no_validation)
++    monkeypatch.setattr(loader, "_read_json_file", _failing_read)
++
++    with caplog.at_level(logging.INFO, logger=LOGGERS):
++        await _drain(loader, forged_path)
++
++    _assert_clean(
++        caplog,
++        f"Extracting chunks from JSON file: {_shown(forged_path)}",
++        f"Error extracting from JSON file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
++    )
++
++
++@pytest.mark.asyncio
++async def test_csv_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
++    loader = CSVLoader()
++    monkeypatch.setattr(loader, "validate_file", _no_validation)
++    monkeypatch.setattr(loader, "_read_csv_file", _failing_read)
++
++    with caplog.at_level(logging.INFO, logger=LOGGERS):
++        await _drain(loader, forged_path)
++
++    _assert_clean(
++        caplog,
++        f"Extracting chunks from CSV file: {_shown(forged_path)}",
++        f"Error extracting from CSV file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
++    )
++
++
++@pytest.mark.asyncio
++async def test_text_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
++    loader = TextLoader()
++    monkeypatch.setattr(loader, "validate_file", _no_validation)
++    monkeypatch.setattr(loader, "_read_file_content", _failing_read)
++
++    with caplog.at_level(logging.INFO, logger=LOGGERS):
++        await _drain(loader, forged_path)
++
++    _assert_clean(
++        caplog,
++        f"Extracting chunks from text file: {_shown(forged_path)}",
++        f"Error extracting from text file {_shown(forged_path)}: parser said\\n{FORGED}",
++    )
++
++
++@pytest.mark.asyncio
++async def test_pdf_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
++    # Pin the backend so the test does not depend on which PDF library is installed.
++    monkeypatch.setattr(pdf_module, "HAS_PDFPLUMBER", True)
++    loader = PDFLoader()
++
++    async def _failing_pages(*_args, **_kwargs):
++        raise ValueError(f"parser said\n{FORGED}")
++        yield  # pragma: no cover - makes this an async generator
++
++    monkeypatch.setattr(loader, "validate_file", _no_validation)
++    monkeypatch.setattr(loader, "_extract_with_pdfplumber", _failing_pages)
++
++    with caplog.at_level(logging.INFO, logger=LOGGERS):
++        await _drain(loader, forged_path)
++
++    _assert_clean(
++        caplog,
++        f"Extracting chunks from PDF: {_shown(forged_path)} using pdfplumber",
++        f"Error extracting from PDF {_shown(forged_path)}: parser said\\n{FORGED}",
++    )
++
++
++class _FailingProcess:
++    returncode = 1
++
++    async def communicate(self):
++        return b"", f"semtools said\n{FORGED}".encode()
++
++
++@pytest.mark.asyncio
++async def test_semtools_loader_logs_do_not_carry_newlines(monkeypatch, ca
+```
+
+**File**: `tests/unit/test_log_injection_guard.py` (modified, +26/-0)
+```diff
+@@ -84,6 +84,11 @@
+     "mcp_memory_service/config/search.py",
+     "mcp_memory_service/config/quality.py",
+     "mcp_memory_service/config/backup.py",
++    "mcp_memory_service/ingestion/semtools_loader.py",
++    "mcp_memory_service/ingestion/json_loader.py",
++    "mcp_memory_service/ingestion/csv_loader.py",
++    "mcp_memory_service/ingestion/text_loader.py",
++    "mcp_memory_service/ingestion/pdf_loader.py",
+ ]
+ 
+ # The levels check 6.5 looks at, verbatim.
+@@ -178,6 +183,11 @@
+     "MCP_HYBRID_FUSION_METHOD",
+     "MCP_QUALITY_AI_PROVIDER",
+     "BACKUP_INTERVAL",
++    # The document a caller asks the ingestion/ loaders to read: every loader
++    # logs it when it starts and when the parser fails. No guarded module logs
++    # the name bare in a %-style call, so listing it decides for nobody else.
++    # `error_msg` above already covers the stderr of the semtools subprocess.
++    "file_path",
+ })
+ 
+ # Fields of an outside object that cannot carry injectable text. An HTTP status
+@@ -584,3 +594,19 @@ def test_lazy_scan_flags_config_environment_strings():
+         assert _lazy_findings(bare)
+         assert not _lazy_findings(wrapped)
+     assert not _lazy_findings('logger.info("Backup configuration: retention=%s days", BACKUP_RETENTION)\n')
++
++
++@pytest.mark.unit
++def test_lazy_scan_flags_ingestion_file_path():
++    """The path the ingestion/ loaders are handed, logged at start and on failure.
++
++    Every guarded logger call in the five loaders already wraps it, so the module
++    scans stay green whether or not the name is listed. This is the sample that
++    fails if `file_path` is dropped from EXTERNAL_NAMES; the character count and
++    the PDF backend name logged next to it stay unlisted on purpose.
++    """
++    bare = 'logger.info("Extracting chunks from JSON file: %s", file_path)\n'
++    wrapped = 'logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))\n'
++    assert _lazy_findings(bare)
++    assert not _lazy_findings(wrapped)
++    assert not _lazy_findings('logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))\n')
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1673** (2026-10-25): feat(storage): ResonanceDB — wave-based semantic memory (phase-aware retrieval) (@doobidoo)
-- **PR #1672** (2026-10-25): docs: document the rerank flag and its MCP_RERANK_* settings (@xubenqiang)
-- **PR #1667** (2026-10-24): fix: send stream false to OpenAI-compatible endpoints for fm serve (#1666) (@doobidoo)
-- **PR #1665** (2026-10-24): feat: negotiate delta-sync peer capabilities (@ducanhnguyen223)
-- **PR #1663** (2026-10-23): feat(web): expose Delta-Sync settings in Environment tab (@ducanhnguyen223)
-- **PR #1662** (2026-10-23): docs: point contributors to the current development verifier (@Ghoscro)
+- **PR #1691** (2026-10-26): chore(release): v12.4.0 (@doobidoo)
+- **PR #1690** (2026-10-26): fix(oauth): confine per-store grants to calls that stay in the store (@doobidoo)
+- **PR #1689** (2026-10-26): chore(deps): bump pypdf from 6.21.1 to 6.21.2 (@dependabot[bot])
+- **PR #1688** (2026-10-26): chore(deps-dev): bump the npm_and_yarn group across 2 directories with 1 update (@dependabot[bot])
+- **PR #1687** (2026-10-26): ci: count .github/CODEOWNERS as a docs-only change (@doobidoo)
+- **PR #1686** (2026-10-26): chore(codeowners): restore henry201605 on the Milvus graph backend (@doobidoo)
 
 ---
 
@@ -4272,21 +4331,33 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661
+## X. oauth): confine per-store grants to calls that stay in the store (#1690)
 
 **RULE**:
-When implementing operations in `changelog.d/1602.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1690.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `344f4ae1`: search): optional second-stage ONNX rerank flag for memory_search (#1602) (#1661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb7c041e`: oauth): confine per-store grants to calls that stay in the store (#1690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1602.added.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1690.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Add an opt-in `rerank` flag to `memory_search`: a second-stage ONNX cross-encoder reorders the top `MCP_RERANK_CANDIDATES` results when `MCP_RERANK_ENABLED` is set, fails open to the unreranked order, and never touches the default path.
+- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
+  `write:<store>` grant authorized any MCP tool call that named the store, including tools
+  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
+  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
+  `fallback`, which read every partition. A per-store grant now covers only the tools that
+  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
+  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
+  everything else needs the global scope, including `memory_explore` and `memory_detail`,
+  whose entity names come from a graph that has no store partition. The SDK
+  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
+  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
+  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
+  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4296,4 +4367,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `344f4ae1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb7c041e` are properly handled with clean fallback behavior.

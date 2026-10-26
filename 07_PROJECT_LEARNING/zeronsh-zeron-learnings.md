@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `c04e3749`  
+> **Source Version**: `325384d8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:30:49.537Z  
+> **Timestamp**: 2026-10-26T13:15:07.942Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:30:48.697Z  
+> **Harvest Timestamp**: 2026-10-26T13:15:07.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3350 stars
+- **Stars / Engagement**: 3370 stars
 
 ---
 
@@ -1600,11 +1600,11 @@ enum TextEngine {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1034** (2026-10-25): **Transcript rail: ten ticks at most; hovering opens the prompt list**
-  *Symptoms*: In long conversations the rail had become a dense comb of one tick per prompt. Now it draws **at most 10 ticks**, and **resting the pointer on it replaces it with a list of every prompt**, the pattern [shadcn recommends](https://x.com/shadcn) from ChatGPT web. Each entry shows the prompt *and* the opening of its reply.  **Rail** - Up to 10 prompts, one tick each, as before. Past 10, each tick stands for an even slice of the conversation, lit while any of its prompts is on screen. - The rail now centres between the titlebar and the composer, the same band the list opens in. - **Lighting fix:** while the transcript is pinned to the bottom, the list reported no row positions, so only the prompt being read lit up. Rows are now placed from the content's end in that state, so every prompt on screen lights its tick and its list entry.  **Prompt list (on hover)** - **Opening:** it opens after the pointer **rests on the rail for 150ms**, so passing over it on the way to the sidebar doesn't flash it open. It closes when the pointer leaves. - **Content:** each prompt on **one line**, with its reply's opening on up to **three**. Replies are reduced to prose (no `**`, backticks or link targets). - **Size and position:** it opens where the rail is, replacing it. It's at most **three quarters of the band's height**, and **sizes to the gutter** left of the reading column (260 to 320px) to overlap the transcript as little as possible. - **Navigation:** clicking an entry glides the transcript 
+- **Issue #1052** (2026-10-26): **Transcript: agent senders and provider switches as captions over the message**
+  *Symptoms*: ## Summary  - **Agent messages:** a message sent from another chat through Zeron's `send_message` now shows `Message from [provider logo] Chat title` as a muted caption over its bubble, in the same style as the provider-switch seam. Clicking it opens the sending chat. The bubble keeps only the body. The routing header stays in the stored prompt, so the receiving agent still reads it. The trailing `(short-id)` that used to leak into the shown name is gone, while a title's own parentheses stay. - **Provider-switch seam:** no divider and no "Switched provider" label. It's now one line, `[logo] From → [logo] To`, right-aligned and set close over the message that switched. - **Seam timing:** the engine used to write the user's message, replace the old provider's runtime (which can take seconds), and only then write the seam. It now writes the seam together with the message (`doc_host.rs` Run path). The dispatch's own later note is idempotent and does nothing. - If a seam lands above a message already on screen, that message is remeasured so its gap tightens.  ## Screenshots  Captured from the new `message-captions-fixture` (offline shell) on Linux. The before shots run the same fixture against `main`. Notes and hashes are in `docs/screenshots/message-captions/README.md`.  | Before | After | | --- | --- | | ![before dark](https://github.com/zeronsh/zeron/blob/e50b92f5e84d97d4dd9c197553a675cb8cdcc3e0/docs/screenshots/message-captions/before-dark.png?raw=true) | ![after dark](https:/
 
-- **Issue #1032** (2026-10-25): **Releases: serve the Android APK's stable name uncached; name each build uniquely**
-  *Symptoms*: ## Why  The website's Android download (`zeron.sh/releases/zeron-android-arm64.apk`) could hand back an old build. The edge sent every release artifact except `.txt`/`.json` as `cache-control: public, max-age=86400, immutable`, which overrode the `no-cache` the Android workflow uploads with. Every build replaces that stable name, so a browser that had downloaded it once kept serving its cached copy for up to a day without checking the server again.  ## What  - **edge**: the `/releases/*` route moved to `edge/src/releases.ts`. When an object was uploaded with its own cache-control, the route now serves that. `.apk` files are served as `application/vnd.android.package-archive`. Desktop artifacts are uploaded without metadata, so their headers stay the same. - **android.yml**: each published APK is now named `zeron-<version>-<build>-android-arm64.apk`. Before, the name was reused by every build of a version. These per-build copies are never replaced, so they're uploaded as `immutable` for a year. The stable name is still uploaded `no-cache`. - New workerd test `test/workerd/releases.workerd.test.ts` covers immutable artifacts, short-lived pointers and an upload's own policy. The `RELEASES` bucket is now bound in the workerd test config.  ## Testing  - `npm run typecheck` and `npm test` in `edge/`: everything passes except `device-nudges` (draining 300 queued wakes), which failed in the full run. It passes on its own, both on this branch and on main. - Checked the live origin: wi
+- **Issue #1049** (2026-10-25): **Transcript rail: back to one tick per prompt; long chats scroll the rail**
+  *Symptoms*: This replaces #1034's ten-tick rail and hover prompt list. The rail goes back to how it was, **one tick per prompt**, and a conversation too long for it now **scrolls the rail**, the way Codex's prompt rail does.  **Back to the old rail** - Every prompt has its own tick at the natural 8px spacing. - Hovering a tick widens it and its neighbours and shows a preview card with the prompt and the opening of its reply. Clicking a tick glides the transcript to that prompt.  **Scrolling, like Codex** - Once the ticks don't fit, the rail shows a window onto them: **70% of the space between the titlebar and the composer, at most 640px**. Codex uses `min(70vh, 40rem)`. - **Scroll over the rail** to move through the ticks. There's no visible scrollbar, as in Codex. A wheel over the rail never scrolls the transcript behind it, even at the rail's ends. - The rail's **ends fade** while there are more ticks beyond them. - The rail **follows the prompts on screen**: when they change, from reading or jumping, it moves just enough to keep their ticks clear of the fades. It only moves when what's lit changes, so a rail you've scrolled by hand stays put.  **Kept from #1034** - The rail centres between the titlebar and the composer. - While the transcript is pinned to the bottom, every prompt on screen lights its tick, not just the one being read.  Screenshots below are offscreen renders from the new `rail-fixture` example. The conversation has 150 prompts and is pinned to the bottom.  The rail at
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1621,686 +1621,492 @@ enum TextEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e151ca6` (2026-10-23)
-**Commit Message**: Harden every provider: crash and stall detection, Windows-safe launching, and run recovery (#977)
+### Incident Patch 1: `325384d8` (2026-10-26)
+**Commit Message**: Transcript: agent senders and provider switches as captions over the message (#1052)
 
-* Harness: lossy line framing for child stdio; OpenCode startup retries and readiness
+An agent-sent message shows `Message from [mark] Chat` over its bubble,
+opening the sending chat on click; the routing header and short id leave
+the bubble. The provider-switch seam drops its divider and rides
+right-aligned over the message that switched, and the engine writes it
+with that message instead of after replacing the outgoing runtime.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Wing <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-* Harness: drop unused line-reader imports; retry OpenCode port races per line
-
-lossy_lines replaced every tokio Lines, leaving AsyncBufReadExt and
-BufReader imports unused across the harnesses.
-
-Address-in-use was matched against the stderr tail after exit, but the
-tail keeps only the last few lines and Node prints EADDRINUSE above a
-stack trace that scrolls it out, so a lost port race failed the spawn
-instead of retrying. Match it per line alongside "database is locked",
-with a fixture that loses the race once.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Claude: classify results by their error fields and never drop a result line
-
-The CLI files API failures (invalid key, 429, 529, full context) under
-`subtype: "success"` with `is_error`/`terminal_reason`/`api_error_status`;
-they ended the turn Completed. They now end Errored with readable wording
-(the CLI's own text after a plain headline), aborts end Interrupted, and a
-failure already 
-
-**File**: `.github/workflows/windows.yml` (modified, +5/-0)
+**File**: `crates/engine/src/doc_host.rs` (modified, +2/-1)
 ```diff
-@@ -73,6 +73,11 @@ jobs:
-       - uses: ./.github/actions/windows-ci-setup
-       - name: Native harness security and integration tests
-         run: cargo test --release --locked -p zeron-harness --features native-fixture --lib --test codex_availability --test windows_native
-+      # The driver suites whose fixtures run without a POSIX shell: an in-test
-+      # HTTP/SSE server (OpenCode), node (the Cursor shim) and a Rust peer
-+      # (Pi). The shell- and python-fixture suites are unix-only.
-+      - name: Portable harness integration tests
-+        run: cargo test --release --locked -p zeron-harness --features native-fixture --test opencode --test cursor_shim --test pi_rpc
-       - name: Shader layout tests
-         run: cargo test --release --locked -p gpui_windows --lib layout
-       - name: Application and updater tests
+@@ -5657,7 +5657,8 @@ impl DocHost {
+                 // issued_at, clamped against clock skew) — not whenever this
+                 // host got around to draining a queued command. Idempotent by
+                 // id, so the dispatch path's own execution-time write dedupes
+-                // to a no-op.
++                // to a no-op. A provider switch's seam lands with it, above.
++                sessions.note_provider_switch(chat_id, harness, handle);
+                 if let Err(err) = handle.write_user_message(
+                     message_id,
+                     &request.prompt,
 ```
 
-**File**: `crates/engine/src/doc_host.rs` (modified, +11/-1)
+**File**: `crates/engine/src/sessions.rs` (modified, +8/-0)
 ```diff
-@@ -5216,12 +5216,22 @@ impl DocHost {
-             // between mark-processed and the outcome write. Left alone it is
-             // a send no drain or retry can ever reach ("Sending…" forever,
-             // 2026-08-19); terminalize it so the truth lands in the doc and
--            // a user retry can mint a fresh attempt.
-+            // a user retry can mint a fresh attempt. `commands` may predate a
-+            // racing drain that has since resolved the command and released
-+            // its claim (resolve comes first), so once no claim is seen the
-+            // status is read again rather than overwriting that outcome.
-+            let still_pending = |id: &str| {
-+                handle.doc.read_commands().is_ok_and(|now| {
-+                    now.iter()
-+                        .any(|c| c.id == id && c.status == SessionCommandStatus::Pending)
-+                })
-+            };
-             for c in &commands {
-                 if c.status == SessionCommandStatus::Pending
-                     && !skipped.contains(&c.id)
-                     && is_processed(&c.id)
-                     && !lock(&self.inner.executing).contains(&c.id)
-+                    && still_pending(&c.id)
-                 {
-                     tracing::warn!(chat = %handle.chat_id, command = %c.id,
-                         "command consumed but never resolved (crash mid-execute?); rejecting");
-```
-
-**File**: `crates/engine/src/lib.rs` (modified, +52/-0)
-```diff
-@@ -579,6 +579,16 @@ impl EngineCore {
-         // releases the next queued row. Freeze first so quitting never starts
-         // recovered work while the engine is being torn down.
-         self.doc_host.pause_all_queues();
-+        // Decided here, from the auth state at the stop, so every way an
-+        // engine goes down (headless, background, in-process) agrees.
-+        let auth = self
-+            .auth
-+            .lock()
-+            .unwrap_or_else(std::sync::PoisonError::into_inner)
-+            .clone();
-+        if auth.is_some_and(|auth| forgoes_revival(self.workspace_scope, &auth.state())) {
-+            self.sessions.forgo_revival();
-+        }
-         self.sessions.shutdown().await;
-         self.terminals.shutdown();
-         self.sessions.stop_activity_projection().await;
-@@ -1146,6 +1156,16 @@ impl Engine {
+@@ -531,6 +531,14 @@ impl SessionsEngine {
+         lock(&self.inner.runs).get(chat_id).map(|h| h.runtime_config.harness_id)
      }
- }
  
-+/// Whether a stopping engine's cut-off turns stay ended rather than revive on
-+/// the next boot ([`EngineCore::shutdown`] asks): a synced engine whose
-+/// account is signed out by the time it stops, whichever stop reached it
-+/// first — the auth watcher, or the app's StopEngine right after its SignOut.
-+/// Sign-out is the user ending the session, like a Stop. A local engine is
-+/// signed out as a matter of course.
-+pub(crate) fn forgoes_revival(scope: WorkspaceScope, auth: &AuthState) -> bool {
-+    scope == WorkspaceScope::Synced && matches!(auth, AuthState::SignedOut)
++    /// Mark the provider-switch seam for a send about to run on `harness_id`
++    /// now, with its message, rather than once the dispatch has replaced the
++    /// outgoing provider's runtime (seconds later). Idempotent: the dispatch's
++    /// own note finds the seam already written.
++    pub fn note_provider_switch(&self, chat_id: &str, harness_id: HarnessId, doc: &ChatDocHandle) {
++        self.inner.note_provider_switch(chat_id, harness_id, doc);
++    }
++
+     /// Whether an accepted agent update gates the chat's live run, so a new
+     /// prompt waits in the queue rather than joining that run's transcript.
+     pub fn live_run_update_pending(&self, chat_id: &str) -> bool {
+```
+
+**File**: `crates/ui/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -68,6 +68,10 @@ required-features = ["project-path-fixture"]
+ name = "rail-fixture"
+ required-features = ["appshots-fixture"]
+ 
++[[example]]
++name = "message-captions-fixture"
++required-features = ["appshots-fixture"]
++
+ [[example]]
+ name = "sidebar-fixture"
+ required-features = ["project-palette-fixture"]
+```
+
+**File**: `crates/ui/examples/message-captions-fixture.rs` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++//! User-message caption review fixture: a chat that switched provider and
++//! then received a message from another chat, in an isolated, offline shell.
++//! With `--capture <dir>` it saves the transcript at rest and with the
++//! sender caption hovered, then quits; ZERON_PALETTE_LIGHT=1 renders the
++//! light theme.
++use gpui::{AppContext, Bounds, WindowBounds, WindowOptions, px, size};
++use serde_json::json;
++use std::path::{Path, PathBuf};
++use zeron_ui::*;
++
++const SENDER_ID: &str = "cd27c5c2-6f1e-4d1a-9a52-3b0c8e7d4f10";
++
++async fn pause(cx: &mut gpui::AsyncApp, ms: u64) {
++    cx.background_executor()
++        .timer(std::time::Duration::from_millis(ms))
++        .await;
 +}
 +
- async fn wait_for_signed_out(state: &mut tokio::sync::watch::Receiver<AuthState>) {
-     loop {
-         if matches!(&*state.borrow(), AuthState::SignedOut) {
-@@ -1698,3 +1718,35 @@ fn replace_empty_device_id(temp_path: &Path, path: &Path) -> std::io::Result<()>
-         std::fs::hard_link(temp_path, path)
-     }
- }
-+
-+#[cfg(test)]
-+mod revival_tests {
-+    use super::*;
-+
-+    #[test]
-+    fn only_a_signed_out_synced_engine_forgoes_revival() {
-+        assert!(forgoes_revival(
-+            WorkspaceScope::Synced,
-+            &AuthState::SignedOut
-+        ));
-+        let user = AuthUser {
-+            id: "u".into(),
-+            email: "u@example.com".into(),
-+            name: None,
-+        };
-+        assert!(!forgoes_revival(
-+            WorkspaceScope::Synced,
-+            &AuthState::SignedIn {
-+                user: user.clone(),
-+                org_id: Some("o".into()),
++fn capture(window: gpui::AnyWindowHandle, cx: &mut gpui::AsyncApp, dir: &Path, name: &str) {
++    window
++        .update(cx, |_, w, cx| {
++            w.draw(cx).clear();
++            match w.render_to_image() {
++                Ok(image) => image.save(dir.join(format!("{name}.png"))).unwrap(),
++                Err(error) => eprintln!("{name}: capture failed: {error:#}"),
 +            }
-+        ));
-+        assert!(!forgoes_revival(
-+            WorkspaceScope::Synced,
-+            &AuthState::NeedsOrganization { user }
-+        ));
-+        for scope in [WorkspaceScope::Local, WorkspaceScope::Development] {
-+            assert!(!forgoes_revival(scope, &AuthState::SignedOut));
-+        }
-+    }
-+}
-```
-
-**File**: `crates/engine/src/managed.rs` (modified, +3/-0)
-```diff
-@@ -387,6 +387,9 @@ impl Engine {
-         engine.refresh_task.abort();
-         engine.auth.quiesce_refresh(Duration::from_secs(10)).await;
-         let runtime = engine.runtime.lock().await.take();
-+        // The app signs out, then stops the engine: the StopEngine may land
-+        // before the auth watcher does, so the runtime's shutdown decides
-+        // revival from the auth state, not from the branch that fired.
-         if let Some(runtime) = runtime {
-             runtime.shutdown().await;
-         }
-```
-
-**File**: `crates/engine/src/run_journal.rs` (modified, +121/-10)
-```diff
-@@ -5,7 +5,9 @@
- //! journal is the durable replay source for live streams (`Subscribe` = replay then tail
- //! the broadcast hub) and the crash-recovery gauge: a journal whose LAST event is not
- //! `Done` belongs to a run that died mid-stream — boot recovery stamps its doc entry
--//! `aborted` and closes the journal with a synthetic `Done`.
-+//! `aborted` and closes the journal with a synthetic `Done`. A turn the engine's own
-+//! shutdown cut off closes normally, so a `{chat_id}.shutdown` marker beside the
-+//! journal flags it for the same pick-up on the next boot.
- //!
- //! Bounded-window compaction is deferred (whole file kept for now, per M2 scope); a torn
- //! trailing line from a crash mid-write is tolerated everywhere.
-@@ -72,24 +74,95 @@ impl RunJournal {
-         self.dir.join(format!("{}.resume", sanitize_id(chat_id)))
-     }
- 
-+    fn shutdown_path(&self, chat_id: &str) -> PathBuf {
-+        self.dir.join(format!("{}.shutdown", sanitize_id(chat_id)))
-+    }
-+
-+    fn stop_path(&self, chat_id: &str) -> PathBuf {
-+        self.dir.join(format!("{}.stopped", sanitize_id(chat_id)))
-+    }
-+
-     /// Auto-resume revival budget (zeron `resumeAttempt`/`MAX_AUTO_RESUME`):
-     /// persisted beside the journal so a run that CRASHES THE ENGINE cannot
--    /// revive itself in an infinite boot loop.
--    pub fn resume_attempts(&self, chat_id: &str) -> u32 {
--        std::fs::read_to_string(self.attempts_path(chat_id))
--            .ok()
--            .and_then(|s| s.trim().parse().ok())
--            .unwrap_or(0)
-+    /// revive itself in an infinite boot loop. Stored as `{count} {last_ms}`;
-+    /// a ledger whose last revival is older than `since_ms` has expired (a
-+    /// chain from days ago must not refuse today's crash). A bare count (the
-+    /// older format) never expires.
-+    pub fn resume_attempts(&self, chat_id: &str, since_ms: i64) -> u32 {
-+        let Ok(raw) = std::fs::read_to_string(self.attempts_path(chat_id)) else {
-+            return 0;
-+        };
-+        let mut fields = raw.split_whitespace();
-+        let count = fields.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-+        match fields.next().and_then(|s| s.parse::<i64>().ok()) {
-+            Some(last) if last < since_ms => 0,
-+            _ => count,
-+        }
-     }
- 
--    pub fn note_resume_attempt(&self, chat_id: &str) -> u32 {
--        let next = self.resume_attempts(chat_id) + 1;
--        if let Err(err) = std::fs::write(self.attempts_path(chat_id), next.to_string()) {
-+    /// Record one revival at `at_ms`, counting on from the unexpired ledger
-+    /// (`since_ms` as in [`Self::resume_attempts`]); returns the new count.
-+    pub fn note_resume_attempt(&self, chat_id: &str, at_ms: i64, since_ms: i64) -> u32 {
-+        let next = self.resume_attempts(chat_id, since_ms) + 1;
-+        if let Err(err) = std::fs::write(self.attempts_path(chat_id), format!("{next} {at_ms}")) {
-             tracing::warn!(chat = %chat_id, error = %err, "resume-attempt ledger write failed");
-         }
-         next
-     }
- 
-+    /// Mark a chat whose turn the engine's own shutdown cut off (at `at_ms`):
-+    /// its journal closes with an ordinary `Done{interrupted}`, so this marker
-+    /// is what tells the next boot the turn was not the user's to end.
-+    pub fn note_shutdown_interrupt(&self, chat_id: &str, at_ms: i64) {
-+        if let Err(err) = std::fs::write(self.shutdown_path(chat_id), at_ms.to_string()) {
-+            tracing::warn!(chat = %chat_id, error = %err, "shutdown marker write failed");
-+        }
-+    }
-+
-+    /// Chats marked by [`Self::note_shutdown_interrupt`], with when.
-+    pub fn shutdown_interrupts(&self) -> Result<Vec<(String, i64)>, JournalError> {
-+        let mut marked = Vec::new();
-+        for entry in std::fs::read_dir(&self.dir)? {
-+            let path = entry?.path();
-+            if path.extension().and_then(|e| e.to_str()) != Some("shutdown") {
-+                continue;
-+            }
-+            let Some(chat_id) = path.file_stem().and_then(|s| s.to_str()) else {
-+                continue;
-+            };
-+            let at = std::fs::read_to_string(&path)
-+                .ok()
-+                .and_then(|s| s.trim().parse().ok())
-+                .unwrap_or(0);
-+            marked.push((chat_id.to_string(), at));
-+        }
-+        marked.sort();
-+        Ok(marked)
-+    }
-+
-+    pub fn clear_shutdown_interrupt(&self, chat_id: &str) {
-+        let _ = std::fs::remove_file(self.shutdown_path(chat_id));
-+    }
-+
-+    /// Mark a chat whose turn the user stopped. Its journal closes only once
-+    /// the stopped run settles (seconds later, for a harness slow to let
-+    /// go): an engine that dies in between leaves a journal that reads as a
-+    /// crash, and this marker keeps the next boot from reviving the turn.
-+    pub fn note_user_stop(&self, chat_id: &str) {
-+        if let Err(err) = std::fs::write(self.stop_path(chat_id), b"") {
-+            tracing::warn!(chat = %chat_id, error = %err,
-```
-
-**File**: `crates/engine/src/sessions.rs` (modified, +1199/-106)
-```diff
-@@ -184,6 +184,10 @@ struct RunHandle {
-     /// is unambiguously before the stop (cancelled with it) or after it
-     /// (re-dispatched to a fresh runtime — never lost).
-     retiring: Arc<std::sync::atomic::AtomicBool>,
-+    /// The turn was working when the engine's shutdown began, and no Stop
-+    /// has claimed it since: if the shutdown is what ends it, the next boot
-+    /// picks it back up (see [`Inner::mark_shutdown_cut`]).
-+    shutdown_cut: std::sync::atomic::AtomicBool,
-     /// The credential the run started with (a Cloud device's broker; `None`
-     /// elsewhere): a parked session whose account has since changed is
-     /// replaced before its next turn.
-@@ -225,14 +229,36 @@ struct RoutedSteer {
-     request: Option<Box<RunRequest>>,
- }
- 
-+/// A turn the engine cut off (a crash or its own shutdown), on its way back
-+/// to the provider as a fresh dispatch of the same user message.
-+#[derive(Debug, Clone)]
-+struct Revival {
-+    message_id: String,
-+    /// Sent instead of the original prompt when the resumed provider session
-+    /// already holds that prompt and part of the work on it.
-+    continuation: Option<String>,
++        })
++        .ok();
 +}
 +
- struct Inner {
-     voice: crate::voice::VoiceManager,
-     device_id: String,
-     /// The engine is shutting down: dying runs re-dispatch nothing.
-     shutting_down: std::sync::atomic::AtomicBool,
-+    /// A shutdown marks the turns it cuts off for pick-up on the next boot
-+    /// (cleared by [`SessionsEngine::forgo_revival`]).
-+    revive_after_shutdown: std::sync::atomic::AtomicBool,
-+    /// Per chat: the recovery re-dispatch on its way (see
-+    /// [`SessionsEngine::recover_stale`]), claimed by its message's dispatch.
-+    revivals: Mutex<HashMap<String, Revival>>,
-     /// Per chat: messages a Stop cancelled while they were still on their
-     /// way (see [`SessionsEngine::cancel_sent_messages`]).
-     cancelled_sends: Mutex<HashMap<String, std::collections::HashSet<String>>>,
-+    /// Per chat: how many Stops the user has sent, counted before each one
-+    /// looks for the run to stop. A retry re-dispatching a failed start
-+    /// compares it with the count its run started under: a Stop that landed
-+    /// while no run was live (between the failed run and its retry) found
-+    /// nothing to stop, and still ends the turn.
-+    user_stops: Mutex<HashMap<String, u64>>,
-     /// Loopback IPC port this engine serves, once known (0 = not serving):
-     /// what the injected `zeron mcp` server dials back into.
-     ipc_port: std::sync::atomic::AtomicU16,
-@@ -263,6 +289,14 @@ struct Inner {
-     /// (zeron kept the same pair on `chats.harness_session_id`). An empty
-     /// session id is the "do not resume" tombstone after a rejected resume.
-     harness_sessions: Mutex<HashMap<String, HarnessSessionRef>>,
-+    /// Per chat: session ids the provider said it no longer has. Never
-+    /// resumed again from any source — the per-provider record a switched
-+    /// chat keeps would otherwise hand the dead id straight back — until a
-+    /// new session replaces them (in memory only, like the tombstone).
-+    rejected_resumes: Mutex<HashMap<String, std::collections::HashSet<String>>>,
-+    /// Chats whose next run starts over after a rejected resume, owed a
-+    /// notice in the transcript that the earlier session is gone.
-+    fresh_start_notices: Mutex<std::collections::HashSet<String>>,
-     /// Auto-titler for untitled chats (wired at engine assembly; absent in bare tests).
-     titles: OnceLock<crate::titles::TitleGenerator>,
-     generated_images: OnceLock<(crate::uploads::Uploads, std::path::PathBuf)>,
-@@ -299,7 +333,10 @@ impl SessionsEngine {
-                 voice: crate::voice::VoiceManager::default(),
-                 device_id,
-                 shutting_down: std::sync::atomic::AtomicBool::new(false),
-+                revive_after_shutdown: std::sync::atomic::AtomicBool::new(true),
-+                revivals: Mutex::new(HashMap::new()),
-                 cancelled_sends: Mutex::new(HashMap::new()),
-+                user_stops: Mutex::new(HashMap::new()),
-                 ipc_port: std::sync::atomic::AtomicU16::new(0),
-                 ipc_token_file: Mutex::new(None),
-                 journal,
-@@ -313,6 +350,8 @@ impl SessionsEngine {
-                 activity_task: Mutex::new(None),
-                 last_requests: Mutex::new(HashMap::new()),
-                 harness_sessions: Mutex::new(HashMap::new()),
-+                rejected_resumes: Mutex::new(HashMap::new()),
-+                fresh_start_notices: Mutex::new(std::collections::HashSet::new()),
-                 titles: OnceLock::new(),
-                 generated_images: OnceLock::new(),
-                 scratch_root: OnceLock::new(),
-@@ -572,8 +611,17 @@ impl SessionsEngine {
-                 _ => break,
-             }
-         }
--        self.dispatch_inner(chat_id, HarnessId::Codex, request, None, false, true)
--            .await
-+        self.dispatch_inner(
-+            chat_id,
-+            Ha
-```
-
-**File**: `crates/engine/tests/message_queue.rs` (modified, +12/-2)
-```diff
-@@ -387,7 +387,8 @@ async fn queue_holds_during_a_turn_and_flushes_in_order_at_its_end() {
- 
- /// Quitting the host must neither release the queue through the interrupt's
- /// Idle transition nor release it when the persisted document is reopened.
--/// An explicit queue action remains the thaw gesture.
-+/// An explicit queue action remains the thaw gesture. (The turn the shutdown
-+/// cut off is picked back up on its own; the queue behind it is not.)
- #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
- async fn restart_restores_the_queue_frozen_until_an_explicit_send() {
-     let tmp = tempfile::tempdir().unwrap();
-@@ -429,9 +430,18 @@ async fn restart_restores_the_queue_frozen_until_an_explicit_send() {
-     // Materializing the persisted chat starts its background drain task. Give
-     // that task time to prove the restored row stays frozen.
-     assert_eq!(queue_texts(&after), vec!["after restart"]);
-+    wait_for(
-+        || after_prompts.lock().unwrap().iter().any(|p| p == "opening"),
-+        "the interrupted opening turn to be picked back up",
-+    )
-+    .await;
-     tokio::time::sleep(Duration::from_millis(250)).await;
-     assert!(
--        after_prompts.lock().unwrap().is_empty(),
-+        !after_prompts
-+            .lock()
-+            .unwrap()
-+            .iter()
-+            .any(|p| p == "after restart"),
-         "startup must not dispatch a recovered queue"
-     );
-     assert_eq!(queue_texts(&after), vec!["after restart"]);
-```
-
-**File**: `crates/engine/tests/restart_resume.rs` (modified, +19/-9)
-```diff
-@@ -732,20 +732,30 @@ async fn fresh_crash_auto_resumes_and_notes_the_interruption() {
-         )),
-         "aborted entry carries the visible interruption note"
-     );
--    // Re-dispatch reuses the original user message id — never a duplicate.
--    assert_eq!(
--        entries
--            .iter()
--            .filter(|e| e.role == MessageRole::User)
--            .count(),
--        1
--    );
-+    // Re-dispatch reuses the original user message id — never a duplicate,
-+    // and the transcript keeps the user's own words.
-+    let users: Vec<_> = entries
-+        .iter()
-+        .filter(|e| e.role == MessageRole::User)
-+        .collect();
-+    assert_eq!(users.len(), 1);
-+    assert!(matches!(
-+        &users[0].parts[0],
-+        MessagePart::Text { text, .. } if text == "long task"
-+    ));
-     // The revived run continues the journal-recovered harness conversation.
-+    // That session already holds the request and the partial work on it, so
-+    // the provider gets a continuation, never the bare request a second time
-+    // (it rides along only for reference, should the session have started over).
-     // (An auto-title request may precede it — titling fires at dispatch.)
-     let recorded = requests.lock().unwrap().clone();
-+    assert!(
-+        recorded.iter().all(|r| r.prompt != "long task"),
-+        "the crashed request must not be re-sent: {recorded:#?}"
++fn entries() -> serde_json::Value {
++    let at = |minutes: i64| 1_788_900_000_000_i64 + minutes * 60_000;
++    let text = |id: &str, role: &str, minutes: i64, text: &str| {
++        json!({"id": id, "role": role, "createdAt": at(minutes), "deviceId": "local", "status": "complete",
++            "parts": [{"id": "t", "kind": "text", "text": text}]})
++    };
++    let routed = format!(
++        "[Message from Zeron chat zgui prod: Windows platform (WING-PC) (cd27c5c2). Reply to it with the Zeron `send_message` tool, chat {SENDER_ID}.]\n\n\
++         Windows lane: the matrices are done on current main (#513, #542, #543). Windows in front and verified uncovered on every run, Zeron minimized, alternating, 0 invalid runs; dist builds, shared DejaVu font."
 +    );
-     let revived = recorded
-         .iter()
--        .find(|r| r.prompt == "long task")
-+        .find(|r| r.prompt.contains("Continue where you left off"))
-         .expect("auto-resumed dispatch reached the harness");
-     assert_eq!(
-         revived.resume.as_deref(),
++    json!([
++        text("u0", "user", 0, "Profile the render loop on Linux and Windows and tell me where the frame time goes."),
++        text("a0", "assistant", 1, "Linux is done: layout is 61% of the frame, paint 22%. I've asked the Windows chat to run the same matrix and report back."),
++        {"id": "switch:1", "role": "system", "createdAt": at(2), "deviceId": "local", "status": "complete",
++            "parts": [{"id": "switch:1", "kind": "switch", "from": "Claude Code", "to": "Codex",
++                "fromHarness": "claude-code", "toHarness": "codex"}]},
++        text("u1", "user", 2, "Carry on from here and draft the summary table."),
++        text("a1", "assistant", 3, "Here's the Linux half; the Windows column fills in when its results arrive."),
++        text("u2", "user", 4, &routed),
++        text("a2", "assistant", 5, "Got it — Windows matches Linux within 3%. The table is complete."),
++    ])
++}
++
++fn main() -> anyhow::Result<()> {
++    let runtime = tokio::runtime::Runtime::new()?;
++    let _guard = runtime.enter();
++    tracing_subscriber::fmt().with_env_filter("warn").init();
++    let temp = tempfile::tempdir()?;
++    let data = temp.path().to_path_buf();
++    let capture_dir = std::env::args()
++        .skip_while(|arg| arg != "--capture")
++        .nth(1)
++        .map(PathBuf::from);
++    let entries = entries();
++    gpui_platform::application().with_assets(icons::Assets).run(move |cx| {
++        gpui_tokio::init(cx);
++        gpui_base::init(cx);
++        let mut settings = settings::UiSettings::default();
++        settings.sidebar_width = 260.0;
++        settings.save(&data).unwrap();
++        settings::init(settings.clone(), data.clone(), cx);
++        let fonts = typography::register_fonts(cx);
++        typography::init(settings.ui_font_family.clone(), settings.ui_font_size, settings.terminal_font_family.clone(), settings.terminal_font_size, settings.code_font_family.clone(), settings.code_font_size, fonts, cx);
++        theme_library::init(data.clone(), cx);
++        let mode = if std::env::var_os("ZERON_PALETTE_LIGHT").is_some() { appearance::AppearanceMode::Light } else { appearance::AppearanceMode::Dark };
++        appearance::init(mode, settings.theme_selection, settings.accent, settings.surface, cx);
++        history::init(settings.git_history_columns, settings.git_history_column_widths, settings.git_history_column_order, settings.git_history_author_display, cx);
++        composer::init(cx, settings.composer_send_behavior);
++        terminal::panel::init(cx);
++        app_menus::init(cx);
++        let chat = |id: &str, title: &str, harness: &str, model: &str| {
++            serde_json::from_value(json!({"id": id, "deviceId": "local", "title": title, "archived": false, "createdAt": "2026-10-25T00:00:00Z",
++                "config": {"harness": harness, "model": model, "reasoning": null, "sandbox": "workspace-write"}})).unwrap()
++        };
++        let state = cx.new(|_| {
++            let mut s = state::AppState::new();
++            s.connection = zeron_proto::view::ConnectionStatus::Ready;
++           
 ```
 
----
-
-### Incident Patch 2: `3c97a05c` (2026-10-24)
-**Commit Message**: iOS: paint terminal box and block glyphs; fix the subagents chip icon (#1010)
-
-Box drawing, block elements and the ⏺ bullet are now painted into their
-cells instead of shaped. Geist Mono has none of them, and fallback glyphs
-neither fill the terminal's line height nor the cell width, so Claude
-Code's block-art mascot showed seams and borders broke between rows; ⏺
-fell back to the color emoji. Other one-cell symbols ask for their text
-presentation.
-
-The subagents chip drew its bot icon as a speck: the tool-* SVGs declare
-1em and load at a point square. Rasterize assets at the icon's size.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/ios/Zeron/Companions/CompanionStrip.swift` (modified, +15/-1)
+**File**: `crates/ui/src/shell.rs` (modified, +1/-0)
 ```diff
-@@ -119,7 +119,7 @@ final class CompanionChip: UIControl {
-         if spinning { glyph.kind = .spinner }
-         icon.isHidden = spinning || symbol == nil
-         if let symbol {
--            icon.image = UIImage(named: symbol)?.withRenderingMode(.alwaysTemplate)
-+            icon.image = Self.asset(symbol)
-                 ?? UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(pointSize: 12, weight: .semibold))
+@@ -4460,6 +4460,7 @@ impl Shell {
+                 );
+             }
+             TranscriptEvent::SignIn { chat_id } => self.sign_in_for_chat(chat_id, cx),
++            TranscriptEvent::OpenChat { chat_id } => self.open_chat(chat_id.clone(), cx),
          }
-         if case let .dot(color)? = kind {
-@@ -136,4 +136,18 @@ final class CompanionChip: UIControl {
-     override var isHighlighted: Bool {
-         didSet { alpha = isHighlighted ? 0.7 : 1 }
-     }
-+
-+    /// A `tool-*` asset at the icon's size. The SVGs declare `1em` and load
-+    /// at about a point square, which a centered image view drew as a speck.
-+    private static var assets: [String: UIImage] = [:]
-+    private static func asset(_ name: String) -> UIImage? {
-+        if let cached = assets[name] { return cached }
-+        guard let image = UIImage(named: name) else { return nil }
-+        let side: CGFloat = 15
-+        let sized = UIGraphicsImageRenderer(size: CGSize(width: side, height: side)).image { _ in
-+            image.draw(in: CGRect(x: 0, y: 0, width: side, height: side))
-+        }.withRenderingMode(.alwaysTemplate)
-+        assets[name] = sized
-+        return sized
-+    }
- }
-```
-
-**File**: `apps/ios/Zeron/Companions/TerminalGlyphs.swift` (added, +198/-0)
-```diff
-@@ -0,0 +1,198 @@
-+import UIKit
-+
-+/// Box drawing (U+2500–257F), block elements (U+2580–259F) and the `⏺`
-+/// bullet, drawn instead of shaped. Geist Mono has none of them, and a
-+/// fallback font's glyphs neither fill the roomy line height nor share the
-+/// cell width: borders broke between rows and Claude Code's block-art mascot
-+/// fell apart. Painted from the cell's own rect, snapped to device pixels,
-+/// neighbors meet exactly; `⏺` would otherwise fall back to the color emoji.
-+enum TerminalGlyphs {
-+    static func draws(_ scalar: Unicode.Scalar) -> Bool {
-+        (0x2500...0x259F).contains(scalar.value) || scalar.value == 0x23FA
-+    }
-+
-+    /// `cell` in UIKit coordinates (y down); `baseline` and `xHeight` place
-+    /// the bullet like a text glyph.
-+    static func draw(_ scalar: Unicode.Scalar, in cell: CGRect, baseline: CGFloat, xHeight: CGFloat, color: UIColor, ctx: CGContext, scale: CGFloat) {
-+        let snap = { (v: CGFloat) in (v * scale).rounded() / scale }
-+        let rect = CGRect(x: snap(cell.minX), y: snap(cell.minY), width: snap(cell.maxX) - snap(cell.minX), height: snap(cell.maxY) - snap(cell.minY))
-+        ctx.saveGState()
-+        defer { ctx.restoreGState() }
-+        ctx.setFillColor(color.cgColor)
-+        ctx.setStrokeColor(color.cgColor)
-+        let v = scalar.value
-+        if v == 0x23FA {
-+            let d = snap(min(rect.width * 0.62, xHeight * 1.15))
-+            ctx.fillEllipse(in: CGRect(x: rect.midX - d / 2, y: baseline - xHeight / 2 - d / 2, width: d, height: d))
-+        } else if v >= 0x2580 {
-+            block(v, rect, ctx, snap)
-+        } else {
-+            box(v, rect, ctx, snap, scale)
-+        }
-+    }
-+
-+    // MARK: Block elements
-+
-+    private static func block(_ v: UInt32, _ r: CGRect, _ ctx: CGContext, _ snap: (CGFloat) -> CGFloat) {
-+        func fill(_ x0: CGFloat, _ y0: CGFloat, _ x1: CGFloat, _ y1: CGFloat) {
-+            let a = snap(r.minX + r.width * x0), b = snap(r.minY + r.height * y0)
-+            ctx.fill(CGRect(x: a, y: b, width: snap(r.minX + r.width * x1) - a, height: snap(r.minY + r.height * y1) - b))
-+        }
-+        switch v {
-+        case 0x2580: fill(0, 0, 1, 0.5)
-+        case 0x2581...0x2588: fill(0, 1 - CGFloat(v - 0x2580) / 8, 1, 1)
-+        case 0x2589...0x258F: fill(0, 0, CGFloat(0x2590 - v) / 8, 1)
-+        case 0x2590: fill(0.5, 0, 1, 1)
-+        case 0x2591...0x2593:
-+            ctx.setAlpha(CGFloat(v - 0x2590) / 4)
-+            fill(0, 0, 1, 1)
-+        case 0x2594: fill(0, 0, 1, 1.0 / 8)
-+        case 0x2595: fill(7.0 / 8, 0, 1, 1)
-+        default:
-+            // Quadrants: upper left, upper right, lower left, lower right.
-+            let masks: [UInt32: Int] = [0x2596: 4, 0x2597: 8, 0x2598: 1, 0x2599: 13, 0x259A: 9, 0x259B: 7, 0x259C: 11, 0x259D: 2, 0x259E: 6, 0x259F: 14]
-+            let mask = masks[v] ?? 0
-+            if mask & 1 != 0 { fill(0, 0, 0.5, 0.5) }
-+            if mask & 2 != 0 { fill(0.5, 0, 1, 0.5) }
-+            if mask & 4 != 0 { fill(0, 0.5, 0.5, 1) }
-+            if mask & 8 != 0 { fill(0.5, 0.5, 1, 1) }
-+        }
-+    }
-+
-+    // MARK: Box drawing
-+
-+    /// Per code point from U+2500: the left, up, right and down arms —
-+    /// 0 none, 1 light, 2 heavy, 3 double. `.` marks the arcs and diagonals.
-+    private static let arms: [String] = [
-+        "1010", "2020", "0101", "0202", "1010", "2020", "0101", "0202", // ─━│┃┄┅┆┇
-+        "1010", "2020", "0101", "0202", "0011", "0021", "0012", "0022", // ┈┉┊┋┌┍┎┏
-+        "1001", "2001", "1002", "2002", "0110", "0120", "0210", "0220", // ┐┑┒┓└┕┖┗
-+        "1100", "2100", "1200", "2200", "0111", "0121", "0211", "0112", // ┘┙┚┛├┝┞┟
-+        "0212", "0221", "0122", "0222", "1101", "2101", "1201", "1102", // ┠┡┢┣┤┥┦┧
-+        "1202", "2201", "2102", "2202", "1011", "2011", "1021", "2021", // ┨┩┪┫┬┭┮┯
-+        "1012", "2012", "1022", "2022", "1110", "2110", "1120", "2120", // ┰┱┲┳┴┵┶┷
-+        "1210", "2210", "1220", "2220", "1111", "2111", "1121", "2121", // ┸┹┺┻┼┽┾┿
-+        "1211", "1112", "1212", "2211", "1221", "2112", "1122", "2221", // ╀╁╂╃╄╅╆╇
-+        "2122", "2212", "1222", "2222", "1010", "2020", "0101", "0202", // ╈╉╊╋╌╍╎╏
-+        "3030", "0303", "0031", "0013", "0033", "3001", "1003", "3003", // ═║╒╓╔╕╖╗
-+        "0130", "0310", "0330", "3100", "1300", "3300", "0131", "0313", // ╘╙╚╛╜╝╞╟
-+        "0333", "3101", "1303", "3303", "3031", "1013", "3033", "3130", // ╠╡╢╣╤╥╦╧
-+        "1310", "3330", "3131", "1313", "3333", ".", ".", ".",          // ╨╩╪╫╬╭╮╯
-+        ".", ".", ".", ".", "1000", "0100", "0010", "0001",             // ╰╱╲╳╴╵╶╷
-+        "2000", "0200", "0020", "0002", "1020", "0102", "2010", "0201", // ╸╹╺╻╼╽╾╿
-+    ]
-+
-+    private static func box(_ v: UInt32, _ r: CGRect, _ ctx: CGContext, _ snap: (CGFloat) -> CGFloat, _ scale: CGFloat) {
-+        let light = max(1 / scale, snap(r.width / 9))
-+        let heavy = max(2 / scale, snap(light * 2))
-+        let gap = max(1 / scale, light)
-+        let cx = snap(r.midX 
-```
-
-**File**: `apps/ios/Zeron/Companions/TerminalView.swift` (modified, +34/-1)
-```diff
-@@ -546,6 +546,12 @@ final class TerminalCanvas: UIView {
-         )
      }
  
-+    /// The scalar `TerminalGlyphs` paints for `ch`, if it does.
-+    private static func drawn(_ ch: Character) -> Unicode.Scalar? {
-+        guard ch.unicodeScalars.count == 1, let scalar = ch.unicodeScalars.first, TerminalGlyphs.draws(scalar) else { return nil }
-+        return scalar
+```
+
+**File**: `crates/ui/src/transcript.rs` (modified, +223/-120)
+```diff
+@@ -177,6 +177,9 @@ pub const USER_LINE_HEIGHT: f32 = 22.0;
+ pub const USER_COLLAPSE_CHARS: usize = 400;
+ /// Vertical separation before the plain expand/collapse link.
+ const USER_TOGGLE_GAP: f32 = 8.0;
++/// Between a caption over a user bubble (provider switch, agent sender) and
++/// the bubble.
++const USER_CAPTION_GAP: f32 = 6.0;
+ /// User-bubble attachment thumbnails (user-attachments.tsx): 112×80 thumbs in
+ /// a wrapping strip. Fixed thumbnail sizes keep load-state flips from
+ /// shifting the virtualizer.
+@@ -1064,6 +1067,9 @@ pub enum RowKind {
+         attachments: Arc<Vec<crate::attachments::UserImageAttachment>>,
+         /// Context the prompt folded in as text, lifted back out by `badges`.
+         badges: Arc<Vec<crate::badges::MessageBadge>>,
++        /// The chat that sent this message through Zeron's `send_message`,
++        /// lifted out of the routing header the receiving agent still reads.
++        sender: Option<AgentSender>,
+         /// Optimistic echo not yet confirmed by a doc frame.
+         pending: bool,
+     },
+@@ -1370,7 +1376,10 @@ pub fn rows_for_entry(
+         // Lifted before the mention projection, so a comment body's own
+         // Markdown never lands in the bubble.
+         let (body, badges) = crate::badges::split(&parsed.text);
+-        let body = agent_message_display(&body);
++        let (sender, body) = match agent_message_sender(&body) {
++            Some((sender, body)) => (Some(sender), body.to_owned()),
++            None => (None, body),
++        };
+         // Chips stand in for their attachments: those leave the strip, and a
+         // chip carries its upload's path for its progress and, for an image,
+         // a click opening it.
+@@ -1408,6 +1417,7 @@ pub fn rows_for_entry(
+                 mentions: Arc::new(mentions),
+                 attachments: Arc::new(attachments),
+                 badges: Arc::new(badges),
++                sender,
+                 pending,
+             },
+             entry_id,
+@@ -2029,7 +2039,14 @@ fn part_prefix(id: &str) -> &str {
+ /// part — matching the live row's internal spacing exactly, so the
+ /// live→split handoff cannot shift a pixel. Tool groups get one larger global
+ /// step on either boundary so their dense chip stack has room to breathe.
++/// A provider-switch seam is the caption of the message under it, so that
++/// message sits right below it.
+ pub fn top_gap_for(prev: Option<&Row>, row: &Row) -> f32 {
++    if matches!(row.kind, RowKind::User { .. })
++        && prev.is_some_and(|prev| matches!(prev.kind, RowKind::SwitchMarker { .. }))
++    {
++        return USER_CAPTION_GAP;
 +    }
-+
-     override func draw(_ rect: CGRect) {
-         guard let frame = frameModel, let ctx = UIGraphicsGetCurrentContext() else { return }
-         let m = metrics
-@@ -571,6 +577,25 @@ final class TerminalCanvas: UIView {
+     if row.turn_start {
+         return Theme::SPACE_LG;
+     }
+@@ -3483,6 +3500,8 @@ pub enum TranscriptEvent {
+         title: String,
+         frozen: bool,
+     },
++    /// An agent message's sender caption: open the chat that sent it.
++    OpenChat { chat_id: String },
+ }
+ 
+ impl gpui::EventEmitter<TranscriptEvent> for Transcript {}
+@@ -5227,6 +5246,7 @@ impl Transcript {
+                 for row in &self.rows[old_range.clone()] {
+                     self.render_cache.borrow_mut().invalidate_row(&row.id);
                  }
++                let after = old_range.start + count;
+                 if old_range.len() == count {
+                     // In-place content change, same row count — notably the
+                     // live→complete flip, where EVERY row of the streamed
+@@ -5242,6 +5262,12 @@ impl Transcript {
+                 } else {
+                     self.list.splice(old_range, count);
+                 }
++                // A row's top gap reads its predecessor, so the row after the
++                // splice can gain a new one (a switch seam landing over the
++                // message already shown under it).
++                if after < new_rows.len() {
++                    self.list.remeasure_items(after..after + 1);
++                }
+                 self.viewport_layout_revision = self.viewport_layout_revision.wrapping_add(1);
              }
          }
-+        // Box drawing, blocks and the bullet: painted into their cells.
-+        let scale = traitCollection.displayScale
-+        let xHeight = CTFontGetXHeight(m.regular)
-+        for (r, line) in rows {
-+            let y = inset.top + CGFloat(r) * m.lineHeight + dy
-+            guard y < rect.maxY, y + m.lineHeight > rect.minY else { continue }
-+            for run in line.runs where !run.text.allSatisfy(\.isASCII) {
-+                let color = run.fg == 0 ? fg : Self.color(run.fg)
-+                let span = (run.wide ? 2 : 1) * m.cellWidth
-+                var x = inset.left + CGFloat(run.col) * m.cellWidth
-+                for ch in run.text {
-+                    if let scalar = Self.drawn(ch) {
-+                        let cell = CGRect(x: x, y: y, width: span, height: m.lineHeight)
-+                        TerminalGlyphs.draw(scalar, in: cell, baseline: y + m.ascent, xHeight: xHeight, color: color, ctx: ctx, scale: scale)
-+                    }
-+                    x += span
-+                }
-+            }
-+        }
-         ctx.textMatrix = .identity
-         ctx.translateBy(x: 0, y: bounds.height)
-         ctx.scaleBy(x: 1, y: -1)
-@@ -600,7 +625,15 @@ final class TerminalCanvas: UIView {
-                     var col = x
-                     for ch in run.text {
-                         let span = (run.wide ? 2 : 1) * m.cellWidth
--                        let line = CTLineCreateWithAttributedString(NSAttributedString(string: String(ch), attributes: attrs))
-+                        if Self.drawn(ch) != nil {
-+                            col += span
-+                            continue
-+                        }
-+                        // A one-cell symbol that also has an emoji form (`⏵`,
-+                        // `☐`): ask for the text glyph, not the color emoji.
-+                        let emojiCapable = ch.unicodeScalars.count == 1 && ch.unicodeScalars.first!.properties.isEmoji
-+                        let glyph = !run.wide && emojiCapable ? "\(ch)\u{FE0E}" : String(ch)
-+                        let line = CTLineCreateWithAttributedString(NSAttributedString(string: glyph, attributes: attrs))
-                         let width = CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
-                         ctx.textPosition = CGPoint(x: col + max(0, (span - width) / 2), y: baseline)
-                         CTLineDraw(line, ctx)
+@@ -6485,6 +6511,59 @@ impl Transcript {
+             .into_any_element()
+     }
+ 
++    /// `Message from [logo] Chat` over an agent-sent bubble, in the switch
++    /// seam's caption style: the sending chat's provider mark and live title
++    /// (the header's title for a chat this workspace doesn't list). A known
++    /// chat opens on click.
++    fn render_agent_sender(
++        &self,
++        row_id: &SharedString,
++        sender: &AgentSender,
++        theme: &Theme,
++        cx: &mut Context<Self>,
++    ) -> AnyElement {
++        let chat = self
++            .state
++            .read(cx)
++            .chats
++            .iter()
++            .find(|chat| chat.id == sender.chat_id.as_ref());
++        let known = chat.is_some();
++        let title: SharedString = chat
++            .and_then(|chat| chat.title.as_deref())
++            .map(str::trim)
++            .filter(|title| !title.is_empty())
++            .map_or_else(|| sender.title.clone(), |title| 
+```
+
+**File**: `docs/screenshots/message-captions/README.md` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++# User-message captions runtime evidence
++
++Captured on 2026-10-26 on Linux (Xvfb, Mesa lavapipe software Vulkan) from `message-captions-fixture`: an offline shell with one chat that switched from Claude Code to Codex and then received a message from another chat through Zeron's `send_message`. The `before-*` captures run the same fixture against `main` `255c540d` with this change's sources stashed.
++
++Build and run: `cargo run -p zeron-ui --features appshots-fixture --example message-captions-fixture` (add `--capture <dir>` on platforms where `render_to_image` is implemented; on Linux the window was captured from the X display with `import -window root`, and hover/click driven with `xdotool`).
++
++- The provider-switch seam has no divider and rides right-aligned over the message that switched, `USER_CAPTION_GAP` above its bubble.
++- An agent-sent message shows `Message from [provider mark] Chat title` over its bubble; the routing header and the trailing short id leave the bubble. Hovering brightens the caption (`sender-hover-dark.png`); clicking opens the sending chat (`sender-click-dark.png`: the fixture's sender chat has no transcript of its own).
++
++Static screenshots do not show the timing change: the engine now writes the seam together with the message instead of after the outgoing provider's runtime is replaced.
++
++- `before-dark.png`: SHA256 `de2b0745c9bce45ff3a05f9b57432752caee872553e99d4e48e4a781e773ae70`
++- `after-dark.png`: SHA256 `310149c94389097faf4d2510e3758f2772ae4aa150d375d9cf06eab590d6f963`
++- `before-light.png`: SHA256 `48c234366795f05d90987355f5c40b89a51f26aaf0eba8154896a708c3d29405`
++- `after-light.png`: SHA256 `1beec003998af34c94ced6d87da25bceb4602a8edff1939a07502f335745c7ba`
++- `sender-hover-dark.png`: SHA256 `e85e20a87b3d08ddbba43b971bfa0d0a4798f7e328b4c19d26d14111e413d517`
++- `sender-click-dark.png`: SHA256 `0158a61dd2e1f5312b38fca513a40dcb309d1a72fb19887b8b20e9cc6cba292d`
 ```
 
 ---
 
-### Incident Patch 3: `5b8edb2d` (2026-10-23)
-**Commit Message**: iOS: don't crash Providers when there's no device to pick (#980)
+### Incident Patch 2: `bc892abd` (2026-10-26)
+**Commit Message**: Session card: branch row shows the branch's changes, not the working tree (#950)
 
-A new account with no paired computer and no Cloud offer has an empty
-device menu. UIKit aborts on a .popUpMenu with nothing to select
-("Menu does not have a valid element for default selection"), and
-onboarding reopens Providers on launch, so the app crashed every time
-it opened. Skip the pop-up accessory when the menu is empty.
+* Session card: the branch row shows the branch's +/- over its base
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The totals came from the working-tree watch, so they only counted
+uncommitted lines. They now come from the Changes pane's Branch changes
+capture against the repo's default branch, re-captured whenever the watch
+checksum moves, and clicking them opens a Diff tab on that scope.
 
-**File**: `apps/ios/Zeron/Cloud/ProvidersViewController.swift` (modified, +6/-1)
+* Session card: clicking the branch totals opens the diff pane
+
+The Branch changes tab was added to a closed pane, so nothing showed.
+Open the pane first, as opening a file does.
+
+**File**: `crates/ui/src/changes.rs` (modified, +8/-0)
 ```diff
-@@ -115,7 +115,12 @@ final class ProvidersViewController: UIViewController, UICollectionViewDelegate
-             cell.backgroundConfiguration = bg
-             var accessories: [UICellAccessory] = []
-             if row.id == "device" {
--                accessories.append(.popUpMenu(self.deviceMenu(), displayed: .always, options: .init(tintColor: Palette.text)))
-+                // UIKit aborts on a pop-up menu with nothing to select: a new
-+                // account with no computer and no Cloud offer has no devices.
-+                let menu = self.deviceMenu()
-+                if !menu.children.isEmpty {
-+                    accessories.append(.popUpMenu(menu, displayed: .always, options: .init(tintColor: Palette.text)))
-+                }
-                 let name = UILabel()
-                 name.text = self.targetName
-                 name.font = Fonts.ui(.sansMedium, 15)
+@@ -1803,6 +1803,14 @@ impl Changes {
+         changes
+     }
+ 
++    /// A Diff tab that opens on *Branch changes* (the scope menu still
++    /// switches it).
++    pub fn for_branch(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
++        let mut changes = Self::new(state, cx);
++        changes.scope = DiffScope::Branch;
++        changes
++    }
++
+     /// A dedicated History surface. It shares the commit-opening event path
+     /// with diffs, but is never offered as an item in a Diff tab's scope menu.
+     pub fn for_history(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
+```
+
+**File**: `crates/ui/src/shell.rs` (modified, +12/-1)
+```diff
+@@ -2315,7 +2315,7 @@ pub struct Shell {
+     session_info_last_reserve: f32,
+     /// The lanes card's folds and pages.
+     session_lanes: session_lanes::LaneState,
+-    /// The working-tree diffs behind the card's branch-row totals.
++    /// The branch diff behind the card's branch-row totals.
+     session_diffs: session_info::SessionDiffs,
+     /// The servers behind the card's Ports section.
+     session_previews: session_info::SessionPreviews,
+@@ -4097,6 +4097,17 @@ impl Shell {
+         self.register_diff_surface(changes, window, cx);
+     }
+ 
++    /// A Diff tab opened on *Branch changes* (the session card's totals),
++    /// opening the pane when it is closed.
++    fn add_branch_diff_surface(&mut self, window: &mut Window, cx: &mut Context<Self>) {
++        if self.active_chat.is_empty() {
++            return;
++        }
++        self.set_surfaces_open(true, cx);
++        let changes = cx.new(|cx| Changes::for_branch(self.state.clone(), cx));
++        self.register_diff_surface(changes, window, cx);
++    }
++
+     /// Open or focus a session-owned editor tab. The explorer is independent.
+     fn add_file_surface(&mut self, path: String, window: &mut Window, cx: &mut Context<Self>) {
+         let owner = (self.active_chat.clone(), self.state.clone());
+```
+
+**File**: `crates/ui/src/shell/session_info.rs` (modified, +121/-15)
+```diff
+@@ -33,22 +33,40 @@ pub(super) fn session_card_reserve(main: f32, transcript: f32) -> Option<f32> {
+     (main - reserve - 2.0 * TRANSCRIPT_GUTTER >= transcript - 0.5).then_some(reserve)
+ }
+ 
+-/// The checkouts' working-tree diffs, for the branch row's `+N −M`: the
+-/// Changes pane's `WatchCheckoutDiffs` stream, kept without the pane.
++/// The branch's diff over its base, for the branch row's `+N −M`: the
++/// Changes pane's *Branch changes* scope, kept without the pane. The
++/// `WatchCheckoutDiffs` stream only says when to re-capture: its checksum
++/// moves with the working tree and HEAD.
+ #[derive(Default)]
+ pub(super) struct SessionDiffs {
+     diffs: Vec<zeron_proto::CheckoutDiff>,
+     /// Device the running watch targets: `None` the connected engine, else
+     /// a remote chat's host (diffs are produced where the checkout lives).
+     target: Option<Option<String>>,
+     _watch: Option<Task<()>>,
++    /// The comparison base per `device:cwd`, from `ListBranches`.
++    base: Option<(String, String)>,
++    /// `chat|cwd` the totals belong to, and those totals.
++    branch: Option<(String, (u32, u32))>,
++    /// `chat|cwd|checksum` last fetched (or in flight).
++    fetched: Option<String>,
++    _fetch: Option<Task<()>>,
+ }
+ 
+ impl SessionDiffs {
+-    /// The chat's uncommitted line totals; `None` while clean or unknown.
++    /// The working-tree diff's checksum for `chat`: a branch capture is
++    /// stale once it moves.
++    fn checksum(&self, chat: &zeron_proto::Chat) -> Option<String> {
++        crate::changes::resolve_diff(&self.diffs, chat).map(|diff| diff.checksum.clone())
++    }
++
++    /// The branch's line totals over its base; `None` while clean or unknown.
+     fn totals(&self, chat: &zeron_proto::Chat) -> Option<(u32, u32)> {
+-        crate::changes::resolve_diff(&self.diffs, chat)
+-            .map(|diff| (diff.additions, diff.deletions))
++        let context = format!("{}|{}", chat.id, chat.cwd.as_deref()?);
++        self.branch
++            .as_ref()
++            .filter(|(key, _)| *key == context)
++            .map(|&(_, totals)| totals)
+             .filter(|&(adds, dels)| adds + dels > 0)
+     }
+ }
+@@ -136,16 +154,17 @@ impl Shell {
+                 {
+                     while let Some(value) = rx.recv().await {
+                         let alive = this.update(cx, |this, cx| {
+-                            // Repaint only when the open chat's totals move.
++                            // Re-render (and so re-capture) only when the open
++                            // chat's checkout moves.
+                             let chat = this.state.read(cx).selected_chat_row().cloned();
+-                            let totals = |diffs: &SessionDiffs| {
+-                                chat.as_ref().and_then(|chat| diffs.totals(chat))
++                            let checksum = |diffs: &SessionDiffs| {
++                                chat.as_ref().and_then(|chat| diffs.checksum(chat))
+                             };
+-                            let before = totals(&this.session_diffs);
++                            let before = checksum(&this.session_diffs);
+                             if crate::changes::apply_diff_frame(
+                                 &mut this.session_diffs.diffs,
+                                 value,
+-                            ) && totals(&this.session_diffs) != before
++                            ) && checksum(&this.session_diffs) != before
+                             {
+                                 cx.notify();
+                             }
+@@ -217,6 +236,94 @@ impl Shell {
+         }));
+     }
+ 
++    /// Capture `chat`'s branch diff over its base (idempotent per chat, cwd
++    /// and working-tree checksum). The base is the repo's default branch, as
++    /// the Changes pane presets it; the last totals stay while a re-capture
++    /// runs.
++    fn ensure_branch_totals(&mut self, chat: &zeron_proto::Chat, cx: &mut Context<Self>) {
++        let Some(cwd) = chat.cwd.clone() else {
++            return;
++        };
++        // Until the watch reports the checkout, there is nothing to refresh on.
++        let Some(checksum) = self.session_diffs.checksum(chat) else {
++            return;
++        };
++        let context = format!("{}|{cwd}", chat.id);
++        let key = format!("{context}|{checksum}");
++        if self.session_diffs.fetched.as_deref() == Some(key.as_str()) {
++            return;
++        }
++        let Some(engine) = self.state.read(cx).engine().cloned() else {
++            return;
++        };
++        let target = self.session_diffs.target.clone().flatten();
++        let repo = format!("{}:{cwd}", target.as_deref().unwrap_or("local"));
++        let known_base = self
++            .session_diffs
++            .base
++            .as_ref()
++            .filter(|(at, _)| *at == repo)
++            .map(|(_, base)| base.clone());
++        let current = chat.branch.clone();
++        self.session_diffs.fetched = Some(key.clone());
++        self.session_diff
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1052** (2026-10-26): Transcript: agent senders and provider switches as captions over the message (@zeronsh[bot])
+- **PR #1049** (2026-10-25): Transcript rail: back to one tick per prompt; long chats scroll the rail (@wingleeio)
 - **PR #1034** (2026-10-25): Transcript rail: ten ticks at most; hovering opens the prompt list (@zeronsh[bot])
 - **PR #1032** (2026-10-25): Releases: serve the Android APK's stable name uncached; name each build uniquely (@zeronsh[bot])
 - **PR #1031** (2026-10-25): Syntax: Luau highlighting (@zeronsh[bot])
 - **PR #1030** (2026-10-25): Bump version to v0.2.123 (@zeronsh[bot])
-- **PR #1029** (2026-10-25): Android: Gmail-style Sessions page; the transcript fades behind the composer (@zeronsh[bot])
-- **PR #1028** (2026-10-25): Session card: snap on chat switch instead of fading over the next chat (@alexandre-vl)
 
 ---
 
@@ -2320,32 +2126,29 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Harden every provider: crash and stall detection, Windows-safe launching, and ru
+## X. Transcript: agent senders and provider switches as captions over the message (#1
 
 **RULE**:
-When implementing operations in `.github/workflows/windows.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/engine/src/doc_host.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e151ca6`: Harden every provider: crash and stall detection, Windows-safe launching, and run recovery (#977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `325384d8`: Transcript: agent senders and provider switches as captions over the message (#1052). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/windows.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/doc_host.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # The driver suites whose fixtures run without a POSIX shell: an in-test
-      # HTTP/SSE server (OpenCode), node (the Cursor shim) and a Rust peer
-      # (Pi). The shell- and python-fixture suites are unix-only.
-      - name: Portable harness integration tests
-        run: cargo test --release --locked -p zeron-harness --features native-fixture --test opencode --test cursor_shim --test pi_rpc
+                // to a no-op. A provider switch's seam lands with it, above.
+                sessions.note_provider_switch(chat_id, harness, handle);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                // to a no-op.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e151ca6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `325384d8` are properly handled with clean fallback behavior.
