@@ -4474,3 +4474,7 @@ https://github.com/ParadevAI/Paradev
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T10:14:57.272Z] ---
 # [HUGGINGFACE-AI-MODELS] briaai/Fibo-2.0-dev (2847 score) - Verified Hugging Face Model: briaai/Fibo-2.0-dev (158 likes, 1267 downloads)
 https://huggingface.co/briaai/Fibo-2.0-dev
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-26T13:11:15.497Z] ---
+# [AI-AGENTS] Vincentwei1021/video-shotcraft (7518 score) - AI video skill for Claude Code & Codex — cinematic product videos with Remotion:
+https://github.com/Vincentwei1021/video-shotcraft

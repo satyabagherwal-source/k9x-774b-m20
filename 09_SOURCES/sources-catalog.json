@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "e7e95b45",
+    "sourceVersion": "404d9173",
     "license": "GPL-3.0",
-    "contentHash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
-    "lastHarvestedAt": "2026-10-25T13:24:08.955Z",
+    "contentHash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
+    "lastHarvestedAt": "2026-10-26T13:11:27.501Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -10768,5 +10768,15 @@
     "contentHash": "32d2a2a56a1f2ff910f8b7f3d1c19c5566c87d2c07dd983c1c7e19ab282ba581",
     "lastHarvestedAt": "2026-10-26T10:15:10.611Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
+  },
+  "vincentwei1021-video-shotcraft": {
+    "repository": "Vincentwei1021/video-shotcraft",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Vincentwei1021/video-shotcraft",
+    "sourceVersion": "43bd349a",
+    "license": "Apache-2.0",
+    "contentHash": "95f8d23d4a02cc13674dd1cad42eb58af2ea2bddd3073bbcc1b00776f35e5eb6",
+    "lastHarvestedAt": "2026-10-26T13:11:23.807Z",
+    "learningId": "learn-github-vincentwei1021-video-shotcraft"
   }
 }

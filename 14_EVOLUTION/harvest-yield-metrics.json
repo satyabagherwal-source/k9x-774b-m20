@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:01:48.661Z",
-  "total_cycles_completed": 5119,
-  "total_learnings_persisted": 5119,
-  "total_rules_promoted": 4499,
+  "last_updated": "2026-10-26T13:11:27.508Z",
+  "total_cycles_completed": 5121,
+  "total_learnings_persisted": 5121,
+  "total_rules_promoted": 4500,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:28:20.545Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T18:34:44.404Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:34:44.599Z",
       "repository": "microsoft/fluentui",
@@ -1403,6 +1389,20 @@
       "repository": "DefGuard/defguard",
       "learningId": "learn-github-defguard-defguard",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:11:23.811Z",
+      "repository": "Vincentwei1021/video-shotcraft",
+      "learningId": "learn-github-vincentwei1021-video-shotcraft",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:11:27.508Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

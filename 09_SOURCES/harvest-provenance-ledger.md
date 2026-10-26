@@ -5149,3 +5149,5 @@ Every entry in this ledger must capture:
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `4728f94f` | Multi-dimensional audit evidence | 2026-10-26T12:40:34.672Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e033d4a5` | Multi-dimensional audit evidence | 2026-10-26T12:57:01.405Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `8efdae0f` | Multi-dimensional audit evidence | 2026-10-26T13:01:48.656Z |
+| `learn-github-vincentwei1021-video-shotcraft` | `https://github.com/Vincentwei1021/video-shotcraft` | `43bd349a` | Multi-dimensional audit evidence | 2026-10-26T13:11:23.807Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `404d9173` | Multi-dimensional audit evidence | 2026-10-26T13:11:27.501Z |

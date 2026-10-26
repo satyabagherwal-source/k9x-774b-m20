@@ -18730,5 +18730,20 @@
     "downloads": 1267,
     "qualityScore": 2847,
     "discoveredAt": "2026-10-26T10:14:57.270Z"
+  },
+  {
+    "name": "video-shotcraft",
+    "fullName": "Vincentwei1021/video-shotcraft",
+    "url": "https://github.com/Vincentwei1021/video-shotcraft",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI video skill for Claude Code & Codex — cinematic product videos with Remotion: 152 shot recipe cards, 209 motion previews, a production-ready template",
+    "stars": 13727,
+    "forks": 1256,
+    "openIssues": 14,
+    "language": "TypeScript",
+    "qualityScore": 7518,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-26T13:07:50.675Z"
   }
 ]

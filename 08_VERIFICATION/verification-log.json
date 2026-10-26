@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-BD43",
-    "timestamp": "2026-10-25T03:45:10.947Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "844a7c23aac2f87afeeae978527ed78296f5981b4720ab4488a7b86f12d39cf6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-L41C",
-    "timestamp": "2026-10-25T03:52:45.744Z",
-    "repository": "arxanas/git-branchless",
-    "learningId": "learn-github-arxanas-git-branchless",
-    "contentHash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-L821",
     "timestamp": "2026-10-25T03:52:50.953Z",
     "repository": "CrawlCove/xml-sitemap-validator",
@@ -7492,6 +7462,36 @@
     "contentHash": "3fbb1616c7a6979448780d717caba366f08cffffdfa83663753c9db19554d7bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-ZDEK",
+    "timestamp": "2026-10-26T13:11:23.804Z",
+    "repository": "Vincentwei1021/video-shotcraft",
+    "learningId": "learn-github-vincentwei1021-video-shotcraft",
+    "contentHash": "95f8d23d4a02cc13674dd1cad42eb58af2ea2bddd3073bbcc1b00776f35e5eb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-ZG96",
+    "timestamp": "2026-10-26T13:11:27.498Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

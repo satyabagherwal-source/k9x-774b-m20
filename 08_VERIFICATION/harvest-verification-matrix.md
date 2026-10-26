@@ -5142,3 +5142,5 @@
 | `CYCLE-20261026-VQLP` | `2026-10-26T12:40:34.669Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4601` | Yes (`0258b7e2...`) |
 | `CYCLE-20261026-GVYY` | `2026-10-26T12:57:01.402Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`50c8444c...`) |
 | `CYCLE-20261026-N1M4` | `2026-10-26T13:01:48.652Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4602` | Yes (`3fbb1616...`) |
+| `CYCLE-20261026-ZDEK` | `2026-10-26T13:11:23.804Z` | `Vincentwei1021/video-shotcraft` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4603` | Yes (`95f8d23d...`) |
+| `CYCLE-20261026-ZG96` | `2026-10-26T13:11:27.498Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md` | Yes (`e6205e97...`) |

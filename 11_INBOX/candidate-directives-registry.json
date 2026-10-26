@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T12:57:01.411Z",
+  "last_updated": "2026-10-26T13:11:27.506Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2829,6 +2829,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-matrixorigin-matrixone"
+    },
+    {
+      "id": "CD-ZG9E",
+      "directive_title": "Merge pull request #775 from Kuddev/fix/windows-update-worker-20261026",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Kuddev/pebrel",
+      "source_commit": "404d9173",
+      "date_staged": "2026-10-26",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-kuddev-pebrel"
     }
   ]
 }

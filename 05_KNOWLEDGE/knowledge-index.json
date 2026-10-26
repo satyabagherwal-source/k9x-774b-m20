@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T13:01:48.593Z",
-  "total_verified_learnings": 1093,
+  "last_updated": "2026-10-26T13:11:27.433Z",
+  "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32200,8 +32200,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "e7e95b45",
-      "content_hash": "1cab1a3ff33d1e36a6385bc7116f666a4ec0fe085d273b4e2be6daffbd56af36",
+      "source_version": "404d9173",
+      "content_hash": "e6205e97a1b50d5b26b1045e1aaebc1fcb8e155be49fdc4d711acd82e6615c2b",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -32226,7 +32226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:24:08.886Z",
+      "verified_at": "2026-10-26T13:11:27.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129092,6 +129092,53 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T13:01:48.580Z"
+    },
+    "learn-github-vincentwei1021-video-shotcraft": {
+      "learning_id": "learn-github-vincentwei1021-video-shotcraft",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Vincentwei1021/video-shotcraft",
+      "repository": "Vincentwei1021/video-shotcraft",
+      "slug": "vincentwei1021-video-shotcraft",
+      "platform": "github",
+      "source_url": "https://github.com/Vincentwei1021/video-shotcraft",
+      "source_version": "43bd349a",
+      "content_hash": "95f8d23d4a02cc13674dd1cad42eb58af2ea2bddd3073bbcc1b00776f35e5eb6",
+      "dossier_path": "07_PROJECT_LEARNING/vincentwei1021-video-shotcraft-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vincentwei1021-video-shotcraft-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4603,
+          "title": "部署加资源哈希防缓存错配 + 首页语言按钮图标对齐 (#58)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-26T13:11:23.719Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4603": {
+      "learning_id": "rule-4603",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4603,
+      "title": "部署加资源哈希防缓存错配 + 首页语言按钮图标对齐 (#58)",
+      "source_url": "https://github.com/Vincentwei1021/video-shotcraft",
+      "source_version": "43bd349a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T13:11:23.719Z"
     }
   },
   "aliases": {
