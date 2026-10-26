@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-QTH4",
-    "timestamp": "2026-10-25T02:05:13.528Z",
-    "repository": "ShiGuangSchedule/shiguangschedule",
-    "learningId": "learn-github-shiguangschedule-shiguangschedule",
-    "contentHash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-YMAX",
-    "timestamp": "2026-10-25T02:11:17.481Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "866ac00d65f98c0279a609fba0271e08c079fd5663e75881746e4be5414e6bf5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-YNO1",
     "timestamp": "2026-10-25T02:11:19.249Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7492,6 +7462,36 @@
     "contentHash": "4c4a2bfff7ac0b40b484db3ef36b30d7cc33b46db8ca11e4f6668b66dc9110d4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-9USN",
+    "timestamp": "2026-10-26T03:03:41.351Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-A21C",
+    "timestamp": "2026-10-26T03:03:50.736Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

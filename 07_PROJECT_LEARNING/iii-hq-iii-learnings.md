@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `e1f3ae29`  
+> **Source Version**: `9dc4f03b`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:58:47.629Z  
+> **Timestamp**: 2026-10-26T03:03:41.026Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:53:46.307Z  
+> **Harvest Timestamp**: 2026-10-26T03:03:39.860Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18859 stars
+- **Stars / Engagement**: 18862 stars
 
 ---
 
@@ -2401,277 +2401,18 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51ab46eb` (2026-10-23)
-**Commit Message**: fix(deps): update Tokio to address RUSTSEC-2026-0386 (#2391)
+### Incident Patch 1: `9dc4f03b` (2026-10-25)
+**Commit Message**: docs: add @iziang to contributors.md
 
-Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
+@iziang agrees to license contributions to iii under Apache 2.0.
 
-**File**: `Cargo.lock` (modified, +14/-14)
+**File**: `contributors.md` (modified, +1/-0)
 ```diff
-@@ -151,7 +151,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -162,7 +162,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -989,7 +989,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
-@@ -1648,7 +1648,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.2",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -1767,7 +1767,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -3203,7 +3203,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4080,7 +4080,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -5369,7 +5369,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -5452,7 +5452,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -5947,7 +5947,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -6199,7 +6199,7 @@ dependencies = [
-  "getrandom 0.4.2",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6404,9 +6404,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
- 
- [[package]]
- name = "tokio"
--version = "1.52.2"
-+version = "1.53.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "110a78583f19d5cdb2c5ccf321d1290344e71313c6c37d43520d386027d18386"
-+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
- dependencies = [
-  "bytes",
-  "libc",
-@@ -7268,7 +7268,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
-```
-
----
-
-### Incident Patch 2: `bdfd4f09` (2026-10-23)
-**Commit Message**: fix(python): require websockets>=14.0 (#2385)
-
-Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
-
-**File**: `sdk/packages/python/helpers/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ dependencies = [
-     "opentelemetry-api>=1.25",
-     "opentelemetry-sdk>=1.25",
-     "httpx>=0.27",
--    "websockets>=12.0",
-+    "websockets>=14.0",
- ]
- 
- [project.urls]
-```
-
-**File**: `sdk/packages/python/iii/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ classifiers = [
-     "Operating System :: OS Independent",
- ]
- dependencies = [
--    "websockets>=12.0",
-+    "websockets>=14.0",
-     "pydantic>=2.0",
-     "opentelemetry-api>=1.25",
-     "iii-helpers==0.25.0",
-```
-
----
-
-### Incident Patch 3: `cd537cbd` (2026-10-22)
-**Commit Message**: test: fix iii-worker and iii-filesystem tests on Ubuntu 26.04 runners (#2379)
-
-Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
-
-**File**: `crates/iii-filesystem/tests/filesystem_integration.rs` (modified, +18/-10)
-```diff
-@@ -538,16 +538,24 @@ fn readdir_pagination_with_nonzero_offset() {
-         all_entries.len()
-     );
- 
--    // Verify that the tail batch entries all have offsets > mid_offset.
--    for e in &tail_entries {
--        assert!(
--            e.offset > mid_offset,
--            "entry '{}' offset {} should be > mid_offset {}",
--            String::from_utf8_lossy(e.name),
--            e.offset,
--            mid_offset,
--        );
--    }
-+    // `offset` is an opaque cookie, not a position: on Linux it is the
-+    // kernel's `d_off`, and tmpfs on recent kernels hands out cookies that do
-+    // not grow along the listing. Resuming from an entry's cookie must return
-+    // exactly the entries listed after it.
-+    let tail_names: Vec<String> = tail_entries
-+        .iter()
-+        .map(|e| String::from_utf8_lossy(e.name).into_owned())
-+        .collect();
-+    let expected_names: Vec<String> = all_entries[mid..]
-+        .iter()
-+        .map(|e| String::from_utf8_lossy(e.name).into_owned())
-+        .collect();
-+    assert_eq!(
-+        tail_names,
-+        expected_names,
-+        "readdir from offset {mid_offset} must resume right after entry {}",
-+        mid - 1
-+    );
- 
-     // Verify that reading past the last entry returns empty.
-     let last_offset = all_entries.last().unwrap().offset;
-```
-
-**File**: `crates/iii-worker/tests/worker_list_discovery_integration.rs` (modified, +18/-8)
-```diff
-@@ -58,6 +58,20 @@ impl Drop for HomeGuard {
-     }
- }
- 
-+/// Copies `/bin/sleep` to `~/.iii/workers/<name>/sleep`, a path the ps
-+/// matcher attributes to worker `<name>` (the first component under the
-+/// workers dir). The copy keeps the basename `sleep` because multicall
-+/// coreutils (uutils, the default on Ubuntu 26.04) pick the utility from
-+/// argv[0]: a copy named after the worker exits at once with
-+/// "unknown program" instead of sleeping.
-+fn install_sleeper(workers_dir: &std::path::Path, name: &str) -> std::path::PathBuf {
-+    let dir = workers_dir.join(name);
-+    std::fs::create_dir_all(&dir).unwrap();
-+    let bin = dir.join("sleep");
-+    std::fs::copy("/bin/sleep", &bin).expect("/bin/sleep must exist on Unix");
-+    bin
-+}
-+
- /// True once `pid`'s own argv is visible to the OS and contains `needle`.
- /// `spawn()` returns pre-exec, and around the exec transition the kernel can
- /// report no cmdline at all; the identity cross-check reads the same source
-@@ -136,8 +150,7 @@ fn is_worker_running_true_for_alive_pid() {
- 
-     let workers_dir = tmp.path().join(".iii/workers");
-     std::fs::create_dir_all(&workers_dir).unwrap();
--    let worker_bin = workers_dir.join("alive-worker");
--    std::fs::copy("/bin/sleep", &worker_bin).unwrap();
-+    let worker_bin = install_sleeper(&workers_dir, "alive-worker");
-     let mut child = std::process::Command::new(&worker_bin)
-         .arg("30")
-         .spawn()
-@@ -233,8 +246,7 @@ async fn kill_stale_worker_sweeps_pidfile_less_process() {
- 
-     let workers_dir = tmp.path().join(".iii/workers");
-     std::fs::create_dir_all(&workers_dir).unwrap();
--    let worker_bin = workers_dir.join("sweep-me");
--    std::fs::copy("/bin/sleep", &worker_bin).unwrap();
-+    let worker_bin = install_sleeper(&workers_dir, "sweep-me");
-     let mut child = std::process::Command::new(&worker_bin)
-         .arg("30")
-         .spawn()
-@@ -362,8 +374,7 @@ fn find_worker_pid_from_ps_locates_live_orphan_binary() {
-     let workers_dir = canonical_home.join(".iii/workers");
-     std::fs::create_dir_all(&workers_dir).unwrap();
-     let worker_name = format!("test-orphan-{}", std::process::id());
--    let worker_bin = workers_dir.join(&worker_name);
--    std::fs::copy("/bin/sleep", &worker_bin).expect("/bin/sleep must exist on Unix");
-+    let worker_bin = install_sleeper(&workers_dir, &worker_name);
-     {
-         use std::os::unix::fs::PermissionsExt;
-         std::fs::set_permissions(&worker_bin, std::fs::Permissions::from_mode(0o755)).unwrap();
-@@ -451,8 +462,7 @@ fn restart_orphan_invisible_to_is_worker_running_but_visible_to_ps() {
-     let workers_dir = canonical_home.join(".iii/workers");
-     std::fs::create_dir_all(&workers_dir).unwrap();
-     let worker_name = format!("test-restart-orphan-{}", std::process::id());
--    let worker_bin = workers_dir.join(&worker_name);
--    std::fs::copy("/bin/sleep", &worker_bin).expect("/bin/sleep must exist on Unix");
-+    let worker_bin = install_sleeper(&workers_dir, &worker_name);
-     {
-         use std::os::unix::fs::PermissionsExt;
-         std::fs::set_permissions(&worker_bin, std::fs::Permissions::from_mode(0o755)).unwrap();
+@@ -23,3 +23,4 @@ The following users make all of their contributions to iii under the Apache 2 li
+ - @1aifanatic
+ - @WanderLandWalker
+ - @bsodmike
++- @iziang
 ```
 
 #### Recent Merged Pull Requests:
@@ -2700,54 +2441,28 @@ Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update Tokio to address RUSTSEC-2026-0386 (#2391)
+## X. docs: add @iziang to contributors.md
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contributors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51ab46eb`: deps): update Tokio to address RUSTSEC-2026-0386 (#2391). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9dc4f03b`: docs: add @iziang to contributors.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `contributors.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.48.0",
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "windows-sys 0.52.0",
-version = "1.53.3"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
- "windows-sys 0.48.0",
+- @iziang
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.52.2"
-checksum = "110a78583f19d5cdb2c5ccf321d1290344e71313c6c37d43520d386027d18386"
- "windows-sys 0.61.2",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51ab46eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9dc4f03b` are properly handled with clean fallback behavior.

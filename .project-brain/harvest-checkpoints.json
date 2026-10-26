@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T02:57:21.351Z",
+  "last_updated": "2026-10-26T03:03:50.746Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
-      "verified_at": "2026-10-25T09:58:48.066Z",
+      "content_hash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
+      "verified_at": "2026-10-26T03:03:41.361Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T09:58:48.066Z"
+      "last_updated": "2026-10-26T03:03:41.361Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "4ff99eb92e48ca24513e0277589dc58bd9761b5acfa2f377e2a1385b11f1a269",
-      "verified_at": "2026-10-25T14:18:50.677Z",
+      "content_hash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
+      "verified_at": "2026-10-26T03:03:50.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T14:18:50.677Z"
+      "last_updated": "2026-10-26T03:03:50.745Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",

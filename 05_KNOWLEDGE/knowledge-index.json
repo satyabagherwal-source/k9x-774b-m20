@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T02:57:21.277Z",
+  "last_updated": "2026-10-26T03:03:50.692Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3755,8 +3755,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "d60598a6",
-      "content_hash": "4ff99eb92e48ca24513e0277589dc58bd9761b5acfa2f377e2a1385b11f1a269",
+      "source_version": "a4d9f092",
+      "content_hash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -3789,6 +3789,11 @@
           "number": 4331,
           "title": "core): overly defensive plugin invocation leads to slowness (#39451)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4555,
+          "title": "docs(eks): explain how to pass null helm chart values from non-typescript langua",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3796,7 +3801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T14:18:50.602Z",
+      "verified_at": "2026-10-26T03:03:50.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28843,8 +28848,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "e1f3ae29",
-      "content_hash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
+      "source_version": "9dc4f03b",
+      "content_hash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -28877,6 +28882,11 @@
           "number": 4224,
           "title": "deps): update Tokio to address RUSTSEC-2026-0386 (#2391)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4554,
+          "title": "docs: add @iziang to contributors.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -28884,7 +28894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:58:47.982Z",
+      "verified_at": "2026-10-26T03:03:41.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128047,6 +128057,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T02:51:02.206Z"
+    },
+    "rule-4554": {
+      "learning_id": "rule-4554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4554,
+      "title": "docs: add @iziang to contributors.md",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "9dc4f03b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T03:03:41.293Z"
+    },
+    "rule-4555": {
+      "learning_id": "rule-4555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4555,
+      "title": "docs(eks): explain how to pass null helm chart values from non-typescript langua",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "a4d9f092",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T03:03:50.682Z"
     }
   },
   "aliases": {

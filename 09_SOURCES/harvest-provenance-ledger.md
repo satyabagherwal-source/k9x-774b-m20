@@ -5106,3 +5106,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6c7a3d4e` | Multi-dimensional audit evidence | 2026-10-26T02:51:02.281Z |
 | `learn-github-tamagui-tamagui` | `https://github.com/tamagui/tamagui` | `7ea8fdab` | Multi-dimensional audit evidence | 2026-10-26T02:57:21.275Z |
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-26T02:57:21.337Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `9dc4f03b` | Multi-dimensional audit evidence | 2026-10-26T03:03:41.354Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `a4d9f092` | Multi-dimensional audit evidence | 2026-10-26T03:03:50.738Z |

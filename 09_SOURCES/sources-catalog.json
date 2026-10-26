@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "e1f3ae29",
+    "sourceVersion": "9dc4f03b",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "57b41f526958559bbc6b32e12a4851a7b9c13ced154fe60ffd0a782896efaeb0",
-    "lastHarvestedAt": "2026-10-25T09:58:48.056Z",
+    "contentHash": "e20b63c5e16ab5c924e420a0dd22ca28260d4e16c283fbe58bd1b953bb247845",
+    "lastHarvestedAt": "2026-10-26T03:03:41.354Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "d60598a6",
+    "sourceVersion": "a4d9f092",
     "license": "Apache-2.0",
-    "contentHash": "4ff99eb92e48ca24513e0277589dc58bd9761b5acfa2f377e2a1385b11f1a269",
-    "lastHarvestedAt": "2026-10-25T14:18:50.669Z",
+    "contentHash": "898ede3c62bc3cbf332e7c564481d04d4cdb340301dc776a1f8006d7d197508c",
+    "lastHarvestedAt": "2026-10-26T03:03:50.738Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
