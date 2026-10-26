@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `28ee6c68`  
+> **Source Version**: `8f54626e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:22:06.811Z  
+> **Timestamp**: 2026-10-26T13:34:05.655Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:22:05.356Z  
+> **Harvest Timestamp**: 2026-10-26T13:33:57.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7709 stars
+- **Stars / Engagement**: 7712 stars
 
 ---
 
@@ -2242,17 +2242,11 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3384** (2026-10-23): **Avoid panic for error handling in `set_resumption_data()`**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server | 2272736 | 2279265 | ⚠️ [6529](https://bench.rustls.dev/comparisons/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9:326650bf951b696fe6238935a69b1fcb1e23ab33/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_server) (0.29%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10430105 | 10450673 | [20568](https://bench.rustls.dev/comparisons/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9:326650bf951b696fe6238935a69b1fcb1e23ab33/cachegr
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3384?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.63%. Comparing base ([`90c65a7`](https://app.codecov.io/gh/rustls/rustls/commit/90c65a72c1b2dde4d2f83302a9560ed0a1f56ee9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`326650b`](https://app.codecov.io/gh/rustls/rustls/commit/326650bf951b696fe6238935a69b1fcb1e23ab33?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3384   +/-   ## ======================================= 
+- **Issue #3389** (2026-10-25): **⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows**
+  *Symptoms*: ## ⚡ Buzz Automated Security Remediation (`CVE-2024-24576`)  - **Vulnerability**: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows - **Target File**: `Cargo.toml` (`L14`) - **Synthesized By**: Gemini 4 Argon (`gemini-4-argon`)  ### Remediation Applied ``` Upgrade `rust` (generic) to Upgrade to latest release to remediate CVE-2024-24576 (CWE-78). ```
 
-- **Issue #3383** (2026-10-23): **Take semver-compatible updates**
-  *Symptoms*: Addresses https://github.com/rustls/rustls/actions/runs/39828352135/job/119997539946
-  **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10470495 | 10409337 | [-61158](https://bench.rustls.dev/comparisons/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77:90eea320942f1d2cc40f47d86defce4fd5a49f65/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server) (-0.58%) | 0.88% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10924162 | 10958468 | [34306](https://bench.rustls.dev/comparisons/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77:90eea320942f1d2cc40f47d86defce4fd5a49f65/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server) (0.31%) | 1.22% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8767873 | 8782762 | [14889](
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3383?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.61%. Comparing base ([`84bf9ea`](https://app.codecov.io/gh/rustls/rustls/commit/84bf9eaa9857d7114609f7e5d0ae1f0fd3cd9f77?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`90eea32`](https://app.codecov.io/gh/rustls/rustls/commit/90eea320942f1d2cc40f47d86defce4fd5a49f65?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3383   +/-   ## ======================================= 
+- **Issue #3385** (2026-10-26): **Expand exactly key_len bytes for TLS 1.3 AEAD keys**
+  *Symptoms*: Currently, hkdf_expand_label_aead_key encodes key_len as the HkdfLabel length but then asks the HKDF expander for AeadKey::MAX_LEN bytes and trims the output. For AES-128-GCM the info says 16 while the provider is asked to fill 32.  The derived key is unchanged, because HKDF-Expand's first n bytes of output is invariant regardless of requested length. However, the implementation is not HKDF-Expand-Label as RFC 8446 section 7.1 defines it, and a provider that checks the requested length against the encoded one rejects every 16-byte key.  For clarity of code, we add an AeadKey::new_with constructor, rather than construct the key in a buffer and then copy. The with_length() method has no other caller and is removed.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,64 +2263,129 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28ee6c68` (2026-10-23)
-**Commit Message**: Avoid panic for error handling in `set_resumption_data()`
+### Incident Patch 1: `8f54626e` (2026-10-24)
+**Commit Message**: Expand exactly key_len bytes for TLS 1.3 AEAD keys.
 
-**File**: `rustls-test/tests/api/resume.rs` (modified, +6/-0)
-```diff
-@@ -153,6 +153,12 @@ fn resumption_combinations() {
-         let mut server_output = Vec::new();
-         let (mut client, mut server) =
-             make_pair_for_arc_configs(&client_config, &server_config, &mut client_output);
-+        assert_eq!(
-+            server
-+                .set_resumption_data(&[0u8; 0x8000])
-+                .err(),
-+            Some(ApiMisuse::ResumptionDataTooLarge.into())
-+        );
-         server
-             .set_resumption_data(resumption_data.as_bytes())
-             .unwrap();
-```
+Currently, hkdf_expand_label_aead_key encodes key_len as the HkdfLabel
+length but then asks the HKDF expander for AeadKey::MAX_LEN bytes and
+trims the output. For AES-128-GCM the info says 16 while the provider is
+asked to fill 32.
 
-**File**: `rustls/src/conn/mod.rs` (modified, +3/-1)
-```diff
-@@ -316,7 +316,9 @@ impl<T: Transport> Connection<ServerSide, T> {
-     /// Integrity will be assured by rustls, but the data will be visible to the client. If secrecy
-     /// from the client is desired, encrypt the data separately.
-     pub fn set_resumption_data(&mut self, data: &[u8]) -> Result<(), Error> {
--        assert!(data.len() < 2usize.pow(15));
-+        if data.len() >= (1 << 15) {
-+            return Err(ApiMisuse::ResumptionDataTooLarge.into());
-+        }
-         match &mut self.state {
-             Ok(st) => st.set_resumption_data(data),
-             Err(e) => Err(e.clone()),
-```
+The derived key is unchanged, because HKDF-Expand's first n bytes of
+output is invariant regardless of requested length. However, the
+implementation is not HKDF-Expand-Label as RFC 8446 section 7.1 defines
+it, and a provider that checks the requested length against the encoded
+one rejects every 16-byte key.
 
-**File**: `rustls/src/error/mod.rs` (modified, +5/-0)
+For clarity of code, we add an AeadKey::new_with constructor, rather
+than construct the key in a buffer and then copy. The with_length()
+method has no other caller and is removed.
+
+**File**: `rustls/src/crypto/cipher/mod.rs` (modified, +12/-5)
 ```diff
-@@ -1699,6 +1699,11 @@ pub enum ApiMisuse {
-     /// [`Connection::set_resumption_data()`]: crate::Connection::set_resumption_data()
-     ResumptionDataProvidedTooLate,
+@@ -374,11 +374,18 @@ impl AeadKey {
+         key
+     }
  
-+    /// [`Connection::set_resumption_data()`] is limited to 32KB of data.
-+    ///
-+    /// [`Connection::set_resumption_data()`]: crate::Connection::set_resumption_data()
-+    ResumptionDataTooLarge,
+-    pub(crate) fn with_length(self, len: usize) -> Self {
+-        let Self { mut buf, used } = self;
+-        assert!(len <= used);
+-        buf[len..used].zeroize();
+-        Self { buf, used: len }
++    /// Builds a key of `len` bytes by letting `fill` write directly into it.
++    pub(crate) fn new_with<E>(
++        len: usize,
++        fill: impl FnOnce(&mut [u8]) -> Result<(), E>,
++    ) -> Result<Self, E> {
++        debug_assert!(len <= Self::MAX_LEN);
++        let mut key = Self {
++            buf: [0u8; Self::MAX_LEN],
++            used: len,
++        };
++        fill(&mut key.buf[..len])?;
++        Ok(key)
+     }
+ 
+     /// Largest possible AEAD key in the ciphersuites we support.
+```
+
+**File**: `rustls/src/tls13/key_schedule.rs` (modified, +51/-1)
+```diff
+@@ -1091,7 +1091,10 @@ pub(crate) fn hkdf_expand_label_aead_key(
+     context: &[u8],
+ ) -> AeadKey {
+     hkdf_expand_label_inner(expander, label, context, key_len, |e, info| {
+-        expand::<AeadKey, { AeadKey::MAX_LEN }>(e, info).with_length(key_len)
++        // Request exactly `key_len` bytes so `L` matches the length
++        // encoded in the HkdfLabel.
++        AeadKey::new_with(key_len, |out| e.expand_slice(info, out))
++            .expect("AEAD key length from cipher suite must be within MAX_LEN")
+     })
+ }
+ 
+@@ -1239,6 +1242,53 @@ mod tests {
+     use crate::key_log::KeyLog;
+     use crate::tls13::Tls13CipherSuite;
+ 
++    /// Checks that HKDF-Expand-Label asks the expander for exactly the
++    /// number of bytes encoded in the HkdfLabel length field, for AEAD
++    /// keys of both supported sizes and for whole blocks.
++    #[test]
++    fn expand_label_length_matches_hkdf_label() {
++        let expander = LengthCheckingExpander;
++        let expected = [LengthCheckingExpander::FILL; LengthCheckingExpander::HASH_LEN];
 +
-     /// [`KernelConnection::update_tx_secret()`] and associated are not available for TLS1.2 connections.
-     ///
-     /// [`KernelConnection::update_tx_secret()`]: crate::conn::kernel::KernelConnection::update_tx_secret()
++        for key_len in [16, 32] {
++            let key = hkdf_expand_label_aead_key(&expander, key_len, b"key", &[]);
++            assert_eq!(key.as_ref(), &expected[..key_len]);
++        }
++
++        let block = hkdf_expand_label_block(&expander, b"derived", &[]);
++        assert_eq!(block.as_ref(), &expected[..]);
++    }
++
++    /// An expander that rejects any request whose output length differs
++    /// from the length encoded at the start of the info.
++    struct LengthCheckingExpander;
++
++    impl LengthCheckingExpander {
++        const HASH_LEN: usize = 32;
++        const FILL: u8 = 0xab;
++    }
++
++    impl HkdfExpander for LengthCheckingExpander {
++        fn expand_slice(&self, info: &[&[u8]], output: &mut [u8]) -> Result<(), OutputLengthError> {
++            let info = info.concat();
++            let encoded = u16::from_be_bytes([info[0], info[1]]) as usize;
++            assert_eq!(output.len(), encoded, "L does not match HkdfLabel.length");
++            output.fill(Self::FILL);
++            Ok(())
++        }
++
++        fn expand_block(&self, info: &[&[u8]]) -> OkmBlock {
++            let mut block = [0u8; Self::HASH_LEN];
++            self.expand_slice(info, &mut block)
++                .unwrap();
++            OkmBlock::new(&block)
++        }
++
++        fn hash_len(&self) -> usize {
++            Self::HASH_LEN
++        }
++    }
++
+     #[test]
+     fn test_vectors() {
+         /* These test vectors generated with OpenSSL. */
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3389** (closed): ⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows (@AgenticJamesBond)
+- **PR #3385** (2026-10-26): Expand exactly key_len bytes for TLS 1.3 AEAD keys (@6d7770)
 - **PR #3384** (2026-10-23): Avoid panic for error handling in `set_resumption_data()` (@ctz)
 - **PR #3383** (2026-10-23): Take semver-compatible updates (@ctz)
 - **PR #3382** (closed): Discard TLS 1.3 tickets with a zero lifetime (@6d7770)
 - **PR #3379** (2026-10-23): docs: add rustls-pure to the third-party providers (@Gilfeather)
-- **PR #3377** (2026-10-23): Map new rustls-webpki errors (@ctz)
-- **PR #3375** (2026-10-21): Use absolute link to PROVIDERS.md (@deadcaf3)
 
 ---
 
@@ -2346,33 +2405,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid panic for error handling in `set_resumption_data()`
+## X. Expand exactly key_len bytes for TLS 1.3 AEAD keys.
 
 **RULE**:
-When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls/src/crypto/cipher/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28ee6c68`: Avoid panic for error handling in `set_resumption_data()`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f54626e`: Expand exactly key_len bytes for TLS 1.3 AEAD keys.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/crypto/cipher/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        assert_eq!(
-            server
-                .set_resumption_data(&[0u8; 0x8000])
-                .err(),
-            Some(ApiMisuse::ResumptionDataTooLarge.into())
-        );
+    /// Builds a key of `len` bytes by letting `fill` write directly into it.
+    pub(crate) fn new_with<E>(
+        len: usize,
+        fill: impl FnOnce(&mut [u8]) -> Result<(), E>,
+    ) -> Result<Self, E> {
+        debug_assert!(len <= Self::MAX_LEN);
+        let mut key = Self {
+            buf: [0u8; Self::MAX_LEN],
+            used: len,
+        };
+        fill(&mut key.buf[..len])?;
+        Ok(key)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    pub(crate) fn with_length(self, len: usize) -> Self {
+        let Self { mut buf, used } = self;
+        assert!(len <= used);
+        buf[len..used].zeroize();
+        Self { buf, used: len }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28ee6c68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f54626e` are properly handled with clean fallback behavior.

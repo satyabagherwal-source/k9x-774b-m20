@@ -5157,3 +5157,4 @@ Every entry in this ledger must capture:
 | `learn-github-ant-design-pro-components` | `https://github.com/ant-design/pro-components` | `0e181a77` | Multi-dimensional audit evidence | 2026-10-26T13:28:56.992Z |
 | `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `48edc688` | Multi-dimensional audit evidence | 2026-10-26T13:29:01.705Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `6acf1e16` | Multi-dimensional audit evidence | 2026-10-26T13:29:04.826Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `8f54626e` | Multi-dimensional audit evidence | 2026-10-26T13:34:06.067Z |

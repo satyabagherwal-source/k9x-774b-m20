@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T13:29:04.831Z",
-  "total_cycles_completed": 5127,
-  "total_learnings_persisted": 5127,
-  "total_rules_promoted": 4506,
+  "last_updated": "2026-10-26T13:34:06.072Z",
+  "total_cycles_completed": 5128,
+  "total_learnings_persisted": 5128,
+  "total_rules_promoted": 4507,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:06:27.354Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:06:27.614Z",
       "repository": "rsuite/rsuite",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-26T13:29:04.831Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T13:34:06.072Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

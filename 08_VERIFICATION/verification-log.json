@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-1Z7O",
-    "timestamp": "2026-10-25T04:05:52.644Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "309aacb8699faa0054caa34f078e19428790420dabb0b6fafe3aa266c94b5910",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2ACA",
     "timestamp": "2026-10-25T04:06:07.066Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7475,21 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "3f9a20965a59684ae62b3744e0af0cee0846614c0303cf6acfc450a48e7aedbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-SKJ3",
+    "timestamp": "2026-10-26T13:34:06.063Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "58ba65b748fdccb083607b9226365fa74cb7b3cf50b1e897703993397ef1f7ea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
