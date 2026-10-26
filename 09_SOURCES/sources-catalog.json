@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "f469568b",
+    "sourceVersion": "4728f94f",
     "license": "Apache-2.0",
-    "contentHash": "5401d4aea0326ff5e6da02f3b2b805b50eeb46d6de61ee911f51f69a15ed9443",
-    "lastHarvestedAt": "2026-10-24T19:28:32.831Z",
+    "contentHash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
+    "lastHarvestedAt": "2026-10-26T12:40:34.672Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T12:20:03.692Z",
+  "last_updated": "2026-10-26T12:40:34.619Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -30863,8 +30863,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "f469568b",
-      "content_hash": "5401d4aea0326ff5e6da02f3b2b805b50eeb46d6de61ee911f51f69a15ed9443",
+      "source_version": "4728f94f",
+      "content_hash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -30882,6 +30882,11 @@
           "number": 3914,
           "title": "runtime): keep the remainder when regex.split reaches maxsplit (#2229)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4601,
+          "title": "runtime): use character indices in str find, index, count, startswith and endswi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30889,7 +30894,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:28:32.788Z",
+      "verified_at": "2026-10-26T12:40:34.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129054,6 +129059,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T12:20:03.680Z"
+    },
+    "rule-4601": {
+      "learning_id": "rule-4601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4601,
+      "title": "runtime): use character indices in str find, index, count, startswith and endswi",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "4728f94f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T12:40:34.612Z"
     }
   },
   "aliases": {

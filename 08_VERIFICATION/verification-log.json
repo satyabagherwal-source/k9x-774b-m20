@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-B5VQ",
-    "timestamp": "2026-10-25T03:45:01.574Z",
-    "repository": "CrawlCove/robots-txt-tester",
-    "learningId": "learn-github-crawlcove-robots-txt-tester",
-    "contentHash": "c50b8e49b5587df14a87f0fdd486ad0d7676b0b690104e778b84bd031930c6f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-B7P3",
     "timestamp": "2026-10-25T03:45:03.927Z",
     "repository": "software-mansion/react-native-gesture-handler",
@@ -7490,6 +7475,21 @@
     "repository": "fallow-rs/fallow",
     "learningId": "learn-github-fallow-rs-fallow",
     "contentHash": "cb096ca078d816a34d999f106370195bdf880f497ca1e219f9b1394173ce2a21",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-VQLP",
+    "timestamp": "2026-10-26T12:40:34.669Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

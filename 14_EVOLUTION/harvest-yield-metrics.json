@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T12:20:03.762Z",
-  "total_cycles_completed": 5116,
-  "total_learnings_persisted": 5116,
-  "total_rules_promoted": 4497,
+  "last_updated": "2026-10-26T12:40:34.675Z",
+  "total_cycles_completed": 5117,
+  "total_learnings_persisted": 5117,
+  "total_rules_promoted": 4498,
   "history": [
-    {
-      "timestamp": "2026-10-25T18:21:51.066Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T18:28:18.796Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-26T12:20:03.762Z",
       "repository": "fallow-rs/fallow",
       "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T12:40:34.675Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -5146,3 +5146,4 @@ Every entry in this ledger must capture:
 | `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `50824d0d` | Multi-dimensional audit evidence | 2026-10-26T12:13:27.403Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `b98e4117` | Multi-dimensional audit evidence | 2026-10-26T12:13:37.963Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `f2d8b806` | Multi-dimensional audit evidence | 2026-10-26T12:20:03.757Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `4728f94f` | Multi-dimensional audit evidence | 2026-10-26T12:40:34.672Z |

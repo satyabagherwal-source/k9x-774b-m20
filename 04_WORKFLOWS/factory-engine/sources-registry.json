@@ -2920,8 +2920,8 @@
     "officialUrl": "https://github.com/serafimcloud/21st",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-25T17:14:21.279Z",
-    "lastVerified": "2026-10-25T17:14:21.279Z",
+    "lastChecked": "2026-10-26T12:35:18.113Z",
+    "lastVerified": "2026-10-26T12:35:18.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-serafimcloud-21st",
@@ -3434,12 +3434,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "flox-flox": {
-    "name": "flox/flox",
+    "name": "flox",
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T12:56:42.740Z",
-    "lastVerified": "2026-10-25T12:56:42.740Z",
+    "lastChecked": "2026-10-26T12:35:20.673Z",
+    "lastVerified": "2026-10-26T12:35:20.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
@@ -3448,7 +3448,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0e1822c8"
   },
   "react-native-elements-react-native-elements": {
     "name": "react-native-elements",
@@ -5486,12 +5487,12 @@
     "revisionIdentifier": "2b290b34"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-core/neuron-ai",
+    "name": "neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-10-25T15:38:22.055Z",
-    "lastVerified": "2026-10-25T15:38:22.055Z",
+    "lastChecked": "2026-10-26T12:35:33.159Z",
+    "lastVerified": "2026-10-26T12:35:33.159Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -5500,7 +5501,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "14ecdbc0"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -10623,22 +10625,21 @@
     "revisionIdentifier": "04cccc39"
   },
   "kcl-lang-kcl": {
-    "name": "kcl",
+    "name": "kcl-lang/kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T16:28:24.321Z",
-    "lastVerified": "2026-10-25T16:28:24.321Z",
+    "lastChecked": "2026-10-26T12:35:32.258Z",
+    "lastVerified": "2026-10-26T12:35:32.258Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "5401d4aea0326ff5e6da02f3b2b805b50eeb46d6de61ee911f51f69a15ed9443",
+    "contentHash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f469568b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cycloidio-terracognita": {
     "name": "terracognita",
@@ -18542,12 +18543,12 @@
     "revisionIdentifier": "733b7419"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T11:41:24.138Z",
-    "lastVerified": "2026-10-26T11:41:24.138Z",
+    "lastChecked": "2026-10-26T12:35:35.715Z",
+    "lastVerified": "2026-10-26T12:35:35.715Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -18556,7 +18557,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6e35860f"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -20342,8 +20344,8 @@
     "officialUrl": "https://github.com/nalexn/ViewInspector",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-10-22T17:25:30.369Z",
-    "lastVerified": "2026-10-22T17:25:30.369Z",
+    "lastChecked": "2026-10-26T12:35:25.607Z",
+    "lastVerified": "2026-10-26T12:35:25.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nalexn-viewinspector",
@@ -23439,8 +23441,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T01:46:01.970Z",
-    "lastVerified": "2026-10-26T01:46:01.970Z",
+    "lastChecked": "2026-10-26T12:35:30.719Z",
+    "lastVerified": "2026-10-26T12:35:30.719Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -25701,8 +25703,8 @@
     "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-21T18:45:49.993Z",
-    "lastVerified": "2026-10-21T18:45:49.993Z",
+    "lastChecked": "2026-10-26T12:35:23.102Z",
+    "lastVerified": "2026-10-26T12:35:23.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matthews-wong-structured-data-validator",
@@ -27507,8 +27509,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-26T12:20:11.622Z",
-    "lastVerified": "2026-10-26T12:20:11.622Z",
+    "lastChecked": "2026-10-26T12:40:37.206Z",
+    "lastVerified": "2026-10-26T12:40:37.206Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
