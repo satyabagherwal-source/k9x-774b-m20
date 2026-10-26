@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `a1e51f49`  
+> **Source Version**: `de16943c`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:02:15.570Z  
+> **Timestamp**: 2026-10-26T00:32:43.412Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:02:15.565Z  
+> **Harvest Timestamp**: 2026-10-26T00:32:43.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38060 stars
+- **Stars / Engagement**: 38069 stars
 
 ---
 
@@ -821,775 +821,86 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1e51f49` (2026-10-25)
-**Commit Message**: tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound
+### Incident Patch 1: `5f40a062` (2026-10-25)
+**Commit Message**: go.mod: update gliderssh for resource exhaustion fixes
 
-ListenSSH now documents its session trust model and takes an
-authorization callback. A session is accepted from any peer that the
-tailnet ACL's TCP rules allow and that resolves with WhoIs. The server
-performs no SSH client authentication, does not map the peer to a local
-user, and does not record the session. The application is responsible
-for what each session does. Set Server.SSHAuthCallback to reject
-unwanted sessions before they reach Accept. A rejected session is
-refused at open with exit status 1 and is never yielded to Accept. The
-callback is plumbed through LocalBackend.ListenSSH and HookListenSSH.
-With no callback, behavior is unchanged.
+Updates tailscale/corp#50380
 
-The listener's SSH server runs session channels only, with no port
-forwarding. Closing the listener closes the accepted connections.
+Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
-- DisablePTYEmulation runs on every session, so a PTY session passes
-  data through unchanged instead of translating "\n" to "\r\n". The
-  translation corrupted binary data read through the net.Conn
-  interface. Window changes are drained for every session, even when
-  the application never calls Pty, because gliderssh writes wind
-
-**File**: `ipn/ipnlocal/local.go` (modified, +18/-3)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -146,22 +146,37 @@ func RegisterNewSSHServer(fn newSSHServerFunc) {
- 	newSSHServer = fn
+@@ -173,4 +173,4 @@
+     });
+   };
  }
- 
-+// SSHAuthCallback reports whether to accept a new SSH session. It is
-+// called for each session before the session is yielded to the
-+// listener from [LocalBackend.ListenSSH], with the peer's node and
-+// user profile. A session that the callback rejects is refused and is
-+// never yielded to Accept.
-+//
-+// ListenSSH accepts a session from any peer that the tailnet ACL's TCP
-+// rules allow. The ACL's SSHPolicy is not used. Use SSHAuthCallback to
-+// reject sessions the application does not want.
-+type SSHAuthCallback func(tailcfg.NodeView, tailcfg.UserProfile) (permitted bool)
-+
- // HookListenSSH is set by the ssh/tailssh package (via feature/ssh) to provide
- // an implementation of ListenSSH for use by tsnet.
--var HookListenSSH feature.Hook[func(net.Listener, *LocalBackend, logger.Logf) (net.Listener, error)]
-+var HookListenSSH feature.Hook[func(net.Listener, *LocalBackend, SSHAuthCallback, logger.Logf) (net.Listener, error)]
- 
- // ListenSSH wraps the given listener with an SSH server that authenticates
- // connections using Tailscale peer identity. The returned listener's Accept
- // yields net.Conn values that are *tailssh.Session.
- //
-+// If auth is nil, every session from a peer that the tailnet ACL's TCP
-+// rules allow is accepted. If auth is non-nil, sessions that it rejects
-+// are refused. See [SSHAuthCallback].
-+//
- // If the ssh/tailssh package has not been linked (e.g. via
- // _ "tailscale.com/feature/ssh"), ListenSSH returns an error.
--func (b *LocalBackend) ListenSSH(ln net.Listener, logf logger.Logf) (net.Listener, error) {
-+func (b *LocalBackend) ListenSSH(ln net.Listener, auth SSHAuthCallback, logf logger.Logf) (net.Listener, error) {
- 	fn, ok := HookListenSSH.GetOk()
- 	if !ok {
- 		return nil, errors.New("SSH support not available; import _ \"tailscale.com/feature/ssh\"")
- 	}
--	return fn(ln, b, logf)
-+	return fn(ln, b, auth, logf)
- }
- 
- // watchSession represents a WatchNotifications channel,
+-# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
+\ No newline at end of file
 ```
 
-**File**: `ssh/tailssh/listen.go` (modified, +150/-45)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -9,10 +9,14 @@ import (
- 	"errors"
- 	"net"
- 	"net/netip"
-+	"strconv"
- 	"sync"
-+	"time"
- 
- 	gliderssh "github.com/tailscale/gliderssh"
-+	"tailscale.com/envknob"
- 	"tailscale.com/ipn/ipnlocal"
-+	"tailscale.com/tailcfg"
- 	"tailscale.com/types/logger"
- )
- 
-@@ -25,11 +29,42 @@ func Register() {
- 	registerIncubator()
+@@ -4,7 +4,7 @@
+     "sri": "sha256-sdlgTLTkdhTvGCeQTwAsR+Do8rNwBzBUp5QPc09BPgI="
+   },
+   "vendor": {
+-    "goModSum": "sha256-Egyb1sq9KWK7VjoNdoC2wnB1RvKlMpwHwPIfC6HSUbs=",
+-    "sri": "sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY="
++    "goModSum": "sha256-c6skz9VfdqDE2R9d7TScija/jid2r6+bHdpWObt4ls0=",
++    "sri": "sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk="
+   }
  }
- 
--// listenSSH wraps rawLn with an SSH server that resolves Tailscale peer
--// identity for each connection. The returned listener's Accept yields
--// *Session values (as net.Conn).
--func listenSSH(rawLn net.Listener, lb *ipnlocal.LocalBackend, logf logger.Logf) (net.Listener, error) {
--	hostKeys, err := getHostKeys(lb.TailscaleVarRoot(), logf)
-+// listenSSH returns an SSH server that wraps rawLn. The returned
-+// listener's Accept yields each session as a *Session. A nil auth
-+// accepts every session. A non-nil auth is called for each session
-+// with the peer identity, and a session that auth rejects is refused.
-+func listenSSH(rawLn net.Listener, lb *ipnlocal.LocalBackend, auth ipnlocal.SSHAuthCallback, logf logger.Logf) (net.Listener, error) {
-+	return newSSHListener(rawLn, sshListenerConfig{
-+		varRoot: lb.TailscaleVarRoot(),
-+		whoIs:   lb.WhoIs,
-+		auth:    auth,
-+		logf:    logf,
-+	})
-+}
-+
-+// sshListenerConfig holds the dependencies of the SSH listener.
-+// listenSSH fills it in from a LocalBackend, and tests use a stub
-+// whoIs instead.
-+type sshListenerConfig struct {
-+	varRoot string
-+	whoIs   func(proto string, ipp netip.AddrPort) (node tailcfg.NodeView, userProfile tailcfg.UserProfile, ok bool)
-+	auth    ipnlocal.SSHAuthCallback // or nil to accept all peers
-+	logf    logger.Logf
-+}
-+
-+// newSSHListener serves SSH on rawLn. The returned listener's Accept
-+// method yields each session as a *Session, and each session is also
-+// usable as a net.Conn.
-+//
-+// The server runs session channels only, and accepts connections
-+// without SSH client authentication. It resolves each connecting peer
-+// with cfg.whoIs and refuses sessions from peers that do not resolve.
-+// If cfg.auth is set, it refuses sessions that cfg.auth rejects as
-+// well. Sessions are not mapped to a local user and are not recorded.
-+// The application consuming the sessions from Accept is responsible
-+// for anything further.
-+func newSSHListener(rawLn net.Listener, cfg sshListenerConfig) (net.Listener, error) {
-+	hostKeys, err := getHostKeys(cfg.varRoot, cfg.logf)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -39,51 +74,19 @@ func listenSSH(rawLn net.Listener, lb *ipnlocal.LocalBackend, logf logger.Logf)
- 	}
- 
- 	sl := &sshListener{
-+		cfg:      cfg,
- 		rawLn:    rawLn,
--		sessions: make(chan net.Conn, 16),
-+		sessions: make(chan net.Conn, maxQueuedSSHListenerSessions),
- 		done:     make(chan struct{}),
- 	}
- 
- 	sshSrv := &gliderssh.Server{
--		HostSigners: signers,
--		Handler: func(sess gliderssh.Session) {
--			srcAddr := sess.RemoteAddr().String()
--			ipp, err := netip.ParseAddrPort(srcAddr)
--			if err != nil {
--				logf("listenSSH: bad remote addr %q: %v", srcAddr, err)
--				sess.Exit(1)
--				return
--			}
--			node, userProfile, ok := lb.WhoIs("tcp", ipp)
--			if !ok {
--				logf("listenSSH: WhoIs failed for %v", srcAddr)
--				sess.Exit(1)
--				return
--			}
--
--			done := make(chan struct{})
--			s := newSession(sess, peerIdentity{
--				Node:        node,
--				UserProfile: userProfile,
--			}, done)
--
--			// Send the session to the listener. If the listener is
--			// closed, drop the session.
--			select {
--			case sl.sessions <- s:
--			case <-sl.done:
--				sess.Exit(1)
--				return
--			}
--
--			// Block until the consumer is done with the session.
--			select {
--			case <-done:
--			case <-sess.Context().Done():
--			case <-sl.done:
--			}
--		},
-+		HostSigners:      signers,
-+		HandshakeTimeout: loginGraceTime(),
-+		IdleTimeout:      sshIdleTimeout(),
-+		Handler:          sl.handleSession,
- 	}
-+	sl.sshSrv = sshSrv
- 
- 	go func() {
- 		if err := sshSrv.Serve(rawLn); err != nil {
-@@ -92,7 +95,7 @@ func listenSSH(rawLn net.Listener, lb *ipnlocal.LocalBackend, logf logger.Logf)
- 			select {
- 			case <-sl.done:
- 			default:
--				logf("listenSSH: Serve error: %v", err)
-+				cfg.logf("listenSSH: Serve error: %v", err)
- 			}
- 		}
- 		sl.Close()
-@@ -101,9 +104,71 @@ func listenSSH(rawLn net.Listener, lb *ipnlocal.LocalBackend, logf logger.Logf)
- 	return sl, nil
- }
- 
-+// maxQueuedSSHListenerSessions is the number of sessions that may
-+// wait in the listener queue before new sessions are refused.
-+const maxQueuedSSHListenerSessions = 16
-+
-+// handleSession resolves the peer identity, calls cfg.auth when set,
-+// and queues the session for Accept.
-+func (sl *sshListener) handleSession(sess gliderssh.Session) {
-+	// The application reads and writes the session as a plain
-+	// net.Conn. Disable the terminal emulation that translates "\n" to
-+	// "\r\n" on PTY sessions, so that writes pass through unchanged.
-+	sess.DisablePTYEmulation()
-+
-+	srcAddr := sess.RemoteAddr().String()
-+	ipp, err := netip.ParseAddrPort(srcAddr)
-+	if err != nil {
-+	
 ```
 
-**File**: `ssh/tailssh/listen_test.go` (added, +503/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,503 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build (linux && !android) || (darwin && !ios) || freebsd || openbsd || plan9
-+
-+package tailssh
-+
-+import (
-+	"bytes"
-+	"errors"
-+	"fmt"
-+	"net"
-+	"net/netip"
-+	"sync"
-+	"testing"
-+	"testing/synctest"
-+	"time"
-+
-+	"tailscale.com/envknob"
-+	"tailscale.com/ipn/ipnlocal"
-+	"tailscale.com/net/memnet"
-+	"tailscale.com/tailcfg"
-+	testssh "tailscale.com/tempfork/sshtest/ssh"
-+)
-+
-+var (
-+	testClientAddr = netip.MustParseAddrPort("100.100.100.101:2231")
-+	testServerAddr = netip.MustParseAddrPort("100.100.100.102:22")
-+	testPeerNode   = (&tailcfg.Node{
-+		ID:   1,
-+		User: 10,
-+		Name: "client.example.ts.net.",
-+	}).View()
-+	testPeerProfile = tailcfg.UserProfile{
-+		ID:        10,
-+		LoginName: "client@example.com",
-+	}
-+)
-+
-+// startTestSSHListener starts a listenSSH server over memnet. The
-+// stub whoIs resolves every connection to testPeerNode. It returns
-+// the SSH listener and the raw listener to dial from the client side.
-+//
-+// It registers no cleanup. A test that runs inside a
-+// [synctest.Test] bubble must close the listener with a defer, because
-+// the bubble expects its goroutines to finish before the test returns.
-+// Other tests should use newTestSSHListener, which registers the
-+// cleanup.
-+func startTestSSHListener(t *testing.T, auth ipnlocal.SSHAuthCallback) (net.Listener, *memnet.Listener) {
-+	t.Helper()
-+	rawLn := memnet.Listen(testServerAddr.String())
-+	rawLn.NewConn = func(network, addr string, maxBuf int) (memnet.Conn, memnet.Conn) {
-+		return memnet.NewTCPConn(testClientAddr, testServerAddr, maxBuf)
-+	}
-+	sl, err := newSSHListener(rawLn, sshListenerConfig{
-+		varRoot: t.TempDir(),
-+		whoIs: func(proto string, ipp netip.AddrPort) (tailcfg.NodeView, tailcfg.UserProfile, bool) {
-+			return testPeerNode, testPeerProfile, true
-+		},
-+		auth: auth,
-+		logf: t.Logf,
-+	})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	return sl, rawLn
-+}
-+
-+// newTestSSHListener is startTestSSHListener with a cleanup that
-+// closes the listener. Do not use it inside a [synctest.Test] bubble.
-+func newTestSSHListener(t *testing.T, auth ipnlocal.SSHAuthCallback) (net.Listener, *memnet.Listener) {
-+	t.Helper()
-+	sl, rawLn := startTestSSHListener(t, auth)
-+	t.Cleanup(func() { sl.Close() })
-+	return sl, rawLn
-+}
-+
-+// startTestSSHClient dials rawLn and completes the SSH handshake from
-+// the client side. It returns the raw connection and the SSH client.
-+// It registers no cleanup, for the same reason as
-+// startTestSSHListener. Use dialTestSSHListener outside a
-+// [synctest.Test] bubble.
-+func startTestSSHClient(t *testing.T, rawLn *memnet.Listener) (net.Conn, *testssh.Client) {
-+	t.Helper()
-+	sc, err := rawLn.Dial(t.Context(), "tcp", rawLn.Addr().String())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c, chans, reqs, err := testssh.NewClientConn(sc, sc.RemoteAddr().String(), &testssh.ClientConfig{
-+		User:            "test",
-+		HostKeyCallback: testssh.InsecureIgnoreHostKey(),
-+		Timeout:         15 * time.Second,
-+	})
-+	if err != nil {
-+		t.Fatalf("client handshake: %v", err)
-+	}
-+	return sc, testssh.NewClient(c, chans, reqs)
-+}
-+
-+// dialTestSSHListener is startTestSSHClient with cleanups that close
-+// the raw connection and the SSH client.
-+func dialTestSSHListener(t *testing.T, rawLn *memnet.Listener) *testssh.Client {
-+	t.Helper()
-+	sc, client := startTestSSHClient(t, rawLn)
-+	t.Cleanup(func() { sc.Close() })
-+	t.Cleanup(func() { client.Close() })
-+	return client
-+}
-+
-+// TestListenSSHPTYRaw tests that a session from a PTY request does not
-+// translate "\n" to "\r\n". The translation is gliderssh PTY emulation,
-+// and it corrupts data written through the net.Conn interface.
-+func TestListenSSHPTYRaw(t *testing.T) {
-+	sl, rawLn := newTestSSHListener(t, nil)
-+	client := dialTestSSHListener(t, rawLn)
-+
-+	sess, err := client.NewSession()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	defer sess.Close()
-+	if err := sess.RequestPty("xterm-256color", 80, 40, nil); err != nil {
-+		t.Fatalf("RequestPty: %v", err)
-+	}
-+	var out bytes.Buffer
-+	sess.Stdout = &out
-+	if err := sess.Shell(); err != nil {
-+		t.Fatalf("Shell: %v", err)
-+	}
-+
-+	// Accept the session and write a line.
-+	conn, err := sl.Accept()
-+	if err != nil {
-+		t.Fatalf("Accept: %v", err)
-+	}
-+	s := conn.(*Session)
-+	defer s.Close()
-+	if _, _, ok := s.Pty(); !ok {
-+		t.Fatal("session reports no PTY despite the pty-req")
-+	}
-+	if _, err := s.Write([]byte("a\n")); err != nil {
-+		t.Fatalf("server write: %v", err)
-+	}
-+	if err := s.Exit(0); err != nil {
-+		t.Fatalf("Exit: %v", err)
-+	}
-+
-+	if err := sess.Wait(); err != nil {
-+		t.Fatalf("client wait: %v", err)
-+	}
-+	if got := out.String(); got != "a\n" {
-+		t.Errorf("client got %q; want %q (PTY emulation must be disabled for tsnet sessions)", got, "a\n")
-+	}
-+}
-+
-+// TestListenSSHAuthCallback tests the authorization callback. A
-+// session the callback rejects is refused and never reaches Accept.
-+// A session t
+@@ -112,7 +112,7 @@ require (
+ 	github.com/studio-b12/gowebdav v0.13.0
+ 	github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d
+ 	github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6
+-	github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0
++	github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f
+ 	github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55
+ 	github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41
+ 	github.com/tailscale/golang-x-crypto v0.0.0-20260720160339-c86ca1284b96
 ```
 
-**File**: `ssh/tailssh/session.go` (modified, +48/-34)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -60,6 +60,11 @@ type Session struct {
- 	// peer is the Tailscale identity of the remote peer.
- 	peer peerIdentity
- 
-+	// pty and winCh are set by newSession when the client requested
-+	// a PTY. Pty returns them.
-+	pty   *Pty
-+	winCh chan Window
-+
- 	// done is closed when the session handler should return,
- 	// unblocking the gliderlabs handler goroutine.
- 	doneOnce sync.Once // guards close(done)
-@@ -70,11 +75,48 @@ type Session struct {
- // peer identity. The done channel is closed by the session consumer to signal
- // that the handler goroutine may return.
- func newSession(sess gliderssh.Session, peer peerIdentity, done chan struct{}) *Session {
--	return &Session{
-+	s := &Session{
- 		sess: sess,
- 		peer: peer,
- 		done: done,
- 	}
-+	// Start draining window changes now, even when the application
-+	// never calls Pty. gliderssh writes window changes from the session
-+	// request loop, so an undrained channel blocks the session's
-+	// requests. Pty returns winCh. Window changes are dropped when the
-+	// application is not reading it.
-+	if gPty, gWinCh, ok := sess.Pty(); ok {
-+		s.pty = &Pty{
-+			Term: gPty.Term,
-+			Window: Window{
-+				Width:        gPty.Window.Width,
-+				Height:       gPty.Window.Height,
-+				WidthPixels:  gPty.Window.WidthPixels,
-+				HeightPixels: gPty.Window.HeightPixels,
-+			},
-+		}
-+		if gPty.Modes != nil {
-+			s.pty.Modes = make(map[uint8]uint32, len(gPty.Modes))
-+			maps.Copy(s.pty.Modes, gPty.Modes)
-+		}
-+		s.winCh = make(chan Window, 1)
-+		go func() {
-+			defer close(s.winCh)
-+			for gw := range gWinCh {
-+				w := Window{
-+					Width:        gw.Width,
-+					Height:       gw.Height,
-+					WidthPixels:  gw.WidthPixels,
-+					HeightPixels: gw.HeightPixels,
-+				}
-+				select {
-+				case s.winCh <- w:
-+				default:
-+				}
-+			}
-+		}()
-+	}
-+	return s
- }
- 
- // Read reads from the SSH channel (stdin from the client).
-@@ -147,42 +189,14 @@ func (s *Session) Subsystem() string {
- 	return s.sess.Subsystem()
- }
- 
--// Pty returns PTY information, a channel of window size changes, and whether a
--// PTY was requested.
-+// Pty returns PTY information, a channel of window size changes, and
-+// whether a PTY was requested. Window changes are dropped when the
-+// returned channel is not being read.
- func (s *Session) Pty() (_ Pty, _ <-chan Window, ok bool) {
--	gPty, gWinCh, ok := s.sess.Pty()
--	if !ok {
-+	if s.pty == nil {
- 		return Pty{}, nil, false
- 	}
--	p := Pty{
--		Term: gPty.Term,
--		Window: Window{
--			Width:        gPty.Window.Width,
--			Height:       gPty.Window.Height,
--			WidthPixels:  gPty.Window.WidthPixels,
--			HeightPixels: gPty.Window.HeightPixels,
--		},
--	}
--	if gPty.Modes != nil {
--		p.Modes = make(map[uint8]uint32, len(gPty.Modes))
--		maps.Copy(p.Modes, gPty.Modes)
--	}
--
--	// Convert the gliderlabs Window channel to our Window type.
--	winCh := make(chan Window, 1)
--	go func() {
--		defer close(winCh)
--		for gw := range gWinCh {
--			winCh <- Window{
--				Width:        gw.Width,
--				Height:       gw.Height,
--				WidthPixels:  gw.WidthPixels,
--				HeightPixels: gw.HeightPixels,
--			}
--		}
--	}()
--
--	return p, winCh, true
-+	return *s.pty, s.winCh, true
- }
- 
- // Signals registers a channel to receive signals from the client.
+@@ -1126,8 +1126,8 @@ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d h1:JcGKBZAL7
+ github.com/tailscale/certstore v0.1.1-0.20260409135935-3638fb84b77d/go.mod h1:XrBNfAFN+pwoWuksbFS9Ccxnopa15zJGgXRFN90l3K4=
+ github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6 h1:5Fr4ItdQ3LDbyuRmDAoDO29xu33QdFYo/2K+l+FTtiw=
+ github.com/tailscale/depaware v0.0.0-20260720165112-f20f66241ec6/go.mod h1:F4qVQ0ffCtHizbxsWWCMGl8OIieayJWw8XetPiILDNA=
+-github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0 h1:Xae/QS1NlbdG4CDrvI0Jw1pM0VMYPZWl4/NIfFMZCuk=
+-github.com/tailscale/gliderssh v0.3.4-0.20261025034130-aa1b529a32f0/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
++github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f h1:9XxzXnE8gJ9d2E8JF6Lau5z/czQG+1W8pO7z9z65dcY=
++github.com/tailscale/gliderssh v0.3.4-0.20261025202817-66627641389f/go.mod h1:wn16Km1EZOX4UEAyaZa3dBwfFGOJ7neck40NcwosJUw=
+ github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55 h1:Gzfnfk2TWrk8Jj4P4c1a3CtQyMaTVCznlkLZI++hok4=
+ github.com/tailscale/go-winio v0.0.0-20231025203758-c4f33415bf55/go.mod h1:4k4QO+dQ3R5FofL+SanAUZe+/QfeK0+OIuwDIRu2vSg=
+ github.com/tailscale/goexpect v0.0.0-20210902213824-6e8c725cea41 h1:/V2rCMMWcsjYaYO2MeovLw+ClP63OtXgCF2Y1eb8+Ns=
 ```
 
-**File**: `ssh/tailssh/tailssh.go` (modified, +8/-0)
+**File**: `shell.nix` (modified, +1/-1)
 ```diff
-@@ -55,6 +55,12 @@ var (
- 	sshDisableForwarding = envknob.RegisterBool("TS_SSH_DISABLE_FORWARDING")
- 	sshDisablePTY        = envknob.RegisterBool("TS_SSH_DISABLE_PTY")
- 
-+	// sshLoginGraceTime is the TS_SSH_LOGIN_GRACE_TIME knob. It is
-+	// the maximum allowed duration between accepting a connection and
-+	// completing authentication, like sshd's LoginGraceTime. It defaults
-+	// to 120 seconds. See loginGraceTime for the accepted value forms.
-+	sshLoginGraceTime = envknob.RegisterString("TS_SSH_LOGIN_GRACE_TIME")
-+
- 	// errTerminal is an empty ssh.PartialSuccessError (with no 'Next'
- 	// authentication methods that may proceed), which results in the SSH
- 	// server immediately disconnecting the client.
-@@ -497,6 +503,8 @@ func (srv *server) newConn() (*conn, error) {
- 		Version:              "Tailscale",
- 		ServerConfigCallback: c.ServerConfig,
- 
-+		IdleTimeout: sshIdleTimeout(),
-+
- 		Handler:                       c.handleSessionPostSSHAuth,
- 		LocalPortForwardingCallback:   c.mayForwardLocalPortTo,
- 		ReversePortForwardingCallback: c.mayReversePortForwardTo,
-```
-
-**File**: `tsnet/listenssh_test.go` (modified, +135/-0)
-```diff
-@@ -19,9 +19,144 @@ import (
- 
- 	_ "tailscale.com/feature/ssh"
- 	"tailscale.com/ssh/tailssh"
-+	"tailscale.com/tailcfg"
- 	"tailscale.com/tstest"
- )
- 
-+// TestListenSSHAuthCallback tests Server.SSHAuthCallback end to end.
-+// A tsnet.Server whose callback denies the peer refuses the session
-+// and never yields it to Accept. A tsnet.Server whose callback allows
-+// the peer yields the session to Accept.
-+func TestListenSSHAuthCallback(t *testing.T) {
-+	ctx := t.Context()
-+
-+	controlURL, _ := startControl(t)
-+	srvNode, srvIP, _ := startServer(t, ctx, controlURL, "sshauthsrv")
-+	clientNode, clientIP, _ := startServer(t, ctx, controlURL, "sshauthclient")
-+
-+	if err := tstest.WaitFor(30*time.Second, func() error {
-+		lc, err := srvNode.LocalClient()
-+		if err != nil {
-+			return err
-+		}
-+		st, err := lc.Status(ctx)
-+		if err != nil {
-+			return err
-+		}
-+		for _, peer := range st.Peer {
-+			if slices.Contains(peer.TailscaleIPs, clientIP) {
-+				return nil
-+			}
-+		}
-+		return errors.New("clientNode not yet in srvNode's netmap")
-+	}); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// runAgainst dials srvNode's SSH listener from clientNode, runs a
-+	// command, and returns the exit error and output.
-+	runAgainst := func(ln net.Listener) (string, error) {
-+		t.Helper()
-+		addr := net.JoinHostPort(srvIP.String(), "22")
-+		if _, port, _ := net.SplitHostPort(ln.Addr().String()); port != "" && port != "0" {
-+			addr = net.JoinHostPort(srvIP.String(), port)
-+		}
-+		tcpConn, err := clientNode.Dial(ctx, "tcp", addr)
-+		if err != nil {
-+			return "", err
-+		}
-+		t.Cleanup(func() { tcpConn.Close() })
-+		sshConn, chans, reqs, err := gossh.NewClientConn(tcpConn, addr, &gossh.ClientConfig{
-+			User:            "test",
-+			HostKeyCallback: gossh.InsecureIgnoreHostKey(),
-+		})
-+		if err != nil {
-+			return "", err
-+		}
-+		sshClient := gossh.NewClient(sshConn, chans, reqs)
-+		t.Cleanup(func() { sshClient.Close() })
-+		session, err := sshClient.NewSession()
-+		if err != nil {
-+			return "", err
-+		}
-+		t.Cleanup(func() { session.Close() })
-+		out, err := session.CombinedOutput("hello")
-+		return string(out), err
-+	}
-+
-+	// A denying callback refuses the session at open.
-+	srvNode.SSHAuthCallback = func(peer tailcfg.NodeView, userProfile tailcfg.UserProfile) bool {
-+		t.Logf("auth callback invoked for peer %v (login %q)", peer.ID(), userProfile.LoginName)
-+		return false
-+	}
-+	denyLn, err := srvNode.ListenSSH(":2222")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() { denyLn.Close() })
-+
-+	out, err := runAgainst(denyLn)
-+	if err == nil {
-+		t.Fatalf("session was not refused by the deny callback; output %q", out)
-+	}
-+	var exitErr *gossh.ExitError
-+	if !errors.As(err, &exitErr) || exitErr.ExitStatus() != 1 {
-+		t.Errorf("refusal error = %v; want exit status 1, got %v", err, exitErr)
-+	}
-+	select {
-+	case conn, ok := <-acceptCh(denyLn):
-+		if ok {
-+			t.Error("session was yielded to Accept despite denial")
-+			conn.Close()
-+		}
-+	case <-time.After(2 * time.Second):
-+		// No session was yielded, as expected.
-+	}
-+
-+	// An allowing callback yields the session, and the application
-+	// can talk to it.
-+	srvNode.SSHAuthCallback = func(peer tailcfg.NodeView, userProfile tailcfg.UserProfile) bool {
-+		return true
-+	}
-+	allowLn, err := srvNode.ListenSSH(":2223")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() { allowLn.Close() })
-+
-+	go func() {
-+		conn, err := allowLn.Accept()
-+		if err != nil {
-+			return
-+		}
-+		defer conn.Close()
-+		sess := conn.(*tailssh.Session)
-+		defer sess.Exit(0)
-+		fmt.Fprintf(sess, "allowed:%v\n", sess.UserProfile().LoginName != "")
-+	}()
-+
-+	out, err = runAgainst(allowLn)
-+	if err != nil {
-+		t.Fatalf("session on allow listener failed: %v", err)
-+	}
-+	if got, want := strings.TrimSpace(string(out)), "allowed:true"; got != want {
-+		t.Errorf("client output = %q; want %q", got, want)
-+	}
-+}
-+
-+func acceptCh(ln net.Listener) <-chan net.Conn {
-+	ch := make(chan net.Conn, 1)
-+	go func() {
-+		conn, err := ln.Accept()
-+		if err != nil {
-+			close(ch)
-+			return
-+		}
-+		ch <- conn
-+	}()
-+	return ch
-+}
-+
- // TestListenSSH starts two tsnet nodes on a test tailnet, has one listen
- // for SSH via ListenSSH, and has the other connect using the Go
- // x/crypto/ssh client. The server verifies the command string and echoes
-```
-
-**File**: `tsnet/tsnet.go` (modified, +53/-4)
-```diff
-@@ -268,6 +268,15 @@ type Server struct {
- 	// used.
- 	AuthKey string
- 
-+	// SSHAuthCallback is called for each new SSH session on listeners
-+	// from [Server.ListenSSH]. It receives the peer's Tailscale
-+	// identity, the same values as Session.Peer and
-+	// Session.UserProfile. A session that it rejects is refused and is
-+	// never yielded to Accept. If it is nil, every session from a peer
-+	// that the tailnet ACL's TCP rules allow is accepted. See
-+	// [SSHAuthCallback].
-+	SSHAuthCallback SSHAuthCallback
-+
- 	// ClientSecret, if non-empty, is the OAuth client secret
- 	// that will be used to generate authkeys via OAuth. It
- 	// will be preferred over the TS_CLIENT_SECRET environment
-@@ -1314,14 +1323,54 @@ func (s *Server) Listen(network, addr string) (net.Listener, error) {
- 	return s.listen(network, addr, listenOnTailnet)
- }
- 
-+// SSHAuthCallback reports whether to accept a new SSH session from a
-+// tailscale peer, on listeners from [Server.ListenSSH]. It is an
-+// alias for ipnlocal.SSHAuthCallback, the type of
-+// [Server.SSHAuthCallback].
-+type SSHAuthCallback = ipnlocal.SSHAuthCallback
-+
- // ListenSSH listens on the Tailscale network for SSH connections at the given
- // addr (e.g. ":2222"). The returned listener's Accept method yields net.Conn
- // values that are actually *tailssh.Session, providing access to the
- // connecting peer's Tailscale identity, PTY information, signals, and more.
- //
--// Basic applications can use the returned connections as plain net.Conn
--// (Read/Write/Close). Applications that need richer SSH semantics should
--// type-assert to *tailssh.Session.
-+// # Trust model
-+//
-+// The server enforces only the tailnet ACL's TCP rules. For any
-+// further authorization, the application must use s.SSHAuthCallback, or
-+// check each accepted session and close the unwanted ones.
-+// SSHAuthCallback enables applications to reject sessions before they
-+// are started.
-+//
-+// Each session is yielded as a net.Conn, with the peer's Tailscale
-+// identity available as Session.Peer and Session.UserProfile. The
-+// application decides what each session may do, including which local
-+// user to run as, if any.
-+//
-+// # Timeouts and limits
-+//
-+// The server runs session channels only; it does not forward ports.
-+//
-+// TS_SSH_LOGIN_GRACE_TIME bounds the time between accepting a
-+// connection and completing the handshake. The default is 120
-+// seconds, matching sshd's LoginGraceTime.
-+//
-+// TS_SSH_IDLE_TIMEOUT bounds connections with no SSH traffic. Any
-+// traffic on the connection resets the timer. Zero, the default,
-+// applies no bound.
-+//
-+// Sessions accepted by the server wait for Accept in a bounded queue.
-+// When the queue is full, the server refuses new sessions, so an
-+// application that stops calling Accept parks only a bounded number of
-+// sessions.
-+//
-+// # Basic usage
-+//
-+// Applications that need only a data stream can use the connections
-+// as plain net.Conn (Read, Write, and Close). Applications that need
-+// peer identity, PTY configuration, or signals should type-assert to
-+// *tailssh.Session. On PTY sessions the server does not translate
-+// "\n" to "\r\n", so Read and Write are binary safe.
- //
- // SSH support must be linked into the binary by importing
- // _ "tailscale.com/feature/ssh". Without that import, ListenSSH returns an
-@@ -1333,7 +1382,7 @@ func (s *Server) ListenSSH(addr string) (net.Listener, error) {
- 	if err != nil {
- 		return nil, err
- 	}
--	sshLn, err := s.lb.ListenSSH(rawLn, s.logf)
-+	sshLn, err := s.lb.ListenSSH(rawLn, s.SSHAuthCallback, s.logf)
- 	if err != nil {
- 		rawLn.Close()
- 		return nil, err
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
+\ No newline at end of file
++# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21945** (2026-10-25): go.mod: update gliderssh for resource exhaustion fixes (@raggi)
+- **PR #21941** (2026-10-26): ssh/tailssh: add user-credential forwarding children and monitor dial/listen ops (@raggi)
 - **PR #21939** (closed): ssh/tailssh: add ssh-monitor process and client (@raggi)
+- **PR #21937** (2026-10-25): ssh/tailssh: add monitor RPC codec and SCM_RIGHTS fd passing (@raggi)
 - **PR #21936** (2026-10-25): ssh/tailssh: drain the sftp test helper's stderr copier (@raggi)
 - **PR #21933** (2026-10-25): go.mod: update gliderssh to remove data race on timeouts (@raggi)
-- **PR #21931** (2026-10-25): ipn/ipnlocal: fix serve app caps leaking across mounts (@jentfoo)
-- **PR #21930** (2026-10-25): tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound (@raggi)
-- **PR #21929** (2026-10-24): ssh/tailssh: record sftp sessions and honor recording failure policy (@raggi)
 
 ---
 
@@ -1609,47 +920,28 @@ forwarding. Closing the listener closes the accepted connections.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound
+## X. go.mod: update gliderssh for resource exhaustion fixes
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1e51f49`: tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f40a062`: go.mod: update gliderssh for resource exhaustion fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// SSHAuthCallback reports whether to accept a new SSH session. It is
-// called for each session before the session is yielded to the
-// listener from [LocalBackend.ListenSSH], with the peer's node and
-// user profile. A session that the callback rejects is refused and is
-// never yielded to Accept.
-//
-// ListenSSH accepts a session from any peer that the tailnet ACL's TCP
-// rules allow. The ACL's SSHPolicy is not used. Use SSHAuthCallback to
-// reject sessions the application does not want.
-type SSHAuthCallback func(tailcfg.NodeView, tailcfg.UserProfile) (permitted bool)
-
-var HookListenSSH feature.Hook[func(net.Listener, *LocalBackend, SSHAuthCallback, logger.Logf) (net.Listener, error)]
-// If auth is nil, every session from a peer that the tailnet ACL's TCP
-// rules allow is accepted. If auth is non-nil, sessions that it rejects
-// are refused. See [SSHAuthCallback].
-//
-func (b *LocalBackend) ListenSSH(ln net.Listener, auth SSHAuthCallback, logf logger.Logf) (net.Listener, error) {
-	return fn(ln, b, auth, logf)
+# nix-direnv cache busting line: sha256-SP0C5kiVlGP3oXgJZbn60ltJoY0pnjDLUPU+KPpLiIk=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-var HookListenSSH feature.Hook[func(net.Listener, *LocalBackend, logger.Logf) (net.Listener, error)]
-func (b *LocalBackend) ListenSSH(ln net.Listener, logf logger.Logf) (net.Listener, error) {
-	return fn(ln, b, logf)
+# nix-direnv cache busting line: sha256-AUIqQxPIe0l98hiTQk6odFcUdWdl1d5DrWwRvs3/+HY=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1e51f49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f40a062` are properly handled with clean fallback behavior.

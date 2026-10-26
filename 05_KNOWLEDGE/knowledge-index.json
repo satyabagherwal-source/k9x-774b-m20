@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T00:24:44.052Z",
+  "last_updated": "2026-10-26T00:35:49.787Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4264,8 +4264,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "260fbc13",
-      "content_hash": "030116ca2e52e3997df97c0e04cafe0c64680f533b598b9a00566d32eca14eff",
+      "source_version": "301402f9",
+      "content_hash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4293,6 +4293,11 @@
           "number": 4086,
           "title": "format/md): preserve newline between block quote and list (#12662)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4502,
+          "title": "mark pnpm-lock.yaml as protected file (#12664)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4300,7 +4305,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:52:31.501Z",
+      "verified_at": "2026-10-26T00:32:36.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21561,7 +21566,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
+      "content_hash": "e23d98bb76ba7a1d1769f86e19fe02d6043b6074a515d32ed8b2ad910b33fcbe",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [
@@ -21593,6 +21598,21 @@
           "number": 1445,
           "title": "Max Position Embeddings Truncation Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4504,
+          "title": "Asymmetric Prefix Enforcement for Contrastive Dual-Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4505,
+          "title": "Numerical Stability Invariant for Masked Mean Pooling and Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4506,
+          "title": "Architecture-Tokenizer Class Dissociation Handling in Model Deserialization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21612,7 +21632,7 @@
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
         "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
       ],
-      "verified_at": "2026-10-21T04:15:50.940Z",
+      "verified_at": "2026-10-26T00:35:49.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47973,8 +47993,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "a1e51f49",
-      "content_hash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
+      "source_version": "de16943c",
+      "content_hash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -48037,6 +48057,11 @@
           "number": 4448,
           "title": "tsnet: authorize ListenSSH peers, fix PTY emulation and session queue bound",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4503,
+          "title": "go.mod: update gliderssh for resource exhaustion fixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48044,7 +48069,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:02:15.912Z",
+      "verified_at": "2026-10-26T00:32:43.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127078,6 +127103,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T00:24:44.041Z"
+    },
+    "rule-4502": {
+      "learning_id": "rule-4502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4502,
+      "title": "mark pnpm-lock.yaml as protected file (#12664)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "301402f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:32:36.221Z"
+    },
+    "rule-4503": {
+      "learning_id": "rule-4503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4503,
+      "title": "go.mod: update gliderssh for resource exhaustion fixes",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "de16943c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:32:43.723Z"
+    },
+    "rule-4504": {
+      "learning_id": "rule-4504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4504,
+      "title": "Asymmetric Prefix Enforcement for Contrastive Dual-Encoders",
+      "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
+      "source_version": "hf-intfloat-multilingual-e5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:35:49.775Z"
+    },
+    "rule-4505": {
+      "learning_id": "rule-4505",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4505,
+      "title": "Numerical Stability Invariant for Masked Mean Pooling and Normalization",
+      "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
+      "source_version": "hf-intfloat-multilingual-e5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:35:49.775Z"
+    },
+    "rule-4506": {
+      "learning_id": "rule-4506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4506,
+      "title": "Architecture-Tokenizer Class Dissociation Handling in Model Deserialization",
+      "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
+      "source_version": "hf-intfloat-multilingual-e5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T00:35:49.775Z"
     }
   },
   "aliases": {

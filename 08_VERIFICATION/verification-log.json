@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261023-JI73",
-    "timestamp": "2026-10-23T11:44:03.807Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "f4eac31f9a2f7c3446faa1ec486de4c8f99a2c793aa5812da0868aa0700a148b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261023-KW4A",
-    "timestamp": "2026-10-23T11:45:08.506Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "0b18dccdf6109564b5424b965d6a2816ea8e36739e5b0d6d6c270c832b2103cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261024-CXFO",
-    "timestamp": "2026-10-24T19:22:30.852Z",
-    "repository": "NomaDamas/CozyClay",
-    "learningId": "learn-github-nomadamas-cozyclay",
-    "contentHash": "80ff9f8c3a400c723b94d548a538e6f6923978b668405a6c9aca47343f7b5a50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261024-KLF6",
     "timestamp": "2026-10-24T19:28:28.530Z",
     "repository": "expressjs/express",
@@ -7492,6 +7447,51 @@
     "contentHash": "3ec6e6ad27b82e03130736c966bda782dd7fdc7b33e778291bdc4ea8fef4e207",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-VK5A",
+    "timestamp": "2026-10-26T00:32:36.286Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-VPXQ",
+    "timestamp": "2026-10-26T00:32:43.790Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-ZPHV",
+    "timestamp": "2026-10-26T00:35:49.843Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "e23d98bb76ba7a1d1769f86e19fe02d6043b6074a515d32ed8b2ad910b33fcbe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

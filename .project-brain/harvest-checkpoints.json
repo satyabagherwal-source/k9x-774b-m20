@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T00:24:44.117Z",
+  "last_updated": "2026-10-26T00:35:49.855Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1580,14 +1580,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
-      "content_hash": "b6a151afab5dade17365bc602063d23402b2c3270f51905fae5fd160bf07f451",
-      "verified_at": "2026-10-21T04:15:51.045Z",
+      "content_hash": "e23d98bb76ba7a1d1769f86e19fe02d6043b6074a515d32ed8b2ad910b33fcbe",
+      "verified_at": "2026-10-26T00:35:49.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T04:15:51.045Z"
+      "last_updated": "2026-10-26T00:35:49.854Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "12b25180ce3a9beab7fe5aa01657560b06f307b29691d370b1a0373abded375b",
-      "verified_at": "2026-10-25T21:02:15.991Z",
+      "content_hash": "2e37d5aae16acace2f34b8216c8d873626b9eac5c48fe70c4f54912cecfa7c7f",
+      "verified_at": "2026-10-26T00:32:43.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:02:15.991Z"
+      "last_updated": "2026-10-26T00:32:43.801Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "030116ca2e52e3997df97c0e04cafe0c64680f533b598b9a00566d32eca14eff",
-      "verified_at": "2026-10-25T05:52:31.602Z",
+      "content_hash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
+      "verified_at": "2026-10-26T00:32:36.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:52:31.602Z"
+      "last_updated": "2026-10-26T00:32:36.297Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

@@ -5060,3 +5060,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-26T00:24:41.770Z |
 | `learn-github-mantinedev-mantine` | `https://github.com/mantinedev/mantine` | `1d8c524f` | Multi-dimensional audit evidence | 2026-10-26T00:24:42.005Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `e139fbd6` | Multi-dimensional audit evidence | 2026-10-26T00:24:44.109Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `301402f9` | Multi-dimensional audit evidence | 2026-10-26T00:32:36.289Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `de16943c` | Multi-dimensional audit evidence | 2026-10-26T00:32:43.794Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-26T00:35:49.846Z |
