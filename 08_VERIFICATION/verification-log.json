@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-XOJL",
-    "timestamp": "2026-10-25T04:58:31.425Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "e8c977e299d8932cab2eb56e77b3b0cf588fa1c2e99ba111630ceb4ed6d6db91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-5UPU",
-    "timestamp": "2026-10-25T05:04:52.674Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-5VWL",
-    "timestamp": "2026-10-25T05:04:54.213Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "8559f334005d327dc08c39f9765c8c5184ceb62c40b19ceb6d1fc370ca838beb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-84Q4",
-    "timestamp": "2026-10-25T05:06:38.956Z",
-    "repository": "pamburus/hl",
-    "learningId": "learn-github-pamburus-hl",
-    "contentHash": "b9d8366f507ad693264ad4e92a9cc1afc92a96a329eff90b9c0e027fe3abd38f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-8I55",
     "timestamp": "2026-10-25T05:06:56.345Z",
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "1d018500b01a19e3b9d8af4dba62c04d3a44cc90ef4e848df1f730960317f1c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-HENT",
+    "timestamp": "2026-10-26T18:05:21.401Z",
+    "repository": "mui/base-ui",
+    "learningId": "learn-github-mui-base-ui",
+    "contentHash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-HLD8",
+    "timestamp": "2026-10-26T18:05:30.092Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-HOJV",
+    "timestamp": "2026-10-26T18:05:34.220Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-HPDG",
+    "timestamp": "2026-10-26T18:05:35.284Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

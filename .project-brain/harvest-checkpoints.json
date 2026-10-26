@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T17:58:31.470Z",
+  "last_updated": "2026-10-26T18:05:35.296Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
-      "verified_at": "2026-10-26T09:23:37.037Z",
+      "content_hash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
+      "verified_at": "2026-10-26T18:05:35.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T09:23:37.037Z"
+      "last_updated": "2026-10-26T18:05:35.295Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
-      "verified_at": "2026-10-25T17:21:09.076Z",
+      "content_hash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
+      "verified_at": "2026-10-26T18:05:34.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:21:09.076Z"
+      "last_updated": "2026-10-26T18:05:34.230Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -6321,14 +6321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
-      "verified_at": "2026-10-25T03:59:25.842Z",
+      "content_hash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
+      "verified_at": "2026-10-26T18:05:21.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:59:25.842Z"
+      "last_updated": "2026-10-26T18:05:21.412Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
-      "verified_at": "2026-10-25T18:15:28.972Z",
+      "content_hash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
+      "verified_at": "2026-10-26T18:05:30.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T18:15:28.972Z"
+      "last_updated": "2026-10-26T18:05:30.103Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

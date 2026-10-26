@@ -5181,3 +5181,7 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `8252d52f` | Multi-dimensional audit evidence | 2026-10-26T17:58:26.668Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `05f166aa` | Multi-dimensional audit evidence | 2026-10-26T17:58:30.307Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1167438a` | Multi-dimensional audit evidence | 2026-10-26T17:58:31.464Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `e3d288fe` | Multi-dimensional audit evidence | 2026-10-26T18:05:21.404Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `cde13dc1` | Multi-dimensional audit evidence | 2026-10-26T18:05:30.095Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `2052f24e` | Multi-dimensional audit evidence | 2026-10-26T18:05:34.223Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `7d8341a4` | Multi-dimensional audit evidence | 2026-10-26T18:05:35.287Z |

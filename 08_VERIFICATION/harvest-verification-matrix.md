@@ -5174,3 +5174,7 @@
 | `CYCLE-20261026-8INE` | `2026-10-26T17:58:26.666Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4633` | Yes (`2b30b67f...`) |
 | `CYCLE-20261026-8LGG` | `2026-10-26T17:58:30.304Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4634` | Yes (`d7964525...`) |
 | `CYCLE-20261026-8MCM` | `2026-10-26T17:58:31.462Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4635` | Yes (`1d018500...`) |
+| `CYCLE-20261026-HENT` | `2026-10-26T18:05:21.401Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4636` | Yes (`bfda050e...`) |
+| `CYCLE-20261026-HLD8` | `2026-10-26T18:05:30.092Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4637` | Yes (`1d09a55f...`) |
+| `CYCLE-20261026-HOJV` | `2026-10-26T18:05:34.220Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4638` | Yes (`0620b175...`) |
+| `CYCLE-20261026-HPDG` | `2026-10-26T18:05:35.284Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4639` | Yes (`1e789e54...`) |

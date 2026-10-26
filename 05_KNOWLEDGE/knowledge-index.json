@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T17:58:31.428Z",
+  "last_updated": "2026-10-26T18:05:35.217Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6084,8 +6084,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "621dd74c",
-      "content_hash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
+      "source_version": "7d8341a4",
+      "content_hash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6198,6 +6198,11 @@
           "number": 4570,
           "title": "Null-Preserving Semantic Demarcation for JSON Zero Values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4639,
+          "title": "deps): update dependency certifi to v2026.10.19 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6205,7 +6210,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T09:23:36.960Z",
+      "verified_at": "2026-10-26T18:05:35.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14747,8 +14752,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "af7e5c5d",
-      "content_hash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
+      "source_version": "2052f24e",
+      "content_hash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -14766,6 +14771,11 @@
           "number": 4394,
           "title": "reject inner types in Go SDK ParamObject (#1224)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4638,
+          "title": "docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI model",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14773,7 +14783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:21:08.996Z",
+      "verified_at": "2026-10-26T18:05:34.134Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37071,8 +37081,8 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "c1294abd",
-      "content_hash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
+      "source_version": "e3d288fe",
+      "content_hash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
@@ -37115,6 +37125,11 @@
           "number": 4030,
           "title": "[code-infra] Update Node.js and Next.js for security fixes (#6089)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4636,
+          "title": "Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37122,7 +37137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:59:25.734Z",
+      "verified_at": "2026-10-26T18:05:21.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48889,8 +48904,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "1bcd8820",
-      "content_hash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
+      "source_version": "cde13dc1",
+      "content_hash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -48923,6 +48938,11 @@
           "number": 3977,
           "title": "Prevent RPCFactory connection leaks after shutdown (#12658)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4637,
+          "title": "Move query converter test cases to querytest (#12661)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48930,7 +48950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:15:28.895Z",
+      "verified_at": "2026-10-26T18:05:30.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129770,6 +129790,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T17:58:31.421Z"
+    },
+    "rule-4636": {
+      "learning_id": "rule-4636",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4636,
+      "title": "Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "e3d288fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:05:21.315Z"
+    },
+    "rule-4637": {
+      "learning_id": "rule-4637",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4637,
+      "title": "Move query converter test cases to querytest (#12661)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "cde13dc1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:05:30.007Z"
+    },
+    "rule-4638": {
+      "learning_id": "rule-4638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4638,
+      "title": "docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI model",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "2052f24e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:05:34.134Z"
+    },
+    "rule-4639": {
+      "learning_id": "rule-4639",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4639,
+      "title": "deps): update dependency certifi to v2026.10.19 [security]",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "7d8341a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T18:05:35.197Z"
     }
   },
   "aliases": {

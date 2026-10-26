@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T17:58:31.467Z",
-  "total_cycles_completed": 5151,
-  "total_learnings_persisted": 5151,
-  "total_rules_promoted": 4536,
+  "last_updated": "2026-10-26T18:05:35.292Z",
+  "total_cycles_completed": 5155,
+  "total_learnings_persisted": 5155,
+  "total_rules_promoted": 4540,
   "history": [
-    {
-      "timestamp": "2026-10-25T20:04:38.710Z",
-      "repository": "windmill-labs/windmill",
-      "learningId": "learn-github-windmill-labs-windmill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:04:41.178Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:04:42.873Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:04:47.698Z",
-      "repository": "buresdv/Cork",
-      "learningId": "learn-github-buresdv-cork",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T20:11:24.500Z",
       "repository": "zai-org/GLM-5.2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-26T17:58:31.467Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:05:21.409Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:05:30.100Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:05:34.227Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T18:05:35.292Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

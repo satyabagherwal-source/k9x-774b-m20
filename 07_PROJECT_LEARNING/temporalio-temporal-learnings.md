@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `1bcd8820`  
+> **Source Version**: `cde13dc1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:15:28.701Z  
+> **Timestamp**: 2026-10-26T18:05:29.598Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:15:28.141Z  
+> **Harvest Timestamp**: 2026-10-26T18:05:28.897Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23978 stars
+- **Stars / Engagement**: 23996 stars
 
 ---
 
@@ -2121,669 +2121,805 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67d8427b` (2026-10-22)
-**Commit Message**: Prevent RPCFactory connection leaks after shutdown (#12658)
+### Incident Patch 1: `cde13dc1` (2026-10-26)
+**Commit Message**: Move query converter test cases to querytest (#12661)
 
 ## What changed?
-Use one mutex for both RPCFactory connection caches and prevent cache
-insertion after shutdown. Connections requested after `Close()` are
-returned closed.
+
+Moved the query converter test cases shared by every visibility store to
+a new `store/query/querytest` package.
+
+**No test case changed**.
 
 ## Why?
-A component still winding down can create a connection after the
-shutdown sweep, leaking its goroutines. Addresses the race described in
-#12642.
 
-## How did you test it?
-`go test -tags test_dep -race ./common/rpc/...` and `make lint-code-fast
-GOLANGCI_LINT_FIX=false` pass. New tests cover cached connections,
-requests after shutdown, and creation paused across `Close()`.
+`store/tests` imported every store implementation just to run one table
+of cases.
 
-## Potential risks
-Remote frontend cache hits now take the shared read lock; TLS
-configuration and dialing remain outside the lock.
+With each store testing itself, the tests live next to the code they
+test.
 
-**File**: `common/rpc/connection_cache_test.go` (modified, +6/-6)
+This unblocks [adding build tags to remove ES from the
+build](https://github.com/temporalio/temporal/pull/12659).
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `common/persistence/visibility/store/elasticsearch/query_converter_test.go` (modified, +41/-0)
 ```diff
-@@ -24,16 +24,16 @@ func newCacheTestFactory() *RPCFactory {
- }
- 
- func cachedConn(f *RPCFactory, hostName string) (*grpc.ClientConn, bool) {
--	f.internodeGRPCConnections.RLock()
--	defer f.internodeGRPCConnections.RUnlock()
--	c, ok := f.internodeGRPCConnections.conns[hostName]
-+	f.connectionsMu.RLock()
-+	defer f.connectionsMu.RUnlock()
-+	c, ok := f.internodeGRPCConnections[hostName]
- 	return c, ok
- }
- 
- func cachedConnCount(f *RPCFactory) int {
--	f.internodeGRPCConnections.RLock()
--	defer f.internodeGRPCConnections.RUnlock()
--	return len(f.internodeGRPCConnections.conns)
-+	f.connectionsMu.RLock()
-+	defer f.connectionsMu.RUnlock()
-+	return len(f.internodeGRPCConnections)
- }
- 
- // dial returns nil after logging Fatal, which a no-op logger does not act on.
-```
-
-**File**: `common/rpc/rpc.go` (modified, +60/-43)
-```diff
-@@ -61,19 +61,18 @@ type RPCFactory struct {
- 	requireRemoteClusterAuth bool
- 	monitor                  membership.Monitor
- 	// A OnceValues wrapper for createLocalFrontendHTTPClient.
--	localFrontendClient      func() (*common.FrontendHTTPClient, error)
--	internodeGRPCConnections struct {
--		sync.RWMutex
--		conns map[string]*grpc.ClientConn
--	}
-+	localFrontendClient func() (*common.FrontendHTTPClient, error)
-+
-+	// Guards closed and both connection maps.
-+	connectionsMu            sync.RWMutex
-+	closed                   bool
-+	internodeGRPCConnections map[string]*grpc.ClientConn
-+	remoteFrontendGRPCConns  map[string]*grpc.ClientConn
-+
- 	internodeConnCleanupTicker *time.Ticker
- 	// A OnceValue wrapper for createLocalFrontendGRPCConnection.
- 	localFrontendGRPCConn func() *grpc.ClientConn
- 
--	// Remote frontend connections, keyed by rpcAddress. Dialing one address
--	// must not block lookups for another.
--	remoteFrontendGRPCConns sync.Map // map[string]*grpc.ClientConn
--
- 	// TODO: Remove these flags once the keepalive settings are rolled out
- 	EnableInternodeServerKeepalive bool
- 	EnableInternodeClientKeepalive bool
-@@ -122,7 +121,8 @@ func NewFactory(
- 	}
- 	f.grpcListener = sync.OnceValue(f.createGRPCListener)
- 	f.localFrontendClient = sync.OnceValues(f.createLocalFrontendHTTPClient)
--	f.internodeGRPCConnections.conns = make(map[string]*grpc.ClientConn)
-+	f.internodeGRPCConnections = make(map[string]*grpc.ClientConn)
-+	f.remoteFrontendGRPCConns = make(map[string]*grpc.ClientConn)
- 	f.internodeConnCleanupTicker = time.NewTicker(internodeConnCleanupInterval)
- 	f.localFrontendGRPCConn = sync.OnceValue(f.createLocalFrontendGRPCConnection)
- 	return f
-@@ -239,22 +239,34 @@ func getListenIP(cfg *config.RPC, logger log.Logger) net.IP {
- // CreateRemoteFrontendGRPCConnection returns the shared connection for cross-cluster
- // calls to rpcAddress, dialing it on first use. Callers must not close it.
- func (d *RPCFactory) CreateRemoteFrontendGRPCConnection(rpcAddress string) *grpc.ClientConn {
--	if conn, ok := d.remoteFrontendGRPCConns.Load(rpcAddress); ok {
--		return conn.(*grpc.ClientConn) //nolint:revive // unchecked-type-assertion
-+	d.connectionsMu.RLock()
-+	conn, ok := d.remoteFrontendGRPCConns[rpcAddress]
-+	d.connectionsMu.RUnlock()
-+	if ok {
-+		return conn
- 	}
- 
--	conn := d.dialRemoteFrontendGRPCConnection(rpcAddress)
-+	newConn := d.dialRemoteFrontendGRPCConnection(rpcAddress)
- 	// Fatal may return under a non-fatal logger; caching nil would wedge this address.
--	if conn == nil {
-+	if newConn == nil {
- 		return nil
- 	}
- 
--	// Dialed outside the lock, so concurrent callers can race; the loser closes its own.
--	actual, loaded := d.remoteFrontendGRPCConns.LoadOrStore(rpcAddress, conn)
--	if loaded {
--		_ = conn.Close()
-+	d.connectionsMu.Lock()
-+	defer d.connectionsMu.Unlock()
-+	if d.closed {
-+		// Callers require a non-nil connection, even after shutdown.
-+		_ = newConn.Close()
-+		return newConn
-+	}
-+	// Connection creation runs unlocked. Recheck for a connection cached by another caller.
-+	existing, ok := d.remoteFrontendGRPCConns[rpcAddress]
-+	if ok {
-+		_ = newConn.Close()
-+		return existing
- 	}
--	return actual.(*grpc.ClientConn) //nolint:revive // unchecked-type-assertion
-+	d.remoteFrontendGRPCConns[rpcAddress] = newConn
-+	return newConn
- }
- 
- func (d *RPCFactory) dialRemoteFrontendGRPCConnection(rpcAddress string) *grpc.ClientConn {
-@@ -318,9 +330,9 @@ func (d *RPCFactory) createInternodeGRPCConnection(hostName string, serviceName
- 	d.maybeCleanupInternodeConns()
- 
- 	// Reuse the cached connection unless it has been shut down, in which case re-dial.
--	d.internodeGRPCConnections.RLock()
--	conn, ok := d.internodeGRPCConnections.conns[hostName]
--	d.internodeGRPCConnections.RUnlock()
-+	d.connectionsMu.RLock()
-+	conn, ok := d.internodeGRPCConnections[hostName]
-+	d.connectionsMu.RUnlock()
- 	if ok && conn.GetState() != connectivity.Shutdown {
- 		return conn
- 	}
-@@ -340,13 +352,20 @@ func (d *RPCFactory) createInternodeGRPCConnection(hostName string, serviceName
- 		return nil
- 	}
- 
--	d.internodeGRPCConnections.Lock()
--	defer d.internodeGRPCConnections.Unlock()
--	if existing, ok := d.internodeGRPCConnections.conns[hostName]; ok && existing.GetState() != connectivity.Shutdown {
-+	d.connectionsMu.Lock()
-+	defer d.connectionsMu.Unlock()
-+	if d.closed {
-+		// Callers require a non-nil connection, even after shutdown.
-+		_ = newConn.Close()
-+		return newConn
-+	}
-+	// Connection creation runs unlocked. Recheck for a connection cached by another caller.
-+	existing, ok := d.internodeGRPCConnections[hostName]
-+	if ok && existing.GetState() != connectivity.Shutdown {
- 		_ = newConn.Close()
- 		return existing
- 	}
--	d.internodeGRPCConnections.conns[hostName] = newConn
-+	d.internodeGRPCConnections[hostName] = newConn
- 	return newConn
- }
- 
-@@ -361,11 +380,11 @@ func (d *RPCFactory) maybeCleanupInternodeConns() {
- 
- // Removes shut-down cached connections; never closes live ones.
- func (d *RPCFactory) cleanupInternodeConns() {
--	d.inte
-```
-
-**File**: `common/rpc/rpc_test.go` (modified, +90/-0)
-```diff
-@@ -1,14 +1,18 @@
- package rpc
+@@ -1,6 +1,7 @@
+ package elasticsearch
  
  import (
-+	"crypto/tls"
- 	"sync"
++	"encoding/json"
+ 	"fmt"
  	"testing"
- 
+ 	"time"
+@@ -9,7 +10,12 @@ import (
  	"github.com/stretchr/testify/require"
- 	"go.temporal.io/server/common/log"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/primitives"
-+	"go.temporal.io/server/common/rpc/encryption"
-+	"go.temporal.io/server/common/testing/await"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/connectivity"
+ 	"github.com/temporalio/sqlparser"
+ 	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/server/common/log"
++	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/namespace"
+ 	"go.temporal.io/server/common/persistence/visibility/store/query"
++	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
++	"go.temporal.io/server/common/searchattribute"
  )
  
- func TestCreateLocalFrontendGRPCConnectionIsCached(t *testing.T) {
-@@ -63,3 +67,89 @@ func TestCreateRemoteFrontendGRPCConnection_ConcurrentSameAddressConverges(t *te
+ func TestQueryConverter_GetDatetimeFormat(t *testing.T) {
+@@ -747,3 +753,38 @@ func TestQueryConverter_ConvertIsExpr(t *testing.T) {
+ 		})
  	}
- 	t.Cleanup(func() { _ = conns[0].Close() })
  }
 +
-+func TestRPCFactoryCloseConnections(t *testing.T) {
++func TestElasticsearchQueryConverter(t *testing.T) {
 +	t.Parallel()
++	querytest.Run(
++		t,
++		querytest.Elasticsearch,
++		newESQueryConverter,
++		serializeESQuery,
++	)
++}
 +
-+	for name, create := range map[string]func(*RPCFactory, string) *grpc.ClientConn{
-+		"history":        (*RPCFactory).CreateHistoryGRPCConnection,
-+		"matching":       (*RPCFactory).CreateMatchingGRPCConnection,
-+		"remoteFrontend": (*RPCFactory).CreateRemoteFrontendGRPCConnection,
-+		"localFrontend": func(f *RPCFactory, _ string) *grpc.ClientConn {
-+			return f.CreateLocalFrontendGRPCConnection()
-+		},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
++func newESQueryConverter() *query.QueryConverter[elastic.Query] {
++	return NewQueryConverter(
++		namespace.Name("test-namespace"),
++		searchattribute.TestNameTypeMap(),
++		&searchattribute.TestMapper{},
++		metrics.NoopMetricsHandler,
++		log.NewNoopLogger(),
++	)
++}
 +
-+			f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
-+				metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
-+			t.Cleanup(f.Close)
-+			cached := create(f, hostA)
-+			require.NotNil(t, cached)
-+
-+			f.Close()
-+			require.Equal(t, connectivity.Shutdown, cached.GetState())
-+
-+			afterClose := create(f, hostB)
-+			require.NotNil(t, afterClose)
-+			t.Cleanup(func() { _ = afterClose.Close() })
-+			require.Equal(t, connectivity.Shutdown, afterClose.GetState())
-+		})
++func serializeESQuery(q elastic.Query) (string, error) {
++	if q == nil {
++		return "", nil
 +	}
-+}
-+
-+func TestRPCFactoryCloseDuringConnectionCreation(t *testing.T) {
-+	t.Parallel()
-+
-+	for name, create := range map[string]func(*RPCFactory, string) *grpc.ClientConn{
-+		"history":        (*RPCFactory).CreateHistoryGRPCConnection,
-+		"matching":       (*RPCFactory).CreateMatchingGRPCConnection,
-+		"remoteFrontend": (*RPCFactory).CreateRemoteFrontendGRPCConnection,
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			started := make(chan struct{})
-+			release := make(chan struct{})
-+			ctx := t.Context()
-+			tlsProvider := &gatedTLSConfigProvider{
-+				getClientConfig: func() (*tls.Config, error) {
-+					close(started)
-+					select {
-+					case <-release:
-+						return nil, nil
-+					case <-ctx.Done():
-+						return nil, ctx.Err()
-+					}
-+				},
-+			}
-+			f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
-+				metrics.NoopMetricsHandler, tlsProvider, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
-+			t.Cleanup(f.Close)
-+			result := make(chan *grpc.ClientConn, 1)
-+			go func() { result <- create(f, hostA) }()
-+
-+			await.Rcv(t, started)
-+			f.Close()
-+			close(release)
-+			conn := await.Rcv(t, result)
-+			require.NotNil(t, conn)
-+			t.Cleanup(func() { _ = conn.Close() })
-+			require.Equal(t, connectivity.Shutdown, conn.GetState())
-+		})
++	source, err := q.Source()
++	if err != nil {
++		return "", err
 +	}
-+}
-+
-+type gatedTLSConfigProvider struct {
-+	encryption.FixedTLSConfigProvider
-+	getClientConfig func() (*tls.Config, error)
-+}
-+
-+func (p *gatedTLSConfigProvider) GetInternodeClientConfig() (*tls.Config, error) {
-+	return p.getClientConfig()
-+}
-+
-+func (p *gatedTLSConfigProvider) GetRemoteClusterClientConfig(string) (*tls.Config, error) {
-+	return p.getClientConfig()
++	data, err := json.Marshal(source)
++	if err != nil {
++		return "", err
++	}
++	return string(data), nil
 +}
 ```
 
----
-
-### Incident Patch 2: `dd83fbdd` (2026-10-22)
-**Commit Message**: Fix data race in standalone activity start delay test (#12679)
-
-## What changed?
-
-Updated the standalone activity start delay test to capture the context
-before polling and move assertions out of the require.Never callback.
-
-## Why?
-
-require.Never can return while a Describe request is still outstanding.
-If that request later returns an error, the callback’s assertion
-accesses an already-finished test, causing a data race and potentially
-panicking the test binary. The callback now returns a boolean without
-accessing the test handle.
-
-
-## How did you test it?
-- [X] built
-- [ ] run locally and tested manually
-- [X] covered by existing tests
-- [ ] added new unit test(s)
-- [ ] added new functional test(s)
-
-**File**: `tests/activity_standalone_test.go` (modified, +29/-16)
+**File**: `common/persistence/visibility/store/query/querytest/querytest.go` (renamed, +20/-98)
 ```diff
-@@ -6807,8 +6807,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 		require.True(t, startResp.Started)
+@@ -1,37 +1,25 @@
+-package tests
++// Package querytest provides the query converter test cases shared by every visibility store.
++package querytest
  
- 		// Verify activity stays in SCHEDULED state throughout the delay (not dispatched early).
-+		ctx := s.Context()
- 		require.Never(t, func() bool {
--			describeResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
-+			describeResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.GetRunId(),
-@@ -6899,8 +6900,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+ import (
+-	"encoding/json"
+ 	"strings"
+ 	"testing"
  
- 		// Activity should stay running (not timed out) throughout startDelay + most of scheduleToStartTimeout.
- 		// The timeout should only fire after startDelay + scheduleToStartTimeout.
-+		ctx := s.Context()
- 		require.Never(t, func() bool {
--			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
-+			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.RunId,
-@@ -6955,8 +6957,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
+-	"github.com/olivere/elastic/v7"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/temporalio/sqlparser"
+-	"go.temporal.io/server/common/log"
+-	"go.temporal.io/server/common/metrics"
+-	"go.temporal.io/server/common/namespace"
+-	"go.temporal.io/server/common/persistence/sql"
+-	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
+-	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
+-	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
+-	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch"
+ 	"go.temporal.io/server/common/persistence/visibility/store/query"
+-	vissql "go.temporal.io/server/common/persistence/visibility/store/sql"
+-	"go.temporal.io/server/common/searchattribute"
+ )
  
- 		// Activity should stay running (not timed out) throughout startDelay + most of scheduleToCloseTimeout.
- 		// The timeout should only fire after startDelay + scheduleToCloseTimeout.
-+		ctx := s.Context()
- 		require.Never(t, func() bool {
--			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
-+			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.RunId,
-@@ -7219,8 +7222,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 		require.NoError(t, err)
- 
- 		// Activity should stay SCHEDULED past the original 2s delay, since the new target is at T+5s.
-+		ctx := s.Context()
- 		require.Never(t, func() bool {
--			descResp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
-+			descResp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.RunId,
-@@ -7433,8 +7437,9 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 		require.Equal(t, expectedExpiration, descResp.GetInfo().GetExpirationTime().AsTime())
- 
- 		// Must not time out before startDelay + scheduleToClose elapses (would happen with the bug).
-+		ctx := s.Context()
- 		require.Never(t, func() bool {
--			resp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
-+			resp, err := env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.RunId,
-@@ -8050,16 +8055,18 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 			StartDelay:             durationpb.New(originalStartDelay),
- 		})
- 		require.NoError(t, err)
--		describe := func() *workflowservice.DescribeActivityExecutionResponse {
--			resp, err := env.FrontendClient().DescribeActivityExecution(s.Context(), &workflowservice.DescribeActivityExecutionRequest{
++// Dialect selects the expected results of the store under test.
++type Dialect int
 +
-+		ctx := s.Context()
-+		describe := func() (*workflowservice.DescribeActivityExecutionResponse, error) {
-+			return env.FrontendClient().DescribeActivityExecution(ctx, &workflowservice.DescribeActivityExecutionRequest{
- 				Namespace:  env.Namespace().String(),
- 				ActivityId: activityID,
- 				RunId:      startResp.RunId,
- 			})
+ const (
+-	testNamespaceName = namespace.Name("test-namespace")
++	MySQL Dialect = iota
++	PostgreSQL
++	SQLite
++	Elasticsearch
+ )
+ 
+-var sqlPlugins = []string{
+-	mysql.PluginName,
+-	postgresql.PluginName,
+-	postgresql.PluginNamePGX,
+-	sqlite.PluginName,
+-}
+-
+ type queryConverterTestCase struct {
+ 	name string
+ 	in   string
+@@ -62,21 +50,21 @@ type queryConverterTestCase struct {
+ 	orderBy string
+ }
+ 
+-func (tc *queryConverterTestCase) expected(store string) (out string, errMsg string) {
++func (tc *queryConverterTestCase) expected(dialect Dialect) (out string, errMsg string) {
+ 	if tc.err != "" {
+ 		return "", tc.err
+ 	}
+-	if store == elasticsearch.PersistenceName {
++	if dialect == Elasticsearch {
+ 		return tc.es, tc.esErr
+ 	}
+ 
+ 	var outOverride, errOverride string
+-	switch store {
+-	case mysql.PluginName:
++	switch dialect {
++	case MySQL:
+ 		outOverride, errOverride = tc.mysql, tc.mysqlErr
+-	case postgresql.PluginName, postgresql.PluginNamePGX:
++	case PostgreSQL:
+ 		outOverride, errOverride = tc.postgres, tc.postgresErr
+-	case sqlite.PluginName:
++	case SQLite:
+ 		outOverride, errOverride = tc.sqlite, tc.sqliteErr
+ 	default:
+ 		// no-op
+@@ -1410,16 +1398,18 @@ var queryConverterTestCases = []queryConverterTestCase{
+ 	},
+ }
+ 
+-func runQueryConverterTest[T any](
++// Run converts every test case with a new query converter, and checks the serialized query
++// against the expected results of dialect.
++func Run[T any](
+ 	t *testing.T,
+-	store string,
++	dialect Dialect,
+ 	newQueryConverter func() *query.QueryConverter[T],
+ 	serialize func(T) (string, error),
+ ) {
+ 	for _, tc := range queryConverterTestCases {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			r := require.New(t)
+-			expectedOut, expectedErr := tc.expected(store)
++			expectedOut, expectedErr := tc.expected(dialect)
+ 			// The query converter is stateful (e.g. it tracks if the query filtered by
+ 			// namespace division), thus each test case requires a new instance.
+ 			queryParams, err := newQueryConverter().Convert(tc.in)
+@@ -1445,71 +1435,3 @@ func runQueryConverterTest[T any](
+ 		})
+ 	}
+ }
+-
+-func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
+-	if expr == nil {
+-		return "", nil
+-	}
+-	return sqlparser.String(expr), nil
+-}
+-
+-func serializeESQuery(q elastic.Query) (string, error) {
+-	if q == nil {
+-		return "", nil
+-	}
+-	source, err := q.Source()
+-	if err != nil {
+-		return "", err
+-	}
+-	data, err := json.Marshal(source)
+-	if err != nil {
+-		return "", err
+-	}
+-	return string(data), nil
+-}
+-
+-func TestSQLQueryConverter(t *testing.T) {
+-	t.Parallel()
+-	for _, plugin := range sqlPlugins {
+-		t.Run(plugin, func(t *testing.T) {
+-			t.Parallel()
+-			pluginVisQC, err := sql.GetPluginVisibilityQueryConverter(plugin)
 -			require.NoError(t, err)
--			return resp
- 		}
--		desc := describe()
+-			runQueryConverterTest(
+-				t,
+-				plugin,
+-				func() *query.QueryConverter[sqlparser.Expr] {
+-					return query.NewQueryConverter(
+-						&vissql.SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
+-						testNamespaceName,
+-						searchattribute.TestNameTypeMap(),
+-						&searchattribute.TestMapper{},
+-						metrics.NoopMetricsHandler,
+-						log.NewNoopLogger(),
+-					)
+-				},
+-				serializeSQLQuery,
+-			)
+-		})
+-	}
+-}
+-
+-func TestElasticsearchQueryConverter(t *testing.T) {
+-	t.Parallel()
+-	runQueryConverterTest(
+-		t,
+-		elasticsearch.PersistenceName,
+-		newESQueryConverter,
+-		serializeESQuery,
+-	)
+-}
+-
+-func newESQueryConverter() *query.QueryConverter[elastic.Query] {
+-	return elasticsearch.NewQueryConverter(
+-		testNamespaceName,
+-		searchattribute.TestNameTypeMap(),
+-		&searchattribute.TestMapper{},
+-		metrics.NoopMetricsHandler,
+-		log.NewNoopLogger(),
+-	)
+-}
+```
+
+**File**: `common/persistence/visibility/store/sql/query_converter_test.go` (modified, +51/-0)
+```diff
+@@ -9,8 +9,17 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/temporalio/sqlparser"
+ 	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/server/common/log"
++	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/namespace"
++	persistencesql "go.temporal.io/server/common/persistence/sql"
+ 	"go.temporal.io/server/common/persistence/sql/sqlplugin"
++	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
++	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
++	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
+ 	"go.temporal.io/server/common/persistence/visibility/store/query"
++	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
++	"go.temporal.io/server/common/searchattribute"
+ 	"go.uber.org/mock/gomock"
+ )
+ 
+@@ -1053,3 +1062,45 @@ func parseWhereString(where string) sqlparser.Expr {
+ 	}
+ 	return stmt.(*sqlparser.Select).Where.Expr
+ }
 +
-+		desc, err := describe()
-+		require.NoError(t, err)
- 		require.Equal(t,
- 			desc.Info.ScheduleTime.AsTime().Add(originalStartDelay+scheduleToCloseTimeout),
- 			desc.Info.ExpirationTime.AsTime())
-@@ -8073,7 +8080,8 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 			UpdateMask:      &fieldmaskpb.FieldMask{Paths: []string{"start_delay"}},
- 		})
- 		require.NoError(t, err)
--		desc = describe()
-+		desc, err = describe()
-+		require.NoError(t, err)
- 		require.Equal(t,
- 			desc.Info.ScheduleTime.AsTime().Add(0+scheduleToCloseTimeout),
- 			desc.Info.ExpirationTime.AsTime())
-@@ -8086,13 +8094,15 @@ func (s *standaloneActivityTestSuite) TestStartDelay() {
- 			RestoreOriginalOptions: true,
- 		})
- 		require.NoError(t, err)
--		desc = describe()
-+		desc, err = describe()
-+		require.NoError(t, err)
- 		require.Equal(t,
- 			desc.Info.ScheduleTime.AsTime().Add(originalStartDelay+scheduleToClo
++func TestSQLQueryConverter(t *testing.T) {
++	t.Parallel()
++	plugins := []struct {
++		name    string
++		dialect querytest.Dialect
++	}{
++		{name: mysql.PluginName, dialect: querytest.MySQL},
++		{name: postgresql.PluginName, dialect: querytest.PostgreSQL},
++		{name: postgresql.PluginNamePGX, dialect: querytest.PostgreSQL},
++		{name: sqlite.PluginName, dialect: querytest.SQLite},
++	}
++	for _, plugin := range plugins {
++		t.Run(plugin.name, func(t *testing.T) {
++			t.Parallel()
++			pluginVisQC, err := persistencesql.GetPluginVisibilityQueryConverter(plugin.name)
++			require.NoError(t, err)
++			querytest.Run(
++				t,
++				plugin.dialect,
++				func() *query.QueryConverter[sqlparser.Expr] {
++					return query.NewQueryConverter(
++						&SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
++						namespace.Name("test-namespace"),
++						searchattribute.TestNameTypeMap(),
++						&searchattribute.TestMapper{},
++						metrics.NoopMetricsHandler,
++						log.NewNoopLogger(),
++					)
++				},
++				serializeSQLQuery,
++			)
++		})
++	}
++}
++
++func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
++	if expr == nil {
++		return "", nil
++	}
++	return sqlparser.String(expr), nil
++}
 ```
 
 ---
 
-### Incident Patch 3: `08f953e9` (2026-10-23)
-**Commit Message**: WCP: Fix tests dependent on history event batch splitting (#12678)
+### Incident Patch 2: `205b1599` (2026-10-26)
+**Commit Message**: Record and expose principal attribution for standalone activities (#12550)
 
 ## What changed?
-- Some tests (those that previously failed) now run with
-`history.maximumEventBatchSizeInBytes` at both 0 (single batch) and 1
-(every event in its own batch).
-- `executeHistoryReplicationTasksUntil` now executing replication tasks
-after the matching event until the rest of that event's transaction is
-applied (since it can be split across multiple batches).
+
+Persist the authenticated principal of the worker that most recently
+accepted or responded to a standalone activity task. Return
+started_by_principal, closed_by_principal, and last_worker_principal
+through DescribeActivityExecution.
 
 ## Why?
-These were found by running all functional tests with
-`history.maximumEventBatchSizeInBytes = 1`. The tests assumed a
-transaction is a single history batch:
-- `TestStartedSpeculativeWorkflowTask_TerminateWorkflow` expected
-`completion_event_batch_id` to be the `WorkflowTaskFailed` event ID;
-with split batches `WorkflowExecutionTerminated` starts its own batch,
-so the correct value is its own event ID.
-- The conflict resolution tests stopped after the replication task
-holding the awaited event, but with split batches the rest of the
-transaction (e.g. `WorkflowTaskScheduled`) arrives in further tasks, so
-the cluster histories never matched.
+
+Help users and operators investigate standalone activities by
+identifying who started or closed an execution and which worker
+principal most recently handled a task.
 
 ## How did you test it?
 - [x] built
 - [ ] run locally and tested manually
-- [x] covered by existing
+- [x] covered by existing tests
+- [x] added new unit test(s)
+- [x] added new functional test(s)
 
-**File**: `tests/update_workflow_test.go` (modified, +104/-91)
+**File**: `chasm/context.go` (modified, +9/-0)
 ```diff
-@@ -2830,109 +2830,122 @@ func (s *WorkflowUpdateSuite) TestSpeculativeWorkflowTask_ScheduleToStartTimeout
+@@ -96,6 +96,12 @@ type ExecutionInfo struct {
+ 	// An execution is closed when its root component reaches a terminal state in its lifecycle.
+ 	// If the component is still running (not yet closed), it returns a zero time.Time value.
+ 	CloseTime time.Time
++	// StartedByPrincipal is the authenticated principal that created this execution.
++	// It is nil when the execution was created without a principal.
++	StartedByPrincipal *commonpb.Principal
++	// ClosedByPrincipal is the authenticated principal that closed this execution.
++	// It is nil when the execution remains open or was closed without a principal.
++	ClosedByPrincipal *commonpb.Principal
  }
  
- func (s *WorkflowUpdateSuite) TestStartedSpeculativeWorkflowTask_TerminateWorkflow() {
--	env := testcore.NewEnv(s.T())
--	mustStartWorkflow(env, env.Tv())
-+	for _, tc := range []struct {
-+		name                           string
-+		maxEventBatchSizeInBytes       int
-+		expectedCompletionEventBatchID int64
-+	}{
-+		// WorkflowTaskFailed and WorkflowTaskTerminated are written in one batch.
-+		{name: "SingleBatch", maxEventBatchSizeInBytes: 0, expectedCompletionEventBatchID: 7},
-+		// Every event is written in its own batch.
-+		{name: "SplitBatches", maxEventBatchSizeInBytes: 1, expectedCompletionEventBatchID: 8},
-+	} {
-+		s.Run(tc.name, func(s *WorkflowUpdateSuite) {
-+			env := testcore.NewEnv(s.T(), testcore.WithDynamicConfig(dynamicconfig.MaximumEventBatchSizeInBytes, tc.maxEventBatchSizeInBytes))
-+			mustStartWorkflow(env, env.Tv())
+ type EndpointRegistry interface {
+@@ -206,6 +212,7 @@ func (c *immutableCtx) ExecutionKey() ExecutionKey {
  
--	wtHandlerCalls := 0
--	wtHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*commandpb.Command, error) {
--		wtHandlerCalls++
--		switch wtHandlerCalls {
--		case 1:
--			// Completes first WT with empty command list.
--			return nil, nil
--		case 2:
--			// Terminate workflow while speculative WT is running.
--			_, err := env.FrontendClient().TerminateWorkflowExecution(s.Context(), &workflowservice.TerminateWorkflowExecutionRequest{
--				Namespace:         env.Namespace().String(),
--				WorkflowExecution: env.Tv().WorkflowExecution(),
--				Reason:            env.Tv().Any().String(),
--			})
--			s.NoError(err)
-+			wtHandlerCalls := 0
-+			wtHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*commandpb.Command, error) {
-+				wtHandlerCalls++
-+				switch wtHandlerCalls {
-+				case 1:
-+					// Completes first WT with empty command list.
-+					return nil, nil
-+				case 2:
-+					// Terminate workflow while speculative WT is running.
-+					_, err := env.FrontendClient().TerminateWorkflowExecution(s.Context(), &workflowservice.TerminateWorkflowExecutionRequest{
-+						Namespace:         env.Namespace().String(),
-+						WorkflowExecution: env.Tv().WorkflowExecution(),
-+						Reason:            env.Tv().Any().String(),
-+					})
-+					s.NoError(err)
+ func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
+ 	executionInfo := c.root.backend.GetExecutionInfo()
++	rootAttributes := c.root.serializedNode.GetMetadata().GetComponentAttributes()
  
--			s.EqualHistory(`
--	  1 WorkflowExecutionStarted
--	  2 WorkflowTaskScheduled
--	  3 WorkflowTaskStarted
--	  4 WorkflowTaskCompleted
--	  5 WorkflowTaskScheduled // Speculative WT.
--	  6 WorkflowTaskStarted`, task.History)
--			return env.UpdateAcceptCompleteCommands(env.Tv()), nil
--		default:
--			s.Failf("wtHandler called too many times", "wtHandler shouldn't be called %d times", wtHandlerCalls)
--			return nil, nil
--		}
--	}
-+					s.EqualHistory(`
-+			  1 WorkflowExecutionStarted
-+			  2 WorkflowTaskScheduled
-+			  3 WorkflowTaskStarted
-+			  4 WorkflowTaskCompleted
-+			  5 WorkflowTaskScheduled // Speculative WT.
-+			  6 WorkflowTaskStarted`, task.History)
-+					return env.UpdateAcceptCompleteCommands(env.Tv()), nil
-+				default:
-+					s.Failf("wtHandler called too many times", "wtHandler shouldn't be called %d times", wtHandlerCalls)
-+					return nil, nil
-+				}
-+			}
+ 	var closeTime time.Time
+ 	closeTimestamp := executionInfo.GetCloseTime()
+@@ -218,6 +225,8 @@ func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
+ 		StateTransitionCount: executionInfo.GetStateTransitionCount(),
+ 		ApproximateStateSize: c.root.backend.GetApproximatePersistedSize(),
+ 		CloseTime:            closeTime,
++		StartedByPrincipal:   rootAttributes.GetStartedByPrincipal(),
++		ClosedByPrincipal:    rootAttributes.GetClosedByPrincipal(),
+ 	}
+ }
  
--	msgHandlerCalls := 0
--	msgHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*protocolpb.Message, error) {
--		msgHandlerCalls++
--		switch msgHandlerCalls {
--		case 1:
--			return nil, nil
--		case 2:
--			updRequestMsg := task.Messages[0]
--			return env.UpdateAcceptCompleteMessages(env.Tv(), updRequestMsg), nil
--		default:
--			s.Failf("msgHandler called too many times", "msgHandler shouldn't be called %d times", msgHandlerCalls)
--			return nil, nil
--		}
--	}
-+			msgHandlerCalls := 0
-+			msgHandler := func(task *workflowservice.PollWorkflowTaskQueueResponse) ([]*protocolpb.Message, error) {
-+				msgHandlerCalls++
-+				switch msgHandlerCalls {
-+				case 1:
-+					return nil, nil
-+				case 2:
-+					updRequestMsg := task.Messages[0]
-+					return env.UpdateAcceptCompleteMessages(env.Tv(), updRequestMsg), nil
-+				default:
-+					s.Failf("msgHandler called too many times", "msgHandler shouldn't be called %d times", msgHandlerCalls)
-+					return nil, nil
-+				}
-+			}
- 
--	//nolint:staticcheck // SA1019 TaskPoller replacement needed
--	poller := &testcore.TaskPoller{
--		Client:              env.FrontendClient(),
--		Namespace:           env.Namespace().String(),
--		TaskQueue:           env.Tv().TaskQueue(),
--		Identity:            env.Tv().WorkerIdentity(),
--		WorkflowTaskHandler: wtHandler,
--		MessageHandler:      msgHandler,
--		Logger:              env.Logger,
--		T:                   s.T(),
--	}
-+			//nolint:staticcheck // SA1019 TaskPoller replacement needed
-+			poller := &testcore.TaskPoller{
-+				Client:              env.FrontendClient(),
-+				Namespace:           env.Namespace().String(),
-+				TaskQueue:           env.Tv().TaskQueue(),
-+				Identity:            env.Tv().WorkerIdentity(),
-+				WorkflowTaskHandler: wtHandler,
-+				MessageHandler:      msgHandler,
-+				Logger:              env.Logger,
-+				T:              
 ```
 
-**File**: `tests/xdc/history_replication_signals_and_updates_test.go` (modified, +29/-3)
+**File**: `chasm/lib/activity/activity.go` (modified, +24/-0)
 ```diff
-@@ -44,6 +44,7 @@ type (
- 	// that push their tasks into test-specific (i.e. workflow-specific) buffers.
- 	hrsuTestSuite struct {
- 		xdcBaseSuite
-+		maxEventBatchSizeInBytes int
+@@ -17,6 +17,7 @@ import (
+ 	"go.temporal.io/server/chasm/lib/callback"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/contextutil"
++	"go.temporal.io/server/common/headers"
+ 	"go.temporal.io/server/common/metrics"
+ 	"go.temporal.io/server/common/retrypolicy"
+ 	serviceerrors "go.temporal.io/server/common/serviceerror"
+@@ -244,6 +245,7 @@ func (a *Activity) HandleStarted(ctx chasm.MutableContext, request *historyservi
+ 		}
+ 		return nil, err
  	}
- 	// Each test starts its own workflow, in its own namespace.
- 	hrsuTest struct {
-@@ -78,14 +79,32 @@ const (
++	a.recordLastWorker(ctx, request.GetPollRequest().GetIdentity())
+ 	if dispatchTime := a.dispatchTimeForAttempt(lastAttempt); dispatchTime != nil {
+ 		metrics.TaskScheduleToStartLatency.With(a.taskScheduleToStartMetricsHandler(ctx)).Record(
+ 			lastAttempt.GetStartedTime().AsTime().Sub(dispatchTime.AsTime()),
+@@ -366,6 +368,7 @@ func (a *Activity) HandleCompleted(
+ 	}); err != nil {
+ 		return nil, err
+ 	}
++	a.recordLastWorker(ctx, event.Request.GetCompleteRequest().GetIdentity())
  
- func TestHistoryReplicationSignalsAndUpdatesTestSuite(t *testing.T) {
- 	t.Parallel()
--	suite.Run(t, new(hrsuTestSuite))
-+	for _, tc := range []struct {
-+		name                     string
-+		maxEventBatchSizeInBytes int
-+	}{
-+		{
-+			name:                     "SingleBatch",
-+			maxEventBatchSizeInBytes: 0,
-+		},
-+		{
-+			// Every event is written in its own batch, so one transaction spans several replication tasks.
-+			name:                     "SplitBatches",
-+			maxEventBatchSizeInBytes: 1,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			suite.Run(t, &hrsuTestSuite{maxEventBatchSizeInBytes: tc.maxEventBatchSizeInBytes})
-+		})
+ 	return &historyservice.RespondActivityTaskCompletedResponse{}, nil
+ }
+@@ -405,6 +408,7 @@ func (a *Activity) HandleFailed(
+ 	}
+ 	if retryState == enumspb.RETRY_STATE_IN_PROGRESS {
+ 		a.emitOnAttemptFailedMetrics(ctx, enrichedHandler)
++		a.recordLastWorker(ctx, failedRequest.GetIdentity())
+ 
+ 		return &historyservice.RespondActivityTaskFailedResponse{}, nil
+ 	}
+@@ -417,6 +421,7 @@ func (a *Activity) HandleFailed(
+ 	}); err != nil {
+ 		return nil, err
+ 	}
++	a.recordLastWorker(ctx, failedRequest.GetIdentity())
+ 
+ 	return &historyservice.RespondActivityTaskFailedResponse{}, nil
+ }
+@@ -442,10 +447,29 @@ func (a *Activity) HandleCanceled(
+ 	}); err != nil {
+ 		return nil, err
+ 	}
++	a.recordLastWorker(ctx, event.Request.GetCancelRequest().GetIdentity())
+ 
+ 	return &historyservice.RespondActivityTaskCanceledResponse{}, nil
+ }
+ 
++func (a *Activity) recordLastWorker(
++	ctx chasm.MutableContext,
++	identity string,
++) {
++	attempt := a.LastAttempt.Get(ctx)
++	attempt.LastWorkerIdentity = identity
++	principalType := ctx.RequestHeader(headers.PrincipalTypeHeaderName)
++	principalName := ctx.RequestHeader(headers.PrincipalNameHeaderName)
++	if principalType != "" || principalName != "" {
++		attempt.LastWorkerPrincipal = &commonpb.Principal{
++			Type: principalType,
++			Name: principalName,
++		}
++		return
 +	}
++	attempt.LastWorkerPrincipal = nil
++}
++
+ // Terminate implements the chasm.RootComponent interface.
+ func (a *Activity) Terminate(
+ 	ctx chasm.MutableContext,
+```
+
+**File**: `chasm/lib/activity/activity_test.go` (modified, +199/-27)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	apiactivitypb "go.temporal.io/api/activity/v1" //nolint:importas
+ 	commonpb "go.temporal.io/api/common/v1"
++	failurepb "go.temporal.io/api/failure/v1"
+ 	nexuspb "go.temporal.io/api/nexus/v1"
+ 	sdkpb "go.temporal.io/api/sdk/v1"
+ 	"go.temporal.io/api/serviceerror"
+@@ -20,11 +21,13 @@ import (
+ 	"go.temporal.io/server/chasm"
+ 	"go.temporal.io/server/chasm/lib/activity/gen/activitypb/v1"
+ 	"go.temporal.io/server/common/dynamicconfig"
++	"go.temporal.io/server/common/headers"
+ 	"go.temporal.io/server/common/metrics"
+ 	"go.temporal.io/server/common/metrics/metricstest"
+ 	"go.temporal.io/server/common/namespace"
+ 	"go.temporal.io/server/common/searchattribute/sadefs"
+ 	serviceerrors "go.temporal.io/server/common/serviceerror"
++	"go.temporal.io/server/common/testing/protorequire"
+ 	"google.golang.org/protobuf/types/known/durationpb"
+ 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+ 	"google.golang.org/protobuf/types/known/timestamppb"
+@@ -112,26 +115,28 @@ func TestHandleStarted(t *testing.T) {
+ 	startedTime := timestamppb.New(testTime.Add(-1 * time.Minute))
+ 
+ 	testCases := []struct {
+-		name           string
+-		activityStatus activitypb.ActivityExecutionStatus
+-		attemptStamp   int32
+-		requestStamp   int32
+-		startRequestID string
+-		requestID      string
+-		attemptCount   int32
+-		dispatchTime   *timestamppb.Timestamp
+-		metricSamples  int
+-		metricLatency  time.Duration
+-		checkOutcome   func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
++		name             string
++		activityStatus   activitypb.ActivityExecutionStatus
++		attemptStamp     int32
++		requestStamp     int32
++		startRequestID   string
++		requestID        string
++		attemptCount     int32
++		dispatchTime     *timestamppb.Timestamp
++		metricSamples    int
++		metricLatency    time.Duration
++		expectLastWorker bool
++		checkOutcome     func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
+ 	}{
+ 		{
+-			name:           "successful transition from scheduled",
+-			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
+-			attemptStamp:   testStamp,
+-			requestStamp:   testStamp,
+-			requestID:      testRequestID,
+-			metricSamples:  1,
+-			metricLatency:  30 * time.Second,
++			name:             "successful transition from scheduled",
++			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
++			attemptStamp:     testStamp,
++			requestStamp:     testStamp,
++			requestID:        testRequestID,
++			metricSamples:    1,
++			metricLatency:    30 * time.Second,
++			expectLastWorker: true,
+ 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
+ 				require.Equal(t, int32(1), response.Attempt)
+ 				require.NoError(t, err)
+@@ -140,15 +145,16 @@ func TestHandleStarted(t *testing.T) {
+ 		{
+ 			// Latency is measured from the attempt's dispatch time, 10s ago, not from the schedule
+ 			// time 30s ago: a retry excludes the earlier attempts and the backoff between them.
+-			name:           "successful transition from scheduled - retry attempt",
+-			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
+-			attemptStamp:   testStamp,
+-			requestStamp:   testStamp,
+-			requestID:      testRequestID,
+-			attemptCount:   2,
+-			dispatchTime:   timestamppb.New(testTime.Add(-10 * time.Second)),
+-			metricSamples:  1,
+-			metricLatency:  10 * time.Second,
++			name:             "successful transition from scheduled - retry attempt",
++			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
++			attemptStamp:     testStamp,
++			requestStamp:     testStamp,
++			requestID:        testRequestID,
++			attemptCount:     2,
++			dispatchTime:     timestamppb.New(testTime.Add(-10 * time.Second)),
++			metricSamples:    1,
++			metricLatency:    10 * time.Second,
++			expectLastWorker: true,
+ 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
+ 				require.Equal(t, int32(2), response.Attempt)
+ 				require.NoError(t, err)
+@@ -279,6 +285,7 @@ func TestHandleStarted(t *testing.T) {
+ 					}),
+ 				},
+ 			}
++			ctx.GoCtx = headers.SetPrincipal(ctx.GoCtx, &commonpb.Principal{Type: "jwt", Name: "poll-worker"})
+ 
+ 			// Setup activity state
+ 			attemptState := &activitypb.ActivityAttemptState{
+@@ -327,12 +334,20 @@ func TestHandleStarted(t *testing.T) {
+ 			request := &historyservice.RecordActivityTaskStartedRequest{
+ 				Stamp:     tc.requestStamp,
+ 				RequestId: tc.requestID,
++				PollRequest: &workflowservice.PollActivityTaskQueueRequest{
++					Namespace: "test-namespace",
++					Identity:  "poll-worker-identity",
++				},
+ 			}
+ 
+ 			// Execute HandleStarted
+ 			response, err := activity.HandleStarted(ctx, request)
+ 
+ 			tc.checkOutcome(t, response, err)
++			if tc.expectLastWorker {
++				require.Equal(t, "poll-worker-identity", attemptState.GetLastWorkerIdentity())
++				protorequire.ProtoEqual(t, &common
+```
+
+**File**: `chasm/lib/activity/gen/activitypb/v1/activity_state.pb.go` (modified, +43/-30)
+```diff
+@@ -743,6 +743,9 @@ type ActivityAttemptState struct {
+ 	// the started attempt is updated, so a task token issued at start remains valid until that attempt completes.
+ 	StartedStamp       int32  `protobuf:"varint,14,opt,name=started_stamp,json=startedStamp,proto3" json:"started_stamp,omitempty"`
+ 	LastWorkerIdentity string `protobuf:"bytes,7,opt,name=last_worker_identity,json=lastWorkerIdentity,proto3" json:"last_worker_identity,omitempty"`
++	// The authenticated principal of the worker that most recently accepted or responded to an activity task.
++	// It is updated with last_worker_identity.
++	LastWorkerPrincipal *v1.Principal `protobuf:"bytes,15,opt,name=last_worker_principal,json=lastWorkerPrincipal,proto3" json:"last_worker_principal,omitempty"`
+ 	// The Worker Deployment Version this activity was dispatched to most recently.
+ 	// If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
+ 	LastDeploymentVersion *v14.WorkerDeploymentVersion `protobuf:"bytes,8,opt,name=last_deployment_version,json=lastDeploymentVersion,proto3" json:"last_deployment_version,omitempty"`
+@@ -852,6 +855,13 @@ func (x *ActivityAttemptState) GetLastWorkerIdentity() string {
+ 	return ""
  }
  
- func (s *hrsuTestSuite) SetupSuite() {
- 	s.dynamicConfigOverrides = map[dynamicconfig.Key]any{
- 		dynamicconfig.EnableReplicationStream.Key(): true,
- 		// Use short interval to make long poll timeout
- 		dynamicconfig.HistoryLongPollExpirationInterval.Key(): 100 * time.Millisecond,
-+		dynamicconfig.MaximumEventBatchSizeInBytes.Key():      s.maxEventBatchSizeInBytes,
++func (x *ActivityAttemptState) GetLastWorkerPrincipal() *v1.Principal {
++	if x != nil {
++		return x.LastWorkerPrincipal
++	}
++	return nil
++}
++
+ func (x *ActivityAttemptState) GetLastDeploymentVersion() *v14.WorkerDeploymentVersion {
+ 	if x != nil {
+ 		return x.LastDeploymentVersion
+@@ -1318,7 +1328,7 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
+ 	"\bidentity\x18\x02 \x01(\tR\bidentity\x12\x16\n" +
+ 	"\x06reason\x18\x03 \x01(\tR\x06reason\x12\x1d\n" +
+ 	"\n" +
+-	"request_id\x18\x04 \x01(\tR\trequestId\"\x98\b\n" +
++	"request_id\x18\x04 \x01(\tR\trequestId\"\xef\b\n" +
+ 	"\x14ActivityAttemptState\x12\x14\n" +
+ 	"\x05count\x18\x01 \x01(\x05R\x05count\x12O\n" +
+ 	"\x16current_retry_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x14currentRetryInterval\x12=\n" +
+@@ -1327,7 +1337,8 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
+ 	"\x14last_failure_details\x18\x05 \x01(\v2T.temporal.server.chasm.lib.activity.proto.v1.ActivityAttemptState.LastFailureDetailsR\x12lastFailureDetails\x12\x14\n" +
+ 	"\x05stamp\x18\x06 \x01(\x05R\x05stamp\x12#\n" +
+ 	"\rstarted_stamp\x18\x0e \x01(\x05R\fstartedStamp\x120\n" +
+-	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12k\n" +
++	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12U\n" +
++	"\x15last_worker_principal\x18\x0f \x01(\v2!.temporal.api.common.v1.PrincipalR\x13lastWorkerPrincipal\x12k\n" +
+ 	"\x17last_deployment_version\x18\b \x01(\v23.temporal.api.deployment.v1.WorkerDeploymentVersionR\x15lastDeploymentVersion\x12(\n" +
+ 	"\x10start_request_id\x18\t \x01(\tR\x0estartRequestId\x12\x19\n" +
+ 	"\bsdk_name\x18\n" +
+@@ -1416,13 +1427,14 @@ var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_goType
+ 	(*v1.Priority)(nil),                             // 18: temporal.api.common.v1.Priority
+ 	(*v12.ActivityOptions)(nil),                     // 19: temporal.api.activity.v1.ActivityOptions
+ 	(*v13.CallbackMetadata)(nil),                    // 20: temporal.server.chasm.lib.callbacks.proto.v1.CallbackMetadata
+-	(*v14.WorkerDeploymentVersion)(nil),             // 21: temporal.api.deployment.v1.WorkerDeploymentVersion
+-	(*v1.Payloads)(nil),                             // 22: temporal.api.common.v1.Payloads
+-	(*v1.Header)(nil),                               // 23: temporal.api.common.v1.Header
+-	(*v15.UserMetadata)(nil),                        // 24: temporal.api.sdk.v1.UserMetadata
+-	(*v16.PropagatedSerializationContext)(nil),      // 25: temporal.api.nexus.v1.PropagatedSerializationContext
+-	(v17.RetryState)(0),                             // 26: temporal.api.enums.v1.RetryState
+-	(*v18.Failure)(nil),                             // 27: temporal.api.failure.v1.Failure
++	(*v1.Principal)(nil),                            // 21: temporal.api.common.v1.Principal
++	(*v14.WorkerDeploymentVersion)(nil),             // 22: temporal.api.deployment.v1.WorkerDeploymentVersion
++	(*v1.Payloads)(nil),                             // 23: temporal.api.common.v1.Payloads
++	(*v1.Header)(nil),                               // 24: temporal.api.common.v1.Header
++	(*v15.UserMetadata)(nil),                        // 25: temporal.api.sdk.v1.UserMetadata
++	(*v16.PropagatedSerializationContext)(nil),      // 26: temporal.api.nexus.v1.PropagatedSerializationContext
++	(v17.RetryState)(0),                             // 27: temporal.api.enums.v1.RetryState
++	(*v18.Failure)(nil),                             // 28: temporal.api.failure.v1.Failure
+ }
+ var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_depIdxs = []int32{
+ 	13, // 0: temporal.server.chasm.lib.activity.proto.v1.ActivityState.activity_type:type_name -> temporal.api.common.v1.ActivityType
+@@ -14
+```
+
+**File**: `chasm/lib/activity/handler.go` (modified, +8/-5)
+```diff
+@@ -228,18 +228,21 @@ func (h *handler) newActivityForStartExecution(
+ 		}
  	}
- 	s.logger = log.NewTestLogger()
- 	s.setupSuite()
-@@ -646,18 +665,25 @@ func (c *hrsuTestCluster) executeNamespaceReplicationTasksUntil(operation enumss
+ 
+-	if request.GetRequestEagerExecution() {
+-		err = TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
++	eager := request.GetRequestEagerExecution()
++	if eager {
++		if err := TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
+ 			requestID: request.GetRequestId(),
+-			identity:  request.GetIdentity(),
+-		})
++		}); err != nil {
++			return nil, nil, err
++		}
++		newActivity.recordLastWorker(mutableContext, request.GetIdentity())
+ 	} else {
+ 		err = TransitionScheduled.Apply(newActivity, mutableContext, nil)
+ 	}
+ 	if err != nil {
+ 		return nil, nil, err
+ 	}
+-	if !request.GetRequestEagerExecution() {
++	if !eager {
+ 		return newActivity, nil, nil
+ 	}
+ 
+```
+
+**File**: `chasm/lib/activity/proto/v1/activity_state.proto` (modified, +4/-0)
+```diff
+@@ -247,6 +247,10 @@ message ActivityAttemptState {
+ 
+   string last_worker_identity = 7;
+ 
++  // The authenticated principal of the worker that most recently accepted or responded to an activity task.
++  // It is updated with last_worker_identity.
++  temporal.api.common.v1.Principal last_worker_principal = 15;
++
+   // The Worker Deployment Version this activity was dispatched to most recently.
+   // If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
+   temporal.api.deployment.v1.WorkerDeploymentVersion last_deployment_version = 8;
+```
+
+**File**: `chasm/lib/activity/responses.go` (modified, +13/-0)
+```diff
+@@ -221,6 +221,7 @@ func (a *Activity) buildActivityExecutionInfo(
+ 		ActivityType:                        a.GetActivityType(),
+ 		Attempt:                             attempt.GetCount(),
+ 		CanceledReason:                      a.CancelState.GetReason(),
++		ClosedByPrincipal:                   resolvedPrincipal(executionInfo.ClosedByPrincipal),
+ 		CloseTime:                           closeTime,
+ 		CurrentRetryInterval:                a.currentRetryInterval(ctx, attempt),
+ 		EagerExecutionAccepted:              a.GetEagerExecutionAccepted(),
+@@ -235,6 +236,7 @@ func (a *Activity) buildActivityExecutionInfo(
+ 		LastHeartbeatTime:                   heartbeat.GetRecordedTime(),
+ 		LastStartedTime:                     attempt.GetStartedTime(),
+ 		LastWorkerIdentity:                  attempt.GetLastWorkerIdentity(),
++		LastWorkerPrincipal:                 resolvedPrincipal(attempt.GetLastWorkerPrincipal()),
+ 		LastDeploymentVersion:               attempt.GetLastDeploymentVersion(),
+ 		SdkName:                             attempt.GetSdkName(),
+ 		SdkVersion:                          attempt.GetSdkVersion(),
+@@ -248,6 +250,7 @@ func (a *Activity) buildActivityExecutionInfo(
+ 		ScheduleToCloseTimeout:              a.GetScheduleToCloseTimeout(),
+ 		ScheduleToStartTimeout:              a.GetScheduleToStartTimeout(),
+ 		StartDelay:                          a.GetStartDelay(),
++		StartedByPrincipal:                  resolvedPrincipal(executionInfo.StartedByPrincipal),
+ 		StartToCloseTimeout:                 a.GetStartToCloseTimeout(),
+ 		StateSizeBytes:                      int64(executionInfo.ApproximateStateSize),
+ 		StateTransitionCount:                executionInfo.StateTransitionCount,
+@@ -266,6 +269,16 @@ func (a *Activity) buildActivityExecutionInfo(
+ 	return info
  }
  
- // executeHistoryReplicationTasksUntil executes buffered history event replication tasks until the specified
--// event type is encountered.
-+// event type is encountered, and then the rest of that transaction, which can span several tasks when
-+// history.maximumEventBatchSizeInBytes splits it into several batches.
- func (c *hrsuTestCluster) executeHistoryReplicationTasksUntil(
- 	eventType enumspb.EventType,
- ) {
-+	found := false
- 	for {
- 		task := <-c.inboundHistoryReplicationTasks
- 		events := c.t.s.executeHistoryReplicationTask(task)
- 		for _, event := range events {
- 			if event.GetEventType() == eventType {
--				return
-+				found = true
++func resolvedPrincipal(principal *commonpb.Principal) *commonpb.ResolvedPrincipal {
++	if principal == nil {
++		return nil
++	}
++	return &commonpb.ResolvedPrincipal{
++		Type:            principal.GetType(),
++		NameAtWriteTime: principal.GetName(),
++	}
++}
++
+ func (a *Activity) buildDescribeActivityExecutionResponse(
+ 	ctx chasm.Context,
+ 	req *activitypb.DescribeActivityExecutionRequest,
+```
+
+**File**: `chasm/lib/activity/statemachine.go` (modified, +0/-7)
+```diff
+@@ -37,7 +37,6 @@ func (a *Activity) SetStateMachineState(state activitypb.ActivityExecutionStatus
+ type (
+ 	eagerStartEvent struct {
+ 		requestID string
+-		identity  string
+ 	}
+ 
+ 	rescheduleEvent struct {
+@@ -421,7 +420,6 @@ func (a *Activity) applyEagerStarted(ctx chasm.MutableContext, event eagerStartE
+ 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
+ 	}
+ 	attempt.StartRequestId = event.requestID
+-	attempt.LastWorkerIdentity = event.identity
+ 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
+ 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
+ 	// TODO: Populate LastDeploymentVersion when standalone eager start supports worker versioning.
+@@ -479,7 +477,6 @@ func (a *Activity) applyStarted(ctx chasm.MutableContext, request *historyservic
+ 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
+ 	}
+ 	attempt.StartRequestId = request.GetRequestId()
+-	attempt.LastWorkerIdentity = request.GetPollRequest().GetIdentity()
+ 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
+ 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
+ 	if versionDirective := request.GetVersionDirective().GetDeploymentVersion(); versionDirective != nil {
+@@ -527,7 +524,6 @@ func (a *Activity) applyCompleted(ctx chasm.MutableContext, event completeEvent)
  			}
  		}
-+		// The task version history ends at the last event of its transaction.
-+		versionHistoryItems := task.replicationTask.GetHistoryTaskAttributes().GetVersionHistoryItems()
-+		if found && events[len(events)-1].GetEventId() >= versionHistoryItems[len(versionHistoryItems)-1].GetEventId() {
-+			return
-+		}
- 	}
- }
+ 		attempt.CompleteTime = timestamppb.New(ctx.Now(a))
+-		attempt.LastWorkerIdentity = req.GetIdentity()
+ 		outcome := a.Outcome.Get(ctx)
+ 		outcome.Variant = &activitypb.ActivityOutcome_Successful_{
+ 			Successful: &activitypb.ActivityOutcome_Successful{
+@@ -549,9 +545,6 @@ func (a *Activity) applyFailed(ctx chasm.MutableContext, event failedEvent) erro
+ 		req := event.req.GetFailedRequest()
+ 		a.Outcome.Get(ctx).RetryState = event.retryState
  
+-		attempt := a.LastAttempt.Get(ctx)
+-		attempt.LastWorkerIdentity = req.GetIdentity()
+-
+ 		// A worker may respond failed without a Failure. Synthesize a generic terminal failure so
+ 		// the closed activity still exposes a consumable outcome; otherwise PollActivityExecution
+ 		// returns a nil outcome and a client cannot tell the closed activity apart from one that
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12729** (2026-10-26): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #12720** (2026-10-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12714** (2026-10-26): Cloud/v1.33.0-165: Merge revisioned task queue user data during replication (@rkannan82)
 - **PR #12712** (2026-10-24): Cloud/v1.33.0-164: Merge revisioned task queue user data during replication (@rkannan82)
 - **PR #12709** (2026-10-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12700** (2026-10-24): WCP: Read multi batch event ranges from the XDC cache (@simvlad)
-- **PR #12695** (2026-10-23): Blacklist internal Nexus caller headers by default (@prathyushpv)
-- **PR #12693** (2026-10-23): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12701** (2026-10-26): Fix V2 schedules forwarding empty last completion result (#12688) (@davidporter-id-au)
 
 ---
 
@@ -2803,38 +2939,68 @@ the cluster histories never matched.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prevent RPCFactory connection leaks after shutdown (#12658)
+## X. Move query converter test cases to querytest (#12661)
 
 **RULE**:
-When implementing operations in `common/rpc/connection_cache_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/persistence/visibility/store/elasticsearch/query_converter_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67d8427b`: Prevent RPCFactory connection leaks after shutdown (#12658). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cde13dc1`: Move query converter test cases to querytest (#12661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/rpc/connection_cache_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/visibility/store/elasticsearch/query_converter_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	f.connectionsMu.RLock()
-	defer f.connectionsMu.RUnlock()
-	c, ok := f.internodeGRPCConnections[hostName]
-	f.connectionsMu.RLock()
-	defer f.connectionsMu.RUnlock()
-	return len(f.internodeGRPCConnections)
+	"encoding/json"
+	"go.temporal.io/server/common/log"
+	"go.temporal.io/server/common/metrics"
+	"go.temporal.io/server/common/namespace"
+	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
+	"go.temporal.io/server/common/searchattribute"
+
+func TestElasticsearchQueryConverter(t *testing.T) {
+	t.Parallel()
+	querytest.Run(
+		t,
+		querytest.Elasticsearch,
+		newESQueryConverter,
+		serializeESQuery,
+	)
+}
+
+func newESQueryConverter() *query.QueryConverter[elastic.Query] {
+	return NewQueryConverter(
+		namespace.Name("test-namespace"),
+		searchattribute.TestNameTypeMap(),
+		&searchattribute.TestMapper{},
+		metrics.NoopMetricsHandler,
+		log.NewNoopLogger(),
+	)
+}
+
+func serializeESQuery(q elastic.Query) (string, error) {
+	if q == nil {
+		return "", nil
+	}
+	source, err := q.Source()
+	if err != nil {
+		return "", err
+	}
+	data, err := json.Marshal(source)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	f.internodeGRPCConnections.RLock()
-	defer f.internodeGRPCConnections.RUnlock()
-	c, ok := f.internodeGRPCConnections.conns[hostName]
-	f.internodeGRPCConnections.RLock()
-	defer f.internodeGRPCConnections.RUnlock()
-	return len(f.internodeGRPCConnections.conns)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67d8427b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cde13dc1` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source**: github ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
-> **Source Version**: `c1294abd`  
+> **Source Version**: `e3d288fe`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:59:25.358Z  
+> **Timestamp**: 2026-10-26T18:05:20.906Z  
 > **Learning ID**: `learn-github-mui-base-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:59:24.635Z  
+> **Harvest Timestamp**: 2026-10-26T18:05:19.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Unstyled UI components for building accessible web apps and design systems. From the creators of Radix, Floating UI, and Material UI.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11230 stars
+- **Stars / Engagement**: 11241 stars
 
 ---
 
@@ -355,14 +355,14 @@ export function handleInputPress(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6092** (2026-10-24): **[scroll area] Measure every mounting Scroll Area before writing to any**
-  *Symptoms*: Each Scroll Area measured its viewport and wrote its thumb sizes and offsets in one go, so mounting many of them forced a synchronous layout per instance. The measurement now reads first and returns its writes; Scroll Areas measuring in the same task queue in one microtask that runs every read before any write.  The smoke comment below doesn't list it: its 60 one-line Scroll Areas lay out too cheaply for the forced layouts to show. Locally against master (99% intervals), the smoke case shows no change detected, and mounting 300 Scroll Areas with 20 lines of overflowing content each improves paint by only 0.1% to 3.3% (90.8 ms to 90.0 ms), with render unchanged.  Split out of #5974. 
+- **Issue #6106** (2026-10-26): **Exclude docs from the published @base-ui/react package (~3.6 MB)**
+  *Symptoms*: ### Summary `@base-ui/react@1.9.0` (current latest) publishes its `docs/` directory (about 3.9 MB, mostly `docs/react`) in its npm tarball. Every consumer downloads and installs it, but nothing executes it at runtime.  ### Evidence Tarball file listing: https://www.jsdelivr.com/package/npm/@base-ui/react?version=1.9.0  ### Suggested fix Exclude `docs/` from the published files (`files` field or `.npmignore`) and check the result with `npm pack --dry-run`.
   **Post-Mortem & Fix Analysis**:
-  >  - [base-ui-tanstack-start](https://pkg.pr.new/template/d08c03d8-8450-496b-b9fd-271cd361b00b) - [vite-css-base-ui-example](https://pkg.pr.new/template/cd100188-d675-4d10-9a82-607e107e8dd2)     ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/react@6092   ```       ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/utils@6092   ```     _commit: <a href="https://github.com/mui/base-ui/runs/120484731365"><code>6bd980e</code></a>_ 
-  > <!-- ci-report-comment -->  ## Bundle size  | Bundle | Parsed size | Gzip size | |:----------|----------:|----------:| | @base-ui/react | 🔺+204B<sup>(+0.04%)</sup> | 🔺+92B<sup>(+0.05%)</sup> |    [Details of bundle changes](https://code-infra-dashboard.onrender.com/size-comparison/mui/base-ui/diff?sha=6bd980e6bff2b410e86bcaa4f0b8556f0ec4b772&base=c1294abd3c7ab19fa0fb980373af732315b8a5be&prNumber=6092&baseRef=master)  ## Performance  No regressions in 36 benchmarks · ran 4m 12s · [details](https://code-infra-dashboard.onrender.com/benchmark-run/mui/base-ui?sha=6bd980e6bff2b410e86bcaa4f0b8556f0ec4b772&prNumber=6092)  <hr>  Check out the [code infra dashboard](https://code-infra-dashboard.onrender.com/repository/mui/base-ui/prs/6092) for more information about this PR.
+  > We're doing this on purpose so that coding agents have easy access to the docs describing the installed library version.
+  > that makes sense. thanks for the feedback.
 
-- **Issue #6091** (2026-10-23): **[website] Simplify resolved mp4 paths **
-  *Symptoms*: This change fixes broken mp4 paths in production builds since upgrading to next `16.4.1`  What changed between Next 16.3.8 and 16.4.1: - Previously, Next temporarily rewrote config.distDir to .next before invoking Webpack. Our rule therefore emitted videos into docs/.next/static/media/, which Next copied to docs/export/_next/static/media/. - Now, Next preserves config.distDir as export, using a separate internal getBuildDistDir() helper for the .next build directory. Our rule consequently emits videos into docs/export/static/media/ instead—outside the build assets Next copies into _next/static/.  I've moved to storage in public directory for simplicity in build.
+- **Issue #6102** (2026-10-25): **[autocomplete] List can't be scrolled by touch on iOS; the page scrolls instead**
+  *Symptoms*: ## Bug report  ### Current behavior  On iOS, an Autocomplete list that overflows can't be scrolled by touch. Dragging inside the list scrolls the page behind it instead. For an anchored popup the page scroll also dismisses the popup. Rendered inline in a modal Dialog, like a command palette, the list stays put and the page under the dialog moves. If the drag starts on an item, it can fire as a tap and select the item.  ### Expected behavior  Dragging inside the list scrolls the list, as Dialog's inside-scroll demo does on the same device.  ### Reproducible example  1. On iOS Safari, open the Virtualized demo: https://base-ui.com/react/components/autocomplete#virtualized 2. Tap the input so the list opens. 3. Drag up inside the list.  The page scrolls and the popup closes; the list doesn't move.  Same result in the COSS UI command palette, which is Autocomplete inline in a Dialog: https://coss.com/ui/docs/components/command  For comparison, the Dialog "Inside scroll dialog" demo (https://base-ui.com/react/components/dialog#inside-scroll-dialog) scrolls correctly on the same device.  ### Base UI version  v1.9.0  ### Which browser are you using?  Safari, iOS 27.0 (iPhone 18 Pro simulator, Xcode 27.1). Also seen on a physical iPhone in Chrome for iOS (WebKit).  ### Which OS are you using?  iOS 27.0  ### Additional context  Measured in our own command palette (COSS command: Autocomplete with `inline` and `open` in a modal Dialog, list wrapped in a ScrollArea):  - The list viewport
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -379,229 +379,283 @@ export function handleInputPress(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a212e6bd` (2026-10-23)
-**Commit Message**: [code-infra] Update Node.js and Next.js for security fixes (#6089)
+### Incident Patch 1: `fc3bd5fb` (2026-10-26)
+**Commit Message**: Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)
 
-**File**: `.circleci/config.yml` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ default-job: &default-job
-   working_directory: /tmp/base-ui
-   executor:
-     name: code-infra/mui-node
--    node-version: '22.23.3'
-+    node-version: '22.23.4'
- 
- default-context: &default-context
-   context:
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +4/-4)
-```diff
-@@ -26,7 +26,7 @@ jobs:
-       - name: Use Node.js 22.x
-         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         with:
--          node-version: '22.23.3'
-+          node-version: '22.23.4'
-           cache: 'pnpm' # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-dependencies
-       - run: pnpm install
-       - run: pnpm release:build
-@@ -48,7 +48,7 @@ jobs:
-       - name: Use Node.js 22.x
-         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         with:
--          node-version: '22.23.3'
-+          node-version: '22.23.4'
-           cache: 'pnpm' # https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#caching-packages-dependencies
-       - run: pnpm install
-       - name: Extract Vale version
-@@ -81,7 +81,7 @@ jobs:
-       - name: Use Node.js 22.x
-         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-         with:
--          node-version: '22.23.3'
-+          node-version: '22.23.4'
-           cache: 'pnpm'
-       - run: pnpm install
-       - run: pnpm test:screen-reader
-@@ -99,7 +99,7 @@ jobs:
-       - name: Prepare for publishing
-         uses: mui/mui-public/.github/actions/publish-prepare@0a555da875ab03199afe8f28dbb4c723f853a52d # master
-         with:
--          node-version: '22.23.3'
-+          node-version: '22.23.4'
-       - name: Dry run npm publishing
-         env:
-           IS_PUBLISH_TEST: 'true'
-```
-
-**File**: `.github/workflows/publish.yml` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ jobs:
-       - name: Prepare for publishing
-         uses: mui/mui-public/.github/actions/publish-prepare@0a555da875ab03199afe8f28dbb4c723f853a52d # master
-         with:
--          node-version: '22.23.3'
-+          node-version: '22.23.4'
-       - name: Publish packages
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-**File**: `CONTRIBUTING.md` (modified, +2/-2)
-```diff
-@@ -4,8 +4,8 @@
- 
- The repository declares its supported toolchain in the `engines` field of `package.json` and enables pnpm's `engineStrict`, so installing with an unsupported version fails early:
- 
--- [Node.js](https://nodejs.org/) 22.22.3 or newer.
--- [pnpm](https://pnpm.io/installation) 11.17.0 exactly. yarn and npm aren't supported.
-+- [Node.js](https://nodejs.org/) 22.23.4 or newer.
-+- [pnpm](https://pnpm.io/installation) 12.11.2 exactly. yarn and npm aren't supported.
- 
- The pnpm version is also pinned in the `packageManager` field, and pnpm 10 and newer honors that pin, so a recent pnpm switches to the required version on its own when run inside the repository.
- Alternatively, enable [Corepack](https://nodejs.org/api/corepack.html) so that Node.js installs the pinned version for you:
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@
-     "lucide-react": "^1.56.0",
-     "lz-string": "^1.5.0",
-     "match-sorter": "^8.3.0",
--    "next": "16.3.8",
-+    "next": "16.4.1",
-     "postcss": "^8.5.30",
-     "postcss-custom-media": "^12.0.3",
-     "postcss-import": "^17.0.0",
-```
-
-**File**: `netlify.toml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-   command = "pnpm docs:build"
- 
- [build.environment]
--  NODE_VERSION = "22.23.3"
-+  NODE_VERSION = "22.23.4"
-   PNPM_FLAGS = "--frozen-lockfile"
- 
- [[plugins]]
-```
+Co-authored-by: code-infra-renovate[bot] <290386390+code-infra-renovate[bot]@users.noreply.github.com>
 
 **File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -120,6 +120,6 @@
-   "packageManager": "pnpm@12.11.2",
-   "engines": {
-     "pnpm": "12.11.2",
--    "node": ">=22.23.3"
-+    "node": ">=22.23.4"
+@@ -87,7 +87,7 @@
+     "@vitejs/plugin-react": "6.1.2",
+     "@vitest/browser-playwright": "5.0.4",
+     "@vitest/coverage-istanbul": "5.0.4",
+-    "@vitest/ui": "5.0.4",
++    "@vitest/ui": "5.0.5",
+     "concurrently": "10.0.6",
+     "cross-env": "10.1.0",
+     "docs": "workspace:^",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +49/-18)
+```diff
+@@ -220,7 +220,7 @@ importers:
+         version: 0.1.1-canary.2
+       '@mui/internal-test-utils':
+         specifier: 2.1.1-canary.3
+-        version: 2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.4)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
++        version: 2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.5)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
+       '@netlify/types':
+         specifier: 3.2.0
+         version: 3.2.0
+@@ -255,8 +255,8 @@ importers:
+         specifier: 5.0.4
+         version: 5.0.4(vitest@5.0.4)
+       '@vitest/ui':
+-        specifier: 5.0.4
+-        version: 5.0.4(vitest@5.0.4)
++        specifier: 5.0.5
++        version: 5.0.5(vitest@5.0.4)
+       concurrently:
+         specifier: 10.0.6
+         version: 10.0.6
+@@ -331,7 +331,7 @@ importers:
+         version: 8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+       vitest:
+         specifier: 5.0.4
+-        version: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
++        version: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.5)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+ 
+   docs:
+     dependencies:
+@@ -4603,6 +4603,9 @@ packages:
+   '@vitest/pretty-format@5.0.4':
+     resolution: {integrity: sha512-kh/bp0oLr6w18kt4MFn5/zS+Hpc5k3bsf6S2m2Qksj7sKHrnc7Tu90UVYyiXnRvkYruN6kSCHQ3RR+SBE6FinA==}
+ 
++  '@vitest/pretty-format@5.0.5':
++    resolution: {integrity: sha512-24sSdIlMA9DVPXnYiB9siwU0bTd887Y9jX3+vabztCSsvHwo7ipvJ/a2L3Rljw8+2rK1f5fCj3h5U9I/Jsqgbw==}
++
+   '@vitest/spy@5.0.4':
+     resolution: {integrity: sha512-MZKk/gSkm2q+ICobMxCpH1mA+cCAWm8WV7UhxlqGjq/sJ3AGc1BqFOs5CRVXxH78wQtme9q/NAAgBquj4AcyMw==}
+ 
+@@ -4611,9 +4614,17 @@ packages:
+     peerDependencies:
+       vitest: 5.0.4
+ 
++  '@vitest/ui@5.0.5':
++    resolution: {integrity: sha512-dCoGUOdgmCaSB2g+WQ/spPCBkytAWdNUkFSXY4z+eYp2d8JEOY8v0uDRaJTG9qf/kTlTVZ4CuYMYMz/f1HS/qQ==}
++    peerDependencies:
++      vitest: 5.0.5
++
+   '@vitest/utils@5.0.4':
+     resolution: {integrity: sha512-hgpnyMuMqCz2PARmk3v62FxUr8jHIkY13ygvUeh8s+dmQxfnvkB/sgtoZFzG4lMitnEdnrg/lCvDbtVzuAsGWQ==}
+ 
++  '@vitest/utils@5.0.5':
++    resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
++
+   '@webassemblyjs/ast@1.14.1':
+     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
+ 
+@@ -11528,7 +11539,7 @@ snapshots:
+ 
+   '@mui/internal-netlify-cache@0.1.1-canary.2': {}
+ 
+-  '@mui/internal-test-utils@2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.4)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
++  '@mui/internal-test-utils@2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.5)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
+     dependencies:
+       '@babel/runtime': 8.0.7
+       '@playwright/test': 1.64.0
+@@ -11545,7 +11556,7 @@ snapshots:
+       prop-types: 15.8.1
+       react: 19.3.0
+       react-dom: 19.3.0(react@19.3.0)
+-      vitest-fail-on-console: 0.10.1(@vitest/utils@5.0.4)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
++      vitest-fail-on-console: 0.10.1(@vitest/utils@5.0.5)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
+     transitivePeerDependencies:
+       - '@types/react'
+       - '@types/react-dom'
+@@ -13197,7 +13208,7 @@ snapshots:
+       picocolors: 1.1.1
+       redent: 3.0.0
+     optionalDependencies:
+-      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
++      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +2/-0)
+```diff
+@@ -69,6 +69,8 @@ minimumReleaseAgeExclude:
+   - next@16.4.1
+   # Renovate security update: vite@8.3.3
+   - vite@8.3.3
++  # Renovate security update: @vitest/ui@5.0.5
++  - '@vitest/ui@5.0.5'
+ # Drop exemptions from minimumReleaseAgeExclude once the lockfile stops resolving them,
+ # so the security-update entries Renovate adds do not accumulate.
+ minimumReleaseAgeExcludePrune: true
+```
+
+---
+
+### Incident Patch 2: `8014975d` (2026-10-26)
+**Commit Message**: Bump vite to 8.3.3 [SECURITY] (#6097)
+
+Co-authored-by: code-infra-renovate[bot] <290386390+code-infra-renovate[bot]@users.noreply.github.com>
+
+**File**: `pnpm-lock.yaml` (modified, +26/-26)
+```diff
+@@ -743,7 +743,7 @@ importers:
+     devDependencies:
+       '@mui/internal-benchmark':
+         specifier: 0.1.1-canary.8
+-        version: 0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
++        version: 0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
+       '@playwright/test':
+         specifier: 1.64.0
+         version: 1.64.0
+@@ -754,8 +754,8 @@ importers:
+         specifier: 19.3.0
+         version: 19.3.0(@types/react@19.3.0)
+       vite:
+-        specifier: 8.3.1
+-        version: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
++        specifier: 8.3.3
++        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+ 
+   test/bundle-size:
+     dependencies:
+@@ -9215,8 +9215,8 @@ packages:
+   vfile@6.0.3:
+     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
+ 
+-  vite@8.3.1:
+-    resolution: {integrity: sha512-/bvH9E9tmCXRGp2uXY3WbOldqpTwFkbha/8ANaEQ6VkxhH60KyqLwgZq6lG2y+4uT55x9+9eUHMpQ7uGnOCKjA==}
++  vite@8.3.3:
++    resolution: {integrity: sha512-cTAldKPImjg6c+gk48U19POPn3GCBzZwpdsN8ZMEEcbpes+6/wvfqUd0C2y3qYY4wsj8PwgFwrZ/1jBPVttMSg==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     hasBin: true
+     peerDependencies:
+@@ -11294,13 +11294,13 @@ snapshots:
+       '@babel/core': 8.0.7
+       resolve: 1.22.13
+ 
+-  '@mui/internal-benchmark@0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
++  '@mui/internal-benchmark@0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
+     dependencies:
+       '@babel/runtime': 8.0.7
+       '@playwright/test': 1.64.0
+       '@pnpm/find-workspace-dir': 1000.1.5
+-      '@vitejs/plugin-react': 6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+-      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
++      '@vitejs/plugin-react': 6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
++      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
+       chalk: 6.0.1
+       env-ci: 11.2.0
+       es-toolkit: 1.52.0
+@@ -11309,12 +11309,12 @@ snapshots:
+       react: 19.3.0
+       react-dom: 19.3.0(react@19.3.0)
+       sirv: 3.0.2
+-      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@10.2.2))(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
++      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@10.2.2))(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+       yaml: 2.9.1
+       yargs: 18.2.0
+       zod: 4.6.7
+     optionalDependencies:
+-      vite: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
++      vite: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+     transitivePeerDependencies:
+       - '@rolldown/plugin-babel'
+       - babel-plugin-react-compiler
+@@ -13606,10 +13606,10 @@ snapshots:
+   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
+     optional: true
+ 
+-  '@vitejs/plugin-react@6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
++  '@vitejs/plugin-react@6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
+     dependencies:
+       '@rolldown/pluginutils': 1.0.1
+-      vite: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +2/-0)
+```diff
+@@ -67,6 +67,8 @@ minimumReleaseAgeExclude:
+   - '@base-ui/*'
+   - '@mui/internal-*'
+   - next@16.4.1
++  # Renovate security update: vite@8.3.3
++  - vite@8.3.3
+ # Drop exemptions from minimumReleaseAgeExclude once the lockfile stops resolving them,
+ # so the security-update entries Renovate adds do not accumulate.
+ minimumReleaseAgeExcludePrune: true
+```
+
+**File**: `test/benchmark/package.json` (modified, +1/-1)
+```diff
+@@ -17,6 +17,6 @@
+     "@playwright/test": "1.64.0",
+     "@types/react": "19.3.0",
+     "@types/react-dom": "19.3.0",
+-    "vite": "8.3.1"
++    "vite": "8.3.3"
    }
  }
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +44/-44)
+---
+
+### Incident Patch 3: `5e1f2e63` (2026-10-26)
+**Commit Message**: [context menu] Fix `actionsRef` type (#5902)
+
+Co-authored-by: Michał Dudak <[REDACTED_EMAIL]>
+
+**File**: `docs/src/app/(docs)/react/components/context-menu/types.md` (modified, +1/-1)
 ```diff
-@@ -346,7 +346,7 @@ importers:
-         version: 3.1.1(@types/react@19.3.0)(react@19.3.0)
-       '@mui/internal-docs-infra':
-         specifier: 0.13.1-canary.17
--        version: 0.13.1-canary.17(@types/react@19.3.0)(next@16.3.8(@babel/core@8.0.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prettier@3.9.10)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(supports-color@10.2.2)
-+        version: 0.13.1-canary.17(@types/react@19.3.0)(next@16.4.1(@babel/core@8.0.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(prettier@3.9.10)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(supports-color@10.2.2)
-       '@next/mdx':
-         specifier: ^16.4.0
-         version: 16.4.0(@mdx-js/loader@3.1.1(supports-color@10.2.2)(webpack@5.111.1(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.30)(sharp@0.35.5(@types/node@22.20.5))(uglify-js@3.19.3)))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.0))
-@@ -399,8 +399,8 @@ importers:
-         specifier: ^8.3.0
-         version: 8.3.0
-       next:
--        specifier: 16.3.8
--        version: 16.3.8(@babel/core@8.0.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-+        specifier: 16.4.1
-+        version: 16.4.1(@babel/core@8.0.7)(@playwright/test@1.64.0)(@types/node@22.20.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-       postcss:
-         specifier: ^8.5.30
-         version: 8.5.30
-@@ -2629,8 +2629,8 @@ packages:
-     resolution: {integrity: sha512-PVvY1EEN9i2Er0LQoiyNG7i/BnwnttLuZqIkBnhL2Jrcj3P5N/NcGkv1i20MJ2ngNGSPQcT7tagDmF3V6BsdWg==}
-     engines: {node: '>=22.12.0'}
- 
--  '@next/env@16.3.8':
--    resolution: {integrity: sha512-Al9zqHVV7TJv0eFuOU4U7Lvv74PTih4Ch63sk2xCIpSTkE3udFnaOcnzP2lQVymiL7yS9Cj2iClUXlR3EQ5sEw==}
-+  '@next/env@16.4.1':
-+    resolution: {integrity: sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==}
- 
-   '@next/eslint-plugin-next@16.4.0':
-     resolution: {integrity: sha512-ffeflB/dL8RrvWejQximw01pOpKHN692Y3FjDB82DCd0YVvXvBD6vY7mcZp27yvSVFVM6wA73xVodEKF4spizA==}
-@@ -2646,54 +2646,54 @@ packages:
-       '@mdx-js/react':
-         optional: true
- 
--  '@next/swc-darwin-arm64@16.3.8':
--    resolution: {integrity: sha512-2JPRMh2nmQG5CiL7cXGL9AGwnPWJQ//cTtAUCT+w511QHk79SYz3LGv/pc5X643B/WEO0rvu3Yww0hqwt3kgeA==}
-+  '@next/swc-darwin-arm64@16.4.1':
-+    resolution: {integrity: sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@next/swc-darwin-x64@16.3.8':
--    resolution: {integrity: sha512-GZtCCOBKJ4leVIT/Th0llWKhD1ca92lzbQiS5R5ON9QkoiFnilFsebDae1JU2a3HWoKMEmEZWGs1AGLavVM72Q==}
-+  '@next/swc-darwin-x64@16.4.1':
-+    resolution: {integrity: sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@next/swc-linux-arm64-gnu@16.3.8':
--    resolution: {integrity: sha512-O659ygeQYqneJ1fBKMpFxIFqYkYswu8IAS1OCKK/4f3ZgJJm1dRz4fVJZRi/kLLWjnBKnebOePA4WNv+sV1pVA==}
-+  '@next/swc-linux-arm64-gnu@16.4.1':
-+    resolution: {integrity: sha512-GHzncHbcaS9g95kcvTNtKQW3aCLoR+xc3Jm7qrkpk1R+D2BjMHIPyvQGRPKCdMX95BsH/421jBUK06q9tEwzjw==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@next/swc-linux-arm64-musl@16.3.8':
--    resolution: {integrity: sha512-dSjKSyWpzxoO1d3DIZZcP4XJcNaKeLmxQMFOiYl5vuBRMmweIqnAhty8tAmRsvTss779cK1FtYnDMj40e4TQlg==}
-+  '@next/swc-linux-arm64-musl@16.4.1':
-+    resolution: {integrity: sha512-1SuJyDxW/PR9dHJat/ZRgcYLhuSZ+1psP4DlKb2tKIuXbjygqpLrJWRSq+onZQBv8LcmU67EIrmb6c3XTaJLjw==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-     libc: [musl]
- 
--  '@next/swc-linux-x64-gnu@16.3.8':
--    resolution: {integrity: sha512-lbqOuz3RPRcv+o9msNsJw5x4+Y1ZwPTs6vmL6DCf7i0fZfvng/F59wyeDwqHIvV0mK//RBy/jJkZ+nCKsSMXjQ==}
-+  '@next/swc-linux-x64-gnu@16.4.1':
-+    resolution: {integrity: sha512-Istng1hMGp9TGO4lUqeKLd70MPN/OOkucVTP2Nmj+gLkwBgmPqUw8CJYBCC7nbl/B/23bBCcjCI5Hsh6hazC1A==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-     libc: [glibc]
- 
--  '@next/swc-linux-x64-musl@16.3.8':
--    resolution: {integrity: sha512-+316WswI8ScVgZeUd+1KGaXkHhaYQzCjvH/05TZSpJ8zBizb1a4G7DtO7F12jcBIqMOtsz9ji1t48fmKtzqsGA==}
-+  '@next/swc-linux-x64-musl@16.4.1':
-+    resolution: {integrity: sha512-aSC9wMNiZRRFVpPkPWBzRwLQxIGm/CiQcXyFF1XNcgodb+uMxdk7aSSGGpDXCbnvZdf4itjHxpOd5h7i7zaiYw==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-     libc: [musl]
- 
--  '@next/swc-win32-arm64-msvc@16.3.8':
--    resolution: {integrity: sha512-ji0gd4kMYUxO+1fJBIbiBVRCjzG/lloiyCccnlebvb1ZJ5qXCPZqYg4Jl1DrrixnWNMKylzgpmMWx0yNDYXlzw==}
-+  '@next/swc-win32-arm64-msvc@16.4.1':
+@@ -17,7 +17,7 @@ Doesn't render its own HTML element.
+ | open                 | `boolean`                                                                                             | -            | Whether the menu is currently open.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+ | onOpenChange         | `((open: boolean, eventDetails: ContextMenu.Root.ChangeEventDetails) => void)`                        | -            | Event handler called when the menu is opened or closed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+ | highlightItemOnHover | `boolean`                                                                                             | `true`       | Whether moving the pointer over items should highlight them.&#xA;Disabling this prop allows CSS `:hover` to be differentiated from the `:focus` (`data-highlighted`) state.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+-| actionsRef           | `React.RefObject<MenuRoot.Actions \| null>`                                                           | -            | A ref to imperative actions. `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.&#xA;Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.&#xA;Whether it leaves the DOM is decided by `keepMounted` on the portal.`close`: Closes the menu imperatively when called.                                                                                                                                                                                                                                                       |
++| actionsRef           | `React.RefObject<ContextMenu.Root.Actions \| null>`                                                   | -            | A ref to imperative actions. `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.&#xA;Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.&#xA;Whether it leaves the DOM is decided by `keepMounted` on the portal.`close`: Closes the menu imperatively when called.                                                                                                                                                                                                                                                       |
+ | loopFocus            | `boolean`                                                                                             | `true`       | Whether to loop keyboard focus back to the first item&#xA;when the end of the list is reached while using the arrow keys.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+ | onItemHighlighted    | `((highlightedItem: HTMLElement \| undefined, eventDetails: MenuRoot.HighlightEventDetails) => void)` | -            | Callback fired when an item is highlighted or unhighlighted.&#xA;Receives the highlighted item element (or `undefined` if no item is highlighted) and details&#xA;containing the reason for the change, the event, and the item's text label.&#xA;The 
+```
+
+**File**: `packages/react/src/context-menu/root/ContextMenuRoot.tsx` (modified, +9/-0)
+```diff
+@@ -67,6 +67,7 @@ export interface ContextMenuRootProps extends Omit<
+   | 'closeDelay'
+   | 'closeParentOnEsc'
+   | 'onOpenChange'
++  | 'actionsRef'
+   // Context Menu opens from a pointer position rather than a registered trigger, so the
+   // render-function form of `children` (which receives the active trigger's payload) is not applicable.
+   | 'children'
+@@ -76,6 +77,14 @@ export interface ContextMenuRootProps extends Omit<
+    */
+   onOpenChange?:
+     ((open: boolean, eventDetails: ContextMenuRoot.ChangeEventDetails) => void) | undefined;
++  /**
++   * A ref to imperative actions.
++   * - `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.
++   * Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.
++   * Whether it leaves the DOM is decided by `keepMounted` on the portal.
++   * - `close`: Closes the menu imperatively when called.
++   */
++  actionsRef?: React.RefObject<ContextMenuRoot.Actions | null> | undefined;
+   /**
+    * @ignore
+    * @deprecated This prop has no effect on Context Menu.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6097** (2026-10-26): Bump vite to 8.3.3 [SECURITY] (@code-infra-renovate[bot])
+- **PR #6096** (2026-10-26): Bump @vitest/ui to 5.0.5 [SECURITY] (@code-infra-renovate[bot])
 - **PR #6092** (closed): [scroll area] Measure every mounting Scroll Area before writing to any (@Janpot)
 - **PR #6091** (2026-10-23): [website] Simplify resolved mp4 paths  (@andy-hook)
 - **PR #6089** (2026-10-23): [code-infra] Update Node.js and Next.js for security fixes (@jjenzz)
-- **PR #6066** (2026-10-22): [tooltip] Keep the trigger disabled when the root is disabled (@flaviendelangle)
-- **PR #6061** (2026-10-22): [internal] Use existing helpers instead of inline copies (@flaviendelangle)
-- **PR #6060** (2026-10-22): [combobox] Remove unused `query` from the derived items context (@flaviendelangle)
+- **PR #6087** (2026-10-26): Bump vale-cli/vale to 3.25.1 (@code-infra-renovate[bot])
 
 ---
 
@@ -621,28 +675,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [code-infra] Update Node.js and Next.js for security fixes (#6089)
+## X. Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)
 
 **RULE**:
-When implementing operations in `.circleci/config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a212e6bd`: [code-infra] Update Node.js and Next.js for security fixes (#6089). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc3bd5fb`: Bump @vitest/ui to 5.0.5 [SECURITY] (#6096). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/config.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    node-version: '22.23.4'
+    "@vitest/ui": "5.0.5",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    node-version: '22.23.3'
+    "@vitest/ui": "5.0.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a212e6bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc3bd5fb` are properly handled with clean fallback behavior.

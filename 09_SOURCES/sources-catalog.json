@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "621dd74c",
+    "sourceVersion": "7d8341a4",
     "license": "Apache-2.0",
-    "contentHash": "3dfa9131e9e2da6682ac1222b6374fd09a27d14943ed72f5dbf7aa3bbb0aca6f",
-    "lastHarvestedAt": "2026-10-26T09:23:37.029Z",
+    "contentHash": "1e789e541355f41075a002c4ccb3484520f1e63ef670a1c9bd91497fa855490c",
+    "lastHarvestedAt": "2026-10-26T18:05:35.287Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "af7e5c5d",
+    "sourceVersion": "2052f24e",
     "license": "Apache-2.0",
-    "contentHash": "9ec56012c141c6ca9329ffac57eae5080f23ba77bac097dbfd95590663ad1c10",
-    "lastHarvestedAt": "2026-10-25T17:21:09.069Z",
+    "contentHash": "0620b175b72f8795aa3632f980b2808df2e2b0fe54da651a3f3c42f866f5fba5",
+    "lastHarvestedAt": "2026-10-26T18:05:34.223Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "c1294abd",
+    "sourceVersion": "e3d288fe",
     "license": "MIT",
-    "contentHash": "9b292d75f7cd9d16474cd75458557254d8df11743f110f3231ab1232d23b780e",
-    "lastHarvestedAt": "2026-10-25T03:59:25.835Z",
+    "contentHash": "bfda050ecf41d67dc3e8132480362a5c18f95ad5e07ba6461c46f387cc9518e7",
+    "lastHarvestedAt": "2026-10-26T18:05:21.404Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "1bcd8820",
+    "sourceVersion": "cde13dc1",
     "license": "MIT",
-    "contentHash": "214f38576504481778bbcb89621897e53af61562a205c404165d71e661500812",
-    "lastHarvestedAt": "2026-10-25T18:15:28.965Z",
+    "contentHash": "1d09a55f383ce34114b1c9eb229164ac185af2ae78ff512f8ef755abc9e4dbcd",
+    "lastHarvestedAt": "2026-10-26T18:05:30.095Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
