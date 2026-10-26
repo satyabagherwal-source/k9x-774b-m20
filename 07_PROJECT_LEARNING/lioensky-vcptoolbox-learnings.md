@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `e2dc7bf0`  
+> **Source Version**: `b98e4117`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:16:11.192Z  
+> **Timestamp**: 2026-10-26T12:13:37.825Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:16:11.186Z  
+> **Harvest Timestamp**: 2026-10-26T12:13:37.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2403 stars
+- **Stars / Engagement**: 2406 stars
 
 ---
 
@@ -1785,11 +1785,14 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #548** (2026-10-25): **fix: archery 审核反馈优先回传改造**
-  *Symptoms*: 人工审核拒绝时，用户在审核框填写的反馈必须回传给 AI；无反馈则保持静默。 本次改动把两个原始提交与其后续修复压缩为单一提交。  - Plugin.js：静默拒绝分支不再无条件返回 undefined。有用户反馈时走与普通拒绝 同构的抛错路径，让上游既有错误链产出 isError=true；无反馈时维持静默语义。 handleApprovalResponse 在 notifyAiOnReject=false 且带原因时，把 userFeedback 随 resolve 一并带出。修正注释中的 archey 拼写。 - toolExecutor._createErrorResult：剥掉真实调用链 catch 前缀「执行错误: 」后再 解析 JSON。原实现直接对 message 判断 startsWith('{')，因前缀污染恒为 false， 解析分支从未生效，AI 实际收到的是转义串噪声。可读文本拼接由字面量 \\n 改为 真实换行。 - toolExecutor.executeAll：finishRecord 的 success 由硬编码 true 改为取 processedResult.success，与 _processResult 的 innerFailed 判定保持一致， 插件显式返回 { success: false } 不再被记为成功。 - tests：新增 approvalFeedbackPassthrough 覆盖审核反馈透传与错误还原。 方法体抽取改用 acorn AST——原手写词法扫描无法处理模板字符串与转义序列， 且文件内含语法错误，自初始提交起从未实际执行过。
+- **Issue #553** (2026-10-26): **feat(VTrade): 新增本地看盘与 AI 模拟交易插件，六个插槽可替换**
+  *Symptoms*: 
 
-- **Issue #547** (2026-10-25): **fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传**
-  *Symptoms*: 本次只新增一笔提交 [964c7974](https://github.com/CI-IISATO/VCPToolBox/commit/964c7974b7e192faf183d1ceaaf826def1f073d5)，修改 4 个文件；没有重新打包 #544，也没有提交预编译二进制。  [仅本次四文件补修的差异](https://github.com/CI-IISATO/VCPToolBox/compare/08b77c62427ecde030cf036bd3f9882778b46f05...964c7974b7e192faf183d1ceaaf826def1f073d5)。当前 main 回退后暂不含 #544，因此本 PR 的总 diff 会显示前置依赖；请以该提交链接审阅补修，在 #544 恢复并同步本 PR 基线后再合并，或只挑选这一笔补修提交。  修复 #544 评审指出的稀疏补充遗漏：先截取 512 条再排除 ID，会让第 513 条及后续可用记录失去补入机会。这里操作的是 Chunk ID；调用方需显式提供 annSearch.excludeIds。  比较口径：原始上游 c603f136 的 ANN 候选池没有原生 ID 排除。#544 新增排除谓词下推；本补修直接以 #544 源码提交 08b77c62 为父提交，只有下述四文件补修。性能探针还原的是 #544 后的稀疏规则（开发起点 9941cd82 在这四个文件上与 08b77c62 一致），不能作为整套方案相对最初上游的端到端收益。  补找规则：  - 保留每个文件候选最多追加 512 个未被 ID 排除的记录。没有 ID 排除时仍沿原正文查询，不启用深查。 - 有排除时先在同一查询中补找，最多额外查看 min(64, 排除集大小) 条。先检查 ID，再将未排除的正文解码成字符串和 JSON。 - 未补满且窗口未确认到达 EOF 时，才读取后备 ID 索引，再批量读取选中正文。后备跳过窗口已见 ID，并恢复选中 ID 的顺序。 - 后备每个文件候选最多读取 4,608 个 ID，整个查询共享 16,384 个 ID 的预算。预算耗尽后，后续文件仍执行基础窗口；候选池不会被清空，仍按原规则排序和重排。  调用链与预算隔离：  - KnowledgeBaseManager 的 executeExternalRerank、executeParallelRerank 转发 options.annSearch。显式提供选项时检查原生 index.query-options.v1 能力，旧模块明确返回重编译错误，避免静默忽略排除。 - 在同一读事务内，先从文件元数据核对日记作用域，再读取 Chunk；范围外文件不会消耗后备 ID 预算。 - 对输入前 255 个文件候选按规范化路径去重，保留最高归一化分及首次位置，避免重复路径反复消耗预算。原有事务与发布门禁保留。 - diagnostics.nativeRerank.sparseScan 分别报告文件元数据、窗口、ID 后备、批量正文、正文解码及重复候选计数，以及预算和 filesStoppedAtScanLimit。诊断可传到插件广播，但不会自动重试。  验证：  - 8 项实际 SQL 回归测试：513/514 后继、完整连续 ID 序列、100 个文件长度与排除模式组合、预算边界、全局预算耗尽后后续文件仍返回结果、反序与两处解码错误传播。 - 新增预算污染反例：4 个范围外文件
+- **Issue #552** (2026-10-26): **feat(MinerUParser): add MinerU PDF parser, dedupe, and knowledge base**
+  *Symptoms*: ## Summary  Adds `Plugin/MinerUParser`, a synchronous Rust stdio plugin that turns PDFs into a clean local knowledge base without polluting the model context.  - `parse` / `query` / `status` / `batch`: MinerU v4 local-file and URL parsing, SHA-256 caching, >200-page sharding, continuation, and concurrent batches. - `migrate` / `locate` / `read`: readable asset directories, keyword lookup, ranged/section Markdown reads, and multimodal image slices returned as `image_url` content parts. - `preflight`: pre-import dedupe by PDF SHA-256, including duplicates inside the same selection and existing library hits. - `duplicates`: read-only whole-library scan by paper id, normalized body fingerprint, normalized title, and source path. - `list` / `info`: workspace-aware library listing and single-paper detail.  Safety and limits: ZIP extraction defenses, path containment, output budgets, token masking, and read-only dedupe. Token is read from `config.env` and is not committed.  The companion VCPChat workbench is submitted separately; this plugin can also be used directly from tool calls.  ## Test plan  - [x] `cargo test` — 76 passed - [x] Release build; `bin/MinerUParser-x86_64-pc-windows-msvc.exe` matches the release binary SHA-256 - [x] Real stdio end-to-end: 520 PDFs → preflight returns 500 with `truncated=true` - [x] 80-level nested folder is discovered; pathological 70-segment glob returns a bounded error - [x] Whole-library duplicate scan on 43 papers completes read-only in ~0.1s 
+  **Post-Mortem & Fix Analysis**:
+  > Companion workbench UI: lioensky/VCPChat#284
+  > 插件商店已有类似插件，建议pr到插件商店
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,1159 +1809,107 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aab375a1` (2026-10-25)
-**Commit Message**: fix: archery 审核反馈优先回传改造
+### Incident Patch 1: `b98e4117` (2026-10-26)
+**Commit Message**: fix
 
-人工审核拒绝时，用户在审核框填写的反馈必须回传给 AI；无反馈则保持静默。
-本次改动把两个原始提交与其后续修复压缩为单一提交。
-
-- Plugin.js：静默拒绝分支不再无条件返回 undefined。有用户反馈时走与普通拒绝
-  同构的抛错路径，让上游既有错误链产出 isError=true；无反馈时维持静默语义。
-  handleApprovalResponse 在 notifyAiOnReject=false 且带原因时，把 userFeedback
-  随 resolve 一并带出。修正注释中的 archey 拼写。
-- toolExecutor._createErrorResult：剥掉真实调用链 catch 前缀「执行错误: 」后再
-  解析 JSON。原实现直接对 message 判断 startsWith('{')，因前缀污染恒为 false，
-  解析分支从未生效，AI 实际收到的是转义串噪声。可读文本拼接由字面量 \\n 改为
-  真实换行。
-- toolExecutor.executeAll：finishRecord 的 success 由硬编码 true 改为取
-  processedResult.success，与 _processResult 的 innerFailed 判定保持一致，
-  插件显式返回 { success: false } 不再被记为成功。
-- tests：新增 approvalFeedbackPassthrough 覆盖审核反馈透传与错误还原。
-  方法体抽取改用 acorn AST——原手写词法扫描无法处理模板字符串与转义序列，
-  且文件内含语法错误，自初始提交起从未实际执行过。
-
-**File**: `Plugin.js` (modified, +39/-8)
+**File**: `TVStxt/JevToolCall.txt` (modified, +25/-22)
 ```diff
-@@ -1399,23 +1399,46 @@ class PluginManager extends EventEmitter {
-             try {
-                 const approvalResult = await approvalPromise;
-                 if (approvalResult && approvalResult.silentRejected === true) {
--                    if (this.debugMode) {
--                        console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) was rejected silently. Returning empty result to AI.`);
--                    }
-+                    const userFeedback = typeof approvalResult.userFeedback === 'string'
-+                        ? approvalResult.userFeedback.trim()
-+                        : '';
-                     const silentRejectionRecord = {
-                         status: 'rejected',
-                         success: false,
-                         silentRejected: true,
-                         error_type: 'approval_rejected',
-                         rejected_by_user: true,
--                        message: `Tool call "${toolName}" was rejected silently by manual approval.`
-+                        message: userFeedback
-+                            ? `Tool call "${toolName}" was rejected by manual approval with user feedback.`
-+                            : `Tool call "${toolName}" was rejected silently by manual approval.`,
-+                        ...(userFeedback ? { user_feedback: userFeedback } : {})
-                     };
-                     toolCallRecordStore.finishRecord(managedToolCallRecord, {
-                         success: false,
-                         result: silentRejectionRecord,
-                         error: silentRejectionRecord.message
-                     });
--                    return undefined;
-+
-+                    // 无用户输入：archery 语义生效，静默吞掉回执，AI 完全无感。
-+                    if (!userFeedback) {
-+                        if (this.debugMode) {
-+                            console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) was rejected silently. Returning empty result to AI.`);
-+                        }
-+                        return undefined;
-+                    }
-+
-+                    // 有用户输入：优先传递用户反馈。
-+                    // 走与普通拒绝完全同构的抛错路径，让上层既有错误链产出 isError=true，
-+                    // archery 分支才能把内容写回对话而不是静默终止。
-+                    if (this.debugMode) {
-+                        console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) was rejected with user feedback; raising rejection to surface feedback to AI.`);
-+                    }
-+                    throw new Error(JSON.stringify({
-+                        plugin_error: `Tool call "${toolName}" was REJECTED by manual approval. User feedback: ${userFeedback}`,
-+                        error_type: 'approval_rejected',
-+                        rejected_by_user: true,
-+                        user_feedback: userFeedback
-+                    }));
-                 }
-                 if (this.debugMode) console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) approved.`);
-             } catch (error) {
-@@ -1913,10 +1936,18 @@ class PluginManager extends EventEmitter {
-                 }
-                 approval.resolve();
-             } else if (approval.notifyAiOnReject === false) {
--                if (this.debugMode && normalizedReason) {
--                    console.log(`[PluginManager] Silent manual rejection for ${requestId} included user note hidden from AI: ${normalizedReason.substring(0, 300)}`);
-+                // 静默拒绝只屏蔽“无用户输入”的回执；用户在审核框中填写的反馈必须优先回传给 AI。
-+                if (normalizedReason) {
-+                    if (this.debugMode) {
-+                        console.log(`[PluginManager] Silent manual rejection for ${requestId} carries user feedback to AI: ${normalizedReason.substring(0, 300)}`);
-+                    }
-+                    approval.resolve({ silentRejected: true, userFeedback: normalizedReason });
-+                } else {
-+                    if (this.debugMode) {
-+                        console.log(`[PluginManager] Silent manual rejection for ${requestId} without user note; nothing returned to AI.`);
-+                    }
-+                    approval.resolve({ silentRejected: true });
-                 }
--                approval.resolve({ silentRejected: true });
-             } else {
-                 const rejectionMessage = normalizedReason
-                     ? `Manual approval was REJECTED by user. User reason: ${normalizedReason}`
-```
-
-**File**: `modules/vcpLoop/toolExecutor.js` (modified, +38/-4)
-```diff
-@@ -434,9 +434,12 @@ class ToolExecutor {
-         toolCallRecordHandle: recordHandle
-       });
-       const processedResult = this._processResult(name, result);
-+      // 与 _processResult 的 success 判定保持一致：
-+      // 插件若显式返回 { success: false }，记录必须落为失败，不能硬编码成功。
-       toolCallRecordStore.finishRecord(recordHandle, {
--        success: true,
--        result
-+        success: processedResult.success,
-+        result,
-+        error: processedResult.error || null
-       });
-       return this._attachRecordIdToResult(processedResult, recordHandle);
-     } catch (error) {
-@@ -498,8 +501,13 @@ class ToolExecutor {
-       }
-     }
-     
-+    // 内层显式声明 success:false 时必须透传：审核带用户反馈的拒绝依赖该标志，
-+    // 否则 archery 循环的 isError 判定会把反馈当作成功结果静默丢弃。
-+    const innerFailed = !!(result && typeof result === 'object' && result.success === false);
-+
-     return {
--      success: true,
-+      success: !innerFailed,
-+      error: innerFailed ? (result.error || formatted.text) : undefined,
-       content: formatted.content,
-       raw: result
-     };
-@@ -534,10 +542,36 @@ class ToolExecutor {
+@@ -17,25 +17,28 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
+ - 点歌演出模式可选：`[流光]`、`[云阶]`、`[心象]`、`[凝彩]`、`[商籁]`、`[镜台]`、`[浮名]`、`[星诞]`；不写时使用常规播放器。
  
-   _createErrorResult(toolName, message) {
-     this._broadcast(toolName, 'error', message);
-+
-+    // 上层抛出的业务错误通常是 JSON 字符串（plugin_error / error_type / user_feedback…）。
-+    // 直接把转义串喂给 AI 会变成噪声，这里解出可读文本，并保留结构化原文到 raw。
-+    //
-+    // 注意：真实调用链里 ToolExecutor 的 catch 会给 error.message 套上 `执行错误: ` 前缀，
-+    // 若直接对 message 做 startsWith('{') 判断将恒为 false，JSON 解析分支永不生效。
-+    // 因此先剥掉已知的包装前缀，再对剩余部分尝试解析。
-+    const rawMessage = typeof message === 'string' ? message : String(message);
-+    const jsonCandidate = rawMessage.replace(/^执行错误:\s*/, '');
-+    let displayText = rawMessage;
-+    let parsedPayload = null;
-+    if (jsonCandidate.trim().startsWith('{')) {
-+      try {
-+        parsedPayload = JSON.parse(jsonCandidate);
-+        const readableParts = [];
-+        if (parsedPayload.plugin_error) readableParts.push(parsedPayload.plugin_error);
-+        if (parsedPayload.user_feedback && !String(parsedPayload.plugin_error || '').includes(parsedPayload.user_feedback)) {
-+          readableParts.push('用户反馈: ' + parsedPayload.user_feedback);
-+        }
-+        if (readableParts.length > 0) displayText = readableParts.join('\n');
-+      } catch (_parseError) {
-+        // 不是合法 JSON，保持原字符串。
-+      }
-+    }
-+
-     return {
-       success: false,
-       error: message,
--      content: [{ type: 'text', text: `[错误] ${message}` }]
-+      content: [{ type: 'text', text: `[错误] ${displayText}` }],
-+      ...(parsedPayload ? { raw: parsedPayload } : {})
-     };
-   }
- 
-```
-
-**File**: `tests/approvalFeedbackPassthrough.test.js` (added, +254/-0)
-```diff
-@@ -0,0 +1,254 @@
-+// tests/approvalFeedbackPassthrough.test.js
-+// 覆盖需求：工具审核带 archery 时，用户填写的反馈必须优先回传给 AI；无反馈则保持静默。
-+//
-+// 说明：Plugin.js 顶层 require 会拉起 express / chokidar watcher，无法在测试进程内自由加载。
-+// 因此这里用 acorn AST 从源码中定位方法体，在 vm 沙箱中以独立函数上下文编译执行——
-+// 测的仍是磁盘上的真实实现，而非复制品。
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+const vm = require('node:vm');
-+const acorn = require('acorn');
-+
-+const PLUGIN_SOURCE = fs.readFileSync(
-+    path.join(__dirname, '..', 'Plugin.js'),
-+    'utf8'
-+);
-+const EXECUTOR_SOURCE = fs.readFileSync(
-+    path.join(__dirname, '..', 'modules', 'vcpLoop', 'toolExecutor.js'),
-+    'utf8'
-+);
-+
-+const PLUGIN_AST = acorn.parse(PLUGIN_SOURCE, {
-+    ecmaVersion: 'latest',
-+    sourceType: 'script'
-+});
-+const EXECUTOR_AST = acorn.parse(EXECUTOR_SOURCE, {
-+    ecmaVersion: 'latest',
-+    sourceType: 'script'
-+});
-+
-+// 按 AST 定位方法与函数体：手写词法扫描在模板字符串、转义引号、正则字面量上必然错位。
-+function findFunctionNode(root, name) {
-+    let found = null;
-+    (function walk(node) {
-+        if (!node || typeof node !== 'object' || found) return;
-+        if (node.type === 'MethodDefinition' && node.key && node.key.name === name) {
-+            found = node.value;
-+            return;
-+        }
-+        if (node.type === 'FunctionDeclaration' && node.id && node.id.name === name) {
-+            found = node;
-+            return;
-+        }
-+        for (const key in node) {
-+            if (key === 'loc' || key === 'start' || key === 'end') continue;
-+            const value = node[key];
-+            if (Array.isArray(value)) value.forEach(walk);
-+            else if (value && typeof value === 'object') walk(value);
-+        }
-+    })(root);
-+    return found;
-+}
-+
-+function extractMethodBody(ast, source, methodName) {
-+    const fn = findFunctionNode(ast, methodName);
-+    assert.ok(fn && fn.body, `未在源码 AST 中找到 ${methodName}`);
-+    return source.slice(fn.body.start + 1, fn.body.end - 1);
-+}
-+
-+const HANDLE_APPROVAL_BODY = extractMethodBody(PLUGIN_AST, PLUGIN_SOURCE, 'handleApprovalResponse');
-+const handleApprovalResponse = vm.runInNewContext(
-+    `(function handleApprovalResponse(requestId, approved, reason) {${HANDLE_APPROVAL_BODY}})`,
-+    { console, clearTimeout, setTimeout }
-+);
-+
-+function makeContext(pending) {
-+    return {
-+        pendingApprovals: pending || new Map(),
-+        webSocketServer: null,
-+        debugMode: false
-+    };
-+}
-+
-+function makePendingEntry(notifyAiOnReject) {
-+    let resolveFn;
-+    const promise = new Promise(resolve => {
-+        resolveFn = resolve;
-+    });
-+    const entry = {
-+        resolve: resolveFn,
-+        reject: error => { throw error; },
-+        timeoutId: null,
-+        notifyAiOnReject
-+    };
-+    return { entry, promise };
-+}
-+
-+test('静默拒绝：用户填写反馈时，反馈随 resolve 一并带出', async () => {
-+    const { entry, promise } = makePendingEntry(false);
-+    const pending = new Map([['req-1', entry]]);
-+    const ctx = makeContext(pending);
-+
-+    const handled = handleApprovalResponse.call(ctx, 'req-1', false, '  文件名写错了  ');
-+    assert.equal(handled, true);
-+    assert.equal(pending.has('req-1'), false);
-+
-+    const resolved = await promise;
-+    assert.equal(resolved.silentRejected, true);
-+    assert.equal(resolved.userFeedback, '文件名写错了');
-+});
-+
-+test('静默拒绝：用户未填写反馈时，不携带 userFeedback', async () => {
-+    const { entry, promise } = makePendingEntry(false);
-+    const pending = new Map([['req-2', entry]]);
-+    const ctx = makeContext(pending);
-+
-+    handleApprovalResponse.call(ctx, 'req-2', false, '   ');
-+    const resolved = await promise;
-+    assert.equal(resolved.silentRejected, true);
-+    assert.equal(resolved.userFeedback, undefined);
-+});
-+
-+test('非静默规则：拒绝时走 reject 并携带理由', () => {
-+    const { entry } = makePendingEntry(true);
-+    let captured = null;
-+    entry.reject = error => {
-+        captured = JSON.parse(error.message);
-+    };
-+    const pending = new Map([['req-3', entry]]);
-+    const ctx = makeContext(pending);
-+
-+    assert.equal(handleApprovalResponse.call(ctx, 'req-3', false, '用户不同意'), true);
-+    assert.ok(captured, '应触发 reject');
-+    assert.equal(captured.error_type, 'approval_rejected');
-+    assert.equal(captured.rejected_by_user, true);
-+    assert.match(captured.plugin_error, /用户不同意/);
-+});
-+
-+// toolExecutor.js 顶部 require 了 EmbeddingUtils 等重依赖，同样改为源码抽取编译。
-+const PROCESS_RESULT_BODY = extractMethodBody(EXECUTOR_AST, EXECUTOR_SOURCE, '_processResult');
-+const FORMAT_RESULT_BODY = extractMethodBody(EXECUTOR_AST, EXECUTOR_SOURCE, '_formatResult');
-+const BROADCAST_BODY = extractMethodBody(EXECUTOR_AST, EXECUTOR_SOURCE, '_broadcast');
-+
-+function makeExecutorStub(webSocketServer) {
-+    const stub = {
-+        webSocketServer: webSocketServer || { broadcast: () => {} },
-+        debugMode: false,
-+        pluginManager: null
-+    };
-+    stub._formatResult = vm.runInNewContext(
-+        `(function _formatResult(result) {${FORMAT_RESULT_BODY}})
+ 核心示例：
+-JEV:「始」请播放【星の余韻】，并启用[星诞]演出模式。「末」
+-JEV:「始」读取当前音乐歌词。「末」
+-JEV:「始」读取[https://example.com]。「末」
+-JEV:「始」对网页截图[https://example.com/page]。「末」
+-JEV:「始」看图[https://example.com/cat.png]。「末」
+-JEV:「始」请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。「末」
+-JEV:「始」请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。「末」
+-JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。「末」
+-JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。「末」
+-JEV:「始」请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。「末」
+-JEV:「始」主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。「末」 //基于Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
+-JEV:「始」主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。「末」//跨角色、跨日记知识库全局搜索
+-JEV:「始」主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。「末」
+-JEV:「始」[音乐检索]【煮咖啡时适合听的歌】。「末」 //语义级搜索vmusic曲目表
+-JEV:「始」在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。「末」
+-JEV:「始」计算【integral('sin(x)', 0, pi)】。「末」
+-JEV:「始」联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。「末」
+-JEV:「始」睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。「末」
+-JEV:「始」请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。「末」
+-JEV:「始」请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
+-JEV:「始」请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。「末」
+-JEV:「始」读取[file://C:\Tsubasa\VCPToolbox\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。「末」
+\ No newline at end of file
++请播放【星の余韻】，并启用[星诞]演出模式。
++读取当前音乐歌词。
++读取[https://example.com]。
++对网页截图[https://example.com/page]。
++看图[https://example.com/cat.png]。
++请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。
++请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。
++请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。
++请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。
++请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
++主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
++主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。
++主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。
++[音乐检索]【煮咖啡时适合听的歌】。
++在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。
++计算【integral('sin(x)', 0, pi)】。
++联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。
++联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
++睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
++请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
++请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
++请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
++请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
++读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
++读取[file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt]获得超详细天气预报。
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `204641ca` (2026-10-25)
-**Commit Message**: Merge pull request #547 from CI-IISATO/fix/rerank-sparse-exclusion-window
+### Incident Patch 2: `afc08997` (2026-10-26)
+**Commit Message**: fix
 
-fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传
-
-**File**: `KnowledgeBaseManager.js` (modified, +17/-1)
+**File**: `agent_map.json.example` (modified, +1/-0)
 ```diff
-@@ -2622,6 +2622,13 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-         if (typeof runtime?.executeExternalRerank !== 'function') {
-             throw new Error('NATIVE_PARALLEL_RERANK_ABI_UNAVAILABLE: rebuild rust-vexus-lite');
-         }
-+        if (options.annSearch !== undefined) {
-+            const features = typeof runtime.capabilities === 'function'
-+                ? runtime.capabilities()?.capabilities : [];
-+            if (!Array.isArray(features) || !features.includes('index.query-options.v1')) {
-+                throw new Error('NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE: rebuild rust-vexus-lite');
-+            }
-+        }
-         const diaryNames = [...new Set(
-             (Array.isArray(options.diaryNames) ? options.diaryNames : [options.diaryNames])
-                 .map(name => String(name || '').trim()).filter(Boolean)
-@@ -2632,6 +2639,7 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-             externalOnly: true, diaryNames,
-             queryText: String(query.text || ''),
-             topK: options.topK, candidateK: options.candidateK,
-+            annSearch: options.annSearch,
-             externalK: options.externalK, useJev: options.useJev,
-             jevPrompt: options.jevPrompt,
-             fileCandidates: options.fileCandidates || [],
-@@ -2649,6 +2657,13 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-         if (typeof runtime?.executeParallelRerank !== 'function') {
-             throw new Error('NATIVE_PARALLEL_RERANK_ABI_UNAVAILABLE: rebuild rust-vexus-lite');
-         }
-+        if (options.annSearch !== undefined) {
-+            const features = typeof runtime.capabilities === 'function'
-+                ? runtime.capabilities()?.capabilities : [];
-+            if (!Array.isArray(features) || !features.includes('index.query-options.v1')) {
-+                throw new Error('NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE: rebuild rust-vexus-lite');
-+            }
-+        }
-         const diaryNames = [...new Set(
-             (Array.isArray(options.diaryNames) ? options.diaryNames : [options.diaryNames])
-                 .map(name => String(name || '').trim()).filter(Boolean)
-@@ -2664,6 +2679,7 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-             riverConfig: this.riverMemoEngine._nativeConfig(prepared.artifact, options),
-             queryText: String(query.text || ''), topK: options.topK,
-             candidateK: options.candidateK, externalK: options.externalK,
-+            annSearch: options.annSearch,
-             alpha: options.alpha ?? 0.5, useJev: options.useJev,
-             autoRrfAlpha: options.autoRrfAlpha === true,
-             jevPrompt: options.jevPrompt,
-@@ -3902,4 +3918,4 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-     }
- }
- 
--module.exports = new KnowledgeBaseManager();
-\ No newline at end of file
-+module.exports = new KnowledgeBaseManager();
-```
-
-**File**: `docs/RUST_VECTOR_ENGINE.md` (modified, +37/-0)
-```diff
-@@ -887,6 +887,43 @@ export declare class VexusIndex {
- 
- ---
- 
-+## 查询排除谓词下推
-+
-+原有查询入口和默认参数保持兼容：默认搜索宽度为 `max(128, k)`，精排预算为 `max(64, k)`。新增入口支持按外部 ID 排除候选，并可显式指定搜索宽度：
-+
-+```js
-+const options = JSON.stringify({ excludeIds: [12, 34] });
-+index.searchWithOptions(query, 10, options);
-+await runtime.searchGlobalTagsWithOptions(query, 10, options);
-+await runtime.searchDiaryIndicesWithOptions(diaryNames, query, 64, 100, options);
-+```
-+
-+`excludeIds` 使用当前索引的外部 ID。被排除的节点仍可作为图导航跳板，但不会占据结果候选池。通用 SM、768 维 SM 和旧 BQ 路径执行同样的过滤规则。SQL 查询继续使用原有读事务和发布门禁；不以原始向量读取失败代替候选池过滤。显式校正模式的锚点仍可用于评分校准，但不会作为结果返回。
-+
-+当前查询与历史补充查询使用同一组选项。文件和时间候选在消耗配额前执行排除，融合后再次过滤。外部 rerank 通道的稀疏追加及最终候选选择也检查排除集，避免已排除 ID 经其他通道回流。
-+
-+`KnowledgeBaseManager.executeExternalRerank` 和 `executeParallelRerank` 通过 `options.annSearch` 透传调用者显式提供的选项；插件不会自行从文本前缀推导排除 ID。显式传入选项时要求原生模块声明 `index.query-options.v1`，不支持时返回重编译错误，避免旧模块静默忽略排除。
-+
-+外部 rerank 的稀疏补充仍只检查输入前 255 个文件候选，先归并规范化后的重复路径并保留最高分，再在同一读事务内按文件元数据核对日记作用域，避免无关或重复文件占用补找预算。每条保留候选最多追加 512 个未被 ID 排除的记录。无排除集时沿原正文查询；有排除集时先在同一查询中有限补找，最多额外查看 64 条。需要更深补找时才读取 ID 索引，再批量获取选中记录的正文。索引补找每条文件候选最多查看 4,608 个 ID，整个查询共享 16,384 个 ID 的预算；预算耗尽后，后续文件仍执行基础窗口。
-+
-+`diagnostics.nativeRerank.sparseScan` 提供元数据、窗口、索引、批量正文的行数，以及正文解码数、重复候选数、预算值和 `filesStoppedAtScanLimit`。最后一项表示触及预算且未补满，文件恰好在边界结束时也可能计数，因此只说明可能还有未检查记录。诊断会保留到插件广播，但不会自动重试。合法早到文件可能耗尽共享预算；极端排除集不保证补满候选，也不会无上限扫描整个大文件。正文前缀过滤和去重仍在最终选择阶段执行，512 不是最终结果数量保证。行数是 SQL 返回/处理计数，不是物理磁盘读取量或固定耗时保证。
-+
-+混合查询计划可通过 `annSearch` 字段传入同一组选项，例如 `{"annSearch":{"excludeIds":[12,34]}}`。可选 `efSearch` 用于显式控制导航宽度；更宽搜索会增加计算，不能把其召回收益归因于排除下推。本次没有修改默认值或推荐加宽。
-+
-+### SQL 读取对照
-+
-+`rust-vexus-lite/benchmarks/sm-search` 是独立 Cargo 基准，直接编译生产 `index_source.rs` 和 `retrieval_index.rs`，不会复制搜索循环。它使用磁盘 SQLite 和显式读事务，通过 SQL trace 统计完整向量查询次数，包含宿主返回前的向量复读。
-+
-+输入由 `BENCH_LIB`（前 97,464 行库向量）、`BENCH_QUERIES`（500 行查询）、`BENCH_REAL_TRUTH`（每查询 300 个 uint64 ID）提供。向量为无头的 3,072 维 little-endian float32；ID 从 1 开始。`BENCH_DB` 必须指向不存在的新文件，`BENCH_OUT` 指定 JSON 输出。
-+
-+```sh
-+RAYON_NUM_THREADS=1 cargo run --release --offline --manifest-path rust-vexus-lite/benchmarks/sm-search/Cargo.toml
-+```
-+
-+对照采用排除真实前 M 个近邻的压力场景。后置过滤会先请求 64 或 `64+M` 条结果，再过滤并取十条；下推方案直接请求十条，保留原精排预算。两种搜索宽度分别报告，256 仅作为额外计算对照。聚合数据与输入 SHA-256 见 `results-summary.json`，运行输出提供逐题排名、真值和完整 SQL 读取计数。即使宽度不变，过滤后也可能增加图遍历量，读取减少不代表总 CPU 或延迟降低。该基准不作生产端到端延迟或全库精确 Top-K 保证。
-+
-+---
-+
- ## 更新日志
- 
- | 版本 | 日期 | 变更 |
-```
-
-**File**: `rust-vexus-lite/benchmarks/sm-search/.gitignore` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+/target/
-```
-
-**File**: `rust-vexus-lite/benchmarks/sm-search/Cargo.toml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+[package]
-+name = "filtered-search-sqlite-bench"
-+version = "0.1.0"
-+edition = "2024"
-+rust-version = "1.89"
-+publish = false
-+
-+[dependencies]
-+vcp-tdb-index = { path = "../../crates/vcp-tdb-index" }
-+rusqlite = { version = "0.29", features = ["bundled", "trace"] }
-+serde = { version = "1", features = ["derive"] }
-+serde_json = "1"
-+sha2 = "0.10"
-+rayon = "1"
-+
-+[workspace]
-```
-
-**File**: `rust-vexus-lite/benchmarks/sm-search/results-summary.json` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+{
-+  "dimension": 3072,
-+  "library_rows": 97464,
-+  "post_filter_contract": "request 64 (or 64+M) results, filter IDs, take ten; pushdown requests ten with the unchanged max(64,k) rerank budget",
-+  "queries": 500,
-+  "rayon_threads": 1,
-+  "scope": "actual SQL function; counts include final vector rereads; adversarial true-top-M exclusions; no latency claim",
-+  "sqlite_version": "3.41.2",
-+  "baseline_commit": "c603f13692b212db371223ff6d91fb71b0b3b39e",
-+  "embedding_model": "gemini-embedding-2-preview",
-+  "dataset": "LongMemEval cached public benchmark embeddings",
-+  "truth": "Exhaustive FP64 cosine top-300 over the library; IDs are one-based",
-+  "results": [
-+    {
-+      "ef": 128,
-+      "excluded_top": 0,
-+      "mean_sql_vector_reads": 128.0,
-+      "mode": "post_filter_128",
-+      "recall10": 0.9646,
-+      "requested_k": 64
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 0,
-+      "mean_sql_vector_reads": 128.0,
-+      "mode": "expanded_post_filter",
-+      "recall10": 0.9646,
-+      "requested_k": 64
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 0,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_128",
-+      "recall10": 0.9646,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 256,
-+      "excluded_top": 0,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_256",
-+      "recall10": 0.9822,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 32,
-+      "mean_sql_vector_reads": 128.0,
-+      "mode": "post_filter_128",
-+      "recall10": 0.9176,
-+      "requested_k": 64
-+    },
-+    {
-+      "ef": 160,
-+      "excluded_top": 32,
-+      "mean_sql_vector_reads": 192.0,
-+      "mode": "expanded_post_filter",
-+      "recall10": 0.94,
-+      "requested_k": 96
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 32,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_128",
-+      "recall10": 0.9378,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 256,
-+      "excluded_top": 32,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_256",
-+      "recall10": 0.9664,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 64,
-+      "mean_sql_vector_reads": 128.0,
-+      "mode": "post_filter_128",
-+      "recall10": 0.3578,
-+      "requested_k": 64
-+    },
-+    {
-+      "ef": 192,
-+      "excluded_top": 64,
-+      "mean_sql_vector_reads": 256.0,
-+      "mode": "expanded_post_filter",
-+      "recall10": 0.9204,
-+      "requested_k": 128
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 64,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_128",
-+      "recall10": 0.9132,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 256,
-+      "excluded_top": 64,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_256",
-+      "recall10": 0.944,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 128,
-+      "mean_sql_vector_reads": 128.0,
-+      "mode": "post_filter_128",
-+      "recall10": 0.01,
-+      "requested_k": 64
-+    },
-+    {
-+      "ef": 256,
-+      "excluded_top": 128,
-+      "mean_sql_vector_reads": 384.0,
-+      "mode": "expanded_post_filter",
-+      "recall10": 0.8694,
-+      "requested_k": 192
-+    },
-+    {
-+      "ef": 128,
-+      "excluded_top": 128,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_128",
-+      "recall10": 0.853,
-+      "requested_k": 10
-+    },
-+    {
-+      "ef": 256,
-+      "excluded_top": 128,
-+      "mean_sql_vector_reads": 74.0,
-+      "mode": "pushdown_256",
-+      "recall10": 0.8752,
-+      "requested_k": 10
-+    }
-+  ],
-+  "input_sha256": {
-+    "library_first_97464_rows_f32le": "fcbe0049718a9863588da943f2c03c701bae79ae0011d0b380275dcf337f97d1",
-+    "queries_500_rows_f32le": "cce5697156435bf2e642787b61857c30bb8c03cbafbd948a9dbe297b6250288d",
-+    "truth_500_by_300_u64le": "4bfc083d89094d01c470405949b2be874698e2babe0f6a03982ee8dad9390159"
-+  }
-+}
-```
-
-**File**: `rust-vexus-lite/benchmarks/sm-search/src/main.rs` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+// Run production SQL-host code without loading a Node-API test host.
-+#![allow(dead_code)]
-+#[path = "../../../src/index_source.rs"]
-+mod index_source;
-+#[path = "../../../src/retrieval_index.rs"]
-+mod retrieval_index;
-+use retrieval_index::{RetrievalIndex, RetrievalSearchOptions};
-+use std::collections::HashSet;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+static READS: AtomicUsize = AtomicUsize::new(0);
-+fn env(name: &str) -> String { std::env::var(name).unwrap() }
-+fn trace(sql: &str) {
-+    if sql.starts_with("SELECT vector FROM tags WHERE id=") { READS.fetch_add(1, Ordering::Relaxed); }
-+}
-+fn rows(path: &str, count: usize) -> Vec<Vec<f32>> {
-+    std::fs::read(path).unwrap().chunks_exact(3072 * 4).take(count).map(|row|
-+        row.chunks_exact(4).map(|v| f32::from_le_bytes(v.try_into().unwrap())).collect()).collect()
-+}
-+fn main() {
-+    let db = env("BENCH_DB");
-+    assert!(!std::path::Path::new(&db).exists(), "BENCH_DB must be a new file");
-+    let mut connection = rusqlite::Connection::open(&db).unwrap();
-+    connection.execute_batch("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF; PRAGMA cache_size=-65536; PRAGMA mmap_size=0; CREATE TABLE tags(id INTEGER PRIMARY KEY,vector BLOB); BEGIN;").unwrap();
-+    let library = rows(&env("BENCH_LIB"), 97464);
-+    {
-+        let mut statement = connection.prepare("INSERT INTO tags VALUES (?1,?2)").unwrap();
-+        for (i, row) in library.iter().enumerate() {
-+            let bytes: Vec<u8> = row.iter().flat_map(|v| v.to_le_bytes()).collect();
-+            statement.execute(rusqlite::params![(i + 1) as i64, bytes]).unwrap();
-+        }
-+    }
-+    connection.execute_batch("COMMIT; BEGIN;").unwrap();
-+    let index = RetrievalIndex::from_sql(index_source::build_memory_from_connection(
-+        &connection, None, 3072, "gemini-embedding-2-preview").unwrap());
-+    eprintln!("Built {} rows", index.size());
-+    let queries = rows(&env("BENCH_QUERIES"), 500);
-+    let truth_bytes = std::fs::read(env("BENCH_REAL_TRUTH")).unwrap();
-+    let truth: Vec<Vec<u64>> = truth_bytes.chunks_exact(300 * 8).map(|row|
-+        row.chunks_exact(8).map(|v| u64::from_le_bytes(v.try_into().unwrap())).collect()).collect();
-+    assert_eq!(truth.len(), queries.len());
-+    connection.trace(Some(trace));
-+    let mut results = Vec::new();
-+    for excluded_top in [0usize, 32, 64, 128] {
-+        for (mode, ef, requested_k, pushdown) in [
-+            ("post_filter_128", 128, 64, false),
-+            ("expanded_post_filter", 128 + excluded_top, 64 + excluded_top, false),
-+            ("pushdown_128", 128, 10, true),
-+            ("pushdown_256", 256, 10, true),
-+        ] {
-+            let mut records = Vec::new();
-+            let mut total_reads = 0usize;
-+            let mut total_hits = 0usize;
-+            for (qi, query) in queries.iter().enumerate() {
-+                let excluded: HashSet<_> = truth[qi][..excluded_top].iter().copied().collect();
-+                let options = RetrievalSearchOptions {
-+                    ef_search: Some(ef), exclude_ids: if pushdown { excluded.clone() } else { HashSet::new() },
-+                };
-+                READS.store(0, Ordering::Relaxed);
-+                let found = index.search_sql_options(&connection, None, query, requested_k, &options).unwrap();
-+                let valid: Vec<_> = found.iter().map(|p| p.0).filter(|id| !excluded.contains(id)).take(10).collect();
-+                let expected = &truth[qi][excluded_top..excluded_top + 10];
-+                let hits = expected.iter().filter(|id| valid.contains(id)).count();
-+                let reads = READS.load(Ordering::Relaxed);
-+                total_hits += hits; total_reads += reads;
-+                assert!(valid.iter().all(|id| !excluded.contains(id)));
-+                records.push(serde_json::json!({"query":qi,"found":valid,"truth":expected,"sql_reads":reads}));
-+            }
-+            eprintln!("M={excluded_top} {mode}: recall10={:.4}, sql_reads={:.2}", total_hits as f64/(queries.len()*10) as f64, total_reads as f64/queries.len() as f64);
-+            results.push(serde_json::json!({"excluded_top":excluded_top,"mode":mode,"ef":ef,
-+                "requested_k":requested_k,"recall10":total_hits as f64/(queries.len()*10) as f64,
-+                "mean_sql_vector_reads":total_reads as f64/queries.len() as f64,"query_records":records}));
-+        }
-+    }
-+    connection.trace(None);
-+    let output = serde_json::json!({"library_rows":index.size(),"queries":queries.len(),"dimension":3072,
-+        "rayon_threads":rayon::current_num_threads(),"sqlite_version":rusqlite::version(),"results":results,
-+        "scope":"actual SQL function; counts include final vector rereads; adversarial true-top-M exclusions; no latency claim",
-+        "post_filter_contract":"request 64 (or 64+M) results, filter IDs, take ten; pushdown requests ten with the unchanged max(64,k) rerank budget"});
-+    std::fs::write(env("BENCH_OUT"), serde_json::to_vec_pretty(
-```
-
-**File**: `rust-vexus-lite/crates/vcp-tdb-index/src/engine.rs` (modified, +28/-6)
-```diff
-@@ -15,6 +15,12 @@ fn invalid(message: &str) -> io::Error {
-     io::Error::new(io::ErrorKind::InvalidInput, message)
- }
- 
-+/// Per-query navigation controls; reranking retains its fixed budget.
-+#[derive(Clone, Copy, Debug, Default)]
-+pub struct SearchOptions {
-+    pub ef_search: Option<usize>,
-+}
-+
- pub struct TdbIndex {
-     dimension: usize,
-     base: Option<VectorAsset>,
-@@ -245,10 +251,26 @@ impl TdbIndex {
-     /// Query routing using authoritative host originals, not snapshot vectors.
-     /// The caller must freeze the source for the duration of this query.
-     pub fn search_with_source<F>(
--        &self, query: &[f32], k: usize, ef: Option<usize>, mut fill: F,
-+        &self, query: &[f32], k: usize, ef: Option<usize>, fill: F,
-     ) -> io::Result<Vec<(u64, f32)>>
-     where
-         F: FnMut(u64, &mut Vec<f32>) -> bool,
-+    {
-+        self.search_with_source_options(query, k, &SearchOptions { ef_search: ef }, &|_| false, fill)
-+    }
-+
-+    pub fn search_with_options<E: Fn(u64) -> bool>(
-+        &self, query: &[f32], k: usize, options: &SearchOptions, exclude: &E,
-+    ) -> io::Result<Vec<(u64, f32)>> {
-+        self.search_with_source_options(query, k, options, exclude, |id, output| {
-+            self.positions.get(&id).is_some_and(|slot| self.fill_slot(*slot, output))
-+        })
-+    }
-+
-+    pub fn search_with_source_options<F, E>(
-+        &self, query: &[f32], k: usize, options: &SearchOptions, exclude: &E, mut fill: F,
-+    ) -> io::Result<Vec<(u64, f32)>>
-+    where F: FnMut(u64, &mut Vec<f32>) -> bool, E: Fn(u64) -> bool,
-     {
-         if query.len() != self.dimension || query.iter().any(|v| !v.is_finite()) {
-             return Err(invalid("invalid search vector"));
-@@ -257,15 +279,15 @@ impl TdbIndex {
-         if k == 0 { return Ok(Vec::new()); }
-         let mut output: Vec<(u64, f32)> = if let Some(graph) = &self.graph {
-             let config = QuIVerSearchConfig {
--                top_k: k, ef_search: ef.unwrap_or(128).max(k),
-+                top_k: k, ef_search: options.ef_search.unwrap_or(128).max(k),
-                 rerank_limit: Some(64_usize.max(k)),
-             };
--            let candidates = graph.search(query, |slot, output| {
-+            let candidates = graph.search_with_options(query, |slot, output| {
-                 self.ids.get(slot).is_some_and(|id| *id != 0 && fill(*id, output))
--            }, &config);
-+            }, &config, exclude);
-             let mut row = Vec::with_capacity(self.dimension);
-             candidates.into_iter().filter_map(|(id, _)| {
--                if !self.contains(id) { return None; }
-+                if !self.contains(id) || exclude(id) { return None; }
-                 row.clear();
-                 fill(id, &mut row).then(|| (id, cosine(query, &row)))
-             }).collect()
-@@ -275,7 +297,7 @@ impl TdbIndex {
-             let mut row = Vec::with_capacity(self.dimension);
-             for &id in &self.ids {
-                 row.clear();
--                if id != 0 && fill(id, &mut row) {
-+                if id != 0 && !exclude(id) && fill(id, &mut row) {
-                     let candidate = RankedRow { id, score: cosine(query, &row) };
-                     if heap.len() < k {
-                         heap.push(candidate);
-```
-
-**File**: `rust-vexus-lite/crates/vcp-tdb-index/src/index/quiver.rs` (modified, +51/-11)
-```diff
-@@ -1306,7 +1306,7 @@ impl QuIVer {
-         let d = NonNanF32(scorer.score(self.ids[entry as usize], cheap_distance(entry)) as f32);
-         visited.set(entry as usize);
-         candidates.push(Reverse((d, entry)));
--        results.push((d, entry));
-+        if scorer.accept_result(self.ids[entry as usize]) { results.push((d, entry)); }
- 
-         while let Some(Reverse((cd, cur))) = candidates.pop() {
-             if results.len() >= ef && cd > results.peek().unwrap().0 {
-@@ -1330,9 +1330,9 @@ impl QuIVer {
-                 let nd = NonNanF32(scorer.score(self.ids[nb as usize], cheap_distance(nb)) as f32);
-                 if results.len() < ef || nd < results.peek().unwrap().0 {
-                     candidates.push(Reverse((nd, nb)));
--                    results.push((nd, nb));
--                    if results.len() > ef {
--                        results.pop();
-+                    if scorer.accept_result(self.ids[nb as usize]) {
-+                        results.push((nd, nb));
-+                        if results.len() > ef { results.pop(); }
-                     }
-                 }
-             }
-@@ -1543,7 +1543,9 @@ impl QuIVer {
-         let initial_distance = distance(scorer, entry);
-         scratch.visited.set(entry as usize);
-         scratch.candidates.push(Reverse((initial_distance, entry)));
--        scratch.results.push((initial_distance, entry));
-+        if scorer.accept_result(self.ids[entry as usize]) {
-+            scratch.results.push((initial_distance, entry));
-+        }
- 
-         while let Some(Reverse((candidate_distance, current))) = scratch.candidates.pop() {
-             if scratch.results.len() >= ef && candidate_distance > scratch.results.peek().unwrap().0
-@@ -1568,9 +1570,9 @@ impl QuIVer {
-                     scratch
-                         .candidates
-                         .push(Reverse((neighbor_distance, neighbor)));
--                    scratch.results.push((neighbor_distance, neighbor));
--                    if scratch.results.len() > ef {
--                        scratch.results.pop();
-+                    if scorer.accept_result(self.ids[neighbor as usize]) {
-+                        scratch.results.push((neighbor_distance, neighbor));
-+                        if scratch.results.len() > ef { scratch.results.pop(); }
-                     }
-                 }
-             }
-@@ -1707,13 +1709,27 @@ impl QuIVer {
-     /// 成功返回 `true`。调用方按需从向量池或mmap冷层读取，
-     /// 默认查询无需传入或常驻第二份全量f32数组。
-     pub fn search<F>(
-+        &self,
-+        query: &[f32],
-+        get_vec_f32: F,
-+        config: &QuIVerSearchConfig,
-+    ) -> Vec<(u64, f32)>
-+    where
-+        F: FnMut(usize, &mut Vec<f32>) -> bool,
-+    {
-+        self.search_with_options(query, get_vec_f32, config, &|_| false)
-+    }
-+
-+    pub fn search_with_options<F, E>(
-         &self,
-         query: &[f32],
-         mut get_vec_f32: F,
-         config: &QuIVerSearchConfig,
-+        exclude: &E,
-     ) -> Vec<(u64, f32)>
-     where
-         F: FnMut(usize, &mut Vec<f32>) -> bool,
-+        E: Fn(u64) -> bool,
-     {
-         if query.len() != self.dim
-             || query.iter().any(|x| !x.is_finite())
-@@ -1748,15 +1764,15 @@ impl QuIVer {
-             let mut fill = |internal: usize, buffer: &mut Vec<f32>| {
-                 !self.tombstones[internal] && get_vec_f32(self.slot_indices[internal], buffer)
-             };
--            let mut output = model.search_routed(sm_query, &self.layer0, &sm_config, &mut fill);
-+            let mut output = model.search_routed_filtered(sm_query, &self.layer0, &sm_config, exclude, &mut fill);
-             if output
-                 .as_ref()
-                 .is_err_and(|e| e.kind() == std::io::ErrorKind::NotFound)
-                 && self.corrected_sm_enabled()
-                 && let Some(default) = &self.default_sm
-             {
-                 // 属性过滤屏蔽显式校正锚点时，使用无锚点默认SM，仍保持余弦精排。
--                output = default.search_routed(sm_query, &self.layer0, &sm_config, &mut fill);
-+                output = default.search_routed_filtered(sm_query, &self.layer0, &sm_config, exclude, &mut fill);
-             }
-             return match output {
-                 Ok(output) => output.neighbors,
-@@ -1767,7 +1783,12 @@ impl QuIVer {
-             };
-         }
-         // 仅缺少原始向量的独立旧sidecar仍使用BQ；数据库加载时会流式补齐SM。
--        let mut scorer = BqNavigationScorer;
-+        struct FilteredBq<'a, E>(&'a E);
-+        impl<E: Fn(u64) -> bool> NavigationScorer for FilteredBq<'_, E> {
-+            fn score(&mut self, _: u64, distance: u32) -> u32 { distance }
-+            fn accept_result(&mut self, id: u64) -> bool { !(self.0)(id) }
-+        }
-+        let mut scorer = FilteredBq(exclude);
-         self.search_with_scorer(query, get_vec_f32, config, &mut scorer)
-     }
- 
-@@ -3713,6 +3734,25 @@ mod tests {
-         }));
-     }
- 
-+    #[test]
-+    fn filtered_legacy_bq_does_not_spend_the_result_pool_on_excluded_hubs() {
-+        for dim in [65,384] {
-+            let mut index = QuIVer::new(dim,&QuIVe
+@@ -1,5 +1,6 @@
+ {
+   "Nova": "Nova.txt",
++  "deepseek": "DeepSeekOfficial.txt",
+   "ShaoShenYun": "ShaoShenYun.txt",
+   "Coco": "ThemeMaidCoco.txt",
+   "Furina": "Furina.txt",
 ```
 
 ---
 
-### Incident Patch 3: `964c7974` (2026-10-25)
-**Commit Message**: fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传
+### Incident Patch 3: `213bea48` (2026-10-25)
+**Commit Message**: fix
 
-**File**: `KnowledgeBaseManager.js` (modified, +17/-1)
+**File**: `Plugin/ComfyUIGen/workflows/AnimaEZGen.json` (modified, +1/-1)
 ```diff
-@@ -2622,6 +2622,13 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-         if (typeof runtime?.executeExternalRerank !== 'function') {
-             throw new Error('NATIVE_PARALLEL_RERANK_ABI_UNAVAILABLE: rebuild rust-vexus-lite');
-         }
-+        if (options.annSearch !== undefined) {
-+            const features = typeof runtime.capabilities === 'function'
-+                ? runtime.capabilities()?.capabilities : [];
-+            if (!Array.isArray(features) || !features.includes('index.query-options.v1')) {
-+                throw new Error('NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE: rebuild rust-vexus-lite');
-+            }
-+        }
-         const diaryNames = [...new Set(
-             (Array.isArray(options.diaryNames) ? options.diaryNames : [options.diaryNames])
-                 .map(name => String(name || '').trim()).filter(Boolean)
-@@ -2632,6 +2639,7 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-             externalOnly: true, diaryNames,
-             queryText: String(query.text || ''),
-             topK: options.topK, candidateK: options.candidateK,
-+            annSearch: options.annSearch,
-             externalK: options.externalK, useJev: options.useJev,
-             jevPrompt: options.jevPrompt,
-             fileCandidates: options.fileCandidates || [],
-@@ -2649,6 +2657,13 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-         if (typeof runtime?.executeParallelRerank !== 'function') {
-             throw new Error('NATIVE_PARALLEL_RERANK_ABI_UNAVAILABLE: rebuild rust-vexus-lite');
-         }
-+        if (options.annSearch !== undefined) {
-+            const features = typeof runtime.capabilities === 'function'
-+                ? runtime.capabilities()?.capabilities : [];
-+            if (!Array.isArray(features) || !features.includes('index.query-options.v1')) {
-+                throw new Error('NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE: rebuild rust-vexus-lite');
-+            }
-+        }
-         const diaryNames = [...new Set(
-             (Array.isArray(options.diaryNames) ? options.diaryNames : [options.diaryNames])
-                 .map(name => String(name || '').trim()).filter(Boolean)
-@@ -2664,6 +2679,7 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-             riverConfig: this.riverMemoEngine._nativeConfig(prepared.artifact, options),
-             queryText: String(query.text || ''), topK: options.topK,
-             candidateK: options.candidateK, externalK: options.externalK,
-+            annSearch: options.annSearch,
-             alpha: options.alpha ?? 0.5, useJev: options.useJev,
-             autoRrfAlpha: options.autoRrfAlpha === true,
-             jevPrompt: options.jevPrompt,
-@@ -3902,4 +3918,4 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
-     }
- }
- 
--module.exports = new KnowledgeBaseManager();
-\ No newline at end of file
-+module.exports = new KnowledgeBaseManager();
-```
-
-**File**: `docs/RUST_VECTOR_ENGINE.md` (modified, +6/-0)
-```diff
-@@ -902,6 +902,12 @@ await runtime.searchDiaryIndicesWithOptions(diaryNames, query, 64, 100, options)
- 
- 当前查询与历史补充查询使用同一组选项。文件和时间候选在消耗配额前执行排除，融合后再次过滤。外部 rerank 通道的稀疏追加及最终候选选择也检查排除集，避免已排除 ID 经其他通道回流。
- 
-+`KnowledgeBaseManager.executeExternalRerank` 和 `executeParallelRerank` 通过 `options.annSearch` 透传调用者显式提供的选项；插件不会自行从文本前缀推导排除 ID。显式传入选项时要求原生模块声明 `index.query-options.v1`，不支持时返回重编译错误，避免旧模块静默忽略排除。
-+
-+外部 rerank 的稀疏补充仍只检查输入前 255 个文件候选，先归并规范化后的重复路径并保留最高分，再在同一读事务内按文件元数据核对日记作用域，避免无关或重复文件占用补找预算。每条保留候选最多追加 512 个未被 ID 排除的记录。无排除集时沿原正文查询；有排除集时先在同一查询中有限补找，最多额外查看 64 条。需要更深补找时才读取 ID 索引，再批量获取选中记录的正文。索引补找每条文件候选最多查看 4,608 个 ID，整个查询共享 16,384 个 ID 的预算；预算耗尽后，后续文件仍执行基础窗口。
-+
-+`diagnostics.nativeRerank.sparseScan` 提供元数据、窗口、索引、批量正文的行数，以及正文解码数、重复候选数、预算值和 `filesStoppedAtScanLimit`。最后一项表示触及预算且未补满，文件恰好在边界结束时也可能计数，因此只说明可能还有未检查记录。诊断会保留到插件广播，但不会自动重试。合法早到文件可能耗尽共享预算；极端排除集不保证补满候选，也不会无上限扫描整个大文件。正文前缀过滤和去重仍在最终选择阶段执行，512 不是最终结果数量保证。行数是 SQL 返回/处理计数，不是物理磁盘读取量或固定耗时保证。
-+
- 混合查询计划可通过 `annSearch` 字段传入同一组选项，例如 `{"annSearch":{"excludeIds":[12,34]}}`。可选 `efSearch` 用于显式控制导航宽度；更宽搜索会增加计算，不能把其召回收益归因于排除下推。本次没有修改默认值或推荐加宽。
- 
- ### SQL 读取对照
-```
-
-**File**: `rust-vexus-lite/src/knowledge_runtime.rs` (modified, +410/-25)
-```diff
-@@ -272,6 +272,188 @@ fn select_external_candidates(
-     }).collect()
- }
- 
-+const SPARSE_FILE_CANDIDATE_LIMIT: usize = 512;
-+const SPARSE_INLINE_EXTRA_LIMIT: usize = 64;
-+const SPARSE_FILE_INDEX_ID_LIMIT: usize = 4608;
-+const SPARSE_QUERY_INDEX_ID_LIMIT: usize = 16384;
-+
-+#[derive(Serialize)]
-+#[serde(rename_all = "camelCase")]
-+struct SparseCandidateStats {
-+    file_candidates_visited: usize,
-+    duplicate_file_candidates_skipped: usize,
-+    file_metadata_rows_read: usize,
-+    window_rows_read: usize,
-+    index_id_rows_read: usize,
-+    batch_rows_read: usize,
-+    content_rows_decoded: usize,
-+    files_stopped_at_scan_limit: usize,
-+    inline_extra_row_limit: usize,
-+    per_file_index_id_limit: usize,
-+    query_index_id_limit: usize,
-+}
-+
-+impl Default for SparseCandidateStats {
-+    fn default() -> Self {
-+        Self { file_candidates_visited:0, duplicate_file_candidates_skipped:0, file_metadata_rows_read:0,
-+            window_rows_read:0, index_id_rows_read:0,
-+            batch_rows_read:0, content_rows_decoded:0, files_stopped_at_scan_limit:0,
-+            inline_extra_row_limit:SPARSE_INLINE_EXTRA_LIMIT,
-+            per_file_index_id_limit:SPARSE_FILE_INDEX_ID_LIMIT,
-+            query_index_id_limit:SPARSE_QUERY_INDEX_ID_LIMIT }
-+    }
-+}
-+
-+fn normalized_sparse_files(files: &[NativeFileCandidate]) -> Vec<(String, &NativeFileCandidate)> {
-+    let mut positions = HashMap::new();
-+    let mut output: Vec<(String, &NativeFileCandidate)> = Vec::new();
-+    for file in files.iter().take(255) {
-+        let path = file.path.replace('\\', "/");
-+        if let Some(&position) = positions.get(&path) {
-+            let (_, existing): &mut (String, &NativeFileCandidate) = &mut output[position];
-+            if file.normalized_bm25_score.clamp(0.0,1.0) > existing.normalized_bm25_score.clamp(0.0,1.0) {
-+                *existing = file;
-+            }
-+        } else {
-+            positions.insert(path.clone(), output.len());
-+            output.push((path, file));
-+        }
-+    }
-+    output
-+}
-+
-+fn external_sparse_row(row: &rusqlite::Row<'_>, score: f64) -> rusqlite::Result<(i64, serde_json::Value)> {
-+    let id = row.get::<_, i64>(0)?;
-+    Ok((id, serde_json::json!({
-+        "id":id, "chunkId":id, "text":row.get::<_,String>(1)?,
-+        "sourceFile":row.get::<_,String>(2)?, "diaryName":row.get::<_,String>(3)?,
-+        "fileId":row.get::<_,i64>(4)?, "score":score
-+    })))
-+}
-+
-+fn append_external_sparse_candidates(
-+    connection: &rusqlite::Connection,
-+    files: &[NativeFileCandidate],
-+    diary_names: &[String],
-+    exclude_ids: &HashSet<u64>,
-+    sparse_weight: f64,
-+    rows: &mut Vec<serde_json::Value>,
-+) -> Result<SparseCandidateStats> {
-+    let mut stats = SparseCandidateStats::default();
-+    if diary_names.is_empty() { return Ok(stats); }
-+    let normalized = normalized_sparse_files(files);
-+    stats.duplicate_file_candidates_skipped = files.len().min(255) - normalized.len();
-+    let allowed: HashSet<&str> = diary_names.iter().map(String::as_str).collect();
-+    let mut metadata = connection.prepare("SELECT diary_name FROM files WHERE path=?1")
-+        .map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+    let mut scoped = Vec::with_capacity(normalized.len());
-+    for (path, file) in normalized {
-+        let diary: Option<String> = metadata.query_row([&path], |row|row.get(0)).optional()
-+            .map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+        if let Some(diary) = diary {
-+            stats.file_metadata_rows_read += 1;
-+            if allowed.contains(diary.as_str()) { scoped.push((path, file)); }
-+        }
-+    }
-+    // Scope lookup and body reads share the caller's immutable SQL read transaction.
-+    let window_sql = "SELECT c.id,c.content,f.path,f.diary_name,f.id FROM chunks c
-+         JOIN files f ON f.id=c.file_id WHERE f.path=?1";
-+    if exclude_ids.is_empty() {
-+        let mut statement = connection.prepare(window_sql)
-+            .map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+        for (path, file) in &scoped {
-+            stats.file_candidates_visited += 1;
-+            let score = file.normalized_bm25_score.clamp(0.0,1.0)*sparse_weight;
-+            let found = statement.query_map([path], |row|
-+                external_sparse_row(row, score))
-+                .map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+            for row in found.take(SPARSE_FILE_CANDIDATE_LIMIT) {
-+                let (_, row) = row.map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+                stats.window_rows_read += 1;
-+                stats.content_rows_decoded += 1;
-+                rows.push(row);
-+            }
-+        }
-+        return Ok(stats);
-+    }
-+
-+    let mut window = connection.prepare(window_sql)
-+        .map_err(|_| Error::from_reason("NATIVE_RERANK_BM25_HYDRATE"))?;
-+    let lookup_sql = "SELECT c.id FROM chunks c JOIN files f ON f.id=c.file_id WH
-```
-
-**File**: `tests/nativeRerankSearchOptions.test.js` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+'use strict';
-+
-+const test = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+const vm = require('node:vm');
-+
-+// Exercise the real serialization methods without starting the manager singleton.
-+function loadMethod(name, nextName) {
-+    const filename = path.join(__dirname, '..', 'KnowledgeBaseManager.js');
-+    const source = fs.readFileSync(filename, 'utf8');
-+    const start = source.indexOf(`    async ${name}(`);
-+    const end = source.indexOf(`    async ${nextName}(`, start + 1);
-+    assert(start >= 0 && end > start);
-+    return vm.runInNewContext(`({${source.slice(start, end)}})`, {
-+        path, __dirname: path.dirname(filename), Float32Array
-+    })[name];
-+}
-+
-+for (const [name, nextName] of [
-+    ['executeExternalRerank', 'executeParallelRerank'],
-+    ['executeParallelRerank', 'executeNativeRiverQuery']
-+]) {
-+    test(`${name} forwards ANN exclusions and preserves sparse diagnostics`, async () => {
-+        const query = { text: 'fixture', vector: new Float32Array([1, 0]) };
-+        let captured;
-+        const owner = {
-+            async _getOrLoadDiaryIndex() {},
-+            async prepareUnifiedMemoObservation() {
-+                return { artifact: { artifactSig: 'fixture' }, pipeline: {},
-+                    queryVector: query.vector, ghostVectors: new Float32Array() };
-+            },
-+            riverMemoEngine: { _nativeConfig: () => ({}) },
-+            nativeKnowledgeRuntime: {
-+                capabilities() { return { capabilities: ['index.query-options.v1'] }; },
-+                async [name](plan, vector) {
-+                    captured = JSON.parse(plan);
-+                    assert.equal(vector, query.vector);
-+                    return JSON.stringify({ results: [], diagnostics: { nativeRerank: {
-+                        sparseScan: { filesStoppedAtScanLimit: 1 }
-+                    } } });
-+                }
-+            }
-+        };
-+        const run = loadMethod(name, nextName);
-+        const annSearch = { excludeIds: [17, 34], efSearch: 128 };
-+        const result = await run.call(owner, query, { diaryNames: ['fixture'], annSearch });
-+        assert.deepEqual(captured.annSearch, annSearch);
-+        assert.equal(result.diagnostics.nativeRerank.sparseScan.filesStoppedAtScanLimit, 1);
-+        await run.call(owner, query, { diaryNames: ['fixture'] });
-+        assert.equal(captured.annSearch, undefined);
-+        owner.nativeKnowledgeRuntime.capabilities = () => ({ capabilities: [] });
-+        captured = undefined;
-+        await assert.rejects(run.call(owner, query, { diaryNames: ['fixture'], annSearch }),
-+            /NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE/);
-+        assert.equal(captured, undefined);
-+        delete owner.nativeKnowledgeRuntime.capabilities;
-+        await assert.rejects(run.call(owner, query, { diaryNames: ['fixture'], annSearch }),
-+            /NATIVE_ANN_SEARCH_OPTIONS_UNAVAILABLE/);
-+        await run.call(owner, query, { diaryNames: ['fixture'] });
-+        assert.equal(captured.annSearch, undefined);
-+    });
-+}
+@@ -61,7 +61,7 @@
+       "inputs": {
+         "guide_size": 512, "guide_size_for": true, "max_size": 1024,
+         "seed": "{{SEED}}", "steps": 18, "cfg": 8, "sampler_name": "euler", "scheduler": "simple",
+-        "denoise": 0.38, "feather": 5, "noise_mask": true, "force_inpaint": true,
++        "denoise": 0.32, "feather": 5, "noise_mask": true, "force_inpaint": true,
+         "bbox_threshold": 0.5, "bbox_dilation": 10, "bbox_crop_factor": 3,
+         "sam_detection_hint": "center-1", "sam_dilation": 0, "sam_threshold": 0.93,
+         "sam_bbox_expansion": 0, "sam_mask_hint_threshold": 0.7, "sam_mask_hint_use_negative": "False",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #553** (closed): feat(VTrade): 新增本地看盘与 AI 模拟交易插件，六个插槽可替换 (@CI-IISATO)
+- **PR #552** (closed): feat(MinerUParser): add MinerU PDF parser, dedupe, and knowledge base (@newcode5662)
+- **PR #550** (2026-10-26): perf(rust-vexus-lite): 语义去重用保守余弦上界提前结束非重复比较，结果逐位不变 (@CI-IISATO)
 - **PR #548** (2026-10-25): fix: archery 审核反馈优先回传改造 (@Wooden-Gear)
 - **PR #547** (2026-10-25): fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传 (@CI-IISATO)
 - **PR #546** (closed): fix: archery审核反馈优先回传改造 (@Wooden-Gear)
-- **PR #545** (2026-10-25): archery 审核反馈优先回传改造 (@Wooden-Gear)
-- **PR #544** (2026-10-25): fix(rust-vexus-lite): 将排除谓词下推至候选池并贯通原生检索通道 (@CI-IISATO)
-- **PR #542** (2026-10-25): perf(rag): 重构TextChunker零回溯线性切分与TextSanitizer有界LRU记忆化，消除长文本Event Loop阻塞 (@infinite-vector)
 
 ---
 
@@ -2978,55 +1929,73 @@ fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. archery 审核反馈优先回传改造
+## X. Empirical Invariant Guard in JevToolCall.txt
 
 **RULE**:
-When implementing operations in `Plugin.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TVStxt/JevToolCall.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aab375a1`: archery 审核反馈优先回传改造. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b98e4117`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TVStxt/JevToolCall.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-                    const userFeedback = typeof approvalResult.userFeedback === 'string'
-                        ? approvalResult.userFeedback.trim()
-                        : '';
-                        message: userFeedback
-                            ? `Tool call "${toolName}" was rejected by manual approval with user feedback.`
-                            : `Tool call "${toolName}" was rejected silently by manual approval.`,
-                        ...(userFeedback ? { user_feedback: userFeedback } : {})
-
-                    // 无用户输入：archery 语义生效，静默吞掉回执，AI 完全无感。
-                    if (!userFeedback) {
-                        if (this.debugMode) {
-                            console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) was rejected silently. Returning empty result to AI.`);
-                        }
-                        return undefined;
-                    }
-
-                    // 有用户输入：优先传递用户反馈。
-                    // 走与普通拒绝完全同构的抛错路径，让上层既有错误链产出 isError=true，
-                    // archery 分支才能把内容写回对话而不是静默终止。
-                    if (this.debugMode) {
-                        console.log(`[PluginManager] Tool call for "${too
+请播放【星の余韻】，并启用[星诞]演出模式。
+读取当前音乐歌词。
+读取[https://example.com]。
+对网页截图[https://example.com/page]。
+看图[https://example.com/cat.png]。
+请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。
+请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。
+请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。
+请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。
+请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
+主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
+主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。
+主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。
+[音乐检索]【煮咖啡时适合听的歌】。
+在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。
+计算【integral('sin(x)', 0, pi)】。
+联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。
+联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
+睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
+请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
+请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
+请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
+请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
+读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+读取[file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-                    if (this.debugMode) {
-                        console.log(`[PluginManager] Tool call for "${toolName}" (ID: ${requestId}) was rejected silently. Returning empty result to AI.`);
-                    }
-                        message: `Tool call "${toolName}" was rejected silently by manual approval.`
-                    return undefined;
-                if (this.debugMode && normalizedReason) {
-                    console.log(`[PluginManager] Silent manual rejection for ${requestId} included user note hidden from AI: ${normalizedReason.substring(0, 300)}`);
-                approval.resolve({ silentRejected: true });
+JEV:「始」请播放【星の余韻】，并启用[星诞]演出模式。「末」
+JEV:「始」读取当前音乐歌词。「末」
+JEV:「始」读取[https://example.com]。「末」
+JEV:「始」对网页截图[https://example.com/page]。「末」
+JEV:「始」看图[https://example.com/cat.png]。「末」
+JEV:「始」请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。「末」
+JEV:「始」请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。「末」
+JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。「末」
+JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。「末」
+JEV:「始」请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。「末」
+JEV:「始」主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。「末」 //基于Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
+JEV:「始」主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。「末」//跨角色、跨日记知识库全局搜索
+JEV:「始」主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。「末」
+JEV:「始」[音乐检索]【煮咖啡时适合听的歌】。「末」 //语义级搜索vmusic曲目表
+JEV:「始」在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。「末」
+JEV:「始」计算【integral('sin(x)', 0, pi)】。「末」
+JEV:「始」联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。「末」
+JEV:「始」睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。「末」
+JEV:「始」请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。「末」
+JEV:「始」请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
+JEV:「始」请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。「末」
+J
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aab375a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b98e4117` are properly handled with clean fallback behavior.

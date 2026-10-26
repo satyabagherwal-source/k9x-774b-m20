@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T12:07:22.400Z",
+  "last_updated": "2026-10-26T12:13:37.902Z",
   "total_verified_learnings": 1093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33186,8 +33186,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "e2dc7bf0",
-      "content_hash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
+      "source_version": "b98e4117",
+      "content_hash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -33212,7 +33212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:16:11.406Z",
+      "verified_at": "2026-10-26T12:13:37.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44517,8 +44517,8 @@
       "slug": "sayanarijit-xplr",
       "platform": "github",
       "source_url": "https://github.com/sayanarijit/xplr",
-      "source_version": "f692d972",
-      "content_hash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
+      "source_version": "50824d0d",
+      "content_hash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
       "dossier_path": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md",
       "promoted_rules": [
@@ -44531,6 +44531,11 @@
           "number": 4294,
           "title": "cursor position related crash (#791)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4599,
+          "title": "tty crash when rendering graphics (#795)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44538,7 +44543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:39:00.495Z",
+      "verified_at": "2026-10-26T12:13:27.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129016,6 +129021,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T11:46:44.940Z"
+    },
+    "rule-4599": {
+      "learning_id": "rule-4599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4599,
+      "title": "tty crash when rendering graphics (#795)",
+      "source_url": "https://github.com/sayanarijit/xplr",
+      "source_version": "50824d0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T12:13:27.358Z"
     }
   },
   "aliases": {

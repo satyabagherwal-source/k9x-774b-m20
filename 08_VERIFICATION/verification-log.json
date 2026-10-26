@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-2W7S",
-    "timestamp": "2026-10-25T03:38:35.800Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "e014a1031fb833966f990acce1aa907791b9c7c48302852eea8a50b7e778b1b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-2YJ6",
-    "timestamp": "2026-10-25T03:38:38.802Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "0da4858ae7dffb0486b97b7c94e2b599f136fecdd4f8190648087928add4fdef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-2ZVK",
     "timestamp": "2026-10-25T03:38:40.544Z",
     "repository": "gardener/gardener",
@@ -7490,6 +7460,36 @@
     "repository": "LifeSciForge/seo-auditor",
     "learningId": "learn-github-lifesciforge-seo-auditor",
     "contentHash": "8389e1549694bac45afa376d3bb5478a9779fd97f424821fdd33ebedbc1b1b35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-WUZS",
+    "timestamp": "2026-10-26T12:13:27.400Z",
+    "repository": "sayanarijit/xplr",
+    "learningId": "learn-github-sayanarijit-xplr",
+    "contentHash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261026-X354",
+    "timestamp": "2026-10-26T12:13:37.960Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

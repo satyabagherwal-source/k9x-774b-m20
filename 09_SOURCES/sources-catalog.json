@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "e2dc7bf0",
+    "sourceVersion": "b98e4117",
     "license": "NOASSERTION",
-    "contentHash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
-    "lastHarvestedAt": "2026-10-25T15:16:11.448Z",
+    "contentHash": "1c6f23415e3625ef6d0a5e0e35cdb756e041db5de4545b9c4f0de8333eec0abc",
+    "lastHarvestedAt": "2026-10-26T12:13:37.963Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3133,10 +3133,10 @@
     "repository": "sayanarijit/xplr",
     "platform": "github",
     "sourceUrl": "https://github.com/sayanarijit/xplr",
-    "sourceVersion": "f692d972",
+    "sourceVersion": "50824d0d",
     "license": "MIT",
-    "contentHash": "8cb447827e7c562f39cb9ee0cf253dcc48c86d134a1602f12a9df7b883d067fd",
-    "lastHarvestedAt": "2026-10-25T12:39:00.585Z",
+    "contentHash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
+    "lastHarvestedAt": "2026-10-26T12:13:27.403Z",
     "learningId": "learn-github-sayanarijit-xplr"
   },
   "danilowoz-react-content-loader": {

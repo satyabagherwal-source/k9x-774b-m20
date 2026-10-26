@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source**: github ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
-> **Source Version**: `f692d972`  
+> **Source Version**: `50824d0d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:39:00.081Z  
+> **Timestamp**: 2026-10-26T12:13:27.147Z  
 > **Learning ID**: `learn-github-sayanarijit-xplr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:39:00.074Z  
+> **Harvest Timestamp**: 2026-10-26T12:13:26.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -426,7 +426,7 @@ use tui::Terminal;
 use tui::backend::CrosstermBackend;
 use tui::crossterm::execute;
 use tui::crossterm::terminal as term;
-use xplr::runner::get_tty;
+use xplr::terminal::get_tty;
 use xplr::*;
 
 const PWD: &str = "/tmp/xplr_bench";
@@ -439,11 +439,10 @@ fn navigation_benchmark(c: &mut Criterion) {
 
     let lua = mlua::Lua::new();
     let mut app =
-        app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into())
+        app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
             .expect("failed to create app");
 
-    app = app
-        .clone()
+    app.clone()
         .handle_task(app::Task::new(
             app::MsgIn::External(app::ExternalMsg::ChangeDirectory(PWD.into())),
             None,
@@ -501,12 +500,12 @@ fn navigation_benchmark(c: &mut Criterion) {
                     app::MsgIn::External(app::ExternalMsg::Back),
                     None,
                 ))
-                .unwrap()
-                .handle_task(app::Task::new(
-                    app::MsgIn::External(app::ExternalMsg::Enter),
-                    None,
-                ))
-                .unwrap()
+                .unwrap();
+            app.handle_task(app::Task::new(
+                app::MsgIn::External(app::ExternalMsg::Enter),
+                None,
+            ))
+            .unwrap()
         })
     });
 }
@@ -519,13 +518,12 @@ fn draw_benchmark(c: &mut Criterion) {
 
     let (tx, _) = std::sync::mpsc::channel();
     let lua = mlua::Lua::new();
-    let mut ui = ui::UI::new(&lua, tx);
-    let mut app =
-        app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into())
+    let mut ui = ui::UI::new(tx);
+    let app =
+        app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
             .expect("failed to create app");
 
-    app = app
-        .clone()
+    app.clone()
         .handle_task(app::Task::new(
             app::MsgIn::External(app::ExternalMsg::ChangeDirectory(PWD.into())),
             None,
@@ -541,9 +539,11 @@ fn draw_benchmark(c: &mut Criterion) {
     let mut terminal = Terminal::new(backend).unwrap();
     terminal.hide_cursor().unwrap();
 
+    let lua = mlua::Lua::new();
+
     c.bench_function("draw on terminal", |b| {
         b.iter(|| {
-            terminal.draw(|f| ui.draw(f, &app)).unwrap();
+            terminal.draw(|f| ui.draw(f, &app, &lua)).unwrap();
         })
     });
 
@@ -691,7 +691,7 @@ impl History {
             .unwrap_or(false)
     }
 
-    fn cleanup(mut self) -> Self {
+    fn cleanup(&mut self) {
         while self.loc > 0
             && self
                 .paths
@@ -712,24 +712,21 @@ impl History {
         {
             self.paths.remove(self.loc.saturating_add(1));
         }
-
-        self
     }
 
     fn peek(&self) -> Option<&String> {
         self.paths.get(self.loc)
     }
 
-    fn push(mut self, path: String) -> Self {
+    fn push(&mut self, path: String) {
         if self.peek() != Some(&path) {
-            self.paths = self.paths.into_iter().take(self.loc + 1).collect();
+            self.paths = self.paths.iter().take(self.loc + 1).cloned().collect();
             self.paths.push(path);
             self.loc = self.paths.len().saturating_sub(1);
         }
-        self
     }
 
-    fn visit_last(mut self) -> Self {
+    fn visit_last(&mut self) {
         self.loc = self.loc.saturating_sub(1);
 
         while self.loc > 0 && !self.loc_exists() {
@@ -739,7 +736,7 @@ impl History {
         self.cleanup()
     }
 
-    fn visit_next(mut self) -> Self {
+    fn visit_next(&mut self) {
         self.loc = self
             .loc
             .saturating_add(1)
@@ -767,7 +764,7 @@ impl History {
             .collect::<IndexSet<String>>()
     }
 
-    fn visit_next_deep_branch(self, pwd: &str) -> Self {
+    fn visit_next_deep_branch(&mut self, pwd: &str) {
         let uniq_deep_dirs = self._uniq_deep_dirs();
 
         if let Some(path) = uniq_deep_dirs
@@ -776,12 +773,10 @@ impl History {
             .nth(1)
         {
             self.push(path.to_string())
-        } else {
-            self
         }
     }
 
-    fn visit_previous_deep_branch(self, pwd: &str) -> Self {
+    fn visit_previous_deep_branch(&mut self, pwd: &str) {
         let uniq_deep_dirs = self._uniq_deep_dirs();
         if let Some(path) = uniq_deep_dirs
             .iter()
@@ -790,8 +785,6 @@ impl History {
             .nth(1)
         {
             self.push(path.to_string())
-        } else {
-            self
         }
     }
 }
@@ -863,6 +856,7 @@ pub struct App {
     pub history: History,
     pub last_modes: Vec<Mode>,
     pub hostname: String,
+    pub read_only: bool,
 }
 
 impl App {
@@ -873,9 +867,11 @@ impl App {
         lua: &mlua::Lua,
         config_file: Option<PathBuf>,
         extra_config_files: Vec<PathBuf>,
+        read_only: bool,
     ) -> Result<Self> {
         let (mut config, hooks) = lua::init(lua)?;
         let mut hooks = hooks.unwrap_or_default();
+        let read_only = read_only || config.general.read_only;
 
         let config_file = if let Some(path) = config_file {
             Some(path)
@@ -911,10 +907,7 @@ impl App {
                 .clone()
                 .unwrap_or_else(|| "default".into()),
         ) {
-            Some(m) => m.clone().sanitized(
-                config.general.read_only,
-                config.general.global_key_bindings.clone(),
-            ),
+            Some(m) => m.clone().extend(config.general.global_key_bindings.clone()),
             None => {
                 bail!("'default' mode is missing")
             }
@@ -937,7 +930,11 @@ impl App {
         let mut session_path = dirs::runtime_dir()
             .join("xplr")
             .join("session")
-       
+            .join(pid.to_string())
+            .to_string_lossy()
+            .to_string();
+
+  
 ```
 
 ### Core Architecture Module: `src/bin/xplr.rs`
@@ -1323,6 +1320,7 @@ pub fn draw_custom_content(
     layout_size: TuiRect,
     app: &app::App,
     content: CustomContent,
+    lua: &mlua::Lua,
 ) {
     let config = app.config.general.panel_ui.default.clone();
     let title = content.title;
@@ -1346,9 +1344,9 @@ pub fn draw_custom_content(
                 scrolltop: ui.scrolltop as u16,
             };
 
-            let render = lua::serialize(ui.lua, &ctx)
+            let render = lua::serialize(lua, &ctx)
                 .map(|arg| {
-                    lua::call(ui.lua, &render, arg).unwrap_or_else(|e| format!("{e:?}"))
+                    lua::call(lua, &render, arg).unwrap_or_else(|e| format!("{e:?}"))
                 })
                 .unwrap_or_else(|e| e.to_string());
 
@@ -1383,9 +1381,9 @@ pub fn draw_custom_content(
                 scrolltop: ui.scrolltop as u16,
             };
 
-            let items = lua::serialize(ui.lua, &ctx)
+            let items = lua::serialize(lua, &ctx)
                 .map(|arg| {
-                    lua::call(ui.lua, &render, arg)
+                    lua::call(lua, &render, arg)
                         .unwrap_or_else(|e| vec![format!("{e:?}")])
                 })
                 .unwrap_or_else(|e| vec![e.to_string()])
@@ -1445,9 +1443,9 @@ pub fn draw_custom_content(
                 scrolltop: ui.scrolltop as u16,
             };
 
-            let rows = lua::serialize(ui.lua, &ctx)
+            let rows = lua::serialize(lua, &ctx)
                 .map(|arg| {
-                    lua::call(ui.lua, &render, arg)
+                    lua::call(lua, &render, arg)
                         .unwrap_or_else(|e| vec![vec![format!("{e:?}")]])
                 })
                 .unwrap_or_else(|e| vec![vec![e.to_string()]])
@@ -1512,22 +1510,6 @@ pub struct Action {
 
     #[serde(default)]
     pub messages: Vec<ExternalMsg>,
-}
-
-impl Action {
-    pub fn sanitized(self, read_only: bool) -> Option<Self> {
-        if self.messages.is_empty() {
-            None
-        } else if read_only {
-            if self.messages.iter().all(ExternalMsg::is_read_only) {
-                Some(self)
-            } else {
-                None
-            }
-        } else {
-            Some(self)
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -1886,25 +1868,36 @@ pub struct KeyBindings {
     pub default: Option<Action>,
     // Checklist for adding new field:
     // - [ ] Update App::handle_key
-    // - [ ] Update KeyBindings::sanitized
+    // - [ ] Update KeyBindings::extend
     // - [ ] Update Mode::help_menu
     // - [ ] Update configure-key-bindings.md
     // - [ ] Update debug-key-bindings.md
 }
 
 impl KeyBindings {
-    pub fn sanitized(mut self, read_only: bool) -> Self {
-        if read_only {
-            self.on_key = self
-                .on_key
-                .into_iter()
-                .filter_map(|(k, a)| a.sanitized(read_only).map(|a| (k, a)))
-                .collect();
+    pub fn extend(mut self, other: Self) -> Self {
+        self.on_key.extend(other.on_key);
+        self.on_alphabet = other.on_alphabet.or(self.on_alphabet);
+        self.on_number = other.on_number.or(self.on_number);
+        self.on_alphanumeric = other.on_alphanumeric.or(self.on_alphanumeric);
+        self.on_special_character =
+            other.on_special_character.or(self.on_special_character);
+        self.on_character = other.on_character.or(self.on_character);
+        self.on_navigation = other.on_navigation.or(self.on_navigation);
+        self.on_function = other.on_function.or(self.on_function);
+        self.default = other.default.or(self.default);
+        self
+    }
+}
 
-            self.on_alphabet = self.on_alphabet.and_then(|a| a.sanitized(read_only));
-            self.on_number = self.on_number.and_then(|a| a.sanitized(read_only));
-            self.on_alphanumeric =
-                self.on_alphanumeric.an
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Mode {
+    #[serde(default)]
+    pub name: String,
+
+    #[serde(default)]
+    pub 
 ```
 
 ### Core Architecture Module: `src/directory_buffer.rs`
@@ -1972,6 +1965,21 @@ pub fn runtime_dir() -> PathBuf {
     dir.clone()
 }
 
+// In unix system, the std::env::current_dir() calls libc getcwd() that
+// returns physical path. As a workaround, this function tries to use `PWD`
+// environment variable that is configured by shell.
+pub fn get_current_dir() -> Result<PathBuf, std::io::Error> {
+    if let Ok(pwd) = std::env::var("PWD") {
+        if pwd.is_empty() {
+            std::env::current_dir()
+        } else {
+            Ok(PathBuf::from(pwd))
+        }
+    } else {
+        std::env::current_dir()
+    }
+}
+
 ```
 
 
@@ -2001,435 +2009,534 @@ pub fn runtime_dir() -> PathBuf {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b71464a` (2026-10-23)
-**Commit Message**: Fix cursor position related crash (#791)
+### Incident Patch 1: `25574260` (2026-10-25)
+**Commit Message**: Fix tty crash when rendering graphics (#795)
 
-Fixes: https://github.com/sayanarijit/xplr/issues/790
+* Fix tty crash when rendering graphics
 
-Thanks @robertdj for the fix.
+* TODO support rich graphics
 
-**File**: `src/runner.rs` (modified, +18/-9)
+**File**: `Cargo.lock` (modified, +83/-220)
 ```diff
-@@ -81,7 +81,8 @@ fn call(
-         event_reader.stop();
+@@ -208,16 +208,6 @@ version = "0.22.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
  
-         // Clear AND redraw the terminal surface
--        terminal.clear()?;
-+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                   // TODO: revert to terminal.clear()?;
-         terminal.set_cursor_position((0, 0))?;
-         term::disable_raw_mode()?;
-         terminal.show_cursor()?;
-@@ -177,7 +178,8 @@ fn call(
+-[[package]]
+-name = "base64-simd"
+-version = "0.8.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "339abbe78e73178762e23bea9dfd08e697eb3f3301cd4be981c0f78ba5859195"
+-dependencies = [
+- "outref",
+- "vsimd",
+-]
+-
+ [[package]]
+ name = "bit-set"
+ version = "0.5.3"
+@@ -318,20 +308,6 @@ name = "bytemuck"
+ version = "1.25.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797"
+-dependencies = [
+- "bytemuck_derive",
+-]
+-
+-[[package]]
+-name = "bytemuck_derive"
+-version = "1.12.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 3.0.9",
+-]
  
-     if !silent {
-         // Clear AND redraw the terminal surface
--        terminal.clear()?;
-+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                   // TODO: revert to terminal.clear()?;
-         term::enable_raw_mode()?;
-         terminal.hide_cursor()?;
-         event_reader.start();
-@@ -341,7 +343,8 @@ impl Runner {
-         let mut terminal = Terminal::new(backend)?;
-         terminal.hide_cursor()?;
-         // Clear AND redraw the terminal surface
--        terminal.clear()?;
-+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                   // TODO: revert to terminal.clear()?;
+ [[package]]
+ name = "byteorder-lite"
+@@ -1095,17 +1071,6 @@ dependencies = [
+  "windows-link",
+ ]
  
-         // Threads
-         pwd_watcher::keep_watching(app.pwd.as_ref(), tx_msg_in.clone(), rx_pwd_watcher)?;
-@@ -417,7 +420,8 @@ impl Runner {
+-[[package]]
+-name = "getrandom"
+-version = "0.2.17"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
+-dependencies = [
+- "cfg-if",
+- "libc",
+- "wasi",
+-]
+-
+ [[package]]
+ name = "getrandom"
+ version = "0.3.4"
+@@ -1129,6 +1094,16 @@ dependencies = [
+  "r-efi 6.0.0",
+ ]
  
-                             ClearScreen => {
-                                 // Clear AND redraw the terminal surface
--                                terminal.clear()?;
-+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                                           // TODO: revert to terminal.clear()?;
-                             }
++[[package]]
++name = "gif"
++version = "0.13.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
++dependencies = [
++ "color_quant",
++ "weezl",
++]
++
+ [[package]]
+ name = "gif"
+ version = "0.14.2"
+@@ -1167,6 +1142,12 @@ version = "0.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
  
-                             ScrollUp => {
-@@ -626,7 +630,8 @@ impl Runner {
-                                 event_reader.stop();
++[[package]]
++name = "hermit-abi"
++version = "0.5.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e17592d60ebacc7d5e169f4663c5f84f9161cc90328abcfe8456f41e4dfcb284"
++
+ [[package]]
+ name = "hex"
+ version = "0.4.3"
+@@ -1270,16 +1251,6 @@ version = "2.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "913a7d294ad056474749152107309fdee3ec17d2482d1ab70fdc61a81c64b9a3"
  
-                                 // Clear AND redraw the terminal surface
--                                terminal.clear()?;
-+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                                           // TODO: revert to terminal.clear()?;
-                                 terminal.set_cursor_position((0, 0))?;
-                                 term::disable_raw_mode()?;
-                                 terminal.show_cursor()?;
-@@ -642,7 +647,8 @@ impl Runner {
-                                 };
+-[[package]]
+-name = "icy_sixel"
+-version = "0.5.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4bfb5a63225620b59df34a235d1fb56ff7b766909c3212a8ff927511a22b181d"
+-dependencies = [
+- "quantette",
+- "thiserror 2.0.21",
+-]
+-
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -1296,7 +1267,7 @@ dependencies = [
+  "byteorder-lite",
+  "color_quant",
+  "exr",
+- "gif",
++ "gif 0.14.2",
+  "image-webp",
+  "moxcms",
+  "num-traits",
+@@ -1320,6 +1291,22 @@ dependencies = [
+  "quick-error",
+ ]
  
-                                 // Clear AND redraw the terminal surface
--                                terminal.clear()?;
-+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                                           // TODO: revert to terminal.clear()?;
-                                 term::enable_raw_mode()?;
-                                 terminal.hide_cursor()?;
-                                 event_reader.start();
-@@ -672,7 +678,8 @@ impl Runner {
-                                 event_reader.stop();
++[[package]]
++name = "image_to_console_core"
++version = "0.2.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d02e2bb5d8b8a6dd125492e20d8d17783b1cfc6cab17600496ca454627198274"
++dependencies = [
++ "base64",
++ "gif 0.13.3",
++ "image",
++ "nohash-hasher",
++ "num_cpus",
++ "quantette",
++ "rayon",
++ "terminal_size",
++]
++
+ [[package]]
+ name = "imgref"
+ version = "1.12.3"
+@@ -1811,6 +1798,12 @@ dependencies = [
+  "memchr",
+ ]
  
-                                 // Clear AND redraw the terminal surface
--                                terminal.clear()?;
-+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                                           // TODO: revert to terminal.clear()?;
-                                 terminal.set_cursor_position((0, 0))?;
-                                 term::disable_raw_mode()?;
-                                 terminal.show_cursor()?;
-@@ -719,7 +726,8 @@ impl Runner {
-                                 };
++[[package]]
++name = "nohash-hasher"
++version = "0.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
++
+ [[package]]
+ name = "nom"
+ version = "7.1.3"
+@@ -1912,6 +1905,16 @@ dependencies = [
+  "libm",
+ ]
  
-                                 // Clear AND redraw the terminal surface
--                                terminal.clear()?;
-+                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                                           // TODO: revert to terminal.clear()?;
-                                 term::enable_raw_mode()?;
-                                 terminal.hide_cursor()?;
-                                 event_reader.start();
-@@ -841,7 +849,8 @@ impl Runner {
-         }
++[[package]]
++name = "num_cpus"
++version = "1.17.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "91df4bbde75afed763b708b7eee1e8e7651e02d97f6d5dd763e89367e957b23b"
++dependencies = [
++ "hermit-abi",
++ "libc",
++]
++
+ [[package]]
+ name = "num_threads"
+ version = "0.1.8"
+@@ -1957,29 +1960,13 @@ dependencies = [
+  "num-traits",
+ ]
  
-         // Clear AND redraw the terminal surface
--        terminal.clear()?;
-+        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-+                                                   // TODO: revert to terminal.clear()?;
-         terminal.set_cursor_position((0, 0))?;
-         execute!(terminal.backend_mut(), term::LeaveAlternateScreen)?;
-         execute!(terminal.backend_mut(), event::DisableMouseCapture).unwrap_or_default();
+-[[package]]
+-name = "ordered-float"
+-version = "5.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8c7c9e0d9b23589f26070720bac724174bfec1083e82f7854cdd0267518343c0"
+-dependencies = [
+- "num-traits",
+-]
+-
+-[[package]]
+-name = "outref"
+-version = "0.5.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
+-
+ [[package]]
+ name = "palette"
+ version = "0.7.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ddeed8580d347d2abf3dcf06a5f0b3dc020258338526b277847cd4248a70fc64"
+ dependencies = [
+  "approx",
+- "bytemuck",
+  "libm",
+  "palette_derive",
+  "palette_math",
+@@ -2362,19 +2349,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "quantette"
+-version = "0.6.0"
++version = "0.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ba5d37e94c17b8870a5b936001d2845a6782a22ebdb1706c84294eca
 ```
 
----
-
-### Incident Patch 2: `de54e476` (2026-10-23)
-**Commit Message**: Fix lint
-
-**File**: `benches/criterion.rs` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +4/-3)
 ```diff
-@@ -1,11 +1,11 @@
- use crate::app;
- use crate::ui;
--use criterion::{criterion_group, criterion_main, Criterion};
-+use criterion::{Criterion, criterion_group, criterion_main};
- use std::fs;
-+use tui::Terminal;
- use tui::backend::CrosstermBackend;
- use tui::crossterm::execute;
- use tui::crossterm::terminal as term;
--use tui::Terminal;
- use xplr::runner::get_tty;
- use xplr::*;
+@@ -47,9 +47,10 @@ jf = "1.0"
+ xdg = "3.0"
+ rayon = "1.12"
+ image = "0.25"
+-ratatui-image = { version = "11.1", default-features = false, features = [
+-  "crossterm",
+-  "image-defaults",
++image_to_console_core = { version = "0.2", default-features = false, features = [
++  "auto_select",
++  "sixel",
++  "gif",
+ ] }
  
+ [dependencies.lscolors]
 ```
 
-**File**: `src/app.rs` (modified, +32/-56)
+**File**: `src/ui.rs` (modified, +108/-102)
 ```diff
-@@ -6,23 +6,23 @@ use crate::dirs;
- use crate::explorer;
- use crate::input::{InputOperation, Key};
- use crate::lua;
-+pub use crate::msg::in_::ExternalMsg;
-+pub use crate::msg::in_::InternalMsg;
-+pub use crate::msg::in_::MsgIn;
- pub use crate::msg::in_::external::Command;
- pub use crate::msg::in_::external::ExplorerConfig;
- pub use crate::msg::in_::external::NodeFilter;
- pub use crate::msg::in_::external::NodeFilterApplicable;
- use crate::msg::in_::external::NodeSearcherApplicable;
- pub use crate::msg::in_::external::NodeSorter;
- pub use crate::msg::in_::external::NodeSorterApplicable;
--pub use crate::msg::in_::ExternalMsg;
--pub use crate::msg::in_::InternalMsg;
--pub use crate::msg::in_::MsgIn;
- pub use crate::msg::out::MsgOut;
- pub use crate::node::Node;
- pub use crate::node::ResolvedNode;
- pub use crate::pipe::Pipe;
- use crate::search::SearchAlgorithm;
- use crate::ui::Layout;
--use anyhow::{bail, Result};
-+use anyhow::{Result, bail};
- use gethostname::gethostname;
- use indexmap::set::IndexSet;
- use path_absolutize::*;
-@@ -300,18 +300,10 @@ impl App {
-             Some(path)
-         } else if let Some(dir) = dirs::config_dir() {
-             let path = dir.join("xplr/init.lua");
--            if path.exists() {
--                Some(path)
--            } else {
--                None
--            }
-+            if path.exists() { Some(path) } else { None }
-         } else {
-             let path = PathBuf::from("/etc/xplr/init.lua");
--            if path.exists() {
--                Some(path)
--            } else {
--                None
--            }
-+            if path.exists() { Some(path) } else { None }
-         };
- 
-         let config_files = config_file.into_iter().chain(extra_config_files);
-@@ -392,14 +384,14 @@ impl App {
- 
-         let hostname = gethostname().to_string_lossy().to_string();
- 
--        if let Some(vroot) = vroot.as_ref() {
--            if !pwd.starts_with(vroot) {
--                bail!(
--                    "{:?} is outside of virtual root {:?}",
--                    pwd.to_string_lossy(),
--                    vroot.to_string_lossy()
--                )
--            }
-+        if let Some(vroot) = vroot.as_ref()
-+            && !pwd.starts_with(vroot)
-+        {
-+            bail!(
-+                "{:?} is outside of virtual root {:?}",
-+                pwd.to_string_lossy(),
-+                vroot.to_string_lossy()
-+            )
-         }
- 
-         let pwd = pwd.to_string_lossy().to_string();
-@@ -798,18 +790,14 @@ impl App {
-     pub fn focus_first(mut self, save_history: bool) -> Result<Self> {
-         let mut history = self.history.clone();
-         if let Some(dir) = self.directory_buffer_mut() {
--            if save_history {
--                if let Some(n) = dir.focused_node() {
--                    history = history.push(n.absolute_path.clone());
--                }
-+            if save_history && let Some(n) = dir.focused_node() {
-+                history = history.push(n.absolute_path.clone());
-             }
- 
-             dir.focus = 0;
- 
--            if save_history {
--                if let Some(n) = self.focused_node() {
--                    self.history = history.push(n.absolute_path.clone())
--                }
-+            if save_history && let Some(n) = self.focused_node() {
-+                self.history = history.push(n.absolute_path.clone())
-             }
-         };
-         Ok(self)
-@@ -919,11 +907,7 @@ impl App {
-         let bounded = self.config.general.enforce_bounded_index_navigation;
-         if let Some(dir) = self.directory_buffer_mut() {
-             dir.focus = if (dir.focus + 1) == dir.total {
--                if bounded {
--                    dir.focus
--                } else {
--                    0
--                }
-+                if bounded { dir.focus } else { 0 }
-             } else {
-                 dir.focus + 1
-             }
-@@ -947,11 +931,7 @@ impl App {
-         {
-             if let Some(idx) = self.selection.get_index_of(n) {
-                 let idx = if idx + 1 == total {
--                    if bounded {
--                        idx
--                    } else {
--                        0
--                    }
-+                    if bounded { idx } else { 0 }
-                 } else {
-                     idx + 1
-                 };
-@@ -1063,14 +1043,14 @@ impl App {
-     fn change_directory(mut self, dir: &str, save_history: bool) -> Result<Self> {
-         let dir = PathBuf::from(dir).absolutize()?.to_path_buf();
- 
--        if let Some(vroot) = &self.vroot.clone() {
--            if !dir.starts_with(vroot) {
--                return self.log_error(format!(
--                    "{:?} is outside of virtual root {:?}",
--                    dir.to_string_lossy(),
--                    vroot,
--                ));
--            }
-+        if let Some(vroot) = &self.vroot.clone()
-+            && !dir.starts_with(vroot)
-+        {
-+            return self.log_error(format!(
-+                "{:?} is outside of virtual root {:?}",
-+ 
-```
-
-**File**: `src/cli.rs` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- use crate::{app, yaml};
--use anyhow::{bail, Context, Result};
-+use anyhow::{Context, Result, bail};
- use app::ExternalMsg;
- use path_absolutize::*;
- use serde_json as json;
-```
-
-**File**: `src/compat.rs` (modified, +3/-3)
-```diff
-@@ -3,12 +3,13 @@
- 
- use crate::app;
- use crate::lua;
--use crate::ui::block;
--use crate::ui::string_to_text;
- use crate::ui::Constraint;
- use crate::ui::ContentRendererArg;
- use crate::ui::UI;
-+use crate::ui::block;
-+use crate::ui::string_to_text;
- use serde::{Deserialize, Serialize};
-+use tui::Frame;
- use tui::layout::Constraint as TuiConstraint;
- use tui::layout::Rect as TuiRect;
- use tui::widgets::Cell;
-@@ -17,7 +18,6 @@ use tui::widgets::ListItem;
- use tui::widgets::Paragraph;
- use tui::widgets::Row;
- use tui::widgets::Table;
--use tui::Frame;
- 
- /// A cursed enum from crate::ui.
- #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-```
-
-**File**: `src/lua/mod.rs` (modified, +3/-3)
-```diff
-@@ -1,14 +1,14 @@
- use crate::app::VERSION;
- use crate::config::Config;
- use crate::config::Hooks;
--use anyhow::bail;
- use anyhow::Error;
- use anyhow::Result;
--use mlua::serde::SerializeOptions;
-+use anyhow::bail;
- use mlua::Lua;
- use mlua::LuaSerdeExt;
--use serde::de::DeserializeOwned;
-+use mlua::serde::SerializeOptions;
- use serde::Serialize;
-+use serde::de::DeserializeOwned;
- use std::fs;
- 
- pub mod util;
-```
-
-**File**: `src/msg/in_/external.rs` (modified, +1/-5)
-```diff
-@@ -1530,11 +1530,7 @@ impl NodeSorterApplicable {
-                 .map(|s| &s.last_modified)
-                 .cmp(&b.symlink.as_ref().map(|s| &s.last_modified)),
-         };
--        if self.reverse {
--            order.reverse()
--        } else {
--            order
--        }
-+        if self.reverse { order.reverse() } else { order }
-     }
- }
- 
-```
-
-**File**: `src/node.rs` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
+@@ -6,11 +6,12 @@ use crate::lua;
  use crate::permissions::Permissions;
--use humansize::{format_size, DECIMAL};
-+use humansize::{DECIMAL, format_size};
+ use crate::{app, path};
+ use ansi_to_tui::IntoText;
++use image::GenericImageView;
++use image_to_console_core::processor::{ImageProcessor, ImageProcessorOptions};
++use image_to_console_core::protocol::get_terminal_protocol;
++use image_to_console_core::{CustomResizeOption, DisplayMode, ResizeMode};
+ use indexmap::IndexSet;
+ use lscolors::{Color as LsColorsColor, Style as LsColorsStyle};
+-use ratatui_image::picker::Picker;
+-use ratatui_image::thread::{ResizeRequest, ResizeResponse, ThreadProtocol};
+-use ratatui_image::{Resize, StatefulImage};
  use serde::{Deserialize, Serialize};
  use std::cmp::Ordering;
- use std::os::unix::prelude::MetadataExt;
-```
-
-**File**: `src/path.rs` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- use crate::dirs;
--use anyhow::{bail, Result};
-+use anyhow::{Result, bail};
- use serde::{Deserialize, Serialize};
- pub use snailquote::escape;
- use std::path::{Component, Path, PathBuf};
+ use std::collections::HashMap;
+@@ -168,84 +169,92 @@ enum CustomOutputEntry {
+ }
+ 
+ struct CustomGraphicsState {
+-    thread_protocol: ThreadProtocol,
+-    rx_responses: Receiver<Result<ResizeResponse, ratatui_image::errors::Errors>>,
++    text: Text<'static>,
+ }
+ 
+ impl CustomGraphicsState {
+     fn from_image(
+-        tx_msg_in: Sender<app::Task>,
+-        picker: Picker,
+         image: image::DynamicImage,
+-    ) -> Self {
+-        let (tx_requests, rx_requests) = mpsc::channel::<ResizeRequest>();
+-        let (tx_responses, rx_responses) =
+-            mpsc::channel::<Result<ResizeResponse, ratatui_image::errors::Errors>>();
+-        let tx_refresh = tx_msg_in.clone();
+-
+-        thread::spawn(move || {
+-            while let Ok(request) = rx_requests.recv() {
+-                let completed = request.resize_encode();
+-                let _ = tx_responses.send(completed);
+-                let _ = tx_refresh.send(app::Task::new(
+-                    app::MsgIn::External(app::ExternalMsg::Refresh),
+-                    None,
+-                ));
+-            }
+-        });
++        cols: u16,
++        rows: u16,
++        mode: DisplayMode,
++    ) -> Result<Self, ()> {
++        if cols == 0 || rows == 0 {
++            return Err(());
++        }
+ 
+-        Self {
+-            thread_protocol: ThreadProtocol::new(
+-                tx_requests,
+-                Some(picker.new_resize_protocol(image)),
+-            ),
+-            rx_responses,
++        let (img_width, img_height) = image.dimensions();
++        if img_width == 0 || img_height == 0 {
++            return Err(());
+         }
++
++        // "Full" display modes pack 2 vertical pixel rows into each terminal
++        // row (half-block rendering), while "half" modes map 1 pixel row to 1
++        // terminal row. Either way, each pixel column maps to 1 terminal
++        // column, so the available "pixel" box is cols x (rows * row_ratio).
++        let row_ratio = if mode.is_full() { 2.0 } else { 1.0 };
++        let box_width = cols as f64;
++        let box_height = rows as f64 * row_ratio;
++        let scale = (box_width / img_width as f64).min(box_height / img_height as f64);
++
++        let target_width =
++            ((img_width as f64 * scale).round() as u32).clamp(1, cols as u32);
++        let target_height = ((img_height as f64 * scale).round() as u32)
++            .clamp(1, (rows as f64 * row_ratio) as u32);
++
++        let options = ImageProcessorOptions {
++            mode,
++            resize_mode: ResizeMode::Custom(CustomResizeOption::new(
++                target_width,
++                target_height,
++            )),
++            center: false,
++            ..ImageProcessorOptions::default()
++        };
++
++        let result = ImageProcessor::new(image, options)
++            .process()
++            .map_err(|_| ())?;
++
++        Ok(Self {
++            text: string_to_text_owned(result.lines.join("\n")),
++        })
+     }
+ 
+     fn spawn_loader(
+         tx_msg_in: Sender<app::Task>,
+-        picker: Picker,
+         path: String,
++        cols: u16,
++        rows: u16,
++        mode: DisplayMode,
+     ) -> Receiver<Result<Self, ()>> {
+         let (tx_ready, rx_ready) = mpsc::channel();
+-        let tx_refresh = tx_msg_in.clone();
+ 
+         thread::spawn(move || {
+             let state = image::ImageReader::open(&path)
+                 .ok()
+                 .and_then(|reader| reader.decode().ok())
+-                .map(|image| Self::from_image(tx_msg_in, picker, image))
+-                .ok_or(());
++                .ok_or(())
++                .and_then(|image| Self::from_image(image, cols, rows, mode));
+ 
+             let _ = tx_ready.send(state);
+-            let _ = tx_refresh.send(app::Task::new(
++            let _ = tx_msg_in.send(app::Task::new(
+                 app::MsgIn::External(app::ExternalMsg::Refresh),
+                 None,
+             ));
+         });
+ 
+         rx_ready
+     }
+-
+-    fn sync_updates(&mut self) {
+-        while let Ok(completed) = self.rx_responses.try_recv() {
+-            match completed {
+-                Ok(completed) => {
+-                    let _ = self.thread_protocol.update_resized_protocol(completed);
+-                }
+-                Err(_) => self.thread_protocol.empty_protocol(),
+-            }
+-        }
+-    }
+ }
+ 
+ i
 ```
 
 ---
 
-### Incident Patch 3: `2b1c0c11` (2026-10-23)
-**Commit Message**: Fix version handling (#792)
+### Incident Patch 2: `50824d0d` (2026-10-26)
+**Commit Message**: Fix doc and bench
 
-* Fix version handling
-
-Respect the rule documented in http://xplr.dev/en/upgrade-guide
-
-* edition 2024
-
-**File**: `Cargo.lock` (modified, +5/-5)
+**File**: `benches/criterion.rs` (modified, +7/-7)
 ```diff
-@@ -362,9 +362,9 @@ dependencies = [
+@@ -80,12 +80,12 @@ fn navigation_benchmark(c: &mut Criterion) {
+                     app::MsgIn::External(app::ExternalMsg::Back),
+                     None,
+                 ))
+-                .unwrap()
+-                .handle_task(app::Task::new(
+-                    app::MsgIn::External(app::ExternalMsg::Enter),
+-                    None,
+-                ))
+-                .unwrap()
++                .unwrap();
++            app.handle_task(app::Task::new(
++                app::MsgIn::External(app::ExternalMsg::Enter),
++                None,
++            ))
++            .unwrap()
+         })
+     });
+ }
+@@ -99,7 +99,7 @@ fn draw_benchmark(c: &mut Criterion) {
+     let (tx, _) = std::sync::mpsc::channel();
+     let lua = mlua::Lua::new();
+     let mut ui = ui::UI::new(tx);
+-    let mut app =
++    let app =
+         app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
+             .expect("failed to create app");
  
- [[package]]
- name = "cc"
--version = "1.9.0"
-+version = "1.10.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
-+checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -3624,9 +3624,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
- 
- [[package]]
- name = "uuid"
--version = "1.28.0"
-+version = "1.29.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
-+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
- dependencies = [
-  "atomic",
-  "getrandom 0.4.3",
-@@ -4076,7 +4076,7 @@ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
+```
+
+**File**: `docs/en/src/awesome-hacks.md` (modified, +6/-10)
+```diff
+@@ -425,25 +425,21 @@ Preview text files or images in a native xplr pane.
+ xplr.fn.custom.preview_pane = {}
+ xplr.fn.custom.preview_pane.render = function(ctx)
+   local n = ctx.app.focused_node
+-  if n and n.canonical then
+-    n = n.canonical
+-  end
+-
+   if n then
+-    local fallback = xplr.util.to_yaml(xplr.util.node(n.absolute_path))
++    local fallback = xplr.util.to_yaml(xplr.util.node(n.relative_path))
+     if n.is_dir then
+       return {
+         CustomOutput = {
+           ui = { title = { format = " 📁 " } },
+-          command = { "tree", "-x", "-C", "-L", "2", n.absolute_path },
++          command = { "tree", "-x", "-C", "-L", "2", n.relative_path },
+           fallback = fallback,
+         },
+       }
+     elseif n.mime_essence and n.mime_essence:match("^image/") then
+       return {
+         CustomGraphics = {
+-          ui = { title = { format = " 🖼️ " } },
+-          path = n.absolute_path,
++          ui = { title = { format = " 🖼️ " .. n.relative_path .. " " } },
++          path = n.relative_path,
+           fallback = fallback,
+         },
+       }
+@@ -457,7 +453,7 @@ xplr.fn.custom.preview_pane.render = function(ctx)
+             "--binary=as-text",
+             string.format("--line-range=:%s", ctx.layout_size.height),
+             string.format("--terminal-width=%s", ctx.layout_size.width),
+-            n.absolute_path,
++            n.relative_path,
+           },
+           fallback = fallback,
+         },
+@@ -567,4 +563,4 @@ xplr.config.modes.builtin.default.key_bindings.on_key['*'] = {
+ [17]: https://sr.ht/~exec64/imv
+ [18]: https://www.semicomplete.com/projects/xdotool
+ [19]: https://github.com/mgunyho/tere
+-[20]: https://github.com/sharkdp/bat
+\ No newline at end of file
++[20]: https://github.com/sharkdp/bat
+```
+
+---
+
+### Incident Patch 3: `6e66ad76` (2026-10-26)
+**Commit Message**: Revert "Fix output redirection"
+
+This reverts commit 0ab1350c94955875b04879d6a08538578c59ebe0.
+
+**File**: `Cargo.lock` (modified, +1/-1)
+```diff
+@@ -3939,7 +3939,7 @@ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
  
  [[package]]
  name = "xplr"
--version = "1.1.3"
-+version = "1.2.0"
+-version = "1.2.3"
++version = "1.2.2"
  dependencies = [
   "ansi-to-tui",
   "anyhow",
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -8,9 +8,9 @@ path = './benches/criterion.rs'
+@@ -8,7 +8,7 @@ path = './benches/criterion.rs'
  
  [package]
  name = 'xplr'
--version = '1.1.3'
-+version = '1.2.0'
+-version = '1.2.3'
++version = '1.2.2'
  authors = ['Arijit Basu <hi@arijitbasu.in>']
--edition = '2021'
-+edition = '2024'
+ edition = '2024'
  description = 'A hackable, minimal, fast TUI file explorer'
- license = 'MIT'
- readme = 'README.md'
+```
+
+**File**: `benches/criterion.rs` (modified, +7/-7)
+```diff
+@@ -80,12 +80,12 @@ fn navigation_benchmark(c: &mut Criterion) {
+                     app::MsgIn::External(app::ExternalMsg::Back),
+                     None,
+                 ))
+-                .unwrap();
+-            app.handle_task(app::Task::new(
+-                app::MsgIn::External(app::ExternalMsg::Enter),
+-                None,
+-            ))
+-            .unwrap()
++                .unwrap()
++                .handle_task(app::Task::new(
++                    app::MsgIn::External(app::ExternalMsg::Enter),
++                    None,
++                ))
++                .unwrap()
+         })
+     });
+ }
+@@ -99,7 +99,7 @@ fn draw_benchmark(c: &mut Criterion) {
+     let (tx, _) = std::sync::mpsc::channel();
+     let lua = mlua::Lua::new();
+     let mut ui = ui::UI::new(tx);
+-    let app =
++    let mut app =
+         app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
+             .expect("failed to create app");
+ 
 ```
 
 **File**: `docs/en/src/upgrade-guide.md` (modified, +2/-2)
@@ -2438,8 +2545,8 @@ Respect the rule documented in http://xplr.dev/en/upgrade-guide
  
  ### Instructions
  
--#### [v1.0.0][51] -> [v1.1.3][52]
-+#### [v1.0.0][51] -> [v1.2.0][52]
+-#### [v1.0.0][51] -> [v1.2.3][52]
++#### [v1.0.0][51] -> [v1.2.2][52]
  
  - No breaking changes.
  - Added a new keybinding in "create" mode. Press `:cc` to enter the
@@ -2447,67 +2554,69 @@ Respect the rule documented in http://xplr.dev/en/upgrade-guide
  [49]: https://github.com/sayanarijit/xplr/releases/tag/v0.21.10
  [50]: https://github.com/lotabout/skim#search-syntax
  [51]: https://github.com/sayanarijit/xplr/releases/tag/v1.0.0
--[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.1.3
-+[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.0
+-[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.3
++[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.2
 ```
 
-**File**: `src/lua/mod.rs` (modified, +10/-10)
+**File**: `src/lua/mod.rs` (modified, +7/-7)
 ```diff
-@@ -42,10 +42,10 @@ fn parse_version(version: &str) -> Result<(u16, u16, u16, Option<u16>)> {
- 
- /// Check the config version and notify users.
- pub fn check_version(version: &str, path: &str) -> Result<()> {
--    let (rmajor, rminor, rbugfix, rbeta) = parse_version(VERSION)?;
--    let (smajor, sminor, sbugfix, sbeta) = parse_version(version)?;
-+    let (rmajor, rminor, _, rbeta) = parse_version(VERSION)?;
-+    let (smajor, sminor, _, sbeta) = parse_version(version)?;
- 
--    if rmajor == smajor && rminor >= sminor && rbugfix >= sbugfix && rbeta == sbeta {
-+    if rmajor == smajor && rminor >= sminor && rbeta == sbeta {
-         Ok(())
-     } else {
-         bail!(
 @@ -152,24 +152,24 @@ mod tests {
          assert!(check_version(VERSION, "foo path").is_ok());
  
          // Current release if OK
--        assert!(check_version("1.1.3", "foo path").is_ok());
-+        assert!(check_version("1.2.0", "foo path").is_ok());
+-        assert!(check_version("1.2.3", "foo path").is_ok());
++        assert!(check_version("1.2.2", "foo path").is_ok());
  
          // Prev major release is ERR
-         assert!(check_version("0.20.4", "foo path").is_err());
+-        assert!(check_version("0.20.5", "foo path").is_err());
++        assert!(check_version("0.20.4", "foo path").is_err());
  
          // Prev minor release is OK
--        assert!(check_version("1.0.3", "foo path").is_ok());
-+        assert!(check_version("1.1.0", "foo path").is_ok());
+-        assert!(check_version("1.1.3", "foo path").is_ok());
++        assert!(check_version("1.1.2", "foo path").is_ok());
  
          // Prev bugfix release is OK
--        assert!(check_version("1.1.2", "foo path").is_ok());
-+        // assert!(check_version("1.2.-1", "foo path").is_ok());
+-        assert!(check_version("1.2.2", "foo path").is_ok());
++        assert!(check_version("1.2.1", "foo path").is_ok());
  
          // Next major release is ERR
 -        assert!(check_version("2.0.3", "foo path").is_err());
-+        assert!(check_version("2.0.0", "foo path").is_err());
++        assert!(check_version("2.0.2", "foo path").is_err());
  
          // Next minor release is ERR
--        assert!(check_version("1.2.3", "foo path").is_err());
-+        assert!(check_version("1.3.0", "foo path").is_err());
+-        assert!(check_version("1.3.3", "foo path").is_err());
++        assert!(check_version("1.3.2", "foo path").is_err());
  
--        // Next bugfix release is ERR (Change when we get to v1)
--        assert!(check_version("1.1.4", "foo path").is_err());
-+        // Next bugfix release is OK
-+        assert!(check_version("1.2.1", "foo path").is_ok());
+         // Next bugfix release is OK
+-        assert!(check_version("1.2.4", "foo path").is_ok());
++        assert!(check_version("1.2.3", "foo path").is_ok());
      }
  }
 ```
 
+**File**: `src/terminal.rs` (modified, +1/-1)
+```diff
+@@ -43,10 +43,10 @@ pub fn stop(
+ ) -> Result<()> {
+     clear(terminal)?;
+     execute!(terminal.backend_mut(), event::DisableMouseCapture).unwrap_or_default();
+-    term::disable_raw_mode()?;
+     if leave_alt_screen {
+         execute!(terminal.backend_mut(), term::LeaveAlternateScreen)?;
+     }
++    term::disable_raw_mode()?;
+     terminal.show_cursor()?;
+     Ok(())
+ }
+```
+
 #### Recent Merged Pull Requests:
+- **PR #796** (2026-10-25): v1.2.2 (@sayanarijit)
+- **PR #795** (2026-10-25): Fix tty crash when rendering graphics (@sayanarijit)
+- **PR #794** (2026-10-25): Cleanup (@sayanarijit)
 - **PR #793** (2026-10-23): Lazy load image picker (@sayanarijit)
 - **PR #792** (2026-10-23): Fix version handling (@sayanarijit)
 - **PR #791** (2026-10-23): Fix cursor position related crash (@sayanarijit)
-- **PR #789** (2026-10-23): fix: don't override node styles when LS_COLORS is unset or empty (@mmustafasenoglu)
-- **PR #788** (2026-10-23): Image support (@sayanarijit)
-- **PR #787** (2026-09-22): v1.1.3 (@sayanarijit)
 
 ---
 
@@ -2527,47 +2636,124 @@ Respect the rule documented in http://xplr.dev/en/upgrade-guide
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cursor position related crash (#791)
+## X. tty crash when rendering graphics (#795)
 
 **RULE**:
-When implementing operations in `src/runner.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sayanarijit/xplr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sayanarijit/xplr. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b71464a`: cursor position related crash (#791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25574260`: tty crash when rendering graphics (#795). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/runner.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                                                   // TODO: revert to terminal.clear()?;
-        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                                                   // TODO: revert to terminal.clear()?;
-        terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                                                   // TODO: revert to terminal.clear()?;
-                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                                                                           // TODO: revert to terminal.clear()?;
-                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                                                                           // TODO: revert to terminal.clear()?;
-                                terminal.resize(terminal.size()?.into())?; // https://github.com/sayanarijit/xplr/issues/790
-                             
+[[package]]
+name = "gif"
+version = "0.13.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
+dependencies = [
+ "color_quant",
+ "weezl",
+]
+
+[[package]]
+name = "hermit-abi"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e17592d60ebacc7d5e169f4663c5f84f9161cc90328abcfe8456f41e4dfcb284"
+
+ "gif 0.14.2",
+[[package]]
+name = "image_to_console_core"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d02e2bb5d8b8a6dd125492e20d8d17783b1cfc6cab17600496ca454627198274"
+dependencies = [
+ "base64",
+ "gif 0.13.3",
+ "image",
+ "nohash-hasher",
+ "num_cpus",
+ "quantette",
+ "rayon",
+ "terminal_size",
+]
+
+[[package]]
+name = "nohash-hasher"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
+
+[[package]]
+name = "num_cpus"
+version = "1.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91df4bbde75afed763b708b7eee1e8e7651e02d97f6d5dd763e89367e957b23b"
+dependencies = [
+ "hermit-abi",
+ "li
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        terminal.clear()?;
-        terminal.clear()?;
-        terminal.clear()?;
-                                terminal.clear()?;
-                                terminal.clear()?;
-                                terminal.clear()?;
-                                terminal.clear()?;
-                                terminal.clear()?;
-        terminal.clear()?;
+[[package]]
+name = "base64-simd"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "339abbe78e73178762e23bea9dfd08e697eb3f3301cd4be981c0f78ba5859195"
+dependencies = [
+ "outref",
+ "vsimd",
+]
+
+dependencies = [
+ "bytemuck_derive",
+]
+
+[[package]]
+name = "bytemuck_derive"
+version = "1.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 3.0.9",
+]
+[[package]]
+name = "getrandom"
+version = "0.2.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "wasi",
+]
+
+[[package]]
+name = "icy_sixel"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4bfb5a63225620b59df34a235d1fb56ff7b766909c3212a8ff927511a22b181d"
+dependencies = [
+ "quantette",
+ "thiserror 2.0.21",
+]
+
+ "gif",
+[[package]]
+name = "ordered-float"
+version = "5.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c7c9e0d9b23589f26070720bac724174bfec108
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b71464a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25574260` are properly handled with clean fallback behavior.
