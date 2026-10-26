@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T05:00:08.774Z",
+  "last_updated": "2026-10-26T05:11:29.734Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12726,14 +12726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-timestral-209m",
-      "content_hash": "cdef71e438f55be737a495d0a29e8a7c52bec809f3ca82849e61b5f770d762cd",
-      "verified_at": "2026-10-21T15:29:10.991Z",
+      "content_hash": "c9ce21dbd64de9fb87ed63d3434fa4a08abf4077b40925f28e29e4dabdaf4dc4",
+      "verified_at": "2026-10-26T05:11:29.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-21T15:29:10.991Z"
+      "last_updated": "2026-10-26T05:11:29.733Z"
     },
     "software-mansion/react-native-screens": {
       "repository": "software-mansion/react-native-screens",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
-      "verified_at": "2026-10-22T15:53:27.710Z",
+      "content_hash": "5c8edc02d78e8c185f9b26454631acceb6366147bae5f9c2a09ce2d5be7b39ca",
+      "verified_at": "2026-10-26T05:07:44.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:53:27.710Z"
+      "last_updated": "2026-10-26T05:07:44.900Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",

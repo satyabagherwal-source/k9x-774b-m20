@@ -5111,3 +5111,5 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `255dee03` | Multi-dimensional audit evidence | 2026-10-26T03:10:14.067Z |
 | `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `11326ef3` | Multi-dimensional audit evidence | 2026-10-26T03:10:15.958Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `f5dec9c4` | Multi-dimensional audit evidence | 2026-10-26T05:00:08.766Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `908119ae` | Multi-dimensional audit evidence | 2026-10-26T05:07:44.891Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-26T05:11:29.725Z |

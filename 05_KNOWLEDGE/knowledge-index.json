@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T05:00:08.690Z",
+  "last_updated": "2026-10-26T05:11:29.664Z",
   "total_verified_learnings": 1089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9465,8 +9465,8 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "2ca2dae5",
-      "content_hash": "f59f194eaa7e72c4084bfd67d8e15406130dddc83cc7864f824ebec53167b633",
+      "source_version": "908119ae",
+      "content_hash": "5c8edc02d78e8c185f9b26454631acceb6366147bae5f9c2a09ce2d5be7b39ca",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
@@ -9479,6 +9479,11 @@
           "number": 3617,
           "title": "Unlock magnifier color panel and add magnifier size setting (#665)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4558,
+          "title": "Cut paused recording spans by sample timestamps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9486,7 +9491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:53:27.623Z",
+      "verified_at": "2026-10-26T05:07:44.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -100566,7 +100571,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "cdef71e438f55be737a495d0a29e8a7c52bec809f3ca82849e61b5f770d762cd",
+      "content_hash": "c9ce21dbd64de9fb87ed63d3434fa4a08abf4077b40925f28e29e4dabdaf4dc4",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [
@@ -100599,6 +100604,21 @@
           "number": 3554,
           "title": "Missing Value Indicators Must Be Embedded Alongside Values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4559,
+          "title": "Non-Saturating Heavy-Tailed Stabilization for Deep Transformers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4560,
+          "title": "Factorized Partial RoPE Injection in Hybrid Spatio-Temporal Layers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4561,
+          "title": "Non-Crossing Quantile Monotonicity Enforcement via Incremental Positive Projections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -100606,7 +100626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:29:10.904Z",
+      "verified_at": "2026-10-26T05:11:29.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -128123,6 +128143,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T05:00:08.678Z"
+    },
+    "rule-4558": {
+      "learning_id": "rule-4558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4558,
+      "title": "Cut paused recording spans by sample timestamps",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "908119ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:07:44.820Z"
+    },
+    "rule-4559": {
+      "learning_id": "rule-4559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4559,
+      "title": "Non-Saturating Heavy-Tailed Stabilization for Deep Transformers",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:11:29.652Z"
+    },
+    "rule-4560": {
+      "learning_id": "rule-4560",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4560,
+      "title": "Factorized Partial RoPE Injection in Hybrid Spatio-Temporal Layers",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:11:29.652Z"
+    },
+    "rule-4561": {
+      "learning_id": "rule-4561",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4561,
+      "title": "Non-Crossing Quantile Monotonicity Enforcement via Incremental Positive Projections",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T05:11:29.652Z"
     }
   },
   "aliases": {

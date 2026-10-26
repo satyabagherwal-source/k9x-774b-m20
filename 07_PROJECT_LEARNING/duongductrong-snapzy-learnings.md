@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `2ca2dae5`  
+> **Source Version**: `908119ae`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:53:27.275Z  
+> **Timestamp**: 2026-10-26T05:07:44.486Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:53:27.116Z  
+> **Harvest Timestamp**: 2026-10-26T05:06:41.445Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3414 stars
+- **Stars / Engagement**: 3419 stars
 
 ---
 
@@ -37,2030 +37,841 @@
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `Snapzy/App/MenuBarIconRenderer.swift`
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Capture/AreaCommand.swift`
 ```
 //
-//  MenuBarIconRenderer.swift
-//  Snapzy
-//
-//  Renders 18pt template status bar images for each menu bar icon style and
-//  manages the user-imported custom icon file.
+//  AreaCommand.swift
+//  SnapzyCLICore
 //
 
-import AppKit
+import ArgumentParser
+import SnapzyCLIProtocol
 
-@MainActor
-final class MenuBarIconRenderer {
-  static let shared = MenuBarIconRenderer()
+struct AreaCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "area",
+    abstract: "Capture a rectangle of the screen.",
+    discussion: """
+    Coordinates are global points with the origin at the top-left of the main \
+    display, the same space as the frames printed by `snapzy list`.
+    """
+  )
 
-  private let fileManager = FileManager.default
-  private let appSupportFolderName = "Snapzy"
-  private let customIconFolderName = "MenuBarIcon"
-  private let customIconFileName = "custom.png"
+  @OptionGroup var global: GlobalOptions
+  @OptionGroup var output: CaptureOutputOptions
 
-  private init() {}
+  /// `.unconditional` so displays left of or above the main one work:
+  /// `--rect -1440,0,800,600` would otherwise parse `-1440…` as an option.
+  @Option(parsing: .unconditional, help: "Rectangle as x,y,width,height in points.")
+  var rect: CLIRect
 
-  // MARK: - Rendering
+  func run() async throws {
+    try await CaptureCommand.run(
+      .captureArea,
+      params: CaptureAreaParams(rect: rect, options: output.captureOptions()),
+      output: output,
+      global: global
+    )
+  }
+}
 
-  /// 18pt template image for the given style. Falls back to the bundled
-  /// default artwork when a custom icon is missing or undecodable.
-  func statusImage(for style: MenuBarIconStyle) -> NSImage? {
-    switch style {
-    case .default:
-      return makeBundledStatusImage()
-    case .custom:
-      if let custom = makeCustomStatusImage() {
-        return custom
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Capture/CaptureCommand.swift`
+```
+//
+//  CaptureCommand.swift
+//  SnapzyCLICore
+//
+//  `capture screen|window|area`. Captures never open Quick Access, touch the
+//  clipboard or history; the file path comes back in the result.
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct CaptureCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "capture",
+    abstract: "Capture a display, a window or an area without user interaction.",
+    subcommands: [ScreenCommand.self, WindowCommand.self, AreaCommand.self]
+  )
+
+  static func run(
+    _ method: CLIMethod,
+    params: some Codable & Sendable,
+    output: CaptureOutputOptions,
+    global: GlobalOptions
+  ) async throws {
+    let destination = OutputDestination.resolve(
+      output.output,
+      currentDirectory: URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
+    )
+    let writer = OutputWriter()
+    try await CommandRunner.reportingErrors(global.renderer) {
+      try writer.preflight(destination, force: output.force)
+    }
+
+    try await CommandRunner.run(global) { client, renderer in
+      let result = try client.call(method, params: params, as: CLICaptureResult.self)
+      let written = try writer.apply(result, to: destination, force: output.force) { data in
+        do {
+          try FileHandle.standardOutput.write(contentsOf: data)
+        } catch {
+          throw CLIError(.internal, "Could not write the image to stdout: \(error.localizedDescription)")
+        }
       }
-      return makeBundledStatusImage()
+
+      if destination == .standardOutput {
+        // stdout carries the image; metadata goes to stderr only when asked.
+        if global.json {
+          try StandardStreams.writeError(OutputRenderer(mode: .json(pretty: false)).render(written))
+        }
+      } else {
+        try StandardStreams.write(renderer.render(written))
+      }
+    }
+  }
+}
+
+struct CaptureOutputOptions: ParsableArguments {
+  @Option(
+    name: [.short, .long],
+    help: ArgumentHelp(
+      "Where to write the capture: a file, a directory (trailing /), or - for stdout.",
+      discussion: "Without it the file stays in Snapzy's staging folder for 24 hours."
+    )
+  )
+  var output: String?
+
+  @Option(help: "Image format. Defaults to the --output extension, else png.")
+  var format: CLIImageFormat?
+
+  @Option(help: "JPEG quality, 0 to 1.")
+  var quality: Double?
+
+  @Option(name: .customLong("max-dimension"), help: "Downscale so the longest edge is at most this many pixels.")
+  var maxDimension: Int?
+
+  @Flag(help: "Include the mouse cursor.")
+  var cursor = false
+
+  @Flag(help: "Overwrite existing files at --output.")
+  var force = false
+
+  mutating func validate() throws {
+    let format = try resolvedFormat()
+    if let quality {
+      guard (0 ... 1).contains(quality) else { throw ValidationError("--quality must be between 0 and 1.") }
+      guard format == .jpeg else { throw ValidationError("--quality only applies to jpg output.") }
+    }
+    if let maxDimension, maxDimension <= 0 {
+      throw ValidationError("--max-dimension must be greater than 0.")
+    }
+  }
+
+  func resolvedFormat() throws -> CLIImageFormat {
+    let outputExtension = output
+      .flatMap { $0 == "-" || $0.hasSuffix("/") ? nil : URL(fileURLWithPath: $0).pathExtension }
+      .flatMap(CLIImageFormat.init(fileExtension:))
+
+    switch (format, outputExtension) {
+    case let (format?, outputExtension?) where format != outputExtension:
+      throw ValidationError(
+        "--format \(format.fileExtension) does not match the --output extension .\(outputExtension.fileExtension)."
+      )
+    case let (format?, _):
+      return format
+    case let (nil, outputExtension?):
+      return outputExtension
+    case (nil, nil):
+      return .png
+    }
+  }
+
+  func captureOptions(windowShadow: Bool = true) throws -> CaptureOptions {
+    try CaptureOptions(
+      format: resolvedFormat(),
+      quality: quality,
+      maxDimension: maxDimension,
+      showCursor: cursor,
+      windowShadow: windowShadow
+    )
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Capture/ScreenCommand.swift`
+```
+//
+//  ScreenCommand.swift
+//  SnapzyCLICore
+//
+
+import ArgumentParser
+import SnapzyCLIProtocol
+
+struct ScreenCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "screen",
+    abstract: "Capture a whole display, or every display."
+  )
+
+  @OptionGroup var global: GlobalOptions
+  @OptionGroup var output: CaptureOutputOptions
+
+  @Option(help: "main, all, or a display ID from `snapzy list displays`.")
+  var display: DisplaySelector = .main
+
+  func run() async throws {
+    try await CaptureCommand.run(
+      .captureScreen,
+      params: CaptureScreenParams(display: display, options: output.captureOptions()),
+      output: output,
+      global: global
+    )
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Capture/WindowCommand.swift`
+```
+//
+//  WindowCommand.swift
+//  SnapzyCLICore
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIProtocol
+
+struct WindowCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "window",
+    abstract: "Capture one window, even when other windows cover it.",
+    discussion: "Pick the window with exactly one of --id, --app or --active."
+  )
+
+  @OptionGroup var global: GlobalOptions
+  @OptionGroup var output: CaptureOutputOptions
+
+  @Option(help: "Window ID from `snapzy list windows`.")
+  var id: UInt32?
+
+  @Option(help: "App name or bundle ID. Captures its frontmost window unless --title or --index narrows it.")
+  var app: String?
+
+  @Option(help: "Regular expression matched against window titles (with --app).")
+  var title: String?
+
+  @Option(help: "0-based index among the matching windows, front to back (with --app).")
+  var index: Int?
+
+  @Flag(help: "The focused window of the frontmost app.")
+  var active = false
+
+  @Flag(name: .customLong("no-shadow"), help: "Capture without the window shadow.")
+  var noShadow = false
+
+  mutating func validate() throws {
+    _ = try selector()
+  }
+
+  func selector() throws -> WindowSelector {
+    switch (id, app, active) {
+    case let (id?, nil, false):
+      try requireNoAppFilters()
+      return .id(id)
+    case let (nil, app?, false):
+      if let title {
+        do {
+          _ = try NSRegularExpression(pattern: title)
+        } catch {
+          throw ValidationError("--title is not a valid regular expression: \(error.localizedDescription)")
+        }
+      }
+      if let index, index < 0 {
+        throw ValidationError("--index must be 0 or greater.")
+      }
+      return .app(AppWindowQuery(app: app, titlePattern: title, index: index))
+    case (nil, nil, true):
+      try requireNoAppFilters()
+      return .active
     default:
-      return makeSymbolStatusImage(symbolName: style.symbolName)
+      throw ValidationError("Pass exactly one of --id, --app or --active.")
     }
   }
 
-  /// Current bundled-artwork rendering (moved from AppStatusBarController).
-  private func makeBundledStatusImage() -> NSImage? {
-    guard let appIcon = NSImage(named: "MenubarIcon") else { return nil }
-
-    let canvasSize = NSSize(width: 18, height: 18)
-    let targetVisibleOccupancy: CGFloat = 0.89
-    // Current MenubarIcon PNG alpha bounds occupy 75.28% of its transparent canvas.
-    let sourceVisibleOccupancy: CGFloat = 0.7528
-    let drawSize = NSSize(
-      width: canvasSize.width * targetVisibleOccupancy / sourceVisibleOccupancy,
-      height: canvasSize.height * targetVisibleOccupancy / sourceVisibleOccupancy
-    )
-    let drawRect = NSRect(
-      x: (canvasSize.width - drawSize.width) / 2,
-      y: (canvasSize.height - drawSize.height) / 2,
-      width: drawSize.width,
-      height: drawSize.height
-    )
-
-    let resizedIcon = NSImage(size: canvasSize)
-    resizedIcon.lockFocus()
-    appIcon.draw(
-      in: drawRect,
-      from: NSRect(origin: .zero, size: appIcon.size),
-      operation: .copy,
-      fraction: 1.0
-    )
-    resizedIcon.unlockFocus()
-    // Template images let AppKit adapt the glyph color to the current menu bar material.
-    resizedIcon.isTemplate = true
-    return resizedIcon
+  private func requireNoAppFilters() throws {
+    if title != nil || index != nil {
+      throw ValidationError("--title and --index only apply with --app.")
+    }
   }
 
-  private func makeSymbolStatusImage(symbolName: String?) -> NSImage? {
-    guard let symbolName else { return nil }
-    let config = NSImage.SymbolConfiguration(pointSize: 15, weight: .regular)
-    let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
-      .withSymbolConfiguration(config)
-    image?.isTemplate = true
-    return image
+  func run() async throws {
+    try await CaptureCommand.run(
+      .captureWindow,
+      params: CaptureWindowParams(
+        window: selector(),
+        options: output.captureOptions(windowShadow: !noShadow)
+      ),
+      output: output,
+      global: global
+    )
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/DoctorCommand.swift`
+```
+//
+//  DoctorCommand.swift
+//  SnapzyCLICore
+//
+//  Explains why `snapzy` can or cannot capture: which app it talks to,
+//  whether it is on PATH, whether Snapzy is reachable, and the app's status.
+//  Never launches Snapzy — a stopped app is reported, not fixed.
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct DoctorCheck: Codable, Equatable {
+  let name: String
+  let ok: Bool
+  let detail: String
+  let hint: String?
+  /// Set when this failure should decide the exit code; advisory checks
+  /// (like PATH) can fail without failing `doctor`.
+  let failureCode: CLIErrorCode?
+
+  static func pass(_ name: String, _ detail: String) -> DoctorCheck {
+    DoctorCheck(name: name, ok: true, detail: detail, hint: nil, failureCode: nil)
   }
 
-  /// Renders the user-imported PNG with alpha-bounds normalization so its
-  /// visible content matches the bundled icon's 89% canvas occupancy.
-  private func makeCustomStatusImage() -> NSImage? {
-    guard let url = customIconURL,
-          fileManager.fileExists(atPath: url.path),
-          let source = NSImage(contentsOf: url),
-          let cgImage = source.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-      return nil
+  static func fail(_ name: String, _ detail: String, hint: String?, code: CLIErrorCode?) -> DoctorCheck {
+    DoctorCheck(name: name, ok: false, detail: detail, hint: hint, failureCode: code)
+  }
+}
+
+struct DoctorReport: Codable, Equatable, HumanReadable {
+  let checks: [DoctorCheck]
+
+  /// The first failure that carries a code, or nil when everything required passed.
+  var failureCode: CLIErrorCode? {
+    checks.first { !$0.ok && $0.failureCode != nil }?.failureCode
+  }
+
+  var humanDescription: String {
+    checks.map { check in
+      var line = "\(check.ok ? "✓" : "✗") \(check.name): \(check.detail)"
+      if let hint = check.hint {
+        line += "\n    hint: \(hint)"
+      }
+      return line
+    }.joined(separator: "\n")
+  }
+}
+
+struct DoctorCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "doctor",
+    abstract: "Check that snapzy can reach Snapzy and capture."
+  )
+
+  @OptionGroup var global: GlobalOptions
+
+  func run() async throws {
+    var checks: [DoctorCheck] = []
+    let executable = Bundle.main.executableURL?.resolvingSymlinksInPath()
+    checks.append(.pass("cli", "\(CLIVersion.current) at \(executable?.path ?? "unknown")"))
+    checks.append(Doctor.pathCheck(
+      path: ProcessInfo.processInfo.environment["PATH"] ?? "",
+      executable: executable,
+      commandName: Doctor.commandName(for: executable),
+      caskInstalled: Doctor.isCaskInstall(executable: executable)
+    ))
+
+    let location: AppLocation
+    do {
+      location = try AppLocator.locate()
+      checks.append(.pass("app", "\(location.appURL.path) (\(location.bundleID))"))
+    } catch let error as CLIError {
+      checks.append(.fail("app", error.message, hint: error.hint, code: error.code))
+      return try finish(checks)
     }
 
-    let canvasSize = NSSize(width: 18, height: 18)
-    let targetVisibleOccupancy: CGFloat = 0.89
-    let imageSize = NSSize(width: cgImage.width, height: cgImage.height)
-
-    let drawSize: NSSize
-    if let alphaBounds = Self.alphaBoundingBox(of: cgImage), !alphaBounds.isEmpty {
-      // Scale so the larger visible dimension fills the target occupancy.
-      let sourceOccupancy = max(
-        alphaBounds.width / imageSize.width,
-        alphaBounds.height / imageSize.height
-      )
-      guard sourceOccupancy > 0 else { return nil }
-      let scale = targetVisibleOccupancy / sourceOccupancy
-      drawSize = NSSize(width: imageSize.width * scale, height: imageSize.height * scale)
-    } else {
-      // Fully opaque (or undetectable bounds): fit the longest side to the target.
-      let fit = min(
-        canvasSize.width * targetVisibleOccupancy / imageSize.width,
-        canvasSize.height * targetVisibleOccupancy / imageSize.height
-      )
-      drawSize = NSSize(width: imageSize.width * fit, height: imageSize.height * fit)
+    // Never launch from doctor; say what could not be checked instead of
+    // reporting success for a server that may not accept requests.
+    let socketPath = SocketLocation.path(forAppBundleID: location.bundleID)
+    guard AppLauncher.Environment.live.isAppRunning(location.bundleID) else {
+      checks.append(.fail(
+        "connection",
+        "Snapzy is not running, so command line access, onboarding and permissions were not checked "
+          + "(socket: \(socketPath))",
+        hint: "Open Snapzy, then run `snapzy doctor` again",
+        code: nil
+      ))
+      return try finish(checks)
     }
 
-    let drawRect = NSRect(
-      x: (canvasSize.width - drawSize.width) / 2,
-      y: (canvasSize.height - drawSize.height) / 2,
-      width: drawSize.width,
-      height: drawSize.height
-    )
-
-    let rendered = NSImage(size: canvasSize)
-    rendered.lockFocus()
-    source.draw(
-      in: drawRect,
-      from: NSRect(origin: .zero, size: source.size),
-      operation: .copy,
-      fraction: 1.0
-    )
-    rendered.unlockFocus()
-    // Template rendering makes any imported PNG monochrome automatically.
-    rendered.isTemplate = true
-    return rendered
-  }
-
-  // MARK: - Custom Icon Storage
-
-  /// URL of the stored custom icon: Application Support/Snapzy/MenuBarIcon/custom.png
-  var customIconURL: URL? {
-    guard
-      let appSupportURL = fileManager.urls(
-        for: .applicationSupportDirectory, in: .userDomainMask
-      ).first
-    else {
-      return nil
+    var options = global.sessionOptions
+    options.allowsLaunch = false
+    let client: CLIClient
+    do {
+      client = try await CLISession.open(options)
+    } catch let error as CLIError {
+      checks.append(.fail("connection", error.message, hint: error.hint, code: error.code))
+      return try finish(checks)
     }
-
-    return appSupportURL
-      .appendingPathComponent(appSupportFolderName, isDirectory: true)
-      .appendingPathComponent(customIconFolderName, isDirectory: true)
-      .appendingPathComponent(customIconFileName, isDirectory: false)
-  }
-
-  var hasCustomIcon: Bool {
-    guard let url = customIconURL else { return false }
-    return fileManager.fileExists(atPath: url.path)
-  }
-
-  /// Modification date of the stored custom icon, used for cache invalidation.
-  var customIconModificationDate: Date? {
-    guard let url = customIconURL else { return nil }
-    return try? fileManager.attributesOfItem(atPath: url.path)[.modificationDate] as? Date
-  }
-
-  /// Validates and copies a user-picked PNG into Application Support.
-  @discardableResult
-  func saveCustomIcon(from sourceURL: URL) -> Bool {
-    guard let destinationURL = customIconURL else { return false }
-
-    // Validate the pick decodes as an image before replacing the stored copy.
-    guard let image = NSImage(contentsOf: sourceURL),
-          image.cgImage(forProposedRect: nil, context: nil, hints: nil) != nil else {
-      DiagnosticLogger.shared.log(
-        .warning, .ui, "Custom menu bar icon rejected: undecodable image",
-        context: ["path": sourceURL.path]
-      )
-      return false
-    }
+    defer { client.close() }
+    checks.append(.pass(
+      "connection",
+      "Snapzy \(client.hello.appVersion) on \(socketPath)"
+    ))
 
     do {
-      let directory = destinationURL.deletingLastPathComponent()
-      try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-      if fileManager.fileExists(atPath: destinationURL.path) {
-        try fileManager.removeItem(at: destinationURL)
+      checks += try Doctor.statusChecks(client.call(.systemStatus, as: CLIStatus.self))
+    } catch let error as CLIError {
+      checks.append(.fail("status", error.message, hint: error.hint, code: error.code))
+    }
+    try finish(checks)
+  }
+
+  private func finish(_ checks: [DoctorCheck]) throws {
+    let report = DoctorReport(checks: checks)
+    try StandardStreams.write(global.renderer.render(report))
+    if let code = report.failureCode {
+      throw ExitCode(code.exitCode)
+    }
+  }
+}
+
+/// Pure pieces of `doctor`, kept separate for tests.
+enum Doctor {
+  /// `snapzy-debug` for the helper inside a Debug build, else `snapzy`.
+  static func commandName(for executable: URL?) -> String {
+    let bundleID = executable
+      .flatMap(AppLocator.enclosingAppBundle(forExecutableAt:))
+      .flatMap(AppLocator.bundleIdentifier(ofAppAt:))
+    return CommandName.forAppBundleID(bundleID)
+  }
+
+  /// Links this exact binary, so the hint is right for Debug builds and
+  /// apps outside /Applications too.
+  static func installHint(for executable: URL?, commandName: String = CommandName.release) -> String {
+    let helper = executable?.path ?? "/Applications/Snapzy.app/Contents/Helpers/snapzy"
+    let quoted = "'" + helper.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    return "sudo mkdir -p /usr/local/bin && sudo ln -sfn \(quoted) /usr/local/bin/\(commandName)"
+  }
+
+  static let homebrewHint = "Snapzy came from Homebrew, which links snapzy: run `brew reinstall --cask snapzy`"
+  static let homebrewCaskroomPaths = ["/opt/homebrew/Caskroom/snapzy", "/usr/local/Caskroom/snapzy"]
+
+  /// Whether this binary is inside the cask's `Snapzy.app` (not a Debug or
+  /// renamed copy), so Homebrew should link it rather than `ln -s` by hand.
+  static func isCaskInstall(
+    executable: URL?,
+    caskroomPaths: [String] = homebrewCaskroomPaths,
+    fileManager: FileManager = .default
+  ) -> Bool {
+    guard let executable, executable.path.hasSuffix("/Snapzy.app/Contents/Helpers/snapzy") else { return false }
+    return caskroomPaths.contains { fileManager.fileExists(atPath: $0) }
+  }
+
+  /// Whether `commandName` on PATH is this binary. Advisory: agents can always use the full path.
+  static func pathCheck(
+    path: String,
+    executable: URL?,
+    commandName: String = CommandName.release,
+    caskInstalled: Bool = false,
+    fileManager: FileManager = .default
+  ) -> DoctorCheck {
+    let found = path.split(separator: ":").lazy
+      .map { URL(fileURLWithPath: String($0)).appendingPathComponent(commandName) }
+      .first { candidate in
+        var isDirectory: ObjCBool = false
+        return fileManager.fileExists(atPath: candidate.path, isDirectory: &isDirectory)
+          && !isDirectory.boolValue
+          && fileManager.isExecutableFile(atPath: candidate.path)
       }
-      try fileManager.copyItem(at: sourceURL, to: destinationURL)
-      DiagnosticLogger.shared.log(.info, .ui, "Custom menu bar icon imported")
-      return true
+
+    guard let found else {
+      let hint = caskInstalled ? homebrewHint : installHint(for: executable, commandName: commandName)
+      return .fail("path", "\(commandName) is not on PATH", hint: hint, code: nil)
+    }
+    let resolved = found.resolvingSymlinksInPath()
+    guard let executable, resolved.path != executable.path else {
+      return .pass("path", "\(found.path) → \(resolved.path)")
+    }
+    return .fail(
+      "path",
+      "\(found.path) runs \(resolved.path), not this \(commandName)",
+      hint: "Point the link at the Snapzy.app you use: \(installHint(for: executable, commandName: commandName))",
+      code: nil
+    )
+  }
+
+  static func statusChecks(_ status: CLIStatus) -> [DoctorCheck] {
+    var checks: [DoctorCheck] = []
+
+    checks.append(status.cliEnabled
+      ? .pass("command line access", "enabled")
+      : .fail(
+        "command line access",
+        "disabled",
+        hint: "Enable Settings → Command Line → Command line access",
+        code: .disabled
+      ))
+
+    checks.append(status.onboardingCompleted
+      ? .pass("onboarding", "completed")
+      : .fail("onboarding", "not completed", hint: "Open Snapzy and finish setup", code: .onboardingIncomplete))
+
+    switch status.screenRecordingPermission {
+    case .granted:
+      checks.append(.pass("screen recording", "granted"))
+    case .denied:
+      checks.append(.fail(
+        "screen recording",
+        "not granted",
+        hint: "System Settings → Privacy & Security → Screen & System Audio Recording → enable Snapzy",
+        code: .permissionDenied
+      ))
+    case .unavailable:
+      checks.append(.fail(
+        "screen recording",
+        "granted but not usable yet",
+        hint: "Relaunch Snapzy. If that does not help, remove Snapzy from System Settings → Privacy & Security → "
+          + "Screen & System Audio Recording and add it again",
+        code: .permissionDenied
+      ))
+    }
+
+    switch status.authorization {
+    case .allowed:
+      checks.append(.pass("authorization", "this app is allowed"))
+    case .undetermined:
+      checks.append(.pass("authorization", "not asked yet; Snapzy asks on the first capture"))
+    case .denied:
+      checks.append(.fail(
+        "authorization",
+        "this app was denied",
+        hint: "Remove it from Settings → Command Line → Allowed apps, then retry",
+        code: .notAuthorized
+      ))
+    }
+    return checks
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/ListCommand.swift`
+```
+//
+//  ListCommand.swift
+//  SnapzyCLICore
+//
+//  Discovery for agents: which displays, windows and apps can be captured.
+//  Window IDs and frames feed straight into `capture window --id` and
+//  `capture area --rect`.
+//
+
+import ArgumentParser
+import SnapzyCLIProtocol
+
+struct ListCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "list",
+    abstract: "List displays, windows or apps.",
+    subcommands: [Displays.self, Windows.self, Apps.self]
+  )
+
+  struct Displays: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+      commandName: "displays",
+      abstract: "List connected displays."
+    )
+
+    @OptionGroup var global: GlobalOptions
+
+    func run() async throws {
+      try await CommandRunner.run(global) { client, renderer in
+        let list = try client.call(.listDisplays, as: CLIDisplayList.self)
+        try StandardStreams.write(renderer.render(list))
+      }
+    }
+  }
+
+  struct Windows: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+      commandName: "windows",
+      abstract: "List windows, front to back."
+    )
+
+    @OptionGroup var global: GlobalOptions
+
+    @Option(help: "Only windows of this app (name or bundle ID).")
+    var app: String?
+
+    @Flag(help: "Include windows that are not on screen.")
+    var all = false
+
+    func run() async throws {
+      try await CommandRunner.run(global) { client, renderer in
+        let list = try client.call(
+          .listWindows,
+          params: ListWindowsParams(app: app, includeOffscreen: all),
+          as: CLIWindowList.self
+        )
+        try StandardStreams.write(renderer.render(list))
+      }
+    }
+  }
+
+  struct Apps: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+      commandName: "apps",
+      abstract: "List running apps that have windows."
+    )
+
+    @OptionGroup var global: GlobalOptions
+
+    func run() async throws {
+      try await CommandRunner.run(global) { client, renderer in
+        let list = try client.call(.listApps, as: CLIAppList.self)
+        try StandardStreams.write(renderer.render(list))
+      }
+    }
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/StatusCommand.swift`
+```
+//
+//  StatusCommand.swift
+//  SnapzyCLICore
+//
+
+import ArgumentParser
+import SnapzyCLIProtocol
+
+struct StatusCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "status",
+    abstract: "Show whether Snapzy can capture for this app."
+  )
+
+  @OptionGroup var global: GlobalOptions
+
+  func run() async throws {
+    try await CommandRunner.run(global) { client, renderer in
+      let status = try client.call(.systemStatus, as: CLIStatus.self)
+      try StandardStreams.write(renderer.render(status))
+    }
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/VersionCommand.swift`
+```
+//
+//  VersionCommand.swift
+//  SnapzyCLICore
+//
+//  Prints the CLI version even when Snapzy is unreachable, then exits with
+//  the connection error's code.
+//
+
+import ArgumentParser
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct VersionInfo: Codable, Equatable, HumanReadable {
+  let cliVersion: String
+  let protocolVersion: ProtocolVersion
+  let appVersion: String?
+  let appBuild: String?
+
+  var humanDescription: String {
+    guard let appVersion else { return "snapzy \(cliVersion)" }
+    return "snapzy \(cliVersion) (Snapzy \(appVersion)\(appBuild.map { " build \($0)" } ?? ""))"
+  }
+}
+
+struct VersionCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "version",
+    abstract: "Show the CLI and Snapzy versions."
+  )
+
+  @OptionGroup var global: GlobalOptions
+
+  func run() async throws {
+    let renderer = global.renderer
+    var hello: HelloResponse?
+    var connectionError: CLIError?
+
+    // Never start Snapzy just to print a version.
+    var sessionOptions = global.sessionOptions
+    sessionOptions.allowsLaunch = false
+
+    do {
+      let client = try await CLISession.open(sessionOptions)
+      hello = client.hello
+      client.close()
+    } catch let error as CLIError {
+      connectionError = error
+    }
+
+    let info = VersionInfo(
+      cliVersion: CLIVersion.current,
+      protocolVersion: .current,
+      appVersion: hello?.appVersion,
+      appBuild: hello?.appBuild
+    )
+    try StandardStreams.write(renderer.render(info))
+
+    if let connectionError {
+      try await CommandRunner.reportingErrors(renderer) { throw connectionError }
+    }
+  }
+}
+
+```
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/GlobalOptions.swift`
+```
+//
+//  GlobalOptions.swift
+//  SnapzyCLICore
+//
+//  Options every command accepts, plus the shared run loop: open a session,
+//  run the command body, and turn any failure into a rendered error and a
+//  documented exit code.
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct GlobalOptions: ParsableArguments {
+  @Flag(help: "Print JSON even when stdout is a terminal.")
+  var json = false
+
+  @Option(help: "Seconds to wait for each Snapzy request.")
+  var timeout: Double = 30
+
+  @Option(name: .customLong("launch-timeout"), help: "Seconds to wait for Snapzy to start.")
+  var launchTimeout: Double = 15
+
+  @Flag(name: .customLong("no-launch"), help: "Fail instead of starting Snapzy when it is not running.")
+  var noLaunch = false
+
+  mutating func validate() throws {
+    guard timeout > 0 else { throw ValidationError("--timeout must be greater than 0.") }
+    guard launchTimeout > 0 else { throw ValidationError("--launch-timeout must be greater than 0.") }
+  }
+
+  var sessionOptions: CLISession.Options {
+    CLISession.Options(
+      requestTimeout: timeout,
+      launchTimeout: launchTimeout,
+      allowsLaunch: !noLaunch,
+      cliVersion: CLIVersion.current
+    )
+  }
+
+  var renderer: OutputRenderer {
+    OutputRenderer(mode: OutputRenderer.mode(jsonFlag: json, stdoutIsTerminal: StandardStreams.stdoutIsTerminal))
+  }
+}
+
+enum CommandRunner {
+  /// Opens a session, runs `body`, and converts failures into exit codes.
+  static func run(
+    _ options: GlobalOptions,
+    _ body: (CLIClient, OutputRenderer) throws -> Void
+  ) async throws {
+    let renderer = options.renderer
+    try await reportingErrors(renderer) {
+      let client = try await CLISession.open(options.sessionOptions)
+      defer { client.close() }
+      try body(client, renderer)
+    }
+  }
+
+  static func reportingErrors(_ renderer: OutputRenderer, _ body: () async throws -> Void) async throws {
+    do {
+      try await body()
+    } catch let error as CLIError {
+      StandardStreams.writeError(renderer.render(error: error))
+      throw ExitCode(error.code.exitCode)
+    } catch let exitCode as ExitCode {
+      throw exitCode
     } catch {
-      DiagnosticLogger.shared.log(
-        .error, .ui, "Custom menu bar icon import failed",
-        context: ["error": error.localizedDescription]
-      )
-      return false
+      let wrapped = CLIError(.internal, String(describing: error))
+      StandardStreams.writeError(renderer.render(error: wrapped))
+      throw ExitCode(wrapped.code.exitCode)
     }
   }
+}
 
-  func removeCustomIcon() {
-    guard let url = customIconURL, fileManager.fileExists(atPath: url.path) else { return }
-    try? fileManager.removeItem(at: url)
+enum StandardStreams {
+  static var stdoutIsTerminal: Bool {
+    isatty(STDOUT_FILENO) == 1
   }
 
-  // MARK: - Alpha Bounds
+  /// `write(contentsOf:)` throws on a closed pipe instead of raising an
+  /// Objective-C exception; SIGPIPE is ignored in `SnapzyCommand.execute`.
+  static func write(_ string: String) {
+    try? FileHandle.standardOutput.write(contentsOf: Data(string.utf8))
+  }
 
-  /// Alpha bounding box of the image in pixel coordinates, detected on a
-  /// downsampled bitmap. Returns nil when the image has no transparent pixels.
-  static nonisolated func alphaBoundingBox(of cgImage: CGImage) -> CGRect? {
-    let sampleSize = 128
-    var bitmap = [UInt8](repeating: 0, count: sampleSize * sampleSize * 4)
-
-    guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
-          let context = CGContext(
-            data: &bitmap,
-            width: sampleSize,
-            height: sampleSize,
-            bitsPerComponent: 8,
-            bytesPerRow: sampleSize * 4,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-          )
-    else {
-      return nil
-    }
-
-    context.draw(cgImage, in: CGRect(x: 0, y: 0, width: sampleSize, height: sampleSize))
-
-    var minX = sampleSize
-    var minY = sampleSize
-    var maxX = -1
-    var maxY = -1
-    var foundTransparent = false
-
-    for y in 0..<sampleSize {
-      for x in 0..<sampleSize {
-        let alpha = bitmap[(y * sampleSize + x) * 4 + 3]
-        if alpha < 8 {
-          foundTransparent = true
-          continue
-        }
-        minX = min(minX, x)
-        minY = min(minY, y)
-        maxX = max(maxX, x)
-        maxY = max(maxY, y)
-      }
-    }
-
-    // No transparent pixels means the content fills the canvas; normalization
-    // by alpha bounds would be meaningless.
-    guard foundTransparent, maxX >= minX, maxY >= minY else { return nil }
-
-    let scaleX = CGFloat(cgImage.width) / CGFloat(sampleSize)
-    let scaleY = CGFloat(cgImage.height) / CGFloat(sampleSize)
-    return CGRect(
-      x: CGFloat(minX) * scaleX,
-      y: CGFloat(minY) * scaleY,
-      width: CGFloat(maxX - minX + 1) * scaleX,
-      height: CGFloat(maxY - minY + 1) * scaleY
-    )
+  static func writeError(_ string: String) {
+    try? FileHandle.standardError.write(contentsOf: Data(string.utf8))
   }
 }
 
 ```
 
-### Core Architecture Module: `Snapzy/Features/Annotate/Models/AnnotateMockupState.swift`
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Output/ArgumentConformances.swift`
 ```
 //
-//  MockupState.swift
-//  Snapzy
+//  ArgumentConformances.swift
+//  SnapzyCLICore
 //
-//  Central state management for 3D mockup rendering
-//
-
-import SwiftUI
-import AppKit
-import Combine
-
-/// State snapshot for undo/redo
-private struct MockupStateSnapshot: Equatable {
-    let rotationX: Double
-    let rotationY: Double
-    let rotationZ: Double
-    let perspective: Double
-    let padding: CGFloat
-    let shadowIntensity: Double
-    let cornerRadius: Double
-    let backgroundStyle: BackgroundStyle
-}
-
-/// Central state object for mockup renderer
-@MainActor
-final class MockupState: ObservableObject {
-    // MARK: - Source Image
-    @Published var sourceImage: NSImage?
-    @Published var sourceURL: URL?
-
-    // MARK: - 3D Transform Parameters
-    // NOTE: each clamp guards its reassignment. `didSet` fires on every write —
-    // even one that leaves the value unchanged — so an unconditional
-    // `rotationX = clamp(...)` re-triggers `didSet` forever (stack overflow /
-    // SIGSEGV). The `!=` guard makes the re-entrant pass a no-op, bounding
-    // recursion at depth 2.
-    @Published var rotationX: Double = 0 {
-        didSet {
-            let clamped = clamp(rotationX, min: -45, max: 45)
-            if clamped != rotationX { rotationX = clamped }
-        }
-    }
-    @Published var rotationY: Double = 0 {
-        didSet {
-            let clamped = clamp(rotationY, min: -45, max: 45)
-            if clamped != rotationY { rotationY = clamped }
-        }
-    }
-    @Published var rotationZ: Double = 0 {
-        didSet {
-            let clamped = clamp(rotationZ, min: -180, max: 180)
-            if clamped != rotationZ { rotationZ = clamped }
-        }
-    }
-    @Published var perspective: Double = 0.5 {
-        didSet {
-            let clamped = clamp(perspective, min: 0.1, max: 1.0)
-            if clamped != perspective { perspective = clamped }
-        }
-    }
-
-    // MARK: - Styling
-    @Published var padding: CGFloat = 40
-    @Published var shadowIntensity: Double = 0.3
-    @Published var cornerRadius: Double = 12
-    @Published var backgroundStyle: BackgroundStyle = .gradient(.bluePurple)
-
-    // MARK: - Preset Selection
-    @Published var selectedPresetId: UUID?
-
-    // MARK: - UI State
-    @Published var showSidebar: Bool = false
-    @Published var zoomLevel: CGFloat = 1.0
-
-    // MARK: - Undo/Redo
-    private var undoStack: [MockupStateSnapshot] = []
-    private var redoStack: [MockupStateSnapshot] = []
-    private let maxUndoStackSize = 20
-
-    var canUndo: Bool { !undoStack.isEmpty }
-    var canRedo: Bool { !redoStack.isEmpty }
-
-    // MARK: - Computed Properties
-
-    /// Shadow X offset based on Y rotation
-    var shadowOffsetX: CGFloat {
-        CGFloat(rotationY) * 0.8
-    }
-
-    /// Shadow Y offset based on X rotation
-    var shadowOffsetY: CGFloat {
-        CGFloat(rotationX) * 0.5 + 8
-    }
-
-    /// Shadow radius scales with perspective
-    var shadowRadius: CGFloat {
-        CGFloat(20 * (1.1 - perspective) * shadowIntensity * 2)
-    }
-
-    // MARK: - Initialization
-
-    init() {}
-
-    init(sourceImage: NSImage) {
-        self.sourceImage = sourceImage
-    }
-
-    // MARK: - Image Loading
-
-    func loadImage(from url: URL) {
-        guard let image = NSImage(contentsOf: url) else { return }
-        saveState()
-        self.sourceImage = image
-        self.sourceURL = url
-    }
-
-    func setImage(_ image: NSImage) {
-        saveState()
-        self.sourceImage = image
-        self.sourceURL = nil
-    }
-
-    // MARK: - Preset Application
-
-    func applyPreset(_ preset: MockupPreset) {
-        saveState()
-        rotationX = preset.rotationX
-        rotationY = preset.rotationY
-        rotationZ = preset.rotationZ
-        perspective = preset.perspective
-        padding = preset.padding
-        selectedPresetId = preset.id
-    }
-
-    func resetToDefaults() {
-        saveState()
-        rotationX = 0
-        rotationY = 0
-        rotationZ = 0
-        perspective = 0.5
-        padding = 40
-        shadowIntensity = 0.3
-        cornerRadius = 12
-        backgroundStyle = .gradient(.bluePurple)
-        selectedPresetId = nil
-    }
-
-    // MARK: - Undo/Redo
-
-    func saveState() {
-        let snapshot = MockupStateSnapshot(
-            rotationX: rotationX,
-            rotationY: rotationY,
-            rotationZ: rotationZ,
-            perspective: perspective,
-            padding: padding,
-            shadowIntensity: shadowIntensity,
-            cornerRadius: cornerRadius,
-            backgroundStyle: backgroundStyle
-        )
-
-        // Avoid duplicates
-        if undoStack.last != snapshot {
-            undoStack.append(snapshot)
-            if undoStack.count > maxUndoStackSize {
-                undoStack.removeFirst()
-            }
-            redoStack.removeAll()
-        }
-    }
-
-    func undo() {
-        guard let snapshot = undoStack.popLast() else { return }
-
-        // Save current state to redo stack
-        let currentSnapshot = MockupStateSnapshot(
-            rotationX: rotationX,
-            rotationY: rotationY,
-            rotationZ: rotationZ,
-            perspective: perspective,
-            padding: padding,
-            shadowIntensity: shadowIntensity,
-            cornerRadius: cornerRadius,
-            backgroundStyle: backgroundStyle
-        )
-        redoStack.append(currentSnapshot)
-
-        // Restore snapshot
-        applySnapshot(snapshot)
-    }
-
-    func redo() {
-        guard let snapshot = redoStack.popLast() else { return }
-
-        // Save current state to undo stack
-        let currentSnapshot = MockupStateSnapshot(
-            rotationX: rotationX,
-            rotationY: rotationY,
-            rotationZ: rotationZ,
-            perspective: perspective,
-            padding: padding,
-            shadowIntensity: shadowIntensity,
-            cornerRadius: cornerRadius,
-            backgroundStyle: backgroundStyle
-        )
-        undoStack.append(currentSnapshot)
-
-        // Restore snapshot
-        applySnapshot(snapshot)
-    }
-
-    private func applySnapshot(_ snapshot: MockupStateSnapshot) {
-        rotationX = snapshot.rotationX
-        rotationY = snapshot.rotationY
-        rotationZ = snapshot.rotationZ
-        perspective = snapshot.perspective
-        padding = snapshot.padding
-        shadowIntensity = snapshot.shadowIntensity
-        cornerRadius = snapshot.cornerRadius
-        backgroundStyle = snapshot.backgroundStyle
-    }
-
-    // MARK: - Helpers
-
-    private func clamp(_ value: Double, min: Double, max: Double) -> Double {
-        Swift.min(Swift.max(value, min), max)
-    }
-}
-
-```
-
-### Core Architecture Module: `Snapzy/Features/Annotate/Models/AnnotateRenderSnapshot.swift`
-```
-//
-//  AnnotateRenderSnapshot.swift
-//  Snapzy
-//
-//  Immutable value-type snapshot of everything final-image rendering needs.
+//  Lets wire types be parsed directly from command-line values. `CLIRect` and
+//  `DisplaySelector` already provide `init?(argument:)` in SnapzyCLIProtocol.
 //
 
-import AppKit
+import ArgumentParser
+import SnapzyCLIProtocol
 
-/// Frozen copy of every `AnnotateState` input used by `AnnotateExporter` rendering.
-/// Built on the main actor (lazy caches pre-warmed, background images pre-resolved),
-/// then consumed from any queue — rendering never touches live state.
-///
-/// Contract: the referenced `NSImage` instances are treated as immutable during render
-/// (state replaces rather than mutates them post-load).
-struct AnnotateRenderSnapshot {
-  var sourceImage: NSImage
-  var editorMode: AnnotateState.EditorMode
-  var isCombineMode: Bool
-  var effectiveContentBounds: CGRect
-  var cropRect: CGRect?
-  var annotations: [AnnotationItem]
-  var embeddedImages: [UUID: NSImage]
-  var embeddedCGImages: [UUID: CGImage]
+extension CLIRect: ExpressibleByArgument {}
 
-  var backgroundStyle: BackgroundStyle
-  var isBlurredBackgroundEffectActive: Bool
-  var blurredBackgroundEffect: BlurredBackgroundEffect
-  /// Wallpaper/blurred background for the active `backgroundStyle` URL, resolved on main
-  /// (cache + sandbox access + blur are main-bound). Nil for `.none`/`.gradient`/preset URLs.
-  var resolvedBackgroundImage: NSImage?
+extension DisplaySelector: ExpressibleByArgument {}
 
-  var padding: CGFloat
-  var cornerRadius: CGFloat
-  var shadowIntensity: CGFloat
-  var imageAlignment: ImageAlignment
-  var aspectRatio: AspectRatioOption
-  var aspectRatioOrientation: AspectRatioOrientation
-
-  var mockupRotationX: CGFloat
-  var mockupRotationY: CGFloat
-  var mockupRotationZ: CGFloat
-  var mockupPerspective: CGFloat
-  var mockupShadowRadius: CGFloat
-  var mockupShadowOffsetX: CGFloat
-  var mockupShadowOffsetY: CGFloat
-}
-
-```
-
-### Core Architecture Module: `Snapzy/Features/Annotate/Services/AnnotateAnnotationRenderer.swift`
-```
-//
-//  AnnotateAnnotationRenderer.swift
-//  Snapzy
-//
-//  Handles rendering annotations to CGContext
-//
-
-import AppKit
-import CoreGraphics
-import SwiftUI
-
-/// Renders annotations to a CGContext
-nonisolated struct AnnotationRenderer {
-  private static let livePreviewFullQualityAreaThreshold: CGFloat = 120_000
-
-  let context: CGContext
-  var editingTextId: UUID?
-  var sourceImage: NSImage?
-  /// Pre-resolved `sourceImage` CGImage; avoids re-resolving per blur per frame.
-  var sourceCGImage: CGImage?
-  var blurCacheManager: BlurCacheManager?
-  private var interactiveBlurAnnotationIds: Set<UUID>
-  var interactiveEmbeddedImageAnnotationId: UUID?
-  var embeddedImageProvider: ((UUID) -> NSImage?)?
-  var embeddedCGImageProvider: ((UUID) -> CGImage?)?
-
-  init(
-    context: CGContext,
-    editingTextId: UUID? = nil,
-    sourceImage: NSImage? = nil,
-    sourceCGImage: CGImage? = nil,
-    blurCacheManager: BlurCacheManager? = nil,
-    interactiveBlurAnnotationId: UUID? = nil,
-    interactiveBlurAnnotationIds: Set<UUID> = [],
-    interactiveEmbeddedImageAnnotationId: UUID? = nil,
-    embeddedImageProvider: ((UUID) -> NSImage?)? = nil,
-    embeddedCGImageProvider: ((UUID) -> CGImage?)? = nil
-  ) {
-    self.context = context
-    self.editingTextId = editingTextId
-    self.sourceImage = sourceImage
-    self.sourceCGImage = sourceCGImage
-    self.blurCacheManager = blurCacheManager
-    var normalizedInteractiveBlurIds = interactiveBlurAnnotationIds
-    if let interactiveBlurAnnotationId {
-      normalizedInteractiveBlurIds.insert(interactiveBlurAnnotationId)
-    }
-    self.interactiveBlurAnnotationIds = normalizedInteractiveBlurIds
-    self.interactiveEmbeddedImageAnnotationId = interactiveEmbeddedImageAnnotationId
-    self.embeddedImageProvider = embeddedImageProvider
-    self.embeddedCGImageProvider = embeddedCGImageProvider
-  }
-
-  func draw(_ annotation: AnnotationItem) {
-    // Skip rendering text that is being edited (overlay handles display)
-    if case .text = annotation.type, annotation.id == editingTextId {
-      return
-    }
-
-    let strokeColor = NSColor(annotation.properties.strokeColor).cgColor
-    let fillColor = NSColor(annotation.properties.fillColor).cgColor
-
-    context.setStrokeColor(strokeColor)
-    context.setFillColor(fillColor)
-    context.setLineWidth(annotation.properties.strokeWidth)
-    context.setLineCap(.round)
-    context.setLineJoin(.round)
-
-    switch annotation.type {
-    case .rectangle:
-      context.addPath(Self.roundedRectPath(in: annotation.bounds, cornerRadius: annotation.properties.cornerRadius))
-      strokeCurrentPath(lineStyle: annotation.properties.lineStyle, strokeWidth: annotation.properties.strokeWidth)
-
-    case .filledRectangle:
-      context.addPath(Self.roundedRectPath(in: annotation.bounds, cornerRadius: annotation.properties.cornerRadius))
-      strokeCurrentPath(lineStyle: annotation.properties.lineStyle, strokeWidth: annotation.properties.strokeWidth, mode: .fillStroke)
-
-    case .oval:
-      context.addEllipse(in: annotation.bounds)
-      strokeCurrentPath(lineStyle: annotation.properties.lineStyle, strokeWidth: annotation.properties.strokeWidth)
-
-    case .arrow(let geometry):
-      drawArrow(
-        geometry,
-        strokeWidth: annotation.properties.strokeWidth,
-        strokeColor: annotation.properties.strokeColor,
-        lineStyle: annotation.properties.lineStyle
-      )
-
-    case .line(let start, let end):
-      context.move(to: start)
-      context.addLine(to: end)
-      strokeCurrentPath(lineStyle: annotation.properties.lineStyle, strokeWidth: annotation.properties.strokeWidth)
-
-    case .path(let points), .highlight(let points):
-      drawPath(
-        points: points,
-        isHighlight: annotation.type.isHighlight,
-        strokeWidth: annotation.properties.strokeWidth
-      )
-
-    case .counter(let value):
-      if let geometry = annotation.counterArrowGeometry {
-        drawArrow(geometry, strokeWidth: annotation.properties.strokeWidth, strokeColor: annotation.properties.strokeColor)
-      }
-      drawCounter(value: value, in: annotation.bounds, properties: annotation.properties)
-
-    case .blur(let blurType):
-      drawBlur(
-        bounds: annotation.bounds,
-        annotationId: annotation.id,
-        blurType: blurType,
-        controlValue: annotation.properties.strokeWidth
-      )
-
-    case .text(let content):
-      drawText(content, in: annotation.bounds, properties: annotation.properties)
-
-    case .watermark(let content):
-      drawWatermark(content, in: annotation.bounds, properties: annotation.properties)
-
-    case .embeddedImage(let assetId):
-      drawEmbeddedImage(assetId: assetId, annotationId: annotation.id, in: annotation.bounds)
-
-    case .spotlight:
-      // Spotlight is rendered as a unified overlay pass, skip per-item drawing
-      break
-    }
-  }
-
-  func drawCurrentStroke(
-    tool: AnnotationToolType,
-    start: CGPoint,
-    currentPath: [CGPoint],
-    strokeColor: Color,
-    strokeWidth: CGFloat,
-    fillColor: Color = .clear,
-    arrowStyle: ArrowStyle = .straight,
-    arrowType: ArrowType = .tapered,
-    arrowBendDirection: ArrowBendDirection = .primary,
-    arrowStartHead: ArrowEndpointStyle = .none,
-    arrowEndHead: ArrowEndpointStyle = .arrow,
-    lineStyle: LineDashStyle = .solid,
-    rectangleCornerRadius: CGFloat = 0,
-    watermarkText: String = "Snapzy",
-    watermarkStyle: WatermarkStyle = .diagonal,
-    watermarkOpacity: CGFloat = 0.22,
-    watermarkRotationDegrees: CGFloat = -24,
-    watermarkFontSize: CGFloat = 36
-  ) {
-    context.setStrokeColor(NSColor(strokeColor).cgColor)
-    context.setLineWidth(strokeWidth)
-    context.setLineCap(.round)
-
-    switch tool {
-    case .pencil, .highlighter:
-      if tool == .highlighter {
-        context.setAlpha(0.4)
-        context.setLineWidth(strokeWidth * 3)
-      }
-      guard currentPath.count > 1 else { return }
-      context.move(to: currentPath[0])
-      for point in currentPath.dropFirst() {
-        context.addLine(to: point)
-      }
-      context.strokePath()
-      context.setAlpha(1.0)
-
-    case .rectangle:
-      let currentPoint = currentPath.last ?? start
-      let rect = makeRect(from: start, to: currentPoint)
-      context.addPath(Self.roundedRectPath(in: rect, cornerRadius: rectangleCornerRadius))
-      strokeCurrentPath(lineStyle: lineStyle, strokeWidth: strokeWidth)
-
-    case .filledRectangle:
-      let currentPoint = currentPath.last ?? start
-      let rect = makeRect(from: start, to: currentPoint)
-      let resolvedFillColor = fillColor == .clear ? strokeColor.opacity(1) : fillColor
-      context.setFillColor(NSColor(resolvedFillColor).cgColor)
-      context.addPath(Self.roundedRectPath(in: rect, cornerRadius: rectangleCornerRadius))
-      strokeCurrentPath(lineStyle: lineStyle, strokeWidth: strokeWidth, mode: .fillStroke)
-      context.setFillColor(NSColor.clear.cgColor)
-
-    case .oval:
-      let currentPoint = currentPath.last ?? start
-      let rect = makeRect(from: start, to: currentPoint)
-      context.addEllipse(in: rect)
-      strokeCurrentPath(lineStyle: lineStyle, strokeWidth: strokeWidth)
-
-    case .line:
-      let currentPoint = currentPath.last ?? start
-      context.move(to: start)
-      context.addLine(to: currentPoint)
-      strokeCurrentPath(lineStyle: lineStyle, strokeWidth: strokeWidth)
-
-    case .arrow:
-      let currentPoint = currentPath.last ?? start
-      let initialStyle = arrowStyle
-      let resolvedStyle: ArrowStyle
-      if arrowBendDirection == .alternate {
-        if initialStyle == .curvedRight {
-          resolvedStyle = .curvedLeft
-        } else if initialStyle == .curvedLeft {
-          resolvedStyle = .curvedRight
-        } else {
-          resolvedStyle = initialStyle
-        }
-      } else {
-        resolvedStyle = initialStyle
-      }
-      let resolvedDirection: ArrowBendDirection = (resolvedStyle == .curvedLeft) ? .primary : .alternate
-      drawArrow(
-        ArrowGeometry(
-          start: start,
-          end: currentPoint,
-          style: resolvedStyle,
-          bendDirection: resolvedDirection,
-          arrowType: arrowType,
-          startHead: arrowStartHead,
-          endHead: arrowEndHead
-        ),
-        strokeWidth: strokeWidth,
-        strokeColor: strokeColor,
-        lineStyle: lineStyle
-      )
-
-    case .watermark:
-      let currentPoint = currentPath.last ?? start
-      let rect = makeRect(from: start, to: currentPoint)
-      guard rect.width >= 24, rect.height >= 24 else { return }
-      drawWatermark(
-        watermarkText,
-        in: rect,
-        properties: AnnotationProperties(
-          strokeColor: strokeColor,
-          fillColor: .clear,
-          strokeWidth: strokeWidth,
-          fontSize: watermarkFontSize,
-          opacity: watermarkOpacity,
-          rotationDegrees: watermarkRotationDegrees,
-          watermarkStyle: watermarkStyle
-        )
-      )
-
-    default:
-      break
-    }
-  }
-
-  /// Live preview of text-snapped highlighter bars. Routed through the same
-  /// path drawing the committed annotations use, so the preview is pixel
-  /// identical to what `mouseUp` creates.
-  func drawSnappedHighlightPreview(segments: [AnnotateTextSnapSegment], strokeColor: Color) {
-    guard !segments.isEmpty else { return }
-    context.setStrokeColor(NSColor(strokeColor).cgColor)
-    context.setLineCap(.round)
-    for segment in segments {
-      drawPath(points: segment.highlightPoints, isHighlight: true, strokeWidth: segment.strokeWidth)
-    }
-  }
-
-  // MARK: - Private Drawing Helpers
-
-  private func drawPath(points: [CGPoint], isHighlight: Bool, strokeWidth: CGFloat) {
-    guard points.count > 1 else { return }
-    if isHighlight {
-      context.setAlpha(0.4)
-      context.setLineWidth(strokeWidth * 3)
-    } else {
-      context.setLineWidth(strokeWidth)
-    }
-    context.move(to: points[0])
-    for point in points.dropFirst() {
-      context.addLine(to: point)
-    }
-    context.strokePath()
-    context.setAlpha(1.0)
-  }
-
-  /// Corner radius the rectangle path actually uses: never negativ
-```
-
-### Core Architecture Module: `Snapzy/Features/Annotate/Services/AnnotateBlurEffectRenderer.swift`
-```
-//
-//  AnnotateBlurEffectRenderer.swift
-//  Snapzy
-//
-//  Helper for rendering pixelated blur effect on image regions
-//
-
-import AppKit
-import CoreGraphics
-import CoreImage
-import Metal
-
-/// Quality tier for blur renders. Interactive work must be bounded so UI input never waits on expensive effects.
-nonisolated enum BlurRenderQuality: Equatable {
-  case interactive
-  case settled
-  case export
-
-  var maxGaussianSamplePixels: CGFloat? {
-    switch self {
-    case .interactive:
-      420_000
-    case .settled:
-      1_600_000
-    case .export:
-      nil
-    }
-  }
-}
-
-/// Renders pixelated blur effect for sensitive content redaction
-nonisolated enum BlurEffectRenderer {
-  /// Default pixel block size for blur effect
-  static let defaultPixelSize: CGFloat = 12
-
-  /// Default Gaussian blur radius
-  static let defaultGaussianRadius: Double = 20.0
-
-  /// Security-first radius floor relative to smallest blur dimension
-  private static let gaussianSecurityStrengthFactor: CGFloat = 0.35
-
-  /// Sampling padding multiplier around target region
-  private static let gaussianPaddingMultiplier: CGFloat = 2.0
-
-  /// Hard cap to keep Gaussian cost bounded on very large regions
-  private static let maxAdaptiveGaussianRadius: CGFloat = 120
-
-  /// Shared GPU-backed CIContext for performance (reused across blur operations)
-  static let sharedCIContext: CIContext = {
-    if let metalDevice = MTLCreateSystemDefaultDevice() {
-      return CIContext(mtlDevice: metalDevice, options: [
-        .cacheIntermediates: true,
-        .priorityRequestLow: false,
-      ])
-    }
-    return CIContext(options: [.cacheIntermediates: true])
-  }()
-
-  private struct RegionMapping {
-    let imageScaleX: CGFloat
-    let imageScaleY: CGFloat
-    let clampedSourceRegion: CGRect
-    let clampedDestRegion: CGRect
-    let targetPixelRegion: CGRect
-  }
-
-  /// Draw a pixelated version of the source image region
-  /// - Parameters:
-  ///   - context: The graphics context to draw into
-  ///   - sourceImage: The source image to sample from
-  ///   - region: The region bounds in image coordinates
-  ///   - pixelSize: Size of each pixel block (larger = more blur)
-  static func drawPixelatedRegion(
-    in context: CGContext,
-    sourceImage: NSImage,
-    region: CGRect,
-    pixelSize: CGFloat = defaultPixelSize
-  ) {
-    drawPixelatedRegion(
-      in: context,
-      sourceImage: sourceImage,
-      sourceRegion: region,
-      destRegion: region,
-      pixelSize: pixelSize
-    )
-  }
-
-  /// Draw a pixelated region by sampling from source region and drawing into destination region.
-  static func drawPixelatedRegion(
-    in context: CGContext,
-    sourceImage: NSImage,
-    sourceRegion: CGRect,
-    destRegion: CGRect,
-    pixelSize: CGFloat = defaultPixelSize
-  ) {
-    guard let cgImage = sourceImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-      drawFallbackBlur(in: context, region: destRegion)
-      return
-    }
-
-    drawPixelatedRegion(
-      in: context,
-      sourceCGImage: cgImage,
-      sourceSize: sourceImage.size,
-      sourceRegion: sourceRegion,
-      destRegion: destRegion,
-      pixelSize: pixelSize
-    )
-  }
-
-  /// Draw a pixelated region using a CGImage snapshot. Safe for background render work.
-  static func drawPixelatedRegion(
-    in context: CGContext,
-    sourceCGImage cgImage: CGImage,
-    sourceSize: CGSize,
-    sourceRegion: CGRect,
-    destRegion: CGRect,
-    pixelSize: CGFloat = defaultPixelSize
-  ) {
-    guard sourceRegion.width > 0, sourceRegion.height > 0, destRegion.width > 0, destRegion.height > 0 else { return }
-
-    guard let mapping = makeRegionMapping(
-      sourceSize: sourceSize,
-      cgImage: cgImage,
-      sourceRegion: sourceRegion,
-      destRegion: destRegion
-    ) else {
-      drawFallbackBlur(in: context, region: destRegion)
-      return
-    }
-
-    guard let croppedImage = cgImage.cropping(to: mapping.targetPixelRegion) else {
-      drawFallbackBlur(in: context, region: mapping.clampedDestRegion)
-      return
-    }
-
-    drawPixelated(
-      croppedImage: croppedImage,
-      in: context,
-      destRect: mapping.clampedDestRegion,
-      pixelSize: pixelSize * max(mapping.imageScaleX, mapping.imageScaleY)
-    )
-  }
-
-  /// Draw pixelated version of cropped image region.
-  /// Uses downsample -> nearest-neighbor upscale instead of one fill call per block.
-  private static func drawPixelated(
-    croppedImage: CGImage,
-    in context: CGContext,
-    destRect: CGRect,
-    pixelSize: CGFloat
-  ) {
-    let blockSize = max(1, pixelSize)
-    let cols = max(1, Int(ceil(CGFloat(croppedImage.width) / blockSize)))
-    let rows = max(1, Int(ceil(CGFloat(croppedImage.height) / blockSize)))
-
-    guard let smallContext = CGContext(
-      data: nil,
-      width: cols,
-      height: rows,
-      bitsPerComponent: 8,
-      bytesPerRow: 0,
-      space: CGColorSpaceCreateDeviceRGB(),
-      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-    ) else {
-      drawFallbackBlur(in: context, region: destRect)
-      return
-    }
-
-    smallContext.interpolationQuality = .low
-    smallContext.draw(croppedImage, in: CGRect(x: 0, y: 0, width: cols, height: rows))
-
-    guard let lowResolutionImage = smallContext.makeImage() else {
-      drawFallbackBlur(in: context, region: destRect)
-      return
-    }
-
-    context.saveGState()
-    context.clip(to: destRect)
-    context.setAllowsAntialiasing(false)
-    context.setShouldAntialias(false)
-    context.interpolationQuality = .none
-    context.draw(lowResolutionImage, in: destRect)
-    context.restoreGState()
-  }
-
-  /// Fallback blur when image sampling fails - draws semi-transparent overlay
-  private static func drawFallbackBlur(in context: CGContext, region: CGRect) {
-    context.setFillColor(NSColor.gray.withAlphaComponent(0.7).cgColor)
-    context.fill(region)
-  }
-
-  /// Draw a subtle placeholder while an exact async blur render is pending.
-  static func drawBlurPlaceholder(
-    in context: CGContext,
-    region: CGRect
-  ) {
-    context.saveGState()
-    context.setFillColor(NSColor.gray.withAlphaComponent(0.32).cgColor)
-    context.fill(region)
-    context.restoreGState()
-  }
-
-  /// Draw blur preview during drag operation (simpler/faster)
-  static func drawBlurPreview(
-    in context: CGContext,
-    region: CGRect,
-    strokeColor: CGColor
-  ) {
-    // Draw semi-transparent overlay with pattern to indicate blur area
-    context.setFillColor(NSColor.gray.withAlphaComponent(0.5).cgColor)
-    context.fill(region)
-
-    // Draw border
-    context.setStrokeColor(strokeColor)
-    context.setLineWidth(2)
-    context.setLineDash(phase: 0, lengths: [6, 4])
-    context.stroke(region)
-    context.setLineDash(phase: 0, lengths: [])
-  }
-
-  /// Draw Gaussian blur region using CIFilter (GPU-accelerated).
-  static func drawGaussianRegion(
-    in context: CGContext,
-    sourceImage: NSImage,
-    region: CGRect,
-    radius: Double = defaultGaussianRadius,
-    quality: BlurRenderQuality = .export
-  ) {
-    drawGaussianRegion(
-      in: context,
-      sourceImage: sourceImage,
-      sourceRegion: region,
-      destRegion: region,
-      radius: radius,
-      quality: quality
-    )
-  }
-
-  /// Draw Gaussian blur by sampling from source region and drawing into destination region.
-  static func drawGaussianRegion(
-    in context: CGContext,
-    sourceImage: NSImage,
-    sourceRegion: CGRect,
-    destRegion: CGRect,
-    radius: Double = defaultGaussianRadius,
-    quality: BlurRenderQuality = .export
-  ) {
-    guard let cgImage = sourceImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-      drawFallbackBlur(in: context, region: destRegion)
-      return
-    }
-
-    drawGaussianRegion(
-      in: context,
-      sourceCGImage: cgImage,
-      sourceSize: sourceImage.size,
-      sourceRegion: sourceRegion,
-      destRegion: destRegion,
-      radius: radius,
-      quality: quality
-    )
-  }
-
-  /// Draw Gaussian blur using a CGImage snapshot. Safe for background render work.
-  static func drawGaussianRegion(
-    in context: CGContext,
-    sourceCGImage cgImage: CGImage,
-    sourceSize: CGSize,
-    sourceRegion: CGRect,
-    destRegion: CGRect,
-    radius: Double = defaultGaussianRadius,
-    quality: BlurRenderQuality = .export
-  ) {
-    guard sourceRegion.width > 0, sourceRegion.height > 0, destRegion.width > 0, destRegion.height > 0 else { return }
-
-    guard let mapping = makeRegionMapping(
-      sourceSize: sourceSize,
-      cgImage: cgImage,
-      sourceRegion: sourceRegion,
-      destRegion: destRegion
-    ) else {
-      drawFallbackBlur(in: context, region: destRegion)
-      return
-    }
-
-    let targetPixelRegion = mapping.targetPixelRegion
-    let imageScale = max(mapping.imageScaleX, mapping.imageScaleY)
-    let effectiveRadiusPx = effectiveGaussianRadiusPixels(
-      baseRadius: CGFloat(radius),
-      imageScale: imageScale,
-      pixelRegion: targetPixelRegion
-    )
-    let samplePaddingPx = ceil(effectiveRadiusPx * gaussianPaddingMultiplier)
-    let pixelBounds = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
-    let sampledPixelRegion = targetPixelRegion.insetBy(dx: -samplePaddingPx, dy: -samplePaddingPx)
-      .intersection(pixelBounds)
-
-    guard !sampledPixelRegion.isEmpty,
-          let sampledCGImage = cgImage.cropping(to: sampledPixelRegion) else {
-      drawFallbackBlur(in: context, region: mapping.clampedDestRegion)
-      return
-    }
-
-    let sampleExtent = CGRect(x: 0, y: 0, width: sampledCGImage.width, height: sampledCGImage.height)
-    let sampleArea = sampleExtent.width * sampleExtent.height
-    let downsampleScale: CGFloat = if let maxPixels = quality.maxGaussianSamplePixels, sampleArea > maxPixels {
-      max(0.05, sqrt(maxPixels / sampleArea))
-    } else {
-      1
-    }
-
-    let sampledCIImage = CIImage(cgImage: sampledCGImage)
-    let workingImage: CIImage = if downsampleScale < 0.999 {
-      sampledCIImage.transformed(by: CGAffineTransform(scaleX: downsampleScale, y: downsampleScale))
-    } else {
-      sampledCIImage
-    }
-
-    let clampedInput = workingIma
-```
-
-### Core Architecture Module: `Snapzy/Features/Annotate/Services/AnnotateMockup3DRenderer.swift`
-```
-//
-//  Mockup3DRenderer.swift
-//  Snapzy
-//
-//  3D transformation renderer for mockup images
-//
-
-import SwiftUI
-
-/// Renders an image with 3D perspective transformations
-struct Mockup3DRenderer: View {
-    @ObservedObject var state: MockupState
-
-    var body: some View {
-        Group {
-            if let image = state.sourceImage {
-                imageContent(image)
-            } else {
-                placeholderView
-            }
-        }
-    }
-
-    // MARK: - Image Content
-
-    @ViewBuilder
-    private func imageContent(_ image: NSImage) -> some View {
-        Image(nsImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: state.cornerRadius, style: .continuous))
-            // Apply rotations in Y -> X -> Z order for intuitive control
-            .rotation3DEffect(
-                .degrees(state.rotationY),
-                axis: (x: 0, y: 1, z: 0),
-                anchor: .center,
-                anchorZ: 0,
-                perspective: state.perspective
-            )
-            .rotation3DEffect(
-                .degrees(state.rotationX),
-                axis: (x: 1, y: 0, z: 0),
-                anchor: .center,
-                anchorZ: 0,
-                perspective: state.perspective
-            )
-            .rotation3DEffect(
-                .degrees(state.rotationZ),
-                axis: (x: 0, y: 0, z: 1),
-                anchor: .center
-            )
-            .shadow(
-                color: .black.opacity(state.shadowIntensity),
-                radius: state.shadowRadius,
-                x: state.shadowOffsetX,
-                y: state.shadowOffsetY
-            )
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.8), value: state.rotationX)
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.8), value: state.rotationY)
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.8), value: state.rotationZ)
-            .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.8), value: state.perspective)
-    }
-
-    // MARK: - Placeholder
-
-    private var placeholderView: some View {
-        Radius.rect(Radius.card)
-            .fill(Color.gray.opacity(0.2))
-            .frame(width: 300, height: 200)
-            .overlay {
-                VStack(spacing: 8) {
-                    Image(systemName: "photo")
-                        .font(.system(size: 40))
-                        .foregroundStyle(.secondary)
-                    Text(L10n.AnnotateUI.dropImageHere)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-    }
-}
-
-// MARK: - Preview Content View (for export)
-
-/// A view that renders the mockup without animations for static export
-struct MockupStaticRenderer: View {
-    let image: NSImage
-    let rotationX: Double
-    let rotationY: Double
-    let rotationZ: Double
-    let perspective: Double
-    let cornerRadius: Double
-    let shadowIntensity: Double
-    let shadowOffsetX: CGFloat
-    let shadowOffsetY: CGFloat
-    let shadowRadius: CGFloat
-
-    init(state: MockupState) {
-        self.image = state.sourceImage ?? NSImage()
-        self.rotationX = state.rotationX
-        self.rotationY = state.rotationY
-        self.rotationZ = state.rotationZ
-        self.perspective = state.perspective
-        self.cornerRadius = state.cornerRadius
-        self.shadowIntensity = state.shadowIntensity
-        self.shadowOffsetX = state.shadowOffsetX
-        self.shadowOffsetY = state.shadowOffsetY
-        self.shadowRadius = state.shadowRadius
-    }
-
-    var body: some View {
-        Image(nsImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            .rotation3DEffect(
-                .degrees(rotationY),
-                axis: (x: 0, y: 1, z: 0),
-                anchor: .center,
-                anchorZ: 0,
-                perspective: perspective
-            )
-            .rotation3DEffect(
-                .degrees(rotationX),
-                axis: (x: 1, y: 0, z: 0),
-                anchor: .center,
-                anchorZ: 0,
-                perspective: perspective
-            )
-            .rotation3DEffect(
-                .degrees(rotationZ),
-                axis: (x: 0, y: 0, z: 1),
-                anchor: .center
-            )
-            .shadow(
-                color: .black.opacity(shadowIntensity),
-                radius: shadowRadius,
-                x: shadowOffsetX,
-                y: shadowOffsetY
-            )
-    }
-}
-
-#Preview {
-    let state = MockupState()
-    state.rotationX = 10
-    state.rotationY = -15
-    state.perspective = 0.4
-
-    return Mockup3DRenderer(state: state)
-        .frame(width: 400, height: 300)
-        .padding()
-}
-
-```
-
-### Core Architecture Module: `Snapzy/Features/History/Components/HistoryEmptyStateView.swift`
-```
-//
-//  HistoryEmptyStateView.swift
-//  Snapzy
-//
-//  Empty state placeholder for capture history
-//
-
-import SwiftUI
-
-struct HistoryEmptyStateView: View {
-  @Environment(\.colorScheme) private var colorScheme
-
-  let filter: CaptureHistoryType?
-  let hasSearch: Bool
-
-  var body: some View {
-    VStack(spacing: 16) {
-      Image(systemName: iconName)
-        .font(.system(size: 48))
-        .foregroundColor(.secondary.opacity(0.5))
-
-      Text(title)
-        .font(.title3)
-        .fontWeight(.semibold)
-
-      Text(subtitle)
-        .font(.body)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: 300)
-    }
-    .padding(.horizontal, 30)
-    .padding(.vertical, 26)
-    .background(.regularMaterial, in: Radius.rect(Radius.panel))
-    .overlay(
-      Radius.rect(Radius.panel)
-        .stroke(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.05), lineWidth: 1)
-    )
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-  }
-
-  private var iconName: String {
-    if hasSearch {
-      return "magnifyingglass"
-    }
-    switch filter {
-    case .screenshot: return CaptureHistoryType.screenshot.systemIconName
-    case .video: return CaptureHistoryType.video.systemIconName
-    case .gif: return CaptureHistoryType.gif.systemIconName
-    case nil: return "square.grid.2x2"
-    }
-  }
-
-  private var title: String {
-    if hasSearch {
-      return "No matches found"
-    }
-    switch filter {
-    case .screenshot: return "No screenshots yet"
-    case .video: return "No videos yet"
-    case .gif: return "No GIFs yet"
-    case nil: return "No captures yet"
-    }
-  }
-
-  private var subtitle: String {
-    if hasSearch {
-      return "Try a different search term."
-    }
-    return "Take a screenshot or record your screen to see them here."
-  }
-}
-
-```
-
-### Core Architecture Module: `Snapzy/Features/Onboarding/SnapzyOnboardingState.swift`
-```
-//
-//  SnapzyOnboardingState.swift
-//  Snapzy
-//
-//  Observable state manager for interactive onboarding, fully compatible with macOS 13.0+.
-//
-
-import AppKit
-import Combine
-import SwiftUI
-
-enum MockAnnotateTool: String, CaseIterable, Identifiable {
-  case arrow
-  case rect
-  case counter
-  case blur
-
-  var id: String { rawValue }
-
-  var icon: String {
-    switch self {
-    case .arrow: return "arrow.up.right"
-    case .rect: return "rectangle"
-    case .counter: return "1.circle.fill"
-    case .blur: return "checkerboard.rectangle"
-    }
-  }
-
-  var label: String {
-    switch self {
-    case .arrow: return "Arrow"
-    case .rect: return "Rectangle"
-    case .counter: return "Counter"
-    case .blur: return "Blur"
-    }
-  }
-}
-
-struct MockAnnotateItem: Identifiable, Equatable {
-  let id = UUID()
-  let tool: MockAnnotateTool
-  var position: CGPoint
-}
-
-enum Step1WorkflowStage: Equatable {
-  case readyToCapture
-  case selectingArea
-  case quickAccessFloating
-  case annotateWindowOpen
-}
-
-enum Step2WorkflowStage: Equatable {
-  case readyToRecord
-  case prerecordArea
-  case recordingActive
-  case videoQuickAccess
-  case videoEditorOpen
-}
-
-@MainActor
-final class SnapzyOnboardingState: ObservableObject {
-  @Published var currentStep: SnapzyOnboardingStep = .meetSnapzy
-  @Published var completedSteps: Set<SnapzyOnboardingStep> = []
-  @Published var completedChallenges: Set<SnapzyOnboardingChallenge> = []
-
-  init(restoreSavedStep: Bool = true) {
-    if restoreSavedStep,
-       let savedStepRaw = UserDefaults.standard.string(forKey: PreferencesKeys.onboardingActiveStep),
-       let savedStep = SnapzyOnboardingStep(rawValue: savedStepRaw) {
-      self.currentStep = savedStep
-      self.resetStateForStep(savedStep)
-    }
-  }
-
-  // Step 1: Capture > Quick Access > Annotate Lifecycle State
-  @Published var step1Stage: Step1WorkflowStage = .readyToCapture
-  @Published var screenFlashOpacity: Double = 0
-  @Published var hasAreaSelection: Bool = false
-  @Published var selectedTool: MockAnnotateTool? = nil
-  @Published var annotationItems: [MockAnnotateItem] = []
-  @Published var isSimulatingSelection: Bool = false
-
-  // Step 2: Screen Recording & Video Editor Lifecycle State
-  @Published var step2Stage: Step2WorkflowStage = .readyToRecord
-  @Published var recordingSeconds: Int = 0
-  @Published var isRecordingTimerRunning: Bool = false
-  @Published var isPlayingPreview: Bool = false
-  @Published var isQuickAccessHovered: Bool = false
-  @Published var quickAccessFeedbackText: String? = nil
-  @Published var isCardPinned: Bool = false
-  private var recordingTimer: Timer? = nil
-
-  // Step 3: Shortcuts & Config Mock State
-  @Published var hasConflict: Bool = true
-  @Published var hasFullscreenConflict: Bool = true
-  @Published var hasAreaConflict: Bool = true
-  @Published var hasRecordingConflict: Bool = true
-  @Published var isCheckingConflict: Bool = false
-  @Published var isConfigGranted: Bool = false
-  @Published var diagnosticsOptIn: Bool = true
-
-  var isCurrentStepComplete: Bool {
-    let required = currentStep.challenges
-    return required.allSatisfy { completedChallenges.contains($0) }
-  }
-
-  var canGoBack: Bool {
-    currentStep.stepNumber > 1
-  }
-
-  var canGoForward: Bool {
-    currentStep.stepNumber < SnapzyOnboardingStep.allCases.count
-  }
-
-  func markCurrentStepVisited() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      _ = completedSteps.insert(currentStep)
-    }
-  }
-
-  func completeChallenge(_ challenge: SnapzyOnboardingChallenge) {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      completedChallenges.insert(challenge)
-      if isCurrentStepComplete {
-        completedSteps.insert(currentStep)
-      }
-    }
-  }
-
-  func setChallenge(_ challenge: SnapzyOnboardingChallenge, completed: Bool) {
-    guard completedChallenges.contains(challenge) != completed else { return }
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      if completed {
-        completedChallenges.insert(challenge)
-        if isCurrentStepComplete { completedSteps.insert(currentStep) }
-      } else {
-        completedChallenges.remove(challenge)
-        completedSteps.remove(currentStep)
-      }
-    }
-  }
-
-  func nextStep() {
-    guard let currentIndex = SnapzyOnboardingStep.allCases.firstIndex(of: currentStep),
-          currentIndex + 1 < SnapzyOnboardingStep.allCases.count else { return }
-    let next = SnapzyOnboardingStep.allCases[currentIndex + 1]
-    transition(to: next)
-  }
-
-  func previousStep() {
-    guard let currentIndex = SnapzyOnboardingStep.allCases.firstIndex(of: currentStep),
-          currentIndex > 0 else { return }
-    let prev = SnapzyOnboardingStep.allCases[currentIndex - 1]
-    transition(to: prev)
-  }
-
-  func transition(to step: SnapzyOnboardingStep) {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-      currentStep = step
-      UserDefaults.standard.set(step.rawValue, forKey: PreferencesKeys.onboardingActiveStep)
-      resetStateForStep(step)
-    }
-  }
-
-  private func resetStateForStep(_ step: SnapzyOnboardingStep) {
-    switch step {
-    case .meetSnapzy:
-      step1Stage = .readyToCapture
-      screenFlashOpacity = 0
-      hasAreaSelection = false
-      selectedTool = nil
-      annotationItems = []
-    case .quickAccess:
-      resetStep2Flow()
-    case .shortcuts:
-      hasFullscreenConflict = true
-      hasAreaConflict = true
-      hasRecordingConflict = true
-      hasConflict = true
-    case .permissions:
-      break
-    }
-  }
-
-  // MARK: - Interactive Simulation Actions
-
-  func simulateAreaCapture() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      step1Stage = .selectingArea
-      hasAreaSelection = true
-      completeChallenge(.selectArea)
-    }
-  }
-
-  func completeCaptureToQuickAccess() {
-    withAnimation(.easeOut(duration: 0.12)) {
-      screenFlashOpacity = 0.65
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
-      withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-        self?.screenFlashOpacity = 0
-        self?.step1Stage = .quickAccessFloating
-        self?.completeChallenge(.captureToQuickAccess)
-      }
-    }
-  }
-
-  func openAnnotateFromQuickAccess() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-      step1Stage = .annotateWindowOpen
-      completeChallenge(.openAnnotateWindow)
-    }
-  }
-
-  func resetStep1Flow() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-      step1Stage = .readyToCapture
-      hasAreaSelection = false
-      selectedTool = nil
-      annotationItems = []
-    }
-  }
-
-  func selectAnnotationTool(_ tool: MockAnnotateTool) {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.hover).animation) {
-      selectedTool = tool
-      if !annotationItems.contains(where: { $0.tool == tool }) {
-        let defaultPosition: CGPoint
-        switch tool {
-        case .arrow: defaultPosition = CGPoint(x: 220, y: 150)
-        case .rect: defaultPosition = CGPoint(x: 140, y: 110)
-        case .counter: defaultPosition = CGPoint(x: 80, y: 80)
-        case .blur: defaultPosition = CGPoint(x: 180, y: 200)
-        }
-        annotationItems.append(MockAnnotateItem(tool: tool, position: defaultPosition))
-      }
-      completeChallenge(.addAnnotation)
-    }
-  }
-
-  func simulateQuickAccessAction(_ actionName: String) {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      quickAccessFeedbackText = actionName
-      completeChallenge(.triggerQuickAction)
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
-      withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-        self?.quickAccessFeedbackText = nil
-      }
-    }
-  }
-
-  // MARK: - Step 2: Screen Recording Simulation Actions
-
-  func simulateStartPrerecord() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      step2Stage = .prerecordArea
-      completeChallenge(.selectRecordArea)
-    }
-  }
-
-  func simulateStartRecording() {
-    recordingTimer?.invalidate()
-    recordingTimer = nil
-    recordingSeconds = 0
-    isRecordingTimerRunning = true
-
-    withAnimation(SnapzyMotionPreferences.shared.spec(.settle).animation) {
-      step2Stage = .recordingActive
-    }
-
-    recordingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-      MainActor.assumeIsolated {
-        guard let self else { return }
-        if self.recordingSeconds < 3 {
-          self.recordingSeconds += 1
-        }
-        if self.recordingSeconds >= 3 {
-          self.recordingTimer?.invalidate()
-          self.recordingTimer = nil
-          self.simulateFinishRecording()
-        }
-      }
-    }
-  }
-
-  func simulateFinishRecording() {
-    recordingTimer?.invalidate()
-    recordingTimer = nil
-    isRecordingTimerRunning = false
-
-    withAnimation(.easeOut(duration: 0.12)) {
-      screenFlashOpacity = 0.65
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
-      withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-        self?.screenFlashOpacity = 0
-        self?.step2Stage = .videoQuickAccess
-        self?.completeChallenge(.recordVideo3s)
-      }
-    }
-  }
-
-  func openVideoEditorFromQuickAccess() {
-    withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-      step2Stage = .videoEditorOpen
-      completeChallenge(.openVideoEditor)
-    }
-  }
-
-  func resetStep2Flow() {
-    recordingTimer?.invalidate()
-    recordingTimer = nil
-    isRecordingTimerRunning = false
-    recordingSeconds = 0
-    isPlayingPreview = false
-    isQuickAccessHovered = false
-    quickAccessFeedbackText = nil
-    isCardPinned = false
-
-    withAnimation(SnapzyMotionPreferences.shared.spec(.morph).animation) {
-      step2Stage = .readyToRecord
-    }
-  }
-
-  // MARK: - Step 3: Shortcuts & Conflict Resolution
-
-  func updateShortcutConflicts(fullscreenConflict: Bool, 
-```
-
-### Core Architecture Module: `Snapzy/Features/Preferences/Models/PreferencesNavigationState.swift`
-```
-//
-//  PreferencesNavigationState.swift
-//  Snapzy
-//
-//  Shared navigation state for selecting Preferences tabs programmatically.
-//
-
-import Combine
-import Foundation
-
-enum PreferencesTab: String, CaseIterable, Identifiable, Hashable {
-  case general
-  case menuBar
-  case capture
-  case annotate
-  case quickAccess
-  case history
-  case shortcuts
-  case permissions
-  case cloud
-  case advanced
-  case about
-
-  var id: String { rawValue }
-
-  static let storageKey = "preferences.lastSelectedTab"
-
-  static var lastSelected: PreferencesTab {
-    guard let raw = UserDefaults.standard.string(forKey: storageKey),
-          let tab = PreferencesTab(rawValue: raw) else {
-      return .general
-    }
-    return tab
-  }
-
-  var title: String {
-    switch self {
-    case .general:
-      return L10n.Preferences.generalTab
-    case .menuBar:
-      return L10n.Preferences.menuBarTab
-    case .capture:
-      return L10n.Preferences.captureTab
-    case .annotate:
-      return L10n.Preferences.annotateTab
-    case .quickAccess:
-      return L10n.Preferences.quickAccessTab
-    case .history:
-      return L10n.Preferences.historyTab
-    case .shortcuts:
-      return L10n.Preferences.shortcutsTab
-    case .permissions:
-      return L10n.Preferences.permissionsTab
-    case .cloud:
-      return L10n.Preferences.cloudTab
-    case .advanced:
-      return L10n.Preferences.advancedTab
-    case .about:
-      return L10n.Preferences.aboutTab
-    }
-  }
-
-  var symbol: String {
-    switch self {
-    case .general:
-      return "gearshape"
-    case .menuBar:
-      return "menubar.rectangle"
-    case .capture:
-      return "camera"
-    case .annotate:
-      return "pencil.and.scribble"
-    case .quickAccess:
-      return "square.stack"
-    case .history:
-      return "clock.arrow.circlepath"
-    case .shortcuts:
-      return "keyboard"
-    case .permissions:
-      return "lock.shield"
-    case .cloud:
-      return "icloud"
-    case .advanced:
-      return "slider.horizontal.3"
-    case .about:
-      return "info.circle"
-    }
-  }
-
-  /// The sidebar's running order in 4 unlabelled groups separated by natural whitespace (Ruru & macOS System Settings style).
-  static let groups: [[PreferencesTab]] = [
-    [.general, .menuBar, .quickAccess, .history],
-    [.capture, .annotate, .cloud],
-    [.shortcuts, .permissions, .advanced],
-    [.about],
-  ]
-}
-
-@MainActor
-final class PreferencesNavigationState: ObservableObject {
-  static let shared = PreferencesNavigationState()
-
-  @Published var selectedTab: PreferencesTab {
-    didSet {
-      UserDefaults.standard.set(selectedTab.rawValue, forKey: PreferencesTab.storageKey)
-    }
-  }
-
-  @Published private(set) var backStack: [PreferencesTab] = []
-  @Published private(set) var forwardStack: [PreferencesTab] = []
-
-  var canGoBack: Bool { !backStack.isEmpty }
-  var canGoForward: Bool { !forwardStack.isEmpty }
-
-  init(initialTab: PreferencesTab? = nil) {
-    self.selectedTab = initialTab ?? PreferencesTab.lastSelected
-  }
-
-  /// User directly selects a tab (via sidebar or programmatic link).
-  func select(_ tab: PreferencesTab) {
-    guard tab != selectedTab else { return }
-    backStack.append(selectedTab)
-    forwardStack.removeAll()
-    selectedTab = tab
-  }
-
-  /// Navigates back to the previous tab in history.
-  func goBack() {
-    guard let previous = backStack.popLast() else { return }
-    forwardStack.append(selectedTab)
-    selectedTab = previous
-  }
-
-  /// Navigates forward to the next tab in history.
-  func goForward() {
-    guard let next = forwardStack.popLast() else { return }
-    backStack.append(selectedTab)
-    selectedTab = next
-  }
-}
-
-```
-
-### Core Architecture Module: `Snapzy/Features/QuickAccess/Models/QuickAccessPinWindowState.swift`
-```
-//
-//  QuickAccessPinWindowState.swift
-//  Snapzy
-//
-//  Observable state for independent pinned screenshot windows.
-//
-
-import AppKit
-import Combine
-import Foundation
-
-@MainActor
-final class QuickAccessPinWindowState: ObservableObject {
-  let id: UUID
-
-  @Published private(set) var url: URL
-  @Published private(set) var image: NSImage
-  @Published private(set) var thumbnail: NSImage
-  @Published var isLocked = false
-  @Published var isMouseInside = false
-  @Published private(set) var zoomFactor: CGFloat = 1
-  @Published private(set) var panOffset: CGPoint = .zero
-  @Published private(set) var zoomMode: QuickAccessPinZoomMode
-
-  private(set) var baseSize: CGSize
-  var onWindowResize: ((CGSize, CGPoint) -> Void)?
-
-  static let minimumZoomFactor: CGFloat = 0.4
-  static let maximumZoomFactor: CGFloat = 8
-
-  static func windowFollowsImageDisplaySize(baseSize: CGSize, zoomFactor: CGFloat) -> CGSize {
-    let factor = min(max(zoomFactor, minimumZoomFactor), maximumZoomFactor)
-    let minimumSize = QuickAccessPinWindowSizing.minimumInteractiveSize
-    return CGSize(
-      width: max(baseSize.width * factor, minimumSize.width),
-      height: max(baseSize.height * factor, minimumSize.height)
-    )
-  }
-
-  init(id: UUID, url: URL, image: NSImage, thumbnail: NSImage, baseSize: CGSize, zoomMode: QuickAccessPinZoomMode = .defaultMode) {
-    self.id = id
-    self.url = url
-    self.image = image
-    self.thumbnail = thumbnail
-    self.baseSize = baseSize
-    self.zoomMode = zoomMode
-  }
-
-  var displaySize: CGSize {
-    zoomMode == .windowFollowsImage
-      ? Self.windowFollowsImageDisplaySize(baseSize: baseSize, zoomFactor: zoomFactor)
-      : baseSize
-  }
-
-  var imageDisplaySize: CGSize {
-    if zoomMode == .windowFollowsImage {
-      let fittedSize = QuickAccessPinImageGeometry.fittedContentSize(
-        imageSize: image.size,
-        viewportSize: baseSize
-      )
-      return CGSize(width: fittedSize.width * zoomFactor, height: fittedSize.height * zoomFactor)
-    }
-    return QuickAccessPinImageGeometry.fixedViewportContentSize(
-      imageSize: image.size,
-      viewportSize: baseSize,
-      zoomFactor: zoomFactor
-    )
-  }
-
-  var zoomPercent: Int {
-    Int((zoomFactor * 100).rounded())
-  }
-
-  var zoomMenuPercents: [Int] {
-    var percents = [40, 50, 75, 100, 125, 150, 200, 400, 800].filter { percent in
-      let factor = CGFloat(percent) / 100
-      return factor >= Self.minimumZoomFactor - 0.001 && factor <= Self.maximumZoomFactor + 0.001
-    }
-    if !percents.contains(zoomPercent) {
-      percents.append(zoomPercent)
-      percents.sort()
-    }
-    return percents
-  }
-
-  func setZoomPercent(_ percent: Int) {
-    updateZoomFactor(CGFloat(percent) / 100)
-  }
-
-  func resetZoom() {
-    zoomFactor = 1
-    panOffset = .zero
-    if zoomMode == .windowFollowsImage { onWindowResize?(baseSize, CGPoint(x: 0.5, y: 0.5)) }
-  }
-
-  @discardableResult
-  func setZoomMode(_ mode: QuickAccessPinZoomMode, baseSize: CGSize) -> Bool {
-    guard zoomMode != mode else { return false }
-    zoomMode = mode
-    self.baseSize = baseSize
-    zoomFactor = 1
-    panOffset = .zero
-    return true
-  }
-
-  func update(url: URL, image: NSImage, thumbnail: NSImage, baseSize: CGSize) -> CGSize {
-    self.url = url
-    self.image = image
-    self.thumbnail = thumbnail
-    return updateSizing(baseSize: baseSize)
-  }
-
-  func updateSizing(baseSize: CGSize) -> CGSize {
-    self.baseSize = baseSize
-    zoomFactor = clampedZoomFactor(zoomFactor)
-    panOffset = clampedPanOffset(panOffset)
-    return displaySize
-  }
-
-  func updateZoomFactor(_ factor: CGFloat) {
-    guard factor.isFinite else { return }
-    zoomFactor = clampedZoomFactor(factor)
-    panOffset = clampedPanOffset(panOffset)
-    if zoomMode == .windowFollowsImage {
-      onWindowResize?(displaySize, CGPoint(x: 0.5, y: 0.5))
-    }
-  }
-
-  func updateViewport(magnification: CGFloat, panOffset: CGPoint) {
-    guard magnification.isFinite, panOffset.x.isFinite, panOffset.y.isFinite else { return }
-    let clampedMagnification = clampedZoomFactor(magnification)
-    if abs(zoomFactor - clampedMagnification) > 0.000_1 {
-      zoomFactor = clampedMagnification
-    }
-    let newPanOffset = clampedPanOffset(panOffset)
-    if abs(self.panOffset.x - newPanOffset.x) > 0.000_1
-      || abs(self.panOffset.y - newPanOffset.y) > 0.000_1 {
-      self.panOffset = newPanOffset
-    }
-  }
-
-  private func clampedPanOffset(_ offset: CGPoint) -> CGPoint {
-    guard zoomMode == .fixedViewport else { return .zero }
-    return QuickAccessPinImageGeometry.clampedPanOffset(
-      offset,
-      viewportSize: baseSize,
-      contentSize: imageDisplaySize
-    )
+extension CLIImageFormat: ExpressibleByArgument {
+  /// Accepts `png`, `jpg`, `jpeg` and `webp`.
+  public init?(argument: String) {
+    self.init(fileExtension: argument)
   }
 
-  func clampedZoomFactor(_ factor: CGFloat) -> CGFloat {
-    min(max(factor, Self.minimumZoomFactor), Self.maximumZoomFactor)
+  public static var allValueStrings: [String] {
+    ["png", "jpg", "webp"]
   }
 }
 
@@ -2098,1049 +909,726 @@ final class QuickAccessPinWindowState: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9de2b0f2` (2026-10-20)
-**Commit Message**: fix: Unlock magnifier color panel and add magnifier size setting (#665)
+### Incident Patch 1: `6f6888fe` (2026-10-20)
+**Commit Message**: fix: Cut paused recording spans by sample timestamps
 
-Preferences forced "Show color picker panel" off and disabled its toggle
-whenever "Show magnifier by default" was off, so a magnifier opened with
-Cmd+scroll could never show the hex value (#607). The runtime already
-reads both preferences independently; the coupling only lived in the
-Preferences view, so it is removed there.
+Pause/resume measured the paused span with Date() on the main thread and
+applied it to samples whenever they reached the writer queue. Frames
+captured during the pause but delivered after resume were mapped behind
+the last written frame, and a non-increasing video PTS fails the
+AVAssetWriter, losing the whole recording.
 
-Add a "Magnifier size" preference (small 128pt / medium 160pt default /
-large 200pt) for users who find the magnifier too large. It applies to
-area screenshot and screenshot-and-annotate, and round-trips through
-TOML import/export as capture.screenshot.magnifier_size. The default
-config document now also lists the two existing magnifier toggles so a
-reset to defaults covers them.
+Pause and resume points are now taken from the host time clock that
+stamps the samples, each sample is classified by its own PTS, and video
+frames that would not advance the track are dropped.
 
-Narrower panels drop the copy hint's leading words ("[C] to Copy") when
-the full translation does not fit, and an overlong suffix truncates with
-an ellipsis instead of clipping mid-glyph. The Russian suffix is
-reworded so it no longer starts with a comma once the prefix is dropped.
-
-Closes #607
-
-**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift` (modified, +5/-0)
+**File**: `Snapzy/Features/Recording/RecordingPauseTimeline.swift` (added, +54/-0)
 ```diff
-@@ -278,6 +278,11 @@ final class InlineAreaAnnotateSession: ObservableObject {
-     defaults.object(forKey: PreferencesKeys.screenshotShowMagnifierColorPanel) as? Bool ?? true
-   }
- 
-+  /// The "magnifier size" preference — same sharing rationale as above.
-+  var magnifierSize: MagnifierSizeOption {
-+    MagnifierSizeOption.current(defaults: defaults)
-+  }
-+
-   /// Registers the per-display magnifier host view created by `InlineAreaMagnifierOverlay` so
-   /// scroll-wheel zoom and the "C" copy shortcut (handled at the session level, since key
-   /// events arrive via `handleKeyEvent`, not through the host view itself) can reach it.
-```
-
-**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift` (modified, +3/-0)
-```diff
-@@ -292,6 +292,7 @@ private struct InlineAreaAnnotateRootView: View {
-             hostSize: display.localFrame.size,
-             showsByDefault: session.showsMagnifierByDefault,
-             showsColorPanel: session.showsMagnifierColorPanel,
-+            size: session.magnifierSize,
-             onHostViewReady: { hostView in
-               session.registerMagnifierHostView(hostView, for: display.displayID)
-             }
-@@ -752,12 +753,14 @@ private struct InlineAreaMagnifierOverlay: NSViewRepresentable {
-   let hostSize: CGSize
-   let showsByDefault: Bool
-   let showsColorPanel: Bool
-+  let size: MagnifierSizeOption
-   let onHostViewReady: (InlineAreaMagnifierHostView) -> Void
- 
-   func makeNSView(context: Context) -> InlineAreaMagnifierHostView {
-     let view = InlineAreaMagnifierHostView(frame: CGRect(origin: .zero, size: hostSize))
-     view.displayBounds = CGRect(origin: .zero, size: hostSize)
-     view.magnifier.showsColorPanel = showsColorPanel
-+    view.magnifier.size = size
-     // Mirrors plain area screenshot capture: coordinates live in the magnifier panel while
-     // it's active, and in `InlineAreaMagnifierHostView`'s own bubble (its equivalent of
-     // `updateCoordinateIndicator`) while it's inactive — never both at once.
-```
-
-**File**: `Snapzy/Features/Preferences/Components/PreferencesCaptureSettingsView.swift` (modified, +18/-6)
-```diff
-@@ -50,6 +50,8 @@ struct CaptureSettingsView: View {
-   @AppStorage(PreferencesKeys.screenshotAutoDetectElementUnderCursor) private var autoDetectElementUnderCursor = false
-   @AppStorage(PreferencesKeys.screenshotShowMagnifierByDefault) private var showMagnifierByDefault = false
-   @AppStorage(PreferencesKeys.screenshotShowMagnifierColorPanel) private var showMagnifierColorPanel = true
-+  @AppStorage(PreferencesKeys.screenshotMagnifierSize)
-+  private var magnifierSize = MagnifierSizeOption.defaultValue.rawValue
- 
-   @AppStorage(PreferencesKeys.screenshotFormat) private var screenshotFormat = "png"
-   @AppStorage(PreferencesKeys.scrollingCaptureShowHints) private var scrollingCaptureShowHints = true
-@@ -223,11 +225,6 @@ struct CaptureSettingsView: View {
-             ) {
-               Toggle("", isOn: $showMagnifierByDefault)
-                 .labelsHidden()
--                .onChange(of: showMagnifierByDefault) { isOn in
--                  if !isOn {
--                    showMagnifierColorPanel = false
--                  }
--                }
-             }
- 
-             SettingRow(
-@@ -244,9 +241,24 @@ struct CaptureSettingsView: View {
-               title: L10n.PreferencesCapture.showMagnifierColorPanelTitle,
-               description: L10n.PreferencesCapture.showMagnifierColorPanelDescription
-             ) {
-+              // Independent of "show magnifier by default": the panel also shows on a
-+              // magnifier opened with ⌘+scroll.
-               Toggle("", isOn: $showMagnifierColorPanel)
-                 .labelsHidden()
--                .disabled(!showMagnifierByDefault)
-+            }
-+
-+            SettingRow(
-+              icon: "arrow.up.left.and.arrow.down.right",
-+              title: L10n.PreferencesCapture.magnifierSizeTitle,
-+              description: L10n.PreferencesCapture.magnifierSizeDescription
-+            ) {
-+              Picker("", selection: $magnifierSize) {
-+                ForEach(MagnifierSizeOption.allCases) { option in
-+                  Text(option.displayName).tag(option.rawValue)
-+                }
-+              }
-+              .labelsHidden()
-+              .pickerStyle(.menu)
-             }
-           }
-         }
-```
-
-**File**: `Snapzy/Features/Preferences/Models/PreferencesKeys.swift` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@ enum PreferencesKeys {
-   static let screenshotAutoDetectElementUnderCursor = "screenshot.autoDetectElementUnderCursor"
-   static let screenshotShowMagnifierByDefault = "screenshot.showMagnifierByDefault"
-   static let screenshotShowMagnifierColorPanel = "screenshot.showMagnifierColorPanel"
-+  static let screenshotMagnifierSize = "screenshot.magnifierSize"
-   static let screenshotLastAreaRect = "screenshot.lastAreaRect"
-   static let scrollingCaptureShowHints = "scrollingCapture.showHints"
-   static let backgroundCutoutAutoCropEnabled = "backgroundCutout.autoCropEnabled"
-```
-
-**File**: `Snapzy/Resources/Localization/Features/Capture.xcstrings` (modified, +326/-1)
-```diff
-@@ -6771,6 +6771,331 @@
-         }
-       }
-     },
-+    "preferences-capture.magnifier-size-description": {
-+      "extractionState": "manual",
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Größe der Lupenvorschau und des Farbwähler-Panels darunter"
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Size of the magnifier preview and the color picker panel below it"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Tamaño de la vista previa de la lupa y del panel del selector de color debajo"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Taille de l’aperçu de la loupe et du panneau du sélecteur de couleur en dessous"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "ルーペのプレビューとその下のカラーピッカーパネルのサイズ"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "돋보기 미리보기와 그 아래 색상 선택 패널의 크기"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Размер окна лупы и панели выбора цвета под ним"
-+          }
-+        },
-+        "vi": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kích thước vùng xem phóng to và bảng chọn màu bên dưới"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "放大镜预览及其下方取色面板的尺寸"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "放大鏡預覽及其下方取色面板的尺寸"
-+          }
-+        }
-+      }
-+    },
-+    "preferences-capture.magnifier-size-title": {
-+      "extractionState": "manual",
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Lupengröße"
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Magnifier size"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Tamaño de la lupa"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Taille de la loupe"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "ルーペのサイズ"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "돋보기 크기"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Размер лупы"
-+          }
-+        },
-+        "vi": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Kích thước kính lúp"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "放大镜尺寸"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "放大鏡尺寸"
-+          }
-+        }
-+      }
-+    },
-+    "preferences-capture.magnifier-size.large": {
-+      "extractionState": "manual",
-+      "localizations": {
-+        "de": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Groß"
-+          }
-+        },
-+        "en": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Large"
-+          }
-+        },
-+        "es": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Grande"
-+          }
-+        },
-+        "fr": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Grande"
-+          }
-+        },
-+        "ja": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "大"
-+          }
-+        },
-+        "ko": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "크게"
-+          }
-+        },
-+        "ru": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Большой"
-+          }
-+        },
-+        "vi": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "Lớn"
-+          }
-+        },
-+        "zh-Hans": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "大"
-+          }
-+        },
-+        "zh-Hant": {
-+          "stringUnit": {
-+            "state": "translated",
-+            "value": "大"
-+          }
-+        }
-+      }
-+    },
-+    "prefe
-```
-
-**File**: `Snapzy/Services/Capture/AreaSelectionMagnifier.swift` (modified, +47/-5)
-```diff
-@@ -3,7 +3,16 @@ import QuartzCore
- 
- final class AreaSelectionMagnifier {
-   // Configurable bounds/sizes. The preview square and the info panel below it share one width.
--  private let magnifierSize: CGFloat = 160.0
-+  /// The "Magnifier size" preference. Frames are laid out once per layer tree, so a size change
-+  /// drops the current layers and the next `update(at:...)` rebuilds them at the new size.
-+  var size: MagnifierSizeOption = .defaultValue {
-+    didSet {
-+      guard size != oldValue else { return }
-+      removeLayers()
-+    }
-+  }
-+
-+  private var magnifierSize: CGFloat { size.previewSize }
-   private let panelGap: CGFloat = 8.0
-   private let magnifierGap: CGFloat = 20.0
-   private let minMagnifierZoom: CGFloat = 1.0
-@@ -39,6 +48,36 @@ final class AreaSelectionMagnifier {
-     let text = copyHintPrefixText
-     return text.isEmpty ? 0 : text.size(withAttributes: [.font: hintFont]).width
-   }()
-+  private lazy var hintSuffixWidth: CGFloat = {
-+    let text = copyHintText
-+    return text.isEmpty ? 0 : text.size(withAttributes: [.font: hintFont]).width
-+  }()
-+
-+  /// Whether the copy hint's leading words ("Press") fit next to the key cap and suffix at
-+  /// the current width. Long translations don't fit narrower sizes (some not even the medium
-+  /// one), so the row drops the prefix and reads "[C] to Copy" instead of clipping mid-word.
-+  private var showsHintPrefix: Bool {
-+    Self.hintRowFitsPrefix(
-+      prefixWidth: hintPrefixWidth,
-+      suffixWidth: hintSuffixWidth,
-+      availableWidth: magnifierSize - panelHorizontalPadding * 2,
-+      keyCapSize: keyCapSize,
-+      gap: keyCapTextGap
-+    )
-+  }
-+
-+  /// The layout rule behind `showsHintPrefix`, kept pure so it can be tested with any
-+  /// widths, independent of the running locale.
-+  static func hintRowFitsPrefix(
-+    prefixWidth: CGFloat,
-+    suffixWidth: CGFloat,
-+    availableWidth: CGFloat,
-+    keyCapSize: CGFloat,
-+    gap: CGFloat
-+  ) -> Bool {
-+    guard prefixWidth > 0 else { return false }
-+    return prefixWidth + gap + keyCapSize + gap + suffixWidth <= availableWidth
-+  }
- 
-   private var colorRowHeight: CGFloat { max(hexLineHeight, swatchSize) }
-   private var hintRowHeight: CGFloat { max(keyCapSize, hintLineHeight) }
-@@ -254,7 +293,7 @@ final class AreaSelectionMagnifier {
-     // The "C" reads as a pressable key (solid badge) rather than blending into the sentence.
-     let hintPrefixText = CATextLayer()
-     configureTextLayer(hintPrefixText, font: hintFont, color: NSColor.white.withAlphaComponent(0.95), contentsScale: contentsScale)
--    hintPrefixText.string = copyHintPrefixText
-+    hintPrefixText.string = showsHintPrefix ? copyHintPrefixText : ""
-     panel.addSublayer(hintPrefixText)
-     self.hintPrefixTextLayer = hintPrefixText
- 
-@@ -275,6 +314,8 @@ final class AreaSelectionMagnifier {
-     let hintText = CATextLayer()
-     configureTextLayer(hintText, font: hintFont, color: NSColor.white.withAlphaComponent(0.95), contentsScale: contentsScale)
-     hintText.string = copyHintText
-+    // A suffix too long even without the prefix ends in "…" rather than being cut mid-glyph.
-+    hintText.truncationMode = .end
-     panel.addSublayer(hintText)
-     self.hintTextLayer = hintText
- 
-@@ -466,15 +507,16 @@ final class AreaSelectionMagnifier {
-     keyCapText: CATextLayer,
-     hintText: CATextLayer
-   ) {
--    let prefixTrailingGap: CGFloat = hintPrefixWidth > 0 ? keyCapTextGap : 0
-+    let prefixWidth = showsHintPrefix ? hintPrefixWidth : 0
-+    let prefixTrailingGap: CGFloat = prefixWidth > 0 ? keyCapTextGap : 0
- 
-     // Bottom row: "[prefix] [C] [suffix]", e.g. "按 [C] 复制色值" / "[C] キーでコピー"
-     let hintRowY = panelVerticalPadding
-     hintPrefixText.frame = CGRect(
-       x: panelHorizontalPadding, y: hintRowY + (hintRowHeight - hintLineHeight) / 2.0,
--      width: hintPrefixWidth, height: hintLineHeight
-+      width: prefixWidth, height: hintLineHeight
-     )
--    let keyCapX = panelHorizontalPadding + hintPrefixWidth + prefixTrailingGap
-+    let keyCapX = panelHorizontalPadding + prefixWidth + prefixTrailingGap
-     keyCapBackground.frame = CGRect(
-       x: keyCapX, y: hintRowY + (hintRowHeight - keyCapSize) / 2.0,
-       width: keyCapSize, height: keyCapSize
-```
-
-**File**: `Snapzy/Services/Capture/AreaSelectionWindow.swift` (modified, +8/-2)
-```diff
-@@ -3494,8 +3494,8 @@ final class AreaSelectionOverlayView: NSView {
-   }
- 
-   /// Applies the magnifier's session-start preferences ("show magnifier by default", "show
--  /// color picker panel") to a window newly entering a selection session. Called from
--  /// `configureSessionWindow` — shared by session start and mid-session display attach —
-+  /// color picker panel", "magnifier size") to a window newly entering a selection session.
-+  /// Called from `configureSessionWindow` — shared by session start and mid-session display attach —
-   /// rather than from `applyBackdrop`/`clearBackdrop` directly, since a frozen session (e.g.
-   /// screenshot-and-annotate) already has its backdrop ready and takes the `applyBackdrop`
-   /// path, which must not reset these on every reapplication.
-@@ -3505,6 +3505,7 @@ final class AreaSelectionOverlayView: NSView {
-     magnifier.resetZoom(showByDefault: showsMagnifierByDefault)
-     magnifier.showsColorPanel = UserDefaults.standard
-       .object(forKey: PreferencesKeys.screenshotShowMagnifierColorPanel) as? Bool ?? true
-+    magnifier.size = MagnifierSizeOption.current()
-     // Coordinates live in the panel, not the separate `updateCoordinateIndicator` bubble, once
-     // the magnifier is active — see the comment there. Same behavior as screenshot-and-annotate.
-     magnifier.showsCoordinatesInPanel = true
-@@ -3633,6 +3634,11 @@ final class AreaSelectionOverlayView: NSView {
-       magnifier.totalHeight
-     }
- 
-+    var testMagnifierSize: MagnifierSizeOption {
-+      get { magnifier.size }
-+      set { magnifier.size = newValue }
-+    }
-+
-     var testMagnifierLastHexColor: String? {
-       magnifier.lastHexColor
-     }
-```
-
-**File**: `Snapzy/Services/Capture/MagnifierSizeOption.swift` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,54 @@
 +//
-+//  MagnifierSizeOption.swift
++//  RecordingPauseTimeline.swift
 +//  Snapzy
 +//
-+//  Size of the area-selection magnifier, stored as its raw value under
-+//  `PreferencesKeys.screenshotMagnifierSize`.
++//  Maps capture-clock sample timestamps onto the written timeline, cutting out paused spans.
 +//
 +
-+import CoreGraphics
-+import Foundation
++import CoreMedia
 +
-+enum MagnifierSizeOption: String, CaseIterable, Identifiable {
-+  case small
-+  case medium
-+  case large
++/// Pause and resume points are measured on the host time clock, the same clock ScreenCaptureKit
++/// and AVCaptureSession stamp samples with, so each sample is classified by its own timestamp
++/// rather than by when it happens to reach the writer queue.
++nonisolated struct RecordingPauseTimeline: Sendable {
++  /// Total paused time removed from samples captured after the latest resume.
++  private(set) var accumulatedOffset: CMTime = .zero
++  private var pausedAt: CMTime?
++  private var resumedAt: CMTime?
++  private(set) var lastVideoTime: CMTime?
 +
-+  /// The size the magnifier had before this preference existed, so upgrades look unchanged.
-+  static let defaultValue: MagnifierSizeOption = .medium
++  var isPaused: Bool { pausedAt != nil }
 +
-+  var id: String { rawValue }
++  mutating func pause(at hostTime: CMTime) {
++    guard pausedAt == nil, hostTime.isNumeric else { return }
++    pausedAt = hostTime
++  }
 +
-+  /// Side length of the square preview. The color picker panel below it shares this width;
-+  /// 128pt is the narrowest width that still fits the hex row, the coordinates row and the
-+  /// English copy hint without clipping.
-+  var previewSize: CGFloat {
-+    switch self {
-+    case .small: return 128
-+    case .medium: return 160
-+    case .large: return 200
++  mutating func resume(at hostTime: CMTime) {
++    guard let pausedAt, hostTime.isNumeric else { return }
++    let pausedDuration = CMTimeSubtract(hostTime, pausedAt)
++    if pausedDuration > .zero {
++      accumulatedOffset = CMTimeAdd(accumulatedOffset, pausedDuration)
 +    }
++    self.pausedAt = nil
++    resumedAt = CMTimeMaximum(hostTime, pausedAt)
 +  }
 +
-+  var displayName: String {
-+    switch self {
-+    case .small: return L10n.PreferencesCapture.magnifierSizeSmall
-+    case .medium: return L10n.PreferencesCapture.magnifierSizeMedium
-+    case .large: return L10n.PreferencesCapture.magnifierSizeLarge
-+    }
++  /// Output timestamp for a sample, or nil when it was captured while paused.
++  /// Samples captured before the latest resume but delivered after it are dropped too.
++  func outputTime(for sourceTime: CMTime) -> CMTime? {
++    guard sourceTime.isNumeric else { return nil }
++    if let pausedAt, sourceTime >= pausedAt { return nil }
++    if let resumedAt, sourceTime < resumedAt { return nil }
++    return accumulatedOffset > .zero ? CMTimeSubtract(sourceTime, accumulatedOffset) : sourceTime
 +  }
 +
-+  /// Unset or unknown stored values (hand-edited defaults) fall back to the default.
-+  static func resolve(_ rawValue: String?) -> MagnifierSizeOption {
-+    rawValue.flatMap(MagnifierSizeOption.init(rawValue:)) ?? defaultValue
-+  }
-+
-+  static func current(defaults: UserDefaults = .standard) -> MagnifierSizeOption {
-+    resolve(defaults.string(forKey: PreferencesKeys.screenshotMagnifierSize))
++  /// Like `outputTime(for:)`, but also rejects frames that would not advance the video track:
++  /// AVAssetWriter fails the whole file on a non-increasing video presentation time.
++  mutating func acceptVideoFrame(at sourceTime: CMTime) -> CMTime? {
++    guard let output = outputTime(for: sourceTime) else { return nil }
++    if let lastVideoTime, output <= lastVideoTime { return nil }
++    lastVideoTime = output
++    return output
 +  }
 +}
 ```
 
----
-
-### Incident Patch 2: `e3bd64ca` (2026-10-22)
-**Commit Message**: fix: Refresh stale window frames before sizing window captures (#670)
-
-A cached SCShareableContent keeps the frame a window had when it was
-fetched. After a resize, Capture Active Window sized its padded canvas
-from the old frame, and ScreenCaptureKit shrank the shadowed window to
-0.80-0.89x of native, which saved soft text (#634).
-
-- resolveWindow compares the cached SCWindow frame with the window's
-  live CGWindowList bounds and refetches shareable content when they
-  differ by more than 1pt
-- Padded shadow captures that trim smaller than the native window on
-  both axes now fall back to the display crop instead of being saved
-  soft; the 75% undersize rule let 0.80-0.85x through
-- Add regression tests with the sizes measured for #634
-
-**File**: `Snapzy/Services/Capture/ScreenCaptureManager.swift` (modified, +12/-4)
+**File**: `Snapzy/Features/Recording/RecordingSession.swift` (modified, +32/-23)
 ```diff
-@@ -2122,13 +2122,19 @@ final class ScreenCaptureManager: ObservableObject {
-       fringeReference = nil
+@@ -34,7 +34,7 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+   private var _sessionStarted = false
+   private var _isCapturing = false
+   private var _firstTimestamp: CMTime?  // Track first video timestamp for timeline alignment
+-  private var _pauseOffsetAccumulator: CMTime = .zero
++  private var _pauseTimeline = RecordingPauseTimeline()
+   private var _onFirstVideoFrame: (() -> Void)?
+   private var _videoFramesReceived = 0
+   private var _videoFramesAppended = 0
+@@ -123,11 +123,20 @@ nonisolated final class RecordingSession: @unchecked Sendable {
      }
+   }
  
--    func rejectIfUndersized(_ candidate: CGImage) throws {
-+    func rejectIfUndersized(_ candidate: CGImage, requiresNativeSize: Bool = false) throws {
-       let actualPixelSize = CGSize(width: candidate.width, height: candidate.height)
--      guard WindowCaptureResolution.isUndersized(
-+      let isUndersized = WindowCaptureResolution.isUndersized(
-         pixelSize: actualPixelSize,
-         logicalSize: contentRect.size,
-         expectedScaleFactor: scaleFactor
--      ) else {
-+      )
-+      let isScaledBelowNative = requiresNativeSize && WindowCaptureResolution.isScaledBelowNative(
-+        pixelSize: actualPixelSize,
-+        logicalSize: contentRect.size,
-+        scaleFactor: scaleFactor
-+      )
-+      guard isUndersized || isScaledBelowNative else {
-         return
+-  /// Set the total accumulated pause duration for PTS adjustment.
+-  /// Called by ScreenRecordingManager on each resume.
+-  func setAccumulatedPauseOffset(_ offset: CMTime) {
++  /// Stop writing samples captured at or after `hostTime` (host time clock, like sample PTS).
++  func pause(atHostTime hostTime: CMTime) {
+     lock.withLock {
+-      _pauseOffsetAccumulator = offset
++      _pauseTimeline.pause(at: hostTime)
++    }
++  }
++
++  /// Resume writing samples captured at or after `hostTime`, shifted back by the paused span.
++  /// Returns the total paused duration so far.
++  @discardableResult
++  func resume(atHostTime hostTime: CMTime) -> CMTime {
++    lock.withLock {
++      _pauseTimeline.resume(at: hostTime)
++      return _pauseTimeline.accumulatedOffset
+     }
+   }
+ 
+@@ -189,13 +198,15 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+     let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+     guard timestamp.isValid else { return }
+ 
+-    // Consolidate locks and read dimensions/offset in one acquisition
++    // Consolidate locks and read dimensions/output time in one acquisition
+     var shouldLogDimensionMismatch = false
+-    let (writer, videoInput, adaptor, shouldStartSession, onFirstVideoFrame, offset, expectedWidth, expectedHeight, pixelWidth, pixelHeight): (
++    let (writer, videoInput, adaptor, shouldStartSession, onFirstVideoFrame, adjustedTimestamp, expectedWidth, expectedHeight, pixelWidth, pixelHeight): (
+       AVAssetWriter?, AVAssetWriterInput?, AVAssetWriterInputPixelBufferAdaptor?, Bool, (() -> Void)?, CMTime, Int?, Int?, Int, Int
+     ) = lock.withLock {
+-      guard _isCapturing, let writer = _assetWriter, writer.status == .writing else {
+-        return (nil, nil, nil, false, nil, .zero, nil, nil, 0, 0)
++      guard _isCapturing, let writer = _assetWriter, writer.status == .writing,
++            // Drops frames captured while paused and any frame that would not advance the track.
++            let adjustedTimestamp = _pauseTimeline.acceptVideoFrame(at: timestamp) else {
++        return (nil, nil, nil, false, nil, .invalid, nil, nil, 0, 0)
        }
  
-@@ -2166,7 +2172,9 @@ final class ScreenCaptureManager: ObservableObject {
-     }.value
+       let w = CVPixelBufferGetWidth(pixelBuffer)
+@@ -208,8 +219,6 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+         shouldLogDimensionMismatch = true
+       }
  
-     if padsCanvasForShadow {
--      try rejectIfUndersized(normalizedImage.image)
-+      // The trimmed window still carries its shadow, so anything smaller than
-+      // the native window was scaled down and would come out soft.
-+      try rejectIfUndersized(normalizedImage.image, requiresNativeSize: true)
-       if normalizedImage.image.width >= image.width || normalizedImage.image.height >= image.height {
-         DiagnosticLogger.shared.log(
-           .warning,
+-      let offset = _pauseOffsetAccumulator
+-
+       // `_firstTimestamp` is published only after `startSession` runs below:
+       // audio queues treat it as "session started" and append right away.
+       var needsSessionStart = false
+@@ -220,7 +229,7 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+ 
+       _videoFramesReceived += 1
+ 
+-      return (writer, _videoInput, _pixelBufferAdaptor, needsSessionStart, _onFirstVideoFrame, offset, _expectedVideoWidth, _expectedVideoHeight, w, h)
++      return (writer, _videoInput, _pixelBufferAdaptor, needsSessionStart, _onFirstVideoFrame, adjustedTimestamp, _expectedVideoWidth, _expectedVideoHeight, w, h)
+     }
+ 
+     if shouldLogDimensionMismatch, let expectedWidth = expectedWidth, let expectedHeight = expectedHeight {
+@@ -234,8 +243,6 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+           let videoInput = videoInput,
+           let adaptor = adaptor else { return }
+ 
+-    let adjustedTimestamp = offset.isNumeric && offset > .zero ? CMTimeSubtract(timestamp, offset) : timestamp
+-
+     // Lazy start session at first video timestamp.
+     // This avoids rewriting every audio sample (large per-buffer allocations).
+     if shouldStartSession {
+@@ -279,19 +286,20 @@ nonisolated final class RecordingSession: @unchecked Sendable {
+     guard timestamp.isValid else { return }
+     logAudioSampleFormatIfNeeded(sampleBuffer, role: .systemAudio)
+ 
+-    let (writer, audioInput, firstTs, offset): (AVAssetWriter?, AVAssetWriterInput?, CMTime?, CMTime) = lock.withLock {
++    let (writer, audioInput, firstTs, adjustedTimestamp, offset): (AVAssetWriter?, AVAssetWriterInput?, CMTime?, CMTime?, CMTime) = lock.withLock {
+       guard _isCapturing, let writer = _assetWriter, writer.status == .writing else {
+-        return (nil, nil, nil, .zero)
++        return (nil, nil, nil, nil, .zero)
+       }
+-      return (writer, _audioInput, _firstTimestamp, _pauseOffsetAccumulator)
++      return (writer, _audioInput, _firstTimestamp, _pauseTimeline.outputTime(for: timestamp), 
 ```
 
-**File**: `Snapzy/Services/Capture/WindowCaptureResolution.swift` (modified, +44/-0)
+**File**: `Snapzy/Services/Capture/ScreenRecordingManager.swift` (modified, +6/-7)
 ```diff
-@@ -20,6 +20,26 @@ nonisolated enum WindowCaptureResolution {
-   /// headroom; the unused margin is trimmed after capture.
-   static let shadowCanvasPadding: CGFloat = 128
+@@ -1162,7 +1162,9 @@ final class ScreenRecordingManager: NSObject, ObservableObject {
+       DiagnosticLogger.shared.log(.debug, .recording, "pauseRecording ignored", context: ["state": "\(state)"])
+       return
+     }
+-    session.isCapturing = false
++    // Samples are cut by their own capture timestamps, so frames already in flight when the user
++    // clicks pause still land, and frames captured during the pause are dropped even if late.
++    session.pause(atHostTime: CMClockGetTime(CMClockGetHostTimeClock()))
+     mouseTracker?.pause()
+     audioLevelMeter.freeze()
+     pauseStartTime = Date()
+@@ -1176,19 +1178,16 @@ final class ScreenRecordingManager: NSObject, ObservableObject {
+       DiagnosticLogger.shared.log(.debug, .recording, "resumeRecording ignored", context: ["state": "\(state)"])
+       return
+     }
++    // Wall-clock duration only drives the elapsed-time label; the writer uses host-clock time.
+     pausedDuration += Date().timeIntervalSince(pauseStart)
+     pauseStartTime = nil
  
-+  /// Points a cached `SCWindow` frame may drift from WindowServer's live
-+  /// bounds before the cached window is treated as stale.
-+  static let staleFrameTolerance: CGFloat = 1
-+
-+  /// Pixels a padded capture may fall short of native size from rounding.
-+  static let nativeSizeTolerance: CGFloat = 2
-+
-+  /// A cached `SCShareableContent` keeps the frame a window had when it was
-+  /// fetched. Sizing a capture from it after a resize shrinks or crops the
-+  /// window (issue #634), so a frame that moved or resized needs a refresh.
-+  static func isFrameStale(_ cachedFrame: CGRect, currentFrame: CGRect?) -> Bool {
-+    guard let currentFrame, !currentFrame.isEmpty else { return false }
-+
-+    let tolerance = staleFrameTolerance
-+    return abs(cachedFrame.minX - currentFrame.minX) > tolerance
-+      || abs(cachedFrame.minY - currentFrame.minY) > tolerance
-+      || abs(cachedFrame.width - currentFrame.width) > tolerance
-+      || abs(cachedFrame.height - currentFrame.height) > tolerance
-+  }
-+
-   static func scaleFactor(
-     displayBackingScaleFactor: CGFloat?,
-     filterPointPixelScale: CGFloat?,
-@@ -102,4 +122,28 @@ nonisolated enum WindowCaptureResolution {
- 
-     return actualScaleFactor < expectedScaleFactor * minimumAcceptedScaleRatio
+-    // Set accumulated pause offset in CoreMedia time before resuming capture
+-    let offset = CMTime(seconds: pausedDuration, preferredTimescale: 1_000_000)
+-    session.setAccumulatedPauseOffset(offset)
+-
+-    session.isCapturing = true
++    let offset = session.resume(atHostTime: CMClockGetTime(CMClockGetHostTimeClock()))
+     mouseTracker?.resume()
+     audioLevelMeter.unfreeze()
+     state = .recording
+     DiagnosticLogger.shared.log(.info, .recording, "Recording resumed", context: [
+-      "pauseOffsetSeconds": String(format: "%.3f", pausedDuration)
++      "pauseOffsetSeconds": String(format: "%.3f", offset.seconds)
+     ])
    }
+ 
+```
+
+**File**: `SnapzyTests/Features/Recording/RecordingPauseTimelineTests.swift` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++//
++//  RecordingPauseTimelineTests.swift
++//  SnapzyTests
++//
++//  Unit tests for mapping capture timestamps across pause/resume.
++//
 +
-+  /// A padded capture is trimmed to the window plus its shadow, so at native
-+  /// scale it is never smaller than the window itself. Falling short on both
-+  /// axes means ScreenCaptureKit scaled the window down to fit its canvas,
-+  /// which `isUndersized` lets through down to 75%. A shrink smaller than the
-+  /// shadow's share of the image stays hidden, so fresh frames still matter.
-+  static func isScaledBelowNative(
-+    pixelSize: CGSize,
-+    logicalSize: CGSize,
-+    scaleFactor: CGFloat
-+  ) -> Bool {
-+    guard
-+      scaleFactor.isFinite,
-+      scaleFactor > 0,
-+      logicalSize.width > 0,
-+      logicalSize.height > 0
-+    else {
-+      return false
-+    }
++import CoreMedia
++import XCTest
++@testable import Snapzy
 +
-+    let nativeSize = expectedPixelSize(logicalSize: logicalSize, scaleFactor: scaleFactor)
-+    return pixelSize.width < nativeSize.width - nativeSizeTolerance
-+      && pixelSize.height < nativeSize.height - nativeSizeTolerance
++final class RecordingPauseTimelineTests: XCTestCase {
++
++  private func t(_ seconds: Double) -> CMTime {
++    CMTime(seconds: seconds, preferredTimescale: 600)
 +  }
++
++  func testOutputTime_withoutPause_isUnchanged() {
++    let timeline = RecordingPauseTimeline()
++    XCTAssertEqual(timeline.outputTime(for: t(3)), t(3))
++  }
++
++  func testOutputTime_dropsSamplesCapturedWhilePaused() {
++    var timeline = RecordingPauseTimeline()
++    timeline.pause(at: t(10))
++
++    XCTAssertEqual(timeline.outputTime(for: t(9.9)), t(9.9), "in-flight pre-pause sample still lands")
++    XCTAssertNil(timeline.outputTime(for: t(10)))
++    XCTAssertNil(timeline.outputTime(for: t(12)))
++  }
++
++  func testOutputTime_afterResume_shiftsByPausedDuration() {
++    var timeline = RecordingPauseTimeline()
++    timeline.pause(at: t(10))
++    timeline.resume(at: t(14))
++
++    XCTAssertEqual(timeline.accumulatedOffset, t(4))
++    XCTAssertEqual(timeline.outputTime(for: t(14.5)), t(10.5))
++  }
++
++  func testOutputTime_afterResume_dropsLateSamplesFromPausedSpan() {
++    var timeline = RecordingPauseTimeline()
++    timeline.pause(at: t(10))
++    timeline.resume(at: t(14))
++
++    // Captured during the pause but delivered after resume: mapping it would go backwards.
++    XCTAssertNil(timeline.outputTime(for: t(12)))
++  }
++
++  func testOutputTime_accumulatesAcrossMultiplePauses() {
++    var timeline = RecordingPauseTimeline()
++    timeline.pause(at: t(10))
++    timeline.resume(at: t(12))
++    timeline.pause(at: t(20))
++    timeline.resume(at: t(23))
++
++    XCTAssertEqual(timeline.outputTime(for: t(24)), t(19))
++  }
++
++  func testResume_withoutPause_isIgnored() {
++    var timeline = RecordingPauseTimeline()
++    timeline.resume(at: t(5))
++    XCTAssertEqual(timeline.accumulatedOffset, .zero)
++    XCTAssertEqual(timeline.outputTime(for: t(1)), t(1))
++  }
++
++  func testResume_beforePausePoint_doesNotAddNegativeOffset() {
++    var timeline = RecordingPauseTimeline()
++    timeline.pause(at: t(10))
++    timeline.resume(at: t(9))
++    XCTAssertEqual(timeline.accumulatedOffset, .zero)
++    XCTAssertFalse(timeline.isPaused)
++    XCTAssertNil(timeline.outputTime(for: t(9.5)), "samples before the pause point stay cut")
++    XCTAssertEqual(timeline.outputTime(for: t(10)), t(10))
++  }
++
++  func testAcceptVideoFrame_rejectsNonIncreasingTimestamps() {
++    var timeline = RecordingPauseTimeline()
++    XCTAssertEqual(timeline.acceptVideoFrame(at: t(1)), t(1))
++    XCTAssertNil(timeline.acceptVideoFrame(at: t(1)))
++    XCTAssertNil(timeline.acceptVideoFrame(at: t(0.5)))
++    XCTAssertEqual(timeline.acceptVideoFrame(at: t(1.1)), t(1.1))
++  }
++
++  func testAcceptVideoFrame_acrossPause_staysStrictlyIncreasing() {
++    var timeline = RecordingPauseTimeline()
++    XCTAssertEqual(timeline.acceptVideoFrame(at: t(9.9)), t(9.9))
++    timeline.pause(at: t(10))
++    XCTAssertNil(timeline.acceptVideoFrame(at: t(11)))
++    timeline.resume(at: t(15))
++    XCTAssertNil(timeline.acceptVideoFrame(at: t(14.9)))
++
++    let resumed = timeline.acceptVideoFrame(at: t(15))
++    XCTAssertEqual(resumed, t(10))
++    XCTAssertEqual(timeline.lastVideoTime, t(10))
++  }
++
++  func testOutputTime_rejectsInvalidTimestamp() {
++    var timeline = RecordingPauseTimeline()
++    XCTAssertNil(timeline.outputTime(for: .invalid))
++    XCTAssertNil(timeline.acceptVideoFrame(at: .invalid))
++  }
++}
+```
+
+**File**: `SnapzyTests/Features/Recording/RecordingSessionTests.swift` (modified, +9/-5)
+```diff
+@@ -64,14 +64,18 @@ final class RecordingSessionTests: XCTestCase {
+     session.configureExpectedVideoDimensions(width: 1920, height: 1080)
+   }
+ 
+-  func testSetAccumulatedPauseOffset_doesNotCrash() {
+-    let offset = CMTime(seconds: 5.0, preferredTimescale: 1_000_000)
+-    session.setAccumulatedPauseOffset(offset)
++  func testResume_returnsAccumulatedPausedDuration() {
++    session.pause(atHostTime: CMTime(seconds: 10, preferredTimescale: 600))
++    let offset = session.resume(atHostTime: CMTime(seconds: 15, preferredTimescale: 600))
++    XCTAssertEqual(offset.seconds, 5, accuracy: 0.001)
+   }
+ 
+   func testReset_clearsPauseOffset() {
+-    let offset = CMTime(seconds: 5.0, preferredTimescale: 1_000_000)
+-    session.setAccumulatedPauseOffset(offset)
++    session.pause(atHostTime: CMTime(seconds: 10, preferredTimescale: 600))
++    session.resume(atHostTime: CMTime(seconds: 15, preferredTimescale: 600))
+     session.reset()
++    session.pause(atHostTime: CMTime(seconds: 20, preferredTimescale: 600))
++    let offset = session.resume(atHostTime: CMTime(seconds: 21, preferredTimescale: 600))
++    XCTAssertEqual(offset.seconds, 1, accuracy: 0.001)
+   }
  }
 ```
 
-**File**: `Snapzy/Services/Capture/WindowSelectionQueryService.swift` (modified, +25/-1)
+**File**: `docs/RECORDING.md` (modified, +2/-2)
 ```diff
-@@ -324,7 +324,20 @@ enum WindowSelectionQueryService {
-     do {
-       let content = try await loadShareableContent(prefetchedContentTask: prefetchedContentTask)
-       if let prefetchedMatch = content.windows.first(where: { $0.windowID == windowID && $0.isOnScreen }) {
--        return prefetchedMatch
-+        let currentFrame = currentQuartzBounds(windowID: windowID)
-+        guard WindowCaptureResolution.isFrameStale(prefetchedMatch.frame, currentFrame: currentFrame) else {
-+          return prefetchedMatch
-+        }
-+        DiagnosticLogger.shared.log(
-+          .debug,
-+          .capture,
-+          "Cached shareable window frame is stale; refreshing",
-+          context: [
-+            "windowID": "\(windowID)",
-+            "cached": "\(prefetchedMatch.frame)",
-+            "current": currentFrame.map { "\($0)" } ?? "unknown",
-+          ]
-+        )
-       }
+@@ -71,8 +71,8 @@ The toolbar's Fullscreen toggle keeps the display already selected: `restartSele
  
-       let refreshedContent = try await SCShareableContent.current
-@@ -339,6 +352,17 @@ enum WindowSelectionQueryService {
-     }
-   }
+ ## Pause / Resume
  
-+  /// Live WindowServer bounds (top-left global points, like `SCWindow.frame`).
-+  nonisolated private static func currentQuartzBounds(windowID: CGWindowID) -> CGRect? {
-+    guard
-+      let windowInfo = (CGWindowListCopyWindowInfo([.optionIncludingWindow], windowID) as? [[String: Any]])?.first,
-+      let boundsDictionary = windowInfo[kCGWindowBounds as String] as? NSDictionary
-+    else {
-+      return nil
-+    }
-+    return CGRect(dictionaryRepresentation: boundsDictionary)?.standardized
-+  }
-+
-   /// Uses WindowServer's raw list rather than ScreenCaptureKit: eligible menu-bar popovers
-   /// are frequently not shareable even while they remain visible.
-   nonisolated static func visibleWindowIDs(for targets: [WindowCaptureTarget]) -> Set<CGWindowID> {
+-- `pauseRecording()` keeps the stream alive but flips `RecordingSession.isCapturing = false` so all incoming samples are dropped; `resumeRecording()` accumulates the wall-clock pause into `pausedDuration`, calls `session.setAccumulatedPauseOffset(CMTime)` **before** setting `isCapturing = true` (fix 70f7f36).
+-- `RecordingSession` subtracts the accumulated offset from every video PTS and re-times audio/mic buffers through `CMSampleBufferCreateCopyWithNewTiming`, so the output timeline has no pause gap.
++- `pauseRecording()` / `resumeRecording()` keep the stream alive and call `session.pause(atHostTime:)` / `session.resume(atHostTime:)` with `CMClockGetHostTimeClock()` time — the clock ScreenCaptureKit and the mic `AVCaptureSession` stamp samples with.
++- `RecordingPauseTimeline` (inside `RecordingSession`) classifies every sample by its own PTS: samples captured in a paused span are dropped even if they reach the writer queue after resume, and later samples are shifted back by the accumulated paused time (audio/mic re-timed through `CMSampleBufferCreateCopyWithNewTiming`), so the output has no pause gap. Video frames whose output PTS would not advance past the last written frame are dropped, since a non-increasing PTS fails the `AVAssetWriter`.
+ - The menu bar / status bar timer is wall clock minus `pausedDuration` (`updateElapsedTime`).
+ - `RecordingMouseTracker.pause()/resume()` keeps sample times consistent with the same exclusion.
+ - Global shortcut `GlobalShortcutKind.pauseResumeRecording` ships unbound (seeded into `clearedShortcuts`; recommended `⌘⇧Space`); bound in Preferences → Shortcuts → Recording it dispatches `ScreenRecordingManager.togglePause()` only when `RecordingState.isPauseResumeEligible` (`.recording` / `.paused`), silent no-op otherwise. The menu bar also gains Pause/Resume during recording.
 ```
 
-**File**: `SnapzyTests/Services/Capture/WindowCaptureResolutionTests.swift` (modified, +92/-0)
+---
+
+### Incident Patch 2: `ef5e914d` (2026-10-20)
+**Commit Message**: fix: Read history records from the database in the retention sweep
+
+The launch sweep ran from a Task right after CaptureHistoryStore was
+created, while its GRDB observation publishes records asynchronously on
+the main queue. When the sweep won, records was still empty and every
+history thumbnail, annotation session and video editor session counted
+as an orphan and was deleted.
+
+The sweep now reads records with fetchRecords() before and after
+retention deletes and skips orphan cleanup when that read fails.
+
+**File**: `Snapzy/Services/History/CaptureHistoryRetentionService.swift` (modified, +44/-65)
 ```diff
-@@ -114,4 +114,96 @@ final class WindowCaptureResolutionTests: XCTestCase {
-       )
+@@ -52,7 +52,9 @@ final class CaptureHistoryRetentionService {
+       DiagnosticLogger.shared.log(.debug, .history, "Capture history retention sweep skipped; history disabled")
+       return
+     }
+-    guard CaptureHistoryStore.shared.isDatabaseAvailable else {
++    // Read records from the database rather than `CaptureHistoryStore.records`: at launch the
++    // observation may not have published yet, and an empty list would wipe every sidecar.
++    guard let recordsBeforeSweep = CaptureHistoryStore.shared.fetchRecords() else {
+       DiagnosticLogger.shared.log(
+         .warning,
+         .history,
+@@ -73,7 +75,8 @@ final class CaptureHistoryRetentionService {
      )
-   }
-+
-+  // Issue #634: measured on a 2x display. A cached 600x400pt frame sized the
-+  // padded canvas for an 800x620pt window, which came out 0.894x native.
-+  func testResizedWindowFrameIsStale() {
-+    XCTAssertTrue(
-+      WindowCaptureResolution.isFrameStale(
-+        CGRect(x: 200, y: 200, width: 600, height: 400),
-+        currentFrame: CGRect(x: 200, y: 200, width: 800, height: 620)
+ 
+     // Collect temp file paths before deleting records so we can clean them up afterward
+-    let tempPathsToDelete = collectTempFilePathsForRecordsToDelete(
++    let tempPathsToDelete = Self.tempFilePathsForRecordsToDelete(
++      in: recordsBeforeSweep,
+       retentionDays: retentionDays,
+       maxCount: maxCount
+     )
+@@ -97,10 +100,19 @@ final class CaptureHistoryRetentionService {
+     // Delete associated temp files that are no longer referenced by any history record
+     deleteUnreferencedTempFiles(paths: tempPathsToDelete)
+ 
++    guard let remainingRecords = CaptureHistoryStore.shared.fetchRecords() else {
++      DiagnosticLogger.shared.log(
++        .warning,
++        .history,
++        "Capture history orphan cleanup skipped; records unavailable after retention"
 +      )
-+    )
-+  }
-+
-+  func testMovedWindowFrameIsStale() {
-+    // A move can change the display, and with it the capture scale.
-+    XCTAssertTrue(
-+      WindowCaptureResolution.isFrameStale(
-+        CGRect(x: 200, y: 200, width: 800, height: 620),
-+        currentFrame: CGRect(x: 1_900, y: 200, width: 800, height: 620)
-+      )
-+    )
-+  }
-+
-+  func testMatchingWindowFrameIsNotStale() {
-+    XCTAssertFalse(
-+      WindowCaptureResolution.isFrameStale(
-+        CGRect(x: 200, y: 200, width: 800, height: 620),
-+        currentFrame: CGRect(x: 200.5, y: 200, width: 800, height: 620.5)
-+      )
-+    )
-+  }
-+
-+  func testUnknownLiveFrameKeepsCachedWindow() {
-+    XCTAssertFalse(
-+      WindowCaptureResolution.isFrameStale(
-+        CGRect(x: 200, y: 200, width: 800, height: 620),
-+        currentFrame: nil
-+      )
-+    )
-+  }
-+
-+  func testShadowedWindowAtNativeScaleIsAccepted() {
-+    // 800x620pt window plus shadow, trimmed: 1796x1436px.
-+    XCTAssertFalse(
-+      WindowCaptureResolution.isScaledBelowNative(
-+        pixelSize: CGSize(width: 1_796, height: 1_436),
-+        logicalSize: CGSize(width: 800, height: 620),
-+        scaleFactor: 2
-+      )
-+    )
-+  }
-+
-+  func testShadowedWindowScaledToFitIsRejected() {
-+    // Issue #634 outputs: 0.847x (v2.0.0, frame-sized canvas) and 0.805x
-+    // (stale frame). Both pass the 75% undersize rule.
-+    let cases: [(pixels: CGSize, points: CGSize)] = [
-+      (CGSize(width: 1_521, height: 1_215), CGSize(width: 800, height: 620)),
-+      (CGSize(width: 2_091, height: 1_447), CGSize(width: 1_200, height: 800)),
-+    ]
-+    for (pixels, points) in cases {
-+      XCTAssertFalse(
-+        WindowCaptureResolution.isUndersized(pixelSize: pixels, logicalSize: points, expectedScaleFactor: 2)
-+      )
-+      XCTAssertTrue(
-+        WindowCaptureResolution.isScaledBelowNative(pixelSize: pixels, logicalSize: points, scaleFactor: 2),
-+        "\(pixels) for \(points)"
-+      )
++      return
 +    }
-+  }
 +
-+  func testShallowShrinkHiddenByShadowIsNotDetected() {
-+    // 0.894x from a stale frame: the shadow keeps the trimmed image wider
-+    // than the native window, so only the frame refresh prevents this one.
-+    XCTAssertFalse(
-+      WindowCaptureResolution.isScaledBelowNative(
-+        pixelSize: CGSize(width: 1_611, height: 1_287),
-+        logicalSize: CGSize(width: 800, height: 620),
-+        scaleFactor: 2
-+      )
-+    )
-+  }
-+
-+  func testTransparentMarginOnOneAxisIsNotScaledBelowNative() {
-+    // Scaling to fit shrinks both axes; a window that is transparent along
-+    // one edge only trims short on that axis.
-+    XCTAssertFalse(
-+      WindowCaptureResolution.isScaledBelowNative(
-+        pixelSize: CGSize(width: 1_500, height: 1_436),
-+        logicalSize: CGSize(width: 800, height: 620),
-+        scaleFactor: 2
-+      )
-+    )
-+  }
- }
+     // Clean up orphaned thumbnails
+-    await cleanupOrphanedThumbnails()
+-    cleanupOrphanedAnnotationSessions()
+-    cleanupOrphanedVideoEditorSessions()
++    await cleanupOrphanedThumbnails(keeping: remainingRecords)
++    cleanupOrphanedAnnotationSessions(keeping: remainingRecords)
++    cleanupOrphanedVideoEditorSessions(keeping: remainingRecords)
+ 
+     logger.info("Retention sweep completed")
+     DiagnosticLogger.shared.log(
+@@ -112,39 +124,34 @@ final class CaptureHistoryRetentionService {
+   }
+ 
+   /// Collect temp file paths for records that will be deleted by retention.
+-  /// Returns paths that are in the temp directory and will be removed.
+-  private func collectTempFilePathsForRecordsToDelete(
++  /// `allRecords` must be ordered newest first. Returns paths that are in the temp directory.
++  static func tempFilePathsForRecordsToDelete(
++    in allRecords: [CaptureHistoryRecord],
+     retentionDays: Int,
+-    maxCount: Int
++    maxCount: Int,
++    now: Date = Date(),
++    isTempFile: ((URL) -> Bool)? = nil
+   ) -> [String] {
+-    let store = CaptureHistoryStore.shared
+-    guard store.isDatabaseAvailable else { return [] }
+-
+-    let tempManager = TempCaptureManager.shared
+-
++    let isTempFile = isTempFile ?? { TempCaptureManager.shared.isTempFile($0) }
+     var pathsToDelete: [String] = []
+ 
+-    do {
+-      let allRecords = store.records
+-
+-      // Find records older than retentionDays
+-      if retentionDays > 0 {
+-        let cutoff = Date().addingTimeInterval(-TimeInterval(retentionDays * 24 * 60 * 60))
+-        for record in allRecords where record.capturedAt < cutoff {
+-          if tempManager.isTempFile(record.fileURL) {
+-            pathsToDelete.append(record.filePath)
+-          }
++    // Find records older than retentionDays
++    if retentionDays > 0 {
++      let cutoff = now.addingTimeInterval(-TimeInterval(retentionDays * 24 * 60 * 60))
++      for record in allRecords where record.capturedAt < cutoff {
++        if isTempFile(record.fileURL) {
++          pathsToDelete.append(record.filePath)
+         }
+       }
++    }
+ 
+-      // Find records that would be trimmed by maxCount
+-      if maxCount > 0, allRecords.count > maxCount {
+-        let excess = allRecords.count - maxCount
+-        let oldestRecords = allRecords.suffix(excess)
+-        for record in oldestRecords {
+-          if tempManager.isTempFile(record.fileURL), !pathsToDelete.contains(record.filePath) {
+-            pathsToDelete.append(record.filePath)
+-          }
++    // Find records that would be trimmed by maxCount
++    if maxCount > 0, allRecords.count > maxCount {
++      let excess = allRecords.count - maxCount
++      let oldestRecords = allRecords.suffix(excess)
++      for record in oldestRecords {
++        if isTempFile(record.fileURL), !pathsToDelete.contains(record.filePath) {
++          pathsToDelete.append(record.filePath)
+         }
+       }
+     }
+@@ -207,18 +214,8 @@ final class CaptureHistoryRetentionService {
+   // MARK: - Private
+ 
+   /// Remove thumbnails that no longer have a corresponding history record
+-  private func cleanupOrphanedThumbnails() async {
++  private func cleanupOrphanedThumbnails(keeping records: [CaptureHistoryRecord]) async {
+     let generator = HistoryThumbnailGenerator.shared
+-    let store = CaptureHistoryStore.shared
+-    guard store.isDatabaseAvailable else {
+-      DiagnosticLogger.shared.log(
+-        .warning,
+-        .history,
+-        "Capture history orphan thumbnail cleanup skipped; database
 ```
 
-**File**: `docs/CAPTURE.md` (modified, +1/-1)
+**File**: `Snapzy/Services/History/CaptureHistoryStore.swift` (modified, +13/-4)
 ```diff
-@@ -113,7 +113,7 @@ flowchart TD
- - Application-window capture can also start directly from the menu, independent shortcut, or `snapzy://capture/application`; it uses the same area capture flow with `.applicationWindow` as the initial interaction mode.
- - Active-window capture resolves the AX focused window of the frontmost app via `ActiveWindowResolver`, maps it to the nearest `WindowCaptureTarget` candidate, and captures it through the same `captureWindow` path — no selection overlay appears.
- - In live application window mode, Snapzy synchronously retains an already-open eligible menu-bar popover before showing any overlay. Because some transient WindowServer popovers can be enumerated but not rendered as an independent Core Graphics window, Snapzy takes one containing-display snapshot and crops the detected popover bounds from that pre-overlay image. After the overlay appears, it checks the exact `CGWindowID` during a short, bounded session-start interval: if the source closes, the retained image is restored beneath the existing dim-mask cutout; if it remains visible, no duplicate image is drawn. The retained image receives a 12pt transparent rounded-corner mask so flattened desktop pixels do not leak into exported PNG corners. The retained candidate is merged ahead of the normal front-to-back layer-0 list built from `CGWindowListCopyWindowInfo` plus `SCShareableContent`. Normal app windows keep their live behavior; only menu-bar-anchored third-party nonzero-layer popovers/dropdowns already open at capture start are retained. Snapzy, Dock, Control Center, and Notification Center are excluded.
--- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. When the window shadow is included (macOS 14+), the output canvas gets 128pt of transparent padding per side with `scalesToFit` off: the filter's content rect excludes the shadow, and a frame-sized canvas made ScreenCaptureKit shrink the shadowed window to ~91% and blur it (issue #569). The unused padding is trimmed afterwards; with the cursor shown, the trim bounds come from a second cursor-free pass so a cursor in the padding cannot enlarge the image, and the undersize check runs on the trimmed image. If a retained eligible menu-bar popover is no longer shareable, Snapzy saves the pre-overlay display crop instead of recapturing after it has disappeared. The legacy Core Graphics single-window path remains only as a fallback for a live eligible popover. Quick Look previews are detected as `QuickLookUIService` WindowServer windows and their pre-overlay display crops are composited back into filtered fullscreen, frozen-area, and live-area captures because ScreenCaptureKit may enumerate them as off-screen. Snapzy does not force third-party popovers to remain open.
-+- Exact window capture is handled by `ScreenCaptureManager.captureWindow()`. ScreenCaptureKit is preferred for every still-resolved `SCWindow`; its output scale uses the target display's backing scale (falling back to ScreenCaptureKit's point-pixel scale only when the display cannot be resolved), and a materially undersized returned image is routed through the existing display-area crop fallback. This keeps Retina windows from being saved at an intermittent nominal 1× while preserving native 1× external-display output. When the window shadow is included (macOS 14+), the output canvas gets 128pt of transparent padding per side with `scalesToFit` off: the filter's content rect excludes the shadow, and a frame-sized canvas made ScreenCaptureKit shrink the shadowed window to ~91% and blur it (issue #569). The unused padding is trimmed afterwards; with the cursor shown, the trim bounds come from a second cursor-free pass so a cursor in the padding cannot enlarge the image, and the undersize check runs on the trimmed image. Because the trimmed image still carries the shadow, a padded capture smaller than the native window on both axes (`WindowCaptureResolution.isScaledBelowNative`) is also routed to the display-crop fallback instead of being saved soft; a shrink smaller than the shadow's share of the image (about 0.89× and above for an 800×620pt window) still passes, so fresh frames are the primary guard. `WindowSelectionQueryService.resolveWindow` compares the cached `SCWindow.frame` with the window's live `CGWindowList` bounds and refetches `SCShareableContent` when they differ by more than 1pt: a frame cached before a resize sized the canvas for the old window and shrank the capture to 0.80–0.89× (issue #634). If a retained eligible menu-bar po
+@@ -621,17 +621,26 @@ final class CaptureHistoryStore: ObservableObject {
+   }
+ 
+   func refreshRecords() {
+-    guard let dbPool = requireDatabase(for: "refresh capture history records") else { return }
++    guard let fetchedRecords = fetchRecords() else { return }
++    records = fetchedRecords
++  }
++
++  /// Reads all records straight from the database, newest first, without waiting for the
++  /// observation to publish them. Returns nil when the read fails, so callers doing cleanup
++  /// can tell "no records" apart from "records not available".
++  func fetchRecords() -> [CaptureHistoryRecord]? {
++    guard let dbPool = requireDatabase(for: "fetch capture history records") else { return nil }
+ 
+     do {
+-      records = try dbPool.read { db in
++      return try dbPool.read { db in
+         try CaptureHistoryRecord
+           .order(Column("capturedAt").desc)
+           .fetchAll(db)
+       }
+     } catch {
+-      logger.error("Failed to refresh capture history records: \(error.localizedDescription)")
+-      DiagnosticLogger.shared.logError(.history, error, "Capture history refresh failed")
++      logger.error("Failed to fetch capture history records: \(error.localizedDescription)")
++      DiagnosticLogger.shared.logError(.history, error, "Capture history fetch failed")
++      return nil
+     }
+   }
+ 
+```
+
+**File**: `SnapzyTests/Services/History/CaptureHistoryRetentionServiceTests.swift` (modified, +62/-0)
+```diff
+@@ -190,6 +190,68 @@ final class CaptureHistoryRetentionServiceTests: XCTestCase {
+     XCTAssertFalse(FileManager.default.fileExists(atPath: videoSessionDirectory(for: inactiveURL).path))
+   }
+ 
++  func testSweep_keepsSidecarsWhenStoreHasNotPublishedRecordsYet() async throws {
++    let sourceURL = try writeSourceFile(named: "launch.png")
++    let videoURL = try writeSourceFile(named: "launch.mov")
++    let masterURL = try writeSourceFile(named: "launch-master.mov")
++    CaptureHistoryStore.shared.add(makeRecord(filePath: sourceURL.path))
++    CaptureHistoryStore.shared.add(makeRecord(filePath: videoURL.path))
++    XCTAssertTrue(annotationSessionStore.persist(makeSessionData(), for: sourceURL))
++    XCTAssertTrue(
++      videoEditorSessionStore.persist(VideoEditorSessionData(sourceSnapshotURL: masterURL), for: videoURL)
++    )
++    // No refreshRecords(): like app launch, the observation has not delivered the rows yet.
++    try XCTSkipUnless(
++      CaptureHistoryStore.shared.records.isEmpty,
++      "Observation already published the new rows; the launch race cannot be reproduced"
++    )
++
++    await service.sweep()
++
++    XCTAssertNotNil(annotationSessionStore.load(for: sourceURL))
++    XCTAssertNotNil(videoEditorSessionStore.load(for: videoURL))
++  }
++
++  func testFetchRecords_readsDatabaseBeforeObservationPublishes() {
++    let record = makeRecord()
++    CaptureHistoryStore.shared.add(record)
++
++    XCTAssertEqual(CaptureHistoryStore.shared.fetchRecords()?.map(\.id), [record.id])
++  }
++
++  // MARK: - temp file collection
++
++  func testTempFilePaths_collectsExpiredAndOverflowTempRecords() {
++    let now = Date()
++    let newest = makeRecord(filePath: "/tmp/newest.png", capturedAt: now)
++    let overflow = makeRecord(filePath: "/tmp/overflow.png", capturedAt: now.addingTimeInterval(-60))
++    let expired = makeRecord(filePath: "/tmp/expired.png", capturedAt: now.addingTimeInterval(-86400 * 10))
++    let expiredSaved = makeRecord(filePath: "/saved/expired.png", capturedAt: now.addingTimeInterval(-86400 * 11))
++
++    let paths = CaptureHistoryRetentionService.tempFilePathsForRecordsToDelete(
++      in: [newest, overflow, expired, expiredSaved],
++      retentionDays: 7,
++      maxCount: 1,
++      now: now,
++      isTempFile: { $0.path.hasPrefix("/tmp/") }
++    )
++
++    XCTAssertEqual(paths, [expired.filePath, overflow.filePath])
++  }
++
++  func testTempFilePaths_emptyWhenLimitsDisabled() {
++    let record = makeRecord(filePath: "/tmp/old.png", capturedAt: Date().addingTimeInterval(-86400 * 100))
++
++    let paths = CaptureHistoryRetentionService.tempFilePathsForRecordsToDelete(
++      in: [record],
++      retentionDays: 0,
++      maxCount: 0,
++      isTempFile: { _ in true }
++    )
++
++    XCTAssertTrue(paths.isEmpty)
++  }
++
+   // MARK: - thumbnail ownership
+ 
+   func testThumbnailOwnership_matchesLegacyAndCacheKeyedNames() {
+```
+
+**File**: `docs/HISTORY.md` (modified, +1/-0)
+```diff
+@@ -57,6 +57,7 @@ flowchart TD
+ - `CaptureHistoryRetentionService` — sweep at launch + every 24h timer.
+ - Prefs: `history.retentionDays` (default 30, 0 = forever), `history.maxCount` (default 500, 0 = unlimited).
+ - Sweep deletes: records older than retention, count-overflow records, unreferenced temp files, orphan thumbnails, orphan annotation sidecars (source gone / no active record / signature mismatch).
++- The sweep reads records straight from the database (`CaptureHistoryStore.fetchRecords()`), not the observed `records`, which is still empty at launch until the GRDB observation publishes; if the read fails the sweep skips orphan cleanup instead of treating history as empty.
+ - `clearAllHistory()` deletes records + thumbnails + sidecars but keeps capture files on disk.
+ - `history.floating.autoClearDays` is persisted/exported but never consumed — dead setting.
+ 
 ```
 
 ---
 
-### Incident Patch 3: `2ca2dae5` (2026-10-22)
-**Commit Message**: fix: Detect a menu bar icon hidden by the notch and open Settings on reopen (#674)
+### Incident Patch 3: `dff80d1f` (2026-10-20)
+**Commit Message**: fix: Free editor caches when Quick Access evicts its oldest card
 
-On a crowded menu bar, notched MacBooks push status items behind the camera
-housing or under the active app's menus. AppKit still reports the item as
-visible, so Snapzy kept running with no way to reach it except the
-snapzy://settings URL (#587).
+Trimming the stack with removeLast() skipped the cleanup removeItem does,
+leaking the full-resolution annotate session data for every evicted card.
 
-The status item now resets isVisible on creation (macOS persists a ⌘-drag
-removal), checks the button window's occlusion state, screen bounds and notch
-gap, and logs when the icon is enabled but hidden. Reopening Snapzy from
-Spotlight or Finder while the icon is hidden opens Settings, matching the
-existing behavior when the icon is turned off.
-
-**File**: `Snapzy/App/AppStatusBarController.swift` (modified, +106/-0)
+**File**: `Snapzy/Features/QuickAccess/QuickAccessManager.swift` (modified, +26/-33)
 ```diff
-@@ -150,6 +150,8 @@ final class AppStatusBarController: ObservableObject {
+@@ -292,17 +292,7 @@ final class QuickAccessManager: ObservableObject {
+ 
+     // Animate insertion explicitly — no implicit .animation on the stack
+     withAnimation(QuickAccessAnimations.cardInsert) {
+-      if items.count >= maxVisibleItems, let oldestId = items.last?.id {
+-        cancelDismissTimer(for: oldestId)
+-        pinWindowManager.close(id: oldestId)
+-        items.removeLast()
+-        DiagnosticLogger.shared.log(
+-          .debug,
+-          .ui,
+-          "Quick access trimmed oldest item",
+-          context: ["maxVisibleItems": "\(maxVisibleItems)"]
+-        )
+-      }
++      trimOldestItemIfNeeded(logMessage: "Quick access trimmed oldest item")
+       items.insert(item, at: 0)
+     }
+     DiagnosticLogger.shared.log(
+@@ -368,17 +358,7 @@ final class QuickAccessManager: ObservableObject {
+ 
+     // Animate insertion explicitly — no implicit .animation on the stack
+     withAnimation(QuickAccessAnimations.cardInsert) {
+-      if items.count >= maxVisibleItems, let oldestId = items.last?.id {
+-        cancelDismissTimer(for: oldestId)
+-        pinWindowManager.close(id: oldestId)
+-        items.removeLast()
+-        DiagnosticLogger.shared.log(
+-          .debug,
+-          .ui,
+-          "Quick access trimmed oldest item",
+-          context: ["maxVisibleItems": "\(maxVisibleItems)"]
+-        )
+-      }
++      trimOldestItemIfNeeded(logMessage: "Quick access trimmed oldest item")
+       items.insert(item, at: 0)
      }
  
-     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-+    // macOS persists a ⌘-drag removal per item; the Snapzy preference is the source of truth.
-+    statusItem?.isVisible = true
+@@ -495,6 +475,29 @@ final class QuickAccessManager: ObservableObject {
+     return item
+   }
  
-     if let button = statusItem?.button {
-       button.imagePosition = .imageLeading
-@@ -158,10 +160,114 @@ final class AppStatusBarController: ObservableObject {
-       button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-       renderStatusItem()
++  /// Drops the oldest card to make room for a new one. Frees its in-memory
++  /// editor caches like `removeItem(id:)`, but keeps the file: a new capture
++  /// must never delete an older unsaved one (launch-time cleanup reclaims it).
++  private func trimOldestItemIfNeeded(logMessage: String) {
++    guard items.count >= maxVisibleItems, let oldest = items.last else { return }
++    cancelDismissTimer(for: oldest.id)
++    pinWindowManager.close(id: oldest.id)
++    activityHoldItemIds.remove(oldest.id)
++    // An open editor still owns its session; it saves back on close.
++    if !editingItemIds.contains(oldest.id) {
++      AnnotateManager.shared.clearSessionData(for: oldest.id)
++      VideoEditorManager.shared.clearSessionData(for: oldest.id)
++      VideoEditorManager.shared.clearSessionData(for: oldest.url)
++    }
++    items.removeLast()
++    DiagnosticLogger.shared.log(
++      .debug,
++      .ui,
++      logMessage,
++      context: ["maxVisibleItems": "\(maxVisibleItems)"]
++    )
++  }
++
+   /// Remove an item (screenshot or video) from the stack
+   func removeItem(id: UUID) {
+     guard let item = items.first(where: { $0.id == id }) else {
+@@ -1444,17 +1447,7 @@ final class QuickAccessManager: ObservableObject {
+     retryURL: URL
+   ) {
+     withAnimation(QuickAccessAnimations.cardInsert) {
+-      if items.count >= maxVisibleItems, let oldestId = items.last?.id {
+-        cancelDismissTimer(for: oldestId)
+-        pinWindowManager.close(id: oldestId)
+-        items.removeLast()
+-        DiagnosticLogger.shared.log(
+-          .debug,
+-          .ui,
+-          "Quick access trimmed oldest item for history restore",
+-          context: ["maxVisibleItems": "\(maxVisibleItems)"]
+-        )
+-      }
++      trimOldestItemIfNeeded(logMessage: "Quick access trimmed oldest item for history restore")
+       items.insert(item, at: 0)
      }
-+
-+    // Occlusion is only known once the status bar window is on screen (see issue #587).
-+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-+      self?.observeStatusItemOcclusion()
-+      self?.logStatusItemVisibilityIfChanged(trigger: "setup")
-+    }
-+  }
-+
-+  // MARK: - Hidden Status Item Detection
-+
-+  /// True when the icon is enabled but macOS is not drawing it, e.g. it was pushed behind the
-+  /// notch or under the active app's menus on a crowded menu bar (issue #587).
-+  var isMenuBarIconObscured: Bool {
-+    guard let statusItem else { return false }
-+    guard statusItem.isVisible, let window = statusItem.button?.window else { return true }
-+    let screen = window.screen
-+    return Self.isStatusItemObscured(
-+      itemFrame: window.frame,
-+      screenFrame: screen?.frame,
-+      notchGap: screen.flatMap { Self.notchGap(of: $0) },
-+      isOcclusionVisible: window.occlusionState.contains(.visible)
-+    )
-+  }
-+
-+  /// Pure decision for whether a status item window is actually visible to the user.
-+  /// Extracted for deterministic testing; AppKit reports `isVisible == true` for hidden items.
-+  nonisolated static func isStatusItemObscured(
-+    itemFrame: CGRect,
-+    screenFrame: CGRect?,
-+    notchGap: ClosedRange<CGFloat>?,
-+    isOcclusionVisible: Bool
-+  ) -> Bool {
-+    guard isOcclusionVisible, let screenFrame else { return true }
-+    if itemFrame.minX < screenFrame.minX || itemFrame.maxX > screenFrame.maxX {
-+      return true
-+    }
-+    if let notchGap, itemFrame.minX < notchGap.upperBound, itemFrame.maxX > notchGap.lowerBound {
-+      return true
-+    }
-+    return false
-+  }
-+
-+  /// Horizontal span covered by the camera housing, or nil on screens without a notch.
-+  private static func notchGap(of screen: NSScreen) -> ClosedRange<CGFloat>? {
-+    guard let left = screen.auxiliaryTopLeftArea,
-+          let right = screen.auxiliaryTopRightArea,
-+          left.maxX < right.minX else { return nil }
-+    return left.maxX...right.minX
-+  }
-+
-+  private var statusItemOcclusionObserver: NSObjectProtocol?
-+  private var lastLoggedStatusItemObscured: Bool?
-+  private var didWarnStatusItemObscured = false
-+
-+  private func observeStatusItemOcclusion() {
-+    removeStatusItemOcclusionObserver()
-+    guard let window = statusItem?.button?.window else { return }
-+    statusItemOcclusionObserver = NotificationCenter.default.addObserver(
-+      forName: NSWindow.didChangeOcclusionStateNotification,
-+      object: window,
-+      queue: .main
-+    ) { [weak self] _ in
-+      MainActor.assumeIsolated {
-+        self?.logStatusItemVisibilityIfChanged(trigger: "occlusionChange")
-+      }
-+    }
-+  }
-+
-+  private func removeStatusItemOcclusionObserver() {
-+    if let statusItemOcclusionObserver {
-+      NotificationCenter.default.removeObserver(statusItemOcclusionObserver)
-+    }
-+    statusItemOcclusionObserver = nil
-+    lastLoggedStatusItemObscured = nil
-+    didWarnStatusItemObscured = false
-+  }
-+
-+  private func logStatusItemVisibilityIfChanged(trigger: String) {
-+    guard let statusItem else { return }
-+    let obscured = isMenuBarIconObscured
-+    guard obscured != lastLoggedStatusItemObscured else { return }
-+    lastLoggedStatusItemObscured = obscured
-+
-+    let window = statusItem.button?.window
-+    let context = [
-+      "trigger": trigger,
-+      "isVisible": statusItem.isVisible ? "true" : "false",
-+      "frame": window.map { NSStringFromRect($0.frame) } ?? "none",
-+      "occlusionVisible": (window?.occlusionState.contains(.visible) ?? false) ? "true" : "false",
-+      "hasNotch": (window?.screen.flatMap { Self.notchGap(of: $0) } != nil) ? "true" : "false",
-+    ]
-+    if obscured {
-+      // An auto-hiding menu bar flips occlusion on every reveal, so warn once per item.
-+      DiagnosticLogger.shared.log(
-+        didWarnStatusItemObscured ? .debug : .warning,
-+        .ui,
-+        "Menu bar icon is enabled but hidden by the system",
-+        context: context
-+      )
-+      didWarnStatusItemObscured = true
-+    } else {
-+      DiagnosticLogger.shared.log(.debug, .ui, "Menu bar icon is visible", context: context)
-+    }
-   }
  
-   private func removeStatusItem() {
-     guard let statusItem else { return }
-+    removeStatusItemOcclusionObserver()
-     processingSpinner?.stopAnimation(nil)
-     processingSpinner?.removeFromSuperview()
-     processingSpinner = nil
-```
-
-**File**: `Snapzy/App/SnapzyApp.swift` (modified, +6/-1)
-```diff
-@@ -137,8 +137,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
-   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-     guard didFinishLaunching else { return true }
-     let showsMenuBarIcon = UserDefaults.standard.object(forKey: PreferencesKeys.showMenuBarIcon) as? Bool ?? true
--    guard !showsMenuBarIcon else { return true }
-+    // An enabled icon can still be hidden behind the notch on a crowded menu bar (issue #587).
-+    let isIconObscured = showsMenuBarIcon && AppStatusBarController.shared.isMenuBarIconObscured
-+    guard !showsMenuBarIcon || isIconObscured else { return true }
- 
-+    if isIconObscured {
-+      DiagnosticLogger.shared.log(.info, .ui, "Opening Settings on reopen because the menu bar icon is hidden")
-+    }
-     AppStatusBarController.shared.openPreferencesWindow(tab: .general)
-     return false
-   }
-```
-
-**File**: `SnapzyTests/App/AppStatusBarControllerTests.swift` (modified, +72/-0)
-```diff
-@@ -49,6 +49,78 @@ final class AppStatusBarControllerTests: XCTestCase {
-     XCTAssertFalse(controller.showsRecordingTimeOnMenuBarForTesting)
-   }
- 
-+  // MARK: - Hidden status item detection (issue #587)
-+
-+  // Frames measured on a 14" notched MacBook Pro at default scaling.
-+  private let notchedScreen = CGRect(x: 0, y: 0, width: 1800, height: 1169)
-+  private let notchGap: ClosedRange<CGFloat> = 790...1010
-+
-+  func testStatusItemObscured_falseWhenRightOfNotchAndVisible() {
-+    XCTAssertFalse(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: 1046, y: 1130, width: 137, height: 39),
-+        screenFrame: notchedScreen,
-+        notchGap: notchGap,
-+        isOcclusionVisible: true
-+      )
-+    )
-+  }
-+
-+  func testStatusItemObscured_trueWhenOverlappingNotch() {
-+    XCTAssertTrue(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: 911, y: 1130, width: 137, height: 39),
-+        screenFrame: notchedScreen,
-+        notchGap: notchGap,
-+        isOcclusionVisible: true
-+      )
-+    )
-+  }
-+
-+  func testStatusItemObscured_trueWhenPushedOffScreen() {
-+    XCTAssertTrue(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: -47, y: 1130, width: 137, height: 39),
-+        screenFrame: notchedScreen,
-+        notchGap: notchGap,
-+        isOcclusionVisible: true
-+      )
-+    )
-+  }
-+
-+  func testStatusItemObscured_trueWhenOccluded() {
-+    XCTAssertTrue(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: 500, y: 1130, width: 137, height: 39),
-+        screenFrame: notchedScreen,
-+        notchGap: notchGap,
-+        isOcclusionVisible: false
-+      )
-+    )
-+  }
-+
-+  func testStatusItemObscured_trueWithoutScreen() {
-+    XCTAssertTrue(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: 1046, y: 1130, width: 137, height: 39),
-+        screenFrame: nil,
-+        notchGap: nil,
-+        isOcclusionVisible: true
-+      )
-+    )
-+  }
-+
-+  func testStatusItemObscured_ignoresNotchGapOnScreensWithoutNotch() {
-+    XCTAssertFalse(
-+      AppStatusBarController.isStatusItemObscured(
-+        itemFrame: CGRect(x: 911, y: 1130, width: 137, height: 39),
-+        screenFrame: notchedScreen,
-+        notchGap: nil,
-+        isOcclusionVisible: true
-+      )
-+    )
-+  }
-+
-   // MARK: - Menu bar title gating (issue #351)
- 
-   func testMenuBarTitle_hiddenWhenTimeDisplayOff_forAllStates() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #674** (2026-10-22): fix: Detect a menu bar icon hidden by the notch and open Settings on reopen (@duongductrong)
-- **PR #673** (2026-10-22): chore: release v2.1.0-beta.13 (@github-actions[bot])
-- **PR #672** (2026-10-22): fix: Keep the app beneath focused during live capture so tooltips survive (@duongductrong)
-- **PR #671** (2026-10-22): chore: release v2.1.0-beta.12 (@github-actions[bot])
-- **PR #670** (2026-10-22): fix: Refresh stale window frames before sizing window captures (@duongductrong)
-- **PR #669** (2026-10-21): chore: release v2.1.0-beta.11 (@github-actions[bot])
+- **PR #686** (2026-10-25): chore: release v2.1.0 (@github-actions[bot])
+- **PR #685** (2026-10-25): feat: Add the snapzy command line tool for agents and scripts (@duongductrong)
+- **PR #683** (2026-10-24): chore: release v2.1.0-beta.15 (@github-actions[bot])
+- **PR #682** (2026-10-24): feat: Show capture chrome in screen recordings (@duongductrong)
+- **PR #681** (2026-10-23): chore: release v2.1.0-beta.14 (@github-actions[bot])
+- **PR #680** (2026-10-23): fix: Retry DMG stapling on transient CloudKit failures (@duongductrong)
 
 ---
 
@@ -3160,25 +1648,54 @@ existing behavior when the icon is turned off.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Unlock magnifier color panel and add magnifier size setting (#665)
+## X. Cut paused recording spans by sample timestamps
 
 **RULE**:
-When implementing operations in `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Snapzy/Features/Recording/RecordingPauseTimeline.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9de2b0f2`: Unlock magnifier color panel and add magnifier size setting (#665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f6888fe`: Cut paused recording spans by sample timestamps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Annotate/InlineAreaAnnotateSession.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Recording/RecordingPauseTimeline.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  /// The "magnifier size" preference — same sharing rationale as above.
-  var magnifierSize: MagnifierSizeOption {
-    MagnifierSizeOption.current(defaults: defaults)
+//
+//  RecordingPauseTimeline.swift
+//  Snapzy
+//
+//  Maps capture-clock sample timestamps onto the written timeline, cutting out paused spans.
+//
+
+import CoreMedia
+
+/// Pause and resume points are measured on the host time clock, the same clock ScreenCaptureKit
+/// and AVCaptureSession stamp samples with, so each sample is classified by its own timestamp
+/// rather than by when it happens to reach the writer queue.
+nonisolated struct RecordingPauseTimeline: Sendable {
+  /// Total paused time removed from samples captured after the latest resume.
+  private(set) var accumulatedOffset: CMTime = .zero
+  private var pausedAt: CMTime?
+  private var resumedAt: CMTime?
+  private(set) var lastVideoTime: CMTime?
+
+  var isPaused: Bool { pausedAt != nil }
+
+  mutating func pause(at hostTime: CMTime) {
+    guard pausedAt == nil, hostTime.isNumeric else { return }
+    pausedAt = hostTime
   }
 
+  mutating func resume(at hostTime: CMTime) {
+    guard let pausedAt, hostTime.isNumeric else { return }
+    let pausedDuration = CMTimeSubtract(hostTime, pausedAt)
+    if pausedDuration > .zero {
+      accumulatedOffset = CMTimeAdd(accumulatedOffset, pausedDuration)
+    }
+    self.pausedAt = nil
+    resume
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3188,4 +1705,4 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9de2b0f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f6888fe` are properly handled with clean fallback behavior.
