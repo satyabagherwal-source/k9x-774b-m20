@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
-    "lastHarvestedAt": "2026-10-22T15:35:16.614Z",
+    "contentHash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
+    "lastHarvestedAt": "2026-10-26T14:10:05.393Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

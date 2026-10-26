@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T14:03:29.031Z",
-  "total_cycles_completed": 5137,
-  "total_learnings_persisted": 5137,
-  "total_rules_promoted": 4520,
+  "last_updated": "2026-10-26T14:10:05.399Z",
+  "total_cycles_completed": 5138,
+  "total_learnings_persisted": 5138,
+  "total_rules_promoted": 4523,
   "history": [
-    {
-      "timestamp": "2026-10-25T19:31:57.710Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T19:32:03.522Z",
       "repository": "modelcontextprotocol/kotlin-sdk",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-26T14:03:29.031Z",
       "repository": "InternScience/Sage-A1.5",
       "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-26T14:10:05.399Z",
+      "repository": "Qwen/Qwen3-14B",
+      "learningId": "learn-huggingface-qwen-qwen3-14b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

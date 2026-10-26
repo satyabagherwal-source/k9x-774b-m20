@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-26T14:03:29.035Z",
+  "last_updated": "2026-10-26T14:10:05.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15816,14 +15816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-14b",
-      "content_hash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
-      "verified_at": "2026-10-22T15:35:16.620Z",
+      "content_hash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
+      "verified_at": "2026-10-26T14:10:05.402Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T15:35:16.620Z"
+      "last_updated": "2026-10-26T14:10:05.402Z"
     },
     "SolaceProducts/solace-agent-mesh": {
       "repository": "SolaceProducts/solace-agent-mesh",

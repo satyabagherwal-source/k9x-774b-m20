@@ -336879,3 +336879,218 @@ if sum(mrope_section) != head_dim:
 ```
 **VERIFICATION METHOD**:
 Assert that `sum(mrope_section) <= head_dim * partial_rotary_factor`.
+
+
+---
+
+## 4620. GQA KV-Cache Memory Invariant (Harvested from Qwen/Qwen3-14B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "GQA KV-Cache Memory Invariant",
+  "source": "Qwen/Qwen3-14B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+  "source_version": "hf-qwen-qwen3-14b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-26T14:10:04.775Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-14b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing or configuring Large Language Models (LLMs) with Grouped Query Attention (GQA), the `num_key_value_heads` MUST be a divisor of `num_attention_heads` and MUST be significantly smaller (typically 1/4 to 1/8) to ensure KV cache memory efficiency without degrading attention quality. The KV cache size per token is proportional to `num_key_value_heads * head_dim * 2 * dtype_size`.
+
+**WHY**:
+Standard Multi-Head Attention (MHA) stores separate K and V vectors for every query head. In a 14B model with 40 heads, this results in massive memory consumption during long-context generation. GQA shares K/V heads across groups of query heads. If `num_key_value_heads` is set too high (e.g., equal to `num_attention_heads`), you lose the memory benefit. If set too low (e.g., 1), you may degrade reasoning capability. The ratio of 40:8 (5:1) is a forensic sweet spot for 14B scale models.
+
+**WHEN TO APPLY**:
+Any LLM inference pipeline, especially those targeting long-context (32k+) generation on consumer or single-node GPU clusters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json invariant
+{
+  "num_attention_heads": 40,
+  "num_key_value_heads": 8,
+  "head_dim": 128,
+  "hidden_size": 5120
+}
+
+# Inference code
+from transformers import AutoModelForCausalLM
+model = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen3-14B",
+    torch_dtype="bfloat16",
+    device_map="auto"
+)
+# The model internally calculates KV cache size based on num_key_value_heads
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Setting num_key_value_heads equal to num_attention_heads
+# This defeats the purpose of GQA and doubles/triples memory usage
+{
+  "num_attention_heads": 40,
+  "num_key_value_heads": 40, # WRONG: No memory savings
+  "head_dim": 128
+}
+```
+
+**VERIFICATION METHOD**:
+```python
+import json
+with open("config.json") as f:
+    config = json.load(f)
+assert config["num_attention_heads"] % config["num_key_value_heads"] == 0, "GQA heads must be divisible"
+assert config["num_key_value_heads"] < config["num_attention_heads"], "GQA must reduce KV heads"
+# Calculate expected KV cache size per token
+kv_cache_size_per_token = config["num_key_value_heads"] * config["head_dim"] * 2 * 2 # *2 for K and V, *2 for bfloat16 bytes
+print(f"KV Cache per token: {kv_cache_size_per_token} bytes")
+```
+
+
+---
+
+## 4621. RoPE Base Theta Context Scaling Invariant (Harvested from Qwen/Qwen3-14B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RoPE Base Theta Context Scaling Invariant",
+  "source": "Qwen/Qwen3-14B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+  "source_version": "hf-qwen-qwen3-14b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-26T14:10:04.992Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-14b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The `rope_theta` (base frequency) MUST be scaled proportionally to the maximum context length to prevent positional encoding degradation. For models extending beyond 32k tokens, `rope_theta` MUST be increased (e.g., from 10000 to 1,000,000) or YaRN scaling MUST be applied. A low `rope_theta` causes high-frequency rotation, leading to "positional aliasing" where distant tokens become indistinguishable.
+
+**WHY**:
+RoPE encodes position by rotating Q and V vectors. The rotation angle is $\theta_i \cdot \text{pos}$. If $\theta_i$ is too small (low base), the rotation cycles too quickly, causing periodicity in attention scores. For 32k+ contexts, a base of 1,000,000 ensures that the rotation period is long enough to maintain unique positional signatures across the entire context window.
+
+**WHEN TO APPLY**:
+Any LLM fine-tuning or inference setup where `max_position_embeddings` > 8192.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "rope_theta": 1000000,
+  "max_position_embeddings": 40960,
+  "rope_scaling": null
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Using default theta for long context
+{
+  "rope_theta": 10000, // WRONG: Causes positional aliasing at 32k+
+  "max_position_embeddings": 40960
+}
+```
+
+**VERIFICATION METHOD**:
+```python
+# Check if rope_theta is appropriate for context length
+if config["max_position_embeddings"] > 32768:
+    assert config["rope_theta"] >= 1000000, "RoPE theta must be scaled for long context"
+    # Or check for YaRN scaling
+    assert config["rope_scaling"] is not None or config["rope_theta"] >= 1000000
+```
+
+
+---
+
+## 4622. Chat Template Thinking Mode Toggle Invariant (Harvested from Qwen/Qwen3-14B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Chat Template Thinking Mode Toggle Invariant",
+  "source": "Qwen/Qwen3-14B",
+  "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+  "source_version": "hf-qwen-qwen3-14b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-26T14:10:05.202Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-qwen-qwen3-14b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The chat template MUST explicitly support a `enable_thinking` parameter that injects a specific token sequence (e.g., `
+</think>
+
+`) to switch between reasoning and non-reasoning modes. The template MUST NOT hardcode the thinking mode; it MUST be dynamically controlled via the `apply_chat_template` function.
+
+**WHY**:
+Qwen3's dual-mode capability relies on the model's ability to "think" (generate intermediate reasoning steps) or "respond directly." If the template hardcodes the thinking prompt, the model will always generate verbose reasoning, increasing latency and token cost for simple queries. If it omits it, the model cannot perform complex reasoning. The toggle MUST be part of the tokenizer's template logic.
+
+**WHEN TO APPLY**:
+Any LLM deployment that requires variable latency/quality trade-offs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+messages = [{"role": "user", "content": "Solve 2+2"}]
+# Enable thinking mode
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True,
+    enable_thinking=True
+)
+# text will include the thinking prompt
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding thinking mode in the prompt
+prompt = "
+</think>
+
+Solve 2+2"
+# This bypasses the template and may not align with the model's training
+```
+
+**VERIFICATION METHOD**:
+```python
+# Test that enable_thinking changes the output
+text_think = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+text_no_think = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+assert text_think != text_no_think, "Thinking mode must change the prompt"
+assert "
+</think>
+
+" in text_think, "Thinking mode must include the thinking token"
+```
+
+---

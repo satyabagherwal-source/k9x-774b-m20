@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-26T14:03:28.963Z",
+  "last_updated": "2026-10-26T14:10:05.332Z",
   "total_verified_learnings": 1094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -114377,16 +114377,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
       "source_version": "hf-qwen-qwen3-14b",
-      "content_hash": "92cd05134bde50952de1dde99820e1342a4b2ab1bcab63a4649693bf6ef0c76f",
+      "content_hash": "574e8b4d84cb6ef1d6193942ddc06731c80a3864566c52b226b6cc918d3c1da2",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 4620,
+          "title": "GQA KV-Cache Memory Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4621,
+          "title": "RoPE Base Theta Context Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4622,
+          "title": "Chat Template Thinking Mode Toggle Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T15:35:16.550Z",
+      "verified_at": "2026-10-26T14:10:05.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -129465,6 +129481,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-26T14:03:28.950Z"
+    },
+    "rule-4620": {
+      "learning_id": "rule-4620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4620,
+      "title": "GQA KV-Cache Memory Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:10:05.320Z"
+    },
+    "rule-4621": {
+      "learning_id": "rule-4621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4621,
+      "title": "RoPE Base Theta Context Scaling Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:10:05.320Z"
+    },
+    "rule-4622": {
+      "learning_id": "rule-4622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4622,
+      "title": "Chat Template Thinking Mode Toggle Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-26T14:10:05.320Z"
     }
   },
   "aliases": {
