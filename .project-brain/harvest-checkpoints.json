@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T18:36:29.922Z",
+  "last_updated": "2026-10-27T18:43:42.579Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2991,14 +2991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rollup-rollup",
-      "content_hash": "03f90b75ef2ead823ac9c0471735aac84f7d8d0ba956fc445b69bb90162ba0a5",
-      "verified_at": "2026-10-23T10:45:04.275Z",
+      "content_hash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
+      "verified_at": "2026-10-27T18:43:42.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:45:04.275Z"
+      "last_updated": "2026-10-27T18:43:42.579Z"
     },
     "rmax/scrapy-redis": {
       "repository": "rmax/scrapy-redis",
@@ -8001,14 +8001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zseven-w-openpencil",
-      "content_hash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
-      "verified_at": "2026-10-19T03:20:23.846Z",
+      "content_hash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
+      "verified_at": "2026-10-27T18:43:26.820Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:20:23.846Z"
+      "last_updated": "2026-10-27T18:43:26.820Z"
     },
     "diggerhq/digger": {
       "repository": "diggerhq/digger",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "1234e51457906fe8eb1a50f2ecb1fe6c8fade2526155ffc9f9d77f7c7316ab93",
-      "verified_at": "2026-10-26T13:40:38.972Z",
+      "content_hash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
+      "verified_at": "2026-10-27T18:43:28.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:40:38.972Z"
+      "last_updated": "2026-10-27T18:43:28.509Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
-      "verified_at": "2026-10-26T00:32:36.297Z",
+      "content_hash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
+      "verified_at": "2026-10-27T18:43:33.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:32:36.297Z"
+      "last_updated": "2026-10-27T18:43:33.899Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

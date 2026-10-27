@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-RT8C",
-    "timestamp": "2026-10-25T20:17:44.892Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "14608bbae8242e4cc5248118194077ac9fe40cfdc98ff83114e8cdf753a09d51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZDD4",
-    "timestamp": "2026-10-25T20:23:37.576Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-bigscience-bloom",
-    "contentHash": "98dbfab91ea5ec27c1f6195908c7a0f8c234970bb68e24d8a83d9c602633f63b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZOYK",
-    "timestamp": "2026-10-25T20:23:52.604Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "c693eee1ee3afac7d13df97f92c96218c326ae1c24b7ff4e8928289526f130a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7WB1",
-    "timestamp": "2026-10-25T20:30:15.373Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "87674dd7d8c634388ba15e1a894e841af82568c9bc40c4f8ad20ccb4e0c70378",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-G6DZ",
     "timestamp": "2026-10-25T20:36:41.687Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "ae3edf81fa95361564f3fb7ba16527961578598481a86375111082c7fbe96a01",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-A8RB",
+    "timestamp": "2026-10-27T18:43:26.807Z",
+    "repository": "ZSeven-W/openpencil",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AA27",
+    "timestamp": "2026-10-27T18:43:28.495Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AE7Z",
+    "timestamp": "2026-10-27T18:43:33.887Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-AKX4",
+    "timestamp": "2026-10-27T18:43:42.568Z",
+    "repository": "rollup/rollup",
+    "learningId": "learn-github-rollup-rollup",
+    "contentHash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

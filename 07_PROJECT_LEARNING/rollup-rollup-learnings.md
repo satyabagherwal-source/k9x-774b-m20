@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source**: github ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
-> **Source Version**: `7726f835`  
+> **Source Version**: `7879c659`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:45:03.906Z  
+> **Timestamp**: 2026-10-27T18:43:41.996Z  
 > **Learning ID**: `learn-github-rollup-rollup`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:45:02.620Z  
+> **Harvest Timestamp**: 2026-10-27T18:43:23.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-generation ES module bundler
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 26305 stars
+- **Stars / Engagement**: 26304 stars
 
 ---
 
@@ -327,705 +327,463 @@ impl AstConverter<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77a6b2bc` (2026-10-17)
-**Commit Message**: fix: include sourcemap comments in chunk hashes (#6509)
+### Incident Patch 1: `5ac31706` (2026-10-26)
+**Commit Message**: Fix tree-shaking of disposable resources (#6556)
 
-* Include sourcemap comments in chunk hashes
+* Fix tree-shaking of disposable resources
 
-(cherry picked from commit 00695d5e425162a77e65a5d0d32a23376ef57c2c)
+* Preserve receivers of unresolved disposers
 
-* Normalize sourcemap placeholders before hashing
+* Treat disposal symbols as missing on Object.prototype
 
-Normalize raw map JSON and file names before URL or base64 encoding can hide chunk placeholders. Preserve sourcemap hash dependencies and add regression coverage for map options and unrelated entries.
+Lets "await using" on plain objects fall back to Symbol.dispose without
+retaining the whole resource as a potential receiver of an unknown
+Symbol.asyncDispose.
 
-Generated-by: OpenAI Codex
+* Cover disposal method resolution through member expressions and reassigned variables
 
-* Clarify sourcemap inputs used for chunk hashes
+* Keep disposal methods on generator prototypes
 
-* Rehash colliding sourcemap filenames
+* Handle using with a disposer from object spread
 
-* Cover inline sourcemap file name hashing with tests
+* Handle using with a getter for the disposal method
 
-Pin the behavior of the inline branch in the sourcemap hash
-computation: the sourcemapFileName exposed for inline sourcemaps is
-derived from the normalized sourcemap content, and identical inline
-maps share one name because no file is emitted, so names are neither
-reserved nor de-duplicated.
+* Correct descriptions of disposal symbols
+
+* Treat generator return values as unknown
+
+* Include only the receiver paths used by the disposer
+
+* Track nested receiver paths accessed via this
+
+* Keep symbol-keyed properties used through parameters
+
+* Resolve audit
 
 ---------
 
-Co-authored-by: xuping.wang <[REDACTED_EMAIL]>
-Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
 Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
 
-**File**: `src/utils/renderChunks.ts` (modified, +153/-62)
+**File**: `audit-resolve.json` (modified, +20/-50)
 ```diff
-@@ -59,21 +59,24 @@ export async function renderChunks(
- 		initialHashesByPlaceholder,
- 		nonHashedChunksWithPlaceholders,
- 		placeholders,
--		renderedChunksByPlaceholder
-+		renderedChunksByPlaceholder,
-+		usedFileNames
- 	} = await transformChunksAndGenerateContentHashes(
- 		renderedChunks,
- 		chunkGraph,
- 		outputOptions,
- 		pluginDriver,
- 		getHash,
--		log
-+		log,
-+		bundle
- 	);
- 	const hashesByPlaceholder = generateFinalHashes(
- 		renderedChunksByPlaceholder,
- 		hashDependenciesByPlaceholder,
- 		initialHashesByPlaceholder,
- 		placeholders,
- 		bundle,
-+		usedFileNames,
- 		getHash
- 	);
- 	addChunksToBundle(
-@@ -205,7 +208,8 @@ async function transformChunksAndGenerateContentHashes(
- 	outputOptions: NormalizedOutputOptions,
- 	pluginDriver: PluginDriver,
- 	getHash: GetHash,
--	log: LogHandler
-+	log: LogHandler,
-+	bundle: OutputBundleWithPlaceholders
- ) {
- 	const nonHashedChunksWithPlaceholders: RenderedChunkWithPlaceholders[] = [];
- 	const renderedChunksByPlaceholder = new Map<string, RenderedChunkWithPlaceholders>();
-@@ -217,7 +221,7 @@ async function transformChunksAndGenerateContentHashes(
- 	} of renderedChunks) {
- 		if (hashPlaceholder) placeholders.add(hashPlaceholder);
- 	}
--	await Promise.all(
-+	const transformedChunks = await Promise.all(
- 		renderedChunks.map(
- 			async ({
- 				chunk,
-@@ -240,62 +244,150 @@ async function transformChunksAndGenerateContentHashes(
- 						log
- 					))
- 				};
--				const { code, map } = transformedChunk;
--
--				if (hashPlaceholder) {
--					// To create a reproducible content-only hash, all placeholders are
--					// replaced with the same value before hashing
--					const { containedPlaceholders, transformedCode } =
--						replacePlaceholdersWithDefaultAndGetContainedPlaceholders(code, placeholders);
--					let contentToHash = transformedCode;
--					const hashAugmentation = pluginDriver.hookReduceValueSync(
--						'augmentChunkHash',
--						'',
--						[chunk.getRenderedChunkInfo()],
--						(augmentation, pluginHash) => {
--							if (pluginHash) {
--								augmentation += pluginHash;
--							}
--							return augmentation;
--						}
--					);
--					if (hashAugmentation) {
--						contentToHash += hashAugmentation;
--					}
--					renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
--					hashDependenciesByPlaceholder.set(hashPlaceholder, {
--						containedPlaceholders,
--						contentHash: getHash(contentToHash)
--					});
--				} else {
--					nonHashedChunksWithPlaceholders.push(transformedChunk);
--				}
--
--				const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
--				if (map && sourcemapHashPlaceholder) {
--					initialHashesByPlaceholder.set(
--						preliminarySourcemapFileName.hashPlaceholder,
--						getHash(map.toString()).slice(0, preliminarySourcemapFileName.hashPlaceholder.length)
--					);
--				}
-+				const hashAugmentation = hashPlaceholder
-+					? pluginDriver.hookReduceValueSync(
-+							'augmentChunkHash',
-+							'',
-+							[chunk.getRenderedChunkInfo()],
-+							(augmentation, pluginHash) => augmentation + (pluginHash || '')
-+						)
-+					: '';
-+				return {
-+					hashAugmentation,
-+					hashPlaceholder,
-+					preliminarySourcemapFileName,
-+					transformedChunk
-+				};
- 			}
- 		)
- 	);
-+	const usedFileNames = new Set(bundle[lowercaseBundleKeys]);
-+	for (const {
-+		transformedChunk,
-+		hashPlaceholder,
-+		preliminarySourcemapFileName,
-+		hashAugmentation
-+	} of transformedChunks) {
-+		const { map } = transformedChunk;
-+		const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-+		if (map && sourcemapHashPlaceholder) {
-+			const { transformedCode: normalizedSourcemap } =
-+				replacePlaceholdersWithDefaultAndGetContainedPlaceholders(map.toString(), placeholders);
-+			initialHashesByPlaceholder.set(
-+				sourcemapHashPlaceholder,
-+				outputOptions.sourcemap === 'inline'
-+					? getHash(normalizedSourcemap).slice(0, sourcemapHashPlaceholder.length)
-+					: getUniqueHash(
-+							normalizedSourcemap,
-+							preliminarySourcemapFileName.fileName,
-+							sourcemapHashPlaceholder,
-+							usedFileNames,
-+							getHash
-+						)
-+			);
-+		}
-+
-+		if (hashPlaceholder) {
-+			renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
-+			hashDependenciesByPlaceholder.set(
-+				hashPlaceholder,
-+				getChunkHash(
-+					transformedChunk,
-+					outputOptions,
-+					getHash,
-+					placeholders,
-+					initialHashesByPlaceholder,
-+					hashAugmentation
-+				)
-+			);
-+		} else {
-+			nonHashedChunksWithPlaceholders.push(transformedChunk);
-+		}
-+	}
- 	return {
- 		hashDependenciesByPlaceholder,
- 		initialHashesByPlaceholder,
- 		nonHashedChunksWithPlaceholders,
- 		placeholders,
--		renderedChunksByPlaceholder
-+		renderedChunksByPlaceholder,
-+		usedFileNames
- 	};
+@@ -3,74 +3,44 @@
+     "1112706|mocha>diff": {
+       "decision": "ignore",
+       "madeAt": 1789100346311,
+-      "expiresAt": 1795000000000
+-    },
+-    "1113686|@rollup/plugin-terser>serialize-javascript": {
+-      "decision": "ignore",
+-      "madeAt": 1789100336869,
+-      "expiresAt": 1795000000000
+-    },
+-    "1119440|@rollup/plugin-terser>serialize-javascript": {
+-      "decision": "ignore",
+-      "madeAt": 1789100343821,
+-      "expiresAt": 1795000000000
++      "expiresAt": 1797000000000
+     },
+     "1113686|mocha>diff>serialize-javascript": {
+       "decision": "ignore",
+       "madeAt": 1789100336870,
+-      "expiresAt": 1795000000000
+-    },
+-    "1119440|mocha>diff>serialize-javascript": {
+-      "decision": "ignore",
+-      "madeAt": 1789100343821,
+-      "expiresAt": 1795000000000
+-    },
+-    "1240992|chokidar>braces": {
+-      "decision": "ignore",
+-      "madeAt": 1791091338232,
+-      "expiresAt": 1795000000000
++      "expiresAt": 1797000000000
+     },
+-    "1240992|nodemon>chokidar>braces": {
+-      "decision": "ignore",
+-      "madeAt": 1791091338232,
+-      "expiresAt": 1795000000000
+-    },
+-    "1240992|patch-package>find-yarn-workspace-root>micromatch>braces": {
+-      "decision": "ignore",
+-      "madeAt": 1791091338232,
+-      "expiresAt": 1795000000000
+-    },
+-    "1240992|shx>shelljs>fast-glob>micromatch>braces": {
++    "1113686|@rollup/plugin-terser>serialize-javascript": {
+       "decision": "ignore",
+-      "madeAt": 1791091338232,
+-      "expiresAt": 1795000000000
++      "madeAt": 1789100336869,
++      "expiresAt": 1797000000000
+     },
+-    "1241202|nyc>@istanbuljs/load-nyc-config>js-yaml>argparse>sprintf-js": {
++    "1119440|mocha>diff>serialize-javascript": {
+       "decision": "ignore",
+-      "madeAt": 1791260936836,
+-      "expiresAt": 1795000000000
++      "madeAt": 1789100343821,
++      "expiresAt": 1797000000000
+     },
+-    "1241206|@mermaid-js/layout-tidy-tree>mermaid>katex": {
++    "1119440|@rollup/plugin-terser>serialize-javascript": {
+       "decision": "ignore",
+-      "madeAt": 1791260936836,
+-      "expiresAt": 1795000000000
++      "madeAt": 1789100343821,
++      "expiresAt": 1797000000000
+     },
+-    "1241206|@mermaid-js/mermaid-cli>@mermaid-js/layout-tidy-tree>mermaid>katex": {
++    "1241206|@mermaid-js/mermaid-cli>katex": {
+       "decision": "ignore",
+       "madeAt": 1791260936836,
+-      "expiresAt": 1795000000000
++      "expiresAt": 1797000000000
+     },
+-    "1241332|concurrently>shell-quote": {
++    "1243082|mocha>diff>serialize-javascript": {
+       "decision": "ignore",
+-      "madeAt": 1791345901688,
+-      "expiresAt": 1795000000000
++      "madeAt": 1792990824148,
++      "expiresAt": 1797000000000
+     },
+-    "1241206|@mermaid-js/mermaid-cli>katex": {
++    "1243082|@rollup/plugin-terser>serialize-javascript": {
+       "decision": "ignore",
+-      "madeAt": 1791963061700,
+-      "expiresAt": 1795000000000
++      "madeAt": 1792990824148,
++      "expiresAt": 1797000000000
+     }
+-  },
++   },
+   "rules": {},
+   "version": 1
  }
+```
+
+**File**: `src/ast/nodes/MemberExpression.ts` (modified, +18/-0)
+```diff
+@@ -50,6 +50,7 @@ import {
+ 	UNKNOWN_RETURN_EXPRESSION,
+ 	UnknownValue
+ } from './shared/Expression';
++import type FunctionBase from './shared/FunctionBase';
+ import type { ChainElement, ExpressionNode, IncludeChildren, SkippedChain } from './shared/Node';
+ import { IS_SKIPPED_CHAIN, NodeBase } from './shared/Node';
+ import type { PatternNode } from './shared/Pattern';
+@@ -231,6 +232,23 @@ export default class MemberExpression
+ 		}
+ 	}
  
-+function getChunkHash(
-+	{ code, map, fileName, sourcemapFileName }: RenderedChunkWithPlaceholders,
-+	outputOptions: NormalizedOutputOptions,
-+	getHash: GetHash,
-+	placeholders: Set<string>,
-+	initialHashesByPlaceholder: Map<string, string>,
-+	hashAugmentat
++	getKnownFunctionAtPath(
++		path: ObjectPath,
++		recursionTracker: EntityPathTracker,
++		origin: DeoptimizableEntity
++	): FunctionBase | null {
++		if (this.variable) {
++			return this.variable.getKnownFunctionAtPath(path, recursionTracker, origin);
++		}
++		if (this.isUndefined) return null;
++		const propertyKey = this.getDynamicPropertyKey();
++		if (propertyKey !== UnknownKey && path.length < MAX_PATH_DEPTH) {
++			if (propertyKey !== this.propertyKey) this.expressionsToBeDeoptimized.push(origin);
++			return this.object.getKnownFunctionAtPath([propertyKey, ...path], recursionTracker, origin);
++		}
++		return null;
++	}
++
+ 	getLiteralValueAtPath(
+ 		path: ObjectPath,
+ 		recursionTracker: EntityPathTracker,
 ```
 
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic-C6tZdZAc_Y2J-Bx2VuOb-.js.map` (renamed, +1/-1)
+**File**: `src/ast/nodes/ObjectExpression.ts` (modified, +9/-0)
 ```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-hashed-DAVPlGJs.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC;;"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-hashed-Bx2VuOb-.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC;;"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic-hashed-Bx2VuOb-.js` (renamed, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ define((function () { 'use strict';
- 	console.log('dynamic-hashed');
+@@ -20,6 +20,7 @@ import Literal from './Literal';
+ import * as NodeType from './NodeType';
+ import type Property from './Property';
+ import type { ExpressionEntity, LiteralValueOrUnknown } from './shared/Expression';
++import type FunctionBase from './shared/FunctionBase';
+ import type { IncludeChildren } from './shared/Node';
+ import { doNotDeoptimize, NodeBase } from './shared/Node';
+ import { ObjectEntity, type ObjectProperty } from './shared/ObjectEntity';
+@@ -52,6 +53,14 @@ export default class ObjectExpression extends NodeBase implements DeoptimizableE
+ 		this.getObjectEntity().deoptimizePath(path);
+ 	}
  
- }));
--//# sourceMappingURL=dynamic-D2UuTzPRzkA4-DAVPlGJs.js.map
-+//# sourceMappingURL=dynamic-C6tZdZAc_Y2J-Bx2VuOb-.js.map
++	getKnownFunctionAtPath(
++		path: ObjectPath,
++		recursionTracker: EntityPathTracker,
++		origin: DeoptimizableEntity
++	): FunctionBase | null {
++		return this.getObjectEntity().getKnownFunctionAtPath(path, recursionTracker, origin);
++	}
++
+ 	getLiteralValueAtPath(
+ 		path: ObjectPath,
+ 		recursionTracker: EntityPathTracker,
 ```
 
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic.js.map` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-CBK0ZRhv.js","sources":["../../dynamic.js"],"sourcesContent":["console.log('dynamic');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,SAAS,CAAC;;"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-6Pt_L0T6.js","sources":["../../dynamic.js"],"sourcesContent":["console.log('dynamic');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,SAAS,CAAC;;"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/main.js` (modified, +2/-2)
+**File**: `src/ast/nodes/SpreadElement.ts` (modified, +3/-2)
 ```diff
 @@ -1,7 +1,7 @@
- define(['require'], (function (require) { 'use strict';
+ import type { NormalizedTreeshakingOptions } from '../../rollup/types';
+ import type { HasEffectsContext, InclusionContext } from '../ExecutionContext';
+ import type { NodeInteraction } from '../NodeInteractions';
+-import { NODE_INTERACTION_UNKNOWN_ACCESS } from '../NodeInteractions';
++import { INTERACTION_CALLED, NODE_INTERACTION_UNKNOWN_ACCESS } from '../NodeInteractions';
+ import {
+ 	type EntityPathTracker,
+ 	type ObjectPath,
+@@ -20,7 +20,8 @@ export default class SpreadElement extends NodeBase {
+ 		path: ObjectPath,
+ 		recursionTracker: EntityPathTracker
+ 	): void {
+-		if (path.length > 0) {
++		// Spread values are copied as data properties, so only calling them can still reach the argument
++		if (path.length > 0 || interaction.type === INTERACTION_CALLED) {
+ 			this.argument.deoptimizeArgumentsOnInteractionAtPath(
+ 				interaction,
+ 				UNKNOWN_PATH,
+```
+
+**File**: `src/ast/nodes/VariableDeclarator.ts` (modified, +86/-6)
+```diff
+@@ -7,17 +7,30 @@ import {
+ 	findNonWhiteSpace,
+ 	type RenderOptions
+ } from '../../utils/renderHelpers';
+-import type { HasEffectsContext, InclusionContext } from '../ExecutionContext';
++import {
++	createInclusionContext,
++	type HasEffectsContext,
++	type InclusionContext
++} from '../ExecutionContext';
++import {
++	INTERACTION_ACCESSED,
++	INTERACTION_CALLED,
++	type NodeInteractionAccessed,
++	type NodeInteractionCalled
++} from '../NodeInteractions';
+ import {
+ 	EMPTY_PATH,
+ 	type ObjectPath,
++	SHARED_RECURSION_TRACKER,
+ 	SymbolAsyncDispose,
+-	SymbolDispose
++	SymbolDispose,
++	UNKNOWN_PATH
+ } from '../utils/PathTracker';
+ import { UNDEFINED_EXPRESSION } from '../values';
+ import ClassExpression from './ClassExpression';
+ import Identifier from './Identifier';
+ import * as NodeType from './NodeType';
++import type FunctionBase from './shared/FunctionBase';
+ import {
+ 	doNotDeoptimize,
+ 	type ExpressionNode,
+@@ -33,6 +46,9 @@ export default class VariableDeclarator extends NodeBase {
+ 	declare type: NodeType.tVariableDeclarator;
+ 	declare isUsingDeclaration: boolean;
+ 	declare isAsyncUsingDeclaration: boolean;
++	declare private disposalCall?: NodeInteractionCalled;
++	declare private disposalFunction?: FunctionBase;
++	declare private hasDeoptimizedDisposal: boolean;
  
--	new Promise(function (resolve, reject) { require(['./dynamic-CBK0ZRhv'], resolve, reject); });
--	new Promise(function (resolve, reject) { require(['./dynamic-hashed-DAVPlGJs'], resolve, reject); });
-+	new Promise(function (resolve, reject) { require(['./dynamic-6Pt_L0T6'], resolve, reject); });
-+	new Promise(function (resolve, reject) { require(['./dynamic-hashed-Bx2VuOb-'], resolve, reject); });
+ 	declareDeclarator(kind: VariableKind): void {
+ 		this.isUsingDeclaration = kind === 'using';
+@@ -44,6 +60,15 @@ export default class VariableDeclarator extends NodeBase {
+ 		this.id.deoptimizePath(path);
+ 	}
  
- }));
- //# sourceMappingURL=main.js.map
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-C33_xDR5Jfrm-_yTWX9Li.js.map` (renamed, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-hashed-BgHsqIXR.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;AAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-hashed-_yTWX9Li.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;AAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-hashed-BgHsqIXR.js` (removed, +0/-4)
-```diff
-@@ -1,4 +0,0 @@
--'use strict';
--
--console.log('dynamic-hashed');
--//# sourceMappingURL=dynamic-CcenT4iVwjBe-BgHsqIXR.js.map
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-hashed-_yTWX9Li.js` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+'use strict';
-+
-+console.log('dynamic-hashed');
-+//# sourceMappingURL=dynamic-C33_xDR5Jfrm-_yTWX9Li.js.map
-```
-
----
-
-### Incident Patch 2: `97611099` (2026-10-14)
-**Commit Message**: Report creation of missing watch files sharing a directory on Linux (#6575)
-
-* Report creation of missing watch files sharing a directory on Linux
-
-When several watched files in the same directory do not exist yet, the
-bundled chokidar keyed its per-directory readdir throttle by directory
-alone, so only the first missing file's read went through and creations
-of the others were silently dropped on inotify. Key the throttle per
-missing file instead, via a build-time replacement of the bundled
-chokidar code.
-
-The regression test only fails on inotify platforms; macOS uses fsevents
-and is unaffected, so the Ubuntu CI run is what guards it.
-
-* Use chokidar 5's throttle key and make watch test order-independent
-
-The per-target key must not collide with the key used for plain
-directory reads, so we use the same composite key that fixes this
-upstream in chokidar 5. The regression test now requires the creation
-of all watched files to be reported instead of relying on which
-missing file happens to win the shared directory throttle.
-
-* Resolve audit.
-
-* Stabilize watch tests against watcher start-up noise
-
-Following #6573, replace the event-sequence assertions of the
-initially-missing-watch
-
-**File**: `audit-resolve.json` (modified, +5/-0)
-```diff
-@@ -64,6 +64,11 @@
-       "decision": "ignore",
-       "madeAt": 1791345901688,
-       "expiresAt": 1795000000000
-+    },
-+    "1241206|@mermaid-js/mermaid-cli>katex": {
-+      "decision": "ignore",
-+      "madeAt": 1791963061700,
-+      "expiresAt": 1795000000000
-     }
-   },
-   "rules": {},
-```
-
-**File**: `build-plugins/chokidar-readdir-throttle-replacement.ts` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+import type { RollupReplaceOptions } from '@rollup/plugin-replace';
-+import { readFile } from 'node:fs/promises';
-+import { exit } from 'node:process';
-+
-+const NODEFS_HANDLER = 'node_modules/chokidar/lib/nodefs-handler.js';
-+// chokidar uses a shared per-directory throttle for reading the directory, so
-+// when several watched files in the same directory do not exist yet, all but
-+// one directory read are silently discarded and file creations are never
-+// reported, see https://github.com/rollup/rollup/issues/6574. Keying the
-+// throttle by watched file gives each missing file its own directory read. The
-+// key matches the one used by chokidar >= 5, where this is fixed upstream.
-+const SHARED_DIRECTORY_READ_THROTTLE = "this.fsw._throttle('readdir', directory, 1000)";
-+const PER_TARGET_DIRECTORY_READ_THROTTLE =
-+	"this.fsw._throttle('readdir', target ? `${directory}:${target}` : directory, 1000)";
-+
-+let fileContent: string;
-+
-+try {
-+	fileContent = await readFile(NODEFS_HANDLER, 'utf8');
-+} catch {
-+	console.error(`Could not find "${NODEFS_HANDLER}".`);
-+	exit(1);
-+}
-+
-+const occurrences = fileContent.split(SHARED_DIRECTORY_READ_THROTTLE).length - 1;
-+if (occurrences !== 1) {
-+	console.error(
-+		`Expected exactly one occurrence of the shared directory-read throttle in "${NODEFS_HANDLER}" but found ${occurrences}.`
-+	);
-+	exit(1);
-+}
-+
-+export const chokidarReaddirThrottleReplacement: RollupReplaceOptions = {
-+	delimiters: ['', ''],
-+	include: NODEFS_HANDLER,
-+	preventAssignment: true, // defaults to true in next major version of plugin
-+	values: {
-+		[SHARED_DIRECTORY_READ_THROTTLE]: PER_TARGET_DIRECTORY_READ_THROTTLE
++	deoptimizeCache(): void {
++		if (!this.hasDeoptimizedDisposal && this.init) {
++			this.hasDeoptimizedDisposal = true;
++			this.init.deoptimizePath(UNKNOWN_PATH);
++			this.init.includePath(UNKNOWN_PATH, createInclusionContext());
++			this.scope.context.requestTreeshakingPass();
++		}
 +	}
-+};
-```
-
-**File**: `package-lock.json` (modified, +21/-4)
-```diff
-@@ -12068,9 +12068,9 @@
-       }
-     },
-     "node_modules/mermaid": {
--      "version": "12.1.0",
--      "resolved": "https://registry.npmjs.org/mermaid/-/mermaid-12.1.0.tgz",
--      "integrity": "sha512-wlVCp+8eTupfCeeFvoZNNiTuHrvag0P2jz/ILgb/f/6jkVokUefOcujefi8qUe/j2asHiSePncVsz/xzzA80LQ==",
-+      "version": "12.2.0",
-+      "resolved": "https://registry.npmjs.org/mermaid/-/mermaid-12.2.0.tgz",
-+      "integrity": "sha512-w7nr/SFrLO7BaVTs3dQTvYSV6nYSBj0Yy9DjBhsIJtAcHqRzXSq4Pg32ujHZ/AdWsAMNEvvhbm5dt9E2tOiHzw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -12090,7 +12090,7 @@
-         "dompurify": "^3.4.12",
-         "elkjs": "^0.9.3",
-         "es-toolkit": "^1.45.1",
--        "katex": "^0.16.47",
-+        "katex": "^0.18.0",
-         "khroma": "^2.1.0",
-         "marked": "^16.3.0",
-         "roughjs": "^4.6.6",
-@@ -12102,6 +12102,23 @@
-         "node": ">=22.12.0"
-       }
-     },
-+    "node_modules/mermaid/node_modules/katex": {
-+      "version": "0.18.10",
-+      "resolved": "https://registry.npmjs.org/katex/-/katex-0.18.10.tgz",
-+      "integrity": "sha512-/B6p9eY9DX7aHBfpkHdpirDTZ5QH9xTwL9y837PWuzuv41O5jFdqNQwVQEQsimY0/iVNkwBY4+4hMfhQ7d4Dbw==",
-+      "dev": true,
-+      "funding": [
-+        "https://opencollective.com/katex",
-+        "https://github.com/sponsors/katex"
-+      ],
-+      "license": "MIT",
-+      "dependencies": {
-+        "commander": "^15.0.0"
-+      },
-+      "bin": {
-+        "katex": "cli.js"
-+      }
-+    },
-     "node_modules/mermaid/node_modules/marked": {
-       "version": "16.4.2",
-       "resolved": "https://registry.npmjs.org/marked/-/marked-16.4.2.tgz",
-```
-
-**File**: `rollup.config.ts` (modified, +2/-0)
-```diff
-@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
- import type { Plugin, RollupOptions, WarningHandlerWithDefault } from 'rollup';
- import addCliEntry from './build-plugins/add-cli-entry';
- import { moduleAliases } from './build-plugins/aliases';
-+import { chokidarReaddirThrottleReplacement } from './build-plugins/chokidar-readdir-throttle-replacement';
- import cleanBeforeWrite from './build-plugins/clean-before-write';
- import { copyBrowserTypes, copyNodeTypes } from './build-plugins/copy-types';
- import emitModulePackageFile from './build-plugins/emit-module-package-file';
-@@ -40,6 +41,7 @@ const treeshake = {
- 
- const nodePlugins: readonly Plugin[] = [
- 	replace(fsEventsReplacement),
-+	replace(chokidarReaddirThrottleReplacement),
- 	alias(moduleAliases),
- 	nodeResolve({ preferBuiltins: true }),
- 	json(),
-```
-
-**File**: `test/watch/index.js` (modified, +110/-32)
-```diff
-@@ -3580,20 +3580,7 @@ describe('rollup.watch', function () {
- 					}
- 				}
- 			});
--			const waitForWatcherEvent = eventCode =>
--				new Promise((resolve, reject) => {
--					const listener = event => {
--						if (event.code === eventCode) {
--							resolve(event);
--						} else if (event.code === 'ERROR') {
--							reject(event.error);
--						} else {
--							watcher.once('event', listener);
--						}
--					};
--					watcher.once('event', listener);
--				});
--			await withTimeout(waitForWatcherEvent('END'), 10_000, () => {
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
- 				throw new Error('The initial build did not finish.');
- 			});
- 			assert.strictEqual(run(BUNDLE_FILE), 42);
-@@ -3610,7 +3597,7 @@ describe('rollup.watch', function () {
- 				await Promise.all([...missingWatchChangeIds].map(file => writeFile(file, 'changed')));
- 				await Promise.race([allWatchChangesAnnounced, wait(300)]);
++
+ 	hasEffects(context: HasEffectsContext): boolean {
+ 		const initEffect = this.init?.hasEffects(context);
+ 		this.id.markDeclarationReached();
+@@ -61,6 +86,11 @@ export default class VariableDeclarator extends NodeBase {
+ 	include(context: InclusionContext, includeChildrenRecursively: IncludeChildren): void {
+ 		const { id, init } = this;
+ 		if (!this.included) this.includeNode(context);
++		const { disposalCall, disposalFunction } = this;
++		// Before including init so that newly included receiver paths are included in this pass
++		if (disposalFunction && disposalCall) {
++			disposalFunction.includeCallArgumentsWhenCalledAtPath(EMPTY_PATH, disposalCall, context);
++		}
+ 		init?.include(context, includeChildrenRecursively);
+ 		id.markDeclarationReached();
+ 		if (includeChildrenRecursively) {
+@@ -111,10 +141,28 @@ export default class VariableDeclarator extends NodeBase {
+ 		this.included = true;
+ 		const { id, init } = this;
+ 		if (init) {
+-			if (this.isUsingDeclaration) {
+-				init.includePath(SYMBOL_DISPOSE_PATH, context);
+-			} else if (this.isAsyncUsingDeclaration) {
+-				init.includePath(SYMBOL_ASYNC_DISPOSE_PATH, context);
++			if (this.isUsingDeclaration || this.isAsyncUsingDeclaration) {
++				const disposalInteractions: DisposalInteractions = {
++					access: { args: [init], type: INTERACTION_ACCESSED },
++					call: { args: [init], type: INTERACTION_CALLED, withNew: false }
++				};
++				if (
++					this.isUsingDeclaration ||
++					!this.includeDisposalMethodAndCheckIfKnownFunction(
++						init,
++						SYMBOL_ASYNC_DISPOSE_PATH,
++						disposalInteractions,
++						context
++					)
++				) {
++					this.includeDisposalMethodAndCheckIfKnownFunction(
++						init,
++						SYMBOL_DISPOSE_PATH,
++						disposalInteractions,
++						context
++					);
++				}
++				this.scope.context.requestTreeshakingPass();
  			}
--			await withTimeout(waitForWatcherEvent('END'), 10_000, () => {
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
- 				throw new Error('The rebuild after the changes did not finish.');
- 			});
- 			assert.strictEqual(run(BUNDLE_FILE), 42);
-@@ -3788,6 +3775,7 @@ describe('rollup.watch', function () {
- 		});
- 
- 		it('respects initially missing added watched files', async () => {
-+			const watchedId = path.join(INPUT_DIR, 'dep');
- 			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
- 			watcher = rollup.watch({
- 				input: ENTRY_FILE,
-@@ -3798,28 +3786,94 @@ describe('rollup.watch', function () {
- 				},
- 				plugins: {
- 					transform() {
--						this.addWatchFile(path.join(INPUT_DIR, 'dep'));
--						return `export default ${existsSync(path.join(INPUT_DIR, 'dep'))}`;
-+						this.addWatchFile(watchedId);
-+						return `export default ${existsSync(watchedId)}`;
- 					}
- 				}
- 			});
--			return sequence(watcher, [
--				'START',
--				'BUNDLE_START',
--				'BUNDLE_END',
--				'END',
--				() => {
--					assert.strictEqual(run(BUNDLE_FILE), false);
--					atomicWriteFileSync(path.join(INPUT_DIR, 'dep'), '');
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
-+				throw new Error('The initial build did not finish.');
-+			});
-+			assert.strictEqual(run(BUNDLE_FILE), false);
-+			const retryDeadline = Date.now() + 5000;
-+			// File watchers may drop changes that happen before they are fully
-+			// initialized, and watcher start-up can trigger spurious additional
-+			// rebuilds, hence the file is created again until a rebuild picks
-+			// up its existence.
-+			while (readBundleResult() !== true) {
-+				if (Date.now() > retryDeadline) {
-+					throw new Error('The creation of the watched file did not trigger a rebuild.');
-+				}
-+				atomicWriteFileSync(watchedId, '');
-+				await wait(300);
-+			}
-+		});
+ 			if (id instanceof Identifier && init instanceof ClassExpression && !init.id) {
+ 				const { name, variable } = id;
+@@ -126,9 +174,41 @@ export default class VariableDeclarator extends NodeBase {
+ 			}
+ 		}
+ 	}
 +
-+		it('reports the creation of initially missing watched files when several of them are in the same directory', async () => {
-+			const extensionlessWatchId = path.join(INPUT_DIR, 'dep');
-+			const watchedId = path.join(INPUT_DIR, 'dep.js');
-+			let writtenBundleCount = 0;
-+			let isCreationReported = false;
-+			const { promise: creationReported, resolve: resolveCreationReported } = createDeferred();
-+			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
-+			watcher = rollup.watch({
-+				input: ENTRY_FILE,
-+				output: {
-+					file: BUNDLE_FILE,
-+					format: 'cjs',
-+					exports: 'auto'
- 				},
--				'START',
--				'BUNDLE_START',
--				'BUNDLE_END',
--				'END',
--				() => {
--					assert.strictEqual(run(BUNDLE_FILE), true);
-+				plugins: {
-+					buildStart() {
-+						// The extension-less resolution candidate is registered one
-+						// build before the file that is actually created so that
-+						// its directory listener reliably wins chokidar's shared
-+						// directory throttle. Like theme/theme.js in
-+						// https://github.com/rollup/rollup/issues/6574, it is never
-+						// created itself.
-+						this.addWatchFile(extensionlessWatchId);
-+						if (writtenBundleCount > 0) {
-+							this.addWatchFile(watchedId);
-+						}
-+					},
-+					writeBundle() {
-+						writtenBundleCount++;
-+					},
-+					watchChange(id) {
-+						// When the initial creation is dropped by the file watcher,
-+						// rewrites are reported as updates, so any event proves
-+						// that the missing file is watched.
-+						if (id === watchedId) {
-+							isCreationReported = true;
-+							resolveCreationReported();
-+						}
-+					}
- 				}
--			]);
-+			});
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
-+				throw new Error('The initial build did not finish.');
-+			});
-+			const registrationDeadline = Date.now() + 5000;
-+			while (writtenBundleCount < 2) {
-+				if (Date.now() > registrationDeadline) {
-+					throw new Error('The rebuild to register the second watched file did not start.');
-+				}
-+				atomicWriteFileSync(ENTRY_FILE, 'export default 43;');
-+				await wait(300);
++	private includeDisposalMethodAndCheckIfKnownFunction(
++		init: ExpressionNode,
++		path: ObjectPath,
++		{ access, call }: DisposalInteractions,
++		context: InclusionContext
++	): boolean {
++		init.deoptimizeArgumentsOnInteractionAtPath(access, path, SHARED_RECURSION_TRACKER);
++		const disposalFunction = init.getKnownFunctionAtPath(path, SHARED_RECURSION_TRACKER, this);
++		init.includePath(path, context);
++		if (!disposalFunction) {
++			const disposalValue = init.getLiteralValueAtPath(path, SHARED_RECURSION_TRACKER, this);
++			if (disposalValue !== null && disposalValue !== undefined) {
++				init.deoptimizeArgumentsOnInteractionAtPath(call, path, SHARED_RECURSION_TRACKER);
++				init.includeCallArgumentsWhenCalledAtPath(path, call, context);
 +			}
-+			const retryDeadline = Date.now() + 5000;
-+			// File watcher
-```
-
----
-
-### Incident Patch 3: `3a9f4af7` (2026-10-19)
-**Commit Message**: Fix transform diagnostics at position zero (#6587)
-
-Co-authored-by: shuaiyafei <[REDACTED_EMAIL]>
-
-**File**: `src/utils/transform.ts` (modified, +2/-2)
-```diff
-@@ -100,7 +100,7 @@ export default async function transform(
- 		(handler: LoggingFunctionWithPosition): LoggingFunctionWithPosition =>
- 		(log, pos) => {
- 			log = normalizeLog(log);
--			if (pos) augmentCodeLocation(log, pos, currentSource, id);
-+			if (pos != null) augmentCodeLocation(log, pos, currentSource, id);
- 			log.id = id;
- 			log.hook = 'transform';
- 			handler(log);
-@@ -140,7 +140,7 @@ export default async function transform(
- 						pos?: number | { column: number; line: number }
- 					): never {
- 						if (typeof error_ === 'string') error_ = { message: error_ };
--						if (pos) augmentCodeLocation(error_, pos, currentSource, id);
-+						if (pos != null) augmentCodeLocation(error_, pos, currentSource, id);
- 						error_.id = id;
- 						error_.hook = 'transform';
- 						return pluginContext.error(error_);
-```
-
-**File**: `test/function/samples/logging/transform-log-at-position-zero/_config.js` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+const path = require('node:path');
-+const ID_MAIN = path.join(__dirname, 'main.js');
-+
-+module.exports = defineTest({
-+	description: 'includes source locations for transform logs at position zero',
-+	options: {
-+		logLevel: 'debug',
-+		plugins: [
-+			{
-+				name: 'test',
-+				transform() {
-+					this.warn('warn-message', 0);
-+					this.info('info-message', 0);
-+					this.debug('debug-message', 0);
-+				}
-+			}
-+		]
-+	},
-+	logs: ['warn', 'info', 'debug'].map(level => ({
-+		code: level === 'warn' ? 'PLUGIN_WARNING' : 'PLUGIN_LOG',
-+		frame: `
-+			1: assert.ok(true);
-+			   ^`,
-+		hook: 'transform',
-+		id: ID_MAIN,
-+		level,
-+		loc: {
-+			column: 0,
-+			file: ID_MAIN,
-+			line: 1
-+		},
-+		message: `[plugin test] main.js (1:0): ${level}-message`,
-+		plugin: 'test',
-+		pos: 0
-+	}))
-+});
-```
-
-**File**: `test/function/samples/logging/transform-log-at-position-zero/main.js` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+assert.ok(true);
-```
-
-**File**: `test/function/samples/plugin-error-transform-pos-zero/_config.js` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+const path = require('node:path');
-+const ID_MAIN = path.join(__dirname, 'main.js');
-+
-+module.exports = defineTest({
-+	description: 'includes the current source location for transform errors at position zero',
-+	options: {
-+		plugins: [
-+			{
-+				name: 'prepend',
-+				transform(code) {
-+					return `const prepended = true;\n${code}`;
-+				}
-+			},
-+			{
-+				name: 'test',
-+				transform() {
-+					this.error(new Error('error at start'), 0);
-+				}
-+			}
-+		]
-+	},
-+	error: {
-+		code: 'PLUGIN_ERROR',
-+		frame: `
-+			1: const prepended = true;
-+			   ^
-+			2: export const value = 1;`,
-+		hook: 'transform',
-+		id: ID_MAIN,
-+		loc: {
-+			column: 0,
-+			file: ID_MAIN,
-+			line: 1
-+		},
-+		message: 'error at start',
-+		plugin: 'test',
-+		pos: 0,
-+		watchFiles: [ID_MAIN]
++			return false;
++		}
++		this.disposalFunction = disposalFunction;
++		this.disposalCall = call;
++		disposalFunction.deoptimizeArgumentsOnInteractionAtPath(
++			call,
++			EMPTY_PATH,
++			SHARED_RECURSION_TRACKER
++		);
++		return true;
 +	}
-+});
+ }
+ 
+ VariableDeclarator.prototype.applyDeoptimizations = doNotDeoptimize;
+ 
++interface DisposalInteractions {
++	access: NodeInteractionAccessed;
++	call: NodeInteractionCall
 ```
 
-**File**: `test/function/samples/plugin-error-transform-pos-zero/main.js` (added, +1/-0)
+**File**: `src/ast/nodes/shared/Expression.ts` (modified, +9/-0)
 ```diff
-@@ -0,0 +1 @@
-+export const value = 1;
+@@ -11,6 +11,7 @@ import type {
+ import { UNKNOWN_PATH } from '../../utils/PathTracker';
+ import type { LiteralValue } from '../Literal';
+ import { Flag, isFlagSet, setFlag } from './BitFlags';
++import type FunctionBase from './FunctionBase';
+ import type { IncludeChildren } from './Node';
+ 
+ export const UnknownValue = Symbol('Unknown Value');
+@@ -53,6 +54,14 @@ export class ExpressionEntity implements WritableEntity {
+ 
+ 	deoptimizePath(_path: ObjectPath): void {}
+ 
++	getKnownFunctionAtPath(
++		_path: ObjectPath,
++		_recursionTracker: EntityPathTracker,
++		_origin: DeoptimizableEntity
++	): FunctionBase | null {
++		return null;
++	}
++
+ 	/**
+ 	 * If possible it returns a stringifyable literal value for this node that
+ 	 * can be used for inlining or comparing values. Otherwise, it should return
+```
+
+**File**: `src/ast/nodes/shared/FunctionBase.ts` (modified, +11/-1)
+```diff
+@@ -95,6 +95,16 @@ export default abstract class FunctionBase extends NodeBase {
+ 		}
+ 	}
+ 
++	getKnownFunctionAtPath(
++		path: ObjectPath,
++		recursionTracker: EntityPathTracker,
++		origin: DeoptimizableEntity
++	): FunctionBase | null {
++		return path.length === 0
++			? this
++			: this.getObjectEntity().getKnownFunctionAtPath(path, recursionTracker, origin);
++	}
++
+ 	getLiteralValueAtPath(
+ 		path: ObjectPath,
+ 		recursionTracker: EntityPathTracker,
+@@ -117,7 +127,7 @@ export default abstract class FunctionBase extends NodeBase {
+ 				origin
+ 			);
+ 		}
+-		if (this.async) {
++		if (this.async || this.generator) {
+ 			if (!this.deoptimizedReturn) {
+ 				this.deoptimizedReturn = true;
+ 				this.scope.getReturnExpression().deoptimizePath(UNKNOWN_PATH);
+```
+
+**File**: `src/ast/nodes/shared/FunctionNode.ts` (modified, +11/-2)
+```diff
+@@ -15,7 +15,11 @@ import { UNKNOWN_EXPRESSION } from './Expression';
+ import FunctionBase from './FunctionBase';
+ import { type IncludeChildren } from './Node';
+ import { ObjectEntity } from './ObjectEntity';
+-import { OBJECT_PROTOTYPE } from './ObjectPrototype';
++import {
++	ASYNC_GENERATOR_PROTOTYPE,
++	GENERATOR_PROTOTYPE,
++	OBJECT_PROTOTYPE
++} from './ObjectPrototype';
+ import type { DeclarationPatternNode } from './Pattern';
+ 
+ export default class FunctionNode extends FunctionBase {
+@@ -135,10 +139,15 @@ export default class FunctionNode extends FunctionBase {
+ 				{
+ 					key: 'prototype',
+ 					kind: 'init',
+-					property: new ObjectEntity([], OBJECT_PROTOTYPE)
++					property: new ObjectEntity([], this.getPrototypeOfPrototype())
+ 				}
+ 			],
+ 			OBJECT_PROTOTYPE
+ 		));
+ 	}
++
++	private getPrototypeOfPrototype(): ObjectEntity {
++		if (!this.generator) return OBJECT_PROTOTYPE;
++		return this.async ? ASYNC_GENERATOR_PROTOTYPE : GENERATOR_PROTOTYPE;
++	}
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1054,101 +812,83 @@ Co-authored-by: shuaiyafei <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include sourcemap comments in chunk hashes (#6509)
+## X. tree-shaking of disposable resources (#6556)
 
 **RULE**:
-When implementing operations in `src/utils/renderChunks.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `audit-resolve.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77a6b2bc`: include sourcemap comments in chunk hashes (#6509). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ac31706`: tree-shaking of disposable resources (#6556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/utils/renderChunks.ts`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `audit-resolve.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-		renderedChunksByPlaceholder,
-		usedFileNames
-		log,
-		bundle
-		usedFileNames,
-	log: LogHandler,
-	bundle: OutputBundleWithPlaceholders
-	const transformedChunks = await Promise.all(
-				const hashAugmentation = hashPlaceholder
-					? pluginDriver.hookReduceValueSync(
-							'augmentChunkHash',
-							'',
-							[chunk.getRenderedChunkInfo()],
-							(augmentation, pluginHash) => augmentation + (pluginHash || '')
-						)
-					: '';
-				return {
-					hashAugmentation,
-					hashPlaceholder,
-					preliminarySourcemapFileName,
-					transformedChunk
-				};
-	const usedFileNames = new Set(bundle[lowercaseBundleKeys]);
-	for (const {
-		transformedChunk,
-		hashPlaceholder,
-		preliminarySourcemapFileName,
-		hashAugmentation
-	} of transformedChunks) {
-		const { map } = transformedChunk;
-		const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-		if (map && sourcemapHashPlaceholder) {
-			const { transformedCode: normalizedSourcemap } =
-				replacePlaceholdersWithDefaultAndGetContainedPlaceholders(map.toString(), placeholders);
-			initialHashesByPlaceholder.set(
-				sourcemapHashPlaceholder,
-				outputOptions.sourcemap === 'inline'
-					? getHash(normalizedSourcemap).slice
+      "expiresAt": 1797000000000
+      "expiresAt": 1797000000000
+    "1113686|@rollup/plugin-terser>serialize-javascript": {
+      "madeAt": 1789100336869,
+      "expiresAt": 1797000000000
+    "1119440|mocha>diff>serialize-javascript": {
+      "madeAt": 1789100343821,
+      "expiresAt": 1797000000000
+    "1119440|@rollup/plugin-terser>serialize-javascript": {
+      "madeAt": 1789100343821,
+      "expiresAt": 1797000000000
+    "1241206|@mermaid-js/mermaid-cli>katex": {
+      "expiresAt": 1797000000000
+    "1243082|mocha>diff>serialize-javascript": {
+      "madeAt": 1792990824148,
+      "expiresAt": 1797000000000
+    "1243082|@rollup/plugin-terser>serialize-javascript": {
+      "madeAt": 1792990824148,
+      "expiresAt": 1797000000000
+   },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-		renderedChunksByPlaceholder
-		log
-	log: LogHandler
-	await Promise.all(
-				const { code, map } = transformedChunk;
-
-				if (hashPlaceholder) {
-					// To create a reproducible content-only hash, all placeholders are
-					// replaced with the same value before hashing
-					const { containedPlaceholders, transformedCode } =
-						replacePlaceholdersWithDefaultAndGetContainedPlaceholders(code, placeholders);
-					let contentToHash = transformedCode;
-					const hashAugmentation = pluginDriver.hookReduceValueSync(
-						'augmentChunkHash',
-						'',
-						[chunk.getRenderedChunkInfo()],
-						(augmentation, pluginHash) => {
-							if (pluginHash) {
-								augmentation += pluginHash;
-							}
-							return augmentation;
-						}
-					);
-					if (hashAugmentation) {
-						contentToHash += hashAugmentation;
-					}
-					renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
-					hashDependenciesByPlaceholder.set(hashPlaceholder, {
-						containedPlaceholders,
-						contentHash: getHash(contentToHash)
-					});
-				} else {
-					nonHashedChunksWithPlaceholders.push(transformedChunk);
-				}
-
-				const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-				
+      "expiresAt": 1795000000000
+    },
+    "1113686|@rollup/plugin-terser>serialize-javascript": {
+      "decision": "ignore",
+      "madeAt": 1789100336869,
+      "expiresAt": 1795000000000
+    },
+    "1119440|@rollup/plugin-terser>serialize-javascript": {
+      "decision": "ignore",
+      "madeAt": 1789100343821,
+      "expiresAt": 1795000000000
+      "expiresAt": 1795000000000
+    },
+    "1119440|mocha>diff>serialize-javascript": {
+      "decision": "ignore",
+      "madeAt": 1789100343821,
+      "expiresAt": 1795000000000
+    },
+    "1240992|chokidar>braces": {
+      "decision": "ignore",
+      "madeAt": 1791091338232,
+      "expiresAt": 1795000000000
+    "1240992|nodemon>chokidar>braces": {
+      "decision": "ignore",
+      "madeAt": 1791091338232,
+      "expiresAt": 1795000000000
+    },
+    "1240992|patch-package>find-yarn-workspace-root>micromatch>braces": {
+      "decision": "ignore",
+      "madeAt": 1791091338232,
+      "expiresAt": 1795000000000
+    },
+    "1240992|shx>shelljs>fast-glob>micromatch>braces": {
+      "madeAt": 1791091338232,
+      "expiresAt": 1795000000000
+    "1241202|nyc>@istanbuljs/load-nyc-config>js-yaml>argparse>sprintf-js": {
+      "madeAt": 179126093
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77a6b2bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ac31706` are properly handled with clean fallback behavior.

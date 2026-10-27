@@ -5488,3 +5488,7 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `d0d87977` | Multi-dimensional audit evidence | 2026-10-27T18:36:23.109Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `9e08585d` | Multi-dimensional audit evidence | 2026-10-27T18:36:27.635Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5fd0491e` | Multi-dimensional audit evidence | 2026-10-27T18:36:29.909Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `9a618ce9` | Multi-dimensional audit evidence | 2026-10-27T18:43:26.810Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `d5d80841` | Multi-dimensional audit evidence | 2026-10-27T18:43:28.500Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `ade98454` | Multi-dimensional audit evidence | 2026-10-27T18:43:33.890Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `7879c659` | Multi-dimensional audit evidence | 2026-10-27T18:43:42.571Z |

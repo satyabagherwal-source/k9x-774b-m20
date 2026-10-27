@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `002a6b7a`  
+> **Source Version**: `d5d80841`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:40:38.503Z  
+> **Timestamp**: 2026-10-27T18:43:27.929Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:40:38.202Z  
+> **Harvest Timestamp**: 2026-10-27T18:43:27.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14577 stars
+- **Stars / Engagement**: 14582 stars
 
 ---
 
@@ -1155,11 +1155,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7762** (2026-10-26): **meta: resolve subdir root for ACL operations**
-  *Symptoms*: ## Problem  On subdir mounts, ACL reads and writes can target the volume root instead of the mounted directory.  ## Fix  Resolve the inode once at the ACL entry points so backend operations and cache handling use the same real inode. Regression coverage is in #7759.
+- **Issue #7765** (2026-10-27): **meta: record parent update decisions in MOVE changelog**
+  *Symptoms*: 
 
-- **Issue #7760** (2026-10-26): **meta: resolve subdir root before batch unlink**
-  *Symptoms*: ## Problem  On subdir mounts, BatchUnlink can leave requested files undeleted or delete a same-name hardlink at the volume root.   Related: #7752  ## Fix  Resolve the parent inode before deleting entries and updating usage.
+- **Issue #7764** (2026-10-27): **meta/redis: avoid changelog entries for missing xattrs**
+  *Symptoms*: Prevent Redis from emitting `REMOVEXATTR` changelog entries for missing attributes 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7764?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :x: Patch coverage is `33.33333%` with `6 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 63.94%. Comparing base ([`951b35b`](https://app.codecov.io/gh/juicedata/juicefs/commit/951b35bfc417e63ab700733d5267a4921e209d9d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`f1155da`](https://app.codecov.io/gh/juicedata/juicefs/commit/f1155da5552bdbd6d93154928b1c1f83e1451f26?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 2 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/juicedata/juicefs/pull/7764?dropdown=coverage&
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,76 +1178,656 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `735029cb` (2026-10-26)
-**Commit Message**: meta: fix subdir quota accounting after mkdir (#7758)
+### Incident Patch 1: `3baaab00` (2026-10-27)
+**Commit Message**: metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754)
 
-**File**: `pkg/meta/base.go` (modified, +1/-1)
+**File**: `docs/en/administration/monitoring.md` (modified, +19/-0)
 ```diff
-@@ -1730,7 +1730,7 @@ func (m *baseMeta) Mkdir(ctx Context, parent Ino, name string, mode uint16, cuma
- 	st := m.Mknod(ctx, parent, name, TypeDirectory, mode, cumask, 0, "", inode, attr)
- 	if st == 0 {
- 		m.parentMu.Lock()
--		m.dirParents[*inode] = parent
-+		m.dirParents[*inode] = m.checkRoot(parent)
- 		m.parentMu.Unlock()
- 	}
- 	return st
+@@ -83,6 +83,25 @@ Here's what the official JuiceFS Grafana dashboard might look like:
+ 
+ ![Grafana Monitoring Dashboard](../images/grafana_dashboard.png)
+ 
++For other deployment forms, the repository also provides dashboard templates that can be imported as JSON files:
++
++- [S3 gateway](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_gateway.json): tracks the file system SDK layer beneath the S3 API (`juicefs_sdk_*`; one S3 request may issue many SDK operations) in addition to the shared object storage, cache and metadata panels.
++- [`juicefs sync`](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_sync.json): tracks the progress and throughput of a running `juicefs sync` job (requires `--metrics` to be configured).
++
++:::note
++These dashboards identify each client process by the Prometheus `instance` label (the scrape target address). If two different processes share the same `instance` value — for example pods with the same IP from different clusters scraped by one Prometheus — their series are merged and double-counted. In that case make `instance` globally unique by relabeling, e.g. `cluster-a/10.0.0.5:9567`:
++
++```yaml
++relabel_configs:
++  - target_label: cluster
++    replacement: cluster-a
++  - source_labels: [cluster, __address__]
++    separator: /
++    target_label: instance
++```
++
++:::
++
+ ## Collecting metrics data {#collect-metrics}
+ 
+ For different types of JuiceFS Client, metrics data is handled slightly differently.
 ```
 
-**File**: `pkg/meta/base_test.go` (modified, +36/-0)
+**File**: `docs/en/grafana_template.json` (modified, +1721/-104)
 ```diff
-@@ -5003,6 +5003,42 @@ func testQuota(t *testing.T, m Meta) {
- 	if st := m.Create(ctx, parent, "f4", 0644, 0, 0, nil, &attr); st != syscall.EDQUOT {
- 		t.Fatalf("Create quota/d22/f4: %s", st)
- 	}
-+
-+	t.Run("SubdirQuota", func(t *testing.T) {
-+		const path = "/quota-subdir"
-+		var parent, inode Ino
-+		if st := m.Mkdir(ctx, RootInode, "quota-subdir", 0755, 0, 0, &parent, nil); st != 0 {
-+			t.Fatalf("Mkdir quota-subdir: %s", st)
-+		}
-+		if err := m.HandleQuota(ctx, QuotaSet, path, DirQuotaType, map[string]*Quota{path: {MaxInodes: 2}}, false, false, false); err != nil {
-+			t.Fatalf("Set quota: %s", err)
-+		}
-+		defer m.HandleQuota(ctx, QuotaDel, path, DirQuotaType, nil, false, false, false)
-+		base := m.getBase()
-+		base.loadQuotas()
-+		defer base.chroot(base.root)
-+		if st := m.Chroot(ctx, path); st != 0 {
-+			t.Fatalf("Chroot: %s", st)
-+		}
-+
-+		if st := m.Mkdir(ctx, RootInode, "d", 0755, 0, 0, &inode, nil); st != 0 {
-+			t.Fatalf("Mkdir d: %s", st)
-+		}
-+		if st := m.Create(ctx, inode, "f", 0644, 0, 0, nil, nil); st != 0 {
-+			t.Fatalf("Create d/f: %s", st)
-+		}
-+		base.doFlushQuotas()
-+		qs := make(map[string]*Quota)
-+		if err := m.HandleQuota(ctx, QuotaGet, path, DirQuotaType, qs, false, false, false); err != nil {
-+			t.Fatalf("Get quota: %s", err)
-+		}
-+		if q := qs[path]; q.UsedInodes != 2 || q.UsedSpace != 2*4<<10 {
-+			t.Errorf("Subdir quota: got %+v, want 2 inodes and 8192 bytes", q)
-+		}
-+		if st := m.Create(ctx, inode, "overflow", 0644, 0, 0, nil, nil); st != syscall.EDQUOT {
-+			t.Errorf("Create d/overflow: got %s, want %s", st, syscall.EDQUOT)
-+		}
-+	})
- }
+@@ -107,7 +107,7 @@
+           },
+           "editorMode": "code",
+           "exemplar": false,
+-          "expr": "sort(max(juicefs_uptime{vol_name=\"$name\"}) by (${node_label}, juicefs_version))",
++          "expr": "sort(max(juicefs_uptime{vol_name=\"$name\", instance=~\"$instance\"}) by (${node_label}, juicefs_version))",
+           "format": "table",
+           "instant": true,
+           "legendFormat": "__auto",
+@@ -228,7 +228,7 @@
+             "uid": "$datasource"
+           },
+           "exemplar": true,
+-          "expr": "avg(juicefs_used_space{vol_name=\"$name\"})",
++          "expr": "avg(juicefs_used_space{vol_name=\"$name\", instance=~\"$instance\"})",
+           "format": "time_series",
+           "instant": false,
+           "interval": "",
+@@ -328,7 +328,7 @@
+             "uid": "$datasource"
+           },
+           "exemplar": true,
+-          "expr": "avg(juicefs_used_inodes{vol_name=\"$name\"})",
++          "expr": "avg(juicefs_used_inodes{vol_name=\"$name\", instance=~\"$instance\"})",
+           "format": "time_series",
+           "interval": "",
+           "intervalFactor": 1,
+@@ -427,7 +427,7 @@
+             "uid": "$datasource"
+           },
+           "editorMode": "code",
+-          "expr": "count by (juicefs_version) (juicefs_uptime{vol_name=\"$name\"})",
++          "expr": "count by (juicefs_version) (juicefs_uptime{vol_name=\"$name\", instance=~\"$instance\"})",
+           "format": "time_series",
+           "interval": "",
+           "intervalFactor": 1,
+@@ -527,7 +527,7 @@
+             "uid": "$datasource"
+           },
+           "exemplar": true,
+-          "expr": "sum(rate(juicefs_fuse_ops_durations_histogram_seconds_count{vol_name=\"$name\"}[$__rate_interval]) < 5000000000) by (${node_label})",
++          "expr": "sum(rate(juicefs_fuse_ops_durations_histogram_seconds_count{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval]) < 5000000000) by (${node_label})",
+           "format": "time_series",
+           "interval": "",
+           "intervalFactor": 1,
+@@ -626,7 +626,7 @@
+             "uid": "$datasource"
+           },
+           "exemplar": true,
+-          "expr": "sum(rate(juicefs_fuse_written_size_bytes_sum{vol_name=\"$name\"}[$__rate_interval]) < 5000000000) by (${node_label})",
++          "expr": "sum(rate(juicefs_fuse_written_size_bytes_sum{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval]) < 5000000000) by (${node_label})",
+           "format": "time_series",
+           "instant": false,
+           "interval": "",
+@@ -638,7 +638,7 @@
+           "datasource": {
+             "uid": "$datasource"
+           },
+-          "expr": "sum(rate(juicefs_fuse_read_size_bytes_sum{vol_name=\"$name\"}[$__rate_interval]) < 5000000000) by (${node_label})",
++          "expr": "sum(rate(juicefs_fuse_read_size_bytes_sum{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval]) < 5000000000) by (${node_label})",
+           "format": "time_series",
+           "hide": false,
+           "interval": "",
+@@ -736,7 +736,7 @@
+           "datasource": {
+             "uid": "$datasource"
+           },
+-          "expr": "sum(rate(juicefs_fuse_ops_durations_histogram_seconds_sum{vol_name=\"$name\"}[$__rate_interval])) by  (${node_label},mp) * 1000000 / sum(rate(juicefs_fuse_ops_durations_histogram_seconds_count{vol_name=\"$name\"}[$__rate_interval])) by  (${node_label},mp)",
++          "expr": "sum(rate(juicefs_fuse_ops_durations_histogram_seconds_sum{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval])) by  (${node_label},mp) * 1000000 / sum(rate(juicefs_fuse_ops_durations_histogram_seconds_count{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval])) by  (${node_label},mp)",
+           "format": "time_series",
+           "hide": false,
+           "interval": "",
+@@ -834,7 +834,7 @@
+           "datasource": {
+             "uid": "$datasource"
+           },
+-          "expr": "sum(rate(juicefs_transaction_durations_histogram_seconds_count{vol_name=\"$name\"}[$__rate_interval])) by  (${node_label})",
++          "expr": "sum(rate(juicefs_transaction_durations_histogram_seconds_count{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval])) by  (${node_label})",
+           "format": "time_series",
+           "interval": "",
+           "intervalFactor": 1,
+@@ -931,7 +931,7 @@
+           "datasource": {
+             "uid": "$datasource"
+           },
+-          "expr": "sum(rate(juicefs_transaction_durations_histogram_seconds_sum{vol_name=\"$name\"}[$__rate_interval])) by  (${node_label},mp) * 1000000 / sum(rate(juicefs_transaction_durations_histogram_seconds_count{vol_name=\"$name\"}[$__rate_interval])) by  (${node_label},mp)",
++          "expr": "sum(rate(juicefs_transaction_durations_histogram_seconds_sum{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval])) by  (${node_label},mp) * 1000000 / sum(rate(juicefs_transaction_durations_histogram_seconds_count{vol_name=\"$name\", instance=~\"$instance\"}[$__rate_interval])) by  
+```
+
+**File**: `docs/en/grafana_template_sync.json` (added, +1002/-0)
+```diff
+@@ -0,0 +1,1002 @@
++{
++  "annotations": {
++    "list": [
++      {
++        "builtIn": 1,
++        "datasource": {
++          "type": "datasource",
++          "uid": "grafana"
++        },
++        "enable": true,
++        "hide": true,
++        "iconColor": "rgba(0, 211, 255, 1)",
++        "name": "Annotations & Alerts",
++        "type": "dashboard"
++      }
++    ]
++  },
++  "editable": true,
++  "fiscalYearStartMonth": 0,
++  "graphTooltip": 0,
++  "id": null,
++  "links": [],
++  "panels": [
++    {
++      "datasource": {
++        "uid": "$datasource"
++      },
++      "fieldConfig": {
++        "defaults": {
++          "color": {
++            "mode": "palette-classic"
++          },
++          "custom": {
++            "axisBorderShow": false,
++            "axisCenteredZero": false,
++            "axisColorMode": "text",
++            "axisLabel": "",
++            "axisPlacement": "auto",
++            "barAlignment": 0,
++            "drawStyle": "line",
++            "fillOpacity": 10,
++            "gradientMode": "none",
++            "hideFrom": {
++              "legend": false,
++              "tooltip": false,
++              "viz": false
++            },
++            "insertNulls": false,
++            "lineInterpolation": "linear",
++            "lineWidth": 1,
++            "pointSize": 5,
++            "scaleDistribution": {
++              "type": "linear"
++            },
++            "showPoints": "never",
++            "spanNulls": false,
++            "stacking": {
++              "group": "A",
++              "mode": "none"
++            },
++            "thresholdsStyle": {
++              "mode": "off"
++            }
++          },
++          "mappings": [],
++          "min": 0,
++          "thresholds": {
++            "mode": "absolute",
++            "steps": [
++              {
++                "color": "green",
++                "value": null
++              },
++              {
++                "color": "red",
++                "value": 80
++              }
++            ]
++          },
++          "unit": "short"
++        },
++        "overrides": []
++      },
++      "gridPos": {
++        "h": 6,
++        "w": 8,
++        "x": 0,
++        "y": 0
++      },
++      "id": 2,
++      "options": {
++        "legend": {
++          "calcs": [
++            "lastNotNull"
++          ],
++          "displayMode": "list",
++          "placement": "bottom",
++          "showLegend": true
++        },
++        "tooltip": {
++          "mode": "single",
++          "sort": "none"
++        }
++      },
++      "pluginVersion": "10.4.0",
++      "targets": [
++        {
++          "datasource": {
++            "uid": "$datasource"
++          },
++          "editorMode": "code",
++          "exemplar": true,
++          "expr": "juicefs_sync_scanned{instance=~\"$instance\", pid=~\"$pid\"}",
++          "format": "time_series",
++          "intervalFactor": 1,
++          "legendFormat": "scanned",
++          "range": true,
++          "refId": "A"
++        },
++        {
++          "datasource": {
++            "uid": "$datasource"
++          },
++          "editorMode": "code",
++          "exemplar": true,
++          "expr": "juicefs_sync_handled{instance=~\"$instance\", pid=~\"$pid\"}",
++          "format": "time_series",
++          "intervalFactor": 1,
++          "legendFormat": "handled",
++          "range": true,
++          "refId": "B"
++        },
++        {
++          "datasource": {
++            "uid": "$datasource"
++          },
++          "editorMode": "code",
++          "exemplar": true,
++          "expr": "juicefs_sync_copied{instance=~\"$instance\", pid=~\"$pid\"}",
++          "format": "time_series",
++          "intervalFactor": 1,
++          "legendFormat": "copied",
++          "range": true,
++          "refId": "C"
++        },
++        {
++          "datasource": {
++            "uid": "$datasource"
++          },
++          "editorMode": "code",
++          "exemplar": true,
++          "expr": "juicefs_sync_pending{instance=~\"$instance\", pid=~\"$pid\"}",
++          "format": "time_series",
++          "intervalFactor": 1,
++          "legendFormat": "pending",
++          "range": true,
++          "refId": "D"
++        }
++      ],
++      "title": "Progress",
++      "type": "timeseries"
++    },
++    {
++      "datasource": {
++        "uid": "$datasource"
++      },
++      "fieldConfig": {
++        "defaults": {
++          "color": {
++            "mode": "palette-classic"
++          },
++          "custom": {
++            "axisBorderShow": false,
++            "axisCenteredZero": false,
++            "axisColorMode": "text",
++            "axisLabel": "",
++            "axisPlacement": "auto",
++            "barAlignment": 0,
++            "drawStyle": "line",
++            "fillOpacity": 10,
++            "gradientMode": "none",
++            "hideFrom": {
++              "legend": false,
++              "tooltip": false,
++              "viz": false
++            },
++            "insertNulls": false,
++            "lineInterpolation": "linear",
++            "lineWidth": 1
+```
+
+**File**: `docs/en/reference/p8s_metrics.md` (modified, +66/-9)
+```diff
+@@ -20,7 +20,9 @@ If you haven't yet set up monitoring for JuiceFS, read [monitoring and data visu
+ | Name                          | Description                            | Unit |
+ |-------------------------------|----------------------------------------|------|
+ | `juicefs_used_space`          | Total used space                       | byte |
+-| `juicefs_used_inodes`         | Total number of inodes                 |      |
++| `juicefs_used_inodes`         | Total number of used inodes            |      |
++| `juicefs_total_space`         | Total space of the volume              | byte |
++| `juicefs_total_inodes`        | Total number of inodes                 |      |
  
- func testAtime(t *testing.T, m Meta) {
+ ## Operating system {#operating-system}
+ 
+@@ -34,22 +36,62 @@ If you haven't yet set up monitoring for JuiceFS, read [monitoring and data visu
+ 
+ ## Metadata engine {#metadata-engine}
+ 
++### Labels
++
++| Name     | Description                                  |
++| ----     | -----------                                  |
++| `method` | Metadata engine operation (e.g. getattr, setattr, lookup) |
++
+ ### Metrics
+ 
+ | Name                                              | Description                                | Unit   |
+ | ----                                              | -----------                                | ----   |
+ | `juicefs_transaction_durations_histogram_seconds` | Transactions latency distributions         | second |
+-| `juicefs_transaction_restart`                     | Number of times a transaction restarted |        |
++| `juicefs_transaction_restart`                     | Number of times a transaction restarted    |        |
++| `juicefs_meta_ops_durations_histogram_seconds`    | Metadata engine operations latency distributions | second |
++| `juicefs_meta_ops_total`                          | Number of metadata engine operations       |        |
++| `juicefs_meta_ops_duration_seconds`               | Accumulated time of metadata engine operations | second |
++
++## Quota {#quota}
++
++### Metrics
++
++Directory quotas carry an `inode` label, user quotas a `uid` label, and group quotas a `gid` label.
++
++| Name                                        | Description                                   | Unit |
++|---------------------------------------------|-----------------------------------------------|------|
++| `juicefs_dir_quota_max_space_bytes`         | Directory quota maximum space                 | byte |
++| `juicefs_dir_quota_max_inodes`              | Directory quota maximum number of inodes      |      |
++| `juicefs_dir_quota_used_space_bytes`        | Directory quota used space                    | byte |
++| `juicefs_dir_quota_used_inodes`             | Directory quota used number of inodes         |      |
++| `juicefs_user_quota_max_space_bytes`        | User quota maximum space                      | byte |
++| `juicefs_user_quota_max_inodes`             | User quota maximum number of inodes           |      |
++| `juicefs_user_quota_used_space_bytes`       | User quota used space                         | byte |
++| `juicefs_user_quota_used_inodes`            | User quota used number of inodes              |      |
++| `juicefs_group_quota_max_space_bytes`       | Group quota maximum space                     | byte |
++| `juicefs_group_quota_max_inodes`            | Group quota maximum number of inodes          |      |
++| `juicefs_group_quota_used_space_bytes`      | Group quota used space                        | byte |
++| `juicefs_group_quota_used_inodes`           | Group quota used number of inodes             |      |
+ 
+ ## FUSE {#fuse}
+ 
++### Labels
++
++| Name     | Description                             |
++| ----     | -----------                             |
++| `method` | FUSE operation (e.g. read, write, lookup) |
++| `errno`  | Error name of failed operations (e.g. EIO, ENOENT) |
++
+ ### Metrics
+ 
+ | Name                                           | Description                          | Unit   |
+ | ----                                           | -----------                          | ----   |
+ | `juicefs_fuse_read_size_bytes`                 | Size distributions of read request   | byte   |
+ | `juicefs_fuse_written_size_bytes`              | Size distributions of write request  | byte   |
+ | `juicefs_fuse_ops_durations_histogram_seconds` | Operations latency distributions     | second |
++| `juicefs_fuse_ops_total`                       | Number of operations                 |        |
++| `juicefs_fuse_ops_durations_seconds`           | Accumulated time of operations       | second |
++| `juicefs_fuse_ops_io_errors`                   | Number of I/O errors                 |        |
+ | `juicefs_fuse_open_handlers`                   | Number of open files and directories |        |
+ 
+ ## SDK {#sdk}
+@@ -60,7 +102,7 @@ If you haven't yet set up monitoring for JuiceFS, read [monitoring and data visu
+ | ----                                          | -----------                         | ----   |
+ | `juicefs_sdk_read_siz
+```
+
+**File**: `docs/zh_cn/administration/monitoring.md` (modified, +19/-0)
+```diff
+@@ -97,6 +97,25 @@ Grafana 仪表盘如下图：
+ 
+ ![grafana_dashboard](../images/grafana_dashboard.png)
+ 
++针对其他部署形态，仓库中还提供了可以直接导入 JSON 文件的仪表盘模板：
++
++- [S3 网关](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_gateway.json)：在共享的对象存储、缓存、元数据面板之外，展示 S3 API 之下文件系统 SDK 层的指标（`juicefs_sdk_*`；一次 S3 请求会产生多次 SDK 操作）。
++- [`juicefs sync`](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_sync.json)：展示运行中的 `juicefs sync` 任务进度与吞吐（需要配置 `--metrics`）。
++
++:::note
++这些仪表盘通过 Prometheus 的 `instance` 标签（即抓取目标地址）区分每一个客户端进程。如果两个不同的进程拥有相同的 `instance` 值——例如同一个 Prometheus 抓取的多个集群中存在相同 IP 的 Pod——它们的序列会被合并并重复计数。此时应通过 relabel 让 `instance` 全局唯一，例如 `cluster-a/10.0.0.5:9567`：
++
++```yaml
++relabel_configs:
++  - target_label: cluster
++    replacement: cluster-a
++  - source_labels: [cluster, __address__]
++    separator: /
++    target_label: instance
++```
++
++:::
++
+ ## 收集监控指标 {#collect-metrics}
+ 
+ 根据部署 JuiceFS 方式的不同可以有不同的收集监控指标的方法，下面分别介绍。
+```
+
+**File**: `docs/zh_cn/reference/p8s_metrics.md` (modified, +65/-8)
+```diff
+@@ -20,7 +20,9 @@ sidebar_position: 4
+ | 名称                            | 描述            | 单位 |
+ |-------------------------------|---------------|----|
+ | `juicefs_used_space`          | 总使用空间         | 字节 |
+-| `juicefs_used_inodes`         | 总 inodes 数量   |    |
++| `juicefs_used_inodes`         | 已使用的 inodes 数量 |    |
++| `juicefs_total_space`         | 文件系统总容量       | 字节 |
++| `juicefs_total_inodes`        | 总 inodes 数量   |    |
+ 
+ ## 操作系统 {#operating-system}
+ 
+@@ -34,22 +36,62 @@ sidebar_position: 4
+ 
+ ## 元数据引擎 {#metadata-engine}
+ 
++### 标签
++
++| 名称     | 描述                                  |
++| ----     | -----------                           |
++| `method` | 元数据引擎操作（例如 getattr、setattr、lookup） |
++
+ ### 指标
+ 
+ | 名称                                              | 描述           | 单位 |
+ | ----                                              | -----------    | ---- |
+ | `juicefs_transaction_durations_histogram_seconds` | 事务的延时分布 | 秒   |
+ | `juicefs_transaction_restart`                     | 事务重启的次数 |      |
++| `juicefs_meta_ops_durations_histogram_seconds`    | 元数据引擎操作的延时分布 | 秒 |
++| `juicefs_meta_ops_total`                          | 元数据引擎操作的次数 |    |
++| `juicefs_meta_ops_duration_seconds`               | 元数据引擎操作的累计耗时 | 秒 |
++
++## 配额 {#quota}
++
++### 指标
++
++目录配额带有 `inode` 标签，用户配额带有 `uid` 标签，组配额带有 `gid` 标签。
++
++| 名称                                        | 描述                       | 单位 |
++|---------------------------------------------|---------------------------|------|
++| `juicefs_dir_quota_max_space_bytes`         | 目录配额的空间上限          | 字节 |
++| `juicefs_dir_quota_max_inodes`              | 目录配额的 inodes 上限     |      |
++| `juicefs_dir_quota_used_space_bytes`        | 目录配额已使用的空间        | 字节 |
++| `juicefs_dir_quota_used_inodes`             | 目录配额已使用的 inodes 数量 |     |
++| `juicefs_user_quota_max_space_bytes`        | 用户配额的空间上限          | 字节 |
++| `juicefs_user_quota_max_inodes`             | 用户配额的 inodes 上限     |      |
++| `juicefs_user_quota_used_space_bytes`       | 用户配额已使用的空间        | 字节 |
++| `juicefs_user_quota_used_inodes`            | 用户配额已使用的 inodes 数量 |     |
++| `juicefs_group_quota_max_space_bytes`       | 组配额的空间上限            | 字节 |
++| `juicefs_group_quota_max_inodes`            | 组配额的 inodes 上限       |      |
++| `juicefs_group_quota_used_space_bytes`      | 组配额已使用的空间          | 字节 |
++| `juicefs_group_quota_used_inodes`           | 组配额已使用的 inodes 数量  |     |
+ 
+ ## FUSE {#fuse}
+ 
++### 标签
++
++| 名称     | 描述                            |
++| ----     | -----------                     |
++| `method` | FUSE 操作（例如 read、write、lookup） |
++| `errno`  | 失败操作的错误名（例如 EIO、ENOENT） |
++
+ ### 指标
+ 
+ | 名称                                           | 描述                 | 单位 |
+ | ----                                           | -----------          | ---- |
+ | `juicefs_fuse_read_size_bytes`                 | 读请求的大小分布     | 字节 |
+ | `juicefs_fuse_written_size_bytes`              | 写请求的大小分布     | 字节 |
+ | `juicefs_fuse_ops_durations_histogram_seconds` | 所有请求的延时分布   | 秒   |
++| `juicefs_fuse_ops_total`                       | 操作的次数           |      |
++| `juicefs_fuse_ops_durations_seconds`           | 操作的累计耗时       | 秒   |
++| `juicefs_fuse_ops_io_errors`                   | IO 错误的次数        |      |
+ | `juicefs_fuse_open_handlers`                   | 打开的文件和目录数量 |      |
+ 
+ ## SDK {#sdk}
+@@ -60,7 +102,7 @@ sidebar_position: 4
+ | ----                                          | -----------        | ---- |
+ | `juicefs_sdk_read_size_bytes`                 | 读请求的大小分布   | 字节 |
+ | `juicefs_sdk_written_size_bytes`              | 写请求的大小分布   | 字节 |
+-| `juicefs_sdk_ops_durations_histogram_seconds` | 所有请求的延时分布 | 秒   |
++| `juicefs_sdk_ops_durations_histogram_seconds` | SDK 内部操作的延时分布（一次请求可能产生多次操作） | 秒   |
+ 
+ ## 缓存 {#cache}
+ 
+@@ -81,16 +123,20 @@ sidebar_position: 4
+ | `juicefs_blockcache_read_hist_seconds`  | 读缓存块的延时分布   | 秒  |
+ | `juicefs_blockcache_write_hist_seconds` | 写缓存块的延时分布   | 秒  |
+ | `juicefs_staging_blocks`                | 暂存路径中的块数    |    |
+-| `juicefs_staging_block_bytes`           | 暂存路径中块的总字节数 | 秒  |
++| `juicefs_staging_block_bytes`           | 暂存路径中块的总字节数 | 字节 |
+ | `juicefs_staging_block_delay_seconds`   | 暂存块延迟的总秒数 | 秒  |
++| `juicefs_staging_block_errors`          | 暂存块出错的次数 |    |
++| `juicefs_staging_write_bytes`           | 写入暂存路径的总字节数 | 字节 |
++| `juicefs_staging_writing_blocks`        | 正在写入暂存路径的块数 |    |
+ 
+ ## 对象存储 {#object-storage}
+ 
+ ### 标签
+ 
+-| 名称     | 描述                                              |
+-| ----     | -----------                                       |
+-| `method` | 请求对象存储的方法（例如 GET、PUT、HEAD、DELETE） |
++| 名称            | 描述                                              |
++| ----            | -----------                                       |
++| `method`        | 请求对象存储的方法（例如 GET、PUT、HEAD、DELETE） |
++| `storage_class` | 请求对象所属的存储类型（配置了存储类型时存在）     |
+ 
+ ### 指标
+ 
+@@ -99,6 +145,7 @@ sidebar_position: 4
+ | `juicefs_object_request_durations_histogram_seconds` | 请求对象存储的延时分布   | 秒   |
+ | `juicefs_object_request_errors`                      
+```
+
+**File**: `pkg/meta/base.go` (modified, +2/-2)
+```diff
+@@ -522,15 +522,15 @@ func newBaseMeta(addr string, conf *Config) *baseMeta {
+ 
+ 		bgjobDuration: prometheus.NewHistogramVec(
+ 			prometheus.HistogramOpts{
+-				Name:    "juicefs_bgjob_duration_seconds",
++				Name:    "bgjob_duration_seconds",
+ 				Help:    "Background job duration in seconds.",
+ 				Buckets: prometheus.ExponentialBuckets(1, 2, 13),
+ 			},
+ 			[]string{"job", "status"},
+ 		),
+ 		bgjobDels: prometheus.NewCounterVec(
+ 			prometheus.CounterOpts{
+-				Name: "juicefs_bgjob_deletions_total",
++				Name: "bgjob_deletions_total",
+ 				Help: "Number of deletions (files or slices) by background jobs.",
+ 			},
+ 			[]string{"job"},
+```
+
+**File**: `pkg/meta/metrics_test.go` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++/*
++ * JuiceFS, Copyright 2026 Juicedata, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package meta
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/prometheus/client_golang/prometheus"
++)
++
++// The mount registerer adds a "juicefs_" prefix to every metric (cmd.wrapRegister),
++// so metric definitions must not embed the prefix themselves, otherwise they are
++// exported as "juicefs_juicefs_*" and never match the documented names.
++func TestMetricsNotDoublePrefixed(t *testing.T) {
++	m, err := newKVMeta("memkv", "jfs-metric-names", testConfig())
++	if err != nil {
++		t.Fatalf("create meta: %v", err)
++	}
++	if err := m.Reset(); err != nil {
++		t.Fatalf("reset meta: %v", err)
++	}
++	if err := m.Init(testFormat(), true); err != nil {
++		t.Fatalf("init format: %v", err)
++	}
++	b := m.getBase()
++	// force label children so the vec names show up in Gather()
++	b.bgjobDuration.WithLabelValues("test_job", "ok").Observe(0.1)
++	b.bgjobDels.WithLabelValues("test_job").Inc()
++
++	registry := prometheus.NewRegistry()
++	registerer := prometheus.WrapRegistererWithPrefix("juicefs_", registry)
++	m.InitMetrics(registerer)
++	m.InitSharedMetrics(registerer)
++
++	mfs, err := registry.Gather()
++	if err != nil {
++		t.Fatalf("gather: %v", err)
++	}
++	var doubled []string
++	found := false
++	for _, mf := range mfs {
++		name := mf.GetName()
++		if strings.Contains(name, "juicefs_juicefs_") {
++			doubled = append(doubled, name)
++		}
++		if name == "juicefs_bgjob_duration_seconds" {
++			found = true
++		}
++	}
++	if len(doubled) > 0 {
++		t.Errorf("metrics exported with doubled juicefs_ prefix: %s", strings.Join(doubled, ", "))
++	}
++	if !found {
++		t.Error("juicefs_bgjob_duration_seconds is not exported")
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7765** (2026-10-27): meta: record parent update decisions in MOVE changelog (@zxh326)
+- **PR #7764** (2026-10-27): meta/redis: avoid changelog entries for missing xattrs (@zxh326)
 - **PR #7762** (2026-10-26): meta: resolve subdir root for ACL operations (@jiefenghuang)
 - **PR #7760** (2026-10-26): meta: resolve subdir root before batch unlink (@jiefenghuang)
 - **PR #7759** (2026-10-26): test: cover file operations on subdir mounts (@jiefenghuang)
 - **PR #7758** (2026-10-26): meta: fix subdir quota accounting after mkdir (@zxh326)
-- **PR #7757** (closed): chunk: fix data races on diskCache state fields (@cxljs)
-- **PR #7756** (2026-10-26): chore: modernize Go idioms and remove dead code (@cxljs)
 
 ---
 
@@ -1265,28 +1847,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: fix subdir quota accounting after mkdir (#7758)
+## X. metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754)
 
 **RULE**:
-When implementing operations in `pkg/meta/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/administration/monitoring.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `735029cb`: meta: fix subdir quota accounting after mkdir (#7758). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3baaab00`: metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/administration/monitoring.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		m.dirParents[*inode] = m.checkRoot(parent)
+For other deployment forms, the repository also provides dashboard templates that can be imported as JSON files:
+
+- [S3 gateway](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_gateway.json): tracks the file system SDK layer beneath the S3 API (`juicefs_sdk_*`; one S3 request may issue many SDK operations) in addition to the shared object storage, cache and metadata panels.
+- [`juicefs sync`](https://github.com/juicedata/juicefs/blob/main/docs/en/grafana_template_sync.json): tracks the progress and throughput of a running `juicefs sync` job (requires `--metrics` to be configured).
+
+:::note
+These dashboards identify each client process by the Prometheus `instance` label (the scrape target address). If two different processes share the same `instance` value — for example pods with the same IP from different clusters scraped by one Prometheus — their series are merged and double-counted. In that case make `instance` globally unique by relabeling, e.g. `cluster-a/10.0.0.5:9567`:
+
+```yaml
+relabel_configs:
+  - target_label: cluster
+    replacement: cluster-a
+  - source_labels: [cluster, __address__]
+    separator: /
+    target_label: instance
+```
+
+:::
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		m.dirParents[*inode] = parent
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `735029cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3baaab00` are properly handled with clean fallback behavior.

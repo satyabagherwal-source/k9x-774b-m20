@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T18:36:29.844Z",
+  "last_updated": "2026-10-27T18:43:42.473Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4409,8 +4409,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "301402f9",
-      "content_hash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
+      "source_version": "ade98454",
+      "content_hash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4443,6 +4443,11 @@
           "number": 4502,
           "title": "mark pnpm-lock.yaml as protected file (#12664)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4947,
+          "title": "markdown_parser): continue block quotes inside deep list items (#12575)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4450,7 +4455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:32:36.221Z",
+      "verified_at": "2026-10-27T18:43:33.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30990,8 +30995,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "002a6b7a",
-      "content_hash": "1234e51457906fe8eb1a50f2ecb1fe6c8fade2526155ffc9f9d77f7c7316ab93",
+      "source_version": "d5d80841",
+      "content_hash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -31024,6 +31029,11 @@
           "number": 4612,
           "title": "meta: fix subdir quota accounting after mkdir (#7758)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4946,
+          "title": "metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31031,7 +31041,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:40:38.857Z",
+      "verified_at": "2026-10-27T18:43:28.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55266,15 +55276,15 @@
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "d155cd08",
-      "content_hash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
+      "source_version": "9a618ce9",
+      "content_hash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "promoted_rules": [
         {
           "number": 2068,
           "title": "agent): route every Studio task family to the design pipeline",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55282,7 +55292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:20:23.788Z",
+      "verified_at": "2026-10-27T18:43:26.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68153,8 +68163,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "7726f835",
-      "content_hash": "03f90b75ef2ead823ac9c0471735aac84f7d8d0ba956fc445b69bb90162ba0a5",
+      "source_version": "7879c659",
+      "content_hash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -68182,6 +68192,11 @@
           "number": 3885,
           "title": "include sourcemap comments in chunk hashes (#6509)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4948,
+          "title": "tree-shaking of disposable resources (#6556)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68189,7 +68204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:45:04.197Z",
+      "verified_at": "2026-10-27T18:43:42.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -92964,13 +92979,13 @@
       "rule_number": 2068,
       "title": "agent): route every Studio task family to the design pipeline",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "d155cd08",
+      "source_version": "9a618ce9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T03:20:23.788Z"
+      "verified_at": "2026-10-27T18:43:26.714Z"
     },
     "rule-2069": {
       "learning_id": "rule-2069",
@@ -137076,6 +137091,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T18:36:29.830Z"
+    },
+    "rule-4946": {
+      "learning_id": "rule-4946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4946,
+      "title": "metrics: Add S3 gateway and sync Grafana dashboards, fix metric names (#7754)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "d5d80841",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:43:28.400Z"
+    },
+    "rule-4947": {
+      "learning_id": "rule-4947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4947,
+      "title": "markdown_parser): continue block quotes inside deep list items (#12575)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "ade98454",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:43:33.797Z"
+    },
+    "rule-4948": {
+      "learning_id": "rule-4948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4948,
+      "title": "tree-shaking of disposable resources (#6556)",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "7879c659",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T18:43:42.455Z"
     }
   },
   "aliases": {

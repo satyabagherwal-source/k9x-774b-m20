@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `d155cd08`  
+> **Source Version**: `9a618ce9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:20:23.610Z  
+> **Timestamp**: 2026-10-27T18:43:26.436Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:20:23.601Z  
+> **Harvest Timestamp**: 2026-10-27T18:43:25.891Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6723 stars
 
 ---
 
@@ -1821,7 +1821,7 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `243c27f5` (2026-09-15)
+### Incident Patch 1: `e5d79280` (2026-09-15)
 **Commit Message**: fix(agent): route every Studio task family to the design pipeline
 
 The intent classifier's keyword list grew up around app and web briefs,
@@ -2057,7 +2057,7 @@ Three unrelated reds fixed alongside, each measured:
 
 ---
 
-### Incident Patch 2: `49100c2c` (2026-09-16)
+### Incident Patch 2: `fb62583b` (2026-09-16)
 **Commit Message**: fix(i18n): carry the catalog size into the exporter, and split the settings tests
 
 Two reds the first CI run that actually executed on this branch caught,
@@ -2403,7 +2403,7 @@ Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
 
 ---
 
-### Incident Patch 3: `6f0f176b` (2026-09-14)
+### Incident Patch 3: `9cf39a0d` (2026-09-14)
 **Commit Message**: fix(ai): keep the radius context cut on a char boundary (#241)
 
 px_values capped each number's context at 48 bytes. That is a boundary only for Latin script; a CJK or Hangul radius sentence puts three bytes on most characters, so the cut landed mid-character and tail[..end] panicked. floor_char_boundary is a no-op on ASCII, where every index is already a boundary.
@@ -2463,12 +2463,12 @@ px_values capped each number's context at 48 bytes. That is a boundary only for 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #262** (2026-10-27): chore(nix): update release manifest to v0.8.5 (@Kayshen-X)
 - **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
+- **PR #251** (closed): feat(mcp): show agent cursor presence for client canvas writes (@gnoviawan)
 - **PR #248** (closed): feat(agent): add packaged browser snapshot capture tool (@caniko)
+- **PR #244** (closed): docs: sync README.zh.md with README.md (@PerryLink)
 - **PR #243** (2026-09-14): fix(design-lint): guard the transparent-alpha test against a non-ascii fill (@kevin9327)
-- **PR #242** (2026-09-14): fix(cli): decode a percent-encoded resource name before the disk lookup (@kevin9327)
-- **PR #241** (2026-09-14): fix(ai): keep the radius context cut on a char boundary (@kevin9327)
-- **PR #240** (2026-09-14): fix(html): stop a non-ascii css prelude from panicking the import (@kevin9327)
 
 ---
 
@@ -2494,7 +2494,7 @@ px_values capped each number's context at 48 bytes. That is a boundary only for 
 When implementing operations in `crates/op-chat-agent/src/backoff.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `243c27f5`: agent): route every Studio task family to the design pipeline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5d79280`: agent): route every Studio task family to the design pipeline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-chat-agent/src/backoff.rs`.
@@ -2538,4 +2538,4 @@ async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `243c27f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5d79280` are properly handled with clean fallback behavior.

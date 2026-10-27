@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "7726f835",
+    "sourceVersion": "7879c659",
     "license": "NOASSERTION",
-    "contentHash": "03f90b75ef2ead823ac9c0471735aac84f7d8d0ba956fc445b69bb90162ba0a5",
-    "lastHarvestedAt": "2026-10-23T10:45:04.263Z",
+    "contentHash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
+    "lastHarvestedAt": "2026-10-27T18:43:42.571Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "d155cd08",
+    "sourceVersion": "9a618ce9",
     "license": "MIT",
-    "contentHash": "78a1500325814fff85a5c8731bf225e8fe34699c776863f68bed7fe038201b60",
-    "lastHarvestedAt": "2026-10-19T03:20:23.841Z",
+    "contentHash": "79ffe6167e168db2cf14ade5d91e039e26437edb781d9cce2a4fc767dfa2071f",
+    "lastHarvestedAt": "2026-10-27T18:43:26.810Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "002a6b7a",
+    "sourceVersion": "d5d80841",
     "license": "Apache-2.0",
-    "contentHash": "1234e51457906fe8eb1a50f2ecb1fe6c8fade2526155ffc9f9d77f7c7316ab93",
-    "lastHarvestedAt": "2026-10-26T13:40:38.960Z",
+    "contentHash": "b6cae88e4cc67163392c1c84cbbb9df3ba5e500deac68bfbd752f274180e94c0",
+    "lastHarvestedAt": "2026-10-27T18:43:28.500Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "301402f9",
+    "sourceVersion": "ade98454",
     "license": "Apache-2.0",
-    "contentHash": "6fa671c368d1cb5533139f52a31239205066a15c47b6f61428139072fe15afb0",
-    "lastHarvestedAt": "2026-10-26T00:32:36.289Z",
+    "contentHash": "3fabbb5c95160c0106ac5adcfcdb4627fc730ca6af80b065fb32704f2ace53a1",
+    "lastHarvestedAt": "2026-10-27T18:43:33.890Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {
