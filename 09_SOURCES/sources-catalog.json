@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "72067296",
+    "sourceVersion": "4def5663",
     "license": "Apache-2.0",
-    "contentHash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
-    "lastHarvestedAt": "2026-10-25T03:59:27.292Z",
+    "contentHash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
+    "lastHarvestedAt": "2026-10-27T16:38:20.271Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "5d27942c",
+    "sourceVersion": "6e4ce04b",
     "license": "Apache-2.0",
-    "contentHash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
-    "lastHarvestedAt": "2026-10-19T09:54:33.391Z",
+    "contentHash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
+    "lastHarvestedAt": "2026-10-27T16:38:32.646Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "1dde7a86",
+    "sourceVersion": "66b6e565",
     "license": "MIT",
-    "contentHash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
-    "lastHarvestedAt": "2026-10-23T07:06:48.048Z",
+    "contentHash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
+    "lastHarvestedAt": "2026-10-27T16:38:22.580Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {

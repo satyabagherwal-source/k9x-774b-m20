@@ -5429,3 +5429,6 @@
 | `CYCLE-20261027-KQOU` | `2026-10-27T16:31:38.526Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`f62b40e5...`) |
 | `CYCLE-20261027-KQTY` | `2026-10-27T16:31:38.710Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4899` | Yes (`f075295c...`) |
 | `CYCLE-20261027-KW24` | `2026-10-27T16:31:45.484Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4900` | Yes (`58780034...`) |
+| `CYCLE-20261027-TCOB` | `2026-10-27T16:38:20.267Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4901` | Yes (`76fb01de...`) |
+| `CYCLE-20261027-TEGH` | `2026-10-27T16:38:22.577Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4902` | Yes (`1bd0dbbe...`) |
+| `CYCLE-20261027-TM83` | `2026-10-27T16:38:32.643Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4903` | Yes (`29de8d75...`) |

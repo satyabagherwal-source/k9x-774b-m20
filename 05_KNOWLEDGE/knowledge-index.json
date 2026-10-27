@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:31:45.426Z",
+  "last_updated": "2026-10-27T16:38:32.584Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -29498,14 +29498,19 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "5d27942c",
-      "content_hash": "b684a7b3556cfc0a9f2710c2eb2ff375beca5335b999d97fe90c07d6cdc886bb",
+      "source_version": "6e4ce04b",
+      "content_hash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
         {
           "number": 2481,
           "title": "corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4903,
+          "title": "mem-index (#3528)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29514,7 +29519,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:54:33.334Z",
+      "verified_at": "2026-10-27T16:38:32.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55192,8 +55197,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "72067296",
-      "content_hash": "b2b6c53ee0393d44b3146dafff718e166ba72a1b5d33796fe562dd442b31e4f9",
+      "source_version": "4def5663",
+      "content_hash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -55241,6 +55246,11 @@
           "number": 4031,
           "title": "rust): preserve command results when stdout closes early (#270)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4901,
+          "title": "ci): build Rust npm packages for Windows ARM64 (#266)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55248,7 +55258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:59:27.208Z",
+      "verified_at": "2026-10-27T16:38:20.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68163,8 +68173,8 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "1dde7a86",
-      "content_hash": "adc5ec409cee15c81829eb439a040692265f6a7fca1bb9df9c2171e1ac5465e0",
+      "source_version": "66b6e565",
+      "content_hash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
@@ -68187,6 +68197,11 @@
           "number": 3802,
           "title": "Orphaned VNode Root Boundary Reset",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4902,
+          "title": "avoid String coercion when diffing symbol-marked VNodes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68194,7 +68209,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:06:47.984Z",
+      "verified_at": "2026-10-27T16:38:22.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136133,6 +136148,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:31:45.413Z"
+    },
+    "rule-4901": {
+      "learning_id": "rule-4901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4901,
+      "title": "ci): build Rust npm packages for Windows ARM64 (#266)",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "4def5663",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:38:20.196Z"
+    },
+    "rule-4902": {
+      "learning_id": "rule-4902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4902,
+      "title": "avoid String coercion when diffing symbol-marked VNodes",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "66b6e565",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:38:22.507Z"
+    },
+    "rule-4903": {
+      "learning_id": "rule-4903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4903,
+      "title": "mem-index (#3528)",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "6e4ce04b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:38:32.571Z"
     }
   },
   "aliases": {

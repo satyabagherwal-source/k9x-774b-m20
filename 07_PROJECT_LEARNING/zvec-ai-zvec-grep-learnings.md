@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `72067296`  
+> **Source Version**: `4def5663`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:59:26.827Z  
+> **Timestamp**: 2026-10-27T16:38:19.845Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:59:26.817Z  
+> **Harvest Timestamp**: 2026-10-27T16:38:18.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4170 stars
+- **Stars / Engagement**: 4190 stars
 
 ---
 
@@ -1118,890 +1118,1410 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2fa4b40` (2026-10-23)
-**Commit Message**: fix(rust): preserve command results when stdout closes early (#270)
+### Incident Patch 1: `3ee5cbe3` (2026-10-26)
+**Commit Message**: feat(ci): build Rust npm packages for Windows ARM64 (#266)
 
-CLI stdout used panicking print macros or propagated BrokenPipe before readiness checks. Ignore only broken-pipe writes at the output boundary so validation and cleanup continue, matching the Node.js CLI behavior.
+* feat(ci): build Rust npm packages for Windows ARM64
 
-**File**: `rust/crates/zg-cli/src/install.rs` (modified, +32/-26)
+* fix(ci): use Clang for Windows ARM64 model runtimes
+
+* fix(ci): preserve MSVC flags with the Clang CL frontend
+
+* fix(ci): enable C++ exceptions for Windows ARM64 wrappers
+
+* feat(ci): package Windows ARM64 with the prebuilt zvec SDK
+
+* fix(ci): use the installed Visual Studio on Windows ARM64
+
+* build: use r2 llama SDKs for Windows ARM64 and CUDA
+
+* build: keep CUDA SDK at r1 with Windows ARM64 CPU support
+
+* docs: describe Windows ARM64 prebuilt SDK packaging
+
+---------
+
+Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/rust-package-build.yml` (modified, +32/-4)
 ```diff
-@@ -135,7 +135,7 @@ struct AgentOptions {
- /// Returns an error when target selection, configuration validation, or an
- /// atomic file update fails.
- pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallError> {
--    print_header();
-+    print_header()?;
-     let detected = detect_agents();
-     let agents = resolve_agents(
-         args.targets.iter().chain(&args.positional_targets),
-@@ -144,7 +144,7 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
-         "install",
-     )?;
-     if agents.is_empty() {
--        println!("\nNo agent integrations selected.");
-+        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
-         return Ok(InstallOutcome {
-             agent_labels: Vec::new(),
-             transport: args.transport.unwrap_or_default(),
-@@ -160,18 +160,18 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
-         token_env: args.mcp_token_env.clone(),
-     };
+@@ -15,14 +15,14 @@ permissions:
  
--    println!("\nInstalling integrations\n");
-+    writeln!(crate::stdout(), "\nInstalling integrations\n")?;
-     for agent in &agents {
-         let result = install_agent(*agent, &options)?;
--        println!("  ✓ {}", agent.label());
--        println!("    MCP       configured");
-+        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
-+        writeln!(crate::stdout(), "    MCP       configured")?;
-         if let Some(path) = result.config_path {
--            println!("    Config    {}", path.display());
-+            writeln!(crate::stdout(), "    Config    {}", path.display())?;
-         }
-         if let Some(note) = result.config_note {
--            println!("    Note      {note}");
-+            writeln!(crate::stdout(), "    Note      {note}")?;
-         }
--        println!();
-+        writeln!(crate::stdout())?;
-     }
+ env:
+   CARGO_TERM_COLOR: always
+-  # Every release target has a pinned SDK. Drift must fail, not rebuild CUDA.
++  # Every release target has a pinned SDK. Drift must fail, not rebuild llama.cpp.
+   LLAMA_CPP_BUILD_MODE: prebuilt
  
-     Ok(InstallOutcome {
-@@ -188,7 +188,7 @@ pub fn execute_install(args: &InstallArgs) -> Result<InstallOutcome, InstallErro
- /// Returns an error when an existing configuration is invalid or a file update
- /// fails.
- pub fn execute_uninstall(args: &UninstallArgs) -> Result<(), InstallError> {
--    print_header();
-+    print_header()?;
-     let detected = detect_agents();
-     let agents = resolve_agents(
-         args.targets.iter().chain(&args.positional_targets),
-@@ -197,23 +197,27 @@ pub fn execute_uninstall(args: &UninstallArgs) -> Result<(), InstallError> {
-         "uninstall",
-     )?;
-     if agents.is_empty() {
--        println!("\nNo agent integrations selected.");
-+        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
-         return Ok(());
-     }
- 
--    println!("\nRemoving integrations\n");
-+    writeln!(crate::stdout(), "\nRemoving integrations\n")?;
-     for agent in agents {
-         uninstall_agent(agent)?;
--        println!("  ✓ {}", agent.label());
--        println!("    integration removed");
-+        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
-+        writeln!(crate::stdout(), "    integration removed")?;
-     }
--    println!("\nRestart the selected agents or start a new session to apply the change.");
-+    writeln!(
-+        crate::stdout(),
-+        "\nRestart the selected agents or start a new session to apply the change."
-+    )?;
-     Ok(())
- }
- 
--fn print_header() {
--    println!("zvec-grep setup");
--    println!("{}", "─".repeat(40));
-+fn print_header() -> io::Result<()> {
-+    let mut output = crate::stdout();
-+    writeln!(output, "zvec-grep setup")?;
-+    writeln!(output, "{}", "─".repeat(40))
- }
- 
- fn resolve_transport(
-@@ -226,8 +230,8 @@ fn resolve_transport(
-     if yes || !io::stdin().is_terminal() || !io::stdout().is_terminal() {
-         return Ok(McpInstallTransport::Stdio);
-     }
--    print!("MCP transport [stdio] (stdio/http): ");
--    io::stdout().flush()?;
-+    write!(crate::stdout(), "MCP transport [stdio] (stdio/http): ")?;
-+    crate::stdout().flush()?;
-     let mut answer = String::new();
-     io::stdin().read_line(&mut answer)?;
-     match answer.trim().to_ascii_lowercase().as_str() {
-@@ -262,14 +266,15 @@ fn resolve_agents<'a>(
-             .collect());
-     }
- 
--    println!(
-+    writeln!(
-+        crate::stdout(),
-         "\n{}\n",
-         if action == "install" {
-             "Choose agent integrations"
-         } else {
-             "Choose integrations to remove"
-         }
--    );
-+    )?;
-     prompt_agent_selection(detected)
- }
- 
-@@ -304,7 +309,7 @@ fn prompt_agent_selection(detected: &BTreeSet<Agent>) -> Result<Vec<Agent>, Inst
-         .iter()
-         .position(|agent| detected.contains(agent))
-         .unwrap_or(0);
--    let mut output = io::stdout().lock();
-+    let mut output = crate::stdout();
-     render_agent_selection(&mut output, active_index, detected, false)?;
-     loop {
-         let Event::Key(key) = event::read()? else {
-@@ -379,7 +384,8 @@ fn render_agent_selection(
- 
- fn prompt_agent_line_selection(detected: &BTreeSet<Agent>) -> Result<Vec<Agent>, InstallError> {
-     for (index, agent) 
+ jobs:
+   native:
+     name: Build ${{ inputs.target }}
+     runs-on: ${{ inputs.runner }}
+-    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc') && 180 || 90 }}
++    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc' || inputs.target == 'win32-arm64-msvc') && 180 || 90 }}
+     defaults:
+       run:
+         working-directory: rust
+@@ -33,6 +33,7 @@ jobs:
+       - uses: actions/setup-node@v6
+         with:
+           node-version: 24
++          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+       - name: Configure native build parallelism
+         shell: node {0}
+         run: |
+@@ -49,6 +50,7 @@ jobs:
+         if: runner.os == 'Windows'
+         with:
+           python-version: "3.12"
++          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+       - name: Use a short Windows Cargo home
+         if: runner.os == 'Windows'
+         shell: python
+@@ -66,8 +68,9 @@ jobs:
+         if: runner.os == 'Windows'
+         uses: ilammy/msvc-dev-cmd@v1
+         with:
+-          arch: x64
+-          vsversion: "2022"
++          arch: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
++          # ARM64 follows the runner image's installed Visual Studio version.
++          vsversion: ${{ inputs.target == 'win32-x64-msvc' && '2022' || '' }}
+       - name: Install Linux build dependencies
+         if: runner.os == 'Linux' && inputs.target != 'linux-x64-gnu'
+         run: |
+@@ -77,11 +80,24 @@ jobs:
+         id: rust-version
+         shell: bash
+         run: echo "channel=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
++      - name: Select the native Windows ARM64 Rust host
++        if: inputs.target == 'win32-arm64-msvc'
++        run: rustup set default-host aarch64-pc-windows-msvc
+       - name: Install the pinned Rust toolchain, including rustup if missing
+         # Linux x64 compiles in Docker, but host packaging still uses cargo metadata.
+         uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+         with:
+           toolchain: ${{ steps.rust-version.outputs.channel }}
++      - name: Verify native Windows toolchains
++        if: runner.os == 'Windows'
++        env:
++          EXPECTED_ARCH: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
++          EXPECTED_HOST: ${{ inputs.target == 'win32-arm64-msvc' && 'aarch64-pc-windows-msvc' || 'x86_64-pc-windows-msvc' }}
++        run: |
++          node -e "if (process.arch !== process.env.EXPECTED_ARCH) throw new Error('unexpected Node architecture: ' + process.arch)"
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          $hostLine = rustc -vV | Select-String '^host: '
++          if ($hostLine.ToString() -ne "host: $env:EXPECTED_HOST") { throw "Unexpected Rust host: $hostLine" }
+       - name: Restore Cargo build state
+         id: cargo-cache
+         uses: actions/cache/restore@v5
+@@ -112,6 +128,18 @@ jobs:
+         with:
+           path: rust/target/ort-cuda12/
+           key: rust-ort-cuda12-v1-${{ inputs.target }}-${{ hashFiles('rust/scripts/cuda/prepare-onnxruntime.py') }}
++      - name: Restore the Windows ARM64 ONNX Runtime
++        if: inputs.target == 'win32-arm64-msvc'
++        uses: actions/cache@v5
++        with:
++          path: rust/target/ort-prebuilt/
++          key: rust-ort-windows-v2-${{ inputs.target }}-${{ hashFiles('rust/Cargo.lock', 'rust/scripts/prepare-onnxruntime-windows.py') }}
++      - name: Prepare the verified Windows ARM64 ONNX Runtime
++        if: inputs.target == 'win32-arm64-msvc'
++        run: |
++          python scripts/test-prepare-onnxruntime-windows.py
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          python scripts/prepare-onnxruntime-windows.py --target aarch64-pc-windows-msvc
+       - name: Restore the Intel macOS ONNX Runtime
+         if: inputs.target == 'darwin-x64'
+         id: ort-cache
 ```
 
-**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +2/-0)
+**File**: `.github/workflows/rust-publish.yml` (modified, +9/-2)
 ```diff
-@@ -11,6 +11,7 @@ mod progress;
- mod render;
- mod setup;
- mod status;
-+mod stdio;
- mod terminal;
- mod theme;
- pub use management::{
-@@ -24,6 +25,7 @@ pub use setup::{
-     prompt_setup_credential,
- };
- pub use status::{write_info_result, write_info_with_options};
-+pub use stdio::stdout;
- pub use terminal::{stderr_supports_ansi, stdout_supports_ansi};
- 
- use std::{
+@@ -19,6 +19,7 @@ on:
+           - all
+           - linux-x64-gnu
+           - win32-x64-msvc
++          - win32-arm64-msvc
+           - linux-arm64-gnu
+           - darwin-arm64
+           - darwin-x64
+@@ -76,6 +77,7 @@ jobs:
+             { target: 'linux-x64-gnu', runner: 'ubuntu-24.04', gpu_runner: 'gpu-linux-t4' },
+             { target: 'linux-arm64-gnu', runner: 'ubuntu-24.04-arm', gpu_runner: '' },
+             { target: 'win32-x64-msvc', runner: 'windows-2022', gpu_runner: 'gpu-windows-t4' },
++            { target: 'win32-arm64-msvc', runner: 'windows-11-arm', gpu_runner: '' },
+           ];
+           if (!['all', ...platforms.map(p => p.target)].includes(platform)) {
+             throw new Error(`Unknown build platform: ${platform}`);
+@@ -252,10 +254,12 @@ jobs:
+       - uses: actions/setup-node@v6
+         with:
+           node-version: 24
++          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+       - uses: actions/setup-python@v6
+         if: runner.os == 'Windows'
+         with:
+           python-version: "3.12"
++          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+       - name: Install the release npm version
+         run: npm install --global npm@11.21.0
+       - uses: actions/download-artifact@v8
+@@ -295,7 +299,7 @@ jobs:
+                 --model-cache /model-cache --logs /work/cpu-logs
+             '
+       - name: Install and exercise the downloaded artifacts without Windows CUDA libraries
+-        if: runner.os == 'Windows'
++        if: matrix.target == 'win32-x64-msvc'
+         shell: pwsh
+         run: |
+           # Hosted CPU images may include toolkit paths; do not let them satisfy DLL dependencies.
+@@ -313,7 +317,7 @@ jobs:
+         run: |
+           mkdir -p cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
+           sudo chown -R "$(id -u):$(id -g)" cpu-logs "${RUNNER_TEMP}/zvec-grep-model-cache"
+-      - name: Install and exercise the macOS and Linux ARM64 artifacts
++      - name: Install and exercise the non-CUDA platform artifacts
+         if: ${{ !matrix.cuda_package }}
+         run: npm run release:artifact-smoke -- --expect-cpu
+       - name: Retain CPU artifact execution evidence
+@@ -389,13 +393,16 @@ jobs:
+             runner: ubuntu-24.04-arm
+           - target: win32-x64-msvc
+             runner: windows-2022
++          - target: win32-arm64-msvc
++            runner: windows-11-arm
+     steps:
+       - uses: actions/checkout@v6
+         with:
+           persist-credentials: false
+       - uses: actions/setup-node@v6
+         with:
+           node-version: 24
++          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+       - name: Install the release npm version
+         run: npm install --global npm@11.21.0
+       - uses: actions/download-artifact@v8
 ```
 
-**File**: `rust/crates/zg-cli/src/render.rs` (modified, +4/-3)
+**File**: `rust/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -326,9 +326,10 @@ pub fn help_text(topic: Option<&str>) -> Result<String, HelpTopicError> {
- ///
- /// # Errors
- ///
--/// Returns an error when `topic` is not part of the public help surface.
--pub fn print_help(topic: Option<&str>) -> Result<(), HelpTopicError> {
--    println!("{}", help_text(topic)?);
-+/// Returns an error when `topic` is not part of the public help surface or
-+/// stdout fails for a reason other than a closed pipe.
-+pub fn print_help(topic: Option<&str>) -> Result<(), Box<dyn std::error::Error>> {
-+    writeln!(crate::stdout(), "{}", help_text(topic)?)?;
-     Ok(())
- }
- 
+@@ -1667,7 +1667,7 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+ [[package]]
+ name = "llama-cpp-2"
+ version = "0.1.154"
+-source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=0e2d4b520af769de221c1bf98bbbf1b2accf4ddc#0e2d4b520af769de221c1bf98bbbf1b2accf4ddc"
++source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=660cb4008b36aaefe9f98a590ba3b712b3a95087#660cb4008b36aaefe9f98a590ba3b712b3a95087"
+ dependencies = [
+  "encoding_rs",
+  "enumflags2",
+@@ -1680,7 +1680,7 @@ dependencies = [
+ [[package]]
+ name = "llama-cpp-sys-2"
+ version = "0.1.154"
+-source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=0e2d4b520af769de221c1bf98bbbf1b2accf4ddc#0e2d4b520af769de221c1bf98bbbf1b2accf4ddc"
++source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=660cb4008b36aaefe9f98a590ba3b712b3a95087#660cb4008b36aaefe9f98a590ba3b712b3a95087"
+ dependencies = [
+  "bindgen",
+  "cc",
 ```
 
-**File**: `rust/crates/zg-cli/src/stdio.rs` (added, +81/-0)
+**File**: `rust/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,81 @@
-+use std::io::{self, Write};
+@@ -13,8 +13,8 @@ publish = false
+ 
+ [workspace.dependencies]
+ # Keep the safe API and the C5 FFI boundary on the same pinned native ABI.
+-llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "0e2d4b520af769de221c1bf98bbbf1b2accf4ddc", default-features = false }
+-llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "0e2d4b520af769de221c1bf98bbbf1b2accf4ddc", default-features = false }
++llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "660cb4008b36aaefe9f98a590ba3b712b3a95087", default-features = false }
++llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "660cb4008b36aaefe9f98a590ba3b712b3a95087", default-features = false }
+ async-trait = "0.1.89"
+ axum = "0.8"
+ bytes = "1.12.1"
+```
+
+**File**: `rust/README.md` (modified, +23/-11)
+```diff
+@@ -481,11 +481,13 @@ bash scripts/check.sh
+ ## Native and CUDA builds
+ 
+ The safe llama API and the C5 FFI boundary share the same pinned
+-`zvec-ai/llama-cpp-rs` revision (`0e2d4b520af769de221c1bf98bbbf1b2accf4ddc`).
++`zvec-ai/llama-cpp-rs` revision (`660cb4008b36aaefe9f98a590ba3b712b3a95087`),
++from branch `prebuilt/0.1.154-cpu-r2`.
+ Its sys crate automatically selects a SHA256-pinned SDK when target, features
+-and native options match: `zvec-0.1.154-cpu-r1` for CPU-only Linux/Windows x64,
+-and `zvec-0.1.154-r1` for the existing five release configurations, including
+-CUDA-enabled Linux/Windows x64. Matching builds reuse native
++and native options match: `zvec-0.1.154-cpu-r2` for CPU-only Linux x64 and
++Windows x64/ARM64, and `zvec-0.1.154-r1` for the existing five release configurations,
++including CUDA-enabled Linux/Windows x64. This pin adds Windows ARM64 CPU support
++without introducing the CUDA r2 architecture upgrade. Matching builds reuse native
+ libraries and bindings without executing bindgen, CMake, C++ or CUDA compilation;
+ Rust application code still compiles normally. CPU-only x64 builds download only
+ the static CPU SDK, not the CUDA SDK; CUDA builds retain the shared core, CPU
+@@ -559,7 +561,8 @@ Source-mode CUDA 12.4 on Windows requires MSVC 14.38 before running
+ `scripts/cuda/build-fallback.py`. Matching SDK builds copy that plugin directly,
+ so neither a second CMake build nor the fallback toolchain is needed.
+ 
+-Publish CI requires prebuilt SDKs on all five targets; CUDA Rust CI also requires
++Publish CI requires prebuilt llama SDKs on all six targets, including the
++Windows ARM64 static CPU SDK. CUDA Rust CI also requires
+ prebuilt mode instead of recompiling only for its T4 GPU. Linux publish builds
+ run on Ubuntu 24.04 without a CUDA compiler. Runtime libraries, driver checks,
+ link audits and real CPU/GPU inference gates remain required. Runtime staging
+@@ -756,7 +759,7 @@ contains exactly the target executable. It cannot be combined with
+ `--binary`, `--lib-dir`, or `--cpu-only`. All payload files are checksummed.
+ 
+ The `Publish Rust packages` workflow builds the selected published native targets
+-(all five by default) on matching CPU runners. It runs only through manual
++(all six by default) on matching CPU runners. It runs only through manual
+ dispatch. With `publish` left at its default `false`, it produces downloadable
+ candidates without publishing to npm. Each CPU artifact-verification runner installs
+ its platform and meta tarballs, then runs `zg --version`, checks managed-rg,
+@@ -773,8 +776,8 @@ requested GPU jobs then verify the exact collected tarballs, including CLI,
+ managed-rg, and daemon IPC checks on every selected platform.
+ 
+ The packaging workflow's manual `platform` input defaults to `all`. Select any
+-of `darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`, or
+-`win32-x64-msvc` for an individual build. For example, to validate Linux x64:
++of `darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`,
++`win32-x64-msvc`, or `win32-arm64-msvc` for an individual build. For example, to validate Linux x64:
+ 
+ ```sh
+ gh workflow run rust-publish.yml --ref <branch> \
+@@ -867,9 +870,18 @@ and is covered by the existing `rust/target/release` cache. ONNX Runtime is
+ cached separately; both shared libraries are included in the npm payload.
+ The Intel release targets macOS 14 and later.
+ 
++Windows ARM64 builds and tests natively on `windows-11-arm` with ARM64 Node,
++Rust, and MSVC. zvec-rust 0.8.0 automatically downloads its Windows ARM64
++prebuilt SDK and stages `zvec_c_api.dll` for packaging; no local zvec source
++build is needed. ONNX Runtime uses the SHA-256-verified ARM64 DirectML archive
++from the locked dependency's distribution manifest. llama-cpp-rs selects the
++SHA-256-pinned Windows ARM64 static CPU SDK from `zvec-0.1.154-cpu-r2`, without
++running bindgen, CMake or a C++ compiler. No Clang/Ninja overrides are needed. npm selects
++`@zvec/zvec-grep-win32-arm64-msvc` for ARM64 Node on Windows.
 +
-+/// Locks CLI stdout, ignoring a consumer that closes its pipe early.
-+///
-+/// Only stdout writes and flushes suppress `BrokenPipe`; command validation and
-+/// cleanup continue normally. Long-lived transports use their own stdout.
-+#[must_use]
-+pub fn stdout() -> impl Write {
-+    IgnoreBrokenPipe(io::stdout().lock())
+ For a complete all-platform run, download the `rust-release-<version>` artifact
+ from the successful workflow run
+-and unzip it. It contains five base platform tarballs, seven CUDA component
++and unzip it. It contains six base platform tarballs, seven CUDA component
+ tarballs, the meta tarball,
+ `SHA256SUMS`, `release.json` with the source commit, and platform-specific install
+ commands. For example, on an ARM64 Mac:
+@@ -899,7 +911,7 @@ Failure blocks npm publication; the candidate artifact is kept for diagnosis.
+ 
+ To publish, update the Rust workspace version, tag the release commit on `main`
+ as `rust-v<version>`, and manually run the workflow with `publish` enabled. The
+-publishing repository must have an npm trusted publisher configured for all 13
++publishing repository must have an npm trusted publisher configured for all 14
+ packages with both **Allow npm publish** and the independent **Allow npm
+ dist-tag** permission enabled, or provide an eligibl
+```
+
+**File**: `rust/npm/README.md` (modified, +22/-9)
+```diff
+@@ -6,7 +6,7 @@ x64. `platforms.json` is the single source of truth for package
+ names and npm `os`, `cpu`, and `libc` selectors.
+ 
+ The current published targets are macOS ARM64/x64, Linux x64/ARM64 with glibc,
+-and Windows x64.
++and Windows x64/ARM64.
+ 
+ After installation, the meta package retains the existing runtime paths. CUDA
+ files are present only after successful plugin installation:
+@@ -28,8 +28,8 @@ The Linux x64 base package's `plugins.json` references `-ggml-cuda13`, `-ggml-cu
+ `-ort-cuda-part1` and `-ort-cuda-part2` packages. Windows x64 references
+ `-ggml-cuda13`, `-ggml-cuda12` and `-ort-cuda`. These suffixes extend the base
+ platform package name. macOS, Linux ARM64 and deliberate CPU-only builds remain
+-single native packages. A default all-platform release contains 13 tarballs:
+-five base packages, seven runtime components and the meta package.
++single native packages. A default all-platform release contains 14 tarballs:
++six base packages, seven runtime components and the meta package.
+ 
+ The base package retains the executable and CPU/core libraries, including
+ zvec's embedded Jieba dictionary; no external dictionary files are required.
+@@ -123,14 +123,15 @@ Published target/backend support is:
+ | Linux x64 glibc (Ubuntu 24.04 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
+ | Linux ARM64 glibc | CPU | CPU |
+ | Windows x64 | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
++| Windows ARM64 | CPU | CPU + DirectML |
+ 
+ A deliberate CPU-only Windows build retains DirectML. The published Windows
+ CUDA bundle uses the official ONNX Runtime 1.28.0 CUDA 12 provider and does not
+ claim DirectML support. ORT requires CUDA 12 runtime/cuBLAS and cuDNN 9 even
+ when GGUF uses CUDA 13; the two runtime families can coexist. NVIDIA driver,
+ CUDA runtime, cuBLAS and cuDNN remain host dependencies, not bundled libraries.
+ macOS keeps its existing ONNX CPU routing because of CoreML regressions.
+-Linux musl, Windows ARM64, CUDA on ARM64/macOS and Vulkan packages are not in
++Linux musl, CUDA on ARM64/macOS and Vulkan packages are not in
+ the release matrix.
+ 
+ The CUDA 13.1 primary GGUF plugin uses
+@@ -226,19 +227,20 @@ Release order:
+    CUDA targets also force a registry plugin installation and verify its hashes
+    and core identity; CPU fallback must not hide a plugin-fetch failure.
+ 6. Promote native `latest` tags and then the meta `latest` tag in a separate job,
+-   only after all five registry install/update/rollback jobs pass.
++   only after all six registry install/update/rollback jobs pass.
+ 
+ `.github/workflows/rust-publish.yml` builds and packs the selected targets once on
+ their native runners in parallel, collects the candidates into a downloadable
+ artifact, then checks real installation, CLI startup, managed-rg and daemon IPC.
+ The workflow runs only through manual dispatch and does not publish unless
+ `publish` is enabled. The manual
+-`platform` input defaults to `all`; each of the five target names can be selected
++`platform` input defaults to `all`; each of the six target names can be selected
+ individually.
+ `publish=true` requires `platform=all`; a subset is a validation-only candidate,
+ not a complete release. Manual runs with `publish=false, cuda=false` use ordinary CPU runners;
+-they do not allocate GPUs or publish packages. All five package builds require
+-the pinned llama-cpp-rs prebuilt SDK. Linux/Windows x64 still produce CUDA-capable
++they do not allocate GPUs or publish packages. All six package builds require
++the pinned llama-cpp-rs prebuilt SDK, including the Windows ARM64 static CPU
++SDK. Linux/Windows x64 still produce CUDA-capable
+ bundles, but neither the 13.1 primary nor 12.4 fallback is compiled in zg CI.
+ All packaging builds stay on ordinary CPU runners, including when `cuda=true`
+ or `publish=true`. Manual `cuda=true` runs add separate Linux/Windows x64 GPU
+@@ -256,6 +258,17 @@ CoreML and zvec SDK are built from
+ pinned sources, cached, and bundled with the native package. The Intel release
+ targets macOS 14 and later.
+ 
++Windows ARM64 uses `windows-11-arm` with ARM64 Node, Rust, and MSVC. It uses
++zvec-rust 0.8.0's automatically selected Windows ARM64 prebuilt SDK instead of
++building zvec from source. The shared DLL is staged by zvec-rust-build and
++bundled in `@zvec/zvec-grep-win32-arm64-msvc`. ONNX Runtime uses the locked
++ARM64 DirectML distribution with SHA-256 verification and a separate cache.
++llama-cpp-rs selects the SHA-256-pinned Windows ARM64 static CPU SDK from
++`zvec-0.1.154-cpu-r2`, without running bindgen, CMake, or a C++ compiler.
++No Clang/Ninja overrides are needed during packaging. The installed artifacts
++receive the same CLI, managed-rg, and direct/server daemon IPC checks as the
++other non-CUDA targets.
++
+ Build jobs select Cargo/CMake parallelism from the runner's available CPUs and
+ total memory, budgeting 3 GiB per job and capping concurrency at 8. The Linux
+ builder receives the same limits. This is a conservative 
+```
+
+**File**: `rust/npm/meta/install.test.cjs` (modified, +7/-0)
+```diff
+@@ -126,6 +126,13 @@ test("selects one published platform and rejects unsupported libc", () => {
+   );
+ });
+ 
++test("selects the ARM64 Windows optional dependency from the release manifest", () => {
++  const manifest = JSON.parse(readFileSync(join(__dirname, "..", "platforms.json"), "utf8"));
++  const selected = selectPlatform(manifest.platforms, "win32", "arm64");
++  assert.equal(selected.package, "@zvec/zvec-grep-win32-arm64-msvc");
++  assert.equal(selected.binary, "zg.exe");
++});
++
+ function componentFixture(target = "linux-x64-gnu") {
+   const paths = fixture();
+   const platform = require("../platforms.json").platforms.find((candidate) => candidate.target === target);
+```
+
+**File**: `rust/npm/platforms.json` (modified, +7/-0)
+```diff
+@@ -80,6 +80,13 @@
+           "payload": "lib/onnxruntime_providers_cuda.dll"
+         }
+       ]
++    },
++    {
++      "target": "win32-arm64-msvc",
++      "package": "@zvec/zvec-grep-win32-arm64-msvc",
++      "os": "win32",
++      "cpu": "arm64",
++      "binary": "zg.exe"
+     }
+   ]
+ }
+```
+
+---
+
+### Incident Patch 2: `3a8e513d` (2026-10-26)
+**Commit Message**: fix(rust): restore query term highlighting in search results (#293)
+
+* fix(rust): restore query term highlighting in search results
+
+Search rendering has only colored headings since the initial Rust workspace import (b1d0ce9a83). Highlight visible source previews and managed rg content using the Node.js phrase and token rules, while preserving Unicode source text and the existing color policy.
+
+* test(rust): expect query highlighting in colored config output
+
+The config CLI integration test kept a plain-text source assertion under --color always. Query highlighting inserts ANSI sequences between the line prefix and matched term, causing the same assertion to fail on all three CI platforms. Assert the highlighted term while retaining the no-color output check.
+
+* fix(rust): highlight managed rg results with actual match ranges
+
+Display queries discard regex options, pattern files and multiple Unicode patterns. Record exact match ranges with the search matcher, transport them with context results, and paint those source spans in the CLI. Keep phrase and token highlighting for indexed queries.
+
+**File**: `rust/README.md` (modified, +5/-0)
+```diff
+@@ -406,6 +406,11 @@ Restart older resident daemons when updating the CLI; replies without
+ `content_range` are rejected during deserialization. Direct and server rendering
+ consume the same engine contract.
+ 
++Managed rg results also provide optional `match_ranges` in decoded UTF-8 source
++coordinates. Terminal highlighting uses these actual matches, preserving regex,
++case, whole-word, and pattern-file semantics. Empty ranges are omitted; older
++replies without this field remain readable.
++
+ Public search reports `freshness: fresh` or `freshness: possibly_stale`.
+ `results: served_from_current_index` describes where results came from, with
+ `background_refresh` reported separately. A provider that only reports current
+```
+
+**File**: `rust/crates/zg-cli/src/highlight.rs` (added, +221/-0)
+```diff
+@@ -0,0 +1,221 @@
++use std::borrow::Cow;
++
++use grep::{
++    matcher::Matcher,
++    regex::{RegexMatcher, RegexMatcherBuilder},
++};
++
++#[derive(Default)]
++pub(crate) struct QueryHighlighter {
++    matchers: Vec<RegexMatcher>,
 +}
 +
-+struct IgnoreBrokenPipe<W>(W);
-+
-+impl<W: Write> Write for IgnoreBrokenPipe<W> {
-+    fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
-+        match self.0.write(buffer) {
-+            Err(error) if error.kind() == io::ErrorKind::BrokenPipe => Ok(buffer.len()),
-+            result => result,
++impl QueryHighlighter {
++    pub fn new(query: &str, enabled: bool) -> Self {
++        if !enabled {
++            return Self::default();
++        }
++        let query = query.trim();
++        let mut terms = Vec::new();
++        if query.encode_utf16().count() > 1 {
++            terms.push(query);
++        }
++        // Keep the phrase and token rules aligned with the Node.js CLI.
++        let Ok(tokenizer) = RegexMatcher::new(r"[A-Za-z_~][A-Za-z0-9_~]*|[0-9]+(?:\.[0-9]+)?")
++        else {
++            return Self::default();
++        };
++        let _ = tokenizer.find_iter(query.as_bytes(), |found| {
++            let term = &query[found.start()..found.end()];
++            if term.len() >= 2 && !is_ignored_term(term) {
++                terms.push(term);
++            }
++            true
++        });
++        terms.sort_unstable();
++        terms.dedup();
++        Self {
++            matchers: terms
++                .into_iter()
++                .filter_map(|term| {
++                    RegexMatcherBuilder::new()
++                        .fixed_strings(true)
++                        .case_insensitive(true)
++                        .build(term)
++                        .ok()
++                })
++                .collect(),
 +        }
 +    }
 +
-+    fn flush(&mut self) -> io::Result<()> {
-+        match self.0.flush() {
-+            Err(error) if error.kind() == io::ErrorKind::BrokenPipe => Ok(()),
-+            result => result,
++    pub fn highlight<'a>(&self, value: &'a str) -> Cow<'a, str> {
++        let mut ranges = Vec::new();
++        for matcher in &self.matchers {
++            if matcher
++                .find_iter(value.as_bytes(), |found| {
++                    ranges.push((found.start(), found.end()));
++                    true
++                })
++                .is_err()
++            {
++                return Cow::Borrowed(value);
++            }
++        }
++        highlight_ranges(value, ranges)
++    }
++}
++
++pub(crate) fn highlight_ranges(
++    value: &str,
++    ranges: impl IntoIterator<Item = (usize, usize)>,
++) -> Cow<'_, str> {
++    let mut ranges: Vec<_> = ranges
++        .into_iter()
++        .map(|(start, end)| (start, end.min(value.len())))
++        .filter(|&(start, end)| {
++            start < end && value.is_char_boundary(start) && value.is_char_boundary(end)
++        })
++        .collect();
++    if ranges.is_empty() {
++        return Cow::Borrowed(value);
++    }
++    ranges.sort_unstable();
++    let mut merged: Vec<(usize, usize)> = Vec::new();
++    for (start, end) in ranges {
++        if let Some(previous) = merged.last_mut()
++            && start <= previous.1
++        {
++            previous.1 = previous.1.max(end);
++        } else {
++            merged.push((start, end));
 +        }
 +    }
++    let mut output = String::new();
++    let mut cursor = 0;
++    for (start, end) in merged {
++        output.push_str(&value[cursor..start]);
++        output.push_str("\x1b[1;33m");
++        output.push_str(&value[start..end]);
++        output.push_str("\x1b[0m");
++        cursor = end;
++    }
++    output.push_str(&value[cursor..]);
++    Cow::Owned(output)
++}
++
++fn is_ignored_term(term: &str) -> bool {
++    matches!(
++        term.to_ascii_lowercase().as_str(),
++        "a" | "an"
++            | "and"
++            | "are"
++            | "as"
++            | "by"
++            | "class"
++            | "enum"
++            | "find"
++            | "for"
++            | "from"
++            | "function"
++            | "how"
++            | "in"
++            | "interface"
++            | "is"
++            | "method"
++            | "of"
++            | "on"
++            | "or"
++            | "struct"
++            | "the"
++            | "to"
++            | "type"
++            | "what"
++            | "where"
++    )
 +}
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
 +
-+    struct Consumer {
-+        remaining: usize,
-+        error: io::ErrorKind,
-+    }
-+
-+    impl Write for Consumer {
-+        fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
-+            if self.remaining == 0 {
-+                return Err(self.error.into());
-+            }
-+            let written = buffer.len().min(self.remaining);
-+            self.remaining -= written;
-+            Ok(written)
-+        }
-+
-+        fn flush(&mut self) -> io::Result<()> {
-+            Err(self.error.into())
-+        }
++    #[test]
++    fn source_ranges_merge_and_clip_without_splitting_utf8() {
++        assert_eq!(
++            highlight_ranges("前needle后", [(6, 9), (3, 8), (0, 1), (9, usize::MAX)]),
++            "前\x1b[1;33mneedle后\x1b[0m"
++        );
++        assert_eq!(
++            highlight_ranges("前", [(0, 1), (1, 2), (3, 3), (usize::MAX, usize::MAX)]),
++            "前"
++        );
 +    }
 +
 +    #[test]
-+    fn partial_consumption_and_broken_pipe_flush_are_ignored() {
-+        let mut writer = IgnoreBrokenPipe(Consumer {
-+            remaining: 3,
-+            error: io::ErrorKind::BrokenPipe,
-+        });
-+        writer
-+            .write_all(b"first chunk")
-+            .expect("partial consumption");
-+        writer.write_all(b"later chunk").expect("closed consumer");
-+        writer.flush().expect("closed consumer flush");
-+    }
-+
-+    #[test]
-+    fn other_io_errors_are_propagated() {
-+        for kind in [io::ErrorKind::PermissionDenied, io::ErrorKind::WriteZero] {
-+            let mut writer = IgnoreBrokenPipe(Consumer {
-+                remaining: 0,
-+                error: kind,
-+            });
-+            assert_eq!(
-+                writer.write_all(b"chunk").expect_err("write error").kind(),
-+                kind
-+            );
-+            assert_eq!(writer.flush().expect_err("flush error").kind(), kind);
-+        }
-+    }
-+}
++    fn query_terms_follow_phrase_token_and_overlap_rules() {
++        for (query, source, expected) in [
++            (
++                "find ImportantSymbol",
++                "prefix IMPORTANTsymbol here",
++                "prefix \x1b[1;33mIMPORTANTsymbol\x1b[0m here",
++            ),
++            (
++                "find needle",
++                "find needle and needle",
++                "\x1b[1;33mfind needle\x1b[0m and \x1b[1;33mneedle\x1b[0m",
++            ),
++            ("abcd cdef", "abcdef", "\x1b[1;33mabcdef\x1b[0m"),
++            (
++                "needle needles",
++                "needlesneedle",
++                "\x1b[1;33mneedlesneedle\x1b[0m",
++            ),
++            (
++              
 ```
 
-**File**: `rust/crates/zg/src/main.rs` (modified, +49/-33)
+**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -1,6 +1,6 @@
- use std::{
-     error::Error,
--    io::{self, IsTerminal},
-+    io::{self, IsTerminal, Write},
-     path::Path,
-     process::ExitCode,
-     sync::{
-@@ -66,7 +66,7 @@ fn run() -> Result<ExitCode, Box<dyn Error>> {
-         }
-         CliPlan::Version => {
-             warn();
--            println!("{}", env!("CARGO_PKG_VERSION"));
-+            writeln!(zg_cli::stdout(), "{}", env!("CARGO_PKG_VERSION"))?;
-             return Ok(ExitCode::SUCCESS);
-         }
-         _ => {}
-@@ -177,8 +177,8 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
-                     ("Model", reference, path)
-                 }
-             };
--            println!("{label} config: {reference}");
--            println!("Global config: {}", path.display());
-+            writeln!(zg_cli::stdout(), "{label} config: {reference}")?;
-+            writeln!(zg_cli::stdout(), "Global config: {}", path.display())?;
-             Ok(())
-         }
-         CliPlan::Auth(args) => {
-@@ -188,7 +188,7 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
-                 .ok_or_else(|| io::Error::other("auth root is required"))?;
-             if matches!(args.action, zg_cli::AuthAction::Revoke) {
-                 let count = zg_engine::authorization::revoke_all(root)?;
--                zg_cli::write_authorization_revoke_result(io::stdout().lock(), count)?;
-+                zg_cli::write_authorization_revoke_result(zg_cli::stdout(), count)?;
-                 return Ok(ExitCode::SUCCESS);
+@@ -1,6 +1,7 @@
+ //! Command-line parsing, validation, request construction, and terminal rendering.
+ 
+ mod authorization;
++mod highlight;
+ mod install;
+ mod jsonc;
+ mod managed_rg;
+```
+
+**File**: `rust/crates/zg-cli/src/path_lookup.rs` (modified, +1/-0)
+```diff
+@@ -405,6 +405,7 @@ mod tests {
+                     end_byte_column: 18,
+                 }),
+                 content_range: range,
++                match_ranges: Vec::new(),
+                 content: content.into(),
+                 outline: None,
+                 content_role: Some(ContextContentRole::Source),
+```
+
+**File**: `rust/crates/zg-cli/src/render.rs` (modified, +175/-27)
+```diff
+@@ -12,7 +12,10 @@ use zg_engine::api::context::{
+     },
+ };
+ 
+-use crate::output_path;
++use crate::{
++    highlight::{QueryHighlighter, highlight_ranges},
++    output_path,
++};
+ 
+ /// Writes only native file paths, separated by newlines or NUL bytes.
+ ///
+@@ -41,9 +44,18 @@ pub fn write_file_paths(
+ /// # Errors
+ ///
+ /// Returns the underlying writer error.
+-pub fn write_context_result(mut writer: impl Write, result: &ContextResult) -> io::Result<()> {
++pub fn write_context_result(writer: impl Write, result: &ContextResult) -> io::Result<()> {
++    write_rg_context_result(writer, result, false, |value| value)
++}
++
++fn write_rg_context_result(
++    mut writer: impl Write,
++    result: &ContextResult,
++    color: bool,
++    heading: impl Fn(String) -> String,
++) -> io::Result<()> {
+     if result.items.is_empty() {
+-        writeln!(writer, "No matches.")?;
++        writeln!(writer, "{}", heading("No matches.".into()))?;
+         return Ok(());
+     }
+     let mut previous_path: Option<&Path> = None;
+@@ -52,18 +64,52 @@ pub fn write_context_result(mut writer: impl Write, result: &ContextResult) -> i
+             if previous_path.is_some() {
+                 writeln!(writer)?;
              }
-             if matches!(args.action, zg_cli::AuthAction::Grant { .. }) {
-@@ -200,7 +200,7 @@ async fn execute_plan(plan: CliPlan) -> Result<ExitCode, Box<dyn Error>> {
-             }
-             let status = zg_engine::authorization::status_snapshot(root)?;
-             zg_cli::write_authorization_status(
--                io::stdout().lock(),
-+                zg_cli::stdout(),
-                 &status,
-                 if args.no_color {
-                     zg_cli::ColorMode::Never
-@@ -261,30 +261,44 @@ async fn execute_install_plan(args: &zg_cli::InstallArgs) -> Result<(), Box<dyn
-     };
-     if let Some(status) = &status {
-         if status.ready {
--            println!("  ✓ Server");
--            println!(
-+            writeln!(zg_cli::stdout(), "  ✓ Server")?;
+-            writeln!(writer, "{}", output_path(&item.relative_path).display())?;
 +            writeln!(
-+                zg_cli::stdout(),
-                 "    ready at {}",
-                 status
-                     .server_url
-                     .as_deref()
-                     .unwrap_or("http://127.0.0.1:7999/mcp")
--            );
++                writer,
++                "{}",
++                heading(output_path(&item.relative_path).display().to_string())
 +            )?;
-         } else {
--            println!("  ○ Server");
--            println!("    not started; run `zg --server on`");
-+            writeln!(zg_cli::stdout(), "  ○ Server")?;
-+            writeln!(zg_cli::stdout(), "    not started; run `zg --server on`")?;
+             previous_path = Some(item.relative_path.as_path());
          }
-     } else {
--        println!("  ○ Server");
--        println!("    not started; run `zg --server on`");
-+        writeln!(zg_cli::stdout(), "  ○ Server")?;
-+        writeln!(zg_cli::stdout(), "    not started; run `zg --server on`")?;
++        let content = item.content.trim_end();
++        let content = if color {
++            highlight_ranges(content, lexical_content_ranges(item))
++        } else {
++            content.into()
++        };
+         if let Some(first) = item.content_range.start_line() {
+-            writeln!(writer, "  {first}: {}", item.content.trim_end())?;
++            writeln!(writer, "  {first}: {content}")?;
+         } else {
+-            writeln!(writer, "  {}", item.content.trim_end())?;
++            writeln!(writer, "  {content}")?;
+         }
      }
-     if outcome.transport == McpInstallTransport::Stdio {
--        println!("  ✓ Connection");
--        println!("    stdio; reconnects start the server automatically");
-+        writeln!(zg_cli::stdout(), "  ✓ Connection")?;
-+        writeln!(
-+            zg_cli::stdout(),
-+            "    stdio; reconnects start the server automatically"
-+        )?;
-     }
--    println!("\nzvec-grep is ready\n");
--    println!("  Agents       {}", outcome.agent_labels.join(", "));
--    println!("  Remote data  Authorization requested on first remote use");
--    println!("\nRestart the selected agents or start a new session to load the integration.");
-+    writeln!(zg_cli::stdout(), "\nzvec-grep is ready\n")?;
-+    writeln!(
-+        zg_cli::stdout(),
-+        "  Agents       {}",
-+        outcome.agent_labels.join(", ")
-+    )?;
-+    writeln!(
-+        zg_cli::stdout(),
-+        "  Remote data  Authorization requested on first remote use"
-+    )?;
-+    writeln!(
-+        zg_cli::stdout(),
-+        "\nRestart the selected agents or start a new session to load the integration."
-+    )?;
      Ok(())
  }
  
-@@ -334,7 +348,7 @@ async fn execute_request(
-             .await;
-         engine.close();
-         zg_cli::write_path_lookup_result(
--            io::stdout().lock(),
-+            zg_cli::stdout(),
-             io::stderr().lock(),
-             &result?,
-             output,
-@@ -390,7 +404,7 @@ async fn execute_context(
-             return Err(protocol_mismatch("context"));
-         };
-         zg_cli::write_context_with_options(
--            io::stdout().lock(),
-+            zg_cli::stdout(),
-             &result,
-             output,
-             zg_cli::stdout_supports_ansi(),
-@@ -754,7 +768,7 @@ async fn execute_direct_context(
-     }
-     engine.close();
-     zg_cli::write_context_with_options(
--        io::stdout().lock(),
-+        zg_cli::stdout(
-```
-
-**File**: `rust/crates/zg/tests/implicit_index.rs` (modified, +86/-0)
-```diff
-@@ -1,5 +1,6 @@
- use std::{
-     fs,
-+    io::Read,
-     net::TcpListener,
-     process::{Command, Output, Stdio},
-     sync::{
-@@ -200,6 +201,91 @@ fn status_check_ready_keeps_direct_and_server_exit_semantics() {
-     check("! Workspace index needs an update", false);
- }
- 
-+fn with_closed_stdout(mut command: Command) -> Output {
-+    let (reader, writer) = std::io::pipe().expect("stdout pipe");
-+    drop(reader);
-+    command
-+        .stdout(Stdio::from(writer))
-+        .output()
-+        .expect("run with closed stdout")
-+}
-+
-+#[test]
-+fn closed_stdout_preserves_success_and_readiness_errors() {
-+    let mut fixture = Fixture::new();
-+    fixture.start_server();
-+    for args in [
-+        vec!["--version"],
-+        vec!["--help"],
-+        vec!["--server", "status"],
-+        vec!["--status", "--mode", "direct"],
-+        vec!["--status", "--mode", "server"],
-+    ] {
-+        let output = with_closed_stdout(fixture.command(&args));
-+        assert_eq!(output.status.code(), Some(0), "{args:?}: {output:?}");
-+        assert!(output.stderr.is_empty(), "{args:?}: {output:?}");
-+    }
-+    for mode in ["direct", "server"] {
-+        let output =
-+            with_closed_stdout(fixture.command(&["--status", "--mode", mode, "--check-ready"]));
-+        assert_eq!(output.status.code(), Some(1), "{mode}: {output:?}");
-+        assert_eq!(
-+            String::from_utf8_lossy(&output.stderr),
-+            "Error: workspace index is not ready\n",
-+            "{mode}: {output:?}"
-+        );
-+    }
-+    fixture.success(&[
-+        "--index",
-+        "--mode",
-+        "direct",
-+        "--embedding",
-+        "local/potion-code-16m-v2",
-+    ]);
-+    for mode in ["direct", "server"] {
-+        for args in [
-+            vec!["--status", "--mode", mode, "--check-ready"],
-+            vec!["--fts", "needle", "--mode", mode, "--refresh", "off"],
-+        ] {
-+            let output = with_closed_stdout(fixture.command(&args));
-+            assert_eq!(output.status.code(), Some(0), "{args:?}: {output:?}");
-+            assert!(output.stderr.is_empty(), "{args:?}: {output:?}");
-+        }
-+    }
-+    fixture.success(&["--server", "off"]);
-+    fixture.server_started = false;
-+    let output = with_closed_stdout(fixture.command(&["--server", "status", "--check-ready"]));
-+    assert_eq!(output.status.code(), Some(1), "{output:?}");
-+    assert_eq!(
-+        String::from_utf8_lossy(&output.stderr),
-+        "Error: server is not ready\n"
-+    );
-+}
-+
-+#[test]
-+fn partial_stdout_consumption_keeps_query_successful() {
-+    let fixture = Fixture::new();
-+    fs::write(
-+        fixture.root.path().join("source.txt"),
-+        format!("needle {}\n", "x".repeat(400)).repeat(10_000),
-+    )
-+    .expect("large search fixture");
-+    let mut child = fixture
-+        .command(&["--rg", "needle", "source.txt", "--mode", "direct"])
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped())
-+        .spawn()
-+        .expect("query producer");
-+    let mut stdout = child.stdout.take().expect("query stdout");
-+    let mut prefix = [0; 100];
-+    stdout.read_exact(&mut prefix).expect("consume first chunk");
-+    assert!(String::from_utf8_lossy(&prefix).contains("source.txt"));
-+    drop(stdout);
-+    let output = child.wait_with_output().expect("query completion");
-+    assert_eq!(output.status.code(), Some(0), "{output:?}");
-+    assert!(output.stderr.is_empty(), "{output:?}");
-+}
-+
- struct GatedEmbedding {
-     endpoint: String,
-     entered: Arc<Semaphore>,
-```
-
-**File**: `rust/crates/zg/tests/pi_install.rs` (modified, +27/-1)
-```diff
-@@ -1,4 +1,8 @@
--use std::{fs, path::Path, process::Command};
-+use std::{
-+    fs,
-+    path::Path,
-+    process::{Command, Stdio},
-+};
- 
- use serde_json::{Value, json};
- use tempfile::TempDir;
-@@ -54,6 +58,28 @@ fn write_json(path: &Path, value: &Value) {
-     .expect("write JSON");
- }
- 
-+#[test]
-+fn closed_stdout_allows_installation_and_removal_to_complete() {
-+    let temporary = TempDir::new().expect("tempdir");
-+    let root = temporary.path();
-+    let path = root.join("pi/mcp.json");
-+    for action in ["--install", "--uninstall"] {
-+        let (reader, writer) = std::io::pipe().expect("stdout pipe");
-+        drop(reader);
-+        let output = command(action, root)
-+            .stdout(Stdio::from(writer))
-+            .output()
-+            .expect("run with closed stdout");
-+        assert_eq!(output.status.code(), Some(0), "{action}: {output:?}");
-+        assert!(output.stderr.is_empty(), "{action}: {output:?}");
-+        assert_eq!(
-+            read_json(&path)["mcpServers"]["zvec_grep"].is_object(),
-+            action == "--install",
-+            "{action} must complete after its first stdout write"
-+        );
-+    }
-+}
-+
- #[test]
- fn config_rewrites_preserve_ordered_exposure_rules_and_unrelated_servers() {
-     let temporary = TempDir::new().expect("tempdir");
-```
-
----
-
-### Incident Patch 2: `60ba7d98` (2026-10-23)
-**Commit Message**: fix(engine): join read cache maintenance on shutdown (#289)
-
-Keep cache ownership separate from the state retained by maintenance so the
-last cache handle stops and joins the existing worker before native storage
-can outlive process teardown. Serialize concurrent closes through both the
-join and cache draining, and wake parked maintenance for prompt shutdown.
-
-Preserve in-flight leases, cache clone behavior, and one worker per cache.
-Add regression coverage for explicit close, final-owner drop, concurrent
-close calls, and cache reuse after dropping another owner.
-
-**File**: `rust/crates/zg-engine/src/storage/read_session.rs` (modified, +56/-15)
-```diff
-@@ -7,6 +7,7 @@ use std::{
-         Arc, Mutex, MutexGuard, OnceLock, Weak,
-         atomic::{AtomicBool, Ordering},
-     },
-+    thread::JoinHandle,
-     time::{Duration, Instant},
- };
- 
-@@ -22,7 +23,14 @@ static CACHES: OnceLock<Mutex<Vec<Weak<CacheInner>>>> = OnceLock::new();
- 
- #[derive(Clone)]
- pub(crate) struct ReadSessionCache {
-+    owner: Arc<CacheOwner>,
-+}
-+
-+// The worker and registry only reference CacheInner, never CacheOwner. The last
-+// cache handle can therefore stop and join maintenance without self-joining.
-+struct CacheOwner {
-     inner: Arc<CacheInner>,
-+    worker: Mutex<Option<JoinHandle<()>>>,
- }
- 
- struct CacheInner {
-@@ -61,6 +69,13 @@ pub(crate) struct ReadSessionLease {
- 
- impl ReadSessionCache {
-     pub(crate) fn new(idle_timeout: Duration) -> std::io::Result<Self> {
-+        Self::spawn(idle_timeout, maintain)
-+    }
-+
-+    fn spawn(
-+        idle_timeout: Duration,
-+        maintenance: impl FnOnce(&Weak<CacheInner>) + Send + 'static,
-+    ) -> std::io::Result<Self> {
-         let inner = Arc::new(CacheInner {
-             state: Mutex::new(CacheState::default()),
-             idle_timeout,
-@@ -69,21 +84,18 @@ impl ReadSessionCache {
-         let weak = Arc::downgrade(&inner);
-         // A native thread can release idle handles even when a synchronous writer
-         // is waiting for another process's cache on a single-threaded executor.
--        std::thread::Builder::new()
-+        let worker = std::thread::Builder::new()
-             .name("index-read-cache".into())
--            .spawn(move || {
--                while let Some(inner) = weak.upgrade() {
--                    if !inner.reap(Instant::now()) {
--                        break;
--                    }
--                    drop(inner);
--                    std::thread::sleep(REAP_INTERVAL);
--                }
--            })?;
-+            .spawn(move || maintenance(&weak))?;
-         let mut caches = lock(CACHES.get_or_init(Mutex::default));
-         caches.retain(|cache| cache.strong_count() > 0);
-         caches.push(Arc::downgrade(&inner));
--        Ok(Self { inner })
-+        Ok(Self {
-+            owner: Arc::new(CacheOwner {
-+                inner,
-+                worker: Mutex::new(Some(worker)),
-+            }),
-+        })
-     }
- 
-     /// The caller holds the workspace home read lock throughout the lease.
-@@ -106,8 +118,8 @@ impl ReadSessionCache {
-         open: impl FnOnce() -> EngineResult<IndexStore>,
-     ) -> EngineResult<ReadSessionLease> {
-         let slot = {
--            let mut state = lock(&self.inner.state);
--            if self.inner.closed.load(Ordering::Acquire) {
-+            let mut state = lock(&self.owner.inner.state);
-+            if self.owner.inner.closed.load(Ordering::Acquire) {
-                 return Err(EngineError::resource_closed(
-                     "index read cache has been closed",
-                 ));
-@@ -117,7 +129,7 @@ impl ReadSessionCache {
-         // Only this workspace waits for native open/close; the map owns entries,
-         // never native I/O. Concurrent misses for one workspace share this slot.
-         let mut entry = lock(&slot.entry);
--        if self.inner.closed.load(Ordering::Acquire) {
-+        if self.owner.inner.closed.load(Ordering::Acquire) {
-             return Err(EngineError::resource_closed(
-                 "index read cache has been closed",
-             ));
-@@ -153,7 +165,20 @@ impl ReadSessionCache {
-     }
- 
-     pub(crate) fn close(&self) {
-+        self.owner.close();
-+    }
-+}
-+
-+impl CacheOwner {
-+    fn close(&self) {
-         self.inner.closed.store(true, Ordering::Release);
-+        // Serialize the whole shutdown so every concurrent close waits for both
-+        // maintenance and native retirement. No cache or slot lock is held at join.
-+        let mut worker = lock(&self.worker);
-+        if let Some(worker) = worker.take() {
-+            worker.thread().unpark();
-+            let _ = worker.join();
-+        }
-         let entries = std::mem::take(&mut lock(&self.inner.state).entries);
-         // In-flight queries retain their own Arc until they finish. Native close
-         // runs after releasing the map lock, under the workspace's own slot lock.
-@@ -163,11 +188,27 @@ impl ReadSessionCache {
-     }
- }
- 
-+impl Drop for CacheOwner {
-+    fn drop(&mut self) {
-+        self.close();
-+    }
-+}
-+
-+fn maintain(weak: &Weak<CacheInner>) {
-+    while let Some(inner) = weak.upgrade() {
-+        if !inner.reap(Instant::now()) {
-+            break;
-+        }
-+        drop(inner);
-+        std::thread::park_timeout(REAP_INTERVAL);
-+    }
-+}
-+
- impl std::fmt::Debug for ReadSessionCache {
-     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-         formatter
-             .debug_struct("ReadSessionCache")
--            .field("entries", &lock(&self.inner.state).entries.len())
-+            .field("entries", &lock(&self.owner.inner.state).entries.len())
-             .finish_non_exhaustive()
-     }
- }
-```
-
-**File**: `rust/crates/zg-engine/src/storage/read_session/tests.rs` (modified, +99/-6)
-```diff
-@@ -178,6 +178,96 @@ fn cache() -> ReadSessionCache {
-     ReadSessionCache::new(Duration::from_secs(60)).expect("cache worker")
- }
- 
-+fn assert_shutdown_waits_for_maintenance(shutdown: fn(ReadSessionCache), callers: usize) {
-+    let (started, running) = std::sync::mpsc::channel();
-+    let (release, released) = std::sync::mpsc::channel();
-+    let cache = ReadSessionCache::spawn(Duration::from_secs(60), move |weak| {
-+        // Native retirement can keep the inner state alive after the last
-+        // public cache handle is dropped. Shutdown must wait for that work.
-+        let _inner = weak.upgrade().expect("cache state");
-+        started.send(()).expect("worker started");
-+        released
-+            .recv_timeout(Duration::from_secs(5))
-+            .expect("release maintenance");
++fn lexical_content_ranges(item: &ContextItem) -> impl Iterator<Item = (usize, usize)> + '_ {
++    item.match_ranges.iter().filter_map(|range| {
++        let ContentRange::Text {
++            start_byte_offset: content_start,
++            ..
++        } = item.content_range
++        else {
++            return None;
++        };
++        let ContentRange::Text {
++            start_byte_offset,
++            end_byte_offset,
++            ..
++        } = range
++        else {
++            return None;
++        };
++        Some((
++            start_byte_offset.checked_sub(content_start)?,
++            end_byte_offset.checked_sub(content_start)?,
++        ))
 +    })
-+    .expect("cache worker");
-+    running
-+        .recv_timeout(Duration::from_secs(5))
-+        .expect("maintenance running");
-+    let (closing, close_started) = std::sync::mpsc::channel();
-+    let (closed, close_finished) = std::sync::mpsc::channel();
-+    let mut caches = (1..callers).map(|_| cache.clone()).collect::<Vec<_>>();
-+    caches.push(cache);
-+    let closers = caches
-+        .into_iter()
-+        .map(|cache| {
-+            let closing = closing.clone();
-+            let closed = closed.clone();
-+            std::thread::spawn(move || {
-+                closing.send(()).expect("shutdown started");
-+                shutdown(cache);
-+                closed.send(()).expect("shutdown finished");
++}
++
+ /// Writes Node-compatible indexed-search status to the caller's diagnostic stream.
+ /// # Errors
+ /// Returns the underlying writer error.
+@@ -116,6 +162,7 @@ pub fn write_context_with_options(
+     use zg_engine::api::context::result::ContextSource;
+     let color = options.color == ColorMode::Always
+         || (options.color == ColorMode::Auto && terminal && std::env::var_os("NO_COLOR").is_none());
++    let highlighter = QueryHighlighter::new(&result.query, color);
+     let heading = |value: String| {
+         if color {
+             format!("\x1b[1;36m{value}\x1b[0m")
+@@ -125,27 +172,11 @@ pub fn write_context_with_options(
+     };
+     if options.human {
+         writeln!(writer, "{}: {:?}", heading("Context".into()), result.source)?;
+-        writeln!(writer, "Query: {}", result.query)?;
++        writeln!(writer, "Query: {}", highlighter.highlight(&result.query))?;
+         writeln!(writer, "Hits: {}", result.items.len())?;
+     }
+     if result.source == ContextSource::Rg {
+-        if color {
+-            let mut buffer = Vec::new();
+-            write_context_result(&mut buffer, result)?;
+-            for line in String::from_utf8_lossy(&buffer).lines() {
+-                writeln!(
+-                    writer,
+-                    "{}",
+-                    if line.starts_with("  ") {
+-                        line.to_owned()
+-                    } else {
+-                        heading(line.to_owned())
+-                    }
+-                )?;
+-            }
+-            return Ok(());
+-        }
+-        return write_context_result(writer, result);
++        return write_rg_context_result(writer, result, color, heading);
+     }
+     if result.items.is_empty() {
+         return writeln!(writer, "No matches.");
+@@ -173,7 +204,7 @@ pub fn write_context_with_options(
+             )
+         };
+         writeln!(writer, "{}", heading(label))?;
+-        write_item_preview(&mut writer, item, options)?;
++        write_item_preview(&mut writer, item, options, &highlighter)?;
+         if options.trace {
+             if let Some(score) = item.score {
+                 writeln!(writer, "score: {score:.4}")?;
+@@ -194,6 +225,7 @@ fn write_item_preview(
+     mut writer: impl Write,
+   
+```
+
+**File**: `rust/crates/zg-engine/src/api/context.rs` (modified, +3/-0)
+```diff
+@@ -492,6 +492,9 @@ pub mod result {
+         pub excerpt_range: Option<ContentRange>,
+         /// Exact source coordinates of `content`, independent of the entity and matched ranges.
+         pub content_range: ContentRange,
++        /// Individual lexical matches in decoded source coordinates, independent of context lines.
++        #[serde(default, skip_serializing_if = "Vec::is_empty")]
++        pub match_ranges: Vec<ContentRange>,
+         pub content: String,
+         /// Optional structural context supplied with the retrieved source.
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+```
+
+**File**: `rust/crates/zg-engine/src/lexical/mod.rs` (modified, +42/-0)
+```diff
+@@ -797,6 +797,11 @@ impl MatchSink<'_> {
+             crate::utils::text_range_from_offsets(text, line_starts, content_start, content_end)
+                 .map_err(io::Error::other)?,
+         )?;
++        let match_ranges = self
++            .match_ranges(text, line_starts, content_start, content_end)?
++            .into_iter()
++            .map(map_range)
++            .collect::<io::Result<Vec<_>>>()?;
+         self.count += 1;
+         self.results.push(LexicalMatch {
+             rank: 0,
+@@ -805,10 +810,46 @@ impl MatchSink<'_> {
+             range,
+             excerpt_range: None,
+             content_range,
++            match_ranges,
+             content: text[content_start..content_end].to_owned(),
+         });
+         Ok(true)
+     }
++
++    fn match_ranges(
++        &self,
++        text: &str,
++        line_starts: &[usize],
++        start: usize,
++        end: usize,
++    ) -> io::Result<Vec<TextRange>> {
++        if self.options.invert_match {
++            return Ok(Vec::new());
++        }
++        let mut matches = Vec::new();
++        // Keep the original haystack so anchors and word boundaries retain their search meaning.
++        self.matcher
++            .find_iter_at(text.as_bytes(), start, |found| {
++                if found.start() >= end {
++                    return false;
++                }
++                if found.start() < found.end()
++                    && text.is_char_boundary(found.start())
++                    && text.is_char_boundary(found.end())
++                {
++                    matches.push(found);
++                }
++                found.end() <= end
 +            })
-+        })
-+        .collect::<Vec<_>>();
-+    for _ in 0..callers {
-+        close_started
-+            .recv_timeout(Duration::from_secs(5))
-+            .expect("start shutdown");
++            .map_err(io::Error::other)?;
++        matches
++            .into_iter()
++            .map(|found| {
++                crate::utils::text_range_from_offsets(text, line_starts, found.start(), found.end())
++                    .map_err(io::Error::other)
++            })
++            .collect()
 +    }
-+    let premature_close = close_finished.recv_timeout(Duration::from_millis(100));
-+    release.send(()).expect("release worker even on failure");
-+    for _ in usize::from(premature_close.is_ok())..callers {
-+        close_finished
-+            .recv_timeout(Duration::from_secs(5))
-+            .expect("shutdown completes after maintenance");
-+    }
-+    for closer in closers {
-+        closer.join().expect("shutdown thread");
-+    }
-+    assert!(
-+        matches!(
-+            premature_close,
-+            Err(std::sync::mpsc::RecvTimeoutError::Timeout)
-+        ),
-+        "shutdown returned before maintenance finished"
-+    );
-+}
-+
-+#[test]
-+fn explicit_close_waits_for_maintenance() {
-+    assert_shutdown_waits_for_maintenance(|cache| cache.close(), 1);
-+}
-+
-+#[test]
-+fn last_cache_drop_waits_for_maintenance() {
-+    assert_shutdown_waits_for_maintenance(drop, 1);
-+}
-+
-+#[test]
-+fn concurrent_close_calls_wait_for_maintenance() {
-+    assert_shutdown_waits_for_maintenance(|cache| cache.close(), 2);
-+}
-+
-+#[test]
-+fn dropping_a_clone_preserves_the_cache_until_the_last_owner() {
-+    let fixture = Fixture::new();
-+    let cache = cache();
-+    let remaining = cache.clone();
-+    let (home_lock, lease) = fixture.read(&cache);
-+    let session = Arc::downgrade(&lease.session);
-+    drop(lease);
-+    drop(cache);
-+    let lease = remaining
-+        .acquire(&fixture.home, &fixture.storage_home)
-+        .expect("remaining cache owner");
-+    assert!(Weak::ptr_eq(&session, &Arc::downgrade(&lease.session)));
-+    drop(lease);
-+    drop(remaining);
-+    assert_eq!(session.strong_count(), 0, "last owner closes idle storage");
-+    drop(home_lock);
-+}
-+
- #[test]
- fn sequential_and_concurrent_queries_reuse_the_session() {
-     let fixture = Fixture::new();
-@@ -219,17 +309,20 @@ fn expiry_starts_at_final_release_and_protects_active_queries() {
-     let cache = cache();
-     let (home_lock, lease) = fixture.read(&cache);
-     let session = Arc::downgrade(&lease.session);
--    cache.inner.reap(Instant::now() + Duration::from_secs(120));
-+    cache
-+        .owner
-+        .inner
-+        .reap(Instant::now() + Duration::from_secs(120));
-     assert!(
-         lease.storage().list_files().is_ok(),
-         "active query remains usable"
-     );
-     drop(lease);
-     drop(home_lock);
-     let released = Instant::now();
--    cache.inner.reap(released + Duration::from_secs(59));
-+    cache.owner.inner.reap(released + Duration::from_secs(59));
-     assert_eq!(session.strong_count(), 1);
--    cache.inner.reap(released + Duration::from_secs(61));
-+    cache.owner.inner.reap(released + Duration::from_secs(61));
-     assert_eq!(session.strong_count(), 0);
  }
  
-@@ -292,7 +385,7 @@ fn maintenance_does_not_recreate_removed_lock_files() {
-     drop(home_lock);
-     let lock_file = fixture.home.join("locks/home");
-     fs::remove_file(&lock_file).expect("remove workspace lock");
--    cache.inner.reap(Instant::now());
-+    cache.owner.inner.reap(Instant::now());
-     assert!(
-         !lock_file.exists(),
-         "maintenance must not recreate deleted workspace paths"
-@@ -416,7 +509,7 @@ async fn indexed_queries_reuse_storage_but_resolve_the_current_manifest() {
-         .expect("first query");
-     assert_eq!(first.items.le
+ fn trim_line_terminator(bytes: &[u8]) -> &[u8] {
+@@ -1388,6 +1429,7 @@ mod tests {
+                 start + text[start..end].trim_end_matches("\r\n").len(),
+             )
+             .expect("visible source range"),
++            match_ranges: Vec::new(),
+             content: text[start..end].trim_end_matches("\r\n").to_owned(),
+         }];
+         request.options.matching.after_context = 0;
+```
+
+**File**: `rust/crates/zg-engine/src/lexical/types.rs` (modified, +1/-0)
+```diff
+@@ -46,6 +46,7 @@ pub(crate) struct LexicalMatch {
+     pub excerpt_range: Option<TextRange>,
+     /// Source coordinates of the returned lines, which may extend beyond the match.
+     pub content_range: TextRange,
++    pub match_ranges: Vec<TextRange>,
+     pub content: String,
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `cccd3d58` (2026-10-23)
-**Commit Message**: fix(rust): update TLS trust dependencies for emSign compromise (#285)
+### Incident Patch 3: `130ac1ad` (2026-10-26)
+**Commit Message**: fix(rust): prefer explicit server options over environment values (#294)
 
-**File**: `rust/Cargo.lock` (modified, +6/-6)
+* test(rust): capture server option precedence cases
+
+Capture the existing Node results and document the existing grammar difference.
+Load the single case table through zg-testkit and check both invalid difference
+field combinations. This commit keeps the existing Rust behavior.
+
+* fix(rust): prefer explicit server options over environment values
+
+Keep environment defaults on ServerArgs and remove them from five child fields.
+Preserve the precedence between competing explicit values and the server grammar.
+
+Use the oracle fixture for all seven option/action pairs. Check child case IDs,
+results and exit status so an empty child run cannot pass. The regression fails
+on the seven intended cases before the repair and passes all 56 afterward.
+
+* test(rust): limit the server option difference to home and token file
+
+**File**: `rust/Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -2547,9 +2547,9 @@ checksum = "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f"
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -3675,18 +3675,18 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
-+checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
- dependencies = [
-  "rustls-pki-types",
+@@ -4279,6 +4279,7 @@ dependencies = [
+  "uuid",
+  "winapi-util",
+  "zg-engine",
++ "zg-testkit",
  ]
  
  [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
+```
+
+**File**: `rust/compat/allowed-differences.toml` (modified, +6/-0)
+```diff
+@@ -1,6 +1,12 @@
+ # TypeScript/Rust differences are forbidden unless listed here with an owner,
+ # reason and removal condition.
+ 
++[[difference]]
++id = "cli-server-options-before-action"
++owner = "CLI"
++reason = "Rust already accepts server options before the action. TypeScript requires the action first. For --home and --token-file, Rust keeps an explicit value after the action ahead of one before the action, then uses the environment value or default. The server-option-precedence fixture records the TypeScript parse errors and the expected Rust values for those options."
++removal_condition = "TypeScript accepts the same server argument forms and precedence, or the TypeScript compatibility layer is retired."
++
+ [[difference]]
+ id = "cli-managed-rg-files"
+ owner = "CLI/engine"
+```
+
+**File**: `rust/compat/cli/server-option-precedence.json` (added, +1339/-0)
+```diff
+@@ -0,0 +1,1339 @@
++{
++  "schema_version": 1,
++  "source_revision": "72067296b8b4acf3fba876df1656c8defd60867b",
++  "cases": [
++    {
++      "id": "on/--home/before/both",
++      "action": "on",
++      "option": "--home",
++      "form": "before",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "--home",
++        "before-action",
++        "on"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "parse_error",
++        "message": "zg --server requires on, off, status, run, or --stdio"
++      },
++      "allowed_differences": [
++        "cli-server-options-before-action"
++      ],
++      "expected_rust": {
++        "kind": "selected",
++        "value": "before-action"
++      }
++    },
++    {
++      "id": "on/--home/after/both",
++      "action": "on",
++      "option": "--home",
++      "form": "after",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "on",
++        "--home",
++        "after-action"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "selected",
++        "value": "after-action"
++      }
++    },
++    {
++      "id": "on/--home/both/both",
++      "action": "on",
++      "option": "--home",
++      "form": "both",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "--home",
++        "before-action",
++        "on",
++        "--home",
++        "after-action"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "parse_error",
++        "message": "zg --server requires on, off, status, run, or --stdio"
++      },
++      "allowed_differences": [
++        "cli-server-options-before-action"
++      ],
++      "expected_rust": {
++        "kind": "selected",
++        "value": "after-action"
++      }
++    },
++    {
++      "id": "on/--home/none/both",
++      "action": "on",
++      "option": "--home",
++      "form": "none",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "on"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "selected",
++        "value": "environment-home"
++      }
++    },
++    {
++      "id": "run/--home/before/both",
++      "action": "run",
++      "option": "--home",
++      "form": "before",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "--home",
++        "before-action",
++        "run"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "parse_error",
++        "message": "zg --server requires on, off, status, run, or --stdio"
++      },
++      "allowed_differences": [
++        "cli-server-options-before-action"
++      ],
++      "expected_rust": {
++        "kind": "selected",
++        "value": "before-action"
++      }
++    },
++    {
++      "id": "run/--home/after/both",
++      "action": "run",
++      "option": "--home",
++      "form": "after",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "run",
++        "--home",
++        "after-action"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "selected",
++        "value": "after-action"
++      }
++    },
++    {
++      "id": "run/--home/both/both",
++      "action": "run",
++      "option": "--home",
++      "form": "both",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "--home",
++        "before-action",
++        "run",
++        "--home",
++        "after-action"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_result": {
++        "kind": "parse_error",
++        "message": "zg --server requires on, off, status, run, or --stdio"
++      },
++      "allowed_differences": [
++        "cli-server-options-before-action"
++      ],
++      "expected_rust": {
++        "kind": "selected",
++        "value": "after-action"
++      }
++    },
++    {
++      "id": "run/--home/none/both",
++      "action": "run",
++      "option": "--home",
++      "form": "none",
++      "condition": "both",
++      "argv": [
++        "zg",
++        "--server",
++        "run"
++      ],
++      "env": {
++        "ZVEC_GREP_HOME": "environment-home",
++        "ZVEC_GREP_SERVER_TOKEN_FILE": "environment-token"
++      },
++      "node_re
+```
+
+**File**: `rust/compat/schema/server-option-precedence.schema.json` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://github.com/zvec-ai/zvec-grep/compat/schema/server-option-precedence.schema.json",
++  "title": "Server option precedence oracle cases",
++  "type": "object",
++  "additionalProperties": false,
++  "required": ["schema_version", "source_revision", "cases"],
++  "properties": {
++    "schema_version": { "const": 1 },
++    "source_revision": { "type": "string" },
++    "cases": {
++      "type": "array",
++      "items": { "$ref": "#/$defs/case" }
++    }
++  },
++  "$defs": {
++    "result": {
++      "oneOf": [
++        {
++          "type": "object", "additionalProperties": false,
++          "required": ["kind", "value"],
++          "properties": { "kind": { "const": "selected" }, "value": { "type": "string" } }
++        },
++        {
++          "type": "object", "additionalProperties": false,
++          "required": ["kind"],
++          "properties": { "kind": { "const": "unset" } }
++        },
++        {
++          "type": "object", "additionalProperties": false,
++          "required": ["kind", "message"],
++          "properties": { "kind": { "const": "parse_error" }, "message": { "type": "string" } }
++        }
++      ]
++    },
++    "case": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": ["id", "action", "option", "form", "condition", "argv", "env", "node_result"],
++      "properties": {
++        "id": { "type": "string" },
++        "action": { "type": "string" },
++        "option": { "type": "string" },
++        "form": { "type": "string" },
++        "condition": { "type": "string" },
++        "argv": { "type": "array", "items": { "type": "string" } },
++        "env": { "type": "object", "additionalProperties": { "type": "string" } },
++        "node_result": { "$ref": "#/$defs/result" },
++        "allowed_differences": { "type": "array", "items": { "type": "string" } },
++        "expected_rust": { "$ref": "#/$defs/result" }
++      },
++      "if": {
++        "required": ["allowed_differences"],
++        "properties": { "allowed_differences": { "minItems": 1 } }
++      },
++      "then": { "required": ["expected_rust"] },
++      "else": { "not": { "required": ["expected_rust"] } }
++    }
++  }
++}
+```
+
+**File**: `rust/crates/zg-cli/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ winapi-util = "0.1.11"
+ [dev-dependencies]
+ tempfile.workspace = true
+ toml.workspace = true
++zg-testkit = { path = "../zg-testkit" }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `rust/crates/zg-cli/src/lib.rs` (modified, +157/-5)
+```diff
+@@ -651,25 +651,25 @@ pub enum ServerAction {
+ pub struct ServerStartArgs {
+     #[arg(long)]
+     pub listen: Option<String>,
+-    #[arg(long, env = "ZVEC_GREP_HOME")]
++    #[arg(long)]
+     pub home: Option<PathBuf>,
+     #[arg(long, env = "ZVEC_GREP_MCP_TOOLSET", value_enum)]
+     pub mcp_toolset: Option<McpToolset>,
+-    #[arg(long = "token-file", env = "ZVEC_GREP_SERVER_TOKEN_FILE")]
++    #[arg(long = "token-file")]
+     pub token_file: Option<PathBuf>,
+ }
+ 
+ #[derive(Clone, Debug, Args)]
+ pub struct ServerStopArgs {
+-    #[arg(long, env = "ZVEC_GREP_HOME")]
++    #[arg(long)]
+     pub home: Option<PathBuf>,
+-    #[arg(long = "token-file", env = "ZVEC_GREP_SERVER_TOKEN_FILE")]
++    #[arg(long = "token-file")]
+     pub token_file: Option<PathBuf>,
+ }
+ 
+ #[derive(Clone, Debug, Args)]
+ pub struct ServerStatusArgs {
+-    #[arg(long, env = "ZVEC_GREP_HOME")]
++    #[arg(long)]
+     pub home: Option<PathBuf>,
+     #[arg(long = "check-ready")]
+     pub check_ready: bool,
+@@ -2106,6 +2106,158 @@ mod tests {
+         }
+     }
+ 
++    fn server_option_expected(case: &zg_testkit::ServerOptionCase) -> Option<PathBuf> {
++        match case.expected_rust.as_ref().unwrap_or(&case.node_result) {
++            zg_testkit::ServerOptionResult::Selected { value } => Some(value.into()),
++            zg_testkit::ServerOptionResult::Unset => None,
++            zg_testkit::ServerOptionResult::ParseError { message } => {
++                panic!("case {} needs a difference entry: {message}", case.id)
++            }
++        }
++    }
++
++    fn server_option_actual(
++        case: &zg_testkit::ServerOptionCase,
++    ) -> Result<Option<PathBuf>, String> {
++        Cli::try_parse_from(&case.argv)
++            .map_err(|error| error.to_string())
++            .and_then(|cli| {
++                cli.into_plan(std::env::temp_dir())
++                    .map_err(|error| error.to_string())
++            })
++            .and_then(|plan| match plan {
++                CliPlan::Server(super::ServerPlan::On(args) | super::ServerPlan::Run(args)) => {
++                    Ok(if case.option == "--home" {
++                        args.home
++                    } else {
++                        args.token_file
++                    })
++                }
++                CliPlan::Server(super::ServerPlan::Off(args)) => Ok(if case.option == "--home" {
++                    args.home
++                } else {
++                    args.token_file
++                }),
++                CliPlan::Server(super::ServerPlan::Status(args)) => Ok(args.home),
++                _ => Err("unexpected plan".to_owned()),
++            })
++    }
++
++    fn check_server_option_child(
++        output: &std::process::Output,
++        cases: &[&zg_testkit::ServerOptionCase],
++    ) -> Vec<String> {
++        let mut failures = Vec::new();
++        let mut seen = std::collections::BTreeSet::new();
++        for line in String::from_utf8_lossy(&output.stdout).lines() {
++            let Some((_, json)) = line.split_once("SERVER_OPTION_CASE ") else {
++                continue;
++            };
++            let Ok(record) = serde_json::from_str::<serde_json::Value>(json) else {
++                failures.push("invalid case record".to_owned());
++                continue;
++            };
++            let Some(id) = record["case"].as_str() else {
++                failures.push("missing case ID".to_owned());
++                continue;
++            };
++            let Some(case) = cases.iter().find(|case| case.id == id) else {
++                failures.push(format!("unexpected case: {id}"));
++                continue;
++            };
++            if !seen.insert(id.to_owned()) {
++                failures.push(format!("duplicate case: {id}"));
++            }
++            let expected = server_option_expected(case);
++            if record["expected"] != serde_json::json!(expected)
++                || record["actual"] != serde_json::json!({"Ok": expected})
++                || record["passed"] != true
++            {
++                failures.push(format!("case failed: {id}"));
++            }
++        }
++        for case in cases {
++            if !seen.contains(&case.id) {
++                failures.push(format!("missing case: {}", case.id));
++            }
++        }
++        if !output.status.success() {
++            failures.push(format!("child status: {}", output.status));
++        }
++        failures
++    }
++
++    fn run_server_option_children(child: &str, fixture: &zg_testkit::ServerOptionCases) {
++        let executable = std::env::current_exe().expect("test executable");
++        let mut failures = Vec::new();
++        for condition in ["both", "home", "absent"] {
++            let cases: Vec<_> = fixture
++                .cases
++                .iter()
++                .filter(|case| case.condition == condition)
++                .collect();
++            assert!(!cases.is_empty(), "empty child condition: {condition}");
++            assert!(cases.iter().all(|case| case.env == cases[0].env));
++ 
+```
+
+**File**: `rust/crates/zg-testkit/src/fixture.rs` (modified, +4/-0)
+```diff
+@@ -43,6 +43,10 @@ pub enum FixtureError {
+         path: String,
+         source: serde_json::Error,
+     },
++    #[error(
++        "invalid fixture {path}, case {case_id}: expected_rust is required exactly when allowed_differences is not empty"
++    )]
++    InvalidCase { path: String, case_id: String },
+     #[error("unsupported fixture schema version {actual}; expected {expected}")]
+     UnsupportedVersion { actual: u32, expected: u32 },
+ }
+```
+
+**File**: `rust/crates/zg-testkit/src/lib.rs` (modified, +4/-0)
+```diff
+@@ -2,6 +2,10 @@
+ 
+ mod fixture;
+ mod mcp;
++mod server_options;
+ 
+ pub use fixture::{CliCompatibilityCase, FixtureError, load_cli_case};
+ pub use mcp::{McpSearchPresentationCase, load_mcp_search_cases};
++pub use server_options::{
++    ServerOptionCase, ServerOptionCases, ServerOptionResult, load_server_option_cases,
++};
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #300** (2026-10-27): build(rust): use glibc 2.31 llama SDKs (@feihongxu0824)
+- **PR #299** (2026-10-27): fix(ort): pin official 1.21 runtimes and verify glibc 2.31 (@feihongxu0824)
+- **PR #294** (2026-10-26): fix(rust): prefer explicit server options over environment values (@AntonioRossi)
+- **PR #293** (2026-10-26): fix(rust): restore query term highlighting in search results (@egolearner)
+- **PR #292** (2026-10-26): fix(cli): clarify index setup prompt and silence cancellation errors (@egolearner)
 - **PR #290** (2026-10-23): ci(rust): reuse upstream zvec SDK resolution on Intel macOS (@egolearner)
-- **PR #289** (2026-10-23): fix(engine): join read cache maintenance on shutdown (@egolearner)
-- **PR #285** (2026-10-23): fix(rust): update TLS trust dependencies for emSign compromise (@egolearner)
-- **PR #283** (2026-10-22): chore(rust): upgrade zvec-rust to 0.8.0 (@egolearner)
-- **PR #281** (2026-10-22): fix(windows): normalize displayed paths and initialize ANSI per stream (@zhourrr)
-- **PR #280** (2026-10-21): ci(rust): make release packaging manual-only (@egolearner)
 
 ---
 
@@ -2021,75 +2541,47 @@ close calls, and cache reuse after dropping another owner.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): preserve command results when stdout closes early (#270)
+## X. ci): build Rust npm packages for Windows ARM64 (#266)
 
 **RULE**:
-When implementing operations in `rust/crates/zg-cli/src/install.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust-package-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2fa4b40`: rust): preserve command results when stdout closes early (#270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ee5cbe3`: ci): build Rust npm packages for Windows ARM64 (#266). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-cli/src/install.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-package-build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    print_header()?;
-        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
-    writeln!(crate::stdout(), "\nInstalling integrations\n")?;
-        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
-        writeln!(crate::stdout(), "    MCP       configured")?;
-            writeln!(crate::stdout(), "    Config    {}", path.display())?;
-            writeln!(crate::stdout(), "    Note      {note}")?;
-        writeln!(crate::stdout())?;
-    print_header()?;
-        writeln!(crate::stdout(), "\nNo agent integrations selected.")?;
-    writeln!(crate::stdout(), "\nRemoving integrations\n")?;
-        writeln!(crate::stdout(), "  ✓ {}", agent.label())?;
-        writeln!(crate::stdout(), "    integration removed")?;
-    writeln!(
-        crate::stdout(),
-        "\nRestart the selected agents or start a new session to apply the change."
-    )?;
-fn print_header() -> io::Result<()> {
-    let mut output = crate::stdout();
-    writeln!(output, "zvec-grep setup")?;
-    writeln!(output, "{}", "─".repeat(40))
-    write!(crate::stdout(), "MCP transport [stdio] (stdio/http): ")?;
-    crate::stdout().flush()?;
-    writeln!(
-        crate::stdout(),
-    )?;
-    let mut output = cra
+  # Every release target has a pinned SDK. Drift must fail, not rebuild llama.cpp.
+    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc' || inputs.target == 'win32-arm64-msvc') && 180 || 90 }}
+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+          architecture: ${{ runner.arch == 'ARM64' && 'arm64' || 'x64' }}
+          arch: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
+          # ARM64 follows the runner image's installed Visual Studio version.
+          vsversion: ${{ inputs.target == 'win32-x64-msvc' && '2022' || '' }}
+      - name: Select the native Windows ARM64 Rust host
+        if: inputs.target == 'win32-arm64-msvc'
+        run: rustup set default-host aarch64-pc-windows-msvc
+      - name: Verify native Windows toolchains
+        if: runner.os == 'Windows'
+        env:
+          EXPECTED_ARCH: ${{ inputs.target == 'win32-arm64-msvc' && 'arm64' || 'x64' }}
+          EXPECTED_HOST: ${{ inputs.target == 'win32-arm64-msvc' && 'aarch64-pc-windows-msvc' || 'x86_64-pc-windows-msvc' }}
+        run: |
+          node -e "if (process.arch !== process.env.EXPECTED_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    print_header();
-        println!("\nNo agent integrations selected.");
-    println!("\nInstalling integrations\n");
-        println!("  ✓ {}", agent.label());
-        println!("    MCP       configured");
-            println!("    Config    {}", path.display());
-            println!("    Note      {note}");
-        println!();
-    print_header();
-        println!("\nNo agent integrations selected.");
-    println!("\nRemoving integrations\n");
-        println!("  ✓ {}", agent.label());
-        println!("    integration removed");
-    println!("\nRestart the selected agents or start a new session to apply the change.");
-fn print_header() {
-    println!("zvec-grep setup");
-    println!("{}", "─".repeat(40));
-    print!("MCP transport [stdio] (stdio/http): ");
-    io::stdout().flush()?;
-    println!(
-    );
-    let mut output = io::stdout().lock();
+  # Every release target has a pinned SDK. Drift must fail, not rebuild CUDA.
+    timeout-minutes: ${{ (inputs.target == 'darwin-x64' || inputs.target == 'linux-x64-gnu' || inputs.target == 'win32-x64-msvc') && 180 || 90 }}
+          arch: x64
+          vsversion: "2022"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2fa4b40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ee5cbe3` are properly handled with clean fallback behavior.

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T16:31:45.493Z",
-  "total_cycles_completed": 5406,
-  "total_learnings_persisted": 5406,
-  "total_rules_promoted": 4808,
+  "last_updated": "2026-10-27T16:38:32.651Z",
+  "total_cycles_completed": 5409,
+  "total_learnings_persisted": 5409,
+  "total_rules_promoted": 4811,
   "history": [
-    {
-      "timestamp": "2026-10-27T11:16:07.747Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:27:20.656Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:27:25.432Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T11:27:27.902Z",
       "repository": "siderolabs/talos",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-27T16:31:45.493Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:38:20.276Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:38:22.585Z",
+      "repository": "preactjs/preact",
+      "learningId": "learn-github-preactjs-preact",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:38:32.651Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -5438,3 +5438,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `6b3bd71c` | Multi-dimensional audit evidence | 2026-10-27T16:31:38.529Z |
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `6cc54d38` | Multi-dimensional audit evidence | 2026-10-27T16:31:38.713Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `66f7eee7` | Multi-dimensional audit evidence | 2026-10-27T16:31:45.488Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `4def5663` | Multi-dimensional audit evidence | 2026-10-27T16:38:20.271Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `66b6e565` | Multi-dimensional audit evidence | 2026-10-27T16:38:22.580Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `6e4ce04b` | Multi-dimensional audit evidence | 2026-10-27T16:38:32.646Z |

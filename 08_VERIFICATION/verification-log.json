@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-XWXG",
-    "timestamp": "2026-10-25T18:02:31.540Z",
-    "repository": "honojs/hono",
-    "learningId": "learn-github-honojs-hono",
-    "contentHash": "386f23cf518f3d83a9e474f052911f408d447423e8e55de7606a1a4d1c4e9ce4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-60S3",
-    "timestamp": "2026-10-25T18:08:49.779Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "35d3a5f79821eee36984d463bbd7f471800a2b05403cf13ed20319d8219199e4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-65E5",
-    "timestamp": "2026-10-25T18:08:55.757Z",
-    "repository": "alin23/Lunar",
-    "learningId": "learn-github-alin23-lunar",
-    "contentHash": "3a12c4a4687651583d91dd32407541604a2297bb629537f1bae03d183d0c1339",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-67GP",
     "timestamp": "2026-10-25T18:08:58.441Z",
     "repository": "prometheus/prometheus",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-TCOB",
+    "timestamp": "2026-10-27T16:38:20.267Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "76fb01dea7637c4ce9fb75160c6019eb83b0f6594aa481b88cf24c8f49467401",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-TEGH",
+    "timestamp": "2026-10-27T16:38:22.577Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-TM83",
+    "timestamp": "2026-10-27T16:38:32.643Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "29de8d75418468d79b9f70e290af18da17c5b66a8bf3e65a7fcf2f972ee4c377",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
