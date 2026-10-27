@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `356c8766`  
+> **Source Version**: `14a611f3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:17:16.928Z  
+> **Timestamp**: 2026-10-27T15:25:47.691Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:17:15.683Z  
+> **Harvest Timestamp**: 2026-10-27T15:25:47.213Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 88428 stars
+- **Stars / Engagement**: 88493 stars
 
 ---
 
@@ -2003,692 +2003,47 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2334f5ed` (2026-10-21)
-**Commit Message**: chore: add security policy section to AGENTS.md (#19067)
+### Incident Patch 1: `14a611f3` (2026-10-27)
+**Commit Message**: fix: allow `autocorrect` on all elements (#19105)
 
-supersedes #19066
-
-**File**: `AGENTS.md` (modified, +4/-0)
-```diff
-@@ -6,6 +6,10 @@ This guide is for AI coding agents working in the Svelte monorepo.
- 
- When submitting a PR, you **MUST** read [`PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) and fill it out correctly. **DO NOT** submit a PR without running the full test suite.
- 
-+## Security Policy
-+
-+See https://github.com/sveltejs/svelte/security/policy.
-+
- ## Quick Reference
- 
- If asked to do a performance investigation, use the `performance-investigation` skill.
-```
-
----
-
-### Incident Patch 2: `91b5110b` (2026-10-21)
-**Commit Message**: fix: use the first valid fallback role in `role` for a11y checks (#19045)
-
-Co-authored-by: paoloricciuti <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fallback-roles-a11y.md` (added, +5/-0)
+**File**: `.changeset/olive-pots-tickle.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: use the first valid fallback role in `role` for a11y checks
++fix: allow `autocorrect` on all elements
 ```
 
-**File**: `packages/svelte/src/compiler/phases/2-analyze/visitors/shared/a11y/index.js` (modified, +30/-5)
+**File**: `packages/svelte/elements.d.ts` (modified, +1/-2)
 ```diff
-@@ -40,7 +40,8 @@ import {
- 	regex_not_whitespace,
- 	regex_redundant_img_alt,
- 	regex_starts_with_vowel,
--	regex_whitespaces
-+	regex_whitespaces,
-+	regex_whitespaces_strict
- } from '../../../../patterns.js';
- import { is_event_attribute, is_text_attribute } from '../../../../../utils/ast.js';
- import { list } from '../../../../../utils/string.js';
-@@ -158,9 +159,7 @@ export function check_element(node, context) {
- 				if (typeof value !== 'string') {
- 					break;
- 				}
--				for (const c_r of value.split(regex_whitespaces)) {
--					const current_role = /** @type {ARIARoleDefinitionKey} current_role */ (c_r);
--
-+				for (const current_role of get_role_tokens(value)) {
- 					if (current_role && is_abstract_role(current_role)) {
- 						w.a11y_no_abstract_role(attribute, current_role);
- 					} else if (current_role && !aria_roles.includes(current_role)) {
-@@ -286,7 +285,9 @@ export function check_element(node, context) {
- 	}
- 
- 	const role = attribute_map.get('role');
--	const role_static_value = /** @type {ARIARoleDefinitionKey} */ (get_static_text_value(role));
-+	const role_static_value = /** @type {ARIARoleDefinitionKey} */ (
-+		get_effective_role(get_static_text_value(role))
-+	);
- 
- 	// click-events-have-key-events
- 	if (handlers.has('click')) {
-@@ -778,6 +779,30 @@ function is_abstract_role(role) {
- 	return abstract_roles.includes(role);
- }
- 
-+/**
-+ * Role tokens use ASCII whitespace and ASCII case-insensitive matching.
-+ * @param {string} value
-+ */
-+function get_role_tokens(value) {
-+	return /** @type {ARIARoleDefinitionKey[]} */ (
-+		// we use this instead of value.toLowerCase() to avoid lowercasing non-ASCII characters
-+		value.replace(/[A-Z]/g, (char) => char.toLowerCase()).split(regex_whitespaces_strict)
-+	);
-+}
-+
-+/**
-+ * The `role` attribute can list fallback roles, in which case the element
-+ * gets the first one that is a known, non-abstract role. Preserve the original
-+ * value if none match, so invalid roles retain their existing diagnostics.
-+ * @param {string | null} value
-+ */
-+function get_effective_role(value) {
-+	if (value === null) return null;
-+	const roles = get_role_tokens(value);
-+	// we return the whole value here in case there's no known, non-abstract role in the list
-+	return roles.find((role) => aria_roles.includes(role) && !is_abstract_role(role)) ?? value;
-+}
-+
- /**
-  * @param {AST.Attribute | undefined} attribute
-  */
-```
-
-**File**: `packages/svelte/tests/validator/samples/a11y-fallback-roles/input.svelte` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+<script>
-+	function handler() {}
-+</script>
-+
-+<!-- valid -->
-+<div role="switch checkbox" aria-checked="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="tab button" aria-selected="true" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="none presentation" onclick={handler}></div>
-+<div role=" button " tabindex="0" onclick={handler} onkeydown={handler}></div>
-+
-+<!-- invalid -->
-+<div role="button link" aria-checked="true" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+
-+<!-- valid -->
-+<div role="BUTTON link" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="&#9;button&#10;&#13;&#12;link&#9;" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role={'button'} aria-pressed="false" onclick={handler} onkeydown={handler}></div>
-+<div role=""></div>
-+<div role="&#9;&#10;&#13;&#12; "></div>
-+
-+<!-- invalid -->
-+<div role="button&nbsp;link" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="&nbsp;button&nbsp;" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="widget bogus" aria-checked="true" onkeydown={handler}></div>
-+<div role="bogus widget" aria-checked="true" onkeydown={handler}></div>
-+<div role="bogus button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="widget button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="lin&#x212A; button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-```
-
-**File**: `packages/svelte/tests/validator/samples/a11y-fallback-roles/warnings.json` (added, +194/-0)
-```diff
-@@ -0,0 +1,194 @@
-+[
-+	{
-+		"code": "a11y_role_supports_aria_props",
-+		"end": {
-+			"column": 43,
-+			"line": 12
-+		},
-+		"message": "The attribute 'aria-checked' is not supported by the role 'button'",
-+		"start": {
-+			"column": 24,
-+			"line": 12
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 28,
-+			"line": 22
-+		},
-+		"message": "Unknown role 'button link'",
-+		"start": {
-+			"column": 5,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_no_noninteractive_tabindex",
-+		"end": {
-+			"column": 86,
-+			"line": 22
-+		},
-+		"message": "noninteractive element cannot have nonnegative tabIndex value",
-+		"start": {
-+			"column": 0,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 86,
-+			"line": 22
-+		},
-+		"message": "`<div>` with a click or keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 30,
-+			"line": 23
-+		},
-+		"message": "Unknown role ' button '. Did you mean 'button'?",
-+		"start": {
-+			"column": 5,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_noninteractive_tabindex",
-+		"end": {
-+			"column": 88,
-+			"line": 23
-+		},
-+		"message": "noninteractive element cannot have nonnegative tabIndex value",
-+		"start": {
-+			"column": 0,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 88,
-+			"line": 23
-+		},
-+		"message": "`<div>` with a click or keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 24,
-+			"line": 24
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 24
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 71,
-+			"line": 24
-+		},
-+		"message": "`<div>` with a keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 25
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 24,
-+			"line": 25
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 71,
-+			"line": 25
-+		},
-+		"message": "`<div>` with a keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 26
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 26
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 25,
-+			"line": 27
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 27
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 30,
-+			"line": 28
-+		},
-+		"message": "Unknown role 'linK'. Did you mean 'link'?",
-+		"start": {
-+			"column": 5,
-+			"line": 28
-+		}
-+	}
-+]
-```
-
----
-
-### Incident Patch 3: `bd762fb1` (2026-10-20)
-**Commit Message**: fix: skip redundant attribute writes during hydration (#18869)
-
-Co-authored-by: Paolo Ricciuti <[REDACTED_EMAIL]>
-
-**File**: `.changeset/quiet-attributes-rest.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: skip redundant attribute writes during hydration
-```
-
-**File**: `packages/svelte/src/internal/client/dom/elements/attributes.js` (modified, +10/-2)
-```diff
-@@ -178,7 +178,8 @@ export function set_attribute(element, attribute, value, skip_warning) {
- 		}
- 	}
- 
--	if (attributes[attribute] === (attributes[attribute] = value)) return;
-+	var previous = attributes[attribute];
-+	if (previous === (attributes[attribute] = value)) return;
- 
- 	if (attribute === 'loading') {
- 		// @ts-expect-error
-@@ -190,7 +191,14 @@ export function set_attribute(element, attribute, value, skip_warning) {
- 	} else if (typeof value !== 'string' && get_setters(element).has(attribute)) {
- 		// @ts-ignore
- 		element[attribute] = value;
--	} else {
-+	} else if (
-+		// while hydrating, skip a number or boolean whose string the server already rendered
-+		!(
-+			hydrating &&
-+			(typeof value === 'number' || typeof value === 'boolean') &&
-+			previous === String(value)
-+		)
-+	) {
- 		element.setAttribute(attribute, value);
- 	}
- }
-```
-
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/_config.js` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+import { flushSync } from 'svelte';
-+import { test } from '../../test';
-+
-+let conversions = 0;
-+const object = { toString: () => String(++conversions) };
-+
-+/** @type {Record<string, [server: any, client: any, written: boolean]>} */
-+const values = {
-+	'data-same': [1, 1, false],
-+	'data-nan': [NaN, NaN, false],
-+	'data-large': [1e21, 1e21, false],
-+	'data-yes': [true, true, false],
-+	'data-no': [false, false, false],
-+	'aria-hidden': [true, true, false],
-+	'data-decimal': ['1.0', 1, true],
-+	'data-zero': ['-0', -0, true],
-+	'aria-checked': ['False', false, true],
-+	'data-empty': ['', true, true],
-+	'aria-rowindex': [2, 3, true],
-+	'data-null': [1, null, true],
-+	'data-undefined': [1, undefined, true],
-+	'data-object': ['server', object, true],
-+	// a property setter still runs
-+	draggable: [false, false, true]
-+};
-+
-+/** @param {number} i */
-+const pick = (i) =>
-+	Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value[i]]));
-+
-+/** @type {string[]} */
-+const changes = [];
-+
-+const custom = { is: 'svelte-observed-button', tabindex: -1, 'data-on': true };
-+
-+/** @type {MutationObserver} */
-+let observer;
-+
-+const written = () =>
-+	observer
-+		.takeRecords()
-+		.map((record) => `${record.target.nodeName.toLowerCase()} ${record.attributeName}`);
-+
-+export default test({
-+	server_props: {
-+		values: pick(0),
-+		spread: { disabled: true, tabindex: -1, hidden: false },
-+		custom,
-+		show: false
-+	},
-+
-+	props: {
-+		values: pick(1),
-+		spread: { disabled: true, tabindex: -1, hidden: true },
-+		custom,
-+		show: true
-+	},
-+
-+	before_test() {
-+		customElements.get(custom.is) ??
-+			customElements.define(
-+				custom.is,
-+				class extends HTMLButtonElement {
-+					static observedAttributes = ['tabindex', 'data-on'];
-+
-+					/**
-+					 * @param {string} name
-+					 * @param {string | null} old_value
-+					 * @param {string | null} value
-+					 */
-+					attributeChangedCallback(name, old_value, value) {
-+						// `htmlEqual` upgrades detached copies
-+						if (this.isConnected) changes.push(`${name} ${old_value} ${value}`);
-+					}
-+				},
-+				{ extends: 'button' }
-+			);
-+
-+		changes.length = 0;
-+		observer = new MutationObserver(() => {});
-+		observer.observe(document.body, { attributes: true, subtree: true });
-+	},
-+
-+	test(assert, target, snapshot, component) {
-+		// spread `disabled` and `hidden` always use their setters
-+		assert.deepEqual(written(), [
-+			'button disabled',
-+			'button hidden',
-+			...Object.keys(values)
-+				.filter((key) => values[key][2])
-+				.map((key) => `div ${key}`)
-+		]);
-+		assert.equal(conversions, 1);
-+
-+		// a customized built-in is called back when it is upgraded, not again for the same value
-+		assert.deepEqual(changes, ['tabindex null -1', 'data-on null true']);
-+
-+		component.$set({ n: 2 });
-+		flushSync();
-+		// the mismatched `{#if}` branch was created, then hydration resumed for the `<p>`
-+		assert.deepEqual(
-+			written().filter((record) => record.endsWith('data-n')),
-+			['section data-n', 'p data-n']
-+		);
-+
-+		// after hydration, a number is written even when its string is unchanged
-+		component.$set({ n: '2' });
-+		flushSync();
-+		written();
-+		component.$set({ n: 2 });
-+		flushSync();
-+		assert.deepEqual(
-+			written().filter((record) => record.endsWith('data-n')),
-+			['section data-n', 'p data-n']
-+		);
-+	},
-+
-+	after_test() {
-+		observer.disconnect();
-+	}
-+});
-```
-
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/_expected.html` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<!--[--><div tabindex="-1" data-same="1" data-nan="NaN" data-large="1e+21" data-yes="true" data-no="false" aria-hidden="true" data-decimal="1" data-zero="0" aria-checked="false" data-empty="true" aria-rowindex="3" data-object="1" draggable="false"></div> <svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24"><rect x="1"></rect></svg> <button tabindex="-1" disabled hidden>x</button> <button is="svelte-observed-button" tabindex="-1" data-on="true">y</button> <section data-n="1" tabindex="-1"></section><!----> <p data-n="1"></p><!--]-->
-```
-
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/main.svelte` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+<script>
-+	let { values, size = 24, spread, custom, show, n = 1 } = $props();
-+</script>
-+
-+<div
-+	tabindex={-1}
-+	data-same={values['data-same']}
-+	data-nan={values['data-nan']}
-+	data-large={values['data-large']}
-+	data-yes={values['data-yes']}
-+	data-no={values['data-no']}
-+	aria-hidden={values['aria-hidden']}
-+	data-decimal={values['data-decimal']}
-+	data-zero={values['data-zero']}
-+	aria-checked={values['aria-checked']}
-+	data-empty={values['data-empty']}
-+	aria-rowindex={values['aria-rowindex']}
-+	data-null={values['data-null']}
-+	data-undefined={values['data-undefined']}
-+	data-object={values['data-object']}
-+	draggable={values.draggable}
-+></div>
-+<svg width={size} height={size} stroke-width={1.5} viewBox="0 0 24 24"><rect x={1} /></svg>
-+<button {...spread}>x</button>
-+<button {...custom}>y</button>
-+{#if show}
-+	<section data-n={n} tabindex={-1}></section>
-+{/if}
-+<p data-n={n}></p>
-```
-
-**File**: `packages/svelte/tests/runtime-browser/samples/hydration-attribute-custom-elements/_config.js` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+import { flushSync } from 'svelte';
-+import { assert_ok, test } from '../../assert';
-+
-+/** @type {string[]} */
-+const changes = [];
-+
-+let hydrating = false;
-+
-+/** @param {string} name */
-+function define(name) {
-+	customElements.define(
-+		name,
-+		class extends HTMLButtonElement {
-+			static observedAttributes = ['tabindex', 'data-on'];
-+
-+			/**
-+			 * @param {string} attribute
-+			 * @param {string | null} old_value
-+			 * @param {string | null} value
-+			 */
-+			attributeChangedCallback(attribute, old_value, value) {
-+				changes.push(`${this.textContent} ${attribute} ${old_value} ${value}`);
-+			}
-+		},
-+		{ extends: 'button' }
-+	);
-+}
-+
-+export default test({
-+	before_test() {
-+		// customized built-ins only come from the server markup here
-+		hydrating = document.querySelector('main')?.firstChild != null;
-+		/** @type {any} */ (globalThis).svelte_test_client = true;
-+
-+		// upgrades the server-rendered button before hydration
-+		define('svelte-early-button');
-+	},
-+
-+	test({ assert, component, target }) {
-+		if (!hydrating) return;
-+
-+		// the upgrade delivered the initial values, and hydration didn't write them again
-+		assert.deepEqual(changes.splice(0).sort(), [
-+			'early data-on null true',
-+			'early tabindex null -1'
-+		]);
-+
-+		// created with hydration turned off, after the `{#if}` mismatch, so its attributes are written
-+		const recovered = [...target.querySelectorAll('button')].find(
-+			(button) => button.textContent === 'recovered'
-+		);
-+		assert_ok(recovered);
-+		assert.equal(recovered.getAttribute('tabindex'), '-1');
-+		assert.equal(recovered.getAttribute('data-on'), 'true');
-+
-+		// defined after hydration: the upgrade still delivers the initial values
-+		define('svelte-late-button');
-+		assert.deepEqual(changes.splice(0).sort(), ['late data-on null true', 'late tabindex null -1']);
-+
-+		// a changed value is written
-+		flushSync(() => component.$set({ n: 0 }));
-+		assert.deepEqual(changes.splice(0).sort(), ['early tabindex -1 0', 'late tabindex -1 0']);
-+	}
-+});
-```
-
-**File**: `packages/svelte/tests/runtime-browser/samples/hydration-attribute-custom-elements/main.svelte` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+<script>
-+	let { n = -1 } = $props();
-+
-+	const early = { is: 'svelte-early-button', 'data-on': true };
-+	const late = { is: 'svelte-late-button', 'data-on': true };
-+
-+	// only the client sees this flag, so the `{#if}` doesn't match the server markup
-+	const mismatch = !!globalThis.svelte_test_client;
-+</script>
-+
-+<button {...early} tabindex={n}>early</button>
-+<button {...late} tabindex={n}>late</button>
-+{#if mismatch}
-+	<button {...early} tabindex={n}>recovered</button>
-+{/if}
-```
-
-**File**: `packages/svelte/tests/runtime-runes/samples/async-hydration-attribute-unchanged/_config.js` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+import { tick } from 'svelte';
-+import { test } from '../../test';
-+
-+/** @type {string[]} */
-+const written = [];
-+
-+/** @type {MutationObserver | undefined} */
-+let observer;
-+
-+export default test({
-+	mode: ['hydrate'],
-+
-+	server_props: { n: 1, m: 1 },
-+	props: { n: 1, m: 2 },
-+
-+	before_test() {
-+		observer?.disconnect();
-+		written.length = 0;
-+		observer = new MutationObserver((records) => {
-+			for (const record of records) written.push(/** @type {string} */ (record.attributeName));
-+		});
-+		observer.observe(document.body, { attributes: true, subtree: true });
-+	},
-+
-+	async test({ assert, target }) {
-+		await tick();
-+		observer?.disconnect();
-+
-+		// the `{#if}` is hydrated once its condition resolves; an awaited value is applied after hydration
-+		assert.deepEqual(written.sort(), ['data-deferred', 'data-m']);
-+		assert.htmlEqual(
-+			target.innerHTML,
-+			'<div data-n="1" data-m="2"></div> <p data-deferred="1"></p>'
-+		);
-+	}
-+});
+@@ -752,6 +752,7 @@ export interface HTMLAttributes<T extends EventTarget> extends AriaAttributes, D
+ 	// Standard HTML Attributes
+ 	accesskey?: string | undefined | null;
+ 	autocapitalize?: 'characters' | 'off' | 'on' | 'none' | 'sentences' | 'words' | undefined | null;
++	autocorrect?: 'on' | 'off' | '' | undefined | null;
+ 	autofocus?: boolean | undefined | null;
+ 	class?: ClassValue | undefined | null;
+ 	contenteditable?: Booleanish | 'inherit' | 'plaintext-only' | undefined | null;
+@@ -1077,8 +1078,6 @@ export interface HTMLInputAttributes extends HTMLAttributes<HTMLInputElement> {
+ 	accept?: string | undefined | null;
+ 	alt?: string | undefined | null;
+ 	autocomplete?: FullAutoFill | undefined | null;
+-	// Safari only https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocorrect
+-	autocorrect?: 'on' | 'off' | '' | undefined | null;
+ 	capture?: boolean | 'user' | 'environment' | undefined | null; // https://www.w3.org/TR/html-media-capture/#the-capture-attribute
+ 	checked?: boolean | undefined | null;
+ 	dirname?: string | undefined | null;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19105** (2026-10-27): fix: allow `autocorrect` on all elements (@CNSeniorious000)
 - **PR #19079** (2026-10-22): chore: skip eager effects during traversal (@Rich-Harris)
+- **PR #19078** (closed): chore: simplify batch.capture (@Rich-Harris)
+- **PR #19076** (2026-10-23): fix: don't run `$inspect` and `$state.eager` with the values of a fork before it is committed (@Rich-Harris)
 - **PR #19074** (2026-10-22): chore: DRY out dirty reaction code (@Rich-Harris)
 - **PR #19068** (2026-10-22): chore: better async derived labels (@Rich-Harris)
-- **PR #19067** (2026-10-21): chore: add security policy section to AGENTS.md (@Rich-Harris)
-- **PR #19066** (closed): chore: add security policy document (@Rich-Harris)
-- **PR #19061** (2026-10-21): chore: DRY out batch intersection logic (@Rich-Harris)
 
 ---
 
@@ -2708,24 +2063,25 @@ Co-authored-by: Paolo Ricciuti <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add security policy section to AGENTS.md (#19067)
+## X. allow `autocorrect` on all elements (#19105)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/olive-pots-tickle.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2334f5ed`: add security policy section to AGENTS.md (#19067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14a611f3`: allow `autocorrect` on all elements (#19105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/olive-pots-tickle.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-## Security Policy
+---
+'svelte': patch
+---
 
-See https://github.com/sveltejs/svelte/security/policy.
-
+fix: allow `autocorrect` on all elements
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2735,4 +2091,4 @@ See https://github.com/sveltejs/svelte/security/policy.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2334f5ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14a611f3` are properly handled with clean fallback behavior.

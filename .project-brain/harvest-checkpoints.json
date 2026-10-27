@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:19:02.730Z",
+  "last_updated": "2026-10-27T15:25:48.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
-      "verified_at": "2026-10-25T21:46:49.704Z",
+      "content_hash": "2fc321f3d3f446f8b31bb93f93513bc04af800e521e229060bcea9c54408d818",
+      "verified_at": "2026-10-27T15:25:47.805Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T21:46:49.704Z"
+      "last_updated": "2026-10-27T15:25:47.805Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
-      "verified_at": "2026-10-23T06:17:17.102Z",
+      "content_hash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
+      "verified_at": "2026-10-27T15:25:48.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:17:17.102Z"
+      "last_updated": "2026-10-27T15:25:48.110Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

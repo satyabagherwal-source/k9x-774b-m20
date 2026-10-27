@@ -5419,3 +5419,5 @@ Every entry in this ledger must capture:
 | `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `16a017ee` | Multi-dimensional audit evidence | 2026-10-27T15:18:54.823Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `2548bd51` | Multi-dimensional audit evidence | 2026-10-27T15:18:59.135Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `565e54d3` | Multi-dimensional audit evidence | 2026-10-27T15:19:02.721Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `352e81e9` | Multi-dimensional audit evidence | 2026-10-27T15:25:47.795Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `14a611f3` | Multi-dimensional audit evidence | 2026-10-27T15:25:48.099Z |

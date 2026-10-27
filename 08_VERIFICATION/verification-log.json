@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZWGY",
-    "timestamp": "2026-10-25T17:08:05.026Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "8da24840749ed2130fe0413f87a199d532ab2e8b9440866c11458fa5c99416a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-83NT",
-    "timestamp": "2026-10-25T17:14:27.593Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "2791403529dd82bfb11214416118db4d703d7d90eb5e7737ee86f6605af6bd3f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-87XF",
     "timestamp": "2026-10-25T17:14:33.123Z",
     "repository": "momenbasel/PureMac",
@@ -7490,6 +7460,36 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "b9fd9dd447f7c7bf8b45cdc7a10f44c84b18c647795bfe7d98bde766341e574d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-82A7",
+    "timestamp": "2026-10-27T15:25:47.791Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "2fc321f3d3f446f8b31bb93f93513bc04af800e521e229060bcea9c54408d818",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-82IO",
+    "timestamp": "2026-10-27T15:25:48.096Z",
+    "repository": "sveltejs/svelte",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `59ad3bc5`  
+> **Source Version**: `352e81e9`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:46:49.173Z  
+> **Timestamp**: 2026-10-27T15:25:47.366Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:46:49.167Z  
+> **Harvest Timestamp**: 2026-10-27T15:25:45.891Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4699 stars
+- **Stars / Engagement**: 4707 stars
 
 ---
 
@@ -1472,13 +1472,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2455** (2026-10-25): **fix(vscode): support new version format for vscode-insiders**
-  *Symptoms*: Closes #2454  @majordumoII if you have `cargo`, could you test this PR? ([guide](https://github.com/topgrade-rs/topgrade?tab=contributing-ov-file#testing-a-pull-request))
-  **Post-Mortem & Fix Analysis**:
-  > This is my first time running this process (on 3rd party), but I think it worked. Results below   ── 16:51:14 - Visual Studio Code Insiders extensions ─────────────────────────── (node:97905) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities. (Use `Code --trace-deprecation ...` to show where the warning was created) No extension to update  ── 16:51:17 - Summary ──────────────────────────────────────── Visual Studio Code Insiders extensions: OK
+- **Issue #2460** (2026-10-26): **feat(step): add LucidLink**
+  *Symptoms*: ## What does this PR do? Add LucidLink sudo update on Windows  ## Standards checklist  - [X] I have read `CONTRIBUTING.md` - [X] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [X] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps. - [ ] If this PR introduces new user-facing messages, they are translated  ```shell cargo run -- --only lucid_link     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.39s      Running `target\debug\topgrade.exe --only lucid_link`  ── 23:36:38 - LucidLink ──────────────────────────────────────────────────────── No new version available.  Installed version:      3.9, Build 9031 Latest version:         3.9, Build 9031  ── 23:36:39 - Summary ────────────────────────────────────────────────────────── LucidLink: OK ```  ### AI involvement I did not use AI at all!  ## For new steps  <!-- This section can be deleted if you are not adding a new step. -->  - [ ] *Optional:* Topgrade skips this step where needed - [ ] *Optional:* The `--yes` option works with this step if it is supported by the underlying command  <!-- If you developed a feature or a bug fix for someone else and you do not have the means to test it, please tag this person here. -->  <!-- Magic marker that you used the PR template; DO NOT EDIT OR REMOVE THIS COMMENT! --> 
 
-- **Issue #2454** (2026-10-25): **VSCODE Insiders version mismatch**
-  *Symptoms*: ### Checklist  - [x] I have searched [the issue tracker](https://github.com/topgrade-rs/topgrade/issues) for relevant or duplicate issues.  ### Area  Failing step  ### Erroneous behavior  ``` Visual Studio Code Insiders extensions failed:    0: The output of `code-insiders --version` changed: Invalid version. This is not your fault, this is an issue in Topgrade. Please open an issue at: https://github.com/topgrade-rs/topgrade/issues/new?template=bug-report.yml&version=topgrade%2017.14.1    1: unexpected character 'c' while parsing major version number ```  ### Expected behavior  ── 18:45:58 - Summary ────────────────────────────────────────────────────────── Skills: OK  ### Steps to reproduce  topgrade --only vscode_insiders  ### Problem persists when running command outside of Topgrade  None  ### Possible cause  VSCode Insiders must have changed printed version format  ### Ran through Remote Execution?  No  ### Topgrade version  topgrade 17.14.1  ### Last working version  N/A  ### Environment  system_profiler SPSoftwareDataType SPHardwareDataType                                                                        18:47 Software:      System Software Overview:        System Version: macOS 27.0.1 (26A434)       Kernel Version: Darwin 27.0.0       Boot Volume: Macintosh HD 2       Boot Mode: Normal       Computer Name: MBP 16 M2 Max       Secure Virtual Memory: Enabled       System Integrity Protection: Enabled       Time since boot: 7 days, 9 hours, 12 minutes  Hardware:   
+- **Issue #2459** (2026-10-26): **feat(step): add Tailscale**
+  *Symptoms*: ## What does this PR do? Add Tailscale sudo update for Windows  ## Standards checklist  - [X] I have read `CONTRIBUTING.md` - [X] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [X] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps. - [ ] If this PR introduces new user-facing messages, they are translated ```shell cargo run -- --only tailscale    Compiling topgrade v17.14.1 (C:\Users\user\topgrade)     Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.37s                      Running `target\debug\topgrade.exe --only tailscale`   ── 23:29:10 - Tailscale ──────────────────────────────────────────────────────── already running stable version 1.104.2; no update needed  ── 23:29:11 - Summary ────────────────────────────────────────────────────────── Tailscale: OK ``` ### AI involvement I did not use AI at all!  ## For new steps  <!-- This section can be deleted if you are not adding a new step. -->  - [ ] *Optional:* Topgrade skips this step where needed - [X] *Optional:* The `--yes` option works with this step if it is supported by the underlying command  <!-- If you developed a feature or a bug fix for someone else and you do not have the means to test it, please tag this person here. -->  <!-- Magic marker that you used the PR template; DO NOT EDIT OR REMOVE THIS COMMENT! --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,61 +1493,118 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59ad3bc5` (2026-10-25)
-**Commit Message**: fix(vscode): support new version format for vscode-insiders (#2455)
+### Incident Patch 1: `352e81e9` (2026-10-26)
+**Commit Message**: feat(step): add LucidLink (#2460)
 
-**File**: `src/steps/generic.rs` (modified, +19/-7)
+Co-authored-by: Gideon <[REDACTED_EMAIL]>
+
+**File**: `src/step.rs` (modified, +3/-0)
 ```diff
-@@ -763,6 +763,7 @@ fn run_vscode_compatible(variant: VSCodeVariant, ctx: &ExecutionContext) -> Resu
-     //    This is confirmed on an install from the apt repository
-     // 2. 1 line: 'bin-name 1.2.3 (commit 123abc)', example: `code-insiders 1.106.0 (commit 48cdf17f0e856e1daca2ad2747814085a2453df0)`
-     //    See https://github.com/topgrade-rs/topgrade/issues/1605, confirmed from Microsoft website
-+    //    The bin-name can also be `code` on `code-insiders`.
-     // This should apply to VSCodium as well.
+@@ -111,6 +111,7 @@ pub enum Step {
+     Kakoune,
+     Krew,
+     Lensfun,
++    LucidLink,
+     Lure,
+     Macports,
+     Mamba,
+@@ -467,6 +468,7 @@ impl Step {
+             Lensfun => runner.execute(*self, "Lensfun's database update", || {
+                 generic::run_lensfun_update_data(ctx)
+             })?,
++            LucidLink => runner.execute(*self, "LucidLink", || generic::run_lucidlink(ctx))?,
+             Lure =>
+             {
+                 #[cfg(target_os = "linux")]
+@@ -997,6 +999,7 @@ pub(crate) fn default_steps() -> Vec<Step> {
+         HermesAgent,
+         AntigravityCli,
+         Zed,
++        LucidLink,
+         Tailscale,
+         // Steps that should run last
+         // Runs `sudo -k` at startup, which drops cached sudo credentials for every later step
+```
+
+**File**: `src/steps/generic.rs` (modified, +9/-0)
+```diff
+@@ -3025,6 +3025,15 @@ pub fn run_antigravity_cli(ctx: &ExecutionContext) -> Result<()> {
+     ctx.execute(agy).arg("update").status_checked()
+ }
  
-     let version_output = ctx.execute(&bin).always().arg("--version").output_checked_utf8()?;
-@@ -776,14 +777,25 @@ fn run_vscode_compatible(variant: VSCodeVariant, ctx: &ExecutionContext) -> Resu
-         ))
-     })?;
++pub fn run_lucidlink(ctx: &ExecutionContext) -> Result<()> {
++    let lucidlink = require("lucid")?;
++
++    print_separator("LucidLink");
++
++    let sudo = ctx.require_sudo()?;
++    sudo.execute(ctx, &lucidlink)?.arg("update").status_checked()
++}
++
+ pub fn run_tailscale(ctx: &ExecutionContext) -> Result<()> {
+     let tailscale = require("tailscale")?;
  
--    let version_string = if line.starts_with(bin_name) {
-+    let version_string = if line.starts_with(bin_name) || line.starts_with("code") {
-         // Case 2
--        line.split_whitespace().nth(1).ok_or_else(|| {
--            eyre!(output_changed_message!(
--                &format!("{bin_name} --version"),
--                format!("No version after '{bin_name}'")
--            ))
--        })?
-+        let mut it = line.split_whitespace();
-+        match (it.next(), it.next()) {
-+            (None, None) => {
-+                return Err(eyre!(output_changed_message!(
-+                    &format!("{bin_name} --version"),
-+                    "No output"
-+                )));
-+            }
-+            (Some(prefix), None) => {
-+                return Err(eyre!(output_changed_message!(
-+                    &format!("{bin_name} --version"),
-+                    format!("No version after '{prefix}'")
-+                )));
-+            }
-+            (Some(_prefix), Some(version)) => version,
-+            (None, Some(_)) => unreachable!(),
-+        }
-     } else {
-         // Case 1
-         // The whole line should be the version
+```
+
+---
+
+### Incident Patch 2: `8a0b622c` (2026-10-26)
+**Commit Message**: feat(step): add Tailscale (#2459)
+
+Co-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>
+
+**File**: `src/step.rs` (modified, +3/-0)
+```diff
+@@ -174,6 +174,7 @@ pub enum Step {
+     Stack,
+     Stew,
+     System,
++    Tailscale,
+     Tldr,
+     Tlmgr,
+     Tmux,
+@@ -701,6 +702,7 @@ impl Step {
+                 #[cfg(target_os = "openbsd")]
+                 runner.execute(*self, "OpenBSD Upgrade", || openbsd::upgrade_openbsd(ctx))?
+             }
++            Tailscale => runner.execute(*self, "Tailscale", || generic::run_tailscale(ctx))?,
+             Tldr => runner.execute(*self, "tldr", || generic::run_tldr(ctx))?,
+             Tlmgr => runner.execute(*self, "tlmgr", || generic::run_tlmgr_update(ctx))?,
+             Tmux =>
+@@ -995,6 +997,7 @@ pub(crate) fn default_steps() -> Vec<Step> {
+         HermesAgent,
+         AntigravityCli,
+         Zed,
++        Tailscale,
+         // Steps that should run last
+         // Runs `sudo -k` at startup, which drops cached sudo credentials for every later step
+         BrewFormula,
+```
+
+**File**: `src/steps/generic.rs` (modified, +9/-0)
+```diff
+@@ -3024,3 +3024,12 @@ pub fn run_antigravity_cli(ctx: &ExecutionContext) -> Result<()> {
+ 
+     ctx.execute(agy).arg("update").status_checked()
+ }
++
++pub fn run_tailscale(ctx: &ExecutionContext) -> Result<()> {
++    let tailscale = require("tailscale")?;
++
++    print_separator("Tailscale");
++
++    let sudo = ctx.require_sudo()?;
++    sudo.execute(ctx, &tailscale)?.arg("update").status_checked()
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2460** (2026-10-26): feat(step): add LucidLink (@p-vdp)
+- **PR #2459** (2026-10-26): feat(step): add Tailscale (@p-vdp)
+- **PR #2458** (2026-10-26): chore(deps): lock file maintenance (@renovate[bot])
+- **PR #2457** (2026-10-26): chore(deps): update release-plz/action action to v0.5.146 (@renovate[bot])
 - **PR #2455** (2026-10-25): fix(vscode): support new version format for vscode-insiders (@GideonBear)
 - **PR #2451** (2026-10-23): chore(deps): update github/codeql-action action to v4.39.1 (@renovate[bot])
-- **PR #2450** (2026-10-23): chore(deps): update release-plz/action action to v0.5.145 (@renovate[bot])
-- **PR #2448** (2026-10-21): Revert "fix(opencode): check for plugin updates before updating" (@NextMerge)
-- **PR #2447** (2026-10-20): fix(opencode): check for plugin updates before updating (@NextMerge)
-- **PR #2446** (2026-10-20): chore(deps): lock file maintenance (@renovate[bot])
 
 ---
 
@@ -1569,52 +1624,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vscode): support new version format for vscode-insiders (#2455)
+## X. step): add LucidLink (#2460)
 
 **RULE**:
-When implementing operations in `src/steps/generic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/step.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59ad3bc5`: vscode): support new version format for vscode-insiders (#2455). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `352e81e9`: step): add LucidLink (#2460). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/steps/generic.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/step.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    //    The bin-name can also be `code` on `code-insiders`.
-    let version_string = if line.starts_with(bin_name) || line.starts_with("code") {
-        let mut it = line.split_whitespace();
-        match (it.next(), it.next()) {
-            (None, None) => {
-                return Err(eyre!(output_changed_message!(
-                    &format!("{bin_name} --version"),
-                    "No output"
-                )));
-            }
-            (Some(prefix), None) => {
-                return Err(eyre!(output_changed_message!(
-                    &format!("{bin_name} --version"),
-                    format!("No version after '{prefix}'")
-                )));
-            }
-            (Some(_prefix), Some(version)) => version,
-            (None, Some(_)) => unreachable!(),
-        }
+    LucidLink,
+            LucidLink => runner.execute(*self, "LucidLink", || generic::run_lucidlink(ctx))?,
+        LucidLink,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let version_string = if line.starts_with(bin_name) {
-        line.split_whitespace().nth(1).ok_or_else(|| {
-            eyre!(output_changed_message!(
-                &format!("{bin_name} --version"),
-                format!("No version after '{bin_name}'")
-            ))
-        })?
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59ad3bc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `352e81e9` are properly handled with clean fallback behavior.

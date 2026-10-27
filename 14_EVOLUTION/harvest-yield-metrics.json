@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T15:19:02.726Z",
-  "total_cycles_completed": 5387,
-  "total_learnings_persisted": 5387,
-  "total_rules_promoted": 4789,
+  "last_updated": "2026-10-27T15:25:48.107Z",
+  "total_cycles_completed": 5389,
+  "total_learnings_persisted": 5389,
+  "total_rules_promoted": 4791,
   "history": [
-    {
-      "timestamp": "2026-10-27T10:50:49.338Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T10:50:51.881Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T10:54:11.436Z",
       "repository": "Gaurav-Gosain/tuios",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T15:19:02.726Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:25:47.802Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:25:48.107Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

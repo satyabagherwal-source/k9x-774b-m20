@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:19:02.660Z",
+  "last_updated": "2026-10-27T15:25:48.037Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50403,8 +50403,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "59ad3bc5",
-      "content_hash": "79decd2ac35451c61d7cd2716976dd733c89f92ce843ffaeff2c703c4ec984af",
+      "source_version": "352e81e9",
+      "content_hash": "2fc321f3d3f446f8b31bb93f93513bc04af800e521e229060bcea9c54408d818",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -50442,6 +50442,11 @@
           "number": 4459,
           "title": "vscode): support new version format for vscode-insiders (#2455)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4882,
+          "title": "step): add LucidLink (#2460)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50449,7 +50454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T21:46:49.599Z",
+      "verified_at": "2026-10-27T15:25:47.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67731,14 +67736,19 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "356c8766",
-      "content_hash": "11acc216e0affde97dc30f9265515404a712b463f64c936cfaa5c8c249235e85",
+      "source_version": "14a611f3",
+      "content_hash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
         {
           "number": 2987,
           "title": "prevent duplicate derived subscriptions on reconnect (#18899)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4883,
+          "title": "allow `autocorrect` on all elements (#19105)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -67747,7 +67757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:17:17.011Z",
+      "verified_at": "2026-10-27T15:25:48.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135688,6 +135698,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:19:02.647Z"
+    },
+    "rule-4882": {
+      "learning_id": "rule-4882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4882,
+      "title": "step): add LucidLink (#2460)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "352e81e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:25:47.715Z"
+    },
+    "rule-4883": {
+      "learning_id": "rule-4883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4883,
+      "title": "allow `autocorrect` on all elements (#19105)",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "14a611f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:25:48.025Z"
     }
   },
   "aliases": {
