@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `b33f3ef5`  
+> **Source Version**: `5c060064`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:04:42.490Z  
+> **Timestamp**: 2026-10-27T13:54:23.598Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:04:42.480Z  
+> **Harvest Timestamp**: 2026-10-27T13:54:23.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `Dicklesworthstone/destructive_command_guard`
-- **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
+- **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6212 stars
+- **Stars / Engagement**: 6215 stars
 
 ---
 
@@ -2476,1097 +2476,754 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b33f3ef5` (2026-10-25)
-**Commit Message**: fix(normalize): never take an option word for timeout's duration or chrt's program (#592)
+### Incident Patch 1: `9d76299f` (2026-10-27)
+**Commit Message**: fix(deps): realign ast-grep core with the vendored language adapter again
 
-Two wrapper parsers in the normalizer could still let an option word fill
-a positional slot, so the wrong word became the command (the same misread
-3d1bfe2b fixed for `time`):
+The Dependabot bump of ast-grep-core to 0.51.0 (8c9335f2, folded in
+869e4044) repeated the break that cdf17b49 fixed: the vendored
+ast-grep-language-dcg adapter is built against core 0.45.3, so the
+build held two incompatible cores, and SupportLang did not implement
+the direct 0.51 core's LanguageExt. Main has not compiled since
+(683 errors in the lib).
 
-- `timeout` read any word its option loop did not recognize as DURATION
-  and the word after it as the program. getopt clusters flags, and the
-  last letter of a cluster may be `-k` or `-s`, whose value is the rest of
-  the word or the next word: `timeout -vk 5 10 prog args` runs `prog`, but
-  normalized to `5 10 prog args`. A long-option abbreviation (`--sig KILL`)
-  or an unknown letter was misread the same way. The external pack keyed
-  on the real program was then not selected, and the command was allowed.
-- `chrt` with an optional priority (`-o`, `-b`, `-i`, `-d`, `-e`) took the
-  first word after its options as the program even when it was an option
-  the loop does not model, such as the `--fi` abbreviation of `--fifo`.
+Restore ast-grep-core 0.45.3 and drop the unused 0.51.0 lock entry,
+keeping the rust-minor-patch group updates. Tell Dependabot to ignore
+ast-grep-core, since it can only move together with the vendored
+adapter; the Cargo.toml comment already said so.
 
-`timeout` now reads a cluster of `-f`/`-p`/`-v` that may end in `-k`/`-s`
-with its value, and leaves the wrapper in place when the word in the
-DURATION slot starts with `-`. `chrt` leaves the wra
-
-**File**: `src/normalize.rs` (modified, +70/-6)
-```diff
-@@ -1249,20 +1249,43 @@ fn timeout_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Op
-             index += 1;
-             continue;
-         }
--        if word.strip_prefix('-').is_some_and(|flags| {
--            !flags.is_empty() && flags.bytes().all(|flag| matches!(flag, b'f' | b'p' | b'v'))
--        }) {
--            index += 1;
-+        if let Some(consume_next) = timeout_flag_cluster(&word) {
-+            if consume_next {
-+                wrapper_word(command, tokens, index + 1)?;
-+            }
-+            index += 1 + usize::from(consume_next);
-             continue;
-         }
-         break;
-     }
--    wrapper_word(command, tokens, index)?;
-+    // DURATION is a number with an optional unit, never an option word. Taking
-+    // an option this parser does not model (a long-option abbreviation such as
-+    // `--sig`, an unknown letter) for the duration made the real duration the
-+    // program.
-+    if wrapper_word(command, tokens, index)?.starts_with('-') {
-+        return None;
-+    }
-     let command_index = index.checked_add(1)?;
-     wrapper_word(command, tokens, command_index)?;
-     Some(command_index)
- }
- 
-+/// A getopt cluster of `timeout` flags: `-f`/`-p`/`-v`, optionally ending in
-+/// `-k` or `-s`, whose value is the rest of the word or, when the letter ends
-+/// the word, the next word (returned as `Some(true)`). `None` when the word is
-+/// not such a cluster.
-+fn timeout_flag_cluster(word: &str) -> Option<bool> {
-+    let flags = word.strip_prefix('-').filter(|flags| !flags.is_empty())?;
-+    for (position, flag) in flags.bytes().enumerate() {
-+        match flag {
-+            b'f' | b'p' | b'v' => {}
-+            b'k' | b's' => return Some(position + 1 == flags.len()),
-+            _ => return None,
-+        }
-+    }
-+    Some(false)
-+}
-+
- fn stdbuf_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Option<usize> {
-     let mut index = 1usize;
-     while let Some(word) = wrapper_word(command, tokens, index) {
-@@ -1387,7 +1410,9 @@ fn chrt_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Optio
-         let command_index = index.checked_add(1)?;
-         wrapper_word(command, tokens, command_index)?;
-         Some(command_index)
--    } else if priority_optional {
-+    } else if priority_optional && !first.starts_with('-') {
-+        // An option word here is one the loop does not model (such as the
-+        // `--fi` abbreviation of `--fifo`), not the program.
-         Some(index)
-     } else {
-         None
-@@ -5497,6 +5522,45 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn timeout_and_chrt_never_take_an_option_word_as_the_duration_or_program() {
-+        // `timeout` clusters its flags getopt style, and the last letter of a
-+        // cluster may be `-k`/`-s`, whose value is the rest of the word or the
-+        // next word. Read as the DURATION, such a cluster made the real
-+        // duration the program. Synthetic program names.
-+        let stripped = [
-+            ("timeout -vk 5 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -vk5 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -fs KILL 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -pvsKILL 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -k 5 -v 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -- 10 zofftool shatter", "zofftool shatter"),
-+        ];
-+        for (command, expected) in stripped {
-+            assert_eq!(
-+                strip_wrapper_prefixes(command).normalized,
-+                expected,
-+                "{command}"
-+            );
-+        }
-+        // An option the parser does not model (a long-option abbreviation, an
-+        // unknown letter) is never the duration, and a word the priority slot
-+        // of `chrt` does not hold is never the program: the wrapper stays.
-+        for command in [
-+            "timeout --sig KILL 10 zofftool shatter",
-+            "timeout -x 10 zofftool shatter",
-+            "timeout -vx 10 zofftool shatter",
-+            "chrt -o --fi 0 zofftool shatter",
-+            "chrt --other -x zofftool shatter",
-+        ] {
-+            assert!(
-+                !strip_wrapper_prefixes(command).was_normalized(),
-+                "an option word was read as the duration or program: {command} -> {}",
-+                strip_wrapper_prefixes(command).normalized
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn wrapper_option_values_never_consume_redirections_issue_531() {
-         let wrappers: &[(&str, &[&str])] = &[
-```
-
-**File**: `tests/repro_592_external_pack_identity_selection.rs` (modified, +6/-0)
-```diff
-@@ -232,6 +232,12 @@ fn programs_behind_wrappers_and_launchers_select_the_external_pack() {
-         ("stripped wrapper", "time /opt/bin/frobtool zap"),
-         ("stripped wrapper", "time -o t.txt /fs/frobtool zap"),
-         ("stripped wrapper", "time -f%E /opt/frob''tool zap"),
-+        // A `timeout` flag cluster ending in `-k`/`-s` is not the duration,
-+        // and an option word is not the program behind `chrt`.
-+        ("stripped wrapper", "timeout -vk 5 10 $F zap"),
-+        ("stripped wrapper", "timeout -fsKILL 10 frob''tool zap"),
-+        ("wrapper left in place", "timeout --sig KILL 10 $F zap"),
-+        ("wrapper left in place", "chrt -o --fi 0 $F zap"),
-         ("launcher", "xargs $F zap"),
-         ("launcher", "xargs frob''tool zap"),
-         ("launcher", "xargs fr\\obtool zap"),
-```
-
----
-
-### Incident Patch 2: `3d1bfe2b` (2026-10-25)
-**Commit Message**: fix(normalize): keep a wrapped program whose second byte is f or o behind time (#592)
-
-`time -fFORMAT` and `time -oFILE` carry their value in the same word. The
-time wrapper parser matched that form by the second byte alone, so a
-program word such as `/opt/bin/tool` or `sofftool` was skipped as if it
-were an option, and the word after it became the command. The program a
-segment runs was then misread: an external pack keyed on that program was
-not selected (the #592 identity selection resolved the wrong word), and a
-rule spelling the program did not see it in the normalized text.
-
-The attached-value form now also requires the word to start with `-`.
-Separate `-f FORMAT` / `-o FILE`, `--format=`/`--output=` and the flag
-clusters are unchanged.
-
-Tests: a normalize unit test for each `time` option form with synthetic
-program names, and `time` rows with `/opt/...` and `/fs/...` program paths
-in the synthetic-pack identity-selection test. Both fail without the fix.
+Checked remotely: cargo check --all-targets and cargo fmt --check pass,
+and the TMPDIR redirect tests (repro_536, 16 tests including the #590
+ones) pass.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/normalize.rs` (modified, +29/-1)
+**File**: `.github/dependabot.yml` (modified, +6/-0)
 ```diff
-@@ -1076,9 +1076,12 @@ fn time_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Optio
-             index += 2;
-             continue;
-         }
-+        // `-fFORMAT` / `-oFILE` carry their value. Only an option does: a
-+        // program word whose second byte is `f` or `o` (`/opt/...`, `sort`)
-+        // is the command, and skipping it handed the next word that role.
-         if word.starts_with("--format=")
-             || word.starts_with("--output=")
--            || word.len() > 2 && matches!(word.as_bytes()[1], b'f' | b'o')
-+            || word.len() > 2 && word.starts_with('-') && matches!(word.as_bytes()[1], b'f' | b'o')
-             || word.strip_prefix('-').is_some_and(|flags| {
-                 !flags.is_empty()
-                     && flags
-@@ -5408,6 +5411,31 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn time_reads_attached_option_values_only_from_options() {
-+        // `-fFORMAT` and `-oFILE` carry their value. A wrapped program whose
-+        // second byte is `f` or `o` is still the program: it used to be skipped
-+        // as an option, so the word after it became the command. Synthetic
-+        // program names.
-+        let cases = [
-+            ("time zofftool shatter", "zofftool shatter"),
-+            ("time -p zofftool shatter", "zofftool shatter"),
-+            ("time /opt/bin/frobtool zap", "/opt/bin/frobtool zap"),
-+            ("time /fs/frobtool zap", "/fs/frobtool zap"),
-+            ("time -o t.txt zofftool shatter", "zofftool shatter"),
-+            ("time -ot.txt zofftool shatter", "zofftool shatter"),
-+            ("time -f%E zofftool shatter", "zofftool shatter"),
-+            ("time --output=t.txt zofftool shatter", "zofftool shatter"),
-+        ];
-+        for (command, expected) in cases {
-+            assert_eq!(
-+                strip_wrapper_prefixes(command).normalized,
-+                expected,
-+                "{command}"
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn wrapper_option_values_never_consume_redirections_issue_531() {
-         let wrappers: &[(&str, &[&str])] = &[
+@@ -19,6 +19,12 @@ updates:
+     labels:
+       - "dependencies"
+       - "rust"
++    ignore:
++      # Must match the core version the vendored ast-grep-language-dcg adapter
++      # is built against (see Cargo.toml). A standalone bump creates a second,
++      # incompatible core and main stops compiling (cdf17b49, and again with
++      # the 0.51.0 bump).
++      - dependency-name: "ast-grep-core"
+     groups:
+       # Group minor/patch updates together
+       rust-minor-patch:
 ```
 
-**File**: `tests/repro_592_external_pack_identity_selection.rs` (modified, +5/-0)
+**File**: `Cargo.lock` (modified, +2/-14)
 ```diff
-@@ -227,6 +227,11 @@ fn programs_behind_wrappers_and_launchers_select_the_external_pack() {
-         ("wrapper left in place", "sudo -p prompt $F zap"),
-         ("wrapper left in place", "builtin command $F zap"),
-         ("option where the program goes", "time --unmodeled $F zap"),
-+        // A program word whose second byte is an option letter of `time`
-+        // (`-fFORMAT`, `-oFILE`) is still the program.
-+        ("stripped wrapper", "time /opt/bin/frobtool zap"),
-+        ("stripped wrapper", "time -o t.txt /fs/frobtool zap"),
-+        ("stripped wrapper", "time -f%E /opt/frob''tool zap"),
-         ("launcher", "xargs $F zap"),
-         ("launcher", "xargs frob''tool zap"),
-         ("launcher", "xargs fr\\obtool zap"),
+@@ -148,23 +148,11 @@ dependencies = [
+  "tree-sitter",
+ ]
+ 
+-[[package]]
+-name = "ast-grep-core"
+-version = "0.51.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "dea8fe60a16a988662ebb1b14aafc94e03260a987fb909a54525555188473269"
+-dependencies = [
+- "bit-set 0.11.1",
+- "regex",
+- "thiserror",
+- "tree-sitter",
+-]
+-
+ [[package]]
+ name = "ast-grep-language-dcg"
+ version = "0.45.3"
+ dependencies = [
+- "ast-grep-core 0.45.3",
++ "ast-grep-core",
+  "ignore",
+  "serde",
+  "tree-sitter",
+@@ -955,7 +943,7 @@ version = "0.15.3"
+ dependencies = [
+  "aho-corasick",
+  "assert_cmd",
+- "ast-grep-core 0.51.0",
++ "ast-grep-core",
+  "ast-grep-language-dcg",
+  "async-trait",
+  "base64",
+```
+
+**File**: `Cargo.toml` (modified, +2/-1)
+```diff
+@@ -68,7 +68,8 @@ rayon = { version = "1.11", optional = true }
+ # SupportLang crosses this crate's Language/LanguageExt trait boundary. Keep
+ # the core compatible with the vendored language adapter below; two semver
+ # incompatible core versions produce distinct traits and cannot interoperate.
+-ast-grep-core = "0.51.0"
++# Dependabot ignores this crate for that reason (.github/dependabot.yml).
++ast-grep-core = "0.45.3"
+ # The Bash grammar carries dcg's #442/#461 fixes (scanner memory safety on glibc;
+ # explicit stdin descriptors and mixed file/here-string redirections). It used to
+ # arrive through `[patch.crates-io]`, which `cargo publish` drops, so a crates.io
 ```
 
 ---
 
-### Incident Patch 3: `a2b42bdf` (2026-10-25)
-**Commit Message**: fix: preserve guardrail and written-script checks across arguments
+### Incident Patch 2: `9b55141b` (2026-10-26)
+**Commit Message**: fix(heredoc): judge quoted interpreter heredocs by where their output goes (#560, #591)
 
-Global flags could hide dcg uninstall and exception grants from the enabled
-guardrails pack. An --agent value named test or explain could also grant
-the self-inspection exemption to a mutating command. Written Python and
-Node programs lost language-aware safety checks when invoked with flags
-or script arguments.
+main denied quoted `python3 - <<'EOF'` edit heredocs that 0.15.3 allows.
+Since fedab418, the literal recovery from #544 judged every string of a
+program as a shell command unless the heredoc was the whole command, so
+`cd dir && python3 - <<'EOF'` or any command after the heredoc made
+Markdown, Rust doc comments and shell text kept as data read as an
+unverifiable substitution. #591 is the same family on 0.15.3: a quoted cat
+body written under ~ counted as input to a following `python3 -` heredoc.
 
-Consume known global options with their real arity, normalize proven
-POSIX/PowerShell dcg option prefixes, and keep quoted agent-name data
-separate from executed commands. Preserve stable guardrails rule IDs and
-exercise Bash, PowerShell and Cmd hook envelopes.
+- Isolation proof: a quoted heredoc is an interpreter's whole program when
+  its output reaches only the terminal and nothing else in the command can
+  run what it wrote (no shell, interpreter, recipe runner, wrapper with a
+  script operand, find -exec, git -c, awk -f, PATH/PYTHON*/LD_* change,
+  function or background job). `cd dir &&` lists, Python run-mode flags,
+  program arguments after `-`, and interpreters in system or package
+  manager bin directories are accepted. The heredoc's language comes from
+  its own receiver rather than the first word of the command.
+- A process call whose arguments ar
 
-Recover the literal written script operand through supported interpreter
-flags and trailing argv. Carry that additional execution target separately
-from the original heredoc receiver, so typed safety checks are added
-without broadening literal-data exemptions or treating console.log text
-as a shell command.
-
-Allow otherwise proven local redirect paths under a verified startup
-TMPDIR. Reject home/system/credential roots, invalid root symlinks,
-unknown bindings, traversal and nonlocal filesystem contexts. Removal
-and mktemp rules retain their existin
-
-**File**: `src/allowlist.rs` (modified, +45/-5)
+**File**: `src/ast_matcher.rs` (modified, +369/-2)
 ```diff
-@@ -822,11 +822,28 @@ fn segment_is_dcg_inspection_call(segment: &str) -> bool {
-     if !is_dcg_binary_name(arg0) {
-         return false;
+@@ -225,6 +225,26 @@ pub(crate) fn interpreter_literal_shell_commands(
+     )
+ }
+ 
++/// [`interpreter_literal_shell_commands`] for a program the outer shell
++/// expands before the interpreter reads it (an unquoted heredoc body). Its
++/// backquotes run at that expansion whatever the program then does with the
++/// string, so no candidate is screened or cut as text only a later shell
++/// might run: every one is judged whole.
++pub(crate) fn expanded_interpreter_literal_shell_commands(
++    code: &str,
++    language: ScriptLanguage,
++    allow_documentation_literals: impl FnOnce() -> Option<bool> + Send + 'static,
++    budget: Duration,
++) -> Result<Vec<ReconstructedCommand>, MatchError> {
++    source_analysis::interpreter_literal_shell_commands_with_execution_evidence(
++        code,
++        language,
++        allow_documentation_literals,
++        budget,
++        false,
++    )
++}
++
+ // Retain the previous two-parse composition only as a differential oracle.
+ #[cfg(test)]
+ fn literal_recovery_scope(
+@@ -243,7 +263,6 @@ fn literal_recovery_scope(
+ 
+ // Independent bounds on this optional screen. Crossing either withholds the
+ // screen, leaving the existing source analyzer's hard bounds and errors intact.
+-#[cfg(test)]
+ const LITERAL_EVIDENCE_MAX_BYTES: usize = 256 * 1024;
+ const LITERAL_EVIDENCE_MAX_NODES: usize = 4096;
+ 
+@@ -271,12 +290,54 @@ fn literal_source_has_execution_evidence(code: &str, language: ScriptLanguage) -
+     literal_root_has_execution_evidence(&ast.root(), language)
+ }
+ 
++/// Whether a Python or JavaScript program may start a process or evaluate
++/// code at all: an execution API name under any arguments (a closed
++/// `subprocess.run([...])` included), or any shape the evidence screen cannot
++/// read. Other languages, oversized programs and parse failures answer yes.
++///
++/// Used where a program's capability, not its literals, is the question: an
++/// interpreter that reads its program from its own heredoc cannot run what
++/// another heredoc wrote unless that program can execute something (#591).
++pub(crate) fn program_may_execute_code(code: &str, language: ScriptLanguage) -> bool {
++    use ast_grep_core::AstGrep;
++    use ast_grep_language::SupportLang;
++
++    if code.len() > LITERAL_EVIDENCE_MAX_BYTES {
++        return true;
++    }
++    let grammar = match language {
++        ScriptLanguage::Python => SupportLang::Python,
++        ScriptLanguage::JavaScript => SupportLang::JavaScript,
++        _ => return true,
++    };
++    let _phase = crate::perf::phase(crate::perf::ProfilePhase::AstMatch);
++    let ast = {
++        let _parse = crate::perf::phase(crate::perf::ProfilePhase::AstParse);
++        AstGrep::try_new(code, grammar)
++    };
++    let Ok(ast) = ast else {
++        return true;
++    };
++    root_has_execution_evidence(&ast.root(), language, false)
++}
++
+ /// Inspect the recovery worker's tree; do not derive a new source exemption.
+ /// A negative answer still requires the caller's independent outer-consumer
+ /// proof. All original node, syntax, callee and identifier checks remain here.
+ fn literal_root_has_execution_evidence<D: ast_grep_core::Doc>(
+     root: &ast_grep_core::Node<'_, D>,
+     language: ScriptLanguage,
++) -> bool {
++    root_has_execution_evidence(root, language, true)
++}
++
++/// The evidence scan. `exempt_closed_calls` lets a [`closed_process_call`]
++/// pass, which is right when the question is whether some *other* literal
++/// may run, and wrong when it is whether the program can run anything.
++fn root_has_execution_evidence<D: ast_grep_core::Doc>(
++    root: &ast_grep_core::Node<'_, D>,
++    language: ScriptLanguage,
++    exempt_closed_calls: bool,
+ ) -> bool {
+     for (index, node) in root.dfs().enumerate() {
+         if index >= LITERAL_EVIDENCE_MAX_NODES || node.is_error() || node.is_missing() {
+@@ -323,7 +384,9 @@ fn literal_root_has_execution_evidence<D: ast_grep_core::Doc>(
+             if !name.is_ascii()
+                 || name.contains('\\')
+                 || name.starts_with("__")
+-                || literal_execution_name(name.as_ref())
++                || (literal_execution_name(name.as_ref())
++                    && !(exempt_closed_calls
++                        && closed_process_call(&node, name.as_ref(), language)))
+             {
+                 return true;
+             }
+@@ -332,6 +395,212 @@ fn literal_root_has_execution_evidence<D: ast_grep_core::Doc>(
+     false
+ }
+ 
++/// Whether `name_node` names the callee of a process call that no string
++/// with shell substitution syntax can reach: `subprocess.run(['git', 'show',
++/// 'origin/main:f'], capture_output=True)`, `re.compile(r'\s+$')` (#560).
++///
++/// The callee is a process API ([`closed_process_call_name`]) under a plain
++/// dotted name, and every argument is a literal (a string, number, boolean
++/// or `None`, or a list, tuple or keyword argument of those) whose value
++/// holds no backquote and no `$(`. No other value of the program can reach
++/// such a call, and the n
+```
+
+**File**: `src/ast_source_analysis.rs` (modified, +25/-7)
+```diff
+@@ -1187,13 +1187,20 @@ pub(super) fn interpreter_literal_shell_commands_inner_with_execution_evidence(
+     // The evidence screen already requires a complete bounded tree before
+     // answering false. Running it here preserves the data-only fast path and
+     // all predicates, but avoids a second parse when recovery is required.
+-    // An unproved outer consumer always retains the unscreened recovery.
+-    if screen_execution_evidence
+-        && allow_documentation_literals
+-        && !super::literal_root_has_execution_evidence(&root, language)
+-    {
++    let without_execution_evidence =
++        screen_execution_evidence && !super::literal_root_has_execution_evidence(&root, language);
++    if without_execution_evidence && allow_documentation_literals {
+         return Ok(Vec::new());
      }
--    // Skip leading global option flags (`--robot`, `--no-color`, `-v`, ...) and
--    // require the first non-flag token to be a known diagnostic subcommand.
--    for token in tokens {
--        if token.starts_with('-') {
--            continue;
-+    // Global options have the same arity here as in `cli::Cli`. In particular,
-+    // `dcg --agent test allow-once ...` is a grant, not a diagnostic: `test`
-+    // is the agent name. Skipping flags without consuming their values would
-+    // exempt the whole mutating command before the guardrails pack sees it.
-+    while let Some(token) = tokens.next() {
-+        match token.as_str() {
-+            "--agent" => {
-+                if tokens.next().is_none() {
-+                    return false;
++    // An unproved outer consumer retains the recovery: a program that runs
++    // nothing itself can still print or write a string that a later shell
++    // runs. A shell given that string runs only the part before its first
++    // syntax error, though. From the line holding an unterminated quote in
++    // Markdown prose, or a `(` after a command word in a Rust signature, the
++    // text is the program's data, not a hidden command, so only the lines
++    // before it are judged (#560; [`crate::heredoc::posix_text_runnable_prefix`]).
++    // With execution evidence every candidate is judged whole.
++    let only_shell_text = without_execution_evidence;
+     let node_limit = interpreter_literal_node_limit(code.len());
+     for (index, node) in root.dfs().enumerate() {
+         if index >= node_limit {
+@@ -1272,14 +1279,25 @@ pub(super) fn interpreter_literal_shell_commands_inner_with_execution_evidence(
+                     "literal count limit",
+                 ));
+             }
+-            if let Some(command) = command {
++            if let Some(mut command) = command {
+                 payload_bytes = payload_bytes.saturating_add(command.len());
+                 if payload_bytes > MAX_INTERPRETER_LITERAL_PAYLOAD_BYTES {
+                     return Err(interpreter_literal_parse_error(
+                         language,
+                         "aggregate literal byte limit",
+                     ));
+                 }
++                // Counted against both limits above, so narrowing or
++                // skipping it adds no unbounded work.
++                if only_shell_text {
++                    match crate::heredoc::posix_text_runnable_prefix(&command) {
++                        Some(runnable) if runnable.trim().is_empty() => continue,
++                        Some(runnable) if runnable.len() < command.len() => {
++                            command = runnable.to_string();
++                        }
++                        Some(_) | None => {}
++                    }
 +                }
-+                continue;
-+            }
-+            "--robot" | "--verbose" | "--quiet" | "--legacy-output" | "--no-color"
-+            | "--no-suggestions" | "-q" => continue,
-+            _ if token.starts_with("--agent=") => continue,
-+            _ if token.starts_with('-') => {
-+                if token.len() > 1 && token[1..].bytes().all(|byte| byte == b'v') {
-+                    continue;
-+                }
-+                return false;
-+            }
-+            _ => {}
+                 let range = node.range();
+                 commands.push(ReconstructedCommand {
+                     command,
+@@ -1371,7 +1389,7 @@ fn interpreter_literal_has_owned_sink<D: ast_grep_core::Doc>(
+ /// Decode complete AST string values, retaining unknown expressions as unknown.
+ /// Python's raw/bytes/triple strings and JavaScript's static templates have
+ /// different escape contracts; shell quoting cannot decode either language.
+-fn static_interpreter_literal<D: ast_grep_core::Doc>(
++pub(super) fn static_interpreter_literal<D: ast_grep_core::Doc>(
+     node: &ast_grep_core::Node<'_, D>,
+     language: ScriptLanguage,
+     depth: usize,
+```
+
+**File**: `src/evaluator.rs` (modified, +51/-32)
+```diff
+@@ -5655,11 +5655,16 @@ fn evaluate_windows_launcher_envelopes(
+     // A quoted POSIX heredoc that feeds a proven data sink suppresses outer
+     // shell expansion. Mask those literal bodies before launcher discovery so
+     // text such as `$(rm ...)` cannot be mistaken for dynamic construction of
+-    // a Windows shell launcher. Expanding heredocs and executing targets stay
+-    // visible, preserving the fail-closed path for real substitutions.
++    // a Windows shell launcher. A quoted body that is a proven non-shell
++    // interpreter's program (`python3 - <<'PY'`) is not shell syntax either:
++    // its own language's analysis and the raw rescan judge it (#560).
++    // Expanding heredocs and executing targets stay visible, preserving the
++    // fail-closed path for real substitutions.
++    let data_view;
+     let launcher_source = match outer_dialect {
+         ShellDialect::Posix | ShellDialect::Unknown => {
+-            crate::heredoc::mask_non_expanding_data_heredocs(command)
++            data_view = crate::heredoc::mask_non_expanding_data_heredocs(command);
++            crate::heredoc::mask_inert_interpreter_stdin(data_view.as_ref())
          }
-         return DCG_INSPECTION_SUBCOMMANDS.contains(&token.as_str());
+         ShellDialect::PowerShell | ShellDialect::Cmd => std::borrow::Cow::Borrowed(command),
+     };
+@@ -33938,35 +33943,49 @@ fn exec_sink_pack_verdict(
+             .min((remaining / 2).max(crate::ast_matcher::protected_scan_budget()))
+             .min(remaining);
      }
-@@ -4151,6 +4168,29 @@ mod tests {
-         ));
+-    let recovered = match crate::ast_matcher::interpreter_literal_shell_commands(
+-        &content.content,
+-        content.language,
+-        move || {
+-            let Some((source, range, decoded_program, language)) = source_identity else {
+-                return (!inline).then_some(false);
+-            };
+-            if let Some(program) = decoded_program {
+-                // The complete word, decoded by the extractor's own lexer.
+-                // An unresolved (partial or dynamic) word carries no
+-                // `word_range` and never reaches this proof.
+-                crate::heredoc::decoded_inline_interpreter_source_proof(
+-                    &source, &range, &program, language,
+-                )
+-            } else if inline {
+-                // The existing inline extractor can return a partial raw
+-                // fragment when shell quotes are escaped. Only extend it
+-                // when the extracted bytes are exactly the complete program.
+-                // Other consumers revoke the documentation exemption without
+-                // suppressing additive checks of that complete source.
+-                crate::heredoc::inline_interpreter_source_proof(&source, &range, language)
+-            } else {
+-                Some(crate::heredoc::range_is_quoted_interpreter_source(
+-                    &source, &range, language,
+-                ))
+-            }
+-        },
+-        budget,
+-    ) {
++    let proof = move || {
++        let Some((source, range, decoded_program, language)) = source_identity else {
++            return (!inline).then_some(false);
++        };
++        if let Some(program) = decoded_program {
++            // The complete word, decoded by the extractor's own lexer.
++            // An unresolved (partial or dynamic) word carries no
++            // `word_range` and never reaches this proof.
++            crate::heredoc::decoded_inline_interpreter_source_proof(
++                &source, &range, &program, language,
++            )
++        } else if inline {
++            // The existing inline extractor can return a partial raw
++            // fragment when shell quotes are escaped. Only extend it
++            // when the extracted bytes are exactly the complete program.
++            // Other consumers revoke the documentation exemption without
++            // suppressing additive checks of that complete source.
++            crate::heredoc::inline_interpreter_source_proof(&source, &range, language)
++        } else {
++            Some(crate::heredoc::range_is_quoted_interpreter_source(
++                &source, &range, language,
++            ))
++        }
++    };
++    // An unquoted heredoc body is expanded by the outer shell first: its
++    // backquotes run then, so its literals are judged whole (#560 narrows
++    // only what a later shell might run).
++    let recovered = if content.heredoc_type.is_some() && !content.quoted {
++        crate::ast_matcher::expanded_interpreter_literal_shell_commands(
++            &content.content,
++            content.language,
++            proof,
++            budget,
++        )
++    } else {
++        crate::ast_matcher::interpreter_literal_shell_commands(
++            &content.content,
++            content.language,
++            proof,
++            budget,
++        )
++    };
++    let recovered = match recovered {
+         Ok(commands) => commands,
+         Err(error) => {
+             tracing::debug!(%error, "interpreter literal analysis did not complete");
+```
+
+**File**: `src/heredoc.rs` (modified, +1465/-64)
+```diff
+@@ -7943,7 +7943,17 @@ fn extract_heredocs(
+             timeout,
+         ) {
+             Ok((content, end_pos, body_start_abs, body_end_abs)) => {
+-                let (mut language, _confidence) = ScriptLanguage::detect(command, &content);
++                // The body is the stdin of the program that owns this
++                // operator. `ScriptLanguage::detect` reads the program at the
++                // head of the whole command, which is `cd` in `cd dir &&
++                // python3 - <<'EOF'` and `S=…;` in `S=…; python3 - <<'EOF'`;
++                // a Python body without an import line then fell to the shell
++                // analysis and its strings were judged as commands (#560).
++                let (mut language, _confidence) =
++                    heredoc_receiver_language(command, full_match.start()).map_or_else(
++                        || ScriptLanguage::detect(command, &content),
++                        |language| (language, DetectionConfidence::CommandPrefix),
++                    );
+                 // A literal cat write immediately consumed as a script is
+                 // executable source, not a data-only cat body (#519). Bind
+                 // the language to this exact operator and body, so the AST
+@@ -8102,6 +8112,45 @@ fn extract_heredoc_target_command(command: &str, heredoc_start: usize) -> Option
+     })
+ }
+ 
++/// The language of the program that receives the heredoc at `heredoc_start`,
++/// read from that program's own command word.
++///
++/// Only a word that starts its simple command (after environment assignments)
++/// counts: the backward walk of [`extract_heredoc_target_resolution`] skips
++/// path-like operands, and one of those is not the receiver. A shell keeps
++/// its answer whatever its name may be rebound to, since judging the body as
++/// shell is the strict reading. A non-shell interpreter counts only when no
++/// wrapper, function, alias or untrusted path can stand in for it
++/// ([`stdin_data_sink_may_be_overridden`]). `None` leaves the caller's
++/// whole-command detection in place.
++fn heredoc_receiver_language(command: &str, heredoc_start: usize) -> Option<ScriptLanguage> {
++    let (token, wrapped) = extract_heredoc_target_resolution(command, heredoc_start)?;
++    if wrapped {
++        return None;
++    }
++    let line_start = command
++        .get(..heredoc_start)?
++        .rfind(['\n', '\r'])
++        .map_or(0, |at| at + 1);
++    let words = tokenize_backwards(command.get(line_start..heredoc_start)?.trim_end());
++    if words
++        .iter()
++        .rev()
++        .find(|word| !is_shell_env_assignment(word))
++        != Some(&token)
++    {
++        return None;
++    }
++    let name = token.rsplit(['/', '\\']).next().unwrap_or(token.as_str());
++    match ScriptLanguage::from_command(name) {
++        ScriptLanguage::Unknown => None,
++        ScriptLanguage::Bash => Some(ScriptLanguage::Bash),
++        language => {
++            (!stdin_data_sink_may_be_overridden(command, heredoc_start, name)).then_some(language)
++        }
++    }
++}
++
+ /// The command that receives the first heredoc in `command`, by basename.
+ ///
+ /// Exposed for pack ordering (#428): the dialect that will actually execute a
+@@ -8187,11 +8236,15 @@ fn extract_heredoc_target_resolution(
+ 
+             // Check if this looks like a command path (/bin/cat, /usr/bin/bash)
+             // vs a file argument (/tmp/file, /path/to/data)
++            // A package manager's interpreter (`/opt/homebrew/bin/python3.14`)
++            // is a program too; one in a virtualenv or a project directory
++            // stays unresolved, as before.
+             let is_known_command = NON_EXECUTING_HEREDOC_COMMANDS.contains(&basename)
+                 || [
+                     "bash", "sh", "zsh", "fish", "ksh", "dash", "python", "perl", "ruby", "node",
+                 ]
+-                .contains(&basename);
++                .contains(&basename)
++                || is_trusted_interpreter_path(token, basename);
+ 
+             // Command paths are typically in standard locations
+             let looks_like_command_path = token.starts_with("/bin/")
+@@ -8435,7 +8488,8 @@ pub(crate) fn stdin_data_sink_may_be_overridden(
+         // executable: `./cat` and `/tmp/cat` may run their stdin as shell. Only
+         // the two normalized OS utility paths retain the documented data-sink
+         // contract; every other path-qualified token fails closed.
+-        return !is_trusted_os_data_sink_path(&lexical_target, target);
++        return !(is_trusted_os_data_sink_path(&lexical_target, target)
++            || is_trusted_interpreter_path(&lexical_target, target));
+     }
+     if std::env::var_os(format!("BASH_FUNC_{target}%%")).is_some() {
+         return true;
+@@ -8637,6 +8691,29 @@ fn is_trusted_os_data_sink_path(lexical_target: &str, basename: &str) -> bool {
+             .is_some_and(|name| name == basename)
+ }
+ 
++/// A non-shell interpreter named by its path in a system or package-manager
++/// `bin`
+```
+
+**File**: `tests/repro_560_source_boundaries.rs` (modified, +91/-0)
+```diff
+@@ -5,10 +5,19 @@ use std::io::Write;
+ use std::process::{Command, Stdio};
+ 
+ fn assert_decision(source: &str, expected: &str) {
++    assert_decision_with_home_dirs(source, expected, &[]);
++}
++
++/// `home_dirs` are created under the isolated home first: whether a write
++/// under `~` lands in an existing directory is part of the verdict.
++fn assert_decision_with_home_dirs(source: &str, expected: &str, home_dirs: &[&str]) {
+     for hook in [false, true] {
+         let temp = tempfile::tempdir().expect("isolated working directory");
+         let home = temp.path().join("home");
+         std::fs::create_dir(&home).expect("isolated home");
++        for dir in home_dirs {
++            std::fs::create_dir_all(home.join(dir)).expect("directory under the isolated home");
++        }
+         let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
+         let input = if hook {
+             command.args(["hook", "--batch"]);
+@@ -284,3 +293,85 @@ fn many_inert_shell_looking_literals_do_not_exhaust_recovery_budget() {
+         assert_decision(&source, "allow");
+     }
+ }
++
++/// Shapes of quoted `python3 -` edit heredocs that agents run and 0.15.3
++/// allows (#560 reopened): Markdown and Rust doc text with apostrophes,
++/// backquotes and generics inside Python strings, shell text kept as data,
++/// closed `subprocess.run` argument lists, and an ordinary command after the
++/// heredoc. None of these bodies reaches a shell.
++#[test]
++fn quoted_python_edit_heredocs_followed_by_commands_are_allowed() {
++    for source in [
++        "python3 - <<'EOF'\ns = s.replace(a, '\\n// `model` is loaded through `#[path]`\\n')\nEOF\ncargo check",
++        "python3 -I - <<'EOF'\nimport subprocess\nfrom pathlib import Path\nc = subprocess.run(['git', 'show', 'origin/main:DESIGN.md'], capture_output=True, text=True, check=True).stdout\nb = \"\"\"## Feature flags\n- The fallback path retries with the caller's `RunConfig` budget.\n\"\"\"\nPath('DESIGN.md').write_text(c.replace('## Feature flags\\n', b))\nEOF\ngit diff --stat origin/main -- DESIGN.md",
++        "python3 -I - <<'PY'\nedits = [\n(\"\"\"    exit 3\n    echo \"COPY FAILED: $1 -> $DEST/$2\"\n\"\"\"),\n(\"\"\"esac\n\"\"\"),\n]\nPY",
++        "cd tools && python3 -I - <<'PY'\nedits = [\n(\"\"\"    exit 3\n    echo \"COPY FAILED: $1 -> $DEST/$2\"\n\"\"\"),\n]\nPY\nbash -n copy.sh && shellcheck -S warning copy.sh; echo \"check rc=$?\"",
++        "python3 -I - <<'EOF'\nimport re\nt = open('f.rs').read()\nt = t[:10] + '''/// `f_k(s)` on the reduced form, refused below the cutoff.\nfn scale_factor(mode: Mode) -> impl Fn(f64) -> Option<(f64, f64)> {\n''' + t[20:]\npattern = re.compile(r\"Some\\(Limits \\{\\s*mode: &mode_fn,\\s*\\}\\),\")\nt, n = pattern.subn(\"\"\"vec![\n        ],\"\"\", t)\nopen('f.rs', 'w').write(t)\nEOF",
++        // A wrapper that runs a build tool, and a runner that starts Python
++        // for pytest, are not programs that run what the heredoc printed.
++        "cd crates/net && python3 -I - <<'EOF'\np = 'src/lib.rs'\ns = open(p).read()\ndef rep(old, new):\n    global s\n    assert s.count(old) == 1, old[:80]\n    s = s.replace(old, new)\nrep('''use x::LIMIT;\n''', '''use x::LIMIT;\n\n/// A pending item's wakeup can be missed under load: `poll_next`\n/// retries `recv()` on every poll.\n''')\nopen(p, 'w').write(s)\nprint('ok')\nEOF\ndevtool exec -- cargo test -p net --no-run > ../build.log 2>&1; echo build=$?; grep -E '^(error|warning)' -A6 ../build.log | head -24",
++        "cat >> tests/test_spans.py <<'PYEOF'\n\ndef test_x():\n    assert True\nPYEOF\npython3 - <<'PYEOF'\nnew = \"`span_ref` (token → line spans; `origin` r2 \\\\| checked; owned by A2)\"\nprint(new)\nPYEOF\nuv run --no-project --with pytest python -m pytest -q tests/test_spans.py 2>&1 | tail -2",
++        // Prose whose shell reading stops at its first line, then a later
++        // script run.
++        "python3 - <<'PY'\nopen('README.md', 'w').write(\"Don't run `make` here (see `docs/`).\\n\")\nPY\nsh scripts/check.sh",
++    ] {
++        assert_decision(source, "allow");
++    }
++}
++
++/// The isolation proof is about where the body goes. Printed shell text that
++/// a shell reads, a written script that a later command runs, and a program
++/// that executes its own literal all stay denied.
++#[test]
++fn python_edit_heredocs_keep_shell_consumers_and_sinks_denied() {
++    for source in [
++        "python3 - <<'PY' | sh\ns = 'echo $(git reset --hard)'\nprint(s)\nPY\ncargo check",
++        "python3 - <<'PY' | sh\nprint(\"git reset --hard it's\")\nPY",
++        "python3 - <<'PY'\nopen('m.sh', 'w').write('echo $(git reset --hard)')\nPY\ncargo check && sh m.sh",
++        "python3 -I - <<'PY'\nopen('m.sh', 'w').write('echo $(git reset --hard)')\nPY\ndevtool exec -- bash m.sh",
++        "python3 -I - <<'PY'\nopen('m.sh', 'w').write('echo `git reset --hard`')\nPY\n. ./m.sh",
++        "python3 - <<'PY'\nimport os\ns = \"it's `git reset --hard`\"\nos.system(s)\nPY\ncargo check",
++        "python3 - <<'PY
+```
+
+---
+
+### Incident Patch 3: `5c060064` (2026-10-27)
+**Commit Message**: fix(git): let a visible subcommand decide after a field-splitting -C path (#597)
+
+`git -C $r log main $b` was denied as core.git:branch-dynamic-token, and so
+were diff, rev-list, merge-base and cherry in the same shape. When the
+value of -C (or another global option) was an unquoted expansion, the
+branch check judged every word after it as `git branch` argv, on the
+theory that `$r` could split into `dir branch`. The bare `$b` then counted
+as a possible -D.
+
+That reading needs two unknowns: the path must split into the branch
+subcommand, and the operand must expand to a deletion flag. Two unknowns
+are not evidence (#281), and the check already ignored a path that splits
+into flags, which is why `git -C $r cherry main` was allowed. When a
+literal Git subcommand follows the value, keep walking and let that
+subcommand decide, as #405 did for alias resolution.
+
+Unchanged: `git -C $r branch $b` still denies (the walk reaches `branch`),
+and so does a splitting path followed by a flag, an expansion or an
+unknown word (`git -C $r -D main`, `git -C $r $sub main $b`).
+
+Tests: a unit test beside the #405 ones, plus the issue's seven commands in
+the false-positive corpus and three controls in t
+
+**File**: `src/packs/core/git.rs` (modified, +52/-1)
+```diff
+@@ -4059,7 +4059,17 @@ fn dynamic_git_branch_may_mutate(command: &str, dialect: ShellDialect) -> bool {
+             let Some(value) = words.get(index + 1) else {
+                 return false;
+             };
+-            if value.dynamic && value.may_split {
++            // A field-splitting value could supply the subcommand itself
++            // (`$r` = `dir branch`), so the words after it may be branch
++            // argv. When a literal Git subcommand follows the value, that
++            // reading needs a second unknown to reach a deletion flag
++            // (`git -C $r log main $b`), and two unknowns are not evidence
++            // (#281): let the visible subcommand decide, as #405 does for
++            // aliases (#597).
++            let visible_subcommand = words
++                .get(index + 2)
++                .is_some_and(|next| !next.dynamic && is_known_git_command(&next.decoded));
++            if value.dynamic && value.may_split && !visible_subcommand {
+                 return semantic_branch_argv_may_mutate(&words[index + 2..], dialect);
+             }
+             index += 2;
+@@ -6672,6 +6682,47 @@ mod tests {
+         }
      }
  
 +    #[test]
-+    fn dcg_self_inspection_consumes_global_option_values() {
++    fn dynamic_path_value_before_a_visible_subcommand_is_not_branch_argv() {
++        // #597: with an unquoted `-C $r`, a bare dynamic operand after a
++        // read-only subcommand was judged as `git branch` argv.
 +        for command in [
-+            "dcg --agent codex --robot test 'rm -rf /'",
-+            "dcg --agent='test' -vv explain 'git reset --hard'",
-+            "dcg --no-suggestions --legacy-output --no-color classify 'git clean -fd'",
++            "git -C $r log main $b",
++            "git -C $r log $b",
++            "git -C $r log main \"$b\"",
++            "git -C $r diff main $b",
++            "git -C $r rev-list main $b",
++            "git -C $r merge-base main $b",
++            "git -C $r cherry main $b",
++            "git --work-tree $w --git-dir $d diff $b",
 +        ] {
-+            assert!(is_dcg_self_inspection_call(command), "{command}");
-+            assert!(is_dcg_self_inspection_segment(command), "{command}");
++            for dialect in [ShellDialect::Posix, ShellDialect::Unknown] {
++                let decision = branch_command_decision_in_dialect(command, dialect);
++                assert!(
++                    !decision.is_destructive(),
++                    "{command} ({dialect:?}) -> {decision:?}"
++                );
++            }
 +        }
++        // Branch argv after the dynamic path, and a dynamic path with no
++        // visible subcommand after it, still fail closed.
 +        for command in [
-+            "dcg --agent test allow-once abc123 --yes",
-+            "dcg --agent explain uninstall",
-+            "dcg --agent classify allowlist add core.git:reset-hard --reason reviewed",
-+            "dcg --agent test",
-+            "dcg --agent",
-+            "dcg --unknown-option test 'rm -rf /'",
++            "git -C $r branch $b",
++            "git -C $r branch -D $b",
++            "git -C $r -D main",
++            "git -C $r $sub main $b",
++            "git -C $r -f main $b",
 +        ] {
-+            assert!(!is_dcg_self_inspection_call(command), "{command}");
-+            assert!(!is_dcg_self_inspection_segment(command), "{command}");
++            for dialect in [ShellDialect::Posix, ShellDialect::Unknown] {
++                let decision = branch_command_decision_in_dialect(command, dialect);
++                assert!(
++                    decision.is_destructive(),
++                    "{command} ({dialect:?}) -> {decision:?}"
++                );
++            }
 +        }
 +    }
 +
      #[test]
-     fn dcg_self_inspection_allows_path_qualified_binary() {
-         assert!(is_dcg_self_inspection_call(
+     fn camel_case_parameters_are_not_git_short_flag_clusters() {
+         // #401: PowerShell writes `-Directory`, `-Confirm`, `-Recurse`; a POSIX
 ```
 
-**File**: `src/evaluator.rs` (modified, +121/-14)
+**File**: `tests/corpus/false_positives/git_safe.toml` (modified, +38/-0)
 ```diff
-@@ -26288,7 +26288,8 @@ fn filesystem_pre_rm_pattern_excluding_dynamic(name: Option<&str>) -> bool {
- /// `&&` chain, explicit tmp-rooted `mktemp -d`, and decimal `$$` components.
- /// A literal prefix may precede one proven variable (#526), including a
- /// literal for-loop variable and an immediately derived loop-local path.
--/// These additional forms must resolve under a tmp-family root. Rebinding,
-+/// These additional forms must resolve under a tmp-family root, including a
-+/// verified local startup `TMPDIR` (#590). Rebinding,
- /// unknown values, unsupported control flow, traversal, protected files, and
- /// additional non-fd redirects all retain the dynamic-path denial.
- fn statically_safe_variable_redirect(
-@@ -26440,6 +26441,87 @@ fn redirect_path_has_tmp_root(path: &str) -> bool {
-     ["/tmp/", "/var/tmp/", "/private/tmp/", "/private/var/tmp/"]
-         .iter()
-         .any(|prefix| path.starts_with(prefix))
-+        || redirect_path_is_under_startup_tmpdir(path)
-+}
+@@ -196,3 +196,41 @@ expected = "allow"
+ description = "a second wildcard word cannot stand in for the branch subcommand (#360)"
+ command = "/* b*"
+ expected = "allow"
 +
-+/// Startup `TMPDIR` is a local root hint, never a source of shell bindings.
-+/// A fully proven literal path below it may receive the redirect-only temp
-+/// proof (#590), but `$TMPDIR` itself still needs an assignment in the source.
-+/// Cache the bounded filesystem check once per process; changing TMPDIR in a
-+/// candidate command cannot grant a new root.
-+static STARTUP_TMPDIR_REDIRECT_ROOT: LazyLock<Option<String>> = LazyLock::new(|| {
-+    if !cfg!(unix) {
-+        return None;
-+    }
-+    let root = std::env::var("TMPDIR").ok()?;
-+    let root = root.trim_end_matches('/');
-+    if root.is_empty()
-+        || root.len() > MAX_REDIRECT_VALUE_BYTES
-+        || !Path::new(root).is_absolute()
-+        || root.split('/').any(|part| matches!(part, "." | ".."))
-+    {
-+        return None;
-+    }
-+    let canonical = fs::canonicalize(root).ok()?;
-+    if !canonical.is_dir()
-+        || !startup_tmpdir_root_is_unprotected(Path::new(root))
-+        || !startup_tmpdir_root_is_unprotected(&canonical)
-+    {
-+        return None;
-+    }
-+    Some(root.to_string())
-+});
++# #597: an unquoted `-C` path followed by a read-only subcommand and a bare
++# dynamic operand. Reaching a branch deletion needs the path to split into
++# `branch` and the operand to be a flag: two unknowns.
++[[case]]
++description = "unquoted -C path, log with a dynamic revision (#597)"
++command = "git -C $r log main $b"
++expected = "allow"
 +
-+/// A supplied temp directory cannot turn a home/system tree into scratch.
-+/// Reuse the existing sensitive-redirect rule instead of maintaining a second
-+/// list of protected roots; the canonical spelling also catches root symlinks.
-+fn startup_tmpdir_root_is_unprotected(root: &Path) -> bool {
-+    if root.parent().is_none() {
-+        return false;
-+    }
-+    if let Some(home) = crate::config::home_dir() {
-+        let canonical_home = fs::canonicalize(&home).unwrap_or_else(|_| home.clone());
-+        if [&home, &canonical_home]
-+            .iter()
-+            .any(|home| root.starts_with(home) || home.starts_with(root))
-+        {
-+            return false;
-+        }
-+    }
-+    let Some(path) = root.to_str() else {
-+        return false;
-+    };
-+    // macOS resolves `/etc` and `/var` through `/private`; that spelling
-+    // must not make an otherwise protected system tree an eligible root.
-+    let system_path = path.strip_prefix("/private/").map_or_else(
-+        || Cow::Borrowed(path),
-+        |rest| Cow::Owned(format!("/{rest}")),
-+    );
-+    let target = format!("{system_path}/dcg-scratch-root-check");
-+    if crate::packs::core::credential_files::names_protected_file(&shell_words::quote(&target)) {
-+        return false;
-+    }
-+    let Some(pattern) = REGISTRY.get("core.filesystem").and_then(|pack| {
-+        pack.destructive_patterns
-+            .iter()
-+            .find(|pattern| pattern.name == Some("redirect-truncate-root-home"))
-+    }) else {
-+        return false;
-+    };
-+    !pattern
-+        .regex
-+        .is_match(&format!(": > {}", shell_words::quote(&target)))
-+}
++[[case]]
++description = "unquoted -C path, log with only a dynamic revision (#597)"
++command = "git -C $r log $b"
++expected = "allow"
 +
-+fn redirect_path_is_under_startup_tmpdir(path: &str) -> bool {
-+    if NonlocalFilesystemScope::active() {
-+        return false;
-+    }
-+    STARTUP_TMPDIR_REDIRECT_ROOT.as_ref().is_some_and(|root| {
-+        path.strip_prefix(root)
-+            .and_then(|suffix| suffix.strip_prefix('/'))
-+            .is_some_and(|suffix| !suffix.is_empty())
-+    })
- }
- 
- /// A PID cannot introduce separators, traversal, quoting, or further expansion.
-@@ -26680,7 +26762,8 @@ fn parse_posix_variable_with_literal_affixes(token: &str) -> Option<(&str, &str,
- /// Redirect operators whose targets are proven in their complete shell source.
- /// The source supplies assignment and loop scope that an extracted command
- /// alone does not retain. Strict scope and a temporary root are required for
--/// this additional route, which must never depend on local filesystem state.
-+/// this additional route. A remote filesystem scope keeps this proof lexical:
-+/// only a local source may borrow the verified startup TMPDIR hint.
- fn proven_bash_redirect_offsets(source: &str) -> Vec<usize> {
-     if source.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-         || !source.contains('>')
-@@ -26917,6 +27000,8 @@ fn embedded_bash_proven_redirect_offsets(command: &str) -> Vec<usize> {
-            
++[[case]]
++description = "unquoted -C path, log with a quoted dynamic revision (#597)"
++command = "git -C $r log main \"$b\""
++expected = "allow"
++
++[[case]]
++description = "unquoted -C path, diff against a dynamic revision (#597)"
++command = "git -C $r diff main $b"
++expected = "allow"
++
++[[case]]
++description = "unquoted -C path, rev-list with a dynamic revision (#597)"
++command = "git -C $r rev-list main $b"
++expected = "allow"
++
++[[case]]
++description = "unquoted -C path, merge-base with a dynamic revision (#597)"
++command = "git -C $r merge-base main $b"
++expected = "allow"
++
++[[case]]
++description = "unquoted -C path, cherry with a dynamic revision (#597)"
++command = "git -C $r cherry main $b"
++expected = "allow"
 ```
 
-**File**: `src/heredoc.rs` (modified, +297/-15)
+**File**: `tests/corpus/true_positives/git_destructive.toml` (modified, +21/-0)
 ```diff
-@@ -1529,6 +1529,20 @@ pub struct ExtractedContent {
-     /// The command that receives this heredoc (e.g., "cat", "bash").
-     /// Used to determine if content should be evaluated as executable.
-     pub target_command: Option<String>,
-+    /// An additional, proven interpreter that executes a written file with
-+    /// script arguments. Language-aware safety checks use this receiver;
-+    /// raw-shell quote classification keeps `target_command`'s original
-+    /// provenance. This evidence cannot grant a literal-data exemption.
-+    pub additional_execution_target: Option<String>,
-+}
+@@ -197,3 +197,24 @@ description = "a literal branch deletion in a quoted interpreter body still deni
+ command = "python3 - <<'PY'\ngit branch -D main\nPY"
+ expected = "deny"
+ rule_id = "core.git:branch-force-delete"
 +
-+impl ExtractedContent {
-+    /// The receiving program for additive language-aware safety checks.
-+    pub(crate) fn execution_target(&self) -> Option<&str> {
-+        self.additional_execution_target
-+            .as_deref()
-+            .or(self.target_command.as_deref())
-+    }
- }
- 
- /// Reason why extraction was skipped (for observability/logging).
-@@ -2759,6 +2773,7 @@ fn extract_inline_scripts(
-                 quoted: true, // -c/-e content is always in quotes
-                 heredoc_type: None,
-                 target_command: Some(cmd_name.to_string()), // -c/-e content is executed by the interpreter
-+                additional_execution_target: None,
-             });
-         }
-     };
-@@ -3116,6 +3131,7 @@ fn push_windows_inner(
-         quoted: true,
-         heredoc_type: None,
-         target_command: Some(target.to_string()),
-+        additional_execution_target: None,
-     });
-     true
- }
-@@ -4222,6 +4238,7 @@ fn extract_deno_eval_inline_scripts(
-             quoted: true,
-             heredoc_type: None,
-             target_command: Some("deno".to_string()),
-+            additional_execution_target: None,
-         });
-     }
- }
-@@ -7637,6 +7654,7 @@ fn extract_herestrings(
-                 quoted: is_quoted,
-                 heredoc_type: Some(HeredocType::HereString),
-                 target_command: target_cmd,
-+                additional_execution_target: None,
-             });
-         }
-     };
-@@ -7811,7 +7829,14 @@ fn extract_heredocs(
- 
-     let mut hit_limit = false;
-     let mut foreign_body_ranges = None;
--    let written_source = written_heredoc_interpreter(command);
-+    // A script's argv does not stop the file from being executable source.
-+    // This wider identity is for additive language analysis only; proofs
-+    // that exempt literal data still require the isolated invocation below.
-+    let written_source = written_heredoc_interpreter(command)
-+        .map(|source| (source, false))
-+        .or_else(|| {
-+            written_heredoc_interpreter_with_argv(command, true).map(|source| (source, true))
-+        });
-     for cap in HEREDOC_EXTRACTOR.captures_iter(command) {
-         if record_timeout_if_needed(start_time, timeout, limits.timeout_ms, skip_reasons) {
-             return;
-@@ -7923,16 +7948,23 @@ fn extract_heredocs(
-                 // executable source, not a data-only cat body (#519). Bind
-                 // the language to this exact operator and body, so the AST
-                 // and synchronous sink backstops inspect the written bytes.
--                let target_cmd = if let Some(source) = written_source.as_ref().filter(|source| {
-+                let mut target_cmd = extract_heredoc_target_command(command, full_match.start());
-+                let mut additional_execution_target = None;
-+                if let Some((source, additional)) = written_source.as_ref().filter(|(source, _)| {
-                     quoted
-                         && source.operator_start == full_match.start()
-                         && source.body == (body_start_abs..body_end_abs)
-                 }) {
-                     language = source.language;
--                    Some(source.interpreter.clone())
--                } else {
--                    extract_heredoc_target_command(command, full_match.start())
--                };
-+                    if *additional {
-+                        // An additive source identity must not turn a print
-+                        // literal into raw shell code merely by changing its
-+                        // receiver from tee/cat to node/python.
-+                        additional_execution_target = Some(source.interpreter.clone());
-+                    } else {
-+                        target_cmd = Some(source.interpreter.clone());
-+                    }
-+                }
-                 extracted.push(ExtractedContent {
-                     content,
-                     language,
-@@ -7943,6 +7975,7 @@ fn extract_heredocs(
-                     quoted,
-                     heredoc_type: Some(heredoc_type),
-                     target_command: target_cmd,
-+                    additional_execution_target,
-                 });
-             }
-             Err(reason) => {
-@@ -9739,6 +9772,16 @@ pub(crate) fn written_javascript_arrow_offsets(command: &str) -> Vec<usize> {
- /// proof. In particular a later `bash file` must not borrow an earlier
- /// `n
-```
-
-**File**: `src/normalize.rs` (modified, +131/-0)
-```diff
-@@ -3874,6 +3874,7 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-         .as_bytes()
-         .iter()
-         .any(|b| matches!(b, b'\'' | b'"' | b'\\' | b'<' | b'>'))
-+        || (dialect == ShellDialect::PowerShell && command.contains('`'))
-         || command.to_ascii_lowercase().contains(".exe");
- 
-     if !needs_normalization {
-@@ -3900,12 +3901,21 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-     let mut segment_has_cmd = false;
-     let mut current_cmd_word: Option<String> = None;
-     let mut wrapper: NormalizeWrapper = NormalizeWrapper::None;
-+    // Some(false): dcg's global prefix; Some(true): the same prefix after
-+    // `allowlist`. Stop at a real subcommand, unknown option or shell stop-
-+    // parsing marker, so argument data cannot become command syntax.
-+    let mut dcg_global_prefix: Option<bool> = None;
-+    let mut dcg_agent_value = false;
-+    let mut dcg_decoder = ShellTokenDecoder::new(dialect);
- 
-     for tok in &tokens {
-         if tok.kind == NormalizeTokenKind::Separator {
-             segment_has_cmd = false;
-             current_cmd_word = None;
-             wrapper = NormalizeWrapper::None;
-+            dcg_global_prefix = None;
-+            dcg_agent_value = false;
-+            dcg_decoder = ShellTokenDecoder::new(dialect);
-             continue;
-         }
- 
-@@ -3915,6 +3925,49 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-         };
- 
-         if segment_has_cmd {
-+            if let Some(after_allowlist) = dcg_global_prefix {
-+                if let Some(decoded) = dcg_decoder.decode(token_text, ShellTokenRole::Syntax) {
-+                    let word = decoded.as_ref();
-+                    let may_replace = if std::mem::take(&mut dcg_agent_value) {
-+                        // --agent consumes exactly one argv word. Decode an
-+                        // ordinary name, but preserve spaces, paths, runtime
-+                        // expansions and metacharacters as opaque data.
-+                        Some(looks_like_subcommand_word(word))
-+                    } else if word == "--agent" {
-+                        dcg_agent_value = true;
-+                        Some(true)
-+                    } else if let Some(value) = word.strip_prefix("--agent=") {
-+                        Some(value.is_empty() || looks_like_subcommand_word(value))
-+                    } else if matches!(
-+                        word,
-+                        "--robot"
-+                            | "--verbose"
-+                            | "--quiet"
-+                            | "--legacy-output"
-+                            | "--no-color"
-+                            | "--no-suggestions"
-+                            | "-q"
-+                    ) || word
-+                        .strip_prefix('-')
-+                        .is_some_and(|flags| !flags.is_empty() && flags.bytes().all(|b| b == b'v'))
-+                    {
-+                        Some(true)
-+                    } else if word == "allowlist" && !after_allowlist {
-+                        dcg_global_prefix = Some(true);
-+                        Some(true)
-+                    } else {
-+                        None
-+                    };
-+                    if let Some(may_replace) = may_replace {
-+                        if may_replace && word != token_text {
-+                            replacements.push((tok.byte_range.clone(), decoded.into_owned()));
-+                        }
-+                        continue;
-+                    }
-+                }
-+                dcg_global_prefix = None;
-+            }
++# #597 controls: a visible read-only subcommand after an unquoted `-C` path is
++# allowed, but branch argv after it, or no visible subcommand, still denies.
++[[case]]
++description = "unquoted -C path before a branch creation with a dynamic name (#597)"
++command = "git -C $r branch $b"
++expected = "deny"
++rule_id = "core.git:branch-dynamic-token"
 +
-             // Check if we should skip dequoting for this command
-             if let Some(cmd) = &current_cmd_word {
-                 if crate::context::SAFE_STRING_REGISTRY.is_all_args_data(cmd) {
-@@ -3975,6 +4028,14 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-         let replacement = normalize_command_word_token_in_dialect(current, dialect);
-         // Track the normalized command word for safe registry checks
-         current_cmd_word = Some(replacement.clone().unwrap_or_else(|| current.to_string()));
-+        if matches!(dialect, ShellDialect::Posix | ShellDialect::PowerShell)
-+            && current_cmd_word.as_deref().is_some_and(|word| {
-+                let name = word.rsplit(['/', '\\']).next().unwrap_or(word);
-+                name.eq_ignore_ascii_case("dcg") || name.eq_ignore_ascii_case("dcg.exe")
-+            })
-+        {
-+            dcg_global_prefix = Some(false);
-+        }
- 
-         if let Some(repl) = replacement {
-             replacements.push((tok.byte_range.clone(), repl));
-@@ -5855,6 +5916,76 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn dcg_global_option_syntax_is_decoded_without_promoting_agent_data() {
-+        for dialect in [ShellDialect::Posix, ShellDialect::PowerShell] {
-+            for (command, expected) in [
-+        
-```
-
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +109/-16)
-```diff
-@@ -47,8 +47,24 @@
- 
- use crate::destructive_pattern;
- use crate::packs::careful_company_running_windows::shared_safe_patterns;
-+use crate::packs::regex_engine::LazyCompiledRegex;
- use crate::packs::{DestructivePattern, Pack, PatternSuggestion, SafePattern};
- 
-+// Match the global options declared by `cli::Cli`, including between an
-+// `allowlist` command and its subcommand. Only --agent consumes a value: a
-+// subcommand-looking agent name is data, while --robot never consumes the
-+// following word. Help/version and arbitrary positional words are not skipped.
-+// This grammar adds destructive evidence; it grants no exemption.
-+macro_rules! dcg_global_options {
-+    () => {
-+        concat!(
-+            r"(?:(?:--(?:verbose|quiet|legacy-output|no-color|no-suggestions|robot)|-v+|-q)[ \t]+",
-+            r#"|--agent=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]*)[ \t]+"#,
-+            r#"|--agent[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]+)[ \t]+)*"#
-+        )
-+    };
-+}
++[[case]]
++description = "unquoted -C path that could split into the branch subcommand before -D (#597)"
++command = "git -C $r -D main"
++expected = "deny"
++rule_id = "core.git:branch-dynamic-token"
 +
- const CONTROL_SUGGESTIONS: &[PatternSuggestion] = &[
-     PatternSuggestion::new(
-         "Ask the operator to make the change",
-@@ -315,12 +331,17 @@ fn create_destructive_patterns() -> Vec<DestructivePattern> {
-             CONTROL_SUGGESTIONS
-         ),
-         // === dcg and agent configuration ===
--        destructive_pattern!(
--            "dcg-bypass-or-uninstall",
--            r"(?i)\bDCG_BYPASS\b\s*[=:]\s*[\x22']?(?:1|true|yes|y|on)\b|\bsetx?\s+DCG_BYPASS\s+[\x22']?(?:1|true|yes|y|on)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_BYPASS\b[^|&;\r\n]*(?:-value\s+)?[\x22']?(?:1|true|yes|y|on)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_BYPASS[\x22']\s*,\s*[\x22']?(?:1|true|yes|y|on)\b|\bdcg(?:\.exe)?\s+uninstall\b|\buninstall\.ps1\b",
--            "Bypassing or uninstalling dcg removes the guard that is supervising this session.",
--            Critical,
--            "`DCG_BYPASS=1` disables every rule for an invocation and `dcg uninstall` removes the \
-+        DestructivePattern {
-+            name: Some("dcg-bypass-or-uninstall"),
-+            regex: LazyCompiledRegex::new(concat!(
-+                r"(?i)\bDCG_BYPASS\b\s*[=:]\s*[\x22']?(?:1|true|yes|y|on)\b|\bsetx?\s+DCG_BYPASS\s+[\x22']?(?:1|true|yes|y|on)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_BYPASS\b[^|&;\r\n]*(?:-value\s+)?[\x22']?(?:1|true|yes|y|on)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_BYPASS[\x22']\s*,\s*[\x22']?(?:1|true|yes|y|on)\b|\bdcg(?:\.exe)?[ \t]+",
-+                dcg_global_options!(),
-+                r"uninstall\b|\buninstall\.ps1\b"
-+            )),
-+            reason: "Bypassing or uninstalling dcg removes the guard that is supervising this session.",
-+            severity: crate::packs::Severity::Critical,
-+            explanation: Some(
-+                "`DCG_BYPASS=1` disables every rule for an invocation and `dcg uninstall` removes the \
-              hook entirely. The escape hatch exists for a person at a terminal who has decided to \
-              accept the risk — an agent reaching for it has removed the only thing checking its \
-              work. A *truthy assignment* is required, so reading the variable, setting it to a false \
-@@ -329,14 +350,23 @@ fn create_destructive_patterns() -> Vec<DestructivePattern> {
-              - `dcg explain \"<command>\"` to find out precisely which rule is in the way\n\
-              - `dcg allowlist add <ruleId> -r \"<reason>\"` to permit one rule, with the reason recorded\n\
-              - Ask the operator to run the command manually if it is genuinely needed",
--            DCG_SUGGESTIONS
--        ),
--        destructive_pattern!(
--            "dcg-policy-self-weakening",
--            r"(?i)\bdcg(?:\.exe)?\s+(?:allowlist\s+(?:add|add-command|import)|allow-once|allow)\b|\bDCG_(?:DISABLE|PACKS|CONFIG)\b\s*[=:]|\bsetx?\s+DCG_(?:DISABLE|PACKS|CONFIG)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_(?:DISABLE|PACKS|CONFIG)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_(?:DISABLE|PACKS|CONFIG)[\x22']\s*,|\bDCG_POLICY_DEFAULT_MODE\b\s*[=:]\s*[\x22']?(?:log|warn)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_POLICY_DEFAULT_MODE\b[^|&;\r\n]*[\x22']?(?:log|warn)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_POLICY_DEFAULT_MODE[\x22']\s*,\s*[\x22'](?:log|warn)\b|\bDCG_POLICY_OBSERVE_UNTIL\b\s*[=:]\s*\S|\bset-item\b[^|&;\r\n]*\benv:DCG_POLICY_OBSERVE_UNTIL\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_POLICY_OBSERVE_UNTIL[\x22']\s*,|\bDCG_HEREDOC_ENABLED\b\s*[=:]\s*[\x22']?(?:false|0|off|no)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_HEREDOC_ENABLED\b[^|&;\r\n]*[\x22']?(?:false|0|off|no)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_HEREDOC_ENABLED[\x22']\s*,\s*[\x22']?(?:false|0|off|no)\b",
--            "Granting an allowlist exception or overriding pack/policy config lets the agent clear its own path.",
--            Critical,
--            "`dcg allowlist add` and `dcg allow-once` grant permission for a rule or command, and the \
-+            ),
-+            suggestions: DCG_SUGGESTIONS,
-+            executables: None,
-+        },
-+        DestructivePattern {
-```
-
-**File**: `tests/regression_heredoc_masking.rs` (modified, +136/-0)
-```diff
-@@ -327,6 +327,142 @@ EOF";
-         }
-     }
- 
-+    #[test]
-+    fn written_script_arguments_cannot_skip_python_and_node_safety_checks() {
-+        for (body, consumer, expected_rule) in [
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 /tmp/program argument",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -I /tmp/program",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -IuB -- /tmp/program --argument",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 /tmp/program \"$USER\"",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -I /tmp/program \"$@\" $1",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node /tmp/program argument",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node -- /tmp/program --eval",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node --no-warnings /tmp/program argument",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node /tmp/program \"${USER}\"",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node -- /tmp/program *.txt",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+        ] {
-+            for writer in [
-+                "tee /tmp/program <<'EOF' >/dev/null",
-+                "cat >/tmp/program <<'EOF'",
-+            ] {
-+                let command = format!("{writer}\n{body}\nEOF\n{consumer}");
-+                let (decision, rule) = hook_decision(&command);
-+                assert_eq!(
-+                    decision, "deny",
-+                    "script arguments cannot hide source: {command:?}"
-+                );
-+                assert_eq!(
-+                    rule, expected_rule,
-+                    "typed safety check required: {command:?}"
-+                );
-+            }
-+        }
-+    }
-+
-+    #[test]
-+    fn written_script_arguments_preserve_safe_programs_and_document_data() {
-+        for command in [
-+            "tee /tmp/program <<'EOF' >/dev/null\nprint('hello')\nEOF\npython3 -I /tmp/program argument",
-+            "cat >/tmp/program <<'EOF'\nprint('hello')\nEOF\npython3 -- /tmp/program --argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode -- /tmp/program argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode --no-warnings /tmp/program argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nprint('hello')\nEOF\npython3 /tmp/program \"$USER\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode /tmp/program \"$@\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nimport shutil\nshutil.rmtree('/home/user')\nEOF\ncat /tmp/program",
-+            "tee /tmp/program <<'EOF' >/dev/null\nrequire('fs').rmSync('/home/user', {recursive: true});\nEOF\nwc -l /tmp/program",
-+            "tee /tmp/program <<'EOF' >/dev/null\nimport shutil\nshutil.rmtree('/home/user')\nEOF\npython3 -c 'print(1)' /tmp/program \"$USER\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nrequire('fs').rmSync('/home/user', {recursive: true});\nEOF\nnode -e 'console.log(1)' /tmp/program \"$USER\"",
-+        ] {
-+            let (decision, rule) = hook_decision(command);
-+            assert_eq!(decision, "allow", "{command:?}: {rule}");
-+        }
-+    }
-+
-+    #[test]
-+    fn written_script_arguments_keep_executed_substitutions_visible() {
-+        for (body, consumer) in [
-+            (
-+                "print('hello')",
-+                "python3 /tmp/program \"$(git reset --hard)\"",
-+            ),
-+            (
-+                "console.log('hello');",
-+                "node -- /tmp/program \"$(git reset --hard)\"",
-+            ),
-+        ] {
-+            let command = format!("tee /tmp/program <<'EOF' >/dev/null\n{body}\nEOF\n{consumer}");
-+            let (decision, rule) = hook_decision(&command);
-+            assert_eq!(decision, "den
-```
-
-**File**: `tests/repro_313_powershell_read_only_false_positives.rs` (modified, +223/-1)
-```diff
-@@ -62,7 +62,16 @@ fn assert_blocked(command: &str, rule: &str) {
-         result.starts_with("Result: BLOCKED") || result.starts_with("Result: REVIEW REQUIRED"),
-         "command: {command}\n{full}"
-     );
--    assert!(full.contains(rule), "expected {rule} for {command}\n{full}");
-+    let separate_fields = rule.split_once(':').is_some_and(|(pack, pattern)| {
-+        full.lines().any(|line| line == format!("Pack: {pack}"))
-+            && full
-+                .lines()
-+                .any(|line| line == format!("Pattern: {pattern}"))
-+    });
-+    assert!(
-+        full.contains(rule) || separate_fields,
-+        "expected {rule} for {command}\n{full}"
-+    );
- }
- 
- #[test]
-@@ -176,3 +185,216 @@ fn items1_and_2_planted_negatives_recursive_delete_still_denies() {
-         "windows.filesystem",
-     );
- }
-+
-+#[test]
-+fn global_options_cannot_hide_guardrail_changes() {
-+    for command in [
-+        "dcg --robot allow-once abc123 --yes",
-+        "dcg --agent codex --no-color allow-once abc123 --yes",
-+        "dcg --agent test allow-once abc123 --yes",
-+        "dcg --agent classify allowlist add core.git:reset-hard --reason reviewed",
-+        "dcg --robot allowlist add core.git:reset-hard --reason reviewed",
-+        "dcg allowlist --robot add core.git:reset-hard --reason reviewed",
-+        "dcg allowlist --agent=codex add-command 'rm -rf dist' --reason reviewed",
-+        "dcg --legacy-output -vv allow core.git:reset-hard --reason reviewed",
-+        "env dcg --robot allow-once abc123 --yes",
-+    ] {
-+        assert_blocked(
-+            command,
-+            "careful_company_running_windows.guardrails:dcg-policy-self-weakening",
-+        );
-+    }
-+    for command in [
-+        "dcg --robot uninstall",
-+        "dcg -q --no-suggestions uninstall",
-+        "dcg --agent 'codex' --no-color uninstall",
-+        "dcg --agent= --robot uninstall",
-+        "dcg --agent explain uninstall",
-+        "dcg --agent='dcg --robot uninstall' --robot uninstall",
-+        "dcg --agent='dcg --robot uninstall' doctor; dcg --robot uninstall",
-+        "bash -c 'dcg --robot uninstall'",
-+        r"C:\tools\dcg.exe --robot uninstall",
-+        "git status && dcg --robot uninstall",
-+    ] {
-+        assert_blocked(
-+            command,
-+            "careful_company_running_windows.guardrails:dcg-bypass-or-uninstall",
-+        );
-+    }
-+}
-+
-+#[test]
-+fn global_options_preserve_inspection_and_argument_data() {
-+    for command in [
-+        "dcg --robot allowlist list",
-+        "dcg allowlist --agent add list",
-+        "dcg --agent uninstall doctor",
-+        "dcg --agent='allowlist add' doctor",
-+        "dcg --agent='dcg --robot uninstall' doctor",
-+        "dcg --agent='dcg --robot allow-once abc --yes' allowlist list",
-+        "dcg --robot allowlist remove core.git:reset-hard",
-+        "dcg --robot test 'dcg --robot uninstall'",
-+        "dcg --no-color explain 'dcg --robot allow-once abc123 --yes'",
-+        "dcg --agent codex --robot test 'dcg --robot uninstall'",
-+        "printf '%s\\n' 'dcg --robot uninstall'",
-+        "echo 'dcg --robot allowlist add core.git:reset-hard --reason reviewed'",
-+    ] {
-+        assert_allowed(command);
-+    }
-+}
-+
-+#[test]
-+fn hook_protocol_keeps_guardrails_active_with_global_options() {
-+    use std::io::Write;
-+
-+    // The strings are hook input only; no uninstall or exception grant runs.
-+    let temp = tempfile::tempdir().expect("isolated hook test");
-+    let home = temp.path().join("home");
-+    std::fs::create_dir_all(&home).expect("isolated home");
-+    let config = temp.path().join("config.toml");
-+    std::fs::write(&config, "[history]\nenabled = false\n").expect("hook config");
-+    for tool_name in ["Bash", "PowerShell", "cmd"] {
-+        let cases: &[(&str, Option<&str>)] = if tool_name == "cmd" {
-+            &[
-+                (
-+                    "echo 'data & dcg --robot uninstall & data'",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                ("echo \"data & dcg --robot uninstall & data\"", None),
-+            ]
-+        } else {
-+            &[
-+                (
-+                    "dcg --robot allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent test allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent 'test' --robot allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent explain uninstall",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                (
-+                    "dcg --agent co'dex' --robot uninstall",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                (
-+                    "dcg --a'gent'=codex --robot uninstall",
-+                 
-```
-
-**File**: `tests/repro_536_tmp_redirect_resolution.rs` (modified, +122/-1)
-```diff
-@@ -10,8 +10,16 @@ use std::process::{Command, Stdio};
- 
- /// `(decision, rule id)` from an isolated invocation of the real hook.
- fn hook(command: &str) -> (String, String) {
-+    hook_with_environment(command, None, None)
-+}
-+
-+fn hook_with_environment(
-+    command: &str,
-+    tmpdir: Option<&std::path::Path>,
-+    home_override: Option<&std::path::Path>,
-+) -> (String, String) {
-     let temp = tempfile::tempdir().expect("temp dir");
--    let home = temp.path().join("home");
-+    let home = home_override.map_or_else(|| temp.path().join("home"), std::path::Path::to_path_buf);
-     std::fs::create_dir_all(&home).expect("home");
-     let config = temp.path().join("config.toml");
-     std::fs::write(&config, "[history]\nenabled = false\n").expect("config");
-@@ -33,6 +41,7 @@ fn hook(command: &str) -> (String, String) {
-         .env("LOCALAPPDATA", home.join("localappdata"))
-         .env("TEMP", temp.path())
-         .env("TMP", temp.path())
-+        .env("TMPDIR", tmpdir.unwrap_or(temp.path()))
-         .env("DCG_CONFIG", &config)
-         .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-         .env(
-@@ -82,6 +91,118 @@ fn assert_denied(command: &str) {
-     assert!(!rule.is_empty(), "denial needs a rule id: {command:?}");
- }
- 
-+/// Three leading slashes are a POSIX spelling of the same absolute path, but
-+/// are outside the literal `/tmp/` prefix. This gives each Unix test a real,
-+/// writable alternate root without requiring a privileged `/data/tmp` fixture.
-+#[cfg(unix)]
-+fn alternate_tmpdir() -> (tempfile::TempDir, std::path::PathBuf) {
-+    let directory = tempfile::tempdir_in("/tmp").expect("alternate temp root");
-+    let spelling = std::path::PathBuf::from(format!("//{}", directory.path().display()));
-+    (directory, spelling)
-+}
-+
-+#[cfg(unix)]
-+#[test]
-+fn startup_tmpdir_extends_only_proven_local_redirect_paths_590() {
-+    let (_directory, root) = alternate_tmpdir();
-+    let root_text = root.to_str().expect("UTF-8 test path");
-+    for command in [
-+        format!("S={root_text}/scratchpad; echo hi > $S/a.txt"),
-+        format!("S={root_text}/scratchpad && echo hi > $S/a.txt"),
-+        format!("for n in 1 2; do echo hi > {root_text}/scratchpad/l$n.txt; done"),
-+        format!("S={root_text}/scratchpad; T=\"$S/sub\"; echo hi > \"$T/a.txt\""),
-+        format!("echo hi > {root_text}/scratchpad/run-$$.txt"),
-+        format!("bash -c 'S={root_text}/scratchpad; echo hi > \"$S/a.txt\"'"),
-+        format!("TMPDIR=/etc; S={root_text}/scratchpad; echo hi > \"$S/a.txt\""),
-+    ] {
-+        let (decision, rule) = hook_with_environment(&command, Some(&root), None);
-+        assert_eq!(
-+            decision, "allow",
-+            "startup root should prove {command:?}: {rule}"
-+        );
-+        let (decision, rule) = hook(&command);
-+        assert_eq!(
-+            decision, "deny",
-+            "an unconfigured root remains unproven: {command:?}: {rule}"
-+        );
-+    }
-+}
-+
-+#[cfg(unix)]
-+#[test]
-+fn startup_tmpdir_keeps_unknown_protected_and_nonlocal_targets_denied_590() {
-+    let (_directory, root) = alternate_tmpdir();
-+    let root_text = root.to_str().expect("UTF-8 test path");
-+    for command in [
-+        // Startup context supplies a root, never a shell variable value.
-+        "echo hi > $TMPDIR/a.txt".to_string(),
-+        "TMPDIR=/etc; echo hi > $TMPDIR/passwd".to_string(),
-+        format!("S={root_text}/scratchpad; read S; echo hi > $S/a.txt"),
-+        format!("false && S={root_text}/scratchpad; echo hi > $S/a.txt"),
-+        format!("S={root_text}/scratchpad; echo hi > $S/$UNKNOWN"),
-+        format!("S={root_text}; echo hi > $S/../outside.txt"),
-+        format!("S={root_text}; echo hi > $S/.git/config"),
-+        format!("S={root_text}; echo hi > $S/.ssh/id_rsa"),
-+        format!("S={root_text}; echo hi > $S/a.txt > $OTHER"),
-+        format!("S={root_text}; echo hi > $S/a.txt; git reset --hard"),
-+        format!("S={root_text}-outside; echo hi > $S/a.txt"),
-+        format!("S={root_text}; echo hi > $S"),
-+        // Recursive removal and mktemp producer rules are not widened.
-+        format!("S={root_text}/scratchpad; rm -rf $S"),
-+        format!("D=$(mktemp -d -p {root_text}); echo hi > $D/a.txt"),
-+        // Local startup context is not evidence about an SSH/container host.
-+        format!("ssh host 'S={root_text}/scratchpad; echo hi > \"$S/a.txt\"'"),
-+        format!("ssh host 'for n in 1 2; do echo hi > {root_text}/l$n.txt; done'"),
-+        format!("ssh host <<'SH'\nS={root_text}/scratchpad; echo hi > \"$S/a.txt\"\nSH"),
-+        format!("ssh host <<'SH'\nbash -c 'S={root_text}; echo hi > \"$S/a.txt\"'\nSH"),
-+        format!("docker exec container sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
-+        format!("chroot /sandbox sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
-+        format!("nsenter -t 1 -m sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
-+    ] {
-+        let (decision, rule) = hook_with_environment(&command, Some(&root), None);
-+        ass
++[[case]]
++description = "unquoted -C path before a dynamic subcommand (#597)"
++command = "git -C $r $sub main $b"
++expected = "deny"
++# The dynamic subcommand is reported first, as a possible alias.
++rule_id = "core.git:git-alias-semantic-unverified"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #596** (2026-10-27): deps(deps): bump smallvec from 1.16.3 to 1.16.4 in the rust-minor-patch group (@dependabot[bot])
+- **PR #595** (2026-10-26): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
+- **PR #594** (2026-10-26): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 - **PR #581** (2026-10-19): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
 - **PR #580** (2026-10-19): deps(deps): bump serde_json from 1.0.151 to 1.0.154 in the serde group (@dependabot[bot])
 - **PR #579** (2026-10-19): deps(deps): bump the rust-minor-patch group with 5 updates (@dependabot[bot])
-- **PR #578** (2026-10-19): ci(deps): bump the actions group with 2 updates (@dependabot[bot])
-- **PR #559** (closed): deps(deps): bump ast-grep-core from 0.45.3 to 0.50.0 (@dependabot[bot])
-- **PR #557** (2026-10-14): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -3586,58 +3243,33 @@ and mktemp rules retain their existin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. normalize): never take an option word for timeout's duration or chrt's program (
+## X. deps): realign ast-grep core with the vendored language adapter again
 
 **RULE**:
-When implementing operations in `src/normalize.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b33f3ef5`: normalize): never take an option word for timeout's duration or chrt's program (#592). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d76299f`: deps): realign ast-grep core with the vendored language adapter again. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/normalize.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if let Some(consume_next) = timeout_flag_cluster(&word) {
-            if consume_next {
-                wrapper_word(command, tokens, index + 1)?;
-            }
-            index += 1 + usize::from(consume_next);
-    // DURATION is a number with an optional unit, never an option word. Taking
-    // an option this parser does not model (a long-option abbreviation such as
-    // `--sig`, an unknown letter) for the duration made the real duration the
-    // program.
-    if wrapper_word(command, tokens, index)?.starts_with('-') {
-        return None;
-    }
-/// A getopt cluster of `timeout` flags: `-f`/`-p`/`-v`, optionally ending in
-/// `-k` or `-s`, whose value is the rest of the word or, when the letter ends
-/// the word, the next word (returned as `Some(true)`). `None` when the word is
-/// not such a cluster.
-fn timeout_flag_cluster(word: &str) -> Option<bool> {
-    let flags = word.strip_prefix('-').filter(|flags| !flags.is_empty())?;
-    for (position, flag) in flags.bytes().enumerate() {
-        match flag {
-            b'f' | b'p' | b'v' => {}
-            b'k' | b's' => return Some(position + 1 == flags.len()),
-            _ => return None,
-        }
-    }
-    Some(false
+    ignore:
+      # Must match the core version the vendored ast-grep-language-dcg adapter
+      # is built against (see Cargo.toml). A standalone bump creates a second,
+      # incompatible core and main stops compiling (cdf17b49, and again with
+      # the 0.51.0 bump).
+      - dependency-name: "ast-grep-core"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if word.strip_prefix('-').is_some_and(|flags| {
-            !flags.is_empty() && flags.bytes().all(|flag| matches!(flag, b'f' | b'p' | b'v'))
-        }) {
-            index += 1;
-    wrapper_word(command, tokens, index)?;
-    } else if priority_optional {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b33f3ef5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d76299f` are properly handled with clean fallback behavior.

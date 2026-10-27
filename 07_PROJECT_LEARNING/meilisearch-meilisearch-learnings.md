@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `7b6f9f39`  
+> **Source Version**: `9bbe2813`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:43:59.451Z  
+> **Timestamp**: 2026-10-27T13:54:34.949Z  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:43:57.772Z  
+> **Harvest Timestamp**: 2026-10-27T13:54:34.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59634 stars
+- **Stars / Engagement**: 59686 stars
 
 ---
 
@@ -2049,612 +2049,61 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b6f9f39` (2026-10-22)
-**Commit Message**: Merge pull request #6687 from meilisearch/better-db-opening
+### Incident Patch 1: `3429b350` (2026-10-26)
+**Commit Message**: Merge pull request #6698 from meilisearch/fix-debian-ci
 
-Improve code correctness by using the latest version of heed
+Fix Debian CI
 
-**File**: `Cargo.lock` (modified, +16/-11)
+**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +5/-1)
 ```diff
-@@ -433,9 +433,9 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
- 
- [[package]]
- name = "arroy"
--version = "0.8.0"
-+version = "0.9.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2f88e18ede2cb2f69e1a68ea804c8fc2f19f748da5f28c795271f279f4068afb"
-+checksum = "36d4f3fe47cf9258aa7a3bcfe3946549cebc03e8461d20559ce7ff4b1052833a"
- dependencies = [
-  "bytemuck",
-  "byteorder",
-@@ -1076,8 +1076,9 @@ dependencies = [
- 
- [[package]]
- name = "cellulite"
--version = "0.3.2"
--source = "git+https://github.com/meilisearch/cellulite?branch=mutexify-open-dbi#f68e7ebedcccca725bb4d9b535d805c22ffa9cbd"
-+version = "0.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "62fe8bc36e9755a1326ce6c8ac15362f78f2bd7508032518443cb9b21f8d2112"
- dependencies = [
-  "crossbeam",
-  "geo",
-@@ -2952,9 +2953,9 @@ dependencies = [
- 
- [[package]]
- name = "hannoy"
--version = "0.2.0"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "27b6b2dbf4421103a9a65bf5691ae6b9c2b997d5a6a62ca5f21a728982a442d8"
-+checksum = "e3b0cef4cfd297a07b1261e6a899a292766bf901e163fc72b6d3eab381be59e6"
- dependencies = [
-  "bytemuck",
-  "byteorder",
-@@ -3048,8 +3049,9 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
- 
- [[package]]
- name = "heed"
--version = "0.22.1"
--source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-+version = "0.23.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "19596d4caf0a0800d6f03dd1290bdcf6e74bea8ea0bca52cc399a725a02e78c6"
- dependencies = [
-  "bitflags",
-  "byteorder",
-@@ -3066,12 +3068,14 @@ dependencies = [
- [[package]]
- name = "heed-traits"
- version = "0.20.0"
--source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "eb3130048d404c57ce5a1ac61a903696e8fcde7e8c2991e9fcfc1f27c3ef74ff"
- 
- [[package]]
- name = "heed-types"
- version = "0.21.0"
--source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "13c255bdf46e07fb840d120a36dcc81f385140d7191c76a7391672675c01a55d"
- dependencies = [
-  "bincode",
-  "byteorder",
-@@ -4055,7 +4059,8 @@ checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
- [[package]]
- name = "lmdb-master-sys"
- version = "0.2.6"
--source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "aaeb9bd22e73bd1babffff614994b341e9b2008de7bb73bf1f7e9154f1978f8b"
- dependencies = [
-  "cc",
-  "doxygen-rs",
-```
-
-**File**: `Cargo.toml` (modified, +0/-3)
-```diff
-@@ -63,6 +63,3 @@ opt-level = 3
- opt-level = 3
- [profile.dev.package.gemm-f16]
- opt-level = 3
--
--[patch.crates-io]
--heed = { git = "https://github.com/meilisearch/heed", branch = "mutexify-open-dbi", version = "0.22.1"  }
-```
-
-**File**: `crates/index-scheduler/src/features.rs` (modified, +16/-7)
-```diff
-@@ -2,7 +2,7 @@ use std::sync::{Arc, RwLock};
- 
- use meilisearch_types::features::{InstanceTogglableFeatures, RuntimeTogglableFeatures};
- use meilisearch_types::heed::types::{SerdeJson, Str};
--use meilisearch_types::heed::{Database, Env, RwTxn, UniqueRwTxn, WithoutTls};
-+use meilisearch_types::heed::{Database, DatabaseOpener, RwTxn, WithoutTls};
- use meilisearch_types::network::route::Status;
- use meilisearch_types::network::{Network, RemoteAvailability};
- 
-@@ -22,8 +22,8 @@ mod db_keys {
- }
- 
- #[derive(Clone)]
--pub(crate) struct FeatureData {
--    persisted: Database<Str, SerdeJson<RuntimeTogglableFeatures>>,
-+pub(crate) struct FeatureData<'e> {
-+    persisted: Database<'e, Str, SerdeJson<RuntimeTogglableFeatures>>,
-     runtime: Arc<RwLock<RuntimeTogglableFeatures>>,
-     network: Arc<RwLock<Network>>,
-     remote_availability: Arc<RemoteAvailability>,
-@@ -252,7 +252,7 @@ impl RoFeatures {
-     }
- }
- 
--impl FeatureData {
-+impl<'e> FeatureData<'e> {
-     pub(crate) const fn nb_db() -> u32 {
-         NUMBER_OF_DATABASES
-     }
-@@ -262,12 +262,12 @@ impl FeatureData {
-     }
- 
-     pub fn new(
--        env: &Env<WithoutTls>,
--        wtxn: &mut UniqueRwTxn,
-+        dbo: &DatabaseOpener<'e, WithoutTls>,
-+        wtxn: &mut RwTxn<'e>,
-         instance_features: InstanceTogglableFeatures,
-     ) -> Result<Self> {
-         let runtime_features_db =
--            env.create_database(wtxn, Some(db_name::EXPERIMENTAL_FEATURES))?;
-+            dbo.create_database(wtxn, Some(db_name::EXPERIMENTAL_FEATURES))?;
- 
-         let persisted_features: RuntimeTogglableFeatures =
-             runtime_features_db.get(wtxn, db_keys::EXPERIMENTAL_FEATURES)?.unwrap_or_default();
-@@ -356,3 +356,12 @@ impl FeatureData {
-         &self.remote_availability
-     }
- }
-+
-+impl meilisearch_types::heed::OnCommit for FeatureData<'_> {
-+    type Committed = FeatureData<'static>;
-+
-+    fn on_commit(self, token: &meilisearch_types::heed::CommitToken) -> Self::Committed {
-+        let Self { persisted, runtime, network, remote_availability } = self;
-+        FeatureData { persisted: persisted.on_commit(token), runtime, network, remote_availability }
-+    }
-+}
-```
-
-**File**: `crates/index-scheduler/src/index_mapper/index_map.rs` (modified, +1/-1)
-```diff
-@@ -352,7 +352,7 @@ mod tests {
-     use crate::utils::clamp_to_page_size;
-     use crate::IndexScheduler;
- 
--    impl IndexMapper {
-+    impl IndexMapper<'_> {
-         fn test() -> (Self, Env<WithoutTls>, IndexSchedulerHandle) {
-             let (index_scheduler, handle) = IndexScheduler::test(true, vec![]);
-             (index_scheduler.index_mapper, index_scheduler.env, handle)
-```
-
-**File**: `crates/index-scheduler/src/index_mapper/mod.rs` (modified, +38/-9)
-```diff
-@@ -4,7 +4,7 @@ use std::time::Duration;
- use std::{fs, thread};
- 
- use meilisearch_types::heed::types::{SerdeJson, Str};
--use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
-+use meilisearch_types::heed::{Database, DatabaseOpener, RoTxn, RwTxn, WithoutTls};
- use meilisearch_types::index_uid::{AnyIndex, DsrIndex, UserIndex, RESERVED_UID_PREFIX};
- use meilisearch_types::milli::database_stats::DatabaseStats;
- use meilisearch_types::milli::index::RollbackOutcome;
-@@ -57,17 +57,17 @@ mod db_name {
- /// - Transactions on the association database.
- /// - ClosingEvent signals emitted when closing an environment.
- #[derive(Clone)]
--pub struct IndexMapper {
-+pub struct IndexMapper<'e> {
-     /// Keep track of the opened indexes. Used mainly by the index resolver.
-     index_map: Arc<RwLock<IndexMap>>,
- 
-     /// Map an index name with an index uuid currently available on disk.
--    index_mapping: Database<Str, UuidCodec>,
-+    index_mapping: Database<'e, Str, UuidCodec>,
-     /// Map an index UUID with the cached stats associated to the index.
-     ///
-     /// Using an UUID forces to use the index_mapping table to recover the index behind a name, ensuring
-     /// consistency wrt index swapping.
--    index_stats: Database<UuidCodec, SerdeJson<IndexStats>>,
-+    index_stats: Database<'e, UuidCodec, SerdeJson<IndexStats>>,
- 
-     /// Path to the folder where the LMDB environments of each index are.
-     base_path: PathBuf,
-@@ -179,7 +179,7 @@ impl IndexStats {
-     }
- }
- 
--impl IndexMapper {
-+impl<'e> IndexMapper<'e> {
-     pub(crate) const fn nb_db() -> u32 {
-         NUMBER_OF_DATABASES
-     }
-@@ -206,15 +206,15 @@ impl IndexMapper {
-     }
- 
-     pub fn new(
--        env: &Env<WithoutTls>,
--        wtxn: &mut UniqueRwTxn,
-+        dbo: &DatabaseOpener<'e, WithoutTls>,
-+        wtxn: &mut RwTxn<'e>,
-         options: &IndexSchedulerOptions,
-         budget: IndexBudget,
-     ) -> Result<Self> {
-         Ok(Self {
-             index_map: Arc::new(RwLock::new(IndexMap::new(budget.index_count))),
--            index_mapping: env.create_database(wtxn, Some(db_name::INDEX_MAPPING))?,
--            index_stats: env.create_database(wtxn, Some(db_name::INDEX_STATS))?,
-+            index_mapping: dbo.create_database(wtxn, Some(db_name::INDEX_MAPPING))?,
-+            index_stats: dbo.create_database(wtxn, Some(db_name::INDEX_STATS))?,
-             base_path: options.indexes_path.clone(),
-             index_base_map_size: budget.map_size,
-             index_growth_amount: options.index_growth_amount,
-@@ -695,6 +695,35 @@ impl IndexMapper {
-     }
- }
- 
-+impl meilisearch_types::heed::OnCommit for IndexMapper<'_> {
-+    type Committed = IndexMapper<'static>;
-+
-+    fn on_commit(self, token: &milli::heed::CommitToken) -> Self::Committed {
-+        let Self {
-+            index_map,
-+            index_mapping,
-+            index_stats,
-+            base_path,
-+            index_base_map_size,
-+            index_growth_amount,
-+            enable_mdb_writemap,
-+            indexer_config,
-+            currently_updating_index,
-+        } = self;
-+        IndexMapper {
-+            index_map,
-+            index_mapping: index_mapping.on_commit(token),
-+            index_stats: index_stats.on_commit(token),
-+            base_path,
-+            index_base_map_size,
-+            index_growth_amount,
-+            enable_mdb_writemap,
-+            indexer_config,
-+            currently_updating_index,
-+        }
-+    }
-+}
-+
- pub trait IndexUid<'a>: Clone + Copy {
-     fn count(db: Database<Str, UuidCodec>, rtxn: &RoTxn) -> Result<u64>;
- 
-```
-
-**File**: `crates/index-scheduler/src/lib.rs` (modified, +90/-23)
-```diff
-@@ -67,7 +67,9 @@ use meilisearch_types::features::{
- };
- use meilisearch_types::heed::byteorder::BE;
- use meilisearch_types::heed::types::{DecodeIgnore, SerdeJson, Str, I128};
--use meilisearch_types::heed::{self, Database, Env, RoTxn, RwTxn, Unspecified, WithoutTls};
-+use meilisearch_types::heed::{
-+    self, CommitOrAbort, Database, Env, OnCommit, RoTxn, RwTxn, Unspecified, WithoutTls,
-+};
- use meilisearch_types::index_uid::UserIndex;
- use meilisearch_types::milli::dynamic_search_rules::DsrFuel;
- use meilisearch_types::milli::sharding::Shards;
-@@ -185,25 +187,25 @@ pub struct IndexScheduler {
-     pub(crate) processing_tasks: Arc<RwLock<ProcessingTasks>>,
- 
-     /// A database containing only the version of the index-scheduler
--    pub version: versioning::Versioning,
-+    pub version: versioning::Versioning<'static>,
-     /// The queue containing both the tasks and the batches.
--    pub queue: queue::Queue,
-+    pub queue: queue::Queue<'static>,
-     /// In charge of creating, opening, storing and returning indexes.
--    pub(crate) index_mapper: IndexMapper,
-+    pub(crate) index_mapper: IndexMapper<'static>,
-     /// In charge of fetching and setting the status of experimental features.
--    features: features::FeatureData,
-+    features: features::FeatureData<'static>,
- 
-     /// Stores the custom chat prompts and other settings of the indexes.
--    pub(crate) chat_settings: Database<Str, SerdeJson<ChatCompletionSettings>>,
-+    pub(crate) chat_settings: Database<'static, Str, SerdeJson<ChatCompletionSettings>>,
- 
-     /// Everything related to the processing of the tasks
-     pub scheduler: scheduler::Scheduler,
- 
-     /// A database to store single-keyed data that is persisted across restarts.
--    persisted: Database<Str, Str>,
-+    persisted: Database<'static, Str, Str>,
- 
-     /// A legacy database that used to store dynamic search rules before they became a dedicated index
--    legacy_dsr: Database<Unspecified, Unspecified>,
-+    legacy_dsr: Database<'static, Unspecified, Unspecified>,
- 
-     /// Webhook, loaded and stored in the `persisted` database
-     webhooks: Arc<Webhooks>,
-@@ -320,7 +322,7 @@ impl IndexScheduler {
-                 run_loop_iteration: _,
-         } = self;
- 
--        let total_size = env.stat().non_free_page_size()
-+        let total_size = env.unnamed_database_stat().non_free_page_size()
-             + chat_settings.stat(rtxn)?.non_free_page_size()
-             + persisted.stat(rtxn)?.non_free_page_size()
-             + legacy_dsr.stat(rtxn)?.non_free_page_size();
-@@ -401,23 +403,88 @@ impl IndexScheduler {
-         }?;
- 
-         // We **must** start by upgrading the version because it'll also upgrade the required database before we can open them
--        let version = versioning::Versioning::new(&env, from_db_version)?;
--
--        let mut wtxn = env.unique_write_txn()?;
- 
--        let features = features::FeatureData::new(&env, &mut wtxn, options.instance_features)?;
--        let queue = Queue::new(&env, &mut wtxn, &options)?;
--        let index_mapper = IndexMapper::new(&env, &mut wtxn, &options, budget)?;
--        let chat_settings = env.create_database(&mut wtxn, Some(db_name::CHAT_SETTINGS))?;
-+        struct Databases<'e> {
-+            version: versioning::Versioning<'e>,
-+            queue: Queue<'e>,
-+            index_mapper: IndexMapper<'e>,
-+            persisted: Database<'e, Str, Str>,
-+            legacy_dsr: Database<'e, Unspecified, Unspecified>,
-+            features: features::FeatureData<'e>,
-+            chat_settings: Database<'e, Str, SerdeJson<ChatCompletionSettings>>,
-+            webhooks: Webhooks,
-+        }
- 
--        let persisted = env.create_database(&mut wtxn, Some(db_name::PERSISTED))?;
--        let legacy_dsr = env.create_database(&mut wtxn, Some(db_name::DYNAMIC_SEARCH_RULES))?;
--        let webhooks_db = persisted.remap_data_type::<SerdeJson<Webhooks>>();
--        let mut webhooks = webhooks_db.get(&wtxn, db_keys::WEBHOOKS)?.unwrap_or_default();
--        webhooks
--            .with_cli(options.cli_webhook_url.clone(), options.cli_webhook_authorization.clone());
-+        impl<'e> OnCommit for Databases<'e> {
-+            type Committed = Databases<'static>;
-+
-+            fn on_commit(self, token: &heed::CommitToken) -> Self::Committed {
-+                let Self {
-+                    version,
-+                    queue,
-+                    index_mapper,
-+                    persisted,
-+                    legacy_dsr,
-+                    features,
-+                    chat_settings,
-+                    webhooks,
-+                } = self;
-+
-+                Databases {
-+                    version: version.on_commit(token),
-+                    queue: queue.on_commit(token),
-+                    index_mapper: index_mapper.on_commit(token),
-+                    persisted: persisted.on_commit(token),
-+                    legacy_dsr: legacy_dsr.on_commit(token),
-+                    features: features.on_commit(token),
-+               
-```
-
-**File**: `crates/index-scheduler/src/queue/batches.rs` (modified, +41/-20)
-```diff
-@@ -3,7 +3,7 @@ use std::ops::{Bound, RangeBounds};
- 
- use meilisearch_types::batches::{Batch, BatchId};
- use meilisearch_types::heed::types::{DecodeIgnore, SerdeBincode, SerdeJson, Str};
--use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
-+use meilisearch_types::heed::{Database, RoTxn, RwTxn};
- use meilisearch_types::milli::{CboRoaringBitmapCodec, RoaringBitmapCodec, BEU32};
- use meilisearch_types::tasks::{Kind, Status};
- use roaring::{MultiOps, RoaringBitmap};
-@@ -31,26 +31,26 @@ mod db_name {
-     pub const BATCH_FINISHED_AT: &str = "batch-finished-at";
- }
- 
--pub struct BatchQueue {
-+pub struct BatchQueue<'e> {
-     /// Contains all the batches accessible by their Id.
--    pub(crate) all_batches: Database<BEU32, SerdeJson<Batch>>,
-+    pub(crate) all_batches: Database<'e, BEU32, SerdeJson<Batch>>,
- 
-     /// All the batches containing a task matching the selected status.
--    pub(crate) status: Database<SerdeBincode<Status>, RoaringBitmapCodec>,
-+    pub(crate) status: Database<'e, SerdeBincode<Status>, RoaringBitmapCodec>,
-     /// All the batches ids grouped by the kind of their task.
--    pub(crate) kind: Database<SerdeBincode<Kind>, RoaringBitmapCodec>,
-+    pub(crate) kind: Database<'e, SerdeBincode<Kind>, RoaringBitmapCodec>,
-     /// Store the batches associated to an index.
--    pub(crate) index_tasks: Database<Str, RoaringBitmapCodec>,
-+    pub(crate) index_tasks: Database<'e, Str, RoaringBitmapCodec>,
-     /// Store the batches containing tasks which were enqueued at a specific date
--    pub(crate) enqueued_at: Database<BEI128, CboRoaringBitmapCodec>,
-+    pub(crate) enqueued_at: Database<'e, BEI128, CboRoaringBitmapCodec>,
-     /// Store the batches containing finished tasks started at a specific date
--    pub(crate) started_at: Database<BEI128, CboRoaringBitmapCodec>,
-+    pub(crate) started_at: Database<'e, BEI128, CboRoaringBitmapCodec>,
-     /// Store the batches containing tasks finished at a specific date
--    pub(crate) finished_at: Database<BEI128, CboRoaringBitmapCodec>,
-+    pub(crate) finished_at: Database<'e, BEI128, CboRoaringBitmapCodec>,
- }
- 
--impl BatchQueue {
--    pub(crate) fn private_clone(&self) -> BatchQueue {
-+impl<'e> BatchQueue<'e> {
-+    pub(crate) fn private_clone(&self) -> BatchQueue<'e> {
-         BatchQueue {
-             all_batches: self.all_batches,
-             status: self.status,
-@@ -85,15 +85,18 @@ impl BatchQueue {
-         Ok(total_size as u64)
-     }
- 
--    pub(crate) fn new(env: &Env<WithoutTls>, wtxn: &mut UniqueRwTxn) -> Result<Self> {
-+    pub(crate) fn new<T>(
-+        dbo: &meilisearch_types::heed::DatabaseOpener<'e, T>,
-+        wtxn: &mut RwTxn<'e>,
-+    ) -> Result<Self> {
-         Ok(Self {
--            all_batches: env.create_database(wtxn, Some(db_name::ALL_BATCHES))?,
--            status: env.create_database(wtxn, Some(db_name::BATCH_STATUS))?,
--            kind: env.create_database(wtxn, Some(db_name::BATCH_KIND))?,
--            index_tasks: env.create_database(wtxn, Some(db_name::BATCH_INDEX_TASKS))?,
--            enqueued_at: env.create_database(wtxn, Some(db_name::BATCH_ENQUEUED_AT))?,
--            started_at: env.create_database(wtxn, Some(db_name::BATCH_STARTED_AT))?,
--            finished_at: env.create_database(wtxn, Some(db_name::BATCH_FINISHED_AT))?,
-+            all_batches: dbo.create_database(wtxn, Some(db_name::ALL_BATCHES))?,
-+            status: dbo.create_database(wtxn, Some(db_name::BATCH_STATUS))?,
-+            kind: dbo.create_database(wtxn, Some(db_name::BATCH_KIND))?,
-+            index_tasks: dbo.create_database(wtxn, Some(db_name::BATCH_INDEX_TASKS))?,
-+            enqueued_at: dbo.create_database(wtxn, Some(db_name::BATCH_ENQUEUED_AT))?,
-+            started_at: dbo.create_database(wtxn, Some(db_name::BATCH_STARTED_AT))?,
-+            finished_at: dbo.create_database(wtxn, Some(db_name::BATCH_FINISHED_AT))?,
-         })
-     }
- 
-@@ -330,7 +333,25 @@ impl BatchQueue {
-     }
- }
- 
--impl Queue {
-+impl<'e> meilisearch_types::heed::OnCommit for BatchQueue<'e> {
-+    type Committed = BatchQueue<'static>;
-+
-+    fn on_commit(self, token: &meilisearch_types::heed::CommitToken) -> Self::Committed {
-+        let Self { all_batches, status, kind, index_tasks, enqueued_at, started_at, finished_at } =
-+            self;
-+        BatchQueue {
-+            all_batches: all_batches.on_commit(token),
-+            status: status.on_commit(token),
-+            kind: kind.on_commit(token),
-+            index_tasks: index_tasks.on_commit(token),
-+            enqueued_at: enqueued_at.on_commit(token),
-+            started_at: started_at.on_commit(token),
-+            finished_at: finished_at.on_commit(token),
-+        }
-+    }
-+}
-+
-+impl Queue<'_> {
-     /// Return the batch ids matched by the given query from the index scheduler's point of view.
-     pub(crate) fn get_batch_ids(
-         &self,
-```
-
-**File**: `crates/index-scheduler/src/queue/mod.rs` (modified, +27/-13)
-```diff
-@@ -13,7 +13,7 @@ use std::time::Duration;
- 
- use file_store::FileStore;
- use meilisearch_types::batches::BatchId;
--use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
-+use meilisearch_types::heed::{Database, RoTxn, RwTxn, WithoutTls};
- use meilisearch_types::milli::{CboRoaringBitmapCodec, BEU32};
- use meilisearch_types::tasks::network::DbTaskNetwork;
- use meilisearch_types::tasks::{Kind, KindWithContent, Status, Task};
-@@ -126,12 +126,12 @@ impl Query {
- 
- /// Structure which holds meilisearch's indexes and schedules the tasks
- /// to be performed on them.
--pub struct Queue {
--    pub(crate) tasks: tasks::TaskQueue,
--    pub(crate) batches: batches::BatchQueue,
-+pub struct Queue<'e> {
-+    pub(crate) tasks: tasks::TaskQueue<'e>,
-+    pub(crate) batches: batches::BatchQueue<'e>,
- 
-     /// Matches a batch id with the associated task ids.
--    pub(crate) batch_to_tasks_mapping: Database<BEU32, CboRoaringBitmapCodec>,
-+    pub(crate) batch_to_tasks_mapping: Database<'e, BEU32, CboRoaringBitmapCodec>,
- 
-     /// The list of files referenced by the tasks.
-     pub(crate) file_store: FileStore,
-@@ -141,8 +141,8 @@ pub struct Queue {
-     pub(crate) max_number_of_tasks: usize,
- }
- 
--impl Queue {
--    pub(crate) fn private_clone(&self) -> Queue {
-+impl<'e> Queue<'e> {
-+    pub(crate) fn private_clone(&self) -> Queue<'e> {
-         Queue {
-             tasks: self.tasks.private_clone(),
-             batches: self.batches.private_clone(),
-@@ -168,17 +168,16 @@ impl Queue {
- 
-     /// Create an index scheduler and start its run loop.
-     pub(crate) fn new(
--        env: &Env<WithoutTls>,
--        wtxn: &mut UniqueRwTxn,
-+        dbo: &meilisearch_types::heed::DatabaseOpener<'e, WithoutTls>,
-+        wtxn: &mut RwTxn<'e>,
-         options: &IndexSchedulerOptions,
-     ) -> Result<Self> {
--        // allow unreachable_code to get rids of the warning in the case of a test build.
-         Ok(Self {
-             file_store: FileStore::new(&options.update_file_path)?,
--            batch_to_tasks_mapping: env
-+            batch_to_tasks_mapping: dbo
-                 .create_database(wtxn, Some(db_name::BATCH_TO_TASKS_MAPPING))?,
--            tasks: TaskQueue::new(env, wtxn)?,
--            batches: BatchQueue::new(env, wtxn)?,
-+            tasks: TaskQueue::new(dbo, wtxn)?,
-+            batches: BatchQueue::new(dbo, wtxn)?,
-             max_number_of_tasks: options.max_number_of_tasks,
-         })
-     }
-@@ -400,3 +399,18 @@ impl Queue {
-         Ok(res)
-     }
- }
-+
-+impl meilisearch_types::heed::OnCommit for Queue<'_> {
-+    type Committed = Queue<'static>;
-+
-+    fn on_commit(self, token: &meilisearch_types::heed::CommitToken) -> Self::Committed {
-+        let Self { tasks, batches, batch_to_tasks_mapping, file_store, max_number_of_tasks } = self;
-+        Queue {
-+            tasks: tasks.on_commit(token),
-+            batches: batches.on_commit(token),
-+            batch_to_tasks_mapping: batch_to_tasks_mapping.on_commit(token),
-+            file_store,
-+            max_number_of_tasks,
-+        }
-+    }
-+}
+@@ -31,9 +31,13 @@ jobs:
+           sudo rm -rf "/usr/share/dotnet" || true
+           sudo rm -rf "/usr/local/lib/android" || true
+           sudo rm -rf "/usr/local/share/boost" || true
++      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
++      - name: Install Rust
++        run: |
++          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
++          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+       - name: Install cargo-deb
+         run: cargo install cargo-deb
+-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+       - name: Build deb package
+         run: cargo deb -p meilisearch -o target/debian/meilisearch.deb
+       - name: Upload debian pkg to release
 ```
 
 ---
 
-### Incident Patch 2: `ad7a839a` (2026-10-22)
-**Commit Message**: Use a published version of hannoy
+### Incident Patch 2: `46b13b7e` (2026-10-26)
+**Commit Message**: Fix Debian CI
 
-**File**: `Cargo.lock` (modified, +3/-2)
+**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +5/-1)
 ```diff
-@@ -2953,8 +2953,9 @@ dependencies = [
- 
- [[package]]
- name = "hannoy"
--version = "0.2.0"
--source = "git+https://github.com/nnethercott/hannoy?branch=better-db-opening#85840ee3db59aade85ba30ea0f35d637cbd5b61e"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e3b0cef4cfd297a07b1261e6a899a292766bf901e163fc72b6d3eab381be59e6"
- dependencies = [
-  "bytemuck",
-  "byteorder",
-```
-
-**File**: `crates/milli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -91,7 +91,7 @@ rhai = { version = "1.25.1", features = [
-     "sync",
- ] }
- arroy = "0.9.0"
--hannoy = { git = "https://github.com/nnethercott/hannoy", branch = "better-db-opening", version = "0.2.0", features = ["arroy"] }
-+hannoy = { version = "0.3.0", features = ["arroy"] }
- rand = "0.10.2"
- tracing = "0.1.44"
- url = "2.5.8"
+@@ -31,9 +31,13 @@ jobs:
+           sudo rm -rf "/usr/share/dotnet" || true
+           sudo rm -rf "/usr/local/lib/android" || true
+           sudo rm -rf "/usr/local/share/boost" || true
++      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
++      - name: Install Rust
++        run: |
++          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
++          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+       - name: Install cargo-deb
+         run: cargo install cargo-deb
+-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+       - name: Build deb package
+         run: cargo deb -p meilisearch -o target/debian/meilisearch.deb
+       - name: Upload debian pkg to release
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6698** (2026-10-26): Fix Debian CI (@curquiza)
+- **PR #6697** (2026-10-26): Update version for the next release (v1.56.0) in Cargo.toml (@meili-bot)
 - **PR #6692** (2026-10-19): docs(readme): update for clarity and AI discoverability (GEO/AEO) (@mayasssh)
 - **PR #6690** (closed): Acquire search queue permit in /similar route (#6666) (@ronitgupta138)
+- **PR #6689** (2026-10-26): Reduce number of cargo flaky iterations to 60 (@dureuill)
 - **PR #6688** (closed): REMOVE: print vectors in test (@ManyTheFish)
-- **PR #6687** (2026-10-22): Improve code correctness by using the latest version of heed (@Kerollmops)
-- **PR #6684** (2026-10-15): Disallow AI Contributions (@Kerollmops)
-- **PR #6683** (closed): Accept every documented reasoning_effort value in chat completions (@jinwukong)
 
 ---
 
@@ -2674,53 +2123,32 @@ Improve code correctness by using the latest version of heed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6687 from meilisearch/better-db-opening
+## X. Merge pull request #6698 from meilisearch/fix-debian-ci
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish-apt-brew-pkg.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b6f9f39`: Merge pull request #6687 from meilisearch/better-db-opening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3429b350`: Merge pull request #6698 from meilisearch/fix-debian-ci. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-apt-brew-pkg.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.9.0"
-checksum = "36d4f3fe47cf9258aa7a3bcfe3946549cebc03e8461d20559ce7ff4b1052833a"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62fe8bc36e9755a1326ce6c8ac15362f78f2bd7508032518443cb9b21f8d2112"
-version = "0.3.0"
-checksum = "e3b0cef4cfd297a07b1261e6a899a292766bf901e163fc72b6d3eab381be59e6"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19596d4caf0a0800d6f03dd1290bdcf6e74bea8ea0bca52cc399a725a02e78c6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb3130048d404c57ce5a1ac61a903696e8fcde7e8c2991e9fcfc1f27c3ef74ff"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13c255bdf46e07fb840d120a36dcc81f385140d7191c76a7391672675c01a55d"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aaeb9bd22e73bd1babffff614994b341e9b2008de7bb73bf1f7e9154f1978f8b"
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.8.0"
-checksum = "2f88e18ede2cb2f69e1a68ea804c8fc2f19f748da5f28c795271f279f4068afb"
-version = "0.3.2"
-source = "git+https://github.com/meilisearch/cellulite?branch=mutexify-open-dbi#f68e7ebedcccca725bb4d9b535d805c22ffa9cbd"
-version = "0.2.0"
-checksum = "27b6b2dbf4421103a9a65bf5691ae6b9c2b997d5a6a62ca5f21a728982a442d8"
-version = "0.22.1"
-source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
-source = "git+https://github.com/meilisearch/heed?branch=mutexify-open-dbi#14b1b330cfb536a2023f717a9c79c069448f9080"
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b6f9f39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3429b350` are properly handled with clean fallback behavior.

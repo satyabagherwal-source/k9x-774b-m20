@@ -2903,10 +2903,10 @@
     "repository": "feathersjs/feathers",
     "platform": "github",
     "sourceUrl": "https://github.com/feathersjs/feathers",
-    "sourceVersion": "572574e3",
+    "sourceVersion": "e73ad697",
     "license": "MIT",
-    "contentHash": "c42b5ad96f97e525d8ff3dbe39905d09552de47d72d5fe8e26d7c9dc63f1e617",
-    "lastHarvestedAt": "2026-10-18T22:23:17.036Z",
+    "contentHash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
+    "lastHarvestedAt": "2026-10-27T13:54:28.112Z",
     "learningId": "learn-github-feathersjs-feathers"
   },
   "litmuschaos-litmus": {
@@ -6083,10 +6083,10 @@
     "repository": "dockview/dockview",
     "platform": "github",
     "sourceUrl": "https://github.com/dockview/dockview",
-    "sourceVersion": "c26490bf",
+    "sourceVersion": "66a36f17",
     "license": "NOASSERTION",
-    "contentHash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
-    "lastHarvestedAt": "2026-10-25T23:39:17.362Z",
+    "contentHash": "3eeb8f2497e1b3f9a612987b1ce346d6d5ce1d0de86bdb86a716a663f49270d2",
+    "lastHarvestedAt": "2026-10-27T13:54:21.463Z",
     "learningId": "learn-github-dockview-dockview"
   },
   "kubearmor-kubearmor": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "b33f3ef5",
+    "sourceVersion": "5c060064",
     "license": "NOASSERTION",
-    "contentHash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
-    "lastHarvestedAt": "2026-10-25T20:04:42.868Z",
+    "contentHash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
+    "lastHarvestedAt": "2026-10-27T13:54:23.864Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "7b6f9f39",
+    "sourceVersion": "9bbe2813",
     "license": "NOASSERTION",
-    "contentHash": "47f1923aeb9b2b2b265638ac1af3a09bf8f2b7d923bbb5ff21a62ed53737c65a",
-    "lastHarvestedAt": "2026-10-22T18:43:59.667Z",
+    "contentHash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
+    "lastHarvestedAt": "2026-10-27T13:54:35.240Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {

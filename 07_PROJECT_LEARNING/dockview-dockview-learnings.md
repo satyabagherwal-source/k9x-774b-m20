@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dockview-dockview-learnings.md`  
 > **Source**: github ([https://github.com/dockview/dockview](https://github.com/dockview/dockview))  
-> **Source Version**: `c26490bf`  
+> **Source Version**: `66a36f17`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:39:16.911Z  
+> **Timestamp**: 2026-10-27T13:54:21.185Z  
 > **Learning ID**: `learn-github-dockview-dockview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dockview-dockview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dockview/dockview](https://github.com/dockview/dockview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:39:16.185Z  
+> **Harvest Timestamp**: 2026-10-27T13:54:20.197Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero dependency docking layout manager supporting tabs, groups, grids and splitviews. Supports React, Vue, Angular, and vanilla TypeScript.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3488 stars
+- **Stars / Engagement**: 3495 stars
 
 ---
 
@@ -1345,11 +1345,11 @@ export class PaneviewApi implements CommonApi<SerializedPaneview> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1717** (2026-10-27): **Pinned left/right edge group grows on every sash drag**
+  *Symptoms*: **Dockview version** 8.7.0  **Framework** Official demo (React). Also reproduces in any app whose edge group has no minimumSize  **Browser** Any. Layout bug, not browser-specific.  **Describe the bug** Pin an auto-hide edge group on the left or right, then drag its sash to make it narrower. The group gets wider instead. Each drag adds about 50px. The bottom edge does not do this.  **Reproduction** 1.Open the dockview demo (autoHideEdgeGroups on). Use the default layout 2.Click the left or right edge tab so it peeks (create new edge first) 3.Press Pin. The tab strip moves to the bottom and the group docks. 4.Drag the sash inward to shrink the group. 5.Release and drag again. The group is wider after every drag.  **Expected behavior** Dragging the sash inward shrinks the group, down to its minimum.   **Additional context** EdgeGroupView watches .dv-tabs-and-actions-container and, for a horizontal edge, stores offsetWidth as the collapsed size (0a64a19e32, shipped in 8.0.0). Pin calls setHeaderPosition('bottom'), so that width becomes the whole panel. With no minimumSize, the expanded floor is _effectiveBaseCollapsed + 50. The sash drag is clamped to that floor, so a shrink grows the panel by ~50px. The strip is measured again and the floor moves up.  Passing minimumSize avoids it, because the floor then uses that value instead of the measured strip. The demo's setupEdgeGroups path does pass one; the default fromJSON layout does not. 
+
 - **Issue #1708** (2026-10-25): **Popout window: deferred resize/move-end callbacks read `_window.window` after the window is closed (null) and throw**
   *Symptoms*: **Version**: dockview-core 7.0.4 (also present in 8.6.1 — `dist/dockview-core.js` around line 16883)  **What happens**  In `addPopoutGroup`, the popout window registers two deferred callbacks:  - `onDidWindowResizeEnd(_window.window, cb)` — runs `cb` 100 ms after the last `resize` event (setTimeout) - `onDidWindowMoveEnd(_window.window)` — polls with requestAnimationFrame  Both callbacks read `_window.window.innerWidth` / `innerHeight` / `screenX`. If the popout window is closed inside that delay, the popout is disposed and `_window.window` is `null`. The pending timeout (or frame) still fires and throws:  ``` TypeError: Cannot read properties of null (reading 'innerWidth') ```  Disposing removes the `resize` listener, but it does not clear the pending timeout.  **Reproduce**  1. Open a panel in a popout with `api.addPopoutGroup(panel)`. 2. Resize the popout window, or dispatch `resize` on it, and close it within 100 ms. 3. An uncaught TypeError appears in the opener's console.  We hit this in an Electron app. After the popout's stylesheets load, we dispatch one `resize` on the popout so the overlay renderer measures again. Our test then closes the window right away.  **Suggested fix**  Guard the deferred callbacks:  ```js onDidWindowResizeEnd(_window.window, () => {     if (!_window.window) {         return;     }     this._onDidPopoutGroupSizeChange.fire({ ... }); }), _onDidWindowPositionChange.event(() => {     if (!_window.window) {         return;     }     this._onDidPo
-
-- **Issue #1692** (2026-10-16): **A row rebuilt after `api.clear()` loses its proportions: shrinking the dock then takes from its last panel only**
-  *Symptoms*: **Version:** dockview-core 8.4.1 and 8.5.1, `proportionalLayout` left at its default (`true`).  After `api.clear()`, a grid built again with a row of panels and a panel below it no longer keeps the row's proportions: making the container narrower takes the whole difference from the row's last panel, and making it wider gives it all to that panel. Built the same way without the `clear()` before it, the row keeps its proportions.  **Repro** (plain dockview-core, a 900×600 container, sizes after the ResizeObserver's layout):  ```html <div id="app" style="width: 900px; height: 600px"></div> <script src="dockview-core.js"></script> <script>   const el = document.getElementById('app');   const api = window['dockview-core'].createDockview(el, {     createComponent: () => ({ element: document.createElement('div'), init() {} }),   });   const build = () => {     api.addPanel({ id: 'a', component: 'x' });     api.addPanel({ id: 'b', component: 'x', position: { referencePanel: 'a', direction: 'right' } });     api.addPanel({ id: 'c', component: 'x', position: { referencePanel: 'b', direction: 'right' } });     api.addPanel({ id: 't', component: 'x', position: { direction: 'below' } });   };   build();   api.clear();   build();   // then: el.style.width = '600px', and back to '900px' </script> ```  | | a, b, c at 900 | at 600 | back at 900 | |---|---|---|---| | `build()` once | 300, 300, 300 | 200, 200, 200 | 300, 300, 300 | | `build(); api.clear(); build()` | 300, 300, 300 | **300, 200,
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1366,186 +1366,534 @@ export class PaneviewApi implements CommonApi<SerializedPaneview> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a89feabc` (2026-10-25)
-**Commit Message**: Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout
+### Incident Patch 1: `7a5157b9` (2026-10-27)
+**Commit Message**: refactor(core): read the edge group's header position instead of a CSS class
 
-fix(dockview-core): cancel pending resize-end callback on dispose
+The #1717 guard decided the strip's orientation from the
+`dv-groupview-header-vertical` class. Read the group's headerPosition
+through IEdgeGroupHost instead, so the check uses the group's state rather
+than a styling hook.
 
-**File**: `packages/dockview-core/src/__tests__/dom.spec.ts` (modified, +32/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01G7k9sUUXNMS6upWe997hiv
+
+**File**: `packages/dockview-core/src/__tests__/dockview/dockviewShell.spec.ts` (modified, +18/-13)
 ```diff
-@@ -13,6 +13,7 @@ import {
-     isInDocument,
-     isShadowRoot,
-     onDidWindowMoveEnd,
-+    onDidWindowResizeEnd,
-     prefersReducedMotion,
-     quasiDefaultPrevented,
-     quasiPreventDefault,
-@@ -547,6 +548,37 @@ describe('onDidWindowMoveEnd', () => {
-     });
- });
+@@ -4,10 +4,15 @@ import {
+     IEdgeGroupHost,
+     ShellManager,
+ } from '../../dockview/dockviewShell';
++import { DockviewHeaderPosition } from '../../dockview/options';
  
-+describe('onDidWindowResizeEnd', () => {
-+    afterEach(() => {
-+        jest.useRealTimers();
-+    });
-+
-+    test('fires the callback once the resize events settle', () => {
-+        jest.useFakeTimers();
-+        const cb = jest.fn();
-+        const disposable = onDidWindowResizeEnd(window, cb);
-+
-+        window.dispatchEvent(new Event('resize'));
-+        window.dispatchEvent(new Event('resize'));
-+        jest.runAllTimers();
-+        expect(cb).toHaveBeenCalledTimes(1);
-+
-+        disposable.dispose();
-+    });
-+
-+    test('disposing cancels a pending callback', () => {
-+        jest.useFakeTimers();
-+        const cb = jest.fn();
-+        const disposable = onDidWindowResizeEnd(window, cb);
-+
-+        window.dispatchEvent(new Event('resize'));
-+        disposable.dispose();
-+        jest.runAllTimers();
-+
-+        expect(cb).not.toHaveBeenCalled();
-+    });
-+});
-+
- describe('shadow-DOM-aware focus and overlay helpers', () => {
-     let host: HTMLElement;
+-function makeGroup(): IEdgeGroupHost & { layout: jest.Mock } {
++function makeGroup(): IEdgeGroupHost & {
++    headerPosition: DockviewHeaderPosition;
++    layout: jest.Mock;
++} {
+     return {
+         element: document.createElement('div'),
++        headerPosition: 'top',
+         layout: jest.fn(),
+     };
+ }
+@@ -329,13 +334,13 @@ describe('EdgeGroupView', () => {
+                 jest.restoreAllMocks();
+             });
  
+-            function makeGroupWithStrip(vertical: boolean) {
++            function makeGroupWithStrip(
++                headerPosition: DockviewHeaderPosition
++            ) {
+                 const group = makeGroup();
++                group.headerPosition = headerPosition;
+                 const strip = document.createElement('div');
+                 strip.className = 'dv-tabs-and-actions-container';
+-                if (vertical) {
+-                    strip.classList.add('dv-groupview-header-vertical');
+-                }
+                 group.element.appendChild(strip);
+                 return { group, strip };
+             }
+@@ -359,7 +364,7 @@ describe('EdgeGroupView', () => {
+             }
+ 
+             test('left/right edge: a vertical strip sets the collapsed size', () => {
+-                const { group, strip } = makeGroupWithStrip(true);
++                const { group, strip } = makeGroupWithStrip('left');
+                 const view = new EdgeGroupView(
+                     { id: 'test', collapsedSize: 35 },
+                     group,
+@@ -373,7 +378,7 @@ describe('EdgeGroupView', () => {
+             });
+ 
+             test('left/right edge: a strip moved to the bottom (pinned) is ignored', () => {
+-                const { group, strip } = makeGroupWithStrip(true);
++                const { group, strip } = makeGroupWithStrip('left');
+                 const view = new EdgeGroupView(
+                     { id: 'test', collapsedSize: 35 },
+                     group,
+@@ -382,7 +387,7 @@ describe('EdgeGroupView', () => {
+                 resizeStrip(strip, 40, 600);
+ 
+                 // pinned: tabs at the bottom
+-                strip.classList.remove('dv-groupview-header-vertical');
++                group.headerPosition = 'bottom';
+                 resizeStrip(strip, 300, 35);
+ 
+                 expect(view.collapsedSize).toBe(40);
+@@ -393,26 +398,26 @@ describe('EdgeGroupView', () => {
+             });
+ 
+             test('left/right edge: un-pinning collapses to the tab width, not the pinned width', () => {
+-                const { group, strip } = makeGroupWithStrip(true);
++                const { group, strip } = makeGroupWithStrip('left');
+                 const view = new EdgeGroupView(
+                     { id: 'test', collapsedSize: 35 },
+                     group,
+                     'horizontal'
+                 );
+                 resizeStrip(strip, 40, 600);
+-                strip.classList.remove('dv-groupview-header-vertical');
++                group.headerPosition = 'bottom';
+                 resizeStrip(strip, 300, 35);
+ 
+                 view.setCollapsed(true);
+                 expect(view.collapsedSize).toBe(40);
+ 
+-                strip.classList.add('dv-groupview-header-vertical');
++                group.headerPosition = 'left';
+                 resizeStrip(strip, 42, 600);
+                 expect(view.collapsedSize).toBe(42);
+             });
+ 
+             test('top/bottom edge: a horizontal strip sets the collapsed size', () => {
+-                const { group, strip } = makeGroupWithStrip(false);
++                const { group, strip } = makeGroupWithStrip('top');
+                 const view = new EdgeGroupView(
+                     { id: 'test', collapsedSize: 35 },
+                     group,
+@@ -425,7 +430,7 @@ describe('EdgeGroupView', () => {
+             });
+ 
+             test('top/bottom edge: a vertical strip is ignored', () => {
+-                const { group, strip } = makeGroupWithStrip(true);
++                const { group, strip } = makeGroupWithStrip('left');
+                 const view = new EdgeGroupView(
+                     { id: 'test', collapsedSize: 35 },
+                     group,
 ```
 
-**File**: `packages/dockview-core/src/dom.ts` (modified, +5/-2)
+**File**: `packages/dockview-core/src/dockview/dockviewComponent.ts` (modified, +8/-5)
 ```diff
-@@ -3,7 +3,7 @@ import {
-     Emitter,
-     addDisposableListener,
- } from './events';
--import { IDisposable, CompositeDisposable } from './lifecycle';
-+import { IDisposable, CompositeDisposable, Disposable } from './lifecycle';
+@@ -3364,11 +3364,14 @@ export class DockviewComponent
+             }
+             this._onDidAddGroup.fire(group);
  
- export interface OverflowEvent {
-     hasScrollX: boolean;
-@@ -679,7 +679,10 @@ export function onDidWindowResizeEnd(element: Window, cb: () => void) {
-             resizeTimeout = setTimeout(() => {
-                 cb();
-             }, DEBOUCE_DELAY);
--        })
-+        }),
-+        // Cancel a pending callback so it cannot fire after a popout window
-+        // is closed and its `window` reference is gone.
-+        Disposable.from(() => clearTimeout(resizeTimeout))
-     );
+-            this._shellManager!.addEdgeView(
+-                position,
+-                options,
+-                group as IEdgeGroupHost
+-            );
++            const host: IEdgeGroupHost = {
++                element: group.element,
++                get headerPosition() {
++                    return group.model.headerPosition;
++                },
++                layout: (width, height) => group.layout(width, height),
++            };
++            this._shellManager!.addEdgeView(position, options, host);
  
-     return disposable;
+             return group.api;
+         });
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewShell.ts` (modified, +5/-3)
+```diff
+@@ -7,6 +7,7 @@ import {
+     Splitview,
+ } from '../splitview/splitview';
+ import { isInDocument, watchElementResize } from '../dom';
++import { DockviewHeaderPosition } from './options';
+ 
+ export type EdgeGroupPosition = 'top' | 'bottom' | 'left' | 'right';
+ 
+@@ -93,6 +94,7 @@ export interface SerializedEdgeGroups {
+  */
+ export interface IEdgeGroupHost {
+     readonly element: HTMLElement;
++    readonly headerPosition: DockviewHeaderPosition;
+     layout(width: number, height: number): void;
+ }
+ 
+@@ -242,9 +244,9 @@ export class EdgeGroupView implements IView {
+             watchElementResize(strip, () => {
+                 // a strip moved across the edge (e.g. a pinned group's bottom
+                 // tabs) spans the whole group, so its size is meaningless here
+-                const stripIsVertical = strip.classList.contains(
+-                    'dv-groupview-header-vertical'
+-                );
++                const { headerPosition } = this._group;
++                const stripIsVertical =
++                    headerPosition === 'left' || headerPosition === 'right';
+                 if (stripIsVertical !== (this._orientation === 'horizontal')) {
+                     return;
+                 }
 ```
 
 ---
 
-### Incident Patch 2: `3484c654` (2026-10-25)
-**Commit Message**: fix(dockview-core): cancel pending resize-end callback on dispose
+### Incident Patch 2: `cba97802` (2026-10-27)
+**Commit Message**: chore: trim comments in the #1717 fix and tests
 
-onDidWindowResizeEnd debounced the callback with setTimeout but only
-removed the resize listener on dispose. When a popout window was closed
-within the debounce delay, the pending callback still ran and read
-innerWidth from the popout's now-null window:
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01G7k9sUUXNMS6upWe997hiv
 
-  TypeError: Cannot read properties of null (reading 'innerWidth')
-
-Clear the timeout when the disposable is disposed.
-
-Fixes #1708
-
-Signed-off-by: mayuriphad <[REDACTED_EMAIL]>
-
-**File**: `packages/dockview-core/src/__tests__/dom.spec.ts` (modified, +32/-0)
+**File**: `e2e/tests/auto-hide-edge-groups.spec.ts` (modified, +0/-6)
 ```diff
-@@ -13,6 +13,7 @@ import {
-     isInDocument,
-     isShadowRoot,
-     onDidWindowMoveEnd,
-+    onDidWindowResizeEnd,
-     prefersReducedMotion,
-     quasiDefaultPrevented,
-     quasiPreventDefault,
-@@ -547,6 +548,37 @@ describe('onDidWindowMoveEnd', () => {
-     });
- });
+@@ -173,7 +173,6 @@ test.describe('auto-hide edge groups (peek)', () => {
+         await expect(group).toHaveClass(/dv-edge-tool-window/);
  
-+describe('onDidWindowResizeEnd', () => {
-+    afterEach(() => {
-+        jest.useRealTimers();
-+    });
-+
-+    test('fires the callback once the resize events settle', () => {
-+        jest.useFakeTimers();
-+        const cb = jest.fn();
-+        const disposable = onDidWindowResizeEnd(window, cb);
-+
-+        window.dispatchEvent(new Event('resize'));
-+        window.dispatchEvent(new Event('resize'));
-+        jest.runAllTimers();
-+        expect(cb).toHaveBeenCalledTimes(1);
-+
-+        disposable.dispose();
-+    });
-+
-+    test('disposing cancels a pending callback', () => {
-+        jest.useFakeTimers();
-+        const cb = jest.fn();
-+        const disposable = onDidWindowResizeEnd(window, cb);
-+
-+        window.dispatchEvent(new Event('resize'));
-+        disposable.dispose();
-+        jest.runAllTimers();
-+
-+        expect(cb).not.toHaveBeenCalled();
-+    });
-+});
-+
- describe('shadow-DOM-aware focus and overlay helpers', () => {
-     let host: HTMLElement;
+         const width = async () => (await group.boundingBox())!.width;
+-        // the shell sash sitting on the group's inner (right) edge
+         const sashCentre = () =>
+             page.evaluate(() => {
+                 const g = document
+@@ -204,13 +203,9 @@ test.describe('auto-hide edge groups (peek)', () => {
+         const start = await width();
+         expect(start).toBeGreaterThan(150);
  
+-        // Repeated inward drags must never widen the group. The bug ratcheted
+-        // the minimum up to the (bottom-docked) strip's full width + 50px, so
+-        // each drag grew it by ~50px instead.
+         let previous = start;
+         for (let i = 0; i < 3; i++) {
+             await dragSash(-30);
+-            // let the strip's ResizeObserver report between drags
+             await page.evaluate(
+                 () => new Promise((r) => requestAnimationFrame(() => r(null)))
+             );
+@@ -220,7 +215,6 @@ test.describe('auto-hide edge groups (peek)', () => {
+         }
+         expect(previous).toBeLessThan(start - 30);
+ 
+-        // Un-pinning collapses to the tab-strip width, not the pinned width.
+         await page.locator('.dv-groupview-edge .dv-edge-peek-pin').click();
+         await expect(group).not.toHaveClass(/dv-edge-tool-window/);
+         await expect.poll(width).toBeLessThan(60);
 ```
 
-**File**: `packages/dockview-core/src/dom.ts` (modified, +5/-2)
+**File**: `packages/dockview-core/src/__tests__/dockview/dockviewShell.spec.ts` (modified, +1/-7)
 ```diff
-@@ -3,7 +3,7 @@ import {
-     Emitter,
-     addDisposableListener,
- } from './events';
--import { IDisposable, CompositeDisposable } from './lifecycle';
-+import { IDisposable, CompositeDisposable, Disposable } from './lifecycle';
+@@ -296,8 +296,6 @@ describe('EdgeGroupView', () => {
+         });
  
- export interface OverflowEvent {
-     hasScrollX: boolean;
-@@ -679,7 +679,10 @@ export function onDidWindowResizeEnd(element: Window, cb: () => void) {
-             resizeTimeout = setTimeout(() => {
-                 cb();
-             }, DEBOUCE_DELAY);
--        })
-+        }),
-+        // Cancel a pending callback so it cannot fire after a popout window
-+        // is closed and its `window` reference is gone.
-+        Disposable.from(() => clearTimeout(resizeTimeout))
-     );
+         describe('strip orientation (#1717)', () => {
+-            // Drive the real ResizeObserver path: the strip measurement is only
+-            // trusted while the strip runs along the edge.
+             let observerCallbacks: Array<(entries: any[]) => void>;
+             let originalResizeObserver: typeof window.ResizeObserver;
  
-     return disposable;
+@@ -383,16 +381,13 @@ describe('EdgeGroupView', () => {
+                 );
+                 resizeStrip(strip, 40, 600);
+ 
+-                // pin: tabs move to the bottom, the strip spans the group width
++                // pinned: tabs at the bottom
+                 strip.classList.remove('dv-groupview-header-vertical');
+                 resizeStrip(strip, 300, 35);
+ 
+-                // the floor must not follow the group's own width, else every
+-                // sash drag ratchets it up (#1717)
+                 expect(view.collapsedSize).toBe(40);
+                 expect(view.minimumSize).toBe(90);
+ 
+-                // and a further resize while pinned still leaves it alone
+                 resizeStrip(strip, 350, 35);
+                 expect(view.minimumSize).toBe(90);
+             });
+@@ -411,7 +406,6 @@ describe('EdgeGroupView', () => {
+                 view.setCollapsed(true);
+                 expect(view.collapsedSize).toBe(40);
+ 
+-                // tabs back on the edge
+                 strip.classList.add('dv-groupview-header-vertical');
+                 resizeStrip(strip, 42, 600);
+                 expect(view.collapsedSize).toBe(42);
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewShell.ts` (modified, +2/-6)
+```diff
+@@ -240,12 +240,8 @@ export class EdgeGroupView implements IView {
+         }
+         this._tabSizeDisposables.addDisposables(
+             watchElementResize(strip, () => {
+-                // Only a strip running along the edge (vertical tabs on a
+-                // left/right edge, horizontal on top/bottom) has a cross size
+-                // that means anything. A strip moved across the edge — as a
+-                // pinned auto-hide group does with its tabs at the bottom —
+-                // spans the whole group, and adopting that would ratchet the
+-                // expanded minimum up on every resize.
++                // a strip moved across the edge (e.g. a pinned group's bottom
++                // tabs) spans the whole group, so its size is meaningless here
+                 const stripIsVertical = strip.classList.contains(
+                     'dv-groupview-header-vertical'
+                 );
+```
+
+---
+
+### Incident Patch 3: `bca3459c` (2026-10-27)
+**Commit Message**: fix(core): ignore a cross-edge tab strip when sizing an edge group (#1717)
+
+EdgeGroupView measures its tab strip's cross size (width for left/right,
+height for top/bottom) as the collapsed size, and derives the expanded
+minimum from it when no minimumSize is configured. A pinned auto-hide
+group moves its tabs to the bottom, so on a left/right edge the strip
+spans the whole group and its width was adopted as the collapsed size.
+The minimum then became the group's own width + 50px, so every inward
+sash drag widened the group instead of shrinking it, and un-pinning
+collapsed to that stale width.
+
+Only accept a measurement while the strip runs along the edge (vertical
+header on a left/right edge, horizontal on top/bottom); otherwise keep
+the last good value.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01G7k9sUUXNMS6upWe997hiv
+
+**File**: `e2e/tests/auto-hide-edge-groups.spec.ts` (modified, +63/-0)
+```diff
+@@ -163,6 +163,69 @@ test.describe('auto-hide edge groups (peek)', () => {
+         await expect(page.locator('.dv-edge-peek')).toHaveCount(0);
+     });
+ 
++    test('a pinned left edge group shrinks when its sash is dragged inward (#1717)', async ({
++        page,
++    }) => {
++        await setup(page);
++        await edgeTab(page).click();
++        await page.locator('.dv-edge-peek-pin').click(); // pin → dock
++        const group = page.locator('[data-testid="dv-edge-group-edge-left"]');
++        await expect(group).toHaveClass(/dv-edge-tool-window/);
++
++        const width = async () => (await group.boundingBox())!.width;
++        // the shell sash sitting on the group's inner (right) edge
++        const sashCentre = () =>
++            page.evaluate(() => {
++                const g = document
++                    .querySelector('[data-testid="dv-edge-group-edge-left"]')!
++                    .getBoundingClientRect();
++                const sash = [...document.querySelectorAll('.dv-sash')]
++                    .map((s) => s.getBoundingClientRect())
++                    .filter((r) => r.width > 0 && r.height > g.height / 2)
++                    .sort(
++                        (a, b) =>
++                            Math.abs(a.x + a.width / 2 - g.right) -
++                            Math.abs(b.x + b.width / 2 - g.right)
++                    )[0];
++                return {
++                    x: sash.x + sash.width / 2,
++                    y: sash.y + sash.height / 2,
++                };
++            });
++        const dragSash = async (dx: number) => {
++            const c = await sashCentre();
++            await page.mouse.move(c.x, c.y);
++            await page.mouse.down();
++            await page.mouse.move(c.x + dx / 2, c.y, { steps: 5 });
++            await page.mouse.move(c.x + dx, c.y, { steps: 5 });
++            await page.mouse.up();
++        };
++
++        const start = await width();
++        expect(start).toBeGreaterThan(150);
++
++        // Repeated inward drags must never widen the group. The bug ratcheted
++        // the minimum up to the (bottom-docked) strip's full width + 50px, so
++        // each drag grew it by ~50px instead.
++        let previous = start;
++        for (let i = 0; i < 3; i++) {
++            await dragSash(-30);
++            // let the strip's ResizeObserver report between drags
++            await page.evaluate(
++                () => new Promise((r) => requestAnimationFrame(() => r(null)))
++            );
++            const now = await width();
++            expect(now).toBeLessThanOrEqual(previous + 1);
++            previous = now;
++        }
++        expect(previous).toBeLessThan(start - 30);
++
++        // Un-pinning collapses to the tab-strip width, not the pinned width.
++        await page.locator('.dv-groupview-edge .dv-edge-peek-pin').click();
++        await expect(group).not.toHaveClass(/dv-edge-tool-window/);
++        await expect.poll(width).toBeLessThan(60);
++    });
++
+     test('the close button closes the panel and removes the peek', async ({
+         page,
+     }) => {
+```
+
+**File**: `packages/dockview-core/src/__tests__/dockview/dockviewShell.spec.ts` (modified, +150/-0)
+```diff
+@@ -294,6 +294,156 @@ describe('EdgeGroupView', () => {
+ 
+             expect(sizes).toEqual([60]);
+         });
++
++        describe('strip orientation (#1717)', () => {
++            // Drive the real ResizeObserver path: the strip measurement is only
++            // trusted while the strip runs along the edge.
++            let observerCallbacks: Array<(entries: any[]) => void>;
++            let originalResizeObserver: typeof window.ResizeObserver;
++
++            beforeEach(() => {
++                observerCallbacks = [];
++                originalResizeObserver = window.ResizeObserver;
++                (window as any).ResizeObserver = class {
++                    constructor(cb: (entries: any[]) => void) {
++                        observerCallbacks.push(cb);
++                    }
++                    observe(): void {
++                        /* noop */
++                    }
++                    unobserve(): void {
++                        /* noop */
++                    }
++                    disconnect(): void {
++                        /* noop */
++                    }
++                };
++                jest.spyOn(window, 'requestAnimationFrame').mockImplementation(
++                    (cb) => {
++                        cb(performance.now());
++                        return 0;
++                    }
++                );
++            });
++
++            afterEach(() => {
++                window.ResizeObserver = originalResizeObserver;
++                jest.restoreAllMocks();
++            });
++
++            function makeGroupWithStrip(vertical: boolean) {
++                const group = makeGroup();
++                const strip = document.createElement('div');
++                strip.className = 'dv-tabs-and-actions-container';
++                if (vertical) {
++                    strip.classList.add('dv-groupview-header-vertical');
++                }
++                group.element.appendChild(strip);
++                return { group, strip };
++            }
++
++            function resizeStrip(
++                strip: HTMLElement,
++                width: number,
++                height: number
++            ): void {
++                Object.defineProperty(strip, 'offsetWidth', {
++                    configurable: true,
++                    value: width,
++                });
++                Object.defineProperty(strip, 'offsetHeight', {
++                    configurable: true,
++                    value: height,
++                });
++                for (const cb of observerCallbacks) {
++                    cb([{ contentRect: { width, height } }]);
++                }
++            }
++
++            test('left/right edge: a vertical strip sets the collapsed size', () => {
++                const { group, strip } = makeGroupWithStrip(true);
++                const view = new EdgeGroupView(
++                    { id: 'test', collapsedSize: 35 },
++                    group,
++                    'horizontal'
++                );
++
++                resizeStrip(strip, 40, 600);
++
++                expect(view.collapsedSize).toBe(40);
++                expect(view.minimumSize).toBe(90);
++            });
++
++            test('left/right edge: a strip moved to the bottom (pinned) is ignored', () => {
++                const { group, strip } = makeGroupWithStrip(true);
++                const view = new EdgeGroupView(
++                    { id: 'test', collapsedSize: 35 },
++                    group,
++                    'horizontal'
++                );
++                resizeStrip(strip, 40, 600);
++
++                // pin: tabs move to the bottom, the strip spans the group width
++                strip.classList.remove('dv-groupview-header-vertical');
++                resizeStrip(strip, 300, 35);
++
++                // the floor must not follow the group's own width, else every
++                // sash drag ratchets it up (#1717)
++                expect(view.collapsedSize).toBe(40);
++                expect(view.minimumSize).toBe(90);
++
++                // and a further resize while pinned still leaves it alone
++                resizeStrip(strip, 350, 35);
++                expect(view.minimumSize).toBe(90);
++            });
++
++            test('left/right edge: un-pinning collapses to the tab width, not the pinned width', () => {
++                const { group, strip } = makeGroupWithStrip(true);
++                const view = new EdgeGroupView(
++                    { id: 'test', collapsedSize: 35 },
++                    group,
++                    'horizontal'
++                );
++                resizeStrip(strip, 40, 600);
++                strip.classList.remove('dv-groupview-header-vertical');
++                resizeStrip(strip, 300, 35);
++
++                view.setCollapsed(true);
++                expect(view.collapsedSize).toBe(40);
++
++                // tabs back on the edge
++                strip.classList.add('dv-groupview-header-vertical');
++                resizeStrip(strip, 42, 600);
++                expect(view.colla
+```
+
+**File**: `packages/dockview-core/src/dockview/dockviewShell.ts` (modified, +12/-0)
+```diff
+@@ -240,6 +240,18 @@ export class EdgeGroupView implements IView {
+         }
+         this._tabSizeDisposables.addDisposables(
+             watchElementResize(strip, () => {
++                // Only a strip running along the edge (vertical tabs on a
++                // left/right edge, horizontal on top/bottom) has a cross size
++                // that means anything. A strip moved across the edge — as a
++                // pinned auto-hide group does with its tabs at the bottom —
++                // spans the whole group, and adopting that would ratchet the
++                // expanded minimum up on every resize.
++                const stripIsVertical = strip.classList.contains(
++                    'dv-groupview-header-vertical'
++                );
++                if (stripIsVertical !== (this._orientation === 'horizontal')) {
++                    return;
++                }
+                 this._applyMeasuredTabSize(
+                     this._orientation === 'vertical'
+                         ? strip.offsetHeight
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1718** (2026-10-27): fix(core): stop pinned left/right edge groups growing on sash drag (@mathuo)
+- **PR #1716** (closed): chore(deps): bump postcss-selector-parser from 6.1.2 to 6.1.5 (@dependabot[bot])
+- **PR #1715** (2026-10-26): feat: make edge-drop group sizing configurable (@mathuo)
+- **PR #1714** (2026-10-26): chore(gen): track dockview-enterprise's exports (@mathuo)
 - **PR #1713** (closed): chore(deps): bump launch-editor from 2.13.2 to 2.14.2 (@dependabot[bot])
 - **PR #1712** (closed): chore(deps): bump body-parser from 1.20.5 to 1.20.9 (@dependabot[bot])
-- **PR #1711** (closed): chore(deps): bump undici from 7.25.0 to 7.30.1 (@dependabot[bot])
-- **PR #1710** (closed): chore(deps): bump fast-uri from 3.1.2 to 3.1.9 (@dependabot[bot])
-- **PR #1709** (2026-10-25): fix(dockview-core): cancel pending resize-end callback on dispose (@mayuriphad)
-- **PR #1707** (2026-10-25): docs: weekly documentation sync (2026-10-16 to 2026-10-23) (@mathuo)
 
 ---
 
@@ -1565,59 +1913,57 @@ Signed-off-by: mayuriphad <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout
+## X. core): read the edge group's header position instead of a CSS class
 
 **RULE**:
-When implementing operations in `packages/dockview-core/src/__tests__/dom.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dockview/dockview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/dockview-core/src/__tests__/dockview/dockviewShell.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dockview/dockview. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a89feabc`: Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a5157b9`: core): read the edge group's header position instead of a CSS class. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/dockview-core/src/__tests__/dom.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/dockview-core/src/__tests__/dockview/dockviewShell.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    onDidWindowResizeEnd,
-describe('onDidWindowResizeEnd', () => {
-    afterEach(() => {
-        jest.useRealTimers();
-    });
-
-    test('fires the callback once the resize events settle', () => {
-        jest.useFakeTimers();
-        const cb = jest.fn();
-        const disposable = onDidWindowResizeEnd(window, cb);
-
-        window.dispatchEvent(new Event('resize'));
-        window.dispatchEvent(new Event('resize'));
-        jest.runAllTimers();
-        expect(cb).toHaveBeenCalledTimes(1);
-
-        disposable.dispose();
-    });
-
-    test('disposing cancels a pending callback', () => {
-        jest.useFakeTimers();
-        const cb = jest.fn();
-        const disposable = onDidWindowResizeEnd(window, cb);
-
-        window.dispatchEvent(new Event('resize'));
-        disposable.dispose();
-        jest.runAllTimers();
-
-        expect(cb).not.toHaveBeenCalled();
-    });
-});
-
+import { DockviewHeaderPosition } from '../../dockview/options';
+function makeGroup(): IEdgeGroupHost & {
+    headerPosition: DockviewHeaderPosition;
+    layout: jest.Mock;
+} {
+        headerPosition: 'top',
+            function makeGroupWithStrip(
+                headerPosition: DockviewHeaderPosition
+            ) {
+                group.headerPosition = headerPosition;
+                const { group, strip } = makeGroupWithStrip('left');
+                const { group, strip } = makeGroupWithStrip('left');
+                group.headerPosition = 'bottom';
+                const { group, strip } = makeGroupWithStrip('left');
+                group.headerPosition = 'bottom';
+                group.headerPosition = 'left';
+                const { group, strip } = makeGroupWithStrip('top');
+                const { group, strip } = makeGroupWithStrip('left');
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+function makeGroup(): IEdgeGroupHost & { layout: jest.Mock } {
+            function makeGroupWithStrip(vertical: boolean) {
+                if (vertical) {
+                    strip.classList.add('dv-groupview-header-vertical');
+                }
+                const { group, strip } = makeGroupWithStrip(true);
+                const { group, strip } = makeGroupWithStrip(true);
+                strip.classList.remove('dv-groupview-header-vertical');
+                const { group, strip } = makeGroupWithStrip(true);
+                strip.classList.remove('dv-groupview-header-vertical');
+                strip.classList.add('dv-groupview-header-vertical');
+                const { group, strip } = makeGroupWithStrip(false);
+                const { group, strip } = makeGroupWithStrip(true);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a89feabc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a5157b9` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source**: github ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
-> **Source Version**: `572574e3`  
+> **Source Version**: `e73ad697`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:23:16.823Z  
+> **Timestamp**: 2026-10-27T13:54:27.852Z  
 > **Learning ID**: `learn-github-feathersjs-feathers`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:23:16.815Z  
+> **Harvest Timestamp**: 2026-10-27T13:54:27.472Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The API and real-time application framework
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15259 stars
+- **Stars / Engagement**: 15255 stars
 
 ---
 
@@ -494,6 +494,60 @@ import koaCookieSession from 'koa-session'
 import { AuthenticationService } from '@feathersjs/authentication'
 import { GrantConfig } from 'grant'
 
+/**
+ * Grant options a request must not override for providers with `dynamic: true`, since they
+ * decide where tokens and profiles come from and how the response is checked.
+ */
+const PROTECTED_DYNAMIC_OPTIONS = [
+  'request_url',
+  'authorize_url',
+  'access_url',
+  'profile_url',
+  'oauth',
+  'origin',
+  'prefix',
+  'redirect_uri',
+  'callback',
+  'transport',
+  'response',
+  'key',
+  'secret',
+  'client_id',
+  'client_secret',
+  'consumer_key',
+  'consumer_secret',
+  'public_key',
+  'private_key',
+  'token_endpoint_auth_method',
+  'token_endpoint_auth_signing_alg',
+  'state',
+  'nonce',
+  'pkce',
+  'subdomain',
+  'name',
+  'dynamic',
+  'overrides'
+]
+
+/**
+ * Authorization parameters `custom_params` must not replace, since Grant copies it over them.
+ */
+const PROTECTED_CUSTOM_PARAMS = [
+  'client_id',
+  'app_id',
+  'appid',
+  'client_key',
+  'redirect_uri',
+  'response_type',
+  'state',
+  'nonce',
+  'code_challenge',
+  'code_challenge_method'
+]
+
+const omit = (data: any, keys: string[]) =>
+  Object.fromEntries(Object.entries(data).filter(([key]) => !keys.includes(key)))
+
 export interface OauthSetupSettings {
   linkStrategy: string
   authService?: string
@@ -546,6 +600,24 @@ export const getGrantConfig = (service: AuthenticationService): GrantConfig => {
   }
 
   return grant
+}
+
+/**
+ * Remove protected options from the request data for providers (or overrides) that are
+ * configured with `dynamic: true`. `options` is the provider configuration as resolved by Grant.
+ */
+export const filterDynamic = (options: any, data: any) => {
+  if (options?.dynamic !== true || !data || typeof data !== 'object') {
+    return data
+  }
+
+  const result = omit(data, PROTECTED_DYNAMIC_OPTIONS)
+
+  if (result.custom_params && typeof result.custom_params === 'object') {
+    result.custom_params = omit(result.custom_params, PROTECTED_CUSTOM_PARAMS)
+  }
+
+  return result
 }
 
 export const setExpressParams: RequestHandler = (req, res, next) => {
@@ -1057,634 +1129,892 @@ export default (event: ConnectionEvent) => async (context: HookContext, next: Ne
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a58896a` (2026-08-11)
-**Commit Message**: fix(authentication-oauth): allow any port on loopback OAuth origins (#3699)
+### Incident Patch 1: `616e8850` (2026-10-25)
+**Commit Message**: fix(authentication-oauth): allow account linking from the configured oAuth origin
 
-* fix(authentication-oauth): allow any port on loopback OAuth origins
-
-Exact origin matching from the 5.0.40 security fix rejected common local
-dev setups where the frontend runs on a different port than the configured
-origin (e.g. http://localhost vs http://localhost:5173).
-
-For localhost, 127.0.0.1, and ::1 only, match on scheme + host and ignore
-port, then redirect using the referer origin so the token returns to the
-correct local port. Non-loopback hosts still require an exact origin match.
-
-Closes #3684
-
-* fix(authentication-oauth): treat 0.0.0.0 as loopback and improve origin errors
-
-Include 0.0.0.0 in the loopback port-flex allowlist used for local OAuth
-redirects. When a referer is rejected, report the normalized origin,
-configured allowlist, and a short hint about ports and loopback matching.
-
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +53/-5)
+**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +10/-3)
 ```diff
-@@ -11,6 +11,51 @@ import qs from 'qs'
+@@ -8,6 +8,7 @@ import { Params } from '@feathersjs/feathers'
+ import { NotAuthenticated } from '@feathersjs/errors'
+ import { createDebug, _ } from '@feathersjs/commons'
+ import qs from 'qs'
++import { getGrantConfig } from './utils'
  
  const debug = createDebug('@feathersjs/authentication-oauth/strategy')
  
-+// Local machine addresses: match any port when scheme + host are allowlisted.
-+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
+@@ -192,15 +193,17 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+   }
+ 
+   /**
+-   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
+-   * link with their own token. Override to allow linking from clients that send no referer.
++   * Account linking with a `feathers_token` must be started from the app (the request host, the
++   * configured oAuth origin or an allowed origin), since anyone can send a link with their own token.
++   * Override to allow linking from clients that send no referer.
+    *
+    * @throws NotAuthenticated if the referer is missing or not an allowed origin
+    */
+   async validateLink(params: Params) {
+     const { redirect, origins = this.app.get('origins') } = this.authentication.configuration.oauth
+     const { referer, host } = params.headers || {}
+     const allowed = Array.isArray(origins) ? origins : redirect ? [redirect] : []
++    const { origin } = getGrantConfig(this.authentication as any).defaults
+     let url: URL
+ 
+     try {
+@@ -209,7 +212,11 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+       throw new NotAuthenticated('Account linking must be started from an allowed origin.')
+     }
+ 
+-    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
++    if (
++      url.host !== host &&
++      !isOriginAllowed(url.origin, origin) &&
++      !allowed.some((current: string) => isOriginAllowed(url.origin, current))
++    ) {
+       throw new NotAuthenticated('Account linking must be started from an allowed origin.')
+     }
+   }
+```
+
+**File**: `packages/authentication-oauth/test/link.test.ts` (modified, +12/-0)
+```diff
+@@ -79,6 +79,18 @@ describe('@feathersjs/authentication-oauth account linking', () => {
+     assert.equal(data.user.gitlabId, 'test')
+   })
+ 
++  it('links the account behind a proxy that rewrites the Host header', async () => {
++    const { user, token } = await createUser('user@example.com')
++    const { data } = await linkFlow(token, {
++      host: 'internal.example:3030',
++      referer: `http://127.0.0.1:${port}/settings`
++    })
 +
-+/** Strip IPv6 brackets so `[::1]` and `::1` compare the same. */
-+function normalizeHostname(hostname: string) {
-+  return hostname.toLowerCase().replace(/^\[|\]$/g, '')
++    assert.ok(data.accessToken)
++    assert.equal(data.user.id, user.id)
++    assert.equal(data.user.gitlabId, 'test')
++  })
++
+   it('uses the configured origins', async () => {
+     const oauth = app.get('authentication').oauth
+     const { token } = await createUser('user@example.com')
+```
+
+---
+
+### Incident Patch 2: `1c29862c` (2026-10-25)
+**Commit Message**: fix(authentication-oauth): only link accounts from an allowed origin
+
+**File**: `packages/authentication-oauth/src/service.ts` (modified, +8/-1)
+```diff
+@@ -220,7 +220,14 @@ export class OAuthService {
+     }
+ 
+     if (feathers_token) {
+-      debug('Got feathers_token query parameter to link accounts', feathers_token)
++      debug('Got feathers_token query parameter to link accounts')
++      const strategy = this.service.getStrategy(params.route.provider) as OAuthStrategy
++
++      if (typeof strategy?.validateLink !== 'function') {
++        throw new NotAuthenticated('Account linking is not supported for this provider.')
++      }
++
++      await strategy.validateLink(params)
+       session.accessToken = feathers_token
+     }
+ 
+```
+
+**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +23/-0)
+```diff
+@@ -191,6 +191,29 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+     return redirect
+   }
+ 
++  /**
++   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
++   * link with their own token. Override to allow linking from clients that send no referer.
++   *
++   * @throws NotAuthenticated if the referer is missing or not an allowed origin
++   */
++  async validateLink(params: Params) {
++    const { redirect, origins = this.app.get('origins') } = this.authentication.configuration.oauth
++    const { referer, host } = params.headers || {}
++    const allowed = Array.isArray(origins) ? origins : redirect ? [redirect] : []
++    let url: URL
++
++    try {
++      url = new URL(referer)
++    } catch {
++      throw new NotAuthenticated('Account linking must be started from an allowed origin.')
++    }
++
++    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
++      throw new NotAuthenticated('Account linking must be started from an allowed origin.')
++    }
++  }
++
+   async getRedirect(
+     data: AuthenticationResult | Error,
+     params?: AuthenticationParams
+```
+
+**File**: `packages/authentication-oauth/test/link.test.ts` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++import { strict as assert } from 'assert'
++import axios from 'axios'
++import { CookieJar } from 'tough-cookie'
++import { expressFixture } from './utils/fixture'
++
++describe('@feathersjs/authentication-oauth account linking', () => {
++  const port = 9786
++  const host = `http://localhost:${port}`
++  const message = 'Account linking must be started from an allowed origin.'
++  const req = axios.create({
++    maxRedirects: 0,
++    validateStatus: () => true
++  })
++  let app: Awaited<ReturnType<typeof expressFixture>>
++
++  const createUser = async (email: string) => {
++    const user = await app.service('users').create({ email })
++    const token = await app.service('authentication').createAccessToken({}, { subject: `${user.id}` })
++
++    return { user, token }
++  }
++
++  const linkFlow = async (token: string | undefined, headers: Record<string, string> = {}) => {
++    const query = token ? `?feathers_token=${token}` : ''
++    const response = await req.get(`${host}/oauth/gitlab${query}`, { headers })
++
++    if (response.status !== 303) {
++      return response
++    }
++
++    const cookie = new CookieJar()
++    response.headers['set-cookie']?.forEach((value) => cookie.setCookie(value, host))
++
++    const provider = await req.get(response.data.location)
++
++    return req.get(provider.headers.location, { headers: { cookie: await cookie.getCookieString(host) } })
++  }
++
++  before(async () => {
++    app = await expressFixture(port, 5124)
++  })
++
++  after(async () => {
++    await app.teardown()
++  })
++
++  afterEach(async () => {
++    const users = (await app.service('users').find({ paginate: false })) as any[]
++
++    for (const user of users) {
++      await app.service('users').remove(user.id)
++    }
++  })
++
++  it('rejects a feathers_token link without a referer', async () => {
++    const { user: attacker, token } = await createUser('attacker@example.com')
++    const response = await linkFlow(token)
++
++    assert.equal(response.status, 401)
++    assert.equal(response.data.message, message)
++    assert.equal((await app.service('users').get(attacker.id)).gitlabId, undefined)
++  })
++
++  it('rejects a feathers_token link from another origin', async () => {
++    const { user: attacker, token } = await createUser('attacker@example.com')
++    const response = await linkFlow(token, { referer: 'https://evil.example/page' })
++
++    assert.equal(response.status, 401)
++    assert.equal(response.data.message, message)
++    assert.equal((await app.service('users').get(attacker.id)).gitlabId, undefined)
++  })
++
++  it('links the account when started from the API host', async () => {
++    const { user, token } = await createUser('user@example.com')
++    const { data } = await linkFlow(token, { referer: `${host}/settings` })
++
++    assert.ok(data.accessToken)
++    assert.equal(data.user.id, user.id)
++    assert.equal(data.user.gitlabId, 'test')
++  })
++
++  it('uses the configured origins', async () => {
++    const oauth = app.get('authentication').oauth
++    const { token } = await createUser('user@example.com')
++
++    oauth.origins = ['http://localhost:3000']
++
++    try {
++      const allowed = await req.get(`${host}/oauth/gitlab?feathers_token=${token}`, {
++        headers: { referer: 'http://localhost:3000/settings' }
++      })
++      const denied = await req.get(`${host}/oauth/gitlab?feathers_token=${token}`, {
++        headers: { referer: 'https://evil.example/' }
++      })
++
++      assert.equal(allowed.status, 303)
++      assert.equal(denied.status, 401)
++    } finally {
++      delete oauth.origins
++    }
++  })
++
++  it('sign in without feathers_token still works without a referer', async () => {
++    const { data } = await linkFlow(undefined)
++
++    assert.ok(data.accessToken)
++  })
++
++  it('validateLink can be overridden to allow clients without a referer', async () => {
++    const strategy = app.service('authentication').getStrategy('gitlab') as any
++    const original = strategy.validateLink
++    const { user, token } = await createUser('user@example.com')
++
++    strategy.validateLink = async () => {}
++
++    try {
++      const { data } = await linkFlow(token)
++
++      assert.equal(data.user.id, user.id)
++      assert.equal(data.user.gitlabId, 'test')
++    } finally {
++      strategy.validateLink = original
++    }
++  })
++})
+```
+
+---
+
+### Incident Patch 3: `3673cde9` (2026-10-23)
+**Commit Message**: fix(authentication-oauth): harden OAuth callback and profile handling
+
+**File**: `package-lock.json` (modified, +2/-0)
+```diff
+@@ -30158,13 +30158,15 @@
+         "@feathersjs/schema": "^5.0.50",
+         "cookie-session": "^2.1.1",
+         "grant": "^5.4.24",
++        "jsonwebtoken": "^9.0.3",
+         "koa-session": "^7.0.2",
+         "qs": "^6.16.0"
+       },
+       "devDependencies": {
+         "@feathersjs/memory": "^5.0.50",
+         "@types/cookie-session": "^2.0.49",
+         "@types/express": "^4.17.21",
++        "@types/jsonwebtoken": "^9.0.10",
+         "@types/koa-session": "^6.4.5",
+         "@types/mocha": "^10.0.10",
+         "@types/node": "^26.0.0",
+```
+
+**File**: `packages/authentication-oauth/package.json` (modified, +2/-0)
+```diff
+@@ -63,13 +63,15 @@
+     "@feathersjs/schema": "^5.0.50",
+     "cookie-session": "^2.1.1",
+     "grant": "^5.4.24",
++    "jsonwebtoken": "^9.0.3",
+     "koa-session": "^7.0.2",
+     "qs": "^6.16.0"
+   },
+   "devDependencies": {
+     "@feathersjs/memory": "^5.0.50",
+     "@types/cookie-session": "^2.0.49",
+     "@types/express": "^4.17.21",
++    "@types/jsonwebtoken": "^9.0.10",
+     "@types/koa-session": "^6.4.5",
+     "@types/mocha": "^10.0.10",
+     "@types/node": "^26.0.0",
+```
+
+**File**: `packages/authentication-oauth/src/apple.ts` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++import { createPublicKey } from 'crypto'
++import jsonwebtoken from 'jsonwebtoken'
++import { createDebug } from '@feathersjs/commons'
++import { NotAuthenticated } from '@feathersjs/errors'
++// eslint-disable-next-line @typescript-eslint/ban-ts-comment
++//@ts-ignore
++import request from 'grant/lib/client'
++
++const debug = createDebug('@feathersjs/authentication-oauth/apple')
++
++const MAX_AGE = 60 * 60 * 1000
++const MIN_REFRESH = 5 * 60 * 1000
++const RETRY_AFTER = 30 * 1000
++
++/**
++ * Apple's public keys for `id_token` signatures. They are refreshed after an hour, or at most
++ * every few minutes for an unknown key id. A failed refresh keeps the previous keys and is
++ * not retried for a few seconds.
++ */
++export const appleKeys = {
++  url: 'https://appleid.apple.com/auth/keys',
++  keys: [] as any[],
++  fetchedAt: 0,
++  failedAt: 0
 +}
 +
-+function isLoopbackHost(hostname: string) {
-+  return LOOPBACK_HOSTS.has(normalizeHostname(hostname))
++let refreshing: Promise<void> | null = null
++
++async function refreshAppleKeys() {
++  try {
++    const { body } = await request({ method: 'GET', url: appleKeys.url })
++
++    if (!Array.isArray(body?.keys) || !body.keys.length) {
++      throw new Error('No keys in response')
++    }
++
++    appleKeys.keys = body.keys
++    appleKeys.fetchedAt = Date.now()
++  } catch (error: any) {
++    debug('Could not refresh Apple keys', error.message)
++    appleKeys.failedAt = Date.now()
++  }
++}
++
++async function getAppleKey(kid: string) {
++  const age = Date.now() - appleKeys.fetchedAt
++  const findKey = () => appleKeys.keys.find((key) => key.kid === kid)
++  const canRetry = Date.now() - appleKeys.failedAt > RETRY_AFTER
++
++  if (canRetry && (age > MAX_AGE || (!findKey() && age > MIN_REFRESH))) {
++    refreshing ||= refreshAppleKeys().finally(() => (refreshing = null))
++    await refreshing
++  }
++
++  return findKey()
 +}
 +
 +/**
-+ * Match key for origin allowlisting.
-+ * Non-loopback hosts use the full WHATWG origin (scheme + host + port).
-+ * Loopback hosts drop the port so local frontends on any port can match a single allowlist entry.
++ * Apple sends the user's name (only on the first sign-in) as a JSON string in the callback body.
 + */
-+function originMatchKey(value: string) {
-+  const url = new URL(value)
-+  const host = normalizeHostname(url.hostname)
-+
-+  if (isLoopbackHost(host)) {
-+    return `${url.protocol}//${host}`
-+  }
-+
-+  return url.origin.toLowerCase()
-+}
-+
-+function isOriginAllowed(refererOrigin: string, configured: string) {
++function getAppleName(user: any) {
 +  try {
-+    return originMatchKey(refererOrigin) === originMatchKey(configured)
++    return (typeof user === 'string' ? JSON.parse(user) : user)?.name
 +  } catch {
-+    return false
++    return undefined
 +  }
 +}
 +
-+function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
-+  return (
-+    `Referer origin "${refererOrigin}" is not allowed. ` +
-+    `Configured origins: ${origins.join(', ')}. ` +
-+    `Use a full origin (scheme + host + port when non-default). ` +
-+    `Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.`
-+  )
++/**
++ * Without a `profile_url`, Grant uses the `user` field of the Apple callback body as the
++ * profile, which the client controls. Take the identity from the verified `id_token` instead
++ * and only keep the name from the callback body.
++ *
++ * @throws NotAuthenticated if the `id_token` is missing or not valid for `clientId`
++ */
++export async function getAppleProfile(payload: any, clientId: string) {
++  const idToken = payload.id_token || payload.raw?.id_token
++  let claims: any
++
++  if (!clientId) {
++    throw new NotAuthenticated('Could not get oAuth profile')
++  }
++
++  try {
++    const { header }: any = jsonwebtoken.decode(idToken, { complete: true })
++    const jwk = await getAppleKey(header.kid)
++
++    claims = jsonwebtoken.verify(idToken, createPublicKey({ key: jwk, format: 'jwk' }), {
++      algorithms: ['RS256'],
++      issuer: 'https://appleid.apple.com',
++      audience: clientId,
++      clockTolerance: 60
++    })
++  } catch {
++    throw new NotAuthenticated('Could not get oAuth profile')
++  }
++
++  if (typeof claims.sub !== 'string' || claims.sub === '') {
++    throw new NotAuthenticated('Could not get oAuth profile')
++  }
++
++  const name = getAppleName(payload.profile)
++
++  return {
++    sub: claims.sub,
++    ...(claims.email ? { email: claims.email } : {}),
++    ...(name ? { name } : {})
++  }
++}
+```
+
+**File**: `packages/authentication-oauth/src/service.ts` (modified, +54/-4)
+```diff
+@@ -4,12 +4,46 @@ import { FeathersError, GeneralError, NotAuthenticated } from '@feathersjs/error
+ // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+ //@ts-ignore
+ import Grant from 'grant/lib/grant'
++// eslint-disable-next-line @typescript-eslint/ban-ts-comment
++//@ts-ignore
++import grantConfig from 'grant/lib/config'
+ import { AuthenticationService } from '@feathersjs/authentication'
+ import { OAuthStrategy } from './strategy'
+-import { getGrantConfig, OauthSetupSettings } from './utils'
++import { getAppleProfile } from './apple'
++import { filterDynamic, getGrantConfig, OauthSetupSettings } from './utils'
+ 
+ const debug = createDebug('@feathersjs/authentication-oauth/services')
+ 
++const isValue = (value: any) => typeof value === 'string' && value !== ''
++
++/**
++ * Grant treats a callback without an authorization code (OAuth2) or token (OAuth1) as a
++ * successful response and exchanges the code with the provider the flow was started with.
++ *
++ * @throws NotAuthenticated if the callback is for a different provider or has no code or token
++ */
++function validateCallback(provider: any, params: OAuthParams) {
++  const { query = {}, session, state, route } = params
++  const input = Object.keys(query).length ? query : state?.oauthCallback || {}
++
++  if (session.grant?.provider && session.grant.provider !== route.provider) {
++    throw new NotAuthenticated('Invalid oAuth callback provider.')
++  }
++
++  if (input.error) {
++    return
++  }
++
++  if (provider.oauth === 2 && !isValue(input.code)) {
++    throw new NotAuthenticated('Missing oAuth authorization code.')
++  }
++
++  // Some OAuth1 providers store the request token code in the session instead
++  if (provider.oauth === 1 && !isValue(input.oauth_token) && !session.grant?.request?.code) {
++    throw new NotAuthenticated('Missing oAuth token.')
++  }
 +}
 +
- /**
-  * Validates that appending a user-supplied path to a base URL does not change the origin.
-  * Uses both URL resolution and string concatenation checks to catch all open redirect vectors:
-@@ -117,17 +162,20 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-       try {
-         refererOrigin = new URL(referer).origin
-       } catch {
--        throw new NotAuthenticated(`Invalid referer "${referer}".`)
-+        throw new NotAuthenticated(
-+          `Invalid referer "${referer}". Expected an absolute URL (e.g. http://localhost:3000).`
-+        )
-       }
+ export type GrantResponse = {
+   location: string
+   session: any
+@@ -80,19 +114,27 @@ export class OAuthService {
+       query,
+       route: { provider }
+     } = params
++    const isCallback = override === 'callback'
++    // Only the request that starts the flow sets dynamic provider options
++    const options = isCallback ? null : grantConfig.provider(this.grant.config, { provider, override })
  
--      // Compare full origins
--      const allowedOrigin = origins.find((current) => refererOrigin.toLowerCase() === current.toLowerCase())
-+      // Exact origin match; loopback hosts also match any port (see originMatchKey).
-+      // Always return the referer origin so redirects use the port the client came from.
-+      const allowedOrigin = origins.find((current) => isOriginAllowed(refererOrigin, current))
+     const result: GrantResponse = await this.grant({
+       params: { provider, override },
+       state: state.grant,
+       session: session.grant,
+-      query,
++      query: filterDynamic(options, query),
+       method,
+-      body
++      body: filterDynamic(options, body)
+     })
  
-       if (!allowedOrigin) {
--        throw new NotAuthenticated(`Referer "${referer}" is not allowed.`)
-+        throw new NotAuthenticated(originNotAllowedMessage(refererOrigin, origins))
-       }
+     session.grant = result.session
+     state.grant = result.state
  
--      return allowedOrigin
-+      return refererOrigin
++    if (isCallback) {
++      // Grant passes a callback without a code through, so authenticate validates its input
++      state.oauthCallback = method === 'POST' ? body : {}
++    }
++
+     return result
+   }
+ 
+@@ -128,10 +170,18 @@ export class OAuthService {
      }
  
-     return redirect
-```
-
-**File**: `packages/authentication-oauth/test/strategy.test.ts` (modified, +166/-3)
-```diff
-@@ -202,7 +202,11 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-             }
-           ),
-         {
--          message: 'Referer "https://target.com.attacker.com/login" is not allowed.'
-+          message:
-+            'Referer origin "https://target.com.attacker.com" is not allowed. ' +
-+            'Configured origins: https://target.com. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-         }
-       )
-     })
-@@ -220,7 +224,11 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-             }
-           ),
-         {
--          message: 'Referer "https://target.com-evil.attacker.com/login" is not allowed.'
-+          message:
-+            'Referer origin "https://target.com-evil.attacker.com" is not allowed. ' +
-+            'Configured origins: https://target.com. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-         }
-       )
-     })
-@@ -238,6 +246,157 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-       assert.equal(redirect, 'https://target.com#access_token=testing')
-     })
-   })
+     try {
++      const provider = grantConfig.provider(this.grant.config, grant || {}, params.state?.grant)
 +
-+  describe('loopback origin port matching (#3684)', () => {
-+    afterEach(() => {
-+      delete app.get('authentication').oauth.origins
-+    })
++      validateCallback(provider, params)
 +
-+    it('should allow any port on localhost when configured without a port', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://localhost:5173/login'
-+          }
-+        }
-+      )
-+
-+      // Redirect must use the referer port, not the config string
-+      assert.equal(redirect, 'http://localhost:5173#access_token=testing')
-+    })
-+
-+    it('should allow a different loopback port than the configured one', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost:3030']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://localhost:3000/app'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://localhost:3000#access_token=testing')
-+    })
-+
-+    it('should allow any port on 127.0.0.1', async () => {
-+      app.get('authentication').oauth.origins = ['http://127.0.0.1:8080']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://127.0.0.1:5173/'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://127.0.0.1:5173#access_token=testing')
-+    })
-+
-+    it('should allow any port on IPv6 loopback', async () => {
-+      app.get('authentication').oauth.origins = ['http://[::1]']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://[::1]:4173/path'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://[::1]:4173#access_token=testing')
-+    })
-+
-+    it('should allow any port on 0.0.0.0', async () => {
-+      app.get('authentication').oauth.origins = ['http://0.0.0.0:3030']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://0.0.0.0:5173/app'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://0.0.0.0:5173#access_token=testing')
-+    })
-+
-+    it('should not treat localhost and 127.0.0.1 as the same host', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost']
-+
-+      await assert.rejects(
-+        () =>
-+          strategy.getRedirect(
-+            { accessToken: 'testing' },
-+            {
-+              headers: {
-+                referer: 'http://127.0.0.1:3000/login'
-+              }
-+            }
-+          ),
-+        {
-+          message:
-+            'Referer origin "http://127.0.0.1:3000" is not allowed. ' +
-+            'Configured origins: http://localhost. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-+        }
-+      )
-+    })
-+
-+    it('should still require exact port match for non-loopback hosts', async () => {
-+      app.get('authentication').oauth.origins = ['https://app.example.com']
-+
-+      await assert.rejects(
-+        () =>
-+          strategy.getRedirect(
-+            { accessToken: 'testing' },
-+            {
-+              headers: {
-+                referer: 'https://app.example.com:8443/login'
-+              }
-+            }
-+          ),
-+        {
-+          message:
-+            'Referer origin "https://app.exa
-```
-
----
-
-### Incident Patch 2: `15f5ee92` (2026-08-11)
-**Commit Message**: docs(authentication): clarify OAuth authStrategies security (#3698)
-
-Document that OAuth providers belong under authentication.oauth and
-must not be listed in public authStrategies for browser redirect SSO.
-Rewrite flow #2 guidance so provider-token login requires a verifying
-getProfile, and cross-link guides and cookbooks.
-
-**File**: `docs/api/authentication/oauth.md` (modified, +74/-9)
-```diff
-@@ -56,6 +56,55 @@ The following settings for `app.configure(oauth())` are available:
- - `expressSession` - An Express middleware for handling sessions. By default will use an HTTP cookie that is only available for the oAuth flow. **This normally does not need to be changed.**
- - `koaSession` - A Koa middleware for handling sessions. By default will use an HTTP cookie that is only available for the oAuth flow. **This normally does not need to be changed.**
+       if (payload.error) {
+         throw new GeneralError(payload.error_description || payload.error, payload)
+       }
  
-+### Configuration and security
-+
-+OAuth setup uses three separate pieces. Only the first two are required for the usual browser redirect login:
-+
-+| Piece | Role |
-+| --- | --- |
-+| `authentication.register('google', new OAuthStrategy())` | Registers the strategy so the OAuth callback can run it |
-+| `authentication.oauth.google` in configuration | Grant provider options (`key`, `secret`, `scope`, …) |
-+| `authentication.authStrategies` | Strategy names clients may use on **external** `POST /authentication` |
-+
-+Browser redirect SSO (`/oauth/<provider>`) only needs **register** + **`authentication.oauth`**. The OAuth callback allows that provider for the internal authentication call after Grant finishes. Provider names do **not** need to be listed in public [`authStrategies`](./service.md#configuration).
-+
-+The [Feathers generator](../../guides/cli/authentication.md) already follows this pattern: OAuth providers are configured under `authentication.oauth`, while `authStrategies` typically stays `["jwt", "local"]`.
-+
-+```json
-+// Typical safe config for browser-only OAuth (matches the generator)
-+{
-+  "authentication": {
-+    "authStrategies": ["jwt", "local"],
-+    "oauth": {
-+      "google": {
-+        "key": "<Client ID>",
-+        "secret": "<Client secret>"
++      if (provider.apple && !provider.profile_url && payload.profile) {
++        authentication.profile = await getAppleProfile(payload, provider.key)
 +      }
++
+       debug(`Calling ${authService}.create authentication with strategy ${name}`)
+ 
+       const authResult = await this.service.create(authentication, authParams)
+@@ -149,7 +199,7 @@ export class OAuthService {
+         location
+       }
+     } catch (error: any) {
+-      const location = await strategy.getRedirect(error, authParams)
++      const location = strategy ? await strategy.getRedirect(error, authParams) : null
+       const e = new OAuthError(error.message, error.data, location)
+ 
+       if (typeof params.session.destroy === 'function') {
+```
+
+**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +17/-1)
+```diff
+@@ -120,8 +120,14 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+   }
+ 
+   async getEntityQuery(profile: OAuthProfile, _params: Params) {
++    const id = profile.sub || profile.id
++
++    if (id === undefined || id === null) {
++      throw new NotAuthenticated('oAuth profile has no id')
 +    }
-+  }
-+}
-+```
 +
-+```json
-+// Unsafe for the default OAuthStrategy when you only need browser SSO.
-+// Do not list provider names here unless you implement verified token login (flow #2).
-+{
-+  "authentication": {
-+    "authStrategies": ["jwt", "local", "google", "microsoft"]
-+  }
-+}
-+```
-+
-+<BlockQuote type="warning" label="Important">
-+
-+Putting an OAuth provider name (for example `google` or `github`) in [`authStrategies`](./service.md#configuration) exposes that strategy on external `POST /authentication`.
-+
-+The default [`getProfile`](#getprofile-data-params) implementation returns `data.profile` from the authentication payload. That is safe when the payload is built **server-side** by the OAuth callback after Grant. It is **not** safe to accept a client-supplied `profile` (for example `{ strategy: 'google', profile: { sub: '...' } }`) as proof of identity. A provider `sub` or `id` is an identifier, not a credential.
-+
-+Only add a provider to `authStrategies` when you intentionally support [flow #2](#flow) (existing provider access token) **and** override `getProfile` to verify that token with the provider. See the [Facebook](../../cookbook/authentication/facebook.md) and [Firebase](../../cookbook/authentication/firebase.md) cookbooks for verified-token patterns.
-+
-+</BlockQuote>
-+
- ### Providers
+     return {
+-      [`${this.name}Id`]: profile.sub || profile.id
++      [`${this.name}Id`]: id
+     }
+   }
  
- For specific OAuth provider setup see the following [cookbook](../../cookbook/) guides:
-@@ -73,22 +122,29 @@ There are two ways to initiate OAuth authentication:
-    - User clicks on link to OAuth URL (`oauth/<provider>`)
-    - Gets redirected to provider and authorizes the application
-    - Callback to the [OauthStrategy](#oauthstrategy) which
--     - Gets the users profile
-+     - Gets the users profile (from the server-side Grant response)
-      - Finds or creates the user (entity) for that profile
-    - The [AuthenticationService](./service.md) creates an access token for that entity
-    - Redirects back to the origin URL including the generated access token
-    - The frontend (e.g. the Feathers [authentication client](./client.md)) uses the returned access token to authenticate
+@@ -132,6 +138,10 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+   }
  
--2. With an existing access token, e.g. obtained through the Facebook mobile SDK
--   - Authenticate normally through the [authentication service](./service.md) with `{ strategy: '<name>', accessToken: 'oauth access token' }`.
--   - Calls the [OauthStrategy](#oauthstrategy) which
--     - Gets the users profile
--     - Finds or creates the entity for that profile
-+   This flow does **not** require the provider name in [`authStrategies`](./service.md#configuration). See [Configuration and security](#configuration-and-security).
+   async getProfile(data: AuthenticationRequest, _params: Params) {
++    if (!data.profile || data.profile.error) {
++      throw new NotAuthenticated('Could not get oAuth profile')
++    }
 +
-+2. With an existing provider access token (for example from a mobile SDK)
+     return data.profile
+   }
+ 
+@@ -208,6 +218,12 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
+ 
+   async findEntity(profile: OAuthProfile, params: Params) {
+     const query = await this.getEntityQuery(profile, params)
++    const values = Object.values(query)
 +
-+   - Authenticate through the [authentication service](./service.md) with a request like `{ strategy: '<name>', accessToken: '<provider access token>' }` (some providers use `access_token` or an ID token instead).
-+   - The strategy must obtain the user profile by **verifying that token with the provider** (userinfo endpoint, Graph API, ID token verification, and so on).
-+   - Finds or creates the entity for that profile
-    - Returns the authentication result
++    // Adapters drop undefined values, so an empty or undefined query returns any entity
++    if (!values.length || values.includes(undefined)) {
++      throw new NotAuthenticated('Invalid oAuth entity query')
++    }
  
- <BlockQuote type="warning" label="Impor
-```
-
-**File**: `docs/api/authentication/service.md` (modified, +2/-2)
-```diff
-@@ -63,7 +63,7 @@ The following options are available:
- 
- - `secret`: The JWT signing secret.
- - `service`: The path of the entity service
--- `authStrategies`: A list of authentication strategy names to allow on this authentication service to create access tokens.
-+- `authStrategies`: A list of authentication strategy names allowed for **external** `create` calls (`POST /authentication` / `app.service('authentication').create`). Typical values are `jwt`, `local`, API keys, and only those custom strategies that accept external credentials. [OAuth](./oauth.md) providers used solely via the `/oauth/<provider>` redirect flow should be [registered](#register-name-strategy) and configured under `authentication.oauth`, but are usually **omitted** from this list. See [OAuth configuration and security](./oauth.md#configuration-and-security).
- - `parseStrategies`: A list of authentication strategies that should be used to parse HTTP requests. Defaults to the same as `authStrategies`.
- - `entity`: The name of the field that will contain the entity after successful authentication. Will also be used to set `params[entity]` (usually `params.user`) when using the [authenticate hook](./hook). Can be `null` if no entity is used (see [stateless tokens](../../cookbook/authentication/stateless.md)).
- - `entityId`: The id property of an entity object. Only necessary if the entity service does not have an `id` property (e.g. when using a custom entity service).
-@@ -95,7 +95,7 @@ An authentication service configuration in `config/default.json` can look like t
- 
- </BlockQuote>
- 
--Additionally to the above configuration, most [strategies](./strategy.md) will look for their own configuration under the name it was registered. An example can be found in the [local strategy configuration](./local.md#configuration).
-+Additionally to the above configuration, most [strategies](./strategy.md) will look for their own configuration under the name it was registered. An example can be found in the [local strategy configuration](./local.md#configuration). OAuth provider settings live under `authentication.oauth` (see [OAuth options](./oauth.md#options)), which is separate from `authStrategies`.
- 
- ## Authentication flows
+     debug('findEntity with query', query)
  
 ```
 
-**File**: `docs/cookbook/authentication/facebook.md` (modified, +2/-0)
+**File**: `packages/authentication-oauth/src/utils.ts` (modified, +72/-0)
 ```diff
-@@ -44,6 +44,8 @@ The client id (App ID) and secret can be found in the Settings of the [Facebook
+@@ -11,6 +11,60 @@ import koaCookieSession from 'koa-session'
+ import { AuthenticationService } from '@feathersjs/authentication'
+ import { GrantConfig } from 'grant'
  
- The standard OAuth strategy only returns the default profile fields (`id` and `name`). To get other fields, like the email or profile picture, the [getProfile](../../api/authentication/oauth.md#getprofile-data-params) method of the [OAuth strategy needs to be customized](../../api/authentication/oauth.md#customization) to call the Graph API profile endpoint `https://graph.facebook.com/me` with an HTTP request library like [Axios](https://developers.facebook.com/tools/explorer/) requesting the additional fields.
- 
-+This `getProfile` pattern (call Graph with the provider access token) is also **required** if you put `"facebook"` in [`authStrategies`](../../api/authentication/service.md#configuration) so clients can authenticate with `{ strategy: 'facebook', accessToken: '...' }` on `POST /authentication`. Never accept a client-supplied `profile` as identity. Browser-only Facebook login via `/oauth/facebook` does not need the provider in `authStrategies`. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
++/**
++ * Grant options a request must not override for providers with `dynamic: true`, since they
++ * decide where tokens and profiles come from and how the response is checked.
++ */
++const PROTECTED_DYNAMIC_OPTIONS = [
++  'request_url',
++  'authorize_url',
++  'access_url',
++  'profile_url',
++  'oauth',
++  'origin',
++  'prefix',
++  'redirect_uri',
++  'callback',
++  'transport',
++  'response',
++  'key',
++  'secret',
++  'client_id',
++  'client_secret',
++  'consumer_key',
++  'consumer_secret',
++  'public_key',
++  'private_key',
++  'token_endpoint_auth_method',
++  'token_endpoint_auth_signing_alg',
++  'state',
++  'nonce',
++  'pkce',
++  'subdomain',
++  'name',
++  'dynamic',
++  'overrides'
++]
 +
- > __Pro tip:__ Facebook API requests can be tested via the [Graph API explorer](https://developers.facebook.com/tools/explorer/).
- 
- The following example allows to log in with Facebook in the [chat application from the guide](../../guides/index.md):
-```
-
-**File**: `docs/cookbook/authentication/firebase.md` (modified, +3/-0)
-```diff
-@@ -16,6 +16,7 @@ Update `config/default.json`:
- ```json
- {
-   "authentication": {
-+    "authStrategies": ["jwt", "firebase"],
-     "oauth": {}
-   },
-   "firebase": {
-@@ -28,6 +29,8 @@ Update `config/default.json`:
- ```
- > Note: Since Firebase can be used for more than just authentication, we'll store our service account in the root of our config. Otherwise, if preferred, you can store under `authentication.oauth`.
- 
-+`"firebase"` must be listed in `authStrategies` because clients authenticate with `POST /authentication` (flow #2). That is only safe because `getProfile` below calls `verifyIdToken` — never trust a client-supplied profile. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
++/**
++ * Authorization parameters `custom_params` must not replace, since Grant copies it over them.
++ */
++const PROTECTED_CUSTOM_PARAMS = [
++  'client_id',
++  'app_id',
++  'appid',
++  'client_key',
++  'redirect_uri',
++  'response_type',
++  'state',
++  'nonce',
++  'code_challenge',
++  'code_challenge_method'
++]
 +
- ## Authentication Strategy
- 
- Create a file under `src/firebase.js`:
-```
-
-**File**: `docs/cookbook/authentication/google.md` (modified, +2/-0)
-```diff
-@@ -111,4 +111,6 @@ module.exports = app => {
- ```
- **Important**: googleId, profilePicture and email are properties that should exist on the database model!
- 
-+Browser Google login uses `/oauth/google`. You do **not** need to add `"google"` to `authentication.authStrategies` for that redirect flow. Only add it if you implement verified provider-token login on `POST /authentication` — see [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
++const omit = (data: any, keys: string[]) =>
++  Object.fromEntries(Object.entries(data).filter(([key]) => !keys.includes(key)))
 +
- 
-```
-
-**File**: `docs/guides/basics/login.md` (modified, +1/-1)
-```diff
-@@ -239,7 +239,7 @@ export const authentication = (app: Application) => {
- 
- <BlockQuote type="info">
- 
--For more information about the OAuth flow and strategy see the [OAuth API documentation](../../api/authentication/oauth.md).
-+For more information about the OAuth flow and strategy see the [OAuth API documentation](../../api/authentication/oauth.md). Generated apps keep OAuth providers under `authentication.oauth` and **out** of public `authStrategies` on purpose so browser login uses `/oauth/github` only. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
- 
- </BlockQuote>
- 
-```
-
-**File**: `docs/guides/cli/authentication.md` (modified, +3/-1)
-```diff
-@@ -30,4 +30,6 @@ export const authentication = (app: Application) => {
- 
- ## oAuth
- 
--Note that when selecting oAuth logins (Google, Facebook, GitHub etc.), the standard registered oAuth strategy only uses the `<name>Id` property to create a new user. This will fail validation against the default user [schema](./service.schemas.md) which requires an `email` property to exist. If the provider (and user) allows fetching the email, you can customize the oAuth strategy like shown for GitHub in the [oAuth authentication guide](../basics/authentication.md#login-with-github). You can also make the email in the schema optional with `email: Type.Optional(Type.String())`.
-+When you select oAuth logins (Google, Facebook, GitHub etc.), the generator registers each provider strategy and adds it under `authentication.oauth` in configuration. Provider names are **not** added to `authentication.authStrategies` — browser SSO uses `/oauth/<provider>` instead of `POST /authentication`. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
-+
-+Note that the standard registered oAuth strategy only uses the `<name>Id` property to create a new user. This will fail validation against the default user [schema](./service.schemas.md) which requires an `email` property to exist. If the provider (and user) allows fetching the email, you can customize the oAuth strategy like shown for GitHub in the [oAuth authentication guide](../basics/authentication.md#login-with-github). You can also make the email in the schema optional with `email: Type.Optional(Type.String())`.
-```
-
-**File**: `docs/guides/cli/default.json.md` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ These options are used directly in the generated application
- 
- ### authentication
- 
--`authentication` contains the configuration for the authentication service and strategies. See the [authentication service configuration](../../api/authentication/service.md#configuration) for more information. For strategy specific settings refer to the [jwt](../../api/authentication/jwt.md#options), [local](../../api/authentication/local.md#options) and [oAuth](../../api/authentication/oauth.md#options) API documentation.
-+`authentication` contains the configuration for the authentication service and strategies. See the [authentication service configuration](../../api/authentication/service.md#configuration) for more information. For strategy specific settings refer to the [jwt](../../api/authentication/jwt.md#options), [local](../../api/authentication/local.md#options) and [oAuth](../../api/authentication/oauth.md#options) API documentation. `authStrategies` lists strategies allowed on external `POST /authentication` (usually `jwt` and `local`). OAuth provider keys live under `authentication.oauth` and are separate from that list — see [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
- 
- ### Databases
- 
-```
-
----
-
-### Incident Patch 3: `0526ffd9` (2026-03-05)
-**Commit Message**: fix(mongodb): Block $rename operator in _patch data by default (CWE-943) (#3665)
-
-**File**: `docs/api/databases/mongodb.md` (modified, +47/-0)
-```diff
-@@ -63,6 +63,7 @@ MongoDB adapter specific options are:
- - `Model {Promise<MongoDBCollection>}` (**required**) - A Promise that resolves with the MongoDB collection instance. This can also be the return value of an `async` function without `await`
- - `disableObjectify {boolean}` (_optional_, default `false`) - This will disable conversion of the id field to a MongoDB ObjectID if you want to e.g. use normal strings
- - `useEstimatedDocumentCount {boolean}` (_optional_, default `false`) - If `true` document counting will rely on `estimatedDocumentCount` instead of `countDocuments`
-+- `disabledOperators {string[]}` (_optional_, default `['$rename']`) - A list of [MongoDB update operators](https://www.mongodb.com/docs/manual/reference/operator/update/) to block in `patch` data. See [Securing update operators](#securing-update-operators) for details.
- 
- The [common API options](./common.md#options) are:
- 
-@@ -164,6 +165,52 @@ Note that creating indexes for an existing collection with many entries should b
- 
- Additionally to the [common querying mechanism](./querying.md) this adapter also supports [MongoDB's query syntax](https://www.mongodb.com/docs/manual/tutorial/query-documents/) and the `update` method also supports MongoDB [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/).
- 
-+## Securing update operators
-+
-+The `patch` method supports MongoDB [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/) like `$push`, `$inc`, and `$unset` in the data payload. While this is powerful, it can be a security risk if patch data from the client is not properly validated. For example, an authenticated user who can patch their own profile could send:
-+
-+```ts
-+// Escalate privileges by pushing to a roles array
-+await app.service('users').patch(userId, { $push: { roles: 'admin' } })
-+
-+// Expose internal fields by renaming them
-+await app.service('users').patch(userId, { $rename: { secretField: 'public' } })
-+```
-+
-+### Schema validation
-+
-+The primary defense is to use [schema validation](../schema/validators.md) on your patch data. When your schema only allows known fields with known types, unexpected operators will be rejected before they reach the database.
-+
-+### The `disabledOperators` option
-+
-+As an additional layer of defense, the `disabledOperators` option blocks specific update operators from being passed through to MongoDB. By default, `$rename` is blocked.
-+
-+To block additional operators on a service:
-+
-+```ts
-+new MongoDBService({
-+  Model: app.get('mongodbClient').then((db) => db.collection('users')),
-+  disabledOperators: ['$rename', '$unset', '$inc']
-+})
-+```
-+
-+To override per-call via `params.adapter`:
-+
-+```ts
-+service.patch(id, data, {
-+  adapter: { disabledOperators: ['$rename', '$unset'] }
-+})
-+```
-+
-+To allow all operators (not recommended without schema validation):
-+
-+```ts
-+new MongoDBService({
-+  Model: app.get('mongodbClient').then((db) => db.collection('messages')),
-+  disabledOperators: []
-+})
-+```
-+
- ## Search
- 
- <BlockQuote type="warning" label="Important">
-```
-
-**File**: `packages/mongodb/src/adapter.ts` (modified, +8/-1)
-```diff
-@@ -29,6 +29,12 @@ export interface MongoDBAdapterOptions extends AdapterServiceOptions {
-   Model: Collection | Promise<Collection>
-   disableObjectify?: boolean
-   useEstimatedDocumentCount?: boolean
-+  /**
-+   * A list of MongoDB update operators to block in `patch` data.
-+   * Defaults to `['$rename']`. Any `$`-prefixed key in this list will be
-+   * silently dropped from the update.
-+   */
-+  disabledOperators?: string[]
+ export interface OauthSetupSettings {
+   linkStrategy: string
+   authService?: string
+@@ -65,6 +119,24 @@ export const getGrantConfig = (service: AuthenticationService): GrantConfig => {
+   return grant
  }
  
- export interface MongoDBAdapterParams<Q = AdapterQuery> extends AdapterParams<
-@@ -404,6 +410,7 @@ export class MongoDbAdapter<
-       query,
-       filters: { $sort, $select }
-     } = this.filterQuery(id, params)
-+    const disabledOperators = this.getOptions(params).disabledOperators || ['$rename']
- 
-     const replacement = Object.keys(data).reduce(
-       (current, key) => {
-@@ -416,7 +423,7 @@ export class MongoDbAdapter<
-             ...current.$set,
-             ...value
-           }
--        } else {
-+        } else if (!disabledOperators.includes(key)) {
-           current[key] = value
-         }
- 
++/**
++ * Remove protected options from the request data for providers (or overrides) that are
++ * configured with `dynamic: true`. `options` is the provider configuration as resolved by Grant.
++ */
++export const filterDynamic = (options: any, data: any) => {
++  if (options?.dynamic !== true || !data || typeof data !== 'object') {
++    return data
++  }
++
++  const result = omit(data, PROTECTED_DYNAMIC_OPTIONS)
++
++  if (result.custom_params && typeof result.custom_params === 'object') {
++    result.custom_params = omit(result.custom_params, PROTECTED_CUSTOM_PARAMS)
++  }
++
++  return result
++}
++
+ export const setExpressParams: RequestHandler = (req, res, next) => {
+   req.session.destroy ||= () => {
+     req.session = null
 ```
 
-**File**: `packages/mongodb/test/index.test.ts` (modified, +47/-0)
+**File**: `packages/authentication-oauth/test/apple.test.ts` (added, +194/-0)
 ```diff
-@@ -839,6 +839,53 @@ describe('Feathers MongoDB Service', () => {
-     })
-   })
- 
-+  describe('disabledOperators in _patch', () => {
-+    it('drops $rename by default', async () => {
-+      const person = await app.service('people').create({ name: 'Secure', age: 30 })
+@@ -0,0 +1,194 @@
++import { strict as assert } from 'assert'
++import crypto from 'crypto'
++import http from 'http'
++import { AddressInfo } from 'net'
++import jsonwebtoken from 'jsonwebtoken'
++import { appleKeys, getAppleProfile } from '../src/apple'
 +
-+      const result = await app.service('people').patch(person._id, {
-+        name: 'Updated',
-+        $rename: { age: 'exposed' }
-+      } as any)
++describe('@feathersjs/authentication-oauth/apple', () => {
++  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 })
++  const otherKey = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey
++  const jwk = { ...publicKey.export({ format: 'jwk' }), kid: 'apple-key' }
++  let server: http.Server
++  let fetched = 0
++  let respond = (res: http.ServerResponse) => {
++    res.writeHead(200, { 'content-type': 'application/json' })
++    res.end(JSON.stringify({ keys: [jwk] }))
++  }
 +
-+      assert.strictEqual(result.name, 'Updated')
-+      assert.strictEqual(result.age, 30)
++  const idToken = (claims: any, { key = privateKey, keyid = 'apple-key' } = {}) =>
++    jsonwebtoken.sign(
++      {
++        iss: 'https://appleid.apple.com',
++        aud: 'some-key',
++        exp: Math.floor(Date.now() / 1000) + 600,
++        ...claims
++      },
++      key,
++      {
++        algorithm: 'RS256',
++        keyid
++      }
++    )
 +
-+      await app.service('people').remove(person._id)
++  before(async () => {
++    server = http.createServer((_req, res) => {
++      fetched++
++      respond(res)
 +    })
-+
-+    it('allows $push and other operators not in the denylist', async () => {
-+      const person = await app.service('people').create({ name: 'PushTest', age: 20 })
-+
-+      const result = await app.service('people').patch(person._id, {
-+        $push: { friends: 'Alice' }
-+      } as any)
-+
-+      assert.strictEqual(result.friends?.length, 1)
-+      assert.strictEqual(result.friends[0], 'Alice')
-+
-+      await app.service('people').remove(person._id)
-+    })
-+
-+    it('drops operators added to disabledOperators', async () => {
-+      const person = await app.service('people').create({ name: 'IncTest', age: 25 })
-+
-+      const result = await app.service('people').patch(
-+        person._id,
-+        {
-+          $inc: { age: 100 }
-+        } as any,
-+        {
-+          adapter: { disabledOperators: ['$rename', '$inc'] }
-+        }
-+      )
-+
-+      assert.strictEqual(result.age, 25)
-+
-+      await app.service('people').remove(person._id)
-+    })
++    await new Promise<void>((resolve) => server.listen(0, resolve))
++    appleKeys.url = `http://localhost:${(server.address() as AddressInfo).port}/auth/keys`
 +  })
 +
-   describe('NoSQL injection via object id', () => {
-     let target: Person
- 
++  beforeEach(() => {
++    appleKeys.keys = []
++    appleKeys.fetchedAt = 0
++    appleKeys.failedAt = 0
++    fetched = 0
++  })
++
++  after(() => {
++    appleKeys.url = 'https://appleid.apple.com/auth/keys'
++    server.close()
++  })
++
++  it('takes sub and email from the id_token and keeps other profile fields', async () => {
++    const profile = await getAppleProfile(
++      {
++        id_token: idToken({ sub: 'real', email: 'real@example.com' }),
++        profile: { id: 'victim', sub: 'victim', email: 'victim@example.com', name: 'Jon' }
++      },
++      'some-key'
++    )
++
++    assert.deepEqual(profile, { name: 'Jon', sub: 'real', email: 'real@example.com' })
++  })
++
++  it('keeps only the name from the callback body, which Apple sends as a JSON string', async () => {
++    const user = JSON.stringify({ name: { firstName: 'Jon', lastName: 'Doe' }, email: 'victim@example.com' })
++    const fromString = await getAppleProfile(
++      { id_token: idToken({ sub: 'real' }), profile: user },
++      'some-key'
++    )
++    const fromObject = await getAppleProfile(
++      { id_token: idToken({ sub: 'real' }), profile: { name: 'Jon', role: 'admin', email_verified: true } },
++      'some-key'
++    )
++    const returning = await getAppleProfile(
++      { id_token: idToken({ sub: 'real' }), profile: { error: 'Grant: No profile URL found!' } },
++      'some-key'
++    )
++
++    assert.deepEqual(fromString, { sub: 'real', name: { firstName: 'Jon', lastName: 'Doe' } })
++    assert.deepEqual(fromObject, { sub: 'real', name: 'Jon' })
++    assert.deepEqual(returning, { sub: 'real' })
++  })
++
++  it('rejects id_tokens that do not verify', async () => {
++    const unsigned = jsonwebtoken.sign(
++      { sub: 'victim', iss: 'https://appleid.apple.com', aud: 'some-key' },
++      '',
++      {
++        algorithm: 'none'
++      }
++    )
++    const tokens = {
++      missing: undefined as any,
++      'signed with another key': idToken({ sub: 'victim' }, { key: otherKey }),
++      'unknown key id': idToken({ sub: 'victim' }, { keyid: 'unknown' }),
++      'unsigned (alg none)': unsigned,
++      'wrong issuer': idToken({ sub: 'victim', iss: 'https://evil.example.com' }),
++      'wrong audience': idToken({ sub: 'victim', aud: 'another-client' }),
++      expired: idToken({ sub: 'victim', exp: Math.floor(Date.now() / 1000) - 3600 }),
++      'missing subject': idToken({})
++    }
++
++    for (const [description, token] of Object.entries(tokens)) {
++      await assert.rejects(
++        () => getAppleProfile({ id_token: token, profile: {} }, 'some-key'),
++        { message: 'Could not get oAuth profile' },
++        description
++      )
++    }
++  })
++
++  it('rejects when no client id is configured', async () => {
++    await assert.rejects(
++      () => getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, undefined as any),
++      {
++        message: 'Could not get oAuth profile'
++      }
++    )
++  })
++
++  it('caches the keys and refreshes them for an unknown key id at most every few minutes', async () => {
++    await getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, 'some-key')
++    await getAppleProfile({ id_token: idToken({ sub: 'x' }), profile: {} }, 'some-key')
++    assert.equal(fetched, 1)
++
++    const unknown = { id_token: idToken({ sub: 'x' }, { keyid: 'unknown' }), profile: {} }
++
++    await assert.rejects(() => getAppleProfile(unknown, 'some-key'))
++    assert.equal(fetched, 1)
++
++    appleKeys.fetchedAt -= 10 * 60 * 1000
++    await assert.rejects(() => getAppleProfile(unknown, 'some-key'))
++    assert.equal(fetched, 2)
++ 
+```
+
+**File**: `packages/authentication-oauth/test/koa.test.ts` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++import { strict as assert } from 'assert'
++import axios from 'axios'
++import { CookieJar } from 'tough-cookie'
++import { koaFixture } from './utils/fixture'
++
++describe('@feathersjs/authentication-oauth with Koa', () => {
++  const port = 9785
++  const host = `http://localhost:${port}`
++  const req = axios.create({
++    maxRedirects: 0,
++    validateStatus: () => true
++  })
++  let app: Awaited<ReturnType<typeof koaFixture>>
++
++  // Start the oAuth flow and return the grant session cookie and the provider location
++  const startFlow = async () => {
++    const cookie = new CookieJar()
++    const response = await req.get(`${host}/oauth/github`)
++
++    assert.equal(response.status, 303)
++    response.headers['set-cookie']?.forEach((value) => cookie.setCookie(value, host))
++
++    return { cookie: await cookie.getCookieString(host), location: response.data.location }
++  }
++
++  before(async () => {
++    app = await koaFixture(port, 5123)
++    await app.service('users').create({ email: 'admin@example.com' })
++  })
++
++  after(async () => {
++    await app.teardown()
++  })
++
++  it('runs through the oAuth flow', async () => {
++    const { cookie, location } = await startFlow()
++    const provider = await req.get(location)
++    const { data } = await req.get(provider.headers.location, { headers: { cookie } })
++
++    assert.ok(data.accessToken)
++    assert.equal(data.user.githubId, 'test')
++  })
++
++  it('rejects a GET callback without an authorization code', async () => {
++    const { cookie } = await startFlow()
++    const response = await req.get(`${host}/oauth/github/callback?code=&state=`, { headers: { cookie } })
++
++    assert.equal(response.status, 401)
++    assert.equal(response.data.message, 'Missing oAuth authorization code.')
++    assert.ok(!response.data.accessToken)
++  })
++
++  it('accepts a POST callback with the code in the body and rejects one without', async () => {
++    const valid = await req.post(
++      `${host}/oauth/github/callback`,
++      { code: 'code' },
++      { headers: { cookie: (await startFlow()).cookie } }
++    )
++    const empty = await req.post(
++      `${host}/oauth/github/callback`,
++      { user: { id: 'victim' } },
++      { headers: { cookie: (await startFlow()).cookie } }
++    )
++
++    assert.ok(valid.data.accessToken)
++    assert.equal(empty.status, 401)
++    assert.equal(empty.data.message, 'Missing oAuth authorization code.')
++  })
++})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3719** (2026-10-23): fix(create-feathers): Call app.setup in Deno and Bun apps (v6) (@fratzinger)
+- **PR #3718** (2026-10-23): fix(client): Stringify dates in queries as ISO strings (v6) (@fratzinger)
+- **PR #3717** (2026-10-23): fix(hooks): Allow synchronous functions to return null or undefined (v6) (@fratzinger)
+- **PR #3716** (2026-10-23): fix(http): Initialize context.http for HTTP service calls (v6) (@fratzinger)
 - **PR #3715** (2026-10-17): fix(http): Do not allow standard methods via method override header (v6) (@fratzinger)
 - **PR #3706** (2026-09-17): fix(authentication): reject leftover codegen params for user (#3599) (@tonycoder-hub)
-- **PR #3705** (2026-09-24): fix(schema): recheck external dispatch after resolving (@akasakariko)
-- **PR #3704** (2026-09-11): fix: Update all dependencies (@daffl)
-- **PR #3703** (2026-09-11): fix: Update dependencies (@daffl)
-- **PR #3701** (2026-09-11): fix(transport-commons): map HEAD requests like GET for REST services (@rome-xi)
 
 ---
 
@@ -1704,13 +2034,13 @@ getProfile, and cross-link guides and cookbooks.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. authentication-oauth): allow any port on loopback OAuth origins (#3699)
+## X. authentication-oauth): allow account linking from the configured oAuth origin
 
 **RULE**:
 When implementing operations in `packages/authentication-oauth/src/strategy.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a58896a`: authentication-oauth): allow any port on loopback OAuth origins (#3699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `616e8850`: authentication-oauth): allow account linking from the configured oAuth origin. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/authentication-oauth/src/strategy.ts`.
@@ -1718,56 +2048,25 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Local machine addresses: match any port when scheme + host are allowlisted.
-const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
-
-/** Strip IPv6 brackets so `[::1]` and `::1` compare the same. */
-function normalizeHostname(hostname: string) {
-  return hostname.toLowerCase().replace(/^\[|\]$/g, '')
-}
-
-function isLoopbackHost(hostname: string) {
-  return LOOPBACK_HOSTS.has(normalizeHostname(hostname))
-}
-
-/**
- * Match key for origin allowlisting.
- * Non-loopback hosts use the full WHATWG origin (scheme + host + port).
- * Loopback hosts drop the port so local frontends on any port can match a single allowlist entry.
- */
-function originMatchKey(value: string) {
-  const url = new URL(value)
-  const host = normalizeHostname(url.hostname)
-
-  if (isLoopbackHost(host)) {
-    return `${url.protocol}//${host}`
-  }
-
-  return url.origin.toLowerCase()
-}
-
-function isOriginAllowed(refererOrigin: string, configured: string) {
-  try {
-    return originMatchKey(refererOrigin) === originMatchKey(configured)
-  } catch {
-    return false
-  }
-}
-
-function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
-  return (
-    `Referer origin "${refererOrigin}" is not a
+import { getGrantConfig } from './utils'
+   * Account linking with a `feathers_token` must be started from the app (the request host, the
+   * configured oAuth origin or an allowed origin), since anyone can send a link with their own token.
+   * Override to allow linking from clients that send no referer.
+    const { origin } = getGrantConfig(this.authentication as any).defaults
+    if (
+      url.host !== host &&
+      !isOriginAllowed(url.origin, origin) &&
+      !allowed.some((current: string) => isOriginAllowed(url.origin, current))
+    ) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        throw new NotAuthenticated(`Invalid referer "${referer}".`)
-      // Compare full origins
-      const allowedOrigin = origins.find((current) => refererOrigin.toLowerCase() === current.toLowerCase())
-        throw new NotAuthenticated(`Referer "${referer}" is not allowed.`)
-      return allowedOrigin
+   * Account linking with a `feathers_token` must be started from the app, since anyone can send a
+   * link with their own token. Override to allow linking from clients that send no referer.
+    if (url.host !== host && !allowed.some((origin: string) => isOriginAllowed(url.origin, origin))) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a58896a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `616e8850` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:48:15.339Z",
+  "last_updated": "2026-10-27T13:54:35.247Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4491,14 +4491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-feathersjs-feathers",
-      "content_hash": "c42b5ad96f97e525d8ff3dbe39905d09552de47d72d5fe8e26d7c9dc63f1e617",
-      "verified_at": "2026-10-18T22:23:17.045Z",
+      "content_hash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
+      "verified_at": "2026-10-27T13:54:28.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:23:17.045Z"
+      "last_updated": "2026-10-27T13:54:28.118Z"
     },
     "litmuschaos/litmus": {
       "repository": "litmuschaos/litmus",
@@ -9246,14 +9246,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dockview-dockview",
-      "content_hash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
-      "verified_at": "2026-10-25T23:39:17.371Z",
+      "content_hash": "3eeb8f2497e1b3f9a612987b1ce346d6d5ce1d0de86bdb86a716a663f49270d2",
+      "verified_at": "2026-10-27T13:54:21.469Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T23:39:17.371Z"
+      "last_updated": "2026-10-27T13:54:21.469Z"
     },
     "kubearmor/KubeArmor": {
       "repository": "kubearmor/KubeArmor",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
-      "verified_at": "2026-10-25T20:04:42.876Z",
+      "content_hash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
+      "verified_at": "2026-10-27T13:54:23.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:04:42.876Z"
+      "last_updated": "2026-10-27T13:54:23.871Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "47f1923aeb9b2b2b265638ac1af3a09bf8f2b7d923bbb5ff21a62ed53737c65a",
-      "verified_at": "2026-10-22T18:43:59.676Z",
+      "content_hash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
+      "verified_at": "2026-10-27T13:54:35.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:43:59.676Z"
+      "last_updated": "2026-10-27T13:54:35.247Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",

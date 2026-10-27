@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:48:15.334Z",
-  "total_cycles_completed": 5320,
-  "total_learnings_persisted": 5320,
-  "total_rules_promoted": 4725,
+  "last_updated": "2026-10-27T13:54:35.244Z",
+  "total_cycles_completed": 5324,
+  "total_learnings_persisted": 5324,
+  "total_rules_promoted": 4729,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:11:27.508Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:06.906Z",
-      "repository": "chakra-ui/zag",
-      "learningId": "learn-github-chakra-ui-zag",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:08.391Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:20.956Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:28:56.997Z",
       "repository": "ant-design/pro-components",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-27T13:48:15.334Z",
       "repository": "streetwriters/notesnook",
       "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:54:21.467Z",
+      "repository": "dockview/dockview",
+      "learningId": "learn-github-dockview-dockview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:54:23.868Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:54:28.116Z",
+      "repository": "feathersjs/feathers",
+      "learningId": "learn-github-feathersjs-feathers",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:54:35.244Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

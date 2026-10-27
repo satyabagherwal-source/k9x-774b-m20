@@ -5352,3 +5352,7 @@ Every entry in this ledger must capture:
 | `learn-github-taiga-family-taiga-ui` | `https://github.com/taiga-family/taiga-ui` | `90c4bc1f` | Multi-dimensional audit evidence | 2026-10-27T13:48:09.292Z |
 | `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `e7475aec` | Multi-dimensional audit evidence | 2026-10-27T13:48:12.304Z |
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `7a183013` | Multi-dimensional audit evidence | 2026-10-27T13:48:15.327Z |
+| `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `66a36f17` | Multi-dimensional audit evidence | 2026-10-27T13:54:21.463Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `5c060064` | Multi-dimensional audit evidence | 2026-10-27T13:54:23.864Z |
+| `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `e73ad697` | Multi-dimensional audit evidence | 2026-10-27T13:54:28.112Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9bbe2813` | Multi-dimensional audit evidence | 2026-10-27T13:54:35.240Z |

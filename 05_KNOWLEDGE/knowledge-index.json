@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:48:15.269Z",
+  "last_updated": "2026-10-27T13:54:35.191Z",
   "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8710,8 +8710,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "b33f3ef5",
-      "content_hash": "19fb1a2ee3657d007a787783ff3da0eee7d70938bb663828e9bc0862c0f90e6f",
+      "source_version": "5c060064",
+      "content_hash": "e6e4c27d2f8da2ff395f4a1d4400dac896e622975b7cfeae4f960fc4ba281beb",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -8744,6 +8744,11 @@
           "number": 4437,
           "title": "normalize): never take an option word for timeout's duration or chrt's program (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4820,
+          "title": "deps): realign ast-grep core with the vendored language adapter again",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8751,7 +8756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:04:42.799Z",
+      "verified_at": "2026-10-27T13:54:23.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9076,8 +9081,8 @@
       "slug": "dockview-dockview",
       "platform": "github",
       "source_url": "https://github.com/dockview/dockview",
-      "source_version": "c26490bf",
-      "content_hash": "975940c065a907f433b21e526a594e95d29ed43db59ecf6e7ed948ee9dcfaefd",
+      "source_version": "66a36f17",
+      "content_hash": "3eeb8f2497e1b3f9a612987b1ce346d6d5ce1d0de86bdb86a716a663f49270d2",
       "dossier_path": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "promoted_rules": [
@@ -9100,6 +9105,11 @@
           "number": 4490,
           "title": "Merge pull request #1709 from mayuriphad/fix/popout-resize-end-timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4819,
+          "title": "core): read the edge group's header position instead of a CSS class",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9107,7 +9117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:39:17.286Z",
+      "verified_at": "2026-10-27T13:54:21.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11689,14 +11699,19 @@
       "slug": "feathersjs-feathers",
       "platform": "github",
       "source_url": "https://github.com/feathersjs/feathers",
-      "source_version": "572574e3",
-      "content_hash": "c42b5ad96f97e525d8ff3dbe39905d09552de47d72d5fe8e26d7c9dc63f1e617",
+      "source_version": "e73ad697",
+      "content_hash": "2aaa8e8ddcdc5e157ee23979e629962908a74557bbd22e116f8eda2c1cc5e842",
       "dossier_path": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/feathersjs-feathers-learnings.md",
       "promoted_rules": [
         {
           "number": 1776,
           "title": "authentication-oauth): allow any port on loopback OAuth origins (#3699)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4821,
+          "title": "authentication-oauth): allow account linking from the configured oAuth origin",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11705,7 +11720,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:23:16.991Z",
+      "verified_at": "2026-10-27T13:54:28.064Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35130,8 +35145,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "7b6f9f39",
-      "content_hash": "47f1923aeb9b2b2b265638ac1af3a09bf8f2b7d923bbb5ff21a62ed53737c65a",
+      "source_version": "9bbe2813",
+      "content_hash": "8366daacca0fa102a572950b85c19c99d2e65121fea4a62cb273e046015058fa",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -35154,6 +35169,11 @@
           "number": 3696,
           "title": "Merge pull request #6687 from meilisearch/better-db-opening",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4822,
+          "title": "Merge pull request #6698 from meilisearch/fix-debian-ci",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35161,7 +35181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:43:59.628Z",
+      "verified_at": "2026-10-27T13:54:35.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133877,6 +133897,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:48:15.257Z"
+    },
+    "rule-4819": {
+      "learning_id": "rule-4819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4819,
+      "title": "core): read the edge group's header position instead of a CSS class",
+      "source_url": "https://github.com/dockview/dockview",
+      "source_version": "66a36f17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:54:21.414Z"
+    },
+    "rule-4820": {
+      "learning_id": "rule-4820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4820,
+      "title": "deps): realign ast-grep core with the vendored language adapter again",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "5c060064",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:54:23.816Z"
+    },
+    "rule-4821": {
+      "learning_id": "rule-4821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4821,
+      "title": "authentication-oauth): allow account linking from the configured oAuth origin",
+      "source_url": "https://github.com/feathersjs/feathers",
+      "source_version": "e73ad697",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:54:28.064Z"
+    },
+    "rule-4822": {
+      "learning_id": "rule-4822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4822,
+      "title": "Merge pull request #6698 from meilisearch/fix-debian-ci",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "9bbe2813",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:54:35.182Z"
     }
   },
   "aliases": {
