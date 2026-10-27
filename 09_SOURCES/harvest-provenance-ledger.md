@@ -5230,3 +5230,5 @@ Every entry in this ledger must capture:
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `c550994e` | Multi-dimensional audit evidence | 2026-10-27T10:57:56.705Z |
 | `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `dd0fb7df` | Multi-dimensional audit evidence | 2026-10-27T10:58:00.074Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `51370d96` | Multi-dimensional audit evidence | 2026-10-27T10:58:02.643Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ac848fa8` | Multi-dimensional audit evidence | 2026-10-27T11:02:57.055Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ba932f9a` | Multi-dimensional audit evidence | 2026-10-27T11:03:02.372Z |

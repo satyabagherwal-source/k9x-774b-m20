@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:58:02.652Z",
+  "last_updated": "2026-10-27T11:03:02.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
-      "verified_at": "2026-10-25T02:58:25.793Z",
+      "content_hash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
+      "verified_at": "2026-10-27T11:03:02.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:58:25.793Z"
+      "last_updated": "2026-10-27T11:03:02.380Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
-      "verified_at": "2026-10-20T11:39:14.981Z",
+      "content_hash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
+      "verified_at": "2026-10-27T11:02:57.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T11:39:14.981Z"
+      "last_updated": "2026-10-27T11:02:57.063Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

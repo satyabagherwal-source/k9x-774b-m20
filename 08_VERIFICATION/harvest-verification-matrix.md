@@ -5221,3 +5221,5 @@
 | `CYCLE-20261027-NLR1` | `2026-10-27T10:57:56.701Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4695` | Yes (`1a26414f...`) |
 | `CYCLE-20261027-NOCN` | `2026-10-27T10:58:00.071Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4696` | Yes (`20ceb749...`) |
 | `CYCLE-20261027-NQC0` | `2026-10-27T10:58:02.640Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4697` | Yes (`c2fa65f2...`) |
+| `CYCLE-20261027-U1I3` | `2026-10-27T11:02:57.051Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4698` | Yes (`6ba4eebf...`) |
+| `CYCLE-20261027-U5LT` | `2026-10-27T11:03:02.369Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4699` | Yes (`863f9cd0...`) |

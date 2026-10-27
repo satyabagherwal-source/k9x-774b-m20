@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `f8f6db89`  
+> **Source Version**: `ac848fa8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:39:14.714Z  
+> **Timestamp**: 2026-10-27T11:02:56.494Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:39:12.947Z  
+> **Harvest Timestamp**: 2026-10-27T11:02:55.537Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 20899 stars
+- **Stars / Engagement**: 20935 stars
 
 ---
 
@@ -541,6 +541,14 @@ loop:
 	return n
 }
 
+// Largest queue weight parseSize accepts on the wire.
+const maxQueueWeight = 999_999_999
+
+// Converts a queue weight total to the weight sent to a route or leaf.
+func queueWeight(n int64) int32 {
+	return int32(min(n, maxQueueWeight))
+}
+
 // parseInt64 expects decimal positive numbers. We
 // return -1 to signal error
 func parseInt64(d []byte) (n int64) {
@@ -795,10 +803,7 @@ func generateInfoJSON(info *Info) []byte {
 	return bytes.Join(pcs, []byte(" "))
 }
 
-// parallelTaskQueue starts a number of goroutines and returns a channel
-// which functions can be sent to for queued parallel execution. The
-// goroutines will stop running when the returned channel is closed and
-// all queued tasks have completed. The passed in mp limits concu
+// parallelTaskQueue starts a number of g
 ```
 
 ### Core Architecture Module: `conf/fuzz.go`
@@ -2721,172 +2726,628 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8f6db89` (2026-10-20)
-**Commit Message**: [FIXED] Missing route pool index check for routes without pooling (#8782)
+### Incident Patch 1: `e8d4a550` (2026-10-26)
+**Commit Message**: [FIXED] server: lock when reading lnocu state (#8779)
 
-`addRoute` checked `RoutePoolIdx` only for pooled routes. On the no-pool
-path the index from the remote's INFO was used as the slot in
-`s.routes[id]` without a range check. A server always sends index 0 on
-this path, so this PR improves robustness by simply rejecting any other
-value as a protocol violation, matching the existing check for solicited
-routes.
+Fixes data race from test:
 
-**File**: `server/route.go` (modified, +3/-0)
-```diff
-@@ -2180,6 +2180,9 @@ func (s *Server) addRoute(c *client, didSolicit, sendDelayedInfo bool, gossipMod
- 			invProtoErr = fmt.Sprintf("Not possible to have a dedicated route for account %q between those servers", accName)
- 			// In this case, make sure this route does not attempt to reconnect
- 			c.setNoReconnect()
-+		} else if info.RoutePoolIdx != 0 {
-+			// Without pooling, the incoming's RoutePoolIdx should not be set.
-+			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
- 		} else {
- 			// We will accept, but treat this remote has "no pool"
- 			pool, noReconnectForOldServer = false, true
 ```
+=== FAIL: server TestLeafNodeRoutedSubKeyDifferentBetweenLeafSubAndRoutedSub/old_server_with_pinned_account (0.38s)
+==================
+WARNING: DATA RACE
+Write at 0x00c001824923 by goroutine 58008:
+  github.com/nats-io/nats-server/v2/server.TestLeafNodeRoutedSubKeyDifferentBetweenLeafSubAndRoutedSub.func1.1()
+      /workspace/server/leafnode_test.go:5791 +0x1aeb
+  github.com/nats-io/nats-server/v2/server.(*Server).forEachRoute()
+      /workspace/server/route.go:3329 +0x1ab7
+  github.com/nats-io/nats-server/v2/server.TestLeafNodeRoutedSubKeyDifferentBetweenLeafSubAndRoutedSub.func1()
+      /workspace/server/leafnode_test.go:5789 +0x1774
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2036 +0x21c
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2101 +0x38
+Previous read at 0x00c001824923 by goroutine 58043:
+  github.com/nats-io/nats-server/v2/server.(*client).processRemoteSub()
+      /workspace/server/route.go:1533 +0x1d4
+  github.com/nats-io/nats-server/v2/server.(*client).parse()
+      /workspace/server/parser.go:694 +0x4204
+  github.com/nats-io/nats-server/v2
 
-**File**: `server/routes_test.go` (modified, +46/-0)
+**File**: `server/route.go` (modified, +1/-1)
 ```diff
-@@ -1372,6 +1372,52 @@ func TestRouteCloseTLSConnection(t *testing.T) {
- 	ch <- true
- }
+@@ -1529,8 +1529,8 @@ func (c *client) processRemoteSub(argo []byte, leafSub, hasOrigin bool) (err err
+ 	c.mu.Lock()
+ 	accountName := string(c.route.accName)
+ 	lnSupport := c.route.ln
+-	c.mu.Unlock()
+ 	oldStyle := !c.route.lnocu && !(leafSub && !hasOrigin)
++	c.mu.Unlock()
  
-+func TestRouteNoPoolRejectsRoutePoolIdx(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		poolSize int
-+		info     string
-+	}{
-+		{"remote out of range", 0, `"route_pool_size":0,"route_pool_idx":3`},
-+		{"remote in range", 0, `"route_pool_size":0,"route_pool_idx":2`},
-+		{"remote negative", 0, `"route_pool_size":0,"route_pool_idx":-1`},
-+		{"local out of range", -1, `"route_pool_size":3,"route_pool_idx":3`},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			o := DefaultOptions()
-+			o.Cluster.Name = "A"
-+			o.Cluster.Host = "127.0.0.1"
-+			o.Cluster.Port = -1
-+			o.Cluster.PoolSize = test.poolSize
-+			s := RunServer(o)
-+			defer s.Shutdown()
-+
-+			conn, err := net.DialTimeout("tcp", net.JoinHostPort(o.Cluster.Host, fmt.Sprintf("%d", o.Cluster.Port)), 2*time.Second)
-+			require_NoError(t, err)
-+			defer conn.Close()
-+
-+			_, err = conn.Write([]byte("CONNECT {\"name\":\"route\",\"verbose\":false,\"pedantic\":false,\"cluster\":\"A\"}\r\n"))
-+			require_NoError(t, err)
-+			_, err = conn.Write(fmt.Appendf(nil, "INFO {\"server_id\":\"route\",\"name\":\"route\",\"cluster\":\"A\",%s}\r\n", test.info))
-+			require_NoError(t, err)
-+
-+			// The route must be rejected as a protocol violation.
-+			require_NoError(t, conn.SetReadDeadline(time.Now().Add(2*time.Second)))
-+			br := bufio.NewReader(conn)
-+			for {
-+				line, err := br.ReadString('\n')
-+				require_NoError(t, err)
-+				if strings.HasPrefix(line, "-ERR") {
-+					require_Contains(t, line, "Route pool index should not be set")
-+					break
-+				}
-+			}
-+			require_True(t, s.Running())
-+			require_Equal(t, s.NumRoutes(), 0)
-+		})
-+	}
-+}
-+
- func TestRouteClusterNameConflictBetweenStaticAndDynamic(t *testing.T) {
- 	o1 := DefaultOptions()
- 	o1.Cluster.Name = "AAAAAAAAAAAAAAAAAAAA" // make it alphabetically the "smallest"
+ 	// Indicate if the account name should be in the protocol. It would be the
+ 	// case if accountName is empty.
 ```
 
 ---
 
-### Incident Patch 2: `f29a6474` (2026-10-20)
-**Commit Message**: [FIXED] Missing route pool index check for routes without pooling
+### Incident Patch 2: `a34c23ee` (2026-10-19)
+**Commit Message**: [FIXED] Queue weight overflow withdrawing route and leaf interest
 
 Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
-**File**: `server/route.go` (modified, +3/-0)
+**File**: `server/accounts.go` (modified, +2/-2)
 ```diff
-@@ -2180,6 +2180,9 @@ func (s *Server) addRoute(c *client, didSolicit, sendDelayedInfo bool, gossipMod
- 			invProtoErr = fmt.Sprintf("Not possible to have a dedicated route for account %q between those servers", accName)
- 			// In this case, make sure this route does not attempt to reconnect
- 			c.setNoReconnect()
-+		} else if info.RoutePoolIdx != 0 {
-+			// Without pooling, the incoming's RoutePoolIdx should not be set.
-+			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
- 		} else {
- 			// We will accept, but treat this remote has "no pool"
- 			pool, noReconnectForOldServer = false, true
+@@ -79,8 +79,8 @@ type Account struct {
+ 	nleafs       int32
+ 	nrleafs      int32
+ 	clients      map[*client]struct{}
+-	rm           map[string]int32
+-	lws          map[string]int32 // per key, last rm[key] sent to routes; used to dedup sends
++	rm           map[string]int64
++	lws          map[string]int32 // per key, last queueWeight(rm[key]) sent to routes; used to dedup sends
+ 	usersRevoked map[string]int64
+ 	mappings     []*mapping
+ 	hasMapped    atomic.Bool
 ```
 
-**File**: `server/routes_test.go` (modified, +46/-0)
+**File**: `server/gateway.go` (modified, +3/-3)
 ```diff
-@@ -1372,6 +1372,52 @@ func TestRouteCloseTLSConnection(t *testing.T) {
- 	ch <- true
+@@ -185,7 +185,7 @@ type srvGateway struct {
+ // Subject interest tally. Also indicates if the key in the map is a
+ // queue or not.
+ type sitally struct {
+-	n int32 // number of subscriptions directly matching
++	n int64 // number of subscriptions directly matching
+ 	q bool  // indicate that this is a queue
  }
  
-+func TestRouteNoPoolRejectsRoutePoolIdx(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		poolSize int
-+		info     string
-+	}{
-+		{"remote out of range", 0, `"route_pool_size":0,"route_pool_idx":3`},
-+		{"remote in range", 0, `"route_pool_size":0,"route_pool_idx":2`},
-+		{"remote negative", 0, `"route_pool_size":0,"route_pool_idx":-1`},
-+		{"local out of range", -1, `"route_pool_size":3,"route_pool_idx":3`},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			o := DefaultOptions()
-+			o.Cluster.Name = "A"
-+			o.Cluster.Host = "127.0.0.1"
-+			o.Cluster.Port = -1
-+			o.Cluster.PoolSize = test.poolSize
-+			s := RunServer(o)
-+			defer s.Shutdown()
+@@ -2431,11 +2431,11 @@ func (s *Server) gatewayUpdateSubInterest(accName string, sub *subscription, cha
+ 		if change < 0 {
+ 			return
+ 		}
+-		entry = &sitally{n: change, q: sub.queue != nil}
++		entry = &sitally{n: int64(change), q: sub.queue != nil}
+ 		st[string(key)] = entry
+ 		first = true
+ 	} else {
+-		entry.n += change
++		entry.n += int64(change)
+ 		if entry.n <= 0 {
+ 			delete(st, bytesToString(key))
+ 			last = true
+```
+
+**File**: `server/leafnode.go` (modified, +17/-17)
+```diff
+@@ -86,7 +86,7 @@ type leaf struct {
+ 	// Used to suppress sub and unsub interest. Same as routes but our audience
+ 	// here is tied to this leaf node. This will hold all subscriptions except this
+ 	// leaf nodes. This represents all the interest we want to send to the other side.
+-	smap map[string]int32
++	smap map[string]int64
+ 	// This map will contain all the subscriptions that have been added to the smap
+ 	// during initLeafNodeSmapAndSendSubs. It is short lived and is there to avoid
+ 	// race between processing of a sub where sub is added to account sublist but
+@@ -2640,7 +2640,7 @@ func (s *Server) initLeafNodeSmapAndSendSubs(c *client) {
+ 
+ 	// Now walk the results and add them to our smap
+ 	rc := c.leaf.remoteCluster
+-	c.leaf.smap = make(map[string]int32)
++	c.leaf.smap = make(map[string]int64)
+ 	for _, sub := range subs {
+ 		// Don't advertise interest from leafnodes to this isolated leafnode connection.
+ 		if isIsolated && (sub.client.kind == LEAF || sub.leaf) {
+@@ -2655,9 +2655,9 @@ func (s *Server) initLeafNodeSmapAndSendSubs(c *client) {
+ 		// Also don't add the subscription if it has a origin cluster and the
+ 		// cluster name matches the one of the client we are sending to.
+ 		if c != sub.client && (sub.origin == nil || (bytesToString(sub.origin) != rc)) {
+-			count := int32(1)
++			count := int64(1)
+ 			if len(sub.queue) > 0 && sub.qw > 0 {
+-				count = sub.qw
++				count = int64(sub.qw)
+ 			}
+ 			c.leaf.smap[keyFromSub(sub)] += count
+ 			if c.leaf.tsub == nil {
+@@ -2852,8 +2852,9 @@ func (c *client) updateSmap(sub *subscription, delta int32, isLDS bool) {
+ 	}
+ 
+ 	// We will update if its a queue, if count is zero (or negative), or we were 0 and are N > 0.
+-	update := sub.queue != nil || (n <= 0 && n+delta > 0) || (n > 0 && n+delta <= 0)
+-	n += delta
++	d := int64(delta)
++	update := sub.queue != nil || (n <= 0 && n+d > 0) || (n > 0 && n+d <= 0)
++	n += d
+ 	if n > 0 {
+ 		c.leaf.smap[key] = n
+ 	} else {
+@@ -2905,7 +2906,7 @@ func (c *client) forceRemoveFromSmap(subj string) {
+ 
+ // Send the subscription interest change to the other side.
+ // Lock should be held.
+-func (c *client) sendLeafNodeSubUpdate(key string, n int32) {
++func (c *client) sendLeafNodeSubUpdate(key string, n int64) {
+ 	// If we are a spoke, we need to check if we are allowed to send this subscription over to the hub.
+ 	if c.isSpokeLeafNode() {
+ 		checkPerms := true
+@@ -2991,7 +2992,7 @@ func keyFromSubWithOrigin(sub *subscription) string {
+ }
+ 
+ // Lock should be held.
+-func (c *client) writeLeafSub(w *bytes.Buffer, key string, n int32) {
++func (c *client) writeLeafSub(w *bytes.Buffer, key string, n int64) {
+ 	if key == _EMPTY_ {
+ 		return
+ 	}
+@@ -3002,13 +3003,14 @@ func (c *client) writeLeafSub(w *bytes.Buffer, key string, n int32) {
+ 			w.WriteString(" ")
+ 			var b [12]byte
+ 			var i = len(b)
+-			for l := n; l > 0; l /= 10 {
++			qw := queueWeight(n)
++			for l := qw; l > 0; l /= 10 {
+ 				i--
+ 				b[i] = digits[l%10]
+ 			}
+ 			w.Write(b[i:])
+ 			if c.trace {
+-				arg := fmt.Sprintf("%s %d", key, n)
++				arg := fmt.Sprintf("%s %d", key, qw)
+ 				c.traceOutOp("LS+", []byte(arg))
+ 			}
+ 		} else if c.trace {
+@@ -3047,14 +3049,12 @@ func (c *client) processLeafSub(argo []byte) (err error) {
+ 	case 3:
+ 		sub.queue = args[1]
+ 		sub.qw = int32(parseSize(args[2]))
+-		// TODO: (ik) We should have a non empty queue name and a queue
+-		// weight >= 1. For 2.11, we may want to return an error if that
+-		// is not the case, but for now just overwrite `delta` if queue
+-		// weight is greater than 1 (it is possible after a reconnect/
+-		// server restart to receive a queue weight > 1 for a new sub).
+-		if sub.qw > 1 {
+-			delta = sub.qw
++		// A missing or malformed weight counts as a single member.
++		if sub.qw < 1 {
++			sub.qw = 1
+ 		}
++		// A new sub can have a weight > 1 after a reconnect or server restart.
++		delta = sub.qw
+ 	default:
+ 		return fmt.Errorf("processLeafSub Parse Error: '%s'", arg)
+ 	}
+```
+
+**File**: `server/leafnode_test.go` (modified, +97/-7)
+```diff
+@@ -5167,7 +5167,7 @@ func TestLeafNodeQueueGroupWeightCorrectOnConnectionCloseInSuperCluster(t *testi
+ 	checkLeafNodeConnectedCount(t, sb2, 2)
+ 
+ 	// Helper to check that the interest is propagated to all servers
+-	checkInterest := func(t *testing.T, expected []int, expectedGW int32) {
++	checkInterest := func(t *testing.T, expected []int, expectedGW int64) {
+ 		t.Helper()
+ 		subj := "foo"
+ 		for i, s := range []*Server{sa1, sa2, so1, so2, sb1, sb2, sc, sd} {
+@@ -5196,7 +5196,7 @@ func TestLeafNodeQueueGroupWeightCorrectOnConnectionCloseInSuperCluster(t *testi
+ 				s.gateway.pasi.Lock()
+ 				accMap := s.gateway.pasi.m
+ 				st := accMap["USER"]
+-				var n int32
++				var n int64
+ 				entry, ok := st["foo bar"]
+ 				if ok {
+ 					n = entry.n
+@@ -5973,8 +5973,8 @@ func createRawLeafConn(t *testing.T, port int, proto string) (net.Conn, *bufio.R
+ 	}
+ }
+ 
+-// Runs a two server hub cluster with leafnode listeners.
+-func createHubClusterWithLeafListeners(t *testing.T) (*Server, *Server, *Options) {
++// Runs a two server hub cluster with leafnode listeners and optionally a gateway.
++func createHubClusterWithLeafListeners(t *testing.T, gateway bool) (*Server, *Server, *Options) {
+ 	t.Helper()
+ 	conf := `
+ 		server_name: %s
+@@ -5987,13 +5987,20 @@ func createHubClusterWithLeafListeners(t *testing.T) (*Server, *Server, *Options
+ 		leafnodes {
+ 			listen: "127.0.0.1:-1"
+ 		}
++		%s
+ 	`
+-	s1Conf := createConfFile(t, []byte(fmt.Sprintf(conf, "S1", _EMPTY_)))
++	var gw string
++	if gateway {
++		gw = `gateway { name: HUB, listen: "127.0.0.1:-1" }
++		accounts { SYS {} }
++		system_account: SYS`
++	}
++	s1Conf := createConfFile(t, []byte(fmt.Sprintf(conf, "S1", _EMPTY_, gw)))
+ 	s1, s1Opts := RunServerWithConfig(s1Conf)
+ 	t.Cleanup(s1.Shutdown)
+ 
+ 	s2Conf := createConfFile(t, []byte(fmt.Sprintf(conf, "S2",
+-		fmt.Sprintf("routes: [\"nats://127.0.0.1:%d\"]", s1Opts.Cluster.Port))))
++		fmt.Sprintf("routes: [\"nats://127.0.0.1:%d\"]", s1Opts.Cluster.Port), gw)))
+ 	s2, _ := RunServerWithConfig(s2Conf)
+ 	t.Cleanup(s2.Shutdown)
+ 
+@@ -6002,7 +6009,7 @@ func createHubClusterWithLeafListeners(t *testing.T) (*Server, *Server, *Options
+ }
+ 
+ func TestLeafNodeQueueWeightRoutedMsgPicksLeafByWeight(t *testing.T) {
+-	s1, s2, _ := createHubClusterWithLeafListeners(t)
++	s1, s2, _ := createHubClusterWithLeafListeners(t, false)
+ 
+ 	// Two leafs on s2 with queue weights 9 and 1, and no local queue members.
+ 	port := s2.getOpts().LeafNode.Port
+@@ -6045,6 +6052,89 @@ func TestLeafNodeQueueWeightRoutedMsgPicksLeafByWeight(t *testing.T) {
+ 	}
+ }
+ 
++func TestLeafNodeQueueWeightOverflowKeepsRouteInterest(t *testing.T) {
++	s1, s2, s1Opts := createHubClusterWithLeafListeners(t, true)
 +
-+			conn, err := net.DialTimeout("tcp", net.JoinHostPort(o.Cluster.Host, fmt.Sprintf("%d", o.Cluster.Port)), 2*time.Second)
-+			require_NoError(t, err)
-+			defer conn.Close()
++	leafConn := func(proto string) net.Conn {
++		t.Helper()
++		nc, _ := createRawLeafConn(t, s1Opts.LeafNode.Port, proto)
++		return nc
++	}
 +
-+			_, err = conn.Write([]byte("CONNECT {\"name\":\"route\",\"verbose\":false,\"pedantic\":false,\"cluster\":\"A\"}\r\n"))
-+			require_NoError(t, err)
-+			_, err = conn.Write(fmt.Appendf(nil, "INFO {\"server_id\":\"route\",\"name\":\"route\",\"cluster\":\"A\",%s}\r\n", test.info))
-+			require_NoError(t, err)
++	// Returns the weight total s1 tracks for the gateway queue interest.
++	gatewayWeight := func(subj string) int64 {
++		s1.gateway.pasi.Lock()
++		defer s1.gateway.pasi.Unlock()
++		if entry, ok := s1.gateway.pasi.m[globalAccountName][subj+" Q1"]; ok {
++			return entry.n
++		}
++		return 0
++	}
 +
-+			// The route must be rejected as a protocol violation.
-+			require_NoError(t, conn.SetReadDeadline(time.Now().Add(2*time.Second)))
-+			br := bufio.NewReader(conn)
-+			for {
-+				line, err := br.ReadString('\n')
-+				require_NoError(t, err)
-+				if strings.HasPrefix(line, "-ERR") {
-+					require_Contains(t, line, "Route pool index should not be set")
-+					break
++	// Returns the weight total s1 tracks for the leaf queue interest.
++	totalWeight := func(subj string) int64 {
++		key := keyFromSubWithOrigin(&subscription{leaf: true, subject: []byte(subj), queue: []byte("Q1")})
++		acc := s1.GlobalAccount()
++		acc.mu.RLock()
++		defer acc.mu.RUnlock()
++		return acc.rm[key]
++	}
++
++	// Returns the weight s2 received from s1 for the leaf queue interest.
++	routeWeight := func(subj string) (qw int32, found bool) {
++		s2.forEachRoute(func(r *client) {
++			r.mu.Lock()
++			defer r.mu.Unlock()
++			for _, sub := range r.subs {
++				if sub.leaf && string(sub.subject) == subj && string(sub.queue) == "Q1" {
++					qw, found = atomic.LoadInt32(&sub.qw), true
 +				}
 +			}
-+			require_True(t, s.Running())
-+			require_Equal(t, s.NumRoutes(), 0)
++		})
++		return qw, found
++	}
++
++	checkWeights := func(subj string, total int64, expected int32) {
++		t.Helper()
++		checkFor(t, 2*time.Second, 20*time.Millisecond, func() error {
++			if n := totalWeight(subj); n != total {
++				return fmt.Errorf("expected total weight %d, got %d", total, n)
++			}
++			if n := gatewayWeight(subj); n != total {
++				return fmt.Errorf("expected gateway weight %d, got %d", total, n)
++			}
++			qw, found := routeWeight(subj)
++			if expected == 0 && found {
++				return fmt.Errorf("expected no route interest, got weight %d", qw)
++			} else if expected > 0 && qw != expected {
++				return fmt.Errorf("expected route weight %d, got %d (found=%v)", expected, qw, found)
++			}
++			return nil
 +		})
 +	}
++
++	// The total stays exact past int32 and the parseable weight limit, peers get the max weight.
++	var conns []net.Conn
++	for i := int64(1); i <= 3; i++ {
++		conns = append(conns, leafConn("LS+ foo Q1 999999999\r\n"))
++		checkWeights("foo", i*maxQueueWeight, maxQueueWeight)
++	}
++
++	// Interest is kept until the last leaf is gone.
++	for i := int64(2); i >= 0; i-- {
++		conns[i].Close()
++		expected := int32(maxQueueWeight)
++		if i == 0 {
++			expected = 0
++	
+```
+
+**File**: `server/route.go` (modified, +15/-16)
+```diff
+@@ -1592,14 +1592,12 @@ func (c *client) processRemoteSub(argo []byte, leafSub, hasOrigin bool) (err err
+ 	case subjIdx + 3:
+ 		sub.queue = args[subjIdx+1]
+ 		sub.qw = int32(parseSize(args[subjIdx+2]))
+-		// TODO: (ik) We should have a non empty queue name and a queue
+-		// weight >= 1. For 2.11, we may want to return an error if that
+-		// is not the case, but for now just overwrite `delta` if queue
+-		// weight is greater than 1 (it is possible after a reconnect/
+-		// server restart to receive a queue weight > 1 for a new sub).
+-		if sub.qw > 1 {
+-			delta = sub.qw
++		// A missing or malformed weight counts as a single member.
++		if sub.qw < 1 {
++			sub.qw = 1
+ 		}
++		// A new sub can have a weight > 1 after a reconnect or server restart.
++		delta = sub.qw
+ 	default:
+ 		return fmt.Errorf("processRemoteSub Parse Error: '%s'", arg)
+ 	}
+@@ -1891,7 +1889,7 @@ func (s *Server) sendSubsToRoute(route *client, idx int, account string) {
+ 			if !route.canImport(s[1]) {
+ 				continue
+ 			}
+-			sub := subscription{leaf: forLeaf, origin: origin, subject: subj, queue: qn, qw: n}
++			sub := subscription{leaf: forLeaf, origin: origin, subject: subj, queue: qn, qw: queueWeight(n)}
+ 			buf = route.addRouteSubOrUnsubProtoToBuf(buf, a.Name, &sub, true)
+ 		}
+ 		a.mu.RUnlock()
+@@ -2576,7 +2574,7 @@ func (s *Server) updateRouteSubscriptionMap(acc *Account, sub *subscription, del
+ 	}
+ 
+ 	// Copy to hold outside acc lock.
+-	var n int32
++	var n int64
+ 	var ok bool
+ 
+ 	isq := len(sub.queue) > 0
+@@ -2618,7 +2616,7 @@ func (s *Server) updateRouteSubscriptionMap(acc *Account, sub *subscription, del
+ 	// special care that this order of updates is same as what is sent out
+ 	// over routes.
+ 	if n, ok = rm[key]; ok {
+-		n += delta
++		n += int64(delta)
+ 		if n <= 0 {
+ 			delete(rm, key)
+ 			delete(lws, key)
+@@ -2627,8 +2625,8 @@ func (s *Server) updateRouteSubscriptionMap(acc *Account, sub *subscription, del
+ 			rm[key] = n
+ 		}
+ 	} else if delta > 0 {
+-		n = delta
+-		rm[key] = delta
++		n = int64(delta)
++		rm[key] = n
+ 		update = true // Adding a new entry for normal sub means update (0->1)
+ 	}
+ 
+@@ -2644,7 +2642,7 @@ func (s *Server) updateRouteSubscriptionMap(acc *Account, sub *subscription, del
+ 		sub.client.mu.Lock()
+ 		nsub := *sub
+ 		sub.client.mu.Unlock()
+-		nsub.qw = n
++		nsub.qw = queueWeight(n)
+ 		sub = &nsub
+ 	}
+ 
+@@ -2707,16 +2705,17 @@ func (s *Server) updateRouteSubscriptionMap(acc *Account, sub *subscription, del
+ 
+ 	acc.mu.Lock()
+ 	n = rm[key]
++	qw := queueWeight(n)
+ 	if isq {
+-		sub.qw = n
++		sub.qw = qw
+ 	}
+ 	// Check the last sent value here. If same, then someone beat us to it and
+ 	// we can just return here. Otherwise update.
+-	if ls, ok := lws[key]; ok && ls == n {
++	if ls, ok := lws[key]; ok && ls == qw {
+ 		acc.mu.Unlock()
+ 		return
+ 	} else if n > 0 {
+-		lws[key] = n
++		lws[key] = qw
+ 	}
+ 	acc.mu.Unlock()
+ 
+```
+
+**File**: `server/server.go` (modified, +1/-1)
+```diff
+@@ -2024,7 +2024,7 @@ func (s *Server) registerAccountNoLock(acc *Account) *Account {
+ 	// make sure we create only if needed.
+ 	// TODO(dlc)- Double check that we need this for GWs.
+ 	if acc.rm == nil && s.opts != nil && s.shouldTrackSubscriptions() {
+-		acc.rm = make(map[string]int32)
++		acc.rm = make(map[string]int64)
+ 		acc.lws = make(map[string]int32)
+ 	}
+ 	acc.srv = s
+```
+
+**File**: `server/util.go` (modified, +8/-0)
+```diff
+@@ -109,6 +109,14 @@ loop:
+ 	return n
+ }
+ 
++// Largest queue weight parseSize accepts on the wire.
++const maxQueueWeight = 999_999_999
++
++// Converts a queue weight total to the weight sent to a route or leaf.
++func queueWeight(n int64) int32 {
++	return int32(min(n, maxQueueWeight))
 +}
 +
- func TestRouteClusterNameConflictBetweenStaticAndDynamic(t *testing.T) {
- 	o1 := DefaultOptions()
- 	o1.Cluster.Name = "AAAAAAAAAAAAAAAAAAAA" // make it alphabetically the "smallest"
+ // parseInt64 expects decimal positive numbers. We
+ // return -1 to signal error
+ func parseInt64(d []byte) (n int64) {
+```
+
+---
+
+### Incident Patch 3: `1b68d941` (2026-10-26)
+**Commit Message**: [FIXED] JetStream: Avoid directory cleanup race after deleting stream (#8725) (#8774)
+
+Resolves #8725
+
+### Description
+When deleting a stream (`mset.stop(deleteFlag=true)`), an uncoordinated
+background goroutine previously attempted to remove
+`filepath.Join(accDir, streamsDir)` and `accDir`. When the deleted
+stream was the account's last stream, these directories became empty and
+were removed from disk.
+
+This raced with immediate subsequent stream creation in the same account
+(or concurrent creation), causing stream initialization to fail with
+`10049: error creating store for stream`.
+
+Because the account's storage directories belong to the account
+lifecycle (managed via `EnableJetStream`/`DisableJetStream`), individual
+stream deletion should only purge the stream's own directory. This PR
+removes the background directory removal goroutine.
+
+### Testing
+- Added `TestJetStreamDeleteStreamPreservesAccountDirectories` to ensure
+account storage directories persist across stream deletion.
+- Added `TestJetStreamConcurrentDeleteAndCreateStream` using a start
+barrier to test concurrent stream deletion and creation in the same
+account.
+
+**File**: `server/jetstream_test.go` (modified, +90/-0)
+```diff
+@@ -27555,3 +27555,93 @@ func TestJetStreamEnableAccountStorageDirFailure(t *testing.T) {
+ 	require_NoError(t, acc.EnableJetStream(nil, nil))
+ 	require_True(t, acc.JetStreamEnabled())
+ }
++
++// https://github.com/nats-io/nats-server/issues/8725
++
++func TestJetStreamDeleteStreamPreservesAccountDirectories(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	nc, js := jsClientConnect(t, s)
++	defer nc.Close()
++
++	cfg := &nats.StreamConfig{
++		Name:     "TEST",
++		Subjects: []string{"test"},
++		Storage:  nats.FileStorage,
++	}
++	_, err := js.AddStream(cfg)
++	require_NoError(t, err)
++
++	accDir := filepath.Join(s.JetStreamConfig().StoreDir, globalAccountName)
++	sdir := filepath.Join(accDir, streamsDir)
++
++	_, err = os.Stat(sdir)
++	require_NoError(t, err)
++
++	require_NoError(t, js.DeleteStream("TEST"))
++
++	// Allow any asynchronous cleanup goroutines time to run.
++	time.Sleep(50 * time.Millisecond)
++
++	// Streams and account directories must not be removed when deleting
++	// the last stream; they belong to the account lifecycle.
++	_, err = os.Stat(sdir)
++	require_NoError(t, err)
++	_, err = os.Stat(accDir)
++	require_NoError(t, err)
++
++	// Recreating the stream in the account must succeed immediately.
++	_, err = js.AddStream(cfg)
++	require_NoError(t, err)
++}
++
++func TestJetStreamConcurrentDeleteAndCreateStream(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	nc, js := jsClientConnect(t, s)
++	defer nc.Close()
++
++	const (
++		name1 = "S1"
++		name2 = "S2"
++	)
++
++	_, err := js.AddStream(&nats.StreamConfig{
++		Name:     name1,
++		Subjects: []string{"s1"},
++		Storage:  nats.FileStorage,
++	})
++	require_NoError(t, err)
++
++	var wg sync.WaitGroup
++	wg.Add(2)
++
++	var delErr, createErr error
++	start := make(chan struct{})
++
++	go func() {
++		defer wg.Done()
++		<-start
++		delErr = js.DeleteStream(name1)
++	}()
++
++	go func() {
++		defer wg.Done()
++		<-start
++		_, createErr = js.AddStream(&nats.StreamConfig{
++			Name:     name2,
++			Subjects: []string{"s2"},
++			Storage:  nats.FileStorage,
++		})
++	}()
++
++	close(start)
++	wg.Wait()
++
++	require_NoError(t, delErr)
++	require_NoError(t, createErr)
++
++	require_NoError(t, js.DeleteStream(name2))
++}
+```
+
+**File**: `server/stream.go` (modified, +1/-7)
+```diff
+@@ -8898,22 +8898,16 @@ func (mset *stream) stop(deleteFlag, advisory bool) error {
+ 
+ 	if deleteFlag {
+ 		// cleanup directories after the stream
+-		accDir := filepath.Join(js.config.StoreDir, accName)
+ 		if store != nil {
+ 			// Ignore errors.
+ 			store.Delete(false)
+ 		} else {
++			accDir := filepath.Join(js.config.StoreDir, accName)
+ 			streamDir := filepath.Join(accDir, streamsDir)
+ 			os.RemoveAll(filepath.Join(streamDir, name))
+ 		}
+ 		// Release any resources.
+ 		js.releaseStreamResources(&mset.cfg)
+-		// Do cleanup in separate go routine similar to how fs will use purge here..
+-		go func() {
+-			// no op if not empty
+-			os.Remove(filepath.Join(accDir, streamsDir))
+-			os.Remove(accDir)
+-		}()
+ 	} else if store != nil {
+ 		// Ignore errors.
+ 		store.Stop()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8798** (2026-10-26): Update dependencies, Go version to 1.27.3/1.26.10 (@neilalexander)
+- **PR #8792** (2026-10-26): Deflake TestJetStreamClusterConsumerHealthCheckMustNotRecreate (@sciascid)
+- **PR #8784** (2026-10-26): [IMPROVED] Optimize `mb.firstMatchingMulti` (@sciascid)
+- **PR #8783** (closed): [FIXED] Consumer info omits deliveries awaiting quorum (@bruth)
 - **PR #8782** (2026-10-20): [FIXED] Missing route pool index check for routes without pooling (@MauriceVanVeen)
-- **PR #8768** (closed): [FIXED] Connz total not reflecting the applied filters (@AmariahAK)
-- **PR #8762** (2026-10-15): (2.15) [FIXED] Scale up from R1 and scale down stalling on learners (@MauriceVanVeen)
-- **PR #8761** (closed): Fix num pending for partial wildcard consumer filters (@aivarsk)
-- **PR #8760** (2026-10-15): Deflake TestJetStreamMsgHeaders (@sciascid)
-- **PR #8759** (2026-10-15): [FIXED] Config reload disconnects clients authorized by auth callout (@sciascid)
+- **PR #8780** (2026-10-26): [IMPROVED] Consistent protocol validation on gateway connections (@wallyqs)
 
 ---
 
@@ -2906,13 +3367,13 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Missing route pool index check for routes without pooling (#8782)
+## X. [FIXED] server: lock when reading lnocu state (#8779)
 
 **RULE**:
 When implementing operations in `server/route.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8f6db89`: [FIXED] Missing route pool index check for routes without pooling (#8782). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8d4a550`: [FIXED] server: lock when reading lnocu state (#8779). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/route.go`.
@@ -2920,16 +3381,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		} else if info.RoutePoolIdx != 0 {
-			// Without pooling, the incoming's RoutePoolIdx should not be set.
-			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
+	c.mu.Unlock()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	c.mu.Unlock()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8f6db89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8d4a550` are properly handled with clean fallback behavior.

@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "4236a423",
+    "sourceVersion": "ba932f9a",
     "license": "Apache-2.0",
-    "contentHash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
-    "lastHarvestedAt": "2026-10-25T02:58:25.782Z",
+    "contentHash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
+    "lastHarvestedAt": "2026-10-27T11:03:02.372Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "f8f6db89",
+    "sourceVersion": "ac848fa8",
     "license": "Apache-2.0",
-    "contentHash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
-    "lastHarvestedAt": "2026-10-20T11:39:14.976Z",
+    "contentHash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
+    "lastHarvestedAt": "2026-10-27T11:02:57.055Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

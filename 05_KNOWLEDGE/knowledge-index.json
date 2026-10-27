@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:58:02.573Z",
+  "last_updated": "2026-10-27T11:03:02.281Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2173,8 +2173,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "4236a423",
-      "content_hash": "ac6ffa47ff575b369353284d6b936c0428e8caaabaabdfaf7493bb91da32ac86",
+      "source_version": "ba932f9a",
+      "content_hash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2212,6 +2212,11 @@
           "number": 4000,
           "title": "Non-Destructive In-Place Lexical Non-Code Masking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4699,
+          "title": "Strengthen PR direction checks and simplify review summaries (#40376)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2219,7 +2224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:58:25.725Z",
+      "verified_at": "2026-10-27T11:03:02.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37584,8 +37589,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "f8f6db89",
-      "content_hash": "2e49b6804779bd0a976bdfa15087851e03e9eefbce420277232d7823808641c9",
+      "source_version": "ac848fa8",
+      "content_hash": "6ba4eebf0c92d13f12da7605264563e58fe309380661be1d3a51716667c62a47",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -37608,6 +37613,11 @@
           "number": 3148,
           "title": "[FIXED] Missing route pool index check for routes without pooling (#8782)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4698,
+          "title": "[FIXED] server: lock when reading lnocu state (#8779)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37615,7 +37625,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T11:39:14.934Z",
+      "verified_at": "2026-10-27T11:02:56.964Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131177,6 +131187,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:58:02.560Z"
+    },
+    "rule-4698": {
+      "learning_id": "rule-4698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4698,
+      "title": "[FIXED] server: lock when reading lnocu state (#8779)",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "ac848fa8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:02:56.964Z"
+    },
+    "rule-4699": {
+      "learning_id": "rule-4699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4699,
+      "title": "Strengthen PR direction checks and simplify review summaries (#40376)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "ba932f9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:03:02.262Z"
     }
   },
   "aliases": {
