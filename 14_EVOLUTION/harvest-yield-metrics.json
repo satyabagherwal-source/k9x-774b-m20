@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T17:49:42.169Z",
-  "total_cycles_completed": 5440,
-  "total_learnings_persisted": 5440,
-  "total_rules_promoted": 4841,
+  "last_updated": "2026-10-27T17:56:55.320Z",
+  "total_cycles_completed": 5442,
+  "total_learnings_persisted": 5442,
+  "total_rules_promoted": 4842,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:18:37.736Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:21:46.981Z",
-      "repository": "inikulin/parse5",
-      "learningId": "learn-github-inikulin-parse5",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:21:48.326Z",
       "repository": "storybookjs/storybook",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T17:49:42.169Z",
       "repository": "agent-of-empires/agent-of-empires",
       "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:56:51.332Z",
+      "repository": "avajs/ava",
+      "learningId": "learn-github-avajs-ava",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:56:55.320Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

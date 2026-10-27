@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `4728f94f`  
+> **Source Version**: `1eeb8527`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:40:34.410Z  
+> **Timestamp**: 2026-10-27T17:56:54.774Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:35:32.258Z  
+> **Harvest Timestamp**: 2026-10-27T17:56:54.347Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1204,176 +1204,293 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4728f94f` (2026-10-26)
-**Commit Message**: fix(runtime): use character indices in str find, index, count, startswith and endswith (#2231)
+### Incident Patch 1: `1eeb8527` (2026-10-27)
+**Commit Message**: fix(runtime): count characters, not bytes, for str len, subscript and iteration (#2232)
 
-fix(runtime): count characters, not bytes, in str find/index/count/startswith/endswith
+Indexing and slicing a str already work on character positions, but
+len(), the subscript bound check and the str iterator still used the
+UTF-8 byte length. With non-ASCII text this made the pieces disagree:
 
-Signed-off-by: Steve <[REDACTED_EMAIL]>
+- len("héllo") returned 6 instead of 5, so s[len(s) - 1] failed.
+- "héllo"[5] passed the byte-length bound check and then panicked with
+  "called `Option::unwrap()` on a `None` value" instead of reporting
+  "string index out of range: 5".
+- list("hé") panicked with the same unwrap error, because the iterator
+  reported it was not at the end after its last character.
 
-**File**: `crates/runtime/src/value/val_str.rs` (modified, +56/-47)
+len(), str_len(), the subscript bound check and the iterator length now
+all count characters, which matches Python and the existing slicing and
+find/index behavior. The ord() error message reports the length in
+characters for the same reason.
+
+Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
+
+**File**: `crates/runtime/src/stdlib/builtin.rs` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,33 @@ fn adjust_indices(
-     start as usize..end as usize
- }
+@@ -410,7 +410,7 @@ impl ValueRef {
+                 if string_len != 1 {
+                     panic!(
+                         " ord() expected string of length 1, but string of length {} found",
+-                        str.len()
++                        string_len
+                     )
+                 }
+                 let ch = str.chars().next().unwrap();
+```
+
+**File**: `crates/runtime/src/value/iter.rs` (modified, +13/-4)
+```diff
+@@ -22,7 +22,7 @@ impl ValueIterator {
+         }
+         match &*p.rc.borrow() {
+             Value::str_value(s) => ValueIterator {
+-                len: s.len(),
++                len: s.chars().count(),
+                 cur_key: Default::default(),
+                 cur_val: Default::default(),
+                 keys: Vec::new(),
+@@ -102,9 +102,6 @@ impl ValueIterator {
+         }
+         match &*host.rc.borrow() {
+             Value::str_value(s) => {
+-                if self.pos >= s.chars().count() as i32 {
+-                    return None;
+-                }
+                 let ch = s.chars().nth(self.pos as usize).unwrap();
+                 self.cur_key = ValueRef::int(self.pos as i64);
+                 self.cur_val = ValueRef::str(&ch.to_string());
+@@ -173,6 +170,18 @@ mod test_value_iter {
+         assert!(it.is_end());
+     }
  
-+/// Resolve the `start`/`end` arguments of the str search methods, which count
-+/// characters, into the selected substring and the character index it starts
-+/// at. Returns `None` when the resulting range is empty or inverted.
-+fn char_range<'a>(
-+    value: &'a str,
-+    start: Option<&ValueRef>,
-+    end: Option<&ValueRef>,
-+) -> Option<(&'a str, usize)> {
-+    let char_len = value.chars().count();
-+    let range = adjust_indices(start, end, char_len);
-+    if !range.is_normal() {
-+        return None;
++    #[test]
++    fn test_str_iter_non_ascii() {
++        let s = ValueRef::str("hé");
++
++        let mut it = s.iter();
++        assert_eq!(it.next(&s).unwrap().as_str(), "h");
++        assert!(!it.is_end());
++        assert_eq!(it.next(&s).unwrap().as_str(), "é");
++        assert!(it.is_end());
++        assert!(it.next(&s).is_none());
 +    }
-+    let mut offsets = value
-+        .char_indices()
-+        .map(|(offset, _)| offset)
-+        .chain(std::iter::once(value.len()));
-+    let byte_start = offsets.clone().nth(range.start)?;
-+    let byte_end = offsets.nth(range.end)?;
-+    Some((&value[byte_start..byte_end], range.start))
-+}
 +
-+/// Convert a byte offset within `value` into a character index.
-+fn char_index(value: &str, byte_offset: usize) -> usize {
-+    value[..byte_offset].chars().count()
-+}
-+
- fn is_case<F, G>(value: &str, is_case: F, is_opposite: G) -> bool
- where
-     F: Fn(char) -> bool,
-@@ -132,11 +159,9 @@ impl ValueRef {
- 
-         match (&*self.rc.borrow(), &*sub.rc.borrow()) {
-             (Value::str_value(v), Value::str_value(sub_str)) => {
--                let range = adjust_indices(start, end, v.len());
--                let count = if range.is_normal() {
--                    v.get(range).unwrap().matches(sub_str).count()
--                } else {
--                    0
-+                let count = match char_range(v, start, end) {
-+                    Some((slice, _)) => slice.matches(sub_str.as_str()).count(),
-+                    None => 0,
-                 };
-                 ValueRef::int(count as i64)
-             }
-@@ -155,11 +180,9 @@ impl ValueRef {
- 
-         match (&*self.rc.borrow(), &*prefix.rc.borrow()) {
-             (Value::str_value(v), Value::str_value(prefix)) => {
--                let range = adjust_indices(start, end, v.len());
--                let result = if range.is_normal() {
--                    v.get(range).unwrap().starts_with(prefix)
--                } else {
--                    false
-+                let result = match char_range(v, start, end) {
-+                    Some((slice, _)) => slice.starts_with(prefix.as_str()),
-+                    None => false,
-                 };
-                 ValueRef::bool(result)
-             }
-@@ -178,11 +201,9 @@ impl ValueRef {
- 
-         match (&*self.rc.borrow(), &*suffix.rc.borrow()) {
-             (Value::str_value(v), Value::str_value(suffix)) => {
--                let range = adjust_indices(start, end, v.len());
--                let result = if range.is_normal() {
--                    v.get(range).unwrap().ends_with(suffix)
--                } else {
--                    false
-+                let result = match char_range(v, start, end) {
-+                    Some((slice, _)) => slice.ends_with(suffix.as_str()),
-+                    None => false,
-                 };
-                 ValueRef::bool(result)
-             }
-@@ -216,15 +237,12 @@ impl ValueRef {
- 
-         match (&*self.rc.borrow(), &*sub.rc.borrow()) {
-             (Value::str_value(v), Value::str_value(sub)) => {
--                let range = adjust_indices(start, end, v.len());
--                let range_start = range.start;
--                let result: i64 = if range.is_normal() {
--                    match v.get(range).unwrap().find(sub) {
--                        Some(index) => (index + range_start) as i64,
-+                let result: i64 = match char_range(v, start, end) {
-+                    Some((slice, range_start)) => match slice.find(sub.as_str()) {
-+                        Some(index) => (char_index(slice, index) + range_start) as i64,
-                         None => -1,
--                    }
--                } else {
--                    -1
-+                    },
-+                    None => -1,
-                 };
-                 ValueRef::int(result)
-             }
-@@ -243,15 +261,12 @@ impl ValueRef {
- 
-         match (&*self.rc.borrow(), &*sub.rc.borrow()) {
-             (Value::str_value(v), Value::str_value(sub)) => {
--                let range = adjust_indices(start, end, v.len());
--                let range_start = range.start;
--                let result: i64 = if range.is_normal() {
--                    match v.get(range).unwrap().rfind(sub) {
--                        Some(index) => (index + range_start) as i64,
-+                let result: i64 = match char_range(v, start, end) {
-+                    Some((slice, range_start)) => match slice.rfind(sub.as_str()) {
-+                        Some(index) => (char_index(slice, index) + range_start) as i64,
-                         None => -1,
--                    }
--                } else {
--                    -1
-+                    },
-+                    None => -1,
-                 };
-                 ValueRef::int(result
+     #[test]
+     fn test_list_iter() {
+         let value = ValueRef::list_int(&[1, 2, 3]);
 ```
 
-**File**: `tests/grammar/builtins/str/search_non_ascii/main.k` (added, +11/-0)
+**File**: `crates/runtime/src/value/val_bin.rs` (modified, +21/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+a = "héllo".find("l")
-+b = "héllo".rfind("l")
-+c = "héllo".index("l")
-+d = "héllo".rindex("l")
-+e = "héllo".find("l", 2)
-+f = "héllo".find("l", 0, 2)
-+g = "héllo".count("l", 2)
-+h = "héllo".startswith("é", 1)
-+i = "héllo".endswith("é", 0, 2)
-+j = "héllo".find("l", -2)
-+k = "héllo".find("", 5)
+@@ -299,7 +299,7 @@ impl ValueRef {
+                 let str_len = a.chars().count();
+                 let index = *b;
+                 let index = must_normalize_index(index as i32, str_len);
+-                if index < a.len() {
++                if index < str_len {
+                     let ch = a.chars().nth(index).unwrap();
+                     Self::str(ch.to_string().as_ref())
+                 } else {
+@@ -413,6 +413,26 @@ mod test_value_bin {
+         }
+     }
+ 
++    #[test]
++    fn test_str_subscr_non_ascii() {
++        let data = ValueRef::str("héllo");
++        let cases = [(0, "h"), (1, "é"), (4, "o"), (-1, "o"), (-4, "é")];
++        for (index, expected) in cases {
++            let index = ValueRef::int(index as i64);
++            let result = data.bin_subscr(&index).as_str();
++            assert_eq!(result, expected);
++        }
++        // The index is out of range in characters but not in bytes.
++        let err = std::panic::catch_unwind(|| {
++            ValueRef::str("héllo").bin_subscr(&ValueRef::int(5));
++        })
++        .unwrap_err();
++        assert_eq!(
++            err.downcast_ref::<String>().unwrap(),
++            "string index out of range: 5"
++        );
++    }
++
+     #[test]
+     fn test_list_subscr() {
+         let data = ValueRef::list_int(&[1, 2, 3, 4]);
 ```
 
-**File**: `tests/grammar/builtins/str/search_non_ascii/stdout.golden` (added, +11/-0)
+**File**: `crates/runtime/src/value/val_len.rs` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,11 @@
-+a: 2
-+b: 3
-+c: 2
-+d: 3
-+e: 2
-+f: -1
-+g: 2
-+h: true
-+i: true
-+j: 3
-+k: 5
+@@ -5,7 +5,7 @@ use crate::*;
+ impl ValueRef {
+     pub fn len(&self) -> usize {
+         match &*self.rc.borrow() {
+-            Value::str_value(s) => s.len(),
++            Value::str_value(s) => s.chars().count(),
+             Value::list_value(v) => v.values.len(),
+             Value::dict_value(v) => v.values.len(),
+             Value::schema_value(v) => v.config.values.len(),
+@@ -31,6 +31,8 @@ mod test_value_len {
+     fn test_len() {
+         let mut ctx = Context::new();
+         assert_eq!(ValueRef::str("abc").len(), 3);
++        assert_eq!(ValueRef::str("héllo").len(), 5);
++        assert_eq!(ValueRef::str("你好").len(), 2);
+         assert_eq!(
+             ValueRef::str("abc")
+                 .bin_aug_mul(&mut ctx, &ValueRef::int(10))
+```
+
+**File**: `crates/runtime/src/value/val_str.rs` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ impl RangeNormal for std::ops::Range<usize> {
+ impl ValueRef {
+     pub fn str_len(&self) -> usize {
+         match &*self.rc.borrow() {
+-            Value::str_value(v) => v.len(),
++            Value::str_value(v) => v.chars().count(),
+             _ => panic!("Invalid str object in str len"),
+         }
+     }
+```
+
+**File**: `tests/grammar/builtins/default/len_non_ascii/main.k` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++s = "héllo"
++a = len(s)
++b = len("你好")
++c = s[len(s) - 1]
++d = len(s[1:])
++e = list("hé")
+```
+
+**File**: `tests/grammar/builtins/default/len_non_ascii/stdout.golden` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++s: héllo
++a: 5
++b: 2
++c: o
++d: 4
++e:
++- h
++- é
+```
+
+**File**: `tests/grammar/expr/sub_expr/str_non_ascii/main.k` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++import runtime
++
++s = "héllo"
++a = s[1]
++b = s[-1]
++c = s[-4]
++msg = runtime.catch(lambda {
++    "héllo"[5] # out of range in characters, not in bytes
++})
+```
+
+---
+
+### Incident Patch 2: `5b734aa2` (2026-10-27)
+**Commit Message**: fix(runtime): return groups and handle unmatched groups in regex.findall (#2233)
+
+regex.findall follows Python's re.findall for patterns with no group
+(the whole match) and with two or more groups (a list of the groups),
+but it had two bugs:
+
+- With exactly one group it returned the whole match instead of the
+  group: regex.findall("a=1 b=2", r"(\w)=\d") gave ["a=1", "b=2"]
+  rather than ["a", "b"].
+- A group that did not take part in a match, as in r"(a)|(b)" or
+  r"(a)?b", made it panic with "called `Option::unwrap()` on a `None`
+  value". Such groups now yield an empty string, as in Python.
+
+Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
+
+**File**: `crates/runtime/src/regex/mod.rs` (modified, +14/-8)
+```diff
+@@ -108,15 +108,21 @@ pub unsafe extern "C-unwind" fn kcl_regex_findall(
+                 .captures_iter(string.as_ref())
+                 .flatten()
+             {
+-                let len = x.len();
+-                if len < 3 {
+-                    list.list_append(&ValueRef::str(x.get(0).unwrap().as_str()));
+-                } else {
+-                    let mut sub_list = ValueRef::list(None);
+-                    for i in 1..len {
+-                        sub_list.list_append(&ValueRef::str(x.get(i).unwrap().as_str()));
++                // Like Python's `re.findall`, return the whole match when the pattern
++                // has no group, the group when it has exactly one, and a list of the
++                // groups otherwise. A group that did not participate in the match
++                // yields an empty string.
++                let group = |i| ValueRef::str(x.get(i).map_or("", |m| m.as_str()));
++                match x.len() {
++                    1 => list.list_append(&group(0)),
++                    2 => list.list_append(&group(1)),
++                    len => {
++                        let mut sub_list = ValueRef::list(None);
++                        for i in 1..len {
++                            sub_list.list_append(&group(i));
++                        }
++                        list.list_append(&sub_list)
+                     }
+-                    list.list_append(&sub_list)
+                 }
+             }
+ 
+```
+
+**File**: `tests/grammar/builtins/regex/test_5/main.k` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++import regex
++
++keys = regex.findall("a=1 b=2", r"(\w)=\d")
++optional = regex.findall("b", r"(a)?b")
++either = regex.findall("ab", r"(a)|(b)")
+```
+
+**File**: `tests/grammar/builtins/regex/test_5/stdout.golden` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++keys:
++- a
++- b
++optional:
++- ''
++either:
++- - a
++  - ''
++- - ''
++  - b
+```
+
+**File**: `tests/runtime/regex/test_regex.py` (modified, +3/-0)
+```diff
+@@ -116,6 +116,9 @@ def test_re_findall(self):
+             re.findall(r"^(\d{0,63})(E|P|T|G|M|K|Ei|Pi|Ti|Gi|Mi|Ki)$", "4Gi"),
+             [["4", "Gi"]],
+         )
++        self.assertEqual(re.findall(r"(\w)=\d", "a=1 b=2"), ["a", "b"])
++        self.assertEqual(re.findall("(a)?b", "b"), [""])
++        self.assertEqual(re.findall("(a)|(b)", "ab"), [["a", ""], ["", "b"]])
+         for string in "a:b::c:::d", S("a:b::c:::d"):
+             self.assertEqual(re.findall(":+", string), [":", "::", ":::"])
+             self.assertEqual(re.findall("(:+)", string), [":", "::", ":::"])
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2233** (2026-10-27): fix(runtime): return groups and handle unmatched groups in regex.findall (@NopeCharon)
+- **PR #2232** (2026-10-27): fix(runtime): count characters, not bytes, for str len, subscript and iteration (@NopeCharon)
 - **PR #2231** (2026-10-26): fix(runtime): use character indices in str find, index, count, startswith and endswith (@56steve)
 - **PR #2229** (2026-10-23): fix(runtime): keep the remainder when regex.split reaches maxsplit (@56steve)
 - **PR #2228** (2026-10-23): feat: Export subcommand [--target=rust] (@mihaigalos)
 - **PR #2226** (2026-10-19): ci(release): use the org DEPLOY_TOKEN for tap updates (@Peefy)
-- **PR #2225** (2026-10-19): ci(release): update kcl-lsp Homebrew tap and Scoop manifest on release (@Peefy)
-- **PR #2224** (2026-10-19): fix(runner): install the panic hook once instead of swapping it per run (@tobias-karlsson)
 
 ---
 
@@ -1393,83 +1510,28 @@ Signed-off-by: Steve <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtime): use character indices in str find, index, count, startswith and endswi
+## X. runtime): count characters, not bytes, for str len, subscript and iteration (#22
 
 **RULE**:
-When implementing operations in `crates/runtime/src/value/val_str.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/runtime/src/stdlib/builtin.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4728f94f`: runtime): use character indices in str find, index, count, startswith and endswith (#2231). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1eeb8527`: runtime): count characters, not bytes, for str len, subscript and iteration (#2232). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/value/val_str.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/runtime/src/stdlib/builtin.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Resolve the `start`/`end` arguments of the str search methods, which count
-/// characters, into the selected substring and the character index it starts
-/// at. Returns `None` when the resulting range is empty or inverted.
-fn char_range<'a>(
-    value: &'a str,
-    start: Option<&ValueRef>,
-    end: Option<&ValueRef>,
-) -> Option<(&'a str, usize)> {
-    let char_len = value.chars().count();
-    let range = adjust_indices(start, end, char_len);
-    if !range.is_normal() {
-        return None;
-    }
-    let mut offsets = value
-        .char_indices()
-        .map(|(offset, _)| offset)
-        .chain(std::iter::once(value.len()));
-    let byte_start = offsets.clone().nth(range.start)?;
-    let byte_end = offsets.nth(range.end)?;
-    Some((&value[byte_start..byte_end], range.start))
-}
-
-/// Convert a byte offset within `value` into a character index.
-fn char_index(value: &str, byte_offset: usize) -> usize {
-    value[..byte_offset].chars().count()
-}
-
-                let count = match char_range(v, start, end) {
-                    Some((slice, _)) => slice.matches(sub_str.as_str()).count(),
-                    None => 0,
-                let result = match char_range(v, start, end) {
+                        string_len
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let range = adjust_indices(start, end, v.len());
-                let count = if range.is_normal() {
-                    v.get(range).unwrap().matches(sub_str).count()
-                } else {
-                    0
-                let range = adjust_indices(start, end, v.len());
-                let result = if range.is_normal() {
-                    v.get(range).unwrap().starts_with(prefix)
-                } else {
-                    false
-                let range = adjust_indices(start, end, v.len());
-                let result = if range.is_normal() {
-                    v.get(range).unwrap().ends_with(suffix)
-                } else {
-                    false
-                let range = adjust_indices(start, end, v.len());
-                let range_start = range.start;
-                let result: i64 = if range.is_normal() {
-                    match v.get(range).unwrap().find(sub) {
-                        Some(index) => (index + range_start) as i64,
-                    }
-                } else {
-                    -1
-                let range = adjust_indices(start, end, v.len());
-                let range_start = range.start;
-                let result: i64 
+                        str.len()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4728f94f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1eeb8527` are properly handled with clean fallback behavior.

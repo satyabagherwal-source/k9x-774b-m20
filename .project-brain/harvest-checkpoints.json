@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:49:42.173Z",
+  "last_updated": "2026-10-27T17:56:55.325Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
-      "verified_at": "2026-10-26T12:40:34.677Z",
+      "content_hash": "a1754bc97ab1b06be250b44ab731d8f7aecf82d43cec2f2afe31a8c10b589003",
+      "verified_at": "2026-10-27T17:56:55.324Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T12:40:34.677Z"
+      "last_updated": "2026-10-27T17:56:55.325Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "a7b20b8146326f1b14c91680cae31e5f38917ac1dcf6d24a8a0aa7faf1048a40",
-      "verified_at": "2026-10-23T09:35:42.642Z",
+      "content_hash": "5c8a012a644372fa5e4e3a4566d77b9a4160eef2d9b93ed17ff1fdb72136d52e",
+      "verified_at": "2026-10-27T17:56:51.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:35:42.642Z"
+      "last_updated": "2026-10-27T17:56:51.335Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",

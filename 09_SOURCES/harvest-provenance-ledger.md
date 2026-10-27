@@ -5472,3 +5472,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a22e2df0` | Multi-dimensional audit evidence | 2026-10-27T17:38:04.018Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a078a8b7` | Multi-dimensional audit evidence | 2026-10-27T17:44:56.496Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `691b8d2c` | Multi-dimensional audit evidence | 2026-10-27T17:49:42.164Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `95297b66` | Multi-dimensional audit evidence | 2026-10-27T17:56:51.320Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `1eeb8527` | Multi-dimensional audit evidence | 2026-10-27T17:56:55.315Z |

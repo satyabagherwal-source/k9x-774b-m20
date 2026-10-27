@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "4728f94f",
+    "sourceVersion": "1eeb8527",
     "license": "Apache-2.0",
-    "contentHash": "0258b7e2d737a3bdbd63bf6fe40784be50c452143ed7ff03132ba5ade039fc4e",
-    "lastHarvestedAt": "2026-10-26T12:40:34.672Z",
+    "contentHash": "a1754bc97ab1b06be250b44ab731d8f7aecf82d43cec2f2afe31a8c10b589003",
+    "lastHarvestedAt": "2026-10-27T17:56:55.315Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "054054b0",
+    "sourceVersion": "95297b66",
     "license": "MIT",
-    "contentHash": "a7b20b8146326f1b14c91680cae31e5f38917ac1dcf6d24a8a0aa7faf1048a40",
-    "lastHarvestedAt": "2026-10-23T09:35:42.635Z",
+    "contentHash": "5c8a012a644372fa5e4e3a4566d77b9a4160eef2d9b93ed17ff1fdb72136d52e",
+    "lastHarvestedAt": "2026-10-27T17:56:51.320Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {

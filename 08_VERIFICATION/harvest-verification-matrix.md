@@ -5463,3 +5463,5 @@
 | `CYCLE-20261027-Y5WV` | `2026-10-27T17:38:04.015Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4929` | Yes (`2103e326...`) |
 | `CYCLE-20261027-706L` | `2026-10-27T17:44:56.493Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4930` | Yes (`d696a44e...`) |
 | `CYCLE-20261027-D4LT` | `2026-10-27T17:49:42.161Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4931` | Yes (`a3518add...`) |
+| `CYCLE-20261027-MBQT` | `2026-10-27T17:56:51.317Z` | `avajs/ava` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/avajs-ava-learnings.md` | Yes (`5c8a012a...`) |
+| `CYCLE-20261027-METR` | `2026-10-27T17:56:55.311Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4932` | Yes (`a1754bc9...`) |
