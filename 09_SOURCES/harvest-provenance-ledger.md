@@ -5574,3 +5574,5 @@ Every entry in this ledger must capture:
 | `learn-github-lokoe-mehdi-scouter` | `https://github.com/lokoe-mehdi/scouter` | `e8edc3c5` | Multi-dimensional audit evidence | 2026-10-27T21:51:49.333Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fce458c1` | Multi-dimensional audit evidence | 2026-10-27T21:52:01.737Z |
 | `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `77e3c644` | Multi-dimensional audit evidence | 2026-10-27T22:00:15.415Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `3a72047c` | Multi-dimensional audit evidence | 2026-10-27T22:06:21.601Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `46349d39` | Multi-dimensional audit evidence | 2026-10-27T22:06:30.641Z |

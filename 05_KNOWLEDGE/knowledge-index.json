@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T22:00:15.341Z",
+  "last_updated": "2026-10-27T22:06:30.603Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7036,13 +7036,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "fff5a476",
-      "content_hash": "a9eaaed06383d898f5ac06f78021d4fa5cbc55e00f618bbe6455720a2ec8b022",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "3a72047c",
+      "content_hash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7117,7 +7117,7 @@
         {
           "number": 4974,
           "title": "tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7125,7 +7125,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:56:14.765Z",
+      "verified_at": "2026-10-27T22:06:21.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39077,8 +39077,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "b1c943e6",
-      "content_hash": "9fa2b4473384bd249cab19b06aba41d1c3e98f5c92474cc345f34c68b4e75e58",
+      "source_version": "46349d39",
+      "content_hash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -39126,6 +39126,11 @@
           "number": 4871,
           "title": "oauth-capture): rewrite form-urlencoded OAuth token responses (#1836)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5037,
+          "title": "proxy): prevent UTF-8 nonce parsing panic (#2216)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39133,7 +39138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:01:19.001Z",
+      "verified_at": "2026-10-27T22:06:30.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137924,14 +137929,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4974,
       "title": "tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "fff5a476",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "3a72047c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T19:56:14.765Z"
+      "verified_at": "2026-10-27T22:06:21.549Z"
     },
     "rule-4975": {
       "learning_id": "rule-4975",
@@ -139003,6 +139008,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T22:00:15.324Z"
+    },
+    "rule-5037": {
+      "learning_id": "rule-5037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5037,
+      "title": "proxy): prevent UTF-8 nonce parsing panic (#2216)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "46349d39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:06:30.596Z"
     }
   },
   "aliases": {

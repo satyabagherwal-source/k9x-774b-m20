@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `88772172`  
+> **Source Version**: `3a72047c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T09:49:02.431Z  
+> **Timestamp**: 2026-10-27T22:06:21.408Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T09:48:27.676Z  
+> **Harvest Timestamp**: 2026-10-27T22:06:19.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41119 stars
+- **Stars / Engagement**: 41135 stars
 
 ---
 
@@ -272,6 +272,266 @@ impl ChildGrant {
             // profile and explicit scope do all the narrowing.
             FleetRole::Builder | FleetRole::Worker | FleetRole::Custom => {
                 (FileGrant::Write, She
+```
+
+### Core Architecture Module: `crates/config/src/hooks.rs`
+```
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
+
+/// Events that can trigger hook execution
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum HookEvent {
+    /// Triggered when a new session starts
+    SessionStart,
+    /// Triggered when a session ends (quit, Ctrl+C)
+    SessionEnd,
+    /// Triggered before a user message is sent to the LLM
+    MessageSubmit,
+    /// Triggered before a tool is executed
+    ToolCallBefore,
+    /// Triggered after a tool completes (success or failure)
+    ToolCallAfter,
+    /// Triggered when the user changes modes (Plan, Act, Operate)
+    ModeChange,
+    /// Triggered when an error occurs
+    OnError,
+    /// Triggered after a turn completes and post-turn state has been updated
+    TurnEnd,
+    /// Triggered when a sub-agent is spawned
+    SubagentSpawn,
+    /// Triggered when a sub-agent reaches a terminal state
+    SubagentComplete,
+    /// Triggered immediately before each `exec_shell` invocation. The hook's
+    /// stdout is parsed as `KEY=VALUE\n` lines and merged on top of the
+    /// shell command's environment — useful for ephemeral credentials,
+    /// per-skill PATH adjustments, or short-lived tokens (#456). Hooks that
+    /// fail or time out are logged but do *not* abort the shell call; they
+    /// simply contribute no env vars.
+    ShellEnv,
+    /// Triggered when the session becomes idle after real work: a turn
+    /// finished (or a wait ended) and no prompt, approval, or continuation
+    /// is outstanding (#6004). Transient tool errors never fire this by
+    /// themselves; it marks "agent done, waiting for the next instruction".
+    SessionIdle,
+    /// Triggered when a turn ends in a terminal failure (#6004). Transient
+    /// tool failures that the agent absorbs never fire this; only a turn
+    /// whose final status is failed does. Hook authors that want opencode's
+    /// grace-period semantics should debounce inside the hook.
+    SessionError,
+    /// Triggered when the agent starts waiting on the person: an approval
+    /// prompt opens, a `request_user_input` question is presented, or a goal
+    /// continuation is parked between passes (#6004). The payload's `reason`
+    /// field is `approval`, `user_input`, or `goal_continuation`.
+    WaitingForUser,
+    /// Triggered when idle or waiting transitions to active work (#6004).
+    /// Startup and repeated observations of the same state stay silent.
+    SessionBusy,
+}
+
+/// Every event name the runtime actually fires, in the order `/hooks events`
+/// and `docs/HOOKS.md` list them. Tests assert this is exhaustive so a new
+/// variant cannot ship without a documented firing point.
+#[cfg(any(test, feature = "test-support"))]
+pub const ALL_HOOK_EVENTS: [HookEvent; 15] = [
+    HookEvent::SessionStart,
+    HookEvent::SessionEnd,
+    HookEvent::TurnEnd,
+    HookEvent::MessageSubmit,
+    HookEvent::ToolCallBefore,
+    HookEvent::ToolCallAfter,
+    HookEvent::ModeChange,
+    HookEvent::OnError,
+    HookEvent::SubagentSpawn,
+    HookEvent::SubagentComplete,
+    HookEvent::ShellEnv,
+    HookEvent::SessionIdle,
+    HookEvent::SessionError,
+    HookEvent::WaitingForUser,
+    HookEvent::SessionBusy,
+];
+
+/// How much a hook's result can change what Codewhale does next.
+///
+/// This is the steering allowlist. "Observer" is a statement about
+/// Codewhale's control flow only — an observer hook is still an arbitrary
+/// shell command and can have any external side effect it likes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HookSteering {
+    /// stdout/exit code can replace or block the submitted text.
+    TransformsSubmittedText,
+    /// stdout/exit code can allow, deny, ask, rewrite input, or add context.
+    DecidesToolCall,
+    /// stdout contributes `KEY=VALUE` pairs to one `exec_shell` invocation.
+    ContributesShellEnv,
+    /// stdout is ignored and the result cannot change Codewhale's behavior.
+    Observer,
+}
+
+impl HookEvent {
+    /// Get string representation for environment variable
+    #[must_use]
+    pub fn as_str(self) -> &'static str {
+        match self {
+            HookEvent::SessionStart => "session_start",
+            HookEvent::SessionEnd => "session_end",
+            HookEvent::MessageSubmit => "message_submit",
+            HookEvent::ToolCallBefore => "tool_call_before",
+            HookEvent::ToolCallAfter => "tool_call_after",
+            HookEvent::ModeChange => "mode_change",
+            HookEvent::OnError => "on_error",
+            HookEvent::TurnEnd => "turn_end",
+            HookEvent::SubagentSpawn => "subagent_spawn",
+            HookEvent::SubagentComplete => "subagent_complete",
+            HookEvent::ShellEnv => "shell_env",
+            HookEvent::SessionIdle => "session_idle",
+            HookEvent::SessionError => "session_error",
+            HookEvent::WaitingForUser => "waiting_for_user",
+            HookEvent::SessionBusy => "session_busy",
+        }
+    }
+
+    /// The steering contract for this event, as implemented.
+    #[must_use]
+    pub fn steering(self) -> HookSteering {
+        match self {
+            HookEvent::MessageSubmit => HookSteering::TransformsSubmittedText,
+            HookEvent::ToolCallBefore => HookSteering::DecidesToolCall,
+            HookEvent::ShellEnv => HookSteering::ContributesShellEnv,
+            HookEvent::SessionStart
+            | HookEvent::SessionEnd
+            | HookEvent::ToolCallAfter
+            | HookEvent::ModeChange
+            | HookEvent::OnError
+            | HookEvent::TurnEnd
+            | HookEvent::SubagentSpawn
+            | HookEvent::SubagentComplete
+            | HookEvent::SessionIdle
+            | HookEvent::SessionError
+            | HookEvent::SessionBusy
+            | HookEvent::WaitingForUser => HookSteering::Observer,
+        }
+    }
+
+    /// Whether a hook result for this event can change Codewhale's own
+    /// behavior. Never read this as "side-effect free" — see [`HookSteering`].
+    #[must_use]
+    pub fn can_steer(self) -> bool {
+        !matches!(self.steering(), HookSteering::Observer)
+    }
+
+    /// Whether this event's context carries a tool name/arguments, so
+    /// `tool_name` / `tool_category` conditions can ever match.
+    ///
+    /// `on_error` is included because the tool-failure path in
+    /// `tui/tool_routing.rs` fires it with the tool name, call id, and result
+    /// attached. An `on_error` firing that has no tool behind it (a transport
+    /// or capacity error) simply does not match a tool predicate — it is
+    /// skipped at dispatch, not rejected at load.
+    #[must_use]
+    pub fn provides_tool_identity(self) -> bool {
+        matches!(
+            self,
+            HookEvent::ToolCallBefore
+                | HookEvent::ToolCallAfter
+                | HookEvent::ShellEnv
+                | HookEvent::OnError
+        )
+    }
+
+    /// Whether this event's context can carry a real process exit code, so
+    /// `exit_code` conditions can ever match. `tool_call_after` observes every
+    /// completed tool and `on_error` observes the failing ones; in both cases
+    /// the code is only present when the tool actually reported one
+    /// (`exec_shell` and friends).
+    #[must_use]
+    pub fn provides_exit_code(self) -> bool {
+        matches!(self, HookEvent::ToolCallAfter | HookEvent::OnError)
+    }
+
+    /// Whether this event's context carries a mode label, so `mode`
+    /// conditions can ever match. `shell_env` fires inside the `exec_shell`
+    /// tool with a deliberately narrow context and has no mode.
+    #[must_use]
+    pub fn provides_mode(self) -> bool {
+        !matches!(self, HookEvent::ShellEnv)
+    }
+
+    /// Whether `background = true` is honored as actual scheduling for this
+    /// event. Events whose result is part of the contract are always run in
+    /// the foreground, so declaring them background is a config error rather
+    /// than a scheduling choice.
+    #[must_use]
+    pub fn honors_background(self) -> bool {
+        !matches!(self, HookEvent::ShellEnv)
+    }
+}
+
+/// Condition for when a hook should run
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+#[derive(Default)]
+pub enum HookCondition {
+    /// Always run this hook
+    #[default]
+    Always,
+    /// Only run for specific tool names
+    ToolName {
+        /// Tool name to match (e.g., "`exec_shell`", "`write_file`")
+        name: String,
+    },
+    /// Only run for specific tool categories
+    ToolCategory {
+        /// Category: "safe", "`file_write`", "shell"
+        category: String,
+    },
+    /// Only run in specific modes
+    Mode {
+        /// Mode: "plan", "agent", "yolo"
+        mode: String,
+    },
+    /// Only run when exit code matches (for `ToolCallAfter` / `OnError`)
+    ExitCode {
+        /// Exit code to match.
+        ///
+        /// `i64`, not `i32`: a Windows crash code such as `3221225477`
+        /// (`0xC0000005`, access violation) is a real code a shell tool
+        /// reports, and narrowing it would silently turn the predicate into
+        /// one that can never match.
+        code: i64,
+    },
+    /// Combine multiple conditions with AND
+    All { conditions: Vec<HookCondition> },
+    /// Combine multiple conditions with OR
+    Any { conditions: Vec<HookCondition> },
+}
+
+#[derive(Debug, Clone)]
+pub struct NativeShellHook {
+    pub owner: crate::OwnerRef,
+    pub scope: Option<crate::EntryRef>,
+    pub handle: u64,
+    pub dialect: String,
+    pub point: String,
+    pub matcher: Option<String>,
+}
+
+/// A single hook definition
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Hook {
+    #[serde(skip)]
+    pub native_shell: Option<NativeShellHook>,
+    /// The event that triggers this hook
+    pub event: HookEvent,
+
+    /// Shell command to execute (platform shell: `sh -c` on Unix, `cmd /C` on Windows)
+    pub command: String,
+
+    /// Optional condition for when this hook should run
+    #[serde(default)]
+    pub condition: Option<HookCondition>,
+
 ```
 
 ### Core Architecture Module: `crates/config/src/setup_state.rs`
@@ -1001,17 +1261,19 @@ fn is_symlink(p: &Path) -> bool {
         .map(|m| m.file_type().is_symlink())
         .unwrap_or(false)
 }
-fn read_capped(p: &Path) -> Option<String> {
-    let meta = std::fs::metadata(p).ok()?;
+pub fn read_project_instruction_file(file: std::fs::File) -> Option<String> {
+    let meta = file.metadata().ok()?;
     if !meta.is_file() {
         return None;
     }
-    if meta.len() > INSTRUCTIONS_FILE_MAX_BYTES as u64 {
-        let mut file = std::fs::File::open(p).ok()?;
-        let mut buf = vec![0u8; INSTRUCTIONS_FILE_MAX_BYTES];
-        use std::io::Read as _;
-        let n = file.read(&mut buf).ok()?;
-        buf.truncate(n);
+    use std::io::Read as _;
+    let mut buf = Vec::new();
+    file.take(INSTRUCTIONS_FILE_MAX_BYTES as u64 + 1)
+        .read_to_end(&mut buf)
+        .ok()?;
+    let observed_len = buf.len() as u64;
+    if meta.len().max(observed_len) > INSTRUCTIONS_FILE_MAX_BYTES as u64 {
+        buf.truncate(INSTRUCTIONS_FILE_MAX_BYTES);
         let mut text = String::from_utf8_lossy(&buf).into_owned();
         let mut end = INSTRUCTIONS_FILE_MAX_BYTES.min(text.len());
         while end > 0 && !text.is_char_boundary(end) {
@@ -1020,13 +1282,10 @@ fn read_capped(p: &Path) -> Option<String> {
         text.truncate(end);
         let omitted = meta
             .len()
+            .max(observed_len)
             .saturating_sub(INSTRUCTIONS_FILE_MAX_BYTES as u64);
         text.push_str(&format!("\n[…truncated: {omitted} bytes omitted]"));
-        return Some(text);
-    }
-    let raw = std::fs::read_to_string(p).ok()?;
-    let trimmed = raw.trim();
-    if trimmed.is_
+        return S
 ```
 
 ### Core Architecture Module: `crates/core/src/ids.rs`
@@ -1512,13 +1771,6 @@ pub use codewhale_protocol::request::*;
 
 ```
 
-### Core Architecture Module: `crates/core/src/role.rs`
-```
-//! Compatibility path for the shared protocol role types.
-pub use codewhale_protocol::role::*;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1546,77 +1798,27 @@ pub use codewhale_protocol::role::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6378f3b6` (2026-10-26)
-**Commit Message**: fix(docs): keep the OrcaRouter registry summary within its limit [skip ci]
+### Incident Patch 1: `0cf390f0` (2026-10-27)
+**Commit Message**: feat(tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552)
 
-The new provider description was141characters against the registry's120
-limit. Shorten it to105 and regenerate the public feature projection.
-The existing feature_registry_matches_code check fails before with the
-141-character diagnostic, then passes1/1 after the correction.
+Mode and permission posture can now change while a turn is running. Tab,
+Shift+Tab, Alt shortcuts, /mode, the hotbar, /auto and /config mode|approval*
+no longer hit the #2982 turn lock; model, thinking and provider stay locked
+because they change the route the in-flight request is on.
 
-Compiled the unchanged existing feature_registry.rs independently with the
-actual built runtime/serde/toml libraries under the existing build lock;
-no new tests, shim or whole TUI rebuild. Node facts and whitespace pass.
-The uncompiled reasoning-recovery packet remains unstaged and is excluded.
+Decision: a change applies at the engine's next step in the same turn, not at
+the next turn and not by restarting the streaming response. The engine already
+drains the live authority snapshot before each tool batch, at every approval
+gate and at the per-step preparation boundary; a call nobody approved, or one
+whose approval is narrowed, is returned to the model to retry. New: the
+preparation boundary now records the mode notice (and Operate contract) via
+Engine::record_mode_context, so the next model request is told the new mode
+and the notice is a session message (model-visible means logged). While a turn
+runs, the TUI shows "<Mode> · <permissions> — applies at the agent's next step
+in this turn"; the engine's existing "Permissions: … · <mode>" status confirms
+the apply.
 
-**File**: `docs/features.toml` (modified, +1/-1)
-```diff
-@@ -296,7 +296,7 @@ owner = "crates/tui/src/sandbox"
- [[feature]]
- id = "providers"
- name = "Providers"
--summary = "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers."
-+summary = "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers."
- status = "stable"
- surfaces = { tui = "stable", api = "stable" }
- docs = "docs/PROVIDERS.md"
-```
-
-**File**: `web/data/features.generated.json` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@
-   "format": "codewhale.features.v1",
-   "source": {
-     "path": "docs/features.toml",
--    "sha256": "35709461f147148def39fbaf18b4ce8e7985a823549be2ee2cc016d18785429f"
-+    "sha256": "ea640f30d580f72c2f98f643ebc523d3ddf0d87ac1cea2c19a0e31e1eb07ef46"
-   },
-   "features": [
-     {
-@@ -335,7 +335,7 @@
-     {
-       "id": "providers",
-       "name": "Providers",
--      "summary": "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers.",
-+      "summary": "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers.",
-       "status": "stable",
-       "surfaces": {
-         "tui": "stable",
-```
-
----
-
-### Incident Patch 2: `579c8d92` (2026-10-26)
-**Commit Message**: feat(tui): recommend the OrcaRouter partner offer in route pickers [skip ci]
-
-No-Issue: founder-requested provider/model recommendation for 0.10.3.
-
-Reuse one recommendation row in /provider, /model and OrcaRouter sign-in
-choices. F7 or a click opens the existing non-closing pager with the exact
-redemption URL, 30% top-up match for DeepSeek V4.1 Flash, current-terms
-pointer and public referral disclosure. Keep provider/model/auth choices
-explicit. Clear previous click latches before opening the offer. Brand-first
-titles retain OrcaRouter at narrow widths. All 15 locale packs, key catalog,
-keybindings guide, provider feature row/docs and both changelogs updated;
-regenerated public docs/features projections.
-
-Verification: final production CLI build passed14m10s with the retained
-large-__eh_frame linker warning. Focused existing batch ran273 tests:
-272 passed,1 failed because F7 was missing from the keybindings guide.
-Corrected only that documentation and its generated projection, compiled
-unchanged keybinding_table.rs with the actual built localization library,
-and reran the exact failed existing test:1 passed,0 failed. Reused the272
-unchanged passing tests; no new tests or code com
+Reference comparison (CW/refs): Codex 
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
@@ -1624,140 +1826,11 @@ unchanged passing tests; no new tests or code com
  
  ## [Unreleased]
  
-+- **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
-+
- - Long drafts now show a localized external-editor hint when the actual composer
-   viewport clips their text. The hint uses the shared F4 binding and preserves
-   queue, running-turn, history, and menu hints (#7049). Thanks @Lstarsky0.
-```
-
-**File**: `crates/localization/locales/ca.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Recomanat",
-+  "OrcaRouterOfferAction": "Mostra l’oferta d’OrcaRouter a /provider o /model",
-+  "OrcaRouterOfferBody": "Aconsegueix un 30% de crèdit addicional per a DeepSeek V4.1 Flash en les recàrregues amb l’oferta Codewhale × OrcaRouter. Consulta les condicions vigents a la pàgina de l’oferta.",
-+  "OrcaRouterOfferDisclosure": "Codewhale rep una comissió de recomanació d’OrcaRouter.",
-   "ShellWaitNoActive": "No s'està esperant cap ordre de l'intèrpret.",
-   "ShellWaitInteractive": "Les ordres interactives no poden continuar en segon pla. Cancel·la el torn o espera que acabin.",
-   "ShellWaitUnavailable": "Aquesta eina no pot continuar en segon pla. Cancel·la el torn o espera que acabi.",
-```
-
-**File**: `crates/localization/locales/de.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Empfohlen",
-+  "OrcaRouterOfferAction": "OrcaRouter-Angebot in /provider oder /model anzeigen",
-+  "OrcaRouterOfferBody": "Erhalte mit dem Angebot Codewhale × OrcaRouter bei Aufladungen 30% zusätzliches Guthaben für DeepSeek V4.1 Flash. Die aktuellen Bedingungen stehen auf der Angebotsseite.",
-+  "OrcaRouterOfferDisclosure": "Codewhale erhält von OrcaRouter eine Vermittlungsprovision.",
-   "ShellWaitNoActive": "Aktuell wird auf keinen Shell-Befehl gewartet.",
-   "ShellWaitInteractive": "Interaktive Befehle können nicht im Hintergrund weiterlaufen. Brich den aktuellen Durchgang ab oder warte, bis der Befehl fertig ist.",
-   "ShellWaitUnavailable": "Dieses Werkzeug kann nicht im Hintergrund weiterlaufen. Brich den aktuellen Durchgang ab oder warte, bis es fertig ist.",
-```
-
-**File**: `crates/localization/locales/en.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Recommended",
-+  "OrcaRouterOfferAction": "View OrcaRouter offer in /provider or /model",
-+  "OrcaRouterOfferBody": "Get a 30% top-up match for DeepSeek V4.1 Flash with the Codewhale × OrcaRouter offer. Check the offer page for current terms.",
-+  "OrcaRouterOfferDisclosure": "Codewhale earns a referral fee from OrcaRouter.",
-   "ShellWaitNoActive": "No shell wait is active.",
-   "ShellWaitInteractive": "Interactive commands cannot continue in the background. Cancel the turn, or wait for completion.",
-   "ShellWaitUnavailable": "This tool cannot continue in the background. Cancel the turn, or wait for completion.",
-```
-
-**File**: `crates/localization/locales/es-419.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Recomendado",
-+  "OrcaRouterOfferAction": "Ver oferta de OrcaRouter en /provider o /model",
-+  "OrcaRouterOfferBody": "Obtén un 30% de crédito extra para DeepSeek V4.1 Flash en tus recargas con la oferta Codewhale × OrcaRouter. Consulta las condiciones vigentes en la página de la oferta.",
-+  "OrcaRouterOfferDisclosure": "Codewhale recibe una comisión por recomendación de OrcaRouter.",
-   "ShellWaitNoActive": "No hay ninguna espera de shell activa.",
-   "ShellWaitInteractive": "Los comandos interactivos no pueden continuar en segundo plano. Cancela el turno o espera a que terminen.",
-   "ShellWaitUnavailable": "Esta herramienta no puede continuar en segundo plano. Cancela el turno o espera a que termine.",
-```
-
-**File**: `crates/localization/locales/fr.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Recommandé",
-+  "OrcaRouterOfferAction": "Voir l’offre OrcaRouter dans /provider ou /model",
-+  "OrcaRouterOfferBody": "Obtenez 30% de crédit supplémentaire pour DeepSeek V4.1 Flash sur vos recharges avec l’offre Codewhale × OrcaRouter. Consultez les conditions en vigueur sur la page de l’offre.",
-+  "OrcaRouterOfferDisclosure": "Codewhale reçoit une commission de recommandation d’OrcaRouter.",
-   "ShellWaitNoActive": "Aucune attente de commande shell en cours.",
-   "ShellWaitInteractive": "Les commandes interactives ne peuvent pas continuer en arrière-plan. Annulez le tour ou attendez la fin de la commande.",
-   "ShellWaitUnavailable": "Cet outil ne peut pas continuer en arrière-plan. Annulez le tour ou attendez la fin de son exécution.",
-```
-
-**File**: `crates/localization/locales/hi.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · सुझाया गया",
-+  "OrcaRouterOfferAction": "/provider या /model में OrcaRouter का ऑफ़र देखें",
-+  "OrcaRouterOfferBody": "Codewhale × OrcaRouter ऑफ़र के साथ टॉप-अप पर DeepSeek V4.1 Flash के लिए 30% अतिरिक्त क्रेडिट पाएँ। मौजूदा शर्तों के लिए ऑफ़र पेज देखें।",
-+  "OrcaRouterOfferDisclosure": "Codewhale को OrcaRouter से रेफ़रल शुल्क मिलता है।",
-   "ShellWaitNoActive": "अभी किसी शेल कमांड के पूरा होने का इंतज़ार नहीं हो रहा है।",
-   "ShellWaitInteractive": "इंटरैक्टिव कमांड बैकग्राउंड में जारी नहीं रह सकतीं। इस बारी को रद्द करें या कमांड पूरी होने की प्रतीक्षा करें।",
-   "ShellWaitUnavailable": "यह टूल बैकग्राउंड में जारी नहीं रह सकता। इस बारी को रद्द करें या इसके पूरा होने की प्रतीक्षा करें।",
-```
-
-**File**: `crates/localization/locales/id.json` (modified, +4/-0)
-```diff
-@@ -1,4 +1,8 @@
- {
-+  "OrcaRouterOfferRecommended": "OrcaRouter · Direkomendasikan",
-+  "OrcaRouterOfferAction": "Lihat penawaran OrcaRouter di /provider atau /model",
-+  "OrcaRouterOfferBody": "Dapatkan tambahan kredit DeepSeek V4.1 Flash sebesar 30% dari isi ulang melalui penawaran Codewhale × OrcaRouter. Lihat ketentuan terbaru di halaman penawaran.",
-+  "OrcaRouterOfferDisclosure": "Codewhale menerima komisi rujukan dari OrcaRouter.",
-   "ShellWaitNoActive": "Tidak ada perintah shell yang sedang ditunggu.",
-   "ShellWaitInteractive": "Perintah interaktif tidak dapat berjalan di latar belakang. Batalkan giliran atau tunggu hingga selesai.",
-   "ShellWaitUnavailable": "Alat ini tidak dapat berjalan di latar belakang. Batalkan giliran atau tunggu hingga selesai.",
-```
-
----
-
-### Incident Patch 3: `eea9f1ea` (2026-10-26)
-**Commit Message**: docs(changelog): credit the verified NoNewPrivs container fix [skip ci]
-
-Refs #7021. Record the existing test-only source fix e7c336d634 and credit
-@asto18089 for diagnosing inherited NoNewPrivs. Both changelogs updated.
-
-Local verification now completed against source bytes identical to the
-carrying commit: compiled the unchanged canonical process_hardening.rs
-as an independent test module with the workspace-pinned real libc/tracing
-libraries, edition2024 and the same stable Rust1.99.0 compiler. Static
-ARM64 Linux musl ELF has no interpreter or needed shared libraries.
-Dependency and module compilation ran under the existing host build lock
-and cache; no new manifest, checkout, cache, shim or tests.
-
-The same harness passed3existing tests in each unpinned/pinned local
-Bookworm container, parent NoNewPrivs0/1. Two substantive matrices cover
-7child rows per state. Pinned run printed exactly2ratchet disclosures;
-unpinned printed0. Child/mode/override markers were unset. Source/binary/
-dependency/compiler/kernel hashes and logs retained in the receipt.
-
-No full Linux TUI/GNU compilation, startup-order, status UI, sudo, hosted
-CI, provider call, release or deployment claim. Changelog-o
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Linux hardening tests:** the NoNewPrivs child matrices now respect a parent that already holds the irreversible flag, keeping the full assertions on unpinned hosts and checking the kernel ratchet on pinned hosts. Thanks [@asto18089](https://github.com/asto18089) for diagnosing the hardened-container failure. (#7021)
-+
- - **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
- 
- - Long drafts now show a localized external-editor hint when the actual composer
++- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
++- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
+ - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
+ - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
+ - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
@@ -1766,20 +1839,809 @@ CI, provider call, release or deployment claim. Changelog-o
  
  ## [Unreleased]
  
-+- **Linux hardening tests:** the NoNewPrivs child matrices now respect a parent that already holds the irreversible flag, keeping the full assertions on unpinned hosts and checking the kernel ratchet on pinned hosts. Thanks [@asto18089](https://github.com/asto18089) for diagnosing the hardened-container failure. (#7021)
-+
- - **OrcaRouter recommendation:** `/provider` and `/model` offer a shared partner recommendation with the DeepSeek V4.1 Flash 30% top-up-match link, public referral disclosure and localized offer details. F7 or a click opens the existing pager while retaining the current route.
++- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
++- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
+ - **Switching provider lands on its current model:** `/provider stepfun` now selects Step 5 Preview instead of the older Step 3.7 Flash; a model you saved for a provider is still kept. `/model` now lists the current provider's own models (bundled and live, newest first, up to 20) instead of only the selected one. Search also matches ids typed without separators (`step5`). While you search, Shift+P and Shift+F type their letters rather than pinning or adding to Fleet, so `Step-5-Preview` can be typed in full; Ctrl+P and Ctrl+F pin or add the highlighted row at any time.
+ - **Remote control works again:** `codewhale rc` (`/rc`) can attach to the hosted control plane for web Chat again. The control plane had only accepted the retired 0.9.13 runtime identity, so every 0.10.x Engine was refused with `runner_runtime_identity_unavailable`; it now accepts the exact released runtime identity (commit, image and digest) and fails closed when they are not configured.
+ - **Modern MCP client:** MCP servers now connect through the official MCP SDK (2.4) behind Codewhale's Rust broker by default (`mcp_backend = "host"`; `"rust"` stays available for one release). Servers that speak the 2026-07-28 revision are discovered with `server/discover`; other stdio and HTTP servers fall back to the legacy `initialize` handshake, and configured SSE servers keep theirs. Rust keeps process, network, credential, catalog, approval and cancellation authority. (CW-6713)
+```
+
+**File**: `crates/tui/src/commands/config_main_host.rs` (modified, +15/-33)
+```diff
+@@ -1656,18 +1656,16 @@ fn subagents_runtime_action(
+ ///
+ /// `default_mode` is deliberately absent: it is a restart default that
+ /// `set_config_value` explicitly does *not* apply to the live session, so
+-/// refusing it would lock a key that cannot affect the turn.
++/// refusing it would lock a key that cannot affect the turn. `mode` and the
++/// approval keys are absent too: the engine applies a posture change at its
++/// next step boundary in the running turn.
+ fn live_route_setting_subject(key: &str) -> Option<MessageId> {
+     match key {
+-        "mode" => Some(MessageId::SettingSubjectMode),
+         // `default_model` is not merely a startup default: for the DeepSeek
+         // routes `set_config_value` installs it as the live model.
+         "model" | "default_model" => Some(MessageId::SettingSubjectModel),
+         "reasoning_effort" | "effort" => Some(MessageId::SettingSubjectThinking),
+         "provider" => Some(MessageId::SettingSubjectProvider),
+-        "approval_mode" | "approval_policy" | "approval" => {
+-            Some(MessageId::SettingSubjectPermissions)
+-        }
+         _ => None,
+     }
+ }
+@@ -3433,55 +3431,39 @@ mod tests {
+     }
  
- - Long drafts now show a localized external-editor hint when the actual composer
+     /// The refusal list is the contract for #2982 on the slash surfaces. Keep
+-    /// restart-only `default_mode` out of it: `set_config_value` deliberately
+-    /// does not apply that key to the live session.
++    /// restart-only `default_mode` out of it, and mode and permissions, which
++    /// the engine applies at its next step boundary mid-turn.
+     #[test]
+     fn live_route_key_list_covers_every_route_mutating_alias() {
+         for key in [
+-            "mode",
+             "model",
+             "default_model",
+             "reasoning_effort",
+             "effort",
+             "provider",
+-            "approval_mode",
+-            "approval_policy",
+-            "approval",
+         ] {
+             assert!(
+                 live_route_setting_subject(key).is_some(),
+                 "{key} mutates the active route and must be locked mid-turn"
+             );
+         }
+-        for key in ["default_mode", "theme", "calm_mode", "rail_panel"] {
++        for key in [
++            "default_mode",
++            "mode",
++            "approval_mode",
++            "approval_policy",
++            "approval",
++            "theme",
++            "calm_mode",
++            "rail_panel",
++        ] {
+             assert!(
+                 live_route_setting_subject(key).is_none(),
+                 "{key} does not mutate the active route and must stay settable"
+             );
+         }
+     }
+ 
+-    #[test]
+-    fn approval_aliases_are_inert_while_a_turn_is_running() {
+-        let mut app = create_test_app();
+-        app.approval_mode = ApprovalMode::Suggest;
+-        app.is_loading = true;
+-
+-        for key in ["approval_mode", "approval_policy", "approval"] {
+-            let result = set_config_value(&mut app, key, "never", false);
+-            assert!(result.is_error, "{key} must be refused mid-turn");
+-            assert!(
+-                result
+-                    .message
+-                    .as_deref()
+-                    .is_some_and(|message| message.contains("locked while a turn is running")),
+-                "unexpected refusal for {key}: {:?}",
+-                result.message
+-            );
+-            assert_eq!(app.approval_mode, ApprovalMode::Suggest);
+-        }
+-    }
+-
+     #[test]
+     fn config_preset_calm_applies_bundle_to_session_and_keeps_evidence() {
+         let mut app = create_test_app();
+```
+
+**File**: `crates/tui/src/core/engine.rs` (modified, +28/-17)
+```diff
+@@ -7101,23 +7101,7 @@ impl Engine {
+                 });
+             }
+ 
+-            self.record_mode_notice(mode);
+-
+-            // The Operate contract (docs/MODES.md) precedes the first Operate
+-            // prompt. KV-cache effect: append-only history, one user-role runtime
+-            // message; it is derived from the session log rather than a flag so a
+-            // cleared, restored, or compacted session gets it again exactly once
+-            // and every later Operate turn does not repeat it.
+-            if mode == AppMode::Operate
+-                && !self
+-                    .session
+-                    .messages
+-                    .iter()
+-                    .any(crate::runtime_handoff::is_current_operate_contract_message)
+-            {
+-                self.session
+-                    .add_message(crate::runtime_handoff::operate_contract_runtime_message());
+-            }
++            self.record_mode_context(mode);
+ 
+             self.session
+                 .working_set
+@@ -9139,6 +9123,33 @@ impl Engine {
+     /// new one is appended whenever the mode differs from the latest. Restored
+     /// Operate contracts also require a current notice after leaving Operate.
+     /// Child and RLM hosts get none: their mode is fixed by their parent.
++    /// Record the mode notice and, on entering Operate, the Operate contract
++    /// (docs/MODES.md), which precedes the first Operate prompt. KV-cache
++    /// effect: append-only history, user-role runtime messages; derived from
++    /// the session log rather than a flag so a cleared, restored, or compacted
++    /// session gets the contract again exactly once and every later Operate
++    /// step does not repeat it. Runs at turn start and before every model
++    /// request, so a mode switched mid-turn reaches the next request. Known
++    /// limitation: a response already streaming is not restarted for a mode
++    /// change; it finishes under the notice it was sent with, and its tool
++    /// calls are planned under the new posture. Returns whether anything was
++    /// appended.
++    fn record_mode_context(&mut self, mode: AppMode) -> bool {
++        let before = self.session.messages.len();
++        self.record_mode_notice(mode);
++        if mode == AppMode::Operate
++            && !self
++                .session
++                .messages
++                .iter()
++                .any(crate::runtime_handoff::is_current_operate_contract_message)
++        {
++            self.session
++                .add_message(crate::runtime_handoff::operate_contract_runtime_message());
++        }
++        self.session.messages.len() != before
++    }
++
+     fn record_mode_notice(&mut self, mode: AppMode) {
+         if self.child_host.is_some() || self.rlm_host.is_some() {
+             return;
+```
+
+**File**: `crates/tui/src/core/engine/turn_loop/preparation.rs` (modified, +3/-0)
+```diff
+@@ -59,6 +59,9 @@ impl Engine {
+             }
+             progress.mode = self.current_mode;
+         }
++        if self.record_mode_context(self.current_mode) {
++            self.emit_session_updated().await;
++        }
+ 
+         let mut accepted_steer = false;
+         while let Some(pending) = self.next_turn_steer() {
+```
+
+**File**: `crates/tui/src/tui/app.rs` (modified, +9/-24)
+```diff
+@@ -3485,9 +3485,6 @@ impl App {
+     /// permission surface and refuses here; otherwise this behaves like
+     /// [`Self::select_mode`] and persists the mode actually installed (Act).
+     pub fn select_yolo_compat(&mut self) -> SettingSelection {
+-        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
+-            return SettingSelection::Refused;
+-        }
+         if self.approval_policy_locked() {
+             self.push_status_toast(
+                 "Permissions are controlled by config or managed requirements".to_string(),
+@@ -3562,28 +3559,21 @@ impl App {
+     /// What is persisted is `self.mode` — the mode `set_mode` actually
+     /// installed — not the requested enum.
+     ///
+-    /// The outcome is typed, not a bool, because three things can happen and
+-    /// only one of them means "nothing was saved":
++    /// The outcome is typed, not a bool, so callers can tell a live change
++    /// from a selection that only saved the startup default:
+     ///
+     /// - [`SettingSelection::Changed`] — live mode moved *and* the startup
+     ///   default was queued.
+     /// - [`SettingSelection::PersistedSame`] — live mode was already the
+     ///   requested one, but the startup default was still queued. This is a
+     ///   real, reportable action: after a session restore the live mode and the
+     ///   startup default routinely disagree.
+-    /// - [`SettingSelection::Refused`] — the #2982 turn lock rejected it and
+-    ///   nothing was written anywhere.
+     ///
+-    /// A bool collapsed the last two, so every caller (slash `/mode`, the
+-    /// Alt+A/P/Y shortcuts, the hotbar mode rows) reported a refusal and a
+-    /// successful same-mode save identically — as "already in that mode", with
+-    /// no receipt for the write that did happen.
++    /// Mode is not turn-locked: a change during a running turn is sent to the
++    /// engine, which applies it at its next step boundary in that turn.
+     ///
+     /// [`StartupDefaultsWriter`]: crate::tui::startup_defaults::StartupDefaultsWriter
+     pub fn select_mode(&mut self, mode: AppMode) -> SettingSelection {
+-        if self.reject_setting_change_while_busy(MessageId::SettingSubjectMode) {
+-            return SettingSelection::Refused;
+-        }
+         let changed = self.set_mode(mode);
+         // Persist an explicit selection even when it matches the live mode.
+         // A restored session can be Operate while the startup default remains
+@@ -3695,11 +3685,12 @@ impl App {
+         );
+     }
+ 
+-    /// Whether mode/thinking selection is locked because a turn is in flight.
++    /// Whether a route setting is locked because a turn is in flight.
+     ///
+-    /// While `is_loading`, the model/permission surface the engine is acting on
+-    /// must not shift underneath it, so user-initiated mode and thinking changes
+-    /// are refused (#2982). Returns true (and posts a concise status message) if
++    /// While `is_loading`, the model, provider and thinking the engine is
++    /// acting on must not shift underneath it, so those changes are refused
++    /// (#2982). Mode and permissions are not locked: the engine applies them
++    /// at its next step boundary in the same turn. Returns true (and posts a concise status message) if
+     /// the change should be rejected — the caller leaves the selection unchanged
+     /// so the chip "twitches" back instead of moving.
+     ///
+@@ -3991,9 +3982,6 @@ impl App {
+     }
+ 
+     fn next_approval_posture(&mut self, allow_root_policy: bool) -> Option<ApprovalMode> {
+-        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
+-            return None;
+-        }
+         // Plan used to refuse the change outright, which welded the two axes
+         // together on the keyboard: Tab cycles the mode, Shift+Tab cycles the
+         // posture, and in Plan the second key silently did nothing. They are
+@@ -4104,9 +4092,6 @@ impl App {
+     /// landing on it; Plan stays read-only and only the Act baseline moves.
+     /// Shared by `/auto` and the Plan hand-off.
+     pub fn apply_agent_posture(&mut self, next: ApprovalMode) -> Result<(), String> {
+-        if self.reject_setting_change_while_busy(MessageId::SettingSubjectPermissions) {
+-            return Err(self.setting_locked_message(MessageId::SettingSubjectPermissions));
+-        }
+         if self.approval_policy_locked() {
+             return Err("Permissions are controlled by config or managed requirements".to_string());
+         }
+```
+
+**File**: `crates/tui/src/tui/app/tests.rs` (modified, +27/-38)
+```diff
+@@ -645,17 +645,18 @@ fn auto_reasoning_change_invalidates_the_previous_route_and_receipt() {
+ }
+ 
+ #[test]
+-fn mode_and_thinking_are_locked_while_a_turn_is_running() {
+-    // #2982: while a turn is in flight, user-initiated mode/thinking changes
+-    // are refused with a concise message instead of shifting the surface the
+-    // engine is acting on.
++fn thinking_is_locked_but_mode_moves_while_a_turn_is_running() {
+     let mut app = App::new(test_options(false), &Config::default());
+     app.mode = AppMode::Agent;
+     app.reasoning_effort = ReasoningEffort::Max;
+     app.is_loading = true;
+ 
+-    app.cycle_mode();
+-    assert_eq!(app.mode, AppMode::Agent, "mode must not change while busy");
++    let before_effort = app.reasoning_effort;
++    app.cycle_effort();
++    assert_eq!(
++        app.reasoning_effort, before_effort,
++        "thinking must not change while busy"
++    );
+     assert!(
+         app.status_message
+             .as_deref()
+@@ -665,17 +666,8 @@ fn mode_and_thinking_are_locked_while_a_turn_is_running() {
+         app.status_message
+     );
+ 
+-    let before_effort = app.reasoning_effort;
+-    app.cycle_effort();
+-    assert_eq!(
+-        app.reasoning_effort, before_effort,
+-        "thinking must not change while busy"
+-    );
+-
+-    // Once the turn finishes, the same gesture works again.
+-    app.is_loading = false;
+     app.cycle_mode();
+-    assert_ne!(app.mode, AppMode::Agent, "mode should change when idle");
++    assert_ne!(app.mode, AppMode::Agent, "mode changes mid-turn");
+ }
+ 
+ #[test]
+@@ -4157,7 +4149,7 @@ fn plan_permission_cycle_moves_the_baseline_and_leaves_plan_read_only() {
+ }
+ 
+ #[test]
+-fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
++fn busy_permission_cycle_moves_the_live_posture() {
+     let _env_lock = lock_test_env();
+     let tmp = tempfile::tempdir().expect("tempdir");
+     let config_path = tmp.path().join("config.toml");
+@@ -4168,12 +4160,10 @@ fn busy_permission_cycle_changes_neither_runtime_nor_persistence() {
+     let before = app.approval_mode;
+     app.is_loading = true;
+ 
+-    assert!(!app.cycle_approval_posture());
+-    assert_eq!(app.approval_mode, before);
+-    assert_eq!(app.mode_prefs.agent_approval_mode, before);
+-    assert!(!tmp.path().join("settings.toml").exists());
++    assert!(app.cycle_approval_posture());
++    assert_ne!(app.mode_prefs.agent_approval_mode, before);
+     assert!(
+-        app.status_message
++        !app.status_message
+             .as_deref()
+             .is_some_and(|message| message.contains("locked"))
+     );
+@@ -6928,7 +6918,7 @@ fn reselecting_restored_live_mode_updates_the_startup_default() {
+ }
+ 
+ #[test]
+-fn mode_change_refused_while_a_turn_runs_persists_nothing() {
++fn mode_change_while_a_turn_runs_is_live_and_persisted() {
+     let _lock = lock_test_env();
+     let tmp = tempfile::TempDir::new().expect("tempdir");
+     let _env = sealed_settings_home(tmp.path());
+@@ -6938,12 +6928,13 @@ fn mode_change_refused_while_a_turn_runs_persists_nothing() {
+     app.select_mode(AppMode::Plan);
+     app.is_loading = true;
+     app.cycle_mode();
++    app.startup_defaults.flush();
+ 
+-    assert_eq!(app.mode, AppMode::Plan, "#2982 lock still holds");
++    assert_eq!(app.mode, AppMode::Plan.next());
+     assert_eq!(
+         Settings::load().expect("reload").default_mode,
+-        "plan",
+-        "a refused change must not be persisted"
++        app.mode.as_setting(),
++        "a mid-turn change is a real selection"
+     );
+ }
+ 
+@@ -7394,7 +7385,7 @@ fn mode_cycling_in_an_unsealed_test_writes_nothing() {
+ // hotbar. `/set` and `/config <key> <value>` reached the same live route through
+ // a different door, and both are reachable mid-turn: the composer accepts
+ // Shift+Enter and the slash menu while `is_loading`. So during a running turn a
+-// slash command could swap the model, thinking level, mode, or provider out from
++// slash command could swap the model, thinking level, or provider out from
+ // under the engine *and* persist it. The refusal now sits in one place, above
+ // every disk write and every `App` mutation.
+ 
+@@ -7438,7 +7429,6 @@ fn slash_config_and_set_refuse_every_live_route_key_while_a_turn_runs() {
+             ("default_model", "deepseek-v4-pro"),
+             ("reasoning_effort", "high"),
+             ("effort", "high"),
+-            ("mode", "operate"),
+             ("provider", "openai"),
+         ] {
+             let result = crate::commands::set_config_value(&mut app, key, value, persist);
+@@ -7637,15 +7627,15 @@ fn mode_selection_reports_refusal_change_and_persisted_same_distinctly() {
+     );
+ 
+     app.is_loading = true;
+-    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Refused);
++    assert_eq!(app.select_mode(AppMode::Plan), SettingSelection::Changed);
+     assert!(!SettingSelection::Refused.accepted());
+-    assert_eq!(app.mode, AppMode::Operate, "a refusal changes nothing");
++    assert_eq!(app.mode, AppMode::Plan, "mode is not turn-locked");
+ }
+ 
+-/// Eve
+```
+
+**File**: `crates/tui/src/tui/ui/provider_routes.rs` (modified, +12/-1)
+```diff
+@@ -627,7 +627,7 @@ pub(crate) fn reasoning_effort_receipt_for_route(
+     .unwrap_or(EffectiveReasoningEffort::Tier(tier))
+ }
+ 
+-pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
++pub(crate) async fn sync_mode_update(app: &mut App, engine_handle: &EngineHandle) {
+     // #6150: non-blocking send on the input path. ChangeMode is safe to drop
+     // on a full channel — `try_send` still publishes the live authority
+     // snapshot, which the drain applies before the next queued op.
+@@ -639,6 +639,17 @@ pub(crate) async fn sync_mode_update(app: &App, engine_handle: &EngineHandle) {
+         approval_mode: app.approval_mode,
+         configured_sandbox_mode: app.configured_sandbox_mode.clone(),
+     });
++    if app.is_loading {
++        app.push_status_toast(
++            format!(
++                "{} · {} — applies at the agent's next step in this turn",
++                crate::tui::app::AppModeUi::display_name_localized(app.mode, app.ui_locale),
++                app.effective_permission_label(),
++            ),
++            StatusToastLevel::Info,
++            Some(6_000),
++        );
++    }
+ }
+ 
+ /// Apply a `/provider` switch by resolving a complete route candidate before
+```
+
+---
+
+### Incident Patch 2: `f75bb12d` (2026-10-27)
+**Commit Message**: fix(dependencies): a version probe that outlives its deadline means installed, not missing (CW-7525)
+
+tools::subagent::tests::root_operate_dispatch_delegates_builtin_verification_but_not_shell
+failed under load: Cargo::resolve() (and resolve_executable_path for
+git/pandoc) run `<tool> --version` with the 3 s VERSION_PROBE_TIMEOUT,
+and on a busy machine the rustup `cargo` shim can take longer. The
+timeout was treated as "not installed" and cached in the resolver's
+OnceLock for the whole process, so run_tests reported cargo missing for
+the rest of the session. That is a product bug, not a test bug.
+
+probe_executable_with_flag and resolve_executable_path now share
+probe_found(): a successful exit means present, a failed launch or a
+failing exit means absent, and a probe that launched and was still
+running at its deadline means present (it is killed with its process
+tree as before). The deadline still bounds how long resolution waits;
+it no longer decides presence. Banner capture
+(probe_executable_capturing) is unchanged and still returns None on
+timeout.
+
+Verification: same nextest batch as 8084ead09c (frozen source) ->
+142 passed, including 55 dependencies:: tests and the subagent te
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
+ 
+ - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
++- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
+ - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
+ - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
+ - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Uninstall on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed and deleted once the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-data`, which previews and then deletes only `~/.codewhale` (or a `CODEWHALE_HOME` named `.codewhale`) and `~/.deepseek/snapshots`, refusing symlinks, home ancestors and directories owned by another user. Windows removal is compile-checked but not yet exercised on a Windows host. (Refs #7091)
+ 
+ - **GitHub Action needs an explicit provider:** the Action's `provider` input no longer defaults to the `codewhale` account relay. Name your BYOK provider (or `codewhale` for a separately verified account machine key); a missing provider stops with `configuration_missing` before any download or model call. The repository's own (disabled) review workflow now pins CLI `v0.10.2` by default instead of `v0.10.0`.
++- **Slow tools are not reported missing:** a tool whose `--version` probe is still running at its 3-second deadline (for example the `cargo` rustup shim on a busy machine) now counts as installed instead of being cached as missing for the rest of the session.
+ - **GitHub Action reviews:** analysis can export a structured Engine review for a separate trusted publisher job. The publisher checks the current PR revision and line anchors, deduplicates its findings, and keeps uncertain or preexisting claims out of inline comments.
+ - **Telegram recovery:** prompts and their initiating identity are durable before the polling cursor advances. Restart recovery reuses the original Engine operation, questions preserve human ownership, and uncertain final replies remain available through `/status` without an automatic resend.
+ - **DingTalk bridge:** an optional internal-app Stream adapter reuses the same Engine, shared admission and approval helpers. Tenant/staff allowlists, durable acceptance before acknowledgement and retained uncertain deliveries protect recovery. Managed account linking is separate from this advanced self-hosted bridge.
+```
+
+**File**: `crates/tui/src/dependencies.rs` (modified, +12/-3)
+```diff
+@@ -70,7 +70,17 @@ pub fn probe_executable_with_flag(spec: &str, version_flag: &str) -> bool {
+     };
+     let mut cmd = version_probe_command(program);
+     cmd.args(parts).arg(version_flag);
+-    matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
++    probe_found(&mut cmd)
++}
++
++/// A probe that launched and was still running at its deadline found an
++/// installed tool that is slow under load; only a failed launch or a failing
++/// exit means the tool is absent.
++fn probe_found(command: &mut Command) -> bool {
++    match probe_output(command, false, VERSION_PROBE_TIMEOUT) {
++        Ok(output) => output.status.success(),
++        Err(error) => error.kind() == std::io::ErrorKind::TimedOut,
++    }
+ }
+ 
+ /// Probe a single executable and capture its version banner in one spawn.
+@@ -244,8 +254,7 @@ fn resolve_executable_path(spec: &str, version_flag: &str) -> Option<String> {
+         let mut cmd = version_probe_command(&candidate);
+         cmd.args(&args).arg(version_flag);
+ 
+-        if matches!(probe_output(&mut cmd, false, VERSION_PROBE_TIMEOUT), Ok(output) if output.status.success())
+-        {
++        if probe_found(&mut cmd) {
+             return Some(candidate.to_string_lossy().into_owned());
+         }
+     }
+```
+
+---
+
+### Incident Patch 3: `ccda7072` (2026-10-27)
+**Commit Message**: perf(tui): an idle session relaxes its poll during prompts and background jobs (#6728)
+
+The event loop only reached its 250 ms quiet poll when nothing at all was
+live, so the states an idle user actually sits in kept the 24-48 ms poll:
+- an approval, elevation or question card on top (the turn is still
+  loading, so the active 24 ms poll applied);
+- a running background job (durable task) or a once-a-second label, which
+  counted as "animating" or "busy" even though the frame requester already
+  wakes the loop at the next frame deadline.
+
+Now a waiting decision prompt takes the idle path and counts as quiescent;
+only motion faster than the quiet poll counts as animation (slower motion
+is woken by its frame deadline); a live durable task no longer blocks the
+quiet poll (the task panel refreshes on its own 2.5 s cadence). The
+terminal input thread polls every 200 ms instead of 50 ms after 5 s
+without input, which keeps the child-terminal pause ack well inside its
+500 ms timeout. `decision_prompt_waiting` replaces the duplicated
+ModalKind match in status_animation_interval_ms.
+
+Known limits: the loop is still polled, not woken, so an engine event, a
+remote decision or a prompt timeout
+
+**File**: `CHANGELOG.md` (modified, +11/-0)
+```diff
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
++- **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take `hunks` (the `@@ … @@` headers from `GET /v1/diff`) with one path and apply only those hunks through `git apply`, honouring the same `expect` preconditions as whole-path writes. A hunk that no longer exists answers `409 git_state_changed` with `stale_hunks`, and nothing is written unless git accepts the whole patch.
+ - **Provider pre-cuts B (internal):** client wire helpers, reasoning-effort mapping and the Ollama catalog parsers move into their own client modules, and test-only provider gates use the shared test-isolation predicate. No behavior change. (CW-6129)
+ - **`codewhale-dependencies`, `codewhale-snapshot`, `codewhale-lsp`, `codewhale-repl` crates:** external-tool resolution, workspace snapshots, the language-server client and the Python REPL runtime moved out of `codewhale-tui` into their own crates; `write_context_file` now lives in `codewhale-repl`. No behavior change. (CW-6129)
+ - **`codewhale-skill-install` crate:** the community-skill installer, package content digest and `SKILL.md` frontmatter reader move out of `codewhale-tui` into a new crate; the install SSRF guard and timeouts are unchanged in production builds. (CW-6129)
+@@ -171,6 +173,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   seconds without input or engine events, as it already did in an idle
+   session, instead of starting about a dozen git processes every 2 seconds for
+   as long as the job lives (#6728).
++- An idle session wakes less often. While an approval, elevation or question
++  prompt waits on you, while a background job runs, or while only a
++  once-a-second label ticks, the event loop now relaxes to its 250 ms quiet
++  poll instead of polling every 24 to 48 ms; animations and the prompt's
++  timeout still wake it on their own deadlines. The terminal input thread
++  polls every 200 ms instead of 50 ms after 5 seconds without input. Measured
++  on macOS with release builds: an approval wait went from 29 to 12 timer
++  wakeups per second, a background job from 32 to 16 and an idle composer
++  from 25 to 11 (#6728).
+ - `write` over an existing file now says when it kept that file's CRLF or LF
+   line endings, so the agent no longer reports a line-ending conversion that
+   did not happen (#7070).
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +11/-0)
+```diff
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
++- **Hunk actions in Review (Runtime API):** `POST /v1/git/stage`, `/v1/git/unstage` and `/v1/git/discard` take `hunks` (the `@@ … @@` headers from `GET /v1/diff`) with one path and apply only those hunks through `git apply`, honouring the same `expect` preconditions as whole-path writes. A hunk that no longer exists answers `409 git_state_changed` with `stale_hunks`, and nothing is written unless git accepts the whole patch.
+ - **Provider pre-cuts B (internal):** client wire helpers, reasoning-effort mapping and the Ollama catalog parsers move into their own client modules, and test-only provider gates use the shared test-isolation predicate. No behavior change. (CW-6129)
+ - **`codewhale-dependencies`, `codewhale-snapshot`, `codewhale-lsp`, `codewhale-repl` crates:** external-tool resolution, workspace snapshots, the language-server client and the Python REPL runtime moved out of `codewhale-tui` into their own crates; `write_context_file` now lives in `codewhale-repl`. No behavior change. (CW-6129)
+ - **`codewhale-skill-install` crate:** the community-skill installer, package content digest and `SKILL.md` frontmatter reader move out of `codewhale-tui` into a new crate; the install SSRF guard and timeouts are unchanged in production builds. (CW-6129)
+@@ -171,6 +173,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   seconds without input or engine events, as it already did in an idle
+   session, instead of starting about a dozen git processes every 2 seconds for
+   as long as the job lives (#6728).
++- An idle session wakes less often. While an approval, elevation or question
++  prompt waits on you, while a background job runs, or while only a
++  once-a-second label ticks, the event loop now relaxes to its 250 ms quiet
++  poll instead of polling every 24 to 48 ms; animations and the prompt's
++  timeout still wake it on their own deadlines. The terminal input thread
++  polls every 200 ms instead of 50 ms after 5 seconds without input. Measured
++  on macOS with release builds: an approval wait went from 29 to 12 timer
++  wakeups per second, a background job from 32 to 16 and an idle composer
++  from 25 to 11 (#6728).
+ - `write` over an existing file now says when it kept that file's CRLF or LF
+   line endings, so the agent no longer reports a line-ending conversion that
+   did not happen (#7070).
+```
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +25/-22)
+```diff
+@@ -5081,13 +5081,19 @@ pub(crate) async fn run_event_loop(
+         let underwater_motion =
+             underwater_ambient_motion || underwater_completion_motion || launch_motion;
+         let animation_active = status_motion || underwater_motion;
++        let animation_interval = Duration::from_millis(animation_interval_ms(
++            app,
++            status_motion,
++            underwater_motion,
++            cadence_tier,
++        ));
+         // #6728: what the loop knows about its own quiet. Anything that
+         // wants a prompt reaction moves `last_ui_activity`; the idle poll
+         // and the automation scan back off from it.
+         let idle_facts = IdleFacts {
+             has_running_agents,
+-            animation_active,
+-            durable_tasks_active,
++            animation_active: animation_active
++                && animation_interval < Duration::from_millis(UI_QUIESCENT_POLL_MS),
+             input_pending: !pending_terminal_events.is_empty(),
+             pending_engine_op: pending_subagent_list_refresh,
+         };
+@@ -5113,12 +5119,6 @@ pub(crate) async fn run_event_loop(
+                 ),
+             ));
+         }
+-        let animation_interval = Duration::from_millis(animation_interval_ms(
+-            app,
+-            status_motion,
+-            underwater_motion,
+-            cadence_tier,
+-        ));
+         let motion_policy = app.motion_policy();
+         if animation_active && last_status_frame.elapsed() >= animation_interval {
+             let translation_animated = streaming_thinking::animate_pending_translation(
+@@ -5325,20 +5325,23 @@ pub(crate) async fn run_event_loop(
+             }
+         }
+ 
+-        let mut poll_timeout =
+-            if app.is_loading || has_running_agents || app.is_compacting || app.is_purging {
+-                Duration::from_millis(active_poll_ms(app))
+-            } else {
+-                // Relaxes only once the UI has been quiescent and quiet for
+-                // `UI_QUIESCENT_AFTER` (#6728); every deadline below still
+-                // shortens it, and input returns the loop at once.
+-                idle_poll_duration(
+-                    app,
+-                    &idle_facts,
+-                    now,
+-                    now.saturating_duration_since(last_ui_activity),
+-                )
+-            };
++        let mut poll_timeout = if (app.is_loading && !decision_prompt_waiting(app))
++            || has_running_agents
++            || app.is_compacting
++            || app.is_purging
++        {
++            Duration::from_millis(active_poll_ms(app))
++        } else {
++            // Relaxes only once the UI has been quiescent and quiet for
++            // `UI_QUIESCENT_AFTER` (#6728); every deadline below still
++            // shortens it, and input returns the loop at once.
++            idle_poll_duration(
++                app,
++                &idle_facts,
++                now,
++                now.saturating_duration_since(last_ui_activity),
++            )
++        };
+         if let Some(until_flush) = app.paste_burst_next_flush_delay_if_enabled(now) {
+             poll_timeout = poll_timeout.min(until_flush);
+         }
+```
+
+**File**: `crates/tui/src/tui/ui/motion.rs` (modified, +5/-7)
+```diff
+@@ -158,13 +158,11 @@ pub(crate) fn rail_min_chat_width(idle_empty: bool) -> u16 {
+ pub(crate) fn status_animation_interval_ms(app: &App) -> u64 {
+     if app.effective_low_motion_for_status() {
+         crate::tui::display_refresh::adaptive_animation_interval_ms(true)
+-    } else if matches!(
+-        app.view_stack.top_kind(),
+-        Some(ModalKind::Approval | ModalKind::Elevation | ModalKind::UserInput)
+-    ) || !(app.is_loading
+-        || app.is_compacting
+-        || app.is_purging
+-        || crate::tui::subagent_routing::running_agent_count(app) > 0)
++    } else if decision_prompt_waiting(app)
++        || !(app.is_loading
++            || app.is_compacting
++            || app.is_purging
++            || crate::tui::subagent_routing::running_agent_count(app) > 0)
+     {
+         UI_QUIET_STATUS_ANIMATION_MS
+     } else {
+```
+
+**File**: `crates/tui/src/tui/ui/terminal.rs` (modified, +15/-15)
+```diff
+@@ -821,10 +821,10 @@ pub(crate) const UI_QUIESCENT_POLL_MS: u64 = 250;
+ pub(crate) struct IdleFacts {
+     /// Live sub-agents (`running_agent_count(app) > 0`).
+     pub(crate) has_running_agents: bool,
+-    /// A spinner, the underwater scene, or a launch animation wants frames.
++    /// A spinner, the underwater scene, or a launch animation wants frames
++    /// faster than [`UI_QUIESCENT_POLL_MS`]; slower motion is woken by its
++    /// own frame deadline.
+     pub(crate) animation_active: bool,
+-    /// Durable tasks queued, running or waiting.
+-    pub(crate) durable_tasks_active: bool,
+     /// A terminal event is already buffered for this iteration.
+     pub(crate) input_pending: bool,
+     /// A sub-agent list refresh is waiting for room in the engine mailbox.
+@@ -837,18 +837,18 @@ pub(crate) struct IdleFacts {
+ /// the list errs towards "busy".
+ pub(crate) fn ui_state_is_quiescent(app: &App, facts: &IdleFacts, now: Instant) -> bool {
+     let toast_live = |toast: &StatusToast| toast.ttl_ms.is_some() && !toast.is_expired(now);
+-    !(app.is_loading
++    let deciding = decision_prompt_waiting(app);
++    !((app.is_loading && !deciding)
+         || app.is_compacting
+         || app.is_purging
+-        || app.turn_started_at.is_some()
+-        || matches!(app.runtime_turn_status.as_deref(), Some("in_progress"))
++        || (app.turn_started_at.is_some() && !deciding)
++        || (matches!(app.runtime_turn_status.as_deref(), Some("in_progress")) && !deciding)
+         || facts.has_running_agents
+         || facts.animation_active
+-        || facts.durable_tasks_active
+         || facts.input_pending
+         || facts.pending_engine_op
+         || app.needs_redraw
+-        || !app.view_stack.is_empty()
++        || (!app.view_stack.is_empty() && !deciding)
+         || app.onboarding != OnboardingState::None
+         || app.redaction_gate
+         || !app.queued_messages.is_empty()
+@@ -862,6 +862,13 @@ pub(crate) fn ui_state_is_quiescent(app: &App, facts: &IdleFacts, now: Instant)
+         || app.sticky_status.as_ref().is_some_and(toast_live))
+ }
+ 
++pub(crate) fn decision_prompt_waiting(app: &App) -> bool {
++    matches!(
++        app.view_stack.top_kind(),
++        Some(ModalKind::Approval | ModalKind::Elevation | ModalKind::UserInput)
++    )
++}
++
+ /// The idle poll for this iteration: [`idle_poll_ms`] normally, relaxed to
+ /// [`UI_QUIESCENT_POLL_MS`] once the UI has been quiescent (see
+ /// [`ui_state_is_quiescent`]) and quiet for [`UI_QUIESCENT_AFTER`]. `quiet_for`
+@@ -991,13 +998,6 @@ mod idle_poll_tests {
+                 },
+                 "something is animating",
+             ),
+-            (
+-                IdleFacts {
+-                    durable_tasks_active: true,
+-                    ..IdleFacts::default()
+-                },
+-                "a durable task is live",
+-            ),
+             (
+                 IdleFacts {
+                     input_pending: true,
+```
+
+**File**: `crates/tui/src/tui/ui/terminal_input.rs` (modified, +10/-1)
+```diff
+@@ -12,6 +12,8 @@ use std::time::{Duration, Instant};
+ use crossterm::event::{self, Event};
+ 
+ const TERMINAL_INPUT_POLL_INTERVAL: Duration = Duration::from_millis(50);
++const TERMINAL_INPUT_IDLE_POLL_INTERVAL: Duration = Duration::from_millis(200);
++const TERMINAL_INPUT_IDLE_AFTER: Duration = Duration::from_secs(5);
+ const TERMINAL_INPUT_HEARTBEAT_INTERVAL: Duration = Duration::from_millis(500);
+ pub(super) const TERMINAL_INPUT_STALL_TIMEOUT: Duration = Duration::from_secs(5);
+ pub(super) const TERMINAL_INPUT_RECOVERY_COOLDOWN: Duration = Duration::from_secs(10);
+@@ -186,18 +188,25 @@ impl TerminalInputPump {
+             .name("codewhale-terminal-input".to_string())
+             .spawn(move || {
+                 let mut last_heartbeat = Instant::now();
++                let mut last_event = last_heartbeat;
+                 while !thread_stop.load(Ordering::Acquire) {
+                     if thread_paused.load(Ordering::Acquire) {
+                         thread_paused_ack.store(true, Ordering::Release);
+                         thread::sleep(TERMINAL_INPUT_CHILD_PAUSE_POLL_INTERVAL);
+                         continue;
+                     }
+                     thread_paused_ack.store(false, Ordering::Release);
+-                    match event::poll(TERMINAL_INPUT_POLL_INTERVAL) {
++                    let poll_interval = if last_event.elapsed() < TERMINAL_INPUT_IDLE_AFTER {
++                        TERMINAL_INPUT_POLL_INTERVAL
++                    } else {
++                        TERMINAL_INPUT_IDLE_POLL_INTERVAL
++                    };
++                    match event::poll(poll_interval) {
+                         Ok(true) if thread_stop.load(Ordering::Acquire) => break,
+                         Ok(true) => match event::read() {
+                             Ok(event) => {
+                                 last_heartbeat = Instant::now();
++                                last_event = last_heartbeat;
+                                 let observed = ObservedTerminalEvent::new(event, last_heartbeat);
+                                 if tx.send(TerminalInputMessage::Event(observed)).is_err() {
+                                     break;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7104** (2026-10-27): docs(i18n): refresh README source stamps after 4cf2d2cff (@Aboysky)
+- **PR #7097** (2026-10-27): fix(tui): resolve the state root before opening session-side state (@SparkofSpike)
 - **PR #7090** (2026-10-25): fix(tui): don't print an unpriced session cost as $0.0000 in /status (@Lstarsky0)
 - **PR #7089** (2026-10-26): fix(tui): only say "Goal cleared." when there was a goal to clear (@Lstarsky0)
 - **PR #7087** (2026-10-25): fix(tui): keep the /diff pager's place when the terminal is resized (@Lstarsky0)
-- **PR #7084** (closed): feat(tui): consider Ctrl+C clearing a non-empty composer before it arms exit (Esc/Ctrl+C split revisited) (@Hmbown)
-- **PR #7083** (closed): feat(engine): soft model-facing context notice while auto-compaction is enabled (no competing save/compact ceremony) (@Hmbown)
-- **PR #7082** (closed): feat(tui): optionally show the running command on a foreground shell card — off by default, with a one-line or fully wrapped detail mode (@Hmbown)
+- **PR #7086** (2026-10-27): feat(context): per-scope instruction budgets with visible truncation (#6526) (@7jrxt42BxFZo4iAnN4CX)
 
 ---
 
@@ -1799,28 +2661,29 @@ CI, provider call, release or deployment claim. Changelog-o
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs): keep the OrcaRouter registry summary within its limit [skip ci]
+## X. tui): change mode and permissions mid-turn; record steering in Unreleased (CW-75
 
 **RULE**:
-When implementing operations in `docs/features.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6378f3b6`: docs): keep the OrcaRouter registry summary within its limit [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0cf390f0`: tui): change mode and permissions mid-turn; record steering in Unreleased (CW-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/features.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-summary = "Provider routes with scoped facts, limits, price estimates and a disclosed OrcaRouter offer in the pickers."
+- **Change mode and permissions while the agent works:** Tab, Shift+Tab, `/mode`, the hotbar and `/config mode` no longer refuse while a turn is running. A response that is already streaming is not restarted; the change applies at the agent's next step in the same turn (before its next tool batch, at every approval gate, and before its next model request, which carries the new mode notice). The status line says so until it applies. A call still waiting for approval goes back to the model under the new posture, and a call you already approved runs only if the new posture is equal or broader. Model, thinking level and provider stay locked until the turn ends. (CW-7552)
+- **Steering interrupts thinking:** a steer (Ctrl+Enter, or Enter twice after queueing) now closes the in-flight model request at once, whether the model is waiting on headers, reasoning, writing text or emitting a tool call, and continues the same turn with your message. Text already shown is kept as interrupted output; unfinished reasoning and partial tool calls are discarded, never run. (CW-7552)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-summary = "Provider routes with endpoint-scoped facts, explicit limits, sourced price estimates and a disclosed OrcaRouter partner offer in the pickers."
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6378f3b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0cf390f0` are properly handled with clean fallback behavior.

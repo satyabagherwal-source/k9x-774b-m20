@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T22:00:15.421Z",
-  "total_cycles_completed": 5542,
-  "total_learnings_persisted": 5542,
-  "total_rules_promoted": 4949,
+  "last_updated": "2026-10-27T22:06:30.645Z",
+  "total_cycles_completed": 5544,
+  "total_learnings_persisted": 5544,
+  "total_rules_promoted": 4951,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:22:13.734Z",
-      "repository": "subnetmarco/pgmcp",
-      "learningId": "learn-github-subnetmarco-pgmcp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:22:18.074Z",
-      "repository": "concierge-hq/concierge",
-      "learningId": "learn-github-concierge-hq-concierge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:22:20.138Z",
       "repository": "openreplay/openreplay",
@@ -1403,6 +1389,20 @@
       "repository": "crawlseo/crawlseo",
       "learningId": "learn-github-crawlseo-crawlseo",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:06:21.605Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T22:06:30.645Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "b1c943e6",
+    "sourceVersion": "46349d39",
     "license": "Apache-2.0",
-    "contentHash": "9fa2b4473384bd249cab19b06aba41d1c3e98f5c92474cc345f34c68b4e75e58",
-    "lastHarvestedAt": "2026-10-27T15:01:19.082Z",
+    "contentHash": "baace9ff8a12d93875940b05689fbfe6fe0b9a52442d42e3a6d24c3538576ec8",
+    "lastHarvestedAt": "2026-10-27T22:06:30.641Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "88772172",
+    "sourceVersion": "3a72047c",
     "license": "MIT",
-    "contentHash": "9d1d301b11f0ce1a40ced1c2366a2fe0d72daa6240399ee12fef7ad5595bae9c",
-    "lastHarvestedAt": "2026-10-26T09:49:02.843Z",
+    "contentHash": "89d5e85644f6633f0e88d9ab1152eed28a9ef666322b74a3798e2191952a7634",
+    "lastHarvestedAt": "2026-10-27T22:06:21.601Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
