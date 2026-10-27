@@ -5239,3 +5239,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-27T11:16:01.022Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `4a9dcea3` | Multi-dimensional audit evidence | 2026-10-27T11:16:06.406Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `414a6ec8` | Multi-dimensional audit evidence | 2026-10-27T11:16:07.742Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `fb3bfac8` | Multi-dimensional audit evidence | 2026-10-27T11:27:20.651Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `cddc6d1d` | Multi-dimensional audit evidence | 2026-10-27T11:27:25.426Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `1d22b2d8` | Multi-dimensional audit evidence | 2026-10-27T11:27:27.897Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `505c1a23` | Multi-dimensional audit evidence | 2026-10-27T11:27:34.123Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `21c7f844` | Multi-dimensional audit evidence | 2026-10-27T11:27:34.819Z |

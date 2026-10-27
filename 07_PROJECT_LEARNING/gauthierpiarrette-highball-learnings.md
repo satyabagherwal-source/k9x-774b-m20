@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `be1d0f39`  
+> **Source Version**: `cddc6d1d`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T05:23:48.741Z  
+> **Timestamp**: 2026-10-27T11:27:24.981Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T05:23:47.814Z  
+> **Harvest Timestamp**: 2026-10-27T11:27:24.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1807 stars
+- **Stars / Engagement**: 1941 stars
 
 ---
 
@@ -629,11 +629,15 @@ public enum EngineIntegrity {
     }
 
     /// Of the DLLs Wine could not find, its own that are absent from this engine on disk.
-    /// Empty when the engine is intact, which is the normal answer.
+    /// Empty when the engine is intact, which is the normal answer. Every engine ships each of
+    /// `builtins` in both halves (all 31 on the M4, x86-64 and arm64, 2026-10-25), and a 32-bit
+    /// program only ever loads the 32-bit copy, so a name missing from either half counts:
+    /// SteamSetup.exe died on missing 32-bit shcore.dll and combase.dll while the 64-bit copies
+    /// made the engine look whole, and the app offered a fresh installer again (highball#494).
     public static func gone(fromEngineAt root: URL, notFound: [String], arch: String = "x86_64") -> [String] {
         let dirs = libraryDirectories(engineRoot: root, arch: arch)
         return notFound.filter { name in
-            builtins.contains(name) && !dirs.contains { FileManager.default.fileExists(atPath: $0.appending(path: name).path) }
+            builtins.contains(name) && !dirs.allSatisfy { FileManager.default.fileExists(atPath: $0.appending(path: name).path) }
         }
     }
 
@@ -804,9 +808,9 @@ public struct EngineStore: Sendable {
         return installed.first { $0.id == oldID }
     }
 
-    /// The engine to offer when a program fails on `currentID`: the default engine when the
-    /// bottle is not on it (the newer one, usually), else the newest other installed engine.
-   
+    /// The engines the owner may remove from Settings: installed, not the default, and no
+    /// environment's engine. Only the engine an update supersedes goes on its own
+    /// (engineT
 ```
 
 ### Core Architecture Module: `Sources/HighballKit/EngineSwitchPlan.swift`
@@ -1029,16 +1033,13 @@ for path in sys.argv[1:]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #443** (2026-10-22): **Blue prince: blank screen**
-  *Symptoms*: ### What happened  the game starts up with no problems at all. as soon as you click new game, it goes on the loading page and after that the screen goes white and nothing can be done  ### Chip and macOS  Apple M5, macOS 26.7.1  ### Highball version  0.10.22  ### Log  ~/Library/Application Support/Highball/logs/2026-10-22T150309Z-Games-BLUE PRINCE.exe.log: # gin x64-sikarugir10.0_6-r26 bottle=Games renderer=wined3d # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Games/Blue.Prince.v2026.09.24/Blue Prince/BLUE PRINCE.exe # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLOVERRIDES=winemenubuilder.exe=d # ROSETTA_ADVERTISE_AVX=1 # CX_FWD_COMPAT_GL_CTX=1 … 3 lines … 00a8:err:environ:init_peb starting L"C:\\windows\\Microsoft.NET\\Framework\\v4.0.30319\\mscorsvw.exe" in experimental wow64 mode  (x17) … 534 lines … 0024:err:winediag:wined3d_adapter_create Using the Vulkan renderer for d3d10/11 applications.  (x4) … 12 lines … 0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_SPECULARENABLE) (0x1d) should have a representative.  (x4) 0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_COLORKEYENABLE) (0x29) should have a representative.  (x4) 0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_RANGEFOGENABLE) (0x30) should have a representative.  (x4) 0024:err:d3d:validate_state_table State STATE_RENDER(WINED3D_RS_LIGHTING) (0x89) should have a representative.  (x4) 0024:err:d3d:validat
+- **Issue #514** (2026-10-26): **death stranding requires a cpu with avx support**
+  *Symptoms*: ### What happened  it did not work until I enabled promote ave. then worked fine  ### Chip and macOS  Apple M4 Max, macOS 27.0.1  ### Highball version  0.10.22  ### Log  ~/Library/Application Support/Highball/logs/2026-10-26T162738Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r29 bottle=Games renderer=d3dmetal # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 1850570 # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r29/renderers/d3dmetal-tsshim/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r29/renderers/d3dmetal/wine:~/Library/Application Support/Highball/engine… ( 158 chars) # WINEDLLOVERRIDES=winemenubuilder.exe=d # ROSETTA_ADVERTISE_AVX=1 # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs #   dxvk.enableAsync = False # note: restarted the environment before the launch so its Windows services get this stack: it runs with a different renderer than d3dmetal; it runs with AVX advertised off and the game wants it on … 370 lines … 0158:err:environ:init_peb starting L"C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe" in experimental wow64 mode … 521 lines … # the line above repeated 1 more times 02bc:err:environ:init_peb starting L"C:\\Program Files (x86)\\Steam\\bin\\gldriverquery.exe" in experime
   **Post-Mortem & Fix Analysis**:
-  > Thanks for the report. The game's folder is from a copy outside the stores, and Highball supports games as their stores sell them, so I can't help with that one. If you have it on Steam or another store, that copy is the one to try.
+  > Thanks, that explains it. Our Death Stranding fix advertises AVX automatically, but it was set on the original game's page, and the Director's Cut is a separate Steam app, so it never reached your copy. The Director's Cut has its own page and fix now, so from the next version it starts without the switch. Closing since it works, feel free to reopen.
 
-- **Issue #439** (2026-10-22): **Helldivers 2 no longer working due to easy anti-cheat**
-  *Symptoms*: ### What happened  Recently Helldivers 2 changed from game-guard to easy anti-cheat and now either crashes on the anti-cheat start or simply doesn't start at all. I got the game to even try to start by switching off of crossover to wine and even then the anti-cheat failed on this error. I tried to attach the log from the wine start up.  <img width="746" height="413" alt="Image" src="https://github.com/user-attachments/assets/cef0171f-8175-4cc1-846a-aae8b3b358f2" />  ### Chip and macOS  Apple M5, macOS 27.0.1  ### Highball version  0.10.22  ### Log  ~/Library/Application Support/Highball/logs/2026-10-22T013932Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r29 bottle=Games renderer=dxmt # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 440 # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=44100 Hz (most games mix at 48000 Hz) # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r29/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r29/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs #   dxvk.enableAsync = False … 370 lines … 015c:err:environ:init_peb starting L"C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe" in experimental wow64 mode … 521 lines … # the line above repeated 
-  **Post-Mortem & Fix Analysis**:
-  > I just read the description that wine doesn't work with easy anti-cheat and realized I'm kinda dumb, AND while i was testing and writing this comment the game gave the same error with crossover as it did with wine even though just a second ago it wasn't even working.  <img width="1052" height="774" alt="Image" src="https://github.com/user-attachments/assets/135dffec-a9f6-4a7b-a26a-0d5c436172f4" /> (Edit: steam also shows up as a completely blank window)
-  > Thanks for the report. Easy Anti-Cheat can run under Proton on Linux when a game allows it, but that doesn't carry over to Wine on a Mac, so with Easy Anti-Cheat Helldivers 2 is out of reach for Highball and CrossOver alike. I've noted it on the game's page. I'm closing this since there's nothing on our side to fix, but if the game ever drops it, comment here.
+- **Issue #508** (2026-10-26): **steam not working**
+  *Symptoms*: ### What happened  steam not working  ### Chip and macOS  Apple M4, macOS 26.5.2  ### Highball version  0.10.22  ### Log  ~/Library/Application Support/Highball/logs/2026-10-26T103328Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe # sync=none (bottle asks msync) winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs #   dxvk.enableAsync = False … 538 lines … 0158:err:environ:init_peb starting L"C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe" in experimental wow64 mode … 1 lines … # the line above repeated 1 more times … 322 lines … 	VK_AMD_shader_trinary_minmax v1 	VK_GOOGLE_display_timing v1 	VK_IMG_format_pvrtc v1 	VK_INTEL_shader_integer_functions2 v1 	VK_MVK_macos_surface v3 	VK_MVK_moltenvk v37 	VK_NV_fragment_shader_barycentric v1 [mvk-info] GPU device: 	model: Apple M4 	type: Integrated 	vendorID: 0x106b 	deviceID: 0x1a050209 	pipelineCacheUUID: DB445FF2-1A05-0209-0000-000100000000 	GPU memory available: 12124 MB 	GPU memory used: 0 MB 	Metal Shading Languag
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1055,472 +1056,285 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0de235ca` (2026-10-20)
-**Commit Message**: arm64-wine11.18-r6: the flight check passed. Microsoft Flight Simulator 2024 on r6 through the test harness (flight r6chk on the M4, the recipe's settings): boot, Free Flight at Gibraltar, a 2-minute park and a 1-minute take-off roll, no crash, no unhandled exception, no GPU hang, 26.1 fps parked and 21.8 rolling. The harness's Steam restarted on r6 started winebus's SDL, UDEV and IOHID buses and signed in.
+### Incident Patch 1: `761456bd` (2026-10-23)
+**Commit Message**: winetricks' wine gets the engine's library paths back. winetricks runs under /bin/bash, which drops every DYLD_* variable under SIP, so the wine processes it started had no library path. The Wine 10 engines find their libraries through their own search path and never showed it; the Wine 11 engines open FreeType by name through that path, so every winetricks install on them ran without fonts. A player's .NET 4.8 install on r23 printed that error over a thousand times while it crashed in a loop until the Mac stopped answering (highball#241); on the M4 the same install finished on r23 and r25 even without fonts (1,758 and 586 errors, no crash), so the loop's own cause is not settled. Measured on the M4: a cmd /c echo on x64-crossover26.3-r25 printed 'cannot find the FreeType font library' 12 times through /bin/sh and never when the variable reached wine, and the winetricks win10 verb 3 times the old way and none through this change. The paths now travel as HB_KEEP_* and a script under Highball's tools folder exports them and starts the engine's wine, in the app's recipe path and the CLI. dotnet48 through the app's recipe code on r25 in an isolated home: installed in 236 s, no FreeType
 
-**File**: `spike/engines/arm64-wine11.18-r6.json` (modified, +1/-1)
+**File**: `Sources/HighballKit/Recipe.swift` (modified, +2/-0)
 ```diff
-@@ -80,7 +80,7 @@
-     "date": "2026-10-20",
-     "macos": "27.0",
-     "chip": "Apple M4",
--    "result": "This archive on a Mac mini M4 (checksum checked): in a fresh prefix with +hid, winebus logged SDL, UDEV and IOHID 'main loop started' within 10 s, where r5's never got past 'SDL main loop starting'. The flight check on this engine is pending. Not tested: a real controller (the M4 has none), other Macs."
-+    "result": "This archive on a Mac mini M4 with 32 GB (checksum checked). Controllers: in a fresh prefix with +hid, winebus logged SDL, UDEV and IOHID 'main loop started' within 10 s, where r5's never got past 'SDL main loop starting', and the test harness's Steam, restarted on r6, started the same three and signed in. Steam copy of Microsoft Flight Simulator 2024 through the test harness with the recipe's settings (flight r6chk): boot, Free Flight, a Cessna 172 at Gibraltar, a 2-minute park and a 1-minute take-off roll in daylight, about 8 minutes to the start screen and 16 to the cockpit; no crash, no unhandled exception, no GPU hang; 26.1 fps parked and 21.8 rolling on this one flight (r5: 22.5 and 19 over four). Not tested: a real controller (the M4 has none), other Macs."
-   },
-   "licenses": {}
- }
+@@ -587,6 +587,8 @@ public struct RecipeRunner: Sendable {
+                 let joined = WineRunner.joiningLiveServer(env, prefix: bottle.url)
+                 if joined != env { log?("[\(recipe.id)] the environment runs with sync \(SyncMode(environment: joined).rawValue), so winetricks uses it too") }
+                 env = joined
++                // The library paths reach winetricks' wine through a script, past bash (see WinetricksWine).
++                env = WinetricksWine.environment(env, wine: engine.wineBinary, script: try WinetricksWine.installScript(in: paths))
+                 // winetricks shells out to cabextract for Microsoft's cabinet installers (the core
+                 // fonts among them) and macOS does not ship it, so the app bundles one under
+                 // Resources/tools (highball#96). HIGHBALL_TOOLS names another directory, for the CLI.
 ```
 
----
-
-### Incident Patch 2: `f85dd689` (2026-10-20)
-**Commit Message**: Five fixes from the 2026-10-20 sweep.
-
-A new environment for a game is named from its title through BottleStore.safeName: a colon before a space reads " - ", other colons, slashes and bars "-", the other characters Windows forbids go, and the name stops at 60 characters. "Onimusha: Way of the Sword Benchmark" refused to become an environment (highball#391), and 100 of the database's 501 titles carry such a character. A test runs every database and recipe title through it.
-
-Before a launch the prefix's own Windows version is read from its registry files (the per-user Version, else CurrentBuild) and the setting written back when they differ. Something set an environment to Windows 7 and left it there, so Steam warned it would stop running on Windows 7 and RDR2 refused Windows 7, while the setting and the log header said Windows 11 (highball#396).
-
-The launch log header shows the DXMT_, D3DM_, SDL_, MVK_ and HB_ switches and WINE_NO_DELAYED_FORK. They are settings, not personal, and a report could not tell whether DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN was set (highball#371).
-
-A program that exits within 10 s with an error gets 20 s to come back before Highball calls it a crash and offers
-
-**File**: `Sources/HighballApp/AppState.swift` (modified, +34/-2)
+**File**: `Sources/HighballKit/WinetricksWine.swift` (added, +58/-0)
 ```diff
-@@ -1567,7 +1567,7 @@ final class AppState {
-     func createEnvironment(for recipe: HighballKit.Recipe, on manifest: EngineManifest, item: LibraryItem? = nil) {
-         pendingEngine = nil
-         guard !busy else { return }
--        let name = BottleStore.freeName(recipe.title, taken: Set(bottles.map(\.name)))
-+        let name = BottleStore.freeName(BottleStore.safeName(fromTitle: recipe.title), taken: Set(bottles.map(\.name)))
-         let accepted = Set(engines.flatMap { $0.manifest.acceptedLicenses ?? [] })
-         let done: DoneState
-         // The game installed where Play started comes along as a clone when it can (SteamGameCarryOver): no second
-@@ -2735,7 +2735,18 @@ final class AppState {
-                 switch outcome {
-                 case .failure(let error): throw error
-                 case .success(let result):
--                    if result.crashedEarly, !stopRequested { crashed(result); return false }
-+                    if result.crashedEarly, !stopRequested {
-+                        // A program that hands itself to its launcher exits at once with an error code
-+                        // and comes back moments later, started by the launcher: Star Wars Galaxy of
-+                        // Heroes through the EA app read as a crash and Highball offered another mode
-+                        // for a game that was running fine (highball-db#566). It gets 20 s to appear.
-+                        for _ in 0..<10 {
-+                            if await started() { box.handedOff = true; return true }
-+                            if stopRequested { return false }
-+                            try await Task.sleep(for: .seconds(2))
-+                        }
-+                        crashed(result); return false
-+                    }
-                     if exitEndsWait { return false }
-                     exited = true
-                 }
-@@ -3091,6 +3102,27 @@ final class AppState {
-         return ids.contains(recipe.id)
-     }
- 
-+    /// Takes a registry-only tweak back off an environment: each value it set is deleted, so Wine
-+    /// uses its own default again, and the environment stops if nothing runs in it, since drivers
-+    /// such as the controller bus read their options when the environment starts. A DualSense player
-+    /// with "Controllers through SDL" installed had no way back short of regedit (Discord, 2026-10-19).
-+    func removeTweak(_ recipe: HighballKit.Recipe, from bottle: Bottle) {
-+        guard recipe.isRemovable, let engine = engine(for: bottle) else { return }
-+        runBusy(String(format: L("Removing %@"), recipe.title)) { [self] in
-+            let runner = WineRunner(paths: paths, engine: engine, bottle: bottle)
-+            for value in recipe.registryValues { try await runner.regDelete(key: value.key, name: value.name) }
-+            let stopped = ProcessTable.liveServer(forPrefix: bottle.url) != nil && ProcessTable.isIdle(prefix: bottle.url)
-+            if stopped { _ = try? runner.kill() }
-+            await MainActor.run {
-+                var copy = self.bottles.first { $0.name == bottle.name } ?? bottle
-+                copy.settings.recipes.removeAll { $0 == recipe.id }
-+                self.update(copy)
-+                self.appendLog("\(recipe.title) removed from \(bottle.name): its registry values are gone, so Wine uses its defaults again"
-+                               + (stopped ? "; the idle environment stopped so its next start reads them." : ". Stop the environment once so programs see it."))
-+            }
+@@ -0,0 +1,58 @@
++import Foundation
++
++/// The wine winetricks starts. winetricks runs under /bin/bash, and with SIP on macOS drops every
++/// DYLD_* variable before bash starts, so each wine process winetricks started had no library path.
++/// The Wine 10 engines find their libraries without one and never showed it. The Wine 11 engines
++/// open FreeType by name through that path, so every winetricks install on them ran without fonts.
++/// A player's .NET 4.8 install on r23 printed that error over a thousand times while it crashed in
++/// a loop until the Mac stopped answering (highball#241). On the M4 the same install finished on
++/// r23 and r25 even without fonts (1,758 and 586 of those errors, no crash), so the loop's own
++/// cause is not settled. Measured on the M4, 2026-10-23: one `cmd /c echo` on
++/// x64-crossover26.3-r25 printed "cannot find the FreeType font library" 12 times started through
++/// /bin/sh, and never when the variable reached wine.
++///
++/// The library paths travel under other names, and a small script puts them back right before it
++/// starts the engine's wine: a variable the script sets itself reaches its child, since SIP only
++/// drops the ones a protected program inherits.
++public enum WinetricksWine {
++    /// What a launch hands wine and winetricks lost on the way.
++    static let carried = ["DYLD_FALLBACK_LIBRARY_PATH", "DYLD_FALLBACK_FRAMEWORK_PATH", "DYLD_LIBRARY_PATH", "DYLD_FRAMEWORK_PATH"]
++    static let keptPrefix = "HB_KEEP_"
++
++    static let script = """
++    #!/bin/sh
++    # Highball: winetricks runs under /bin/bash, where SIP drops the DYLD_* variables. Put the
++    # engine's library paths back, then start the engine's wine.
++    for name in \(carried.joined(separator: " ")); do
++      eval "value=\\${\(keptPrefix)$name-}"
++      if [ -n "$value" ]; then export "$name=$value"; fi
++    done
++    exec "$HB_WINE" "$@"
++
++    """
++
++    /// The script, written under Highball's tools folder when it is missing or out of date.
++    public static func installScript(in paths: HighballPaths) throws -> URL {
++        let dir = paths.home.appending(path: "tools/winetricks-wine", directoryHint: .isDirectory)
++        // Named wine in a folder of its own, so winetricks' name-based guesses (wine64 beside wine) still read it as wine.
++        let file = dir.appending(path: "wine")
++        let fm = FileManager.default
++        if (try? String(contentsOf: file, encoding: .utf8)) != script {
++            try fm.createDirectory(at: dir, withIntermediateDirectories: true)
++            try Data(script.utf8).write(to: file, options: .atomic)
 +        }
++        try fm.setAttributes([.posixPermissions: 0o755], ofItemAtPath: file.path)
++        return file
 +    }
 +
-     /// A runtime a game's own first-run setup installed (Steam runs the Visual C++ redist for
-     /// most games) registers itself like Highball's install does, but leaves Wine's built-in
-     /// copies of its DLLs in front of the real ones, and a launcher that checks those files
-```
-
-**File**: `Sources/HighballApp/BottleView.swift` (modified, +3/-0)
-```diff
-@@ -593,6 +593,9 @@ struct EnvironmentSettingsPage: View {
-                                     let live = state.bottles.first { $0.name == bottle.name } ?? bottle
-                                     if live.settings.recipes.contains(r.id) || state.tweakIsInstalled(r, in: live) {
-                                         Label(L("Installed"), systemImage: "checkmark.circle.fill").foregroundStyle(.green).labelStyle(.titleAndIcon)
-+                                        if r.isRemovable {
-+                                            Button(L("Remove")) { state.removeTweak(r, from: live) }.controlSize(.small).disabled(state.busy)
-+                                        }
-                                     } else {
-                                         Button(L("Install")) {
-                                             state.applyRecipe(r.id, to: state.bottles.first { $0.name == bottle.name } ?? bottle)
-```
-
-**File**: `Sources/HighballKit/BottleStore.swift` (modified, +27/-0)
-```diff
-@@ -43,6 +43,33 @@ public struct BottleStore: Sendable {
-         return candidate
-     }
- 
-+    /// A name `nameProblem` accepts, made from a game's title, for an environment Highball creates
-+    /// for that game. A fifth of the database's titles carry a character Windows forbids in paths,
-+    /// mostly a colon, and "Onimusha: Way of the Sword Benchmark" refused to become an environment
-+    /// (highball#391). A colon before a space reads as " - ", any other colon, slash or bar as "-",
-+    /// the other forbidden characters and control characters go, spaces close up, leading and
-+    /// trailing dots and dashes go, and the name stops at 60 characters so freeName's " 2" still fits.
-+    public static func safeName(fromTitle title: String) -> String {
-+        let chars = Array(title)
-+        var out = ""
-+        for (i, ch) in chars.enumerated() {
-+            if ch.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) { out += " "; continue }
-+            switch ch {
-+            case ":": out += (i + 1 < chars.count && chars[i + 1] == " ") ? " -" : "-"
-+            case "/", "\\", "|": out += "-"
-+            case "*", "?", "\"", "<", ">": continue
-+            default: out.append(ch)
-+            }
-+        }
-+        func tidy(_ s: String) -> String {
-+            s.split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
-+                .trimmingCharacters(in: CharacterSet(charactersIn: " .-"))
-+        }
-+        var name = tidy(out)
-+        if name.count > 60 { name = tidy(String(name.prefix(60))) }
-+        return name.isEmpty ? "Game" : name
-+    }
-+
-     public static func nameProblem(_ name: String) -> String? {
-         let trimmed = name.trimmingCharacters(in: .whitespaces)
-         if trimmed.isEmpty { return "The bottle name is empty." }
-```
-
-**File**: `Sources/HighballKit/Recipe.swift` (modified, +14/-0)
-```diff
-@@ -316,6 +316,20 @@ public struct Recipe: Codable, Sendable, Identifiable {
-         public var min: Int?
-     }
- 
-+    /// A tweak made only of registry values (and notes) can be taken back off: deleting each value it
-+    /// set returns Wine to its own default for it. "Controllers through SDL" asked for it, since a
-+    /// DualSense gives no input in some games with it on and the app could only install it.
-+    public var isRemovable: Bool {
-+        kind == .tweak && !registryValues.isEmpty && steps.allSatisfy {
-+            switch $0 { case .registry, .note: return true; default: return false }
-+        }
-+    }
-+
-+    /// The registry values this recipe sets, key and name.
-+    public var registryValues: [(key: String, name: String)] {
-+        steps.compactMap { if case let .registry(key, name, _, _) = $0 { return (key, name) } else { return nil } }
-+    }
-+
-     /// True when any marker is present in the bottle. Recipes without markers report false; the
-     /// caller still knows whether the recipe ran.
-     public func isInstalled(in bottle: Bottle) -> Bool {
-```
-
-**File**: `Sources/HighballKit/WineRunner.swift` (modified, +51/-0)
-```diff
-@@ -91,6 +91,15 @@ public struct WineRunner: Sendable {
-     /// GitHub issue, and a bottle's env can hold personal paths or tokens. Without it a report
-     /// cannot separate "the config was never delivered" from "the config was delivered and did
-     /// not help", which is exactly where issue #21 stalled for two rounds.
-+    static let headerSwitchPrefixes = ["DXMT_", "D3DM_", "SDL_", "MVK_", "HB_", "WINE_NO_DELAYED_FORK"]
-+
-+    /// The header lines for those switches, in name order, short values only.
-+    static func headerSwitchLines(_ env: [String: String]) -> String {
-+        env.keys.sorted().filter { key in headerSwitchPrefixes.contains { key.hasPrefix($0) } }
-+            .compactMap { key in env[key].flatMap { $0.count <= 200 ? "# \(key)=\($0)\n" : nil } }
-+            .joined()
-+    }
-+
-     static func launchHeader(engine: InstalledEngine, bottle: Bottle, renderer: Renderer,
-                              env: [String: String], args: [String]) -> String {
-         var out = "# gin \(engine.id) bottle=\(bottle.name) renderer=\(renderer)\n"
-@@ -109,6 +118,10 @@ public struct WineRunner: Sendable {
-         for key in ["WINEDLLPATH_PREPEND", "WINEDLLOVERRIDES", "ROSETTA_ADVERTISE_AVX", "MTL_HUD_ENABLED", "CX_FWD_COMPAT_GL_CTX", "DXVK_CONFIG_FILE", "DXVK_LOG_PATH", "DXVK_CONFIG", "VKD3D_SHADER_MODEL", "VKD3D_FEATURE_LEVEL", "VKD3D_CONFIG", "VKD3D_SHADER_CACHE_PATH", "LSFGM_MULTIPLIER", "LSFGM_PACING_MODE", "LSFGM_FLOW_SCALE", "LSFGM_DLL_PATH"] {
-             if let value = env[key] { out += "# \(key)=\(value)\n" }
-         }
-+        // Renderer and controller switches a player or a recipe sets: settings, never personal, and
-+        // a report can't tell whether one was set without them (highball#371 asked whether
-+        // DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN was in the environment, and the log couldn't say).
-+        out += headerSwitchLines(env)
-         // The generated dxvk.conf decides per-game behaviour, so quote it rather than making the
-         // reader ask for a second file that Repair may already have rewritten.
-         if env["DXVK_CONFIG_FILE"] != nil,
-@@ -289,6 +302,7 @@ public struct WineRunner: Sendable {
-     public func start(_ executable: URL, arguments: [String] = [], renderer: Renderer? = nil, extraEnvironment: [String: String] = [:], workingDirectory: URL? = nil, headerNote: String? = nil, program: String? = nil, onOutput: (@Sendable (String) -> Void)? = nil) async throws -> LaunchResult {
-         // First, while no server holds the hive: the syncs below start the environment's server.
-         let linkedSteamView = (try? SteamRegistryView.repair(prefix: bottle.url)) == true
-+        let prefixVersion = Self.prefixWindowsVersion(prefix: bottle.url)
-         await syncMacFontSubstitutes()
-         await syncDllOverridesRegistry()
-         await syncEngineAppDefaults()
-@@ -299,6 +313,15 @@ public struct WineRunner: Sendable {
-             onOutput?("note: \(text)")
-             note = [note, text].compactMap { $0 }.joined(separator: "; ")
-         }
-+        // highball#396: winetricks verbs and some installers set the prefix to Windows 7 and leave it.
-+        // Steam then warned it would stop running on Windows 7 and RDR2 refused to start, while the
-+        // environment's setting, and the header below, still said Windows 11. The setting wins.
-+        let wantedVersion = bottle.settings.windowsVersion.rawValue
-+        if let found = prefixVersion, found != wantedVersion, (try? await setWindowsVersion(bottle.settings.windowsVersion)) != nil {
-+            let text = "the prefix reported \(found), set back to \(wantedVersion) as the environment's settings say"
-+            onOutput?("note: \(text)")
-+            note = [note, text].compactMap { $0 }.joined(separator: "; ")
-+        }
-         // External Mac drives get letters of their own, so Steam can offer them for a library.
-         // Windows lists drives through Wine's mount manager, which reads the links when the
-         // environment's server starts: a letter linked while the server ran stayed unlisted until
-@@ -759,6 +782,34 @@ public struct WineRunner: Sendable {
-     public func setWindowsVersion(_ v: WindowsVersion) async throws {
-         _ = try await run(["winecfg", "-v", v.rawValue], renderer: .wined3d, label: "winecfg")
-     }
-+
-+    /// The Windows version a prefix reports, from its registry files, as winecfg names it, or nil
-+    /// when the files can't be read or say nothing. Wine takes HKCU\Software\Wine's Version first
-+    /// (winetricks and older winecfg write it) and otherwise the machine's CurrentBuild, which
-+    /// `winecfg -v` writes while it removes the per-user value.
-+    public static func prefixWindowsVersion(prefix: URL) -> String? {
-+        let user = (try? String(contentsOf: prefix.appending(path: "user.reg"), encoding: .utf8)) ?? ""
-+        let system = (try? String(contentsOf: prefix.appending(path: "system.reg"), encoding: .utf8)) ?? ""
-+        return prefixWindowsV
-```
-
-**File**: `Tests/HighballKitTests/LaunchChecksTests.swift` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+import XCTest
-+@testable import HighballKit
-+
-+/// The checks a launch makes before the program starts, and the tweak removal next to them.
-+final class LaunchChecksTests: XCTestCase {
-+
-+    /// highball#396: Steam warned it would stop running on Windows 7 in an environment whose setting
-+    /// said Windows 11. The prefix's own version is what Wine reports, read from its registry files.
-+    func testPrefixWindowsVersionComesFromTheRegistryFiles() {
-+        func system(_ build: String) -> String {
-+            "WINE REGISTRY Version 2\n\n[Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion] 1788462370\n\"CurrentBuild\"=\"\(build)\"\n\"CurrentVersion\"=\"6.3\"\n"
-+        }
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: "", systemReg: system("7601")), "win7", "what winetricks win7 leaves")
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: "", systemReg: system("19045")), "win10")
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: "", systemReg: system("22000")), "win11")
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: "", systemReg: system("9600")), "win81")
-+        XCTAssertNil(WineRunner.prefixWindowsVersion(userReg: "", systemReg: ""), "nothing to read, nothing to change")
-+        // The per-user value wins in Wine, so it wins here.
-+        let user = "WINE REGISTRY Version 2\n\n[Software\\\\Wine] 1788462370\n\"Version\"=\"win7\"\n\n[Software\\\\Wine\\\\Direct3D] 1788462370\n\"Version\"=\"win11\"\n"
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: user, systemReg: system("22000")), "win7")
-+        XCTAssertEqual(WineRunner.prefixWindowsVersion(userReg: "[Software\\\\Wine\\\\Direct3D] 1\n\"Version\"=\"win7\"\n", systemReg: system("22000")), "win11",
-+                       "a value of the same name under another key is not the version")
-+    }
-+
-+    /// highball#371: the log could not show whether DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN was set.
-+    func testTheHeaderShowsRendererAndControllerSwitchesOnly() {
-+        let env = ["DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1", "SDL_JOYSTICK_MFI": "0", "HOME": "/Users/someone",
-+                   "STEAM_TOKEN": "secret", "MVK_CONFIG_USE_MTLHEAP": "0", "WINE_NO_DELAYED_FORK": "1",
-+                   "D3DM_LONG": String(repeating: "x", count: 300)]
-+        XCTAssertEqual(WineRunner.headerSwitchLines(env),
-+                       "# DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN=1\n# MVK_CONFIG_USE_MTLHEAP=0\n# SDL_JOYSTICK_MFI=0\n# WINE_NO_DELAYED_FORK=1\n")
-+    }
-+
-+    /// A DualSense player had "Controllers through SDL" installed and no way back but regedit.
-+    func testRegistryOnlyTweaksCanBeRemoved() throws {
-+        let sdl = try JSONDecoder.highball.decode(Recipe.self, from: Data("""
-+        {"id": "controller-sdl", "kind": "tweak", "title": "Controllers through SDL", "steps": [
-+          {"type": "registry", "key": "HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\winebus", "name": "DisableHidraw", "valueType": "REG_DWORD", "data": "1"},
-+          {"type": "registry", "key": "HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\winebus", "name": "Enable SDL", "valueType": "REG_DWORD", "data": "1"},
-+          {"type": "note", "text": "Restart the environment."}]}
-+        """.utf8))
-+        XCTAssertTrue(sdl.isRemovable)
-+        XCTAssertEqual(sdl.registryValues.map(\.name), ["DisableHidraw", "Enable SDL"])
-+        let runtime = try JSONDecoder.highball.decode(Recipe.self, from: Data("""
-+        {"id": "xact", "kind": "tweak", "title": "XACT", "steps": [{"type": "winetricks", "verbs": ["xact"]},
-+          {"type": "registry", "key": "HKCU\\\\Software\\\\Wine\\\\DllOverrides", "name": "xaudio2_7", "valueType": "REG_SZ", "data": "native"}]}
-+        """.utf8))
-+        XCTAssertFalse(runtime.isRemovable, "a runtime that installed files can't be taken off by deleting values")
-+        let notesOnly = try JSONDecoder.highball.decode(Recipe.self, from: Data("""
-+        {"id": "n", "kind": "tweak", "title": "N", "steps": [{"type": "note", "text": "x"}]}
-+        """.utf8))
-+        XCTAssertFalse(notesOnly.isRemovable, "nothing to remove")
++    /// The environment for a winetricks run: WINE is the script, HB_WINE the engine's wine, and each
++    /// library path is also under its HB_KEEP_ name. WINE_BIN stays the engine's wine, which
++    /// winetricks only reads to tell the binary's architecture.
++    public static func environment(_ env: [String: String], wine: URL, script: URL) -> [String: String] {
++        var out = env
++        for name in carried { if let value = env[name] { out[keptPrefix + name] = value } }
++        out["HB_WINE"] = wine.path
++        out["WINE"] = script.path
++        return out
 +    }
 +}
 ```
 
-**File**: `Tests/HighballKitTests/RecipeDBTests.swift` (modified, +22/-0)
+**File**: `Sources/highball/main.swift` (modified, +3/-2)
 ```diff
-@@ -39,6 +39,28 @@ final class RecipeDBTests: XCTestCase {
-         XCTAssertTrue(recipe.isInstalled(in: bottle), "the real runtime counts")
+@@ -538,8 +538,9 @@ struct Tricks: AsyncParsableCommand {
+         env["WINE_BINDIR"] = eng.wineBinary.deletingLastPathComponent().path
+         env["WINESERVER"] = eng.wineserverBinary.path
+         env["PATH"] = "\(eng.engineDir.appending(path: "bin").path):/usr/bin:/bin:/usr/sbin:/sbin"
+-        // bash, not sh: same as the recipe path — winetricks' macOS guidance, and sh strips
+-        // the DYLD vars winetricks' children need (issue #16 fix said "both paths"; this one lagged).
++        // bash, as the recipe path runs it (winetricks' macOS guidance). bash drops the DYLD vars
++        // under SIP like sh does, so they reach wine through WinetricksWine's script.
++        env = WinetricksWine.environment(env, wine: eng.wineBinary, script: try WinetricksWine.installScript(in: HighballPaths()))
+         let out = try Shell.capture("/bin/bash", [wt.path, "--unattended"] + verbs, env: env)
+         print(out.split(separator: "\n").suffix(12).joined(separator: "\n"))
      }
- 
-+    /// highball#391: every title in the database and every recipe's title makes a usable
-+    /// environment name, a fifth of them through BottleStore.safeName's replacements.
-+    func testEveryTitleMakesAnEnvironmentName() throws {
-+        guard FileManager.default.fileExists(atPath: dbRoot.appending(path: "db/games").path) else {
-+            throw XCTSkip("no highball-db checkout beside the repo and no .build/highball-db clone")
-+        }
-+        var titles: [String] = []
-+        for dir in ["db/games", "recipes/games", "recipes/launchers", "recipes/tweaks"] {
-+            let files = (try? FileManager.default.contentsOfDirectory(at: dbRoot.appending(path: dir), includingPropertiesForKeys: nil)) ?? []
-+            for f in files where f.pathExtension == "json" {
-+                if let o = try? JSONSerialization.jsonObject(with: Data(contentsOf: f)) as? [String: Any],
-+                   let t = o["title"] as? String { titles.append(t) }
-+            }
-+        }
-+        XCTAssertGreaterThan(titles.count, 400)
-+        for t in titles {
-+            let name = BottleStore.safeName(fromTitle: t)
-+            XCTAssertNil(BottleStore.nameProblem(name), "\(t) -> \(name)")
-+            XCTAssertNil(BottleStore.nameProblem(BottleStore.freeName(name, taken: [name])), "\(t) with a suffix")
-+        }
-+    }
-+
-     func testAllShippedRecipesDecode() throws {
-         let recipes = dbRoot.appending(path: "recipes")
-         guard FileManager.default.fileExists(atPath: recipes.path) else {
 ```
 
-**File**: `Tests/HighballKitTests/RecipeEngineTests.swift` (modified, +20/-0)
+**File**: `Tests/HighballKitTests/WinetricksWineTests.swift` (added, +61/-0)
 ```diff
-@@ -215,4 +215,24 @@ final class RecipeEngineTests: XCTestCase {
-         XCTAssertEqual(BottleStore.freeName("EA app", taken: ["EA app"]), "EA app 2")
-         XCTAssertEqual(BottleStore.freeName("EA app", taken: ["EA app", "EA app 2"]), "EA app 3")
+@@ -0,0 +1,61 @@
++import XCTest
++@testable import HighballKit
++
++/// winetricks runs under /bin/bash, which drops the DYLD_* variables under SIP, and the Wine 11
++/// engines then found no FreeType during every winetricks install (highball#241).
++final class WinetricksWineTests: XCTestCase {
++    func testTheLibraryPathsTravelUnderOtherNames() {
++        let wine = URL(fileURLWithPath: "/engines/x/engine/bin/wine"), script = URL(fileURLWithPath: "/hb/tools/winetricks-wine/wine")
++        let env = WinetricksWine.environment(["DYLD_FALLBACK_LIBRARY_PATH": "/a b/frameworks:/c", "WINE": wine.path,
++                                              "WINE_BIN": wine.path, "WINEPREFIX": "/p"], wine: wine, script: script)
++        XCTAssertEqual(env["WINE"], script.path, "winetricks starts the script")
++        XCTAssertEqual(env["HB_WINE"], wine.path, "the script starts the engine's wine")
++        XCTAssertEqual(env["WINE_BIN"], wine.path, "winetricks reads the architecture off the real binary")
++        XCTAssertEqual(env["HB_KEEP_DYLD_FALLBACK_LIBRARY_PATH"], "/a b/frameworks:/c")
++        XCTAssertEqual(env["DYLD_FALLBACK_LIBRARY_PATH"], "/a b/frameworks:/c", "a run where DYLD gets through keeps it")
++        XCTAssertNil(env["HB_KEEP_DYLD_LIBRARY_PATH"], "nothing is invented for a variable the environment does not set")
++        XCTAssertEqual(env["WINEPREFIX"], "/p")
++    }
++
++    /// The script's loop, run by /bin/sh the way winetricks reaches it: a path with spaces comes back
++    /// whole, and a variable with nothing kept stays unset.
++    func testTheScriptPutsThePathsBack() throws {
++        let body = WinetricksWine.script.replacingOccurrences(of: "exec \"$HB_WINE\" \"$@\"", with: "export -p")
++        XCTAssertNotEqual(body, WinetricksWine.script)
++        let out = try run(["-c", body], env: ["HB_KEEP_DYLD_FALLBACK_LIBRARY_PATH": "/Users/x/Library/Application Support/Highball/engines/r/frameworks:/y"])
++        // export -p quotes the way the shell likes (bash double, dash single), so the quotes are left out.
++        let exported = out.split(separator: "\n").map { line -> String in
++            var s = String(line)
++            for prefix in ["export ", "declare -x "] where s.hasPrefix(prefix) { s.removeFirst(prefix.count) }
++            return s.replacingOccurrences(of: "\"", with: "").replacingOccurrences(of: "'", with: "")
++        }
++        XCTAssertTrue(exported.contains("DYLD_FALLBACK_LIBRARY_PATH=/Users/x/Library/Application Support/Highball/engines/r/frameworks:/y"), out)
++        XCTAssertFalse(exported.contains { $0.hasPrefix("DYLD_LIBRARY_PATH") }, out)
++    }
++
++    func testTheScriptStartsWineWithItsArguments() throws {
++        let dir = FileManager.default.temporaryDirectory.appending(path: "hb-wtw-\(UUID().uuidString)", directoryHint: .isDirectory)
++        defer { try? FileManager.default.removeItem(at: dir) }
++        let script = try WinetricksWine.installScript(in: HighballPaths(home: dir))
++        XCTAssertEqual(try WinetricksWine.installScript(in: HighballPaths(home: dir)), script, "a second call keeps the same file")
++        let stub = dir.appending(path: "stub-wine")
++        try Data("#!/bin/sh\necho \"wine got: $*\"\n".utf8).write(to: stub)
++        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: stub.path)
++        let out = try run(["-c", "\"$0\" cmd.exe /c 'echo %AppData%'", script.path], env: ["HB_WINE": stub.path])
++        XCTAssertEqual(out.trimmingCharacters(in: .whitespacesAndNewlines), "wine got: cmd.exe /c echo %AppData%")
++    }
++
++    private func run(_ args: [String], env: [String: String]) throws -> String {
++        let p = Process()
++        p.executableURL = URL(fileURLWithPath: "/bin/sh")
++        p.arguments = args
++        p.environment = ["PATH": "/usr/bin:/bin"].merging(env) { $1 }
++        let pipe = Pipe()
++        p.standardOutput = pipe
++        p.standardError = pipe
++        try p.run()
++        let data = pipe.fileHandleForReading.readDataToEndOfFile()
++        p.waitUntilExit()
++        return String(decoding: data, as: UTF8.self)
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `86c161d1` (2026-10-25)
+**Commit Message**: Launch logs keep MoltenVK's warnings and errors and drop its info output. MoltenVK printed its whole extension list, about 160 lines, at info level each time a process made a Vulkan instance, and a Steam launch makes dozens. The end of a log, where a crash lands, was more of that list, so the reports' digests and the logs players paste ended before the failure (highball#486, #490, #492, Portal 2 on Discord). Every launch now sets MVK_CONFIG_LOG_LEVEL=2: [mvk-warn] and [mvk-error] lines stay, our MoltenVK patches' HIGHBALL markers among them, and a level the engine or the player sets wins. 591 tests pass on the M4.
+
+**File**: `Sources/HighballKit/Bottle.swift` (modified, +7/-0)
+```diff
+@@ -769,6 +769,13 @@ public struct Bottle: Sendable {
+         // CrossOver switch the engine's winemac.so carries adds the bit for them (Tomb Raider IV-VI
+         // Remastered, highball#136). It touches nothing that succeeded before.
+         env["CX_FWD_COMPAT_GL_CTX"] = "1"
++        // MoltenVK prints its whole extension list, about 160 lines, at info level each time a
++        // process makes a Vulkan instance, and a Steam launch makes dozens. The end of the log,
++        // where a crash lands, was more of that list, so the reports' digests and the logs players
++        // paste ended before the failure (highball#486, #490, #492, Portal 2 on Discord). Warnings
++        // and errors stay, our patches' markers among them, and a level the engine or the player
++        // sets wins.
++        if env["MVK_CONFIG_LOG_LEVEL"] == nil { env["MVK_CONFIG_LOG_LEVEL"] = "2" }
+         let r = effective
+         // The async toggle travels in the generated dxvk.conf, NOT the DXVK_ASYNC env var:
+         // the async fork reads `env == "1" || config.enableAsync`, so an env 1 can never be
+```
+
+**File**: `Tests/HighballKitTests/EngineArchTests.swift` (modified, +8/-0)
+```diff
+@@ -223,4 +223,12 @@ final class EngineArchTests: XCTestCase {
+         let intel = InstalledEngine(manifest: manifest("x86_64", requires: ["rosetta2"]), root: tempRoot("x64-engine"))
+         XCTAssertEqual(try bottle.environment(engine: intel, renderer: .wined3d)["ROSETTA_ADVERTISE_AVX"], "1")
      }
 +
-+    /// highball#391: a new environment for "Onimusha: Way of the Sword Benchmark" failed, since its
-+    /// name came straight from the title and a bottle name can't hold a colon.
-+    func testSafeNameFromTitle() {
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "Onimusha: Way of the Sword Benchmark"), "Onimusha - Way of the Sword Benchmark")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "Seven Knights Re:BIRTH"), "Seven Knights Re-BIRTH")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "Fate/Stay Night"), "Fate-Stay Night")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "Who's Your Daddy?!"), "Who's Your Daddy!")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "\"Quoted\" <Game>"), "Quoted Game")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "PEAK"), "PEAK", "a usable title stays as it is")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "...Dots..."), "Dots")
-+        XCTAssertEqual(BottleStore.safeName(fromTitle: "???"), "Game")
-+        let long = BottleStore.safeName(fromTitle: "BRAZILIAN DRUG DEALER 3: I OPENED A PORTAL TO HELL IN THE FAVELA TRYING TO REVIVE MIT AIA I NEED TO CLOSE IT")
-+        XCTAssertLessThanOrEqual(long.count, 60)
-+        for title in ["Onimusha: Way of the Sword Benchmark", "Seven Knights Re:BIRTH", "a|b\\c*d", "x\ty", " : ", long] {
-+            let name = BottleStore.safeName(fromTitle: title)
-+            XCTAssertNil(BottleStore.nameProblem(name), "\(title) -> \(name)")
-+            XCTAssertNil(BottleStore.nameProblem(BottleStore.freeName(name, taken: [name])), "with freeName's suffix")
-+        }
++    func testMoltenVKLogsWarningsNotItsExtensionList() throws {
++        var bottle = Bottle(url: URL(fileURLWithPath: "/tmp/hb-arch-test-bottle"), settings: BottleSettings(name: "t", engineID: "x64-test-r1"))
++        let intel = InstalledEngine(manifest: manifest("x86_64", requires: ["rosetta2"]), root: tempRoot("x64-engine"))
++        XCTAssertEqual(try bottle.environment(engine: intel, renderer: .wined3d)["MVK_CONFIG_LOG_LEVEL"], "2", "warnings and errors only")
++        bottle.settings.environment["MVK_CONFIG_LOG_LEVEL"] = "3"
++        XCTAssertEqual(try bottle.environment(engine: intel, renderer: .wined3d)["MVK_CONFIG_LOG_LEVEL"], "3", "a player's own level wins")
 +    }
  }
 ```
 
 ---
 
-### Incident Patch 3: `7c9eb52c` (2026-10-19)
-**Commit Message**: The app icon is now Hayden's .icon, which he built from the original icon's drawing script. Its ice stays see-through, the drink has more depth and the bubbles have a rim, closer to the old icon than the version this PR had. The one change to his file is the refraction effect, which is gone because Xcode 26.6's actool, which builds releases, stops on it with an exception, and on macOS 27 the icon draws the same without it (no pixel more than 0.8% apart). The static files, AppIcon.icns at every size from 16 to 1024 px (each drawn at its point size and scale), AppIcon.png and the README and docs logos, are this icon as macOS 27 draws it, rendered on the M4 from the catalog Xcode 26.6 compiles. Xcode 26.6 and 27.0 both compile it. make-app.sh says why the refraction effect stays out.
+### Incident Patch 3: `234c9888` (2026-10-25)
+**Commit Message**: A program added by hand carries its game's fix variables. The library matches such a program to its database game, and the game's page lists the variables the fix scoped to it as applied to its launches, but launching a pin passed only the pin's own environment. Forza Horizon 6 run from its exe in ~/Games then started on D3DMetal's default graphics card and crashed at startup (highball#486). A pin launch now starts from the matched game's variables, with the program's own settings winning. 590 tests pass on the M4.
 
-Co-authored-by: hayden <[REDACTED_EMAIL]>
-
-**File**: `Resources/AppIcon.icon/Assets/03_Liquid_Body 2.svg` (added, +18/-0)
+**File**: `Sources/HighballApp/AppState.swift` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,18 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <defs>
-+    <clipPath id="glassClip">
-+      <rect x="362" y="224" width="300" height="560" rx="42" ry="42"/>
-+    </clipPath>
-+    <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-+      <stop offset="0%" stop-color="#E3A94F"/>
-+      <stop offset="100%" stop-color="#9A5E17"/>
-+    </linearGradient>
-+  </defs>
-+  <!-- Glass clipping mask preserves the rounded base corners -->
-+  <g clip-path="url(#glassClip)">
-+    <!-- Flat-topped liquid body (from y=422 down to glass base at y=784) -->
-+    <rect x="362" y="422" width="300" height="362" fill="url(#liquidGrad)"/>
-+    <!-- Integrated fizz head band across the flat top surface -->
-+    <rect x="362" y="422" width="300" height="18" fill="#F3CE8B" fill-opacity="0.85"/>
-+  </g>
-+</svg>
-\ No newline at end of file
+@@ -2559,13 +2559,17 @@ final class AppState {
+         let steamFirstBoot = isSteamUI(pin) && !FileManager.default.fileExists(
+             atPath: bottle.driveC.appending(path: "Program Files (x86)/Steam/bin/cef").path)
+         let cef = bottle.driveC.appending(path: "Program Files (x86)/Steam/bin/cef")
++        // The database game the library matches this program to keeps its fix's variables, as its
++        // page says, with the program's own winning (highball#486).
++        let gameID = libraryItems.first(where: { $0.pinID == pin.id }).flatMap { gameDB.entry(for: $0)?.id }
++        let gameEnvironment = pin.environment(withGame: bottle.settings.environment(forGame: gameID))
+         runBusy(steamFirstBoot ? L("Starting Steam for the first time — it downloads and unpacks its own client") : "Starting \(pin.name)",
+                 expected: steamFirstBoot ? L("usually 15–25 minutes; long quiet stretches are normal") : nil,
+                 done: .handedOff,
+                 stop: .killBottle(bottle, label: L("Stop")),
+                 cleanup: { [weak self] in self?.launchingPins.remove(pin.id) }) { [self] in
+             let runner = WineRunner(paths: paths, engine: engine, bottle: bottle)
+-            var extraEnvironment = [String: String]()
++            var extraEnvironment = gameEnvironment
+             // A Steam client left running by a game launch answers a new steam.exe by swallowing
+             // it (issue #33). Ask it to show its window instead, and leave the wineserver alone:
+             // a game may still be running under it.
 ```
 
-**File**: `Resources/AppIcon.icon/Assets/05_Ice_Cube_Left.svg` (added, +7/-0)
+**File**: `Sources/HighballKit/Bottle.swift` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <g transform="translate(453, 499) rotate(12)">
-+    <rect x="-55" y="-55" width="110" height="110" rx="22" ry="22"
-+          fill="#FFF6E6" fill-opacity="0.4675"
-+          stroke="#FFFFFF" stroke-opacity="0.65" stroke-width="6"/>
-+  </g>
-+</svg>
-\ No newline at end of file
+@@ -282,6 +282,15 @@ public struct Pin: Codable, Sendable, Identifiable, Hashable {
+         return pin
+     }
+ 
++    /// What a launch of this program carries: the variables the database game it is matched to got
++    /// from its fix, then the program's own, which win. A program added by hand ran with its own
++    /// variables only, so its game's page listed the fix's variables as applied while the launch
++    /// dropped them, and Forza Horizon 6 started that way crashed on D3DMetal's default graphics card
++    /// (highball#486).
++    public func environment(withGame gameVariables: [String: String]) -> [String: String] {
++        gameVariables.merging(environment) { $1 }
++    }
++
+     /// Where the pin's executable actually lives for a given bottle.
+     public func executableURL(driveC: URL) -> URL {
+         let named = launchURL(driveC: driveC)
 ```
 
-**File**: `Resources/AppIcon.icon/Assets/06_Ice_Cube_Right.svg` (added, +7/-0)
+**File**: `Tests/HighballKitTests/LaunchChecksTests.swift` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <g transform="translate(575, 549) rotate(-18)">
-+    <rect x="-55" y="-55" width="110" height="110" rx="22" ry="22"
-+          fill="#FFF6E6" fill-opacity="0.4125"
-+          stroke="#FFFFFF" stroke-opacity="0.65" stroke-width="6"/>
-+  </g>
-+</svg>
-\ No newline at end of file
-```
-
-**File**: `Resources/AppIcon.icon/Assets/07_Bubble_1.svg` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <circle cx="430" cy="724" r="10" fill="#FFF0D0" fill-opacity="0.7"/>
-+</svg>
-\ No newline at end of file
-```
-
-**File**: `Resources/AppIcon.icon/Assets/08_Bubble_2.svg` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <circle cx="560" cy="684" r="13" fill="#FFF0D0" fill-opacity="0.7"/>
-+</svg>
-\ No newline at end of file
-```
-
-**File**: `Resources/AppIcon.icon/Assets/09_Bubble_3.svg` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <circle cx="480" cy="644" r="8" fill="#FFF0D0" fill-opacity="0.7"/>
-+</svg>
-\ No newline at end of file
-```
-
-**File**: `Resources/AppIcon.icon/Assets/10_Bubble_4.svg` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <circle cx="610" cy="734" r="9" fill="#FFF0D0" fill-opacity="0.7"/>
-+</svg>
-\ No newline at end of file
-```
-
-**File**: `Resources/AppIcon.icon/Assets/11_Glass_Outline.svg` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-+  <rect x="362" y="224" width="300" height="560" rx="42" ry="42"
-+        fill="none" stroke="#F5EBDD" stroke-opacity="0.9" stroke-width="16"/>
-+</svg>
-\ No newline at end of file
+@@ -71,6 +71,18 @@ final class LaunchChecksTests: XCTestCase {
+         XCTAssertNil(Pin(name: "x", path: "x.exe").launching(with: nil).renderer, "and with none, the environment decides")
+     }
+ 
++    /// Forza Horizon 6 added by hand ran without its fix's graphics card variables and crashed (highball#486).
++    func testAProgramCarriesItsGamesVariables() {
++        let fix = ["D3DM_VENDOR_ID": "0x10de", "D3DM_DEVICE_ID": "0x2786"]
++        let pin = Pin(name: "Forza Horizon 6", path: "/Users/x/Games/Forza Horizon 6/forzahorizon6.exe",
++                      environment: ["D3DM_DEVICE_ID": "0x56a1", "MY_SETTING": "1"])
++        let env = pin.environment(withGame: fix)
++        XCTAssertEqual(env["D3DM_VENDOR_ID"], "0x10de", "the fix's variable reaches the launch")
++        XCTAssertEqual(env["D3DM_DEVICE_ID"], "0x56a1", "the program's own setting wins over the fix")
++        XCTAssertEqual(env["MY_SETTING"], "1")
++        XCTAssertEqual(Pin(name: "x", path: "x.exe").environment(withGame: [:]), [:], "no game, nothing added")
++    }
++
+     /// A DualSense player had "Controllers through SDL" installed and no way back but regedit.
+     func testRegistryOnlyTweaksCanBeRemoved() throws {
+         let sdl = try JSONDecoder.highball.decode(Recipe.self, from: Data("""
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #457** (2026-10-23): Play removes macOS '._' files from a game's folder on exFAT and similar drives (@gauthierpiarrette)
-- **PR #456** (2026-10-23): A game's page looks for its program again after an install changes (@gauthierpiarrette)
-- **PR #452** (2026-10-22): Play gives a pinned program the mode it chose (@gauthierpiarrette)
-- **PR #450** (2026-10-22): Report links fill the form's Game or launcher field (@gauthierpiarrette)
-- **PR #449** (2026-10-22): winetricks joins a running server's sync mode (@gauthierpiarrette)
-- **PR #422** (2026-10-21): Secrets out of launch logs, Steam window after a D3DMetal Play, engine choice for new environments, setup without Rosetta (@gauthierpiarrette)
+- **PR #520** (2026-10-27): MoltenVK device memory cap (highball#398) and a CI build for the engine's MoltenVK (@gauthierpiarrette)
+- **PR #511** (2026-10-26): Settings can remove engines no environment uses (@gauthierpiarrette)
+- **PR #510** (2026-10-26): A winetricks step no longer waits forever behind an open Steam window (@gauthierpiarrette)
+- **PR #501** (2026-10-25): Launch logs drop MoltenVK's info output (@gauthierpiarrette)
+- **PR #495** (2026-10-25): An engine missing the 32-bit half of a Wine DLL counts as damaged (@gauthierpiarrette)
+- **PR #491** (2026-10-25): Offer patched private-API MoltenVK for X4 (@mvanhorn)
 
 ---
 
@@ -1540,28 +1354,29 @@ Co-authored-by: hayden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. arm64-wine11.18-r6: the flight check passed. Microsoft Flight Simulator 2024 on 
+## X. winetricks' wine gets the engine's library paths back. winetricks runs under /bi
 
 **RULE**:
-When implementing operations in `spike/engines/arm64-wine11.18-r6.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/HighballKit/Recipe.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0de235ca`: arm64-wine11.18-r6: the flight check passed. Microsoft Flight Simulator 2024 on r6 through the test harness (flight r6chk on the M4, the recipe's settings): boot, Free Flight at Gibraltar, a 2-minute park and a 1-minute take-off roll, no crash, no unhandled exception, no GPU hang, 26.1 fps parked and 21.8 rolling. The harness's Steam restarted on r6 started winebus's SDL, UDEV and IOHID buses and signed in.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `761456bd`: winetricks' wine gets the engine's library paths back. winetricks runs under /bin/bash, which drops every DYLD_* variable under SIP, so the wine processes it started had no library path. The Wine 10 engines find their libraries through their own search path and never showed it; the Wine 11 engines open FreeType by name through that path, so every winetricks install on them ran without fonts. A player's .NET 4.8 install on r23 printed that error over a thousand times while it crashed in a loop until the Mac stopped answering (highball#241); on the M4 the same install finished on r23 and r25 even without fonts (1,758 and 586 errors, no crash), so the loop's own cause is not settled. Measured on the M4: a cmd /c echo on x64-crossover26.3-r25 printed 'cannot find the FreeType font library' 12 times through /bin/sh and never when the variable reached wine, and the winetricks win10 verb 3 times the old way and none through this change. The paths now travel as HB_KEEP_* and a script under Highball's tools folder exports them and starts the engine's wine, in the app's recipe path and the CLI. dotnet48 through the app's recipe code on r25 in an isolated home: installed in 236 s, no FreeType. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `spike/engines/arm64-wine11.18-r6.json`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/Recipe.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    "result": "This archive on a Mac mini M4 with 32 GB (checksum checked). Controllers: in a fresh prefix with +hid, winebus logged SDL, UDEV and IOHID 'main loop started' within 10 s, where r5's never got past 'SDL main loop starting', and the test harness's Steam, restarted on r6, started the same three and signed in. Steam copy of Microsoft Flight Simulator 2024 through the test harness with the recipe's settings (flight r6chk): boot, Free Flight, a Cessna 172 at Gibraltar, a 2-minute park and a 1-minute take-off roll in daylight, about 8 minutes to the start screen and 16 to the cockpit; no crash, no unhandled exception, no GPU hang; 26.1 fps parked and 21.8 rolling on this one flight (r5: 22.5 and 19 over four). Not tested: a real controller (the M4 has none), other Macs."
+                // The library paths reach winetricks' wine through a script, past bash (see WinetricksWine).
+                env = WinetricksWine.environment(env, wine: engine.wineBinary, script: try WinetricksWine.installScript(in: paths))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-    "result": "This archive on a Mac mini M4 (checksum checked): in a fresh prefix with +hid, winebus logged SDL, UDEV and IOHID 'main loop started' within 10 s, where r5's never got past 'SDL main loop starting'. The flight check on this engine is pending. Not tested: a real controller (the M4 has none), other Macs."
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0de235ca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `761456bd` are properly handled with clean fallback behavior.

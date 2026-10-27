@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:16:07.672Z",
+  "last_updated": "2026-10-27T11:27:34.757Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2684,8 +2684,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "f2f80ab7",
-      "content_hash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
+      "source_version": "21c7f844",
+      "content_hash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -2718,6 +2718,11 @@
           "number": 4429,
           "title": "Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4711,
+          "title": "client build-id across packages and introduce TAR.GZ dbg package (#23537)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2725,7 +2730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:45:16.689Z",
+      "verified_at": "2026-10-27T11:27:34.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7986,8 +7991,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8742357a",
-      "content_hash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
+      "source_version": "505c1a23",
+      "content_hash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8232,7 +8237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:39:42.890Z",
+      "verified_at": "2026-10-27T11:27:34.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32302,8 +32307,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "ea89cc4d",
-      "content_hash": "fcd3e1a07f836fe08c5e78cbe1114b5953982c639a34b720757bddfd6aee6c4c",
+      "source_version": "fb3bfac8",
+      "content_hash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -32351,6 +32356,11 @@
           "number": 4393,
           "title": "dead-code): a constructor no longer keeps an unused class alive",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4708,
+          "title": "Merge pull request #1256 from kucherenko/fix/knip-config-files",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32358,7 +32368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:20:54.433Z",
+      "verified_at": "2026-10-27T11:27:20.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45797,8 +45807,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "0770c5f3",
-      "content_hash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
+      "source_version": "1d22b2d8",
+      "content_hash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -45831,6 +45841,11 @@
           "number": 4064,
           "title": "ignore netlink recoverable errors in watchers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4710,
+          "title": "include applesmc module",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45838,7 +45853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:04:52.609Z",
+      "verified_at": "2026-10-27T11:27:27.823Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117090,14 +117105,19 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "be1d0f39",
-      "content_hash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
+      "source_version": "cddc6d1d",
+      "content_hash": "799cac2d6681e1646fc9525d17ecf04c4d6f2d4577ecd930d333f79ed277af31",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
         {
           "number": 3763,
           "title": "arm64-wine11.18-r6: the flight check passed. Microsoft Flight Simulator 2024 on",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4709,
+          "title": "winetricks' wine gets the engine's library paths back. winetricks runs under /bi",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -117106,7 +117126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:23:48.972Z",
+      "verified_at": "2026-10-27T11:27:25.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131367,6 +131387,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:16:07.655Z"
+    },
+    "rule-4708": {
+      "learning_id": "rule-4708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4708,
+      "title": "Merge pull request #1256 from kucherenko/fix/knip-config-files",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "fb3bfac8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:27:20.573Z"
+    },
+    "rule-4709": {
+      "learning_id": "rule-4709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4709,
+      "title": "winetricks' wine gets the engine's library paths back. winetricks runs under /bi",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "cddc6d1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:27:25.353Z"
+    },
+    "rule-4710": {
+      "learning_id": "rule-4710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4710,
+      "title": "include applesmc module",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "1d22b2d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:27:27.823Z"
+    },
+    "rule-4711": {
+      "learning_id": "rule-4711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4711,
+      "title": "client build-id across packages and introduce TAR.GZ dbg package (#23537)",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "21c7f844",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:27:34.745Z"
     }
   },
   "aliases": {

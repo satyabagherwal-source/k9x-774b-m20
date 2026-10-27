@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `f2f80ab7`  
+> **Source Version**: `21c7f844`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:45:16.377Z  
+> **Timestamp**: 2026-10-27T11:27:34.417Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:45:16.370Z  
+> **Harvest Timestamp**: 2026-10-27T11:27:34.154Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23521** (2026-10-23): **Merge latest devel into 4.0**
-  *Symptoms*: ### Scope & Purpose  Enterprise companion https://github.com/arangodb/enterprise/pull/1727 
+- **Issue #23537** (2026-10-26): **Fix client build-id across packages and introduce TAR.GZ dbg package**
+  *Symptoms*: - fix client build-id across packages: now it's fixed for TAR.GZ (incl. docker images), DEB and RPM.  - introduce TAR.GZ dbg package: ``` arangodb3e-client-linux-<VERSION>_<ARCH>.tar.gz arangodb3e-dbg-linux-<VERSION>_<ARCH>.tar.gz      ← new arangodb3e-linux-<VERSION>_<ARCH>.tar.gz ```
 
-- **Issue #23519** (2026-10-23): **It seems our old way of remoting GDB no longer works. Work out a new way**
-  *Symptoms*: ### Scope & Purpose  The way GDB reacts to our remoting has changed - adopt.  - [x] :hankey: Bugfix 
+- **Issue #23533** (2026-10-26): **Revert "Merge pull request #22819 from arangodb/feature/cor-575-impro…**
+  *Symptoms*: Reverts https://github.com/arangodb/arangodb/pull/22819 due to issues shown in the alubsan nightly run on devel.  This reverts commit c5b4ffcc91d73b47c26fe6dfc8f762b0fc9e1f1f, reversing changes made to 023cfa4654a531f47b0f9a9c304fc208bf7dae1e. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,58 +1009,536 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2f80ab7` (2026-10-25)
-**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+### Incident Patch 1: `3e688268` (2026-10-26)
+**Commit Message**: Fix client build-id across packages and introduce TAR.GZ dbg package (#23537)
 
-**File**: `CHANGELOG` (modified, +3/-3)
+* Fix client build-id across packages and introduce TAR.GZ dbg package
+
+* Format the change to override_dh_strip in a readeable fashion
+
+**File**: `scripts/packaging/build-targz.sh` (modified, +12/-1)
 ```diff
-@@ -1,6 +1,9 @@
- 3.12.13 (XXXX-XX-XX)
- --------------------
+@@ -61,11 +61,22 @@ cp -a "${SCRIPT_DIR}/binForTarGz" bin
+ find bin \( -name "*.bak" -o -name "*~" \) -delete
+ cp "bin/README.${OS}.server" ./README
+ sed -i -E "s/@ARANGODB_PACKAGE_NAME@/${NAME}-${OS}-${V}${ARCH_SUFFIX}/g" README
+-# prepareInstall: strip client tools per policy; arangod stays unstripped.
++# prepareInstall: strip client tools per policy (extracting their debug
++# information first); arangod stays unstripped.
++if [ "${PACKAGE_STRIP}" != "None" ]; then
++  export DEBUG_SYMBOLS_DIR="${WORK}/${NAME}-dbg-${OS}-${V}${ARCH_SUFFIX}"
++fi
+ "${SCRIPT_DIR}/strip-install-tree.sh" "${WORK}/targz"
  
-+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-+  dependencies.
+ mkdir -p "${PACKAGES_OUT}"
+ 
++# Debug-symbols bundle: usr/lib/debug/.build-id/... debug files for the
++# binaries stripped above.
++if [ -n "${DEBUG_SYMBOLS_DIR:-}" ] && [ -d "${DEBUG_SYMBOLS_DIR}/usr/lib/debug" ]; then
++  DBG="$(basename "${DEBUG_SYMBOLS_DIR}")"
++  tar czf "${PACKAGES_OUT}/${DBG}.tar.gz" -C "${WORK}" "${DBG}"
++fi
 +
- * Updated ArangoDB Starter to v0.19.30.
+ # Server bundle
+ cd "${WORK}"
+ cp -a targz "${NAME}-${OS}-${V}${ARCH_SUFFIX}"
+```
+
+**File**: `scripts/packaging/debian/common/rules` (modified, +4/-2)
+```diff
+@@ -24,9 +24,11 @@ override_dh_auto_install:
+ 	cd build/install ; if test -d usr/share/arangodb3/js/common; then cp -a --parents usr/share/arangodb3/js/common usr/share/arangodb3/js/client usr/share/arangodb3/js/node ../../debian/@EDITION@-client; else cp -a --parents usr/share/arangodb3/js/*/common usr/share/arangodb3/js/*/client usr/share/arangodb3/js/*/node ../../debian/@EDITION@-client; fi
+ 	cd build/install ; if test -x usr/bin/arangobackup ; then cp -a --parents etc/arangodb3/arangobackup.conf usr/bin/arangobackup ../../debian/@EDITION@-client ; fi
  
- * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
-@@ -77,9 +80,6 @@
-   indexes for multi-byte characters. Fixed `FIND_FIRST()` sometimes missing
-   matches of accented characters at the end of the search range.
++# Strip explicitly instead of via dh_strip: dh_strip rewrites the GNU
++# build-id of every binary it strips. See scripts/packaging/strip-debian-packages.sh.
+ override_dh_strip:
+-	@DEBIAN_STRIP_ALL@dh_strip --exclude usr/bin/arangodb --dbg-package @EDITION@-dbg
+-	@DEBIAN_STRIP_EXCEPT_ARANGOD@dh_strip --exclude usr/bin/arangodb --exclude usr/sbin/arangod --dbg-package @EDITION@-dbg
++	@DEBIAN_STRIP_ALL@scripts/packaging/strip-debian-packages.sh @EDITION@ All
++	@DEBIAN_STRIP_EXCEPT_ARANGOD@scripts/packaging/strip-debian-packages.sh @EDITION@ ExceptArangod
+ 	@DEBIAN_STRIP_NONE@
  
--* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
--  dependencies.
+ override_dh_builddeb:
+```
+
+**File**: `scripts/packaging/strip-debian-packages.sh` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++#!/bin/bash
++# Strip the client tools in the debian/<pkg>{,-client} trees, extracting
++# their debug info into the -dbg package first (/usr/lib/debug/<path>.debug,
++# debuglink layout). Plain strip/objcopy keep the GNU build-id intact.
++# Whitelist only: arangod is stripped solely in All mode; the starter and
++# rclone are never touched; symlinked tool names are skipped.
++#
++# Usage: strip-debian-packages.sh <edition-pkg-name> <All|ExceptArangod>
++
++set -euo pipefail
++
++EDITION_PKG="$1"
++MODE="$2"
++
++TOOLS="usr/bin/arangobackup usr/bin/arangobench usr/bin/arangodump
++       usr/bin/arangoexport usr/bin/arangoimport usr/bin/arangorestore
++       usr/bin/arangosh usr/bin/arangovpack"
++if [ "${MODE}" = "All" ]; then
++  TOOLS="${TOOLS} usr/sbin/arangod"
++fi
++
++for pkg in "${EDITION_PKG}" "${EDITION_PKG}-client"; do
++  for rel in ${TOOLS}; do
++    bin="debian/${pkg}/${rel}"
++    { [ -f "${bin}" ] && [ ! -L "${bin}" ]; } || continue
++    dbg="debian/${EDITION_PKG}-dbg/usr/lib/debug/${rel}.debug"
++    mkdir -p "$(dirname "${dbg}")"
++    objcopy --only-keep-debug "${bin}" "${dbg}"
++    strip --remove-section=.comment --remove-section=.note "${bin}"
++    objcopy --add-gnu-debuglink="${dbg}" "${bin}"
++  done
++done
+```
+
+**File**: `scripts/packaging/strip-install-tree.sh` (modified, +42/-9)
+```diff
+@@ -1,17 +1,23 @@
+ #!/bin/bash
+-# Strip an install tree the way shipped packages are stripped.
+-# Client tools are stripped, arangod and the starter stay unstripped
+-# (arangod was only ever stripped for <= 3.10).
++# Strip an install tree the way shipped packages are stripped, optionally
++# extracting each stripped binary's debug information first into a
++# GDB-style usr/lib/debug/.build-id/ tree (objcopy --only-keep-debug,
++# strip, --add-gnu-debuglink; the GNU build-id is left intact).
++# Client tools are stripped, arangod and the starter stay unstripped;
++# only PACKAGE_STRIP=All strips arangod too.
+ # Used by build-targz.sh and by the nightly Docker image job.
+ #
+ # Usage: strip-install-tree.sh <install-tree>
+-#   EDITION        enterprise | community      (default enterprise)
+-#   PACKAGE_STRIP  All | ExceptArangod | None  (default ExceptArangod)
++#   EDITION            enterprise | community      (default enterprise)
++#   PACKAGE_STRIP      All | ExceptArangod | None  (default ExceptArangod)
++#   DEBUG_SYMBOLS_DIR  optional: extract debug info of every stripped
++#                      binary into this directory before stripping
+ 
+ set -euo pipefail
+ 
+ EDITION="${EDITION:-enterprise}"
+ PACKAGE_STRIP="${PACKAGE_STRIP:-ExceptArangod}"
++DEBUG_SYMBOLS_DIR="${DEBUG_SYMBOLS_DIR:-}"
+ 
+ if [ $# -ne 1 ] || [ ! -d "$1" ]; then
+   echo "strip-install-tree: need an existing install tree as first argument" >&2
+@@ -20,16 +26,43 @@ fi
+ 
+ cd "$1"
+ 
++# Extract debug info (when DEBUG_SYMBOLS_DIR is set), then strip; the
++# debug file is keyed by GNU build-id, by name if the binary has none.
++extract_and_strip() {
++  local bin="$1"
++  if [ -z "${DEBUG_SYMBOLS_DIR}" ]; then
++    strip "${bin}"
++    return
++  fi
++  local id dbgfile
++  id="$(readelf -n "${bin}" 2>/dev/null | sed -n 's/.*Build ID: \([0-9a-f]\{40\}\).*/\1/p' | head -n1)"
++  if [ -n "${id}" ]; then
++    dbgfile="${DEBUG_SYMBOLS_DIR}/usr/lib/debug/.build-id/${id:0:2}/${id:2}.debug"
++  else
++    dbgfile="${DEBUG_SYMBOLS_DIR}/usr/lib/debug/$(basename "${bin}").debug"
++  fi
++  mkdir -p "$(dirname "${dbgfile}")"
++  objcopy --only-keep-debug "${bin}" "${dbgfile}"
++  chmod 644 "${dbgfile}"
++  strip "${bin}"
++  objcopy --add-gnu-debuglink="${dbgfile}" "${bin}"
++}
++
+ case "${PACKAGE_STRIP}" in
+   All|ExceptArangod)
+-    strip usr/bin/arangodump usr/bin/arangoexport usr/bin/arangoimport \
+-          usr/bin/arangorestore usr/bin/arangosh usr/bin/arangovpack \
+-          usr/bin/arangobench
++    for tool in arangobench arangodump arangoexport arangoimport \
++                arangorestore arangosh arangovpack; do
++      extract_and_strip "usr/bin/${tool}"
++    done
+     ;;
+ esac
+ 
++if [ "${PACKAGE_STRIP}" = "All" ]; then
++  extract_and_strip usr/sbin/arangod
++fi
++
+ if [ "${EDITION}" != "enterprise" ]; then
+   rm -f bin/arangobackup usr/bin/arangobackup usr/sbin/arangobackup
+ elif [ -f usr/bin/arangobackup ] && [ "${PACKAGE_STRIP}" != "None" ]; then
+-  strip usr/bin/arangobackup
++  extract_and_strip usr/bin/arangobackup
+ fi
+```
+
+---
+
+### Incident Patch 2: `9c840878` (2026-10-26)
+**Commit Message**: Revert "Merge pull request #22819 from arangodb/feature/cor-575-improve-activitiy-registry-datastructure" (#23533)
+
+This reverts commit c5b4ffcc91d73b47c26fe6dfc8f762b0fc9e1f1f, reversing
+changes made to 023cfa4654a531f47b0f9a9c304fc208bf7dae1e.
+
+**File**: `Documentation/Metrics/arangodb_activities_existing_thread_registries.yaml` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-name: arangodb_activities_existing_thread_registries
+-introducedIn: "3.12.13"
+-help: |
+-  Number of currently existing activity thread registries.
+-unit: number
+-type: gauge
+-category: Statistics
+-complexity: advanced
+-exposedBy:
+-  - dbserver
+-  - coordinator
+-  - agent
+-description: |
+-  Number of currently existing activity thread registries. One thread registry is created when the first activity is created on a thread. The registry lives at least as long as the thread itself but also at least as long as the last activity inside it - therefore it can exist longer than the thread itself.
+```
+
+**File**: `Documentation/Metrics/arangodb_activities_ready_for_deletion.yaml` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-name: arangodb_activities_ready_for_deletion
+-introducedIn: "3.12.13"
+-help: |
+-  Number of activities waiting for garbage collection.
+-unit: number
+-type: gauge
+-category: Statistics
+-complexity: advanced
+-exposedBy:
+-  - dbserver
+-  - coordinator
+-  - agent
+-description: |
+-  Number of finished activities that are still registered because their garbage collection has not run yet. Garbage collection runs on the owning thread when it creates the next activity, or periodically from the activities feature's cleanup thread.
+```
+
+**File**: `Documentation/Metrics/arangodb_activities_thread_registries_total.yaml` (removed, +0/-14)
+```diff
+@@ -1,14 +0,0 @@
+-name: arangodb_activities_thread_registries_total
+-introducedIn: "3.12.13"
+-help: |
+-  Total number of threads that created activities since database process start.
+-unit: number
+-type: counter
+-category: Statistics
+-complexity: advanced
+-exposedBy:
+-  - dbserver
+-  - coordinator
+-  - agent
+-description: |
+-  Total number of threads that created activities since database process start. It can be higher than the total number of threads if a thread was restarted at some point.
+```
+
+**File**: `arangod/SystemMonitor/Activities/Feature.cpp` (modified, +21/-45)
+```diff
+@@ -46,16 +46,6 @@ DECLARE_COUNTER(
+ DECLARE_GAUGE(arangodb_activities_existing, std::uint64_t,
+               "Number of currently registered activities");
+ 
+-DECLARE_GAUGE(arangodb_activities_ready_for_deletion, std::uint64_t,
+-              "Number of activities waiting for garbage collection");
 -
- * COR-1083 / github issue #23425:
-   Fixed the incorrect usage of released pool analyzer.
+-DECLARE_COUNTER(arangodb_activities_thread_registries_total,
+-                "Total number of threads that created activities since "
+-                "database process start");
+-
+-DECLARE_GAUGE(arangodb_activities_existing_thread_registries, std::uint64_t,
+-              "Number of currently existing activity thread registries");
+-
+ Feature::Feature(
+     application_features::ApplicationServer& server,
+     std::shared_ptr<crash_handler::DataSourceRegistry> dataSourceRegistry)
+@@ -75,39 +65,25 @@ auto Feature::create_metrics(metrics::IRegistry& registry)
+     -> std::shared_ptr<RegistryMetrics> {
+   return std::make_shared<RegistryMetrics>(
+       registry.addShared(arangodb_activities_total{}),
+-      registry.addShared(arangodb_activities_existing{}),
+-      registry.addShared(arangodb_activities_ready_for_deletion{}),
+-      registry.addShared(arangodb_activities_thread_registries_total{}),
+-      registry.addShared(arangodb_activities_existing_thread_registries{}));
++      registry.addShared(arangodb_activities_existing{}));
+ }
+-
+ struct Feature::CleanupThread {
+   CleanupThread(size_t gc_timeout)
+-      : _thread([gc_timeout, this](std::stop_token stoken) {
+-          auto const stopRequested = [&] {
+-            std::unique_lock guard(_mutex);
+-            return _cv.wait_for(guard, stoken, std::chrono::seconds{gc_timeout},
+-                                [&stoken] { return stoken.stop_requested(); });
+-          };
+-          while (not stopRequested()) {
+-            activities::registry.run_external_cleanup();
++      : _thread([gc_timeout](std::stop_token stoken) {
++          while (not stoken.stop_requested()) {
++            std::this_thread::sleep_for(std::chrono::seconds{gc_timeout});
++            activities::registry.garbageCollect();
+           }
+         }) {}
+ 
+-  ~CleanupThread() {
+-    _thread.request_stop();
+-    _cv.notify_one();
+-    _thread.join();
+-  }
++  ~CleanupThread() { _thread.request_stop(); }
+ 
+-  std::mutex _mutex;
+-  std::condition_variable_any _cv;
+   std::jthread _thread;
+ };
+ 
+ void Feature::prepare() {
+   _metrics = create_metrics(server().getFeature<metrics::MetricsFeature>());
+-  registry.set_metrics(_metrics);
++  registry.setMetrics(_metrics);
+ }
+ 
+ void Feature::start() {
+@@ -117,25 +93,25 @@ void Feature::start() {
+ void Feature::stop() { _cleanupThread.reset(); }
+ 
+ velocypack::SharedSlice Feature::getData() const {
+-  auto snap = registry.snapshot();
+-  if (not snap.ok()) {
++  auto res = registry.snapshot();
++  if (res.ok()) {
++    return res.get();
++  } else {
+     THROW_ARANGO_EXCEPTION_MESSAGE(
+         TRI_ERROR_INTERNAL,
+-        std::string{"Error while serializing to VelocyPack: "} +
+-            snap.error().error() + "\nPath: " + snap.error().path());
++        std::format("Failed to serialize snapshot with error: {}",
++                    res.error().error()));
+   }
+-  return snap.get();
+ }
+ 
+ velocypack::SharedSlice Feature::getCrashData() const {
+-  auto snap = registry.snapshot();
+-  if (not snap.ok()) {
+-    auto builder = VPackBuilder{};
+-    {
+-      VPackObjectBuilder ob(&builder);
+-      builder.add("error", VPackValue(snap.error().error()));
+-    }
+-    return builder.sharedSlice();
++  auto res = registry.snapshot();
++  if (res.ok()) {
++    return getData();
++  } else {
++    // YOLO.  If an exception is thrown here it happens inside crash
++    // data collection and the synthetic text extrusion machine
++    // complains.
++    return velocypack::SharedSlice();
+   }
+-  return snap.get();
+ }
+```
+
+**File**: `arangod/SystemMonitor/Activities/Metrics.cpp` (modified, +2/-17)
+```diff
+@@ -31,23 +31,8 @@ auto RegistryMetrics::increment_total_nodes() -> void {
+ auto RegistryMetrics::increment_registered_nodes() -> void {
+   existing_activities->fetch_add(1);
+ }
+-auto RegistryMetrics::decrement_registered_nodes() -> void {
+-  existing_activities->fetch_sub(1);
+-}
+-auto RegistryMetrics::increment_ready_for_deletion_nodes() -> void {
+-  ready_for_deletion_activities->fetch_add(1);
+-}
+-auto RegistryMetrics::decrement_ready_for_deletion_nodes() -> void {
+-  ready_for_deletion_activities->fetch_sub(1);
+-}
+-auto RegistryMetrics::increment_total_lists() -> void {
+-  thread_registries_total->count();
+-}
+-auto RegistryMetrics::increment_existing_lists() -> void {
+-  existing_thread_registries->fetch_add(1);
+-}
+-auto RegistryMetrics::decrement_existing_lists() -> void {
+-  existing_thread_registries->fetch_sub(1);
++auto RegistryMetrics::store_registered_nodes(std::uint64_t count) -> void {
++  existing_activities->store(count, std::memory_order_relaxed);
+ }
+ 
+ }  // namespace arangodb::activities
+```
+
+**File**: `arangod/SystemMonitor/Activities/Metrics.h` (modified, +9/-27)
+```diff
+@@ -21,47 +21,29 @@
+ ////////////////////////////////////////////////////////////////////////////////
+ #pragma once
+ 
+-#include "Containers/Concurrent/metrics.h"
++#include "Activities/IRegistryMetrics.h"
+ #include "Metrics/Fwd.h"
+ 
+ #include <memory>
+ 
+ namespace arangodb::activities {
+ 
+-struct RegistryMetrics : arangodb::containers::Metrics {
+-  RegistryMetrics(
+-      std::shared_ptr<arangodb::metrics::Counter> activities_total,
+-      std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
+-          existing_activities,
+-      std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
+-          ready_for_deletion_activities,
+-      std::shared_ptr<arangodb::metrics::Counter> thread_registries_total,
+-      std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
+-          existing_thread_registries)
+-      : activities_total{std::move(activities_total)},
+-        existing_activities{std::move(existing_activities)},
+-        ready_for_deletion_activities{std::move(ready_for_deletion_activities)},
+-        thread_registries_total{std::move(thread_registries_total)},
+-        existing_thread_registries{std::move(existing_thread_registries)} {}
++struct RegistryMetrics : IRegistryMetrics {
++  RegistryMetrics(std::shared_ptr<arangodb::metrics::Counter> activities_total,
++                  std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
++                      existing_activities)
++
++      : activities_total{activities_total},
++        existing_activities{existing_activities} {}
+   ~RegistryMetrics() = default;
+   auto increment_total_nodes() -> void override;
+-  auto decrement_registered_nodes() -> void override;
+-  auto increment_ready_for_deletion_nodes() -> void override;
+-  auto decrement_ready_for_deletion_nodes() -> void override;
+-  auto increment_total_lists() -> void override;
+-  auto increment_existing_lists() -> void override;
+-  auto decrement_existing_lists() -> void override;
+   auto increment_registered_nodes() -> void override;
++  auto store_registered_nodes(std::uint64_t count) -> void override;
+ 
+  private:
+   std::shared_ptr<arangodb::metrics::Counter> activities_total = nullptr;
+   std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>> existing_activities =
+       nullptr;
+-  std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
+-      ready_for_deletion_activities = nullptr;
+-  std::shared_ptr<arangodb::metrics::Counter> thread_registries_total = nullptr;
+-  std::shared_ptr<arangodb::metrics::Gauge<std::uint64_t>>
+-      existing_thread_registries = nullptr;
+ };
+ 
+ }  // namespace arangodb::activities
+```
+
+**File**: `arangod/SystemMonitor/AsyncRegistry/Feature.cpp` (modified, +6/-8)
+```diff
+@@ -155,24 +155,22 @@ auto Feature::create_metrics(metrics::IRegistry& registry)
+ struct Feature::PromiseCleanupThread {
+   PromiseCleanupThread(size_t gc_timeout)
+       : _thread([gc_timeout, this](std::stop_token stoken) {
+-          auto const stopRequested = [&] {
++          while (not stoken.stop_requested()) {
+             std::unique_lock guard(_mutex);
+-            return _cv.wait_for(guard, stoken, std::chrono::seconds{gc_timeout},
+-                                [&stoken] { return stoken.stop_requested(); });
+-          };
+-          while (not stopRequested()) {
+-            async_registry::registry.run_external_cleanup();
++            auto status = _cv.wait_for(guard, std::chrono::seconds{gc_timeout});
++            if (status == std::cv_status::timeout) {
++              async_registry::registry.run_external_cleanup();
++            }
+           }
+         }) {}
+ 
+   ~PromiseCleanupThread() {
+     _thread.request_stop();
+     _cv.notify_one();
+-    _thread.join();
+   }
+ 
+   std::mutex _mutex;
+-  std::condition_variable_any _cv;
++  std::condition_variable _cv;
+   std::jthread _thread;
+ };
  
 ```
 
-**File**: `VERSIONS` (modified, +3/-3)
+**File**: `arangod/SystemMonitor/AsyncRegistry/Metrics.cpp` (modified, +2/-2)
 ```diff
-@@ -6,10 +6,10 @@ GCC_LINUX "13.2.0"
- CLANG_LINUX "19.1.7"
- OPENSSL_LINUX "3.5.9"
- USE_RCLONE "true"
--RCLONE_GO "1.26.9-f0f9558_20261012084010"
-+RCLONE_GO "1.26.10-60c5ceb_20261025121659"
- RCLONE_VERSION "1.75.1"
--RCLONE_SHA256_AMD64 "1c8cdcbfc39f015460905cc036df7b3a002e8c1483898557198d14dc20459599"
--RCLONE_SHA256_ARM64 "249cd726ffb63add94e54a7acae6fd61651e64872ed3c1fd49080b05c15573ff"
-+RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
-+RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
- MINIMAL_DEBUG_INFO "On"
- DEFAULT_ARCHITECTURE "sandy-bridge"
- USE_ARM "On"
+@@ -36,10 +36,10 @@ auto RegistryMetrics::decrement_registered_nodes() -> void {
+   existing_promises->fetch_sub(1);
+ }
+ auto RegistryMetrics::increment_ready_for_deletion_nodes() -> void {
+-  ready_for_deletion_promises->fetch_add(1);
++  existing_promises->fetch_add(1);
+ }
+ auto RegistryMetrics::decrement_ready_for_deletion_nodes() -> void {
+-  ready_for_deletion_promises->fetch_sub(1);
++  existing_promises->fetch_sub(1);
+ }
+ auto RegistryMetrics::increment_total_lists() -> void {
+   thread_registries_total->count();
+```
+
+---
+
+### Incident Patch 3: `bdd98c05` (2026-10-26)
+**Commit Message**: Remove fix for async prefetch. (#23528)
+
+* Remove fix for async prefetch.
+
+* Disable broken test code.
+
+**File**: `arangod/Aql/ExecutionNode/ExecutionNode.cpp` (modified, +0/-1)
+```diff
+@@ -662,7 +662,6 @@ void ExecutionNode::cloneWithoutRegisteringAndDependencies(
+   other._varUsageValid = _varUsageValid;
+   other._isInSplicedSubquery = _isInSplicedSubquery;
+   other._isCallstackSplitEnabled = _isCallstackSplitEnabled;
+-  other.setIsAsyncPrefetchEnabled(_isAsyncPrefetchEnabled);
+ 
+   // point to current AST -> don't do deep copies.
+   other._varsUsedLaterStack = _varsUsedLaterStack;
+```
+
+**File**: `tests/Aql/ExecutionNode/ExecutionNodeTest.cpp` (modified, +2/-2)
+```diff
+@@ -242,8 +242,8 @@ TEST_F(ExecutionNodeTest, clone_copies_execution_flags) {
+   auto* cloned = node->clone(&plan, false);
+   EXPECT_NE(node->id(), cloned->id());
+   EXPECT_TRUE(cloned->isCallstackSplitEnabled());
+-  EXPECT_TRUE(cloned->isAsyncPrefetchEnabled());
+-  EXPECT_EQ(2, plan.asyncPrefetchNodes());
++  // EXPECT_TRUE(cloned->isAsyncPrefetchEnabled());
++  // EXPECT_EQ(2, plan.asyncPrefetchNodes());
+ }
+ 
+ TEST_F(ExecutionNodeTest, sort_node_clone_copies_limit_and_grouping) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23537** (2026-10-26): Fix client build-id across packages and introduce TAR.GZ dbg package (@KVS85)
+- **PR #23533** (2026-10-26): Revert "Merge pull request #22819 from arangodb/feature/cor-575-impro… (@jvolmer)
+- **PR #23528** (2026-10-26): Remove fix for async prefetch. (@maierlars)
+- **PR #23527** (2026-10-26): It seems our old way of remoting GDB no longer works. Work out a new way (@dothebart)
 - **PR #23521** (2026-10-23): Merge latest devel into 4.0 (@mpoeter)
-- **PR #23519** (2026-10-23): It seems our old way of remoting GDB no longer works. Work out a new way (@dothebart)
-- **PR #23517** (2026-10-23): rbac-tests improve logging and version handling (@RheaAyase)
-- **PR #23514** (2026-10-22): catch any non-normal exit. (@dothebart)
-- **PR #23511** (2026-10-21): Remove dead code releated to mustCheckBounds. (@maierlars)
-- **PR #23506** (2026-10-20): Compile with C++26 (@markuspf)
+- **PR #23520** (2026-10-26): AQL traversal conditions keep outer document attributes in projections (@maierlars)
 
 ---
 
@@ -1080,32 +1558,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+## X. client build-id across packages and introduce TAR.GZ dbg package (#23537)
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/packaging/build-targz.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2f80ab7`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e688268`: client build-id across packages and introduce TAR.GZ dbg package (#23537). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/packaging/build-targz.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
+# prepareInstall: strip client tools per policy (extracting their debug
+# information first); arangod stays unstripped.
+if [ "${PACKAGE_STRIP}" != "None" ]; then
+  export DEBUG_SYMBOLS_DIR="${WORK}/${NAME}-dbg-${OS}-${V}${ARCH_SUFFIX}"
+fi
+# Debug-symbols bundle: usr/lib/debug/.build-id/... debug files for the
+# binaries stripped above.
+if [ -n "${DEBUG_SYMBOLS_DIR:-}" ] && [ -d "${DEBUG_SYMBOLS_DIR}/usr/lib/debug" ]; then
+  DBG="$(basename "${DEBUG_SYMBOLS_DIR}")"
+  tar czf "${PACKAGES_OUT}/${DBG}.tar.gz" -C "${WORK}" "${DBG}"
+fi
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
-  dependencies.
-
+# prepareInstall: strip client tools per policy; arangod stays unstripped.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2f80ab7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e688268` are properly handled with clean fallback behavior.

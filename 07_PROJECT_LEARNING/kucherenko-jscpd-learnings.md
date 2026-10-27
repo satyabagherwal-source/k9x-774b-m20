@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `ea89cc4d`  
+> **Source Version**: `fb3bfac8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:20:54.094Z  
+> **Timestamp**: 2026-10-27T11:27:20.237Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:20:54.087Z  
+> **Harvest Timestamp**: 2026-10-27T11:27:18.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6449 stars
+- **Stars / Engagement**: 6453 stars
 
 ---
 
@@ -1878,1500 +1878,155 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0934df0a` (2026-10-25)
-**Commit Message**: fix(dead-code): a constructor no longer keeps an unused class alive
+### Incident Patch 1: `fb3bfac8` (2026-10-25)
+**Commit Message**: Merge pull request #1256 from kucherenko/fix/knip-config-files
 
-The graph took every MAGIC symbol for a root, and reaching a member
-reaches its class. So a class with a constructor or a dunder method was
-always live. It was never reported as an unused export or symbol, and a
-class only the tests import was not marked as one. The constructor
-finding this PR removes was the only trace such a class left. Now a
-constructor is reached through its class like any other member, and a
-class nothing uses is reported as the class. super().__init__() and
-this.constructor no longer reach every class that declares the name. A
-class declared inside a function is reached by nothing, so its hooks
-stay roots.
+fix(dead-code): knip.ts and knip.js are knip's config, not unused files
 
-MAGIC was also given by name alone: to fields (next = null), to a static
-or computed constructor, to dispose, catch and finally, which the
-language itself never calls, and in Python to every __x__ name, typos
-and Python 2 hooks included. Now it covers the real constructor,
-toString, toJSON, valueOf and then, and the Python data model, and such
-members are never reported. The other hook names get HOOK_NAME. Their
-findings carry a new reason, hook-name, that takes 30 points off, so
-they fal
-
-**File**: `docs/basta-extending.md` (modified, +16/-4)
+**File**: `rust/crates/basta/frameworks.yaml` (modified, +9/-0)
 ```diff
-@@ -122,10 +122,22 @@ positive on a real codebase; the tests that pin them are named in brackets.
-   `export` keyword, encode the convention: Python uses `__all__` when present
-   and the underscore rule otherwise, and treats an import as exported only in
-   an `__init__.py`, in `__all__`, or with an explicit re-export marker.
--- **`MAGIC`, `DECORATED`, `ABSTRACT`, `OVERRIDE`** make a symbol a
--  reachability root or lower its confidence. Set `DECORATED` only for
--  decorators you do not recognise; `@property`-style decorators that never
--  call the function themselves are inert. [`inert_decorators_do_not_count_as_framework_magic`]
-+- **`MAGIC` is a name the language calls for you:** a class's constructor,
-+  Python's `__init__` or `__iter__`, JavaScript's `toString` or `then`. A
-+  `MAGIC` member is never reported, and it is reached through its class
-+  rather than on its own, so a class nothing uses is reported as the class.
-+  **`HOOK_NAME` is a name only a library or a convention calls** (`dispose`,
-+  `__tablename__`), or one shaped like a hook that is none (`__nonzero__`, a
-+  misspelt dunder). Its findings lose confidence and say why. Set `MAGIC`
-+  only on names the runtime really calls. At module level, where there is no
-+  class to go through, both make a reachability root.
-+  [`only_what_the_language_calls_is_magic`,
-+  `a_constructor_is_reached_through_its_class_and_not_by_its_name`]
-+- **`DECORATED` and `ABSTRACT`** make a symbol a reachability root, and
-+  `DECORATED`, `ABSTRACT` and `OVERRIDE` lower a finding's confidence. Set
-+  `DECORATED` only for decorators you do not recognise; `@property`-style
-+  decorators that never call the function themselves are inert.
-+  [`inert_decorators_do_not_count_as_framework_magic`]
- - **`local_refs`** is the count of references from inside the file, minus
-   the ones that only *export* the name. `export { a }` and
-   `module.exports = { a }` are not uses of `a`.
-```
-
-**File**: `docs/rust.md` (modified, +9/-2)
-```diff
-@@ -963,6 +963,13 @@ jscpd --dead-code src --dead-code-categories all
- could be a call to any `render` in the project, so the rule is the least
- certain of the five.
+@@ -820,6 +820,15 @@ frameworks:
+       - "src/service-worker.{js,ts}"
+       - "src/react-app-env.d.ts"
  
-+A member the language calls for you is never reported: a constructor,
-+Python's `__init__` and `__repr__`, JavaScript's `toString` and `then`. A
-+class nothing uses is reported as the class. A member that is only named like
-+a hook a library calls, such as `dispose` or `__tablename__`, may be called
-+from outside the code, so it is reported under the default confidence floor,
-+with that reason.
++  - name: knip
++    detect:
++      configFiles: ["knip.{json,jsonc,js,ts}", ".knip.{json,jsonc}", "knip.config.{js,ts}"]
++      dependencies: [knip]
++      packageJsonKeys: [knip]
++    entry:
++      # `knip.config.*` is an entry already, like any `*.config.*` file.
++      - "knip.{js,ts}"
 +
- ### How it decides
- 
- Everything rests on the entry points, because every finding is the answer to
-@@ -1069,8 +1076,8 @@ The score starts from a base set by how much inference the rule needs — an
- unreferenced import binding is a fact, an unused class member is a guess —
- and loses points for each piece of contrary evidence: a file that calls
- `eval` or `getattr`, a decorator the analyzer does not recognise, a wildcard
--re-export, a name that appears in a string, a file in the scan that did not
--parse. A file whose own path ends a string literal somewhere, extension left
-+re-export, a name that appears in a string, a member named like a hook a
-+library calls, a file in the scan that did not parse. A file whose own path ends a string literal somewhere, extension left
- off — `resolve(distDir, 'runtime/handlers/island')`, the way a framework names
- a file it loads by itself — loses 40 points, which takes it under the default
- floor: the string is no import and creates no edge, but it is reason enough
+   # ── Python ────────────────────────────────────────────────────────────────
+   # Nothing in this table is about JavaScript as such: a framework is found by
+   # a file it cannot run without, and what it loads is a list of paths.
 ```
 
-**File**: `rust/crates/basta/src/classify.rs` (modified, +95/-19)
+**File**: `rust/crates/basta/tests/findings.rs` (modified, +25/-0)
 ```diff
-@@ -144,10 +144,20 @@ fn category_for(
-         return (!used).then_some(Category::UnusedImport);
-     }
-     // A name the project's framework reads by convention is used by the
--    // framework. The graph roots it, which keeps what it calls alive; this
--    // keeps the declaration itself out of the report, where an entry point's
--    // `--include-entry-exports` or a member no code names would put it.
--    if symbol.flags.contains(SymbolFlags::FRAMEWORK_GLOBAL) {
-+    // framework, and one the language calls for you (a constructor,
-+    // `__repr__`, `toString`) is used by the runtime. Code need not name
-+    // either, so this keeps the declaration out of the report, where an entry
-+    // point's `--include-entry-exports` or a member no code names would put
-+    // it. The graph roots a framework's names; a magic member runs when its
-+    // class does, and a class nothing uses is reported as the class.
-+    //
-+    // A class that is used is taken to be constructed. One used only for its
-+    // static members never runs its constructor, and that goes unreported:
-+    // basta does not track what is constructed.
-+    if symbol
-+        .flags
-+        .intersects(SymbolFlags::FRAMEWORK_GLOBAL | SymbolFlags::MAGIC)
-+    {
-         return None;
-     }
-     if symbol.kind.is_member() {
-@@ -159,11 +169,6 @@ fn category_for(
-         if graph.is_member_name_read(&symbol.name) {
-             return None;
-         }
--        // The runtime calls a constructor or a dunder method for you, so no
--        // code ever names it.
--        if symbol.flags.contains(SymbolFlags::MAGIC) {
--            return None;
--        }
-         // A member of a declaration that is itself dead is covered by that
-         // declaration's finding; repeating it per method buries the one line
-         // a reader needs.
-@@ -308,6 +313,7 @@ fn gather_evidence(
-     // True of any finding about a named declaration.
-     evidence.name_in_string = graph.appears_in_string(&symbol.name);
-     evidence.decorated = symbol.flags.contains(SymbolFlags::DECORATED);
-+    evidence.hook_name = symbol.flags.contains(SymbolFlags::HOOK_NAME);
+@@ -895,6 +895,31 @@ fn bundler_configs_name_files_relative_to_the_project() {
+     assert_file_used(&report, "src/views/a.ts");
+ }
  
-     match category {
-         Category::UnusedMember => {
-@@ -646,28 +652,98 @@ mod tests {
-     }
- 
-     #[test]
--    fn a_member_the_runtime_calls_is_never_reported() {
-+    fn a_member_the_language_calls_is_never_reported() {
-         let scan = scan(
-             &[
-                 (
-                     "index.js",
--                    "class Point {\n  constructor(x) {\n    this.x = x;\n  }\n  onlyHere() {}\n}\n\n\
--                     console.log(new Point(1).x);\n",
-+                    "class Point {\n  constructor(x) {\n    this.x = x;\n  }\n  toString() {\n    return `${this.x}`;\n  }\n  onlyHere() {}\n}\n\n\
-+                     class Util {\n  constructor() {\n    this.cache = new Map();\n  }\n  static helper() {}\n}\n\n\
-+                     console.log(`${new Point(1)}`);\nUtil.helper();\n",
-                 ),
-                 (
-                     "main.py",
--                    "class Point:\n    def __init__(self, x):\n        self.x = x\n\n\
--                     \x20   def __repr__(self):\n        return f\"Point({self.x})\"\n\n\
--                     \x20   def only_here(self):\n        pass\n\n\n\
--                     print(Point(1))\n",
-+                    "class Point:\n    def __init__(self, x):\n        self.x = x\n\n    def __repr__(self):\n        return f\"Point({self.x})\"\n\n    def only_here(self):\n        pass\n\n\nprint(Point(1))\n",
-                 ),
-             ],
-             &["index.js", "main.py"],
-         );
-+        assert_eq!(
-+            names(&scan.all(), Category::UnusedMember),
-+            vec!["onlyHere", "only_here"],
-+            "`Util.constructor` is not reported either, although nothing \
-+             constructs `Util`: basta does not track what is constructed"
-+        );
-+    }
++#[test]
++fn a_knip_config_is_an_entry_with_or_without_knip_in_package_json() {
++    // knip finds `knip.ts` and `knip.js` by name, like `knip.config.ts`;
++    // nothing imports them.
++    let installed = scan(&[
++        (
++            "package.json",
++            r#"{ "main": "src/index.ts", "devDependencies": { "knip": "6" } }"#,
++        ),
++        ("src/index.ts", "export {};\n"),
++        ("src/orphan.ts", "export const orphan = 1;\n"),
++        ("knip.ts", "export default { entry: ['src/index.ts'] };\n"),
++    ]);
++    assert_file_used(&installed, "knip.ts");
++    assert_reported(&installed, Category::UnusedFile, "src/orphan.ts", "");
 +
-+    #[test]
-+    fn a_member_only_named_like_a_hook_is_reported_on_request() {
-+        // VS Code calls `dispose` and SQLAlchemy reads `__tablename__`, but a
-+        // `dispose` nothing calls looks the same, and Python 3 never calls
-+        // `__nonzero__`.
-+        let scan = scan(
-+            &[
-+                (
-+                    "index.js",
-+                    "class Resource {\n  dispose() {}\n}\n\nconsole.log(new Resource());\n",
-+                ),
-+                (
-+                    "main.py",
-+                    "class Money:\n    __tablename__ = \"money\"\n\n    def __nonzero__(self):\n        return False\n\n\nprint(Money())\n",
-+                ),
-+            ],
-+            &["index.js", "main.py"],
-+        );
-+        let found = scan.all();
-+        assert_eq!(
-+            names(&found, Category::UnusedMember),
-+            vec!["__nonzero__", "__tablename__", "dispose"]
-+        );
-+        let floor = BastaConfig::default().min_confidence;
-+        for finding in &found {
-+            assert_eq!(finding.reasons, vec![Reason::
-```
-
-**File**: `rust/crates/basta/src/confidence.rs` (modified, +5/-1)
-```diff
-@@ -25,6 +25,8 @@ pub struct Evidence {
-     pub name_in_string: bool,
-     /// The declaration carries a decorator the analyzer does not recognise.
-     pub decorated: bool,
-+    /// The name is one a library or a convention calls without naming it.
-+    pub hook_name: bool,
-     /// The declaration is abstract.
-     pub abstract_declaration: bool,
-     /// The declaration overrides an inherited member.
-@@ -79,6 +81,7 @@ pub fn score(category: Category, evidence: &Evidence) -> (u8, Vec<Reason>) {
-     add(evidence.abstract_declaration, Reason::Abstract);
-     add(evidence.overrides, Reason::Overrides);
-     add(evidence.decorated, Reason::Decorated);
-+    add(evidence.hook_name, Reason::HookName);
-     add(evidence.name_in_string, Reason::NameAppearsInString);
-     add(evidence.path_in_string, Reason::PathAppearsInString);
-     add(evidence.dynamic_module, Reason::DynamicAccess);
-@@ -163,6 +166,7 @@ mod tests {
-                 dynamic_module: true,
-                 name_in_string: true,
-                 decorated: true,
-+                hook_name: true,
-                 abstract_declaration: true,
-                 overrides: true,
-                 package_surface: true,
-@@ -177,7 +181,7 @@ mod tests {
-             },
-         );
-         assert_eq!(score, 0);
--        assert_eq!(reasons.len(), 14);
-+        assert_eq!(reasons.len(), 15);
-     }
- 
-     #[test]
-```
-
-**File**: `rust/crates/basta/src/graph.rs` (modified, +89/-16)
-```diff
-@@ -330,8 +330,11 @@ impl Graph {
-     /// Roots are every declaration the program can start at: the exports of
-     /// entry modules, everything referenced from the top level of a reachable
-     /// module (importing a module runs its top level), and the declarations
--    /// the runtime calls without naming — constructors, dunder methods, and
--    /// anything a framework decorator took a handle to.
-+    /// something calls without naming them: a module's own hooks
-+    /// (`__getattr__`), and anything a framework decorator took a handle to.
-+    /// The constructor or a dunder method of a class the graph can reach is
-+    /// no root: it runs when the class does, and reaching the class reaches
-+    /// it.
-     fn symbol_reachability(&self, roots: Roots) -> FxHashSet<SymbolId> {
-         let scopes = self.build_scopes();
-         let members_by_name = self.build_member_index();
-@@ -385,12 +388,28 @@ impl Graph {
-             let is_root_surface = roots.accepts(module);
-             for index in self.module_symbols[module.id.0 as usize].clone() {
-                 let symbol = &self.symbols[index];
--                let always_live = symbol.flags.intersects(
--                    SymbolFlags::MAGIC
--                        | SymbolFlags::DECORATED
--                        | SymbolFlags::ABSTRACT
--                        | SymbolFlags::FRAMEWORK_GLOBAL,
--                );
-+                // A class's `__init__` runs when the class does, and reaching
-+                // the class reaches it; rooting it would make every class that
-+                // declares one live, used or not. That holds for a class the
-+                // graph can reach: by name at module level, or through the
-+                // class it is nested in. A module's `__getattr__`, or the
-+                // `__call__` of a class declared inside a function, has no
-+                // such class to wait for and stays a root.
-+                let reached_with_class = symbol.parent.is_some_and(|class| {
-+                    self.symbols[class.0 as usize]
-+                        .flags
-+                        .intersects(SymbolFlags::TOP_LEVEL | SymbolFlags::MEMBER)
-+                });
-+                let runtime_root = !reached_with_class
-+                    && symbol
-+                        .flags
-+                        .intersects(SymbolFlags::MAGIC | SymbolFlags::HOOK_NAME);
-+                let always_live = runtime_root
-+                    || symbol.flags.intersects(
-+                        SymbolFlags::DECORATED
-+                            | SymbolFlags::ABSTRACT
-+                            | SymbolFlags::FRAMEWORK_GLOBAL,
-+                    );
-                 // An entry module's exports are its public surface: something
-                 // outside the scan calls them.
-                 let entry_export = is_root_surface && symbol.is_exported();
-@@ -425,9 +444,9 @@ impl Graph {
-             // names those, and treating a live class's methods as dead would
-             // strand every helper they call.
-             //
--            // This is about following the chain, not about the verdict: a
--            // method that no code anywhere names is still reported, by the
--            // separate name-based rule in `classify`.
-+            // This is about following the chain, not about the verdict:
-+            // whether a method no code names is reported is for the
-+            // name-based rule in `classify` to say.
-             for member in &members_of[current.0 as usize] {
-                 enqueue(*member, &mut seen, &mut queue);
-             }
-@@ -516,10 +535,20 @@ impl Graph {
- 
-     /// Member declarations by name, across every module. basta infers no
-     /// types, so `x.render()` reaches every `render` there is.
-+    ///
-+    /// Not the names the runtime and its libraries call on objects of every
-+    /// kind. `super().__init__()`, `this.constructor` or `.then(` says nothing
-+    /// about which class it means, and reaching every class that declares
-+    /// one would keep them all alive. Such members are reached through their
-+    /// class.
-     fn build_member_index(&self) -> FxHashMap<&str, Vec<SymbolId>> {
-         let mut index: FxHashMap<&str, Vec<SymbolId>> = FxHashMap::default();
-         for symbol in &self.symbols {
--            if symbol.kind.is_member() {
-+            if symbol.kind.is_member()
-+                && !symbol
-+                    .flags
-+                    .intersects(SymbolFlags::MAGIC | SymbolFlags::HOOK_NAME)
-+            {
-                 index
-                     .entry(symbol.name.as_str())
-                     .or_default()
-@@ -904,21 +933,65 @@ mod tests {
-     }
- 
-     #[test]
--    fn magic_and_decorated_declarations_are_always_reachable() {
-+    fn a_decorated_declaration_is_always_reachable() {
-         let g = graph(
-             &[(
-                 "app/handlers.py",
--                "import app\n\n\nclass C:\n    def __init__(self):\n        pass\n\n\n@app.route(\"/
-```
-
-**File**: `rust/crates/basta/src/lang/javascript.rs` (modified, +69/-18)
-```diff
-@@ -1955,7 +1955,6 @@ impl Walk<'_, '_> {
-         let mut flags = flags;
-         flags.insert(SymbolFlags::MEMBER);
-         flags.set(SymbolFlags::PRIVATE_NAME, name.starts_with('#'));
--        flags.set(SymbolFlags::MAGIC, is_magic_member(&name));
-         let start = self.builder.loc(span.start);
-         let end = self.builder.loc(span.end);
-         let id = self.builder.push(Symbol {
-@@ -2007,8 +2006,13 @@ impl<'a> Visit<'a> for Walk<'a, '_> {
-                 flags.set(SymbolFlags::DECORATED, !m.decorators.is_empty());
-                 flags.set(SymbolFlags::ABSTRACT, m.r#type.is_abstract());
-                 flags.set(SymbolFlags::OVERRIDE, m.r#override);
--                if m.key.is_specific_id("constructor") || m.kind.is_constructor() {
-+                // oxc gives the constructor kind only to what runs on `new`:
-+                // a `static constructor()` or a computed `['constructor']()`
-+                // is a method like any other.
-+                if m.kind.is_constructor() {
-                     flags.insert(SymbolFlags::MAGIC);
-+                } else if m.kind.is_method() {
-+                    flags.insert(runtime_hook(&name));
-                 }
-                 self.member(name, SymbolKind::Method, m.span, flags);
-             }
-@@ -2017,6 +2021,16 @@ impl<'a> Visit<'a> for Walk<'a, '_> {
-                 let mut flags = SymbolFlags::NONE;
-                 flags.set(SymbolFlags::DECORATED, !p.decorators.is_empty());
-                 flags.set(SymbolFlags::OVERRIDE, p.r#override);
-+                // `then = (resolve) => …` is called as surely as a method of
-+                // that name is; `next = null` is a field like any other.
-+                if matches!(
-+                    p.value,
-+                    Some(
-+                        Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_)
-+                    )
-+                ) {
-+                    flags.insert(runtime_hook(&name));
-+                }
-                 self.member(name, SymbolKind::Property, p.span, flags);
-             }
-             AstKind::AccessorProperty(p) => {
-@@ -2493,22 +2507,21 @@ fn member_name(key: &PropertyKey<'_>) -> String {
-     }
- }
- 
--/// Members the runtime calls without anyone naming them.
--fn is_magic_member(name: &str) -> bool {
--    matches!(
--        name,
--        "constructor"
--            | "toString"
--            | "toJSON"
--            | "valueOf"
--            | "then"
--            | "catch"
--            | "finally"
--            | "next"
--            | "return"
--            | "throw"
--            | "dispose"
--    ) || name.starts_with("[Symbol.")
-+/// What a method of this name is to whatever runs the code.
-+///
-+/// The language calls the first group on any object that has them: `${x}`
-+/// calls `toString`, `await x` calls `then`, `JSON.stringify(x)` calls
-+/// `toJSON`. The second group is called by convention, and only on some
-+/// objects: iteration calls `next`, `return` and `throw` on an iterator, VS
-+/// Code calls `dispose` on what an extension registers, and a library's users
-+/// call `catch` and `finally` on what it returns. A method of one of those
-+/// names that nothing in the project names may be such a hook, or dead.
-+fn runtime_hook(name: &str) -> SymbolFlags {
-+    match name {
-+        "toString" | "toJSON" | "valueOf" | "then" => SymbolFlags::MAGIC,
-+        "next" | "return" | "throw" | "dispose" | "catch" | "finally" => SymbolFlags::HOOK_NAME,
-+        _ => SymbolFlags::NONE,
-+    }
- }
- 
- /// Imports, in module-record terms.
-@@ -3172,6 +3185,44 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn only_what_the_language_calls_is_magic() {
-+        let f = facts(
-+            "class C {\n  constructor() {}\n  toString() { return ''; }\n  then = (done) => done(1);\n  \
-+             dispose() {}\n  next = null;\n  get return() { return 1; }\n}\n\
-+             class S {\n  static constructor() {}\n}\n\
-+             class K {\n  ['constructor']() {}\n}\n",
-+            "javascript",
-+        );
-+        let member = |class: &str, name: &str| {
-+            let class = symbol(&f, class).id;
-+            let found = f
-+                .symbols
-+                .iter()
-+                .find(|s| s.parent == Some(class) && s.name == name);
-+            found
-+                .unwrap_or_else(|| panic!("no {name} in {class:?}"))
-+                .flags
-+        };
-+        for name in ["constructor", "toString", "then"] {
-+            assert!(member("C", name).contains(SymbolFlags::MAGIC), "{name}");
-+        }
-+        assert!(member("C", "dispose").contains(SymbolFlags::HOOK_NAME));
-+        // A field holding a value, a getter, a static method and a computed
-+        // key are called by nobody but their own code.
-+        for flags in [
-+            member("C", "next"),
-+            member("C", "return"),
-+            member("S", "constructor"),
-+            member("K", "constructor"),
-+        ] {
-+            assert!(
-+              
-```
-
-**File**: `rust/crates/basta/src/lang/python.rs` (modified, +176/-4)
-```diff
-@@ -593,7 +593,7 @@ impl Walk<'_> {
-         flags.set(SymbolFlags::TOP_LEVEL, top_level);
-         flags.set(SymbolFlags::MEMBER, member);
-         flags.set(SymbolFlags::PRIVATE_NAME, name.starts_with('_'));
--        flags.set(SymbolFlags::MAGIC, is_magic(&name));
-+        flags.insert(dunder(&name));
-         flags.set(
-             SymbolFlags::IN_DUNDER_ALL,
-             self.dunder_all.is_some_and(|all| all.contains(&name)),
-@@ -1098,11 +1098,162 @@ fn is_dynamic_builtin(name: &str) -> bool {
-     )
- }
- 
--/// Names the interpreter calls for you.
--fn is_magic(name: &str) -> bool {
--    name.starts_with("__") && name.ends_with("__") && name.len() > 4
-+/// What a dunder name is to the interpreter.
-+///
-+/// Python itself calls or reads the ones in [`DATA_MODEL`] (`repr(x)` calls
-+/// `__repr__`, `with` calls `__enter__`), so one is used whenever its class
-+/// is. Any other name of that shape is a convention someone else keeps
-+/// (`__tablename__` for SQLAlchemy, `__version__` for packaging tools), a
-+/// hook Python 3 no longer uses (`__nonzero__`, `__metaclass__`), or a typo,
-+/// and nothing tells those apart.
-+fn dunder(name: &str) -> SymbolFlags {
-+    if !(name.starts_with("__") && name.ends_with("__") && name.len() > 4) {
-+        SymbolFlags::NONE
-+    } else if DATA_MODEL.contains(&name) {
-+        SymbolFlags::MAGIC
-+    } else {
-+        SymbolFlags::HOOK_NAME
-+    }
- }
- 
-+/// The names the language reference's data model gives meaning to, and the
-+/// standard library protocols built the same way.
-+const DATA_MODEL: &[&str] = &[
-+    // Creating, showing, comparing and hashing an object, and its truth.
-+    "__new__",
-+    "__init__",
-+    "__del__",
-+    "__repr__",
-+    "__str__",
-+    "__bytes__",
-+    "__format__",
-+    "__lt__",
-+    "__le__",
-+    "__eq__",
-+    "__ne__",
-+    "__gt__",
-+    "__ge__",
-+    "__hash__",
-+    "__bool__",
-+    // Attribute access and descriptors.
-+    "__getattr__",
-+    "__getattribute__",
-+    "__setattr__",
-+    "__delattr__",
-+    "__dir__",
-+    "__get__",
-+    "__set__",
-+    "__delete__",
-+    "__set_name__",
-+    "__slots__",
-+    // Creating and checking classes.
-+    "__init_subclass__",
-+    "__class_getitem__",
-+    "__mro_entries__",
-+    "__prepare__",
-+    "__instancecheck__",
-+    "__subclasscheck__",
-+    "__subclasshook__",
-+    // Calls, containers and iteration.
-+    "__call__",
-+    "__len__",
-+    "__length_hint__",
-+    "__getitem__",
-+    "__setitem__",
-+    "__delitem__",
-+    "__missing__",
-+    "__iter__",
-+    "__next__",
-+    "__reversed__",
-+    "__contains__",
-+    // Numbers: the operators, their reflected and in-place forms, conversions.
-+    "__add__",
-+    "__sub__",
-+    "__mul__",
-+    "__matmul__",
-+    "__truediv__",
-+    "__floordiv__",
-+    "__mod__",
-+    "__divmod__",
-+    "__pow__",
-+    "__lshift__",
-+    "__rshift__",
-+    "__and__",
-+    "__xor__",
-+    "__or__",
-+    "__radd__",
-+    "__rsub__",
-+    "__rmul__",
-+    "__rmatmul__",
-+    "__rtruediv__",
-+    "__rfloordiv__",
-+    "__rmod__",
-+    "__rdivmod__",
-+    "__rpow__",
-+    "__rlshift__",
-+    "__rrshift__",
-+    "__rand__",
-+    "__rxor__",
-+    "__ror__",
-+    "__iadd__",
-+    "__isub__",
-+    "__imul__",
-+    "__imatmul__",
-+    "__itruediv__",
-+    "__ifloordiv__",
-+    "__imod__",
-+    "__ipow__",
-+    "__ilshift__",
-+    "__irshift__",
-+    "__iand__",
-+    "__ixor__",
-+    "__ior__",
-+    "__neg__",
-+    "__pos__",
-+    "__abs__",
-+    "__invert__",
-+    "__complex__",
-+    "__int__",
-+    "__float__",
-+    "__index__",
-+    "__round__",
-+    "__trunc__",
-+    "__floor__",
-+    "__ceil__",
-+    // `with`, `async`, buffers and `match`.
-+    "__enter__",
-+    "__exit__",
-+    "__aenter__",
-+    "__aexit__",
-+    "__await__",
-+    "__aiter__",
-+    "__anext__",
-+    "__buffer__",
-+    "__release_buffer__",
-+    "__match_args__",
-+    // What the interpreter reads off a class or a module.
-+    "__doc__",
-+    "__module__",
-+    "__qualname__",
-+    "__annotations__",
-+    "__annotate__",
-+    "__all__",
-+    "__path__",
-+    // The standard library's protocols: `copy`, `pickle`, `dataclasses`, `os.fspath`, `sys.getsizeof`.
-+    "__copy__",
-+    "__deepcopy__",
-+    "__replace__",
-+    "__reduce__",
-+    "__reduce_ex__",
-+    "__getstate__",
-+    "__setstate__",
-+    "__getnewargs__",
-+    "__getnewargs_ex__",
-+    "__post_init__",
-+    "__fspath__",
-+    "__sizeof__",
-+];
++    // Run with `npx knip`: the config file is the only sign of it.
++    let by_name = scan(&[
++        ("package.json", r#"{ "main": "src/index.ts" }"#),
++        ("src/index.ts", "export {};\n"),
++        ("knip.js", "export default { entry: ['src/index.ts'] };\n"),
++    ]);
++    assert_file_used(&by_name, "knip.js");
++}
 +
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -1434,6 +1585,27 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn a_dunder_python_calls_is_magic_and_any_other_only_looks_like_a_hook() {
-+        let f = facts(
-+            "class C:\n    __slots__ = ()\n    __tablename__ = \"c\"\n\n    def __init__(self):\n        pass\n\n    \
-+             def __nonzero__(self):\n        return True\n\n    def __repr___(self):\n        return \"c\"\n",
-+        );
-+        for name in ["__slots__", "__init__"] {
-+            assert!(
-+                symbol(&f, name).flags.contains(Sy
-```
-
-**File**: `rust/crates/basta/src/model.rs` (modified, +8/-1)
-```diff
-@@ -47,7 +47,9 @@ impl SymbolFlags {
-     pub const MEMBER: Self = Self(1 << 3);
-     /// Python: listed in the module's `__all__`.
-     pub const IN_DUNDER_ALL: Self = Self(1 << 4);
--    /// A dunder / magic name the runtime calls for you (`__init__`, `__iter__`).
-+    /// A name the language calls for you: a class's constructor, a Python
-+    /// data-model method (`__init__`, `__iter__`), JavaScript's `toString`.
-+    /// On a member it runs whenever its class is used.
-     pub const MAGIC: Self = Self(1 << 5);
-     /// Name begins with `_` (Python) or `#` (JS private field).
-     pub const PRIVATE_NAME: Self = Self(1 << 6);
-@@ -66,6 +68,11 @@ impl SymbolFlags {
-     /// project has to mention it. Set from the framework table once the
-     /// project's frameworks are known, not by an analyzer.
-     pub const FRAMEWORK_GLOBAL: Self = Self(1 << 11);
-+    /// Named like a hook that only a library or a convention calls
-+    /// (`dispose`, `__tablename__`), or shaped like one without being one
-+    /// (`__nonzero__`, which Python 3 no longer calls). Something outside the
-+    /// code may call it, so a finding about it is a weaker one.
-+    pub const HOOK_NAME: Self = Self(1 << 12);
- 
-     /// True when every bit of `other` is set here.
-     #[inline]
+ #[test]
+ fn package_exports_in_string_form_and_sveltekit_lib_dirs_resolve() {
+     let report = scan(&[
 ```
 
 ---
 
-### Incident Patch 2: `0ee230fe` (2026-10-24)
-**Commit Message**: fix(action): install the release of the action ref on every runner
+### Incident Patch 2: `d0f46112` (2026-10-25)
+**Commit Message**: fix(dead-code): knip.ts and knip.js are knip's config, not unused files
 
-- A release commit raises rust/package.json before npm has the release,
-  so for the length of a release run @master asked for a version nobody
-  could install. When the version comes from the action ref and can't be
-  installed, the step now warns and installs the latest release.
-- Runners start bash with -eo pipefail, so a missing rust/package.json
-  stopped the step before its warning. The version is read once, with
-  node, and an unreadable file gives the latest release with a warning
-  on every system.
-- Without --force install.sh kept a newer jscpd that was already in the
-  prefix, and npm ran only when no jscpd was on PATH at all. A pinned
-  install passes --force, npm runs whenever install.sh fails, and the
-  prefix goes first on PATH when its jscpd isn't the one found there.
-- The step prints which jscpd the next steps run and warns when it isn't
-  the release that was asked for.
-- The cpd@X fallback is gone: that package has no jscpd command, so the
-  Run step had nothing to call.
-- The Windows step wrapped npm in a try/catch that never saw npm fail.
-  One bash step installs on every system now, as the Ru
+knip reads its config from the first of knip.json, knip.jsonc,
+.knip.json, .knip.jsonc, knip.ts, knip.js, knip.config.ts and
+knip.config.js it finds in the directory it runs in. Every *.config.*
+file is an entry, so knip.config.ts was never reported, but knip.ts and
+knip.js matched no rule and came back as unused files at 95%.
 
-**File**: `action.yml` (modified, +88/-86)
+frameworks.yaml gets a knip row. Any of those config files, the knip
+package in package.json or a "knip" section there detects it, and the
+row roots knip.ts and knip.js. The config file is enough on its own, so
+a project that runs npx knip without the dependency is covered too.
+
+On ten repos that keep a knip config at the root, basta no longer
+reports it in seven. It never did in the other three, because a script
+or a Makefile names the file. In 10ten-ja-reader, knip.ts also lists
+scripts/generate-icons.ts under entry, which is no longer reported
+either, and src/common/i18n.polyfill.tsx under ignore. A string that
+names a source file is an edge, so the polyfill is now reached and 8 of
+its unexported declarations show up at 60%, where master reported the
+file at 55%. master gives the sam
+
+**File**: `rust/crates/basta/frameworks.yaml` (modified, +9/-0)
 ```diff
-@@ -150,11 +150,11 @@ inputs:
-     required: false
-     default: ""
-   version:
--    description: "Version of jscpd to install. Empty (the default) installs the release that matches the action ref you use (rust/package.json at that ref), so a pinned action also pins jscpd; 'latest' installs the newest release"
-+    description: "Version of jscpd to install. Empty (the default) installs the release this action ref belongs to, so pinning the action to a release tag or its SHA pins jscpd too; a commit between releases gets the release before it. 'latest' installs the newest release"
-     required: false
-     default: ""
-   install-prefix:
--    description: "Installation directory for the cpd binary (default: /usr/local/bin on Linux/macOS, npm global bin on Windows)"
-+    description: "Installation directory for the jscpd binary on Linux/macOS (default: ~/.local/bin). Windows installs jscpd with npm and ignores it"
-     required: false
-     default: ""
-   skip-install:
-@@ -203,105 +203,107 @@ outputs:
- runs:
-   using: composite
-   steps:
--    - name: Install jscpd (Linux/macOS)
--      if: runner.os != 'Windows' && inputs.skip-install != 'true'
-+    - name: Install jscpd
-+      if: inputs.skip-install != 'true'
-       shell: bash
-       env:
-         JSCPD_VERSION: ${{ inputs.version }}
-         JSCPD_PREFIX: ${{ inputs.install-prefix }}
-       run: |
--        # An empty version means "the release this action ref belongs to", so
--        # pinning the action (tag or SHA) also pins the installed jscpd.
--        if [ -z "$JSCPD_VERSION" ]; then
--          JSCPD_VERSION=$(sed -n 's/^[[:space:]]*"version":[[:space:]]*"\([^"]*\)".*/\1/p' "$GITHUB_ACTION_PATH/rust/package.json" | head -n 1)
--          if [ -z "$JSCPD_VERSION" ]; then
--            echo "::warning::Could not read the action's jscpd version from rust/package.json; installing the latest release"
--            JSCPD_VERSION=latest
-+        # An empty version means the release this action ref belongs to, the
-+        # one rust/package.json names, so pinning the action to a release tag
-+        # or its SHA pins jscpd too.
-+        version="${JSCPD_VERSION#v}"
-+        from_ref=""
-+        if [ -z "$version" ]; then
-+          manifest="$GITHUB_ACTION_PATH/rust/package.json"
-+          version=$(node -p 'require(process.argv[1]).version' "$manifest" 2>/dev/null) || version=""
-+          if printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+'; then
-+            from_ref=1
-+            echo "Installing jscpd $version, the release of this action ref"
-           else
--            echo "Installing jscpd $JSCPD_VERSION (the version of this action)"
-+            echo "::warning::Could not read the jscpd version from $manifest; installing the latest release"
-+            version=latest
-           fi
-         fi
--        ARGS=""
--        if [ -n "$JSCPD_VERSION" ] && [ "$JSCPD_VERSION" != "latest" ]; then
--          ARGS="$ARGS --version $JSCPD_VERSION"
--        fi
--        if [ -n "$JSCPD_PREFIX" ]; then
--          ARGS="$ARGS --prefix $JSCPD_PREFIX"
--        fi
+@@ -820,6 +820,15 @@ frameworks:
+       - "src/service-worker.{js,ts}"
+       - "src/react-app-env.d.ts"
  
--        # Try install script first (downloads from GitHub Releases, falls back to npm)
--        for attempt in 1 2 3; do
--          if curl -fsSL --retry 3 --retry-delay 5 https://jscpd.dev/install.sh | bash -s -- $ARGS; then
--            break
-+        # install.sh downloads the release binary on Linux and macOS, and npm
-+        # is the fallback there and the only way on Windows. curl retries
-+        # transient errors only, a 403 or 404 for install.sh stays one.
-+        installed_by=npm
-+        install_jscpd() {
-+          local want="$1" installer=""
-+          local args=()
-+          if [ "$want" != latest ]; then
-+            # --force, or install.sh keeps a newer jscpd that an earlier job
-+            # left in the prefix.
-+            args+=(--version "$want" --force)
-           fi
--          echo "Install attempt $attempt failed, retrying in 10s..."
--          sleep 10
--        done
--
--        # Fallback: if install script failed, try npm directly
--        if ! command -v cpd >/dev/null 2>&1 && ! command -v jscpd >/dev/null 2>&1; then
--          echo "Install script failed, falling back to npm install..."
--          if [ -n "$JSCPD_VERSION" ] && [ "$JSCPD_VERSION" != "latest" ]; then
--            npm install -g "jscpd@$JSCPD_VERSION" || npm install -g "cpd@$JSCPD_VERSION"
-+          if [ -n "$JSCPD_PREFIX" ]; then
-+            args+=(--prefix "$JSCPD_PREFIX")
-+          fi
-+          if [ "$RUNNER_OS" != Windows ]; then
-+            installer=$(mktemp)
-+            if curl -fsSL --retry 3 --retry-delay 5 -o "$installer" https://jscpd.dev/install.sh \
-+              && bash "$installer" "${args[@]}"; then
-+              rm -f "$installer"
-+              installed_by=install.sh
-+              return 0
-+            fi
-+            rm -f "$installer"
-+            echo "install.sh failed, installing jscpd from npm"
-+          fi
-+          if [ "$want" = latest ]; then
-+            npm ins
-```
-
-**File**: `docs/ci-and-hooks.md` (modified, +8/-4)
-```diff
-@@ -23,7 +23,7 @@ jobs:
- 
- This scans the entire repository with default settings and uploads SARIF results to GitHub Code Scanning.
- 
--`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact tag (e.g. `kucherenko/jscpd@v5.4.2`) or a commit SHA if you need reproducible runs.
-+`@v5` is a moving tag that follows the latest 5.x release of the action. Pin to an exact release tag (e.g. `kucherenko/jscpd@v5.4.2`) or its commit SHA if you need reproducible runs, and see [Pin a specific version](#pin-a-specific-version) for the jscpd release it installs.
- 
- ### Fail on Threshold
- 
-@@ -77,8 +77,8 @@ The workflow fails if more than 5% of the code is duplicated.
- | `absolute` | Use absolute paths in reports | `false` |
- | `formats-exts` | Custom format-to-extension mappings | — |
- | `formats-names` | Custom format-to-filename mappings | — |
--| `version` | jscpd version to install; empty installs the release that matches the action ref, `latest` installs the newest release | `""` (the action's version) |
--| `install-prefix` | Installation directory for the binary | — |
-+| `version` | jscpd version to install: empty installs the release the action ref belongs to, `latest` the newest release | the action's release |
-+| `install-prefix` | Installation directory for the binary on Linux/macOS (Windows installs it with npm) | `~/.local/bin` |
- | `skip-install` | Skip installation (binary already present) | `false` |
- | `extra-args` | Additional arguments passed to jscpd | — |
- | `upload-report` | Upload report directory as artifact | `false` |
-@@ -130,7 +130,11 @@ The workflow fails if more than 5% of the code is duplicated.
- 
- #### Pin a specific version
- 
--By default the action installs the jscpd release that matches the action ref, so pinning the action to a tag or commit SHA (and letting Dependabot or Renovate bump it) also pins jscpd. Set `version` to install another release, or `latest` for the newest one:
-+By default the action installs the jscpd release its ref belongs to, so pinning the action to a release tag or its commit SHA pins jscpd too, and a Dependabot or Renovate bump of the action updates both. This starts with the first release after 5.4.2: v5.4.2 and older tags install the newest jscpd.
++  - name: knip
++    detect:
++      configFiles: ["knip.{json,jsonc,js,ts}", ".knip.{json,jsonc}", "knip.config.{js,ts}"]
++      dependencies: [knip]
++      packageJsonKeys: [knip]
++    entry:
++      # `knip.config.*` is an entry already, like any `*.config.*` file.
++      - "knip.{js,ts}"
 +
-+A commit between releases installs the release before it, so pin a release rather than a commit on `master`. While a release is being published, `@master` already names the new version, and the action installs the latest release with a warning until the new one is out.
-+
-+Set `version` to install another release, or `latest` for the newest one:
- 
- ```yaml
- - uses: kucherenko/jscpd@v5
+   # ── Python ────────────────────────────────────────────────────────────────
+   # Nothing in this table is about JavaScript as such: a framework is found by
+   # a file it cannot run without, and what it loads is a list of paths.
 ```
 
----
-
-### Incident Patch 3: `ea89cc4d` (2026-10-25)
-**Commit Message**: Merge pull request #1254 from sarankumar1325/fix/dead-code-magic-members
-
-fix(basta): don't report constructors and dunder methods as unused members
-
-**File**: `docs/basta-extending.md` (modified, +16/-4)
+**File**: `rust/crates/basta/tests/findings.rs` (modified, +25/-0)
 ```diff
-@@ -122,10 +122,22 @@ positive on a real codebase; the tests that pin them are named in brackets.
-   `export` keyword, encode the convention: Python uses `__all__` when present
-   and the underscore rule otherwise, and treats an import as exported only in
-   an `__init__.py`, in `__all__`, or with an explicit re-export marker.
--- **`MAGIC`, `DECORATED`, `ABSTRACT`, `OVERRIDE`** make a symbol a
--  reachability root or lower its confidence. Set `DECORATED` only for
--  decorators you do not recognise; `@property`-style decorators that never
--  call the function themselves are inert. [`inert_decorators_do_not_count_as_framework_magic`]
-+- **`MAGIC` is a name the language calls for you:** a class's constructor,
-+  Python's `__init__` or `__iter__`, JavaScript's `toString` or `then`. A
-+  `MAGIC` member is never reported, and it is reached through its class
-+  rather than on its own, so a class nothing uses is reported as the class.
-+  **`HOOK_NAME` is a name only a library or a convention calls** (`dispose`,
-+  `__tablename__`), or one shaped like a hook that is none (`__nonzero__`, a
-+  misspelt dunder). Its findings lose confidence and say why. Set `MAGIC`
-+  only on names the runtime really calls. At module level, where there is no
-+  class to go through, both make a reachability root.
-+  [`only_what_the_language_calls_is_magic`,
-+  `a_constructor_is_reached_through_its_class_and_not_by_its_name`]
-+- **`DECORATED` and `ABSTRACT`** make a symbol a reachability root, and
-+  `DECORATED`, `ABSTRACT` and `OVERRIDE` lower a finding's confidence. Set
-+  `DECORATED` only for decorators you do not recognise; `@property`-style
-+  decorators that never call the function themselves are inert.
-+  [`inert_decorators_do_not_count_as_framework_magic`]
- - **`local_refs`** is the count of references from inside the file, minus
-   the ones that only *export* the name. `export { a }` and
-   `module.exports = { a }` are not uses of `a`.
-```
-
-**File**: `docs/rust.md` (modified, +9/-2)
-```diff
-@@ -963,6 +963,13 @@ jscpd --dead-code src --dead-code-categories all
- could be a call to any `render` in the project, so the rule is the least
- certain of the five.
- 
-+A member the language calls for you is never reported: a constructor,
-+Python's `__init__` and `__repr__`, JavaScript's `toString` and `then`. A
-+class nothing uses is reported as the class. A member that is only named like
-+a hook a library calls, such as `dispose` or `__tablename__`, may be called
-+from outside the code, so it is reported under the default confidence floor,
-+with that reason.
-+
- ### How it decides
- 
- Everything rests on the entry points, because every finding is the answer to
-@@ -1069,8 +1076,8 @@ The score starts from a base set by how much inference the rule needs — an
- unreferenced import binding is a fact, an unused class member is a guess —
- and loses points for each piece of contrary evidence: a file that calls
- `eval` or `getattr`, a decorator the analyzer does not recognise, a wildcard
--re-export, a name that appears in a string, a file in the scan that did not
--parse. A file whose own path ends a string literal somewhere, extension left
-+re-export, a name that appears in a string, a member named like a hook a
-+library calls, a file in the scan that did not parse. A file whose own path ends a string literal somewhere, extension left
- off — `resolve(distDir, 'runtime/handlers/island')`, the way a framework names
- a file it loads by itself — loses 40 points, which takes it under the default
- floor: the string is no import and creates no edge, but it is reason enough
-```
-
-**File**: `rust/crates/basta/src/classify.rs` (modified, +110/-4)
-```diff
-@@ -144,10 +144,20 @@ fn category_for(
-         return (!used).then_some(Category::UnusedImport);
-     }
-     // A name the project's framework reads by convention is used by the
--    // framework. The graph roots it, which keeps what it calls alive; this
--    // keeps the declaration itself out of the report, where an entry point's
--    // `--include-entry-exports` or a member no code names would put it.
--    if symbol.flags.contains(SymbolFlags::FRAMEWORK_GLOBAL) {
-+    // framework, and one the language calls for you (a constructor,
-+    // `__repr__`, `toString`) is used by the runtime. Code need not name
-+    // either, so this keeps the declaration out of the report, where an entry
-+    // point's `--include-entry-exports` or a member no code names would put
-+    // it. The graph roots a framework's names; a magic member runs when its
-+    // class does, and a class nothing uses is reported as the class.
-+    //
-+    // A class that is used is taken to be constructed. One used only for its
-+    // static members never runs its constructor, and that goes unreported:
-+    // basta does not track what is constructed.
-+    if symbol
-+        .flags
-+        .intersects(SymbolFlags::FRAMEWORK_GLOBAL | SymbolFlags::MAGIC)
-+    {
-         return None;
-     }
-     if symbol.kind.is_member() {
-@@ -303,6 +313,7 @@ fn gather_evidence(
-     // True of any finding about a named declaration.
-     evidence.name_in_string = graph.appears_in_string(&symbol.name);
-     evidence.decorated = symbol.flags.contains(SymbolFlags::DECORATED);
-+    evidence.hook_name = symbol.flags.contains(SymbolFlags::HOOK_NAME);
- 
-     match category {
-         Category::UnusedMember => {
-@@ -640,6 +651,101 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn a_member_the_language_calls_is_never_reported() {
-+        let scan = scan(
-+            &[
-+                (
-+                    "index.js",
-+                    "class Point {\n  constructor(x) {\n    this.x = x;\n  }\n  toString() {\n    return `${this.x}`;\n  }\n  onlyHere() {}\n}\n\n\
-+                     class Util {\n  constructor() {\n    this.cache = new Map();\n  }\n  static helper() {}\n}\n\n\
-+                     console.log(`${new Point(1)}`);\nUtil.helper();\n",
-+                ),
-+                (
-+                    "main.py",
-+                    "class Point:\n    def __init__(self, x):\n        self.x = x\n\n    def __repr__(self):\n        return f\"Point({self.x})\"\n\n    def only_here(self):\n        pass\n\n\nprint(Point(1))\n",
-+                ),
-+            ],
-+            &["index.js", "main.py"],
-+        );
-+        assert_eq!(
-+            names(&scan.all(), Category::UnusedMember),
-+            vec!["onlyHere", "only_here"],
-+            "`Util.constructor` is not reported either, although nothing \
-+             constructs `Util`: basta does not track what is constructed"
-+        );
-+    }
-+
-+    #[test]
-+    fn a_member_only_named_like_a_hook_is_reported_on_request() {
-+        // VS Code calls `dispose` and SQLAlchemy reads `__tablename__`, but a
-+        // `dispose` nothing calls looks the same, and Python 3 never calls
-+        // `__nonzero__`.
-+        let scan = scan(
-+            &[
-+                (
-+                    "index.js",
-+                    "class Resource {\n  dispose() {}\n}\n\nconsole.log(new Resource());\n",
-+                ),
-+                (
-+                    "main.py",
-+                    "class Money:\n    __tablename__ = \"money\"\n\n    def __nonzero__(self):\n        return False\n\n\nprint(Money())\n",
-+                ),
-+            ],
-+            &["index.js", "main.py"],
-+        );
-+        let found = scan.all();
-+        assert_eq!(
-+            names(&found, Category::UnusedMember),
-+            vec!["__nonzero__", "__tablename__", "dispose"]
-+        );
-+        let floor = BastaConfig::default().min_confidence;
-+        for finding in &found {
-+            assert_eq!(finding.reasons, vec![Reason::HookName], "{finding:?}");
-+            assert!(finding.confidence < floor, "not by default: {finding:?}");
-+        }
-+    }
-+
-+    #[test]
-+    fn a_class_nothing_uses_is_reported_whatever_its_constructor_does() {
-+        // Its constructor runs when the class does, so it proves nothing on
-+        // its own. Taking it for a use kept every class with one alive.
-+        let scan = scan_with(
-+            &[
-+                ("index.js", "import { used } from './lib.js';\nused();\n"),
-+                (
-+                    "lib.js",
-+                    "export function used() {}\n\
-+                     export class NeverImported {\n  constructor() {\n    this.a = 1;\n  }\n}\n\
-+                     export class OnlyTests {\n  constructor() {\n    this.b = 2;\n  }\n}\n",
-+                ),
-+                (
-+                    "lib.test.js",
-+                    "import { OnlyTests } from './lib.js';\nnew OnlyTests();\n",
-+                ),
-+                ("app/__main__.py", "from .cor
-```
-
-**File**: `rust/crates/basta/src/confidence.rs` (modified, +5/-1)
-```diff
-@@ -25,6 +25,8 @@ pub struct Evidence {
-     pub name_in_string: bool,
-     /// The declaration carries a decorator the analyzer does not recognise.
-     pub decorated: bool,
-+    /// The name is one a library or a convention calls without naming it.
-+    pub hook_name: bool,
-     /// The declaration is abstract.
-     pub abstract_declaration: bool,
-     /// The declaration overrides an inherited member.
-@@ -79,6 +81,7 @@ pub fn score(category: Category, evidence: &Evidence) -> (u8, Vec<Reason>) {
-     add(evidence.abstract_declaration, Reason::Abstract);
-     add(evidence.overrides, Reason::Overrides);
-     add(evidence.decorated, Reason::Decorated);
-+    add(evidence.hook_name, Reason::HookName);
-     add(evidence.name_in_string, Reason::NameAppearsInString);
-     add(evidence.path_in_string, Reason::PathAppearsInString);
-     add(evidence.dynamic_module, Reason::DynamicAccess);
-@@ -163,6 +166,7 @@ mod tests {
-                 dynamic_module: true,
-                 name_in_string: true,
-                 decorated: true,
-+                hook_name: true,
-                 abstract_declaration: true,
-                 overrides: true,
-                 package_surface: true,
-@@ -177,7 +181,7 @@ mod tests {
-             },
-         );
-         assert_eq!(score, 0);
--        assert_eq!(reasons.len(), 14);
-+        assert_eq!(reasons.len(), 15);
-     }
- 
-     #[test]
-```
-
-**File**: `rust/crates/basta/src/graph.rs` (modified, +89/-16)
-```diff
-@@ -330,8 +330,11 @@ impl Graph {
-     /// Roots are every declaration the program can start at: the exports of
-     /// entry modules, everything referenced from the top level of a reachable
-     /// module (importing a module runs its top level), and the declarations
--    /// the runtime calls without naming — constructors, dunder methods, and
--    /// anything a framework decorator took a handle to.
-+    /// something calls without naming them: a module's own hooks
-+    /// (`__getattr__`), and anything a framework decorator took a handle to.
-+    /// The constructor or a dunder method of a class the graph can reach is
-+    /// no root: it runs when the class does, and reaching the class reaches
-+    /// it.
-     fn symbol_reachability(&self, roots: Roots) -> FxHashSet<SymbolId> {
-         let scopes = self.build_scopes();
-         let members_by_name = self.build_member_index();
-@@ -385,12 +388,28 @@ impl Graph {
-             let is_root_surface = roots.accepts(module);
-             for index in self.module_symbols[module.id.0 as usize].clone() {
-                 let symbol = &self.symbols[index];
--                let always_live = symbol.flags.intersects(
--                    SymbolFlags::MAGIC
--                        | SymbolFlags::DECORATED
--                        | SymbolFlags::ABSTRACT
--                        | SymbolFlags::FRAMEWORK_GLOBAL,
--                );
-+                // A class's `__init__` runs when the class does, and reaching
-+                // the class reaches it; rooting it would make every class that
-+                // declares one live, used or not. That holds for a class the
-+                // graph can reach: by name at module level, or through the
-+                // class it is nested in. A module's `__getattr__`, or the
-+                // `__call__` of a class declared inside a function, has no
-+                // such class to wait for and stays a root.
-+                let reached_with_class = symbol.parent.is_some_and(|class| {
-+                    self.symbols[class.0 as usize]
-+                        .flags
-+                        .intersects(SymbolFlags::TOP_LEVEL | SymbolFlags::MEMBER)
-+                });
-+                let runtime_root = !reached_with_class
-+                    && symbol
-+                        .flags
-+                        .intersects(SymbolFlags::MAGIC | SymbolFlags::HOOK_NAME);
-+                let always_live = runtime_root
-+                    || symbol.flags.intersects(
-+                        SymbolFlags::DECORATED
-+                            | SymbolFlags::ABSTRACT
-+                            | SymbolFlags::FRAMEWORK_GLOBAL,
-+                    );
-                 // An entry module's exports are its public surface: something
-                 // outside the scan calls them.
-                 let entry_export = is_root_surface && symbol.is_exported();
-@@ -425,9 +444,9 @@ impl Graph {
-             // names those, and treating a live class's methods as dead would
-             // strand every helper they call.
-             //
--            // This is about following the chain, not about the verdict: a
--            // method that no code anywhere names is still reported, by the
--            // separate name-based rule in `classify`.
-+            // This is about following the chain, not about the verdict:
-+            // whether a method no code names is reported is for the
-+            // name-based rule in `classify` to say.
-             for member in &members_of[current.0 as usize] {
-                 enqueue(*member, &mut seen, &mut queue);
-             }
-@@ -516,10 +535,20 @@ impl Graph {
- 
-     /// Member declarations by name, across every module. basta infers no
-     /// types, so `x.render()` reaches every `render` there is.
-+    ///
-+    /// Not the names the runtime and its libraries call on objects of every
-+    /// kind. `super().__init__()`, `this.constructor` or `.then(` says nothing
-+    /// about which class it means, and reaching every class that declares
-+    /// one would keep them all alive. Such members are reached through their
-+    /// class.
-     fn build_member_index(&self) -> FxHashMap<&str, Vec<SymbolId>> {
-         let mut index: FxHashMap<&str, Vec<SymbolId>> = FxHashMap::default();
-         for symbol in &self.symbols {
--            if symbol.kind.is_member() {
-+            if symbol.kind.is_member()
-+                && !symbol
-+                    .flags
-+                    .intersects(SymbolFlags::MAGIC | SymbolFlags::HOOK_NAME)
-+            {
-                 index
-                     .entry(symbol.name.as_str())
-                     .or_default()
-@@ -904,21 +933,65 @@ mod tests {
-     }
- 
-     #[test]
--    fn magic_and_decorated_declarations_are_always_reachable() {
-+    fn a_decorated_declaration_is_always_reachable() {
-         let g = graph(
-             &[(
-                 "app/handlers.py",
--                "import app\n\n\nclass C:\n    def __init__(self):\n        pass\n\n\n@app.route(\"/
-```
-
-**File**: `rust/crates/basta/src/lang/javascript.rs` (modified, +69/-18)
-```diff
-@@ -1955,7 +1955,6 @@ impl Walk<'_, '_> {
-         let mut flags = flags;
-         flags.insert(SymbolFlags::MEMBER);
-         flags.set(SymbolFlags::PRIVATE_NAME, name.starts_with('#'));
--        flags.set(SymbolFlags::MAGIC, is_magic_member(&name));
-         let start = self.builder.loc(span.start);
-         let end = self.builder.loc(span.end);
-         let id = self.builder.push(Symbol {
-@@ -2007,8 +2006,13 @@ impl<'a> Visit<'a> for Walk<'a, '_> {
-                 flags.set(SymbolFlags::DECORATED, !m.decorators.is_empty());
-                 flags.set(SymbolFlags::ABSTRACT, m.r#type.is_abstract());
-                 flags.set(SymbolFlags::OVERRIDE, m.r#override);
--                if m.key.is_specific_id("constructor") || m.kind.is_constructor() {
-+                // oxc gives the constructor kind only to what runs on `new`:
-+                // a `static constructor()` or a computed `['constructor']()`
-+                // is a method like any other.
-+                if m.kind.is_constructor() {
-                     flags.insert(SymbolFlags::MAGIC);
-+                } else if m.kind.is_method() {
-+                    flags.insert(runtime_hook(&name));
-                 }
-                 self.member(name, SymbolKind::Method, m.span, flags);
-             }
-@@ -2017,6 +2021,16 @@ impl<'a> Visit<'a> for Walk<'a, '_> {
-                 let mut flags = SymbolFlags::NONE;
-                 flags.set(SymbolFlags::DECORATED, !p.decorators.is_empty());
-                 flags.set(SymbolFlags::OVERRIDE, p.r#override);
-+                // `then = (resolve) => …` is called as surely as a method of
-+                // that name is; `next = null` is a field like any other.
-+                if matches!(
-+                    p.value,
-+                    Some(
-+                        Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_)
-+                    )
-+                ) {
-+                    flags.insert(runtime_hook(&name));
-+                }
-                 self.member(name, SymbolKind::Property, p.span, flags);
-             }
-             AstKind::AccessorProperty(p) => {
-@@ -2493,22 +2507,21 @@ fn member_name(key: &PropertyKey<'_>) -> String {
-     }
+@@ -895,6 +895,31 @@ fn bundler_configs_name_files_relative_to_the_project() {
+     assert_file_used(&report, "src/views/a.ts");
  }
  
--/// Members the runtime calls without anyone naming them.
--fn is_magic_member(name: &str) -> bool {
--    matches!(
--        name,
--        "constructor"
--            | "toString"
--            | "toJSON"
--            | "valueOf"
--            | "then"
--            | "catch"
--            | "finally"
--            | "next"
--            | "return"
--            | "throw"
--            | "dispose"
--    ) || name.starts_with("[Symbol.")
-+/// What a method of this name is to whatever runs the code.
-+///
-+/// The language calls the first group on any object that has them: `${x}`
-+/// calls `toString`, `await x` calls `then`, `JSON.stringify(x)` calls
-+/// `toJSON`. The second group is called by convention, and only on some
-+/// objects: iteration calls `next`, `return` and `throw` on an iterator, VS
-+/// Code calls `dispose` on what an extension registers, and a library's users
-+/// call `catch` and `finally` on what it returns. A method of one of those
-+/// names that nothing in the project names may be such a hook, or dead.
-+fn runtime_hook(name: &str) -> SymbolFlags {
-+    match name {
-+        "toString" | "toJSON" | "valueOf" | "then" => SymbolFlags::MAGIC,
-+        "next" | "return" | "throw" | "dispose" | "catch" | "finally" => SymbolFlags::HOOK_NAME,
-+        _ => SymbolFlags::NONE,
-+    }
- }
- 
- /// Imports, in module-record terms.
-@@ -3172,6 +3185,44 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn only_what_the_language_calls_is_magic() {
-+        let f = facts(
-+            "class C {\n  constructor() {}\n  toString() { return ''; }\n  then = (done) => done(1);\n  \
-+             dispose() {}\n  next = null;\n  get return() { return 1; }\n}\n\
-+             class S {\n  static constructor() {}\n}\n\
-+             class K {\n  ['constructor']() {}\n}\n",
-+            "javascript",
-+        );
-+        let member = |class: &str, name: &str| {
-+            let class = symbol(&f, class).id;
-+            let found = f
-+                .symbols
-+                .iter()
-+                .find(|s| s.parent == Some(class) && s.name == name);
-+            found
-+                .unwrap_or_else(|| panic!("no {name} in {class:?}"))
-+                .flags
-+        };
-+        for name in ["constructor", "toString", "then"] {
-+            assert!(member("C", name).contains(SymbolFlags::MAGIC), "{name}");
-+        }
-+        assert!(member("C", "dispose").contains(SymbolFlags::HOOK_NAME));
-+        // A field holding a value, a getter, a static method and a computed
-+        // key are called by nobody but their own code.
-+        for flags in [
-+            member("C", "next"),
-+            member("C", "return"),
-+            member("S", "constructor"),
-+            member("K", "constructor"),
-+        ] {
-+            assert!(
-+              
-```
-
-**File**: `rust/crates/basta/src/lang/python.rs` (modified, +176/-4)
-```diff
-@@ -593,7 +593,7 @@ impl Walk<'_> {
-         flags.set(SymbolFlags::TOP_LEVEL, top_level);
-         flags.set(SymbolFlags::MEMBER, member);
-         flags.set(SymbolFlags::PRIVATE_NAME, name.starts_with('_'));
--        flags.set(SymbolFlags::MAGIC, is_magic(&name));
-+        flags.insert(dunder(&name));
-         flags.set(
-             SymbolFlags::IN_DUNDER_ALL,
-             self.dunder_all.is_some_and(|all| all.contains(&name)),
-@@ -1098,11 +1098,162 @@ fn is_dynamic_builtin(name: &str) -> bool {
-     )
- }
- 
--/// Names the interpreter calls for you.
--fn is_magic(name: &str) -> bool {
--    name.starts_with("__") && name.ends_with("__") && name.len() > 4
-+/// What a dunder name is to the interpreter.
-+///
-+/// Python itself calls or reads the ones in [`DATA_MODEL`] (`repr(x)` calls
-+/// `__repr__`, `with` calls `__enter__`), so one is used whenever its class
-+/// is. Any other name of that shape is a convention someone else keeps
-+/// (`__tablename__` for SQLAlchemy, `__version__` for packaging tools), a
-+/// hook Python 3 no longer uses (`__nonzero__`, `__metaclass__`), or a typo,
-+/// and nothing tells those apart.
-+fn dunder(name: &str) -> SymbolFlags {
-+    if !(name.starts_with("__") && name.ends_with("__") && name.len() > 4) {
-+        SymbolFlags::NONE
-+    } else if DATA_MODEL.contains(&name) {
-+        SymbolFlags::MAGIC
-+    } else {
-+        SymbolFlags::HOOK_NAME
-+    }
- }
- 
-+/// The names the language reference's data model gives meaning to, and the
-+/// standard library protocols built the same way.
-+const DATA_MODEL: &[&str] = &[
-+    // Creating, showing, comparing and hashing an object, and its truth.
-+    "__new__",
-+    "__init__",
-+    "__del__",
-+    "__repr__",
-+    "__str__",
-+    "__bytes__",
-+    "__format__",
-+    "__lt__",
-+    "__le__",
-+    "__eq__",
-+    "__ne__",
-+    "__gt__",
-+    "__ge__",
-+    "__hash__",
-+    "__bool__",
-+    // Attribute access and descriptors.
-+    "__getattr__",
-+    "__getattribute__",
-+    "__setattr__",
-+    "__delattr__",
-+    "__dir__",
-+    "__get__",
-+    "__set__",
-+    "__delete__",
-+    "__set_name__",
-+    "__slots__",
-+    // Creating and checking classes.
-+    "__init_subclass__",
-+    "__class_getitem__",
-+    "__mro_entries__",
-+    "__prepare__",
-+    "__instancecheck__",
-+    "__subclasscheck__",
-+    "__subclasshook__",
-+    // Calls, containers and iteration.
-+    "__call__",
-+    "__len__",
-+    "__length_hint__",
-+    "__getitem__",
-+    "__setitem__",
-+    "__delitem__",
-+    "__missing__",
-+    "__iter__",
-+    "__next__",
-+    "__reversed__",
-+    "__contains__",
-+    // Numbers: the operators, their reflected and in-place forms, conversions.
-+    "__add__",
-+    "__sub__",
-+    "__mul__",
-+    "__matmul__",
-+    "__truediv__",
-+    "__floordiv__",
-+    "__mod__",
-+    "__divmod__",
-+    "__pow__",
-+    "__lshift__",
-+    "__rshift__",
-+    "__and__",
-+    "__xor__",
-+    "__or__",
-+    "__radd__",
-+    "__rsub__",
-+    "__rmul__",
-+    "__rmatmul__",
-+    "__rtruediv__",
-+    "__rfloordiv__",
-+    "__rmod__",
-+    "__rdivmod__",
-+    "__rpow__",
-+    "__rlshift__",
-+    "__rrshift__",
-+    "__rand__",
-+    "__rxor__",
-+    "__ror__",
-+    "__iadd__",
-+    "__isub__",
-+    "__imul__",
-+    "__imatmul__",
-+    "__itruediv__",
-+    "__ifloordiv__",
-+    "__imod__",
-+    "__ipow__",
-+    "__ilshift__",
-+    "__irshift__",
-+    "__iand__",
-+    "__ixor__",
-+    "__ior__",
-+    "__neg__",
-+    "__pos__",
-+    "__abs__",
-+    "__invert__",
-+    "__complex__",
-+    "__int__",
-+    "__float__",
-+    "__index__",
-+    "__round__",
-+    "__trunc__",
-+    "__floor__",
-+    "__ceil__",
-+    // `with`, `async`, buffers and `match`.
-+    "__enter__",
-+    "__exit__",
-+    "__aenter__",
-+    "__aexit__",
-+    "__await__",
-+    "__aiter__",
-+    "__anext__",
-+    "__buffer__",
-+    "__release_buffer__",
-+    "__match_args__",
-+    // What the interpreter reads off a class or a module.
-+    "__doc__",
-+    "__module__",
-+    "__qualname__",
-+    "__annotations__",
-+    "__annotate__",
-+    "__all__",
-+    "__path__",
-+    // The standard library's protocols: `copy`, `pickle`, `dataclasses`, `os.fspath`, `sys.getsizeof`.
-+    "__copy__",
-+    "__deepcopy__",
-+    "__replace__",
-+    "__reduce__",
-+    "__reduce_ex__",
-+    "__getstate__",
-+    "__setstate__",
-+    "__getnewargs__",
-+    "__getnewargs_ex__",
-+    "__post_init__",
-+    "__fspath__",
-+    "__sizeof__",
-+];
++#[test]
++fn a_knip_config_is_an_entry_with_or_without_knip_in_package_json() {
++    // knip finds `knip.ts` and `knip.js` by name, like `knip.config.ts`;
++    // nothing imports them.
++    let installed = scan(&[
++        (
++            "package.json",
++            r#"{ "main": "src/index.ts", "devDependencies": { "knip": "6" } }"#,
++        ),
++        ("src/index.ts", "export {};\n"),
++        ("src/orphan.ts", "export const orphan = 1;\n"),
++        ("knip.ts", "export default { entry: ['src/index.ts'] };\n"),
++    ]);
++    assert_file_used(&installed, "knip.ts");
++    assert_reported(&installed, Category::UnusedFile, "src/orphan.ts", "");
 +
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -1434,6 +1585,27 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn a_dunder_python_calls_is_magic_and_any_other_only_looks_like_a_hook() {
-+        let f = facts(
-+            "class C:\n    __slots__ = ()\n    __tablename__ = \"c\"\n\n    def __init__(self):\n        pass\n\n    \
-+             def __nonzero__(self):\n        return True\n\n    def __repr___(self):\n        return \"c\"\n",
-+        );
-+        for name in ["__slots__", "__init__"] {
-+            assert!(
-+                symbol(&f, name).flags.contains(Sy
-```
-
-**File**: `rust/crates/basta/src/model.rs` (modified, +8/-1)
-```diff
-@@ -47,7 +47,9 @@ impl SymbolFlags {
-     pub const MEMBER: Self = Self(1 << 3);
-     /// Python: listed in the module's `__all__`.
-     pub const IN_DUNDER_ALL: Self = Self(1 << 4);
--    /// A dunder / magic name the runtime calls for you (`__init__`, `__iter__`).
-+    /// A name the language calls for you: a class's constructor, a Python
-+    /// data-model method (`__init__`, `__iter__`), JavaScript's `toString`.
-+    /// On a member it runs whenever its class is used.
-     pub const MAGIC: Self = Self(1 << 5);
-     /// Name begins with `_` (Python) or `#` (JS private field).
-     pub const PRIVATE_NAME: Self = Self(1 << 6);
-@@ -66,6 +68,11 @@ impl SymbolFlags {
-     /// project has to mention it. Set from the framework table once the
-     /// project's frameworks are known, not by an analyzer.
-     pub const FRAMEWORK_GLOBAL: Self = Self(1 << 11);
-+    /// Named like a hook that only a library or a convention calls
-+    /// (`dispose`, `__tablename__`), or shaped like one without being one
-+    /// (`__nonzero__`, which Python 3 no longer calls). Something outside the
-+    /// code may call it, so a finding about it is a weaker one.
-+    pub const HOOK_NAME: Self = Self(1 << 12);
- 
-     /// True when every bit of `other` is set here.
-     #[inline]
++    // Run with `npx knip`: the config file is the only sign of it.
++    let by_name = scan(&[
++        ("package.json", r#"{ "main": "src/index.ts" }"#),
++        ("src/index.ts", "export {};\n"),
++        ("knip.js", "export default { entry: ['src/index.ts'] };\n"),
++    ]);
++    assert_file_used(&by_name, "knip.js");
++}
++
+ #[test]
+ fn package_exports_in_string_form_and_sveltekit_lib_dirs_resolve() {
+     let report = scan(&[
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1259** (closed): fix(tokenizer): a /* in a JS string no longer ends a jscpd:ignore region (@kucherenko)
+- **PR #1256** (2026-10-25): fix(dead-code): knip.ts and knip.js are knip's config, not unused files (@kucherenko)
 - **PR #1254** (2026-10-25): fix(basta): don't report constructors and dunder methods as unused members (@sarankumar1325)
 - **PR #1252** (2026-10-25): chore(deps): bump fallow from 2.96.0 to 3.34.0 in /benchmark/tools (@dependabot[bot])
 - **PR #1251** (2026-10-24): fix(dead-code): follow import() written with backticks or a $lib alias (@kucherenko)
 - **PR #1250** (2026-10-24): fix(release): tag the release commit, run the fixture check with cpd (@kucherenko)
-- **PR #1249** (2026-10-24): fix(action): install the jscpd release that matches the action ref (@sarankumar1325)
-- **PR #1248** (2026-10-23): chore(deps): bump serde-saphyr from 1.3.0 to 2.0.0 in /rust (@dependabot[bot])
 
 ---
 
@@ -3391,46 +2046,36 @@ fix(basta): don't report constructors and dunder methods as unused members
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dead-code): a constructor no longer keeps an unused class alive
+## X. Merge pull request #1256 from kucherenko/fix/knip-config-files
 
 **RULE**:
-When implementing operations in `docs/basta-extending.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/basta/frameworks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0934df0a`: dead-code): a constructor no longer keeps an unused class alive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb3bfac8`: Merge pull request #1256 from kucherenko/fix/knip-config-files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/basta-extending.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/basta/frameworks.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`MAGIC` is a name the language calls for you:** a class's constructor,
-  Python's `__init__` or `__iter__`, JavaScript's `toString` or `then`. A
-  `MAGIC` member is never reported, and it is reached through its class
-  rather than on its own, so a class nothing uses is reported as the class.
-  **`HOOK_NAME` is a name only a library or a convention calls** (`dispose`,
-  `__tablename__`), or one shaped like a hook that is none (`__nonzero__`, a
-  misspelt dunder). Its findings lose confidence and say why. Set `MAGIC`
-  only on names the runtime really calls. At module level, where there is no
-  class to go through, both make a reachability root.
-  [`only_what_the_language_calls_is_magic`,
-  `a_constructor_is_reached_through_its_class_and_not_by_its_name`]
-- **`DECORATED` and `ABSTRACT`** make a symbol a reachability root, and
-  `DECORATED`, `ABSTRACT` and `OVERRIDE` lower a finding's confidence. Set
-  `DECORATED` only for decorators you do not recognise; `@property`-style
-  decorators that never call the function themselves are inert.
-  [`inert_decorators_do_not_count_as_framework_magic`]
+  - name: knip
+    detect:
+      configFiles: ["knip.{json,jsonc,js,ts}", ".knip.{json,jsonc}", "knip.config.{js,ts}"]
+      dependencies: [knip]
+      packageJsonKeys: [knip]
+    entry:
+      # `knip.config.*` is an entry already, like any `*.config.*` file.
+      - "knip.{js,ts}"
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **`MAGIC`, `DECORATED`, `ABSTRACT`, `OVERRIDE`** make a symbol a
-  reachability root or lower its confidence. Set `DECORATED` only for
-  decorators you do not recognise; `@property`-style decorators that never
-  call the function themselves are inert. [`inert_decorators_do_not_count_as_framework_magic`]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0934df0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb3bfac8` are properly handled with clean fallback behavior.

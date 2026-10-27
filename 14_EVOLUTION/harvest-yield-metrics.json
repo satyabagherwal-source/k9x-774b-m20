@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:16:07.747Z",
-  "total_cycles_completed": 5207,
-  "total_learnings_persisted": 5207,
-  "total_rules_promoted": 4610,
+  "last_updated": "2026-10-27T11:27:34.824Z",
+  "total_cycles_completed": 5212,
+  "total_learnings_persisted": 5212,
+  "total_rules_promoted": 4614,
   "history": [
-    {
-      "timestamp": "2026-10-25T23:04:47.744Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:53.433Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:53.561Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:57.455Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:17:15.708Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T23:17:30.551Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T11:16:07.747Z",
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:27:20.656Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:27:25.432Z",
+      "repository": "gauthierpiarrette/highball",
+      "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:27:27.902Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:27:34.134Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:27:34.824Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

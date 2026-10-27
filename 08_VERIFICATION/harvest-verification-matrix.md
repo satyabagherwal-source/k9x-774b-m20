@@ -5230,3 +5230,8 @@
 | `CYCLE-20261027-AUEY` | `2026-10-27T11:16:01.018Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4704, Rule 4705, Rule 4706` | Yes (`739f7de5...`) |
 | `CYCLE-20261027-AYKJ` | `2026-10-27T11:16:06.403Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4678` | Yes (`426babff...`) |
 | `CYCLE-20261027-AZLN` | `2026-10-27T11:16:07.739Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4707` | Yes (`9f577720...`) |
+| `CYCLE-20261027-PETJ` | `2026-10-27T11:27:20.647Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4708` | Yes (`b7c8d175...`) |
+| `CYCLE-20261027-PII7` | `2026-10-27T11:27:25.423Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4709` | Yes (`799cac2d...`) |
+| `CYCLE-20261027-PKEU` | `2026-10-27T11:27:27.894Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4710` | Yes (`3571762e...`) |
+| `CYCLE-20261027-PP7R` | `2026-10-27T11:27:34.119Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`5882a7fa...`) |
+| `CYCLE-20261027-PPR4` | `2026-10-27T11:27:34.816Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4711` | Yes (`99bf7b8f...`) |

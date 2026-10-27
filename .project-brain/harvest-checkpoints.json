@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T11:16:07.751Z",
+  "last_updated": "2026-10-27T11:27:34.828Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "b3ba51b4d09d4e011d753ab3cc67e22ea35a11c57d75aa1e152edcd3841906a0",
-      "verified_at": "2026-10-27T10:39:42.953Z",
+      "content_hash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
+      "verified_at": "2026-10-27T11:27:34.137Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:39:42.953Z"
+      "last_updated": "2026-10-27T11:27:34.137Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "fcd3e1a07f836fe08c5e78cbe1114b5953982c639a34b720757bddfd6aee6c4c",
-      "verified_at": "2026-10-25T17:20:54.518Z",
+      "content_hash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
+      "verified_at": "2026-10-27T11:27:20.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:20:54.518Z"
+      "last_updated": "2026-10-27T11:27:20.659Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "c1a0481705b49a1084a905e222422500043f781fcb2ea247da37f726df089fca",
-      "verified_at": "2026-10-25T19:45:16.765Z",
+      "content_hash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
+      "verified_at": "2026-10-27T11:27:34.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:45:16.765Z"
+      "last_updated": "2026-10-27T11:27:34.827Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "a78e7b6f5008d818c6a0a277399650855e60fa28206c3c4ecf4912bd1e4fab2d",
-      "verified_at": "2026-10-25T05:04:52.690Z",
+      "content_hash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
+      "verified_at": "2026-10-27T11:27:27.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:04:52.690Z"
+      "last_updated": "2026-10-27T11:27:27.905Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "c0d4ed567140f07a67a4023c03eec0a4874bc7f788bed041287522266e178495",
-      "verified_at": "2026-10-23T05:23:49.037Z",
+      "content_hash": "799cac2d6681e1646fc9525d17ecf04c4d6f2d4577ecd930d333f79ed277af31",
+      "verified_at": "2026-10-27T11:27:25.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T05:23:49.037Z"
+      "last_updated": "2026-10-27T11:27:25.435Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8742357a`  
+> **Source Version**: `505c1a23`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:39:42.686Z  
+> **Timestamp**: 2026-10-27T11:27:33.920Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:34:41.318Z  
+> **Harvest Timestamp**: 2026-10-27T11:27:33.634Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,57 +2203,197 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8742357a` (2026-10-27)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943)
+### Incident Patch 1: `505c1a23` (2026-10-27)
+**Commit Message**: fix(get): step past stale cache temps; tighten a symlinked cache root (#4944)
 
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.261 to 1.0.262.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.261...v1.0.262)
+* fix(get): step past stale cache temps; tighten a symlinked cache root
 
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.262
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Since #4928 the get cache's temp files are opened with create_new, so a temp
+left by a crashed download (`ingest-<pid>-0.tmp`, `*.tmp-<pid>-<n>`) made a
+later process that got the same pid fail with AlreadyExists - routine in
+containers, where qsv has the same low pid every run. create_private_temp now
+moves on to the next token, as DerivedFile::create does.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+make_private used symlink_metadata, so a `get` root relocated by a symlink was
+never tightened and downloads an earlier qsv left there at 0644 stayed
+readable by others. It now follows the link.
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+roborev 5902.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #4944
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@v1.0.261
-+        uses: anthropics/claude-code-action@v1.0.262
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
++## [Unreleased]
++
++### Fixed
++* `get`: a temp file left behind by a crashed download no longer makes later downloads fail with "File exists" when a new process gets the same process ID, which is routine in containers. A regression from the private caches in 27.0.0 (#4928). ([#4944](https://github.com/dathere/qsv/pull/4944))
++* `get`: a cache directory relocated with a symlink (`<cache>/get` → elsewhere) is now made owner-only at its real location, like an ordinary one. ([#4944](https://github.com/dathere/qsv/pull/4944))
++
+ ## [27.0.0] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
+ 
+ ### Highlights
 ```
 
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+**File**: `src/diskcache.rs` (modified, +53/-8)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -711,7 +711,11 @@ mod rich {
+         #[cfg(unix)]
+         {
+             use std::os::unix::fs::PermissionsExt;
+-            if let Ok(meta) = fs::symlink_metadata(root)
++            // `metadata` follows a symlinked root, so a cache relocated by a
++            // symlink gets its real directory tightened too. Following adds no
++            // exposure: every cache read and write already goes through the link,
++            // and chmod only succeeds on a directory the user owns.
++            if let Ok(meta) = fs::metadata(root)
+                 && meta.is_dir()
+                 && meta.permissions().mode() & 0o077 != 0
+                 && let Err(e) = fs::set_permissions(root, fs::Permissions::from_mode(0o700))
+@@ -820,12 +824,30 @@ mod rich {
+         format!("{}-{n}", std::process::id())
+     }
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@v1.0.261
-+        uses: anthropics/claude-code-action@v1.0.262
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
++    /// Create an owner-only temp file at `make(token)`, moving on to the next
++    /// token if that name is taken. A crashed run leaves its temps behind, and
++    /// a later process that gets the same pid (routine in containers, where
++    /// qsv often has the same low pid every run) would otherwise hit them.
++    fn create_private_temp(make: impl Fn(&str) -> PathBuf) -> std::io::Result<(PathBuf, fs::File)> {
++        let mut last_err = None;
++        for _ in 0..16 {
++            let tmp = make(&unique_token());
++            match create_private_file(&tmp) {
++                Ok(file) => return Ok((tmp, file)),
++                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => last_err = Some(e),
++                Err(e) => return Err(e),
++            }
++        }
++        Err(last_err.unwrap_or_else(|| std::io::Error::other("no free temp filename")))
++    }
++
+     fn atomic_write(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+         if let Some(parent) = path.parent() {
+             super::create_private_dir_all(parent)?;
+         }
+-        let tmp = path.with_extension(format!("tmp-{}", unique_token()));
+-        let written = create_private_file(&tmp).and_then(|mut f| f.write_all(bytes));
++        let (tmp, mut file) = create_private_temp(|t| path.with_extension(format!("tmp-{t}")))?;
++        let written = file.write_all(bytes);
++        drop(file);
+         if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
+             // Best-effort cleanup so a failed write or rename doesn't leave temp litter.
+             let _ = fs::remove_file(&tmp);
+@@ -849,10 +871,10 @@ mod rich {
+         if let Some(parent) = destination.parent() {
+             super::create_private_dir_all(parent)?;
+         }
+-        let tmp = destination.with_extension(format!("tmp-{}", unique_token()));
++        let input = fs::File::open(blob_path(root, b3, compression))?;
++        let (tmp, file) = create_private_temp(|t| destination.with_extension(format!("tmp-{t}")))?;
+         let result = (|| {
+-            let input = fs::File::open(blob_path(root, b3, compression))?;
+-            let mut output = BufWriter::with_capacity(1024 * 1024, create_private_file(&tmp)?);
++            let mut output = BufWriter::with_capacity(1024 * 1024, file);
+             match compression {
+                 Compression::Zstd => {
+                     let mut decoder = zstd::stream::read::Decoder::new(input)?;
+@@ -924,8 +946,8 @@ mod rich {
+         fn new(root: &Path, compression: Compression) -> CliResult<Self> {
+             let blobs = root.join("blobs");
+             super::create_private_dir_all(&blobs)?;
+-            let tmp = blobs.join(format!("ingest-{}.tmp", unique_token()));
+-            let buf = BufWriter::new(create_private_file(&tmp)?);
++            let (tmp, file) = create_private_temp(|t| blobs.join(format!("ingest-{t}.tmp")))?;
++            let buf = BufWriter::new(file);
+             let writer = match compression {
+                 Compression::Zstd => {
+                     BlobSinkWriter::Zstd(zstd::stream::write::Encoder::new(buf, ZSTD_LEVEL)?)
+@@ -3578,6 +3600,29 @@ mod rich {
+             }
+         }
  
++        // A crashed run leaves `<name>.tmp-<pid>-<n>` behind; a later process
++        // with the same pid (routine in containers) must step past it, not fail.
++        #[test]
++        fn atomic_write_steps_past_stale_temps_from_a_reused_pid() {
++            let dir = tempfile::tempdir().unwrap();
++            let path = dir.path().join("entry.json");
++            let current = super::unique_token();
++            let (pid, n) = current.rsplit_once('-').unwrap();
++            let n: u64 = n.parse().unwrap();
++            for k in n + 1..=n + 8 {
++                std::fs::write(path.with_extension(format!("tmp-{pid}-{k}")), b"stale").unwrap();
++            }
++
++            super::atomic_write(&path, b"fresh").unwrap();
++
++            assert_eq!(std::fs::read(&path).unwrap(), b"fresh");
++            // the stale temps are left alone, never overwritten or renamed in
++            for k in n + 1..=n + 8 {
++                let stale = path.with_extension(format!("tmp-{pid}-{k}"));
++                a
+```
+
+**File**: `tests/test_get.rs` (modified, +30/-0)
+```diff
+@@ -2825,6 +2825,36 @@ fn get_cache_and_dc_copies_are_owner_only() {
+     );
+ }
+ 
++// A `get` root relocated by a symlink is tightened at its real directory, so
++// downloads an earlier qsv left there at 0644 aren't readable by others.
++#[cfg(unix)]
++#[test]
++#[serial]
++fn get_symlinked_cache_root_is_made_owner_only() {
++    use std::os::unix::fs::PermissionsExt;
++    let wrk = Workdir::new("get_symlinked_cache_root_is_made_owner_only");
++    let cache_dir = wrk.path("qsvcache");
++    let tmp_dir = private_qsv_tmp(&wrk);
++    let real_root = wrk.path("relocated_get");
++    std::fs::create_dir_all(&cache_dir).unwrap();
++    std::fs::create_dir(&real_root).unwrap();
++    std::fs::set_permissions(&real_root, std::fs::Permissions::from_mode(0o755)).unwrap();
++    std::os::unix::fs::symlink(&real_root, cache_dir.join("get")).unwrap();
++    wrk.create_from_string("src.csv", "a,b\n1,2\n");
++
++    let mut get = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
++    get.args(["--name", "t.csv", "src.csv"]);
++    wrk.assert_success(&mut get);
++
++    assert_eq!(mode_of(&real_root), 0o700);
++    assert!(
++        std::fs::symlink_metadata(cache_dir.join("get"))
++            .unwrap()
++            .file_type()
++            .is_symlink()
++    );
++}
++
+ // The dc: directory's name is predictable, so in a shared /tmp another user
+ // could make it first; anything but a directory of this user's is refused,
+ // and nothing is written through it.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4944** (2026-10-27): fix(get): step past stale cache temps; tighten a symlinked cache root (@jqnatividad)
 - **PR #4943** (2026-10-27): build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (@dependabot[bot])
 - **PR #4929** (2026-10-27): fix(stats): the .stats.csv.json sidecar is no more readable than its CSV (@jqnatividad)
 - **PR #4928** (2026-10-27): fix(get): make the get cache and its dc: copies owner-only (@jqnatividad)
 - **PR #4927** (2026-10-27): deps: polars-readstat-rs 0.27.0; writestat refuses XPT numbers past IBM float range (@jqnatividad)
 - **PR #4926** (2026-10-27): feat(viz): Advanced Filter and Export CSV on live results; data viewer date-filter fixes (@jqnatividad)
-- **PR #4925** (2026-10-26): fix(json): don't leave the intermediate CSV in the temp dir (@jqnatividad)
 
 ---
 
@@ -2273,28 +2413,33 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943)
+## X. get): step past stale cache temps; tighten a symlinked cache root (#4944)
 
 **RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8742357a`: build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `505c1a23`: get): step past stale cache temps; tighten a symlinked cache root (#4944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: anthropics/claude-code-action@v1.0.262
+## [Unreleased]
+
+### Fixed
+* `get`: a temp file left behind by a crashed download no longer makes later downloads fail with "File exists" when a new process gets the same process ID, which is routine in containers. A regression from the private caches in 27.0.0 (#4928). ([#4944](https://github.com/dathere/qsv/pull/4944))
+* `get`: a cache directory relocated with a symlink (`<cache>/get` → elsewhere) is now made owner-only at its real location, like an ordinary one. ([#4944](https://github.com/dathere/qsv/pull/4944))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: anthropics/claude-code-action@v1.0.261
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8742357a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `505c1a23` are properly handled with clean fallback behavior.

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-NTC0",
-    "timestamp": "2026-10-25T07:38:48.768Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "429b6c325f69e9d0acd61f6d9e192994f51328d3ee38f8a3782cd91320a593aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-NZ79",
-    "timestamp": "2026-10-25T07:38:56.373Z",
-    "repository": "bergside/typeui",
-    "learningId": "learn-github-bergside-typeui",
-    "contentHash": "5bde2361628c34c11bb2d48079fa877bb246258a226ef8ba582f3257bf1f87c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ORL7",
-    "timestamp": "2026-10-25T07:39:33.163Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "3e22f0a103d7116afa3caa10d2a00c9738e0ffa7fc3c9026556472804bbc278d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-561G",
-    "timestamp": "2026-10-25T07:52:18.388Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "c68dfdd9ce246ee138482d19c91dcc950e6c73e6c4e2368302e5066e7dff47a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6UTS",
-    "timestamp": "2026-10-25T07:53:37.168Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-francisring-prism",
-    "contentHash": "920e39ecd89b619f21a38f26e3b4ef0c91554f8c8598406a6dff38f70473a81c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-PL4E",
     "timestamp": "2026-10-25T08:08:11.054Z",
     "repository": "sxyazi/yazi",
@@ -7490,6 +7415,81 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "9f57772010db3c703916a86e7a5d073f6d6bab3cda93ba07c2ddc0c36d727985",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PETJ",
+    "timestamp": "2026-10-27T11:27:20.647Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "b7c8d1759995d4c6a8d7532887cb4d5c64cd3b7cd68e85a44aad105b0b07bdde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PII7",
+    "timestamp": "2026-10-27T11:27:25.423Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "799cac2d6681e1646fc9525d17ecf04c4d6f2d4577ecd930d333f79ed277af31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PKEU",
+    "timestamp": "2026-10-27T11:27:27.894Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "3571762e234de7f067ed549f2719731a90fafc26e0c9b21404d3a9aeb2c1779c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PP7R",
+    "timestamp": "2026-10-27T11:27:34.119Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-PPR4",
+    "timestamp": "2026-10-27T11:27:34.816Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "99bf7b8f80b676790bf8c3bfb4bed99918dded7a33ad7cdc168e91b65fa6faaf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
