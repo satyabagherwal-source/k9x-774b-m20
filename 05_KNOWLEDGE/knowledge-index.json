@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T15:25:48.037Z",
+  "last_updated": "2026-10-27T15:29:36.344Z",
   "total_verified_learnings": 1139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10543,8 +10543,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "bd202f84",
-      "content_hash": "c9bd8c578ab78ff0b64a34a4cfd1b3488b3e58a61df1b4afc73653858c190993",
+      "source_version": "c2881447",
+      "content_hash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -10582,6 +10582,11 @@
           "number": 3852,
           "title": "cli: fix WorkspaceRoot looping forever on a .git file (#2620)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4884,
+          "title": "LLM rules setup and update LLM instructions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10589,7 +10594,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T09:35:46.135Z",
+      "verified_at": "2026-10-27T15:29:31.164Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32790,8 +32795,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "197403e8",
-      "content_hash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
+      "source_version": "3575f972",
+      "content_hash": "38cda21232c587f0cae928b0fc066c31d823076f026f6635f4a2cfc8a9937f74",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -32829,6 +32834,11 @@
           "number": 4538,
           "title": "honor downstream Lance dependency overrides (#4671)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4885,
+          "title": "fix!: reject unsupported remote connection and table options (#4486)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32836,7 +32846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:25:29.893Z",
+      "verified_at": "2026-10-27T15:29:36.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135726,6 +135736,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T15:25:48.025Z"
+    },
+    "rule-4884": {
+      "learning_id": "rule-4884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4884,
+      "title": "LLM rules setup and update LLM instructions",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "c2881447",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:29:31.164Z"
+    },
+    "rule-4885": {
+      "learning_id": "rule-4885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4885,
+      "title": "fix!: reject unsupported remote connection and table options (#4486)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "3575f972",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T15:29:36.327Z"
     }
   },
   "aliases": {

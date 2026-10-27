@@ -5412,3 +5412,5 @@
 | `CYCLE-20261027-ZDQ6` | `2026-10-27T15:19:02.718Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4881` | Yes (`b9fd9dd4...`) |
 | `CYCLE-20261027-82A7` | `2026-10-27T15:25:47.791Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4882` | Yes (`2fc321f3...`) |
 | `CYCLE-20261027-82IO` | `2026-10-27T15:25:48.096Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4883` | Yes (`e2e1fa3c...`) |
+| `CYCLE-20261027-CUPC` | `2026-10-27T15:29:31.248Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4884` | Yes (`08b00e47...`) |
+| `CYCLE-20261027-CYPI` | `2026-10-27T15:29:36.438Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4885` | Yes (`38cda212...`) |

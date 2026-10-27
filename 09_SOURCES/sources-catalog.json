@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "bd202f84",
+    "sourceVersion": "c2881447",
     "license": "MPL-2.0",
-    "contentHash": "c9bd8c578ab78ff0b64a34a4cfd1b3488b3e58a61df1b4afc73653858c190993",
-    "lastHarvestedAt": "2026-10-23T09:35:46.175Z",
+    "contentHash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
+    "lastHarvestedAt": "2026-10-27T15:29:31.251Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "197403e8",
+    "sourceVersion": "3575f972",
     "license": "Apache-2.0",
-    "contentHash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
-    "lastHarvestedAt": "2026-10-26T02:25:29.950Z",
+    "contentHash": "38cda21232c587f0cae928b0fc066c31d823076f026f6635f4a2cfc8a9937f74",
+    "lastHarvestedAt": "2026-10-27T15:29:36.441Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

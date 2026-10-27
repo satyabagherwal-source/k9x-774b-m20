@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T15:25:48.107Z",
-  "total_cycles_completed": 5389,
-  "total_learnings_persisted": 5389,
-  "total_rules_promoted": 4791,
+  "last_updated": "2026-10-27T15:29:36.446Z",
+  "total_cycles_completed": 5391,
+  "total_learnings_persisted": 5391,
+  "total_rules_promoted": 4793,
   "history": [
-    {
-      "timestamp": "2026-10-27T10:54:11.436Z",
-      "repository": "Gaurav-Gosain/tuios",
-      "learningId": "learn-github-gaurav-gosain-tuios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T10:54:16.248Z",
-      "repository": "liyupi/mianshiya",
-      "learningId": "learn-github-liyupi-mianshiya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T10:54:23.343Z",
       "repository": "goharbor/harbor",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T15:25:48.107Z",
       "repository": "sveltejs/svelte",
       "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:29:31.256Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T15:29:36.446Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

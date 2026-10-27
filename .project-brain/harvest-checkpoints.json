@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T15:25:48.111Z",
+  "last_updated": "2026-10-27T15:29:36.450Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "c9bd8c578ab78ff0b64a34a4cfd1b3488b3e58a61df1b4afc73653858c190993",
-      "verified_at": "2026-10-23T09:35:46.185Z",
+      "content_hash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
+      "verified_at": "2026-10-27T15:29:31.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T09:35:46.185Z"
+      "last_updated": "2026-10-27T15:29:31.259Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "9448f8556eaf3511aba315204c8e2e37081a3c4a3b4418b82d57c9d3c0da46a7",
-      "verified_at": "2026-10-26T02:25:29.957Z",
+      "content_hash": "38cda21232c587f0cae928b0fc066c31d823076f026f6635f4a2cfc8a9937f74",
+      "verified_at": "2026-10-27T15:29:36.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:25:29.957Z"
+      "last_updated": "2026-10-27T15:29:36.449Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

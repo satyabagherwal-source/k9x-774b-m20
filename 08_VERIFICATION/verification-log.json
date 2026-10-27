@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-87XF",
-    "timestamp": "2026-10-25T17:14:33.123Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "13ee0bbaa4acae66ce5940755e95f69e099103c11cdea8dae72d07ab9d5fe4a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8F4G",
-    "timestamp": "2026-10-25T17:14:42.448Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "ecbd96ce7e324a2fe4f140982784a3dbf0fdd10dce8a77c516d3a7e9b78ebd94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-GDFA",
     "timestamp": "2026-10-25T17:20:53.494Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7460,36 @@
     "repository": "sveltejs/svelte",
     "learningId": "learn-github-sveltejs-svelte",
     "contentHash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CUPC",
+    "timestamp": "2026-10-27T15:29:31.248Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CYPI",
+    "timestamp": "2026-10-27T15:29:36.438Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "38cda21232c587f0cae928b0fc066c31d823076f026f6635f4a2cfc8a9937f74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

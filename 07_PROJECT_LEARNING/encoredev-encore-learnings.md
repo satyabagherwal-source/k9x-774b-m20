@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `bd202f84`  
+> **Source Version**: `c2881447`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:35:45.965Z  
+> **Timestamp**: 2026-10-27T15:29:30.698Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:35:45.244Z  
+> **Harvest Timestamp**: 2026-10-27T15:29:29.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12520 stars
+- **Stars / Engagement**: 12619 stars
 
 ---
 
@@ -1768,124 +1768,292 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c7540ac` (2026-10-21)
-**Commit Message**: cli: fix WorkspaceRoot looping forever on a .git file (#2620)
+### Incident Patch 1: `c2881447` (2026-10-26)
+**Commit Message**: Fix LLM rules setup and update LLM instructions
 
-Motivation:
-In a git worktree or submodule, .git is a file rather than a directory.
-WorkspaceRoot handled that case with `continue` without changing dir, so
-it stat'ed the same path forever and any command calling it (e.g.
-`encore build docker`) hung, spinning a CPU core with no output.
+CLI:
+- Don't panic when the daemon fails to create the app (nil appResp).
+- Skip downloading instructions when no tool is selected.
+- Check the HTTP status and set a timeout when downloading, so error
+  pages are never written as rule files.
+- Fetch instructions from the CLI's release tag, falling back to main,
+  so they only describe commands and MCP tools that version has.
+- Parse JSONC editor configs (.vscode/mcp.json, .zed/settings.json).
+- Don't write a VS Code MCP config with an empty --app.
 
-Approach:
-Treat an existing .git entry, directory or file, as the workspace root
-and return dir, as the issue suggests.
+Instructions:
+- Remove wait_for_subscription_message and retry_until, reverted in #2460.
+- Make the MCP section editor-agnostic; the same text is installed for
+  Cursor, VS Code, Zed and AGENTS.md, not only Claude Code.
+- Add an Encore Cloud access section: CLI login and Cloud MCP setup/auth.
+- Fix invalid code samples and wrong claims in the TS and Go files.
 
-Validation:
-Added TestWorkspaceRoot covering a .git directory and a .git file, from
-the root and from a nested directory. Without the fix the .git-file case
-hangs (go test -timeout 5s -run WorkspaceRoot panics with a timeout);
-with the fix `go test ./cli/cmd/encore/cmdutil/` passes and go vet and
-gofmt are clean. I did not run `encore build docker` end to end in a
-real
-worktree.
-
-Report: https://github.com/encoredev/encore/issues/2619
-Signed-off-by: Pujitha Paladugu
-<[REDACTED_EMAIL]>
-Assisted-by: claude-sonnet-5-5 (via Claude Code)
-
-Fixes #2619
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2620?autoLogin=true&ref=codesmith_pr_footer"><picture><source
-media="(prefers-c
-
-**File**: `cli/cmd/encore/cmdutil/cmdutil.go` (modified, +3/-4)
+**File**: `cli/cmd/encore/app/create.go` (modified, +1/-1)
 ```diff
-@@ -108,13 +108,13 @@ func LooksLikeUninitializedEncoreApp(dir string) bool {
- 	return false
- }
- 
--// WorkspaceRoot determines the workspace root by looking for the .git folder in app root or parents to it.
-+// WorkspaceRoot determines the workspace root by looking for the .git folder or file in app root or parents to it.
- // It reports the absolute path to the workspace root.
- func WorkspaceRoot(appRoot string) string {
- 	dir := appRoot
- 	for {
- 		path := filepath.Join(dir, ".git")
--		fi, err := os.Stat(path)
-+		_, err := os.Stat(path)
- 		if errors.Is(err, fs.ErrNotExist) {
- 			dir2 := filepath.Dir(dir)
- 			if dir2 == dir {
-@@ -124,9 +124,8 @@ func WorkspaceRoot(appRoot string) string {
- 			continue
- 		} else if err != nil {
- 			Fatal(err)
--		} else if !fi.IsDir() {
--			continue
- 		} else {
-+			// A .git directory, or the .git file of a worktree or submodule.
- 			return dir
- 		}
+@@ -354,7 +354,7 @@ func createApp(ctx context.Context, name, template string, lang cmdutil.Language
+ 		color.Red("Failed to create app on daemon: %s\n", err)
  	}
+ 
+-	if err := llm_rules.SetupLLMRules(llmRules, lang, filepath.Join(name, appRootRelpath), appResp.AppId); err != nil {
++	if err := llm_rules.SetupLLMRules(llmRules, lang, filepath.Join(name, appRootRelpath), appResp.GetAppId()); err != nil {
+ 		color.Red("Failed to setup LLM rules: %s\n", err)
+ 	}
+ 
 ```
 
-**File**: `cli/cmd/encore/cmdutil/cmdutil_test.go` (added, +40/-0)
+**File**: `cli/cmd/encore/llm_rules/tool.go` (modified, +61/-23)
 ```diff
-@@ -0,0 +1,40 @@
-+package cmdutil
+@@ -9,9 +9,12 @@ import (
+ 	"path/filepath"
+ 	"time"
+ 
+-	"encr.dev/cli/cmd/encore/cmdutil"
+ 	"github.com/briandowns/spinner"
+ 	"github.com/fatih/color"
++	"github.com/tailscale/hujson"
 +
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+)
-+
-+func TestWorkspaceRoot(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		git  func(t *testing.T, root string)
-+	}{
-+		{"git directory", func(t *testing.T, root string) {
-+			if err := os.Mkdir(filepath.Join(root, ".git"), 0o755); err != nil {
-+				t.Fatal(err)
-+			}
-+		}},
-+		{"git file (worktree or submodule)", func(t *testing.T, root string) {
-+			if err := os.WriteFile(filepath.Join(root, ".git"), []byte("gitdir: /elsewhere\n"), 0o644); err != nil {
-+				t.Fatal(err)
-+			}
-+		}},
++	"encr.dev/cli/cmd/encore/cmdutil"
++	"encr.dev/internal/version"
+ )
+ 
+ const mdcTemplate string = `---
+@@ -89,6 +92,10 @@ type ToolSelectModel = cmdutil.SimpleSelectModel[Tool, ToolItem]
+ type ToolSelectDone = cmdutil.SimpleSelectDone[Tool]
+ 
+ func SetupLLMRules(llmRules Tool, lang cmdutil.Language, appRootRelpath string, appSlug string) error {
++	if llmRules == LLMRulesToolNone {
++		return nil
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			root := t.TempDir()
-+			tt.git(t, root)
-+			app := filepath.Join(root, "sub", "app")
-+			if err := os.MkdirAll(app, 0o755); err != nil {
-+				t.Fatal(err)
++
+ 	llmInstructions, err := downloadLLMInstructions(lang)
+ 	if err != nil {
+ 		return err
+@@ -160,21 +167,23 @@ func SetupLLMRules(llmRules Tool, lang cmdutil.Language, appRootRelpath string,
+ 			return err
+ 		}
+ 
+-		vscodePath := filepath.Join(appRootRelpath, ".vscode")
+-		if err := os.MkdirAll(vscodePath, 0755); err != nil {
+-			return err
+-		}
++		if appSlug != "" {
++			vscodePath := filepath.Join(appRootRelpath, ".vscode")
++			if err := os.MkdirAll(vscodePath, 0755); err != nil {
++				return err
 +			}
-+			for _, start := range []string{root, app} {
-+				if got := WorkspaceRoot(start); got != root {
-+					t.Errorf("WorkspaceRoot(%q) = %q, want %q", start, got, root)
+ 
+-		// https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_configuration-format
+-		mcpPath := filepath.Join(vscodePath, "mcp.json")
+-		err = updateJsonFile(mcpPath, "servers", func(servers map[string]any) {
+-			servers["encore-local"] = map[string]any{
+-				"command": "encore",
+-				"args":    []string{"mcp", "run", "--app=" + appSlug},
++			// https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_configuration-format
++			mcpPath := filepath.Join(vscodePath, "mcp.json")
++			err = updateJsonFile(mcpPath, "servers", func(servers map[string]any) {
++				servers["encore-local"] = map[string]any{
++					"command": "encore",
++					"args":    []string{"mcp", "run", "--app=" + appSlug},
 +				}
-+			}
-+		})
++			})
++			if err != nil {
++				return err
+ 			}
+-		})
+-		if err != nil {
+-			return err
+ 		}
+ 
+ 	case LLMRulesToolAgentsMD:
+@@ -242,8 +251,13 @@ func PrintLLMRulesInfo(tool Tool) {
+ func updateJsonFile(path, parent string, updateFn func(field map[string]any)) error {
+ 	var conf map[string]any
+ 
+-	// Read existing mcp.json if it exists
++	// Read existing config if it exists. Editor configs such as VS Code's mcp.json
++	// and Zed's settings.json are JSONC, so standardize comments and trailing commas first.
+ 	if existingData, err := os.ReadFile(path); err == nil {
++		existingData, err = hujson.Standardize(existingData)
++		if err != nil {
++			return fmt.Errorf("failed to parse existing %s: %w", path, err)
++		}
+ 		if err := json.Unmarshal(existingData, &conf); err != nil {
+ 			return fmt.Errorf("failed to parse existing %s: %w", path, err)
+ 		}
+@@ -263,7 +277,7 @@ func updateJsonFile(path, parent string, updateFn func(field map[string]any)) er
+ 	// Write back the config
+ 	data, err := json.MarshalIndent(conf, "", "    ")
+ 	if err != nil {
+-		return fmt.Errorf("failed to marshal mcp.json: %w", err)
++		return fmt.Errorf("failed to marshal %s: %w", path, err)
+ 	}
+ 
+ 	err = os.WriteFile(path, data, 0644)
+@@ -291,29 +305,53 @@ func writeNewFileOrSkip(filePath string, data []byte) error {
+ }
+ 
+ func downloadLLMInstructions(lang cmdutil.Language) (string, error) {
+-	fmt.Println("Downloading LLM Instructions...")
+-	var url string
++	var file string
+ 	switch lang {
+ 	case cmdutil.LanguageGo:
+-		url = "https://raw.githubusercontent.com/encoredev/encore/refs/heads/main/go_llm_instructions.txt"
++		file = "go_llm_instructions.txt"
+ 	case cmdutil.LanguageTS:
+-		url = "https://raw.githubusercontent.com/encoredev/encore/refs/heads/main/ts_llm_instructions.txt"
++		file = "ts_llm_instructions.txt"
+ 	default:
+ 		return "", fmt.Errorf("unsupported language")
+ 	}
+ 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+ 	s.Prefix = "Downloading LLM instructions..."
+ 	s.Start()
+ 	defer s.Stop()
+-	resp, err := http.Get(url)
++
++	// Prefer the instructions matching this CLI release, so they only describe
++	// commands and MCP tools this version has. Fall back to main for
++	// non-release builds or if the tag is missing.
++	refs := []string{"refs/heads/main"}
++	if version.Channel == version.GA {
++		refs = []string{"refs/tags/" + version.Version, "refs/heads/main"}
 +	}
++
++	client := &http.Client{Timeout: 30 * time.Second}
++	var lastErr error
++	for _, ref := range refs {
++		url := "https://raw.githubusercontent.com/encoredev/encore/" + ref + "/" + file
++		body, err := fetchLLMInstructions(client, url)
++		if err == nil {
++			return body, nil
++		}
++		lastErr = err
++	}
++	s.FinalMSG = fmt.Sprintf("failed, skipping: %v\n", lastErr)
++	return "", lastErr
 +}
++
++func fetchLLMInstructions(client *http.Client, url string) (string, error) {
++	resp, err := client.Get(url)
+ 	if err != nil {
+-		s.FinalMSG = fmt.Sprintf("failed, skipping: %v", err.Error())
+ 		return "", err
+ 	}
+ 	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusOK {
++		return "", fmt.Errorf("GET %s: %s", url, resp.Status)
++	}
+ 	body, err := io.ReadAll(resp.Body)
+ 	if err != nil {
+-		
+```
+
+**File**: `go_llm_instructions.txt` (modified, +49/-24)
+```diff
+@@ -6,25 +6,22 @@ MUST write valid Go v1.22+ code, best practices.
+ 
+ `encore.gen/` + `.encore/` CLI-regenerated; never edit.
+ 
+-`encore.app` at repo root = app manifest — CUE-formatted **text** file, not binary, despite `.app` extension. Read like any source file.
++`encore.app` at repo root = app manifest — JSON **text** file (comments allowed), not binary, despite `.app` extension. Read like any source file.
+ 
+ ## Encore local MCP server
+ 
+-Local Encore MCP wired via `.mcp.json` (registered **`encore-local`**, tool prefix `mcp__encore-local__`). Prefer for live app introspection over `Read`/grep; use docs tools when unsure of Encore API surface.
++Encore's local MCP server is registered as **`encore-local`** in the editor's MCP config when set up via `encore app create` / `encore llm-rules init` (Claude Code: `.mcp.json`, Cursor: `.cursor/mcp.json`, VS Code: `.vscode/mcp.json`, Zed: `.zed/settings.json`). Not configured? Add a stdio server running `encore mcp run --app=<app-id>`. Prefer it for live app introspection; use its docs tools when unsure of Encore API surface.
+ 
+-### Tools
+-
+-20 tools, all prefixed `mcp__encore-local__`. MCP client gets full catalog (names, descriptions, input schemas) via `tools/list` on session init — no need enumerate here.
++MCP client gets full tool catalog (names, descriptions, input schemas) via `tools/list` on session init — no list here.
+ 
+ ### Important tools (runtime-only — no filesystem equivalent)
+ 
+-Do what `Glob`/`Grep`/`Read` can't. For static config (services, endpoints, topics, schemas), see "When NOT to use it" below.
++These do what file search + reading source can't. For static structure, see "MCP only for runtime data" below.
+ 
+-- **`call_endpoint`** — args: `service`, `endpoint`, `method`, `path`, `payload` (JSON string with body/query/headers/path-params), optional `auth_token` / `auth_payload` / `correlation_id`. Optional `retry_until: { predicate, timeout_ms?, interval_ms?, fail_on_timeout? }` polls **server-side** until predicate matches — predicate = `status: 200` OR `body_path: { path: ".events.0.orderID", equals: 7 }` OR `body_jq: ".events | length > 0"` (minimal subset: `<path> | length <op> N` or `<path>` truthy). Use instead of agent-side polling loops for eventually-consistent reads. **auto-starts app** if not running. Use instead of `curl` to test endpoints.
+-- **`wait_for_subscription_message`** — args: `topic`, optional `subscription`, `timeout_ms` (default 10000), `since` (ISO/RFC3339), `match` (top-level key/value JSON filter, e.g. `{"CustomerID":"cust_42"}`). Blocks until the next message on the topic is fully processed by a subscription handler (returns or errors), then returns `{outcome, payload, duration_ms, handler_error, trace_id}`. Use to bridge async Pub/Sub work into a synchronous verify step — beats polling read-side endpoints + introspecting via `get_pubsub`/`get_traces`.
+-- **`query_database`** — args: `queries` (array of `{database, query}`). Runs SQL against named DBs, multiple queries one call. Beats `encore db conn-uri` + `psql` round-trips.
+-- **`get_traces`** — args: optional `service`, `endpoint`, `topic`, `subscription`, `error` (`"true"`/`"false"`), `start_time` / `end_time` (ISO), `min_duration_ms` / `max_duration_ms`, `parent_trace_id`, `limit`. Returns recent root request/Pub/Sub/test traces (timing, status, ids).
+-- **`get_trace_spans`** — args: `trace_ids` (array IDs from `get_traces`). Returns full per-span details for deep debugging.
++- **`call_endpoint`** — args: `service`, `endpoint`, `method`, `path`, `payload` (JSON string w/ body/query/headers/path-params), optional `auth_token` / `auth_payload` / `correlation_id`. **auto-starts app** if not running. Use instead of `curl` to test endpoints.
++- **`query_database`** — args: `queries` (array of `{database, query}`). Runs SQL against named DBs, multi queries per call. Beats `encore db conn-uri` + `psql` round-trips.
++- **`get_traces`** — args: optional `service`, `endpoint`, `topic`, `subscription`, `error` (`"true"`/`"false"`), `start_time` / `end_time` (ISO), `min_duration_ms` / `max_duration_ms`, `parent_trace_id`, `limit`. Recent root request/Pub/Sub/test traces (timing, status, ids).
++- **`get_trace_spans`** — args: `trace_ids` (array from `get_traces`). Full per-span details for deep debug.
+ - **`get_objects`** — args: `buckets` (array of bucket names). Lists objects + metadata in storage buckets.
+ - **`search_docs`** — args: `query`, optional `hits_per_page`, `page`, `facet_filters`. Algolia-backed Encore docs search.
+ - **`get_docs`** — args: `paths` (array of doc paths, e.g. `/docs/go/primitives/databases`). Fetches full doc pages found via `search_docs`.
+@@ -35,16 +32,38 @@ Do what `Glob`/`Grep`/`Read` can't. For static config (services, endpoints, topi
+ |---|---|
+ | "What services / endpoints / databases exist?" | `get_metadata` once |
+ | "Test my new POST /orders endpoint" | `call_endpoint` (auto-starts app) |
+-| "Did the Pub/Sub handler run after I pub
+```
+
+**File**: `ts_llm_instructions.txt` (modified, +44/-26)
+```diff
+@@ -1,9 +1,10 @@
+ ## Node.js style guide
+ 
+-MUST write valid TypeScript w/ Node.js v20+ features + best practices:
++MUST write valid TypeScript w/ Node.js v22+ features + best practices:
+ - ES6+ syntax always.
+ - Built-in `fetch` for HTTP, not `node-fetch`.
+ - Node.js `import`, never `require`.
++
+ ## TypeScript style guide
+ 
+ - interface/type for complex objects
+@@ -17,18 +18,15 @@ MUST write valid TypeScript w/ Node.js v20+ features + best practices:
+ 
+ ## Encore local MCP server
+ 
+-Local Encore MCP wired via `.mcp.json` (registered as **`encore-local`**, tool prefix `mcp__encore-local__`). Prefer for live app introspection over `Read`/grep; use docs tools when unsure of Encore API surface.
+-
+-### Tools
++Encore's local MCP server is registered as **`encore-local`** in the editor's MCP config when set up via `encore app create` / `encore llm-rules init` (Claude Code: `.mcp.json`, Cursor: `.cursor/mcp.json`, VS Code: `.vscode/mcp.json`, Zed: `.zed/settings.json`). Not configured? Add a stdio server running `encore mcp run --app=<app-id>`. Prefer it for live app introspection; use its docs tools when unsure of Encore API surface.
+ 
+-20 tools, all prefixed `mcp__encore-local__`. MCP client gets full catalog (names, descriptions, schemas) via `tools/list` on session init — no list here.
++MCP client gets full tool catalog (names, descriptions, input schemas) via `tools/list` on session init — no list here.
+ 
+ ### Important tools (runtime-only — no filesystem equivalent)
+ 
+-These do what `Glob`/`Grep`/`Read` can't. For static config (services, endpoints, topics, schemas), see "When NOT to use it" below.
++These do what file search + reading source can't. For static structure, see "MCP only for runtime data" below.
+ 
+-- **`call_endpoint`** — args: `service`, `endpoint`, `method`, `path`, `payload` (JSON string w/ body/query/headers/path-params), optional `auth_token` / `auth_payload` / `correlation_id`. Optional `retry_until: { predicate, timeout_ms?, interval_ms?, fail_on_timeout? }` polls **server-side** until predicate matches — predicate = `status: 200` OR `body_path: { path: ".events.0.orderID", equals: 7 }` OR `body_jq: ".events | length > 0"` (minimal subset: `<path> | length <op> N` or `<path>` truthy). Use instead of agent-side polling loops for eventually-consistent reads. **auto-starts app** if not running. Use instead of `curl` to test endpoints.
+-- **`wait_for_subscription_message`** — args: `topic`, optional `subscription`, `timeout_ms` (default 10000), `since` (ISO/RFC3339), `match` (top-level key/value JSON filter, e.g. `{"customerID":"cust_42"}`). Blocks until the next message on the topic is fully processed by a subscription handler (returns or errors), then returns `{outcome, payload, duration_ms, handler_error, trace_id}`. Use to bridge async Pub/Sub work into a synchronous verify step — beats polling read-side endpoints + introspecting via `get_pubsub`/`get_traces`.
++- **`call_endpoint`** — args: `service`, `endpoint`, `method`, `path`, `payload` (JSON string w/ body/query/headers/path-params), optional `auth_token` / `auth_payload` / `correlation_id`. **auto-starts app** if not running. Use instead of `curl` to test endpoints.
+ - **`query_database`** — args: `queries` (array of `{database, query}`). Runs SQL against named DBs, multi queries per call. Beats `encore db conn-uri` + `psql` round-trips.
+ - **`get_traces`** — args: optional `service`, `endpoint`, `topic`, `subscription`, `error` (`"true"`/`"false"`), `start_time` / `end_time` (ISO), `min_duration_ms` / `max_duration_ms`, `parent_trace_id`, `limit`. Recent root request/Pub/Sub/test traces (timing, status, ids).
+ - **`get_trace_spans`** — args: `trace_ids` (array from `get_traces`). Full per-span details for deep debug.
+@@ -42,16 +40,38 @@ These do what `Glob`/`Grep`/`Read` can't. For static config (services, endpoints
+ |---|---|
+ | "What services / endpoints / databases exist?" | `get_metadata` once |
+ | "Test my new POST /orders endpoint" | `call_endpoint` (auto-starts app) |
+-| "Did the Pub/Sub handler run after I published?" | `wait_for_subscription_message` |
+-| "Endpoint output is eventually consistent (e.g. read-after-publish)" | `call_endpoint` w/ `retry_until` |
++| "Did the Pub/Sub handler run after I published?" | `get_traces` w/ `topic` / `subscription` filter |
+ | "Why did last request fail?" | `get_traces` then `get_trace_spans` |
+ | "How does Encore API surface work?" | `search_docs` then `get_docs` |
+ 
+-- **MCP only for runtime data** - For **static structure** in source (services, endpoints, topics, subscriptions, schemas, secrets, middleware, cron jobs), `Glob`+`Grep`+`Read` = faster + more reliable than `get_*` tool.
++- **MCP only for runtime data** - For **static structure** in source (services, endpoints, topics, subscriptions, schemas, secrets, middleware, cron jobs), searching + reading source files = faster + more reliable than `get_*` tools.
++
++## Encore Cloud access
++
++Needed for deploying, cloud secrets, `enc
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2623** (2026-10-26): Fix LLM rules setup and update LLM instructions (@marcuskohlberg)
 - **PR #2622** (2026-10-22): Update README.md (@marcuskohlberg)
 - **PR #2620** (2026-10-21): cli: fix WorkspaceRoot looping forever on a .git file (@pujitha24)
 - **PR #2618** (2026-10-20): cli/daemon: fail encore check commands on HTTP errors (@marcuskohlberg)
 - **PR #2617** (2026-10-20): Remove the broken quick-reference link from the LLM instructions (@marcuskohlberg)
 - **PR #2616** (2026-10-19): metascrub: include cookie fields (@eandre)
-- **PR #2615** (2026-10-19): Add a deploy section to the TS and Go LLM instructions (@marcuskohlberg)
 
 ---
 
@@ -1905,33 +2073,28 @@ media="(prefers-c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli: fix WorkspaceRoot looping forever on a .git file (#2620)
+## X. LLM rules setup and update LLM instructions
 
 **RULE**:
-When implementing operations in `cli/cmd/encore/cmdutil/cmdutil.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/cmd/encore/app/create.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c7540ac`: cli: fix WorkspaceRoot looping forever on a .git file (#2620). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2881447`: LLM rules setup and update LLM instructions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/encore/cmdutil/cmdutil.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/cmd/encore/app/create.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// WorkspaceRoot determines the workspace root by looking for the .git folder or file in app root or parents to it.
-		_, err := os.Stat(path)
-			// A .git directory, or the .git file of a worktree or submodule.
+	if err := llm_rules.SetupLLMRules(llmRules, lang, filepath.Join(name, appRootRelpath), appResp.GetAppId()); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// WorkspaceRoot determines the workspace root by looking for the .git folder in app root or parents to it.
-		fi, err := os.Stat(path)
-		} else if !fi.IsDir() {
-			continue
+	if err := llm_rules.SetupLLMRules(llmRules, lang, filepath.Join(name, appRootRelpath), appResp.AppId); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c7540ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2881447` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `197403e8`  
+> **Source Version**: `3575f972`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:25:29.613Z  
+> **Timestamp**: 2026-10-27T15:29:35.875Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:25:29.184Z  
+> **Harvest Timestamp**: 2026-10-27T15:29:35.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11771 stars
+- **Stars / Engagement**: 11791 stars
 
 ---
 
@@ -1209,14 +1209,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4671** (2026-10-25): **fix: honor downstream Lance dependency overrides**
-  *Symptoms*: Consumers that provide a local Lance checkout cannot resolve the dependency graph because the SDK directly selects a vendored `lance-arrow`, producing two path packages with the same name and version. The Rust core now declares its upstream Git dependency separately so the consuming workspace can override that source consistently. Python continues inheriting the vendored workspace dependency, keeping the sliced-struct validity fix in Maturin source distributions. Standalone SDK builds still select that same fix through the existing root patch.  Adds a downstream consumer CI regression that resolves a local Lance override and checks that exactly one canonical `lance-arrow` package is selected. The Lance version updater also updates the core declaration in stable, preview and local modes. Public APIs and query behavior are unchanged.  The workspace declaration lint excludes path dependencies because the Python binding intentionally uses the bundled source. Duplicate and unused external declarations remain errors; advisory, license, banned-package and source checks continue covering the full dependency graph. 
+- **Issue #4688** (2026-10-27): **fix: gate experimental local functions behind an opt-in feature**
+  *Symptoms*: Published SDK builds currently expose local SQL computed columns and materialized-view execution that are not ready for release. Add the opt-in `experimental-functions` Cargo feature to the Rust core and forward it through the Python and Node bindings; published packages leave it disabled.  Local declarations and refreshes now return `NotSupported` before mutating tables or spawning jobs, including prepared materialized-view creation. Remote Cloud/Enterprise client operations, Python UDF packaging, ordinary eager `add_columns`, and access to existing data remain available. Stored metadata and write protections stay active, and shared server commit helpers remain usable.  CI covers both feature configurations. Existing local execution tests run with the feature enabled; default-build regressions cover early rejection, unchanged table versions, existing metadata protections, and normal eager transforms. API and source-build documentation explain the opt-in.  Validation: Rust library tests pass with the feature disabled (1,869 tests) and enabled (1,947 tests), plus three default-build integration regressions. Python and TypeScript bindings were rebuilt and tested in both configurations, including mocked remote requests; Rust formatting, Python package lint, TypeScript lint/build, and generated docs were checked. Repository-wide Ruff still reports 48 pre-existing errors in unchanged `docs/web-tests` files. 
 
-- **Issue #4665** (2026-10-25): **fix: execute remote materialized view creation through SQL**
-  *Symptoms*: Remote materialized-view creation currently expects a REST response containing a registry job ID, while refresh already submits SQL. Route both through the SQL query backend and preserve Python's synchronous and asynchronous return types.  ### Query to Job mapping  `SqlClient::submit_as_job()` submits an `ExecuteQueryRequest` through the same backend as `execute_query_async()`. Once submission succeeds, it retains the returned `Query` and starts one client-side task that consumes its result reader to completion. `Job::from_query_task()` wraps that task, its cached outcome, a single ID and a cancellation callback. Python exposes this as `Job[T]` or `AsyncJob[T]`.  The existing `job_type` property maps SQL-backed handles to the new `"query"` kind. The shared `id` contains that query's UUID string, so Python callers can inspect it with `db.describe_query(job.id)` on the submitting connection. No separate `query_id`, backend enum or `type()` API is added.  | Handle | `job_type` | `id` | Available lookup | | --- | --- | --- | --- | | SQL-backed | `"query"`, known at submission | Connection-scoped query UUID string | `describe_query(job.id)` | | Registry-backed | Existing server-reported kind, after `status()` or `refresh()` | Registry job ID string | Registry job APIs, descriptions and events | | Local | `None` | `None` | The current in-process handle |  | Job concept | SQL-backed behavior | | --- | --- | | Submission | Await initial SQL submission before returning the handle. Sub
-  **Post-Mortem & Fix Analysis**:
-  > @lancedb-gatekeeper The latest revision uses the existing job-type property for the new `"query"` kind. SQL-backed handles expose `job_type == "query"` immediately and put the query UUID string in the shared `id`; Python accepts that ID directly in `describe_query()` on the submitting connection. The separate `query_id`, backend enum and `type()` API have all been removed. Registry handles retain their server-reported job types and registry IDs; local handles have neither.  Rust, Python and TypeScript accessors, typed-result mapping, docs and regression coverage now follow that contract. Status/wait/cancellation behavior and the single-reader cached outcome are unchanged. This also removes the enum import and binding-generator errors reported by CI on the superseded revision. The job guide and PR description document the mapping and the requirement for compatible SQL server support. Please review the updated revision.
-  > @lancedb-gatekeeper Please review current head `b84392210`. The final API uses the existing `job_type` property: query-backed handles report `"query"` immediately, and `id` contains the connection-scoped query UUID string accepted by Python `describe_query()`. There is no separate query-ID accessor, backend enum or `type()` method. Registry job types and IDs retain their current behavior.  All current Rust/Python/Node lint checks, Python type checking and doctests, and the Node 22/24/26 plus Arrow compatibility suites have passed. The checked-in API reference matches CI generation. The PR description and job guide explain submission, one-reader cached completion, typed waits, cancellation and the SQL-server compatibility requirement. No local builds or tests were run. 
+- **Issue #4686** (2026-10-27): **fix: refuse Function-bound writes by column instead of by table**
+  *Symptoms*: A table with a Function binding rejected every update and merge_insert, whatever columns the write named: updating an unrelated column, or a merge that only inserts rows, failed with "not supported on a table with registered Function bindings". Expression computed columns on the same table accept those writes.  Both paths now use the per-column guard that schema evolution already uses. An update is checked on its SET columns. A merge is checked on the columns a matched row would take from the source, every source column but the join keys; an insert-only merge is an append, and its new rows get their Function outputs from the next refresh. Writes to a binding's inputs or outputs are still refused, now naming the column. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1233,249 +1230,1166 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `197403e8` (2026-10-25)
-**Commit Message**: fix: honor downstream Lance dependency overrides (#4671)
+### Incident Patch 1: `180eaaf6` (2026-10-26)
+**Commit Message**: fix!: reject unsupported remote connection and table options (#4486)
 
-Consumers that provide a local Lance checkout cannot resolve the
-dependency graph because the SDK directly selects a vendored
-`lance-arrow`, producing two path packages with the same name and
-version. The Rust core now declares its upstream Git dependency
-separately so the consuming workspace can override that source
-consistently. Python continues inheriting the vendored workspace
-dependency, keeping the sliced-struct validity fix in Maturin source
-distributions. Standalone SDK builds still select that same fix through
-the existing root patch.
+Fixes #4399.
 
-Adds a downstream consumer CI regression that resolves a local Lance
-override and checks that exactly one canonical `lance-arrow` package is
-selected. The Lance version updater also updates the core declaration in
-stable, preview and local modes. Public APIs and query behavior are
-unchanged.
+Remote connections currently discard local-only settings, including
+table write options that determine storage format. The synchronous
+Python client also binds the fourth positional `create_table` argument
+to `on_bad_vectors`, so an intended overwrite is sent as a create.
 
-The workspace declaration lint excludes path dependencies because the
-Python binding intentionally uses the bundled source. Duplicate and
-unused external declarations remain errors; advisory, license,
-banned-package and source checks continue covering the full dependency
-graph.
+This change aligns the remote Python signature with
+`DBConnection.create_table`, preserves the legacy remote timeout
+keywords, and raises `ValueError` for other unknown connection keywords.
+The shared Rust client rejects unsupported connection, create, and open
+options before sending HTTP requests; open validation also runs before a
+table-cache hit. Python reports these as `NotImplementedError`,
+including explicit `enable_v2_manifest_paths=False`. Supported
+Enterprise connection-level storage options remain available.
 
----------
+This implements option 2 from the issue: explicit rejection. It
+deliberately does not add unverified server write parameters. Calls that
+previously supplied ignored options must omit them to use server-managed
+storage and caching. Database URI prefixes are already preserved on
+current main and are unchanged here.
 
-Co-aut
+R
 
-**File**: `.github/workflows/pypi-publish.yml` (modified, +3/-0)
+**File**: `docs/src/python/python.md` (modified, +11/-0)
 ```diff
-@@ -15,6 +15,9 @@ on:
-       - ci/check_cargo_lock.py
-       - ci/check_sdist.py
-       - python/pyproject.toml
-+      - python/Cargo.toml
-+      - python/vendor/**
-+      - rust/lancedb/Cargo.toml
-       - Cargo.toml # Change in dependency frequently breaks builds
-       - Cargo.lock
+@@ -20,6 +20,17 @@ pip install lancedb
+ The following methods describe the synchronous API client. There
+ is also an [asynchronous API client](#connections-asynchronous).
+ 
++Connections to `db://` databases reject local-only options with
++`NotImplementedError`. These include `session` and `manifest_enabled=True` on
++connect, per-table storage and write options on create, and `index_cache_size`,
++`storage_options`, or `location` on open (where the method accepts them).
++Omit these options to use server-managed storage and caching. Connection-level
++`storage_options` supported by an Enterprise deployment remain available.
++
++The synchronous remote `create_table` uses the same positional order as the
++local API: `name, data, schema, mode, exist_ok, on_bad_vectors, fill_value,
++embedding_functions`. Prefer keyword arguments for optional parameters.
++
+ ## Connections (Synchronous)
+ 
+ ::: lancedb.connect
+```
+
+**File**: `docs/web/basics/sdk.mdx` (modified, +7/-0)
+```diff
+@@ -92,6 +92,13 @@ manages background maintenance.
+   [background maintenance](/maintenance/background-jobs) rather than calling
+   the embedded table's `optimize()` method.
+ 
++{/* Draft for the remote option validation release.
++- **Remove local storage and cache settings.** `db://` connections reject local
++  sessions, table cache settings, and per-table storage and write options. Omit
++  these options so Enterprise manages storage and caching. Connection-level
++  storage options supported by your Enterprise deployment remain available.
++*/}
++
+ For SQL connection details, see [SQL](/basics/sql). For the operating model and
+ deployment options, see [LanceDB Enterprise](/enterprise).
  
 ```
 
-**File**: `.github/workflows/rust.yml` (modified, +57/-0)
+**File**: `nodejs/__test__/query.test.ts` (modified, +11/-5)
 ```diff
-@@ -29,6 +29,63 @@ env:
-   RUST_BACKTRACE: "1"
- 
- jobs:
-+  dependency-overrides:
-+    name: Downstream Lance override
-+    runs-on: ubuntu-24.04
-+    timeout-minutes: 15
-+    steps:
-+      - uses: actions/checkout@v6
-+      - uses: actions-rust-lang/setup-rust-toolchain@v1
-+      - name: Read the pinned Lance tag
-+        id: lance
-+        run: |
-+          python3 - <<'PYTHON'
-+          import os
-+          import tomllib
-+          from pathlib import Path
-+
-+          manifest = tomllib.loads(Path("Cargo.toml").read_text())
-+          tag = manifest["workspace"]["dependencies"]["lance"]["tag"]
-+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
-+              output.write(f"tag={tag}\n")
-+          PYTHON
-+      - uses: actions/checkout@v6
-+        with:
-+          repository: lance-format/lance
-+          ref: ${{ steps.lance.outputs.tag }}
-+          path: local-lance
-+      - name: Resolve a downstream workspace with a local Lance override
-+        run: |
-+          mkdir -p downstream/src
-+          touch downstream/src/lib.rs
-+          cat > downstream/Cargo.toml <<'TOML'
-+          [package]
-+          name = "lancedb-local-lance-consumer"
-+          version = "0.1.0"
-+          edition = "2024"
-+
-+          [workspace]
-+
-+          [dependencies]
-+          lancedb = { path = "../rust/lancedb", default-features = false }
-+          lance-arrow = { path = "../local-lance/rust/lance-arrow" }
-+
-+          [patch."https://github.com/lance-format/lance.git"]
-+          lance-arrow = { path = "../local-lance/rust/lance-arrow" }
-+          TOML
-+          cargo metadata --manifest-path downstream/Cargo.toml --format-version 1 > downstream/graph.json
-+          python3 - <<'PYTHON'
-+          import json
-+          from pathlib import Path
-+
-+          graph = json.loads(Path("downstream/graph.json").read_text())
-+          packages = [p for p in graph["packages"] if p["name"] == "lance-arrow"]
-+          assert len(packages) == 1, [p["id"] for p in packages]
-+          assert Path(packages[0]["manifest_path"]).resolve() == Path(
-+              "local-lance/rust/lance-arrow/Cargo.toml"
-+          ).resolve()
-+          PYTHON
-+
-   lint:
-     timeout-minutes: 30
-     runs-on: ubuntu-24.04
+@@ -538,11 +538,17 @@ describe("IVF search effort", () => {
+     const db = await connect(directory.name);
+     const rows = Array.from({ length: 512 }, (_, id) => ({
+       id,
+-      vector: Array.from(
+-        { length: 16 },
+-        (_, j) =>
+-          (Math.floor(id / 32) === j ? 1 : 0) + Math.sin(id * 17 + j) * 0.001,
+-      ),
++      // Keep all eight exact neighbors together even if random IVF training
++      // splits the first cluster. This tests effort, not training recall.
++      vector:
++        id < 8
++          ? [...vector]
++          : Array.from(
++              { length: 16 },
++              (_, j) =>
++                (Math.floor(id / 32) === j ? 1 : 0) +
++                Math.sin(id * 17 + j) * 0.001,
++            ),
+     }));
+     table = await db.createTable("effort", rows.slice(0, 256));
+     await table.add(rows.slice(256));
 ```
 
-**File**: `ci/set_lance_version.py` (modified, +14/-0)
+**File**: `nodejs/__test__/remote.test.ts` (modified, +49/-0)
 ```diff
-@@ -2,6 +2,8 @@
- import re
- import sys
+@@ -98,6 +98,55 @@ async function withMockDatabase(
+ }
+ 
+ describe("remote connection", () => {
++  it.each([
++    { dataStorageVersion: "2.0" },
++    { enableV2ManifestPaths: false },
++    { storageOptions: { bogusOptionXyz: "1" } },
++  ])("rejects local create options %j before sending data", async (options) => {
++    const requests: string[] = [];
++    await withMockDatabase(
++      (req, res) => {
++        requests.push(req.url ?? "");
++        res.writeHead(200).end();
++      },
++      async (db) => {
++        await expect(
++          db.createTable("test", [{ value: 1 }], {
++            ...options,
++            mode: "overwrite",
++          }),
++        ).rejects.toThrow(/write_options.*remote/);
++        await expect(
++          db.createEmptyTable(
++            "test",
++            new Schema([new Field("value", new Int64(), true)]),
++            options,
++          ),
++        ).rejects.toThrow(/write_options.*remote/);
++      },
++    );
++    expect(requests).toEqual([]);
++  });
++
++  it.each([{ indexCacheSize: 5 }, { storageOptions: { x: "y" } }])(
++    "rejects local open options %j before sending a request",
++    async (options) => {
++      const requests: string[] = [];
++      await withMockDatabase(
++        (req, res) => {
++          requests.push(req.url ?? "");
++          res.writeHead(200).end();
++        },
++        async (db) => {
++          await expect(
++            db.openTable("test", undefined, options),
++          ).rejects.toThrow(/not supported for remote/);
++        },
++      );
++      expect(requests).toEqual([]);
++    },
++  );
++
+   it.each([false, true])(
+     "normalizes remote blob writes (range target: %s)",
+     async (wide) => {
+```
+
+**File**: `python/python/lancedb/__init__.py` (modified, +15/-0)
+```diff
+@@ -281,6 +281,21 @@ def connect(
+             "uri is required when not connecting through a namespace client"
+         )
+     if isinstance(uri, str) and uri.startswith("db://"):
++        # Preserve the deprecated remote timeout options, but validate all other
++        # unknown keywords just as the local connection does.
++        unknown_kwargs = {
++            key: value
++            for key, value in kwargs.items()
++            if key not in ("connection_timeout", "read_timeout")
++        }
++        if unknown_kwargs:
++            raise ValueError(f"Unknown keyword arguments: {unknown_kwargs}")
++        if session is not None:
++            raise NotImplementedError("session is not supported for remote connections")
++        if manifest_enabled:
++            raise NotImplementedError(
++                "manifest_enabled is not supported for remote connections"
++            )
+         if api_key is None:
+             api_key = os.environ.get("LANCEDB_API_KEY")
+         if api_key is None:
+```
+
+**File**: `python/python/lancedb/remote/db.py` (modified, +25/-12)
+```diff
+@@ -7,7 +7,6 @@
+ from dataclasses import replace
+ from datetime import timedelta
  import json
-+import tomllib
-+from pathlib import Path
- 
- LANCE_GIT_URL = "https://github.com/lance-format/lance.git"
- 
-@@ -148,6 +150,18 @@ def update_cargo_toml(line_updater):
-     with open("Cargo.toml", "w") as f:
-         f.writelines(new_lines)
- 
-+    core_manifest = Path("rust/lancedb/Cargo.toml")
-+    if core_manifest.exists():
-+        lines = core_manifest.read_text().splitlines(keepends=True)
-+        for index, line in enumerate(lines):
-+            if line.startswith("lance-arrow ="):
-+                updated = tomllib.loads(line_updater(line))["lance-arrow"]
-+                config = {"version": updated} if isinstance(updated, str) else updated
-+                if "path" in config:
-+                    config["path"] = "../../" + config["path"]
-+                lines[index] = dict_to_toml_line("lance-arrow", config)
-+        core_manifest.write_text("".join(lines))
-+
- 
- def set_stable_version(version: str):
-     """
-```
-
-**File**: `ci/tests/test_set_lance_version.py` (modified, +28/-0)
-```diff
-@@ -4,6 +4,7 @@
+-import logging
+ from concurrent.futures import ThreadPoolExecutor
  import sys
- import tempfile
- import textwrap
-+import tomllib
- import unittest
- from pathlib import Path
+ from typing import (
+@@ -502,18 +501,14 @@ def open_table(
  
-@@ -83,6 +84,13 @@ def test_supported_update_modes_only_rewrite_lance_dependencies(self):
-             with self.subTest(version=version), tempfile.TemporaryDirectory() as tmp:
-                 workdir = Path(tmp)
-                 (workdir / "Cargo.toml").write_text(CARGO_TOML)
-+                core_manifest = workdir / "rust/lancedb/Cargo.toml"
-+                core_manifest.parent.mkdir(parents=True)
-+                core_manifest.write_text(
-+                    "[dependencies]\nlance-arrow = { "
-+                    'version = "=1.0.0", git = "https://github.com/lance-format/lance.git", '
-+                    'tag = "v1.0.0" }\narrow.workspace = true\n'
+         if namespace_path is None:
+             namespace_path = []
+-        if storage_options is not None:
+-            logging.info(
+-                "storage_options is ignored for remote tables"
+-                " (storage is managed; set storage_options on connect() instead)"
+-            )
+-        if index_cache_size is not None:
+-            logging.info(
+-                "index_cache_size is ignored for remote tables"
+-                " (there is no local cache to configure)"
++        table = LOOP.run(
++            self._conn.open_table(
++                name,
++                namespace_path=namespace_path,
++                storage_options=storage_options,
++                index_cache_size=index_cache_size,
+             )
+-
+-        table = LOOP.run(self._conn.open_table(name, namespace_path=namespace_path))
++        )
+         tbl = RemoteTable(
+             table,
+             self.db_name,
+@@ -593,6 +588,9 @@ def create_table(
+         embedding_functions: Optional[List[EmbeddingFunctionConfig]] = None,
+         *,
+         namespace_path: Optional[List[str]] = None,
++        storage_options: Optional[Dict[str, str]] = None,
++        data_storage_version: Optional[str] = None,
++        enable_v2_manifest_paths: Optional[bool] = None,
+     ) -> Table:
+         """Create a [Table][lancedb.table.Table] in the database.
+ 
+@@ -632,6 +630,12 @@ def create_table(
+         embedding_functions: list of EmbeddingFunctionConfig, optional
+             The embedding functions to store in the table schema and use to
+             generate vectors when creating the table or adding data.
++        storage_options: dict, optional
++            Not supported for remote table creation. Raises NotImplementedError.
++        data_storage_version: str, optional
++            Not supported for remote table creation. Raises NotImplementedError.
++        enable_v2_manifest_paths: bool, optional
++            Not supported for remote table creation. Raises NotImplementedError.
+ 
+         Returns
+         -------
+@@ -698,6 +702,14 @@ def create_table(
+         LanceTable(table4)
+ 
+         """
++        for option, value in (
++            ("data_storage_version", data_storage_version),
++            ("enable_v2_manifest_paths", enable_v2_manifest_paths),
++        ):
++            if value is not None:
++                raise NotImplementedError(
++                    f"{option} is not supported for remote table creation"
 +                )
-                 command_log = workdir / "commands.log"
-                 fake_bin = workdir / "bin"
-                 fake_bin.mkdir()
-@@ -111,6 +119,26 @@ def test_supported_update_modes_only_rewrite_lance_dependencies(self):
-                     + updated_dependencies
-                     + UNTOUCHED_DEPENDENCIES,
+         if exist_ok:
+             if mode == "create":
+                 mode = "exist_ok"
+@@ -719,6 +731,7 @@ def create_table(
+                 on_bad_vectors=on_bad_vectors,
+                 fill_value=fill_value,
+                 embedding_functions=embedding_functions,
++                storage_options=storage_options,
+             )
+         )
+         return RemoteTable(
+```
+
+**File**: `python/python/tests/test_remote_db.py` (modified, +5/-5)
+```diff
+@@ -1823,12 +1823,12 @@ def test_remote_unsupported_legacy_hnsw_pq():
                  )
-+                core = tomllib.loads(core_manifest.read_text())["dependencies"]
-+                dependency = core["lance-arrow"]
-+                if isinstance(dependency, str):
-+                    dependency = {"version": dependency}
-+                if version == "local":
-+                    self.assertEqual(
-+                        dependency["path"], "../../../lance/rust/lance-arrow"
-+                    )
-+                else:
-+                    expected_version = {
-+                        "stable": "9.9.9",
-+                        "preview": "10.0.0-beta.3",
-+                    }.get(version, version.removeprefix("v"))
-+                    self.assertEqual(dependency["version"], f"={expected_version}")
-+                    if "beta" in expected_version:
-+                        self.assertEqual(dependency["git"], LANCE_GIT_URL)
-+                        self.assertEqual(dependency["tag"], f"v{expected_version}")
-+                    else:
-+                        self.assertNotIn("git", dependency)
-+                self.assertEqual(core["arrow"], {"workspace": True})
-                 commands = command_log.read_text().splitlines()
-                 for command in expected_commands:
-                     self.assertTrue(
+ 
+ 
+-def test_remote_python_only_messages(caplog):
++def test_remote_python_only_messages():
+     with mock_lancedb_connection(remote_unsupported_handler) as db:
+-        with caplog.at_level("INFO"):
+-            table = db.open_table("test", storage_options={}, index_cache_size=1)
+-        assert "storage_options is ignored for remote tables" in caplog.text
+-        assert "index_cache_size is ignored for remote tables" in caplog.text
++        for options in [{"storage_options": {}}, {"index_cache_size": 1}]:
++            with pytest.raises(NotImplementedError, match=next(iter(options))):
++                db.open_table("test", **options)
++        table = db.open_table("test")
+         for method in ["to_arrow", "to_pandas", "to_polars"]:
+             with pytest.raises(NotImplementedError) as error:
+                 getattr(table, method)()
 ```
 
-**File**: `deny.toml` (modified, +3/-1)
+**File**: `python/python/tests/test_remote_options.py` (added, +154/-0)
 ```diff
-@@ -177,7 +177,9 @@ wildcards = "deny"
- # `[workspace.dependencies]` table: any crate used by more than one member must
- # go through `workspace = true`, and entries nothing uses are an error. This
- # keeps versions from drifting between the core crate and the bindings.
--workspace-dependencies = { duplicates = "deny", unused = "deny" }
-+# Python bundles a patched path crate while the Rust SDK uses the overridable
-+# upstream source. Check shared external declarations, not these path bindings.
-+workspace-dependencies = { duplicates = "deny", unused = "deny", include-path-dependencies = false }
- # Internal workspace crates reference each other via `path = "..."`, which
- # cargo-deny sees as a wildcard version. That's fine for private workspace
- # members (not published to crates.io), so allow it specifically for paths.
+@@ -0,0 +1,154 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++import inspect
++from urllib.parse import parse_qs, urlparse
++
++import lancedb
++import pyarrow as pa
++import pytest
++
++from test_remote_db import mock_lancedb_connection, mock_lancedb_connection_async
++
++
++@pytest.mark.parametrize("uri", ["memory://", "db://dev"])
++def test_unknown_connect_options(uri):
++    with pytest.raises(ValueError, match="Unknown keyword arguments.*bogus"):
++        lancedb.connect(uri, api_key="fake", bogus=1)
++
++
++@pytest.mark.parametrize("option", ["session", "manifest_enabled"])
++@pytest.mark.parametrize("asynchronous", [False, True])
++@pytest.mark.asyncio
++async def test_remote_connect_rejects_local_options(option, asynchronous):
++    value = lancedb.Session() if option == "session" else True
++    with pytest.raises(NotImplementedError, match=option):
++        if asynchronous:
++            await lancedb.connect_async("db://dev", api_key="fake", **{option: value})
++        else:
++            lancedb.connect("db://dev", api_key="fake", **{option: value})
++
++
++def test_remote_create_signature():
++    from lancedb.db import DBConnection
++    from lancedb.remote.db import RemoteDBConnection
++
++    expected = inspect.signature(DBConnection.create_table).parameters
++    actual = inspect.signature(RemoteDBConnection.create_table).parameters
++    assert list(actual) == list(expected)
++    for name in expected:
++        assert actual[name].kind == expected[name].kind
++        if name == "mode":
++            # Remote connections retain their existing server-default mode.
++            assert actual[name].default is None
++        else:
++            assert actual[name].default == expected[name].default
++
++
++def test_remote_create_positional_mode():
++    modes = []
++
++    def handler(request):
++        assert urlparse(request.path).path == "/v1/table/ct_pos/create/"
++        modes.append(parse_qs(urlparse(request.path).query)["mode"])
++        request.send_response(200)
++        request.end_headers()
++
++    with mock_lancedb_connection(handler) as db:
++        data = [{"value": 1}]
++        db.create_table("ct_pos", data, None, "overwrite")
++        db.create_table("ct_pos", data, None, "overwrite")
++        db.create_table("ct_pos", data, None, "create", True)
++        with pytest.raises(ValueError, match="Invalid mode"):
++            db.create_table("ct_pos", data, None, "drop")
++    assert modes == [["overwrite"], ["overwrite"], ["exist_ok"]]
++
++
++CREATE_OPTIONS = [
++    {"new_table_data_storage_version": "2.0"},
++    {"new_table_enable_v2_manifest_paths": "false"},
++    {"bogus_option_xyz": "1"},
++]
++
++
++@pytest.mark.parametrize("storage_options", CREATE_OPTIONS)
++@pytest.mark.parametrize("empty", [False, True])
++@pytest.mark.asyncio
++async def test_remote_create_rejects_write_options(storage_options, empty):
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        request.send_response(200)
++        request.end_headers()
++
++    kwargs = {"schema": pa.schema([("value", pa.int64())])}
++    if not empty:
++        kwargs["data"] = [{"value": 1}]
++    async with mock_lancedb_connection_async(handler) as db:
++        with pytest.raises(NotImplementedError, match="write_options.*remote"):
++            await db.create_table("t", storage_options=storage_options, **kwargs)
++    assert requests == []
++
++
++@pytest.mark.parametrize(
++    "options",
++    [
++        {"data_storage_version": "2.0"},
++        {"enable_v2_manifest_paths": False},
++        {"storage_options": {"x": "1"}},
++    ],
++)
++def test_sync_remote_create_rejects_write_options(options):
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        request.send_response(200)
++        request.end_headers()
++
++    with mock_lancedb_connection(handler) as db:
++        with pytest.raises(NotImplementedError, match="remote"):
++            db.create_table("t", [{"value": 1}], **options)
++    assert requests == []
++
++
++@pytest.mark.parametrize("asynchronous", [False, True])
++@pytest.mark.parametrize(
++    "options", [{"index_cache_size": 10}, {"storage_options": {"x": "y"}}]
++)
++@pytest.mark.asyncio
++async def test_remote_open_rejects_local_options(options, asynchronous):
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        request.send_response(200)
++        request.end_headers()
++        request.wfile.write(b'{"version": 1, "schema": {"fields": []}}')
++
++    if asynchronous:
++        async with mock_lancedb_connection_async(handler) as db:
++            with pytest.raises(NotImplementedError, match="remote"):
++                await db.open_table("t", **options)
++    else:
++        with mock_lancedb_connection(handler) as db:
++            with pytest.raises(NotImplementedError, match="remote"):
++                db.open_table("t", **options)
++    assert requests == []
++
++
++@pytest.mark.asyncio
++async def test_remote
 ```
 
-**File**: `python/Cargo.toml` (modified, +0/-1)
+---
+
+### Incident Patch 2: `982b2a12` (2026-10-26)
+**Commit Message**: fix(python): restore sync remote connection and table API parity (#4473)
+
+Fixes #4400.
+
+Sync remote connections fail on `uri`, `len(db)`, and `name in db`, and
+remote tables lack `namespace`, `id`, and `replace_field_metadata`.
+Share the paginated connection helpers and table identifier contract
+through the base classes, and delegate remote metadata replacement to
+the existing async implementation. Unsupported remote session and
+read-consistency properties raise explicit `NotImplementedError`s.
+
+Reconciled with main at `3dd57978`, including the synchronous method
+signatures from #4498. The local session fix has already landed in
+#4433, so this PR preserves its supplied-session-or-None contract and
+adds no Rust/PyO3 session access. Namespace connections retain their
+writable properties.
+
+Existing custom `Table` subclasses remain instantiable: `namespace`
+defaults to a fresh empty list, and deprecated `replace_field_metadata`
+delegates to `update_field_metadata` with `replace=True` while retaining
+its `None` return. Native and remote overrides are preserved. Regression
+tests instantiate an old-style subclass through normal ABC class
+creation and verify identifiers, independent namesp
+
+**File**: `python/python/lancedb/db.py` (modified, +18/-15)
 ```diff
-@@ -22,7 +22,6 @@ bytes.workspace = true
- lancedb.workspace = true
- datafusion-common.workspace = true
- lance-core.workspace = true
--# The workspace path dependency includes the patched crate in Maturin sources.
- lance-arrow.workspace = true
- lance-namespace.workspace = true
- lance-namespace-impls.workspace = true
+@@ -823,8 +823,26 @@ def drop_all_tables(self, namespace_path: Optional[List[str]] = None):
+ 
+     @property
+     def uri(self) -> str:
++        """The URI of this database."""
+         return self._uri
+ 
++    def _all_table_names(self) -> Generator[str, None, None]:
++        page_token = None
++        while True:
++            response = self.list_tables(page_token=page_token)
++            yield from response.tables
++            page_token = response.page_token
++            if not page_token:
++                return
++
++    def __len__(self) -> int:
++        """Return the number of tables in the root namespace across all pages."""
++        return sum(1 for _ in self._all_table_names())
++
++    def __contains__(self, name: str) -> bool:
++        """Return whether the root namespace contains the named table."""
++        return name in self._all_table_names()
++
+     def namespace_client(self) -> LanceNamespace:
+         """Get the equivalent namespace client for this connection.
+ 
+@@ -1609,21 +1627,6 @@ def table_names(
+             )
+         )
+ 
+-    def _all_table_names(self) -> Generator[str, None, None]:
+-        page_token = None
+-        while True:
+-            response = self.list_tables(page_token=page_token)
+-            yield from response.tables
+-            page_token = response.page_token
+-            if not page_token:
+-                return
+-
+-    def __len__(self) -> int:
+-        return sum(1 for _ in self._all_table_names())
+-
+-    def __contains__(self, name: str) -> bool:
+-        return name in self._all_table_names()
+-
+     @override
+     def create_table(
+         self,
 ```
 
-**File**: `rust/lancedb/Cargo.toml` (modified, +1/-1)
+**File**: `python/python/lancedb/remote/db.py` (modified, +18/-1)
 ```diff
-@@ -46,7 +46,7 @@ lance-index = { workspace = true, features = ["tokenizer-jieba", "tokenizer-lind
- lance-table = { workspace = true }
- lance-linalg = { workspace = true }
- lance-encoding = { workspace = true }
--lance-arrow = { workspace = true }
-+lance-arrow = { version = "=15.0.0-beta.1", tag = "v15.0.0-beta.1", git = "https://github.com/lance-format/lance.git" }
- lance-namespace = { workspace = true }
- lance-namespace-impls = { workspace = true }
- metrics = { workspace = true, optional = true }
+@@ -47,7 +47,7 @@
+ from ..view import ViewDescription
+ 
+ if TYPE_CHECKING:
+-    from .._lancedb import JobInfo
++    from .._lancedb import JobInfo, Session
+ from ..embeddings import EmbeddingFunctionConfig
+ from lance_namespace import (
+     LanceNamespace,
+@@ -240,6 +240,23 @@ def _from_catalog(
+     def __repr__(self) -> str:
+         return f"RemoteConnect(name={self.db_name})"
+ 
++    @property
++    @override
++    def uri(self) -> str:
++        return self._conn.uri
++
++    @property
++    def session(self) -> Optional["Session"]:
++        """Remote connections do not expose a local cache session."""
++        raise NotImplementedError("session is not supported by remote connections")
++
++    @property
++    def read_consistency_interval(self) -> Optional[timedelta]:
++        """Remote connections do not expose a local read consistency interval."""
++        raise NotImplementedError(
++            "read_consistency_interval is not supported by remote connections"
++        )
++
+     @override
+     def serialize(self) -> str:
+         if getattr(self, "_catalog_oauth", False):
+```
+
+**File**: `python/python/lancedb/remote/table.py` (modified, +12/-0)
+```diff
+@@ -192,6 +192,18 @@ def name(self) -> str:
+         """The name of the table"""
+         return self._name
+ 
++    @property
++    def namespace(self) -> List[str]:
++        return self._namespace_path
++
++    @deprecation.deprecated(
++        deprecated_in="0.33.1",
++        current_version=__version__,
++        details="Use update_field_metadata() instead.",
++    )
++    def replace_field_metadata(self, field_name: str, new_metadata: Dict[str, str]):
++        LOOP.run(self._table.replace_field_metadata(field_name, new_metadata))
++
+     def __repr__(self) -> str:
+         return f"RemoteTable({self.db_name}.{self.name})"
+ 
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +33/-7)
+```diff
+@@ -1360,6 +1360,16 @@ def name(self) -> str:
+         """The name of this Table"""
+         raise NotImplementedError("name is not supported for this table type")
+ 
++    @property
++    def namespace(self) -> List[str]:
++        """Return the namespace path of the table (empty for the root namespace)."""
++        return []
++
++    @property
++    def id(self) -> str:
++        """Return the full identifier of the table (namespace$name)."""
++        return "$".join(self.namespace + [self.name])
++
+     @property
+     @abstractmethod
+     def version(self) -> int:
+@@ -3106,6 +3116,29 @@ def update_field_metadata(
+             version: the new table version after the update.
+         """
+ 
++    @deprecation.deprecated(
++        deprecated_in="0.33.1",
++        current_version=__version__,
++        details="Use update_field_metadata() instead.",
++    )
++    def replace_field_metadata(self, field_name: str, new_metadata: Dict[str, str]):
++        """Replace all metadata of a field in the schema.
++
++        .. deprecated:: 0.33.1
++            Use [update_field_metadata][lancedb.table.Table.update_field_metadata]
++            with ``replace=True`` instead.
++
++        Parameters
++        ----------
++        field_name: str
++            The name of the field whose metadata is replaced.
++        new_metadata: dict
++            The new metadata, replacing all existing keys.
++        """
++        self.update_field_metadata(
++            {"path": field_name, "metadata": new_metadata, "replace": True}
++        )
++
+     @abstractmethod
+     def drop_columns(self, columns: Iterable[str]) -> DropColumnsResult:
+         """
+@@ -3315,13 +3348,6 @@ def namespace(self) -> List[str]:
+         """Return the namespace path of the table."""
+         return self._namespace_path
+ 
+-    @property
+-    def id(self) -> str:
+-        """Return the full identifier of the table (namespace$name)."""
+-        if self._namespace_path:
+-            return "$".join(self._namespace_path + [self.name])
+-        return self.name
+-
+     @classmethod
+     async def from_inner(cls, tbl: LanceDBTable):
+         from .db import AsyncConnection, LanceDBConnection
+```
+
+**File**: `python/python/tests/test_sync_api_parity.py` (added, +170/-0)
+```diff
+@@ -0,0 +1,170 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++from datetime import timedelta
++import json
++from urllib.parse import parse_qs, urlparse
++
++import lancedb
++from lancedb.table import Table
++import pytest
++
++from test_remote_db import mock_lancedb_connection
++
++
++@pytest.fixture
++def legacy_table():
++    """Implement the pre-existing abstract API without the two new members."""
++
++    def unsupported(self, *args, **kwargs):
++        raise NotImplementedError
++
++    def update_field_metadata(self, updates):
++        self.metadata_updates.append(updates)
++        return object()  # The deprecated wrapper must not expose this result.
++
++    # Supply concrete implementations through normal ABC class creation. Leave
++    # namespace and replace_field_metadata inherited, as an old subclass would.
++    implementations = {
++        name: unsupported
++        for name in Table.__abstractmethods__
++        if name not in {"namespace", "replace_field_metadata"}
++    }
++    implementations.update(
++        name=property(lambda self: "legacy"),
++        update_field_metadata=update_field_metadata,
++    )
++    legacy_class = type("LegacyTable", (Table,), implementations)
++    table = legacy_class()
++    table.metadata_updates = []
++    return table
++
++
++def test_legacy_table_namespace_and_id(legacy_table):
++    assert legacy_table.namespace == []
++    assert legacy_table.id == "legacy"
++    namespace = legacy_table.namespace
++    namespace.append("changed")
++    assert legacy_table.namespace == []
++    assert legacy_table.id == "legacy"
++
++
++def test_legacy_table_replace_field_metadata(legacy_table):
++    with pytest.warns(DeprecationWarning, match="update_field_metadata"):
++        result = legacy_table.replace_field_metadata("nested.field", {"a": "b"})
++    assert result is None
++    assert legacy_table.metadata_updates == [
++        {"path": "nested.field", "metadata": {"a": "b"}, "replace": True}
++    ]
++
++
++def respond(request, body):
++    request.send_response(200)
++    request.send_header("Content-Type", "application/json")
++    request.end_headers()
++    request.wfile.write(json.dumps(body).encode())
++
++
++def test_remote_uri():
++    with mock_lancedb_connection(lambda request: respond(request, {})) as db:
++        assert db.uri == "db://dev"
++
++
++@pytest.mark.parametrize("attribute", ["session", "read_consistency_interval"])
++def test_remote_unsupported_properties(attribute):
++    with mock_lancedb_connection(lambda request: respond(request, {})) as db:
++        with pytest.raises(NotImplementedError, match=attribute):
++            getattr(db, attribute)
++
++
++@pytest.mark.parametrize("tables", [[], ["first", "last"]])
++def test_remote_len_and_contains_follow_pages(tables):
++    requests = []
++
++    def handler(request):
++        requests.append(request.path)
++        query = parse_qs(urlparse(request.path).query)
++        if tables and "page_token" not in query:
++            respond(request, {"tables": [tables[0]], "page_token": "opaque-next"})
++        else:
++            if tables:
++                assert query["page_token"] == ["opaque-next"]
++            respond(request, {"tables": tables[1:]})
++
++    with mock_lancedb_connection(handler) as db:
++        assert len(db) == len(tables)
++        assert ("last" in db) == bool(tables)
++        assert "missing" not in db
++        requests.clear()
++        assert ("first" in db) == bool(tables)
++        assert len(requests) == 1
++
++
++@pytest.mark.parametrize("namespace", [[], ["parent", "child"]])
++def test_remote_table_identifiers(namespace):
++    def handler(request):
++        respond(request, {"version": 1, "schema": {"fields": []}})
++
++    with mock_lancedb_connection(handler) as db:
++        table = db.open_table("rfm", namespace_path=namespace)
++        assert table.namespace == namespace
++        assert table.id == "$".join(namespace + ["rfm"])
++
++
++def test_remote_replace_field_metadata():
++    updates = []
++
++    def handler(request):
++        if request.path.endswith("/describe/"):
++            respond(request, {"version": 1, "schema": {"fields": []}})
++        else:
++            assert request.path == "/v1/table/rfm/update_field_metadata/"
++            body = request.rfile.read(int(request.headers["Content-Length"]))
++            updates.append(json.loads(body))
++            respond(request, {"version": 2})
++
++    with mock_lancedb_connection(handler) as db:
++        table = db.open_table("rfm")
++        with pytest.warns(DeprecationWarning, match="update_field_metadata"):
++            assert table.replace_field_metadata("id", {"a": "b"}) is None
++    assert updates == [
++        {"updates": [{"path": "id", "metadata": {"a": "b"}, "replace": True}]}
++    ]
++
++
++@pytest.mark.parametrize("custom_session", [False, True])
++def test_local_properties_and_metadata(tmp_path, custom_session):
++    supplied = lancedb.Session() if custom_session else None
++    db = lancedb.connect(
++        tmp_path, 
+```
+
+---
+
+### Incident Patch 3: `2cd635d4` (2026-10-27)
+**Commit Message**: fix: correct remote materialized view refresh results and options (#4672)
+
+Remote materialized-view refreshes drained the SQL result and then
+fabricated `mode=rebuild`, `rows_written=<total view rows>`, and
+`source_version=0`. This made incremental refreshes report incorrect
+statistics.
+
+Make these three result fields optional across Rust, Python, and
+TypeScript, and leave them unset for remote SQL refreshes. Remove the
+post-refresh row count request. Local refreshes continue to populate all
+metrics, and `version` remains the view version observed after
+completion. Remote per-operation statistics remain unavailable until the
+SQL job adapter can retrieve them.
+
+Expose the forced-rebuild option through the Rust builder,
+synchronous/asynchronous Python refresh and job methods, and TypeScript
+refresh. Remote `full=true` sends `WITH (full = true)`; the default lets
+the server choose its refresh mode. Local source-version pinning and
+remote job cancellation are preserved.
+
+Local refresh regression tests respect the `experimental-functions`
+build gate, while remote refresh coverage also runs in default builds.
+
+Validation:
+
+- Rust: 20 materialized-view tests and 21 remote SQL tests passed
+
+**File**: `docs/src/js/classes/MaterializedView.md` (modified, +7/-3)
+```diff
+@@ -66,14 +66,18 @@ refresh(options?): Promise<RefreshMaterializedViewResult>
+ Recompute the view from its source.
+ Local refresh requires a source build with `experimental-functions`.
+ 
+-Every refresh rebuilds the complete view. For local views,
+-`sourceVersion` refreshes to that source version instead of the latest;
+-remote SQL refreshes do not support source-version pinning.
++`full: true` forces a remote rebuild; otherwise the server chooses the
++refresh mode. Local views always rebuild, and `sourceVersion` selects a
++source version instead of the latest. Remote SQL refreshes do not support
++source-version pinning. Their results leave `mode`, `rowsWritten`, and
++`sourceVersion` absent because the SQL job adapter does not expose these metrics.
+ 
+ #### Parameters
+ 
+ * **options?**
+ 
++* **options.full?**: `boolean`
++
+ * **options.sourceVersion?**: `number`
+ 
+ #### Returns
+```
+
+**File**: `docs/src/js/interfaces/RefreshMaterializedViewResult.md` (modified, +11/-7)
+```diff
+@@ -8,30 +8,34 @@
+ 
+ ## Properties
+ 
+-### mode
++### mode?
+ 
+ ```ts
+-mode: string;
++optional mode: string;
+ ```
+ 
+-How the view was brought up to date: "rebuild".
++How the view was brought up to date: "rebuild", or absent for remote SQL refreshes.
+ 
+ ***
+ 
+-### rowsWritten
++### rowsWritten?
+ 
+ ```ts
+-rowsWritten: number;
++optional rowsWritten: number;
+ ```
+ 
++Rows written by this refresh, or absent for remote SQL refreshes.
++
+ ***
+ 
+-### sourceVersion
++### sourceVersion?
+ 
+ ```ts
+-sourceVersion: number;
++optional sourceVersion: number;
+ ```
+ 
++Source version refreshed to, or absent for remote SQL refreshes.
++
+ ***
+ 
+ ### version
+```
+
+**File**: `nodejs/__test__/materialized_view.test.ts` (modified, +27/-13)
+```diff
+@@ -6,6 +6,7 @@ import * as tmp from "tmp";
+ import { Connection, connect } from "../lancedb";
+ import {
+   DEFINITION_META_KEY,
++  MaterializedView,
+   definitionFromMetadata,
+ } from "../lancedb/materialized_view";
+ import { experimentalFunctionsEnabled } from "../lancedb/native";
+@@ -94,20 +95,33 @@ describe("materialized views", () => {
+     );
+   });
+ 
+-  experimentalTest("fully refreshes after an append", async () => {
+-    const view = await db.createMaterializedView("copy", "people", {
+-      withNoData: true,
+-    });
+-    await view.refresh();
+-
+-    const people = await db.openTable("people");
+-    await people.add([{ name: "alan", age: 41 }]);
+-    const result = await view.refresh();
+-    expect(result.mode).toBe("rebuild");
+-    expect(Number(result.rowsWritten)).toBe(4);
+-    expect(await view.table().countRows()).toBe(4);
++  experimentalTest.each([false, true])(
++    "fully refreshes after an append (full=%s)",
++    async (full) => {
++      const view = await db.createMaterializedView("copy", "people", {
++        withNoData: true,
++      });
++      await view.refresh();
++
++      const people = await db.openTable("people");
++      await people.add([{ name: "alan", age: 41 }]);
++      const result = await view.refresh({ full });
++      expect(result.mode).toBe("rebuild");
++      expect(Number(result.rowsWritten)).toBe(4);
++      expect(await view.table().countRows()).toBe(4);
++
++      expect((await view.refresh()).mode).toBe("rebuild");
++    },
++  );
+ 
+-    expect((await view.refresh()).mode).toBe("rebuild");
++  it("forwards a forced refresh and preserves absent remote metrics", async () => {
++    const view = new MaterializedView(await db.openTable("people"));
++    const remoteResult = { version: 42 };
++    const refresh = jest
++      .spyOn(view.table(), "refreshMaterializedView")
++      .mockResolvedValue(remoteResult);
++    expect(await view.refresh({ full: true })).toEqual(remoteResult);
++    expect(refresh).toHaveBeenCalledWith(undefined, true);
+   });
+ 
+   experimentalTest("lists views and rejects non-views", async () => {
+```
+
+**File**: `nodejs/lancedb/materialized_view.ts` (modified, +10/-4)
+```diff
+@@ -188,14 +188,20 @@ export class MaterializedView {
+    * Recompute the view from its source.
+    * Local refresh requires a source build with `experimental-functions`.
+    *
+-   * Every refresh rebuilds the complete view. For local views,
+-   * `sourceVersion` refreshes to that source version instead of the latest;
+-   * remote SQL refreshes do not support source-version pinning.
++   * `full: true` forces a remote rebuild; otherwise the server chooses the
++   * refresh mode. Local views always rebuild, and `sourceVersion` selects a
++   * source version instead of the latest. Remote SQL refreshes do not support
++   * source-version pinning. Their results leave `mode`, `rowsWritten`, and
++   * `sourceVersion` absent because the SQL job adapter does not expose these metrics.
+    */
+   async refresh(options?: {
++    full?: boolean;
+     sourceVersion?: number;
+   }): Promise<RefreshMaterializedViewResult> {
+     validateNonNegativeInteger(options?.sourceVersion, "sourceVersion");
+-    return await this.inner.refreshMaterializedView(options?.sourceVersion);
++    return await this.inner.refreshMaterializedView(
++      options?.sourceVersion,
++      options?.full,
++    );
+   }
+ }
+```
+
+**File**: `nodejs/lancedb/table.ts` (modified, +3/-1)
+```diff
+@@ -699,6 +699,7 @@ export abstract class Table {
+    */
+   abstract refreshMaterializedView(
+     sourceVersion?: number,
++    full?: boolean,
+   ): Promise<RefreshMaterializedViewResult>;
+ 
+   /** @ignore */
+@@ -1442,8 +1443,9 @@ export class LocalTable extends Table {
+ 
+   async refreshMaterializedView(
+     sourceVersion?: number,
++    full?: boolean,
+   ): Promise<RefreshMaterializedViewResult> {
+-    return await this.inner.refreshMaterializedView(sourceVersion);
++    return await this.inner.refreshMaterializedView(sourceVersion, full);
+   }
+ 
+   async materializedViewDefinition(): Promise<string> {
+```
+
+**File**: `nodejs/src/table.rs` (modified, +13/-10)
+```diff
+@@ -470,11 +470,12 @@ impl Table {
+     pub async fn refresh_materialized_view(
+         &self,
+         source_version: Option<i64>,
++        full: Option<bool>,
+     ) -> napi::Result<RefreshMaterializedViewResult> {
+         let view = lancedb::MaterializedView::from_table(self.inner_ref()?.clone())
+             .await
+             .default_error()?;
+-        let mut builder = view.refresh();
++        let mut builder = view.refresh().full(full.unwrap_or(false));
+         if let Some(version) = source_version {
+             let version = u64::try_from(version).map_err(|_| {
+                 napi::Error::from_reason("sourceVersion must be a non-negative integer")
+@@ -1615,22 +1616,24 @@ impl From<lancedb::function::FunctionErrors> for FunctionErrors {
+ 
+ #[napi(object)]
+ pub struct RefreshMaterializedViewResult {
+-    /// How the view was brought up to date: "rebuild".
+-    pub mode: String,
+-    pub rows_written: i64,
+-    pub source_version: i64,
++    /// How the view was brought up to date: "rebuild", or absent for remote SQL refreshes.
++    pub mode: Option<String>,
++    /// Rows written by this refresh, or absent for remote SQL refreshes.
++    pub rows_written: Option<i64>,
++    /// Source version refreshed to, or absent for remote SQL refreshes.
++    pub source_version: Option<i64>,
+     pub version: i64,
+ }
+ 
+ impl From<lancedb::RefreshMaterializedViewResult> for RefreshMaterializedViewResult {
+     fn from(value: lancedb::RefreshMaterializedViewResult) -> Self {
+-        let mode = match value.mode {
++        let mode = value.mode.map(|mode| match mode {
+             lancedb::RefreshMode::Rebuild => "rebuild",
+-        };
++        });
+         Self {
+-            mode: mode.to_string(),
+-            rows_written: value.rows_written as i64,
+-            source_version: value.source_version as i64,
++            mode: mode.map(str::to_string),
++            rows_written: value.rows_written.map(|rows| rows as i64),
++            source_version: value.source_version.map(|version| version as i64),
+             version: value.version as i64,
+         }
+     }
+```
+
+**File**: `python/python/lancedb/_lancedb.pyi` (modified, +5/-5)
+```diff
+@@ -528,10 +528,10 @@ class Table:
+         limit: Optional[int] = None,
+     ) -> FunctionErrors: ...
+     async def refresh_materialized_view(
+-        self, source_version: Optional[int] = None
++        self, source_version: Optional[int] = None, *, full: bool = False
+     ) -> RefreshMaterializedViewResult: ...
+     async def refresh_materialized_view_async(
+-        self, source_version: Optional[int] = None
++        self, source_version: Optional[int] = None, *, full: bool = False
+     ) -> Job: ...
+     async def materialized_view_definition(self) -> str: ...
+     async def add_columns_with_schema(self, schema: pa.Schema) -> AddColumnsResult: ...
+@@ -921,9 +921,9 @@ class FunctionErrors:
+ class RefreshMaterializedViewResult:
+     @staticmethod
+     def from_json(value: str) -> RefreshMaterializedViewResult: ...
+-    mode: str
+-    rows_written: int
+-    source_version: int
++    mode: Optional[str]
++    rows_written: Optional[int]
++    source_version: Optional[int]
+     version: int
+ 
+ class AlterColumnsResult:
+```
+
+**File**: `python/python/lancedb/materialized_view.py` (modified, +21/-12)
+```diff
+@@ -184,31 +184,36 @@ async def definition(self) -> MaterializedViewDefinition:
+         return _definition_from_json(raw)
+ 
+     async def refresh(
+-        self, *, source_version: Optional[int] = None
++        self, *, full: bool = False, source_version: Optional[int] = None
+     ) -> "RefreshMaterializedViewResult":
+         """Recompute the view from its source.
+ 
+-        Every refresh rebuilds the complete view. For local views,
+-        ``source_version`` refreshes to that source version instead of the
+-        latest; remote SQL refreshes do not support source-version pinning.
++        ``full=True`` forces a remote rebuild; otherwise the server chooses
++        the refresh mode. Local views always rebuild, and ``source_version``
++        selects a source version instead of the latest. Remote SQL refreshes
++        do not support source-version pinning.
++
++        Remote results leave ``mode``, ``rows_written``, and ``source_version``
++        as ``None`` because the SQL job adapter does not expose these metrics.
+         """
+         return await self._table._inner.refresh_materialized_view(
+-            source_version=source_version
++            source_version=source_version, full=full
+         )
+ 
+     async def refresh_async(
+-        self, *, source_version: Optional[int] = None
++        self, *, full: bool = False, source_version: Optional[int] = None
+     ) -> "AsyncJob[RefreshMaterializedViewResult]":
+         """Submit a refresh and return its job without waiting.
+ 
+         The job may already be complete for a local view. Remote refreshes are
+-        submitted through the SQL service.
++        submitted through the SQL service. Options and result metrics follow
++        [refresh][lancedb.materialized_view.AsyncMaterializedView.refresh].
+         """
+         from ._lancedb import RefreshMaterializedViewResult
+ 
+         return _typed_job(
+             await self._table._inner.refresh_materialized_view_async(
+-                source_version=source_version
++                source_version=source_version, full=full
+             ),
+             RefreshMaterializedViewResult.from_json,
+         )
+@@ -240,18 +245,22 @@ def definition(self) -> MaterializedViewDefinition:
+         return LOOP.run(self._async.definition())
+ 
+     def refresh(
+-        self, *, source_version: Optional[int] = None
++        self, *, full: bool = False, source_version: Optional[int] = None
+     ) -> "RefreshMaterializedViewResult":
+         """Recompute the view from its source. See
+         [AsyncMaterializedView.refresh][lancedb.materialized_view.AsyncMaterializedView.refresh]."""
+-        return LOOP.run(self._async.refresh(source_version=source_version))
++        return LOOP.run(self._async.refresh(full=full, source_version=source_version))
+ 
+     def refresh_async(
+-        self, *, source_version: Optional[int] = None
++        self, *, full: bool = False, source_version: Optional[int] = None
+     ) -> "Job[RefreshMaterializedViewResult]":
+         """Submit a refresh and return its job without waiting.
+ 
+         See
+         [AsyncMaterializedView.refresh_async][lancedb.materialized_view.AsyncMaterializedView.refresh_async].
+         """
+-        return Job(LOOP.run(self._async.refresh_async(source_version=source_version)))
++        return Job(
++            LOOP.run(
++                self._async.refresh_async(full=full, source_version=source_version)
++            )
++        )
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4671** (2026-10-25): fix: honor downstream Lance dependency overrides (@jackye1995)
-- **PR #4668** (2026-10-25): feat(python): open lazy blob files from SQL descriptors (@jackye1995)
-- **PR #4665** (2026-10-25): fix: execute remote materialized view creation through SQL (@jackye1995)
-- **PR #4664** (2026-10-25): feat(sql): follow adaptive streaming and polling responses (@jackye1995)
-- **PR #4663** (2026-10-25): feat: infer lazy blob reader Function inputs (@jackye1995)
-- **PR #4657** (closed): feat(sql): execute similarity search in source and target blocks (@jackye1995)
+- **PR #4690** (2026-10-27): chore: update Lance to v15.0.0-beta.2 (@Xuanwo)
+- **PR #4688** (2026-10-27): fix: gate experimental local functions behind an opt-in feature (@Xuanwo)
+- **PR #4686** (2026-10-27): fix: refuse Function-bound writes by column instead of by table (@wkalt)
+- **PR #4683** (2026-10-26): fix(ci): acknowledge Arrow-pinned zstd advisories (@Xuanwo)
+- **PR #4682** (2026-10-27): fix(python)!: raise on bool(Expr) instead of silently dropping predicates (@avanish-garg)
+- **PR #4680** (closed): chore: validate lance v14.0.0-rc.2 in lancedb (@BubbleCal)
 
 ---
 
@@ -1495,23 +2409,31 @@ Co-aut
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. honor downstream Lance dependency overrides (#4671)
+## X. fix!: reject unsupported remote connection and table options (#4486)
 
 **RULE**:
-When implementing operations in `.github/workflows/pypi-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `197403e8`: honor downstream Lance dependency overrides (#4671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `180eaaf6`: fix!: reject unsupported remote connection and table options (#4486). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pypi-publish.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - python/Cargo.toml
-      - python/vendor/**
-      - rust/lancedb/Cargo.toml
+Connections to `db://` databases reject local-only options with
+`NotImplementedError`. These include `session` and `manifest_enabled=True` on
+connect, per-table storage and write options on create, and `index_cache_size`,
+`storage_options`, or `location` on open (where the method accepts them).
+Omit these options to use server-managed storage and caching. Connection-level
+`storage_options` supported by an Enterprise deployment remain available.
+
+The synchronous remote `create_table` uses the same positional order as the
+local API: `name, data, schema, mode, exist_ok, on_bad_vectors, fill_value,
+embedding_functions`. Prefer keyword arguments for optional parameters.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1521,4 +2443,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `197403e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `180eaaf6` are properly handled with clean fallback behavior.
