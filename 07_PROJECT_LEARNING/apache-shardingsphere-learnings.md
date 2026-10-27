@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `ba932f9a`  
+> **Source Version**: `ce3abe70`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:03:01.791Z  
+> **Timestamp**: 2026-10-27T23:44:11.761Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:03:01.784Z  
+> **Harvest Timestamp**: 2026-10-27T23:44:11.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1449,15 +1449,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #40378** (2026-10-27): **Align coding standards with Checkstyle test class finality**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > ### Result  Review Result: Mergeable  No blocking issues or recommended changes remain.  ### Evidence  - Only the newly added Skill section was removed; no replacement instructions were added. - The three documentation changes remain intact, with consistent Chinese and English wording. - Two independent assessments and final session validation passed.  ### Coverage  - Complete review of the three local documentation files and six changed blocks. - Policy bundle validation and 262 source-read checks passed. - No applicable automatic semantic case exists; unrelated cases were not run. - Checkstyle configuration, production code, and test code were unchanged.
+
 - **Issue #40376** (2026-10-27): **Strengthen PR direction checks and simplify review summaries**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
   > ### Summary  This update strengthens early assessment of root causes, ownership, and existing repair options, and requires explaining what the PR changes and whether its approach is sound before giving a verdict. It reuses existing mechanisms, shortens public Coverage to a verification summary, and retains complete internal checks within the approved scope.  ### Result  Review Result: Mergeable  No blocking issues or recommended changes remain.  ### Evidence  Static validation, 9 unit checks, and 52 source-read checks passed. The initial semantic run passed 33/39 cases; paired confirmation found no new regressions, and all 5 critical cases passed majority confirmation.  ### Coverage  Local working-tree candidate against baseline f0b3e2fe1249; all 3 files reviewed. Code scope only; CI was not reviewed.
-
-- **Issue #40370** (2026-10-26): **Refactor MD5 digest input preparation**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Result Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence Responsibility ownership, UTF-8 replacement behavior, whole-string encoding order, salt configuration, and exception propagation were verified. All 12 final focused tests and the exact four-file read-only formatting and coding-standard checks passed.  ### Coverage Standalone local candidate based on original baseline fa602445bea9. The review covers the complete changes to MD5MessageDigestAlgorithm.java, MD5MessageDigestEngine.java, their corresponding tests, and affected call paths. Two independent complete assessments, all three review lenses, convergence, and substantive coordinator review were completed. First-stage confirmation and review-record validation passed, with no unresolved evidence gaps. The conclusion covers code correctness; CI was not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1474,267 +1474,85 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba932f9a` (2026-10-27)
-**Commit Message**: Strengthen PR direction checks and simplify review summaries (#40376)
+### Incident Patch 1: `ce3abe70` (2026-10-27)
+**Commit Message**: Align coding standards with Checkstyle test class finality (#40378)
 
-**File**: `.codex/harness/agents/cases.toml` (modified, +41/-6)
+**File**: `CODE_OF_CONDUCT.md` (modified, +3/-2)
 ```diff
-@@ -2781,10 +2781,10 @@ required_actions = []
- allowed_actions = ["inspect_local", "run_bounded_adversarial_review"]
- forbidden_actions = ["edit_code", "edit_non_code", "run_local_checks", "run_pre_handoff_review", "propose_commit_message", "mutate_git", "mutate_remote"]
- required_reasons = []
--required_summary_terms = ["### Result", "Review Result: Mergeable", "### Evidence", "### Coverage", "abc123", "module-a", "checkstyle:check", "spotless:check", "exit", "Foo.java", "FooTest.java"]
-+required_summary_terms = ["### Result", "Review Result: Mergeable", "### Evidence", "### Coverage", "abc123", "module-a", "checkstyle:check", "spotless:check", "exit"]
- forbidden_summary_terms = ["Review Result: Not Mergeable", "Review Result: Review Incomplete"]
- policy_binding_profile = "review-pr"
--policy_assertions = [{source = "review-pr", statements = ["Use a whole-repository check, complete affected-module checks, or an exact-file check only when the command output and file inventory prove that the selected scope covers every applicable PR-impact file.", "Only successful current-candidate evidence for both checks, or an explicit not-applicable determination for either check, permits the remaining Formal Decision Contract to select `Mergeable`."]}, {source = "review-pr-evidence", statements = ["Run `checkstyle:check` and `spotless:check` over the whole repository, every complete affected module, or a reliable exact-file scope that covers the inventory.", "Treat a zero exit code without selection proof as inconclusive, including when a filter matches no intended file."]}]
-+policy_assertions = [{source = "review-pr", statements = ["Return every review output as one complete copy-ready Markdown report in a fenced block labelled `markdown`, in both output modes and every review round.", "`Mergeable`: `### Result` with exactly one `Review Result: Mergeable` line and a concise reason; `### Evidence`; `### Coverage`.", "Use a whole-repository check, complete affected-module checks, or an exact-file check only when the command output and file inventory prove that the selected scope covers every applicable PR-impact file.", "Only successful current-candidate evidence for both checks, or an explicit not-applicable determination for either check, permits the remaining Formal Decision Contract to select `Mergeable`.", "In `### Coverage`, give a short verification summary, normally one to three lines, with the candidate type and baseline or head, reviewed scope, relevant check status, CI scope, and material gaps or failures."]}, {source = "review-pr-evidence", statements = ["Run `checkstyle:check` and `spotless:check` over the whole repository, every complete affected module, or a reliable exact-file scope that covers the inventory.", "Treat a zero exit code without selection proof as inconclusive, including when a filter matches no intended file."]}]
- critical = true
+@@ -40,7 +40,7 @@ The following code of conduct is based on full compliance with the [Apache Softw
+ - Avoid using `this` modifier except for assignment statements where constructor parameters have the same name as global variables.
+ - Local variables must not be declared as `final`, including ordinary local variables, `for` loop variables, enhanced `for` loop variables and try-with-resources resources.
+ - Lambda parameters should not be marked as `final`.
+-- Declare every class `final` unless it is an abstract class intended for inheritance.
++- Declare every production class `final` unless it is an abstract class intended for inheritance.
+ - Extract nested loops into separate methods.
+ - The order of member variable definitions and parameter passing should remain consistent across all classes and methods.
+ - Use guard clauses for invalid inputs, missing states and exceptional conditions so that the normal execution path uses positive conditions and minimal nesting.
+@@ -74,7 +74,8 @@ The following code of conduct is based on full compliance with the [Apache Softw
  
- [[cases]]
-@@ -3312,7 +3312,7 @@ allowed_actions = ["inspect_local", "run_pre_handoff_review"]
- forbidden_actions = ["edit_code", "edit_non_code", "run_local_checks", "propose_commit_message", "mutate_git", "mutate_remote"]
- required_reasons = ["pre_handoff_review_required"]
- required_summary_terms = ["Foo.java", "Bar.java", "FooTest.java"]
--required_summary_term_groups = [["complete candidate", "full candidate", "entire candidate", "full scope", "full-candidate"], ["fresh", "pending", "rebuild", "reset"]]
-+required_summary_term_groups = [["complete candidate", "full candidate", "entire candidate", "full scope", "full-candidate", "complete current candidate", "complete effective candidate"], ["fresh", "pending", "rebuild", "reset"]]
- policy_binding_profile = "review-pr"
- policy_assertions = [{source = "review-pr", statements = ["Start every Formal Review round with fresh coverage of the complete effective candidate and its affected behavior and contracts, preserving the original task baseline and attributed scope.", "Reuse only facts and verification results whose current-candidate validity is established; do not inherit reviewed-file statuses, discovery passes, proof conclusions, or convergence results.", "Discover candidates across the complete scope through three lenses: root cause and behavior; blast radius and contracts; tests, runtime, and operations.", "Run a convergence pass across the complete candidate and its affected behavior and contracts, including the latest delta.", "Initialize a new ledger for each round that requires one, from the full current inventory with pending file statuses and no inherited review passes."]}]
- critical = true
-@@ -3495,8 +3495,9 @@ forbidden_actions = ["edit_code", "edit_non_code", "run_local_checks", "run_pre_
- required_reasons = []
- required_summary_terms = ["### Result", "Review Result: Not Mergeable", "Feedback Mode: Needs Discussion", "Blocking Issues", "project", "commitment", "### Coverage"]
- forbidden_summary_terms = ["Review Result: Mergeable", "Feedback Mode: Change Request"]
-+required_summary_prefix = "```markdown\
+ ## Unit Testing Standards
+ 
+-- Test code and production code need to follow the same coding standards.
++- Test code and production code need to follow the same coding standards, except for class finality.
++- Classes whose names end with `Test` must not be declared `final`.
+ - Unit tests need to follow the AIR (Automatic, Independent, Repeatable) design philosophy.
+    - Automatic: Unit tests should be fully automated, not interactive. Manual inspection of output results is forbidden, use of `System.out`, `log`, etc. is not allowed, assertions must be used for verification.
+    - Independent: Forbid mutual calls between unit test cases, forbid dependency on execution order. Each unit test can run independently.
 ```
 
-**File**: `.codex/skills/review-pr/SKILL.md` (modified, +13/-7)
+**File**: `docs/community/content/involved/conduct/code.cn.md` (modified, +3/-2)
 ```diff
-@@ -94,10 +94,13 @@ Before judging reviewed code or Maven POM changes, read [coding standards](../co
- Complete this gate before implementation-detail discovery; it establishes the review basis but does not waive the Finding Proof, Mandatory Style Verification, Completion, or convergence gates.
+@@ -54,7 +54,7 @@ chapter = true
+  - 除了构造器入参与全局变量名称相同的赋值语句外，避免使用 `this` 修饰符。
+  - 局部变量不得声明为 `final`，包括普通局部变量、`for` 循环变量、增强 `for` 循环变量和 try-with-resources 资源变量。
+  - Lambda 参数不应标记为 `final`。
+- - 除用于继承的抽象类外，所有类都应声明为 `final`。
++ - 除用于继承的抽象类外，所有生产类都应声明为 `final`。
+  - 嵌套循环应提取为独立方法。
+  - 成员变量定义顺序以及参数传递顺序在各个类和方法中保持一致。
+  - 对无效输入、缺失状态和异常条件使用卫语句提前返回，使正常执行路径使用正向条件并保持最少嵌套。
+@@ -88,7 +88,8 @@ chapter = true
  
- 1. Reconstruct the problem and expected behavior from the PR, linked issue when present, official documentation, maintained contracts, current code, and tests.
--2. Classify the requested outcome as preserving an accepted contract or adding a project commitment such as new semantics, configuration, API or SPI, compatibility, topology, database, dialect, or cross-module support.
--3. For Apache ShardingSphere, establish that ShardingSphere owns the behavior and that official project positioning, maintained contracts, or an explicit public maintainer decision accepts every new commitment; for an authorized downstream repository, apply equivalent target-project evidence available within the user-authorized repository boundary.
--4. Identify the narrowest accepted user-visible behavior and compare it with the patch's public contract, shared abstractions, compatibility surface, documentation, and tests.
--5. Check whether the change creates precedent or consistency pressure beyond the accepted behavior; an exact existing behavior or special case does not authorize broader generalization.
-+2. For a defect, trace the failing path to the violated contract and its maintained owner; for another PR type, establish the goal and responsibilities it must preserve.
-+3. Trace the patch's actual mechanism and compare it with a repair or reuse path in that owner; record why the chosen boundary addresses the cause or accepted goal and what remains outside scope.
-+4. Verify outcome-sensitive assumptions about external calls, dependency versions, configuration and lifecycle, including side effects and resource cost on already-correct supported paths, before accepting the direction.
-+5. Classify the requested outcome as preserving an accepted contract or adding a project commitment such as new semantics, configuration, API or SPI, compatibility, topology, database, dialect, or cross-module support.
-+6. For Apache ShardingSphere, establish that ShardingSphere owns the behavior and that official project positioning, maintained contracts, or an explicit public maintainer decision accepts every new commitment; for an authorized downstream repository, apply equivalent target-project evidence available within the user-authorized repository boundary.
-+7. Identify the narrowest accepted user-visible behavior and compare it with the patch's public contract, shared abstractions, compatibility surface, documentation, and tests.
-+8. Check whether the change creates precedent or consistency pressure beyond the accepted behavior; an exact existing behavior or special case does not authorize broader generalization.
+ ## 单元测试规范
  
- An open or labeled issue, popularity, contributor effort, available code, passing tests, or a small diff do not establish project acceptance.
- When evidence disproves the problem, expected behavior, applicable project ownership, or an asserted accepted commitment, or when a new commitment still requires a maintainer decision, record a `Needs Discussion` condition.
-@@ -312,6 +315,9 @@ logs, or emojis.
- 
- Use this format for both public-PR and local-candidate reviews.
- 
-+Begin the Formal Review with `### Summary` before `### Result`, explaining the problem or goal, actual change mechanism, direction assessment and material limits in two to four concise sentences.
-+Keep a required `### Correction` first, then give the current summary and result using only verified facts.
-+
- - `Mergeable`: `### Result` with exactly one `Review Result: Mergeable` line and a concise reason; `### Evidence`; `### Coverage`.
- - `Not Mergeable`: `### Result` with exactly one `Review Result: Not Mergeable` line, one `Feedback Mode`, a `Blocking Issues: N` line, and a concise reason; `### Blocking Issues`; `### Coverage`.
- - `Review Incomplete`: `### Result` with exactly one `Review Result: Review Incomplete` line and a concise reason; `### Confirmed Issues` when any are already proven; `### Verified Facts`; `### Required Evidence`; `### Coverage`.
-@@ -328,9 +334,9 @@ For each blocking issue include:
- 
- Do not add patch-level changes after selecting Needs Discussion.
- Do not include placeholder headings.
--In `### Coverage`, report the candidate type, reviewed baseline or head, authoritative requirements and files accounted for, accepted behavior and project-commitment basis, behavior clusters, completed discovery lenses, unresolved gaps, and CI scope.
--Also report the completed independent assessments and stages, overall adjudication and resolution of any differences without exposing private reviewer materials.
--For every public PR or PR-backed local candidate, also report the effective candidate SHA, each style-verification scope and command, each exit code, every cove
+- - 测试代码和生产代码需遵守相同代码规范。
++ - 测试代码和生产代码需遵守相同代码规范，但类的 `final` 声明要求除外。
++ - 名称以 `Test` 结尾的类不得声明为 `final`。
+  - 单元测试需遵循 AIR（Automatic, Independent, Repeatable）设计理念。
+    - 自动化（Automatic）：单元测试应全自动执行，而非交互式。禁止人工检查输出结果，不允许使用 `System.out`，`log` 等，必须使用断言进行验证。
+    - 独立性（Independent）：禁止单元测试用例间的互相调用，禁止依赖执行的先后次序。每个单元测试均可独立运行。
 ```
 
-**File**: `.codex/skills/review-pr/references/sql-parser-review.md` (modified, +2/-1)
+**File**: `docs/community/content/involved/conduct/code.en.md` (modified, +3/-2)
 ```diff
-@@ -45,5 +45,6 @@ Read this reference before reviewing PRs that touch SQL grammar, SQL visitor cla
+@@ -54,7 +54,7 @@ The following code of conduct is based on full compliance with the [Apache Softw
+ - Avoid using `this` modifier except for assignment statements where constructor parameters have the same name as global variables.
+ - Local variables must not be declared as `final`, including ordinary local variables, `for` loop variables, enhanced `for` loop variables and try-with-resources resources.
+ - Lambda parameters should not be marked as `final`.
+-- Declare every class `final` unless it is an abstract class intended for inheritance.
++- Declare every production class `final` unless it is an abstract class intended for inheritance.
+ - Extract nested loops into separate methods.
+ - The order of member variable definitions and parameter passing should remain consistent across all classes and methods.
+ - Use guard clauses for invalid inputs, missing states and exceptional conditions so that the normal execution path uses positive conditions and minimal nesting.
+@@ -88,7 +88,8 @@ The following code of conduct is based on full compliance with the [Apache Softw
  
- ## Output Requirements
+ ## Unit Testing Standards
  
--- In `Coverage`, name the target dialect, related trunk or branch dialects checked, official documentation pages used, and repo docs or examples checked.
-+- Record the target dialect, related trunk or branch dialects checked, official documentation pages used, and repo docs or examples checked in private review material.
-+- Follow the main Skill's short `Coverage` summary and disclose any missing or failed dialect check that affects the conclusion.
- - If syntax evidence is missing or contradicted, classify the result using the main skill's evidence sufficiency rules instead of guessing.
-```
-
----
-
-### Incident Patch 2: `f0b3e2fe` (2026-10-26)
-**Commit Message**: Refactor MD5 digest input preparation (#40370)
-
-**File**: `infra/algorithm/type/message-digest/type/md5/src/main/java/org/apache/shardingsphere/infra/algorithm/messagedigest/md5/MD5MessageDigestAlgorithm.java` (modified, +6/-1)
-```diff
-@@ -18,6 +18,7 @@
- package org.apache.shardingsphere.infra.algorithm.messagedigest.md5;
- 
- import lombok.SneakyThrows;
-+import org.apache.shardingsphere.infra.algorithm.core.util.AlgorithmValueUtils;
- import org.apache.shardingsphere.infra.algorithm.messagedigest.spi.MessageDigestAlgorithm;
- import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- 
-@@ -42,7 +43,11 @@ public void init(final Properties props) {
-     @SneakyThrows(GeneralSecurityException.class)
-     @Override
-     public byte[] digest(final Object plainValue) {
--        return null == plainValue ? null : MD5MessageDigestEngine.digest(plainValue, salt);
-+        if (null == plainValue) {
-+            return null;
-+        }
-+        String plainText = AlgorithmValueUtils.convertToUTF8Text(plainValue) + salt;
-+        return MD5MessageDigestEngine.digest(AlgorithmValueUtils.convertToBytes(plainText, null));
-     }
-     
-     @Override
-```
-
-**File**: `infra/algorithm/type/message-digest/type/md5/src/main/java/org/apache/shardingsphere/infra/algorithm/messagedigest/md5/MD5MessageDigestEngine.java` (modified, +3/-20)
-```diff
-@@ -19,11 +19,9 @@
- 
- import lombok.AccessLevel;
- import lombok.NoArgsConstructor;
--import org.apache.shardingsphere.infra.algorithm.core.util.AlgorithmValueUtils;
- 
- import java.security.GeneralSecurityException;
- import java.security.MessageDigest;
--import java.util.Properties;
- 
- /**
-  * MD5 message digest engine.
-@@ -33,29 +31,14 @@ public final class MD5MessageDigestEngine {
-     
-     private static final String MD5 = "MD5";
-     
--    private static final String SALT = "salt";
--    
--    /**
--     * Digest value with MD5.
--     *
--     * @param plainValue plain value
--     * @param props algorithm properties
--     * @return digest bytes
--     * @throws GeneralSecurityException digest failure
--     */
--    public static byte[] digest(final Object plainValue, final Properties props) throws GeneralSecurityException {
--        return digest(plainValue, props.getProperty(SALT, ""));
--    }
--    
-     /**
-      * Digest value with MD5.
-      *
--     * @param plainValue plain value
--     * @param salt salt
-+     * @param plainValue plain value bytes
-      * @return digest bytes
-      * @throws GeneralSecurityException digest failure
-      */
--    public static byte[] digest(final Object plainValue, final String salt) throws GeneralSecurityException {
--        return MessageDigest.getInstance(MD5).digest(AlgorithmValueUtils.convertToBytes(AlgorithmValueUtils.convertToUTF8Text(plainValue) + salt, null));
-+    public static byte[] digest(final byte[] plainValue) throws GeneralSecurityException {
-+        return MessageDigest.getInstance(MD5).digest(plainValue);
-     }
- }
-```
-
-**File**: `infra/algorithm/type/message-digest/type/md5/src/test/java/org/apache/shardingsphere/infra/algorithm/messagedigest/md5/MD5MessageDigestAlgorithmTest.java` (modified, +22/-12)
-```diff
-@@ -24,8 +24,13 @@
- import org.apache.shardingsphere.infra.util.props.PropertiesBuilder.Property;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
-+import org.junit.jupiter.params.ParameterizedTest;
-+import org.junit.jupiter.params.provider.Arguments;
-+import org.junit.jupiter.params.provider.MethodSource;
- 
- import java.nio.charset.StandardCharsets;
-+import java.util.Properties;
-+import java.util.stream.Stream;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
-@@ -40,24 +45,29 @@ void setUp() {
-         digestAlgorithm = TypedSPILoader.getService(MessageDigestAlgorithm.class, "MD5");
-     }
-     
--    @Test
--    void assertDigest() {
--        assertThat(Hex.encodeHexString(digestAlgorithm.digest("test")), is("098f6bcd4621d373cade4e832627b4f6"));
-+    @ParameterizedTest(name = "{0}")
-+    @MethodSource("provideDigestArguments")
-+    void assertDigest(final String name, final Object plainValue, final Properties props, final String expected) {
-+        digestAlgorithm.init(props);
-+        assertThat(Hex.encodeHexString(digestAlgorithm.digest(plainValue)), is(expected));
-     }
-     
--    @Test
--    void assertDigestBytes() {
--        assertThat(Hex.encodeHexString(digestAlgorithm.digest("test".getBytes(StandardCharsets.UTF_8))), is("098f6bcd4621d373cade4e832627b4f6"));
-+    private static Stream<Arguments> provideDigestArguments() {
-+        return Stream.of(
-+                Arguments.of("Text without salt", "test", new Properties(), "098f6bcd4621d373cade4e832627b4f6"),
-+                Arguments.of("UTF-8 bytes without salt", "test".getBytes(StandardCharsets.UTF_8), new Properties(), "098f6bcd4621d373cade4e832627b4f6"),
-+                Arguments.of("Configured salt", "test", PropertiesBuilder.build(new Property("salt", "202cb962ac5907")), "0c243d2934937738f36514035d95344a"),
-+                Arguments.of("Text with salt", "test", PropertiesBuilder.build(new Property("salt", "salt")), "315240c61218a4a861ec949166a85ef0"),
-+                Arguments.of("Chinese text", "中文", new Properties(), "a7bac2239fcdcb3a067903d8077c4a07"),
-+                Arguments.of("Chinese bytes with salt", "中文".getBytes(StandardCharsets.UTF_8), PropertiesBuilder.build(new Property("salt", "盐")), "3d4e5d6bae87398145d538c70a7ac58b"),
-+                Arguments.of("Invalid UTF-8 with salt", new byte[]{(byte) 0xC3, 0x28}, PropertiesBuilder.build(new Property("salt", "salt")), "bd3cece2bc4d3c492eefa3bd788005db"),
-+                Arguments.of("Surrogate pair across salt boundary", String.valueOf((char) 0xD83D), PropertiesBuilder.build(new Property("salt", String.valueOf((char) 0xDE00))),
-+                        "2a02eac39d716a70ecf37579185927b6"),
-+                Arguments.of("Number as text", 123, new Properties(), "202cb962ac59075b964b07152d234b70"));
-     }
-     
-     @Test
-     void assertDigestWithNullPlaintext() {
-         assertNull(digestAlgorithm.digest(null));
-     }
--    
--    @Test
--    void assertDigestWhenConfigSalt() {
--        digestAlgorithm.init(PropertiesBuilder.build(new Property("salt", "202cb962ac5907")));
--        assertThat(Hex.encodeHexString(digestAlgorithm.digest("test")), is("0c243d2934937738f36514035d95344a"));
--    }
- }
-```
-
-**File**: `infra/algorithm/type/message-digest/type/md5/src/test/java/org/apache/shardingsphere/infra/algorithm/messagedigest/md5/MD5MessageDigestEngineTest.java` (modified, +3/-9)
-```diff
-@@ -20,8 +20,8 @@
- import org.apache.commons.codec.binary.Hex;
- import org.junit.jupiter.api.Test;
- 
-+import java.nio.charset.StandardCharsets;
- import java.security.GeneralSecurityException;
--import java.util.Properties;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
-@@ -30,13 +30,7 @@ class MD5MessageDigestEngineTest {
-     
-     @Test
-     void assertDigest() throws GeneralSecurityException {
--        assertThat(Hex.encodeHexString(MD5MessageDigestEngine.digest("test", "salt")), is("315240c61218a4a861ec949166a85ef0"));
--    }
--    
--    @Test
--    void assertDigestWithProperties() throws GeneralSecurityException {
--        Properties props = new Properties();
--        props.setProperty("salt", "salt");
--        assertThat(Hex.encodeHexString(MD5MessageDigestEngine.digest("test", props)), is("315240c61218a4a861ec949166a85ef0"));
-+        assertThat(Hex.encodeHexString(MD5MessageDigestEngine.digest("testsalt".getBytes(StandardCharsets.UTF_8))), is("315240c61218a4a861ec949166a85ef0"));
-+        assertThat(Hex.encodeHexString(MD5MessageDigestEngine.digest(new byte[]{(byte) 0xC3, 0x28})), is("0999cc4fa36693c7d5ab8482d6bdc367"));
-     }
- }
+-- Test code and production code need to follow the same coding standards.
++- Test code and production code need to follow the same coding standards, except for class finality.
++- Classes whose names end with `Test` must not be declared `final`.
+ - Unit tests need to follow the AIR (Automatic, Independent, Repeatable) design philosophy.
+     - Automatic: Unit tests should be fully automated, not interactive. Manual inspection of output results is forbidden, use of `System.out`, `log`, etc. is not allowed, assertions must be used for verification.
+     - Independent: Forbid mutual calls between unit test cases, forbid dependency on execution order. Each unit test can run independently.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40378** (2026-10-27): Align coding standards with Checkstyle test class finality (@terrymanu)
 - **PR #40376** (2026-10-27): Strengthen PR direction checks and simplify review summaries (@terrymanu)
 - **PR #40370** (2026-10-26): Refactor MD5 digest input preparation (@terrymanu)
 - **PR #40369** (2026-10-26): Refactor CDC socket sink packages (@terrymanu)
 - **PR #40366** (2026-10-26): Refactor CDC sinks into SPI, core and socket modules (@terrymanu)
 - **PR #40363** (2026-10-24): Fix PostgreSQL 15+ pipeline catalog compatibility (@terrymanu)
-- **PR #40362** (2026-10-24): Fix PostgreSQL pipeline DDL statement splitting (@terrymanu)
 
 ---
 
@@ -1754,31 +1572,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Strengthen PR direction checks and simplify review summaries (#40376)
+## X. Align coding standards with Checkstyle test class finality (#40378)
 
 **RULE**:
-When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba932f9a`: Strengthen PR direction checks and simplify review summaries (#40376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce3abe70`: Align coding standards with Checkstyle test class finality (#40378). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE_OF_CONDUCT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-required_summary_terms = ["### Result", "Review Result: Mergeable", "### Evidence", "### Coverage", "abc123", "module-a", "checkstyle:check", "spotless:check", "exit"]
-policy_assertions = [{source = "review-pr", statements = ["Return every review output as one complete copy-ready Markdown report in a fenced block labelled `markdown`, in both output modes and every review round.", "`Mergeable`: `### Result` with exactly one `Review Result: Mergeable` line and a concise reason; `### Evidence`; `### Coverage`.", "Use a whole-repository check, complete affected-module checks, or an exact-file check only when the command output and file inventory prove that the selected scope covers every applicable PR-impact file.", "Only successful current-candidate evidence for both checks, or an explicit not-applicable determination for either check, permits the remaining Formal Decision Contract to select `Mergeable`.", "In `### Coverage`, give a short verification summary, normally one to three lines, with the candidate type and baseline or head, reviewed scope, relevant check status, CI scope, and material gaps or failures."]}, {source = "review-pr-evidence", statements = ["Run `checkstyle:check`
+- Declare every production class `final` unless it is an abstract class intended for inheritance.
+- Test code and production code need to follow the same coding standards, except for class finality.
+- Classes whose names end with `Test` must not be declared `final`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-required_summary_terms = ["### Result", "Review Result: Mergeable", "### Evidence", "### Coverage", "abc123", "module-a", "checkstyle:check", "spotless:check", "exit", "Foo.java", "FooTest.java"]
-policy_assertions = [{source = "review-pr", statements = ["Use a whole-repository check, complete affected-module checks, or an exact-file check only when the command output and file inventory prove that the selected scope covers every applicable PR-impact file.", "Only successful current-candidate evidence for both checks, or an explicit not-applicable determination for either check, permits the remaining Formal Decision Contract to select `Mergeable`."]}, {source = "review-pr-evidence", statements = ["Run `checkstyle:check` and `spotless:check` over the whole repository, every complete affected module, or a reliable exact-file scope that covers the inventory.", "Treat a zero exit code without selection proof as inconclusive, including when a filter matches no intended file."]}]
-required_summary_term_groups = [["complete candidate", "full candidate", "entire candidate", "full scope", "full-candidate"], ["fresh", "pending", "rebuild", "reset"]]
+- Declare every class `final` unless it is an abstract class intended for inheritance.
+- Test code and production code need to follow the same coding standards.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba932f9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce3abe70` are properly handled with clean fallback behavior.

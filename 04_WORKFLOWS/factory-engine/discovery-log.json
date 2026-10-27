@@ -19600,5 +19600,17 @@
     "qualityScore": 2391,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T21:27:00.415Z"
+  },
+  {
+    "name": "LiquidAI/LFM3-1.7B",
+    "fullName": "LiquidAI/LFM3-1.7B",
+    "url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM3-1.7B (154 likes, 6311 downloads)",
+    "likes": 154,
+    "downloads": 6311,
+    "qualityScore": 3540,
+    "discoveredAt": "2026-10-27T23:41:40.764Z"
   }
 ]

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "39773c33",
+    "sourceVersion": "b11d06c6",
     "license": "NOASSERTION",
-    "contentHash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
-    "lastHarvestedAt": "2026-10-27T19:49:30.099Z",
+    "contentHash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
+    "lastHarvestedAt": "2026-10-27T23:44:09.187Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "ba932f9a",
+    "sourceVersion": "ce3abe70",
     "license": "Apache-2.0",
-    "contentHash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
-    "lastHarvestedAt": "2026-10-27T11:03:02.372Z",
+    "contentHash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
+    "lastHarvestedAt": "2026-10-27T23:44:12.119Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -6883,10 +6883,10 @@
     "repository": "iconoir-icons/iconoir",
     "platform": "github",
     "sourceUrl": "https://github.com/iconoir-icons/iconoir",
-    "sourceVersion": "4eae577f",
+    "sourceVersion": "285be69c",
     "license": "MIT",
-    "contentHash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
-    "lastHarvestedAt": "2026-10-19T06:59:28.883Z",
+    "contentHash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
+    "lastHarvestedAt": "2026-10-27T23:44:03.624Z",
     "learningId": "learn-github-iconoir-icons-iconoir"
   },
   "gardener-gardener": {
@@ -11358,5 +11358,15 @@
     "contentHash": "c72cf1e17387953f4059c369bdb8349ea548e92a9222a3ba3c2359a34339338c",
     "lastHarvestedAt": "2026-10-27T21:29:55.684Z",
     "learningId": "learn-github-margelo-react-native-blur"
+  },
+  "hf-liquidai-lfm3-1.7b": {
+    "repository": "LiquidAI/LFM3-1.7B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+    "sourceVersion": "hf-liquidai-lfm3-1.7b",
+    "license": "Open-Source",
+    "contentHash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
+    "lastHarvestedAt": "2026-10-27T23:45:58.583Z",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   }
 }

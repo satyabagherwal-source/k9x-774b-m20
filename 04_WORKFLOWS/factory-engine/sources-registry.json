@@ -2060,12 +2060,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-27T19:49:29.186Z",
-    "lastVerified": "2026-10-27T19:49:29.186Z",
+    "lastChecked": "2026-10-27T23:44:04.224Z",
+    "lastVerified": "2026-10-27T23:44:04.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -2074,7 +2074,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "39773c33"
   },
   "megabit-blazorise": {
     "name": "Megabit/Blazorise",
@@ -2870,8 +2871,8 @@
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T12:07:05.386Z",
-    "lastVerified": "2026-10-26T12:07:05.386Z",
+    "lastChecked": "2026-10-27T23:43:54.184Z",
+    "lastVerified": "2026-10-27T23:43:54.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -4139,12 +4140,12 @@
     "revisionIdentifier": "ae2aabf5"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh/chaos-mesh",
+    "name": "chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-27T11:59:44.620Z",
-    "lastVerified": "2026-10-27T11:59:44.620Z",
+    "lastChecked": "2026-10-27T23:44:01.718Z",
+    "lastVerified": "2026-10-27T23:44:01.718Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
@@ -4153,7 +4154,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "35842157"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -9472,12 +9474,12 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-27T11:03:01.784Z",
-    "lastVerified": "2026-10-27T11:03:01.784Z",
+    "lastChecked": "2026-10-27T23:44:11.056Z",
+    "lastVerified": "2026-10-27T23:44:11.056Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
+    "contentHash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -15866,22 +15868,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "iconoir-icons-iconoir": {
-    "name": "iconoir",
+    "name": "iconoir-icons/iconoir",
     "officialUrl": "https://github.com/iconoir-icons/iconoir",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-25T11:20:45.939Z",
-    "lastVerified": "2026-10-25T11:20:45.939Z",
+    "lastChecked": "2026-10-27T23:44:03.049Z",
+    "lastVerified": "2026-10-27T23:44:03.049Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iconoir-icons-iconoir",
-    "contentHash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4eae577f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "onejs-one": {
     "name": "onejs/one",
@@ -18493,8 +18494,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-27T23:01:41.336Z",
-    "lastVerified": "2026-10-27T23:01:41.336Z",
+    "lastChecked": "2026-10-27T23:44:09.204Z",
+    "lastVerified": "2026-10-27T23:44:09.204Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -27422,8 +27423,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-27T23:37:17.823Z",
-    "lastVerified": "2026-10-27T23:37:17.823Z",
+    "lastChecked": "2026-10-27T23:46:01.130Z",
+    "lastVerified": "2026-10-27T23:46:01.130Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -27684,9 +27685,9 @@
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",
     "officialUrl": "https://github.com/searchsolved/search-solved-public-seo",
-    "lastChecked": "2026-10-25T02:57:02.775Z",
+    "lastChecked": "2026-10-27T23:43:56.689Z",
     "revisionIdentifier": "f1108d97e7",
-    "lastVerified": "2026-10-25T02:57:02.775Z"
+    "lastVerified": "2026-10-27T23:43:56.689Z"
   },
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
@@ -29585,6 +29586,23 @@
     "promotedRulesCount": 2,
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm3-1.7b": {
+    "name": "LiquidAI/LFM3-1.7B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-27T23:43:51.716Z",
+    "lastVerified": "2026-10-27T23:43:51.716Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

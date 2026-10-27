@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md`  
 > **Source**: github ([https://github.com/iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir))  
-> **Source Version**: `4eae577f`  
+> **Source Version**: `285be69c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:59:28.678Z  
+> **Timestamp**: 2026-10-27T23:44:03.461Z  
 > **Learning ID**: `learn-github-iconoir-icons-iconoir`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iconoir-icons/iconoir](https://github.com/iconoir-icons/iconoir))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:59:28.672Z  
+> **Harvest Timestamp**: 2026-10-27T23:44:03.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `iconoir-icons/iconoir`
-- **Description**: An open source icons library with 1600+ icons, supporting React, React Native, Flutter, Vue, Figma, and Framer.
+- **Description**: Free, open source (MIT) SVG icon library: 1,383 icons (1,671 SVGs with solid variants) for React, React Native, Vue, Solid, Flutter, CSS, Figma and Framer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4594 stars
+- **Stars / Engagement**: 4608 stars
 
 ---
 
@@ -456,11 +456,11 @@ module.exports = makeMetroConfig({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #641** (2026-10-25): **email[ICON]**
+  *Symptoms*: <!-- Before creating an icon request, please search to see if someone has requested the icon already. If there is an open request, please upvote it or add a comment. -->  ## Icon Request  - Icon name: - Use case: - Screenshots of similar icons: 
+
 - **Issue #640** (2026-10-18): **feat(site): link the icon sheet to the icon's own page**
   *Symptoms*: Adds a small info icon in the bottom-right corner of the icon sheet's code snippet. It links to the icon's own page at `iconoir.com/icons/<name>` (SVG download, regular and solid previews, snippets for every package, related icons).  - Muted 18px `InfoCircle`, black on hover, with a tooltip and an accessible label ("Open the heart icon page"). - Icons now carry their `icons.csv` name (`icon.name`), shared by regular and solid variants. `filename` is rebuilt from the component name and doesn't always match: 49 icons with digits come out wrong (`arc-3d` → `arc3d`, `battery-25` → `battery25`), and the icon pages use the real name. Solid variants link to their regular icon's page, which shows both.  ## Checked - Dev server: the arc-3d-center-point sheet links to `/icons/arc-3d-center-point` (live: 200; `arc3d-center-point` would be 404). heart-solid links to `/icons/heart`. The icon sits 10px from the corner and turns black on hover. - `eslint` and `tsc --noEmit` pass on the changed files.  ## Notes - The sheet only renders after a click, so search engines won't follow this link. Making the explorer's tiles real links would, and could come in a follow-up. - Unrelated, not fixed here: the same `filename` mismatch gives those 49 icons wrong SVG/PNG download names and a wrong CSS class in the CSS snippet (`iconoir-arc3d`).
-
-- **Issue #637** (2026-10-17): **fix(site): always show Carbon's small ad card, never the Cover card**
-  *Symptoms*: With `format=responsive`, carbon.js renders the big colorful **Carbon Cover** card (blurred large image, brand colors, call to action) whenever an ad has all of `backgroundColor, callToAction, company, companyTagline, logo, largeImage`. Roughly 1 in 3 ads for this placement are Cover ads, and there's no URL option to turn that off.  ## Change `CarbonCoverAd` now wraps `window.fetch` once, before it injects carbon.js. For responses from `srv.carbonads.net/ads/…` or `srv.buysellads.com/ads/…` only, it drops `callToAction`, `companyTagline` and `largeImage` from each `ads[]` entry and returns a new `Response` with the same status and headers. carbon.js then always picks its small image-and-text card. Cover ads have no `smallImage`, so the small card shows their `logo` on their `backgroundColor`, which are both kept. Links, impression/viewability tracking and the "ads via Carbon" credit are still handled by carbon.js.  The wrapper doesn't hook `_carbonads_go` because carbon.js reads that inside an IntersectionObserver callback, which races the script's onload. A module-level flag means it's installed only once, even under Strict Mode's double effect. The same fix already runs on the `/icons/*` SEO pages.  ## Testing - `eslint` on the changed file is clean. Full `pnpm run lint` still reports 5 `style/eol-last` errors in `package.json` files on `main`, which this PR doesn't touch. - In `next dev`, the wrapper is installed, the page has one `#_carbonads_js` and the ad renders. - Fet
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -477,212 +477,378 @@ module.exports = makeMetroConfig({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2171410d` (2026-10-14)
-**Commit Message**: fix(site): changelog survives GitHub outages; star count in parentheses
+### Incident Patch 1: `0c903c4c` (2026-10-25)
+**Commit Message**: fix(site): drop tabindex=1 from the icon search field
 
-- The changelog fetches releases through the shared withFallback helper
-  (now generic): if GitHub fails, is rate limited or slow, the page
-  builds with a note linking to the releases instead of erroring
-- Nav link reads "GitHub (4.6K)" in black
+A positive tabindex breaks the natural tab order (Lighthouse a11y audit).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `iconoir.com/components/Header.tsx` (modified, +5/-12)
+**File**: `iconoir.com/components/FiltersEditor.tsx` (modified, +0/-1)
 ```diff
-@@ -124,11 +124,6 @@ const Links = styled.nav<{ $visible?: boolean }>`
+@@ -122,7 +122,6 @@ export function FiltersEditor({ filters, categories, onChange }: FiltersEditorPr
+           value={search}
+           type="search"
+           autoCapitalize="none"
+-          tabIndex={1}
+           onFocus={(e) => {
+             if (!didScrollRef.current) {
+               e.target.scrollIntoView({
+```
+
+---
+
+### Incident Patch 2: `4da87361` (2026-10-25)
+**Commit Message**: fix(deps): patch high-severity Dependabot alerts
+
+Bump vite and Vue; add pnpm overrides for transitive dependency fixes.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `examples/vue/package.json` (modified, +2/-2)
+```diff
+@@ -10,7 +10,7 @@
+     "type-check": "vue-tsc --build"
+   },
+   "dependencies": {
+-    "vue": "^3.5.40"
++    "vue": "^3.5.42"
+   },
+   "devDependencies": {
+     "@iconoir/vue": "workspace:*",
+@@ -20,7 +20,7 @@
+     "@vue/tsconfig": "^0.7.0",
+     "npm-run-all2": "^8.0.4",
+     "typescript": "~5.8.3",
+-    "vite": "^7.3.6",
++    "vite": "^7.3.7",
+     "vite-plugin-vue-devtools": "^7.7.10",
+     "vue-tsc": "^3.3.8"
    }
- `;
- 
--/** Star count beside the GitHub link, a shade lighter than the label. */
--const Stars = styled.span`
--  color: var(--muted);
--`;
--
- const Actions = styled.div`
-   display: flex;
-   align-items: center;
-@@ -190,13 +185,11 @@ export function Header({ currentVersion, numStars }: HeaderProps) {
-             Our mission
-           </NavigationItem>
-           <NavigationLink href={GITHUB_LINK} target="_blank" rel="noreferrer">
--            GitHub
--            {' '}
--            <Stars>
--              {new Intl.NumberFormat('en-US', { notation: 'compact' }).format(
--                numStars,
--              )}
--            </Stars>
-+            GitHub (
-+            {new Intl.NumberFormat('en-US', { notation: 'compact' }).format(
-+              numStars,
-+            )}
-+            )
-           </NavigationLink>
-         </Links>
-         <Actions>
 ```
 
-**File**: `iconoir.com/lib/stats.ts` (modified, +8/-4)
+**File**: `package.json` (modified, +13/-3)
 ```diff
-@@ -8,11 +8,15 @@ const FALLBACK_NUM_STARS = 4580;
- const FALLBACK_NUM_DOWNLOADS = 691733;
- const FETCH_TIMEOUT_MS = 10_000;
- 
--async function withFallback(
--  promise: Promise<number | undefined>,
--  fallback: number,
-+/**
-+ * Resolves to the promise's value, or to `fallback` when it fails, comes back
-+ * empty, or takes longer than FETCH_TIMEOUT_MS.
-+ */
-+export async function withFallback<T>(
-+  promise: Promise<T | undefined>,
-+  fallback: T,
-   label: string,
--): Promise<number> {
-+): Promise<T> {
-   let timer: Parameters<typeof clearTimeout>[0];
- 
-   const timeout = new Promise<undefined>((resolve) => {
-```
-
-**File**: `iconoir.com/pages/docs/changelog.tsx` (modified, +27/-8)
-```diff
-@@ -18,10 +18,11 @@ import { Header } from '../../components/Header';
- import { Layout } from '../../components/Layout';
- import { ReadOnGitHub } from '../../components/ReadOnGitHub';
- import { SEO } from '../../components/SEO';
--import { Eyebrow, H1 } from '../../components/Typography';
--import { REPO } from '../../lib/constants';
-+import { Body, Eyebrow, H1 } from '../../components/Typography';
-+import { GITHUB_LINK, REPO } from '../../lib/constants';
- import { getHeaderProps } from '../../lib/getHeaderProps';
- import { octokit } from '../../lib/octokit';
-+import { withFallback } from '../../lib/stats';
- import {
-   Container,
-   ContentContainer,
-@@ -30,6 +31,8 @@ import {
-   NavigationContainer,
- } from './[...slug]';
- 
-+const RELEASES_LINK = `${GITHUB_LINK}/releases`;
-+
- export interface ChangelogProps extends HeaderProps {
-   documentationProps: DocumentationNavigationProps;
-   entries: ChangelogEntryProps[];
-@@ -52,9 +55,21 @@ export default function Changelog({
-           <InnerContentContainer>
-             <Eyebrow>Releases</Eyebrow>
-             <H1>Changelog</H1>
--            {entries.map((entry) => (
--              <ChangelogEntry key={entry.name} {...entry} />
--            ))}
-+            {entries.length
-+              ? entries.map((entry) => (
-+                  <ChangelogEntry key={entry.name} {...entry} />
-+                ))
-+              : (
-+                  <Body>
-+                    The release notes couldn&apos;t be loaded right now. You can
-+                    read them on
-+                    {' '}
-+                    <a href={RELEASES_LINK} target="_blank" rel="noreferrer">
-+                      GitHub
-+                    </a>
-+                    .
-+                  </Body>
-+                )}
-             <ReadOnGitHub path="../../releases" resource="the releases" />
-           </InnerContentContainer>
-         </ContentContainer>
-@@ -65,9 +80,13 @@ export default function Changelog({
- }
- 
- export async function getStaticProps() {
--  const { data: releases } = await octokit.rest.repos.listReleases({
--    ...REPO,
--  });
-+  // An empty list (with a pointer to GitHub) beats a failed build when the
-+  // API is down or rate limited.
-+  const releases = await withFallback(
-+    octokit.rest.repos.listReleases({ ...REPO }).then(({ data }) => data),
-+    [],
-+    'GitHub releases',
-+  );
- 
-   const entries: ChangelogEntryProps[] = [];
- 
-```
-
----
-
-### Incident Patch 2: `7582b7a7` (2026-10-15)
-**Commit Message**: fix(site): scroll back to the grid start when filters change
-
-A search or filter that shrinks the list left the page scrolled past
-the results. Jump back to the top of the grid (instantly, so the
-page's smooth scrolling doesn't lag behind typing) when scrolled past it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `iconoir.com/components/Explore.tsx` (modified, +19/-0)
-```diff
-@@ -140,6 +140,25 @@ export function Explore({ allIcons }: ExploreProps) {
-     };
-   }, []);
- 
-+  // A new search or filter can shrink the list far above the current scroll
-+  // position, so jump back to the start of the grid if we're past it.
-+  const isFirstFilters = React.useRef(true);
-+  React.useEffect(() => {
-+    if (isFirstFilters.current) {
-+      isFirstFilters.current = false;
-+      return;
-+    }
-+
-+    const container = containerRef.current;
-+    if (!container)
-+      return;
-+
-+    const offset = container.getBoundingClientRect().top - (NAV_HEIGHT + TOOLBAR_HEIGHT);
-+    if (offset < 0)
-+      // Instant: the page's smooth scrolling would lag behind each keystroke.
-+      window.scrollTo({ top: window.scrollY + offset, behavior: 'instant' });
-+  }, [filters.search, filters.style, filters.category]);
-+
-   return (
-     <>
-       <Toolbar>
-```
-
----
-
-### Incident Patch 3: `bff1304d` (2026-10-14)
-**Commit Message**: fix(site): reset icon grid row sizes when the search changes
-
-Row heights are cached by index, so a new search could leave an icon row
-with a category header's height and draw the next row over it.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `iconoir.com/components/IconList.tsx` (modified, +3/-1)
-```diff
-@@ -178,11 +178,13 @@ export function IconList({ filters, allIcons }: IconListProps) {
-     setHeight(window.innerHeight);
-   }, []);
- 
-+  // Row sizes are cached by index; a new search shifts which index is a
-+  // category header and which an icon row, so drop the cache then too.
-   React.useEffect(() => {
-     if (listRef.current) {
-       listRef.current.resetAfterIndex(0, true);
+@@ -56,18 +56,28 @@
+     "semver": "^7.8.5",
+     "tinypool": "^2.1.2",
+     "typescript": "~5.8.3",
+-    "vite": "^7.3.6",
++    "vite": "^7.3.7",
+     "vite-plugin-dts": "^4.5.4",
+     "vite-plugin-solid": "2.11.7"
+   },
+   "pnpm": {
+     "overrides": {
+       "@tootallnate/once@<2.0.1": "^2.0.1",
++      "@xmldom/xmldom@<=0.8.14": "^0.8.15",
++      "@xmldom/xmldom@<=0.9.10": "^0.9.12",
++      "compression@<1.8.2": "^1.8.2",
++      "fast-uri@<3.1.7": "^3.1.7",
++      "image-size@<=2.0.2": "^2.0.3",
++      "js-yaml@>=4.0.0 <4.3.2": "^4.3.2",
++      "js-yaml@>=3.0.0 <3.15.1": "^3.15.1",
+       "postcss@<8.5.18": "^8.5.23",
+       "seroval@<=1.6.0": "^1.6.2",
+       "shell-quote@<1.11.0": "^1.11.0",
+-      "sharp@<0.35.0": "^0.35.3",
+-      "tinypool@<=2.1.1": "^2.1.2"
++      "sharp@<0.35.5": "^0.35.5",
++      "source-map-js@<1.2.2": "^1.2.2",
++      "tinypool@<=2.1.1": "^2.1.2",
++      "undici@>=6.23.0 <6.29.1": "^6.29.1",
++      "vue@<3.5.42": "^3.5.42"
      }
--  }, [iconWidth, height]);
-+  }, [iconWidth, height, filters.search]);
+   }
+ }
+\ No newline at end of file
+```
+
+**File**: `pnpm-lock.yaml` (modified, +360/-276)
+```diff
+@@ -6,11 +6,21 @@ settings:
  
-   if (filteredIcons.length && iconsPerRow && width && iconWidth) {
-     const iconRows = getRowsFromIcons(filteredIcons, iconsPerRow);
+ overrides:
+   '@tootallnate/once@<2.0.1': ^2.0.1
++  '@xmldom/xmldom@<=0.8.14': ^0.8.15
++  '@xmldom/xmldom@<=0.9.10': ^0.9.12
++  compression@<1.8.2: ^1.8.2
++  fast-uri@<3.1.7: ^3.1.7
++  image-size@<=2.0.2: ^2.0.3
++  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
++  js-yaml@>=3.0.0 <3.15.1: ^3.15.1
+   postcss@<8.5.18: ^8.5.23
+   seroval@<=1.6.0: ^1.6.2
+   shell-quote@<1.11.0: ^1.11.0
+-  sharp@<0.35.0: ^0.35.3
++  sharp@<0.35.5: ^0.35.5
++  source-map-js@<1.2.2: ^1.2.2
+   tinypool@<=2.1.1: ^2.1.2
++  undici@>=6.23.0 <6.29.1: ^6.29.1
++  vue@<3.5.42: ^3.5.42
+ 
+ packageExtensionsChecksum: sha256-cBTyUPq+IGZAZgWgvReLGDDDIq+QC1sEPJbt4H4UmnQ=
+ 
+@@ -20,7 +30,7 @@ importers:
+     devDependencies:
+       '@antfu/eslint-config':
+         specifier: ^5.4.1
+-        version: 5.4.1(@next/eslint-plugin-next@15.5.28)(@typescript-eslint/typescript-estree@8.65.0(typescript@5.8.3))(@typescript-eslint/utils@8.65.0(eslint@9.39.5)(typescript@5.8.3))(@vue/compiler-sfc@3.5.40)(eslint-plugin-format@1.5.0(eslint@9.39.5))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.5))(eslint@9.39.5)(typescript@5.8.3)
++        version: 5.4.1(@next/eslint-plugin-next@15.5.28)(@typescript-eslint/typescript-estree@8.65.0(typescript@5.8.3))(@typescript-eslint/utils@8.65.0(eslint@9.39.5)(typescript@5.8.3))(@vue/compiler-sfc@3.5.44)(eslint-plugin-format@1.5.0(eslint@9.39.5))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.5))(eslint@9.39.5)(typescript@5.8.3)
+       '@atomist/yaml-updater':
+         specifier: ^1.0.2
+         version: 1.0.2
+@@ -35,7 +45,7 @@ importers:
+         version: 8.1.0(@svgr/core@8.1.0(typescript@5.8.3))
+       '@vitejs/plugin-vue':
+         specifier: ^6.0.8
+-        version: 6.0.8(vite@7.3.6(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.40(typescript@5.8.3))
++        version: 6.0.8(vite@7.3.7(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.44(typescript@5.8.3))
+       esbuild:
+         specifier: ^0.25.12
+         version: 0.25.12
+@@ -70,14 +80,14 @@ importers:
+         specifier: ~5.8.3
+         version: 5.8.3
+       vite:
+-        specifier: ^7.3.6
+-        version: 7.3.6(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0)
++        specifier: ^7.3.7
++        version: 7.3.7(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0)
+       vite-plugin-dts:
+         specifier: ^4.5.4
+-        version: 4.5.4(@types/node@26.1.1)(rollup@4.62.2)(typescript@5.8.3)(vite@7.3.6(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))
++        version: 4.5.4(@types/node@26.1.1)(rollup@4.62.2)(typescript@5.8.3)(vite@7.3.7(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))
+       vite-plugin-solid:
+         specifier: 2.11.7
+-        version: 2.11.7(solid-js@1.9.14)(vite@7.3.6(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))
++        version: 2.11.7(solid-js@1.9.14)(vite@7.3.7(@types/node@26.1.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))
+ 
+   examples/next:
+     dependencies:
+@@ -156,8 +166,8 @@ importers:
+   examples/vue:
+     dependencies:
+       vue:
+-        specifier: ^3.5.40
+-        version: 3.5.40(typescript@5.8.3)
++        specifier: ^3.5.42
++        version: 3.5.44(typescript@5.8.3)
+     devDependencies:
+       '@iconoir/vue':
+         specifier: workspace:*
+@@ -170,22 +180,22 @@ importers:
+         version: 22.20.1
+       '@vitejs/plugin-vue':
+         specifier: ^6.0.8
+-        version: 6.0.8(vite@7.3.6(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.40(typescript@5.8.3))
++        version: 6.0.8(vite@7.3.7(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.44(typescript@5.8.3))
+       '@vue/tsconfig':
+         specifier: ^0.7.0
+-        version: 0.7.0(typescript@5.8.3)(vue@3.5.40(typescript@5.8.3))
++        version: 0.7.0(typescript@5.8.3)(vue@3.5.44(typescript@5.8.3))
+       npm-run-all2:
+         specifier: ^8.0.4
+         version: 8.0.4
+       typescript:
+         specifier: ~5.8.3
+         version: 5.8.3
+       vite:
+-        specifier: ^7.3.6
+-        version: 7.3.6(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0)
++        specifier: ^7.3.7
++        version: 7.3.7(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0)
+       vite-plugin-vue-devtools:
+         specifier: ^7.7.10
+-        version: 7.7.10(rollup@4.62.2)(vite@7.3.6(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.40(typescript@5.8.3))
++        version: 7.7.10(rollup@4.62.2)(vite@7.3.7(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.49.0)(yaml@2.9.0))(vue@3.5.44(typescript@5.8.3))
+       vue-tsc:
+         specifier: ^3.3.8
+         version: 3.3.8(typescript@5.8.3)
+@@ -318,12 +328,12 @@ importers:
+   packages/iconoir-vue:
+     dependencies:
+       vue:
+-        specifier: '3'
+-        version: 3.5.40(typescrip
+```
+
+---
+
+### Incident Patch 3: `b14009a3` (2026-10-25)
+**Commit Message**: fix(deps): patch critical Dependabot vulnerabilities
+
+Bump Next.js and tinypool; add pnpm overrides for seroval and shell-quote.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `examples/next/package.json` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@
+     "lint": "next lint"
+   },
+   "dependencies": {
+-    "next": "^15.5.21",
++    "next": "^15.5.24",
+     "react": "^19.2.8",
+     "react-dom": "^19.2.8"
+   },
+```
+
+**File**: `iconoir.com/package.json` (modified, +2/-2)
+```diff
+@@ -24,11 +24,11 @@
+     "@types/react-dom": "^19.2.3",
+     "@types/react-window": "^1.8.8",
+     "csvtojson": "^2.0.14",
+-    "eslint-config-next": "^15.5.21",
++    "eslint-config-next": "^15.5.24",
+     "iconoir-react": "workspace:*",
+     "lodash": "^4.18.1",
+     "moment": "^2.30.1",
+-    "next": "^15.5.21",
++    "next": "^15.5.24",
+     "next-mdx-remote": "^6.0.0",
+     "react": "^19.2.8",
+     "react-dom": "^19.2.8",
+```
+
+**File**: `package.json` (modified, +5/-2)
+```diff
+@@ -54,7 +54,7 @@
+     "prettier": "^3.9.6",
+     "scule": "^1.3.0",
+     "semver": "^7.8.5",
+-    "tinypool": "1.1.1",
++    "tinypool": "^2.1.2",
+     "typescript": "~5.8.3",
+     "vite": "^7.3.6",
+     "vite-plugin-dts": "^4.5.4",
+@@ -64,7 +64,10 @@
+     "overrides": {
+       "@tootallnate/once@<2.0.1": "^2.0.1",
+       "postcss@<8.5.18": "^8.5.23",
+-      "sharp@<0.35.0": "^0.35.3"
++      "seroval@<=1.6.0": "^1.6.2",
++      "shell-quote@<1.11.0": "^1.11.0",
++      "sharp@<0.35.0": "^0.35.3",
++      "tinypool@<=2.1.1": "^2.1.2"
+     }
+   }
+ }
+\ No newline at end of file
+```
+
+**File**: `pnpm-lock.yaml` (modified, +79/-82)
+```diff
+@@ -5,9 +5,12 @@ settings:
+   excludeLinksFromLockfile: false
+ 
+ overrides:
+-  postcss@<8.5.18: ^8.5.23
+   '@tootallnate/once@<2.0.1': ^2.0.1
++  postcss@<8.5.18: ^8.5.23
++  seroval@<=1.6.0: ^1.6.2
++  shell-quote@<1.11.0: ^1.11.0
+   sharp@<0.35.0: ^0.35.3
++  tinypool@<=2.1.1: ^2.1.2
+ 
+ packageExtensionsChecksum: sha256-cBTyUPq+IGZAZgWgvReLGDDDIq+QC1sEPJbt4H4UmnQ=
+ 
+@@ -17,7 +20,7 @@ importers:
+     devDependencies:
+       '@antfu/eslint-config':
+         specifier: ^5.4.1
+-        version: 5.4.1(@next/eslint-plugin-next@15.5.21)(@typescript-eslint/typescript-estree@8.65.0(typescript@5.8.3))(@typescript-eslint/utils@8.65.0(eslint@9.39.5)(typescript@5.8.3))(@vue/compiler-sfc@3.5.40)(eslint-plugin-format@1.5.0(eslint@9.39.5))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.5))(eslint@9.39.5)(typescript@5.8.3)
++        version: 5.4.1(@next/eslint-plugin-next@15.5.28)(@typescript-eslint/typescript-estree@8.65.0(typescript@5.8.3))(@typescript-eslint/utils@8.65.0(eslint@9.39.5)(typescript@5.8.3))(@vue/compiler-sfc@3.5.40)(eslint-plugin-format@1.5.0(eslint@9.39.5))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.5))(eslint@9.39.5)(typescript@5.8.3)
+       '@atomist/yaml-updater':
+         specifier: ^1.0.2
+         version: 1.0.2
+@@ -61,8 +64,8 @@ importers:
+         specifier: ^7.8.5
+         version: 7.8.5
+       tinypool:
+-        specifier: 1.1.1
+-        version: 1.1.1
++        specifier: ^2.1.2
++        version: 2.2.0
+       typescript:
+         specifier: ~5.8.3
+         version: 5.8.3
+@@ -79,8 +82,8 @@ importers:
+   examples/next:
+     dependencies:
+       next:
+-        specifier: ^15.5.21
+-        version: 15.5.21(@babel/core@7.29.7)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
++        specifier: ^15.5.24
++        version: 15.5.28(@babel/core@7.29.7)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+       react:
+         specifier: ^19.2.8
+         version: 19.2.8
+@@ -235,8 +238,8 @@ importers:
+         specifier: ^2.0.14
+         version: 2.0.14
+       eslint-config-next:
+-        specifier: ^15.5.21
+-        version: 15.5.21(eslint@9.39.5)(typescript@5.8.3)
++        specifier: ^15.5.24
++        version: 15.5.28(eslint@9.39.5)(typescript@5.8.3)
+       iconoir-react:
+         specifier: workspace:*
+         version: link:../packages/iconoir-react
+@@ -247,8 +250,8 @@ importers:
+         specifier: ^2.30.1
+         version: 2.30.1
+       next:
+-        specifier: ^15.5.21
+-        version: 15.5.21(@babel/core@7.29.7)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
++        specifier: ^15.5.24
++        version: 15.5.28(@babel/core@7.29.7)(@types/node@22.20.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+       next-mdx-remote:
+         specifier: ^6.0.0
+         version: 6.0.0(@types/react@19.2.17)(react@19.2.8)
+@@ -1702,56 +1705,56 @@ packages:
+       '@emnapi/core': ^1.7.1
+       '@emnapi/runtime': ^1.7.1
+ 
+-  '@next/env@15.5.21':
+-    resolution: {integrity: sha512-hjJI/GfrjWHgNguRIBzItjRRu0m3Nrz17GhxsjuHfjIvg9hyg3239REd2dpI+bpMTFuVrVprHzEQ19m++cDtbw==}
++  '@next/env@15.5.28':
++    resolution: {integrity: sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==}
+ 
+-  '@next/eslint-plugin-next@15.5.21':
+-    resolution: {integrity: sha512-5MoR9vO3dE1lU3LixogB54xrn7OhMGempTqk1q3WlvbKrT6cNt5mV2mMkX5sghAk0vZF6Nz1HxoTb9YmZv8wRg==}
++  '@next/eslint-plugin-next@15.5.28':
++    resolution: {integrity: sha512-EsR/G+skBFfu8Z35P6V/yuu4IV8zkZXIssGOgIRD0ZXqB4CTEuEHQC1ySOQi31u4xjmgHVAdG1RT3QAasRmcZA==}
+ 
+-  '@next/swc-darwin-arm64@15.5.21':
+-    resolution: {integrity: sha512-ZfjqPEdi6TRC/fWx7UDbwb1fbVgyh2uD5tVTRKIDZDlYM+UNuE/LafDG2fwuAoZilADpABh46OY/F5qf9JjqLQ==}
++  '@next/swc-darwin-arm64@15.5.28':
++    resolution: {integrity: sha512-dPoQYXcfSIqx5o+TOXVXO7kONK5qbtNRDeiTfII0bT3puGIT6VF5e0QwmxNZfEZ5Zety5f3m9P/p4xqwfiLlPg==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@next/swc-darwin-x64@15.5.21':
+-    resolution: {integrity: sha512-TlCf1NpxgQLzTrexuev75xwmNCJMd1/qkJpTVP1GRRcih93hlIBn1P72hkh8T0gnRFr6BmWksQtbyG3jT6jnww==}
++  '@next/swc-darwin-x64@15.5.28':
++    resolution: {integrity: sha512-RgCJ7buBivTH+6sddqaVm+/v8kwMHlFkobvdt3DfETutws5HrxnToMIWSN9X3MZ3aAi7BbKrGZZWUDQLEycXqw==}
+     engines: {node: '>= 10'}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@next/swc-linux-arm64-gnu@15.5.21':
+-    resolution: {integrity: sha512-LXRsq1p+HvHSi7ygwNcSEEcK0zuo5jS75ZlqFHtOH+LF7qntXAJVJxah+1Pi/GyBm7EpkwU7m4EgbvIKrMqm9A==}
++  '@next/swc-linux-arm64-gnu@15.5.28':
++    resolution: {integrity: sha512-OHXQe13olE59aKe++zHavGcJPh5SLHXi6Anret3BBeq1+qhSuOJDNAli/EDDfxs6UTqA4Qddo4uyYry2slyjiQ==}
+     engines: {node: '>= 10'}
+     cpu: [arm64]
+     os: [linux]
+ 
+-  '@next/swc-linux-arm64-musl@15.5.21':
+-    resolution: {integrity: sha512-hyGixhFxpDKjqoev6l4KlcRBlt9AXWrGhDZwmwg49sMJM5tnKQPSi+SEj9+e5n+l/bthRGZUdh59GKIs6lQPRw==}
++  '@next/swc-
 ```
 
 #### Recent Merged Pull Requests:
@@ -705,49 +871,3 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. site): changelog survives GitHub outages; star count in parentheses
-
-**RULE**:
-When implementing operations in `iconoir.com/components/Header.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iconoir-icons/iconoir. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2171410d`: site): changelog survives GitHub outages; star count in parentheses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `iconoir.com/components/Header.tsx`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-            GitHub (
-            {new Intl.NumberFormat('en-US', { notation: 'compact' }).format(
-              numStars,
-            )}
-            )
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-/** Star count beside the GitHub link, a shade lighter than the label. */
-const Stars = styled.span`
-  color: var(--muted);
-`;
-
-            GitHub
-            {' '}
-            <Stars>
-              {new Intl.NumberFormat('en-US', { notation: 'compact' }).format(
-                numStars,
-              )}
-            </Stars>
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2171410d` are properly handled with clean fallback behavior.

@@ -5589,3 +5589,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-27T23:10:18.909Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `2b7b001a` | Multi-dimensional audit evidence | 2026-10-27T23:21:53.914Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `9d87f3fa` | Multi-dimensional audit evidence | 2026-10-27T23:37:15.267Z |
+| `learn-github-iconoir-icons-iconoir` | `https://github.com/iconoir-icons/iconoir` | `285be69c` | Multi-dimensional audit evidence | 2026-10-27T23:44:03.624Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b11d06c6` | Multi-dimensional audit evidence | 2026-10-27T23:44:09.187Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ce3abe70` | Multi-dimensional audit evidence | 2026-10-27T23:44:12.119Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-27T23:45:58.583Z |

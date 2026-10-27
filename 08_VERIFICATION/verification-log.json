@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-M3EQ",
-    "timestamp": "2026-10-26T01:49:13.538Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "08fc9d507fc72feec96321c59f2c765636b2575af0310ea0bbd38c9ffe626e15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-M5GN",
-    "timestamp": "2026-10-26T01:49:16.199Z",
-    "repository": "code-forge-io/seo-tools",
-    "learningId": "learn-github-code-forge-io-seo-tools",
-    "contentHash": "a6cb0d0d16f078c4dbef2d75fc60960ffc9c225804df5ef685da98f981a2cea8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-U9X2",
-    "timestamp": "2026-10-26T01:55:35.222Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "58805b16afc68a067fb425e9fb60a3a66ad7f70bb284f9ba7464263db35e8fc6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-UATQ",
-    "timestamp": "2026-10-26T01:55:36.398Z",
-    "repository": "hartemyaakoub/seo-toolkit",
-    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
-    "contentHash": "4f7b2e2d411e2d7946cd5cdf80e34c8c827e003e471c8d375754dc3bd6dddb43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-2FGY",
     "timestamp": "2026-10-26T02:01:55.666Z",
     "repository": "rtk-ai/rtk",
@@ -7492,6 +7432,66 @@
     "contentHash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0U1X",
+    "timestamp": "2026-10-27T23:44:03.621Z",
+    "repository": "iconoir-icons/iconoir",
+    "learningId": "learn-github-iconoir-icons-iconoir",
+    "contentHash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0YCG",
+    "timestamp": "2026-10-27T23:44:09.184Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-10LW",
+    "timestamp": "2026-10-27T23:44:12.116Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-3AR7",
+    "timestamp": "2026-10-27T23:45:58.579Z",
+    "repository": "LiquidAI/LFM3-1.7B",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:37:15.207Z",
-  "total_verified_learnings": 1152,
+  "last_updated": "2026-10-27T23:45:58.528Z",
+  "total_verified_learnings": 1153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2223,8 +2223,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "ba932f9a",
-      "content_hash": "863f9cd072427293d4d68699d7d9ae46ba06d19a4e6eabad542e070dbcbb6452",
+      "source_version": "ce3abe70",
+      "content_hash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2267,6 +2267,11 @@
           "number": 4699,
           "title": "Strengthen PR direction checks and simplify review summaries (#40376)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5058,
+          "title": "Align coding standards with Checkstyle test class finality (#40378)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2274,7 +2279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:03:02.262Z",
+      "verified_at": "2026-10-27T23:44:12.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12568,8 +12573,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "39773c33",
-      "content_hash": "b89cd80d895ca089e227e8923afae35faa6e9ca7ee0e9dbcd17f5455ecf2b4e2",
+      "source_version": "b11d06c6",
+      "content_hash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -12682,6 +12687,11 @@
           "number": 4973,
           "title": "build: release 0.2.151 (#6016)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5057,
+          "title": "conformance): report-only removal tier in policy::decide (#6015)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12689,7 +12699,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:49:30.009Z",
+      "verified_at": "2026-10-27T23:44:09.123Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29438,8 +29448,8 @@
       "slug": "iconoir-icons-iconoir",
       "platform": "github",
       "source_url": "https://github.com/iconoir-icons/iconoir",
-      "source_version": "4eae577f",
-      "content_hash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
+      "source_version": "285be69c",
+      "content_hash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
       "dossier_path": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iconoir-icons-iconoir-learnings.md",
       "promoted_rules": [
@@ -29454,7 +29464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:59:28.843Z",
+      "verified_at": "2026-10-27T23:44:03.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -77699,14 +77709,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
-      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-26T13:51:48.855Z"
+      "verified_at": "2026-10-27T23:45:58.516Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -139383,6 +139393,105 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:37:15.192Z"
+    },
+    "rule-5057": {
+      "learning_id": "rule-5057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5057,
+      "title": "conformance): report-only removal tier in policy::decide (#6015)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "b11d06c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:44:09.123Z"
+    },
+    "rule-5058": {
+      "learning_id": "rule-5058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5058,
+      "title": "Align coding standards with Checkstyle test class finality (#40378)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "ce3abe70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:44:12.058Z"
+    },
+    "learn-huggingface-liquidai-lfm3-1-7b": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-1.7B",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "slug": "hf-liquidai-lfm3-1.7b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "content_hash": "182bd4dd6cb13ad204aeb4a0657ab5e6253694eb671bafda8f5b0edf8c2bdb8b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5059,
+          "title": "Agentic Tool Call Regex Parsing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5060,
+          "title": "Sliding Window Attention KV Cache Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T23:45:58.516Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5059": {
+      "learning_id": "rule-5059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5059,
+      "title": "Agentic Tool Call Regex Parsing Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:45:58.516Z"
+    },
+    "rule-5060": {
+      "learning_id": "rule-5060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5060,
+      "title": "Sliding Window Attention KV Cache Management Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+      "source_version": "hf-liquidai-lfm3-1.7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:45:58.516Z"
     }
   },
   "aliases": {
