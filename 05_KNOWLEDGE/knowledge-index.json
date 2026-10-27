@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:45:08.998Z",
+  "last_updated": "2026-10-27T16:52:01.995Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3291,8 +3291,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "86040b77",
-      "content_hash": "4b38ab4dd438440dcfa99e243d8c3de387069145f05823906377937bb427c375",
+      "source_version": "42ec2ba6",
+      "content_hash": "f62b0ababd067d6a2c0f2f942003826fe261d736b224b559bcb168d9810cb03f",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -3350,6 +3350,11 @@
           "number": 4550,
           "title": "assistant-stream): replace stale model content in tool responses (#10107)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4905,
+          "title": "vue): preserve application shortcuts in thread lists (#10132)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3357,7 +3362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T02:50:51.481Z",
+      "verified_at": "2026-10-27T16:51:48.849Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7318,8 +7323,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "4b5d3bc9",
-      "content_hash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
+      "source_version": "85072f93",
+      "content_hash": "11b00db46e087a7cde141a9bc70d02a5302167a9f21bbfd173dcabc79c52e2f8",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -7352,6 +7357,11 @@
           "number": 3787,
           "title": "stuck CREATE SUBSCRIPTION with pg_tunnel and misconfigured ssl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4907,
+          "title": "Discourage using LLMs to analyze bugs as part of issue reports",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7359,7 +7369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T13:30:59.769Z",
+      "verified_at": "2026-10-27T16:52:01.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68274,8 +68284,8 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "272296e5",
-      "content_hash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
+      "source_version": "1a77c6cb",
+      "content_hash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
@@ -68298,6 +68308,11 @@
           "number": 3820,
           "title": "Graceful Graph Environmental Tolerance on Bail/Cancellation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4906,
+          "title": "browser): don't hang in `page.viewport()` (#11738)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68305,7 +68320,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T07:39:45.901Z",
+      "verified_at": "2026-10-27T16:51:54.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136209,6 +136224,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:45:03.365Z"
+    },
+    "rule-4905": {
+      "learning_id": "rule-4905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4905,
+      "title": "vue): preserve application shortcuts in thread lists (#10132)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "42ec2ba6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:51:48.849Z"
+    },
+    "rule-4906": {
+      "learning_id": "rule-4906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4906,
+      "title": "browser): don't hang in `page.viewport()` (#11738)",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "1a77c6cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:51:54.832Z"
+    },
+    "rule-4907": {
+      "learning_id": "rule-4907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4907,
+      "title": "Discourage using LLMs to analyze bugs as part of issue reports",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "85072f93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:52:01.982Z"
     }
   },
   "aliases": {

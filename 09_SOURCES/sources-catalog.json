@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "4b5d3bc9",
+    "sourceVersion": "85072f93",
     "license": "Apache-2.0",
-    "contentHash": "855a92e81d714ee6bcbb571b23529f51098952b613d80ab73a50f44f4bb0f937",
-    "lastHarvestedAt": "2026-10-25T13:30:59.844Z",
+    "contentHash": "11b00db46e087a7cde141a9bc70d02a5302167a9f21bbfd173dcabc79c52e2f8",
+    "lastHarvestedAt": "2026-10-27T16:52:02.063Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "86040b77",
+    "sourceVersion": "42ec2ba6",
     "license": "MIT",
-    "contentHash": "4b38ab4dd438440dcfa99e243d8c3de387069145f05823906377937bb427c375",
-    "lastHarvestedAt": "2026-10-26T02:50:51.541Z",
+    "contentHash": "f62b0ababd067d6a2c0f2f942003826fe261d736b224b559bcb168d9810cb03f",
+    "lastHarvestedAt": "2026-10-27T16:51:48.929Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "272296e5",
+    "sourceVersion": "1a77c6cb",
     "license": "MIT",
-    "contentHash": "bc56cf0ac6fe2bfbb2c945096789b7777c270bc2cc16b93bae5e7d578844cadf",
-    "lastHarvestedAt": "2026-10-23T07:39:45.970Z",
+    "contentHash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
+    "lastHarvestedAt": "2026-10-27T16:51:54.924Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

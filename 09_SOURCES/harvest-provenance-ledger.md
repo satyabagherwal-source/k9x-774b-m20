@@ -5443,3 +5443,6 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `6e4ce04b` | Multi-dimensional audit evidence | 2026-10-27T16:38:32.646Z |
 | `learn-github-adobe-react-spectrum` | `https://github.com/adobe/react-spectrum` | `06891def` | Multi-dimensional audit evidence | 2026-10-27T16:45:03.438Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `fd3c66a5` | Multi-dimensional audit evidence | 2026-10-27T16:45:09.070Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `42ec2ba6` | Multi-dimensional audit evidence | 2026-10-27T16:51:48.929Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `1a77c6cb` | Multi-dimensional audit evidence | 2026-10-27T16:51:54.924Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `85072f93` | Multi-dimensional audit evidence | 2026-10-27T16:52:02.063Z |

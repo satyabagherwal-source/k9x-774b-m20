@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T16:45:09.075Z",
-  "total_cycles_completed": 5411,
-  "total_learnings_persisted": 5411,
-  "total_rules_promoted": 4812,
+  "last_updated": "2026-10-27T16:52:02.068Z",
+  "total_cycles_completed": 5414,
+  "total_learnings_persisted": 5414,
+  "total_rules_promoted": 4815,
   "history": [
-    {
-      "timestamp": "2026-10-27T11:27:34.824Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:34:09.645Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:34:12.062Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T11:34:17.159Z",
       "repository": "trinodb/trino",
@@ -1403,6 +1382,27 @@
       "repository": "QwikDev/qwik",
       "learningId": "learn-github-qwikdev-qwik",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:51:48.934Z",
+      "repository": "assistant-ui/assistant-ui",
+      "learningId": "learn-github-assistant-ui-assistant-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:51:54.929Z",
+      "repository": "vitest-dev/vitest",
+      "learningId": "learn-github-vitest-dev-vitest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:52:02.068Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
