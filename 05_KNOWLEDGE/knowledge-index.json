@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:54:51.613Z",
+  "last_updated": "2026-10-27T21:01:44.891Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5253,8 +5253,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "ed798f9c",
-      "content_hash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
+      "source_version": "b396bd00",
+      "content_hash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -5282,6 +5282,11 @@
           "number": 4156,
           "title": "Slot-Separation of Intent vs. Fault in Pipeline Verdicts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5008,
+          "title": "deps): clear undici, fast-uri, vite and zod security alerts (#3966)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5289,7 +5294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:22:25.435Z",
+      "verified_at": "2026-10-27T21:01:37.893Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32419,8 +32424,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "3995dc6d",
-      "content_hash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
+      "source_version": "a38f4c6c",
+      "content_hash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -32433,6 +32438,11 @@
           "number": 3643,
           "title": "deps): Bump actions/checkout from 6 to 7 (#2106)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5007,
+          "title": "Import busybox into k3d as a single-platform tarball (#2119)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32440,7 +32450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T16:38:47.311Z",
+      "verified_at": "2026-10-27T21:01:37.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51094,8 +51104,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "17b07077",
-      "content_hash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
+      "source_version": "aca78520",
+      "content_hash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -51113,6 +51123,11 @@
           "number": 4641,
           "title": "Update Rust dependencies and address security advisories.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5009,
+          "title": "Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51120,7 +51135,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:12:34.486Z",
+      "verified_at": "2026-10-27T21:01:44.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -120951,16 +120966,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
       "source_version": "hf-ornith-ai-ornith-1.5-122b",
-      "content_hash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
+      "content_hash": "3d0d6628c7c6f11878482254bf62d64dbc6d3634fffca7312c78169495479685",
       "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5004,
+          "title": "Hybrid Attention Interleaving for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5005,
+          "title": "Precision Isolation for Stateful Recurrence Layers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5006,
+          "title": "Sparse MoE Routing with Expert Capacity Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:58:38.858Z",
+      "verified_at": "2026-10-27T21:01:37.427Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138291,6 +138322,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:54:51.596Z"
+    },
+    "rule-5004": {
+      "learning_id": "rule-5004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5004,
+      "title": "Hybrid Attention Interleaving for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:37.427Z"
+    },
+    "rule-5005": {
+      "learning_id": "rule-5005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5005,
+      "title": "Precision Isolation for Stateful Recurrence Layers",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:37.427Z"
+    },
+    "rule-5006": {
+      "learning_id": "rule-5006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5006,
+      "title": "Sparse MoE Routing with Expert Capacity Constraints",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:37.427Z"
+    },
+    "rule-5007": {
+      "learning_id": "rule-5007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5007,
+      "title": "Import busybox into k3d as a single-platform tarball (#2119)",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "a38f4c6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:37.818Z"
+    },
+    "rule-5008": {
+      "learning_id": "rule-5008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5008,
+      "title": "deps): clear undici, fast-uri, vite and zod security alerts (#3966)",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "b396bd00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:37.893Z"
+    },
+    "rule-5009": {
+      "learning_id": "rule-5009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5009,
+      "title": "Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "aca78520",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:01:44.878Z"
     }
   },
   "aliases": {

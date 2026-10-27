@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `17b07077`  
+> **Source Version**: `aca78520`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:12:34.009Z  
+> **Timestamp**: 2026-10-27T21:01:44.518Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:12:32.830Z  
+> **Harvest Timestamp**: 2026-10-27T21:01:43.929Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5729 stars
+- **Stars / Engagement**: 5733 stars
 
 ---
 
@@ -327,7 +327,7 @@ pub(crate) async fn add_record_api_config(
   state: &AppState,
   api: RecordApiConfig,
 ) -> Result<(), anyhow::Error> {
-  let mut config = (*state.get_config()).clone();
+  let mut config = (**state.get_config()).clone();
   config.record_apis.push(api);
   return Ok(state.validate_and_update_config(config, None).await?);
 }
@@ -576,7 +576,7 @@ fn subscribe_message_benchmark(b: &mut Bencher, runtime: &tokio::runtime::Runtim
   let authorization = format!("Bearer {}", setup.user_x_token);
   let create_request_body = {
     let request = serde_json::json!({
-      "_owner": BASE64_URL_SAFE.encode(setup.u
+      "_owner": BASE64_URL_SAFE.encode(setup.
 ```
 
 ### Core Architecture Module: `crates/core/bindings/ListWasmModulesResponse.ts`
@@ -930,11 +930,11 @@ pub async fn test_email_handler(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #303** (2026-10-14): **Would per-component capabilities fit TrailBase?**
-  *Symptoms*: I'm Jeetu, creator of [Snug](https://github.com/snugprotocol/snug), a project for portable, agent-backed apps. Snug is independent and doesn't integrate with TrailBase today. I'm trying to understand where TrailBase could fit.  Snug apps currently run as HTML in sandboxed iframes. Their code and state live in a portable SQLite-backed .snug file, and they use the host's agent runtime for intelligence. Imported app code is untrusted, so the host needs to control both its storage access and the other capabilities it can use.  I understand TrailBase's WASM components are currently trusted. The SQL API doesn't take a database name on each request, and databases can be attached. For Snug, SQL scoping alone wouldn't cover the broader host boundary.  The [capability discussion in #252](https://github.com/trailbaseio/trailbase/issues/252#issuecomment-5043476929) seems relevant here. Would an optional, host-enforced per-component policy fit that direction: binding a component to its allowed database/storage, with filesystem, network and other host capabilities granted separately? Or would you recommend keeping untrusted execution outside TrailBase, with a trusted broker handling access?  I'm looking for guidance on the architecture before getting into an implementation proposal.
+- **Issue #309** (2026-10-27): **fix: stream record subscriptions through reverse proxies**
+  *Symptoms*: ## Problem  `GET /api/records/v1/{name}/subscribe/{record}` already responds with `content-type: text/event-stream` and flushes `: ping` immediately (axum `KeepAlive`, first tick is instant, then every 15 s). The only cache header axum sets is `cache-control: no-cache`.  That is enough for a client talking to TrailBase directly. It is not enough behind nginx (or a proxy that follows nginx's convention): with `proxy_buffering on` (the default), nginx holds a chunked body until `proxy_buffer_size` fills. An 8-byte `: ping`, and a real event written 1.5 s later, both stayed invisible for 3 s behind nginx 1.24 with an 8 kB buffer. The same nginx, given `X-Accel-Buffering: no`, delivered the first byte in 4 ms.  PocketBase's realtime handler sets `Cache-Control: no-store` and `X-Accel-Buffering: no` on its SSE response for this reason ([apis/realtime.go](https://github.com/pocketbase/pocketbase/blob/7f2773ec234b62d0b80ca47c508397cb3d0da3ea/apis/realtime.go#L61-L65)). TrailBase's subscribe response sends neither.  ## Repro  nginx 1.24, `proxy_buffering on`, `proxy_buffer_size 8k`, `gzip on`, `gzip_proxied any`, `gzip_types text/event-stream`, `gzip_min_length 1`. Upstream writes `: ping\n\n` immediately and `event: connect` after 1.5 s.  ```sh curl -N -D - --http1.1 -m 3 \   -H 'Accept: text/event-stream' \   -H 'Accept-Encoding: gzip' \   http://127.0.0.1:19990/ ```  | Upstream response headers | First byte within 3 s | `content-encoding` | | --- | --- | --- | | `cache-control: no
 
-- **Issue #302** (2026-10-14): **fix(admin): use textarea for TEXT columns in row editor**
-  *Symptoms*: `buildSqlTextFormField` in `InsertUpdateRow.tsx` rendered every `TEXT` column as a single-line `TextFieldInput type="text"`. Pasting multi-line text into a single-line `<input>` silently strips newlines per HTML input sanitization, so the stored value came back as one long line.  Render `TEXT` values (including geometry blobs displayed as WKT through the same builder) with `TextFieldTextArea` (`rows={3}`) instead, preserving newlines on input. `Integer`, `Real`, `Blob`, and `Any` fields are unchanged.  Fixes #301.
+- **Issue #306** (2026-10-27): **Server shutdown does not close or checkpoint SQLite databases, leading to stale WAL files and database corruption**
+  *Symptoms*: ### **Description:** When running the `trail` server binary and sending a termination signal (`Ctrl+C` / `SIGINT` / `SIGTERM`), the console prints: ```text Received Ctrl+C. Shutting down gracefully. [2026-10-23T13:57:16.999337Z DEBUG trailbase::server] cleanup started [2026-10-23T13:57:16.999393Z DEBUG trailbase::server] cleanup finished [2026-10-23T13:57:16.999532Z DEBUG trailbase::server] Shutdown watchdog started. Pending tasks: 8 Shut down gracefully 👋 [2026-10-23T13:57:17.000530Z DEBUG trailbase::scheduler] alive [2026-10-23T13:57:17.001390Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.011795Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.023015Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.023657Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down [2026-10-23T13:57:17.024857Z DEBUG trailbase_sqlite::sqlite::executor] writer thread shut down ``` Notice  how the message `Shut down gracefully 👋` appeared before `writer thread shut down`  The SQLite database connections are never actually checkpointed or closed before the process terminates. As a result, the `-wal` (write-ahead log) file is left on disk with uncheckpointed frames, and uncommitted/in-flight writes are abruptly aborted. In our environment, this resulted in severe corruption of a ~1 GB database file.  ---  ### **Steps to Reproduce:** 1. Start `trail run ...` on a SQLite 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,244 +951,437 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18d4f4ed` (2026-10-25)
-**Commit Message**: Update Rust dependencies and address security advisories.
+### Incident Patch 1: `eb34079d` (2026-10-26)
+**Commit Message**: Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a dev-only dependency.
 
-**File**: `Cargo.lock` (modified, +41/-38)
+**File**: `Cargo.lock` (modified, +34/-37)
 ```diff
-@@ -1372,19 +1372,19 @@ checksum = "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c"
- 
- [[package]]
- name = "const_format"
--version = "0.2.36"
-+version = "0.2.37"
+@@ -156,7 +156,7 @@ version = "1.1.5"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4481a617ad9a412be3b97c5d403fef8ed023103368908b9c50af598ff467cc1e"
-+checksum = "a3decb4d6965448659923544a634a0571ba44cede4e11ef15a5a317126840454"
+ checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
  dependencies = [
-  "const_format_proc_macros",
-  "konst",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
  ]
  
  [[package]]
- name = "const_format_proc_macros"
--version = "0.2.34"
-+version = "0.2.37"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1d57c2eccfb16dbac1f4e61e206105db5820c9d26c3c472bc17c774259ef7744"
-+checksum = "941b570269a642506f08cb5b688c04bfa6cfd41a26f8bcdc49db8fd00c0ab659"
+@@ -167,7 +167,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
  dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -1774,9 +1774,9 @@ checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
+ ]
  
  [[package]]
- name = "crossfire"
--version = "3.1.21"
-+version = "3.1.22"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8a2ff0acecd50a3f2a01c93e21c9f67266cbccc1018b4748c17435b61ca007b8"
-+checksum = "342783f90d75bfc49d9c7cff550d0a25d3b1b346b5964f3f22672d195cbb6b1f"
- dependencies = [
-  "crossfire-utils",
-  "futures-core",
-@@ -1812,9 +1812,9 @@ dependencies = [
+@@ -789,7 +789,7 @@ dependencies = [
+  "regex",
+  "rustc-hash",
+  "shlex 2.0.1",
+- "syn 3.0.9",
++ "syn 2.0.119",
+ ]
+ 
+ [[package]]
+@@ -1033,7 +1033,7 @@ dependencies = [
+  "cap-primitives",
+  "cap-std",
+  "io-lifetimes 3.0.1",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
+ ]
+ 
+ [[package]]
+@@ -1050,7 +1050,7 @@ dependencies = [
+  "maybe-owned",
+  "rustix",
+  "rustix-linux-procfs",
+- "windows-sys 0.61.2",
++ "windows-sys 0.60.2",
+  "winx",
+ ]
+ 
+@@ -1829,9 +1829,9 @@ dependencies = [
  
  [[package]]
  name = "crypto-bigint"
--version = "0.7.5"
-+version = "0.7.8"
+-version = "0.7.8"
++version = "0.7.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
-+checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
+-checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
++checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
  dependencies = [
   "cpubits",
   "ctutils",
-@@ -1851,7 +1851,7 @@ version = "0.7.2"
+@@ -1868,7 +1868,7 @@ version = "0.7.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
  checksum = "3633a51a39c69ebbaa4feaa694bd83d241e4093901c84a0963b19d9bb3f0cf8f"
  dependencies = [
-- "crypto-bigint 0.7.5",
-+ "crypto-bigint 0.7.8",
+- "crypto-bigint 0.7.8",
++ "crypto-bigint 0.7.10",
   "rand_core 0.10.1",
  ]
  
-@@ -2549,18 +2549,18 @@ dependencies = [
+@@ -1904,9 +1904,9 @@ dependencies = [
  
  [[package]]
- name = "enumset"
--version = "1.1.14"
-+version = "1.1.15"
+ name = "ctutils"
+-version = "0.4.5"
++version = "0.4.6"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ccc5801fd11762e24d1e420d01d2ac518f2a2ca4329d4fbb6639f2412b6204e0"
-+checksum = "2e6bd2d7c76d078cd7a460fa169f778c42c026fe16d90e37d7a45d37181bdce5"
+-checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
++checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
  dependencies = [
-  "enumset_derive",
+  "cmov",
+ ]
+@@ -2183,9 +2183,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "der"
+-version = "0.8.2"
++version = "0.8.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
++checksum = "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004"
+ dependencies = [
+  "const-oid 0.10.2",
+  "pem-rfc7468 1.0.0",
+@@ -2324,7 +2324,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users 0.5.3",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
  ]
  
  [[package]]
- name = "enumset_derive"
--version = "0.15.0"
-+version = "0.15.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4bd536557b58c682b217b8fb199afdff47cd3eff260623f19e77074eb073d63a"
-+checksum = "f60587c2044cabd91c4d4c73e3912e9f1ea7d76905f31c7eec51869305dae044"
+@@ -2632,7 +2632,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
  dependencies = [
-  "darling 0.21.3",
-  "proc-macro2",
-@@ -2599,9 +2599,9 @@ checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "erased-serde"
--version = "0.4.10"
-+version = "0.4.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d2add8a07dd6a8d93ff627029c51de145e12686fbc36ecb298ac22e74cf02dec"
-+checksum = "1e59b668157f32d3459d4bd634861a06ffa2503a461ca5f0916b9f0252605e66"
- dependencies = [
-  "serde",
-  "serde_core",
-@@ -4131,9 +4131,9 @@ dependencies = [
- 
- [[package]]
- name = "jsonschema"
--version = "0.60.0"
-+version = "0.60.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7e7305938cac5ee144352ceb71583ffc6cfeac7d20fcb20ef865a4d5c314e499"
-+checksum = "65de752665c4a06528af6759955eecf60ba73ae7442d35349963a09c8031cd71"
- dependencies = [
-  "ahash",
-  "bytecount",
-@@ -4143,12 +4143,12 @@ dependencies = [
-  "fraction 0.17.0",
-  "getrandom 0.3.4",
-  "itoa",
-- "jsonschema-regex 0.60.0",
-- "jsonschema-value 0.60.0",
-+ "jsonschema-regex 0.60.1",
-+ "jsonschema-value 0.60.1",
-  "num-cmp",
-  "num-traits",
-  "percent-encoding",
-- "referencing 0.60.0",
-+ "referencing 0.60.1",
-  "regex",
-  "serde",
-  "serde_json",
-@@ -4168,9 +4168,9 @@ dependencies = [
- 
- [[package]]
- name = "jsonschema-regex"
--version = "0.60.0"
-+version = "0.60.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "99991ee391af622bda42f01a8727e12fcddbc5ace6f116eef766f060242a36a0"
-+checksum = "6f8a848331614144c03e815fb931f238c9e342bd7ab501b29e35d647e7cd5688"
- dependencies = [
-  "regex-syntax",
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
  ]
-@@ -4191,14 +4191,15 @@ dependencies = [
  
  [[package]]
- name = "jsonschema-value"
--version = "0.60.0"
-+version = "0.60.1"
+@@ -3946,7 +3946,7 @@ version = "1.0.6"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "31581ee58bb3f9a56c0413dd8560d4bdda6b05be0751fa6a533d5b609beb1aae"
-+checksum = "5a5a947ef798eeacacb43edf29b1d0ab64bdf5e2c9fbcaad10ee8663d922b544"
+ checksum = "82cb6a9f675da968c63b6208c641b9dca58fc0133ae53375736b1767b0cab8bd"
  dependencies = [
-  "ahash",
-  "bytecount",
-  "fraction 0.17.0",
-  "getrandom 0.3.4",
-+ "memchr",
-  "num-cmp",
-  "num-traits",
-  "serde_json",
-@@ -6578,9 +6579,9 @@ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
  
  [[package]]
- name = "referencing"
--version = "0.60.0"
-+version = "0.60.1"
+@@ -4936,7 +4936,7 @@ version = "0.50.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fd75db0e860de35f9b7fb4b05fe13ba057f2548db080178009067f9ea9751d32"
-+chec
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -5764,7 +5764,7 @@ version = "0.8.0-rc.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f485dbafe293ea6ccaa7d82bc591651a796eb8a9aec3df040b057b706073dbc3"
+ dependencies = [
+- "der 0.8.2",
++ "der 0.8.3",
+  "spki 0.8.1",
+ ]
+ 
+@@ -5784,7 +5784,7 @@ version = "0.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "451913da69c775a56034ea8d9003d27ee8948e12443eae7c038ba100a4f21cb7"
+ dependencies = [
+- "der 0.8.2",
++ "der 0.8.3",
+  "spki 0.8.1",
+ ]
+ 
+@@ -6314,7 +6314,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -6970,7 +6970,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "33405e321e16ef941ca66e254f6904c3aafd3c7ff001fb88bf11c73eb75c2b85"
+ dependencies = [
+  "const-oid 0.10.2",
+- "crypto-bigint 0.7.8",
++ "crypto-bigint 0.7.10",
+  "crypto-primes",
+  "digest 0.11.3",
+  "pkcs1 0.8.0-rc.5",
+@@ -6983,11 +6983,10 @@ dependencies = [
+ 
+ [[package]]
+ name = "rsqlite-vfs"
+-version = "0.1.1"
++version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c"
++checksum = "353b74f9810d5b085b6c42c9d86a5f0fdb795553235cdd48753b32e3809d18a7"
+ dependencies = [
+- "hashbrown 0.16.1",
+  "thiserror 2.0.21",
+ ]
+ 
+@@ -7186,7 +7185,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
+ 
+ [[package]]
+@@ -7255,7 +7254,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `client/testfixture/guests/typescript/package.json` (modified, +6/-6)
 ```diff
-@@ -63,7 +63,7 @@ chrono = { version = "0.4.45", default-features = false }
- compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
- clap = { version = "^4.6.7", features=["derive", "env"] }
- cron = "0.17.0"
--crossfire = { version = "3.1.21", default-features = false, features = ["tokio"] }
-+crossfire = { version = "3.1.22", default-features = false, features = ["tokio"] }
- env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
- flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
- futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
+@@ -16,13 +16,13 @@
+     "trailbase-wasm": "workspace:*"
+   },
+   "devDependencies": {
+-    "@bytecodealliance/jco": "^1.35.0",
++    "@bytecodealliance/jco": "^1.39.0",
+     "@eslint/js": "^10.0.1",
+-    "@types/node": "^26.6.3",
+-    "eslint": "^10.11.0",
+-    "prettier": "^3.9.9",
++    "@types/node": "^26.6.5",
++    "eslint": "^10.13.0",
++    "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.71.0",
+-    "vite": "^8.3.1"
++    "typescript-eslint": "^8.72.0",
++    "vite": "^8.3.5"
+   }
+ }
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
+**File**: `crates/assets/js/admin/package.json` (modified, +22/-22)
 ```diff
-@@ -48,7 +48,7 @@ bytes = { workspace = true }
- chrono = { workspace = true }
- client-ip = "0.2.1"
- compact_str = { workspace = true }
--const_format = "0.2.36"
-+const_format = "0.2.37"
- cron = { workspace = true }
- ed25519-dalek = { version = "3.0.0", features = ["pkcs8", "pem", "rand_core"] }
- fallible-iterator = "0.3.0"
-@@ -65,7 +65,7 @@ hyper-util = "0.1.21"
- indexmap = "2.14.2"
- init-tracing-opentelemetry = { version = "0.43.0", features = ["tracing_subscriber_ext", "metrics"], optional = true }
- itertools = { workspace = true }
--jsonschema = { version = "0.60.0", default-features = false }
-+jsonschema = { version = "0.60.1", default-features = false }
- jsonwebtoken = { workspace = true }
- lazy_static = "1.5.1"
- lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
+@@ -16,11 +16,11 @@
+   "dependencies": {
+     "@antv/x6": "^3.1.8",
+     "@bufbuild/protobuf": "^2.16.0",
+-    "@codemirror/autocomplete": "^6.20.3",
++    "@codemirror/autocomplete": "^6.20.4",
+     "@codemirror/lang-sql": "^6.10.0",
+-    "@codemirror/language": "^6.12.4",
++    "@codemirror/language": "^6.13.1",
+     "@codemirror/state": "^6.7.6",
+-    "@codemirror/view": "^6.43.13",
++    "@codemirror/view": "^6.43.15",
+     "@corvu/resizable": "^0.2.5",
+     "@kobalte/core": "^0.13.14",
+     "@kobalte/tailwindcss": "^0.9.0",
+@@ -32,55 +32,55 @@
+     "@solid-primitives/memo": "^1.5.1",
+     "@solidjs/router": "^1.0.0",
+     "@tanstack/solid-form": "^1.33.5",
+-    "@tanstack/solid-query": "^5.104.0",
+-    "@tanstack/solid-table": "^9.2.4",
+-    "@tanstack/table-core": "^9.2.4",
++    "@tanstack/solid-query": "^5.104.5",
++    "@tanstack/solid-table": "^9.3.1",
++    "@tanstack/table-core": "^9.3.1",
+     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
+-    "chart.js": "^4.5.1",
++    "chart.js": "^4.6.1",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+     "codemirror": "^6.0.2",
+     "geojson": "^0.5.0",
+     "i18n-iso-countries": "^7.14.0",
+     "long": "^5.3.2",
+-    "maplibre-gl": "^6.11.2",
+-    "nanostores": "^1.5.4",
++    "maplibre-gl": "^6.15.0",
++    "nanostores": "^1.5.5",
+     "rapidoc": "^9.3.8",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.15",
++    "solid-js": "^1.9.17",
+     "tailwind-merge": "^3.7.0",
+     "trailbase": "file:../client",
+-    "uuid": "^14.0.2"
++    "uuid": "^14.0.3"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.41",
++    "@iconify-json/tabler": "^1.2.42",
+     "@solidjs/testing-library": "^0.8.10",
+     "@tailwindcss/typography": "^0.5.20",
+     "@tailwindcss/vite": "^4.3.3",
+     "@testing-library/jest-dom": "^7.0.1",
+-    "@testing-library/user-event": "^14.6.7",
++    "@testing-library/user-event": "^14.6.8",
+     "@types/geojson": "^7946.0.16",
+     "@types/wicg-file-system-access": "^2023.10.7",
+     "autoprefixer": "^10.6.1",
+-    "eslint": "^10.11.0",
+-    "eslint-plugin-better-tailwindcss": "^4.7.0",
+-    "eslint-plugin-solid": "^0.18.0",
++    "eslint": "^10.13.0",
++    "eslint-plugin-better-tailwindcss": "^4.10.0",
++    "eslint-plugin-solid": "^0.18.1",
+     "globals": "^17.13.0",
+-    "jsdom": "^30.1.1",
+-    "prettier": "^3.9.9",
++    "jsdom": "^30.1.3",
++    "prettier": "^3.9.10",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+     "tailwindcss": "^4.3.3",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase-bindings": "file:../bindings",
+-    "ts-proto": "^2.12.4",
++    "ts-proto": "^2.18.3",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.71.0",
+-    "vite": "^8.3.1",
++    "typescript-eslint": "^8.72.0",
++    "vite": "^8.3.5",
+     "vite-plugin-csp-guard": "^4.0.1",
+     "vite-plugin-solid": "^2.11.14",
+     "vite-tsconfig-paths": "6.1.1",
+-    "vitest": "^4.1.11"
++    "vitest": "^4.1.12"
+   }
+ }
 ```
 
-**File**: `crates/extension/Cargo.toml` (modified, +1/-1)
+**File**: `crates/assets/js/bindings/package.json` (modified, +3/-3)
 ```diff
-@@ -16,7 +16,7 @@ arc-swap = { workspace = true }
- argon2 = { workspace = true }
- base64 = { workspace = true }
- bcrypt = "0.19.3"
--jsonschema = { version = "0.60.0", default-features = false }
-+jsonschema = { version = "0.60.1", default-features = false }
- maxminddb = "0.32.0"
- parking_lot = { workspace = true }
- quick_cache = { version = "0.7.0", default-features = false }
+@@ -9,10 +9,10 @@
+     "build": "barrelize && vite build"
+   },
+   "devDependencies": {
+-    "@microsoft/api-extractor": "^7.59.3",
++    "@microsoft/api-extractor": "^7.59.4",
+     "barrelize": "^1.9.2",
+     "typescript": "=6.0.3",
+-    "vite": "^8.3.1",
+-    "vite-plugin-dts": "^5.1.1"
++    "vite": "^8.3.5",
++    "vite-plugin-dts": "^5.1.2"
+   }
+ }
 ```
 
-**File**: `crates/schema/Cargo.toml` (modified, +1/-1)
+**File**: `crates/assets/js/client/package.json` (modified, +10/-10)
 ```diff
-@@ -19,7 +19,7 @@ fallible-iterator = "0.3.0"
- geos = { workspace = true, optional = true }
- infer = "0.22.0"
- itertools = { workspace = true }
--jsonschema = { version = "0.60.0", default-features = false }
-+jsonschema = { version = "0.60.1", default-features = false }
- lazy_static = "1.5.1"
- log = { workspace = true }
- parking_lot = { workspace = true }
+@@ -38,27 +38,27 @@
+     "@ungap/raw-json": "0.4.4",
+     "geojson": "^0.5.0",
+     "jwt-decode": "^4.0.0",
+-    "uuid": "^14.0.2"
++    "uuid": "^14.0.3"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@microsoft/api-extractor": "^7.59.3",
++    "@microsoft/api-extractor": "^7.59.4",
+     "@types/geojson": "^7946.0.16",
+-    "eslint": "^10.11.0",
++    "eslint": "^10.13.0",
+     "globals": "^17.13.0",
+     "http-status": "^2.1.0",
+-    "jsdom": "^30.1.1",
++    "jsdom": "^30.1.3",
+     "nano-spawn": "^2.1.0",
+     "oauth2-mock-server": "^8.2.3",
+     "otplib": "^13.5.0",
+-    "prettier": "^3.9.9",
+-    "tinybench": "^6.2.0",
++    "prettier": "^3.9.10",
++    "tinybench": "^6.2.2",
+     "trailbase-bindings": "file:../bindings",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.71.0",
+-    "vite": "^8.3.1",
++    "typescript-eslint": "^8.72.0",
++    "vite": "^8.3.5",
+     "vite-node": "^6.0.0",
+-    "vite-plugin-dts": "^5.1.1",
+-    "vitest": "^4.1.11"
++    "vite-plugin-dts": "^5.1.2",
++    "vitest": "^4.1.12"
+   }
+ }
 ```
 
-**File**: `crates/sqlite/Cargo.toml` (modified, +1/-1)
+**File**: `crates/auth-ui/ui/package.json` (modified, +12/-12)
 ```diff
-@@ -36,7 +36,7 @@ rusqlite = { workspace = true }
- self_cell = "1.3.0"
- serde = { workspace = true }
- serde_json = { workspace = true }
--smallvec = { version = "1.16.3", features = ["const_generics"] }
-+smallvec = { version = "1.16.4", features = ["const_generics"] }
- sqlparser = { version = "0.63.0", optional = true }
- thiserror = "2.0.21"
- tokio = { workspace = true }
+@@ -13,40 +13,40 @@
+     "format": "prettier -w ."
+   },
+   "dependencies": {
+-    "@astrojs/check": "^0.9.10",
+-    "@astrojs/solid-js": "^7.0.2",
++    "@astrojs/check": "^0.9.12",
++    "@astrojs/solid-js": "^7.1.1",
+     "@kobalte/core": "^0.13.14",
+     "@nanostores/persistent": "^1.3.5",
+     "@nanostores/solid": "^1.1.1",
+-    "astro": "^7.3.5",
++    "astro": "^7.4.2",
+     "astro-icon": "^1.2.0",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+-    "nanostores": "^1.5.4",
++    "nanostores": "^1.5.5",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.15",
++    "solid-js": "^1.9.17",
+     "tailwind-merge": "^3.7.0",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase": "file:../../assets/js/client"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.41",
++    "@iconify-json/tabler": "^1.2.42",
+     "@kobalte/tailwindcss": "^0.9.0",
+     "@tailwindcss/typography": "^0.5.20",
+     "@tailwindcss/vite": "^4.3.3",
+-    "eslint": "^10.11.0",
++    "eslint": "^10.13.0",
+     "eslint-plugin-astro": "^3.2.1",
+-    "eslint-plugin-better-tailwindcss": "^4.7.0",
+-    "eslint-plugin-solid": "^0.18.0",
++    "eslint-plugin-better-tailwindcss": "^4.10.0",
++    "eslint-plugin-solid": "^0.18.1",
+     "globals": "^17.13.0",
+-    "prettier": "^3.9.9",
+-    "prettier-plugin-astro": "^1.1.0",
++    "prettier": "^3.9.10",
++    "prettier-plugin-astro": "^1.1.2",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+     "sharp": "^0.35.5",
+     "tailwindcss": "^4.3.3",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.71.0"
++    "typescript-eslint": "^8.72.0"
+   }
+ }
 ```
 
 **File**: `crates/wasm-component-repo/Cargo.toml` (modified, +1/-1)
@@ -1197,203 +1390,310 @@ Observed empirical fixes and code patches:
  trailbase-wasm-common = { workspace = true }
  url = "2.5.8"
  wit-component = "0.262.0"
--zip = { version = "9.0.5", default-features = false, features = ["deflate"] }
-+zip = { version = "9.1.0", default-features = false, features = ["deflate"] }
+-zip = { version = "9.1.0", default-features = false, features = ["deflate"] }
++zip = { version = "9.1.2", default-features = false, features = ["deflate"] }
  
  [build-dependencies]
  trailbase-build = { workspace = true }
 ```
 
-**File**: `crates/wasm-runtime-host/Cargo.toml` (modified, +1/-1)
+**File**: `deny.toml` (modified, +3/-0)
 ```diff
-@@ -37,6 +37,6 @@ wasmtime = { workspace = true }
- wasmtime-wasi = { workspace = true }
- wasmtime-wasi-http = { workspace = true }
- wasmtime-wasi-io = { workspace = true }
--const_format = "0.2.36"
-+const_format = "0.2.37"
- deadpool = { version = "0.13.1", default-features = false, features = ["managed", "rt_tokio_1"] }
- normalize-path = "0.2.2"
+@@ -4,6 +4,9 @@ ignore = [
+   { id = "RUSTSEC-2023-0071", reason = "rsa: no safe upgrade available and only used for Signin-with-Apple pub-key RSA" },
+   { id = "RUSTSEC-2026-0344", reason = "pinned by wasmtime" },
+   { id = "RUSTSEC-2026-0387", reason = "pinned by jsonwebtoken" },
++  { id = "RUSTSEC-2026-0398", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
++  { id = "RUSTSEC-2026-0391", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
++  { id = "RUSTSEC-2026-0403", reason = "zstd/zstd-safe are dev-only dependecy pulled in by oliphaunt" },
+ ]
+ 
+ [sources]
 ```
 
 ---
 
-### Incident Patch 2: `8da6ce37` (2026-10-25)
-**Commit Message**: Minor: disable debug logging for lemon-rs crate.
+### Incident Patch 2: `960610fa` (2026-10-26)
+**Commit Message**: Update node runtime v22 => v24 for builds and CI.
 
-**File**: `crates/cli/src/bin/trail.rs` (modified, +3/-1)
+**File**: `.github/actions/setup_pnpm/action.yml` (modified, +2/-2)
 ```diff
-@@ -29,8 +29,10 @@ use trailbase_cli::{
- type BoxError = Box<dyn std::error::Error + Send + Sync>;
+@@ -6,8 +6,8 @@ runs:
+   steps:
+     - uses: pnpm/setup@v2
+       with:
+-        runtime: node@22
+-        version: "^12.0.0"
++        runtime: node@24
++        version: "^12.4.2"
  
- fn init_logger(dev: bool, base_level: Option<&str>) {
-+  // NOTE: "scanner" is a spammy custom log target of the lemon SQLite parser:
-+  //  https://github.com/gwenn/lemon-rs/blob/f1b3ff556ca503152f948dbf63e644dd163b5e21/src/lexer/scan.rs#L156
-   let default = format!(
--    "{},trailbase_refinery=warn,tracing::span=warn",
-+    "{},trailbase_refinery=warn,tracing::span=warn,scanner=warn",
-     base_level.unwrap_or("info")
-   );
+     - name: Get pnpm store directory
+       shell: bash
+```
+
+**File**: `Dockerfile` (modified, +2/-2)
+```diff
+@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  
+ # Install node
+ ENV PATH=/usr/local/node/bin:$PATH
+-ENV NODE_VERSION=22.13.1
++ENV NODE_VERSION=24.22.0
+ 
+ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+@@ -41,7 +41,7 @@ COPY . .
+ # Start by installing all JS dependencies upfront. This is to avoid
+ # `node_modules` collisions due to parallel installs later-on while building
+ # packages for various crates.
+-RUN pnpm -r install --frozen-lockfile
++RUN pnpm -r install --prefer-frozen-lockfile
+ 
+ 
+ FROM base-builder AS auth-ui-builder
+```
+
+**File**: `Dockerfile.ci` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
+ 
+ # Install node
+ ENV PATH=/usr/local/node/bin:$PATH
+-ENV NODE_VERSION=22.13.1
++ENV NODE_VERSION=24.22.0
+ 
+ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
 ```
 
 ---
 
-### Incident Patch 3: `d7d96b53` (2026-10-25)
-**Commit Message**: Fix building CLI w/o the WASM feature.
+### Incident Patch 3: `c818aa90` (2026-10-26)
+**Commit Message**: Add tests for `Connection::close` to clean up auxiliary files.
 
-**File**: `Cargo.lock` (modified, +0/-2)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -8891,7 +8891,6 @@ dependencies = [
-  "trailbase-extension",
-  "trailbase-sqlite",
-  "trailbase-wasm-component-repo",
-- "trailbase-wasm-runtime-host",
-  "url",
-  "utoipa",
+@@ -9089,6 +9089,7 @@ dependencies = [
+  "tempfile",
+  "thiserror 2.0.21",
+  "tokio",
++ "trailbase-extension",
+  "triomphe",
   "uuid",
-@@ -9150,7 +9149,6 @@ dependencies = [
-  "serde",
-  "trailbase-build",
-  "trailbase-wasm-common",
-- "trailbase-wasm-runtime-host",
-  "url",
-  "wit-component 0.262.0",
-  "zip",
+ ]
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/connection.rs` (modified, +70/-0)
 ```diff
-@@ -95,7 +95,7 @@ tokio = { version = "^1.54.1", default-features = false, features = ["fs", "io-s
- tokio-rustls = { version = "0.26.6", default-features = false }
- tracing = { version = "0.1.44", default-features = false }
- tracing-subscriber = { version = "0.3.23", default-features = false, features = ["smallvec", "std", "fmt", "json"] }
--trailbase = { path = "crates/core", version = "0.2.0", default-features = false, features=["wasm", "pg"] }
-+trailbase = { path = "crates/core", version = "0.2.0", default-features = false }
- trailbase-assets = { path = "crates/assets", version = "0.2.0" }
- trailbase-auth-config = { path = "crates/auth-config", version = "0.0.0" }
- trailbase-build = { path = "crates/build", version = "0.1.1" }
-```
-
-**File**: `crates/cli/Cargo.toml` (modified, +1/-2)
-```diff
-@@ -12,7 +12,7 @@ doctest = false
- name = "trail"
+@@ -666,3 +666,73 @@ pub(crate) fn connect_rusqlite_without_default_extensions_and_schemas(
+ }
  
- [features]
--default = ["trailbase/wasm", "geos", "mcp"]
-+default = ["trailbase/wasm", "trailbase/pg", "geos", "mcp"]
- geos-static = ["trailbase/geos-static"]
- geos = ["trailbase/geos"]
- mcp = ["dep:rmcp", "dep:rmcp-openapi"]
-@@ -45,7 +45,6 @@ trailbase-client = { workspace = true }
- trailbase-extension = { workspace = true }
- trailbase-sqlite = { workspace = true }
- trailbase-wasm-component-repo = { workspace = true }
--trailbase-wasm-runtime-host = { workspace = true }
- url = "2.5.8"
- utoipa = { workspace = true }
+ const PREPARED_STATEMENT_CACHE_CAPACITY: usize = 256;
++
++#[cfg(test)]
++mod tests {
++  use super::*;
++
++  #[tokio::test]
++  async fn sqlite_cleans_up_auxiliary_files_on_close() {
++    let tmp_dir = temp_dir::TempDir::new().unwrap();
++    let data_dir = DataDir(tmp_dir.path().to_path_buf());
++    data_dir.ensure_directory_structure().await.unwrap();
++
++    let json_schema_registry = Arc::new(
++      trailbase_schema::json_schema::registry::build_json_schema_registry(vec![]).unwrap(),
++    );
++
++    let (conn, _metadata, new_db) = init_db_sqlite(InitDbOptions {
++      data_path: Some(&data_dir.main_db_path()),
++      migration_path: Some(&data_dir.migrations_path()),
++      is_main_db: true,
++      json_registry: &json_schema_registry,
++      runtimes: &vec![],
++      attach: vec![AttachedDatabase {
++        schema_name: "foo".to_string(),
++        path: data_dir.data_path().join("foo.db"),
++      }],
++      num_threads: None,
++      read_only: None,
++    })
++    .await
++    .unwrap();
++
++    assert!(new_db);
++
++    conn
++      .execute(
++        "CREATE TABLE 'test' (id INTEGER PRIMARY KEY, value INTEGER)",
++        (),
++      )
++      .await
++      .unwrap();
++
++    const N: usize = 100;
++    for i in 0..N {
++      conn
++        .execute("INSERT INTO 'test' (value) VALUES ($1);", (i as i64,))
++        .await
++        .unwrap();
++    }
++
++    assert_eq!(
++      N,
++      conn
++        .read_query_rows("SELECT * FROM 'test'", ())
++        .await
++        .unwrap()
++        .len()
++    );
++
++    assert!(conn.close().await.is_ok());
++
++    // Make sure there are no auxiliary files left (i.e. -wal, -shm).
++    let contents: Vec<_> = std::fs::read_dir(data_dir.data_path())
++      .unwrap()
++      .into_iter()
++      .map(|entry| entry.unwrap().path())
++      .collect();
++
++    assert_eq!(2, contents.len(), "{contents:?}");
++  }
++}
+```
+
+**File**: `crates/sqlite/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -53,4 +53,5 @@ itertools = { workspace = true }
+ oliphaunt-pgwire-server = { workspace = true }
+ rand = { workspace = true }
+ tempfile = "3.27.0"
++trailbase-extension = { workspace = true }
  uuid = { workspace = true }
 ```
 
-**File**: `crates/cli/src/bin/trail.rs` (modified, +3/-3)
+**File**: `crates/sqlite/src/lib.rs` (modified, +0/-4)
 ```diff
-@@ -11,7 +11,7 @@ use compact_str::CompactString;
- use itertools::Itertools;
- use serde::Serialize;
- use std::io::Write;
--use trailbase::api::cli::{AuthTokens, UserReference};
-+use trailbase::api::cli::UserReference;
- use trailbase::api::{self, Email, JsonSchemaMode};
- use trailbase::config::proto::Config;
- use trailbase::constants::USER_TABLE;
-@@ -612,15 +612,15 @@ async fn async_main(
-           })
-           .await?;
- 
--          let AuthTokens {
-+          let trailbase::api::cli::AuthTokens {
-             auth_token,
-             refresh_token,
-             csrf_token,
-           } = api::cli::mint_auth_tokens(&state, UserReference::parse(&user)?).await?;
- 
-           Tokens {
-             auth_token,
--            refresh_token: refresh_token,
-+            refresh_token,
-             csrf_token: Some(csrf_token),
-           }
-         }
-```
-
-**File**: `crates/core/src/auth/tokens.rs` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ pub(crate) async fn mint_new_tokens(
-   };
- 
-   return Ok(FreshTokens {
--    auth_token_claims: (AuthTokenClaims::new(&user, &auth_token_ttl), auth_token_ttl),
-+    auth_token_claims: (AuthTokenClaims::new(user, &auth_token_ttl), auth_token_ttl),
-     refresh_token,
-   });
+@@ -76,7 +76,3 @@ macro_rules! named_params {
+         [$(($param_name as &str, Into::<$crate::to_sql::ToSqlProxy>::into($param_val))),+]
+     };
  }
+-
+-#[cfg(test)]
+-#[path = "tests.rs"]
+-mod tests;
 ```
 
-**File**: `crates/core/src/wasm/mod.rs` (modified, +2/-2)
+**File**: `crates/sqlite/src/sqlite/mod.rs` (modified, +3/-0)
 ```diff
-@@ -21,7 +21,7 @@ pub(crate) async fn build_sync_wasm_runtimes_for_sqlite(
-   dev: bool,
- ) -> Result<Vec<(SqliteStore, SqliteFunctions)>, AnyError> {
-   let wasm_components_path = data_dir.wasm_path();
--  let mut components = trailbase_wasm_runtime_host::find_wasm_components(&wasm_components_path);
-+  let mut components = trailbase_wasm_common::find_wasm_components(&wasm_components_path);
+@@ -9,3 +9,6 @@ pub(super) mod value;
  
-   if !extra_components.is_empty() {
-     components.extend_from_slice(extra_components);
-@@ -74,7 +74,7 @@ impl WasmState {
-     dev: bool,
-   ) -> Self {
-     let wasm_components_path = data_dir.wasm_path();
--    let mut components = trailbase_wasm_runtime_host::find_wasm_components(&wasm_components_path);
-+    let mut components = trailbase_wasm_common::find_wasm_components(&wasm_components_path);
- 
-     if !extra_components.is_empty() {
-       components.extend_from_slice(extra_components);
+ pub use batch::execute_batch;
+ pub use util::{extract_record_values, extract_row_id, from_rows};
++
++#[cfg(test)]
++mod tests;
 ```
 
-**File**: `crates/wasm-component-repo/Cargo.toml` (modified, +0/-1)
+**File**: `crates/sqlite/src/sqlite/tests.rs` (renamed, +35/-17)
 ```diff
-@@ -15,7 +15,6 @@ minijinja = { workspace = true }
- reqwest = { workspace = true }
- serde = { workspace = true }
- trailbase-build = { workspace = true }
--trailbase-wasm-runtime-host = { workspace = true }
- trailbase-wasm-common = { workspace = true }
- url = "2.5.8"
- wit-component = "0.262.0"
-```
-
-**File**: `crates/wasm-component-repo/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ use std::fs;
- use std::io::{Read, Seek};
- use std::path::Path;
- use std::sync::{Arc, LazyLock};
--use trailbase_wasm_runtime_host::find_wasm_components;
-+use trailbase_wasm_common::find_wasm_components;
+@@ -6,6 +6,7 @@ use std::borrow::Cow;
+ use crate::sqlite::connection::{Connection, Options};
+ use crate::sqlite::extract_row_id;
+ use crate::{Database, Error, SyncConnectionTrait, Value, ValueType};
++use crate::{named_params, params};
  
- type BoxError = Box<dyn std::error::Error + Send + Sync>;
+ #[tokio::test]
+ async fn open_in_memory_test() {
+@@ -57,10 +58,14 @@ async fn call_failure_test() {
+ #[tokio::test]
+ async fn close_success_test() {
+   let tmp_dir = tempfile::TempDir::new().unwrap();
+-  let db_path = tmp_dir.path().join("main.sqlite");
++  let db_path = tmp_dir.path().join("main.db");
  
+   let conn = Connection::with_opts(
+-    move || rusqlite::Connection::open(&db_path).map_err(Error::Rusqlite),
++    move || -> Result<_, Error> {
++      let conn = rusqlite::Connection::open(&db_path)?;
++      trailbase_extension::apply_default_pragmas(&conn)?;
++      return Ok(conn);
++    },
+     Options {
+       num_threads: Some(3),
+       ..Default::default()
+@@ -71,27 +76,40 @@ async fn close_success_test() {
+   assert_eq!(3, conn.threads());
+ 
+   conn
+-    .execute("CREATE TABLE 'test' (id INTEGER PRIMARY KEY)", ())
+-    .await
+-    .unwrap();
+-  conn
+-    .execute_batch(
+-      r#"
+-        INSERT INTO 'test' (id) VALUES (1);
+-        INSERT INTO 'test' (id) VALUES (2);
+-      "#,
++    .execute(
++      "CREATE TABLE 'test' (id INTEGER PRIMARY KEY, value INTEGER)",
++      (),
+     )
+     .await
+     .unwrap();
+ 
+-  let rows = conn
+-    .read_query_rows("SELECT * FROM 'test'", ())
+-    .await
+-    .unwrap();
++  const N: usize = 100;
++  for i in 0..N {
++    conn
++      .execute("INSERT INTO 'test' (value) VALUES ($1);", params!(i as i64))
++      .await
++      .unwrap();
++  }
+ 
+-  assert_eq!(rows.len(), 2);
++  assert_eq!(
++    N,
++    conn
++      .read_query_rows("SELECT * FROM 'test'", ())
++      .await
++      .unwrap()
++      .len()
++  );
+ 
+   assert!(conn.close().await.is_ok());
++
++  // Make sure there are no auxiliary files left (i.e. -wal, -shm).
++  let contents: Vec<_> = std::fs::read_dir(tmp_dir.path())
++    .unwrap()
++    .into_iter()
++    .map(|entry| entry.unwrap().path())
++    .collect();
++
++  assert_eq!(1, contents.len(), "{contents:?}");
+ }
+ 
+ #[tokio::test]
+@@ -570,7 +588,7 @@ fn test_busy() {
+     .unwrap();
+ 
+   let tmp_dir = tempfile::TempDir::new().unwrap();
+-  let db_path = tmp_dir.path().join("main.sqlite");
++  let db_path = tmp_dir.path().join("main.db");
+ 
+   let conn = Connection::with_opts(
+     move || -> Result<_, Error> {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #309** (closed): fix: stream record subscriptions through reverse proxies (@rb365)
 - **PR #302** (2026-10-14): fix(admin): use textarea for TEXT columns in row editor (@jessepeterson)
 - **PR #296** (closed): Add audit GitHub workflow (@0rzech)
 - **PR #293** (2026-09-18): Add built-in helpers for expanded types to Kotlin client (@Bnyro)
 - **PR #292** (2026-09-17): Add README documentation to kotlin client (@Bnyro)
 - **PR #291** (closed): docs: Clarify how to upload files with JSON requests (@Bnyro)
-- **PR #290** (2026-09-14): Fix table explorer resetting page size on sort/filter (@brigon-dev)
 
 ---
 
@@ -1413,13 +1713,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust dependencies and address security advisories.
+## X. Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18d4f4ed`: Update Rust dependencies and address security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb34079d`: Update Rust and JavaScript dependencies. Ignore zstd-safe security advisory as a dev-only dependency.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1427,65 +1727,61 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.37"
-checksum = "a3decb4d6965448659923544a634a0571ba44cede4e11ef15a5a317126840454"
-version = "0.2.37"
-checksum = "941b570269a642506f08cb5b688c04bfa6cfd41a26f8bcdc49db8fd00c0ab659"
-version = "3.1.22"
-checksum = "342783f90d75bfc49d9c7cff550d0a25d3b1b346b5964f3f22672d195cbb6b1f"
-version = "0.7.8"
-checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
- "crypto-bigint 0.7.8",
-version = "1.1.15"
-checksum = "2e6bd2d7c76d078cd7a460fa169f778c42c026fe16d90e37d7a45d37181bdce5"
-version = "0.15.1"
-checksum = "f60587c2044cabd91c4d4c73e3912e9f1ea7d76905f31c7eec51869305dae044"
-version = "0.4.11"
-checksum = "1e59b668157f32d3459d4bd634861a06ffa2503a461ca5f0916b9f0252605e66"
-version = "0.60.1"
-checksum = "65de752665c4a06528af6759955eecf60ba73ae7442d35349963a09c8031cd71"
- "jsonschema-regex 0.60.1",
- "jsonschema-value 0.60.1",
- "referencing 0.60.1",
-version = "0.60.1"
-checksum = "6f8a848331614144c03e815fb931f238c9e342bd7ab501b29e35d647e7cd5688"
-version = "0.60.1"
-checksum = "5a5a947ef798eeacacb43edf29b1d0ab64bdf5e2c9fbcaad10ee8663d922b544"
- "memchr",
-version = "0.60.1"
-chec
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+ "syn 2.0.119",
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+version = "0.7.10"
+checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
+ "crypto-bigint 0.7.10",
+version = "0.4.6"
+checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
+version = "0.8.3"
+checksum = "6a996a108feb8b427a6e12fcf6af4aa83409b79d72c15337d7741368131ee004"
+ "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
+ "windows-sys 0.59.0",
+ "der 0.8.3",
+ "der 0.8.3",
+ "windows-sys 0.52.0",
+ "crypto-bigint 0.7.10",
+version = "0.2.0"
+checksum = "353b74f9810d5b085b6c42c9d86a5f0fdb795553235cdd48753b32e3809d18a7"
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.2.36"
-checksum = "4481a617ad9a412be3b97c5d403fef8ed023103368908b9c50af598ff467cc1e"
-version = "0.2.34"
-checksum = "1d57c2eccfb16dbac1f4e61e206105db5820c9d26c3c472bc17c774259ef7744"
-version = "3.1.21"
-checksum = "8a2ff0acecd50a3f2a01c93e21c9f67266cbccc1018b4748c17435b61ca007b8"
-version = "0.7.5"
-checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
- "crypto-bigint 0.7.5",
-version = "1.1.14"
-checksum = "ccc5801fd11762e24d1e420d01d2ac518f2a2ca4329d4fbb6639f2412b6204e0"
-version = "0.15.0"
-checksum = "4bd536557b58c682b217b8fb199afdff47cd3eff260623f19e77074eb073d63a"
-version = "0.4.10"
-checksum = "d2add8a07dd6a8d93ff627029c51de145e12686fbc36ecb298ac22e74cf02dec"
-version = "0.60.0"
-checksum = "7e7305938cac5ee144352ceb71583ffc6cfeac7d20fcb20ef865a4d5c314e499"
- "jsonschema-regex 0.60.0",
- "jsonschema-value 0.60.0",
- "referencing 0.60.0",
-version = "0.60.0"
-checksum = "99991ee391af622bda42f01a8727e12fcddbc5ace6f116eef766f060242a36a0"
-version = "0.60.0"
-checksum = "31581ee58bb3f9a56c0413dd8560d4bdda6b05be0751fa6a533d5b609beb1aae"
-version = "0.60.0"
-checksum = "fd75db0e860de35f9b7fb4b05fe13ba057f2548db080178009067f9ea9751d32"
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "syn 3.0.9",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "0.7.8"
+checksum = "d726facc8b27e604391b232b970cdc19b5468c69f08b466b9734c759216c7415"
+ "crypto-bigint 0.7.8",
+version = "0.4.5"
+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
+version = "0.8.2"
+checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "der 0.8.2",
+ "der 0.8.2",
+ "windows-sys 0.61.2",
+ "crypto-bigint 0.7.8",
+version = "0.1.1"
+checksum = "c51c9ae4df8a7fba42103df5c621fa3c37eccf3a3c650879e90fc48b11cc192c"
+ "hashbrown 0.16.1",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18d4f4ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb34079d` are properly handled with clean fallback behavior.

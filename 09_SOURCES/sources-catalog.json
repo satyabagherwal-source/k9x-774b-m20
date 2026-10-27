@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "17b07077",
+    "sourceVersion": "aca78520",
     "license": "OSL-3.0",
-    "contentHash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
-    "lastHarvestedAt": "2026-10-26T18:12:34.584Z",
+    "contentHash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
+    "lastHarvestedAt": "2026-10-27T21:01:44.951Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "ed798f9c",
+    "sourceVersion": "b396bd00",
     "license": "MIT",
-    "contentHash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
-    "lastHarvestedAt": "2026-10-25T07:22:25.506Z",
+    "contentHash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
+    "lastHarvestedAt": "2026-10-27T21:01:37.974Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "3995dc6d",
+    "sourceVersion": "a38f4c6c",
     "license": "Apache-2.0",
-    "contentHash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
-    "lastHarvestedAt": "2026-10-22T16:38:47.363Z",
+    "contentHash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
+    "lastHarvestedAt": "2026-10-27T21:01:37.915Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
-    "lastHarvestedAt": "2026-10-24T19:58:38.904Z",
+    "contentHash": "3d0d6628c7c6f11878482254bf62d64dbc6d3634fffca7312c78169495479685",
+    "lastHarvestedAt": "2026-10-27T21:01:37.511Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

@@ -5548,3 +5548,7 @@ Every entry in this ledger must capture:
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `5ad37a73` | Multi-dimensional audit evidence | 2026-10-27T20:52:54.924Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `45e9cfeb` | Multi-dimensional audit evidence | 2026-10-27T20:53:00.487Z |
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `32c88c86` | Multi-dimensional audit evidence | 2026-10-27T20:54:51.689Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-10-27T21:01:37.511Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `a38f4c6c` | Multi-dimensional audit evidence | 2026-10-27T21:01:37.915Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `b396bd00` | Multi-dimensional audit evidence | 2026-10-27T21:01:37.974Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `aca78520` | Multi-dimensional audit evidence | 2026-10-27T21:01:44.951Z |

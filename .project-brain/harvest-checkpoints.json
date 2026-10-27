@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:54:51.699Z",
+  "last_updated": "2026-10-27T21:01:44.960Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "9859e3d3612ddd621aaa047df5d7ba0ef3985b7cfd8588ddbaa572152f708649",
-      "verified_at": "2026-10-26T18:12:34.592Z",
+      "content_hash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
+      "verified_at": "2026-10-27T21:01:44.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:12:34.592Z"
+      "last_updated": "2026-10-27T21:01:44.959Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "340f6205ca1f05a2eaf0fe3187b03dcf35b8ef2de4c0ba5d333013e78cb74cdb",
-      "verified_at": "2026-10-25T07:22:25.519Z",
+      "content_hash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
+      "verified_at": "2026-10-27T21:01:37.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:22:25.519Z"
+      "last_updated": "2026-10-27T21:01:37.982Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "41071bc2595239251c0e5d21ef6ba8ebfe09f8257de87bde97a0eda6e22ae87a",
-      "verified_at": "2026-10-22T16:38:47.370Z",
+      "content_hash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
+      "verified_at": "2026-10-27T21:01:37.924Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:38:47.370Z"
+      "last_updated": "2026-10-27T21:01:37.924Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -15966,14 +15966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "content_hash": "1dc52e5ce251204ea3eb1e51bc78cde4660f89ba7fb2e6569fc31fe5f4e82240",
-      "verified_at": "2026-10-24T19:58:38.909Z",
+      "content_hash": "3d0d6628c7c6f11878482254bf62d64dbc6d3634fffca7312c78169495479685",
+      "verified_at": "2026-10-27T21:01:37.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:58:38.909Z"
+      "last_updated": "2026-10-27T21:01:37.521Z"
     },
     "lokoe-mehdi/scouter": {
       "repository": "lokoe-mehdi/scouter",

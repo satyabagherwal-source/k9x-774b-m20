@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T20:54:51.695Z",
-  "total_cycles_completed": 5516,
-  "total_learnings_persisted": 5516,
-  "total_rules_promoted": 4916,
+  "last_updated": "2026-10-27T21:01:44.956Z",
+  "total_cycles_completed": 5520,
+  "total_learnings_persisted": 5520,
+  "total_rules_promoted": 4922,
   "history": [
-    {
-      "timestamp": "2026-10-27T13:41:01.657Z",
-      "repository": "Open-Source-Legal/OpenContracts",
-      "learningId": "learn-github-open-source-legal-opencontracts",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:48:09.296Z",
-      "repository": "taiga-family/taiga-ui",
-      "learningId": "learn-github-taiga-family-taiga-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:48:12.309Z",
-      "repository": "aio-libs/aiohttp",
-      "learningId": "learn-github-aio-libs-aiohttp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T13:48:15.334Z",
-      "repository": "streetwriters/notesnook",
-      "learningId": "learn-github-streetwriters-notesnook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T13:54:21.467Z",
       "repository": "dockview/dockview",
@@ -1403,6 +1375,34 @@
       "repository": "microsoft/fluentui",
       "learningId": "learn-github-microsoft-fluentui",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:01:37.517Z",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:01:37.921Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:01:37.979Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:01:44.956Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

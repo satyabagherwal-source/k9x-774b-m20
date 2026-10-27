@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-Z1L8",
-    "timestamp": "2026-10-25T23:39:19.628Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "f5c52edb5942deb0b331b20917bbddd088d21d2d8a02bf11cdc569abe930a0f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-Z6U8",
-    "timestamp": "2026-10-25T23:39:26.432Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "33d9989c180e7a1e82630d10e43b84a865b0f02580560122ec837ba31ed8fa2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7GOA",
-    "timestamp": "2026-10-25T23:45:52.426Z",
-    "repository": "SimonSchubert/Kai",
-    "learningId": "learn-github-simonschubert-kai",
-    "contentHash": "a6d17f1f99036502cabdcbfa78830a67ccd25a6005c276dc8bcc95e988ffc5bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-7L3H",
-    "timestamp": "2026-10-25T23:45:58.157Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "c463c737dbf59fb4ce862e436a2f8e989f273123d08ca0003ab138132e093613",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-H4E4",
     "timestamp": "2026-10-25T23:53:23.068Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7492,6 +7432,66 @@
     "contentHash": "ade7d1e2b030cd8d23f5898c67973d56f8b55400b41d5c4b657db4c4df58fac6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7XWK",
+    "timestamp": "2026-10-27T21:01:37.508Z",
+    "repository": "ornith-ai/Ornith-1.5-122B",
+    "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+    "contentHash": "3d0d6628c7c6f11878482254bf62d64dbc6d3634fffca7312c78169495479685",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7Y7R",
+    "timestamp": "2026-10-27T21:01:37.911Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7Y9E",
+    "timestamp": "2026-10-27T21:01:37.970Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "d74e8b5090e398011f2026f94a86aa80c98fb5e04d7d9771d59b47d0cbee2950",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-83N7",
+    "timestamp": "2026-10-27T21:01:44.947Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "24f5f8ab3087723efbbf775ae4e23fac2ebc3ecd11bfbf33faebbd4557996a82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
