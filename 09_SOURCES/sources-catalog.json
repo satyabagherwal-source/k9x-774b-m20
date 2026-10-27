@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "1805a79d",
+    "sourceVersion": "7d4fd1fa",
     "license": "Apache-2.0",
-    "contentHash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
-    "lastHarvestedAt": "2026-10-25T12:32:01.290Z",
+    "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
+    "lastHarvestedAt": "2026-10-27T14:36:39.135Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
-    "lastHarvestedAt": "2026-10-22T21:47:59.901Z",
+    "contentHash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
+    "lastHarvestedAt": "2026-10-27T14:36:28.538Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {

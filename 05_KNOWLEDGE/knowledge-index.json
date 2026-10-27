@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:33:25.954Z",
+  "last_updated": "2026-10-27T14:36:39.085Z",
   "total_verified_learnings": 1132,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -696,8 +696,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "1805a79d",
-      "content_hash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
+      "source_version": "7d4fd1fa",
+      "content_hash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -715,6 +715,11 @@
           "number": 3272,
           "title": "sdk/python): stop retrying permanent status callbacks (#1109)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4854,
+          "title": "control-plane): return 503 for transient storage errors during DID resolution (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -722,7 +727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:32:01.203Z",
+      "verified_at": "2026-10-27T14:36:39.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -117565,7 +117570,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/flint-GGUF",
       "source_version": "hf-unsloth-flint-gguf",
-      "content_hash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
+      "content_hash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
       "promoted_rules": [
@@ -117585,7 +117590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:47:59.858Z",
+      "verified_at": "2026-10-27T14:36:28.478Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134960,6 +134965,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:33:25.937Z"
+    },
+    "rule-4854": {
+      "learning_id": "rule-4854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4854,
+      "title": "control-plane): return 503 for transient storage errors during DID resolution (#",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "7d4fd1fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:36:39.074Z"
     }
   },
   "aliases": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:33:26.030Z",
-  "total_cycles_completed": 5356,
-  "total_learnings_persisted": 5356,
-  "total_rules_promoted": 4760,
+  "last_updated": "2026-10-27T14:36:39.140Z",
+  "total_cycles_completed": 5358,
+  "total_learnings_persisted": 5358,
+  "total_rules_promoted": 4761,
   "history": [
-    {
-      "timestamp": "2026-10-26T18:12:34.589Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T18:12:35.371Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T18:19:11.759Z",
       "repository": "bitnami/sealed-secrets",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T14:33:26.030Z",
       "repository": "NirDiamant/RAG_Techniques",
       "learningId": "learn-github-nirdiamant-rag_techniques",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:36:28.543Z",
+      "repository": "unsloth/flint-GGUF",
+      "learningId": "learn-huggingface-unsloth-flint-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:36:39.140Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

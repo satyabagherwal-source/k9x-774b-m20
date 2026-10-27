@@ -1927,8 +1927,8 @@
     "officialUrl": "https://github.com/influxdata/influxdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-26T00:32:42.440Z",
-    "lastVerified": "2026-10-26T00:32:42.440Z",
+    "lastChecked": "2026-10-27T14:36:37.893Z",
+    "lastVerified": "2026-10-27T14:36:37.893Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-influxdata-influxdb",
@@ -5200,12 +5200,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "invertase-react-native-firebase": {
-    "name": "invertase/react-native-firebase",
+    "name": "react-native-firebase",
     "officialUrl": "https://github.com/invertase/react-native-firebase",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-24T19:34:58.737Z",
-    "lastVerified": "2026-10-24T19:34:58.737Z",
+    "lastChecked": "2026-10-27T14:36:30.335Z",
+    "lastVerified": "2026-10-27T14:36:30.335Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-invertase-react-native-firebase",
@@ -5214,7 +5214,8 @@
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c65e1ee3"
   },
   "wix-detox": {
     "name": "Detox",
@@ -8126,22 +8127,21 @@
     "revisionIdentifier": "b1301b09"
   },
   "agent-field-agentfield": {
-    "name": "agentfield",
+    "name": "Agent-Field/agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-26T01:37:18.218Z",
-    "lastVerified": "2026-10-26T01:37:18.219Z",
+    "lastChecked": "2026-10-27T14:36:38.773Z",
+    "lastVerified": "2026-10-27T14:36:38.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "6fdc7cfbf7bb5e1752e39bae7341f16571407031baf71f75b95bcaa48453e1b6",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1805a79d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubeshop-botkube": {
     "name": "botkube",
@@ -10839,8 +10839,8 @@
     "officialUrl": "https://github.com/graphprotocol/graph-node",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-25T20:43:02.613Z",
-    "lastVerified": "2026-10-25T20:43:02.613Z",
+    "lastChecked": "2026-10-27T14:36:25.293Z",
+    "lastVerified": "2026-10-27T14:36:25.293Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-graphprotocol-graph-node",
@@ -21866,12 +21866,12 @@
     "revisionIdentifier": "d8bc862d"
   },
   "mantinedev-mantine": {
-    "name": "mantinedev/mantine",
+    "name": "mantine",
     "officialUrl": "https://github.com/mantinedev/mantine",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-26T00:24:40.844Z",
-    "lastVerified": "2026-10-26T00:24:40.844Z",
+    "lastChecked": "2026-10-27T14:36:22.795Z",
+    "lastVerified": "2026-10-27T14:36:22.795Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mantinedev-mantine",
@@ -21880,7 +21880,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1d8c524f"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
@@ -22305,12 +22306,12 @@
     "revisionIdentifier": "ca4d588f"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-27T12:50:25.885Z",
-    "lastVerified": "2026-10-27T12:50:25.885Z",
+    "lastChecked": "2026-10-27T14:36:35.325Z",
+    "lastVerified": "2026-10-27T14:36:35.325Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -22319,7 +22320,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ce76ea8f"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -27444,8 +27446,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-27T14:33:28.588Z",
-    "lastVerified": "2026-10-27T14:33:28.588Z",
+    "lastChecked": "2026-10-27T14:36:41.676Z",
+    "lastVerified": "2026-10-27T14:36:41.676Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -28268,13 +28270,13 @@
     "officialUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-22T21:47:50.887Z",
-    "lastVerified": "2026-10-22T21:47:50.887Z",
+    "lastChecked": "2026-10-27T14:36:27.670Z",
+    "lastVerified": "2026-10-27T14:36:27.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "e5303460f8da6d7fb543f6560c0142877cc13066a5cb55195c2025bcb3c286a6",
-    "promotedRulesCount": 2,
+    "contentHash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

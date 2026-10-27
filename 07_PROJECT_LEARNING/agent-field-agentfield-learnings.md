@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `1805a79d`  
+> **Source Version**: `7d4fd1fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:32:01.103Z  
+> **Timestamp**: 2026-10-27T14:36:38.780Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:32:00.604Z  
+> **Harvest Timestamp**: 2026-10-27T14:36:38.773Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2620 stars
+- **Stars / Engagement**: 2624 stars
 
 ---
 
@@ -1418,187 +1418,1072 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1805a79d` (2026-10-24)
-**Commit Message**: chore(release): v0.1.143 [skip ci]
+### Incident Patch 1: `7306a0eb` (2026-10-27)
+**Commit Message**: fix(control-plane): return 503 for transient storage errors during DID resolution (#1087) (#1124)
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+ResolveDID collapsed any GetDIDDocument error into a notFound resolution
+result with a nil error, so a genuine missing DID and a transient DB
+failure were indistinguishable. Both flowed through VerifyDIDOwnership
+and the DID auth middleware as a 401. Since #1081 the Go SDK treats 401
+as non-retryable, so a momentary storage blip now drops the status
+callback instead of being retried away.
+
+- storage: add ErrDIDDocumentNotFound sentinel and wrap sql.ErrNoRows
+  with it in GetDIDDocument (message is unchanged, so no string-match
+  breakage).
+- services: ResolveDID maps to notFound only for ErrDIDDocumentNotFound;
+  any other storage error propagates wrapped in a new retryable
+  ErrDIDResolutionUnavailable sentinel. IsDIDRevoked uses errors.Is
+  against the same sentinel instead of brittle string matching.
+- middleware: return 503 (did_resolution_unavailable) when verification
+  fails with ErrDIDResolutionUnavailable, otherwise keep the existing
+  401.
+
+Genuine not-found, revoked, invalid-document and signature-verification
+failures still return 401; only transient storage errors become 
+
+**File**: `control-plane/internal/server/middleware/did_auth.go` (modified, +10/-0)
 ```diff
-@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+@@ -6,6 +6,7 @@ import (
+ 	"crypto/sha256"
+ 	"encoding/base64"
+ 	"encoding/hex"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -15,6 +16,7 @@ import (
+ 	"time"
  
- <!-- changelog:entries -->
+ 	"github.com/Agent-Field/agentfield/control-plane/internal/logger"
++	"github.com/Agent-Field/agentfield/control-plane/internal/services"
+ 	"github.com/gin-gonic/gin"
+ )
  
-+## [0.1.143] - 2026-10-24
+@@ -281,6 +283,14 @@ func DIDAuthMiddleware(didService DIDWebServiceInterface, config DIDAuthConfig)
+ 		)
+ 
+ 		if err != nil {
++			if errors.Is(err, services.ErrDIDResolutionUnavailable) {
++				logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID resolution temporarily unavailable")
++				c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
++					"error":   "did_resolution_unavailable",
++					"message": "DID resolution is temporarily unavailable, retry shortly",
++				})
++				return
++			}
+ 			logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID signature verification error")
+ 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+ 				"error":   "verification_error",
+```
+
+**File**: `control-plane/internal/server/middleware/did_auth_test.go` (modified, +24/-0)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/Agent-Field/agentfield/control-plane/internal/services"
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/stretchr/testify/assert"
+ )
+@@ -202,6 +203,29 @@ func TestDIDAuth_VerificationError(t *testing.T) {
+ 	assert.Contains(t, w.Body.String(), "verification_error")
+ }
+ 
++func TestDIDAuth_TransientResolutionError(t *testing.T) {
++	resetReplayCache()
++	svc := &mockDIDService{
++		verifyFunc: func(_ context.Context, _ string, _ []byte, _ []byte) (bool, error) {
++			// A transient storage failure during resolution surfaces as the
++			// retryable sentinel rather than a plain verification failure.
++			return false, fmt.Errorf("failed to resolve DID: %w", services.ErrDIDResolutionUnavailable)
++		},
++	}
++	router := newDIDAuthRouter(svc, DIDAuthConfig{Enabled: true})
 +
- ## [0.1.143-rc.5] - 2026-10-24
++	req := httptest.NewRequest(http.MethodPost, "/execute/agent.func", strings.NewReader("{}"))
++	req.Header.Set("X-Caller-DID", "did:web:example.com:agents:test")
++	req.Header.Set("X-DID-Signature", uniqueSig())
++	req.Header.Set("X-DID-Timestamp", fmt.Sprintf("%d", time.Now().Unix()))
++	w := httptest.NewRecorder()
++	router.ServeHTTP(w, req)
++
++	// Transient storage errors must be retryable, not reported as auth failure.
++	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
++	assert.Contains(t, w.Body.String(), "did_resolution_unavailable")
++}
++
+ func TestDIDAuth_InvalidSignature(t *testing.T) {
+ 	resetReplayCache()
+ 	svc := &mockDIDService{
+```
+
+**File**: `control-plane/internal/services/did_web_service.go` (modified, +22/-9)
+```diff
+@@ -5,14 +5,22 @@ import (
+ 	"crypto/ed25519"
+ 	"encoding/base64"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"strings"
+ 	"time"
  
+ 	"github.com/Agent-Field/agentfield/control-plane/internal/logger"
++	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
+ 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
+ )
  
-```
-
-**File**: `VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--0.1.143-rc.5
-+0.1.143
-```
-
-**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@ module {{.GoModule}}
++// ErrDIDResolutionUnavailable indicates a DID could not be resolved because of
++// a transient storage failure rather than a genuine missing or revoked record.
++// Callers (e.g. the DID auth middleware) should treat it as retryable and
++// return a 503 instead of a 401.
++var ErrDIDResolutionUnavailable = errors.New("DID resolution temporarily unavailable")
++
+ // DIDWebService handles did:web generation, storage, and resolution.
+ type DIDWebService struct {
+ 	domain     string
+@@ -129,11 +137,17 @@ func (s *DIDWebService) ResolveDID(ctx context.Context, did string) (*types.DIDR
+ 	// Get the DID document record
+ 	record, err := s.storage.GetDIDDocument(ctx, did)
+ 	if err != nil {
+-		return &types.DIDResolutionResult{
+-			DIDResolutionMetadata: types.DIDResolutionMetadata{
+-				Error: "notFound",
+-			},
+-		}, nil
++		// A genuine missing record resolves to "notFound"; any other storage
++		// failure is transient and must propagate so callers can retry rather
++		// than mistake a DB blip for an unknown DID.
++		if errors.Is(err, storage.ErrDIDDocumentNotFound) {
++			return &types.DIDResolutionResult{
++				DIDResolutionMetadata: types.DIDResolutionMetadata{
++					Error: "notFound",
++				},
++			}, nil
++		}
++		return nil, fmt.Errorf("%w: %w", ErrDIDResolutionUnavailable, err)
+ 	}
  
- go 1.23
+ 	// Check if revoked
+@@ -195,10 +209,9 @@ func (s *DIDWebService) RevokeDID(ctx context.Context, did string) error {
+ func (s *DIDWebService) IsDIDRevoked(ctx context.Context, did string) bool {
+ 	record, err := s.storage.GetDIDDocument(ctx, did)
+ 	if err != nil {
+-		// Check if this is a "not found" error vs a real storage failure.
+-		// Not found means the DID was never registered — treat as not revoked.
+-		// Any other error (DB timeout, connection failure) — fail closed.
+-		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
++		// Not found means the DID was never registered - treat as not revoked.
++		// Any other error (DB timeout, connection failure) - fail closed.
++		if errors.Is(err, storage.ErrDIDDocumentNotFound) {
+ 			return false
+ 		}
+ 		logger.Logger.Warn().Err(err).Str("did", did).Msg("Storage error checking DID revocation, failing closed")
+```
+
+**File**: `control-plane/internal/services/did_web_service_additional_test.go` (modified, +15/-3)
+```diff
+@@ -7,9 +7,11 @@ import (
+ 	"encoding/base64"
+ 	"encoding/json"
+ 	"errors"
++	"fmt"
+ 	"testing"
+ 	"time"
  
--require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.5
-+require github.com/Agent-Field/agentfield/sdk/go v0.1.143
++	storagepkg "github.com/Agent-Field/agentfield/control-plane/internal/storage"
+ 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -73,7 +75,7 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
+ 		require.Equal(t, "example.com", service.GetDomain())
+ 	})
+ 
+-	t.Run("storage failures and malformed payloads return DID resolution metadata", func(t *testing.T) {
++	t.Run("genuine missing, revoked and malformed records map to resolution metadata; transient errors propagate", func(t *testing.T) {
+ 		now := time.Now().UTC()
+ 		service := NewDIDWebService("example.com", nil, &didWebStorageWithErrors{
+ 			didWebStorageStub: didWebStorageStub{
+@@ -95,7 +97,10 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
+ 					},
+ 				},
+ 				errByDID: map[string]error{
+-					"did:web:example.com:agents:missing": errors.New("not found"),
++					// A genuine missing record surfaces the storage not-found sentinel.
++					"did:web:example.com:agents:missing": fmt.Errorf("%w: did:web:example.com:agents:missing", storagepkg.ErrDIDDocumentNotFound),
++					// A transient failure is a different, non-sentinel error.
++					"did:web:example.com:agents:flaky": errors.New("connection reset by peer"),
+ 				},
+ 			},
+ 		})
+@@ -104,6 +109,13 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
+ 		require.NoError(t, err)
+ 		require.Equal(t, "notFound", missing.DIDResolutionMetadata.Error)
+ 
++		// Transient storage errors must not be masked as notFound; they propagate
++		// as a retryable resolution error so the middleware can answer 503.
++		flaky, err := service.ResolveDID(context.Background(), "did:web:example.com:agents:flaky")
++		require.Error(t, err)
++		require.Nil(t, flaky)
++		require.ErrorIs(t, err, ErrDIDResolutionUnavailable)
++
+ 		revoked, err := service.ResolveDID(context.Background(), "did:web:example.com:agents:revoked")
+ 		require.NoError(t, err)
+ 		require.Equal(t, "deactivated", revoked.DIDResolutionMetadata.Error)
+@@ -184,7 +196,7 @@ func TestDIDWebServiceGetOrCreateAndRevocationPaths(t *testing.T) {
+ 					},
+ 				},
+ 				errByDID: map[string]error{
+-					"did:web:example.com:agents:missing": errors.New("not found"),
++					"did:web:example.com:agents:missing": fmt.Errorf("%w: did:web:example.com:agents:missing", storagepkg.ErrDIDDocumentNotFound),
+ 					"did:web:example.com:agents:error":   errors.New("database unavailable"),
+ 				},
+ 			},
 ```
 
-**File**: `control-plane/internal/templates/python/requirements.txt.tmpl` (modified, +1/-1)
+**File**: `control-plane/internal/services/did_web_service_test.go` (modified, +4/-3)
 ```diff
-@@ -1 +1 @@
--agentfield>=0.1.142
-+agentfield>=0.1.143
+@@ -5,9 +5,10 @@ package services
+ 
+ import (
+ 	"context"
+-	"errors"
++	"fmt"
+ 	"testing"
+ 
++	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
+ 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -32,7 +33,7 @@ func (s *didWebStorageStub) GetDIDDocument(_ context.Context, did string) (*type
+ 	if record, ok := s.docsByDID[did]; ok {
+ 		return record, nil
+ 	}
+-	return nil, errors.New("not found")
++	return nil, fmt.Errorf("%w: %s", storage.ErrDIDDocumentNotFound, did)
+ }
+ 
+ func (s *didWebStorageStub) GetDIDDocumentByAgentID(_ context.Context, agentID string) (*types.DIDDocumentRecord, error) {
+@@ -41,7 +42,7 @@ func (s *didWebStorageStub) GetDIDDocumentByAgentID(_ context.Context, agentID s
+ 			return record, nil
+ 		}
+ 	}
+-	return nil, errors.New("not found")
++	return nil, fmt.Errorf("%w: %s", storage.ErrDIDDocumentNotFound, agentID)
+ }
+ 
+ func (s *didWebStorageStub) RevokeDIDDocument(_ context.Context, _ string) error {
 ```
 
-**File**: `control-plane/internal/templates/typescript/package.json.tmpl` (modified, +1/-1)
+**File**: `control-plane/internal/storage/local_did.go` (modified, +5/-0)
 ```diff
-@@ -9,7 +9,7 @@
-     "lint": "tsc --noEmit"
-   },
-   "dependencies": {
--    "@agentfield/sdk": "^0.1.142",
-+    "@agentfield/sdk": "^0.1.143",
-     "dotenv": "^16.4.5",
-     "zod": "^3.22.4"
-   },
+@@ -24,6 +24,11 @@ var ErrDIDAllocationConflict = errors.New("DID allocation conflict")
+ // ErrDIDNodeAlreadyRegistered means another active identity owns the node or component name.
+ var ErrDIDNodeAlreadyRegistered = errors.New("DID node or component already registered")
+ 
++// ErrDIDDocumentNotFound means no DID document exists for the requested DID.
++// It lets callers distinguish a genuine missing record from a transient
++// storage failure, so a momentary DB error is not reported as "not found".
++var ErrDIDDocumentNotFound = errors.New("DID document not found")
++
+ const didPostgresLockTimeout = "15s"
+ 
+ func isSQLiteContention(err error) bool {
 ```
 
-**File**: `examples/python_agent_nodes/agentic_rag/requirements.txt` (modified, +1/-1)
+**File**: `control-plane/internal/storage/local_events.go` (modified, +1/-1)
 ```diff
-@@ -1,3 +1,3 @@
--agentfield>=0.1.142
-+agentfield>=0.1.143
- fastembed>=0.2.0
- numpy>=1.24.0
-```
-
-**File**: `examples/python_agent_nodes/documentation_chatbot/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
- fastembed>=0.3.4
- pydantic>=2.7.4
--agentfield>=0.1.142
-+agentfield>=0.1.143
- httpx>=0.27.0
-```
-
-**File**: `examples/python_agent_nodes/hello_world_rag/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
--agentfield>=0.1.142
-+agentfield>=0.1.143
- fastembed>=0.2.0
+@@ -743,7 +743,7 @@ func (ls *LocalStorage) GetDIDDocument(ctx context.Context, did string) (*types.
+ 	)
+ 	if err != nil {
+ 		if err == sql.ErrNoRows {
+-			return nil, fmt.Errorf("DID document not found: %s", did)
++			return nil, fmt.Errorf("%w: %s", ErrDIDDocumentNotFound, did)
+ 		}
+ 		return nil, fmt.Errorf("failed to get DID document: %w", err)
+ 	}
 ```
 
 ---
 
-### Incident Patch 2: `dbb394aa` (2026-10-24)
-**Commit Message**: chore(release): v0.1.143-rc.5 [skip ci]
+### Incident Patch 2: `d26f52da` (2026-10-27)
+**Commit Message**: fix(sdk): log the CodeAF missing-key warning once, and count the harness config's env (#1132)
 
-**File**: `CHANGELOG.md` (modified, +13/-0)
+Agent construction and call-time refusal now share one warning per process in the Python, Go and TypeScript SDKs, and the construction check reads the same effective environment the harness calls use (the process environment overlaid with the harness config's env map). This removes the double warning for keyless agents, the false warning when the key is only in the config's env, and the missed warning when that env blanks a process key. Refusals and keyed calls are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `control-plane/internal/skillkit/skill_data/agentfield/references/primitives-snapshot.md` (modified, +5/-3)
 ```diff
-@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+@@ -200,9 +200,11 @@ Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUT
+ The check honors per-call environment overrides, compatible `OPENAI_API_KEY`
+ credentials (an `sk-or-` key or a custom base URL), saved profile `api_key` or
+ `model_sources`, and connected-provider credential files. Unreadable/malformed
+-profiles permit execution conservatively. Refusal warns once per process; an
+-Agent with an explicit harness config resolving to CodeAF also warns once at
+-construction without failing. Legacy aforge pins are unchanged.
++profiles permit execution conservatively. The warning is logged once per process —
++at construction for an Agent with a CodeAF harness config and no key (counting
++the config's `env`), otherwise at the first refused call. Construction never
++fails; every refused call still fails with the not-configured error. Legacy
++aforge pins are unchanged.
  
- <!-- changelog:entries -->
- 
-+## [0.1.143-rc.5] - 2026-10-24
-+
-+
-+### Other
-+
-+- Make CodeAF the default harness, installed automatically with AgentField (#1128)
-+
-+CodeAF (the renamed aforge-v2) becomes the default harness in the Python, Go and TypeScript SDKs. A provider-less harness call runs `codeaf exec --json` headless. CodeAF v0.8.2 is pinned and sha256-verified, and it is installed by install.sh/install.ps1, desktop launch, af skill install, af install, the agent and cloud images, `af codeaf ensure`, and a lazy first-call download in each SDK.
-+
-+`provider="aforge"` is an alias that runs CodeAF. Legacy pins (AFORGE_BIN, aforge_bin, aforgeBin, Go BinPath) keep the original aforge adapter, and AGENTFIELD_AFORGE_COMMAND / AFORGE_MODEL are honored as fallbacks.
-+
-+Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com> (647e31c)
-+
- ## [0.1.143-rc.4] - 2026-10-20
- 
+ **Harness availability gate** — DO NOT use unless ALL true:
  
 ```
 
-**File**: `VERSION` (modified, +1/-1)
+**File**: `docs/harness-providers.md` (modified, +4/-3)
 ```diff
-@@ -1 +1 @@
--0.1.143-rc.4
-+0.1.143-rc.5
+@@ -57,9 +57,10 @@ Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUT
+ The error remains catchable as the SDK's unavailable-provider error (Python and
+ TypeScript expose `HarnessProviderNotConfigured`; Go uses
+ `ProviderUnavailableError` with `NotConfigured: true`). It identifies `codeaf`
+-and lists `OPENROUTER_API_KEY` as missing. Refused calls log a warning once per
+-process. An Agent with an explicit harness config resolving to CodeAF also warns
+-once at construction; construction continues normally.
++and lists `OPENROUTER_API_KEY` as missing. The warning is logged once per process —
++at construction for an Agent with a CodeAF harness config and no key (counting
++the config's `env`), otherwise at the first refused call. Construction continues
++normally; every refused call still fails with the not-configured error.
+ 
+ The check uses the effective child environment, including per-call `env`
+ overrides and the SDK's default `CODEAF_HOME`. It accepts `OPENROUTER_API_KEY`,
 ```
 
-**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
+**File**: `sdk/codeaf-auth-contract.json` (modified, +1/-1)
 ```diff
-@@ -2,4 +2,4 @@ module {{.GoModule}}
- 
- go 1.23
- 
--require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.4
-+require github.com/Agent-Field/agentfield/sdk/go v0.1.143-rc.5
-```
-
-**File**: `sdk/python/agentfield/__init__.py` (modified, +1/-1)
-```diff
-@@ -195,4 +195,4 @@
-     "reasoner",
- ]
- 
--__version__ = "0.1.143-rc.4"
-+__version__ = "0.1.143-rc.5"
-```
-
-**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
- 
- [project]
- name = "agentfield"
--version = "0.1.143-rc.4"
-+version = "0.1.143-rc.5"
- description = "Python SDK for the AgentField control plane"
- readme = "README.md"
- license = {text = "Apache-2.0"}
-```
-
-**File**: `sdk/python/uv.lock` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ resolution-markers = [
- 
- [[package]]
- name = "agentfield"
--version = "0.1.143rc4"
-+version = "0.1.143rc5"
- source = { editable = "." }
- dependencies = [
-     { name = "aiohttp" },
-```
-
-**File**: `sdk/typescript/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
+@@ -1,5 +1,5 @@
  {
-   "name": "@agentfield/sdk",
--  "version": "0.1.143-rc.4",
-+  "version": "0.1.143-rc.5",
-   "description": "AgentField TypeScript SDK",
-   "type": "module",
-   "main": "dist/index.js",
+-  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: the first refusal in a process logs the warning once. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns once at construction when no credential is visible. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
++  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: a process logs the warning at most once in total — at Agent construction or at the first refusal, whichever comes first; every refused call still fails with the not-configured error. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns at construction when the effective environment its harness calls will use (the process environment overlaid with the config's env map) has no credential; construction never fails. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
+   "refusal": "Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
+   "warning": "CodeAF is the harness provider and no model key is configured, so harness calls will fail. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
+   "cases": [
+```
+
+**File**: `sdk/go/agent/harness.go` (modified, +2/-5)
+```diff
+@@ -2,20 +2,17 @@ package agent
+ 
+ import (
+ 	"context"
+-	"sync"
+ 
+ 	"github.com/Agent-Field/agentfield/sdk/go/harness"
+ )
+ 
+-var codeAFConfigWarning sync.Once
+-
+ func warnCodeAFConfiguration(cfg Config) {
+ 	if cfg.HarnessConfig == nil {
+ 		return
+ 	}
+ 	provider, _ := harness.BuildProvider(cfg.HarnessConfig.Provider, cfg.HarnessConfig.BinPath)
+-	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{}) {
+-		codeAFConfigWarning.Do(func() { cfg.Logger.Print("WARNING " + harness.CodeAFMissingKeyWarning) })
++	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{Env: cfg.HarnessConfig.Env}) {
++		harness.WarnCodeAFMissingKeyOnce(func(message string) { cfg.Logger.Print("WARNING " + message) })
+ 	}
+ }
+ 
+```
+
+**File**: `sdk/go/agent/harness_auth_test.go` (modified, +200/-18)
+```diff
+@@ -2,25 +2,93 @@ package agent
+ 
+ import (
+ 	"bytes"
++	"context"
+ 	"encoding/json"
++	"errors"
++	"fmt"
+ 	"log"
++	"net/http"
+ 	"os"
++	"os/exec"
+ 	"path/filepath"
++	"regexp"
+ 	"strings"
+-	"sync"
+ 	"testing"
+ 
++	"github.com/Agent-Field/agentfield/sdk/go/harness"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+-func TestCodeAFK6ConstructionWarning(t *testing.T) {
++type codeAFAgentAuthContract struct {
++	Warning string `json:"warning"`
++	Refusal string `json:"refusal"`
++	Cases   []struct {
++		Name    string             `json:"name"`
++		Allow   bool               `json:"allow"`
++		Env     map[string]string  `json:"env"`
++		Overlay map[string]string  `json:"overlay"`
++		Files   map[string]*string `json:"files"`
++	} `json:"cases"`
++}
++
++func readCodeAFAgentAuthContract(t *testing.T) codeAFAgentAuthContract {
++	t.Helper()
+ 	data, err := os.ReadFile("../../codeaf-auth-contract.json")
+ 	require.NoError(t, err)
+-	var contract struct {
+-		Warning string `json:"warning"`
+-	}
++	var contract codeAFAgentAuthContract
+ 	require.NoError(t, json.Unmarshal(data, &contract))
++	return contract
++}
++
++// A fresh process gives each Agent test an unspent harness warning budget
++// without exporting a production API solely to reset sync.Once in tests.
++func runCodeAFAuthInFreshProcess(t *testing.T) bool {
++	t.Helper()
++	if os.Getenv("AGENTFIELD_TEST_CODEAF_AUTH_PROCESS") == t.Name() {
++		return false
++	}
++	command := exec.Command(os.Args[0], "-test.run=^"+regexp.QuoteMeta(t.Name())+"$", "-test.count=1")
++	command.Env = append(os.Environ(), "AGENTFIELD_TEST_CODEAF_AUTH_PROCESS="+t.Name())
++	output, err := command.CombinedOutput()
++	require.NoError(t, err, "%s", output)
++	return true
++}
++
++type codeAFAgentNoDownload struct{ t *testing.T }
++
++func (transport codeAFAgentNoDownload) RoundTrip(*http.Request) (*http.Response, error) {
++	transport.t.Error("download attempted")
++	return nil, errors.New("downloads forbidden by CodeAF auth tests")
++}
++
++func isolateCodeAFAgentAuth(t *testing.T) (string, *bytes.Buffer) {
++	t.Helper()
++	for _, entry := range os.Environ() {
++		key, _, _ := strings.Cut(entry, "=")
++		if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
++			t.Setenv(key, "")
++			require.NoError(t, os.Unsetenv(key))
++		}
++	}
++	directory := t.TempDir()
++	t.Setenv("HOME", filepath.Join(directory, "home"))
++	t.Setenv("PATH", directory)
++	t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
++	t.Setenv("CODEAF_TELEMETRY", "off")
++	var output bytes.Buffer
++	previousWriter, previousTransport := log.Writer(), http.DefaultTransport
++	log.SetOutput(&output)
++	http.DefaultTransport = codeAFAgentNoDownload{t}
++	t.Cleanup(func() {
++		log.SetOutput(previousWriter)
++		http.DefaultTransport = previousTransport
++	})
++	return directory, &output
++}
++
++func TestCodeAFK6ConstructionWarning(t *testing.T) {
++	contract := readCodeAFAgentAuthContract(t)
+ 	for _, tc := range []struct {
+ 		name, provider, envProvider, key string
+ 		configured, legacy, warn         bool
+@@ -36,25 +104,16 @@ func TestCodeAFK6ConstructionWarning(t *testing.T) {
+ 		{name: "env-other", envProvider: "claude-code", configured: true},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			for _, entry := range os.Environ() {
+-				key, _, _ := strings.Cut(entry, "=")
+-				if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
+-					t.Setenv(key, "")
+-					require.NoError(t, os.Unsetenv(key))
+-				}
++			if runCodeAFAuthInFreshProcess(t) {
++				return
+ 			}
+-			directory := t.TempDir()
+-			t.Setenv("HOME", filepath.Join(directory, "home"))
+-			t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
+-			t.Setenv("CODEAF_TELEMETRY", "off")
++			_, output := isolateCodeAFAgentAuth(t)
+ 			t.Setenv("OPENROUTER_API_KEY", tc.key)
+ 			t.Setenv("AGENTFIELD_HARNESS_PROVIDER", tc.envProvider)
+ 			if tc.legacy {
+ 				t.Setenv("AFORGE_BIN", "/fake/legacy")
+ 			}
+-			codeAFConfigWarning = sync.Once{}
+-			var output bytes.Buffer
+-			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(&output, "", 0)}
++			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(output, "", 0)}
+ 			if tc.configured {
+ 				cfg.HarnessConfig = &HarnessConfig{Provider: tc.provider}
+ 			}
+@@ -70,3 +129,126 @@ func TestCodeAFK6ConstructionWarning(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func codeAFAgentFakeBinary(t *testing.T, directory string) (string, string) {
++	t.Helper()
++	binary, marker := filepath.Join(directory, "fake-codeaf"), filepath.Join(directory, "ran")
++	require.NoError(t, os.WriteFile(binary, []byte(fmt.Sprintf("#!/bin/sh\n/bin/cat >/dev/null\nprintf ran > '%s'\nprintf '%%s\\n' '{\"ok\":true,\"stop\":\"done\",\"answer\":\"answer\"}'\n", marker)), 0o755))
++	return binary, marker
++}
++
++func TestCodeAFW1SharedP
+```
+
+**File**: `sdk/go/harness/codeaf.go` (modified, +7/-1)
+```diff
+@@ -34,6 +34,12 @@ var (
+ 	codeAFMissingKeyOnce sync.Once
+ )
+ 
++// WarnCodeAFMissingKeyOnce shares one process-wide warning budget between Agent
++// construction and refused calls, using the caller's warning logger.
++func WarnCodeAFMissingKeyOnce(warn func(string)) {
++	codeAFMissingKeyOnce.Do(func() { warn(CodeAFMissingKeyWarning) })
++}
++
+ // CodeAFProvider invokes CodeAF's canonical headless exec or do protocol.
+ // Binary discovery and managed installation happen lazily on first execution.
+ // When CodeAF is unavailable it can delegate to the unchanged legacy adapter.
+@@ -274,7 +280,7 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
+ 		override = options.BinPath
+ 	}
+ 	if !CodeAFHasCredentials(options) {
+-		codeAFMissingKeyOnce.Do(func() { log.Print("WARNING " + CodeAFMissingKeyWarning) })
++		WarnCodeAFMissingKeyOnce(func(message string) { log.Print("WARNING " + message) })
+ 		binary := firstNonEmpty(override, os.Getenv("CODEAF_BIN"), "codeaf")
+ 		return nil, &ProviderUnavailableError{
+ 			Provider: ProviderCodeAF, Binary: binary, InstallCommand: providerSpecs[ProviderCodeAF].InstallCommand,
+```
+
+**File**: `sdk/go/harness/codeaf_auth_test.go` (modified, +4/-3)
+```diff
+@@ -82,11 +82,12 @@ func assertAuthRefusal(t *testing.T, err error, contract authContract) {
+ 	assert.ErrorIs(t, err, ErrProviderUnavailable)
+ 	assert.Equal(t, contract.Refusal, err.Error())
+ 	assert.Equal(t, ProviderCodeAF, unavailable.Provider)
++	assert.True(t, unavailable.NotConfigured)
+ 	assert.Equal(t, []string{"OPENROUTER_API_KEY"}, unavailable.MissingAuthEnv)
+ 	assert.Equal(t, "af codeaf ensure", unavailable.InstallCommand)
+ }
+ 
+-func TestCodeAFK1K3K4K7SharedKeyLadder(t *testing.T) {
++func TestCodeAFW4K1K3K4K7SharedKeyLadder(t *testing.T) {
+ 	contract := readAuthContract(t)
+ 	for _, tc := range contract.Cases {
+ 		t.Run(tc.Name, func(t *testing.T) {
+@@ -135,7 +136,7 @@ func TestCodeAFK1K3K4K7SharedKeyLadder(t *testing.T) {
+ 	}
+ }
+ 
+-func TestCodeAFK1K2BeforeResolution(t *testing.T) {
++func TestCodeAFW2K1K2BeforeResolution(t *testing.T) {
+ 	contract := readAuthContract(t)
+ 	for _, provider := range []string{"", "codeaf", "aforge"} {
+ 		for _, pin := range []string{"automatic", "env", "option"} {
+@@ -157,7 +158,7 @@ func TestCodeAFK1K2BeforeResolution(t *testing.T) {
+ 				if pin == "option" {
+ 					opts.BinPath = binary
+ 				}
+-				for call := 0; call < 2; call++ {
++				for call := 0; call < 3; call++ {
+ 					_, err := p.Execute(context.Background(), "task", opts)
+ 					assertAuthRefusal(t, err, contract)
+ 				}
+```
+
+**File**: `sdk/python/agentfield/harness/providers/codeaf.py` (modified, +15/-11)
+```diff
+@@ -44,8 +44,14 @@
+     "Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another "
+     "harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER."
+ )
+-_missing_key_logged = False
+-_construction_warning_logged = False
++_missing_key_warned = False
++
++
++def _warn_missing_key_once() -> None:
++    global _missing_key_warned
++    if not _missing_key_warned:
++        _missing_key_warned = True
++        logger.warning(CODEAF_MISSING_KEY_WARNING)
+ 
+ 
+ def _max_concurrent() -> int:
+@@ -223,7 +229,6 @@ def warn_codeaf_configuration(config: HarnessConfig) -> None:
+ def _warn_codeaf_configuration(config: HarnessConfig) -> None:
+     from agentfield.harness.providers._factory import resolve_execution_provider
+ 
+-    global _construction_warning_logged
+     provider = resolve_execution_provider(config)
+     if provider not in {"codeaf", "aforge"}:
+         return
+@@ -232,10 +237,12 @@ def _warn_codeaf_configuration(config: HarnessConfig) -> None:
+         or os.environ.get("AFORGE_BIN", "").strip()
+     ):
+         return
+-    environment = {**os.environ, **_child_environment({}, None)}
+-    if not _has_model_key(environment) and not _construction_warning_logged:
+-        _construction_warning_logged = True
+-        logger.warning(CODEAF_MISSING_KEY_WARNING)
++    environment = {
++        **os.environ,
++        **_child_environment({"env": dict(config.env or {})}, None),
++    }
++    if not _has_model_key(environment):
++        _warn_missing_key_once()
+ 
+ 
+ class CodeafProvider:
+@@ -273,7 +280,6 @@ async def _resolve_automatic(cls) -> tuple[str | None, str, str | None]:
+             cls._resolution_task = None
+ 
+     async def execute(self, prompt: str, options: dict[str, object]) -> RawResult:
+-        global _missing_key_logged
+         started = time.monotonic()
+         timeout = int(os.environ.get("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1800"))
+         deadline = started + timeout
+@@ -283,9 +289,7 @@ async def execute(self, prompt: str, options: dict[str, object]) -> RawResult:
+             return await AforgeProvider(legacy_pin).execute(prompt, options)
+         environment = {**os.environ, **_child_environment(options, None)}
+         if not _has_model_key(environment):
+-            if not _missing_key_logged:
+-                _missing_key_logged = True
+-                logger.warning(CODEAF_MISSING_KEY_WARNING)
++            _warn_missing_key_once()
+             raise HarnessProviderNotConfigured(
+                 binary=self._bin or os.environ.get("CODEAF_BIN") or "codeaf"
+             )
+```
+
+---
+
+### Incident Patch 3: `27bc3a13` (2026-10-26)
+**Commit Message**: fix(sdk): fail fast with a clear message when the CodeAF harness has no model key (#1130)
+
+When CodeAF (the default harness provider) has no model key it could use, the Python, Go and TypeScript SDKs now refuse the call before resolving, downloading or launching CodeAF, with a message that names OPENROUTER_API_KEY and how to pick another provider (HarnessProviderNotConfigured / ProviderUnavailableError{NotConfigured}), and warn once per process and at Agent construction. The check mirrors CodeAF's own key ladder and lets the call through whenever it cannot be sure. Keyless launches no longer reach CodeAF, so they stop being counted as failed CodeAF sessions.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `control-plane/internal/skillkit/skill_data/agentfield/references/primitives-snapshot.md` (modified, +15/-0)
+```diff
+@@ -189,6 +189,21 @@ caller leaves the shared download running. Doctor checks unpinned `aforge`
+ against CodeAF read-only, including its version, then falls back to legacy
+ aforge; a pin checks only the pinned binary.
+ 
++CodeAF harness calls fail fast before binary resolution, download or launch when
++no model credential is visible, including with an explicit binary. The SDK's
++unavailable-provider error carries this exact message:
++
++```text
++Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
++```
++
++The check honors per-call environment overrides, compatible `OPENAI_API_KEY`
++credentials (an `sk-or-` key or a custom base URL), saved profile `api_key` or
++`model_sources`, and connected-provider credential files. Unreadable/malformed
++profiles permit execution conservatively. Refusal warns once per process; an
++Agent with an explicit harness config resolving to CodeAF also warns once at
++construction without failing. Legacy aforge pins are unchanged.
++
+ **Harness availability gate** — DO NOT use unless ALL true:
+ 
+ 1. `af doctor` reports `recommendation.harness_usable: true` AND lists the chosen provider.
+```
+
+**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +11/-0)
+```diff
+@@ -22,6 +22,17 @@ CLI/skill/package installs, node launch and Desktop provision it best-effort.
+ The Python-agent, Go-agent and cloud control-plane images ship CodeAF at
+ `/usr/local/bin/codeaf`, failing their build if download or verification fails.
+ 
++SDK harness calls with no model credential fail before binary resolution,
++download or launch, with this message:
++
++```text
++Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
++```
++
++The check honors the effective child environment and saved/connected profile
++credentials. See the [credential contract](harness-providers.md#default-codeaf)
++for the key ladder and once-per-process warnings.
++
+ - `AGENTFIELD_HARNESS_PROVIDER`: Explicit SDK provider config wins over this
+   variable; blank values are ignored; the built-in default is `codeaf`.
+ - `AGENTFIELD_CODEAF_BASE_URL`: Full release directory override, version included;
+```
+
+**File**: `docs/harness-providers.md` (modified, +28/-0)
+```diff
+@@ -47,6 +47,34 @@ result, err := agent.Harness(ctx, task, schema, &dest, harness.Options{Cwd: repo
+ const result = await app.harness(task, { schema });
+ ```
+ 
++Without a model credential, Python, Go and TypeScript harness calls fail before
++resolving, downloading or launching CodeAF, including with an explicit binary:
++
++```text
++Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
++```
++
++The error remains catchable as the SDK's unavailable-provider error (Python and
++TypeScript expose `HarnessProviderNotConfigured`; Go uses
++`ProviderUnavailableError` with `NotConfigured: true`). It identifies `codeaf`
++and lists `OPENROUTER_API_KEY` as missing. Refused calls log a warning once per
++process. An Agent with an explicit harness config resolving to CodeAF also warns
++once at construction; construction continues normally.
++
++The check uses the effective child environment, including per-call `env`
++overrides and the SDK's default `CODEAF_HOME`. It accepts `OPENROUTER_API_KEY`,
++an `OPENAI_API_KEY` starting with `sk-or-`, or another `OPENAI_API_KEY` with a
++custom `CODEAF_BASE_URL` (falling back to `AFORGE_BASE_URL`). Ordinary OpenAI keys
++are not accepted for the OpenRouter host. Whitespace-only values are empty.
++The profile directory is the first non-empty `CODEAF_PROFILE_DIR`,
++`AFORGE_PROFILE_DIR`, child `CODEAF_HOME`, or `AFORGE_HOME`; when none is set, or
++one is whitespace only, the call is allowed and CodeAF decides.
++A saved `api_key` or non-empty `model_sources` array/object in its `config.json`
++also permits execution. Unreadable or malformed profile configs and existing
++`credentials.json` or `codex.json` permit execution conservatively, so connected
++providers and sign-ins can supply their credentials. Legacy aforge pins keep
++their existing behavior.
++
+ The default model is `~deepseek/deepseek-v4-flash-latest`. Pass `model=` to change
+ it; the SDK strips one leading `openrouter/` before invoking CodeAF.
+ 
+```
+
+**File**: `sdk/codeaf-auth-contract.json` (added, +423/-0)
+```diff
+@@ -0,0 +1,423 @@
++{
++  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: the first refusal in a process logs the warning once. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns once at construction when no credential is visible. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
++  "refusal": "Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
++  "warning": "CodeAF is the harness provider and no model key is configured, so harness calls will fail. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
++  "cases": [
++    {
++      "name": "no-key",
++      "allow": false,
++      "env": {},
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "process-key",
++      "allow": true,
++      "env": {
++        "OPENROUTER_API_KEY": " process-key "
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "overlay-key",
++      "allow": true,
++      "env": {},
++      "overlay": {
++        "OPENROUTER_API_KEY": " overlay-key "
++      },
++      "files": {}
++    },
++    {
++      "name": "whitespace-key",
++      "allow": false,
++      "env": {
++        "OPENROUTER_API_KEY": " \t\n"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "overlay-clears-key",
++      "allow": false,
++      "env": {
++        "OPENROUTER_API_KEY": "process-key"
++      },
++      "overlay": {
++        "OPENROUTER_API_KEY": ""
++      },
++      "files": {}
++    },
++    {
++      "name": "openai-router-key",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": " sk-or-v1-x "
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-custom-endpoint",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "http://127.0.0.1:11434/v1"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-legacy-endpoint",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "AFORGE_BASE_URL": "http://127.0.0.1:11434/v1"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-empty-base-fallback",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "",
++        "AFORGE_BASE_URL": "localhost:11434/v1"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-whitespace-base-fallback",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": " \t",
++        "AFORGE_BASE_URL": "localhost:11434/v1"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-without-base",
++      "allow": false,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-router-base",
++      "allow": false,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "https://openrouter.ai/api/v1"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "openai-router-normalized-host",
++      "allow": false,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "WWW.OpenRouter.AI.:443/other"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "base-precedence",
++      "allow": false,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "//openrouter.ai/v1",
++        "AFORGE_BASE_URL": "localhost:11434"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "unparseable-custom-base",
++      "allow": true,
++      "env": {
++        "OPENAI_API_KEY": "sk-proj-x",
++        "CODEAF_BASE_URL": "http://[broken"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "empty-openai-custom-base",
++      "allow": false,
++      "env": {
++        "OPENAI_API_KEY": " \t",
++        "CODEAF_BASE_URL": "localhost:11434"
++      },
++      "overlay": {},
++      "files": {}
++    },
++    {
++      "name": "profile-api-key",
++      "allow": true,
++      "env": {},
++      "overlay": {},
++      "files": {
++        "$STATE/config.json": "{\"api_key\":\" saved-key \"}"
++      }
++    },
++    {
++    
+```
+
+**File**: `sdk/go/agent/agent.go` (modified, +1/-0)
+```diff
+@@ -622,6 +622,7 @@ func New(cfg Config) (*Agent, error) {
+ 	if cfg.Logger == nil {
+ 		cfg.Logger = log.New(os.Stdout, "[agent] ", log.LstdFlags)
+ 	}
++	warnCodeAFConfiguration(cfg)
+ 
+ 	if cfg.CallTimeout <= 0 {
+ 		cfg.CallTimeout = 15 * time.Second
+```
+
+**File**: `sdk/go/agent/harness.go` (modified, +13/-0)
+```diff
+@@ -2,10 +2,23 @@ package agent
+ 
+ import (
+ 	"context"
++	"sync"
+ 
+ 	"github.com/Agent-Field/agentfield/sdk/go/harness"
+ )
+ 
++var codeAFConfigWarning sync.Once
++
++func warnCodeAFConfiguration(cfg Config) {
++	if cfg.HarnessConfig == nil {
++		return
++	}
++	provider, _ := harness.BuildProvider(cfg.HarnessConfig.Provider, cfg.HarnessConfig.BinPath)
++	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{}) {
++		codeAFConfigWarning.Do(func() { cfg.Logger.Print("WARNING " + harness.CodeAFMissingKeyWarning) })
++	}
++}
++
+ // harness.go integrates the harness package with the Agent struct,
+ // providing lazy initialization and a convenience Harness() method.
+ // HarnessConfig configures the default harness runner for the agent.
+```
+
+**File**: `sdk/go/agent/harness_auth_test.go` (added, +72/-0)
+```diff
+@@ -0,0 +1,72 @@
++package agent
++
++import (
++	"bytes"
++	"encoding/json"
++	"log"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++func TestCodeAFK6ConstructionWarning(t *testing.T) {
++	data, err := os.ReadFile("../../codeaf-auth-contract.json")
++	require.NoError(t, err)
++	var contract struct {
++		Warning string `json:"warning"`
++	}
++	require.NoError(t, json.Unmarshal(data, &contract))
++	for _, tc := range []struct {
++		name, provider, envProvider, key string
++		configured, legacy, warn         bool
++	}{
++		{name: "default", configured: true, warn: true},
++		{name: "explicit", provider: "codeaf", configured: true, warn: true},
++		{name: "alias", provider: "aforge", configured: true, warn: true},
++		{name: "key", provider: "codeaf", key: "key", configured: true},
++		{name: "other", provider: "claude-code", configured: true},
++		{name: "no-config"},
++		{name: "legacy", provider: "aforge", configured: true, legacy: true},
++		{name: "env-codeaf", envProvider: "codeaf", configured: true, warn: true},
++		{name: "env-other", envProvider: "claude-code", configured: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			for _, entry := range os.Environ() {
++				key, _, _ := strings.Cut(entry, "=")
++				if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
++					t.Setenv(key, "")
++					require.NoError(t, os.Unsetenv(key))
++				}
++			}
++			directory := t.TempDir()
++			t.Setenv("HOME", filepath.Join(directory, "home"))
++			t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
++			t.Setenv("CODEAF_TELEMETRY", "off")
++			t.Setenv("OPENROUTER_API_KEY", tc.key)
++			t.Setenv("AGENTFIELD_HARNESS_PROVIDER", tc.envProvider)
++			if tc.legacy {
++				t.Setenv("AFORGE_BIN", "/fake/legacy")
++			}
++			codeAFConfigWarning = sync.Once{}
++			var output bytes.Buffer
++			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(&output, "", 0)}
++			if tc.configured {
++				cfg.HarnessConfig = &HarnessConfig{Provider: tc.provider}
++			}
++			for i := 0; i < 2; i++ {
++				_, err := New(cfg)
++				require.NoError(t, err)
++			}
++			expected := 0
++			if tc.warn {
++				expected = 1
++			}
++			assert.Equal(t, expected, strings.Count(output.String(), contract.Warning))
++		})
++	}
++}
+```
+
+**File**: `sdk/go/agent/harness_test.go` (modified, +6/-0)
+```diff
+@@ -115,6 +115,9 @@ func TestHarnessRunner_ConcurrentAccess(t *testing.T) {
+ }
+ 
+ func TestHarness_ErrorWithoutProvider(t *testing.T) {
++	t.Setenv("OPENROUTER_API_KEY", "test-codeaf-key")
++	t.Setenv("HOME", t.TempDir())
++	t.Setenv("AGENTFIELD_HOME", t.TempDir())
+ 	// With no provider configured, Harness() defaults to codeaf and reaches
+ 	// provider execution. A missing binary may fail, but provider resolution does not.
+ 	t.Setenv(harness.ProviderEnvVar, "")
+@@ -211,6 +214,9 @@ func TestHarnessDoctor_UnknownProviderIsAnError(t *testing.T) {
+ }
+ 
+ func TestHarnessDefaultCodeAFRecordsUsage(t *testing.T) {
++	t.Setenv("OPENROUTER_API_KEY", "test-codeaf-key")
++	t.Setenv("HOME", t.TempDir())
++	t.Setenv("AFORGE_BIN", "")
+ 	t.Setenv(harness.ProviderEnvVar, "")
+ 	t.Setenv("AGENTFIELD_HOME", t.TempDir())
+ 	path := filepath.Join(t.TempDir(), "codeaf")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1132** (2026-10-27): fix(sdk): log the CodeAF missing-key warning once, and count the harness config's env (@AbirAbbas)
+- **PR #1131** (2026-10-27): chore(deps): bump certifi from 2026.2.25 to 2026.10.18 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
+- **PR #1130** (2026-10-26): fix(sdk): fail fast with a clear message when the CodeAF harness has no model key (@AbirAbbas)
 - **PR #1128** (2026-10-24): Make CodeAF the default harness, installed automatically with AgentField (@AbirAbbas)
-- **PR #1123** (2026-10-20): fix(sdk/python): parse remaining boolean env flags with the SDK-wide vocabulary (@ShryukGrandhi)
-- **PR #1122** (2026-10-19): fix(control-plane): refuse IPv4-embedding and special-use ranges in the webhook URL guard (@AbirAbbas)
-- **PR #1121** (2026-10-19): fix(control-plane): run session tool calls through the execute pipeline in-process (@AbirAbbas)
-- **PR #1120** (2026-10-19): test(sdk/python): drop the stale enable_mcp kwarg from Agent fixtures (@AbirAbbas)
-- **PR #1119** (2026-10-19): fix(control-plane): preserve DID identities across restarts and home path changes (@AbirAbbas)
+- **PR #1127** (2026-10-26): chore(deps): bump the uv group across 1 directory with 3 updates (@dependabot[bot])
+- **PR #1126** (2026-10-26): fix(sdk/typescript): stop retrying permanent status callbacks (@ShryukGrandhi)
 
 ---
 
@@ -1618,22 +2503,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): v0.1.143 [skip ci]
+## X. control-plane): return 503 for transient storage errors during DID resolution (#
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `control-plane/internal/server/middleware/did_auth.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1805a79d`: release): v0.1.143 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7306a0eb`: control-plane): return 503 for transient storage errors during DID resolution (#1087) (#1124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/server/middleware/did_auth.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## [0.1.143] - 2026-10-24
-
+	"errors"
+	"github.com/Agent-Field/agentfield/control-plane/internal/services"
+			if errors.Is(err, services.ErrDIDResolutionUnavailable) {
+				logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID resolution temporarily unavailable")
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
+					"error":   "did_resolution_unavailable",
+					"message": "DID resolution is temporarily unavailable, retry shortly",
+				})
+				return
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1643,4 +2536,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1805a79d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7306a0eb` are properly handled with clean fallback behavior.

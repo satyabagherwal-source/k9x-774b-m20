@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-SEWB",
-    "timestamp": "2026-10-25T15:38:16.811Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "609280e6c71fcdd062eb21d2432cf792a4ca42acd6c8cbc27fdf31cd886e5af1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-SHJC",
-    "timestamp": "2026-10-25T15:38:20.232Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "5c12e79ea551716fa7d1c479f00a18fbeb2df7dab09a0822c886befddd6134d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-SJCS",
     "timestamp": "2026-10-25T15:38:22.588Z",
     "repository": "neuron-core/neuron-ai",
@@ -7490,6 +7460,36 @@
     "repository": "NirDiamant/RAG_Techniques",
     "learningId": "learn-github-nirdiamant-rag_techniques",
     "contentHash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GMWN",
+    "timestamp": "2026-10-27T14:36:28.535Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "e8c47cce3ad0baa87dfa6ba860d1516c4c629687369db486578812bf812f4de7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-GV31",
+    "timestamp": "2026-10-27T14:36:39.133Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

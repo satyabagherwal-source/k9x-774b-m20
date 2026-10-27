@@ -5388,3 +5388,5 @@ Every entry in this ledger must capture:
 | `learn-github-lackeyjb-playwright-skill` | `https://github.com/lackeyjb/playwright-skill` | `dd47a6a0` | Multi-dimensional audit evidence | 2026-10-27T14:33:15.782Z |
 | `learn-github-boardgameio-boardgame-io` | `https://github.com/boardgameio/boardgame.io` | `47adef2b` | Multi-dimensional audit evidence | 2026-10-27T14:33:18.876Z |
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `9e2e9930` | Multi-dimensional audit evidence | 2026-10-27T14:33:26.025Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-27T14:36:28.538Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `7d4fd1fa` | Multi-dimensional audit evidence | 2026-10-27T14:36:39.135Z |
