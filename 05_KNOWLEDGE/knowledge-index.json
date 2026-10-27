@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T17:23:43.703Z",
+  "last_updated": "2026-10-27T17:31:04.499Z",
   "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39124,8 +39124,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "66f7eee7",
-      "content_hash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
+      "source_version": "71322f76",
+      "content_hash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -39225,7 +39225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:31:45.413Z",
+      "verified_at": "2026-10-27T17:31:04.488Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47361,8 +47361,8 @@
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "a83496bf",
-      "content_hash": "77b66daa9618a23b97c27e0beff0f562407d5ef35acc225eb2fb22f7a9e1d31f",
+      "source_version": "142d4334",
+      "content_hash": "33d6ab95033716b24185bf7f6886ebcf38553f307ecb008b5cbd43d536021449",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "promoted_rules": [
@@ -47380,6 +47380,11 @@
           "number": 4020,
           "title": "Keep Reanimated deep imports out of web bundles (#4620)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4926,
+          "title": "Bump postcss-selector-parser from 6.1.4 to 6.1.5 in /packages/docs-gesture-handl",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47387,7 +47392,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:45:03.863Z",
+      "verified_at": "2026-10-27T17:30:56.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136691,6 +136696,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T17:23:43.685Z"
+    },
+    "rule-4926": {
+      "learning_id": "rule-4926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4926,
+      "title": "Bump postcss-selector-parser from 6.1.4 to 6.1.5 in /packages/docs-gesture-handl",
+      "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
+      "source_version": "142d4334",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:30:56.106Z"
     }
   },
   "aliases": {

@@ -5465,3 +5465,5 @@ Every entry in this ledger must capture:
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `0f99087a` | Multi-dimensional audit evidence | 2026-10-27T17:23:41.162Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `26ce6d2e` | Multi-dimensional audit evidence | 2026-10-27T17:23:42.873Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `54d4c0fa` | Multi-dimensional audit evidence | 2026-10-27T17:23:43.767Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `142d4334` | Multi-dimensional audit evidence | 2026-10-27T17:30:56.154Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `71322f76` | Multi-dimensional audit evidence | 2026-10-27T17:31:04.567Z |

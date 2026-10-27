@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T17:23:43.773Z",
-  "total_cycles_completed": 5433,
-  "total_learnings_persisted": 5433,
-  "total_rules_promoted": 4833,
+  "last_updated": "2026-10-27T17:31:04.573Z",
+  "total_cycles_completed": 5435,
+  "total_learnings_persisted": 5435,
+  "total_rules_promoted": 4834,
   "history": [
-    {
-      "timestamp": "2026-10-27T12:10:43.268Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T12:10:49.103Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:10:57.840Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1403,6 +1389,20 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:30:56.157Z",
+      "repository": "software-mansion/react-native-gesture-handler",
+      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:31:04.573Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

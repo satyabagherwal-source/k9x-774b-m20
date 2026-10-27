@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-OE4N",
-    "timestamp": "2026-10-25T19:19:06.119Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "7abb2f2f75dede8c1f5d64dc649d08dc9a68f7808865d6e3f13b9459ef984495",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-OHFK",
-    "timestamp": "2026-10-25T19:19:10.400Z",
-    "repository": "vinceglb/FileKit",
-    "learningId": "learn-github-vinceglb-filekit",
-    "contentHash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-OJOW",
     "timestamp": "2026-10-25T19:19:13.329Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7492,6 +7462,36 @@
     "contentHash": "1b91069fef41d0acd6d20af8e13105066b4717d6e1d305beac4ff3c5b2203007",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-OZRR",
+    "timestamp": "2026-10-27T17:30:56.151Z",
+    "repository": "software-mansion/react-native-gesture-handler",
+    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+    "contentHash": "33d6ab95033716b24185bf7f6886ebcf38553f307ecb008b5cbd43d536021449",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-P69H",
+    "timestamp": "2026-10-27T17:31:04.565Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

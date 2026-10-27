@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T17:23:43.777Z",
+  "last_updated": "2026-10-27T17:31:04.576Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "58780034abdad909d59572c4f8a7f490e368bf5cccb172012df6e71e3c78c2ed",
-      "verified_at": "2026-10-27T16:31:45.496Z",
+      "content_hash": "c6d1ecbe0a099a0156a8a30ef252b41be22cad42510cae753443568edda201ad",
+      "verified_at": "2026-10-27T17:31:04.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:31:45.496Z"
+      "last_updated": "2026-10-27T17:31:04.575Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7311,14 +7311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
-      "content_hash": "77b66daa9618a23b97c27e0beff0f562407d5ef35acc225eb2fb22f7a9e1d31f",
-      "verified_at": "2026-10-25T03:45:03.939Z",
+      "content_hash": "33d6ab95033716b24185bf7f6886ebcf38553f307ecb008b5cbd43d536021449",
+      "verified_at": "2026-10-27T17:30:56.160Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:45:03.939Z"
+      "last_updated": "2026-10-27T17:30:56.160Z"
     },
     "aws/aws-cdk": {
       "repository": "aws/aws-cdk",

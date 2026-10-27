@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `66f7eee7`  
+> **Source Version**: `71322f76`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:31:45.075Z  
+> **Timestamp**: 2026-10-27T17:31:04.415Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:31:44.845Z  
+> **Harvest Timestamp**: 2026-10-27T17:31:04.282Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -931,123 +931,10 @@ export function enlarge(matrix, rows, cols) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66f7eee7` (2026-10-27)
-**Commit Message**: Select ARC puzzle via CLI argument
+### Incident Patch 1: `71322f76` (2026-10-27)
+**Commit Message**: Move agent guidance to Claude config
 
-The ARC example now loads its puzzle at runtime from the first command-line argument (default `3aa6fb7a`) instead of a hard-coded JSON import. The ID is validated as eight lowercase hex characters before reading `src/data/training/<id>.json`.
-
-The result canvas is now initialized from the test input dimensions rather than the expected output, and the expected output is read only for comparison after predictions are made. README updated with usage.
-
-**File**: `arc/README.md` (modified, +3/-1)
-```diff
-@@ -37,7 +37,9 @@ automatic prompt/KV caching. See OpenRouter's
- and [prompt caching](https://openrouter.ai/docs/guides/best-practices/prompt-caching)
- documentation for the distinction.
- 
--Run the ARC example with `bun run start`. This makes live OpenRouter calls;
-+Run the ARC example with `bun run start`, which defaults to puzzle `3aa6fb7a`.
-+Pass a puzzle ID as the first argument, for example `bun run start 0d3d703e`,
-+to load `src\data\training\0d3d703e.json`. This makes live OpenRouter calls;
- type checking, linting, and offline inspection do not require model calls.
- 
- ## Terminal presentation
-```
-
-**File**: `arc/server.ts` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ import "dotenv/config";
- import { start } from "./src/app";
- import * as terminal from "./src/lib/terminal";
- 
--start().catch((error) => {
-+start(process.argv[2]).catch((error) => {
-   terminal.failure(error);
-   process.exitCode = 1;
- });
-```
-
-**File**: `arc/src/app.ts` (modified, +29/-20)
-```diff
-@@ -1,26 +1,34 @@
-+import { readFile } from "node:fs/promises";
-+import { join } from "node:path";
- import * as analyzer from "./analyzer";
- import * as visualizer from "./visualizer";
- import * as Matrix from "./lib/Matrix";
- import * as nucleoid from "./lib/nucleoid";
- import * as terminal from "./lib/terminal";
--import puzzle from "./data/training/0ca9ddb6.json";
--// Completed:
--// 3aa6fb7a
--
--const {
--  train,
--  test: [{ input: test_input_matrix, output: test_output_matrix }],
--} = puzzle;
--
--const training_input = {
--  dataset: train.map(({ input, output }) => ({
--    input_matrix: input,
--    output_matrix: output,
--    instances: [],
--  })),
--};
--
--export async function start() {
-+
-+export async function start(puzzle_id = "3aa6fb7a") {
-+  if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
-+    throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
-+  }
-+
-+  const puzzle = JSON.parse(
-+    await readFile(
-+      join(__dirname, "data", "training", `${puzzle_id}.json`),
-+      "utf8"
-+    )
-+  );
-+  const {
-+    train,
-+    test: [{ input: test_input_matrix }],
-+  } = puzzle;
-+  const training_input = {
-+    dataset: train.map(({ input, output }) => ({
-+      input_matrix: input,
-+      output_matrix: output,
-+      instances: [],
-+    })),
-+  };
-+
-   const startedAt = performance.now();
-   terminal.header({ version: await nucleoid.version() });
-   terminal.puzzle({ train, testInput: test_input_matrix });
-@@ -88,8 +96,8 @@ export async function start() {
- 
-   let test_index = 0;
- 
--  let result_matrix = Array.from({ length: test_output_matrix.length }, () =>
--    Array(test_output_matrix[0].length).fill(0)
-+  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
-+    Array(test_input_matrix[0].length).fill(0)
-   );
- 
-   const input_instances = [];
-@@ -122,6 +130,7 @@ export async function start() {
-     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
-   }
- 
-+  const test_output_matrix = puzzle.test[0].output;
-   terminal.section(3, "Compare", "Expected and predicted canvases");
-   terminal.grid("Expected", test_output_matrix);
-   terminal.grid("Result", result_matrix);
-```
-
----
-
-### Incident Patch 2: `94722467` (2026-10-27)
-**Commit Message**: Rename ARC dataset file by content hash
-
-Rename the dataset file to match its content hash; its contents are unchanged.
+Relocate the existing instructions, agents, rules, and skills from `.github` to `.claude` without changing their contents.
 
 
 
@@ -1071,36 +958,3 @@ Rename the dataset file to match its content hash; its contents are unchanged.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Select ARC puzzle via CLI argument
-
-**RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `66f7eee7`: Select ARC puzzle via CLI argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-Run the ARC example with `bun run start`, which defaults to puzzle `3aa6fb7a`.
-Pass a puzzle ID as the first argument, for example `bun run start 0d3d703e`,
-to load `src\data\training\0d3d703e.json`. This makes live OpenRouter calls;
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-Run the ARC example with `bun run start`. This makes live OpenRouter calls;
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66f7eee7` are properly handled with clean fallback behavior.

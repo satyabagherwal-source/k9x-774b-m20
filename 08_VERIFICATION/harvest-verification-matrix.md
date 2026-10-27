@@ -5456,3 +5456,5 @@
 | `CYCLE-20261027-FO4N` | `2026-10-27T17:23:41.159Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4923` | Yes (`0e2d1734...`) |
 | `CYCLE-20261027-FPG6` | `2026-10-27T17:23:42.870Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4924` | Yes (`8e14ff94...`) |
 | `CYCLE-20261027-FQ50` | `2026-10-27T17:23:43.764Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4925` | Yes (`1b91069f...`) |
+| `CYCLE-20261027-OZRR` | `2026-10-27T17:30:56.151Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4926` | Yes (`33d6ab95...`) |
+| `CYCLE-20261027-P69H` | `2026-10-27T17:31:04.565Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`c6d1ecbe...`) |
