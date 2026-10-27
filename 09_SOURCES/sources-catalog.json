@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "a670afb4",
+    "sourceVersion": "fce3dc25",
     "license": "Apache-2.0",
-    "contentHash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
-    "lastHarvestedAt": "2026-10-22T21:14:30.997Z",
+    "contentHash": "b2472b8b124c73a497eaa03de0c7e9c3790d89b5c5b383a6cf067a60b9732853",
+    "lastHarvestedAt": "2026-10-27T13:31:54.281Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -9613,10 +9613,10 @@
     "repository": "psf/requests",
     "platform": "github",
     "sourceUrl": "https://github.com/psf/requests",
-    "sourceVersion": "611c6162",
+    "sourceVersion": "3c7baaa0",
     "license": "Apache-2.0",
-    "contentHash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
-    "lastHarvestedAt": "2026-10-20T00:12:44.894Z",
+    "contentHash": "8a9e5b457c612ba9289bf4fb4ec5a7d78a75a114704169ef359af2b93807d1b5",
+    "lastHarvestedAt": "2026-10-27T13:31:49.696Z",
     "learningId": "learn-github-psf-requests"
   },
   "williewangwei-swiftui-tutorials": {

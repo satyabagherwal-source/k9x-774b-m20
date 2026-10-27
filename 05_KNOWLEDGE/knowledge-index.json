@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:28:34.814Z",
+  "last_updated": "2026-10-27T13:31:54.213Z",
   "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9512,8 +9512,8 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "a670afb4",
-      "content_hash": "0b6968c6fe372ad309dab71bf356d5cd48faa21747e76aad3089df88da9d3b35",
+      "source_version": "fce3dc25",
+      "content_hash": "b2472b8b124c73a497eaa03de0c7e9c3790d89b5c5b383a6cf067a60b9732853",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
@@ -9531,6 +9531,11 @@
           "number": 3747,
           "title": "client): bump client submodule to fd4dde4 (#5079)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4807,
+          "title": "build): bump Alpine base image to 3.23.7 and update client submodule (#5090)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9538,7 +9543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:14:30.945Z",
+      "verified_at": "2026-10-27T13:31:54.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66860,14 +66865,19 @@
       "slug": "psf-requests",
       "platform": "github",
       "source_url": "https://github.com/psf/requests",
-      "source_version": "611c6162",
-      "content_hash": "472d4e19c6c4aa72a770d83729a155b41621c54659e4e8898de0d7fe8223cec3",
+      "source_version": "3c7baaa0",
+      "content_hash": "8a9e5b457c612ba9289bf4fb4ec5a7d78a75a114704169ef359af2b93807d1b5",
       "dossier_path": "07_PROJECT_LEARNING/psf-requests-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/psf-requests-learnings.md",
       "promoted_rules": [
         {
           "number": 2911,
           "title": "link to AI Policy in CONTRIBUTING.md (#7576)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4806,
+          "title": "Bump the actions group with 4 updates (#7636)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -66876,7 +66886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:12:44.828Z",
+      "verified_at": "2026-10-27T13:31:49.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133630,6 +133640,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:28:29.566Z"
+    },
+    "rule-4806": {
+      "learning_id": "rule-4806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4806,
+      "title": "Bump the actions group with 4 updates (#7636)",
+      "source_url": "https://github.com/psf/requests",
+      "source_version": "3c7baaa0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:31:49.616Z"
+    },
+    "rule-4807": {
+      "learning_id": "rule-4807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4807,
+      "title": "build): bump Alpine base image to 3.23.7 and update client submodule (#5090)",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "fce3dc25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:31:54.197Z"
     }
   },
   "aliases": {

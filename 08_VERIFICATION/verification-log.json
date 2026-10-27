@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-8LSS",
-    "timestamp": "2026-10-25T13:30:54.172Z",
-    "repository": "NativeScript/NativeScript",
-    "learningId": "learn-github-nativescript-nativescript",
-    "contentHash": "914fdd3ea2b4252b81710868b053e629fd148419229b7815921e1b65e3ec60ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-8NJ1",
-    "timestamp": "2026-10-25T13:30:56.413Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "d959109a48f54e272b0a4e984ec3e31b8e604c06e90990563c2eb1a1c4826884",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-8Q69",
     "timestamp": "2026-10-25T13:30:59.841Z",
     "repository": "crate/crate",
@@ -7492,6 +7462,36 @@
     "contentHash": "34d3f1d4e30216a41a1e60d17bb0485cd55baf6ca4a96a14d1ba2283d6b60d96",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5HZ0",
+    "timestamp": "2026-10-27T13:31:49.692Z",
+    "repository": "psf/requests",
+    "learningId": "learn-github-psf-requests",
+    "contentHash": "8a9e5b457c612ba9289bf4fb4ec5a7d78a75a114704169ef359af2b93807d1b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-5LIE",
+    "timestamp": "2026-10-27T13:31:54.278Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "b2472b8b124c73a497eaa03de0c7e9c3790d89b5c5b383a6cf067a60b9732853",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

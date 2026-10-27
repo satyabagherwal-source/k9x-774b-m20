@@ -5338,3 +5338,5 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `e5c46263` | Multi-dimensional audit evidence | 2026-10-27T13:28:29.283Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `3e9bc1e1` | Multi-dimensional audit evidence | 2026-10-27T13:28:29.621Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `d1de96c1` | Multi-dimensional audit evidence | 2026-10-27T13:28:34.874Z |
+| `learn-github-psf-requests` | `https://github.com/psf/requests` | `3c7baaa0` | Multi-dimensional audit evidence | 2026-10-27T13:31:49.696Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `fce3dc25` | Multi-dimensional audit evidence | 2026-10-27T13:31:54.281Z |

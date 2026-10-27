@@ -5329,3 +5329,5 @@
 | `CYCLE-20261027-17C0` | `2026-10-27T13:28:29.280Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4804` | Yes (`8e665ef6...`) |
 | `CYCLE-20261027-17LE` | `2026-10-27T13:28:29.618Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4805` | Yes (`459bcd65...`) |
 | `CYCLE-20261027-1BN3` | `2026-10-27T13:28:34.863Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md` | Yes (`34d3f1d4...`) |
+| `CYCLE-20261027-5HZ0` | `2026-10-27T13:31:49.692Z` | `psf/requests` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4806` | Yes (`8a9e5b45...`) |
+| `CYCLE-20261027-5LIE` | `2026-10-27T13:31:54.278Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4807` | Yes (`b2472b8b...`) |

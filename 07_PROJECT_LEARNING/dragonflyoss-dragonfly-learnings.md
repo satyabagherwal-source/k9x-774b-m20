@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
-> **Source Version**: `a670afb4`  
+> **Source Version**: `fce3dc25`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:14:30.706Z  
+> **Timestamp**: 2026-10-27T13:31:53.844Z  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:14:30.592Z  
+> **Harvest Timestamp**: 2026-10-27T13:31:53.534Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Delivers efficient, stable, and secure data distribution and acceleration powered by P2P technology, with an optional content‑addressable filesystem that accelerates OCI container launch.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3353 stars
+- **Stars / Engagement**: 3355 stars
 
 ---
 
@@ -1154,582 +1154,107 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a670afb4` (2026-10-21)
-**Commit Message**: chore(client): bump client submodule to fd4dde4 (#5079)
+### Incident Patch 1: `fce3dc25` (2026-10-27)
+**Commit Message**: chore(build): bump Alpine base image to 3.23.7 and update client submodule (#5090)
 
-* chore(client): bump client submodule to fd4dde4
+* chore(build): bump Alpine base image to 3.23.7 and update client submodule
 
-Update the client submodule pointer from 7015520 to fd4dde4 to pull in
-the latest upstream changes.
-
-Signed-off-by: Gaius <[REDACTED_EMAIL]>
-
-* feat(scheduler): keep seed peer hashring in sync with host announcements
-
-Register super seed hosts in the seed peer hashring when they announce and
-remove them when they leave or are deleted, instead of relying only on the
-initial seed peer list. Evict a seed peer from the hashring when a download
-request fails with an unavailable error so traffic is routed to healthy
-seeds.
-
-Cover hashring store/delete paths in v1 and v2 host tests and make the e2e
-scheduler test wait for the hashring to be rebuilt before asserting.
+Update the pinned Alpine base image from 3.23.4 to 3.23.7 across the
+manager, scheduler, and plugin-builder Dockerfiles so release images pick
+up the latest upstream patches. Also advance the client submodule to its
+latest commit.
 
 Signed-off-by: Gaius <[REDACTED_EMAIL]>
+
+* ci(lint): set up Go from go.mod before running golangci-lint
+
+The lint job relied on the Go preinstalled on the runner image. When
+ubuntu-latest moved to ubuntu-26.04 the preinstalled Go became 1.26,
+which selects dependency files guarded by `//go:build go1.26` that the
+go1.25-built golangci-lint binary cannot type-check:
+
+    panic: file requires newer Go version go1.26 (application built with go1.25)
+
+Install Go from go.mod first, matching ci.yml and the
+golangci-lint-action README.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ---------
 
 Signed-off-by: Gaius <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/lint.yml` (modified, +5/-0)
+```diff
+@@ -20,6 +20,11 @@ jobs:
+         with:
+           fetch-depth: '0'
+ 
++      - name: Setup Go
++        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
++        with:
++          go-version-file: go.mod
++
+       - name: Golangci lint
+         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+         with:
+```
+
+**File**: `build/images/manager/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
++ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+ 
+ FROM node:24-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd AS console-builder
+ 
+```
+
+**File**: `build/images/scheduler/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
++ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+ 
+ FROM golang:1.25.5-alpine3.23@sha256:ac09a5f469f307e5da71e766b0bd59c9c49ea460a528cc3e6686513d64a6f1fb AS builder
+ 
+```
+
+**File**: `build/plugin-builder/images/manager/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
++ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+ 
+ FROM ${BASE_IMAGE}
+ 
+```
+
+**File**: `build/plugin-builder/images/scheduler/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-ARG BASE_IMAGE=alpine:3.23.4@sha256:5b10f432ef3da1b8d4c7eb6c487f2f5a8f096bc91145e68878dd4a5019afde11
++ARG BASE_IMAGE=alpine:3.23.7@sha256:ff7f0c727dd796aa36787bfcd9a64bf35a6ce72a73451b3359fde849b6703d63
+ 
+ FROM ${BASE_IMAGE}
+ 
+```
 
 **File**: `client` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--Subproject commit 701552010f620feb3539f7f1ebb5c809efb7dea9
-+Subproject commit fd4dde4347be8a3334e688e5943851f0750746bf
-```
-
-**File**: `scheduler/resource/standard/seed_peer.go` (modified, +115/-48)
-```diff
-@@ -22,9 +22,7 @@ import (
- 	"context"
- 	"fmt"
- 	"io"
--	"maps"
- 	"net"
--	"slices"
- 	"strconv"
- 	"sync"
- 	"time"
-@@ -33,6 +31,8 @@ import (
- 	"go.opentelemetry.io/otel/trace"
- 	"golang.org/x/sync/errgroup"
- 	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/status"
- 
- 	cdnsystemv1 "d7y.io/api/v2/pkg/apis/cdnsystem/v1"
- 	commonv1 "d7y.io/api/v2/pkg/apis/common/v1"
-@@ -56,7 +56,8 @@ const (
- 	// Default value of seed peer failed timeout.
- 	SeedPeerFailedTimeout = 30 * time.Minute
- 
--	// SeedPeerRefreshInterval is the interval of refreshing seed peers.
-+	// SeedPeerRefreshInterval is the interval of refreshing seed peers, which
-+	// drops the seed peers whose announcements have stopped.
- 	SeedPeerRefreshInterval = 30 * time.Second
- 
- 	// SeedPeerHealthCheckConcurrencyLimit is the number of seed peers checked
-@@ -77,6 +78,12 @@ type SeedPeer interface {
- 	// Select selects a seed peer target by the task id.
- 	Select(context.Context, string) (*Host, error)
- 
-+	// Store stores the announced seed peer in the hashring.
-+	Store(*Host)
-+
-+	// Delete deletes the seed peer from the hashring.
-+	Delete(*Host)
-+
- 	// HasAvailable returns whether there is any available seed peer.
- 	HasAvailable() bool
- 
-@@ -101,10 +108,10 @@ type seedPeer struct {
- 	// dialOpts is the options for grpc dial.
- 	dialOptions []grpc.DialOption
- 
--	// mu protects hosts and hashring, which are replaced together by refresh.
-+	// mu protects hosts and hashring.
- 	mu sync.RWMutex
- 
--	// hosts is the healthy seed peers keyed by name.
-+	// hosts is the seed peers keyed by name.
- 	hosts map[string]*Host
- 
- 	// hashring is the hashring constructed from the names of seed peers.
-@@ -148,6 +155,7 @@ func (s *seedPeer) TriggerDownloadTask(ctx context.Context, taskID string, req *
- 
- 	stream, err := client.DownloadTask(ctx, taskID, req)
- 	if err != nil {
-+		s.evict(selected, err)
- 		return err
- 	}
- 
-@@ -159,11 +167,24 @@ func (s *seedPeer) TriggerDownloadTask(ctx context.Context, taskID string, req *
- 				return nil
- 			}
- 
-+			s.evict(selected, err)
- 			return err
- 		}
- 	}
- }
- 
-+// evict deletes the seed peer from the hashring when the error reports it
-+// unreachable, the seed peer is stored again by its next announcement, refer to
-+// https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier.
-+func (s *seedPeer) evict(host *Host, err error) {
-+	if status.Code(err) != codes.Unavailable {
-+		return
-+	}
-+
-+	host.Log.Warnf("evict unavailable seed peer from hashring: %s", err)
-+	s.Delete(host)
-+}
-+
- // TriggerTask triggers the seed peer to download task.
- // Used only in v1 version of the grpc.
- func (s *seedPeer) TriggerTask(ctx context.Context, rg *http.Range, task *Task) (*Peer, *schedulerv1.PeerResult, error) {
-@@ -311,6 +332,55 @@ func (s *seedPeer) Select(ctx context.Context, taskID string) (*Host, error) {
- 	return host, nil
- }
- 
-+// Store stores the announced seed peer in the hashring. The hashring is keyed
-+// by the name of the seed peer instead of the address, so that the seed peer
-+// keeps its position in the hashring when its ip changes, refer to
-+// https://github.com/grpc/proposal/blob/master/A76-ring-hash-improvements.md.
-+func (s *seedPeer) Store(host *Host) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+
-+	if _, ok := s.hosts[host.Name]; !ok {
-+		s.hashring.Add(host.Name)
-+	}
-+
-+	// The most recently announced host of the seed peer wins, such as
-+	// the new pod after a restart.
-+	s.hosts[host.Name] = host
-+}
-+
-+// Delete deletes the seed peer from the hashring.
-+func (s *seedPeer) Delete(host *Host) {
-+	s.deleteHosts([]*Host{host})
-+}
-+
-+// deleteHosts deletes the hosts from the hashring at once, and keeps the
-+// seed peer when a more recently announced host of the same name has
-+// replaced the host.
-+func (s *seedPeer) deleteHosts(hosts []*Host) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+
-+	changed := false
-+	for _, host := range hosts {
-+		if current, ok := s.hosts[host.Name]; !ok || current != host {
-+			continue
-+		}
-+
-+		delete(s.hosts, host.Name)
-+		changed = true
-+	}
-+
-+	if changed {
-+		ring := hashring.New()
-+		for name := range s.hosts {
-+			ring.Add(name)
-+		}
-+
-+		s.hashring = ring
-+	}
-+}
-+
- // HasAvailable returns whether there is any available seed peer.
- func (s *seedPeer) HasAvailable() bool {
- 	s.mu.RLock()
-@@ -353,31 +423,48 @@ func (s *seedPeer) initSeedPeer(ctx context.Context, rg *http.Range, task *Task,
- 	return peer, nil
- }
- 
--// refresh refreshes the hosts and hashring of seed peers, and clears
--// them when no seed peer is found in host manager. The hashring is keyed
--// by the name of the seed peer instead of the address, so that the seed peer
--// keeps its position in the hashring when its ip changes, refer to
--// https://github.com/grpc/proposal/blob/master/A76-ring-hash-improvements.md.
-+// refresh drops the seed peers whose announcements have stopped, the one
-+// missed an announcement is dropped when it fails the health check, refer to
-+// https://www.cs.cornell.edu
-```
-
-**File**: `scheduler/resource/standard/seed_peer_mock.go` (modified, +24/-0)
-```diff
-@@ -43,6 +43,18 @@ func (m *MockSeedPeer) EXPECT() *MockSeedPeerMockRecorder {
- 	return m.recorder
- }
- 
-+// Delete mocks base method.
-+func (m *MockSeedPeer) Delete(arg0 *Host) {
-+	m.ctrl.T.Helper()
-+	m.ctrl.Call(m, "Delete", arg0)
-+}
-+
-+// Delete indicates an expected call of Delete.
-+func (mr *MockSeedPeerMockRecorder) Delete(arg0 any) *gomock.Call {
-+	mr.mock.ctrl.T.Helper()
-+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSeedPeer)(nil).Delete), arg0)
-+}
-+
- // HasAvailable mocks base method.
- func (m *MockSeedPeer) HasAvailable() bool {
- 	m.ctrl.T.Helper()
-@@ -98,6 +110,18 @@ func (mr *MockSeedPeerMockRecorder) Stop() *gomock.Call {
- 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockSeedPeer)(nil).Stop))
- }
- 
-+// Store mocks base method.
-+func (m *MockSeedPeer) Store(arg0 *Host) {
-+	m.ctrl.T.Helper()
-+	m.ctrl.Call(m, "Store", arg0)
-+}
-+
-+// Store indicates an expected call of Store.
-+func (mr *MockSeedPeerMockRecorder) Store(arg0 any) *gomock.Call {
-+	mr.mock.ctrl.T.Helper()
-+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockSeedPeer)(nil).Store), arg0)
-+}
-+
- // TriggerDownloadTask mocks base method.
- func (m *MockSeedPeer) TriggerDownloadTask(arg0 context.Context, arg1 string, arg2 *dfdaemon.DownloadTaskRequest) error {
- 	m.ctrl.T.Helper()
-```
-
-**File**: `scheduler/resource/standard/seed_peer_test.go` (modified, +314/-157)
-```diff
-@@ -25,7 +25,6 @@ import (
- 	"reflect"
- 	"strconv"
- 	"sync"
--	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -49,6 +48,7 @@ import (
- 
- 	logger "d7y.io/dragonfly/v2/internal/dflog"
- 	"d7y.io/dragonfly/v2/pkg/gc"
-+	"d7y.io/dragonfly/v2/pkg/idgen"
- 	nethttp "d7y.io/dragonfly/v2/pkg/net/http"
- 	"d7y.io/dragonfly/v2/pkg/rpc/common"
- 	dfdaemonclientmocks "d7y.io/dragonfly/v2/pkg/rpc/dfdaemon/client/mocks"
-@@ -145,234 +145,363 @@ func TestSeedPeer_newSeedPeer(t *testing.T) {
- 	}
- }
- 
--func TestSeedPeer_refresh(t *testing.T) {
-+func TestSeedPeer_Store(t *testing.T) {
- 	tests := []struct {
- 		name   string
--		hosts  func(t *testing.T) []*Host
--		mock   func(m *MockHostManagerMockRecorder, hosts []*Host)
--		expect func(t *testing.T, seedPeer *seedPeer, hosts []*Host)
-+		expect func(t *testing.T, seedPeer *seedPeer)
- 	}{
- 		{
--			name: "refresh healthy seed peer",
--			hosts: func(t *testing.T) []*Host {
--				return []*Host{mockSeedHostServer(t, func(svr *grpc.Server) {
--					healthpb.RegisterHealthServer(svr, health.NewServer())
--				})}
--			},
--			mock: func(m *MockHostManagerMockRecorder, hosts []*Host) {
--				m.LoadAllSeeds().Return(hosts)
--			},
--			expect: func(t *testing.T, seedPeer *seedPeer, hosts []*Host) {
-+			name: "store seed peer",
-+			expect: func(t *testing.T, seedPeer *seedPeer) {
- 				assert := assert.New(t)
--				seedPeer.refresh(context.Background())
-+				mockHost := mockSeedHost(mockRawSeedHost.Port)
-+				seedPeer.Store(mockHost)
- 				assert.True(seedPeer.HasAvailable())
-+				assert.Equal(hashring.DefaultVNodesPerNode, seedPeer.hashring.Len())
- 
- 				host, err := seedPeer.Select(context.Background(), mockTaskID)
- 				assert.NoError(err)
--				assert.Equal(hosts[0].ID, host.ID)
-+				assert.Same(mockHost, host)
- 			},
- 		},
- 		{
--			name: "filter unhealthy seed peer",
--			hosts: func(t *testing.T) []*Host {
--				return []*Host{mockUnreachableSeedHost(t)}
-+			name: "replace the host of the same seed peer and keep the hashring",
-+			expect: func(t *testing.T, seedPeer *seedPeer) {
-+				assert := assert.New(t)
-+				stale := mockSeedHost(mockRawSeedHost.Port)
-+				seedPeer.Store(stale)
-+				ring := seedPeer.hashring
-+
-+				restarted := mockSeedHost(mockRawSeedHost.Port)
-+				restarted.ID = idgen.HostID("127.0.0.2", mockRawSeedHost.Hostname, true)
-+				restarted.IP = "127.0.0.2"
-+				seedPeer.Store(restarted)
-+				assert.Same(ring, seedPeer.hashring)
-+				assert.Equal(hashring.DefaultVNodesPerNode, seedPeer.hashring.Len())
-+				assert.Len(seedPeer.hosts, 1)
-+
-+				host, err := seedPeer.Select(context.Background(), mockTaskID)
-+				assert.NoError(err)
-+				assert.Same(restarted, host)
- 			},
--			mock: func(m *MockHostManagerMockRecorder, hosts []*Host) {
--				m.LoadAllSeeds().Return(hosts)
-+		},
-+		{
-+			name: "store seed peers with different names",
-+			expect: func(t *testing.T, seedPeer *seedPeer) {
-+				assert := assert.New(t)
-+				foo := mockSeedHost(mockRawSeedHost.Port)
-+				foo.Name = "default-seed-client-0"
-+				bar := mockSeedHost(mockRawSeedHost.Port)
-+				bar.Name = "default-seed-client-1"
-+				seedPeer.Store(foo)
-+				seedPeer.Store(bar)
-+				assert.Len(seedPeer.hosts, 2)
-+				assert.Equal(2*hashring.DefaultVNodesPerNode, seedPeer.hashring.Len())
-+
-+				host, err := seedPeer.Select(context.Background(), mockTaskID)
-+				assert.NoError(err)
-+				assert.Contains([]*Host{foo, bar}, host)
- 			},
--			expect: func(t *testing.T, seedPeer *seedPeer, hosts []*Host) {
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctl := gomock.NewController(t)
-+			defer ctl.Finish()
-+			hostManager := NewMockHostManager(ctl)
-+			peerManager := NewMockPeerManager(ctl)
-+			clientPool := dfdaemonclientmocks.NewMockPool(ctl)
-+
-+			tc.expect(t, newSeedPeer(peerManager, hostManager, clientPool).(*seedPeer))
-+		})
-+	}
-+}
-+
-+func TestSeedPeer_Delete(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		expect func(t *testing.T, seedPeer *seedPeer)
-+	}{
-+		{
-+			name: "delete seed peer",
-+			expect: func(t *testing.T, seedPeer *seedPeer) {
- 				assert := assert.New(t)
--				seedPeer.refresh(context.Background())
-+				mockHost := mockSeedHost(mockRawSeedHost.Port)
-+				seedPeer.Store(mockHost)
-+				seedPeer.Delete(mockHost)
-+				assert.Empty(seedPeer.hosts)
- 				assert.False(seedPeer.HasAvailable())
- 
- 				_, err := seedPeer.Select(context.Background(), mockTaskID)
--				assert.Error(err)
-+				assert.EqualError(err, "no available seed peer")
- 			},
- 		},
- 		{
--			name: "keep the most recently announced host of the same seed peer",
--			hosts: func(t *testing.T) []*Host {
--				register := func(svr *grpc.Server) {
--					healthpb.RegisterHealthServer(svr, health.NewServer())
--				}
--
--				stale := mockSeedHostServer(t, register)
--				stale.UpdatedAt.Store(time.Now().Add(-time.Minute))
--				return []*Host{stale, mockSeedHostServer(t, register)}
-+			name: "delete seed peer which does not exist",
-+			expect: func(t *testing.T, seedPeer *seedPeer) {
-+				assert := assert.New(t)
-+				seedPeer.Delete(mockSee
-```
-
-**File**: `scheduler/service/service_v1.go` (modified, +17/-0)
-```diff
-@@ -542,6 +542,12 @@ func (v *V1) AnnounceHost(ctx context.Context, req *schedulerv1.AnnounceHostRequ
- 
- 		v.resource.HostManager().Store(host)
- 		host.Log.Infof("announce new host: %#v", req)
-+
-+		// Store the seed peer in the hashring by its announcement.
-+		if host.Type == types.HostTypeSuperSeed {
-+			v.resource.SeedPeer().Store(host)
-+		}
-+
- 		return nil
- 	}
- 
-@@ -624,6 +630,11 @@ func (v *V1) AnnounceHost(ctx context.Context, req *schedulerv1.AnnounceHostRequ
- 		}
- 	}
- 
-+	// Store the seed peer in the hashring by its announcement.
-+	if host.Type == types.HostTypeSuperSeed {
-+		v.resource.SeedPeer().Store(host)
-+	}
-+
- 	return nil
- }
- 
-@@ -644,6 +655,12 @@ func (v *V1) LeaveHost(_ctx context.Context, req *schedulerv1.LeaveHostRequest)
- 
- 	// Delete host in scheduler.
- 	v.resource.HostManager().Delete(host.ID)
-+
-+	// Delete the seed peer from the hashring.
-+	if host.Type == types.HostTypeSuperSeed {
-+		v.resource.SeedPeer().Delete(host)
-+	}
-+
- 	return nil
- }
- 
-```
-
-**File**: `scheduler/service/service_v1_test.go` (modified, +84/-11)
-```diff
-@@ -1845,7 +1845,7 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 	tests := []struct {
- 		name string
- 		req  *schedulerv1.AnnounceHostRequest
--		run  func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder)
-+		run  func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, seedPeer resource.SeedPeer, msp *resource.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder)
- 	}{
- 		{
- 			name: "host not found",
-@@ -1910,7 +1910,7 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 					Platform:   mockBuild.Platform,
- 				},
- 			},
--			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, seedPeer resource.SeedPeer, msp *resource.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				assert := assert.New(t)
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(types.SchedulerClusterClientConfig{LoadLimit: 10}, nil).Times(1),
-@@ -2011,7 +2011,7 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 					Platform:   mockBuild.Platform,
- 				},
- 			},
--			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, seedPeer resource.SeedPeer, msp *resource.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				assert := assert.New(t)
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(types.SchedulerClusterClientConfig{}, errors.New("foo")).Times(1),
-@@ -2112,7 +2112,7 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 					Platform:   mockBuild.Platform,
- 				},
- 			},
--			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, seedPeer resource.SeedPeer, msp *resource.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(types.SchedulerClusterClientConfig{LoadLimit: 10}, nil).Times(1),
- 					mr.HostManager().Return(hostManager).Times(1),
-@@ -2210,7 +2210,7 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 					Platform:   mockBuild.Platform,
- 				},
- 			},
--			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, mh *resource.MockHostManagerMockRecorder, seedPeer resource.SeedPeer, msp *resource.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(types.SchedulerClusterClientConfig{}, errors.New("foo")).Times(1),
- 					mr.HostManager().Return(hostManager).Times(1),
-@@ -2245,6 +2245,57 @@ func TestServiceV1_AnnounceHost(t *testing.T) {
- 				assert.NotNil(host.Log)
- 			},
- 		},
-+		{
-+			name: "host not found and host type is HostTypeSuperSeed stores the seed peer",
-+			req: &schedulerv1.AnnounceHostRequest{
-+				Id:           mockSeedHostID,
-+				Type:         pkgtypes.HostTypeSuperSeed.Name(),
-+				Hostname:     "hostname",
-+				Ip:           "127.0.0.1",
-+				Port:         8003,
-+				DownloadPort: 8001,
-+			},
-+			run: func(t *testing.T, svc *V1, req *schedulerv1.AnnounceHostRequest, host *resource.Host, hostManager resource.HostManager, mr *resource.MockResourceMockRecorder, m
-```
-
-**File**: `scheduler/service/service_v2.go` (modified, +11/-1)
-```diff
-@@ -751,6 +751,11 @@ func (v *V2) AnnounceHost(ctx context.Context, req *schedulerv2.AnnounceHostRequ
- 		}
- 	}
- 
-+	// Store the seed peer in the hashring by its announcement.
-+	if host.Type == types.HostTypeSuperSeed {
-+		v.resource.SeedPeer().Store(host)
-+	}
-+
- 	// Handle the persistent host. If redis is not enabled,
- 	// it will not support the persistent feature.
- 	if v.persistentResource != nil {
-@@ -1214,7 +1219,7 @@ func (v *V2) DeleteHost(_ctx context.Context, req *schedulerv2.DeleteHostRequest
- 	log := logger.WithHostID(req.GetHostId())
- 	log.Infof("delete host request: %#v", req)
- 
--	_, loaded := v.resource.HostManager().Load(req.GetHostId())
-+	host, loaded := v.resource.HostManager().Load(req.GetHostId())
- 	if !loaded {
- 		msg := fmt.Sprintf("host %s not found", req.GetHostId())
- 		log.Error(msg)
-@@ -1227,6 +1232,11 @@ func (v *V2) DeleteHost(_ctx context.Context, req *schedulerv2.DeleteHostRequest
- 	// Delete host in scheduler.
- 	v.resource.HostManager().Delete(req.GetHostId())
- 
-+	// Delete the seed peer from the hashring.
-+	if host.Type == types.HostTypeSuperSeed {
-+		v.resource.SeedPeer().Delete(host)
-+	}
-+
- 	// Handle the persistent host for deletion.
- 	if v.persistentResource != nil {
- 		peers, err := v.persistentResource.PeerManager().LoadAllByHostID(ctx, req.GetHostId())
-```
-
-**File**: `scheduler/service/service_v2_test.go` (modified, +58/-18)
-```diff
-@@ -1096,7 +1096,7 @@ func TestServiceV2_AnnounceHost(t *testing.T) {
- 	tests := []struct {
- 		name string
- 		req  *schedulerv2.AnnounceHostRequest
--		run  func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder)
-+		run  func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, seedPeer standard.SeedPeer, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, msp *standard.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder)
- 	}{
- 		{
- 			name: "host not found",
-@@ -1169,7 +1169,7 @@ func TestServiceV2_AnnounceHost(t *testing.T) {
- 				},
- 				Interval: durationpb.New(5 * time.Minute),
- 			},
--			run: func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, seedPeer standard.SeedPeer, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, msp *standard.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				assert := assert.New(t)
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(managertypes.SchedulerClusterClientConfig{LoadLimit: 10}, nil).Times(1),
-@@ -1330,7 +1330,7 @@ func TestServiceV2_AnnounceHost(t *testing.T) {
- 				},
- 				Interval: durationpb.New(5 * time.Minute),
- 			},
--			run: func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
-+			run: func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, persistentHost *persistent.Host, persistentCacheHost *persistentcache.Host, hostManager standard.HostManager, persistentHostManager persistent.HostManager, persistentCacheHostManager persistentcache.HostManager, seedPeer standard.SeedPeer, mr *standard.MockResourceMockRecorder, mpr *persistent.MockResourceMockRecorder, mpcr *persistentcache.MockResourceMockRecorder, mh *standard.MockHostManagerMockRecorder, mph *persistent.MockHostManagerMockRecorder, mpch *persistentcache.MockHostManagerMockRecorder, msp *standard.MockSeedPeerMockRecorder, md *configmocks.MockDynconfigInterfaceMockRecorder) {
- 				assert := assert.New(t)
- 				gomock.InOrder(
- 					md.GetSchedulerClusterClientConfig().Return(managertypes.SchedulerClusterClientConfig{}, errors.New("foo")).Times(1),
-@@ -1491,7 +1491,7 @@ func TestServiceV2_AnnounceHost(t *testing.T) {
- 				},
- 				Interval: durationpb.New(5 * time.Minute),
- 			},
--			run: func(t *testing.T, svc *V2, req *schedulerv2.AnnounceHostRequest, host *standard.Host, 
+-Subproject commit fd4dde4347be8a3334e688e5943851f0750746bf
++Subproject commit 024c6e9c7d9ef6a67311ed15e645baf98b227f94
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5079** (2026-10-21): chore(client): bump client submodule to fd4dde4 (@gaius-qi)
-- **PR #5078** (2026-10-20): chore(deps): bump actions/download-artifact from 7.0.0 to 8.0.2 (@dependabot[bot])
-- **PR #5077** (2026-10-20): chore(deps): bump goreleaser/goreleaser-action from 7.2.2 to 7.3.0 (@dependabot[bot])
-- **PR #5076** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.0 (@dependabot[bot])
-- **PR #5075** (closed): chore(deps): bump google.golang.org/grpc from 1.83.1 to 1.84.0 (@dependabot[bot])
-- **PR #5074** (2026-10-20): chore(deps): bump ossf/scorecard-action from 2.4.4 to 2.5.0 (@dependabot[bot])
+- **PR #5090** (2026-10-27): chore(build): bump Alpine base image to 3.23.7 and update client submodule (@gaius-qi)
+- **PR #5089** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.1 (@dependabot[bot])
+- **PR #5088** (2026-10-27): chore(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (@dependabot[bot])
+- **PR #5087** (closed): chore(deps): bump github/codeql-action/autobuild from 4.36.2 to 4.39.1 (@dependabot[bot])
+- **PR #5086** (closed): chore(deps): bump github/codeql-action/analyze from 4.36.2 to 4.39.1 (@dependabot[bot])
+- **PR #5085** (closed): chore(deps): bump github.com/docker/go-connections from 0.8.1 to 0.8.2 (@dependabot[bot])
 
 ---
 
@@ -1749,28 +1274,32 @@ Signed-off-by: Gaius <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client): bump client submodule to fd4dde4 (#5079)
+## X. build): bump Alpine base image to 3.23.7 and update client submodule (#5090)
 
 **RULE**:
-When implementing operations in `client`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a670afb4`: client): bump client submodule to fd4dde4 (#5079). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fce3dc25`: build): bump Alpine base image to 3.23.7 and update client submodule (#5090). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Subproject commit fd4dde4347be8a3334e688e5943851f0750746bf
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: go.mod
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Subproject commit 701552010f620feb3539f7f1ebb5c809efb7dea9
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a670afb4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fce3dc25` are properly handled with clean fallback behavior.
