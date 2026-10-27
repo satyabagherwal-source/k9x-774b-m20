@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T16:18:19.715Z",
+  "last_updated": "2026-10-27T16:24:57.006Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "a3ae5b9dad346cf8764d3b9c9c1bdb99bf1bf09b619a3ba62f7389c7d6c3233d",
-      "verified_at": "2026-10-25T12:45:40.527Z",
+      "content_hash": "822b62064d08fce75bd6e484371d2f8dff66c676c5fae114732b0fba9182309f",
+      "verified_at": "2026-10-27T16:24:57.006Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:45:40.527Z"
+      "last_updated": "2026-10-27T16:24:57.006Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",

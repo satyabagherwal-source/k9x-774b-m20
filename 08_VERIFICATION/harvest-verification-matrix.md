@@ -5424,3 +5424,4 @@
 | `CYCLE-20261027-3GZ3` | `2026-10-27T16:18:12.783Z` | `datagouv/datagouv-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4893` | Yes (`2f11b7cd...`) |
 | `CYCLE-20261027-3L4F` | `2026-10-27T16:18:18.159Z` | `BlackSnufkin/LitterBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4894` | Yes (`1e938f22...`) |
 | `CYCLE-20261027-3MBD` | `2026-10-27T16:18:19.705Z` | `PaperDebugger/paperdebugger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4895` | Yes (`dbdabc46...`) |
+| `CYCLE-20261027-C4VA` | `2026-10-27T16:24:56.998Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4896` | Yes (`822b6206...`) |

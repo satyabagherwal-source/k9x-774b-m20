@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T16:18:19.712Z",
-  "total_cycles_completed": 5401,
-  "total_learnings_persisted": 5401,
-  "total_rules_promoted": 4803,
+  "last_updated": "2026-10-27T16:24:57.004Z",
+  "total_cycles_completed": 5402,
+  "total_learnings_persisted": 5402,
+  "total_rules_promoted": 4804,
   "history": [
-    {
-      "timestamp": "2026-10-27T11:09:14.647Z",
-      "repository": "Planetable/Planet",
-      "learningId": "learn-github-planetable-planet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T11:09:21.389Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-27T16:18:19.712Z",
       "repository": "PaperDebugger/paperdebugger",
       "learningId": "learn-github-paperdebugger-paperdebugger",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T16:24:57.004Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

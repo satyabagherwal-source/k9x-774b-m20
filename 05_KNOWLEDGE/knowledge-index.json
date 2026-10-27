@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T16:18:19.650Z",
+  "last_updated": "2026-10-27T16:24:56.939Z",
   "total_verified_learnings": 1142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41240,8 +41240,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "1b30ad1b",
-      "content_hash": "a3ae5b9dad346cf8764d3b9c9c1bdb99bf1bf09b619a3ba62f7389c7d6c3233d",
+      "source_version": "97bc1c66",
+      "content_hash": "822b62064d08fce75bd6e484371d2f8dff66c676c5fae114732b0fba9182309f",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -41274,6 +41274,11 @@
           "number": 4295,
           "title": "make merges and VACUUM's merger wait interruptible (#6740)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4896,
+          "title": "apply backpressure across immutable merge layers (#6880)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41281,7 +41286,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:45:40.421Z",
+      "verified_at": "2026-10-27T16:24:56.929Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136038,6 +136043,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T16:18:19.635Z"
+    },
+    "rule-4896": {
+      "learning_id": "rule-4896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4896,
+      "title": "apply backpressure across immutable merge layers (#6880)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "97bc1c66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T16:24:56.929Z"
     }
   },
   "aliases": {

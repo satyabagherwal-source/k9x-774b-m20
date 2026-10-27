@@ -5433,3 +5433,4 @@ Every entry in this ledger must capture:
 | `learn-github-datagouv-datagouv-mcp` | `https://github.com/datagouv/datagouv-mcp` | `01db2a6f` | Multi-dimensional audit evidence | 2026-10-27T16:18:12.787Z |
 | `learn-github-blacksnufkin-litterbox` | `https://github.com/BlackSnufkin/LitterBox` | `a609527c` | Multi-dimensional audit evidence | 2026-10-27T16:18:18.162Z |
 | `learn-github-paperdebugger-paperdebugger` | `https://github.com/PaperDebugger/paperdebugger` | `191bd322` | Multi-dimensional audit evidence | 2026-10-27T16:18:19.708Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `97bc1c66` | Multi-dimensional audit evidence | 2026-10-27T16:24:57.000Z |

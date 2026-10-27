@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-GOS1",
-    "timestamp": "2026-10-25T17:49:07.825Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "f4d1a0fc533dc55dd0c71b28c3e42014f40039a4d4040fe1b13e4f90cd967e1e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-GPQ3",
     "timestamp": "2026-10-25T17:49:09.051Z",
     "repository": "actix/actix-web",
@@ -7490,6 +7475,21 @@
     "repository": "PaperDebugger/paperdebugger",
     "learningId": "learn-github-paperdebugger-paperdebugger",
     "contentHash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-C4VA",
+    "timestamp": "2026-10-27T16:24:56.998Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "822b62064d08fce75bd6e484371d2f8dff66c676c5fae114732b0fba9182309f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
