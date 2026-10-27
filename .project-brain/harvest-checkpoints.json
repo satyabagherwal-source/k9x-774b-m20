@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T14:26:34.191Z",
+  "last_updated": "2026-10-27T14:29:59.604Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3111,14 +3111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastapi-fastapi",
-      "content_hash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
-      "verified_at": "2026-10-25T12:23:01.110Z",
+      "content_hash": "8c990616402ee82689bf1b2d4c7a230f52a830ddc7e7df0e2284fdf486ee813c",
+      "verified_at": "2026-10-27T14:29:45.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T12:23:01.110Z"
+      "last_updated": "2026-10-27T14:29:45.646Z"
     },
     "pallets/flask": {
       "repository": "pallets/flask",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
-      "verified_at": "2026-10-19T06:52:15.650Z",
+      "content_hash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
+      "verified_at": "2026-10-27T14:29:59.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:52:15.650Z"
+      "last_updated": "2026-10-27T14:29:59.604Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

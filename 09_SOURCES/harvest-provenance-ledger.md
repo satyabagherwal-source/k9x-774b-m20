@@ -5381,3 +5381,5 @@ Every entry in this ledger must capture:
 | `learn-github-ooples-token-optimizer-mcp` | `https://github.com/ooples/token-optimizer-mcp` | `c20a1bd9` | Multi-dimensional audit evidence | 2026-10-27T14:23:11.830Z |
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `76f97a98` | Multi-dimensional audit evidence | 2026-10-27T14:26:28.125Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `abcdcf19` | Multi-dimensional audit evidence | 2026-10-27T14:26:34.182Z |
+| `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `79cab5be` | Multi-dimensional audit evidence | 2026-10-27T14:29:45.639Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `ad54fb8b` | Multi-dimensional audit evidence | 2026-10-27T14:29:59.597Z |

@@ -6333,10 +6333,10 @@
     "repository": "fastapi/fastapi",
     "platform": "github",
     "sourceUrl": "https://github.com/fastapi/fastapi",
-    "sourceVersion": "7a0a3f0b",
+    "sourceVersion": "79cab5be",
     "license": "MIT",
-    "contentHash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
-    "lastHarvestedAt": "2026-10-25T12:23:01.092Z",
+    "contentHash": "8c990616402ee82689bf1b2d4c7a230f52a830ddc7e7df0e2284fdf486ee813c",
+    "lastHarvestedAt": "2026-10-27T14:29:45.639Z",
     "learningId": "learn-github-fastapi-fastapi"
   },
   "ataraxy-labs-sem": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "1baf1620",
+    "sourceVersion": "ad54fb8b",
     "license": "NOASSERTION",
-    "contentHash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
-    "lastHarvestedAt": "2026-10-19T06:52:15.644Z",
+    "contentHash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
+    "lastHarvestedAt": "2026-10-27T14:29:59.597Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

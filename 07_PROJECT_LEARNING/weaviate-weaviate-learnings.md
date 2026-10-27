@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `1baf1620`  
+> **Source Version**: `ad54fb8b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:52:15.413Z  
+> **Timestamp**: 2026-10-27T14:29:59.258Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:52:15.405Z  
+> **Harvest Timestamp**: 2026-10-27T14:29:58.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16890 stars
+- **Stars / Engagement**: 16921 stars
 
 ---
 
@@ -735,7 +735,9 @@ import (
 	"github.com/weaviate/weaviate/entities/models"
 	"github.com/weaviate/weaviate/entities/modelsext"
 	entschema "github.com/weaviate/weaviate/entities/schema"
+	"github.com/weaviate/weaviate/usecases/namespaces"
 	"github.com/weaviate/weaviate/usecases/schema"
+	"github.com/weaviate/weaviate/usecases/schema/namespacing"
 	"github.com/weaviate/weaviate/usecases/sharding"
 )
 
@@ -916,9 +918,7 @@ func (e *dropVectorIndexEnqueuer) EnqueueDropVectorIndexWithTasks(ctx context.Co
 	}
 	shardOwnership = withoutCleanedShards(shardOwnership, cleaned)
 	shardOwnership, deferredShards := capShardOwnership(shardOwnership, maxShardsPerDropRound)
-	if deferredShards > 0 {
-		e.logInfo(collection, fmt.Sprintf(
-			"drop-vector enqueue: round capped at %d shards, %d deferr
+	if deferre
 ```
 
 ### Core Architecture Module: `adapters/handlers/rest/operations/replication/get_collection_sharding_state.go`
@@ -1732,86 +1732,821 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cd62c1f` (2026-10-15)
-**Commit Message**: Test that unflushed writes of a suspended namespace survive a crash
+### Incident Patch 1: `ad54fb8b` (2026-10-27)
+**Commit Message**: Merge pull request #13593 from weaviate/namespace_drop_vector
 
-**File**: `adapters/repos/db/backup_integration_test.go` (modified, +6/-4)
+Namespace: Make supend compatible with drop named vector
+
+**File**: `adapters/handlers/rest/configure_api.go` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,7 @@ import (
- 	backupUC "github.com/weaviate/weaviate/usecases/backup"
- 	"github.com/weaviate/weaviate/usecases/cluster"
- 	"github.com/weaviate/weaviate/usecases/memwatch"
+@@ -1268,7 +1268,7 @@ func initReindexAndDistributedTasks(
+ 	// is missing (crash, upgrade, or restore).
+ 	enterrors.GoWrapper(func() {
+ 		runDropVectorIndexReconciliation(
+-			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.Logger,
++			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.NamespacesController, appState.Logger,
+ 			appState.ServerConfig.Config.DistributedTasks.DropVectorReconcileInterval,
+ 			appState.ClusterService.IsLeader, dropVectorReconcileNudge)
+ 	}, appState.Logger)
+```
+
+**File**: `adapters/handlers/rest/drop_vector_index_enqueuer.go` (modified, +12/-5)
+```diff
+@@ -26,7 +26,9 @@ import (
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/modelsext"
+ 	entschema "github.com/weaviate/weaviate/entities/schema"
++	"github.com/weaviate/weaviate/usecases/namespaces"
+ 	"github.com/weaviate/weaviate/usecases/schema"
++	"github.com/weaviate/weaviate/usecases/schema/namespacing"
+ 	"github.com/weaviate/weaviate/usecases/sharding"
+ )
+ 
+@@ -505,9 +507,11 @@ type dropVectorReconcileClient interface {
+ // reconcileDroppedVectorIndexes enqueues cleanup for every "none" marker with no
+ // in-flight task — recovery for a crash between marker apply and enqueue, an
+ // upgrade with pre-existing markers, or a restore. Idempotent: the active-task
+-// check + the ConflictDetector dedupe across nodes running it at startup.
++// check + the ConflictDetector dedupe across nodes running it at startup. It
++// skips a class whose namespace is not active and leaves its markers for a round
++// after resume.
+ func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
+-	enq dropVectorReconcileClient, logger logrus.FieldLogger,
++	enq dropVectorReconcileClient, namespacesExister namespaces.Exister, logger logrus.FieldLogger,
+ ) {
+ 	tasks, err := enq.ListDistributedTasks(ctx)
+ 	if err != nil {
+@@ -518,6 +522,9 @@ func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
+ 		if class == nil {
+ 			continue
+ 		}
++		if err := namespaces.RequireActive(namespacesExister, namespacing.NamespaceFromQualified(class.Class)); err != nil {
++			continue
++		}
+ 		for name, cfg := range class.VectorConfig {
+ 			if !modelsext.IsVectorIndexDropped(cfg) {
+ 				continue
+@@ -539,8 +546,8 @@ func reconcileDroppedVectorIndexes(ctx context.Context, classes []*models.Class,
+ // goroutine. lister reads the local schema: eventually consistent is fine for
+ // this idempotent safety net.
+ func runDropVectorIndexReconciliation(ctx context.Context, lister local.ClassReader,
+-	enq dropVectorReconcileClient, logger logrus.FieldLogger, interval time.Duration,
+-	isLeader func() bool, nudge <-chan struct{},
++	enq dropVectorReconcileClient, namespacesExister namespaces.Exister, logger logrus.FieldLogger,
++	interval time.Duration, isLeader func() bool, nudge <-chan struct{},
+ ) {
+ 	const attempts = 30
+ 	for i := 0; i < attempts; i++ {
+@@ -580,7 +587,7 @@ func runDropVectorIndexReconciliation(ctx context.Context, lister local.ClassRea
+ 				return
+ 			}
+ 			if classes := lister.ReadOnlySchema().Classes; len(classes) > 0 {
+-				reconcileDroppedVectorIndexes(ctx, classes, enq, logger)
++				reconcileDroppedVectorIndexes(ctx, classes, enq, namespacesExister, logger)
+ 			}
+ 		}()
+ 		select {
+```
+
+**File**: `adapters/handlers/rest/drop_vector_index_enqueuer_test.go` (modified, +29/-6)
+```diff
+@@ -25,11 +25,13 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/weaviate/weaviate/adapters/repos/db"
+ 	"github.com/weaviate/weaviate/cluster/distributedtask"
++	api "github.com/weaviate/weaviate/cluster/proto/api"
+ 	"github.com/weaviate/weaviate/cluster/schema/leader"
+ 	"github.com/weaviate/weaviate/cluster/schema/local"
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/modelsext"
+ 	"github.com/weaviate/weaviate/entities/versioned"
 +	"github.com/weaviate/weaviate/usecases/namespaces"
  	"github.com/weaviate/weaviate/usecases/sharding"
  )
  
-@@ -287,13 +288,14 @@ func setupTestDB(t *testing.T, rootDir string, classes ...*models.Class) *DB {
- // setupTestDBWithConfig builds a single-node DB on a single shard. override, when
- // non-nil, adjusts the Config before the DB is created.
- func setupTestDBWithConfig(t *testing.T, rootDir string, override func(*Config), classes ...*models.Class) *DB {
--	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
-+	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
- }
- 
- // setupTestDBWithShardState builds a single-node DB that holds the given shards.
--// override, when non-nil, adjusts the Config before the DB is created.
-+// override, when non-nil, adjusts the Config before the DB is created. exister
-+// answers the namespace of a <ns>:<Class> name, and may be nil without one.
- func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *sharding.State,
--	override func(*Config), classes ...*models.Class,
-+	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
- ) *DB {
- 	logger, _ := test.NewNullLogger()
- 
-@@ -335,7 +337,7 @@ func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *shardin
- 		override(&cfg)
+@@ -91,7 +93,7 @@ func TestReconcile_EnqueuesMissingTasks(t *testing.T) {
  	}
- 	db, err := New(logger, "node1", cfg, &FakeRemoteClient{}, mockNodeSelector, &FakeRemoteNodeClient{}, &FakeReplicationClient{}, nil, memwatch.NewDummyMonitor(),
--		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
-+		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
- 	require.Nil(t, err)
- 	db.SetSchemaGetter(schemaGetter)
- 	require.Nil(t, db.WaitForStartup(testCtx()))
-```
-
-**File**: `adapters/repos/db/batch_delete_limit_integration_test.go` (modified, +2/-2)
-```diff
-@@ -502,7 +502,7 @@ func newBatchDeleteRepoAt(t *testing.T, rootDir string, class *models.Class,
+ 	enq := &fakeReconcileEnqueuer{active: map[string]bool{}}
  
- 	return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
- 		cfg.QueryMaximumResults = queryMaximumResults
--	}, class)
-+	}, nil, class)
+-	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
++	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
+ 
+ 	require.ElementsMatch(t, []string{"A/v1", "B/v2"}, enq.enqueued,
+ 		"every dropped marker without a live task is enqueued; non-dropped vectors are skipped")
+@@ -116,7 +118,7 @@ func TestReconcile_ListError_SkipsRound(t *testing.T) {
+ 	}
+ 	enq := &listErrEnqueuer{fakeReconcileEnqueuer: &fakeReconcileEnqueuer{active: map[string]bool{}}}
+ 
+-	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
++	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
+ 
+ 	require.Empty(t, enq.enqueued, "an unreadable task list must skip the round, not enqueue blind")
+ }
+@@ -128,11 +130,32 @@ func TestReconcile_SkipsClassesWithLiveTasks(t *testing.T) {
+ 	}
+ 	enq := &fakeReconcileEnqueuer{active: map[string]bool{"A/v1": true}} // v1 already in flight
+ 
+-	reconcileDroppedVectorIndexes(context.Background(), classes, enq, logger)
++	reconcileDroppedVectorIndexes(context.Background(), classes, enq, nil, logger)
+ 
+ 	require.Equal(t, []string{"A/v2"}, enq.enqueued, "only the marker without a live task is enqueued")
  }
  
- // TestBatchDeleteObjects_DeadDocIDDoesNotBurnASlot pins that a doc id with no object row costs a read, not a limit slot.
-@@ -848,7 +848,7 @@ func TestObjectsTTLSweepResolvesPastDeadDocIDs(t *testing.T) {
- 			newTTLRepo := func() *DB {
- 				return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
- 					cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(sweepBatch)
--				}, class)
-+				}, nil, class)
- 			}
++func TestReconcile_SkipsClassesWithoutActiveNamespace(t *testing.T) {
++	logger, _ := test.NewNullLogger()
++	classes := []*models.Class{
++		{Class: "ns1:A", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
++		{Class: "ns2:B", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
++		{Class: "C", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
++		{Class: "ns3:D", VectorConfig: map[string]models.VectorConfig{"v1": dropped()}},
++	}
++	exister := namespaces.NewMockExisterInState(t, map[string]api.NamespaceState{
++		"ns1": api.NamespaceStateSuspended,
++		"ns2": api.NamespaceStateActive,
++		"ns3": api.NamespaceStateDeleting,
++	})
++	enq := &fakeReconcileEnqueuer{active: map[string]bool{}}
++
++	reconcileDroppedVectorIndexes(context.Background(), classes, enq, exister, logger)
++
++	require.Equal(t, []string{"ns2:B/v1", "C/v1"}, enq.enqueued,
++		"a class whose namespace is not active is skipped, and the round continues past it")
++}
++
+ // probeRecordingEnqueuer flags when the DTM probe has run, so the order test can
+ // assert the schema is read only afterwards.
+ type probeRecordingEnqueuer struct {
+@@ -178,7 +201,7 @@ func TestReconciliationAtStartup_ReadsSchemaAfterProbe(t *testing.T) {
+ 	// One round: the loop exits via ctx after the first pass.
+ 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+ 	defer cancel()
+-	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
++	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
+ 		func() bool { return true }, nil)
  
- 			repo := newTTLRepo()
+ 	require.True(t, orderOK, "schema must be read AFTER the DTM readiness probe")
+@@ -202,7 +225,7 @@ func TestReconciliation_FollowerSkipsRound(t *testing.T) {
+ 
+ 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+ 	defer cancel()
+-	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
++	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
+ 		func() bool { return false }, nil)
+ 
+ 	require.Empty(t, enq.enqueued, "a non-leader must not enqueue")
+@@ -1094,7 +1117,7 @@ func TestReconciliation_NudgeWakesBeforeInterval(t *testing.T) {
+ 	defer cancel()
+ 	// Interval far beyond the ctx timeout: a second round can only come from
+ 	// the nudge.
+-	runDropVectorIndexReconciliation(ctx, lister, enq, logger, time.Hour,
++	runDropVectorIndexReconciliation(ctx, lister, enq, nil, logger, time.Hour,
+ 		func() bool { return true }, nudge)
+ 
+ 	require.GreaterOrEqual(t, len(enq.enqueued), 2, "the nudge must trigger a follow-up round within the interval")
 ```
 
-**File**: `adapters/repos/db/index_objects_ttl_integration_test.go` (modified, +1/-1)
+**File**: `adapters/repos/db/drop_vector_index_provider.go` (modified, +51/-38)
 ```diff
-@@ -147,7 +147,7 @@ func setupTTLRepo(t *testing.T, batchSize int, shardState *sharding.State, class
+@@ -243,7 +243,7 @@ func (p *DropVectorIndexProvider) processUnits(
+ 	ctx context.Context, task *distributedtask.Task,
+ 	payload *DropVectorIndexTaskPayload, localUnits []string,
+ ) {
+-	buckets := p.localBuckets(ctx, payload, localUnits)
++	buckets, resolveErr := p.localBuckets(ctx, payload, localUnits)
  
- 	repo := setupTestDBWithShardState(t, t.TempDir(), shardState, func(cfg *Config) {
- 		cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(batchSize)
--	}, class)
-+	}, nil, class)
- 	t.Cleanup(func() { require.NoError(t, repo.Shutdown(context.Background())) })
+ 	pending := make([]string, 0, len(localUnits))
+ 	for _, unitID := range localUnits {
+@@ -253,6 +253,11 @@ func (p *DropVectorIndexProvider) processUnits(
+ 		pending = append(pending, unitID)
+ 	}
  
- 	insertTTLObjects(t, repo, tenant, expiredCount, aliveCount)
++	if resolveErr != nil {
++		p.failPending(ctx, task, pending, "resolve objects buckets: "+resolveErr.Error())
++		return
++	}
++
+ 	// Last check before the destructive ops arm: the marker commit and the task
+ 	// enqueue are not atomic, so the class may have been deleted+re-created (or the
+ 	// entry otherwise revived) since. Arming against a live vector would strip user
+@@ -261,12 +266,7 @@ func (p *DropVectorIndexProvider) processUnits(
+ 	// drain poll: a momentary leader blip must not fail a whole drop task.
+ 	stillDropped, verifyErr := p.targetsStillDroppedWithRetry(ctx, payload)
+ 	if verifyErr != nil {
+-		if ctx.Err() != nil {
+-			return // shutdown: leave units in place, the task resumes after restart
+-		}
+-		for _, unitID := range pending {
+-			p.failUnit(ctx, task, unitID, "verify targets still marked dropped: "+verifyErr.Error())
+-		}
++		p.failPending(ctx, task, pending, "verify targets still marked dropped: "+verifyErr.Error())
+ 		return
+ 	}
+ 	if !stillDropped {
+@@ -299,21 +299,15 @@ func (p *DropVectorIndexProvider) processUnits(
+ }
+ 
+ // localBuckets resolves the objects bucket for every local unit's shard in one
+-// walk. Returns nil on a lookup error; per-unit handling then fails the units.
++// walk.
+ func (p *DropVectorIndexProvider) localBuckets(
+ 	ctx context.Context, payload *DropVectorIndexTaskPayload, localUnits []string,
+-) map[string]editOpBucket {
++) (map[string]editOpBucket, error) {
+ 	shardNames := make([]string, 0, len(localUnits))
+ 	for _, unitID := range localUnits {
+ 		shardNames = append(shardNames, payload.UnitToShard[unitID])
+ 	}
+-	buckets, err := p.shards.EditOpBucketsForShards(ctx, payload.Collection, shardNames)
+-	if err != nil {
+-		p.logger.WithField("collection", payload.Collection).
+-			Errorf("drop-vector: resolve objects buckets: %v", err)
+-		return nil
+-	}
+-	return buckets
++	return p.shards.EditOpBucketsForShards(ctx, payload.Collection, shardNames)
+ }
+ 
+ // armUnit registers the edit op on the unit's shard, reporting whether the unit
+@@ -342,7 +336,11 @@ func (p *DropVectorIndexProvider) armUnit(
+ 		CreatedAt: time.Now().UnixNano(),
+ 	}
+ 	if err := bucket.RegisterEditOp(payload.OpID, desc); err != nil {
+-		p.failUnit(ctx, task, unitID, "register drop edit op: "+err.Error())
++		msg := "register drop edit op: " + err.Error()
++		if !p.bucketStillLoaded(payload.Collection, payload.UnitToShard[unitID], bucket) {
++			msg += shardGoneReason
++		}
++		p.failUnit(ctx, task, unitID, msg)
+ 		return false
+ 	}
+ 	return true
+@@ -354,20 +352,17 @@ func (p *DropVectorIndexProvider) drainUnit(
+ 	payload *DropVectorIndexTaskPayload, unitID string, bucket editOpBucket,
+ ) {
+ 	shardGone := func() bool {
+-		return !p.shardLocallyLoaded(payload.Collection, payload.UnitToShard[unitID])
++		return !p.bucketStillLoaded(payload.Collection, payload.UnitToShard[unitID], bucket)
+ 	}
+ 	if err := p.pollUntilEmpty(ctx, bucket, task, unitID, payload.OpID, shardGone); err != nil {
+ 		if ctx.Err() != nil {
+ 			return // shutdown: resume after restart, do not mark failed
+ 		}
+ 		msg := "drain pending segments: " + err.Error()
+-		// Tenant lifecycle is decoupled from cleanups (see CheckTenantMutation):
+-		// a mid-strip deactivation surfaces here as persistent read errors on
+-		// the closed sidecar. Name the real cause — this failure is an expected
+-		// hand-off to the next reconcile round, not a fault.
+-		if shard := payload.UnitToShard[unitID]; !p.shardLocallyLoaded(payload.Collection, shard) {
+-			msg += " (shard no longer locally available — tenant deactivated, offloaded, or deleted; " +
+-				"reconciliation re-covers the remaining shards and the tenant on reactivation)"
++		// Neither a tenant deactivation (see CheckTenantMutation) nor a namespace
++		// suspend waits for this drain, so a gone shard is the likely cause.
++		if shardGone() {
++			msg += shardGoneReason
+ 		}
+ 		p.failUnit(ctx, task, unitID, msg)
+ 		return
+@@ -384,8 +379,8 @@ func (p *DropVectorIndexProvider) drainUnit(
+ 		}
+ 		msg := "clear dimension rows: " + err.Error()
+ 		if errors.Is(err, errDimensionsShardNotLoaded) {
+-			msg += " (tenant deactivated, offloaded, or deleted after its drain; reconciliation " +
+-				"re-covers the tenant on reactivation, and loading it clears the rows)"
++			msg += " (" + shardUnloadedCause + ", after its drain; reconciliation " +
++				"re-covers the shard on reactivation or resume, and loading it clears the rows)"
+ 		}
+ 		p.failUnit(ctx, task, unitID, msg)
+ 		return
+@@ -423,11 +418,9 @@ func (p *DropVectorIndex
 ```
 
-**File**: `adapters/repos/db/namespace_suspend_crash_integration_test.go` (added, +79/-0)
+**File**: `adapters/repos/db/drop_vector_index_provider_test.go` (modified, +133/-1)
 ```diff
-@@ -0,0 +1,79 @@
+@@ -51,11 +51,15 @@ type fakeEditOpBucket struct {
+ 	pendingErr     error                          // when set, EditOpPending returns it
+ 	pendingFn      func(string) ([]string, error) // when set, overrides all other pending sources
+ 	polled         chan struct{}                  // if set, a non-blocking signal per EditOpPending call
++	registerErr    error                          // when set, RegisterEditOp returns it
+ }
+ 
+ func (f *fakeEditOpBucket) RegisterEditOp(opID string, desc lsmkv.OpDescriptor) error {
+ 	f.mu.Lock()
+ 	defer f.mu.Unlock()
++	if f.registerErr != nil {
++		return f.registerErr
++	}
+ 	if f.registered == nil {
+ 		f.registered = map[string]lsmkv.OpDescriptor{}
+ 	}
+@@ -151,7 +155,9 @@ type fakeShards struct {
+ 	bucket     editOpBucket
+ 	buckets    map[string]editOpBucket // per-shard override; takes precedence over bucket
+ 	bucketErr  error
+-	resolveErr error // when set, the bucket resolution itself fails
++	resolveErr error                   // when set, the bucket resolution itself fails
++	loaded     map[string]editOpBucket // when non-nil, what EditOpBucketsForLoadedShards alone returns
++	loadedErr  error                   // when set, EditOpBucketsForLoadedShards alone fails
+ 	mu         sync.Mutex
+ 	removed    []removedCall
+ 	removeErr  map[string]error // per-shard EnsureDroppedVectorFilesRemoved error
+@@ -185,6 +191,12 @@ func (f *fakeShards) EditOpBucketsForShards(ctx context.Context, collection stri
+ }
+ 
+ func (f *fakeShards) EditOpBucketsForLoadedShards(collection string, shardNames []string) (map[string]editOpBucket, error) {
++	if f.loadedErr != nil {
++		return nil, f.loadedErr
++	}
++	if f.loaded != nil {
++		return f.loaded, nil
++	}
+ 	return f.resolve(shardNames)
+ }
+ 
+@@ -579,6 +591,126 @@ func TestStartTask_BucketLookupFails_UnitFailed(t *testing.T) {
+ 	require.Empty(t, rec.completed)
+ }
+ 
++// TestStartTask_BucketResolutionFails_FailsUnitWithReason pins that the lookup
++// error itself, not a missing-shard reason, is what GET /v1/tasks shows.
++func TestStartTask_BucketResolutionFails_FailsUnitWithReason(t *testing.T) {
++	shards := &fakeShards{resolveErr: errors.New(`index for collection "Collection" not found`)}
++	rec := newFakeRecorder()
++	p := newTestDropProvider(shards, &fakeFinalizer{}, rec)
++
++	task := dropTask(distributedtask.TaskStatusStarted, map[string]*distributedtask.Unit{
++		"u1": {ID: "u1", Status: distributedtask.UnitStatusPending},
++	})
++	h, err := p.StartTask(task)
++	require.NoError(t, err)
++	waitDone(t, h)
++
++	require.Contains(t, rec.failed, "u1")
++	require.Contains(t, rec.failed["u1"], `index for collection "Collection" not found`)
++	require.Empty(t, rec.completed)
++}
++
++// TestStartTask_ShutdownDuringBucketResolution_LeavesUnitUnfailed pins that a
++// lookup error seen during a shutdown leaves the unit for the task's resume.
++func TestStartTask_ShutdownDuringBucketResolution_LeavesUnitUnfailed(t *testing.T) {
++	shards := &fakeShards{resolveErr: errors.New("listing failed")}
++	rec := newFakeRecorder()
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	p := newTestDropProviderCtx(shards, &fakeFinalizer{}, rec, ctx)
++
++	task := dropTask(distributedtask.TaskStatusStarted, map[string]*distributedtask.Unit{
++		"u1": {ID: "u1", Status: distributedtask.UnitStatusPending},
++	})
++	h, err := p.StartTask(task)
++	require.NoError(t, err)
++	waitDone(t, h)
++
++	require.Empty(t, rec.failed, "shutdown must not fail the unit")
++	require.Empty(t, rec.completed)
++}
++
++// TestStartTask_ShardUnloaded_ReasonNamesSuspend pins that a unit's failure
++// reason names a suspended namespace only when the shard no longer holds the
++// unit's bucket. A shard a resume reopened under a new bucket no longer holds it.
++func TestStartTask_ShardUnloaded_ReasonNamesSuspend(t *testing.T) {
++	registerErr := errors.New("bucket is shutting down")
++	readErr := errors.New("database not open")
++	unloaded := map[string]editOpBucket{}
++	reopened := map[string]editOpBucket{"shard1": &fakeEditOpBucket{}}
++
++	tests := []struct {
++		name         string
++		bucket       *fakeEditOpBucket
++		loaded       map[string]editOpBucket
++		loadedErr    error
++		dimsErr      error
++		wantReason   string // a substring of the unit's reason
++		namesSuspend bool
++	}{
++		{
++			name:         "before arming",
++			bucket:       &fakeEditOpBucket{registerErr: registerErr},
++			loaded:       unloaded,
++			wantReason:   "register drop edit op: bucket is shutting down",
++			namesSuspend: true,
++		},
++		{
++			name:       "register fails on a loaded shard",
++			bucket:     &fakeEditOpBucket{registerErr: registerErr},
++			wantReason: "register drop edit op: bucket is shutting down",
++		},
++		{
++			name:         "resumed mid-drain",
++			bucket:       &fakeEditOpBucket{pendingErr: readErr},
++			loaded:       reopened,
++			wantReason:   "shard no longer locally loaded",
++			namesSuspend: true,
++		},
++		{
++			name:       "loaded-shard lookup fails",
++			bucket:     &fakeEditOpBucket{pendingErr: readErr},
++			loadedErr:  er
+```
+
+**File**: `adapters/repos/db/drop_vector_index_wiring.go` (modified, +6/-0)
+```diff
+@@ -39,13 +39,19 @@ import (
+ // explicitly with the error surfaced — never via Store()'s panicking mustLoad
+ // — acceptable for a drop, a rare operator-initiated action that must touch
+ // every shard once anyway.
++//
++// Before each shard it refuses a collection whose namespace is not active, so
++// a namespace suspended while it runs stops it at the next shard.
+ func (db *DB) EditOpBucketsForShards(ctx context.Context, collection string, shardNames []string) (map[string]editOpBucket, error) {
+ 	idx := db.GetIndex(entschema.ClassName(collection))
+ 	if idx == nil {
+ 		return nil, fmt.Errorf("index for collection %q not found", collection)
+ 	}
+ 	buckets := make(map[string]editOpBucket, len(shardNames))
+ 	for _, name := range shardNames {
++		if err := idx.requireNamespaceAllowsShardLoad(callerUserRequest); err != nil {
++			return nil, fmt.Errorf("collection %q: %w", collection, err)
++		}
+ 		if b := db.loadEditOpBucket(ctx, idx, collection, name); b != nil {
+ 			buckets[name] = b
+ 		}
+```
+
+**File**: `adapters/repos/db/drop_vector_index_wiring_test.go` (modified, +71/-0)
+```diff
+@@ -21,9 +21,11 @@ import (
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 
++	"github.com/weaviate/weaviate/cluster/proto/api"
+ 	"github.com/weaviate/weaviate/entities/schema"
+ 	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
+ 	"github.com/weaviate/weaviate/usecases/memwatch"
++	"github.com/weaviate/weaviate/usecases/namespaces"
+ )
+ 
+ const editOpColdShard = "cold"
+@@ -70,6 +72,54 @@ func TestEditOpBucketsForShardsOnShutDownIndex(t *testing.T) {
+ 	require.False(t, cold.isLoaded())
+ }
+ 
++func TestEditOpBucketsForShardsRefusesInactiveNamespace(t *testing.T) {
++	tests := []struct {
++		name  string
++		state api.NamespaceState
++		// suspendOnColdLoad suspends the namespace while EditOpBucketsForShards
++		// loads the cold shard, and fails that load.
++		suspendOnColdLoad bool
++		shardNames        func(loaded ShardLike) []string
++	}{
++		{
++			name:       "suspended, cold and loaded shard",
++			state:      api.NamespaceStateSuspended,
++			shardNames: func(loaded ShardLike) []string { return []string{editOpColdShard, loaded.Name()} },
++		},
++		{
++			name:       "suspended, shard absent from the node",
++			state:      api.NamespaceStateSuspended,
++			shardNames: func(ShardLike) []string { return []string{"absent"} },
++		},
++		{
++			name:              "suspended mid-call",
++			state:             api.NamespaceStateActive,
++			suspendOnColdLoad: true,
++			shardNames:        func(loaded ShardLike) []string { return []string{editOpColdShard, loaded.Name()} },
++		},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx := testCtx()
++			states := map[string]api.NamespaceState{"alpha": tc.state}
++			var allocChecker memwatch.AllocChecker
++			if tc.suspendOnColdLoad {
++				allocChecker = loadProbeAllocChecker{memwatch.NewDummyMonitor(), func() {
++					states["alpha"] = api.NamespaceStateSuspended
++				}}
++			}
++			db, idx, loaded, cold := newEditOpTestIndex(t, ctx, allocChecker)
++			idx.namespace = "alpha"
++			idx.namespacesExister = namespaces.NewMockExisterInState(t, states)
++
++			buckets, err := db.EditOpBucketsForShards(ctx, idx.Config.ClassName.String(), tc.shardNames(loaded))
++			require.ErrorIs(t, err, namespaces.ErrNamespaceSuspended)
++			require.Empty(t, buckets)
++			require.False(t, cold.isLoaded())
++		})
++	}
++}
++
+ func TestEditOpBucketsForLoadedShards(t *testing.T) {
+ 	ctx := testCtx()
+ 	db, idx, loaded, cold := newEditOpTestIndex(t, ctx, nil)
+@@ -82,6 +132,27 @@ func TestEditOpBucketsForLoadedShards(t *testing.T) {
+ 	require.False(t, cold.isLoaded())
+ }
+ 
++// TestEditOpBucketsForLoadedShards_ReturnsResolvedBucket pins that a shard's
++// loaded lookup returns the bucket EditOpBucketsForShards resolved for it, which
++// is how bucketStillLoaded tells a still-loaded shard from a reopened one.
++func TestEditOpBucketsForLoadedShards_ReturnsResolvedBucket(t *testing.T) {
++	ctx := testCtx()
++	db, idx, loaded, cold := newEditOpTestIndex(t, ctx, nil)
++	t.Cleanup(func() { cold.Shutdown(context.Background()) })
++	class := idx.Config.ClassName.String()
++	names := []string{loaded.Name(), editOpColdShard}
++
++	resolved, err := db.EditOpBucketsForShards(ctx, class, names)
++	require.NoError(t, err)
++	require.Len(t, resolved, 2)
++
++	current, err := db.EditOpBucketsForLoadedShards(class, names)
++	require.NoError(t, err)
++	for _, name := range names {
++		require.Same(t, resolved[name], current[name], "shard %s", name)
++	}
++}
++
+ // newEditOpTestIndex returns a DB over an index holding one loaded shard and the
+ // lazy shard editOpColdShard, not yet loaded, whose loads check allocChecker.
+ // A nil allocChecker takes the index's own.
+```
+
+**File**: `adapters/repos/db/namespace_guard.go` (modified, +3/-1)
+```diff
+@@ -58,7 +58,9 @@ var (
+ type shardLoadCaller int
+ 
+ const (
+-	// callerUserRequest is a load driven by a user request. It gets the full check.
++	// callerUserRequest is a load driven by a user request, or by
++	// DB.EditOpBucketsForShards resolving a drop-vector task's buckets. It gets
++	// the full check.
+ 	callerUserRequest shardLoadCaller = iota
+ 	// callerResume is a resuming namespace reopening its own shards. It is still
+ 	// refused for a namespace that keeps no shards open, so a stale reopen cannot
+```
+
+---
+
+### Incident Patch 2: `ad0f4b18` (2026-10-27)
+**Commit Message**: Merge pull request #13614 from weaviate/merge-stable-v1.40-into-main
+
+Merge stable/v1.40 into main
+
+**File**: `.github/workflows/pull_requests.yaml` (modified, +28/-5)
+```diff
+@@ -718,7 +718,6 @@ jobs:
+         env:
+           WCS_DUMMY_CI_PW: ${{ secrets.WCS_DUMMY_CI_PW }}
+           WCS_DUMMY_CI_PW_2: ${{ secrets.WCS_DUMMY_CI_PW_2 }}
+-          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
+           REPLICATION_GRPC_ENABLED: ${{ matrix.grpc_replication || '' }}
+         run: ./test/run.sh ${{ matrix.test }}
+   Acceptance-Tests-4-cores:
+@@ -756,8 +755,6 @@ jobs:
+             test: "--acceptance-self-recovery-intact"
+           - name: "python"
+             test: "--acceptance-only-python"
+-          - name: "python-namespaces"
+-            test: "--acceptance-only-python-namespaces"
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+       - name: Set up Go
+@@ -781,7 +778,7 @@ jobs:
+         env:
+           MATRIX_TEST: ${{ matrix.name }}
+         run: |
+-          if [[ "$MATRIX_TEST" == "replica-slow" || "$MATRIX_TEST" == "replica-slow-grpc" || "$MATRIX_TEST" == "fast-group-4" || "$MATRIX_TEST" == "fast-group-5" || "$MATRIX_TEST" == "recovery" || "$MATRIX_TEST" == "self-recovery" || "$MATRIX_TEST" == "self-recovery-lazy" || "$MATRIX_TEST" == "self-recovery-intact" || "$MATRIX_TEST" == "distributed-tasks" || "$MATRIX_TEST" == "compaction" || "$MATRIX_TEST" == "python-namespaces" ]]; then
++          if [[ "$MATRIX_TEST" == "replica-slow" || "$MATRIX_TEST" == "replica-slow-grpc" || "$MATRIX_TEST" == "fast-group-4" || "$MATRIX_TEST" == "fast-group-5" || "$MATRIX_TEST" == "recovery" || "$MATRIX_TEST" == "self-recovery" || "$MATRIX_TEST" == "self-recovery-lazy" || "$MATRIX_TEST" == "self-recovery-intact" || "$MATRIX_TEST" == "distributed-tasks" || "$MATRIX_TEST" == "compaction" ]]; then
+             echo "test_timeout_minutes=45" >> $GITHUB_ENV
+           else
+             echo "test_timeout_minutes=15" >> $GITHUB_ENV
+@@ -790,12 +787,38 @@ jobs:
+         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4
+         env:
+           REPLICATION_GRPC_ENABLED: ${{ matrix.grpc_replication || '' }}
+-          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
+         with:
+           timeout_minutes: ${{ env.test_timeout_minutes }}
+           max_attempts: ${{ env.retry_max_attempts }}
+           command: ./test/run.sh ${{ matrix.test }}
+           on_retry_command: ./test/run.sh --cleanup
++  Acceptance-With-License-Tests:
++    name: acceptance with license (${{ matrix.name }})
++    runs-on: ubicloud-standard-4-ubuntu-2404
++    # Forks and Dependabot cannot read WEAVIATE_LICENSE_KEY.
++    if: ${{ (github.event_name != 'push' || github.ref_type != 'branch') && !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]' }}
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++          - name: "licensed"
++            test: "--acceptance-licensed"
++          - name: "python-namespaces"
++            test: "--acceptance-only-python-namespaces"
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++      - name: Set up Go
++        uses: ./.github/actions/setup-go
++      - name: Login to Docker Hub
++        uses: ./.github/actions/docker-login
++        with:
++          username: ${{secrets.DOCKER_USERNAME}}
++          password: ${{secrets.DOCKER_PASSWORD}}
++      - name: Acceptance tests with license
++        timeout-minutes: 45
++        env:
++          WEAVIATE_LICENSE_KEY: ${{ secrets.WEAVIATE_LICENSE_KEY }}
++        run: ./test/run.sh ${{ matrix.test }}
+   Acceptance-Reindex-Tests:
+     name: reindex (${{ matrix.name }})
+     runs-on: ubicloud-standard-4-ubuntu-2404
+```
+
+**File**: `test/acceptance/authn/dynamic_users_test.go` (modified, +1/-242)
+```diff
+@@ -14,21 +14,16 @@ package authn
+ import (
+ 	"context"
+ 	"errors"
+-	"slices"
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/go-openapi/strfmt"
+-
+ 	"github.com/weaviate/weaviate/entities/models"
+ 
+ 	"github.com/weaviate/weaviate/test/docker"
+ 
+-	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/weaviate/weaviate/client/users"
+ 	"github.com/weaviate/weaviate/test/helper"
+-	"github.com/weaviate/weaviate/usecases/auth/authorization"
+ )
+ 
+ // TestDynamicUsers boots a single Weaviate container shared across the dynamic
+@@ -50,89 +45,18 @@ func TestDynamicUsers(t *testing.T) {
+ 		WithUserApiKey("static-user", "static-key").
+ 		WithDbUsers().
+ 		WithRBAC().WithRbacRoots(adminUser).
+-		WithLicenseKeyFile().
+ 		Start(ctx)
+ 	require.Nil(t, err)
+ 	helper.SetupClient(compose.GetWeaviate().URI())
+ 	defer func() {
+ 		helper.ResetClient()
+-		// testExpiration waits for a key to expire and restarts the node, which
+-		// can outlast the ctx Start ran under.
+-		terminateCtx, terminateCancel := context.WithTimeout(context.Background(), 2*time.Minute)
+-		defer terminateCancel()
+-		require.NoError(t, compose.Terminate(terminateCtx))
++		require.NoError(t, compose.Terminate(ctx))
+ 		cancel()
+ 	}()
+ 
+ 	t.Run("create_user", testCreateUser)
+ 	t.Run("with_static_user", testWithStaticUser)
+ 	t.Run("suspend_and_activate", testSuspendAndActivate)
+-	t.Run("expiration", func(t *testing.T) { testExpiration(t, compose) })
+-}
+-
+-// testExpiration runs last in TestDynamicUsers, because its last subtest
+-// restarts the node without a license key.
+-func testExpiration(t *testing.T, compose *docker.DockerCompose) {
+-	adminKey := "admin-key"
+-	in24h := helper.ExpiryIn(24 * time.Hour)
+-
+-	ownInfo := func(t *testing.T, key string) error {
+-		_, err := helper.Client(t).Users.GetOwnInfo(users.NewGetOwnInfoParams(), helper.CreateAuth(key))
+-		return err
+-	}
+-
+-	t.Run("create with expiresAt shows it on GET, list and own-info", func(t *testing.T) {
+-		const userID = "exp-user"
+-		helper.DeleteUser(t, userID, adminKey)
+-		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in24h)
+-
+-		want := (*strfmt.DateTime)(&in24h)
+-		require.Equal(t, want, helper.GetUser(t, userID, adminKey).ExpiresAt)
+-		listed := helper.ListAllUsers(t, adminKey)
+-		i := slices.IndexFunc(listed, func(u *models.DBUserInfo) bool { return *u.UserID == userID })
+-		require.NotEqual(t, -1, i, "%s not listed", userID)
+-		require.Equal(t, want, listed[i].ExpiresAt)
+-		require.Equal(t, want, helper.GetInfoForOwnUser(t, apiKey).ExpiresAt)
+-	})
+-
+-	t.Run("expiry holds after the node restarts without a license key", func(t *testing.T) {
+-		const userID = "exp-restart"
+-		helper.DeleteUser(t, userID, adminKey)
+-		in10s := helper.ExpiryIn(10 * time.Second)
+-		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in10s)
+-
+-		var unauthorized *users.GetOwnInfoUnauthorized
+-		require.EventuallyWithT(t, func(c *assert.CollectT) {
+-			assert.ErrorAs(c, ownInfo(t, apiKey), &unauthorized)
+-		}, 30*time.Second, 500*time.Millisecond)
+-
+-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+-		defer cancel()
+-		require.NoError(t, compose.SetLicenseKeyFileAt(ctx, 0, ""))
+-		grace := 10 * time.Second
+-		require.NoError(t, compose.RestartAt(ctx, 0, &grace))
+-		helper.SetupClient(compose.GetWeaviate().URI())
+-
+-		require.ErrorAs(t, ownInfo(t, apiKey), &unauthorized)
+-		require.Equal(t, (*strfmt.DateTime)(&in10s), helper.GetUser(t, userID, adminKey).ExpiresAt)
+-		require.Equal(t, (*strfmt.DateTime)(&in24h), helper.GetUser(t, "exp-user", adminKey).ExpiresAt)
+-
+-		in48h := helper.ExpiryIn(48 * time.Hour)
+-		_, err := helper.Client(t).Users.SetUserExpiration(
+-			users.NewSetUserExpirationParams().WithUserID("exp-user").WithBody(users.SetUserExpirationBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
+-			helper.CreateAuth(adminKey),
+-		)
+-		var putForbidden *users.SetUserExpirationForbidden
+-		require.ErrorAs(t, err, &putForbidden)
+-		require.Contains(t, putForbidden.Payload.Error[0].Message, "license key")
+-
+-		_, err = helper.Client(t).Users.CreateUser(
+-			users.NewCreateUserParams().WithUserID("exp-unlicensed").WithBody(users.CreateUserBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
+-			helper.CreateAuth(adminKey),
+-		)
+-		var createForbidden *users.CreateUserForbidden
+-		require.ErrorAs(t, err, &createForbidden)
+-	})
+ }
+ 
+ func testCreateUser(t *testing.T) {
+@@ -449,168 +373,3 @@ func testSuspendAndActivate(t *testing.T) {
+ 		require.True(t, errors.As(err, &conflict))
+ 	})
+ }
+-
+-func TestCreateUser_Namespaces(t *testing.T) {
+-	const (
+-		adminKey  = "admin-key"
+-		adminUser = "admin-user"
+-	)
+-
+-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+-	// NS clusters require RBAC; adminUser is the root that creates namespaces and
+-	// namespaced DB users.
+-	compose, err := docker.New().WithWeaviate().
+-		WithApiKey().WithRBAC().WithUserApiKey(adminUser, adminKey).WithRbacRoots(adminUser).
+-		WithDbUsers().
+-		WithNamespaces().
+-		S
+```
+
+**File**: `test/acceptance/authz/auto_tenancy_test.go` (modified, +2/-2)
+```diff
+@@ -402,7 +402,7 @@ func TestAuthzAutoSchemaCollectionCreation(t *testing.T) {
+ 	// auto-schema path actually runs.
+ 	_, teardown := composeUpWithSettings(t,
+ 		map[string]string{existingUser: existingKey}, map[string]string{customUser: customKey}, nil,
+-		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false, false)
++		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false)
+ 
+ 	className := "AutoCreated"
+ 	obj := articles.NewParagraph().WithID("00000000-0000-0000-0000-000000000010").Object()
+@@ -528,7 +528,7 @@ func TestAuthzAutoSchemaPropertyAdd(t *testing.T) {
+ 	// so the property-add path runs.
+ 	_, teardown := composeUpWithSettings(t,
+ 		map[string]string{existingUser: existingKey}, map[string]string{customUser: customKey}, nil,
+-		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false, false)
++		false, map[string]string{"AUTOSCHEMA_ENABLED": "true"}, false)
+ 
+ 	cls := articles.ParagraphsClass()
+ 	obj := articles.NewParagraph().WithID("00000000-0000-0000-0000-000000000020").Object()
+```
+
+**File**: `test/acceptance/authz/setup_test.go` (modified, +1/-4)
+```diff
+@@ -27,7 +27,7 @@ func composeUpWithSettings(t *testing.T,
+ 	viewers map[string]string,
+ 	enableMCP bool,
+ 	weaviateEnvs map[string]string,
+-	withDbUsers, withNamespaces bool,
++	withDbUsers bool,
+ ) (*docker.DockerCompose, func()) {
+ 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+ 
+@@ -39,9 +39,6 @@ func composeUpWithSettings(t *testing.T,
+ 	if withDbUsers {
+ 		builder = builder.WithDbUsers()
+ 	}
+-	if withNamespaces {
+-		builder = builder.WithNamespaces()
+-	}
+ 
+ 	// Enable MCP server if requested
+ 	if enableMCP {
+```
+
+**File**: `test/acceptance/licensed/authn/create_user_namespaces_test.go` (added, +191/-0)
+```diff
+@@ -0,0 +1,191 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1823,138 +2558,352 @@ Observed empirical fixes and code patches:
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+//go:build integrationTest
-+
-+package db
++package authn
 +
 +import (
 +	"context"
-+	"path/filepath"
-+	"sync/atomic"
++	"errors"
 +	"testing"
++	"time"
++
++	"github.com/go-openapi/strfmt"
++	"github.com/stretchr/testify/require"
++	"github.com/weaviate/weaviate/client/users"
++	"github.com/weaviate/weaviate/test/docker"
++	"github.com/weaviate/weaviate/test/helper"
++	"github.com/weaviate/weaviate/usecases/auth/authorization"
++)
++
++func TestCreateUser_Namespaces(t *testing.T) {
++	const (
++		adminKey  = "admin-key"
++		adminUser = "admin-user"
++	)
++
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
++	// NS clusters require RBAC; adminUser is the root that creates namespaces and
++	// namespaced DB users.
++	compose, err := docker.New().WithWeaviate().
++		WithApiKey().WithRBAC().WithUserApiKey(adminUser, adminKey).WithRbacRoots(adminUser).
++		WithDbUsers().
++		WithNamespaces().
++		Start(ctx)
++	require.NoError(t, err)
++	helper.SetupClient(compose.GetWeaviate().URI())
++	defer func() {
++		helper.ResetClient()
++		require.NoError(t, compose.Terminate(ctx))
++		cancel()
++	}()
++
++	helper.CreateNamespace(t, "ns1", adminKey)
++	helper.CreateNamespace(t, "ns2", adminKey)
++
++	t.Run("happy path: create user bound to ns1", func(t *testing.T) {
++		const (
++			userID  = "u1"
++			fullKey = "ns1:u1" // operator-facing form for namespaced users
++		)
++		helper.DeleteUser(t, fullKey, adminKey)
++
++		resp, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID(fullKey).WithBody(users.CreateUserBody{}),
++			helper.CreateAuth(adminKey),
++		)
++		require.NoError(t, err)
++		require.NotNil(t, resp.Payload.Apikey)
++
++		// admin is a static API key (global operator) — namespace must be returned.
++		// The storage/operator-addressable key is the namespace-prefixed form.
++		got := helper.GetUser(t, fullKey, adminKey)
++		require.Equal(t, "ns1", got.Namespace)
++
++		// The bare short id must not address a namespaced user. This locks
++		// the prefix-only addressing contract: an operator who omits the
++		// namespace gets 404, not the user from a different namespace (or
++		// any user at all).
++		_, err = helper.Client(t).Users.GetUserInfo(
++			users.NewGetUserInfoParams().WithUserID(userID),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var notFound *users.GetUserInfoNotFound
++		require.True(t, errors.As(err, &notFound), "expected GetUserInfoNotFound, got %T: %v", err, err)
++
++		helper.DeleteUser(t, fullKey, adminKey)
++	})
++
++	t.Run("missing namespace rejects", func(t *testing.T) {
++		_, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID("u-missing"),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var unproc *users.CreateUserUnprocessableEntity
++		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
++	})
++
++	t.Run("empty namespace prefix rejected", func(t *testing.T) {
++		_, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID(":u-empty-ns").WithBody(users.CreateUserBody{}),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var unproc *users.CreateUserUnprocessableEntity
++		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
++	})
++
++	t.Run("empty user part rejected", func(t *testing.T) {
++		_, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID("ns1:").WithBody(users.CreateUserBody{}),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var unproc *users.CreateUserUnprocessableEntity
++		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
++	})
++
++	t.Run("multi-colon name rejected", func(t *testing.T) {
++		// First ':' is the ns separator; "user:extra" then fails the user-name regex.
++		_, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID("ns1:user:extra").WithBody(users.CreateUserBody{}),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var unproc *users.CreateUserUnprocessableEntity
++		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
++	})
++
++	t.Run("unknown namespace rejects", func(t *testing.T) {
++		_, err := helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID("ns404:u-unknown").WithBody(users.CreateUserBody{}),
++			helper.CreateAuth(adminKey),
++		)
++		require.Error(t, err)
++		var unproc *users.CreateUserUnprocessableEntity
++		require.True(t, errors.As(err, &unproc), "expected CreateUserUnprocessableEntity, got %T: %v", err, err)
++	})
++
++	t.Run("import on NS-enabled cluster reject
+```
+
+**File**: `test/acceptance/licensed/authn/user_expiration_test.go` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package authn
++
++import (
++	"context"
++	"slices"
++	"testing"
++	"time"
 +
 +	"github.com/go-openapi/strfmt"
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/cluster/proto/api"
-+	"github.com/weaviate/weaviate/entities/additional"
++	"github.com/weaviate/weaviate/client/users"
 +	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
++	"github.com/weaviate/weaviate/test/docker"
++	"github.com/weaviate/weaviate/test/helper"
 +)
 +
-+// A node that crashes while a suspended namespace's shards hold unflushed writes
-+// boots without registering those shards. Their write-ahead logs stay on disk
-+// until a resume opens the shards and replays them.
-+func TestSuspendedNamespace_UnflushedWriteSurvivesACrash(t *testing.T) {
-+	const className = "alpha:Product"
-+	ctx := testCtx()
-+	id := strfmt.UUID("6f3e9a4c-1b2d-4c5e-8f70-9a1b2c3d4e5f")
-+	// Both DBs read one sharding state, whose shard name is random.
-+	shardState := singleShardState()
++// TestUserExpiration covers DB user expiry, which needs a license key. Its last
++// subtest restarts the node without one.
++func TestUserExpiration(t *testing.T) {
++	adminUser, adminKey := "admin-user", "admin-key"
 +
-+	liveDir := t.TempDir()
-+	live := setupTestDBWithShardState(t, liveDir, shardState, nil,
-+		existerWithState(t, api.NamespaceStateActive), makeTestClass(className))
-+	t.Cleanup(func() { require.NoError(t, live.Shutdown(context.Background())) })
-+	require.NoError(t, live.PutObject(ctx, &models.Object{
-+		Class: className, ID: id, Properties: map[string]any{"stringProp": "kept"},
-+	}, nil, nil, nil, nil, 0))
-+
-+	// PutObject writes the WAL to its file before it returns, and the memtable
-+	// flushes only after MemtablesFlushDirtyAfter, so a copy is what a kill leaves.
-+	crashDir := t.TempDir()
-+	copyDirTree(t, liveDir, crashDir)
-+	wals, err := filepath.Glob(filepath.Join(crashDir, "*", "*", "lsm", "objects", "*.wal"))
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
++	defer cancel()
++	compose, err := docker.New().WithWeaviate().
++		WithApiKey().
++		WithUserApiKey(adminUser, adminKey).
++		WithDbUsers().
++		WithRBAC().WithRbacRoots(adminUser).
++		WithLicenseKeyFile().
++		Start(ctx)
 +	require.NoError(t, err)
-+	require.NotEmpty(t, wals, "the write must still be unflushed when the node crashes")
++	helper.SetupClient(compose.GetWeaviate().URI())
++	defer func() {
++		helper.ResetClient()
++		// The test waits for a key to expire and restarts the node, which can
++		// outlast the ctx Start ran under.
++		terminateCtx, terminateCancel := context.WithTimeout(context.Background(), 2*time.Minute)
++		defer terminateCancel()
++		require.NoError(t, compose.Terminate(terminateCtx))
++	}()
 +
-+	var state atomic.Value
-+	state.Store(api.NamespaceStateSuspended)
-+	exister := namespaces.NewMockExister(t)
-+	exister.EXPECT().GetNamespace("alpha").RunAndReturn(func(string) (api.Namespace, bool) {
-+		return api.Namespace{Name: "alpha", State: state.Load().(api.NamespaceState)}, true
-+	}).Maybe()
-+	booted := setupTestDBWithShardState(t, crashDir, shardState, nil, exister, makeTestClass(className))
-+	t.Cleanup(func() { require.NoError(t, booted.Shutdown(context.Background())) })
-+	idx := booted.GetIndex(schema.ClassName(className))
-+	require.NotNil(t, idx)
-+	assert.Empty(t, registeredShards(t, idx), "a suspended namespace's shard must not open at boot")
++	in24h := helper.ExpiryIn(24 * time.Hour)
 +
-+	state.Store(api.NamespaceStateResuming)
-+	require.NoError(t, booted.ReopenShard(ctx, className, shardState.AllPhysicalShards()[0]))
-+	state.Store(api.NamespaceStateActive)
++	ownInfo := func(t *testing.T, key string) error {
++		_, err := helper.Client(t).Users.GetOwnInfo(users.NewGetOwnInfoParams(), helper.CreateAuth(key))
++		return err
++	}
 +
-+	obj, err := booted.Object(ctx, className, id, nil, additional.Properties{}, nil, "")
-+	require.NoError(t, err)
-+	require.NotNil(t, obj, "the resume must replay the WAL the crash left")
-+	assert.Equal(t, "kept", obj.Schema.(map[string]any)["stringProp"])
++	t.Run("create with expiresAt shows it on GET, list and own-info", func(t *testing.T) {
++		const userID = "exp-user"
++		helper.DeleteUser(t, userID, adminKey)
++		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in24h)
++
++		want := (*strfmt.DateTime)(&in24h)
++		require.Equal(t, want, helper.GetUser(t, userID, adminKey).ExpiresAt)
++		listed := helper.ListAllUsers(t, adminKey)
++		i := slices.IndexFunc(listed, func(u *models.DBUserInfo) bool { return *u.UserID == userID })
++		require.NotEqual(t, -1, i, "%s not listed", userID)
++		require.Equal(t, want, listed[i].ExpiresAt)
++		require.Equal(t, want, helper.GetInfoForOwnUser(t, apiKey).ExpiresAt)
++	})
++
++	t.Run("expiry holds after the node restarts without a license key", func(t *testing.T) {
++		const userID = "exp-restart"
++		helper.DeleteUser(t, userID, adminKey)
++		in10s := helper.ExpiryIn(10 * time.Second)
++		apiKey := helper.CreateUserWithExpiry(t, userID, adminKey, &in10s)
++
++		var unauthorized *users.GetOwnInfoUnauthorized
++		require.EventuallyWithT(t, func(c *assert.CollectT) {
++			assert.ErrorAs(c, ownInfo(t, apiKey), &unauthorized)
++		}, 30*time.Second, 500*time.Millisecond)
++
++		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
++		defer cancel()
++		require.NoError(t, compose.SetLicenseKeyFileAt(ctx, 0, ""))
++		grace := 10 * time.Second
++		require.NoError(t, compose.RestartAt(ctx, 0, &grace))
++		helper.SetupClient(compose.GetWeaviate().URI())
++
++		require.ErrorAs(t, ownInfo(t, apiKey), &unauthorized)
++		require.Equal(t, (*strfmt.DateTime)(&in10s), helper.GetUser(t, userID, adminKey).ExpiresAt)
++		require.Equal(t, (*strfmt.DateTime)(&in24h), helper.GetUser(t, "exp-user", adminKey).ExpiresAt)
++
++		in48h := helper.ExpiryIn(48 * time.Hour)
++		_, err := helper.Client(t).Users.SetUserExpiration(
++			users.NewSetUserExpirationParams().WithUserID("exp-user").WithBody(users.SetUserExpirationBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
++			helper.CreateAuth(adminKey),
++		)
++		var putForbidden *users.SetUserExpirationForbidden
++		require.ErrorAs(t, err, &putForbidden)
++		require.Contains(t, putForbidden.Payload.Error[0].Message, "license key")
++
++		_, err = helper.Client(t).Users.CreateUser(
++			users.NewCreateUserParams().WithUserID("exp-unlicensed").WithBody(users.CreateUserBody{ExpiresAt: (*strfmt.DateTime)(&in48h)}),
++			helper.CreateAuth(adminKey),
++		)
++		var createForbidden *users.CreateUserForbidden
++		require.ErrorAs(t, err, &createForbidden)
++	})
 +}
 ```
 
-**File**: `test/acceptance/namespace/suspend_shards_test.go` (modified, +3/-3)
+**File**: `test/acceptance/licensed/authz/namespaces_test.go` (renamed, +9/-14)
 ```diff
-@@ -375,9 +375,9 @@ func TestNamespaces_SuspendedNamespaceLoadsNoShardsAfterRestart(t *testing.T) {
- 		require.NoError(t, sharedCompose.EnsureRunning(ctx, restartNodeIndex))
- 	})
+@@ -36,18 +36,13 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	noPermsUser := "no-perms-user"
+ 	noPermsKey := "no-perms-key"
  
--	// The kill can happen during the sweep's unload, because the listing empties
--	// before the flush ends. That leaves what a kill during a tenant
--	// deactivation leaves, since both end in shutdownOrRestoreShard.
-+	// The kill meets shards the sweep released or is still flushing, as a kill
-+	// during a tenant deactivation can. adapters/repos/db's
-+	// TestSuspendedNamespace_UnflushedWriteSurvivesACrash crashes before the sweep.
- 	t.Run("after a crash the suspended namespace loads no shards", func(t *testing.T) {
- 		zero := time.Duration(0)
- 		require.NoError(t, sharedCompose.StopNode(ctx, restartNodeIndex, &zero))
+-	_, down := composeUpWithSettings(t,
++	down := composeUp(t,
+ 		map[string]string{adminUser: adminKey},
+ 		map[string]string{
+ 			manageUser:       manageKey,
+ 			scopedManageUser: scopedManageKey,
+ 			noPermsUser:      noPermsKey,
+ 		},
+-		nil,
+-		false,
+-		nil,
+-		true, // withDbUsers — needed for the namespace-scoping subtests below.
+-		true, // withNamespaces
+ 	)
+ 	defer down()
+ 
+@@ -232,7 +227,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	// user can only create within their own namespace.
+ 	const bootstrapRole = "ns-bootstrap-create"
+ 	helper.CreateRole(t, adminKey, &models.Role{
+-		Name: String(bootstrapRole),
++		Name: new(bootstrapRole),
+ 		Permissions: []*models.Permission{
+ 			helper.NewCollectionsPermission().WithAction(authorization.CreateCollections).WithCollection("*").Permission(),
+ 			helper.NewAliasesPermission().WithAction(authorization.CreateAliases).WithCollection("*").WithAlias("*").Permission(),
+@@ -259,7 +254,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	t.Run("read_collections wildcard scope: namespaced caller can read own-NS collection by unqualified name", func(t *testing.T) {
+ 		const role = "read-all"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
+ 			},
+@@ -274,7 +269,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	t.Run("read_collections regex scope (Movies*): matches in own namespace only", func(t *testing.T) {
+ 		const role = "read-movies-prefix"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("Movies*").Permission(),
+ 			},
+@@ -296,7 +291,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	t.Run("read_collections exact scope (Movies): allows only Movies in own namespace", func(t *testing.T) {
+ 		const role = "read-movies-exact"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("Movies").Permission(),
+ 			},
+@@ -317,7 +312,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 	t.Run("schema dump filters to own namespace for namespaced caller", func(t *testing.T) {
+ 		const role = "read-all-for-dump"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
+ 			},
+@@ -354,7 +349,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 
+ 		const role = "read-aliases-all"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewAliasesPermission().WithAction(authorization.ReadAliases).WithCollection("*").WithAlias("*").Permission(),
+ 			},
+@@ -393,7 +388,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 		// Role creation rejects qualified resource paths for now
+ 		const role = "own-info-strip"
+ 		helper.CreateRole(t, adminKey, &models.Role{
+-			Name: String(role),
++			Name: new(role),
+ 			Permissions: []*models.Permission{
+ 				helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection("*").Permission(),
+ 				helper.NewAliasesPermission().WithAction(authorization.ReadAliases).WithCollection("*").WithAlias("*").Permission(),
+@@ -470,7 +465,7 @@ func TestAuthzNamespaces(t *testing.T) {
+ 		const role = "qualified-path-role"
+ 		_, err := helper.Client(t).Authz.CreateRole(
+ 			authz.NewCreateRoleParams().WithBody(&models.Role{
+-				Name: String(role),
++				Name: new(role),
+ 				Permissions: []*models.Permission{
+ 					helper.NewCollectionsPermission().WithAction(authorization.ReadCollections).WithCollection(ns1 + ":Movies").Permission(),
+ 				},
 ```
 
----
-
-### Incident Patch 2: `94dda712` (2026-10-14)
-**Commit Message**: Merge pull request #13530 from weaviate/fix-migrate-properties-settings-change
-
-fix(schema): reject module setting changes for modules with migrate properties
-
-**File**: `cluster/schema/manager.go` (modified, +3/-0)
+**File**: `test/acceptance/licensed/authz/setup_test.go` (added, +51/-0)
 ```diff
-@@ -549,6 +549,9 @@ func (s *SchemaManager) UpdateClass(cmd *command.ApplyRequest, nodeID string, sc
- 		meta.Class.VectorIndexConfig = u.VectorIndexConfig
- 		meta.Class.InvertedIndexConfig = u.InvertedIndexConfig
- 		meta.Class.VectorConfig = u.VectorConfig
-+		if u.ModuleConfig != nil {
-+			meta.Class.ModuleConfig = u.ModuleConfig
-+		}
- 		meta.Class.ReplicationConfig = u.ReplicationConfig
- 		meta.Class.MultiTenancyConfig = u.MultiTenancyConfig
- 		meta.Class.ObjectTTLConfig = u.ObjectTTLConfig
-```
-
-**File**: `cluster/schema/update_class_module_settings_test.go` (modified, +13/-0)
-```diff
-@@ -165,3 +165,16 @@ func TestSchemaManager_UpdateClass_MutableSettings(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestSchemaManager_UpdateClass_WithoutModuleConfigKeepsStoredModuleConfig(t *testing.T) {
-+	sm := newSchemaManagerWithModules(t)
-+	stored := classShapes[1].build(moduleSettings("a", "m"))
-+	stored.ModuleConfig = map[string]any{"generative-fake": map[string]any{"model": "g"}}
-+	require.NoError(t, sm.AddClass(addClassRequest(t, stored), "node1", true, false))
-+
-+	update := classShapes[1].build(moduleSettings("a", "m"))
-+	update.Description = "new description"
-+	require.NoError(t, sm.UpdateClass(updateClassRequest(t, update, 2), "node1", true, false))
-+	require.Equal(t, map[string]any{"generative-fake": map[string]any{"model": "g"}},
-+		sm.NewSchemaReader().ReadOnlyClass(className).ModuleConfig)
-+}
-```
-
-**File**: `usecases/modules/migrate_vectorizer_settings_test.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,51 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -1966,594 +2915,55 @@ fix(schema): reject module setting changes for modules with migrate properties
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package modules
++package authz
 +
 +import (
 +	"context"
 +	"testing"
++	"time"
 +
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/modulecapabilities"
-+	"github.com/weaviate/weaviate/entities/moduletools"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/usecases/config"
-+)
-+
-+type migratingText2VecModule struct {
-+	dummyText2VecModuleNoCapabilities
-+}
-+
-+func (migratingText2VecModule) MigrateProperties() []modulecapabilities.MigrateProperty {
-+	return []modulecapabilities.MigrateProperty{{Name: "baseURL"}, {Name: "dimensions"}}
-+}
-+
-+func (migratingText2VecModule) ClassConfigDefaults() map[string]any {
-+	return map[string]any{"baseURL": "https://a", "dimensions": 512, "vectorizeClassName": true}
-+}
-+
-+func (migratingText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
-+
-+func (migratingText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
-+	return nil
-+}
-+
-+// defaultsText2VecModule has class config defaults but no migrate properties.
-+type defaultsText2VecModule struct {
-+	dummyText2VecModuleNoCapabilities
-+}
-+
-+func (defaultsText2VecModule) ClassConfigDefaults() map[string]any {
-+	return map[string]any{"baseURL": "https://a"}
-+}
-+
-+func (defaultsText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
-+
-+func (defaultsText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
-+	return nil
-+}
-+
-+func TestMigrateVectorizerSettings(t *testing.T) {
-+	const (
-+		migrating = "text2vec-migrating"
-+		defaults  = "text2vec-defaults"
-+	)
-+	logger, _ := test.NewNullLogger()
-+	p := NewProvider(logger, config.Config{})
-+	p.Register(migratingText2VecModule{newDummyText2VecModule(migrating, nil)})
-+	p.Register(defaultsText2VecModule{newDummyText2VecModule(defaults, nil)})
-+
-+	tests := []struct {
-+		name         string
-+		module       string
-+		stored       map[string]any
-+		update       map[string]any
-+		wantMigrated bool
-+		wantEqual    bool
-+	}{
-+		{
-+			name:         "added setting missing from the stored settings, set to a value other than the default",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "baseURL": "https://custom"},
-+			wantMigrated: true,
-+		},
-+		{
-+			name:         "added setting decoded as a float, default declared as an int",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "dimensions": float64(512)},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "added setting stored as an empty string",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small", "baseURL": ""},
-+			update:       map[string]any{"model": "small", "baseURL": "https://a"},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "defaulted setting outside the migrate properties missing from the stored settings",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "vectorizeClassName": true},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "stored custom value, update sets the default",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small", "baseURL": "https://custom"},
-+			update:       map[string]any{"model": "small", "baseURL": "https://a"},
-+			wantMigrated: true,
-+		},
-+		{
-+			name:   "module without migrate properties, setting missing from the stored settings, update sets the default",
-+			module: defaults,
-+			stored: map[string]any{"model": "small"},
-+			update: map[string]any{"model": "small", "baseURL": "https://a"},
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			stored := map[string]any{tt.module: tt.stored}
-+			update := map[string]any{tt.module: tt.update}
-+
-+			assert.Equal(t, tt.wantMigrated, p.MigrateVectorizerSettings(stored, update))
-+			assert.Equal(t, tt.wantEqual, assert.ObjectsAreEqual(stored, update), "stored: %v, update: %v", stored, update)
-+		})
-+	}
-+}
-```
-
-**File**: `usecases/modules/modules.go` (modified, +47/-7)
-```diff
-@@ -12,9 +12,10 @@
- package modules
- 
- import (
-+	"bytes"
- 	"context"
-+	"encoding/json"
- 	"fmt"
--	"maps"
- 	"regexp"
- 	"slices"
- 	"sync"
-@@ -1169,6 +1170,7 @@ func (p *Provider) settingsConfig(moduleName string, settings map[string]any) mo
- // MigrateVectorizerSettings compares and migrates module settings if module settings
- // changed, an example would be renaming of baseUrl property setting to baseURL
- // in that case we need to migrate baseURL value to new property name.
-+// Both configs are changed in place, so a stored config must be passed as a copy.
- func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerConfig any) bool {
- 	migratedSettings := false
- 	oldVectorizerCfg, oldVectorizerCfgOk := oldVectorizerConfig.(map[string]any)
-@@ -1177,19 +1179,57 @@ func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerC
- 		for modName, modSettings := range newVectorizerCfg {
- 			migratedNewVectorizer := p.migrateVectorizerSettings(modName, modSettings)
- 			migratedOldVectorizer := p.migrateVectorizerSettings(modName, oldVectorizerCfg[modName])
--			if settings, ok := modSettings.(map[string]any); ok {
--				if oldSettings, ok := oldVectorizerCfg[modName].(map[string]any); ok {
--					maps.Copy(oldSettings, settings)
--				}
--			}
--			if migratedNewVectorizer || migratedOldVectorizer {
-+			copiedDefaults := p.copyOnlyMigratedSettings(modName, oldVectorizerCfg[modName], modSettings)
-+			if migratedNewVectorizer || migratedOldVectorizer || copiedDefaults {
- 				migratedSettings = true
- 			}
- 		}
- 	}
- 	return migratedSettings
- }
- 
-+// copyOnlyMigratedSettings copies settings the old settings lack, or hold as an empty string, from the new settings
-+// when the new value is the module's default, which is what the module used while the setting was missing. It only
-+// applies to modules that declare migrate properties. Every other setting is left as is so that a changed value
-+// still fails the comparison that follows the migration. It reports whether it copied a setting.
-+func (p *Provider) copyOnlyMigratedSettings(modName string, oldModuleSettings, newModuleSettings any) bool {
-+	mod := p.GetByName(modName)
-+	if mod == nil {
-+		return false
-+	}
-+	if _, ok := mod.(modulecapabilities.MigrateProperties); !ok {
-+		return false
-+	}
-+	configurator, ok := mod.(modulecapabilities.ClassConfigurator)
-+	if !ok {
-+		return false
-+	}
-+	oldSettings, oldOk := oldModuleSettings.(map[string]any)
-+	newSettings, newOk := newModuleSettings.(map[string]any)
-+	if !oldOk || !newOk {
-+		return false
-+	}
-+	copied := false
-+	for name, defaultValue := range configurator.ClassConfigDefaults() {
-+		newValue, ok := newSettings[name]
-+		if !ok {
-+			continue
-+		}
-+		if oldValue, ok := oldSettings[name]; ok && oldValue != "" {
-+			continue
-+		}
-+		// Compared by JSON form, so that numbers decoded as float64 or json.Number equal the int a module declares.
-+		newJSON, newErr := json.Marshal(newValue)
-+		defaultJSON, defaultErr := json.Marshal(defaultValue)
-+		if newErr != nil || defaultErr != nil || !bytes.Equal(newJSON, defaultJSON) {
-+			continue
-+		}
-+		oldSettings[name] = newValue
-+		copied = true
-+	}
-+	return copied
-+}
-+
- func (p *Provider) migrateVectorizerSettings(modName string, moduleSettings any) bool {
- 	if mod := p.GetByName(modName); mod != nil {
- 		if migrate, ok := mod.(modulecapabilities.MigrateProperties); ok {
-```
-
-**File**: `usecases/schema/class.go` (modified, +4/-2)
-```diff
-@@ -1757,9 +1757,11 @@ func validateImmutableFields(initial, updated *models.Class, modulesProvider mod
- 			// There might be module settings that need to be migrated to new names, for example
- 			// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
- 			// and migrate baseUrl to baseURL
--			if modulesProvider.MigrateVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
-+			// initial shares its maps with the stored schema, so the migration runs on a copy.
-+			initialVectorizer := structToMap(initial.VectorConfig[k].Vectorizer)
-+			if modulesProvider.MigrateVectorizerSettings(initialVectorizer, v.Vectorizer) {
- 				// Module settings have been migrated, let's recheck vectorizer settings
--				if deepEqualVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
-+				if deepEqualVectorizerSettings(initialVectorizer, v.Vectorizer) {
- 					continue
- 				}
- 			}
-```
-
-**File**: `usecases/schema/migrate_vectorizer_settings_test.go` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package schema
-+
-+import (
-+	"testing"
-+
-+	"github.com/sirupsen/logrus/hooks/test"
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
-+	text2vecopenai "github.com/weaviate/weaviate/modules/text2vec-openai"
-+	"github.com/weaviate/weaviate/usecases/config"
-+	"github.com/weaviate/weaviate/usecases/fakes"
-+	"github.com/weaviate/weaviate/usecases/modules"
-+	shardingcfg "github.com/weaviate/weaviate/usecases/sharding/config"
++	"github.com/weaviate/weaviate/test/docker"
++	"github.com/weaviate/weaviate/test/helper"
 +)
 +
-+// text2vec-openai declares baseURL as a migrate property, so baseURL may be missing from the stored settings,
-+// but every other difference must still be rejected.
-+func TestParseClassUpdate_ModuleWithMigrateProperties(t *testing.T) {
-+	const openai = "text2vec-openai"
-+	logger, _ := test.NewNullLogger()
-+	provider := modules.NewProvider(logger, config.Config{})
-+	provider.Register(text2vecopenai.New())
-+	p := NewParser(fakes.NewFakeClusterState(), dummyParseVectorConfig, fakeValidator{}, provider, nil, nil)
-+	shardingConfig := shardingcfg.Config{
-+		DesiredCount: 1, VirtualPerPhysical: 128, ActualCount: 1, DesiredVirtualCount: 128, Key: "_id", Strategy: "hash", Function: "murmur3",
-+	}
-+	stored := func() map[string]any {
-+		return map[string]any{"model": "text-embedding-3-small", "baseURL": "https://api.openai.com", "vectorizeClassName": true}
-+	}
-+	withoutBaseURL := func(settings map[string]any) map[string]any {
-+		delete(settings, "baseURL")
-+		return settings
-+	}
-+	// A named vector created on v1.24 is stored with only the settings the client sent.
-+	createdOnV124 := func() map[string]any {
-+		return map[string]any{"properties": []any{"text"}, "vectorizeClassName": false, "vectorizePropertyName": false}
-+	}
-+	with := func(settings map[string]any, key string, value any) map[string]any {
-+		settings[key] = value
-+		return settings
-+	}
-+	classLevel := func(settings map[string]any) *models.Class {
-+		return &models.Class{
-+			Class: "Doc", Vectorizer: openai, VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
-+			ModuleConfig: map[string]any{openai: settings},
-+		}
-+	}
-+	namedVector := func(settings map[string]any) *models.Class {
-+		return &models.Class{
-+			Class: "Doc",
-+			VectorConfig: map[string]models.VectorConfig{"text": {
-+				VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
-+				Vectorizer: map[string]any{openai: settings},
-+			}},
-+		}
-+	}
++// composeUp starts a namespace-enabled RBAC node with DB users, the admins as
++// RBAC roots and the users as plain API-key users.
++func composeUp(t *testing.T, admins, users map[string]string) func() {
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 +
-+	tests := []struct {
-+		name            string
-+		stored, updated map[string]any
-+		wantErr         bool
-+	}{
-+		{
-+			name: "model and baseURL missing from the stored settings, update fills the defaults", stored: createdOnV124(),
-+			updated: with(with(createdOnV124(), "model", "text-embedding-3-small"), "baseURL", "https://api.openai.com"),
-+		},
-+		{
-+			name: "changed model, baseURL missing from the stored settings", stored: withoutBaseURL(stored()),
-+			updated: with(stored(), "model", "text-embedding-3-large"), wantErr: true,
-+		},
++	builder := docker.New().WithWeaviateEnv("AUTOSCHEMA_ENABLED", "false").WithWeaviate().
++		WithRBAC().WithApiKey().WithDbUsers().WithNamespaces()
++	adminUserNames := make([]string, 0, len(admins))
++	for userName, key := range admins {
++		builder = builder.WithUserApiKey(userName, key)
++		adminUserNames = append(adminUserNames, userName)
 +	}
-+	for _, build := range []struct {
-+		name  string
-+		class func(map[string]any) *models.Class
-+	}{{"class level", classLevel}, {"named vector", namedVector}} {
-+		for _, tt := range tests {
-+			t.Run(build.name+"/"+tt.name, func(t *testing.T) {
-+				storedClass := build.class(tt.stored)
-+				storedClass.ShardingConfig = shardingConfig
-+				storedBefore := structToMap(storedClass)
++	builder = builder.WithRbacRoots(adminUserNames...)
++	for userName, key := range users {
++		builder = builder.WithUserApiKey(userName, key)
++	}
++	compose, err := builder.Start(ctx)
++	require.NoError(t, err)
 +
-+				_, err := p.ParseClassUpdate(storedClass, build.class(tt.updated))
-+				if tt.wantErr {
-+					require.Error(t, err)
-+				} else {
-+					require.NoError(t, err)
-+				}
-+				require.Equal(t, storedBefore, structToMap(storedClass), "the stored class must not be changed")
-+			})
++	helper.SetupClient(compose.GetWeaviate().URI())
++	return func() {
++		helper.ResetClient()
++		if err := compose.Terminate(ctx); err != nil {
++			t.Fatalf("failed to terminate test containers: %v", err)
 +		}
++		cancel()
 +	}
 +}
-```
-
-**File**: `usecases/schema/mutable_settings_test.go` (modified, +2/-2)
-```diff
-@@ -50,8 +50,8 @@ func (mutableModules) MutableSettings(module string, current, updated map[string
- 	return reflect.DeepEqual(current, updated)
- }
- 
--// MigrateVectorizerSettings copies the new settings over the stored ones like modules.Provider does, and reports a
--// migration when a module whose name contains "migrating" is present.
-+// MigrateVectorizerSettings copies all new settings over the stored ones, and reports a migration when a module
-+// whose name contains "migrating" is present.
- func (mutableModules) MigrateVectorizerSettings(initial, updated any) bool {
- 	initialConfig, _ := initial.(map[string]any)
- 	updatedConfig, _ := updated.(map[string]any)
-```
-
-**File**: `usecases/schema/parser.go` (modified, +15/-16)
-```diff
-@@ -14,6 +14,7 @@ package schema
- import (
- 	"encoding/json"
- 	"fmt"
-+	"maps"
- 	"reflect"
- 	"slices"
- 	"sort"
-@@ -517,47 +518,45 @@ func (p *Parser) validateModuleConfigsParityAndImmutables(initial, updated *mode
- 		// There might be module settings that need to be migrated to new names, for example
- 		// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
- 		// and migrate baseUrl to baseURL
--		if p.modules.MigrateVectorizerSettings(initialModConf, updatedModConf) {
-+		// initialModConf is the stored schema's map, so the migration runs on a copy.
-+		migratedInitialModConf := structToMap(initialModConf)
-+		if p.modules.MigrateVectorizerSettings(migratedInitialModConf, updatedModConf) {
- 			// Module settings have been migrated, let's recheck vectorizer settings
--			if deepEqualVectorizerSettings(initialModConf[module], updatedModConf[module]) {
-+			if deepEqualVectorizerSettings(migratedInitialModConf[module], updatedModConf[module]) {
- 				continue
- 			}
- 		}
- 
- 		return fmt.Errorf("can only update generative and reranker module configs, or settings the module allows to change. Got: %v for class: %s", module, updated.Class)
- 	}
- 
--	if initial.ModuleConfig == nil {
--		initial.ModuleConfig = updatedModConf
-+	if initialModConf == nil {
-+		updated.ModuleConfig = updatedModConf
- 		return nil
- 	}
- 
--	if _, ok := initial.ModuleConfig.(map[string]any); !ok {
--		initial.ModuleConfig = updatedModConf
--		return nil
--	}
-+	// initialModConf is the stored schema's map and the caller may still reject the update, so merge into a copy.
-+	mergedModConf := maps.Clone(initialModConf)
- 	if hasGenerativeUpdate {
- 		// clear out old generative module
--		for module := range initialModConf {
-+		for module := range mergedModConf {
- 			if p.modules.IsGenerative(module) {
--				delete(initialModConf, module)
-+				delete(mergedModConf, module)
- 			}
- 		}
- 	}
- 
- 	if hasRerankerUpdate {
- 		// clear out old reranker module
--		for module := range initialModConf {
-+		for module := range mergedModConf {
- 			if p.modules.IsReranker(module) {
--				delete(initialModConf, module)
-+				delete(mergedModConf, module)
- 			}
- 		}
- 	}
- 
--	for module := range updatedModConf {
--		initialModConf[module] = updatedModConf[module]
--	}
--	updated.ModuleConfig = initialModConf
-+	maps.Copy(mergedModConf, updatedModConf)
-+	updated.ModuleConfig = mergedModConf
- 	return nil
- }
- 
-```
-
----
-
-### Incident Patch 3: `f5788cff` (2026-10-15)
-**Commit Message**: Revert "shard: a config update the index accepted is written to its mapping record"
-
-This reverts commit 78cc22636f92e3afe3ae888636c3c96ab6541ed4.
-
-**File**: `adapters/repos/db/shard.go` (modified, +2/-29)
-```diff
-@@ -535,34 +535,10 @@ func (s *Shard) UpdateVectorIndexConfig(ctx context.Context, updated schemaConfi
- 	// collection that dropped its last vector carries an inert legacy config in
- 	// the schema, but its shards were built without a legacy index and there is
- 	// nothing to reconfigure.
--	found, err := s.WithVectorIndex("", func(index VectorIndex) error {
-+	_, err := s.WithVectorIndex("", func(index VectorIndex) error {
- 		return index.UpdateUserConfig(updated, noopCallback)
- 	})
--	if err != nil || !found {
--		return err
--	}
--	return s.recordAdoptedVectorIndexConfig("", updated)
--}
--
--// recordAdoptedVectorIndexConfig writes the config the index of targetVector
--// just accepted into its mapping record, so the record never says a config
--// the index is not running with. A vector without a record, a skipped one,
--// has nothing to record. This is the bridge that keeps the records correct
--// while the schema still pushes config into loaded shards directly; it goes
--// when that push does.
--func (s *Shard) recordAdoptedVectorIndexConfig(targetVector string, cfg schemaConfig.VectorIndexConfig) error {
--	rec, ok, err := s.mapping.Get(targetVector)
--	if err != nil {
--		return err
--	}
--	if !ok {
--		return nil
--	}
--	rec, changed := rec.adopted(cfg)
--	if !changed {
--		return nil
--	}
--	return s.mapping.Put(targetVector, rec)
-+	return err
- }
- 
- func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string]schemaConfig.VectorIndexConfig) error {
-@@ -590,9 +566,6 @@ func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string
- 			if err != nil {
- 				break
- 			}
--			if err = s.recordAdoptedVectorIndexConfig(targetVector, targetCfg); err != nil {
--				break
--			}
- 		} else {
- 			// dont lazy load segments on config update
- 			if err = s.initTargetVector(ctx, targetVector, targetCfg, false); err != nil {
-```
-
-**File**: `adapters/repos/db/shard_update_vector_config_test.go` (removed, +0/-89)
-```diff
-@@ -1,89 +0,0 @@
--//                           _       _
--// __      _____  __ ___   ___  __ _| |_ ___
--// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
--//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
--//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
--//
--//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
--//
--//  CONTACT: hello@weaviate.io
--//
--
--package db
--
--import (
--	"context"
--	"testing"
--
--	"github.com/stretchr/testify/assert"
--	"github.com/stretchr/testify/require"
--
--	"github.com/weaviate/weaviate/entities/models"
--	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
--	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
--)
--
--// A config update that the index accepted is written to the vector's mapping
--// record, so the record says what the index runs with. One the index refused
--// leaves the record as it was.
--func TestUpdateVectorIndexConfigs_RecordsTheAdoptedConfig(t *testing.T) {
--	ctx := context.Background()
--	legacy := enthnsw.NewDefaultUserConfig()
--	foo := enthnsw.NewDefaultUserConfig()
--	foo.RQ.Enabled = true
--	foo.RQ.Bits = 8
--	class := &models.Class{Class: "AdoptedConfig", VectorConfig: map[string]models.VectorConfig{
--		"foo": {VectorIndexType: foo.IndexType(), VectorIndexConfig: foo},
--	}}
--	shardLike, _ := testShardWithSettings(t, ctx, class, legacy, false, false, func(i *Index) {
--		i.vectorIndexUserConfigs = map[string]schemaConfig.VectorIndexConfig{"foo": foo}
--	})
--	shard := underlyingShard(t, shardLike)
--
--	// the first load recorded the config each index was built with
--	assert.Equal(t, recorded(shard, "foo", "vectors_foo", "ready"), mustRecord(t, shard, "foo"))
--	assert.Equal(t, recorded(shard, "", "main", "ready"), mustRecord(t, shard, ""))
--
--	// a named vector's update, accepted: the record follows
--	updated := foo
--	updated.EF = 200
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
--	rec := mustRecord(t, shard, "foo")
--	assert.Equal(t, updated, rec.Config)
--	assert.Equal(t, "vectors_foo", rec.QueueID)
--	assert.Equal(t, "ready", rec.State)
--
--	// the legacy vector's update, accepted: the record follows
--	legacyUpdated := legacy
--	legacyUpdated.EF = 300
--	require.NoError(t, shard.UpdateVectorIndexConfig(ctx, legacyUpdated))
--	assert.Equal(t, legacyUpdated, mustRecord(t, shard, "").Config)
--
--	// refused by the index: nothing is recorded
--	refused := updated
--	refused.RQ.Bits = 1
--	err := shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": refused})
--	require.ErrorContains(t, err, "rq bits is immutable")
--	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config, "a refused config is not the index's config")
--
--	// the same config again writes nothing new
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
--	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config)
--
--	// a skipped vector added by an update owns no record to write to
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{
--		"skipped": enthnsw.UserConfig{Skip: true},
--	}))
--	_, ok, err := shard.mapping.Get("skipped")
--	require.NoError(t, err)
--	assert.False(t, ok)
--}
--
--// mustRecord is name's mapping record, which must exist.
--func mustRecord(t *testing.T, shard *Shard, name string) vectorIndexRecord {
--	t.Helper()
--	rec, ok, err := shard.mapping.Get(name)
--	require.NoError(t, err)
--	require.True(t, ok, "no record for %q", name)
--	return rec
--}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13556** (2026-10-16): Retry user creation on any 422 in the Python namespace test setup (@dirkkul)
-- **PR #13555** (2026-10-16): perf(lsmkv): compare keys once per tree level and drop a flatten allocation (@aliszka)
-- **PR #13554** (2026-10-16): perf(inverted): build batched Contains keys once per filter value (@aliszka)
-- **PR #13552** (2026-10-16): perf(lsmkv): stop timing segment reads whose duration is never recorded (@aliszka)
-- **PR #13551** (2026-10-16): perf(lsmkv): compare NotFound and Deleted directly before errors.Is (@aliszka)
-- **PR #13549** (2026-10-16): Keep the vector_index_tombstones gauge equal to the tombstone count (@dirkkul)
+- **PR #13621** (2026-10-27): chore: adjust macOS swagger lib download in tools/gen-code-from-swagger.sh script (@antas-marcin)
+- **PR #13616** (2026-10-27): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13615** (2026-10-27): test(lazy-load): stop periodic flushes from counting warmup seed objects (@antas-marcin)
+- **PR #13614** (2026-10-27): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13613** (2026-10-27): Allow a minute for new DB user keys in namespace acceptance tests (@dirkkul)
+- **PR #13612** (2026-10-27): perf(db): open and walk each shard once for all startup rebuilds before load (@antas-marcin)
 
 ---
 
@@ -2573,36 +2983,28 @@ This reverts commit 78cc22636f92e3afe3ae888636c3c96ab6541ed4.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test that unflushed writes of a suspended namespace survive a crash
+## X. Merge pull request #13593 from weaviate/namespace_drop_vector
 
 **RULE**:
-When implementing operations in `adapters/repos/db/backup_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/handlers/rest/configure_api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cd62c1f`: Test that unflushed writes of a suspended namespace survive a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad54fb8b`: Merge pull request #13593 from weaviate/namespace_drop_vector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/backup_integration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/rest/configure_api.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/usecases/namespaces"
-	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
-// override, when non-nil, adjusts the Config before the DB is created. exister
-// answers the namespace of a <ns>:<Class> name, and may be nil without one.
-	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
-		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
+			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.NamespacesController, appState.Logger,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
-// override, when non-nil, adjusts the Config before the DB is created.
-	override func(*Config), classes ...*models.Class,
-		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
+			serverShutdownCtx, appState.SchemaManager, dropVectorEnqueuer, appState.Logger,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cd62c1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad54fb8b` are properly handled with clean fallback behavior.

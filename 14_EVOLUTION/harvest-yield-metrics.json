@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:26:34.187Z",
-  "total_cycles_completed": 5349,
-  "total_learnings_persisted": 5349,
-  "total_rules_promoted": 4753,
+  "last_updated": "2026-10-27T14:29:59.601Z",
+  "total_cycles_completed": 5351,
+  "total_learnings_persisted": 5351,
+  "total_rules_promoted": 4755,
   "history": [
-    {
-      "timestamp": "2026-10-26T17:58:30.310Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:31.467Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T18:05:21.409Z",
       "repository": "mui/base-ui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T14:26:34.187Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:29:45.644Z",
+      "repository": "fastapi/fastapi",
+      "learningId": "learn-github-fastapi-fastapi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:29:59.601Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

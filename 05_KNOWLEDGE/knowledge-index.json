@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:26:34.118Z",
+  "last_updated": "2026-10-27T14:29:59.546Z",
   "total_verified_learnings": 1129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11596,8 +11596,8 @@
       "slug": "fastapi-fastapi",
       "platform": "github",
       "source_url": "https://github.com/fastapi/fastapi",
-      "source_version": "7a0a3f0b",
-      "content_hash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
+      "source_version": "79cab5be",
+      "content_hash": "8c990616402ee82689bf1b2d4c7a230f52a830ddc7e7df0e2284fdf486ee813c",
       "dossier_path": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastapi-fastapi-learnings.md",
       "promoted_rules": [
@@ -11675,6 +11675,11 @@
           "number": 3794,
           "title": "🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 4847,
+          "title": "📝 Update release notes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11682,7 +11687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T12:23:01.032Z",
+      "verified_at": "2026-10-27T14:29:45.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52884,14 +52889,19 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "1baf1620",
-      "content_hash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
+      "source_version": "ad54fb8b",
+      "content_hash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
         {
           "number": 2260,
           "title": "Test that unflushed writes of a suspended namespace survive a crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4848,
+          "title": "Merge pull request #13593 from weaviate/namespace_drop_vector",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -52900,7 +52910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:52:15.593Z",
+      "verified_at": "2026-10-27T14:29:59.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134743,6 +134753,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:26:34.105Z"
+    },
+    "rule-4847": {
+      "learning_id": "rule-4847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4847,
+      "title": "📝 Update release notes",
+      "source_url": "https://github.com/fastapi/fastapi",
+      "source_version": "79cab5be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:29:45.579Z"
+    },
+    "rule-4848": {
+      "learning_id": "rule-4848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4848,
+      "title": "Merge pull request #13593 from weaviate/namespace_drop_vector",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "ad54fb8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:29:59.536Z"
     }
   },
   "aliases": {

@@ -5372,3 +5372,5 @@
 | `CYCLE-20261027-ZK5V` | `2026-10-27T14:23:11.827Z` | `ooples/token-optimizer-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4844` | Yes (`b4140bcc...`) |
 | `CYCLE-20261027-3RMI` | `2026-10-27T14:26:28.122Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4845` | Yes (`8a447017...`) |
 | `CYCLE-20261027-3WAQ` | `2026-10-27T14:26:34.178Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4846` | Yes (`9a2955f4...`) |
+| `CYCLE-20261027-8010` | `2026-10-27T14:29:45.636Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4847` | Yes (`8c990616...`) |
+| `CYCLE-20261027-8ASQ` | `2026-10-27T14:29:59.594Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4848` | Yes (`e4de1c5a...`) |
