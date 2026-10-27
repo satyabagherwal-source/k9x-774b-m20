@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `45e9cfeb`  
+> **Source Version**: `fce458c1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:53:00.241Z  
+> **Timestamp**: 2026-10-27T21:52:01.541Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:52:59.492Z  
+> **Harvest Timestamp**: 2026-10-27T21:52:01.533Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,1529 +1799,842 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45e9cfeb` (2026-10-27)
-**Commit Message**: fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (#315)
+### Incident Patch 1: `fce458c1` (2026-10-27)
+**Commit Message**: fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (#316)
 
-* bench(longmemeval): --per-type stratified sampling, and the stratified before/after of the keyword-channel change
+* fix(gateway): let a restarted gateway outlive its parent's lock instead of dying at the 5 s timeout
 
-The first-N slice of LongMemEval-S is all single-session-user, which cannot
-show where one channel beats another. `--per-type N` takes the first N
-questions of each question_type in dataset order and records the sampling in
-the output.
+A full-process restart spawns the new gateway while the old one is still
+draining tasks and closing the server (the orchestrator sidecar alone takes
+~10 s to exit), so the child regularly finds the lock file held by its
+parent. It gave up at the plain 5 s lock timeout, the parent then exited, and
+nothing was left listening: on 2026-10-27 a soapbox-compute config change
+triggered exactly this and the reference node was dark for 51 minutes until
+an operator procedure started a gateway by hand.
 
-Results (10 per type, 60 questions, quiet bridge): vector R@5 is 100% on
-every type in both runs, so at this size the benchmark can only show fusion
-noise, not gain. Keyword R@5 0% -> 95%, attribution multi 0% -> 98.3%. R@5
-overall unchanged at 98.3%: one single-session-assistant question gained (the
-importance boost had pushed it to rank 6), one multi-session question lost
-(keyword's own top 5 missed the gold session and its other hits pushed the
-fused gold rank from 5 to 10). R@10 100% in both. Documented in the README
-with the conclusion that a harder instrument is needed before channel
-weighting can be judged.
+- process-respawn passes BITTERBOT_RESTART_PARENT_PID to the child.
+- acquireGatewayLock: when the lock owner is that pid, the wait extends to
+  restartHandoffTimeoutMs (default 120 s) and fires onRestartHandoffWait once;
+  the run loop logs it. A lock held by any other live gateway fails fast as
+  before.
+- run-loop releases the lock right after a successful spawn, before
+  runtime.exit(): the finally that used to release it never ran on that path.
+- Tests: the child acquires the lock after
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-* fix(memory): bound the post-fusion bo
-
-**File**: `benchmarks/live-recall/README.md` (added, +85/-0)
+**File**: `docs/gateway/gateway-lock.md` (modified, +8/-1)
 ```diff
-@@ -0,0 +1,85 @@
-+# Live-memory held-out recall
+@@ -8,7 +8,7 @@ title: "Gateway Lock"
+ 
+ # Gateway lock
+ 
+-Last updated: 2025-12-11
++Last updated: 2026-10-27
+ 
+ ## Why
+ 
+@@ -28,6 +28,13 @@ Last updated: 2025-12-11
+ - If another process holds the port, startup throws `GatewayLockError("another gateway instance is already listening on ws://127.0.0.1:<port>")`.
+ - Other bind failures surface as `GatewayLockError("failed to bind gateway socket on ws://127.0.0.1:<port>: …")`.
+ 
++## Restart handoff
 +
-+A retrieval test built from a node's own memory store instead of a public
-+dataset. Public benchmarks such as LongMemEval-S saturate: the vector channel
-+alone already puts some chunk of the gold session in the top 5 on nearly every
-+question, so two retrievers that are both decent look identical. The operator's
-+real memory is harder and more relevant: it is full of names, file paths,
-+identifiers and project words that embeddings blur and exact-term matching
-+finds, and it is the data the agent actually searches.
++- A full-process restart (SIGUSR1, the gateway tool, a config change that needs a restart) spawns the new gateway while the old one is still draining tasks and closing the server; the orchestrator sidecar alone can take ten seconds to exit. The child therefore usually finds the lock file still held by its parent.
++- The child is told who its parent is (`BITTERBOT_RESTART_PARENT_PID`). When the lock owner is that pid, the child waits up to 120 s for the parent to release the lock or exit instead of giving up at the plain 5 s timeout, and logs `lock still held by the restarting gateway (pid …); waiting for it to exit` once.
++- The parent releases the lock right after the spawn succeeds, before it exits, so the handoff normally completes in well under a second.
++- Before 2026-10-27 the child gave up at 5 s, the parent then exited, and no gateway was left listening (a 51-minute outage on the reference node). A lock held by any other live gateway still fails fast as before.
 +
-+## Method
-+
-+1. **Snapshot.** Take a consistent read-only copy of the live store
-+   (`VACUUM INTO` on `~/.bitterbot/memory/main.sqlite`). Nothing below touches
-+   the live database.
-+2. **Sample.** `make-questions.mts` selects chunks from `memory` and `sessions`
-+   sources with a live lifecycle and 300 to 1500 characters, orders them by
-+   `sha256(seed + id)` so the sample is reproducible, drops any chunk the
-+   secret redactor would change, and takes the first N.
-+3. **Questions.** A small model (default `claude-haiku-4-5`) writes one
-+   question per chunk under a fixed prompt: a question the passage answers,
-+   phrased as someone half-remembering the topic would type it, keeping the
-+   proper nouns and identifiers, never copying a sentence. The questions
-+   paraphrase private memory, so the file is written with mode 0600 under
-+   `~/.bitterbot/benchmarks/live-recall/` and is **never committed**. A
-+   manifest records the snapshot size, sample counts, seed, model, and the
-+   SHA-256 of the prompt and of the question file.
-+4. **Score.** `run.mts` copies the snapshot (search updates access statistics),
-+   opens it through the normal `MemoryIndexManager` with the live embedding
-+   provider and hybrid settings and every background engine off, runs each
-+   question, and records where the source chunk lands: the fused rank and each
-+   channel's own rank. Metrics: R@1, R@5, R@10 and MRR for the fused list and
-+   for the vector, keyword and graph channels; a per-source breakdown; the
-+   commit under test; the snapshot and question-file hashes. The result file
-+   holds ids and ranks only.
-+
-+Two runs on the same snapshot and question file differ only in the code under
-+test, so a before/after is exact: same questions, same store, same embeddings.
-+
-+## Run
-+
-+```bash
-+SNAP=/path/to/snapshot.sqlite
-+Q=~/.bitterbot/benchmarks/live-recall/questions-$(date +%F).jsonl
-+node --import tsx benchmarks/live-recall/make-questions.mts --snapshot $SNAP --out $Q --n 60 --seed 1
-+node --import tsx benchmarks/live-recall/run.mts --snapshot $SNAP --questions $Q \
-+  --out benchmarks/live-recall/results/live-recall-$(git rev-parse --short HEAD).json
-+```
-+
-+Costs: one small-model call per question to generate, one embedding call per
-+question to score. A 60-question run takes a few minutes.
-+
-+## Results, 2026-10-27
-+
-+One node, snapshot of 4,083 chunks, 60 questions (seed 1, `claude-haiku-4-5`), question
-+file SHA-256 in `results/questions-2026-10-27.manifest.json`. Fused = the list the agent sees.
-+
-+| run                                                | fused R@1 | fused R@5 | fused R@10 | fused MRR | vector R@5 | keyword R@5 |
-+| -------------------------------------------------- | --------- | --------- | ---------- | --------- | ---------- | ----------- |
-+| AND-joined keyword channel, full boosts (pre-#312) | 0.0%      | 3.3%      | 6.7%       | 0.022     | 16.7%      | 0.0%        |
-+| OR-joined keyword channel (#312), full boosts      | 3.3%      | 8.3%      | 13.3%      | 0.063     | 21.7%      | 30.0%       |
-+| same, recency boost off                            | 5.0%      | 11.7%     | 16.7%      | 0.087     | 23.3%      | 33.3%       |
-+| same, `postFusionBoostScale` 0.25                  | 15.0%     | 33.3%     | 40.0%      | 0.241     | 23.3%      | 55.0%       |
-+| same, `postFusionBoostScale` 0.1 (new default)     | 20.0%     | 40.0%     | 46.7%      | 0.276     | 23.3%      | 55.0%       |
-+| same, `postFusionBoostScale` 0                     | 26.7%     | 41.7%     | 48.3%      | 0.336     | 23.3%      | 53.3%       |
-+
-+Reading: the keyword channel is the strongest single channel on real memory
-+(names, paths, identifiers), and the fused list was worse than either channel
-+until the post-fusion boosts were bounded, because the temporal-intent decay
-+and the recency boost, sized for cosine scores, reordered rank-fused results
-+wholesale. Channel columns in the full-boost rows undercount: a target pushed
-+out of the returned 50 by the boosts has no channel rank either.
-+
-+Result files are in `results/` and hold ranks, chunk ids and sources only.
-+
-+## Caveats
-+
-+- The question writer sees the passage, so questions can be easier than real
-+  recall: they always contain findable terms. Treat absolute numbers as an
-+  upper bound and read the before/after differences.
-+- Only one chunk is the target. A neighbouring chunk from the same
+ ## Operational notes
+ 
+ - If the port is occupied by _another_ process, the error is the same; free the port or choose another with `bitterbot gateway --port <port>`.
 ```
 
-**File**: `benchmarks/live-recall/make-questions.mts` (added, +152/-0)
+**File**: `src/cli/gateway-cli/run-loop.ts` (modified, +9/-1)
 ```diff
-@@ -0,0 +1,152 @@
+@@ -24,7 +24,12 @@ export async function runGatewayLoop(params: {
+   start: () => Promise<Awaited<ReturnType<typeof startGatewayServer>>>;
+   runtime: typeof defaultRuntime;
+ }) {
+-  const lock = await acquireGatewayLock();
++  const lock = await acquireGatewayLock({
++    onRestartHandoffWait: (parentPid) =>
++      gatewayLog.info(
++        `lock still held by the restarting gateway (pid ${parentPid}); waiting for it to exit`,
++      ),
++  });
+   let server: Awaited<ReturnType<typeof startGatewayServer>> | null = null;
+   let shuttingDown = false;
+   let restartResolver: (() => void) | null = null;
+@@ -95,6 +100,9 @@ export async function runGatewayLoop(params: {
+                 ? `spawned pid ${respawn.pid ?? "unknown"}`
+                 : "supervisor restart";
+             gatewayLog.info(`restart mode: full process restart (${modeLabel})`);
++            // Hand the lock over now: runtime.exit() below never reaches the
++            // finally that would release it, and the child is already waiting.
++            await lock?.release().catch(() => undefined);
+             cleanupSignals();
+             params.runtime.exit(0);
+           } else {
+```
+
+**File**: `src/infra/gateway-lock.test.ts` (modified, +58/-1)
+```diff
+@@ -5,7 +5,7 @@ import os from "node:os";
+ import path from "node:path";
+ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+ import { resolveConfigPath, resolveGatewayLockDir, resolveStateDir } from "../config/paths.js";
+-import { acquireGatewayLock, GatewayLockError } from "./gateway-lock.js";
++import { acquireGatewayLock, GatewayLockError, RESTART_PARENT_PID_ENV } from "./gateway-lock.js";
+ 
+ let fixtureRoot = "";
+ let fixtureCount = 0;
+@@ -215,3 +215,60 @@ describe("gateway lock", () => {
+     await cleanup();
+   });
+ });
++
++describe("restart handoff", () => {
++  // Real timers: the loop polls the filesystem.
++  it("outlives a parent that is still shutting down when spawned as its restart", async () => {
++    vi.useRealTimers();
++    const { env, cleanup } = await makeEnv();
++    const parent = await acquireGatewayLock({
++      env,
++      allowInTests: true,
++      timeoutMs: 50,
++      pollIntervalMs: 2,
++    });
++    expect(parent).not.toBeNull();
++    // The lock owner is this process; the child is told this process is its parent.
++    const childEnv = { ...env, [RESTART_PARENT_PID_ENV]: String(process.pid) };
++    const waited: number[] = [];
++    const pending = acquireGatewayLock({
++      env: childEnv,
++      allowInTests: true,
++      timeoutMs: 30,
++      restartHandoffTimeoutMs: 3000,
++      pollIntervalMs: 2,
++      onRestartHandoffWait: (pid) => waited.push(pid),
++    });
++    // Well past the plain timeout, the parent finally lets go.
++    await new Promise((r) => setTimeout(r, 150));
++    await parent?.release();
++    const child = await pending;
++    expect(child).not.toBeNull();
++    expect(waited).toEqual([process.pid]);
++    await child?.release();
++    await cleanup();
++  });
++
++  it("still gives up at the plain timeout when the owner is not its parent", async () => {
++    vi.useRealTimers();
++    const { env, cleanup } = await makeEnv();
++    const owner = await acquireGatewayLock({
++      env,
++      allowInTests: true,
++      timeoutMs: 50,
++      pollIntervalMs: 2,
++    });
++    const childEnv = { ...env, [RESTART_PARENT_PID_ENV]: String(process.pid + 100_000) };
++    await expect(
++      acquireGatewayLock({
++        env: childEnv,
++        allowInTests: true,
++        timeoutMs: 30,
++        restartHandoffTimeoutMs: 3000,
++        pollIntervalMs: 2,
++      }),
++    ).rejects.toBeInstanceOf(GatewayLockError);
++    await owner?.release();
++    await cleanup();
++  });
++});
+```
+
+**File**: `src/infra/gateway-lock.ts` (modified, +32/-1)
+```diff
+@@ -8,6 +8,16 @@ import { isPidAlive } from "../shared/pid-alive.js";
+ const DEFAULT_TIMEOUT_MS = 5000;
+ const DEFAULT_POLL_INTERVAL_MS = 100;
+ const DEFAULT_STALE_MS = 30_000;
 +/**
-+ * Live-memory held-out recall set: question generation.
++ * A full-process restart spawns the new gateway while the old one is still
++ * draining and closing (the orchestrator alone can take ~10 s to exit), so the
++ * child regularly finds the lock held by its parent. With the plain 5 s
++ * timeout the child gave up, the parent then exited, and nothing was left
++ * listening: a 51-minute outage on 2026-10-27. When the lock owner IS the
++ * parent named in RESTART_PARENT_PID_ENV, the child waits this long instead.
++ */
++const DEFAULT_RESTART_HANDOFF_TIMEOUT_MS = 120_000;
++export const RESTART_PARENT_PID_ENV = "BITTERBOT_RESTART_PARENT_PID";
+ 
+ type LockPayload = {
+   pid: number;
+@@ -29,6 +39,10 @@ export type GatewayLockOptions = {
+   staleMs?: number;
+   allowInTests?: boolean;
+   platform?: NodeJS.Platform;
++  /** How long to wait for the restart parent (env RESTART_PARENT_PID_ENV) to let go of the lock. */
++  restartHandoffTimeoutMs?: number;
++  /** Called once when the wait is extended for the restart parent. */
++  onRestartHandoffWait?: (parentPid: number) => void;
+ };
+ 
+ export class GatewayLockError extends Error {
+@@ -200,10 +214,13 @@ export async function acquireGatewayLock(
+     return null;
+   }
+ 
+-  const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
++  let timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+   const pollIntervalMs = opts.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
+   const staleMs = opts.staleMs ?? DEFAULT_STALE_MS;
+   const platform = opts.platform ?? process.platform;
++  const restartParentPid = Number.parseInt(env[RESTART_PARENT_PID_ENV] ?? "", 10);
++  const handoffTimeoutMs = opts.restartHandoffTimeoutMs ?? DEFAULT_RESTART_HANDOFF_TIMEOUT_MS;
++  let handoffExtended = false;
+   const { lockPath, configPath } = resolveGatewayLockPath(env);
+   await fs.mkdir(path.dirname(lockPath), { recursive: true });
+ 
+@@ -246,6 +263,20 @@ export async function acquireGatewayLock(
+         await fs.rm(lockPath, { force: true });
+         continue;
+       }
++      // Restart handoff: the lock is held by the gateway that spawned us and is
++      // still shutting down. Outlive it instead of giving up at the plain
++      // timeout; it releases the lock or dies, and either frees the loop above.
++      if (
++        !handoffExtended &&
++        Number.isFinite(restartParentPid) &&
++        restartParentPid > 0 &&
++        ownerPid === restartParentPid &&
++        handoffTimeoutMs > timeoutMs
++      ) {
++        handoffExtended = true;
++        timeoutMs = handoffTimeoutMs;
++        opts.onRestartHandoffWait?.(restartParentPid);
++      }
+       if (ownerStatus !== "alive") {
+         let stale = false;
+         if (lastPayload?.createdAt) {
+```
+
+**File**: `src/infra/process-respawn.ts` (modified, +8/-2)
+```diff
+@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
+ import fs from "node:fs";
+ import path from "node:path";
+ import { readBootVerify } from "./boot-verify.js";
++import { RESTART_PARENT_PID_ENV } from "./gateway-lock.js";
+ import { setupHandoverPending } from "./setup-handover.js";
+ import { CURRENT_LINK, resolveTarballLayout } from "./tarball-install.js";
+ import { spawnTarballBootWatchdog } from "./tarball-watchdog-spawn.js";
+@@ -111,7 +112,10 @@ export function restartGatewayProcessWithFreshPid(): GatewayRespawnResult {
+   }
+   if (tarball) {
+     try {
+-      const env = { ...process.env };
++      const env: NodeJS.ProcessEnv = {
++        ...process.env,
++        [RESTART_PARENT_PID_ENV]: String(process.pid),
++      };
+       // The new launcher sets its own root, and its entry.js re-execs itself
+       // (warning flags) unless this marker is inherited.
+       delete env.BITTERBOT_INSTALL_ROOT;
+@@ -128,7 +132,9 @@ export function restartGatewayProcessWithFreshPid(): GatewayRespawnResult {
+   try {
+     const args = [...process.execArgv, ...process.argv.slice(1)];
+     const child = spawn(process.execPath, args, {
+-      env: process.env,
++      // The child finds our lock still held while we drain and close; the pid
++      // lets it wait for us instead of giving up at the plain lock timeout.
++      env: { ...process.env, [RESTART_PARENT_PID_ENV]: String(process.pid) },
+       detached: true,
+       stdio: "inherit",
+     });
+```
+
+---
+
+### Incident Patch 2: `ac3cc673` (2026-10-27)
+**Commit Message**: bench(live-recall): replay the agent's real memory_search queries under each boost scale (#317)
+
+The event journal records every memory_search call with its query text: 71
+calls, 68 distinct queries, May to October 2026. extract-journal-queries.mts
+pulls them (private output, manifest committed); replay-judge.mts searches a
+snapshot copy once per postFusionBoostScale, pools the top-5 passages across
+settings and has claude-haiku-4-5 judge each (query, passage) pair once, so
+the same verdicts score every setting.
+
+Results: scale 1 hit@5 38.2% / P@5 23.8% / MRR 0.342; 0.1: 42.6% / 30.9% /
+0.354; 0: 44.1% / 31.2% / 0.362. Same direction as the held-out set, much
+smaller effect on real (short, keyword-shaped) queries; 0 is not
+distinguishable from 0.1 here (3 up, 3 down), so the default stays 0.1. Only
+33 of 68 real queries had any relevant passage in the store under any setting.
+
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `benchmarks/live-recall/README.md` (modified, +36/-0)
+```diff
+@@ -73,6 +73,42 @@ out of the returned 50 by the boosts has no channel rank either.
+ 
+ Result files are in `results/` and hold ranks, chunk ids and sources only.
+ 
++## Real agent queries (journal replay)
++
++Generated questions always contain findable terms. The event journal records
++every `memory_search` the agent has made, with its query text, so the same
++code paths can be judged on what the agent actually asks:
++
++1. `extract-journal-queries.mts` pulls the distinct queries from
++   `~/.bitterbot/event-journal.sqlite` (stream `tool`, phase `start`). Private
++   output under `~/.bitterbot`, never committed; a manifest with counts and the
++   file hash is.
++2. `replay-judge.mts` searches a copy of the snapshot once per setting
++   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
++   settings, and asks a small model ONCE per (query, passage) pair whether the
++   passage answers the query. The same verdicts score every setting, so the
++   comparison is fair even where the judge is not. Output: hit@k (any relevant
++   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
++
++Results, 2026-10-27: 68 distinct real queries (May to October 2026, median 36
++characters), k = 5, judge `claude-haiku-4-5`, 398 pairs judged. Only 33 of the
++68 queries had any relevant passage under any setting; the store simply does
++not hold an answer for the rest, which is itself a finding about what the agent
++asks for versus what it has kept.
++
++| `postFusionBoostScale` | hit@5 | precision@5 | relevant@1 | MRR   |
++| ---------------------- | ----- | ----------- | ---------- | ----- |
++| 1 (legacy)             | 38.2% | 23.8%       | 32.4%      | 0.342 |
++| 0.1 (default)          | 42.6% | 30.9%       | 32.4%      | 0.354 |
++| 0                      | 44.1% | 31.2%       | 32.4%      | 0.362 |
++
++Per query, 0.1 against 1 moved the first relevant passage up on 8 queries and
++down on 5 (55 unchanged); 0 against 0.1 moved 3 up and 3 down. The direction
++agrees with the held-out set; the size of the effect is far smaller on real
++queries, which are short and keyword-shaped and sit closer to the keyword
++channel's strengths, and 0 is not distinguishable from 0.1 on this sample. The
++default stays at 0.1.
++
+ ## Caveats
+ 
+ - The question writer sees the passage, so questions can be easier than real
+```
+
+**File**: `benchmarks/live-recall/extract-journal-queries.mts` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++/**
++ * Real agent queries from the event journal.
 + *
-+ * Samples chunks from a READ-ONLY snapshot of a node's memory store and asks a
-+ * small model to write one question each chunk answers. The output is PRIVATE
-+ * (it paraphrases the operator's own memory) and lives outside the repository;
-+ * only the manifest (hashes, counts, model, prompt hash) and the scored ranks
-+ * are meant to be shared.
++ * Every `memory_search` tool call the agent made is journaled with its
++ * arguments (stream "tool", phase "start"). This pulls the distinct queries
++ * out so retrieval can be judged on what the agent actually asks, not on
++ * questions a model wrote while looking at the answer. The output paraphrases
++ * the operator's conversations, so it is PRIVATE: written 0600 outside the
++ * repository, never committed. A manifest with counts and the file hash is.
 + *
-+ *   node --import tsx benchmarks/live-recall/make-questions.mts \
-+ *     --snapshot ~/snap.sqlite --out ~/.bitterbot/benchmarks/live-recall/questions.jsonl \
-+ *     [--n 60] [--seed 1] [--model claude-haiku-4-5]
++ *   node --import tsx benchmarks/live-recall/extract-journal-queries.mts \
++ *     --journal ~/.bitterbot/event-journal.sqlite --out ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl [--max 120]
 + */
 +import { createHash } from "node:crypto";
 +import { mkdirSync, writeFileSync } from "node:fs";
 +import { dirname } from "node:path";
 +import { DatabaseSync } from "node:sqlite";
 +import { parseArgs } from "node:util";
++import { gunzipSync } from "node:zlib";
++
++const { values: args } = parseArgs({
++  options: {
++    journal: { type: "string" },
++    out: { type: "string" },
++    max: { type: "string", default: "120" },
++  },
++  strict: true,
++});
++if (!args.journal || !args.out) {
++  throw new Error("usage: --journal <event-journal.sqlite> --out <queries.jsonl> [--max N]");
++}
++const max = Number(args.max);
++
++type ToolEvent = { phase?: string; name?: string; args?: { query?: unknown } };
++
++const db = new DatabaseSync(args.journal, { readOnly: true });
++const rows = db
++  .prepare(
++    `SELECT seq, ts, session_key AS sk, data_blob AS d FROM event_log WHERE stream = 'tool' ORDER BY seq DESC`,
++  )
++  .all() as unknown as Array<{ seq: number; ts: number; sk: string | null; d: Uint8Array }>;
++db.close();
++
++const seen = new Set<string>();
++const picked: Array<{ seq: number; ts: number; sessionKeySha256: string; query: string }> = [];
++let calls = 0;
++for (const r of rows) {
++  let evt: ToolEvent;
++  try {
++    evt = JSON.parse(gunzipSync(Buffer.from(r.d)).toString("utf-8")) as ToolEvent;
++  } catch {
++    continue;
++  }
++  if (evt.name !== "memory_search" || evt.phase !== "start") {
++    continue;
++  }
++  const query = typeof evt.args?.query === "string" ? evt.args.query.trim() : "";
++  if (!query) {
++    continue;
++  }
++  calls++;
++  const key = query.toLowerCase();
++  if (seen.has(key)) {
++    continue;
++  }
++  seen.add(key);
++  picked.push({
++    seq: r.seq,
++    ts: r.ts,
++    sessionKeySha256: createHash("sha256")
++      .update(r.sk ?? "")
++      .digest("hex")
++      .slice(0, 16),
++    query,
++  });
++  if (picked.length >= max) {
++    break;
++  }
++}
++// Oldest first, so a saved file reads chronologically.
++picked.sort((a, b) => a.seq - b.seq);
++
++mkdirSync(dirname(args.out), { recursive: true });
++const body = `${picked.map((p) => JSON.stringify(p)).join("\n")}\n`;
++writeFileSync(args.out, body, { mode: 0o600 });
++const manifest = {
++  createdAt: new Date().toISOString(),
++  journal: args.journal,
++  toolEvents: rows.length,
++  memorySearchCalls: calls,
++  distinctQueries: picked.length,
++  oldest: picked[0] ? new Date(picked[0].ts).toISOString() : null,
++  newest: picked.at(-1) ? new Date(picked.at(-1)!.ts).toISOString() : null,
++  queriesSha256: createHash("sha256").update(body).digest("hex"),
++};
++writeFileSync(`${args.out}.manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`);
++console.log(JSON.stringify(manifest));
+```
+
+**File**: `benchmarks/live-recall/replay-judge.mts` (added, +274/-0)
+```diff
+@@ -0,0 +1,274 @@
++/**
++ * Replay real agent queries against a store snapshot under several
++ * post-fusion boost scales and judge relevance with a small model.
++ *
++ * The held-out set (run.mts) has exact ground truth but synthetic questions.
++ * Real queries from the journal (extract-journal-queries.mts) have no ground
++ * truth, so a judge model marks each (query, passage) pair relevant or not,
++ * ONCE, and the same verdicts score every setting. Settings differ only in the
++ * code path under test, so the comparison is fair even if the judge is not
++ * perfect. Output holds metrics and ids only.
++ *
++ *   node --import tsx benchmarks/live-recall/replay-judge.mts \
++ *     --snapshot ~/snap.sqlite --queries ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl \
++ *     --scales 1,0.1,0 --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5]
++ */
++import { execSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { dirname, join } from "node:path";
++import { parseArgs } from "node:util";
 +import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import type { BitterbotConfig } from "../../src/config/config.js";
 +import { loadConfig } from "../../src/config/io.js";
-+import { redactSensitiveText } from "../../src/logging/redact.js";
++import { MemoryIndexManager } from "../../src/memory/manager.js";
++import type { MemorySearchResult } from "../../src/memory/types.js";
 +
 +const { values: args } = parseArgs({
 +  options: {
 +    snapshot: { type: "string" },
++    queries: { type: "string" },
 +    out: { type: "string" },
-+    n: { type: "string", default: "60" },
-+    seed: { type: "string", default: "1" },
-+    model: { type: "string", default: "claude-haiku-4-5" },
-+    "min-chars": { type: "string", default: "300" },
-+    "max-chars": { type: "string", default: "1500" },
++    scales: { type: "string", default: "1,0.1,0" },
++    k: { type: "string", default: "5" },
++    judge: { type: "string", default: "claude-haiku-4-5" },
 +  },
 +  strict: true,
 +});
-+if (!args.snapshot || !args.out) {
++if (!args.snapshot || !args.queries || !args.out) {
 +  throw new Error(
-+    "usage: --snapshot <sqlite> --out <questions.jsonl> [--n N] [--seed S] [--model M]",
++    "usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--scales 1,0.1,0] [--k 5]",
 +  );
 +}
-+const n = Number(args.n);
-+const seed = String(args.seed);
++const K = Number(args.k);
++const scales = args.scales.split(",").map((s) => Number(s.trim()));
++const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
 +
-+const PROMPT =
-+  "You write retrieval test questions. Given a passage from someone's notes or chat history, write ONE question " +
-+  "that this passage answers and that a person who half-remembers the topic might type into a memory search. " +
-+  "Rules: at most 25 words; do not copy a sentence from the passage; keep the proper nouns, names, file names, " +
-+  "numbers or identifiers that make the passage findable; no preamble, output the question only.";
++const queriesRaw = readFileSync(args.queries, "utf-8");
++const queries = queriesRaw
++  .split("\n")
++  .filter((l) => l.trim())
++  .map((l) => (JSON.parse(l) as { query: string }).query);
 +
-+type Row = {
-+  id: string;
-+  path: string;
-+  source: string;
-+  start_line: number;
-+  end_line: number;
-+  text: string;
-+};
-+
-+const db = new DatabaseSync(args.snapshot, { readOnly: true });
-+const rows = db
-+  .prepare(
-+    `SELECT id, path, source, start_line, end_line, text FROM chunks
-+     WHERE source IN ('memory', 'sessions') AND model != 'pending'
-+       AND lifecycle IN ('generated', 'consolidated', 'activated')
-+       AND length(text) BETWEEN ? AND ?`,
-+  )
-+  .all(Number(args["min-chars"]), Number(args["max-chars"])) as unknown as Row[];
-+const snapshotChunks = (db.prepare(`SELECT COUNT(*) AS c FROM chunks`).get() as { c: number }).c;
-+db.close();
-+
-+// Deterministic sample: order by sha256(seed + id).
-+const key = (id: string) => createHash("sha256").update(`${seed}:${id}`).digest("hex");
-+const ordered = rows.toSorted((a, b) => (key(a.id) < key(b.id) ? -1 : 1));
-+// Never put a secret in front of a model: skip anything the redactor would change.
-+const clean = ordered.filter((r) => redactSensitiveText(r.text, { mode: "tools" }) === r.text);
-+const picked = clean.slice(0, n);
-+console.log(`eligible=${rows.length} clean=${clean.length} picked=${picked.length}`);
-+
-+const auth = await resolveApiKeyForProvider({ provider: "anthropic", cfg: loadConfig() });
-+if (!auth?.apiKey) {
-+  throw new Error("no Anthropic key resolvable through the normal auth path");
-+}
-+const apiKey = auth.apiKey;
-+
-+async function ask(text: string): Promise<string> {
-+  const res = await fetch("https://api.anthropic.com/v1/messages", {
-+    method: "POST",
-+    headers: {
-+      "content-type": "application/json",
-+      "x-api-key": apiKey,
-+      "anthropic-version": "2023-06-01",
-+    },
-+    body: JSON.stringify({
-+      model: args.model,
-+      max_tokens: 120,
-+      system: PROMPT,
-+      messages: [{ role: "user", content: `Passage:\n\n${text}` }],
-+    }),
-+  });
-+  if (!res.ok) {
-+    throw new Error(`anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
-+  }
-+  const data = (await res.json()) as { content: Array<{ type: string; text?: string }> };
-+  return (data.content.find((c) => c.type === "text")?.text ?? "").trim().replaceAll(/\s+/g, " ");
-+}
-+
-+mkdirSync(dirname(args.out), { recursive: true });
-+const lines: string[] = [];
-+let failed = 0;
-+for (let i = 0; i < picked.length; i++) {
-+  const r = picked[i]!;
++function gitCommit(): string | null {
 +  try {
-+    const question = await ask(r.text);
-+    if (!question) {
-+      throw new Error("empty question");
-+    }
-+    lines.push(
-+      JSON.stringify({
-+        chunkId: r.id,
-+        path: r.path,
-+        source: r.source,
-+        startLine: r.start_line,
-+        endLine: r.end_line,
-+        textSha256: createHash("sha256").update(r.text).digest("hex"),
-+        question,
-+      }),
-+    );
-+  } catch (err) {
-+    failed++;
-+    console.error(`  [
++    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
++    const dirty = execSync("git status --porcelain --untracked-files=no", {
++      encoding: "utf-8",
++    }).trim();
++    return dirty ? `${head}+dirty` : head;
++  } catch {
++    return null;
++  }
++}
++const measuredCommit = gitCommit();
++
++const live = loadConfig();
++const openai = await resolveApiKeyForProvider({ provider: "openai", cfg: live });
++const anthropic = await resolveApiKeyForProvider({ provider: "anthropic", cfg: live });
++if (!openai?.apiKey || !anthropic?.apiKey) {
++  throw new Error("need both an OpenAI key (embeddings) and an Anthropic key (judge)");
++}
++const judgeKey = anthropic.apiKey;
++
++type Hit = { id: string; snippet: string; rank: number };
++const resultId = (r: MemorySearchResult) => `${r.path}:${r.startLine}-${r.endLine}`;
++
++async function searchAll(scale: number): Promise<Map<string, Hit[]>> {
++  const work = mkdtempSync(join(tmpdir(), `replay-${scale}-`));
++  const storePath = join(work, "store.sqlite");
++  copyFileSync(args.snapshot!, storePath);
++  const workspaceDir = join(work, "workspace");
++  mkdirSync(join(workspaceDir, "memory"), { recursive: true });
++  writeFileSync(join(workspaceDir, "memory", "MEMORY.md"), "# replay\n");
++  const agentId = `replay-${String(scale).replace(".", "_")}`;
++  const cfg = {
++    agents: {
++      defaults: {
++        workspace: workspaceDir,
++        memorySearch: {
++          enabled: true,
++          provider: "openai",
++          model: "text-embedding-3-small",
++          remote: { apiKey: openai!.apiKey },
++          sources: ["memory", "sessions"],
++          store: { path: storePath, vector: { enabled: true } },
++          sync: {
++            intervalMinutes: 0,
++            onSearch: false,
++            onStartup: false,
++            watch: false,
++            onSessionStart: false,
++          },
++          query: {
++            maxResults: K,
++            minScore: 0,
++            hybrid: { enabled: true, mergeStrategy: "rrf", candidateMultiplier: 5 },
++            postFusionBoostScale: scale,
++          },
++        },
++      },
++      list: [{ id: agentId, default: true, workspace: workspaceDir }],
++    },
++    memory: {
++      dream: { enabled: false },
++      consolidation: { enabled: false },
++      curiosity: { enabled: false },
++      emotional: { enabled: false },
++      healthSweep: { enabled: false },
++      coverageDiagnostics: { enabled: false },
++    },
++  } as unknown as BitterbotConfig;
++  const m
 ```
 
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-and_boosts-1.json` (added, +768/-0)
+**File**: `benchmarks/live-recall/results/journal-queries-2026-10-27.manifest.json` (added, +10/-0)
 ```diff
-@@ -0,0 +1,768 @@
+@@ -0,0 +1,10 @@
 +{
-+  "git_commit": "a22e2df0+dirty",
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 587.5,
-+  "summary": {
-+    "fused": {
-+      "R@1": "0.0%",
-+      "R@5": "3.3%",
-+      "R@10": "6.7%",
-+      "MRR": "0.022"
-+    },
-+    "vector": {
-+      "R@1": "6.7%",
-+      "R@5": "16.7%",
-+      "R@10": "23.3%",
-+      "MRR": "0.116"
-+    },
-+    "keyword": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    }
-+  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 0,
-+      "keywordAt5": 0
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 2,
-+      "keywordAt5": 0
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 27,
-+        "vector": 23,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 35,
-+        "vector": 1,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 29,
-+        "vector": 6,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 19,
-+        "vector": 1,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 4,
-+        "vector": 6,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory",
-+      "ranks": 
++  "createdAt": "2026-10-27T21:00:29.171Z",
++  "journal": "/home/vicmg/.bitterbot/event-journal.sqlite",
++  "toolEvents": 22869,
++  "memorySearchCalls": 71,
++  "distinctQueries": 68,
++  "oldest": "2026-05-22T18:57:08.945Z",
++  "newest": "2026-10-23T00:12:31.985Z",
++  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2"
++}
 ```
 
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.1.json` (added, +770/-0)
+**File**: `benchmarks/live-recall/results/replay-journal-2026-10-27.json` (added, +1193/-0)
 ```diff
-@@ -0,0 +1,770 @@
+@@ -0,0 +1,1193 @@
 +{
-+  "git_commit": "33abb4e0+dirty",
-+  "recencyBoost": true,
-+  "postFusionBoostScale": 0.1,
++  "git_commit": "db896f78",
 +  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 219.7,
++  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2",
++  "judge": "claude-haiku-4-5",
++  "judgePromptSha256": "56d6dc5281a15b16bb9790e296c942a2e9c2629ea264bbf939a8b9956f726f79",
++  "k": 5,
++  "n": 68,
++  "pairsJudged": 398,
++  "anyRelevantQueries": 33,
++  "elapsed_seconds": 348.7,
 +  "summary": {
-+    "fused": {
-+      "R@1": "20.0%",
-+      "R@5": "40.0%",
-+      "R@10": "46.7%",
-+      "MRR": "0.276"
++    "0": {
++      "n": 68,
++      "hitAtK": 0.441,
++      "precisionAtK": 0.312,
++      "mrr": 0.362,
++      "relevantAt1": 0.324
 +    },
-+    "vector": {
-+      "R@1": "6.7%",
-+      "R@5": "23.3%",
-+      "R@10": "40.0%",
-+      "MRR": "0.150"
++    "1": {
++      "n": 68,
++      "hitAtK": 0.382,
++      "precisionAtK": 0.238,
++      "mrr": 0.342,
++      "relevantAt1": 0.324
 +    },
-+    "keyword": {
-+      "R@1": "28.3%",
-+      "R@5": "55.0%",
-+      "R@10": "66.7%",
-+      "MRR": "0.398"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
++    "0.1": {
++      "n": 68,
++      "hitAtK": 0.426,
++      "precisionAtK": 0.309,
++      "mrr": 0.354,
++      "relevantAt1": 0.324
 +    }
 +  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 15,
-+      "keywordAt5": 24
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 9,
-+      "keywordAt5": 9
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 4,
-+        "vector": 19,
-+        "keyword": 5,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 17,
-+        "vector": 23,
-+        "keyword": 15,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 20,
-+        "vector": 7,
-+        "keyword": 37,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 31,
-+        "vector": 50,
-+        "keyword": 6,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 6,
-+        "vector": 6,
-+        "keyword": 2,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 5,
-+        "vector": 6,
-+        "keyword": 9,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 9,
-+        "vector": 9,
-+        "keyword": 12,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory"
-```
-
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.25.json` (added, +770/-0)
-```diff
-@@ -0,0 +1,770 @@
-+{
-+  "git_commit": "33abb4e0+dirty",
-+  "recencyBoost": true,
-+  "postFusionBoostScale": 0.25,
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 502,
-+  "summary": {
-+    "fused": {
-+      "R@1": "15.0%",
-+      "R@5": "33.3%",
-+      "R@10": "40.0%",
-+      "MRR": "0.241"
-+    },
-+    "vector": {
-+      "R@1": "6.7%",
-+      "R@5": "23.3%",
-+      "R@10": "40.0%",
-+      "MRR": "0.150"
-+    },
-+    "keyword": {
-+      "R@1": "28.3%",
-+      "R@5": "55.0%",
-+      "R@10": "66.7%",
-+      "MRR": "0.399"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    }
-+  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 14,
-+      "keywordAt5": 24
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 6,
-+      "keywordAt5": 9
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 4,
-+        "vector": 20,
-+        "keyword": 4,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 17,
-+        "vector": 23,
-+        "keyword": 15,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 23,
-+        "vector": 7,
-+        "keyword": 36,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 32,
-+        "vector": 49,
-+        "keyword": 6,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 16,
-+        "vector": 6,
-+        "keyword": 2,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 2,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 5,
-+        "vector": 6,
-+        "keyword": 9,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 9,
-+        "vector": 9,
-+        "keyword": 12,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory"
-```
-
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.json` (added, +770/-0)
-```diff
-@@ -0,0 +1,770 @@
-+{
-+  "git_commit": "33abb4e0+dirty",
-+  "recencyBoost": true,
-+  "postFusionBoostScale": 0,
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 206.8,
-+  "summary": {
-+    "fused": {
-+      "R@1": "26.7%",
-+      "R@5": "41.7%",
-+      "R@10": "48.3%",
-+      "MRR": "0.336"
-+    },
-+    "vector": {
-+      "R@1": "6.7%",
-+      "R@5": "23.3%",
-+      "R@10": "40.0%",
-+      "MRR": "0.150"
-+    },
-+    "keyword": {
-+      "R@1": "28.3%",
-+      "R@5": "53.3%",
-+      "R@10": "66.7%",
-+      "MRR": "0.398"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    }
-+  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 16,
-+      "keywordAt5": 23
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 9,
-+      "keywordAt5": 9
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 4,
-+        "vector": 18,
-+        "keyword": 7,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 17,
-+        "vector": 23,
-+        "keyword": 15,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 18,
-+        "vector": 7,
-+        "keyword": 37,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 31,
-+        "vector": 50,
-+        "keyword": 6,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 6,
-+        "keyword": 2,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 1,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 5,
-+        "vector": 6,
-+        "keyword": 9,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 9,
-+        "vector": 9,
-+        "keyword": 12,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory",
-
-```
-
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-1.json` (added, +768/-0)
-```diff
-@@ -0,0 +1,768 @@
-+{
-+  "git_commit": "33abb4e0+dirty",
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 341.9,
-+  "summary": {
-+    "fused": {
-+      "R@1": "3.3%",
-+      "R@5": "8.3%",
-+      "R@10": "13.3%",
-+      "MRR": "0.063"
-+    },
-+    "vector": {
-+      "R@1": "6.7%",
-+      "R@5": "21.7%",
-+      "R@10": "28.3%",
-+      "MRR": "0.123"
-+    },
-+    "keyword": {
-+      "R@1": "16.7%",
-+      "R@5": "30.0%",
-+      "R@10": "33.3%",
-+      "MRR": "0.220"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    }
-+  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 2,
-+      "keywordAt5": 12
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 3,
-+      "keywordAt5": 6
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 33,
-+        "vector": 16,
-+        "keyword": 2,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 21,
-+        "vector": 23,
-+        "keyword": 13,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 13,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 44,
-+        "vector": 6,
-+        "keyword": 28,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 36,
-+        "vector": 48,
-+        "keyword": 6,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 23,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 5,
-+        "vector": 6,
-+        "keyword": 9,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": nu
-```
-
-**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-1_recency-off.json` (added, +769/-0)
-```diff
-@@ -0,0 +1,769 @@
-+{
-+  "git_commit": "33abb4e0+dirty",
-+  "recencyBoost": false,
-+  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
-+  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
-+  "n": 60,
-+  "maxResults": 50,
-+  "elapsed_seconds": 538.3,
-+  "summary": {
-+    "fused": {
-+      "R@1": "5.0%",
-+      "R@5": "11.7%",
-+      "R@10": "16.7%",
-+      "MRR": "0.087"
-+    },
-+    "vector": {
-+      "R@1": "8.3%",
-+      "R@5": "23.3%",
-+      "R@10": "30.0%",
-+      "MRR": "0.135"
-+    },
-+    "keyword": {
-+      "R@1": "18.3%",
-+      "R@5": "33.3%",
-+      "R@10": "36.7%",
-+      "MRR": "0.244"
-+    },
-+    "graph": {
-+      "R@1": "0.0%",
-+      "R@5": "0.0%",
-+      "R@10": "0.0%",
-+      "MRR": "0.000"
-+    }
-+  },
-+  "bySource": {
-+    "memory": {
-+      "n": 34,
-+      "fusedAt5": 3,
-+      "keywordAt5": 14
-+    },
-+    "sessions": {
-+      "n": 26,
-+      "fusedAt5": 4,
-+      "keywordAt5": 6
-+    }
-+  },
-+  "per_question": [
-+    {
-+      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 30,
-+        "vector": 16,
-+        "keyword": 2,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 14,
-+        "vector": 23,
-+        "keyword": 13,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 6,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 20,
-+        "vector": 7,
-+        "keyword": 32,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": 30,
-+        "vector": 49,
-+        "keyword": 6,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 16,
-+        "vector": 1,
-+        "keyword": 1,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": 5,
-+        "vector": 6,
-+        "keyword": 9,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
-+      "source": "sessions",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
-+      "source": "memory",
-+      "ranks": {
-+        "fused": null,
-+        "vector": null,
-+        "keyword": null,
-+        "graph": null
-+      },
-+      "returned": 50,
-+      "fusion": "rrf"
-+    },
-+    {
-+      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
-+      "source": "memory",
-+      "rank
++  "per_query": [
++    {
++      "q": "c4b4aafcd5d3",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "c3e3a474a0e8",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "ec7da990967b",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "e9a264deb36c",
++      "results": {
++        "0": {
++          "ranks": [4],
++          "relevant": 1
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [4],
++          "relevant": 1
++        }
++      }
++    },
++    {
++      "q": "b7dfabb2f915",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "b99ea1dac442",
++      "results": {
++        "0": {
++          "ranks": [2, 3, 4, 5],
++          "relevant": 4
++        },
++        "1": {
++          "ranks": [1, 2, 3, 4, 5],
++          "relevant": 5
++        },
++        "0.1": {
++          "ranks": [1, 2, 4, 5],
++          "relevant": 4
++        }
++      }
++    },
++    {
++      "q": "f1ae139c5d90",
++      "results": {
++        "0": {
++          "ranks": [1, 2, 5],
++          "relevant": 3
++        },
++        "1": {
++          "ranks": [4],
++          "relevant": 1
++        },
++        "0.1": {
++          "ranks": [1, 3],
++          "relevant": 2
++        }
++      }
++    },
++    {
++      "q": "0e6f2c9a2e04",
++      "results": {
++        "0": {
++          "ranks": [1, 2, 3, 4, 5],
++          "relevant": 5
++        },
++        "1": {
++          "ranks": [1, 3, 4],
++          "relevant": 3
++        },
++        "0.1": {
++          "ranks": [1, 2, 3, 4, 5],
++          "relevant": 5
++        }
++      }
++    },
++    {
++      "q": "47ee47857fe7",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "562cae9685a9",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "5b9ed35adf6e",
++      "results": {
++        "0": {
++          "ranks": [1, 2, 3, 4, 5],
++          "relevant": 5
++        },
++        "1": {
++          "ranks": [1, 2, 3, 4],
++          "relevant": 4
++        },
++        "0.1": {
++          "ranks": [1, 2, 3, 4, 5],
++          "relevant": 5
++        }
++      }
++    },
++    {
++      "q": "7e7063207d6c",
++      "results": {
++        "0": {
++          "ranks": [4],
++          "relevant": 1
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "a9b038920ac6",
++      "results": {
++        "0": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "0.1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
+- **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
 - **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
 - **PR #313** (closed): bench(longmemeval): stratified per-type sampling and the stratified before/after of the keyword-channel change (@VGIL77)
 - **PR #312** (2026-10-27): fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (@VGIL77)
 - **PR #311** (2026-10-27): fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (@VGIL77)
-- **PR #310** (2026-10-27): fix(skills): resolve the receiver's primary model from agents.defaults.model for the applicability fit (@VGIL77)
-- **PR #309** (2026-10-27): feat(memory): per-channel retrieval diagnostics and skill applicability profiles (PLAN-58) (@VGIL77)
 
 ---
 
@@ -3341,49 +2654,35 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchma
+## X. gateway): restarted gateway outlives its parent's lock instead of dying at the 5
 
 **RULE**:
-When implementing operations in `benchmarks/live-recall/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gateway/gateway-lock.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45e9cfeb`: memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (#315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fce458c1`: gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (#316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/gateway-lock.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Live-memory held-out recall
+Last updated: 2026-10-27
+## Restart handoff
 
-A retrieval test built from a node's own memory store instead of a public
-dataset. Public benchmarks such as LongMemEval-S saturate: the vector channel
-alone already puts some chunk of the gold session in the top 5 on nearly every
-question, so two retrievers that are both decent look identical. The operator's
-real memory is harder and more relevant: it is full of names, file paths,
-identifiers and project words that embeddings blur and exact-term matching
-finds, and it is the data the agent actually searches.
+- A full-process restart (SIGUSR1, the gateway tool, a config change that needs a restart) spawns the new gateway while the old one is still draining tasks and closing the server; the orchestrator sidecar alone can take ten seconds to exit. The child therefore usually finds the lock file still held by its parent.
+- The child is told who its parent is (`BITTERBOT_RESTART_PARENT_PID`). When the lock owner is that pid, the child waits up to 120 s for the parent to release the lock or exit instead of giving up at the plain 5 s timeout, and logs `lock still held by the restarting gateway (pid …); waiting for it to exit` once.
+- The parent releases the lock right after the spawn succeeds, before it exits, so the handoff normally completes in well under a second.
+- Before 2026-10-27 the child gave up at 5 s, the parent then exited, and no gateway was left listening (a 51-minute outage on the reference node). A lock held by any other live gateway still fails fast as before.
 
-## Method
-
-1. **Snapshot.** Take a consistent read-only copy of the live store
-   (`VACUUM INTO` on `~/.bitterbot/memory/main.sqlite`). Nothing below touches
-   the live database.
-2. **Sample.** `make-questions.mts` selects chunks from `memory` and `sessions`
-   sources with a live lifecycle and 300 to 1500 characters, orders them by
-   `sha256(seed + id)` so the sample is reproducible, drops any chunk the
-   secret redactor would change, and takes the first N.
-3. **Questions.** A small model (default `claude-haiku-4-5`) writes one
-   question per chunk under a fixed prompt: a question the passage answers,
-   phrased as someone half-remembering 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Last updated: 2025-12-11
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45e9cfeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fce458c1` are properly handled with clean fallback behavior.

@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "45e9cfeb",
+    "sourceVersion": "fce458c1",
     "license": "MIT",
-    "contentHash": "98fcef47f7d480d0e9b2fa577076d242e5bd1fcaa2bb6b642e66ab0103300643",
-    "lastHarvestedAt": "2026-10-27T20:53:00.487Z",
+    "contentHash": "a8dc125c0d8a65d7d2bd087f3d87e0b2c528807e51f611671646e33f461f6d76",
+    "lastHarvestedAt": "2026-10-27T21:52:01.737Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -10635,8 +10635,8 @@
     "sourceUrl": "https://github.com/lokoe-mehdi/scouter",
     "sourceVersion": "e8edc3c5",
     "license": "MIT",
-    "contentHash": "d24546aded604a73e80014cac88c2df958454d7b5178e8c20a25844d958eea3b",
-    "lastHarvestedAt": "2026-10-24T20:41:57.296Z",
+    "contentHash": "591bc4cc00a7e3b0cdc5d366bc95619e97d5d1e57e53bb64154277a7f0207fa2",
+    "lastHarvestedAt": "2026-10-27T21:51:49.333Z",
     "learningId": "learn-github-lokoe-mehdi-scouter"
   },
   "shiguangschedule-shiguangschedule": {

@@ -5571,3 +5571,5 @@ Every entry in this ledger must capture:
 | `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `19eb7447` | Multi-dimensional audit evidence | 2026-10-27T21:45:06.954Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `42abf54e` | Multi-dimensional audit evidence | 2026-10-27T21:45:10.279Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `2879ce4f` | Multi-dimensional audit evidence | 2026-10-27T21:45:15.377Z |
+| `learn-github-lokoe-mehdi-scouter` | `https://github.com/lokoe-mehdi/scouter` | `e8edc3c5` | Multi-dimensional audit evidence | 2026-10-27T21:51:49.333Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fce458c1` | Multi-dimensional audit evidence | 2026-10-27T21:52:01.737Z |

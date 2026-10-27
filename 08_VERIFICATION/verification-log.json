@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-NTZR",
-    "timestamp": "2026-10-26T00:54:35.415Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "1cf440d82d974fe840dcb350af74bdd5d5c745ad6796a121ef3e63bb57bf0b11",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-NV2P",
-    "timestamp": "2026-10-26T00:54:36.817Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "02a217bcc7e254429dbcfa9f229eb6b436ffc5f08d82f936434993591521c862",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-O4KB",
     "timestamp": "2026-10-26T00:54:49.115Z",
     "repository": "clockworklabs/SpacetimeDB",
@@ -7492,6 +7462,36 @@
     "contentHash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0HUA",
+    "timestamp": "2026-10-27T21:51:49.330Z",
+    "repository": "lokoe-mehdi/scouter",
+    "learningId": "learn-github-lokoe-mehdi-scouter",
+    "contentHash": "591bc4cc00a7e3b0cdc5d366bc95619e97d5d1e57e53bb64154277a7f0207fa2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-0REU",
+    "timestamp": "2026-10-27T21:52:01.734Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "a8dc125c0d8a65d7d2bd087f3d87e0b2c528807e51f611671646e33f461f6d76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
