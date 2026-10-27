@@ -5557,3 +5557,8 @@
 | `CYCLE-20261027-8C81` | `2026-10-27T21:29:55.681Z` | `margelo/react-native-blur` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5023, Rule 5024` | Yes (`c72cf1e1...`) |
 | `CYCLE-20261027-GXR4` | `2026-10-27T21:36:36.832Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5025` | Yes (`269ed343...`) |
 | `CYCLE-20261027-H0BX` | `2026-10-27T21:36:40.173Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5026, Rule 5027` | Yes (`7dcd8966...`) |
+| `CYCLE-20261027-RQJL` | `2026-10-27T21:45:00.705Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5028` | Yes (`733cf0c3...`) |
+| `CYCLE-20261027-RR0C` | `2026-10-27T21:45:01.308Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5029` | Yes (`24001c43...`) |
+| `CYCLE-20261027-RVD2` | `2026-10-27T21:45:06.951Z` | `komi-store/komi-store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5030` | Yes (`ad10acc6...`) |
+| `CYCLE-20261027-RXXF` | `2026-10-27T21:45:10.275Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5031` | Yes (`861c7247...`) |
+| `CYCLE-20261027-S1V2` | `2026-10-27T21:45:15.374Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5032` | Yes (`9a6b00af...`) |

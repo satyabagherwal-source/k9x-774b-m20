@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T21:36:40.090Z",
+  "last_updated": "2026-10-27T21:45:15.305Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5092,8 +5092,8 @@
       "slug": "burntsushi-ripgrep",
       "platform": "github",
       "source_url": "https://github.com/BurntSushi/ripgrep",
-      "source_version": "6892bc2b",
-      "content_hash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
+      "source_version": "91f5d22e",
+      "content_hash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
       "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "promoted_rules": [
@@ -5106,6 +5106,11 @@
           "number": 1733,
           "title": "Lossless System Boundary Argument Parsing (Bstr/OsStr Invariant)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5029,
+          "title": "ignore: respect linked worktree excludes without requiring Git",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5113,7 +5118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:43:10.403Z",
+      "verified_at": "2026-10-27T21:45:01.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32057,8 +32062,8 @@
       "slug": "komi-store-komi-store",
       "platform": "github",
       "source_url": "https://github.com/komi-store/komi-store",
-      "source_version": "fc65863b",
-      "content_hash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
+      "source_version": "19eb7447",
+      "content_hash": "ad10acc605a3ce37ea7eee84b5823b6167ad161cea9741d6186059df724d06a9",
       "dossier_path": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/komi-store-komi-store-learnings.md",
       "promoted_rules": [
@@ -32081,6 +32086,11 @@
           "number": 4197,
           "title": "Upstream Direct-Source Failover Invariant for Cache Lag Protection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5030,
+          "title": "reviews): an expressive look for ratings and reviews, plus review fixes (#1224)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32088,7 +32098,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T08:44:18.743Z",
+      "verified_at": "2026-10-27T21:45:06.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33748,8 +33758,8 @@
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "2527a65b",
-      "content_hash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
+      "source_version": "1527e4eb",
+      "content_hash": "733cf0c32cc8c001ac68cf579e966ea7cecd0820f63305bb62ffedf1afab759a",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "promoted_rules": [
@@ -33792,6 +33802,11 @@
           "number": 4644,
           "title": "look up placeholder values, default variables and Trans elements as own properti",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5028,
+          "title": "format-json): add a trailing newline to newly created catalogs (#2747)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33799,7 +33814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:25:27.151Z",
+      "verified_at": "2026-10-27T21:45:00.618Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42084,8 +42099,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "e0faf3fe",
-      "content_hash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
+      "source_version": "42abf54e",
+      "content_hash": "861c7247da7b76e877bfc51c8c892f647bbb36f3eb75e732709fa7d8e34f74e1",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -42133,6 +42148,11 @@
           "number": 4686,
           "title": "build: upgrade Go to 1.27.3 (#72180)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5031,
+          "title": "sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42140,7 +42160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:47:37.084Z",
+      "verified_at": "2026-10-27T21:45:10.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51863,8 +51883,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "fe883d1b",
-      "content_hash": "2673a5c6d41815377fc76766ea6f7b359bd70efd0217c1782807f52ce7343cf8",
+      "source_version": "2879ce4f",
+      "content_hash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -51902,6 +51922,11 @@
           "number": 4409,
           "title": "concurrent read queries within a transaction over HTTP (#8036)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5032,
+          "title": "Add concurrent workers for import (#8029)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51909,7 +51934,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:15:32.760Z",
+      "verified_at": "2026-10-27T21:45:15.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -138832,6 +138857,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T21:36:40.076Z"
+    },
+    "rule-5028": {
+      "learning_id": "rule-5028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5028,
+      "title": "format-json): add a trailing newline to newly created catalogs (#2747)",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "1527e4eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:45:00.618Z"
+    },
+    "rule-5029": {
+      "learning_id": "rule-5029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5029,
+      "title": "ignore: respect linked worktree excludes without requiring Git",
+      "source_url": "https://github.com/BurntSushi/ripgrep",
+      "source_version": "91f5d22e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:45:01.219Z"
+    },
+    "rule-5030": {
+      "learning_id": "rule-5030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5030,
+      "title": "reviews): an expressive look for ratings and reviews, plus review fixes (#1224)",
+      "source_url": "https://github.com/komi-store/komi-store",
+      "source_version": "19eb7447",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:45:06.862Z"
+    },
+    "rule-5031": {
+      "learning_id": "rule-5031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5031,
+      "title": "sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "42abf54e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:45:10.169Z"
+    },
+    "rule-5032": {
+      "learning_id": "rule-5032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5032,
+      "title": "Add concurrent workers for import (#8029)",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "2879ce4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T21:45:15.288Z"
     }
   },
   "aliases": {

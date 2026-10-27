@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "6892bc2b",
+    "sourceVersion": "91f5d22e",
     "license": "Unlicense",
-    "contentHash": "fac00586c8a6c72669e1b4330ea05fb0669d6c6436027f518918ccbfa9153e63",
-    "lastHarvestedAt": "2026-10-25T10:43:10.482Z",
+    "contentHash": "24001c43f51c33e1dd15181accb5f89edd4d3c774e9d0872f23976624c8592ba",
+    "lastHarvestedAt": "2026-10-27T21:45:01.312Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "2527a65b",
+    "sourceVersion": "1527e4eb",
     "license": "MIT",
-    "contentHash": "2847b606085618fa91ae8d9e5dbad307c3969cd79ec9e84fd820f3f420c77385",
-    "lastHarvestedAt": "2026-10-26T18:25:27.210Z",
+    "contentHash": "733cf0c32cc8c001ac68cf579e966ea7cecd0820f63305bb62ffedf1afab759a",
+    "lastHarvestedAt": "2026-10-27T21:45:00.709Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "fe883d1b",
+    "sourceVersion": "2879ce4f",
     "license": "MPL-2.0",
-    "contentHash": "2673a5c6d41815377fc76766ea6f7b359bd70efd0217c1782807f52ce7343cf8",
-    "lastHarvestedAt": "2026-10-25T18:15:32.845Z",
+    "contentHash": "9a6b00afd894561c4e42a3146c5bb55b2d6ab92b3be6ccaec498ab3bbfb37c73",
+    "lastHarvestedAt": "2026-10-27T21:45:15.377Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -6353,10 +6353,10 @@
     "repository": "komi-store/komi-store",
     "platform": "github",
     "sourceUrl": "https://github.com/komi-store/komi-store",
-    "sourceVersion": "fc65863b",
+    "sourceVersion": "19eb7447",
     "license": "Apache-2.0",
-    "contentHash": "e00d3972e26a1d9416b723b69c0eeef59b8d3772e903ca19541693175d3e7afb",
-    "lastHarvestedAt": "2026-10-25T08:44:18.827Z",
+    "contentHash": "ad10acc605a3ce37ea7eee84b5823b6167ad161cea9741d6186059df724d06a9",
+    "lastHarvestedAt": "2026-10-27T21:45:06.954Z",
     "learningId": "learn-github-komi-store-komi-store"
   },
   "opentofu-opentofu": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "e0faf3fe",
+    "sourceVersion": "42abf54e",
     "license": "Apache-2.0",
-    "contentHash": "994045af5bcd219fb100ead442f948be6ecb3f433e5f5060e2203c71023c0daa",
-    "lastHarvestedAt": "2026-10-27T10:47:37.139Z",
+    "contentHash": "861c7247da7b76e877bfc51c8c892f647bbb36f3eb75e732709fa7d8e34f74e1",
+    "lastHarvestedAt": "2026-10-27T21:45:10.279Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

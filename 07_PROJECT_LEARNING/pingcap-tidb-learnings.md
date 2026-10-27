@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `e0faf3fe`  
+> **Source Version**: `42abf54e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:47:36.811Z  
+> **Timestamp**: 2026-10-27T21:45:09.706Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:47:36.328Z  
+> **Harvest Timestamp**: 2026-10-27T21:45:09.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40684 stars
+- **Stars / Engagement**: 40683 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72430** (2026-10-27): **executor, planner: support materialized view SHOW statements**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The MV SHOW syntax added by #72409 needs planner and executor support before users can inspect materialized views and their logs. This PR implements object listings, CREATE statements, remaining refresh-log counts, and logs waiting for purge. It also completes the common object-level grant rules for MV/MLog objects.  ### What changed and how does it work?  - Implement the six SHOW forms below, including object resolution, result columns, LIKE/WHERE filtering, visibility, and authorization. - Read the refresh/purge watermarks and MLog counts in one internal transaction, and restore the borrowed session's MV settings on cleanup. Resolve permanent objects for the definition and status commands when local temporary tables shadow them. - Limit MV/MLog object grants to SELECT, SHOW VIEW, ALTER, DROP, and OPERATE VIEW, with USAGE and grant-option handling. Expand object-level GRANT ALL to that supported set, allow only SELECT/USAGE column grants, and reject grants on shadow tables
+- **Issue #72453** (2026-10-27): **sessionctx: lower the new-cluster sampled NDV threshold to 100 million**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #67449  Problem Summary: Tests at 100 million rows showed few plan regressions, so new clusters can sample NDV from a lower threshold.  ### What changed and how does it work?  - New clusters start `tidb_analyze_sampled_ndv_threshold` at 100,000,000 (was 500,000,000). Upgraded clusters still start at 0. - The design doc uses the new value.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Side effects  - [ ] Performance regression: Consumes more CPU - [ ] Performance regression: Consumes more Memory - [ ] Breaking backward compatibility  Documentation  - [x] Affects user behaviors - [ ] Contains syntax changes - [x] Contains variable changes - [ ] Contains experimental features - [ ] Changes MySQL compatibility  ### Release note  <!-- compatibility chan
 
-- **Issue #72429** (2026-10-27): **br: enable log redact by default**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72428  Problem Summary:  ### What changed and how does it work?  Now, `--redact-info-log` was enabled by default.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [x] Manual test (add detailed scripts or steps below)  Source: current uncommitted change in br/cmd/br/cmd.go, based on 7fa5afdeb8412ec26fd848054a9bc1f703a2eb90. All builds and runtime verification were executed outside the sandbox.  #### Commands  ```sh make build_br BR_BIN=/private/tmp/br-redact-tiup.F1JjR8/br tiup playground:v1.16.1 v9.0.0-beta.2.pre-nightly --mode tikv-slim --pd 1 --kv 1 --without-monitor --port-offset 20000 --tag br-redact-F1JjR8 tiup --binpath /private/tmp/br-redact-tiup.F1JjR8/br br backup raw --pd 127.0.0.1:22379 --storage local:///private/tmp/br-redact-tiup.F1JjR8/default-backup --format raw --start br_redact_probe_a --end br_redact_probe_z --log-file /private/tmp/br-redact-tiup.F1JjR8/default.log --log-format json tiup --binpath /private/tmp/br-re
+- **Issue #72441** (2026-10-27): **dumpling: retain TLS compatibility with legacy MySQL servers**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #72440, ref #70069  Problem Summary:  When Dumpling is embedded in a Go 1.27 application, connections to legacy MySQL TLS servers can fail with `SELECT version();: remote error: tls: handshake failure`. Go 1.27 removed the `tlsrsakex` GODEBUG switch previously used by TiFlow. Both Dumpling TLS paths leave cipher selection to Go defaults, which exclude RSA key exchange. This blocks the MySQL 5.7 source in pingcap/tiflow#12904, even without source CA/cert/key configuration because Dumpling attempts TLS by default.  ### What changed and how does it work?  - When the MySQL TLS configuration has no explicit cipher policy (`CipherSuites == nil`), clone it and retain the non-insecure TLS 1.2 suites exposed by `crypto/tls`, plus the four RSA/AES suites required for legacy MySQL compatibility. - Apply the same policy to the default opportunistic TLS path and the explicitly configured TLS path. - Preserve explicit cipher restrictions, including an empty cipher list, without widening them. Do not mutate the 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,1026 +1940,652 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fa5afde` (2026-10-26)
-**Commit Message**: build: upgrade Go to 1.27.3 (#72180)
+### Incident Patch 1: `42abf54e` (2026-10-27)
+**Commit Message**: sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)
 
-ref pingcap/tidb#70069
+ref pingcap/tidb#67449
 
-**File**: `.github/actions/tidb_build/action.yml` (modified, +1/-1)
+**File**: `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,7 @@ inputs:
-   go-version:
-     description: Go version to setup
-     required: false
--    default: "1.25"
-+    default: "1.27.3"
-   bazelrc:
-     description: Bazelrc content from secrets
-     required: true
-```
-
-**File**: `.github/workflows/bazel-build-crossbuild.yml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ jobs:
-         with:
-           bazelrc: ${{ secrets.BAZELRC }}
-           gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
--          go-version: 1.25
-+          go-version: 1.27.3
-       - name: Run Build
-         shell: bash
-         run: |
-```
-
-**File**: `.github/workflows/bazel-lint-crossbuild.yml` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ jobs:
-         with:
-           bazelrc: ${{ secrets.BAZELRC }}
-           gcp_sa_key: ${{ secrets.GCP_SA_KEY }}
--          go-version: 1.25
-+          go-version: 1.27.3
-       - name: Run Bazel Lint
-         shell: bash
-         run: |
-```
-
-**File**: `.github/workflows/check-bazel-prepare.yml` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
-         with:
--          go-version: 1.25
-+          go-version: 1.27.3
-           cache: false
-       - name: Set up Bazelisk
-         uses: bazel-contrib/setup-bazel@8310a45e30297e76bc8fbae427fb6068efa01eb8 # 0.16.0
-```
-
-**File**: `.github/workflows/generate-bazel-files.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-         with:
-           bazelrc: ""
-           gcp_sa_key: ""
--          go-version: 1.25
-+          go-version: 1.27.3
-       - name: Run Bazel Prepare
-         shell: bash
-         run: |
-```
-
-**File**: `DEPS.bzl` (modified, +237/-192)
-```diff
-@@ -8,29 +8,29 @@ def go_deps():
-         name = "cc_mvdan_gofumpt",
-         build_file_proto_mode = "disable_global",
-         importpath = "mvdan.cc/gofumpt",
--        sum = "h1:zsEMWL8SVKGHNztrx6uZrXdp7AX8r421Vvp23sz7ik4=",
--        version = "v0.9.2",
-+        sum = "h1:1Lbudkz2kpM9Cjz2pL4M19u7q+GaEhCTNf7N9mfpcho=",
-+        version = "v0.12.0",
-     )
-     go_repository(
-         name = "cc_mvdan_unparam",
-         build_file_proto_mode = "disable_global",
-         importpath = "mvdan.cc/unparam",
--        sum = "h1:ssMzja7PDPJV8FStj7hq9IKiuiKhgz9ErWw+m68e7DI=",
--        version = "v0.0.0-20251027182757-5beb8c8f8f15",
-+        sum = "h1:Re1NRyLpiAt9kB+ImaaoapwWiQXrKwER4tY8fLOkDew=",
-+        version = "v0.0.0-20260823230713-2fa3d841b0c8",
-     )
-     go_repository(
-         name = "co_honnef_go_tools",
-         build_file_proto_mode = "disable_global",
-         importpath = "honnef.co/go/tools",
--        sum = "h1:w6WUp1VbkqPEgLz4rkBzH/CSU6HkoqNLp6GstyTx3lU=",
--        version = "v0.7.0",
-+        sum = "h1:+jPbCzuYxYrcoOvCecYUFDj+XJQRmzIhJmlbpps21Zk=",
-+        version = "v0.8.2",
-     )
-     go_repository(
-         name = "com_4d63_gocheckcompilerdirectives",
-         build_file_proto_mode = "disable_global",
-         importpath = "4d63.com/gocheckcompilerdirectives",
--        sum = "h1:Ew5y5CtcAAQeTVKUVFrE7EwHMrTO6BggtEj8BZSjZ3A=",
--        version = "v1.3.0",
-+        sum = "h1:ZLq62rbGWVmQhiZ8kuNVIT/M09xCSTdJz9K3xOdT/CY=",
-+        version = "v1.4.0",
-     )
-     go_repository(
-         name = "com_4d63_gochecknoglobals",
-@@ -43,15 +43,15 @@ def go_deps():
-         name = "com_github_4meepo_tagalign",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/4meepo/tagalign",
--        sum = "h1:Bnu7jGWwbfpAie2vyl63Zup5KuRv21olsPIha53BJr8=",
--        version = "v1.4.3",
-+        sum = "h1:052JDGj2pBORc6NkD30dDXpsUpoYszDeUwr9/5YZuVA=",
-+        version = "v1.4.4",
-     )
-     go_repository(
-         name = "com_github_abirdcfly_dupword",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/Abirdcfly/dupword",
--        sum = "h1:2j8sInznrje4I0CMisSL6ipEBkeJUJAmK1/lfoNGWrQ=",
--        version = "v0.1.7",
-+        sum = "h1:SrhcUuGsROBuChFxHALRYzyyPODWn9zwghmzPvD9Cd8=",
-+        version = "v0.1.8",
-     )
-     go_repository(
-         name = "com_github_acarl005_stripansi",
-@@ -106,15 +106,15 @@ def go_deps():
-         name = "com_github_alecthomas_chroma_v2",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/alecthomas/chroma/v2",
--        sum = "h1:nv2AVZdTyClGbVQkIzlDm/rnhk1E9bU9nXwmZ/Vk/iY=",
--        version = "v2.23.1",
-+        sum = "h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=",
-+        version = "v2.27.0",
-     )
-     go_repository(
-         name = "com_github_alecthomas_go_check_sumtype",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/alecthomas/go-check-sumtype",
--        sum = "h1:u9aUvbGINJxLVXiFvHUlPEaD7VDULsrxJb4Aq31NLkU=",
--        version = "v0.3.1",
-+        sum = "h1:dXPJ+uOJLWb8rjlAuLX7JPiRJtZKw/53Ol+WxdDJ1Eo=",
-+        version = "v0.5.1-0.20260828200218-ae6904d28606",
-     )
-     go_repository(
-         name = "com_github_alecthomas_kingpin_v2",
-@@ -316,8 +316,8 @@ def go_deps():
-         name = "com_github_alwxsin_noinlineerr",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/AlwxSin/noinlineerr",
--        sum = "h1:RUjt63wk1AYWTXtVXbSqemlbVTb23JOSRiNsshj7TbY=",
--        version = "v1.0.5",
-+        sum = "h1:KAvuxunTe9QxvqrFB7nZTdb/7Wzas4AvifslTnG0Ld8=",
-+        version = "v1.0.6",
-     )
-     go_repository(
-         name = "com_github_andybalholm_brotli",
-@@ -344,15 +344,15 @@ def go_deps():
-         name = "com_github_antonboom_errname",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/Antonboom/errname",
--        sum = "h1:bllB7mlIbTVzO9jmSWVWLjxTEbGBVQ1Ff/ClQgtPw9Q=",
--        version = "v1.1.1",
-+        sum = "h1:dxwONZJua3VB8Xh/VaCjqAcqF645sWWv7xj26zy7tdQ=",
-+        version = "v1.1.2",
-     )
-     go_repository(
-         name = "com_github_antonboom_nilnil",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/Antonboom/nilnil",
--        sum = "h1:9Mdr6BYd8WHCDngQnNVV0b554xyisFioEKi30sksufQ=",
--        version = "v1.1.1",
-+        sum = "h1:aNlFuJhaEseXe4fHO3xbjXlSeEiQVYa2lEkWD2s2hAY=",
-+        version = "v1.1.2",
-     )
-     go_repository(
-         name = "com_github_antonboom_testifylint",
-@@ -442,8 +442,8 @@ def go_deps():
-         name = "com_github_ashanbrown_forbidigo_v2",
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/ashanbrown/forbidigo/v2",
--        sum = "h1:OZZDOchCgsX5gvToVtEBoV2UWbFfI6RKQTir2UZzSxo=",
--        version = "v2.3.0",
-+        sum = "h1:KAZijvQ7zeIBKbhikT4jCm0TLYXC4u78bTiLh/8JROI=",
-+        version = "v2.3.1",
-     )
-     go_repository(
-         name = "com_github_asha
-```
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- # production environment, please refer to https://github.com/PingCAP-QE/artifacts/blob/main/dockerfiles/cd/builders/tidb/Dockerfile.
+@@ -291,7 +291,7 @@ r = \min\left(1,\ \max\left(0.05,\ \frac{T}{M}\right)\right)
+ - Between $T$ and $20T$ rows, the NDV sample holds $T$ rows, so processing values costs about as much as a full-input `ANALYZE` of $T$ rows. TiKV still scans every row.
+ - Above $20T$ rows, the rate stays at 0.05. Below that rate, scanning every row dominates the duration, so a lower rate saves little more time, while the error for nearly unique columns keeps growing as $\sqrt{1/r}$.
  
- # Builder image
--FROM golang:1.25.14@sha256:54b6b88db6fe375c6676625d87d668273f85c6d09153635d0cbba89cba7a207a as builder
-+FROM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd as builder
- WORKDIR /tidb
+-TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 500,000,000 rows, keeps tables up to that size on full input and halves the values processed at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
++TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 100,000,000 rows, keeps tables up to that size on full input and processes one tenth of the values at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
  
- COPY . .
+ An `ANALYZE` with no given or saved `NDVRATE`, manual or automatic, applies this rule and does not save the rate it chooses, so a table always follows its size and the current $T$.
+ 
+@@ -317,7 +317,7 @@ Sampled NDV changes both the TiKV response and the sketches TiDB saves. `ANALYZE
+ 
+ - Old TiDB never requests sampling, so new TiKV returns legacy results.
+ - Old TiDB cannot read sampled sketches, so set `tidb_analyze_sampled_ndv_threshold` only after the whole cluster is upgraded.
+-- The threshold starts at 500,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
++- The threshold starts at 100,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
+ 
+ #### Response Format
+ 
+@@ -442,7 +442,7 @@ Compare TiKV CPU, `ANALYZE` duration, NDV error, and query plans with full input
+ ## Unresolved Questions
+ 
+ - Should the threshold also account for the number or width of analyzed columns? Counting rows alone samples narrow tables, whose `ANALYZE` time is mostly scanning.
+-- Is the default threshold right? With $T$ at 500,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.71 at 1,000,000,000 rows and 0.22 from 10,000,000,000 rows.
++- Is the default threshold right? With $T$ at 100,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.32 at 1,000,000,000 rows and 0.22 from 2,000,000,000 rows.
+ - What NDV accuracy and query-plan regression limits should gate wider adoption?
+ 
+ ## Future Possibility
 ```
 
-**File**: `Dockerfile.enterprise` (modified, +1/-1)
+**File**: `pkg/session/upgrade_backfill_test.go` (modified, +2/-2)
 ```diff
-@@ -14,7 +14,7 @@
+@@ -198,11 +198,11 @@ func TestAdaptiveLimitScanClusterDefaults(t *testing.T) {
+ 		require.Equal(t, sampledNDVThreshold, chk.GetRow(0).GetString(3))
+ 	}
+ 	// Initial bootstrap uses the new-cluster policy.
+-	assertValue(vardef.On, "500000000")
++	assertValue(vardef.On, "100000000")
+ 	// The upgrade backfill must preserve an existing value.
+ 	upgradeToVer317(se, version316)
+ 	upgradeToVer319(se, version318)
+-	assertValue(vardef.On, "500000000")
++	assertValue(vardef.On, "100000000")
  
- # The current dockerfile is only used for development purposes.
- # Builder image
--FROM golang:1.25.14@sha256:54b6b88db6fe375c6676625d87d668273f85c6d09153635d0cbba89cba7a207a as builder
-+FROM golang:1.27.3@sha256:f24164268fc1e741bbdc0066dbadcf1c8426c5a8489f0729c02c3905a53032fd as builder
- WORKDIR /tidb
- 
- COPY . .
+ 	// Simulate an existing cluster before the version317 backfill. It has no
+ 	// ndv_rate column yet, and its saved options must not gain a rate.
+```
+
+**File**: `pkg/sessionctx/variable/sysvar.go` (modified, +2/-2)
+```diff
+@@ -4376,8 +4376,8 @@ func GlobalSystemVariableInitialValue(varName, varVal string) string {
+ 	case vardef.TiDBEnableAdaptiveLimitScan:
+ 		varVal = vardef.On
+ 	case vardef.TiDBAnalyzeSampledNDVThreshold:
+-		// New clusters sample NDV for tables and partitions above 500 million rows.
+-		varVal = "500000000"
++		// New clusters sample NDV for tables and partitions above 100 million rows.
++		varVal = "100000000"
+ 	case vardef.TiDBPessimisticTransactionFairLocking:
+ 		if kerneltype.IsNextGen() {
+ 			varVal = vardef.Off
+```
+
+**File**: `pkg/sessionctx/variable/sysvar_test.go` (modified, +1/-1)
+```diff
+@@ -1732,7 +1732,7 @@ func TestGlobalSystemVariableInitialValue(t *testing.T) {
+ 			BoolToOnOff(vardef.DefTiDBEnableAdaptiveLimitScan),
+ 			vardef.On,
+ 		},
+-		{vardef.TiDBAnalyzeSampledNDVThreshold, "0", "500000000"},
++		{vardef.TiDBAnalyzeSampledNDVThreshold, "0", "100000000"},
+ 		{
+ 			vardef.TiDBRowFormatVersion,
+ 			strconv.Itoa(vardef.DefTiDBRowFormatV1),
 ```
 
 ---
 
-### Incident Patch 2: `da76b944` (2026-10-26)
-**Commit Message**: statistics: build auto-analyze jobs during the table scan (#72229)
+### Incident Patch 2: `a35c499c` (2026-10-27)
+**Commit Message**: dxf: clean orphan global-sort data (#72420)
 
-close pingcap/tidb#72184
+close pingcap/tidb#72404
 
-**File**: `pkg/meta/meta.go` (modified, +1/-0)
+**File**: `pkg/dxf/framework/scheduler/scheduler_manager.go` (modified, +20/-21)
 ```diff
-@@ -1205,6 +1205,7 @@ func splitRangeInt64Max(n int64) [][]string {
- 
- // IterAllTables iterates all the table at once, in order to avoid oom. It can use at most 15 concurrency to iterate.
- // This function is optimized for 'many databases' scenario. Only 1 concurrency can work for 'many tables in one database' scenario.
-+// It calls fn from the worker goroutines, but never concurrently.
- func IterAllTables(ctx context.Context, store kv.Storage, startTs uint64, concurrency int, fn func(info *model.TableInfo) error) error {
- 	cancelCtx, cancel := context.WithCancel(ctx)
- 	defer cancel()
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue.go` (modified, +51/-49)
-```diff
-@@ -545,65 +545,22 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
- 		}
- 		jobFactory := NewAnalysisJobFactory(sctx, autoAnalyzeRatio, currentTs)
- 
--		// Get all schemas except the memory and system database.
--		tbls := make([]*model.TableInfo, 0, 512)
--		// This only occurs during priority queue initialization which is infrequent.
--		halfCPUNum := runtime.NumCPU() / 2
--		start := time.Now()
--		if err := meta.IterAllTables(
--			ctx,
--			sctx.GetStore(),
--			currentTs,
--			halfCPUNum,
--			// Make sure this function is thread-safe.
--			func(info *model.TableInfo) error {
--				// Ignore the memory and system database.
--				db, ok := is.SchemaByID(info.DBID)
--				if !ok || metadef.IsMemOrSysDB(db.Name.L) {
--					return nil
--				}
--				tbls = append(tbls, info)
--				return nil
--			}); err != nil {
--			return errors.Trace(err)
--		}
--		statslogutil.StatsLogger().Info("Fetched all tables", zap.Int("tableCount", len(tbls)), zap.Duration("duration", time.Since(start)))
--		// Add assertion to verify we've collected all tables by comparing with two different methods.
--		// The below one is way slower than the above one, so we only use it for verification.
--		intest.AssertFunc(func() bool {
--			dbs := is.AllSchemaNames()
--			verifyTbls := make([]*model.TableInfo, 0, 512)
--			for _, db := range dbs {
--				// Ignore the memory and system database.
--				if metadef.IsMemOrSysDB(db.L) {
--					continue
--				}
--
--				tbls, err := is.SchemaTableInfos(context.Background(), db)
--				if err != nil {
--					panic(err)
--				}
--				verifyTbls = append(verifyTbls, tbls...)
--			}
--			return len(verifyTbls) == len(tbls)
--		})
--
- 		// We need to check every partition of every table to see if it needs to be analyzed.
--		for _, tblInfo := range tbls {
-+		pushJobsForTable := func(tblInfo *model.TableInfo) error {
- 			// If table locked, skip analyze all partitions of the table.
- 			if _, ok := lockedTables[tblInfo.ID]; ok {
--				continue
-+				return nil
- 			}
- 
- 			if tblInfo.IsView() {
--				continue
-+				return nil
- 			}
- 
- 			pi := tblInfo.GetPartitionInfo()
- 			if pi == nil {
- 				stats, found := pq.statsHandle.GetNonPseudoPhysicalTableStats(tblInfo.ID)
- 				if !found {
--					continue
-+					return nil
- 				}
- 
- 				job := jobFactory.CreateNonPartitionedTableAnalysisJob(
-@@ -614,7 +571,7 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
- 				if err != nil {
- 					return err
- 				}
--				continue
-+				return nil
- 			}
- 
- 			// Only analyze the partition that has not been locked.
-@@ -641,7 +598,7 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
- 			} else {
- 				globalStats, found := pq.statsHandle.GetNonPseudoPhysicalTableStats(tblInfo.ID)
- 				if !found {
--					continue
-+					return nil
- 				}
- 				job := jobFactory.CreateDynamicPartitionedTableAnalysisJob(
- 					tblInfo,
-@@ -653,8 +610,53 @@ func (pq *AnalysisPriorityQueue) fetchAllTablesAndBuildAnalysisJobs(ctx context.
- 					return err
- 				}
- 			}
-+			return nil
- 		}
- 
-+		// Get all schemas except the memory and system database.
-+		tableCount := 0
-+		// This only occurs during priority queue initialization which is infrequent.
-+		halfCPUNum := runtime.NumCPU() / 2
-+		start := time.Now()
-+		if err := meta.IterAllTables(
-+			ctx,
-+			sctx.GetStore(),
-+			currentTs,
-+			halfCPUNum,
-+			// IterAllTables calls this function serially, so it can push to the queue directly.
-+			// Build jobs during the scan: keeping every TableInfo until the end can OOM with many tables.
-+			func(info *model.TableInfo) error {
-+				// Ignore the memory and system database.
-+				db, ok := is.SchemaByID(info.DBID)
-+				if !ok || metadef.IsMemOrSysDB(db.Name.L) {
-+					return nil
-+				}
-+				tableCount++
-+				return pushJobsForTable(info)
-+			}); err != nil {
-+			return errors.Trace(err)
-+		}
-+		statslogutil.StatsLogger().Info("Fetched all tables", zap.Int("tableCount", tableCount), zap.Duration("duration", time.Since(start)))
-+		// Add assertion to verify we've collected all tables by comparing with two different methods.
-+		// The below one is way slower than the above one, so we only use it for verification.
-+		intest.AssertFunc(func() bool {
-+			dbs := is.AllSchemaNames()
-+			verifyTbls := make([]*model.TableInfo, 0, 512)
-+			for _, db := range dbs {
-+				// Ignore the memory and system database.
-+				if metadef.IsMemOrSysDB(db.L) {
-+					continue
-+				}
-+
-+				tbls, err := is.SchemaTableInfos(context.Background(), db)
-+				if err != nil {
-+					panic(err)
-+				}
-+				verifyTbls = append(verifyTbls, tbls...)
-+			}
-+			return len(verifyTbls) == tableCount
-+		})
-+
- 		return nil
- 	}, statsutil.FlagWrapTxn)
- }
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/queue_test.go` (modified, +21/-0)
-```diff
-@@ -480,6 +480,15 @@ func TestProcessDMLChangesWithLockedTables(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, tbl2.Meta().ID, job.GetTableID())
- 
-+	// Rebuild must also skip the locked table.
-+	require.NoError(t, pq.Rebuild())
-+	l, err = pq.Len()
-+	require.NoError(t, err)
-+	require.Equal(t, 1, l)
-+	job, err = pq.PeekForTest()
-+	require.NoError(t, err)
-+	require.Equal(t, tbl2.Meta().ID, job.GetTableID())
-+
- 	// Unlock t1.
- 	tk.MustExec("unlock stats t1")
- 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
-@@ -542,6 +551,12 @@ func TestProcessDMLChangesWithLockedPartitionsAndDynamicPruneMode(t *testing.T)
- 	require.NoError(t, err)
- 	require.Equal(t, 0, l)
- 
-+	// Rebuild must also skip the locked table.
-+	require.NoError(t, pq.Rebuild())
-+	l, err = pq.Len()
-+	require.NoError(t, err)
-+	require.Equal(t, 0, l)
-+
- 	// Unlock the whole table.
- 	tk.MustExec("unlock stats t1")
- 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
-@@ -605,6 +620,12 @@ func TestProcessDMLChangesWithLockedPartitionsAndStaticPruneMode(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Equal(t, 0, l)
- 
-+	// Rebuild must also skip the locked partition.
-+	require.NoError(t, pq.Rebuild())
-+	l, err = pq.Len()
-+	require.NoError(t, err)
-+	require.Equal(t, 0, l)
-+
- 	// Unlock partition p0.
- 	tk.MustExec("unlock stats t1 partition (p0)")
- 	require.NoError(t, handle.Update(ctx, dom.InfoSchema()))
-```
-
----
-
-### Incident Patch 3: `592082de` (2026-10-26)
-**Commit Message**: server: fix connection quota and cursor resource ownership (#72240)
-
-close pingcap/tidb#71988, close pingcap/tidb#72411
-
-**File**: `pkg/server/conn_stmt.go` (modified, +23/-54)
-```diff
-@@ -285,24 +285,10 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
- 	}
- 
- 	// first, try to clear the left cursor if there is one
--	if useCursor && stmt.GetCursorActive() {
--		resultset.ReportCursorRUV2Delta(stmt.GetResultSet())
--		if stmt.GetResultSet() != nil && stmt.GetResultSet().GetRowIterator() != nil {
--			stmt.GetResultSet().GetRowIterator().Close()
-+	if stmt.GetCursorActive() {
-+		if err := stmt.CloseCursor(); err != nil {
-+			logutil.Logger(ctx).Error("Fail to close cursor before executing statement", zap.Error(err))
- 		}
--		if stmt.GetRowContainer() != nil {
--			stmt.GetRowContainer().GetMemTracker().Detach()
--			stmt.GetRowContainer().GetDiskTracker().Detach()
--			err := stmt.GetRowContainer().Close()
--			if err != nil {
--				logutil.Logger(ctx).Error(
--					"Fail to close rowContainer before executing statement. May cause resource leak",
--					zap.Error(err))
--			}
--			stmt.StoreRowContainer(nil)
--		}
--		stmt.StoreResultSet(nil)
--		stmt.SetCursorActive(false)
- 	}
- 
- 	// For the combination of `ComPrepare` and `ComExecute`, the statement name is stored in the client side, and the
-@@ -323,10 +309,10 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
- 	if rs == nil || err != nil {
- 		clearConnectionAlive()
- 	}
--	var lazy bool
-+	var detached bool
- 	if rs != nil {
- 		defer func() {
--			if !lazy {
-+			if !detached {
- 				rs.Close()
- 			}
- 		}()
-@@ -355,7 +341,7 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
- 	// we should hold the ResultSet in PreparedStatement for next stmt_fetch, and only send back ColumnInfo.
- 	// Tell the client cursor exists in server by setting proper serverStatus.
- 	if useCursor {
--		lazy, err = cc.executeWithCursor(ctx, stmt, rs)
-+		detached, err = cc.executeWithCursor(ctx, stmt, rs)
- 		return false, err
- 	}
- 	retryable, err := cc.writeResultSet(ctx, rs, true, cc.ctx.Status(), 0)
-@@ -365,15 +351,25 @@ func (cc *clientConn) executePreparedStmtAndWriteResult(ctx context.Context, stm
- 	return false, nil
+@@ -104,23 +104,22 @@ func (sm *Manager) getSchedulers() []Scheduler {
+ 	return slices.Clone(sm.mu.schedulers)
  }
  
--func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatement, rs resultset.ResultSet) (lazy bool, err error) {
-+// The detached result indicates that the caller no longer owns the original result set,
-+// even when detaching or sending the cursor metadata fails.
-+func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatement, rs resultset.ResultSet) (detached bool, err error) {
-+	defer func() {
-+		if err != nil {
-+			if closeErr := stmt.CloseCursor(); closeErr != nil {
-+				logutil.Logger(ctx).Error("Fail to close cursor after execution error",
-+					zap.NamedError("original-error", err), zap.NamedError("close-error", closeErr))
-+			}
-+		}
-+	}()
- 	vars := (&cc.ctx).GetSessionVars()
- 	if vars.EnableLazyCursorFetch {
- 		// try to execute with lazy cursor fetch
- 		ok, err := cc.executeWithLazyCursor(ctx, stmt, rs)
+-type orphanDataMonitor interface {
+-	// Trigger scans and publishes the orphan data size. It runs synchronously
+-	// on the caller's goroutine and can block for the duration of a storage
+-	// scan, so callers must not expect to react to context cancellation until
+-	// the scan returns.
++type orphanDataCleaner interface {
++	// Trigger measures orphan data and deletes a bounded batch of scanned
++	// objects. It runs synchronously on the caller's goroutine and can block
++	// while storage operations finish, including after context cancellation.
+ 	Trigger(context.Context)
+ 	// Reset clears the published orphan data size, so an instance that no
+ 	// longer owns the scheduler stops exporting a stale value.
+ 	Reset()
+ }
  
--		// if `ok` is false, should try to execute without lazy cursor fetch
--		if ok {
--			return true, err
-+		// Fall back to eager execution only when detaching is unsupported.
-+		if ok || err != nil {
-+			return ok, err
- 		}
+-// noopOrphanDataMonitor is used when orphan data monitoring is not enabled.
+-type noopOrphanDataMonitor struct{}
++// noopOrphanDataCleaner is used when orphan data cleanup is not enabled.
++type noopOrphanDataCleaner struct{}
+ 
+-func (noopOrphanDataMonitor) Trigger(context.Context) {}
++func (noopOrphanDataCleaner) Trigger(context.Context) {}
+ 
+-func (noopOrphanDataMonitor) Reset() {}
++func (noopOrphanDataCleaner) Reset() {}
+ 
+ type orphanDataActiveProducerChecker struct {
+ 	taskMgr TaskManager
+@@ -163,9 +162,9 @@ type Manager struct {
+ 	nodeRes *proto.NodeResource
+ 	// initialized on demand
+ 	metricCollector *dxfmetric.Collector
+-	// orphanMonitor publishes global-sort orphan data size while this node owns
+-	// the scheduler. It is a no-op when orphan data monitoring is not enabled.
+-	orphanMonitor orphanDataMonitor
++	// orphanCleaner measures and cleans global-sort orphan data while this
++	// node owns the scheduler. It is a no-op when cleanup is not enabled.
++	orphanCleaner orphanDataCleaner
+ }
+ 
+ // NewManager creates a scheduler struct.
+@@ -199,19 +198,19 @@ func NewManager(ctx context.Context, store kv.Storage, taskMgr TaskManager, serv
+ 		nodeRes:  nodeRes,
  	}
+ 	schedulerManager.mu.schedulerMap = make(map[int64]Scheduler)
+-	schedulerManager.orphanMonitor = newOrphanDataMonitor(schedulerManager)
++	schedulerManager.orphanCleaner = newOrphanDataCleaner(schedulerManager)
  
-@@ -407,20 +403,6 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
- 	// store the rowContainer in the statement right after it's created, so that even if the logic in defer is not triggered,
- 	// the rowContainer will be released when the statement is closed.
- 	stmt.StoreRowContainer(rowContainer)
--	defer func() {
--		if err != nil {
--			// if the execution panic, it'll not reach this branch. The `rowContainer` will be released in the `stmt.Close`.
--			stmt.StoreRowContainer(nil)
--
--			rowContainer.GetMemTracker().Detach()
--			rowContainer.GetDiskTracker().Detach()
--			errCloseRowContainer := rowContainer.Close()
--			if errCloseRowContainer != nil {
--				logutil.Logger(ctx).Error("Fail to close rowContainer in error handler. May cause resource leak",
--					zap.NamedError("original-error", err), zap.NamedError("close-error", errCloseRowContainer))
--			}
--		}
--	}()
+ 	return schedulerManager
+ }
  
+-// newOrphanDataMonitor builds the orphan data monitor for this manager. Orphan
++// newOrphanDataCleaner builds the orphan data cleaner for this manager. Orphan
+ // global-sort data only exists in the NextGen kernel, where cloud storage is
+-// the shared spill area; elsewhere monitoring is a no-op.
+-func newOrphanDataMonitor(sm *Manager) orphanDataMonitor {
++// the shared spill area; elsewhere cleanup is a no-op.
++func newOrphanDataCleaner(sm *Manager) orphanDataCleaner {
+ 	if !kerneltype.IsNextGen() {
+-		return noopOrphanDataMonitor{}
++		return noopOrphanDataCleaner{}
+ 	}
+-	return orphandata.NewMonitor(orphandata.Config{
++	return orphandata.NewCleaner(orphandata.Config{
+ 		ActiveProducerChecker: orphanDataActiveProducerChecker{taskMgr: sm.taskMgr},
+ 		GetStorageURI:         func() string { return handle.GetCloudStorageURI(sm.ctx, sm.store) },
+ 		Logger:                sm.logger,
+@@ -264,7 +263,7 @@ func (sm *Manager) Stop() {
+ 	// The orphan data size is only meaningful while this node owns the
+ 	// scheduler. Reset it on owner change, otherwise a former owner keeps
+ 	// exporting the last value it observed.
+-	sm.orphanMonitor.Reset()
++	sm.orphanCleaner.Reset()
+ }
+ 
+ // Initialized check the manager initialized.
+@@ -466,7 +465,7 @@ func (sm *Manager) startScheduler(basicTask *proto.TaskBase, allocateSlots bool,
+ func (sm *Manager) cleanTaskLoop() {
+ 	sm.logger.Info("cleanup loop start")
+ 	sm.drainCleanTaskBatches()
+-	sm.orphanMonitor.Trigger(sm.ctx)
++	sm.orphanCleaner.Trigger(sm.ctx)
+ 	ticker := time.NewTicker(DefaultCleanUpInterval)
+ 	defer ticker.Stop()
  	for {
- 		chk := rs.NewChunk(nil)
-@@ -440,11 +422,6 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
- 	}
- 
- 	reader := chunk.NewRowContainerReader(rowContainer)
--	defer func() {
--		if err != nil {
--			reader.Close()
--		}
--	}()
- 	crs := resultset.WrapWithRowContainerCursor(rs, reader)
- 	resultset.AttachCursorRUV2Tracker(crs, cc.buildCursorRUV2Tracker(ctx))
- 	if cl, ok := crs.(resultset.FetchNotifier); ok {
-@@ -456,13 +433,12 @@ func (cc *clientConn) executeWithCursor(ctx context.Context, stmt PreparedStatem
- }
- 
- // executeWithLazyCursor tries to detach the `ResultSet` and make it suitable to execute lazily.
--// Be careful that the return value `(bool, error)` has different meaning with other similar functions. The first `bool` represent whether
--// the `ResultSet` is suitable for lazy execution. If the return value is `(false, _)`, the `rs` in argument can still 
-```
-
-**File**: `pkg/server/conn_stmt_test.go` (modified, +111/-0)
-```diff
-@@ -58,6 +58,23 @@ func (*mockCursorTrackerRecordSet) Close() error { return nil }
- 
- var _ sqlexec.RecordSet = &mockCursorTrackerRecordSet{}
- 
-+type detachableCursorRecordSet struct {
-+	mockCursorTrackerRecordSet
-+	detached      sqlexec.RecordSet
-+	detachErr     error
-+	detachOnError bool
-+	closeCount    int
-+}
-+
-+func (rs *detachableCursorRecordSet) TryDetach() (sqlexec.RecordSet, bool, error) {
-+	return rs.detached, rs.detached != nil || rs.detachOnError, rs.detachErr
-+}
-+
-+func (rs *detachableCursorRecordSet) Close() error {
-+	rs.closeCount++
-+	return nil
-+}
-+
- type executeStmtRecordSetSession struct {
- 	sessionapi.Session
- 	recordSet sqlexec.RecordSet
-@@ -556,6 +573,16 @@ func TestCursorFetchExecuteWithOpenCursor(t *testing.T) {
- 	require.NoError(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
- 	require.NoError(t, c.flush(context.Background()))
- 	require.Equal(t, expected, out.Bytes())
-+
-+	// Re-executing without a cursor must release the previous cursor too.
-+	require.NoError(t, c.Dispatch(ctx, append(
-+		appendUint32([]byte{mysql.ComStmtExecute}, uint32(stmt.ID())),
-+		0x0, 0x1, 0x0, 0x0, 0x0,
-+	)))
-+	require.False(t, stmt.GetCursorActive())
-+	require.Nil(t, stmt.GetResultSet())
-+	require.Nil(t, stmt.GetRowContainer())
-+	require.Error(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
- }
- 
- func TestCursorFetchReset(t *testing.T) {
-@@ -598,6 +625,90 @@ func TestCursorFetchReset(t *testing.T) {
- 	)))
- 	// the following fetch will fail
- 	require.Error(t, c.Dispatch(ctx, appendUint32(appendUint32([]byte{mysql.ComStmtFetch}, uint32(stmt.ID())), 1)))
-+
-+	t.Run("lazy metadata failures release the detached cursor", func(t *testing.T) {
-+		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
-+		for _, tc := range []struct {
-+			name       string
-+			bufferSize int
-+		}{
-+			{name: "column count", bufferSize: 1},
-+			{name: "EOF", bufferSize: 5},
-+			{name: "flush", bufferSize: 4096},
-+		} {
-+			t.Run(tc.name, func(t *testing.T) {
-+				writer := &failedWriteResponseWriter{failOnWrite: 1}
-+				c.pkt.SetBufWriter(bufio.NewWriterSize(writer, tc.bufferSize))
-+				detached := &detachableCursorRecordSet{}
-+				source := resultset.New(&detachableCursorRecordSet{detached: detached}, nil)
-+				defer source.Close()
-+				cursorStmt := &TiDBStatement{}
-+				_, err := c.executeWithCursor(ctx, cursorStmt, source)
-+				require.Error(t, err)
-+				require.Equal(t, 1, detached.closeCount)
-+				require.Nil(t, cursorStmt.GetResultSet())
-+				require.False(t, cursorStmt.GetCursorActive())
-+				require.NoError(t, cursorStmt.Reset())
-+				require.Equal(t, 1, detached.closeCount)
-+			})
-+		}
-+	})
-+
-+	t.Run("detach errors do not fall back to eager execution", func(t *testing.T) {
-+		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
-+		c.pkt.ResetBufWriter(new(bytes.Buffer))
-+		for _, detached := range []bool{false, true} {
-+			detachErr := errors.New("cannot detach cursor")
-+			source := resultset.New(&detachableCursorRecordSet{detachErr: detachErr, detachOnError: detached}, nil)
-+			defer source.Close()
-+			cursorStmt := &TiDBStatement{}
-+			gotDetached, err := c.executeWithCursor(ctx, cursorStmt, source)
-+			require.ErrorIs(t, err, detachErr)
-+			require.Equal(t, detached, gotDetached)
-+			require.Nil(t, cursorStmt.GetRowContainer())
-+			require.Nil(t, cursorStmt.GetResultSet())
-+			require.False(t, cursorStmt.GetCursorActive())
-+		}
-+	})
-+
-+	t.Run("successful lazy cursor stays open until release", func(t *testing.T) {
-+		c.ctx.GetSessionVars().EnableLazyCursorFetch = true
-+		c.pkt.ResetBufWriter(new(bytes.Buffer))
-+		detached := &detachableCursorRecordSet{}
-+		source := resultset.New(&detachableCursorRecordSet{detached: detached}, nil)
-+		defer source.Close()
-+		cursorStmt := &TiDBStatement{boundParams: [][]byte{[]byte("long data")}}
-+		gotDetached, err := c.executeWithCursor(ctx, cursorStmt, source)
-+		require.NoError(t, err)
-+		require.True(t, gotDetached)
-+		require.True(t, cursorStmt.GetCursorActive())
-+		require.Zero(t, detached.closeCount)
-+		require.NoError(t, cursorStmt.CloseCursor())
-+		require.Equal(t, [][]byte{[]byte("long data")}, cursorStmt.BoundParams())
-+		require.NoError(t, cursorStmt.CloseCursor())
-+		require.NoError(t, cursorStmt.Reset())
-+		require.Nil(t, cursorStmt.BoundParams()[0])
-+		require.Equal(t, 1, detached.closeCount)
-+		require.Nil(t, cursorStmt.GetResultSet())
-+		require.False(t, cursorStmt.GetCursorActive())
-+	})
-+
-+	t.Run("eager metadata failures release the row container", func(t *testing.T) {
-+		c.ctx.GetSessionVars().EnableLazyCursorFetch = false
-+		for _, bufferSize := range []int{1, 5, 4096} {
-+			writer := &failedWriteResponseWriter{failOnWrite: 1}
-+			c.pkt.SetBufWriter(bufio.NewWriterSize(writer, bufferSize))
-+			source := resultset.New(&mockCursorTrackerRecordSet{}, nil)
-+			defer source.Close()
-+			cursorStmt := &TiDBStatement{}
-+			_, err := c.executeWithCursor(ctx, cursorStmt, source)
-+			re
-```
-
-**File**: `pkg/server/driver.go` (modified, +3/-0)
-```diff
-@@ -65,6 +65,9 @@ type PreparedStatement interface {
- 	// Reset removes all bound parameters and opened resultSet/rowContainer.
- 	Reset() error
- 
-+	// CloseCursor releases cursor resources without clearing bound parameters.
-+	CloseCursor() error
-+
- 	// Close closes the statement.
- 	Close() error
- 
-```
-
-**File**: `pkg/server/driver_tidb.go` (modified, +18/-35)
-```diff
-@@ -80,9 +80,8 @@ type TiDBStatement struct {
- 	boundLongDataBytes int64
- 	paramsType         []byte
- 	ctx                *TiDBContext
--	// this result set should have been closed before stored here. Only the `rowIterator` are used here. This field is
--	// not moved out to reuse the logic inside functions `writeResultSet...`
--	// TODO: move the `fetchedRows` into the statement, and remove the `ResultSet` from statement.
-+	// Eager cursors keep a reader over rowContainer after their result set is closed;
-+	// lazy cursors keep a detached result set alive until their iterator is closed.
- 	rs resultset.CursorResultSet
- 	// the `rowContainer` should contain all pre-fetched results of the statement in `EXECUTE` command.
- 	// it's stored here to be closed in RESET and CLOSE command
-@@ -207,8 +206,7 @@ func (ts *TiDBStatement) GetParamsType() []byte {
- 
- // StoreResultSet stores ResultSet for stmt fetching
- func (ts *TiDBStatement) StoreResultSet(rs resultset.CursorResultSet) {
--	// the original reset set should have been closed, and it's only used to store the iterator through the rowContainer
--	// so it's fine to just overwrite it.
-+	// The caller must release any previous cursor before replacing it.
- 	ts.rs = rs
- }
- 
-@@ -220,47 +218,32 @@ func (ts *TiDBStatement) GetResultSet() resultset.CursorResultSet {
- // Reset implements PreparedStatement Reset method.
- func (ts *TiDBStatement) Reset() error {
- 	ts.releaseBoundLongData()
--	ts.hasActiveCursor = false
-+	return ts.CloseCursor()
-+}
- 
--	resultset.ReportCursorRUV2Delta(ts.rs)
--	if ts.rs != nil && ts.rs.GetRowIterator() != nil {
--		ts.rs.GetRowIterator().Close()
--	}
-+// CloseCursor releases each owned cursor resource once, including after an error.
-+func (ts *TiDBStatement) CloseCursor() error {
-+	rs, rowContainer := ts.rs, ts.rowContainer
- 	ts.rs = nil
-+	ts.rowContainer = nil
-+	ts.hasActiveCursor = false
- 
--	if ts.rowContainer != nil {
--		ts.rowContainer.GetMemTracker().Detach()
--		ts.rowContainer.GetDiskTracker().Detach()
--
--		rc := ts.rowContainer
--		ts.rowContainer = nil
--
--		err := rc.Close()
--		if err != nil {
--			return err
--		}
-+	resultset.ReportCursorRUV2Delta(rs)
-+	if rs != nil && rs.GetRowIterator() != nil {
-+		rs.GetRowIterator().Close()
- 	}
- 
-+	if rowContainer != nil {
-+		return rowContainer.Close()
-+	}
- 	return nil
- }
- 
- // Close implements PreparedStatement Close method.
- func (ts *TiDBStatement) Close() error {
- 	ts.releaseBoundLongData()
--
--	resultset.ReportCursorRUV2Delta(ts.rs)
--	if ts.rs != nil && ts.rs.GetRowIterator() != nil {
--		ts.rs.GetRowIterator().Close()
--	}
--
--	if ts.rowContainer != nil {
--		ts.rowContainer.GetMemTracker().Detach()
--		ts.rowContainer.GetDiskTracker().Detach()
--
--		err := ts.rowContainer.Close()
--		if err != nil {
--			return err
--		}
-+	if err := ts.CloseCursor(); err != nil {
-+		return err
- 	}
- 
- 	// TODO close at tidb level
-```
-
-**File**: `pkg/server/server.go` (modified, +3/-2)
-```diff
-@@ -834,13 +834,14 @@ func (s *Server) onConn(conn *clientConn) {
- 		logutil.Logger(ctx).Debug("connection closed")
- 	}()
- 
--	if err := conn.increaseUserConnectionsCount(); err != nil {
-+	releaseUserConnection, err := conn.increaseUserConnectionsCount()
-+	if err != nil {
- 		logutil.BgLogger().With(zap.Uint64("conn", conn.connectionID)).
- 			Warn("failed to increase the count of connections", zap.Error(err),
- 				zap.String("remote addr", conn.bufReadConn.RemoteAddr().String()))
- 		return
- 	}
--	defer conn.decreaseUserConnectionCount()
-+	defer releaseUserConnection()
- 
- 	if !s.registerConn(conn) {
- 		return
-```
-
-**File**: `pkg/server/user_connections.go` (modified, +19/-27)
-```diff
-@@ -36,59 +36,51 @@ func calculateConnectionLimit(globalLimit uint32, userLimit uint32) uint32 {
- 	return globalLimit
- }
- 
--// increaseUserConnectionsCount increases the count of connections when user login the database.
-+// increaseUserConnectionsCount increases the count of connections when user login the database
-+// and returns a release function bound to the account that acquired the quota.
- // Note: increaseUserConnectionsCount() is called when create connections only, and not in 'changeUser'(COM_CHANGE_USER).
- // In mysql, 'COM_CHANGE_USER' will only reset the session state (such as permissions, default database, etc.),
- // but will not change the ownership of the number of connections.
--func (cc *clientConn) increaseUserConnectionsCount() error {
-+func (cc *clientConn) increaseUserConnectionsCount() (func(), error) {
- 	var (
- 		user       = cc.ctx.GetSessionVars().User
- 		targetUser = user.String()
- 		globaLimit = vardef.MaxUserConnectionsValue.Load()
-+		server     = cc.server
- 	)
- 
- 	// check the number of connections again.
- 	pm := privilege.GetPrivilegeManager(cc.ctx.Session)
- 	userLimit, err := pm.GetUserResources(user.AuthUsername, user.AuthHostname)
- 	if err != nil {
--		return err
-+		return nil, err
- 	}
- 	limit := calculateConnectionLimit(globaLimit, uint32(userLimit))
- 
--	cc.server.userResLock.Lock()
--	defer cc.server.userResLock.Unlock()
--	ur, ok := cc.server.userResource[targetUser]
-+	server.userResLock.Lock()
-+	defer server.userResLock.Unlock()
-+	ur, ok := server.userResource[targetUser]
- 	if !ok {
--		// if not exist in userResource,
--		userHost := &userResourceLimits{
--			connections: 1,
--		}
--		cc.server.userResource[targetUser] = userHost
--		return nil
--	}
--
--	// check the global variables `MAX_USER_CONNECTIONS` and the max_user_conections in mysql.user
--	// with current count of active connection.
--	if limit > 0 && ur.connections >= int(limit) {
--		return servererr.ErrTooManyUserConnections.GenWithStackByArgs(targetUser)
-+		ur = &userResourceLimits{}
-+		server.userResource[targetUser] = ur
-+	} else if limit > 0 && ur.connections >= int(limit) {
-+		// Check the global MAX_USER_CONNECTIONS and the user's limit against the active count.
-+		return nil, servererr.ErrTooManyUserConnections.GenWithStackByArgs(targetUser)
- 	}
- 
- 	ur.connections++
--	return nil
-+	return func() { server.decreaseUserConnectionCount(targetUser) }, nil
- }
- 
- // decreaseUserConnectionCount decreases the count of connections when user logout the database.
--func (cc *clientConn) decreaseUserConnectionCount() {
--	user := cc.ctx.GetSessionVars().User
--	targetUser := user.String()
--
--	cc.server.userResLock.Lock()
--	defer cc.server.userResLock.Unlock()
--	ur, ok := cc.server.userResource[targetUser]
-+func (s *Server) decreaseUserConnectionCount(targetUser string) {
-+	s.userResLock.Lock()
-+	defer s.userResLock.Unlock()
-+	ur, ok := s.userResource[targetUser]
- 	if ok && ur.connections > 0 {
- 		ur.connections--
- 		if ur.connections <= 0 {
--			delete(cc.server.userResource, targetUser)
-+			delete(s.userResource, targetUser)
+@@ -478,7 +477,7 @@ func (sm *Manager) cleanTaskLoop() {
+ 			sm.drainCleanTaskBatches()
+ 		case <-ticker.C:
+ 			sm.drainCleanTaskBatches()
+-			sm.orphanMonitor.Trigger(sm.ctx)
++			sm.orphanCleaner.Trigger(sm.ctx)
  		}
  	}
  }
 ```
 
-**File**: `pkg/server/user_connections_test.go` (modified, +75/-37)
+**File**: `pkg/dxf/framework/scheduler/scheduler_manager_nokit_test.go` (modified, +8/-8)
 ```diff
-@@ -62,88 +62,126 @@ func TestUserConnectionCount(t *testing.T) {
- 		AuthHostname: "%",
+@@ -287,8 +287,8 @@ func TestExpiredFileCleanLoopEnabled(t *testing.T) {
+ 	taskMgr.EXPECT().GetAllNodes(gomock.Any()).Return(nil, nil).AnyTimes()
+ 	taskMgr.EXPECT().GetCleanupTasks(gomock.Any()).Return(nil, nil).AnyTimes()
+ 	taskMgr.EXPECT().GetTopUnfinishedTasks(gomock.Any()).Return(nil, nil).AnyTimes()
+-	// The NextGen cleanup loop triggers the orphan data monitor on startup.
+-	// Reporting an active task keeps the monitor from reaching the real object
++	// The NextGen cleanup loop triggers the orphan data cleaner on startup.
++	// Reporting an active task keeps the cleaner from reaching the real object
+ 	// store.
+ 	taskMgr.EXPECT().GetActiveTaskCountsByKeyspace(gomock.Any()).Return(
+ 		&storage.ActiveTaskSummary{Total: 1}, nil).AnyTimes()
+@@ -331,9 +331,9 @@ func TestStopResetsOrphanDataGauge(t *testing.T) {
+ 	ctrl := gomock.NewController(t)
+ 	defer ctrl.Finish()
+ 	mgr := NewManager(context.Background(), nil, mock.NewMockTaskManager(ctrl), "1", proto.NodeResourceForTest)
+-	// Install a real monitor regardless of the kernel type so the reset path is
++	// Install a real cleaner regardless of the kernel type so the reset path is
+ 	// exercised deterministically.
+-	mgr.orphanMonitor = orphandata.NewMonitor(orphandata.Config{})
++	mgr.orphanCleaner = orphandata.NewCleaner(orphandata.Config{})
+ 	t.Cleanup(func() { metrics.GlobalSortOrphanDataSize.Reset() })
+ 
+ 	metrics.GlobalSortOrphanDataSize.WithLabelValues().Set(42)
+@@ -552,15 +552,15 @@ func TestSchedulerCleanTask(t *testing.T) {
+ 		loopCtx, cancel := context.WithCancel(context.Background())
+ 		mgr := NewManager(loopCtx, nil, taskMgr, "1", proto.NodeResourceForTest)
+ 		cleanupStarted := make(chan struct{})
+-		monitorStarted := make(chan struct{})
++		orphanCleanerStarted := make(chan struct{})
+ 		loopDone := make(chan struct{})
+ 		taskMgr.EXPECT().GetCleanupTasks(mgr.ctx).DoAndReturn(func(context.Context) ([]*proto.Task, error) {
+ 			close(cleanupStarted)
+ 			return nil, nil
+ 		})
+ 		if kerneltype.IsNextGen() {
+ 			taskMgr.EXPECT().GetActiveTaskCountsByKeyspace(mgr.ctx).DoAndReturn(func(context.Context) (*storage.ActiveTaskSummary, error) {
+-				close(monitorStarted)
++				close(orphanCleanerStarted)
+ 				return &storage.ActiveTaskSummary{Total: 1}, nil
+ 			})
+ 		}
+@@ -576,9 +576,9 @@ func TestSchedulerCleanTask(t *testing.T) {
+ 		}
+ 		if kerneltype.IsNextGen() {
+ 			select {
+-			case <-monitorStarted:
++			case <-orphanCleanerStarted:
+ 			case <-time.After(3 * time.Second):
+-				t.Fatal("cleanup task loop did not request the orphan data monitor")
++				t.Fatal("cleanup task loop did not request the orphan data cleaner")
+ 			}
+ 		}
+ 		cancel()
+```
+
+**File**: `pkg/ingestor/globalsort/orphandata/BUILD.bazel` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+ 
+ go_library(
+     name = "orphandata",
+-    srcs = ["monitor.go"],
++    srcs = ["cleaner.go"],
+     importpath = "github.com/pingcap/tidb/pkg/ingestor/globalsort/orphandata",
+     visibility = ["//visibility:public"],
+     deps = [
+@@ -18,7 +18,7 @@ go_test(
+     name = "orphandata_test",
+     timeout = "short",
+     srcs = [
+-        "monitor_test.go",
++        "cleaner_test.go",
+         "scan_test.go",
+     ],
+     embed = [":orphandata"],
+```
+
+**File**: `pkg/ingestor/globalsort/orphandata/cleaner.go` (renamed, +61/-39)
+```diff
+@@ -33,10 +33,10 @@ type ActiveProducerChecker interface {
+ 	HasActiveProducers(context.Context) (bool, error)
+ }
+ 
+-// Config configures an orphan data Monitor.
++// Config configures an orphan data Cleaner.
+ type Config struct {
+ 	ActiveProducerChecker ActiveProducerChecker
+-	// GetStorageURI returns the cloud storage URI to scan. The monitor calls it
++	// GetStorageURI returns the cloud storage URI to scan. The cleaner calls it
+ 	// on every run, so it reads the latest value of the system variable.
+ 	GetStorageURI func() string
+ 	Logger        *zap.Logger
+@@ -46,34 +46,34 @@ type Config struct {
+ 	RetainedPrefixes []string
+ }
+ 
+-type noopActiveProducerChecker struct{}
++type missingActiveProducerChecker struct{}
+ 
+-func (noopActiveProducerChecker) HasActiveProducers(context.Context) (bool, error) {
+-	return false, nil
++func (missingActiveProducerChecker) HasActiveProducers(context.Context) (bool, error) {
++	return true, nil
+ }
+ 
+ type storeFactory func(context.Context, string) (storeapi.Storage, error)
+ 
+-// Monitor scans orphan global-sort objects and publishes their size, but only
+-// when no producer is active, so the reported size is orphan data.
+-type Monitor struct {
++// Cleaner measures and deletes orphan global-sort objects when no producer is
++// active. Its gauge records the size observed before cleanup.
++type Cleaner struct {
+ 	cfg Config
+ 	// storeFactory builds the object store for a scan; tests substitute it.
+ 	storeFactory storeFactory
+ }
+ 
+-// NewMonitor creates an orphan data Monitor.
+-func NewMonitor(cfg Config) *Monitor {
++// NewCleaner creates an orphan data Cleaner.
++func NewCleaner(cfg Config) *Cleaner {
+ 	if cfg.Logger == nil {
+ 		cfg.Logger = zap.NewNop()
+ 	}
+ 	if cfg.ActiveProducerChecker == nil {
+-		cfg.ActiveProducerChecker = noopActiveProducerChecker{}
++		cfg.ActiveProducerChecker = missingActiveProducerChecker{}
+ 	}
+ 	if cfg.GetStorageURI == nil {
+ 		cfg.GetStorageURI = func() string { return "" }
+ 	}
+-	return &Monitor{
++	return &Cleaner{
+ 		cfg:          cfg,
+ 		storeFactory: newStore,
+ 	}
+@@ -87,64 +87,78 @@ func newStore(ctx context.Context, uri string) (storeapi.Storage, error) {
+ 	return objstore.NewWithDefaultOpt(ctx, backend)
+ }
+ 
+-// Trigger scans orphan global-sort objects and publishes their size. It runs
++// Trigger measures orphan global-sort objects and deletes a bounded batch of
++// scanned keys after confirming that no producer is active. It runs
+ // synchronously and is not safe for concurrent use: the scheduler cleanup loop
+ // calls it serially from its own goroutine, which also owns cancellation.
+-func (m *Monitor) Trigger(ctx context.Context) {
+-	storageURI := m.cfg.GetStorageURI()
++func (c *Cleaner) Trigger(ctx context.Context) {
++	storageURI := c.cfg.GetStorageURI()
+ 	if storageURI == "" {
+ 		return
  	}
  
-+	var releases []func()
-+	acquireConnection := func() error {
-+		release, err := cc.increaseUserConnectionsCount()
-+		if err == nil {
-+			releases = append(releases, release)
+-	hasActiveProducers, err := m.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
++	hasActiveProducers, err := c.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
+ 	if err != nil {
+ 		if ctx.Err() == nil {
+-			m.cfg.Logger.Warn("global sort orphan data monitor failed to check active producers", zap.Error(err))
++			c.cfg.Logger.Warn("global sort orphan data cleaner failed to check active producers", zap.Error(err))
+ 		}
+ 		return
+ 	}
+ 	if hasActiveProducers {
+ 		return
+ 	}
+ 
+-	storage, err := m.storeFactory(ctx, storageURI)
++	storage, err := c.storeFactory(ctx, storageURI)
+ 	if err != nil {
+ 		if ctx.Err() == nil {
+-			m.cfg.Logger.Warn("global sort orphan data monitor failed to create storage", zap.Error(err))
++			c.cfg.Logger.Warn("global sort orphan data cleaner failed to create storage", zap.Error(err))
+ 		}
+ 		return
+ 	}
+ 	defer storage.Close()
+ 
+-	stats, err := scanOrphanData(ctx, storage, m.cfg.RetainedPrefixes)
++	stats, err := scanOrphanData(ctx, storage, c.cfg.RetainedPrefixes)
+ 	if err != nil {
+ 		if ctx.Err() == nil {
+-			m.cfg.Logger.Warn("global sort orphan data monitor failed to scan storage", zap.Error(err))
++			c.cfg.Logger.Warn("global sort orphan data cleaner failed to scan storage", zap.Error(err))
+ 		}
+ 		return
+ 	}
+ 
+-	// Re-check after the scan. A producer that appears and disappears entirely
+-	// between the two checks (empty -> active -> empty) is not detected. We
+-	// accept that ABA window for now: a task removes its own objects before its
+-	// row leaves the task table, so any value published from a scan that raced a
+-	// cleanup is corrected by the next scan.
+-	hasActiveProducers, err = m.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
++	// Re-check after the scan, then delete only the exact captured keys: never
++	// expand a scanned namespace with another listing. Normal task IDs are not
++	// reused, so a new task cannot own these keys. A task's row remains until
++	// its normal cleanup finishes, making a task that starts and finishes
++	// between the two checks harmless. Late writers can recreate orphan keys;
++	// a future sweep will find them.
++	hasActiveProducers, err = c.cfg.ActiveProducerChecker.HasActiveProducers(ctx)
+ 	
+```
+
+**File**: `pkg/ingestor/globalsort/orphandata/cleaner_test.go` (renamed, +277/-76)
+```diff
+@@ -30,20 +30,22 @@ import (
+ 	"go.uber.org/zap/zaptest/observer"
+ )
+ 
+-type monitorWalkEntry struct {
++type cleanerWalkEntry struct {
+ 	path string
+ 	size int64
+ }
+ 
+-type monitorStorage struct {
++type cleanerStorage struct {
+ 	storeapi.Storage
+-	entries    []monitorWalkEntry
+-	walkErr    error
+-	walkFn     func(context.Context) error
+-	closeCount int
++	entries     []cleanerWalkEntry
++	walkErr     error
++	walkFn      func(context.Context) error
++	closeCount  int
++	deleteCalls int
++	deleteFn    func(context.Context, []string) error
+ }
+ 
+-func (s *monitorStorage) WalkDir(
++func (s *cleanerStorage) WalkDir(
+ 	ctx context.Context,
+ 	_ *storeapi.WalkOption,
+ 	fn func(path string, size int64) error,
+@@ -53,23 +55,38 @@ func (s *monitorStorage) WalkDir(
+ 			return err
+ 		}
+ 	}
+-	if s.walkErr != nil {
++	if s.entries == nil {
++		if err := s.Storage.WalkDir(ctx, &storeapi.WalkOption{}, fn); err != nil {
++			return err
 +		}
-+		return err
+ 		return s.walkErr
+ 	}
+ 	for _, entry := range s.entries {
+ 		if err := fn(entry.path, entry.size); err != nil {
+ 			return err
+ 		}
+ 	}
+-	return nil
++	return s.walkErr
+ }
+ 
+-func (s *monitorStorage) Close() {
++func (s *cleanerStorage) DeleteFiles(ctx context.Context, keys []string) error {
++	s.deleteCalls++
++	if s.deleteFn != nil {
++		return s.deleteFn(ctx, keys)
 +	}
-+	releaseConnection := func() {
-+		last := len(releases) - 1
-+		releases[last]()
-+		releases = releases[:last]
++	// Synthetic listing entries are used by the existing statistics tests.
++	if s.entries != nil {
++		return nil
 +	}
++	return s.Storage.DeleteFiles(ctx, keys)
++}
 +
- 	// test1: global MAX_USER_CONNECTIONS = 0 and max_user_conections = 0 in mysql.user for `zak`@`%`
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
-+	releaseConnection()
-+	releaseConnection()
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
++func (s *cleanerStorage) Close() {
+ 	s.closeCount++
+ }
  
- 	// test2: global MAX_USER_CONNECTIONS = 0 and max_user_conections = 2 in mysql.user for `zak`@`%`
- 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 2")
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.ErrorContains(t, acquireConnection(),
- 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 2)
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
+-type testMonitor struct {
+-	*Monitor
++type testCleaner struct {
++	*Cleaner
+ 	logs *observer.ObservedLogs
+ }
  
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+@@ -83,22 +100,22 @@ func staticURI(uri string) func() string {
+ 	return func() string { return uri }
+ }
  
- 	// test3: global MAX_USER_CONNECTIONS = 3 and max_user_conections = 0 in mysql.user for `zak`@`%`
- 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 0")
- 	tk.MustExec("set global max_user_connections = 3")
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.ErrorContains(t, acquireConnection(),
- 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
-+	releaseConnection()
-+	releaseConnection()
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+-func newTestMonitor(t *testing.T, cfg Config) *testMonitor {
++func newTestCleaner(t *testing.T, cfg Config) *testCleaner {
+ 	t.Helper()
+ 	if cfg.Logger == nil {
+ 		core, logs := observer.New(zap.DebugLevel)
+ 		cfg.Logger = zap.New(core)
+-		return &testMonitor{
+-			Monitor: NewMonitor(cfg),
++		return &testCleaner{
++			Cleaner: NewCleaner(cfg),
+ 			logs:    logs,
+ 		}
+ 	}
+-	return &testMonitor{
+-		Monitor: NewMonitor(cfg),
++	return &testCleaner{
++		Cleaner: NewCleaner(cfg),
+ 	}
+ }
  
- 	// test4: global MAX_USER_CONNECTIONS = 2 and max_user_conections = 3 in mysql.user for `zak`@`%`
- 	// the max_user_connection attribute has a higher priority than global MAX_USER_CONNECTIONS.
- 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 3")
- 	tk.MustExec("set global max_user_connections = 2")
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.ErrorContains(t, acquireConnection(),
- 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 3)
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
-+	releaseConnection()
-+	releaseConnection()
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+-// orphanDataMetricName is the name of the metric the monitor publishes to.
++// orphanDataMetricName is the name of the metric the cleaner publishes to.
+ const orphanDataMetricName = "tidb_global_sort_orphan_data_size_bytes"
  
- 	// test5: global MAX_USER_CONNECTIONS = 3 and max_user_conections = 2 in mysql.user for `zak`@`%`
- 	// the max_user_connection attribute has a higher priority than global MAX_USER_CONNECTIONS.
- 	tk.MustExec("ALTER USER `zak`@`%` WITH MAX_USER_CONNECTIONS 2")
- 	tk.MustExec("set global max_user_connections = 3")
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.Nil(t, cc.increaseUserConnectionsCount())
--	require.ErrorContains(t, cc.increaseUserConnectionsCount(),
-+	require.NoError(t, acquireConnection())
-+	require.NoError(t, acquireConnection())
-+	require.ErrorContains(t, acquireConnection(),
- 		"[server:1203]User zak@% has exceeded the 'max_user_connections' resource")
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 2)
--	cc.decreaseUserConnectionCount()
--	cc.decreaseUserConnectionCount()
-+	releaseConnection()
-+	releaseConnection()
- 	require.Equal(t, cc.getUserConnectionCount(sess.User), 0)
+ // requireGauge asserts the orphan data size is the expected value.
+@@ -132,14 +149,196 @@ func requireNoCandidate(t *testing.T, logs *observer.ObservedLogs, candidate str
+ 	}
+ }
  
- 	// test6: the user zak@127.0.0.1 and zak@127.0.0.2 have same limit(zak@127.0.0.1 + zap@127.0.0.2 <= 3).
- 	tk.MustExec("set global max_user_connec
+-func TestMonitor(t *testing.T) {
++func TestCleaner(t *testing.T) {
+ 	t.Cleanup(func() {
+ 		metrics.GlobalSortOrphanDataSize.Reset()
+ 	})
+ 
++	t.Run("cleanup deletes only scanned keys and retains conflict data", func(t *testing.T) {
++		ctx := context.Background()
++		store := &cleanerStorage{Storage: objstore.NewMemStorage()}
++		const oldKey = "123/old-file"
++		const newKey = "123/new-file"
++		retainedKey := conflictpath.StoragePrefix + "9/3-uuid/0_1"
++		require.NoError(t, store.WriteFile(ctx, oldKey, []byte("old")))
++		require.NoError(t, store.WriteFile(ctx, retainedKey, []byte("retained")))
++		checks := 0
++		m := newTestCleaner(t, Config{
++			ActiveProducerChecker: activeProducerCheckerFunc(func(context.Context) (bool, error) {
++				checks++
++				if checks == 2 {
++					require.NoError(t, store.WriteFile(ctx, newKey, []byte("new")))
++				}
++				return false, nil
++			}),
++			GetStorageURI:    staticURI("memstore:///orphandata"),
++			RetainedPrefixes: []string{conflictpath.StoragePrefix},
++		})
++		m.storeFactory = func(context.Context, string) (storeapi.Storage, error) { return store, nil }
++
++		m.Trigger(ctx)
++
++		exists, err := store.FileExists(ctx, oldKey)
++		require.NoError(t, err)
++		require.False(t, exists)
++		for _, key := range []string{newKey, retainedKey} {
++			data, err := store.ReadFile(ctx, key)
++			require.NoError(t, err)
++			require.NotEmpty(t, data)
++		}
++		require.Equal(t, 1, store.deleteCalls)
++		requireGauge(t, 3)
++		m.Trigger(ctx)
++		require.Equal(t, 2, store.deleteCalls)
++		m.Trigger(ctx)
++		require.Equal(t, 2, store.deleteCalls)
++		requireGauge(t, 0)
++		data, err := store.ReadFile(ctx, retainedKey)
++		require.NoError(t, err)
++		require.Equal(t, []byte("retained"), data)
++	})
++
++	t.Run("cleanup fails closed without a producer checker", func(t *testing.T) {
++		metrics.GlobalSortOrphanDataSize.WithLabelValues().Set(37)
++		factoryCalls := 0
++		m := newTestCleaner(t, Config{GetStorageURI: staticURI("memstore:///orphandata")})
++		m.storeFactory = func(context.Context, string) (storeapi.Storage, error) {
++			factoryCalls++
++			return &cleanerStorage{Storage: objstore.NewMemStorage()}, nil
++		}
++
++		m.Trigger(context.Background())
++
++		require.Zero(t, factoryCalls)
++		requireGauge(t, 37)
++	})
++
++	t.Run("cleanup bounds each sweep and measures the full scan", func(t *testing.T) {
++		ctx := context.Background()
++		
+```
+
+**File**: `pkg/ingestor/globalsort/orphandata/scan_test.go` (modified, +17/-11)
+```diff
+@@ -64,9 +64,10 @@ func TestScan(t *testing.T) {
+ 		stats, err := scanOrphanData(ctx, store, nil)
+ 		require.NoError(t, err)
+ 		require.Equal(t, scanStats{
+-			sizeBytes:     8,
+-			objectCount:   3,
+-			sampleObjects: []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
++			sizeBytes:          8,
++			objectCount:        3,
++			sampleObjects:      []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
++			deletionCandidates: []string{"123/meta.json", "p00000001/456/data", "unknown/file"},
+ 		}, stats)
+ 	})
+ 
+@@ -79,8 +80,9 @@ func TestScan(t *testing.T) {
+ 		stats, err := scanOrphanData(context.Background(), store, nil)
+ 		require.NoError(t, err)
+ 		require.Equal(t, scanStats{
+-			objectCount:   1,
+-			sampleObjects: []string{"unknown/file"},
++			objectCount:        1,
++			sampleObjects:      []string{"unknown/file"},
++			deletionCandidates: []string{"unknown/file"},
+ 		}, stats)
+ 		require.Equal(t, 1, store.walkCount)
+ 	})
+@@ -94,15 +96,16 @@ func TestScan(t *testing.T) {
+ 		stats, err := scanOrphanData(ctx, store, []string{conflictpath.StoragePrefix})
+ 		require.NoError(t, err)
+ 		require.Equal(t, scanStats{
+-			sizeBytes:     3,
+-			objectCount:   1,
+-			sampleObjects: []string{"123/meta.json"},
++			sizeBytes:          3,
++			objectCount:        1,
++			sampleObjects:      []string{"123/meta.json"},
++			deletionCandidates: []string{"123/meta.json"},
+ 		}, stats)
+ 	})
+ 
+-	t.Run("sample is bounded", func(t *testing.T) {
+-		entries := make([]walkEntry, 0, sampleObjectLimit+1)
+-		for i := 0; i <= sampleObjectLimit; i++ {
++	t.Run("sampling and cleanup candidates are independently bounded", func(t *testing.T) {
++		entries := make([]walkEntry, 0, cleanupObjectLimit+1)
++		for i := 0; i <= cleanupObjectLimit; i++ {
+ 			entries = append(entries, walkEntry{path: fmt.Sprintf("object-%02d/file", i), size: 1})
+ 		}
+ 		store := &walkStorage{
+@@ -114,6 +117,9 @@ func TestScan(t *testing.T) {
+ 		require.NoError(t, err)
+ 		require.Equal(t, int64(len(entries)), stats.objectCount)
+ 		require.Len(t, stats.sampleObjects, sampleObjectLimit)
++		require.Len(t, stats.deletionCandidates, cleanupObjectLimit)
++		require.Equal(t, entries[0].path, stats.deletionCandidates[0])
++		require.Equal(t, entries[cleanupObjectLimit-1].path, stats.deletionCandidates[cleanupObjectLimit-1])
+ 		require.True(t, stats.truncated)
+ 		require.Equal(t, entries[0].path, stats.sampleObjects[0])
+ 	})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #72453** (2026-10-27): sessionctx: lower the new-cluster sampled NDV threshold to 100 million (@0xPoe)
+- **PR #72441** (2026-10-27): dumpling: retain TLS compatibility with legacy MySQL servers (@GMHDBJD)
 - **PR #72430** (2026-10-27): executor, planner: support materialized view SHOW statements (@windtalker)
 - **PR #72429** (2026-10-27): br: enable log redact by default (@YuJuncen)
-- **PR #72419** (2026-10-27): Diagnostic mode: merge diagnostic split PRs onto release-nextgen-202603 (@elsa0520)
-- **PR #72413** (closed): go.mod: update PD client and TiKV client-go (@rleungx)
-- **PR #72409** (2026-10-27): parser: support materialized view SHOW and COMPARE syntax (@windtalker)
-- **PR #72406** (2026-10-26): build: prepare Bazel tooling for Go 1.27 (#72082) (@ti-chi-bot)
+- **PR #72422** (2026-10-27): ddl: refactor partition metadata helpers with explicit ownership (@D3Hunter)
+- **PR #72420** (2026-10-27): dxf: clean orphan global-sort data (@D3Hunter)
 
 ---
 
@@ -2979,28 +2605,32 @@ close pingcap/tidb#71988, close pingcap/tidb#72411
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: upgrade Go to 1.27.3 (#72180)
+## X. sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453)
 
 **RULE**:
-When implementing operations in `.github/actions/tidb_build/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fa5afde`: build: upgrade Go to 1.27.3 (#72180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42abf54e`: sessionctx: lower the new-cluster sampled NDV threshold to 100 million (#72453). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/tidb_build/action.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/2026-09-09-sampling-based-ndv-for-large-tables.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    default: "1.27.3"
+TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 100,000,000 rows, keeps tables up to that size on full input and processes one tenth of the values at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
+- The threshold starts at 100,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
+- Is the default threshold right? With $T$ at 100,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.32 at 1,000,000,000 rows and 0.22 from 2,000,000,000 rows.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    default: "1.25"
+TiDB takes $M$ from the table statistics or, as it already does to choose `SAMPLERATE`, from the approximate count in PD when the statistics count is far smaller, for example right after a physical import. The rate changes continuously with the row count, so the rule adds no jumps to a table's NDV as the table grows. The initial $T$, 500,000,000 rows, keeps tables up to that size on full input and halves the values processed at 1,000,000,000 rows, about where a full-input `ANALYZE` of one table or partition becomes slow in practice. Partitions choose their rates independently, because the global merge accepts any mix of rates, as described in [Partitioned Tables](#partitioned-tables).
+- The threshold starts at 500,000,000 in new clusters but at 0 in upgraded clusters, so an upgrade never turns sampling on. Even if TiDB is upgraded before TiKV, it therefore gets no mix of sampled and legacy responses.
+- Is the default threshold right? With $T$ at 500,000,000, a nearly unique column that the schema does not keep unique comes out at about $\sqrt{T/M}$ of its NDV: 0.71 at 1,000,000,000 rows and 0.22 from 10,000,000,000 rows.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fa5afde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42abf54e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `fe883d1b`  
+> **Source Version**: `2879ce4f`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:15:32.450Z  
+> **Timestamp**: 2026-10-27T21:45:14.818Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:15:32.443Z  
+> **Harvest Timestamp**: 2026-10-27T21:45:14.268Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -992,6 +992,10 @@ impl ImportingDatabaseHandle for ImportingLocalDatabaseHandle {
         import_commit(intent, |typedb_source| LocalServerStateError::DatabaseDataCommitFailed { typedb_source })
     }
 
+    fn try_unwrap(self: Arc<Self>) -> Result<Box<dyn ImportingDatabaseHandle>, Arc<dyn ImportingDatabaseHandle>> {
+        Arc::try_unwrap(self).map(|this| Box::new(this) as _).map_err(|this| this as _)
+    }
+
     fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
         let Self { database_manager, staged_database } = *self;
         let name = staged_database.name().to_owned();
@@ -1053,7 +1057,7 @@ impl LocalDatabaseOperator {
         .await;
     }
 
-    pub fn start_importer(&self, importing_database: Box<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
+    pub fn start_importer(&self, importing_database: Arc<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
         let scratch_directory = self.database_manager.import_directory().to_owned();
         DatabaseImporter::start(
             importing_database,
@@ -1111,12 +1115,7 @@ pub fn get_database_type_schema<D: DurabilityClient>(
 
 #[async_trait]
 impl DatabaseOperator for LocalDatabaseOperator {
-    async fn all(&self) -> Result<Vec<String>, ArcServerStateError> {
-        Ok(self.database_manager.database_names())
-    }
-
-    async fn contains(&self, name: &str) -> Result<bool, ArcServerStateError> {
-        Ok(self.database_manager.database(name).is_some())
+    async fn all(&self) -> Result<Vec<String>, ArcServer
 ```
 
 ### Core Architecture Module: `server/state/mod.rs`
@@ -1858,181 +1857,845 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe883d1b` (2026-10-24)
-**Commit Message**: Fix concurrent read queries within a transaction over HTTP (#8036)
+### Incident Patch 1: `2879ce4f` (2026-10-27)
+**Commit Message**: Add concurrent workers for import (#8029)
 
 ## Product change and motivation
 
-We fix the implementation of multiple read queries being executed
-concurrently in HTTP services. Previously, we supported at most 1 read
-or write query a time. The new behaviour matches gRPC, where multiple
-read queries can operate concurrently exclusively against 1 write or
-schema query at a time.
+Restructure the database importer around phases and worker threads so
+that imports can be parallelised. Items arrive on one channel from the
+import service, are collected into batches, and are handed to a
+`DatabaseImporterPhase` whose `ImportWorker` threads pull batches from a
+shared queue and write them in their own transactions.
 
-Other changes:
-- Writes, schema queries, rollback, and close interrupts running read
-queries
-- A commit interrupts all running read queries but does finish all
-queued write queries.
-- A failed read or analyse only fails that request. Previously any read
-error closed the HTTP transaction.
+We also introduce locks and atomics where required to support multiple
+threads writing to the importer state.
 
-- A commit sent while a write was still running closed the transaction
-without committing, losing the write, while the write's client was told
-it had been applied (TSV23).
-- we fix a crash that occurs during a double 'interrupt' signal
-internally
+In this iteration, the entire import runs in 1 phase with 1 thread, and
+then we execute the remaining `Pending` items that were set aside as
+unfinished before directly in the `DatabaseImporter`.
 
 ## Implementation
 
-- Keep a set of running concurrently read query handles
-- Introduce a new common method to 'interrupt' currently running
-queries, which interrupts & awaits read queries, and waits for writes to
-finish (without responding to the user).
-- `fi
+- Introduce `DatabaseImporterPhase` and  `ImportWorker`s
+- Switch to using atomics and locks around shared state between the
+workers
+- Introduce a shared `ErrorState` that allows one error to be recorded
+that is visible to all the threads - this encourages a fast abort
 
-**File**: `executor/lib.rs` (modified, +5/-2)
+**File**: `database/migration/database_exporter.rs` (modified, +16/-11)
 ```diff
-@@ -99,9 +99,12 @@ impl ExecutionInterrupt {
-             Some(signal) => match signal.try_recv() {
-                 Ok(type_) => Some(type_),
-                 Err(TryRecvError::Empty) => None,
--                Err(TryRecvError::Closed) | Err(TryRecvError::Lagged(_)) => {
-+                // If lagged, the interrupt has been triggered multiple times.
-+                // Once we take that error state, we return the latest
-+                Err(TryRecvError::Lagged(_)) => signal.try_recv().ok(),
-+                Err(TryRecvError::Closed) => {
-                     unreachable!(
--                        "Unexpected interrupt signal state. They should never be lagged or closed before cleaning up the receivers."
-+                        "Unexpected interrupt signal state. They should never be closed before cleaning up the receivers."
-                     )
-                 }
-             },
-```
-
-**File**: `server/service/grpc/transaction_service.rs` (modified, +1/-1)
-```diff
-@@ -1206,7 +1206,7 @@ impl TransactionService {
-         given_rows: Option<GivenRowsGrpc>,
-         source_query: String,
-     ) -> JoinHandle<()> {
--        debug_assert!(self.query_queue.is_empty() && self.running_write_query.is_none() && self.transaction.is_some());
-+        debug_assert!(self.running_write_query.is_none() && self.transaction.is_some());
-         let timeout_at = self.timeout_at;
-         let interrupt = self.query_interrupt_receiver.clone();
-         let diagnostics_manager = self.server_state.diagnostics_manager();
-```
-
-**File**: `server/service/http/transaction_service.rs` (modified, +70/-39)
-```diff
-@@ -44,7 +44,7 @@ use tokio::{
-         mpsc::{Receiver, Sender},
-         oneshot,
-     },
--    task::{JoinHandle, spawn_blocking},
-+    task::{JoinHandle, JoinSet, spawn_blocking},
-     time::Instant,
+@@ -19,9 +19,14 @@ use crate::{
+     transaction::{DatabaseReadError, TransactionRead},
  };
+ 
++pub enum ExportMessage {
++    Schema(String),
++    Item(MigrationItem),
++}
++
+ pub struct DatabaseExporter<'a> {
+     transaction: &'a TransactionRead<WALClient>,
+-    opening: std::vec::IntoIter<MigrationItem>,
++    opening: std::vec::IntoIter<ExportMessage>,
+     attributes: Box<dyn Iterator<Item = Result<Attribute, Box<ConceptReadError>>> + Send + 'a>,
+     entities: Box<dyn Iterator<Item = Result<Entity, Box<ConceptReadError>>> + Send + 'a>,
+     relations: Box<dyn Iterator<Item = Result<Relation, Box<ConceptReadError>>> + Send + 'a>,
+@@ -44,7 +49,7 @@ impl<'a> DatabaseExporter<'a> {
+         };
+         Ok(Self {
+             transaction,
+-            opening: vec![MigrationItem::Schema(transaction.schema()?), header].into_iter(),
++            opening: vec![ExportMessage::Schema(transaction.schema()?), ExportMessage::Item(header)].into_iter(),
+             attributes: Box::new(attributes),
+             entities: Box::new(entities),
+             relations: Box::new(relations),
+@@ -53,7 +58,7 @@ impl<'a> DatabaseExporter<'a> {
+         })
+     }
+ 
+-    pub fn next_batch(&mut self, batch_size: usize) -> Result<Option<Vec<MigrationItem>>, DatabaseReadError> {
++    pub fn next_batch(&mut self, batch_size: usize) -> Result<Option<Vec<ExportMessage>>, DatabaseReadError> {
+         let mut batch = Vec::with_capacity(batch_size);
+         while batch.len() < batch_size {
+             match self.next_item()? {
+@@ -64,7 +69,7 @@ impl<'a> DatabaseExporter<'a> {
+         Ok((!batch.is_empty()).then_some(batch))
+     }
+ 
+-    pub fn next_item(&mut self) -> Result<Option<MigrationItem>, DatabaseReadError> {
++    pub fn next_item(&mut self) -> Result<Option<ExportMessage>, DatabaseReadError> {
+         if let Some(item) = self.opening.next() {
+             return Ok(Some(item));
+         }
+@@ -78,8 +83,8 @@ impl<'a> DatabaseExporter<'a> {
+                 &transaction.thing_manager,
+                 attribute?,
+             )?;
+-            self.checksums.attribute_count += 1;
+-            return Ok(Some(item));
++            self.checksums.increment_attribute_count();
++            return Ok(Some(ExportMessage::Item(item)));
+         }
+         if let Some(entity) = self.entities.next() {
+             let item = encode_entity(
+@@ -89,8 +94,8 @@ impl<'a> DatabaseExporter<'a> {
+                 &mut self.checksums,
+                 entity?,
+             )?;
+-            self.checksums.entity_count += 1;
+-            return Ok(Some(item));
++            self.checksums.increment_entity_count();
++            return Ok(Some(ExportMessage::Item(item)));
+         }
+         if let Some(relation) = self.relations.next() {
+             let item = encode_relation(
+@@ -100,12 +105,12 @@ impl<'a> DatabaseExporter<'a> {
+                 &mut self.checksums,
+                 relation?,
+             )?;
+-            self.checksums.relation_count += 1;
+-            return Ok(Some(item));
++            self.checksums.increment_relation_count();
++            return Ok(Some(ExportMessage::Item(item)));
+         }
+         if self.checksums_pending {
+             self.checksums_pending = false;
+-            return Ok(Some(MigrationItem::Checksums(self.checksums.clone())));
++            return Ok(Some(ExportMessage::Item(MigrationItem::Checksums(self.checksums.clone()))));
+         }
+         Ok(None)
+     }
+```
+
+**File**: `database/migration/database_importer.rs` (modified, +616/-353)
+```diff
+@@ -9,7 +9,12 @@ use std::{
+     iter,
+     marker::PhantomData,
+     path::PathBuf,
+-    sync::Arc,
++    sync::{
++        Arc, Mutex, OnceLock,
++        atomic::{AtomicU64, AtomicUsize, Ordering},
++        mpsc::{Receiver, SyncSender, sync_channel},
++    },
++    thread,
+ };
+ 
+ use bytes::{Bytes, byte_array::ByteArray};
+@@ -25,7 +30,7 @@ use concept::{
+         thing_manager::ThingManager,
+     },
+     type_::{
+-        Capability, KindAPI, Ordering, OwnerAPI, PlayerAPI, TypeAPI,
++        Capability, KindAPI, OwnerAPI, PlayerAPI, TypeAPI,
+         annotation::{AnnotationCardinality, AnnotationCategory, AnnotationIndependent, AnnotationKey},
+         attribute_type::{AttributeType, AttributeTypeAnnotation},
+         constraint::Constraint,
+@@ -48,24 +53,22 @@ use encoding::{
+     value::{label::Label, value::Value},
+ };
+ use error::{TypeDBError, typedb_error};
+-use executor::{ExecutionInterrupt, InterruptType};
+ use query::error::QueryError;
+ use resource::{constants::snapshot::BUFFER_KEY_INLINE, profile::StorageCounters};
+ use serde::{Serialize, de::DeserializeOwned};
+ use storage::{
+     durability_client::WALClient,
+     snapshot::{ReadableSnapshot, WritableSnapshot},
+ };
+-use tokio::{
+-    sync::{broadcast, mpsc},
+-    task::JoinHandle,
+-};
++use tokio::{sync::mpsc, task::JoinHandle};
  use tracing::{Level, event};
-@@ -162,6 +162,7 @@ pub(crate) struct TransactionService {
-     query_manager: Option<QueryManager>,
-     query_queue: VecDeque<(TransactionResponder, QueueOptions, Arc<TypeQLPipeline>, Option<GivenRowsHttp>, String)>,
-     running_write_query: Option<(TransactionResponder, JoinHandle<(Transaction, WriteQueryResult)>)>,
-+    running_read_queries: JoinSet<ControlFlow<(), ()>>,
+ use typeql::{parse_query, query::SchemaQuery};
  
-     close_sender: Sender<()>,
-     close_receiver: Receiver<()>,
-@@ -258,6 +259,7 @@ impl TransactionService {
-             query_manager: None,
-             query_queue: VecDeque::with_capacity(20),
-             running_write_query: None,
-+            running_read_queries: JoinSet::new(),
+ use crate::{
+     migration::{
+-        Checksums, MigrationOperationError, importing_database_handle::ImportingDatabaseHandle, item::MigrationItem,
++        Checksums, MigrationOperationError,
++        importing_database_handle::ImportingDatabaseHandle,
++        item::{AttributeItem, EntityItem, MigrationItem, RelationItem},
+     },
+     query::execute_schema_query,
+     transaction::{TransactionError, TransactionSchema, TransactionWrite},
+@@ -131,7 +134,7 @@ struct SchemaInfo {
+     original_cardinalities_owns: HashMap<Owns, Option<AnnotationCardinality>>,
+     original_cardinalities_plays: HashMap<Plays, Option<AnnotationCardinality>>,
+     original_cardinalities_relates: HashMap<Relates, Option<AnnotationCardinality>>,
+-    temporarily_removed_specializing_owns: HashMap<Owns, (HashSet<OwnsAnnotation>, Ordering)>,
++    temporarily_removed_specializing_owns: HashMap<Owns, (HashSet<OwnsAnnotation>, concept::type_::Ordering)>,
+     temporarily_removed_specializing_plays: HashMap<Plays, HashSet<PlaysAnnotation>>,
+ }
  
-             close_sender,
-             close_receiver,
-@@ -355,6 +357,9 @@ impl TransactionService {
-                         self.do_close().await;
-                         return;
-                     }
-+                    Some(read_query_result) = self.running_read_queries.join_next(), if !self.running_read_queries.is_empty() => {
-+                        read_query_result.expect("Expected read query completion")
-+                    }
-                     next = self.request_stream.recv() => {
-                         self.handle_next(next).await
-                     }
-@@ -389,15 +394,17 @@ impl TransactionService {
+@@ -155,61 +158,126 @@ type IID = ByteArray<BUFFER_KEY_INLINE>;
+ 
+ #[derive(Debug)]
+ struct DataInfo {
+-    objects: ObjectsInfo,
+-    attributes: AttributesInfo,
++    objects: Mutex<ObjectsInfo>,
++    attributes: Mutex<AttributesInfo>,
+     checksums: Checksums,
+-    expected_checksums: Option<Checksums>,
++    expected_checksums: OnceLock<Checksums>,
++    unresolved_ownerships: AtomicUsize,
++    unresolved_role_players: AtomicUsize,
+ }
+ 
+ impl DataInfo {
+     fn new(cache_directory: &PathBuf, database_name: &str) -> Self {
+         Self {
+-            objects: ObjectsInfo::new(&cache_directory, database_name),
+-            attributes: AttributesInfo::new(cache_directory, database_name),
++            objects: Mutex::new(ObjectsInfo::new(&cache_directory, database_name)),
++            attributes: Mutex::new(AttributesInfo::new(cache_directory, database_name)),
+             checksums: Checksums::new(),
+-            expected_checksums: None,
++            expected_checksums: OnceLock::new(),
++            unresolved_ownerships: AtomicUsize::new(0),
++            unresolved_role_players: AtomicUsize::new(0),
+         }
      }
  
-     async fn handle_commit(&mut self, responder: TransactionResponder) -> ControlFlow<(), ()> {
--        // finish any running write query, interrupt running queries, clear all running/queued reads, finish all writes
-+        // finish any running write query, interrupt running reads, clear queued reads, finish all queued writes
-         //   note: if any write query errors, the whole transaction errors
-         // finish any active write query
-         if let Break(()) = self.finish_running_write_query_no_transmit(InterruptType::TransactionCommitted).await {
-             return Break(());
-         }
+-    fn record_entity(&mut self, original_id: String, entity: Entity) -> Result<(), DatabaseImportError> {
+-        self.checksums.entity_count += 1;
+-        self.objects.instance_id_mapping.record(original_id, entity.into_object())
++    fn record_entity(&self, original_id: String, entity: Entity) -> Result<(), DatabaseImportError> {
++        self.checksums.increment_entity_count();
++        self.objects.lock().unwrap().instance_id_mapping.record(original_id, entity.into_object())
+     }
  
-         // interrupt active queries
--        self.interrupt(InterruptType::TransactionCommitted).await;
-+        if let Break(()) = self.interrupt_running_queries(InterruptType::TransactionCommitted).await {
-+            return Break(());
+-    fn record_relation(&mut self, original_id: String, relation: Relation) -> Result<(), DatabaseImportError> {
+-        self.checksums.relation_count += 1;
+-        self.objects.instance_id_mapping.record(original_id, relation.into_object())
++    fn record_relation(&self, original_id: String, relation: Relation) -> Result<(), DatabaseImportError> {
++        self.checksums.increment_relation_count();
++        self.objects.lock().unwrap().instance_id_mapping.record(original_id, relation.into_object())
+     }
+ 
+-    fn record_attribute(&mut self, original_id: String, attribute: Attribute) -> Result<(), DatabaseImportError> {
+-        self.checksums.attribute_count += 1;
+-        self.attributes.instance_id_mapping.record(original_id, attribute)
++    fn record_attribute(&self, original_id: String, attribute: Attribute) -> Result<(), DatabaseImportError> {
++        self.checksums.increment_attribute_count();
++        self.attributes
+```
+
+**File**: `database/migration/importing_database_handle.rs` (modified, +3/-0)
+```diff
+@@ -27,6 +27,9 @@ pub trait ImportingDatabaseHandle: Send + Sync {
+ 
+     fn commit_data(&self, intent: DataCommitIntent<WALClient>) -> Result<(), MigrationOperationError>;
+ 
++    /// Unwraps the handle if this is its only reference, and gives it back otherwise - the Arc::try_unwrap of a trait object
++    fn try_unwrap(self: Arc<Self>) -> Result<Box<dyn ImportingDatabaseHandle>, Arc<dyn ImportingDatabaseHandle>>;
++
+     fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError>;
+ }
+ 
+```
+
+**File**: `database/migration/item.rs` (modified, +34/-29)
+```diff
+@@ -23,42 +23,47 @@ use crate::migration::Checksums;
+ 
+ #[derive(Debug)]
+ pub enum MigrationItem {
+-    Schema(String),
+-    Header {
+-        typedb_version: String,
+-        original_database: String,
+-    },
+-    Entity {
+-        id: String,
+-        label: Label,
+-        owned_attributes: Vec<String>,
+-    },
+-    Relation {
+-        id: String,
+-        label: Label,
+-        owned_attributes: Vec<String>,
+-        related_role_players: Vec<(Label, Vec<String>)>,
+-    },
+-    Attribute {
+-        id: String,
+-        label: Label,
+-        value: Value<'static>,
+-    },
++    Header { typedb_version: String, original_database: String },
++    Entity(EntityItem),
++    Relation(RelationItem),
++    Attribute(AttributeItem),
+     Checksums(Checksums),
+ }
+ 
++#[derive(Debug)]
++pub struct EntityItem {
++    pub id: String,
++    pub label: Label,
++    pub owned_attributes: Vec<String>,
++}
++
++#[derive(Debug)]
++pub struct RelationItem {
++    pub id: String,
++    pub label: Label,
++    pub owned_attributes: Vec<String>,
++    pub related_role_players: Vec<(Label, Vec<String>)>,
++}
++
++#[derive(Debug)]
++pub struct AttributeItem {
++    pub id: String,
++    pub label: Label,
++    pub value: Value<'static>,
++}
++
+ pub(crate) fn encode_entity(
+     snapshot: &impl ReadableSnapshot,
+     type_manager: &TypeManager,
+     thing_manager: &ThingManager,
+     checksums: &mut Checksums,
+     entity: Entity,
+ ) -> Result<MigrationItem, Box<ConceptReadError>> {
+-    Ok(MigrationItem::Entity {
++    Ok(MigrationItem::Entity(EntityItem {
+         id: encode_thing_iid(&entity),
+         label: encode_type_label(snapshot, type_manager, entity.type_())?,
+         owned_attributes: encode_owned_attributes(snapshot, thing_manager, checksums, entity)?,
+-    })
++    }))
+ }
+ 
+ pub(crate) fn encode_relation(
+@@ -68,12 +73,12 @@ pub(crate) fn encode_relation(
+     checksums: &mut Checksums,
+     relation: Relation,
+ ) -> Result<MigrationItem, Box<ConceptReadError>> {
+-    Ok(MigrationItem::Relation {
++    Ok(MigrationItem::Relation(RelationItem {
+         id: encode_thing_iid(&relation),
+         label: encode_type_label(snapshot, type_manager, relation.type_())?,
+         owned_attributes: encode_owned_attributes(snapshot, thing_manager, checksums, relation)?,
+         related_role_players: encode_relation_roles(snapshot, type_manager, thing_manager, checksums, relation)?,
+-    })
++    }))
+ }
+ 
+ pub(crate) fn encode_attribute(
+@@ -83,11 +88,11 @@ pub(crate) fn encode_attribute(
+     attribute: Attribute,
+ ) -> Result<MigrationItem, Box<ConceptReadError>> {
+     let value = attribute.get_value(snapshot, thing_manager, StorageCounters::DISABLED)?.into_owned();
+-    Ok(MigrationItem::Attribute {
++    Ok(MigrationItem::Attribute(AttributeItem {
+         id: encode_thing_iid(&attribute),
+         label: encode_type_label(snapshot, type_manager, attribute.type_())?,
+         value,
+-    })
++    }))
+ }
+ 
+ fn encode_thing_iid(thing: &impl ThingAPI) -> String {
+@@ -115,7 +120,7 @@ fn encode_owned_attributes(
+         let (has, count) = has?;
+         for _ in 0..count {
+             owned_attributes.push(encode_thing_iid(&has.attribute()));
+-            checksums.ownership_count += 1;
++            checksums.increment_ownership_count();
+         }
+     }
+     Ok(owned_attributes)
+@@ -135,7 +140,7 @@ fn encode_relation_roles(
+         let (role_player, count) = player?;
+         for _ in 0..count {
+             players_by_role.entry(role_player.role_type()).or_default().push(encode_thing_iid(&role_player.player()));
+-            checksums.role_count += 1;
++            checksums.increment_role_count();
+         }
+     }
+ 
+```
+
+**File**: `database/migration/mod.rs` (modified, +75/-4)
+```diff
+@@ -4,7 +4,14 @@
+  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+  */
+ 
+-use std::{fmt, fmt::Formatter, sync::Arc};
++use std::{
++    fmt,
++    fmt::Formatter,
++    sync::{
++        Arc,
++        atomic::{AtomicI64, Ordering},
++    },
++};
+ 
+ use error::TypeDBError;
+ 
+@@ -15,8 +22,17 @@ pub mod item;
+ 
+ pub type MigrationOperationError = Arc<dyn TypeDBError + Send + Sync>;
+ 
+-#[derive(Debug, Clone, PartialEq, Eq)]
++#[derive(Debug)]
+ pub struct Checksums {
++    entity_count: AtomicI64,
++    attribute_count: AtomicI64,
++    relation_count: AtomicI64,
++    role_count: AtomicI64,
++    ownership_count: AtomicI64,
++}
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
++pub struct Counts {
+     pub entity_count: i64,
+     pub attribute_count: i64,
+     pub relation_count: i64,
+@@ -28,17 +44,72 @@ impl Checksums {
+     pub fn new() -> Self {
+         Self::default()
+     }
++
++    pub fn from_counts(counts: Counts) -> Self {
++        let Counts { entity_count, attribute_count, relation_count, role_count, ownership_count } = counts;
++        Self {
++            entity_count: AtomicI64::new(entity_count),
++            attribute_count: AtomicI64::new(attribute_count),
++            relation_count: AtomicI64::new(relation_count),
++            role_count: AtomicI64::new(role_count),
++            ownership_count: AtomicI64::new(ownership_count),
 +        }
-         if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionCommitted).await {
-             respond_error_and_return_break!(responder, TransactionServiceError::QueueCleanupFailed {});
-         }
-@@ -451,12 +458,11 @@ impl TransactionService {
-     }
- 
-     async fn handle_rollback(&mut self, responder: TransactionResponder) -> ControlFlow<(), ()> {
--        // interrupt all queries, cancel writes, then rollback
--        self.interrupt(InterruptType::TransactionRolledback).await;
--        if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionRolledback).await {
-+        // interrupt and finish running queries, cancel queued reads and writes, then rollback
-+        if let Break(()) = self.interrupt_running_queries(InterruptType::TransactionRolledback).await {
-             return Break(());
-         }
--        if let Break(()) = self.finish_running_write_query_no_transmit(InterruptType::TransactionCommitted).await {
-+        if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionRolledback).await {
-             return Break(());
-         }
-         if let Break(()) = self.cancel_queued_write_queries(InterruptType::TransactionRolledback).await {
-@@ -496,9 +502,8 @@ impl TransactionService {
-     }
- 
-     async fn do_close(&mut self) {
--        self.interrupt(InterruptType::TransactionClosed).await;
-+        let _ = self.interrupt_running_queries(InterruptType::TransactionClosed).await;
-         let _ = self.cancel_queued_read_queries(InterruptType::TransactionClosed).await;
--        let _ = self.finish_running_write_query_no_transmit(InterruptType::TransactionClosed).await;
-         let _ = self.cancel_queued_write_queries(InterruptType::TransactionClosed).await;
- 
-         match self.transaction.take() {
-@@ -510,6 +515,23 @@ impl TransactionService {
-         self.txn_metrics.take(); // drop -> submit
-     }
- 
-+    async fn interrupt_running_queries(&mut self, interrupt: InterruptType) -> ControlFlow<(), ()> {
-+        self.interrupt(interrupt).await;
-+        let reads = self.finish_running_read_queries().await;
-+        let write = self.finish_running_write_query_no_transmit(interrupt).await;
-+        if reads.is_break() { reads } else { write }
 +    }
 +
-+    async fn finish_running_read_queries(&mut self) -> ControlFlow<(), ()> {
-+        let mut control = Continue(());
-+        while let Some(result) = self.running_read_queries.join_next().await {
-+            if let Break(()) = result.expect("Expected read query completion") {
-+                control = Break(());
-+    
++    pub fn counts(&self) -> Counts {
++        Counts {
++            entity_count: self.entity_count.load(Ordering::Relaxed),
++            attribute_count: self.attribute_count.load(Ordering::Relaxed),
++            relation_count: self.relation_count.load(Ordering::Relaxed),
++            role_count: self.role_count.load(Ordering::Relaxed),
++            ownership_count: self.ownership_count.load(Ordering::Relaxed),
++        }
++    }
++
++    pub fn increment_entity_count(&self) {
++        self.entity_count.fetch_add(1, Ordering::Relaxed);
++    }
++
++    pub fn increment_attribute_count(&self) {
++        self.attribute_count.fetch_add(1, Ordering::Relaxed);
++    }
++
++    pub fn increment_relation_count(&self) {
++        self.relation_count.fetch_add(1, Ordering::Relaxed);
++    }
++
++    pub fn increment_role_count(&self) {
++        self.role_count.fetch_add(1, Ordering::Relaxed);
++    }
++
++    pub fn increment_ownership_count(&self) {
++        self.ownership_count.fetch_add(1, Ordering::Relaxed);
++    }
+ }
+ 
+ impl Default for Checksums {
+     fn default() -> Self {
+-        Self { entity_count: 0, attribute_count: 0, relation_count: 0, role_count: 0, ownership_count: 0 }
++        Self::from_counts(Counts::default())
+     }
+ }
+ 
++impl Clone for Checksums {
++    fn clone(&self) -> Self {
++        Self::from_counts(self.counts())
++    }
++}
++
++impl PartialEq for Checksums {
++    fn eq(&self, other: &Self) -> bool {
++        self.counts() == other.counts()
++    }
++}
++
++impl Eq for Checksums {}
++
+ impl fmt::Display for Checksums {
+     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+-        let Self { entity_count, attribute_count, relation_count, role_count, ownership_count } = self;
++        let Counts { entity_count, attribute_count, relation_count, role_count, ownership_count } = self.counts();
+         write!(
+             f,
+             "[{entity_count} entities, {attribute_count} attributes, {relation_count} relations, {role_count} roles, {ownership_count} ownerships]"
+```
+
+**File**: `database/tests/migration.rs` (modified, +103/-91)
+```diff
+@@ -11,13 +11,13 @@ use database::{
+     Database,
+     database_manager::{DatabaseManager, ImportOwnership},
+     migration::{
+-        Checksums, MigrationOperationError,
+-        database_exporter::DatabaseExporter,
++        Checksums, Counts, MigrationOperationError,
++        database_exporter::{DatabaseExporter, ExportMessage},
+         database_importer::{DatabaseImportError, DatabaseImporter, DatabaseImporterHandle},
+         importing_database_handle::{
+             ImportingDatabaseHandle, open_import_schema_transaction, open_import_write_transaction,
+         },
+-        item::MigrationItem,
++        item::{AttributeItem, EntityItem, MigrationItem, RelationItem},
+     },
+     transaction::{
+         CommitIntent, DataCommitIntent, SchemaCommitIntent, TransactionError, TransactionRead, TransactionSchema,
+@@ -65,6 +65,10 @@ impl ImportingDatabaseHandle for TestImportingDatabaseHandle {
+         intent.commit(&mut CommitProfile::disabled()).map_err(|error| Arc::new(error) as _)
+     }
+ 
++    fn try_unwrap(self: Arc<Self>) -> Result<Box<dyn ImportingDatabaseHandle>, Arc<dyn ImportingDatabaseHandle>> {
++        Arc::try_unwrap(self).map(|this| Box::new(this) as _).map_err(|this| this as _)
++    }
++
+     fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
+         let Self { database_manager, staged_database } = *self;
+         let name = staged_database.name().to_owned();
+@@ -88,9 +92,9 @@ fn manager(data_dir: &TempDir) -> Arc<DatabaseManager> {
+ 
+ const BUFFER_SIZE: usize = 10;
+ 
+-fn importing_database(database_manager: &Arc<DatabaseManager>, name: &str) -> Box<dyn ImportingDatabaseHandle> {
++fn importing_database(database_manager: &Arc<DatabaseManager>, name: &str) -> Arc<dyn ImportingDatabaseHandle> {
+     let staged_database = database_manager.prepare_imported_database(name.to_owned()).expect("prepare");
+-    Box::new(TestImportingDatabaseHandle { database_manager: database_manager.clone(), staged_database })
++    Arc::new(TestImportingDatabaseHandle { database_manager: database_manager.clone(), staged_database })
+ }
+ 
+ // Tests that don't exercise shutdown use an untracked spawner: without a shutdown sender the tracker is closed, but
+@@ -113,57 +117,83 @@ fn importer_with_spawner(
+     DatabaseImporter::start(importing_database(database_manager, name), scratch_directory, BUFFER_SIZE, task_spawner)
+ }
+ 
++async fn importer_with_schema(
++    database_manager: &Arc<DatabaseManager>,
++    name: &str,
++    schema: &str,
++) -> DatabaseImporterHandle {
++    let mut importer = importer(database_manager, name);
++    importer.send_schema(schema.to_owned()).await.expect("schema");
++    importer
++}
++
+ fn read_transaction(database_manager: &Arc<DatabaseManager>, name: &str) -> TransactionRead<WALClient> {
+     let database = database_manager.database(name).expect("imported database is served");
+     TransactionRead::open(database, TransactionOptions::default()).expect("open read")
+ }
+ 
+-fn export(transaction: &TransactionRead<WALClient>, name: &str) -> Vec<MigrationItem> {
++fn export_messages(transaction: &TransactionRead<WALClient>, name: &str) -> Vec<ExportMessage> {
+     let mut exporter = DatabaseExporter::new(transaction, "3.0.0-test", name).expect("exporter");
+-    let mut items = Vec::new();
+-    while let Some(item) = exporter.next_item().expect("next item") {
+-        items.push(item);
++    let mut messages = Vec::new();
++    while let Some(message) = exporter.next_item().expect("next item") {
++        messages.push(message);
+     }
+-    items
++    messages
++}
++
++/// Splits an exported stream into its schema, which must come first, and its items.
++fn export(transaction: &TransactionRead<WALClient>, name: &str) -> (String, Vec<MigrationItem>) {
++    let mut messages = export_messages(transaction, name).into_iter();
++    let Some(ExportMessage::Schema(schema)) = messages.next() else { panic!("the stream must open with the schema") };
++    let items = messages
++        .map(|message| match message {
++            ExportMessage::Item(item) => item,
++            ExportMessage::Schema(_) => panic!("the stream must carry exactly one schema"),
++        })
++        .collect();
++    (schema, items)
+ }
+ 
+ fn source_items() -> Vec<MigrationItem> {
+     let alice = "alice".to_owned();
+     let bob = "bob".to_owned();
+     vec![
+-        MigrationItem::Schema(SCHEMA.to_owned()),
+-        MigrationItem::Attribute {
++        MigrationItem::Attribute(AttributeItem {
+             id: alice.clone(),
+             label: Label::build("name", None),
+             value: Value::String("Alice".into()),
+-        },
+-        MigrationItem::Attribute {
++        }),
++        MigrationItem::Attribute(AttributeItem {
+             id: bob.clone(),
+             label: Label::build("name", None),
+             value: Value::String("Bob".into()),
+-        },
+-        MigrationItem::Entity {
++        }),
++        MigrationItem::Entity(EntityItem {
+             id: "p1".to_owned(),
+             label: Label::build("person"
+```
+
+**File**: `server/error.rs` (modified, +6/-4)
+```diff
+@@ -360,11 +360,13 @@ fn database_import_origin(error: &DatabaseImportError) -> ErrorOrigin {
+         | DatabaseImportError::DataCommitFailed { .. }
+         | DatabaseImportError::FinalisationFailed { .. }
+         | DatabaseImportError::CacheError { .. }
+-        | DatabaseImportError::Interrupted { .. } => ErrorOrigin::System,
++        | DatabaseImportError::Interrupted { .. }
++        | DatabaseImportError::WorkerInterrupted { .. } => ErrorOrigin::System,
+ 
+-        DatabaseImportError::PreparationSchemaCommitFailed { .. } | DatabaseImportError::ImporterStopped { .. } => {
+-            ErrorOrigin::Internal
+-        }
++        DatabaseImportError::PreparationSchemaCommitFailed { .. }
++        | DatabaseImportError::ImporterStopped { .. }
++        | DatabaseImportError::WorkerStopped { .. }
++        | DatabaseImportError::ImportingDatabaseStillShared { .. } => ErrorOrigin::Internal,
+ 
+         DatabaseImportError::ConceptRead { typedb_source } => concept_read_origin(typedb_source),
+         DatabaseImportError::ConceptWrite { typedb_source } => concept_write_origin(typedb_source),
+```
+
+**File**: `server/service/grpc/migration/import_service.rs` (modified, +4/-8)
+```diff
+@@ -12,10 +12,7 @@ use std::{
+     time::Instant,
+ };
+ 
+-use database::migration::{
+-    database_importer::{DatabaseImportError, DatabaseImporterHandle},
+-    item::MigrationItem,
+-};
++use database::migration::database_importer::{DatabaseImportError, DatabaseImporterHandle};
+ use diagnostics::{diagnostics_manager::DiagnosticsManager, metrics::ActionKind};
+ use error::TypeDBError;
+ use tokio::sync::{
+@@ -256,14 +253,13 @@ impl DatabaseImportService {
+             .import_prepare(&name, self.close_sender.clone())
+             .await
+             .map_err(|typedb_source| DatabaseImportServiceError::ImportPrepareFailed { typedb_source })?;
++        self.active_import = Some(ActiveImport::new(name, importer));
+ 
+-        // Recorded before anything can fail, so that closing the service cleans the import up.
+-        let active_import = self.active_import.insert(ActiveImport::new(name, importer));
++        let active_import = self.active_import.as_mut().ok_or(DatabaseImportServiceError::ImportNotInitialised {})?;
+         self.stop_signals
+-            .unless_stopped(active_import.importer.send(MigrationItem::Schema(schema)))
++            .unless_stopped(active_import.importer.send_schema(schema))
+             .await?
+             .map_err(|typedb_source| DatabaseImportServiceError::DatabaseImport { typedb_source })?;
+-
+         Ok(Continue(()))
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `73542737` (2026-10-27)
+**Commit Message**: Bound the query caches by query size, not entry count (#8035)
+
+## Product change and motivation
+
+Bound the query caches by the size of the queries they hold, not by
+their number of entries. Fixes #8034.
+
+The parse, translation and plan caches each held up to a fixed number of
+entries (200, 200 and 100), whatever their size. A parsed, translated or
+compiled pipeline grows with its query. So after a bulk load of large
+insert queries, the caches kept gigabytes of server heap (#8034).
+
+On 3.14.1 this memory is not released while the server idles. In #8034,
+3.14.0-rc1 did release most of it.
+
+## Implementation
+
+Each cache now has a `moka` weigher.
+
+- **Weight:** an entry weighs the length of its source query in bytes,
+with a floor of `QUERY_CACHE_MIN_ENTRY_WEIGHT` (4 KiB).
+- **Capacity:** each cache's capacity is its existing
+`QUERY_*_CACHE_SIZE` × 4 KiB. That is 800 KiB of query text for the
+parse and translation caches and 400 KiB for the plan cache.
+- **Effect:** a cache still holds as many queries up to 4 KiB as before,
+and proportionally fewer longer ones.
+- **Oversized queries:** a query longer than a cache's whole capacity is
+not cached, because `moka` never admits an entry heavi
+
+**File**: `query/query_cache.rs` (modified, +65/-7)
+```diff
+@@ -19,7 +19,7 @@ use ir::{
+ use moka::sync::{Cache, CacheBuilder};
+ use resource::{
+     constants::database::{
+-        QUERY_PARSE_CACHE_SIZE, QUERY_PLAN_CACHE_FLUSH_ANY_STATISTIC_CHANGE_FRACTION,
++        QUERY_CACHE_MIN_ENTRY_WEIGHT, QUERY_PARSE_CACHE_SIZE, QUERY_PLAN_CACHE_FLUSH_ANY_STATISTIC_CHANGE_FRACTION,
+         QUERY_PLAN_CACHE_FLUSH_STATIC_SMOOTH_THRESHOLD, QUERY_PLAN_CACHE_SIZE, QUERY_TRANSLATION_CACHE_SIZE,
+     },
+     perf_counters::QUERY_CACHE_FLUSH,
+@@ -38,7 +38,7 @@ struct ValidityRequirements {
+ pub struct QueryCache {
+     parse_cache: Cache<String, Arc<Pipeline>>,
+     translation_cache: Cache<String, TranslatedPipeline>,
+-    executable_cache: Cache<IRQuery, ExecutablePipeline>,
++    executable_cache: Cache<IRQuery, (ExecutablePipeline, u32)>,
+     validity_requirements: RwLock<ValidityRequirements>,
+ }
+ 
+@@ -50,9 +50,16 @@ pub enum ParsedQuery {
+ 
+ impl QueryCache {
+     pub fn new() -> Self {
+-        let parse_cache = CacheBuilder::new(QUERY_PARSE_CACHE_SIZE).build();
+-        let translation_cache = CacheBuilder::new(QUERY_TRANSLATION_CACHE_SIZE).build();
+-        let executable_cache = CacheBuilder::new(QUERY_PLAN_CACHE_SIZE).build();
++        // Parsed, translated and compiled queries grow with the query, so the caches are bounded by weight, not count
++        let parse_cache = CacheBuilder::new(weighted_capacity(QUERY_PARSE_CACHE_SIZE))
++            .weigher(|source_query: &String, _: &Arc<Pipeline>| query_weight(source_query))
++            .build();
++        let translation_cache = CacheBuilder::new(weighted_capacity(QUERY_TRANSLATION_CACHE_SIZE))
++            .weigher(|source_query: &String, _: &TranslatedPipeline| query_weight(source_query))
++            .build();
++        let executable_cache = CacheBuilder::new(weighted_capacity(QUERY_PLAN_CACHE_SIZE))
++            .weigher(|_: &IRQuery, (_, weight): &(ExecutablePipeline, u32)| *weight)
++            .build();
+         let validity_requirements =
+             RwLock::new(ValidityRequirements { latest_statistics: None, latest_schema_commit: None });
+         QueryCache { parse_cache, translation_cache, executable_cache, validity_requirements }
+@@ -94,7 +101,7 @@ impl QueryCache {
+         fetch: Arc<Option<FetchObject>>,
+     ) -> Option<ExecutablePipeline> {
+         let key = IRQuery::new(preamble.clone(), given, stages, fetch);
+-        let mut found = self.executable_cache.get(&key)?;
++        let (mut found, _) = self.executable_cache.get(&key)?;
+         let is_outdated = self
+             .validity_requirements
+             .read()
+@@ -115,6 +122,7 @@ impl QueryCache {
+     pub(crate) fn may_insert_executable(
+         &self,
+         statistics_sequence_number: SequenceNumber,
++        source_query: &str,
+         preamble: Arc<Vec<Function>>,
+         given: Arc<Option<TranslatedGiven>>,
+         stages: Arc<Vec<TranslatedStage>>,
+@@ -130,7 +138,7 @@ impl QueryCache {
+                 .as_ref()
+                 .map_or(true, |stats| !is_pipeline_type_populations_outdated(&stats, &pipeline));
+         if may_insert {
+-            self.executable_cache.insert(key, pipeline);
++            self.executable_cache.insert(key, (pipeline, query_weight(source_query)));
+         }
+         drop(read_lock);
+     }
+@@ -182,6 +190,14 @@ fn smoothstep(pop: u64, min: u64, max: u64) -> f64 {
+     (3.0 - 2.0 * x) * x * x
+ }
+ 
++fn query_weight(source_query: &str) -> u32 {
++    u32::try_from(source_query.len()).unwrap_or(u32::MAX).max(QUERY_CACHE_MIN_ENTRY_WEIGHT)
++}
++
++fn weighted_capacity(max_entries: u64) -> u64 {
++    max_entries * u64::from(QUERY_CACHE_MIN_ENTRY_WEIGHT)
++}
++
+ #[derive(Debug)]
+ struct IRQuery {
+     preamble: Arc<Vec<Function>>,
+@@ -232,3 +248,45 @@ impl StructuralEquality for IRQuery {
+             && self.fetch.equals(&other.fetch)
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use std::sync::Arc;
++
++    use resource::constants::database::QUERY_PARSE_CACHE_SIZE;
++    use typeql::query::QueryStructure;
++
++    use super::QueryCache;
++
++    fn insert_query(people: usize, seed: u64) -> String {
++        let statements: Vec<_> = (0..people).map(|i| format!("$p{i} isa person, has name \"{seed}-{i}\";")).collect();
++        format!("insert {}", statements.join(" "))
++    }
++
++    fn fill_parse_cache(people: usize) -> QueryCache {
++        let cache = QueryCache::new();
++        let pipeline = match typeql::parse_query(&insert_query(1, 0)).unwrap().into_structure() {
++            QueryStructure::Pipeline(pipeline) => Arc::new(pipeline),
++            QueryStructure::Schema(_) => unreachable!("an insert is a data pipeline"),
++        };
++        for seed in 0..2 * QUERY_PARSE_CACHE_SIZE {
++            cache.insert_parsed(&insert_query(people, seed), pipeline.clone());
++        }
++        cache.parse_cache.run_pending_tasks();
++        cache
++    }
++
++    #[test]
++    fn small_queries_are_bounded_by_count() {
++        let cache = fill_parse_cache(1);
++        assert_eq!(cache.parse_cache.entry_count(), QUERY_PARSE_CACHE_SIZE
+```
+
+**File**: `query/query_manager.rs` (modified, +2/-0)
+```diff
+@@ -231,6 +231,7 @@ impl QueryManager {
+                     let seq = thing_manager.statistics().sequence_number;
+                     cache.may_insert_executable(
+                         seq,
++                        source_query,
+                         arced_preamble,
+                         arced_given,
+                         arced_stages,
+@@ -332,6 +333,7 @@ impl QueryManager {
+                         if let Some(cache) = self.cache.as_ref() {
+                             cache.may_insert_executable(
+                                 thing_manager.statistics().sequence_number,
++                                source_query,
+                                 arced_preamble,
+                                 arced_given,
+                                 arced_stages,
+```
+
+**File**: `resource/constants.rs` (modified, +3/-0)
+```diff
+@@ -121,6 +121,9 @@ pub mod database {
+     pub const QUERY_PLAN_CACHE_SIZE: u64 = 100;
+     pub const QUERY_PARSE_CACHE_SIZE: u64 = 200;
+     pub const QUERY_TRANSLATION_CACHE_SIZE: u64 = 200;
++    // Cached queries weigh the length of their source text, but at least this many bytes: each query cache holds at
++    // most its size in queries up to this length, and proportionally fewer longer ones (e.g. bulk inserts)
++    pub const QUERY_CACHE_MIN_ENTRY_WEIGHT: u32 = 4096;
+     pub const STATISTICS_DURABLE_WRITE_CHANGE_COUNT: u64 = 10_000;
+     pub const STATISTICS_DURABLE_WRITE_SEQ_NUMBERS: usize = 1_000;
+     pub const STATISTICS_UPDATE_INTERVAL: Duration = Duration::from_millis(50);
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8037** (2026-10-24): Drop HTTP transaction service lock while handling request (@flyingsilverfin)
 - **PR #8036** (2026-10-24): Fix concurrent read queries within a transaction over HTTP (@flyingsilverfin)
+- **PR #8035** (2026-10-27): Bound the query caches by query size, not entry count (@caniko)
 - **PR #8033** (2026-10-22): Prepare release 3.14.1 (@flyingsilverfin)
 - **PR #8032** (2026-10-21): Prepare release 3.14.0 (@flyingsilverfin)
 - **PR #8031** (2026-10-21): Fix query planner memory leak (@farost)
-- **PR #8028** (2026-10-17): Prepare for release 3.14.0-rc1 (@farost)
 
 ---
 
@@ -2052,33 +2715,53 @@ finish (without responding to the user).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. concurrent read queries within a transaction over HTTP (#8036)
+## X. Add concurrent workers for import (#8029)
 
 **RULE**:
-When implementing operations in `executor/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `database/migration/database_exporter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe883d1b`: concurrent read queries within a transaction over HTTP (#8036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2879ce4f`: Add concurrent workers for import (#8029). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `executor/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `database/migration/database_exporter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // If lagged, the interrupt has been triggered multiple times.
-                // Once we take that error state, we return the latest
-                Err(TryRecvError::Lagged(_)) => signal.try_recv().ok(),
-                Err(TryRecvError::Closed) => {
-                        "Unexpected interrupt signal state. They should never be closed before cleaning up the receivers."
+pub enum ExportMessage {
+    Schema(String),
+    Item(MigrationItem),
+}
+
+    opening: std::vec::IntoIter<ExportMessage>,
+            opening: vec![ExportMessage::Schema(transaction.schema()?), ExportMessage::Item(header)].into_iter(),
+    pub fn next_batch(&mut self, batch_size: usize) -> Result<Option<Vec<ExportMessage>>, DatabaseReadError> {
+    pub fn next_item(&mut self) -> Result<Option<ExportMessage>, DatabaseReadError> {
+            self.checksums.increment_attribute_count();
+            return Ok(Some(ExportMessage::Item(item)));
+            self.checksums.increment_entity_count();
+            return Ok(Some(ExportMessage::Item(item)));
+            self.checksums.increment_relation_count();
+            return Ok(Some(ExportMessage::Item(item)));
+            return Ok(Some(ExportMessage::Item(MigrationItem::Checksums(self.checksums.clone()))));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                Err(TryRecvError::Closed) | Err(TryRecvError::Lagged(_)) => {
-                        "Unexpected interrupt signal state. They should never be lagged or closed before cleaning up the receivers."
+    opening: std::vec::IntoIter<MigrationItem>,
+            opening: vec![MigrationItem::Schema(transaction.schema()?), header].into_iter(),
+    pub fn next_batch(&mut self, batch_size: usize) -> Result<Option<Vec<MigrationItem>>, DatabaseReadError> {
+    pub fn next_item(&mut self) -> Result<Option<MigrationItem>, DatabaseReadError> {
+            self.checksums.attribute_count += 1;
+            return Ok(Some(item));
+            self.checksums.entity_count += 1;
+            return Ok(Some(item));
+            self.checksums.relation_count += 1;
+            return Ok(Some(item));
+            return Ok(Some(MigrationItem::Checksums(self.checksums.clone())));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe883d1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2879ce4f` are properly handled with clean fallback behavior.

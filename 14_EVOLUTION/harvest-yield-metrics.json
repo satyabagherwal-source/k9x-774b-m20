@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T21:36:40.181Z",
-  "total_cycles_completed": 5534,
-  "total_learnings_persisted": 5534,
-  "total_rules_promoted": 4940,
+  "last_updated": "2026-10-27T21:45:15.383Z",
+  "total_cycles_completed": 5539,
+  "total_learnings_persisted": 5539,
+  "total_rules_promoted": 4945,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:10:39.851Z",
-      "repository": "carbon-design-system/carbon",
-      "learningId": "learn-github-carbon-design-system-carbon",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:10:49.330Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:10:54.497Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:10:56.255Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:14:09.807Z",
-      "repository": "atomicstrata/llm-wiki-compiler",
-      "learningId": "learn-github-atomicstrata-llm-wiki-compiler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:14:13.037Z",
       "repository": "alpic-ai/skybridge",
@@ -1403,6 +1368,41 @@
       "repository": "Comfy-Org/MOSS-Image",
       "learningId": "learn-huggingface-comfy-org-moss-image",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:45:00.715Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:45:01.317Z",
+      "repository": "BurntSushi/ripgrep",
+      "learningId": "learn-github-burntsushi-ripgrep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:45:06.959Z",
+      "repository": "komi-store/komi-store",
+      "learningId": "learn-github-komi-store-komi-store",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:45:10.284Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T21:45:15.383Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

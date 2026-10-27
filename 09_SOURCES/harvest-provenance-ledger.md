@@ -5566,3 +5566,8 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-blur` | `https://github.com/margelo/react-native-blur` | `7edfaa0f` | Multi-dimensional audit evidence | 2026-10-27T21:29:55.684Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `b486def1` | Multi-dimensional audit evidence | 2026-10-27T21:36:36.836Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-27T21:36:40.176Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `1527e4eb` | Multi-dimensional audit evidence | 2026-10-27T21:45:00.709Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `91f5d22e` | Multi-dimensional audit evidence | 2026-10-27T21:45:01.312Z |
+| `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `19eb7447` | Multi-dimensional audit evidence | 2026-10-27T21:45:06.954Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `42abf54e` | Multi-dimensional audit evidence | 2026-10-27T21:45:10.279Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `2879ce4f` | Multi-dimensional audit evidence | 2026-10-27T21:45:15.377Z |
