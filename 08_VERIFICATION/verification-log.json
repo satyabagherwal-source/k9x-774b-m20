@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-TAZL",
-    "timestamp": "2026-10-25T12:23:01.089Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "0a017f5de52ae5a264792ebb31811333590ba418cbe877524995e25aebf0bf10",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TCLF",
-    "timestamp": "2026-10-25T12:23:03.171Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "12ea10f334850848316a72f50bfce35ebea42b8a91f1158462c85adb7bc61cd6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-TFQ7",
-    "timestamp": "2026-10-25T12:23:07.231Z",
-    "repository": "joreilly/PeopleInSpace",
-    "learningId": "learn-github-joreilly-peopleinspace",
-    "contentHash": "323563dd06121b5c2e1efd3a6d9e537df16c64d7f579d1b4617ae2c52e42c84e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-TILR",
     "timestamp": "2026-10-25T12:23:10.959Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7445,51 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "ca172c0e033c47c0600ea4926b8592b40fe3df9011df6a8439e93b7b4231cce1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-E67V",
+    "timestamp": "2026-10-27T13:10:34.747Z",
+    "repository": "franken-ui/ui",
+    "learningId": "learn-github-franken-ui-ui",
+    "contentHash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EC37",
+    "timestamp": "2026-10-27T13:10:42.355Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "fcf228ce9a33c7f7253a5d08ae01cb710d8d421d3fe9b1b74b4d13307740d539",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EF2M",
+    "timestamp": "2026-10-27T13:10:46.222Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "913b890a5964ae86eece90f80e79e927ff9e0345634b44896ee1b3fb3e24a61b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

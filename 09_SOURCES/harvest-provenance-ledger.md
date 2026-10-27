@@ -5313,3 +5313,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `a8e11030` | Multi-dimensional audit evidence | 2026-10-27T13:03:45.506Z |
 | `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `6997ceb2` | Multi-dimensional audit evidence | 2026-10-27T13:07:07.413Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `a354091b` | Multi-dimensional audit evidence | 2026-10-27T13:07:21.844Z |
+| `learn-github-franken-ui-ui` | `https://github.com/franken-ui/ui` | `32af1a27` | Multi-dimensional audit evidence | 2026-10-27T13:10:34.750Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `43f954c2` | Multi-dimensional audit evidence | 2026-10-27T13:10:42.358Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `5946dcf5` | Multi-dimensional audit evidence | 2026-10-27T13:10:46.225Z |

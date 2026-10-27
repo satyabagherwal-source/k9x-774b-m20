@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:07:21.781Z",
+  "last_updated": "2026-10-27T13:10:46.168Z",
   "total_verified_learnings": 1114,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12240,7 +12240,7 @@
       "platform": "github",
       "source_url": "https://github.com/franken-ui/ui",
       "source_version": "32af1a27",
-      "content_hash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
+      "content_hash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
       "dossier_path": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/franken-ui-ui-learnings.md",
       "promoted_rules": [
@@ -12265,7 +12265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:24:11.658Z",
+      "verified_at": "2026-10-27T13:10:34.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34658,8 +34658,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "8003be3b",
-      "content_hash": "65a757438bd702430c92ceb78d61c2ccb72b0d17271054ffc97eef8bdb253c4e",
+      "source_version": "43f954c2",
+      "content_hash": "fcf228ce9a33c7f7253a5d08ae01cb710d8d421d3fe9b1b74b4d13307740d539",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -34687,6 +34687,11 @@
           "number": 3832,
           "title": "Asynchronous Resource Watcher Concurrency with Safe Park/Restart",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4787,
+          "title": "e2e): repair group_message_creation_members.spec.ts on master (#39384)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34694,7 +34699,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T08:23:29.402Z",
+      "verified_at": "2026-10-27T13:10:42.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38611,8 +38616,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "11d9e6b8",
-      "content_hash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
+      "source_version": "5946dcf5",
+      "content_hash": "913b890a5964ae86eece90f80e79e927ff9e0345634b44896ee1b3fb3e24a61b",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -38650,6 +38655,11 @@
           "number": 3989,
           "title": "proxy): answer 407 when an unauthenticated CONNECT arrives with an upstream prox",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4788,
+          "title": "clean up workspace dependencies and build configuration (#2210)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38657,7 +38667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:36:19.084Z",
+      "verified_at": "2026-10-27T13:10:46.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -92884,7 +92894,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T22:24:11.658Z"
+      "verified_at": "2026-10-27T13:10:34.679Z"
     },
     "rule-2110": {
       "learning_id": "rule-2110",
@@ -133204,6 +133214,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:07:21.769Z"
+    },
+    "rule-4787": {
+      "learning_id": "rule-4787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4787,
+      "title": "e2e): repair group_message_creation_members.spec.ts on master (#39384)",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "43f954c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:10:42.281Z"
+    },
+    "rule-4788": {
+      "learning_id": "rule-4788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4788,
+      "title": "clean up workspace dependencies and build configuration (#2210)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "5946dcf5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:10:46.156Z"
     }
   },
   "aliases": {

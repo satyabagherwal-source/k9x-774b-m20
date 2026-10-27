@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "8003be3b",
+    "sourceVersion": "43f954c2",
     "license": "NOASSERTION",
-    "contentHash": "65a757438bd702430c92ceb78d61c2ccb72b0d17271054ffc97eef8bdb253c4e",
-    "lastHarvestedAt": "2026-10-23T08:23:29.470Z",
+    "contentHash": "fcf228ce9a33c7f7253a5d08ae01cb710d8d421d3fe9b1b74b4d13307740d539",
+    "lastHarvestedAt": "2026-10-27T13:10:42.358Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "11d9e6b8",
+    "sourceVersion": "5946dcf5",
     "license": "Apache-2.0",
-    "contentHash": "b8ecfd556af1b0b345e4aabcc7d694886330669f475f8d42a2921e24c59d4bf2",
-    "lastHarvestedAt": "2026-10-25T02:36:19.151Z",
+    "contentHash": "913b890a5964ae86eece90f80e79e927ff9e0345634b44896ee1b3fb3e24a61b",
+    "lastHarvestedAt": "2026-10-27T13:10:46.225Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -5635,8 +5635,8 @@
     "sourceUrl": "https://github.com/franken-ui/ui",
     "sourceVersion": "32af1a27",
     "license": "MIT",
-    "contentHash": "1d18945ba880a9a8ad77cbdb005adf8e2c3b031387cbb1d2f96ddad97b7af76a",
-    "lastHarvestedAt": "2026-10-25T22:24:11.740Z",
+    "contentHash": "8c01b70b1c7580573c1b03ff380888b6318aff04b06f963e567f625e0b3038a3",
+    "lastHarvestedAt": "2026-10-27T13:10:34.750Z",
     "learningId": "learn-github-franken-ui-ui"
   },
   "datadog-glommio": {
