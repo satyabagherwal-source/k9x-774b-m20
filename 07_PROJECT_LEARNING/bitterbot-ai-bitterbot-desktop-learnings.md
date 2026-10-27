@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `a22e2df0`  
+> **Source Version**: `45e9cfeb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:38:03.667Z  
+> **Timestamp**: 2026-10-27T20:53:00.241Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:38:03.063Z  
+> **Harvest Timestamp**: 2026-10-27T20:52:59.492Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,1145 +1799,1529 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a22e2df0` (2026-10-27)
-**Commit Message**: fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (#312)
+### Incident Patch 1: `45e9cfeb` (2026-10-27)
+**Commit Message**: fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (#315)
 
-* fix(memory): make the keyword channel match natural-language queries; keep a failed embedding batch from aborting sync
+* bench(longmemeval): --per-type stratified sampling, and the stratified before/after of the keyword-channel change
 
-Two defects the PLAN-58 per-channel diagnostics and the retrieval baseline
-surfaced on 2026-10-27.
+The first-N slice of LongMemEval-S is all single-session-user, which cannot
+show where one channel beats another. `--per-type N` takes the first N
+questions of each question_type in dataset order and records the sampling in
+the output.
 
-- buildFtsQuery AND-joined every token, so a chunk had to contain every word
-  of the query. That held for terse two-word lookups and for no conversational
-  question: the keyword channel contributed zero results to natural-language
-  queries on the live store (0 of 6 results carried a keyword rank) and to the
-  LongMemEval baseline (keyword R@10 = 0% on every question). "Hybrid" search
-  was vector-only in practice. Terms are now OR-joined with a shared stopword
-  list (dropped only when the query has three or more tokens) and a 16-term
-  cap; bm25 ranks by how many terms match and how rare they are, so an
-  all-terms match still sorts first. proactive-recall's recall fallback shares
-  the stopword list.
-- A transient embedding failure during sync left the item's embedding as [],
-  and Buffer.from(new Float32Array([]).buffer) binds as NULL in node:s
+Results (10 per type, 60 questions, quiet bridge): vector R@5 is 100% on
+every type in both runs, so at this size the benchmark can only show fusion
+noise, not gain. Keyword R@5 0% -> 95%, attribution multi 0% -> 98.3%. R@5
+overall unchanged at 98.3%: one single-session-assistant question gained (the
+importance boost had pushed it to rank 6), one multi-session question lost
+(keyword's own top 5 missed the gold session and its other hits pushed the
+fused gold rank from 5 to 10). R@10 100% in both. Documented in the README
+with the conclusion that a harder instrument is needed before channel
+weighting can be judged.
 
-**File**: `benchmarks/longmemeval/README.md` (modified, +12/-0)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+* fix(memory): bound the post-fusion bo
+
+**File**: `benchmarks/live-recall/README.md` (added, +85/-0)
 ```diff
-@@ -45,6 +45,18 @@ chunk (`vector-only`, `keyword-only`, `graph-only`, `multi`). The output
- JSON records the git commit it measured, so a saved run is the frozen
- baseline any later retrieval change is compared against.
- 
-+Saved runs (LongMemEval-S, first 50 questions, all `single-session-user`, quiet bridge):
+@@ -0,0 +1,85 @@
++# Live-memory held-out recall
 +
-+| metric                            | `bitterbot_longmemeval_s_retrieval.json` (code 9708d2d1, AND-joined FTS) | `..._2026-10-27_keyword-or.json` (code 09e5a54e, OR-joined FTS) |
-+| --------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
-+| questions scored                  | 49 (one lost to the empty-embedding NOT NULL bug)                        | 50                                                              |
-+| R@5 / R@10                        | 98.0% / 100%                                                             | 100% / 100%                                                     |
-+| vector R@5                        | 98.0%                                                                    | 98.0%                                                           |
-+| keyword R@5 / R@10                | 0.0% / 0.0%                                                              | 100% / 100%                                                     |
-+| attribution of the top-5 gold hit | vector-only 98%, none 2%                                                 | multi 100%                                                      |
++A retrieval test built from a node's own memory store instead of a public
++dataset. Public benchmarks such as LongMemEval-S saturate: the vector channel
++alone already puts some chunk of the gold session in the top 5 on nearly every
++question, so two retrievers that are both decent look identical. The operator's
++real memory is harder and more relevant: it is full of names, file paths,
++identifiers and project words that embeddings blur and exact-term matching
++finds, and it is the data the agent actually searches.
 +
-+The vector channel did not change between the two runs; the difference is that the keyword channel now takes part at all. On this slice it agrees with the vector channel on every gold session, which is what the fused score should reflect.
++## Method
 +
- ## How It Works
- 
- 1. **Ingest**: Each question's chat history is converted to timestamped session files and ingested through Bitterbot's normal memory pipeline (chunk → embed → store with temporal metadata)
++1. **Snapshot.** Take a consistent read-only copy of the live store
++   (`VACUUM INTO` on `~/.bitterbot/memory/main.sqlite`). Nothing below touches
++   the live database.
++2. **Sample.** `make-questions.mts` selects chunks from `memory` and `sessions`
++   sources with a live lifecycle and 300 to 1500 characters, orders them by
++   `sha256(seed + id)` so the sample is reproducible, drops any chunk the
++   secret redactor would change, and takes the first N.
++3. **Questions.** A small model (default `claude-haiku-4-5`) writes one
++   question per chunk under a fixed prompt: a question the passage answers,
++   phrased as someone half-remembering the topic would type it, keeping the
++   proper nouns and identifiers, never copying a sentence. The questions
++   paraphrase private memory, so the file is written with mode 0600 under
++   `~/.bitterbot/benchmarks/live-recall/` and is **never committed**. A
++   manifest records the snapshot size, sample counts, seed, model, and the
++   SHA-256 of the prompt and of the question file.
++4. **Score.** `run.mts` copies the snapshot (search updates access statistics),
++   opens it through the normal `MemoryIndexManager` with the live embedding
++   provider and hybrid settings and every background engine off, runs each
++   question, and records where the source chunk lands: the fused rank and each
++   channel's own rank. Metrics: R@1, R@5, R@10 and MRR for the fused list and
++   for the vector, keyword and graph channels; a per-source breakdown; the
++   commit under test; the snapshot and question-file hashes. The result file
++   holds ids and ranks only.
++
++Two runs on the same snapshot and question file differ only in the code under
++test, so a before/after is exact: same questions, same store, same embeddings.
++
++## Run
++
++```bash
++SNAP=/path/to/snapshot.sqlite
++Q=~/.bitterbot/benchmarks/live-recall/questions-$(date +%F).jsonl
++node --import tsx benchmarks/live-recall/make-questions.mts --snapshot $SNAP --out $Q --n 60 --seed 1
++node --import tsx benchmarks/live-recall/run.mts --snapshot $SNAP --questions $Q \
++  --out benchmarks/live-recall/results/live-recall-$(git rev-parse --short HEAD).json
++```
++
++Costs: one small-model call per question to generate, one embedding call per
++question to score. A 60-question run takes a few minutes.
++
++## Results, 2026-10-27
++
++One node, snapshot of 4,083 chunks, 60 questions (seed 1, `claude-haiku-4-5`), question
++file SHA-256 in `results/questions-2026-10-27.manifest.json`. Fused = the list the agent sees.
++
++| run                                                | fused R@1 | fused R@5 | fused R@10 | fused MRR | vector R@5 | keyword R@5 |
++| -------------------------------------------------- | --------- | --------- | ---------- | --------- | ---------- | ----------- |
++| AND-joined keyword channel, full boosts (pre-#312) | 0.0%      | 3.3%      | 6.7%       | 0.022     | 16.7%      | 0.0%        |
++| OR-joined keyword channel (#312), full boosts      | 3.3%      | 8.3%      | 13.3%      | 0.063     | 21.7%      | 30.0%       |
++| same, recency boost off                            | 5.0%      | 11.7%     | 16.7%      | 0.087     | 23.3%      | 33.3%       |
++| same, `postFusionBoostScale` 0.25                  | 15.0%     | 33.3%     | 40.0%      | 0.241     | 23.3%      | 55.0%       |
++| same, `postFusionBoostScale` 0.1 (new default)     | 20.0%     | 40.0%     | 46.7%      | 0.276     | 23.3%      | 55.0%       |
++| same, `postFusionBoostScale` 0                     | 26.7%     | 41.7%     | 48.3%      | 0.336     | 23.3%      | 53.3%       |
++
++Reading: the keyword channel is the strongest single channel on real memory
++(names, paths, identifiers), and the fused list was worse than either channel
++until the post-fusion boosts were bounded, because the temporal-intent decay
++and the recency boost, sized for cosine scores, reordered rank-fused results
++wholesale. Channel columns in the full-boost rows undercount: a target pushed
++out of the returned 50 by the boosts has no channel rank either.
++
++Result files are in `results/` and hold ranks, chunk ids and sources only.
++
++## Caveats
++
++- The question writer sees the passage, so questions can be easier than real
++  recall: they always contain findable terms. Treat absolute numbers as an
++  upper bound and read the before/after differences.
++- Only one chunk is the target. A neighbouring chunk from the same
 ```
 
-**File**: `benchmarks/longmemeval/bitterbot-bridge.ts` (modified, +14/-0)
+**File**: `benchmarks/live-recall/make-questions.mts` (added, +152/-0)
 ```diff
-@@ -108,6 +108,20 @@ export async function createBenchmarkMemoryManager(): Promise<BenchmarkBridge> {
-       },
-       list: [{ id: agentId, default: true, workspace: workspaceDir }],
-     },
-+    // Retrieval baseline = raw store + search. Without these switches the
-+    // manager starts the dream engine (trigger-on-start cycle, emotional
-+    // mini-dreams), consolidation, curiosity and the health sweep inside the
-+    // benchmark process: minutes per question, LLM calls on the operator's
-+    // key, and a score that is no longer "raw mode". The biological runner
-+    // has its own bridge for that comparison.
-+    memory: {
-+      dream: { enabled: false },
-+      consolidation: { enabled: false },
-+      curiosity: { enabled: false },
-+      emotional: { enabled: false },
-+      healthSweep: { enabled: false },
-+      coverageDiagnostics: { enabled: false },
+@@ -0,0 +1,152 @@
++/**
++ * Live-memory held-out recall set: question generation.
++ *
++ * Samples chunks from a READ-ONLY snapshot of a node's memory store and asks a
++ * small model to write one question each chunk answers. The output is PRIVATE
++ * (it paraphrases the operator's own memory) and lives outside the repository;
++ * only the manifest (hashes, counts, model, prompt hash) and the scored ranks
++ * are meant to be shared.
++ *
++ *   node --import tsx benchmarks/live-recall/make-questions.mts \
++ *     --snapshot ~/snap.sqlite --out ~/.bitterbot/benchmarks/live-recall/questions.jsonl \
++ *     [--n 60] [--seed 1] [--model claude-haiku-4-5]
++ */
++import { createHash } from "node:crypto";
++import { mkdirSync, writeFileSync } from "node:fs";
++import { dirname } from "node:path";
++import { DatabaseSync } from "node:sqlite";
++import { parseArgs } from "node:util";
++import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import { loadConfig } from "../../src/config/io.js";
++import { redactSensitiveText } from "../../src/logging/redact.js";
++
++const { values: args } = parseArgs({
++  options: {
++    snapshot: { type: "string" },
++    out: { type: "string" },
++    n: { type: "string", default: "60" },
++    seed: { type: "string", default: "1" },
++    model: { type: "string", default: "claude-haiku-4-5" },
++    "min-chars": { type: "string", default: "300" },
++    "max-chars": { type: "string", default: "1500" },
++  },
++  strict: true,
++});
++if (!args.snapshot || !args.out) {
++  throw new Error(
++    "usage: --snapshot <sqlite> --out <questions.jsonl> [--n N] [--seed S] [--model M]",
++  );
++}
++const n = Number(args.n);
++const seed = String(args.seed);
++
++const PROMPT =
++  "You write retrieval test questions. Given a passage from someone's notes or chat history, write ONE question " +
++  "that this passage answers and that a person who half-remembers the topic might type into a memory search. " +
++  "Rules: at most 25 words; do not copy a sentence from the passage; keep the proper nouns, names, file names, " +
++  "numbers or identifiers that make the passage findable; no preamble, output the question only.";
++
++type Row = {
++  id: string;
++  path: string;
++  source: string;
++  start_line: number;
++  end_line: number;
++  text: string;
++};
++
++const db = new DatabaseSync(args.snapshot, { readOnly: true });
++const rows = db
++  .prepare(
++    `SELECT id, path, source, start_line, end_line, text FROM chunks
++     WHERE source IN ('memory', 'sessions') AND model != 'pending'
++       AND lifecycle IN ('generated', 'consolidated', 'activated')
++       AND length(text) BETWEEN ? AND ?`,
++  )
++  .all(Number(args["min-chars"]), Number(args["max-chars"])) as unknown as Row[];
++const snapshotChunks = (db.prepare(`SELECT COUNT(*) AS c FROM chunks`).get() as { c: number }).c;
++db.close();
++
++// Deterministic sample: order by sha256(seed + id).
++const key = (id: string) => createHash("sha256").update(`${seed}:${id}`).digest("hex");
++const ordered = rows.toSorted((a, b) => (key(a.id) < key(b.id) ? -1 : 1));
++// Never put a secret in front of a model: skip anything the redactor would change.
++const clean = ordered.filter((r) => redactSensitiveText(r.text, { mode: "tools" }) === r.text);
++const picked = clean.slice(0, n);
++console.log(`eligible=${rows.length} clean=${clean.length} picked=${picked.length}`);
++
++const auth = await resolveApiKeyForProvider({ provider: "anthropic", cfg: loadConfig() });
++if (!auth?.apiKey) {
++  throw new Error("no Anthropic key resolvable through the normal auth path");
++}
++const apiKey = auth.apiKey;
++
++async function ask(text: string): Promise<string> {
++  const res = await fetch("https://api.anthropic.com/v1/messages", {
++    method: "POST",
++    headers: {
++      "content-type": "application/json",
++      "x-api-key": apiKey,
++      "anthropic-version": "2023-06-01",
 +    },
-   } as BitterbotConfig;
- 
-   const manager = await MemoryIndexManager.get({ cfg: config, agentId });
-```
-
-**File**: `benchmarks/longmemeval/results/bitterbot_longmemeval_s_retrieval.json` (modified, +1961/-44)
-```diff
-@@ -1,21 +1,47 @@
- {
--  "dataset": "/mnt/d/Bitterbot/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
--  "n_questions": 5,
--  "elapsed_seconds": 2729.7,
-+  "dataset": "/home/vicmg/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
-+  "git_commit": "9708d2d1",
-+  "generated_at": "2026-10-27T15:48:53.764Z",
-+  "n_questions": 50,
-+  "elapsed_seconds": 1337.9,
-   "overall": {
--    "n": 0,
--    "R@5": "—",
--    "R@10": "—",
--    "R@5(all)": "—",
--    "R@10(all)": "—"
-+    "n": 49,
-+    "R@5": "98.0%",
-+    "R@10": "100.0%",
-+    "R@5(all)": "98.0%",
-+    "R@10(all)": "100.0%",
-+    "vector R@5": "98.0%",
-+    "keyword R@5": "0.0%",
-+    "graph R@5": "0.0%",
-+    "vector R@10": "98.0%",
-+    "keyword R@10": "0.0%",
-+    "attribution": {
-+      "vector-only": "98.0%",
-+      "keyword-only": "0.0%",
-+      "graph-only": "0.0%",
-+      "multi": "0.0%",
-+      "none": "2.0%"
++    body: JSON.stringify({
++      model: args.model,
++      max_tokens: 120,
++      system: PROMPT,
++      messages: [{ role: "user", content: `Passage:\n\n${text}` }],
++    }),
++  });
++  if (!res.ok) {
++    throw new Error(`anthropic ${res.status}: ${(await res.text()).slice(0, 200)}`);
++  }
++  const data = (await res.json()) as { content: Array<{ type: string; text?: string }> };
++  return (data.content.find((c) => c.type === "text")?.text ?? "").trim().replaceAll(/\s+/g, " ");
++}
++
++mkdirSync(dirname(args.out), { recursive: true });
++const lines: string[] = [];
++let failed = 0;
++for (let i = 0; i < picked.length; i++) {
++  const r = picked[i]!;
++  try {
++    const question = await ask(r.text);
++    if (!question) {
++      throw new Error("empty question");
 +    }
-   },
-   "by_question_type": {
-     "single-session-user": {
--      "n": 0,
--      "R@5": "—",
--      "R@10": "—",
--      "R@5(all)": "—",
--      "R@10(all)": "—"
-+      "n": 49,
-+      "R@5": "98.0%",
-+      "R@10": "100.0%",
-+      "R@5(all)": "98.0%",
-+      "R@10(all)": "100.0%",
-+      "vector R@5": "98.0%",
-+      "keyword R@5": "0.0%",
-+      "graph R@5": "0.0%",
-+      "vector R@10": "98.0%",
-+      "keyword R@10": "0.0%",
-+      "attribution": {
-+        "vector-only": "98.0%",
-+        "keyword-only": "0.0%",
-+        "graph-only": "0.0%",
-+        "multi": "0.0%",
-+        "none": "2.0%"
-+      }
-     }
-   },
-   "per_question": [
-@@ -24,70 +50,1961 @@
-       "question_type": "single-session-user",
-       "num_haystack_sessions": 53,
-       "num_answer_sessions": 1,
--      "retrieved_sessions": [],
-+      "retrieved_sessions": [
-+        "answer_280352e9",
-+        "sharegpt_UnjngE7_65",
-+        "f6859b48_2",
-+        "d414cac5_4",
-+        "sharegpt_PdnvIns_0",
-+        "41abc171_4",
-+        "sharegpt_Jcy1CVN_0",
-+        "sharegpt_QZMeA7V_17",
-+        "02bd2b90_3",
-+        "0586f435_3"
-+      ],
-       "answer_session_ids": ["answer_280352e9"],
--      "recall_any_5": 0,
--      "recall_any_10": 0,
--      "recall_all_5": 0,
--      "recall_all_10": 0,
--      "num_chunks_returned": 0,
--      "error": "fetch failed"
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "keyword": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        },
-+        "graph": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        }
-+      },
-+      "attribution": "vector-only",
-+      "fusion": "rrf"
-     },
-     {
-       "question_id": "118b2229",
-       "question_type": "single-session-user",
-       "num_haystack_sessions": 45,
-       "num_answer_sessions": 1,
--      "retrieved_sessions": [],
-+      "retrieved_sessions": [
-+        "answer_40a90d51",
-+        "7d8b5834_1",
-+        "004edb32",
-+        "5209e813_2",
-+        "0afa904a",
-+        "c22571ff_2",
-+        "sharegpt_M3x4mZx_0",
-+        "sharegpt_dabXXRO_10",
-+        "afe04238_1",
-+        "db50c0f6"
-+      ],
-       "answer_session_ids": ["answer_40a90d51"],
--      "recall_any_5": 0,
--      "recall_any_10": 0,
--      "recall_all_5": 0,
--      "recall_all_10": 0,
--      "num_chunks_returned": 0,
--      "error": "memory embeddings batch timed out after 120s"
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "keyword": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        },
-+        "graph": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        }
-+      },
-+      "attribution": "vector-only",
-+      "fusion": "rrf"
-     },
-     {
-       "question_id": "51a45a95",
-       "question_type": "single-session-user",
-       "num_haystack_sessions": 50,
-       "num_answer_sessions": 1,
--      "retrieved_sessions": [],
-+      "retrieved_sessions": [
-+        "answer_d61669c7",
-+        "sharegpt_MKMWjX0_25",
-+        "55e0c6db_2",
-+        "sharegpt_apWLb2c_0",
-+        "4679a05c",
-+        "6e0b1800_2",
-+        "07d1915d_1",
-+        "d680a212_1",
-+        "83addb61_4",
-+        "dfe646a7_1"
-+      ],
-       "answer_session_ids": ["answer_d61669c7"],
--      "recall_any_5": 0,
--      "recall_any_10": 0,
--      "recall_all_5": 0,
--      "recall_all_10": 0,
--      "num_chunks_returned": 0,
--      "error": "memory embeddings batch timed out after 120s"
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+       
++    lines.push(
++      JSON.stringify({
++        chunkId: r.id,
++        path: r.path,
++        source: r.source,
++        startLine: r.start_line,
++        endLine: r.end_line,
++        textSha256: createHash("sha256").update(r.text).digest("hex"),
++        question,
++      }),
++    );
++  } catch (err) {
++    failed++;
++    console.error(`  [
 ```
 
-**File**: `benchmarks/longmemeval/results/bitterbot_longmemeval_s_retrieval_2026-10-27_keyword-or.json` (added, +2048/-0)
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-and_boosts-1.json` (added, +768/-0)
 ```diff
-@@ -0,0 +1,2048 @@
+@@ -0,0 +1,768 @@
 +{
-+  "dataset": "/home/vicmg/bitterbot-desktop/benchmarks/longmemeval/data/longmemeval_s.json",
-+  "git_commit": "09e5a54e",
-+  "generated_at": "2026-10-27T16:15:20.404Z",
-+  "n_questions": 50,
-+  "elapsed_seconds": 1440.8,
-+  "overall": {
-+    "n": 50,
-+    "R@5": "100.0%",
-+    "R@10": "100.0%",
-+    "R@5(all)": "100.0%",
-+    "R@10(all)": "100.0%",
-+    "vector R@5": "98.0%",
-+    "keyword R@5": "100.0%",
-+    "graph R@5": "0.0%",
-+    "vector R@10": "98.0%",
-+    "keyword R@10": "100.0%",
-+    "attribution": {
-+      "vector-only": "0.0%",
-+      "keyword-only": "0.0%",
-+      "graph-only": "0.0%",
-+      "multi": "100.0%",
-+      "none": "0.0%"
++  "git_commit": "a22e2df0+dirty",
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 587.5,
++  "summary": {
++    "fused": {
++      "R@1": "0.0%",
++      "R@5": "3.3%",
++      "R@10": "6.7%",
++      "MRR": "0.022"
++    },
++    "vector": {
++      "R@1": "6.7%",
++      "R@5": "16.7%",
++      "R@10": "23.3%",
++      "MRR": "0.116"
++    },
++    "keyword": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
 +    }
 +  },
-+  "by_question_type": {
-+    "single-session-user": {
-+      "n": 50,
-+      "R@5": "100.0%",
-+      "R@10": "100.0%",
-+      "R@5(all)": "100.0%",
-+      "R@10(all)": "100.0%",
-+      "vector R@5": "98.0%",
-+      "keyword R@5": "100.0%",
-+      "graph R@5": "0.0%",
-+      "vector R@10": "98.0%",
-+      "keyword R@10": "100.0%",
-+      "attribution": {
-+        "vector-only": "0.0%",
-+        "keyword-only": "0.0%",
-+        "graph-only": "0.0%",
-+        "multi": "100.0%",
-+        "none": "0.0%"
-+      }
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 0,
++      "keywordAt5": 0
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 2,
++      "keywordAt5": 0
 +    }
 +  },
 +  "per_question": [
 +    {
-+      "question_id": "e47becba",
-+      "question_type": "single-session-user",
-+      "num_haystack_sessions": 53,
-+      "num_answer_sessions": 1,
-+      "retrieved_sessions": [
-+        "answer_280352e9",
-+        "02bd2b90_3",
-+        "sharegpt_UnjngE7_65",
-+        "f6859b48_2",
-+        "d414cac5_4",
-+        "sharegpt_PdnvIns_0",
-+        "41abc171_4",
-+        "sharegpt_Jcy1CVN_0",
-+        "sharegpt_QZMeA7V_17",
-+        "0586f435_3"
-+      ],
-+      "answer_session_ids": ["answer_280352e9"],
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "keyword": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "graph": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        }
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
 +      },
-+      "attribution": "multi",
++      "returned": 50,
 +      "fusion": "rrf"
 +    },
 +    {
-+      "question_id": "118b2229",
-+      "question_type": "single-session-user",
-+      "num_haystack_sessions": 45,
-+      "num_answer_sessions": 1,
-+      "retrieved_sessions": [
-+        "answer_40a90d51",
-+        "5209e813_2",
-+        "db50c0f6",
-+        "0afa904a",
-+        "7d8b5834_1",
-+        "sharegpt_dabXXRO_10",
-+        "afe04238_1",
-+        "db73b7e4_4",
-+        "5dce60dd",
-+        "ultrachat_392094"
-+      ],
-+      "answer_session_ids": ["answer_40a90d51"],
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "keyword": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "graph": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        }
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 27,
++        "vector": 23,
++        "keyword": null,
++        "graph": null
 +      },
-+      "attribution": "multi",
++      "returned": 50,
 +      "fusion": "rrf"
 +    },
 +    {
-+      "question_id": "51a45a95",
-+      "question_type": "single-session-user",
-+      "num_haystack_sessions": 50,
-+      "num_answer_sessions": 1,
-+      "retrieved_sessions": [
-+        "answer_d61669c7",
-+        "d680a212_1",
-+        "07ba9acd_2",
-+        "217debf7",
-+        "4679a05c",
-+        "5c44d9fe_1",
-+        "127fd1c9",
-+        "fab585c2_1",
-+        "98c198fb",
-+        "dfe646a7_1"
-+      ],
-+      "answer_session_ids": ["answer_d61669c7"],
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "keyword": {
-+          "recall_any_5": 1,
-+          "recall_any_10": 1
-+        },
-+        "graph": {
-+          "recall_any_5": 0,
-+          "recall_any_10": 0
-+        }
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 35,
++        "vector": 1,
++        "keyword": null,
++        "graph": null
 +      },
-+      "attribution": "multi",
++      "returned": 50,
 +      "fusion": "rrf"
 +    },
 +    {
-+      "question_id": "58bf7951",
-+      "question_type": "single-session-user",
-+      "num_haystack_sessions": 57,
-+      "num_answer_sessions": 1,
-+      "retrieved_sessions": [
-+        "answer_355c48bb",
-+        "ultrachat_221066",
-+        "ultrachat_155546",
-+        "sharegpt_9qAGH5s_0",
-+        "sharegpt_DGiqvVv_270",
-+        "7e17ae56_5",
-+        "ultrachat_71618",
-+        "ultrachat_304942",
-+        "sharegpt_LG0uJvY_0",
-+        "sharegpt_PancT1q_0"
-+      ],
-+      "answer_session_ids": ["answer_355c48bb"],
-+      "recall_any_5": 1,
-+      "recall_any_10": 1,
-+      "recall_all_5": 1,
-+      "recall_all_10": 1,
-+      "num_chunks_returned": 50,
-+      "channel_recall": {
-+        "vector": {
-+ 
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 29,
++        "vector": 6,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 19,
++        "vector": 1,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 4,
++        "vector": 6,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory",
++      "ranks": 
 ```
 
-**File**: `benchmarks/longmemeval/runner-retrieval.ts` (modified, +13/-2)
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.1.json` (added, +770/-0)
 ```diff
-@@ -95,9 +95,19 @@ function attribution(chunks: MemorySearchResult[], top5: Set<string>, gold: stri
-   return found[0] ? (`${found[0]}-only` as Attribution) : "none";
- }
- 
-+/**
-+ * The commit under test, read ONCE before the first question. A run takes
-+ * long enough for HEAD to move (the 2026-10-27 baseline was stamped with a
-+ * commit made while it ran), so the stamp is taken at the start, and a dirty
-+ * working tree is marked because the measured code is then not that commit.
-+ */
- function gitCommit(): string | null {
-   try {
--    return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-+    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
-+    const dirty = execSync("git status --porcelain --untracked-files=no", {
-+      encoding: "utf-8",
-+    }).trim();
-+    return dirty ? `${head}+dirty` : head;
-   } catch {
-     return null;
-   }
-@@ -212,6 +222,7 @@ function fmt(agg: Aggregate) {
- // ── Main ──
- 
- async function run() {
-+  const measuredCommit = gitCommit();
-   const dataFile = args.oracle
-     ? join(args["data-dir"]!, "longmemeval_oracle.json")
-     : join(args["data-dir"]!, "longmemeval_s.json");
-@@ -375,7 +386,7 @@ async function run() {
-   const summary = {
-     dataset: dataFile,
-     // PLAN-58: the baseline is only comparable when it names the code it measured.
--    git_commit: gitCommit(),
-+    git_commit: measuredCommit,
-     generated_at: new Date().toISOString(),
-     n_questions: perQuestion.length,
-     elapsed_seconds: parseFloat(totalSec),
-```
-
-**File**: `docs/memory/curiosity-and-search.md` (modified, +2/-0)
-```diff
-@@ -234,6 +234,8 @@ flowchart TB
- 
- **Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
- 
-+**Keyword query shape.** `buildFtsQuery()` OR-joins the query's terms for the FTS5 `MATCH`, dropping a short shared stopword list when the query has three or more tokens (a one- or two-word lookup keeps every word) and capping at 16 distinct terms. bm25 then ranks chunks by how many of the terms they contain and how rare those terms are, so a chunk holding every term still sorts first. Until 2026-10-27 the terms were AND-joined: a chunk had to contain every token, which held for terse lookups and for no conversational question, and the per-channel diagnostics showed the keyword channel contributing nothing to natural-language queries on the live store or the LongMemEval baseline. The `fusion` field still reports `rrf` in that case, so look at `channels.keyword` presence, not `fusion`, to tell whether the keyword channel took part.
-+
- **Per-channel diagnostics (PLAN-58).** Every result carries `channels` and `fusion` alongside the fused `score`:
- 
- ```ts
-```
-
-**File**: `src/memory/hybrid.test.ts` (modified, +20/-4)
-```diff
-@@ -8,14 +8,30 @@ import {
- import { rrfFuse } from "./rrf.js";
- 
- describe("memory hybrid helpers", () => {
--  it("buildFtsQuery tokenizes and AND-joins", () => {
--    expect(buildFtsQuery("hello world")).toBe('"hello" AND "world"');
--    expect(buildFtsQuery("FOO_bar baz-1")).toBe('"FOO_bar" AND "baz" AND "1"');
-+  it("buildFtsQuery tokenizes and OR-joins so bm25 ranks by how many terms match", () => {
-+    expect(buildFtsQuery("hello world")).toBe('"hello" OR "world"');
-+    expect(buildFtsQuery("FOO_bar baz-1")).toBe('"FOO_bar" OR "baz" OR "1"');
-     expect(buildFtsQuery("金银价格")).toBe('"金银价格"');
--    expect(buildFtsQuery("価格 2026年")).toBe('"価格" AND "2026年"');
-+    expect(buildFtsQuery("価格 2026年")).toBe('"価格" OR "2026年"');
-     expect(buildFtsQuery("   ")).toBeNull();
-   });
- 
-+  it("buildFtsQuery drops stopwords from a sentence but keeps every word of a short lookup", () => {
-+    // A natural question: under AND this matched nothing anywhere.
-+    expect(buildFtsQuery("what did the user say about their trip to Paris")).toBe(
-+      '"user" OR "say" OR "trip" OR "Paris"',
-+    );
-+    // Two tokens: no stopword pass, so "the" survives on purpose.
-+    expect(buildFtsQuery("the matrix")).toBe('"the" OR "matrix"');
-+    // All stopwords: fall back to the raw tokens rather than returning nothing.
-+    expect(buildFtsQuery("and the for")).toBe('"and" OR "the" OR "for"');
-+    // Duplicates collapse and the term list is capped.
-+    expect(buildFtsQuery("alpha alpha beta")).toBe('"alpha" OR "beta"');
-+    expect(
-+      buildFtsQuery(Array.from({ length: 30 }, (_, i) => `term${i}`).join(" "))?.split(" OR "),
-+    ).toHaveLength(16);
-+  });
-+
-   it("bm25RankToScore is monotonic and clamped", () => {
-     expect(bm25RankToScore(0)).toBeCloseTo(1);
-     expect(bm25RankToScore(1)).toBeCloseTo(0.5);
-```
-
-**File**: `src/memory/hybrid.ts` (modified, +147/-2)
-```diff
-@@ -62,6 +62,143 @@ export type HybridKeywordResult = {
-   emotionalValence?: number | null;
- };
- 
-+/**
-+ * Minimal English stopword set shared by the keyword channel and the
-+ * proactive-recall fallback. It only needs to strip the glue words of a
-+ * conversational sentence; bm25's inverse document frequency handles the rest.
-+ */
-+export const FTS_STOPWORDS: ReadonlySet<string> = new Set([
-+  "the",
-+  "and",
-+  "for",
-+  "are",
-+  "was",
-+  "were",
-+  "did",
-+  "does",
-+  "has",
-+  "had",
-+  "have",
-+  "you",
-+  "your",
-+  "yours",
-+  "our",
-+  "ours",
-+  "his",
-+  "her",
-+  "hers",
-+  "its",
-+  "their",
-+  "theirs",
-+  "this",
-+  "that",
-+  "these",
-+  "those",
-+  "with",
-+  "from",
-+  "what",
-+  "which",
-+  "when",
-+  "where",
-+  "who",
-+  "whom",
-+  "why",
-+  "how",
-+  "can",
-+  "could",
-+  "would",
-+  "should",
-+  "will",
-+  "shall",
-+  "may",
-+  "might",
-+  "must",
-+  "about",
-+  "into",
-+  "onto",
-+  "over",
-+  "under",
-+  "again",
-+  "then",
-+  "than",
-+  "there",
-+  "here",
-+  "just",
-+  "very",
-+  "not",
-+  "but",
-+  "any",
-+  "all",
-+  "some",
-+  "one",
-+  "two",
-+  "get",
-+  "got",
-+  "let",
-+  "lets",
-+  "please",
-+  "tell",
-+  "know",
-+  "think",
-+  "want",
-+  "need",
-+  "yesterday",
-+  "today",
-+  "tomorrow",
-+  "now",
-+  "still",
-+  "yet",
-+  "also",
-+  "too",
-+  "a",
-+  "i",
-+  "to",
-+  "of",
-+  "in",
-+  "on",
-+  "at",
-+  "it",
-+  "is",
-+  "as",
-+  "be",
-+  "by",
-+  "or",
-+  "an",
-+  "if",
-+  "we",
-+  "my",
-+  "me",
-+  "do",
-+  "so",
-+  "up",
-+  "no",
-+  "us",
-+  "he",
-+  "she",
-+  "they",
-+  "them",
-+  "been",
-+  "being",
-+]);
-+
-+/** Query terms kept after stopword removal; bm25 ranks by how many match. */
-+export const FTS_MAX_QUERY_TERMS = 16;
-+
-+/**
-+ * Build the FTS5 MATCH expression for the keyword channel.
-+ *
-+ * Terms are OR-joined, not AND-joined. Under AND, a chunk had to contain
-+ * every token of the query, which held for terse two-word lookups and for
-+ * nothing conversational: the PLAN-58 per-channel diagnostics showed the
-+ * keyword channel contributing zero results to natural-language questions on
-+ * the live store and on the LongMemEval baseline, so "hybrid" search had been
-+ * vector-only in practice. With OR, bm25 ranks chunks by how many of the
-+ * query's terms they contain and how rare those terms are, so an all-terms
-+ * match still sorts first and the channel has something to say about the
-+ * rest. Stopwords are dropped only when the query has three or more tokens,
-+ * so a short lookup keeps every word it was given. Returns null when nothing
-+ * searchable remains.
-+ */
- export function buildFtsQuery(raw: string): string | null {
-   const tokens =
-     raw
-@@ -71,8 +208,16 @@ export function buildFtsQuery(raw: string): string | null {
-   if (tokens.length === 0) {
-     return null;
-   }
--  const quoted = tokens.map((t) => `"${t.replaceAll('"', "")}"`);
--  return quoted.join(" AND ");
-+  const content =
-+    tokens.length >= 3 ? tokens.filter((t) => !FTS_STOPWORDS.has(t.toLowerCase())) : tokens;
-+  const kept = content.length > 0 ? content : tokens;
-+  const unique = [...new Set(kept.map((t) => t.replaceAll('"', "")))]
-+    .filter(Boolean)
-+    .slice(0, FTS_MAX_QUERY_TERMS);
-+  if (unique.length === 0) {
-+    return null;
-+  }
-+  return unique.map((t) => `"${t}"`).join(" OR ");
- }
- 
- export function bm25RankToScore(rank: number): number {
-```
-
----
-
-### Incident Patch 2: `ee51008c` (2026-10-27)
-**Commit Message**: fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (#311)
-
-* fix(skills): lint src/agents/skills again, dedupe fit mismatch text, add the local two-node mesh harness
-
-- .oxlintrc.json: the `skills/` ignore pattern also matched `src/agents/skills/`,
-  so that directory was linted nowhere, CI included. Anchor it to the repo-root
-  bundled skills dir and fix the 15 findings it hid (unused imports and
-  variables, `sort` -> `toSorted`, a useless regex escape, a brittle unused
-  replaced-count computation).
-- applicability-fit: name the sender model once when the gate model and the
-  read model are the same string (was "measured on X, X: weaker ...").
-- server-startup-memory: memory search turned off is a configuration, not
-  "initialization failed: unknown error"; log it as information and keep the
-  warning for a real thrown error. Unit test added.
-- scripts/sim-mesh: two throwaway gateways on one machine joined only over
-  loopback (the wrapper strips the public bootstraps the gateway merges in),
-  with a publisher script that runs the real housekeeping pass and
-  orchestrator publish, and a retraction script. Verified end to end: fit
-  goo
-
-**File**: `.gitignore` (modified, +2/-0)
-```diff
-@@ -240,6 +240,8 @@ benchmarks/arc-agi-3/results/
- 
- # PLAN-24 Phase 2 contrastive run scratch + timestamped artifacts
- benchmarks/longmemeval/.work-contrastive/
-+benchmarks/longmemeval/.work-retrieval/
-+benchmarks/longmemeval/.bench-runs/
- # Per-run benchmark artifacts (PLAN-41 p0-24): two historic run dirs and
- # the bio work tree were tracked at ~57MB; runs are reproducible, not source.
- benchmarks/longmemeval/.bench-runs-bio/
-```
-
-**File**: `.oxlintrc.json` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@
-     "node_modules/",
-     "patches/",
-     "pnpm-lock.yaml",
--    "skills/",
-+    "/skills/",
-     "deploy/mailbox-host/mailbox-host.bundle.mjs",
-     "src/canvas-host/a2ui/a2ui.bundle.js",
-     "Swabble/",
-```
-
-**File**: `desktop/renderer/src/components/skills/SkillEditor.tsx` (modified, +1/-1)
-```diff
-@@ -296,7 +296,7 @@ export function SkillEditor({ onClose }: { onClose: () => void }) {
-   const validation = useMemo<ValidationResult>(() => validate(content), [content]);
- 
-   const appTheme = useUIStore((s) => s.theme);
--  const monacoRef = useRef<Parameters<OnMount>[1] | null>(null);
-+  const monacoRef = useRef<Parameters<OnMount>[1]>(null);
- 
-   const onEditorMount: OnMount = useCallback((editor, monaco) => {
-     monacoRef.current = monaco;
-```
-
-**File**: `docs/memory/skills-pipeline.md` (modified, +13/-0)
-```diff
-@@ -345,6 +345,19 @@ gate or touching the orchestrator.
- - Config: `skills.evolution.applicabilityProfile.{enabled, publish,
-   windowDays}`, defaults `true`, `true`, `14`.
- 
-+#### Exercising it locally
-+
-+`scripts/sim-mesh/` brings up two throwaway gateways on one machine, joined
-+only over loopback with the public bootstraps stripped, and drives the whole
-+outbound and inbound path without an LLM: seeded evolved skills on the
-+publisher go through the real housekeeping pass (evidence record, profile,
-+signed trailer, orchestrator publish), arrive on the receiver through its
-+orchestrator, and land in quarantine with the fit on the envelope, in the
-+review list, in the staged meta after an operator accept and in the
-+evolution status. A signed retraction from the publisher removes the
-+receiver's quarantined copy. See the README there for the exact commands and
-+the expected fits.
-+
- ### Measuring it: the ablation harness (PLAN-45 Phase 5.1 and 5.2)
- 
- The mechanism above is only a claim until it has numbers. `pnpm
-```
-
-**File**: `scripts/sim-mesh/README.md` (added, +82/-0)
-```diff
-@@ -0,0 +1,82 @@
-+# Local two-node mesh test
-+
-+Two throwaway Bitterbot nodes on one machine, connected only to each other
-+over loopback, so the skill propagation path can be exercised end to end
-+without an LLM and without touching the public mesh:
-+
-+evolved skill on A → housekeeping (evidence record, applicability profile,
-+signed provenance trailer) → orchestrator `publish_skill` → Gossipsub →
-+B's orchestrator → `skill_received` → ingest (signature, hash, binding,
-+applicability fit) → quarantine → operator accept → staging → evolution
-+status, and a signed retraction back the other way.
-+
-+Each node is a real gateway with its own state dir, keys, ports and
-+orchestrator. Dreams, consolidation, curiosity and memory search are off in
-+the generated config so a test node makes no model or embedding calls. The
-+orchestrator runs through `orchestrator-isolated.sh`, which drops every
-+non-loopback bootstrap the gateway merges in from the defaults and DNS and
-+forces relay mode off. A test node therefore never reaches the relay fleet.
-+
-+Budget: each fresh gateway settles around 700 MB RSS. On a small box stop
-+them as soon as the run is done.
-+
-+## Run
-+
-+Build first (`pnpm build`) so `dist/entry.js` is current. All paths below
-+are relative to the repository root. Replace `$A`/`$B` with the state dirs.
-+
-+```bash
-+A=~/bitterbot-sim/a; B=~/bitterbot-sim/b
-+export A_IPC=/tmp/bitterbot-orchestrator-sim-a.sock B_IPC=/tmp/bitterbot-orchestrator-sim-b.sock
-+
-+# 1. Fresh identities. A node whose key dir is empty would otherwise inherit a
-+#    legacy key from <repo>/keys or ~/keys and share the live node's peer id.
-+mkdir -p $A/keys $B/keys
-+for n in a b; do
-+  timeout 4 orchestrator/target/release/bitterbot-orchestrator \
-+    --ipc-path /tmp/keygen-$n.sock --key-dir ~/bitterbot-sim/$n/keys \
-+    --listen-addr /ip4/127.0.0.1/tcp/9299 --relay-mode off >/dev/null 2>&1 || true
-+  rm -f /tmp/keygen-$n.sock
-+done
-+
-+# 2. Node A (publisher): weaker primary model so its "poor" skill reads as such on B.
-+node scripts/sim-mesh/write-config.mjs a 19101 9201 9857 anthropic/claude-haiku-4-5
-+BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
-+  setsid nohup node dist/entry.js gateway > $A/gateway.log 2>&1 < /dev/null &
-+until curl -sf http://127.0.0.1:9857/api/peers >/dev/null; do sleep 2; done
-+A_PEER=$(curl -s http://127.0.0.1:9857/api/peers | sed 's/.*"peer_id":"\([^"]*\)".*/\1/')
-+
-+# 3. Node B (receiver) dials A over loopback.
-+node scripts/sim-mesh/write-config.mjs b 19102 9202 9858 anthropic/claude-opus-4-8 \
-+  /ip4/127.0.0.1/tcp/9201/p2p/$A_PEER
-+BITTERBOT_STATE_DIR=$B BITTERBOT_ORCHESTRATOR_IPC_PATH=$B_IPC \
-+  setsid nohup node dist/entry.js gateway > $B/gateway.log 2>&1 < /dev/null &
-+until curl -s http://127.0.0.1:9857/api/peers | grep -q '"connected_peers":1'; do sleep 2; done
-+
-+# 4. Publish from A through its real housekeeping pass and orchestrator.
-+BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
-+  node --import tsx scripts/sim-mesh/publish-sim.mts run1
-+
-+# 5. Read the result on B: review list, fit, then accept one into staging.
-+BITTERBOT_STATE_DIR=$B node dist/entry.js skills incoming list --json
-+cat $B/skills-incoming/sim-mesh-good-run1/.envelope.json | grep -A4 applicability_fit
-+BITTERBOT_STATE_DIR=$B node dist/entry.js skills incoming accept sim-mesh-good-run1
-+cat $B/skills-staging/sim-mesh-good-run1/.evolution-meta.json | grep -A4 applicabilityFit
-+
-+# 6. Retract the other one from A; B drops its quarantined copy within a second.
-+BITTERBOT_STATE_DIR=$A BITTERBOT_ORCHESTRATOR_IPC_PATH=$A_IPC \
-+  node --import tsx scripts/sim-mesh/retract-sim.mts sim-mesh-poor-run1
-+grep -i retraction $B/gateway.log
-+
-+# 7. Stop both gateways (their orchestrators exit with them) and keep or delete the dirs.
-+pkill -f "bitterbot-orchestrator-sim-[ab].sock"
-+```
-+
-+Expected on B with the defaults above: `sim-mesh-good-run1` fit `good`,
-+score 1.0, no mismatches; `sim-mesh-poor-run1` fit `poor`, score 0.25, with
-+the weaker model, the declared OS, the missing binary and the thin evidence
-+named. The fit orders evaluation and tightens the canary; it never admits or
-+rejects a skill (see `docs/memory/skills-pipeline.md`).
-+
-+Scripts here import from `src/` and run under `node --import tsx`; they are
-+not part of the build.
-```
-
-**File**: `scripts/sim-mesh/orchestrator-isolated.sh` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+#!/usr/bin/env bash
-+# Isolated-mesh wrapper for local multi-node tests (scripts/sim-mesh/README.md).
-+#
-+# The gateway always merges the public relay fleet (and the DNS bootstrap list)
-+# into the orchestrator's --bootstrap arguments. A test node must never dial
-+# them: a simulated skill would gossip onto the real mesh. This wrapper keeps
-+# only loopback bootstraps, forces relay mode off and passes everything else
-+# through to the real binary. Point `p2p.orchestratorBinary` at it.
-+set -euo pipefail
-+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+REAL="${SIM_MESH_ORCHESTRATOR:-$HERE/../../orchestrator/target/release/bitterbot-orchestrator}"
-+args=()
-+while [ $# -gt 0 ]; do
-+  case "$1" in
-+    --bootstrap)
-+      case "$2" in /ip4/127.0.0.1/*) args+=("$1" "$2") ;; esac
-+      shift 2
-+      ;;
-+    --relay-mode) shift 2 ;;
-+    *)
-+      args+=("$1")
-+      shift
-+      ;;
-+  esac
-+done
-+exec "$REAL" "${args[@]}" --relay-mode off
-```
-
-**File**: `scripts/sim-mesh/publish-sim.mts` (added, +204/-0)
-```diff
-@@ -0,0 +1,204 @@
-+/**
-+ * Publisher side of the local two-node mesh test (scripts/sim-mesh/README.md).
-+ *
-+ *   BITTERBOT_STATE_DIR=~/bitterbot-sim/a BITTERBOT_ORCHESTRATOR_IPC_PATH=/tmp/bitterbot-orchestrator-sim-a.sock \
-+ *     node --import tsx scripts/sim-mesh/publish-sim.mts <tag>
-+ *
-+ * Seeds two skills exactly as the evolution loop leaves them (SKILL.md,
-+ * `.evolution-meta.json` with an accepted gate verdict, credited reads in the
-+ * skill-wiki ledger), then runs the REAL housekeeping pass against the node's
-+ * state dir: evidence record, applicability profile, signed provenance trailer
-+ * and the orchestrator `publish_skill` verb over the node's own IPC socket.
-+ * No LLM is involved. The "good" skill was measured on the receiver's model
-+ * with eight passing runs; the "poor" one on a weaker model, declares another
-+ * OS and a binary nobody has, and carries two thin runs.
-+ */
-+import { randomUUID } from "node:crypto";
-+import fs from "node:fs/promises";
-+import net from "node:net";
-+import path from "node:path";
-+import readline from "node:readline";
-+import { WIKI_SUBDIR } from "../../src/agents/skills/impact-trail.js";
-+import { keyPairFromPrivateKeyPem } from "../../src/commerce/envelope.js";
-+import { loadConfig } from "../../src/config/io.js";
-+import { loadOrCreateDeviceIdentity } from "../../src/infra/device-identity.js";
-+import { ipcAuthLine, loadOrCreateIpcToken } from "../../src/infra/orchestrator-ipc-token.js";
-+import { resolveP2pKeyDir } from "../../src/infra/p2p-key-dir.js";
-+import { runHousekeeping } from "../../src/memory/skill-evolution/housekeeping.js";
-+
-+const configDir = process.env.BITTERBOT_STATE_DIR;
-+const ipcPath = process.env.BITTERBOT_ORCHESTRATOR_IPC_PATH;
-+if (!configDir || !ipcPath) {
-+  throw new Error("set BITTERBOT_STATE_DIR and BITTERBOT_ORCHESTRATOR_IPC_PATH to the test node's");
-+}
-+const TAG = process.argv[2] ?? "mesh1";
-+const GOOD_MODEL = process.env.SIM_MESH_GOOD_MODEL ?? "anthropic/claude-opus-4-8";
-+const POOR_MODEL = process.env.SIM_MESH_POOR_MODEL ?? "anthropic/claude-haiku-4-5";
-+const now = Date.now();
-+const DAY = 86_400_000;
-+
-+type Pending = { res: (v: unknown) => void; rej: (e: Error) => void; t: NodeJS.Timeout };
-+type Ipc = { send: (type: string, payload: unknown) => Promise<unknown>; close: () => void };
-+
-+/** The same JSON-line protocol the gateway's orchestrator bridge speaks. */
-+function connectIpc(socketPath: string, token: string): Promise<Ipc> {
-+  return new Promise((resolve, reject) => {
-+    const pending = new Map<string, Pending>();
-+    const sock = net.createConnection({ path: socketPath }, () => {
-+      sock.write(ipcAuthLine(token));
-+      resolve({
-+        send: (type, payload) =>
-+          new Promise((res, rej) => {
-+            const id = randomUUID();
-+            const t = setTimeout(() => {
-+              pending.delete(id);
-+              rej(new Error(`${type} timed out`));
-+            }, 20_000);
-+            pending.set(id, { res, rej, t });
-+            sock.write(`${JSON.stringify({ type, id, payload })}\n`);
-+          }),
-+        close: () => sock.end(),
-+      });
-+    });
-+    sock.on("error", reject);
-+    readline.createInterface({ input: sock }).on("line", (line) => {
-+      let msg: { type: string; id?: string; payload?: unknown };
-+      try {
-+        msg = JSON.parse(line) as typeof msg;
-+      } catch {
-+        return;
-+      }
-+      const p = msg.type === "response" && msg.id ? pending.get(msg.id) : undefined;
-+      if (p && msg.id) {
-+        clearTimeout(p.t);
-+        pending.delete(msg.id);
-+        p.res(msg.payload);
-+      }
-+    });
-+  });
-+}
-+
-+const seeds = [
-+  { name: `sim-mesh-good-${TAG}`, model: GOOD_MODEL, bins: ["node"], os: null, runs: 8, fails: 0 },
-+  {
-+    name: `sim-mesh-poor-${TAG}`,
-+    model: POOR_MODEL,
-+    bins: ["definitely-missing-bin-xyz"],
-+    os: ["darwin"],
-+    runs: 2,
-+    fails: 1,
+@@ -0,0 +1,770 @@
++{
++  "git_commit": "33abb4e0+dirty",
++  "recencyBoost": true,
++  "postFusionBoostScale": 0.1,
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 219.7,
++  "summary": {
++    "fused": {
++      "R@1": "20.0%",
++      "R@5": "40.0%",
++      "R@10": "46.7%",
++      "MRR": "0.276"
++    },
++    "vector": {
++      "R@1": "6.7%",
++      "R@5": "23.3%",
++      "R@10": "40.0%",
++      "MRR": "0.150"
++    },
++    "keyword": {
++      "R@1": "28.3%",
++      "R@5": "55.0%",
++      "R@10": "66.7%",
++      "MRR": "0.398"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    }
 +  },
-+] as const;
-+
-+const liveRoot = path.join(configDir, "skills");
-+const wikiDir = path.join(configDir, WIKI_SUBDIR);
-+await fs.mkdir(wikiDir, { recursive: true });
-+let readLines = "";
-+for (const s of seeds) {
-+  const dir = path.join(liveRoot, s.name);
-+  await fs.mkdir(dir, { recursive: true });
-+  const skillMd = [
-+    "---",
-+    `name: ${s.name}`,
-+    `description: Use when the task asks to ${s.name} against a flaky host; not for local files.`,
-+    "bitterbot:",
-+    "  requires:",
-+    `    bins: [${s.bins.join(", ")}]`,
-+    ...(s.os ? [`  os: [${s.os.join(", ")}]`] : []),
-+    "---",
-+    "",
-+    `Mesh simulation skill (${TAG}). Steps: check the host answers, retry twice with backoff, report the final status. It does nothing real.`,
-+    "",
-+  ].join("\n");
-+  await fs.writeFile(path.join(dir, "SKILL.md"), skillMd);
-+  const meta = {
-+    origin: "wiki-evolution",
-+    stagedAt: now - 5 * DAY,
-+    validation: {
-+      mode: "tasks",
-+      verdict: "accepted",
-+      validatedAt: now - 4 * DAY,
-+      model: s.model,
-+      evolverModel: s.mod
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 15,
++      "keywordAt5": 24
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 9,
++      "keywordAt5": 9
++    }
++  },
++  "per_question": [
++    {
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": 4,
++        "vector": 19,
++        "keyword": 5,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 17,
++        "vector": 23,
++        "keyword": 15,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 1,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 20,
++        "vector": 7,
++        "keyword": 37,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": 31,
++        "vector": 50,
++        "keyword": 6,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": 6,
++        "vector": 6,
++        "keyword": 2,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 1,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 5,
++        "vector": 6,
++        "keyword": 9,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": 9,
++        "vector": 9,
++        "keyword": 12,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory"
 ```
 
-**File**: `scripts/sim-mesh/retract-sim.mts` (added, +76/-0)
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.25.json` (added, +770/-0)
 ```diff
-@@ -0,0 +1,76 @@
-+/**
-+ * Publisher side: retract a skill this test node published (scripts/sim-mesh/README.md).
-+ *
-+ *   BITTERBOT_STATE_DIR=... BITTERBOT_ORCHESTRATOR_IPC_PATH=... \
-+ *     node --import tsx scripts/sim-mesh/retract-sim.mts <skillName> [reason]
-+ *
-+ * Uses the real `publishRetraction` (PLAN-45 3.4): the signed stub rides the
-+ * publish verb and the receiver drops the quarantined copy by author key and
-+ * content hash.
-+ */
-+import { randomUUID } from "node:crypto";
-+import fs from "node:fs/promises";
-+import net from "node:net";
-+import path from "node:path";
-+import readline from "node:readline";
-+import { loadConfig } from "../../src/config/io.js";
-+import { ipcAuthLine, loadOrCreateIpcToken } from "../../src/infra/orchestrator-ipc-token.js";
-+import { resolveP2pKeyDir } from "../../src/infra/p2p-key-dir.js";
-+import { publishRetraction } from "../../src/memory/skill-evolution/p2p-publish.js";
-+
-+const configDir = process.env.BITTERBOT_STATE_DIR;
-+const ipcPath = process.env.BITTERBOT_ORCHESTRATOR_IPC_PATH;
-+const [name, reason = "simulation: retract after mesh test"] = process.argv.slice(2);
-+if (!configDir || !ipcPath || !name) {
-+  throw new Error(
-+    "usage: BITTERBOT_STATE_DIR=.. BITTERBOT_ORCHESTRATOR_IPC_PATH=.. retract-sim.mts <skillName> [reason]",
-+  );
-+}
-+const meta = JSON.parse(
-+  await fs.readFile(path.join(configDir, "skills", name, ".evolution-meta.json"), "utf-8"),
-+) as { published?: { contentHash?: string } };
-+const contentHash = meta.published?.contentHash;
-+if (!contentHash) {
-+  throw new Error(`${name} has no published marker; nothing to retract`);
-+}
-+const token = loadOrCreateIpcToken(resolveP2pKeyDir(loadConfig().p2p?.keyDir));
-+const pending = new Map<string, (v: unknown) => void>();
-+const sock = await new Promise<net.Socket>((res, rej) => {
-+  const s = net.createConnection({ path: ipcPath }, () => {
-+    s.write(ipcAuthLine(token));
-+    res(s);
-+  });
-+  s.on("error", rej);
-+});
-+readline.createInterface({ input: sock }).on("line", (line) => {
-+  let msg: { type: string; id?: string; payload?: unknown };
-+  try {
-+    msg = JSON.parse(line) as typeof msg;
-+  } catch {
-+    return;
-+  }
-+  const settle = msg.type === "response" && msg.id ? pending.get(msg.id) : undefined;
-+  if (settle && msg.id) {
-+    pending.delete(msg.id);
-+    settle(msg.payload);
-+  }
-+});
-+const publisher = {
-+  publishSkill: (skillMd: string, skillName: string) =>
-+    new Promise<unknown>((res) => {
-+      const id = randomUUID();
-+      pending.set(id, res);
-+      sock.write(
-+        `${JSON.stringify({ type: "publish_skill", id, payload: { skill_md: skillMd, name: skillName } })}\n`,
-+      );
-+    }),
-+};
-+const result = await publishRetraction({
-+  publisher,
-+  name,
-+  contentHash,
-+  reason,
-+  storeOpts: { configDir },
-+});
-+console.log("retraction:", JSON.stringify(result), "of", contentHash.slice(0, 12));
-+sock.end();
+@@ -0,0 +1,770 @@
++{
++  "git_commit": "33abb4e0+dirty",
++  "recencyBoost": true,
++  "postFusionBoostScale": 0.25,
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 502,
++  "summary": {
++    "fused": {
++      "R@1": "15.0%",
++      "R@5": "33.3%",
++      "R@10": "40.0%",
++      "MRR": "0.241"
++    },
++    "vector": {
++      "R@1": "6.7%",
++      "R@5": "23.3%",
++      "R@10": "40.0%",
++      "MRR": "0.150"
++    },
++    "keyword": {
++      "R@1": "28.3%",
++      "R@5": "55.0%",
++      "R@10": "66.7%",
++      "MRR": "0.399"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    }
++  },
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 14,
++      "keywordAt5": 24
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 6,
++      "keywordAt5": 9
++    }
++  },
++  "per_question": [
++    {
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": 4,
++        "vector": 20,
++        "keyword": 4,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 17,
++        "vector": 23,
++        "keyword": 15,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 1,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 23,
++        "vector": 7,
++        "keyword": 36,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": 32,
++        "vector": 49,
++        "keyword": 6,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": 16,
++        "vector": 6,
++        "keyword": 2,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 2,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 5,
++        "vector": 6,
++        "keyword": 9,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": 9,
++        "vector": 9,
++        "keyword": 12,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory"
+```
+
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-0.json` (added, +770/-0)
+```diff
+@@ -0,0 +1,770 @@
++{
++  "git_commit": "33abb4e0+dirty",
++  "recencyBoost": true,
++  "postFusionBoostScale": 0,
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 206.8,
++  "summary": {
++    "fused": {
++      "R@1": "26.7%",
++      "R@5": "41.7%",
++      "R@10": "48.3%",
++      "MRR": "0.336"
++    },
++    "vector": {
++      "R@1": "6.7%",
++      "R@5": "23.3%",
++      "R@10": "40.0%",
++      "MRR": "0.150"
++    },
++    "keyword": {
++      "R@1": "28.3%",
++      "R@5": "53.3%",
++      "R@10": "66.7%",
++      "MRR": "0.398"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    }
++  },
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 16,
++      "keywordAt5": 23
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 9,
++      "keywordAt5": 9
++    }
++  },
++  "per_question": [
++    {
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": 4,
++        "vector": 18,
++        "keyword": 7,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 17,
++        "vector": 23,
++        "keyword": 15,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 1,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 18,
++        "vector": 7,
++        "keyword": 37,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": 31,
++        "vector": 50,
++        "keyword": 6,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": 1,
++        "vector": 6,
++        "keyword": 2,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 1,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 5,
++        "vector": 6,
++        "keyword": 9,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": 9,
++        "vector": 9,
++        "keyword": 12,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory",
+
+```
+
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-1.json` (added, +768/-0)
+```diff
+@@ -0,0 +1,768 @@
++{
++  "git_commit": "33abb4e0+dirty",
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 341.9,
++  "summary": {
++    "fused": {
++      "R@1": "3.3%",
++      "R@5": "8.3%",
++      "R@10": "13.3%",
++      "MRR": "0.063"
++    },
++    "vector": {
++      "R@1": "6.7%",
++      "R@5": "21.7%",
++      "R@10": "28.3%",
++      "MRR": "0.123"
++    },
++    "keyword": {
++      "R@1": "16.7%",
++      "R@5": "30.0%",
++      "R@10": "33.3%",
++      "MRR": "0.220"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    }
++  },
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 2,
++      "keywordAt5": 12
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 3,
++      "keywordAt5": 6
++    }
++  },
++  "per_question": [
++    {
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": 33,
++        "vector": 16,
++        "keyword": 2,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 21,
++        "vector": 23,
++        "keyword": 13,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 13,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 44,
++        "vector": 6,
++        "keyword": 28,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": 36,
++        "vector": 48,
++        "keyword": 6,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 23,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 5,
++        "vector": 6,
++        "keyword": 9,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory",
++      "ranks": {
++        "fused": nu
+```
+
+**File**: `benchmarks/live-recall/results/live-recall-2026-10-27_keyword-or_boosts-1_recency-off.json` (added, +769/-0)
+```diff
+@@ -0,0 +1,769 @@
++{
++  "git_commit": "33abb4e0+dirty",
++  "recencyBoost": false,
++  "snapshotSha256": "1d3432bb80e181f2b86da3e46c7a69a72f85d14b04240125a7153f45d4a7dc17",
++  "questionsSha256": "63a048d32bd0438b852970a341a29d604cc6ee997932717bdfcf7e3cd978a531",
++  "n": 60,
++  "maxResults": 50,
++  "elapsed_seconds": 538.3,
++  "summary": {
++    "fused": {
++      "R@1": "5.0%",
++      "R@5": "11.7%",
++      "R@10": "16.7%",
++      "MRR": "0.087"
++    },
++    "vector": {
++      "R@1": "8.3%",
++      "R@5": "23.3%",
++      "R@10": "30.0%",
++      "MRR": "0.135"
++    },
++    "keyword": {
++      "R@1": "18.3%",
++      "R@5": "33.3%",
++      "R@10": "36.7%",
++      "MRR": "0.244"
++    },
++    "graph": {
++      "R@1": "0.0%",
++      "R@5": "0.0%",
++      "R@10": "0.0%",
++      "MRR": "0.000"
++    }
++  },
++  "bySource": {
++    "memory": {
++      "n": 34,
++      "fusedAt5": 3,
++      "keywordAt5": 14
++    },
++    "sessions": {
++      "n": 26,
++      "fusedAt5": 4,
++      "keywordAt5": 6
++    }
++  },
++  "per_question": [
++    {
++      "chunkId": "5f8a69bcc1abc60e8799fa8ae8d36207e7302d66b453fb2de6404f71b384f72d",
++      "source": "memory",
++      "ranks": {
++        "fused": 30,
++        "vector": 16,
++        "keyword": 2,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "22dc543e9804eb55ec4038332e038d7628fe3c6cb876bdbc8f30fa9a139d0dbb",
++      "source": "sessions",
++      "ranks": {
++        "fused": 14,
++        "vector": 23,
++        "keyword": 13,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "handover_09dc1692-877d-46f4-8c9e-461b91188414",
++      "source": "memory",
++      "ranks": {
++        "fused": 6,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "dc18ffb0459d032093dac17c8b7b45e03041332755cded9582cbc2a30c520dcc",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "0ed4c92a59c9ad5a819cd7a031b697ba7b6efabad198e5706f9351c312e091e5",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "90d60f313c052ea0c85074b61ed7cb1a1f97677c96383ce3372589bbfd0d63b7",
++      "source": "sessions",
++      "ranks": {
++        "fused": 20,
++        "vector": 7,
++        "keyword": 32,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "447f9795b25df9be38063de4b9b1d4c1290531fd3ae6168848c557317aa11dcf",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "bf45d59b420c7ee6bacf6fc39d8836d2ed965aa297bd2d9243078c1e523e6f2f",
++      "source": "memory",
++      "ranks": {
++        "fused": 30,
++        "vector": 49,
++        "keyword": 6,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "66064693c65de41cec5293b2dfa1e118baaaf0c217f26b1ff86f82c3af97d50f",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "57dbdc025659c60caf744290e66c5bf9038a543f9e7a05070ea449f8a3a2b541",
++      "source": "sessions",
++      "ranks": {
++        "fused": 16,
++        "vector": 1,
++        "keyword": 1,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "a2bab9969dda02aaf7b2f4427e12eac2fff6839838024ae82a471d09edd0cb5d",
++      "source": "sessions",
++      "ranks": {
++        "fused": 5,
++        "vector": 6,
++        "keyword": 9,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "01dd35289b1175d09c08da445df0e51c2686ae18921eab6c493ad9b17545c5e3",
++      "source": "sessions",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "e47a986ce05f942ff864043ceed612dc866fef3087103157a6743314d828f6d6",
++      "source": "memory",
++      "ranks": {
++        "fused": null,
++        "vector": null,
++        "keyword": null,
++        "graph": null
++      },
++      "returned": 50,
++      "fusion": "rrf"
++    },
++    {
++      "chunkId": "d2d6acd1664def1a8fee4574e6bc115dad59a628c326426881b64a127d491ab0",
++      "source": "memory",
++      "rank
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
+- **PR #313** (closed): bench(longmemeval): stratified per-type sampling and the stratified before/after of the keyword-channel change (@VGIL77)
 - **PR #312** (2026-10-27): fix(memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (@VGIL77)
 - **PR #311** (2026-10-27): fix(skills): lint src/agents/skills again, dedupe fit text, two-node mesh harness, startup log (@VGIL77)
 - **PR #310** (2026-10-27): fix(skills): resolve the receiver's primary model from agents.defaults.model for the applicability fit (@VGIL77)
 - **PR #309** (2026-10-27): feat(memory): per-channel retrieval diagnostics and skill applicability profiles (PLAN-58) (@VGIL77)
-- **PR #308** (2026-10-23): fix(compute): local operator pools are local trust, startup reconcile waits for the coordinator, beta installs update to stable (@VGIL77)
-- **PR #292** (2026-10-22): fix(memory): attach compute episode and nudge sinks on every manager get (@VGIL77)
 
 ---
 
@@ -2957,29 +3341,42 @@ surfaced on 2026-10-27.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): keyword channel matches natural-language queries; failed embedding batc
+## X. memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchma
 
 **RULE**:
-When implementing operations in `benchmarks/longmemeval/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/live-recall/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a22e2df0`: memory): keyword channel matches natural-language queries; failed embedding batch no longer aborts sync (#312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45e9cfeb`: memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (#315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/longmemeval/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Saved runs (LongMemEval-S, first 50 questions, all `single-session-user`, quiet bridge):
+# Live-memory held-out recall
 
-| metric                            | `bitterbot_longmemeval_s_retrieval.json` (code 9708d2d1, AND-joined FTS) | `..._2026-10-27_keyword-or.json` (code 09e5a54e, OR-joined FTS) |
-| --------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| questions scored                  | 49 (one lost to the empty-embedding NOT NULL bug)                        | 50                                                              |
-| R@5 / R@10                        | 98.0% / 100%                                                             | 100% / 100%                                                     |
-| vector R@5                        | 98.0%                                                                    | 98.0%                                                           |
-| keyword R@5 / R@10                | 0.0% / 0.0%                                                              | 100% / 100%                                                     |
-| attribution of the top-5 gold hit 
+A retrieval test built from a node's own memory store instead of a public
+dataset. Public benchmarks such as LongMemEval-S saturate: the vector channel
+alone already puts some chunk of the gold session in the top 5 on nearly every
+question, so two retrievers that are both decent look identical. The operator's
+real memory is harder and more relevant: it is full of names, file paths,
+identifiers and project words that embeddings blur and exact-term matching
+finds, and it is the data the agent actually searches.
+
+## Method
+
+1. **Snapshot.** Take a consistent read-only copy of the live store
+   (`VACUUM INTO` on `~/.bitterbot/memory/main.sqlite`). Nothing below touches
+   the live database.
+2. **Sample.** `make-questions.mts` selects chunks from `memory` and `sessions`
+   sources with a live lifecycle and 300 to 1500 characters, orders them by
+   `sha256(seed + id)` so the sample is reproducible, drops any chunk the
+   secret redactor would change, and takes the first N.
+3. **Questions.** A small model (default `claude-haiku-4-5`) writes one
+   question per chunk under a fixed prompt: a question the passage answers,
+   phrased as someone half-remembering 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2989,4 +3386,4 @@ Saved runs (LongMemEval-S, first 50 questions, all `single-session-user`, quiet 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a22e2df0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45e9cfeb` are properly handled with clean fallback behavior.

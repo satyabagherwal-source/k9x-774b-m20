@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `2ddb246a`  
+> **Source Version**: `d51e8fdd`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:18:00.996Z  
+> **Timestamp**: 2026-10-27T20:52:45.777Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:12:51.918Z  
+> **Harvest Timestamp**: 2026-10-27T20:52:44.861Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 62303 stars
+- **Stars / Engagement**: 62324 stars
 
 ---
 
@@ -938,31 +938,328 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5db32b4` (2026-10-23)
-**Commit Message**: build: drop debug info for dependencies in dev builds
+### Incident Patch 1: `cd2fa712` (2026-10-26)
+**Commit Message**: fix: update Cargo.lock crates for published RustSec advisories (#1421)
 
-A clean debug build of src-tauri took 3.5G of target; without dependency debug info it takes 2.4G. Debug info stays on for the pake crate, so its backtraces and breakpoints are unchanged, and release builds are untouched.
+Update targeted transitive dependencies in src-tauri/Cargo.lock (`h2`, `rustls`,
+`rustls-webpki`, `webpki-roots`, `plist`, `tauri-winrt-notification`, and
+`quinn-proto`) to resolve 16 published RustSec vulnerability advisories (plus 2
+intermediate-version advisories) without modifying Cargo.toml.
 
-**File**: `src-tauri/Cargo.toml` (modified, +5/-0)
+**File**: `src-tauri/Cargo.lock` (modified, +77/-39)
 ```diff
-@@ -97,3 +97,8 @@ codegen-units = 1
- lto = "thin"
- opt-level = "z"
- strip = true
+@@ -441,6 +441,17 @@ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+ 
++[[package]]
++name = "chacha20"
++version = "0.10.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06"
++dependencies = [
++ "cfg-if",
++ "cpufeatures 0.3.1",
++ "rand_core 0.10.1",
++]
 +
-+# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
-+# backtraces and breakpoints in pake code are unchanged.
-+[profile.dev.package."*"]
-+debug = false
+ [[package]]
+ name = "chrono"
+ version = "0.4.44"
+@@ -584,6 +595,15 @@ dependencies = [
+  "libc",
+ ]
+ 
++[[package]]
++name = "cpufeatures"
++version = "0.3.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566"
++dependencies = [
++ "libc",
++]
++
+ [[package]]
+ name = "crc32fast"
+ version = "1.5.0"
+@@ -747,7 +767,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -925,7 +945,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -1291,11 +1311,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "r-efi",
+  "wasip2",
+- "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1305,10 +1323,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "139ef39800118c7683f2fd3c98c1b23c09ae076556b435f8e9064ae108aaeeec"
+ dependencies = [
+  "cfg-if",
++ "js-sys",
+  "libc",
+  "r-efi",
++ "rand_core 0.10.1",
+  "wasip2",
+  "wasip3",
++ "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1479,9 +1500,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.13"
++version = "0.4.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2f44da3a8150a6703ed5d34e164b875fd14c2cdab9af1252a9a1020bde2bdc54"
++checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -2559,7 +2580,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.45.0",
+ ]
+ 
+ [[package]]
+@@ -2823,13 +2844,13 @@ checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
+ 
+ [[package]]
+ name = "plist"
+-version = "1.8.0"
++version = "1.10.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "740ebea15c5d1428f910cd1a5f52cebf8d25006245ed8ade92702f4943d91e07"
++checksum = "7da1d65da6dd5d1e44199ac0f58712d241c0f439f80adea8924d832384087f85"
+ dependencies = [
+  "base64 0.22.1",
+  "indexmap 2.13.0",
+- "quick-xml 0.38.4",
++ "quick-xml",
+  "serde",
+  "time",
+ ]
+@@ -3009,18 +3030,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "quick-xml"
+-version = "0.37.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
+-dependencies = [
+- "memchr",
+-]
+-
+-[[package]]
+-name = "quick-xml"
+-version = "0.38.4"
++version = "0.41.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b66c2058c55a409d601666cffe35f04333cf1013010882cec174a7467cd4e21c"
++checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
+ dependencies = [
+  "memchr",
+ ]
+@@ -3047,14 +3059,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "quinn-proto"
+-version = "0.11.15"
++version = "0.11.19"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
++checksum = "0e750cca55fe4f0439a15d0bb529da9651e79993e8e72c61a899a36d462befbe"
+ dependencies = [
+  "bytes",
+- "getrandom 0.3.4",
++ "getrandom 0.4.1",
+  "lru-slab",
+- "rand 0.9.2",
++ "rand 0.10.3",
++ "rand_pcg 0.10.2",
+  "ring",
+  "rustc-hash",
+  "rustls",
+@@ -3106,7 +3119,7 @@ dependencies = [
+  "rand_chacha 0.2.2",
+  "rand_core 0.5.1",
+  "rand_hc",
+- "rand_pcg",
++ "rand_pcg 0.2.1",
+ ]
+ 
+ [[package]]
+@@ -3130,6 +3143,17 @@ dependencies = [
+  "rand_core 0.9.5",
+ ]
+ 
++[[package]]
++name = "rand"
++version = "0.10.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
++dependencies = [
++ "chacha20",
++ "getrandom 0.4.1",
++ "rand_core 0.10.1",
++]
++
+ [[package]]
+ name = "rand_chacha"
+ version = "0.2.2"
+@@ -3187,6 +3211,12 @@ dependencies = [
+  "getrandom 0.3.4",
+ ]
+ 
++[[package]]
++name = "rand_core"
++version = "0.10.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
++
+ [[package]]
+ name = "rand_hc"
+ version = "0.2.0"
+@@ -3205,6 +3235,15
+```
+
+---
+
+### Incident Patch 2: `1c685367` (2026-10-26)
+**Commit Message**: fix(test): drop hashbangs that broke the review gate tests on windows
+
+Windows checks out CRLF, and Vitest cannot parse an imported module whose first line is a hashbang ending in \r, so the CLI fast suite and full build failed on windows-latest with 'Invalid or unexpected token' in check-incidents and risk-tier tests. Both scripts are run as node scripts/..., so the hashbang and executable bit go, and a test now fails when any script a test imports starts with one.
+
+Verified: converting the files to CRLF reproduced the failure on macOS and passes without the hashbang; the new assertion fails with a hashbang restored; 32 gate tests pass.
+Revert: revert this commit (the windows legs fail again).
+
+**File**: `scripts/check-incidents.mjs` (modified, +0/-1)
+```diff
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env node
+ // Every row of docs/incidents.md names real commits, a known layer and a
+ // catcher the code defines.
+ //
+```
+
+**File**: `scripts/risk-tier.mjs` (modified, +0/-1)
+```diff
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env node
+ // Name the verification a change needs from the paths it touches, not from
+ // who wrote it.
+ //
+```
+
+**File**: `tests/unit/check-incidents.test.ts` (modified, +29/-0)
+```diff
+@@ -140,3 +140,32 @@ describe('incident ledger', () => {
+     );
+   });
+ });
++
++describe('scripts imported by tests', () => {
++  // Windows checks out CRLF, and Vitest fails to parse an imported module whose
++  // first line is a hashbang ending in \r ("Invalid or unexpected token").
++  it('do not start with a hashbang', () => {
++    const testsDir = path.join(process.cwd(), 'tests');
++    const imported = new Set<string>();
++    const walk = (dir: string) => {
++      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++        const full = path.join(dir, entry.name);
++        if (entry.isDirectory()) walk(full);
++        else if (/\.test\.[cm]?[jt]s$/.test(entry.name)) {
++          const text = fs.readFileSync(full, 'utf8');
++          for (const m of text.matchAll(
++            /from '((?:\.\.\/)+scripts\/[^']+\.mjs)'/g,
++          )) {
++            imported.add(path.resolve(dir, m[1]));
++          }
++        }
++      }
++    };
++    walk(testsDir);
++    expect(imported.size).toBeGreaterThan(0);
++    const withHashbang = [...imported].filter((file) =>
++      fs.readFileSync(file, 'utf8').startsWith('#!'),
++    );
++    expect(withHashbang).toEqual([]);
++  });
++});
+```
+
+---
+
+### Incident Patch 3: `04c8a8b9` (2026-10-27)
+**Commit Message**: docs: shorten two Chinese FAQ build headings
+
+On a 360px phone pake.run wrapped 「Windows：缺少 Visual Studio 构建工具」 and 「macOS：构建失败，出现模块编译错误」 so the last line held one character. The body right below still names Visual Studio Build Tools in full and the module error, and the table of contents links follow the new anchors.
+
+**File**: `docs/faq_CN.md` (modified, +4/-4)
+```diff
+@@ -19,8 +19,8 @@
+   - [Linux：AppImage 打开后按钮或键盘在 Wayland 下不可用](#linuxappimage-打开后按钮或键盘在-wayland-下不可用)
+   - [Linux："cargo: command not found" 即使已安装 Rust](#linuxcargo-command-not-found-即使已安装-rust)
+   - [Windows：首次构建时安装超时](#windows首次构建时安装超时)
+-  - [Windows：缺少 Visual Studio 构建工具](#windows缺少-visual-studio-构建工具)
+-  - [macOS：构建失败，出现模块编译错误](#macos构建失败出现模块编译错误)
++  - [Windows：缺少 VS 构建工具](#windows缺少-vs-构建工具)
++  - [macOS：构建时模块编译出错](#macos构建时模块编译出错)
+ - [运行时问题](#运行时问题)
+   - [应用窗口太小/太大](#应用窗口太小太大)
+   - [应用图标显示不正确](#应用图标显示不正确)
+@@ -343,7 +343,7 @@ pake https://github.com --name GitHub
+ - 首次安装：Windows 上需要 10-15 分钟
+ - 后续构建：依赖已缓存，速度会快很多
+ 
+-### Windows：缺少 Visual Studio 构建工具
++### Windows：缺少 VS 构建工具
+ 
+ 构建失败，提示缺少 MSVC 或 Windows SDK。
+ 
+@@ -353,7 +353,7 @@ pake https://github.com --name GitHub
+ 2. 安装时选择"使用 C++ 的桌面开发"
+ 3. ARM64 支持：在"单个组件"下额外选择"MSVC v143 - VS 2022 C++ ARM64 构建工具"
+ 
+-### macOS：构建失败，出现模块编译错误
++### macOS：构建时模块编译出错
+ 
+ 在 macOS 26 Beta 或更新版本上，可能看到与 `CoreFoundation` 或 `_Builtin_float` 模块相关的错误。
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1422** (2026-10-26): fix: update vitest, add vite peer and remove unused terser plugin for advisories (@jakero)
+- **PR #1421** (2026-10-26): fix: update Cargo.lock crates for published RustSec advisories (@jakero)
 - **PR #1420** (closed): Fix Pake CLI workflow for pake-cli 3.x (@Bulls64)
 - **PR #1419** (closed): ci: gate the workflows with Plumber and publish the score badge (@Totara-thib)
 - **PR #1417** (2026-10-17): Fix/windows notification default sound (@reg-chen)
 - **PR #1416** (2026-10-17): ci: pin the third-party actions by commit, name the secrets the app build receives and drop persisted checkout credentials (@Totara-thib)
-- **PR #1415** (2026-10-15): fix: stop the IME-confirming Enter (keyCode 229) from reaching the page (@houzixiashanxiedaima)
-- **PR #1409** (2026-10-10): fix: update sharp to 0.35.5 for libheif advisories (@jakero)
 
 ---
 
@@ -982,32 +1279,96 @@ A clean debug build of src-tauri took 3.5G of target; without dependency debug i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: drop debug info for dependencies in dev builds
+## X. update Cargo.lock crates for published RustSec advisories (#1421)
 
 **RULE**:
-When implementing operations in `src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5db32b4`: build: drop debug info for dependencies in dev builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd2fa712`: update Cargo.lock crates for published RustSec advisories (#1421). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+[[package]]
+name = "chacha20"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06"
+dependencies = [
+ "cfg-if",
+ "cpufeatures 0.3.1",
+ "rand_core 0.10.1",
+]
 
-# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
-# backtraces and breakpoints in pake code are unchanged.
-[profile.dev.package."*"]
-debug = false
+[[package]]
+name = "cpufeatures"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566"
+dependencies = [
+ "libc",
+]
+
+ "windows-sys 0.59.0",
+ "windows-sys 0.59.0",
+ "js-sys",
+ "rand_core 0.10.1",
+ "wasm-bindgen",
+version = "0.4.20"
+checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+ "windows-sys 0.45.0",
+version = "1.10.0"
+checksum = "7da1d65da6dd5d1e44199ac0f58712d241c0f439f80adea8924d832384087f85"
+ "quick-xml",
+version = "0.41.0"
+checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
+version = "0.11.19"
+checksum = "0e750cca55fe4f0439a15d0bb529da9651e79993e8e72c61a899a36d462befbe"
+ "getrandom 0.4.1",
+ "rand 0.10.3",
+ "rand_pcg 0.10.2",
+ "rand_pcg 0.2.1",
+[[package]]
+name = "rand"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+check
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "js-sys",
+ "wasm-bindgen",
+version = "0.4.13"
+checksum = "2f44da3a8150a6703ed5d34e164b875fd14c2cdab9af1252a9a1020bde2bdc54"
+ "windows-sys 0.61.2",
+version = "1.8.0"
+checksum = "740ebea15c5d1428f910cd1a5f52cebf8d25006245ed8ade92702f4943d91e07"
+ "quick-xml 0.38.4",
+version = "0.37.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "quick-xml"
+version = "0.38.4"
+checksum = "b66c2058c55a409d601666cffe35f04333cf1013010882cec174a7467cd4e21c"
+version = "0.11.15"
+checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
+ "getrandom 0.3.4",
+ "rand 0.9.2",
+ "rand_pcg",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5db32b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd2fa712` are properly handled with clean fallback behavior.

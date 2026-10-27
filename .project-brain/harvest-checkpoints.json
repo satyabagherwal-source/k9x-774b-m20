@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T20:45:27.348Z",
+  "last_updated": "2026-10-27T20:54:51.699Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
-      "verified_at": "2026-10-25T09:18:01.396Z",
+      "content_hash": "2defab077b721eeee2d1238ead17dca750ed1a72d8d5ea53db8b15a20dee6dce",
+      "verified_at": "2026-10-27T20:52:46.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T09:18:01.396Z"
+      "last_updated": "2026-10-27T20:52:46.374Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
-      "verified_at": "2026-10-27T17:38:04.025Z",
+      "content_hash": "98fcef47f7d480d0e9b2fa577076d242e5bd1fcaa2bb6b642e66ab0103300643",
+      "verified_at": "2026-10-27T20:53:00.503Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:38:04.025Z"
+      "last_updated": "2026-10-27T20:53:00.503Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6096,14 +6096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-fluentui",
-      "content_hash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
-      "verified_at": "2026-10-26T14:29:54.231Z",
+      "content_hash": "ade7d1e2b030cd8d23f5898c67973d56f8b55400b41d5c4b657db4c4df58fac6",
+      "verified_at": "2026-10-27T20:54:51.698Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T14:29:54.231Z"
+      "last_updated": "2026-10-27T20:54:51.698Z"
     },
     "o2sh/onefetch": {
       "repository": "o2sh/onefetch",
@@ -9201,14 +9201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shoutem-ui",
-      "content_hash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
-      "verified_at": "2026-10-25T07:05:16.671Z",
+      "content_hash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
+      "verified_at": "2026-10-27T20:52:51.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:05:16.671Z"
+      "last_updated": "2026-10-27T20:52:51.135Z"
     },
     "databricks/click": {
       "repository": "databricks/click",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
-      "verified_at": "2026-10-27T07:50:43.527Z",
+      "content_hash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
+      "verified_at": "2026-10-27T20:52:54.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T07:50:43.527Z"
+      "last_updated": "2026-10-27T20:52:54.933Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",

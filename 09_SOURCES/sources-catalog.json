@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "2ddb246a",
+    "sourceVersion": "d51e8fdd",
     "license": "GPL-3.0",
-    "contentHash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
-    "lastHarvestedAt": "2026-10-25T09:18:01.384Z",
+    "contentHash": "2defab077b721eeee2d1238ead17dca750ed1a72d8d5ea53db8b15a20dee6dce",
+    "lastHarvestedAt": "2026-10-27T20:52:46.366Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a22e2df0",
+    "sourceVersion": "45e9cfeb",
     "license": "MIT",
-    "contentHash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
-    "lastHarvestedAt": "2026-10-27T17:38:04.018Z",
+    "contentHash": "98fcef47f7d480d0e9b2fa577076d242e5bd1fcaa2bb6b642e66ab0103300643",
+    "lastHarvestedAt": "2026-10-27T20:53:00.487Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "c7b45497",
+    "sourceVersion": "32c88c86",
     "license": "NOASSERTION",
-    "contentHash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
-    "lastHarvestedAt": "2026-10-26T14:29:54.224Z",
+    "contentHash": "ade7d1e2b030cd8d23f5898c67973d56f8b55400b41d5c4b657db4c4df58fac6",
+    "lastHarvestedAt": "2026-10-27T20:54:51.689Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -6055,8 +6055,8 @@
     "sourceUrl": "https://github.com/shoutem/ui",
     "sourceVersion": "92e3f530",
     "license": "NOASSERTION",
-    "contentHash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
-    "lastHarvestedAt": "2026-10-25T07:05:16.659Z",
+    "contentHash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
+    "lastHarvestedAt": "2026-10-27T20:52:51.126Z",
     "learningId": "learn-github-shoutem-ui"
   },
   "databricks-click": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "223a398d",
+    "sourceVersion": "5ad37a73",
     "license": "Apache-2.0",
-    "contentHash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
-    "lastHarvestedAt": "2026-10-27T07:50:43.515Z",
+    "contentHash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
+    "lastHarvestedAt": "2026-10-27T20:52:54.924Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {

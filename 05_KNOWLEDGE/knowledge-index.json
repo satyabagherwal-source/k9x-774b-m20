@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T20:45:27.277Z",
+  "last_updated": "2026-10-27T20:54:51.613Z",
   "total_verified_learnings": 1149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4525,8 +4525,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "a22e2df0",
-      "content_hash": "2103e3268c1c1d95759379e7c8c9fb5fb0d43422ee52ac2c0fec029c26d2b6c8",
+      "source_version": "45e9cfeb",
+      "content_hash": "98fcef47f7d480d0e9b2fa577076d242e5bd1fcaa2bb6b642e66ab0103300643",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4606,7 +4606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:38:03.955Z",
+      "verified_at": "2026-10-27T20:53:00.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36180,8 +36180,8 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "c7b45497",
-      "content_hash": "375db55146eb260b6861bf0d6256ea731c7429d87e6f5b4eed3eab032dd47b0f",
+      "source_version": "32c88c86",
+      "content_hash": "ade7d1e2b030cd8d23f5898c67973d56f8b55400b41d5c4b657db4c4df58fac6",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -36244,6 +36244,21 @@
           "number": 4628,
           "title": "deps): bump browserslist from 4.28.2 to 4.29.3 in the security-dependencies grou",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5001,
+          "title": "Web Animations API Deterministic Freezing for Visual Regression Testing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5002,
+          "title": "Gesture-Isolated Modifier Activation via Keyup-Only State Transitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5003,
+          "title": "Tree-Shaking Measurement Isolation via Explicit Named Export Fixtures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36251,7 +36266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T14:29:54.153Z",
+      "verified_at": "2026-10-27T20:54:51.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42645,8 +42660,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "223a398d",
-      "content_hash": "6964b2cbf6858c564595d404042e380fd36ab2129f8e91f543de83d9da68ef38",
+      "source_version": "5ad37a73",
+      "content_hash": "d3e6cc5f8143db64147ec0c717c27dd45c870bead03fc500db2d410221b43481",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -42664,6 +42679,11 @@
           "number": 3415,
           "title": "bump to go1.27.3, mockery v2.53.8, golangci-lint v2.15.0 (#7771)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5000,
+          "title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42671,7 +42691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T07:50:43.428Z",
+      "verified_at": "2026-10-27T20:52:54.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46396,7 +46416,7 @@
       "platform": "github",
       "source_url": "https://github.com/shoutem/ui",
       "source_version": "92e3f530",
-      "content_hash": "6a8290468069f0ae150592998b06325481b1a20c894d4f2126c0bf7bf00eece1",
+      "content_hash": "188c0abdc7d97bcd1122ef4ea2272b81d3aa9f81f09f647bc6a059d865529f88",
       "dossier_path": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shoutem-ui-learnings.md",
       "promoted_rules": [
@@ -46421,7 +46441,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:05:16.600Z",
+      "verified_at": "2026-10-27T20:52:51.020Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64196,8 +64216,8 @@
       "slug": "tw93-pake",
       "platform": "github",
       "source_url": "https://github.com/tw93/Pake",
-      "source_version": "2ddb246a",
-      "content_hash": "68ff4ddea1d91109215f933bd3150d034d07543a5d906e2d5d1408ced012a836",
+      "source_version": "d51e8fdd",
+      "content_hash": "2defab077b721eeee2d1238ead17dca750ed1a72d8d5ea53db8b15a20dee6dce",
       "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
       "promoted_rules": [
@@ -64220,6 +64240,11 @@
           "number": 4212,
           "title": "build: drop debug info for dependencies in dev builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4999,
+          "title": "update Cargo.lock crates for published RustSec advisories (#1421)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -64227,7 +64252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:18:01.314Z",
+      "verified_at": "2026-10-27T20:52:46.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -94435,7 +94460,7 @@
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-20T17:10:26.063Z"
+      "verified_at": "2026-10-27T20:52:51.020Z"
     },
     "rule-2161": {
       "learning_id": "rule-2161",
@@ -138196,6 +138221,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T20:45:27.264Z"
+    },
+    "rule-4999": {
+      "learning_id": "rule-4999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4999,
+      "title": "update Cargo.lock crates for published RustSec advisories (#1421)",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "d51e8fdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:52:46.276Z"
+    },
+    "rule-5000": {
+      "learning_id": "rule-5000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5000,
+      "title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.0 to 2.33.1 (#7782)",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "5ad37a73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:52:54.836Z"
+    },
+    "rule-5001": {
+      "learning_id": "rule-5001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5001,
+      "title": "Web Animations API Deterministic Freezing for Visual Regression Testing",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "32c88c86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:54:51.596Z"
+    },
+    "rule-5002": {
+      "learning_id": "rule-5002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5002,
+      "title": "Gesture-Isolated Modifier Activation via Keyup-Only State Transitions",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "32c88c86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:54:51.596Z"
+    },
+    "rule-5003": {
+      "learning_id": "rule-5003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5003,
+      "title": "Tree-Shaking Measurement Isolation via Explicit Named Export Fixtures",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "32c88c86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T20:54:51.596Z"
     }
   },
   "aliases": {
