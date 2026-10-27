@@ -5567,3 +5567,4 @@
 | `CYCLE-20261027-BCC4` | `2026-10-27T22:00:15.412Z` | `crawlseo/crawlseo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5034, Rule 5035, Rule 5036` | Yes (`25beda91...`) |
 | `CYCLE-20261027-J6VZ` | `2026-10-27T22:06:21.599Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4974` | Yes (`89d5e856...`) |
 | `CYCLE-20261027-JDV3` | `2026-10-27T22:06:30.639Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5037` | Yes (`baace9ff...`) |
+| `CYCLE-20261027-LWFV` | `2026-10-27T22:36:27.643Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5038` | Yes (`6b099d69...`) |

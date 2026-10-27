@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T22:06:30.603Z",
+  "last_updated": "2026-10-27T22:36:27.583Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -63719,13 +63719,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "4a9dcea3",
-      "content_hash": "426babffa76c72ca74c0ab261a2d1c011ffe5595890f05231326669cf4a33294",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "6b124303",
+      "content_hash": "6b099d696de29b98f3a8f1d9de52633959e8976ce91addbd78ed594f1c27794b",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -63776,6 +63776,11 @@
           "number": 4678,
           "title": "Merge pull request #4577 from aleo-labs-protocol/fix/devnet-sh-eval",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5038,
+          "title": "metrics: count transaction verification, memory-pool admission and gossip per ca",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -63783,7 +63788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:16:06.295Z",
+      "verified_at": "2026-10-27T22:36:27.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139022,6 +139027,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T22:06:30.596Z"
+    },
+    "rule-5038": {
+      "learning_id": "rule-5038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5038,
+      "title": "metrics: count transaction verification, memory-pool admission and gossip per ca",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "6b124303",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T22:36:27.570Z"
     }
   },
   "aliases": {
