@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/go-kratos-kratos-learnings.md`  
 > **Source**: github ([https://github.com/go-kratos/kratos](https://github.com/go-kratos/kratos))  
-> **Source Version**: `3f6b3b6c`  
+> **Source Version**: `dd0fb7df`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T17:38:26.075Z  
+> **Timestamp**: 2026-10-27T10:57:59.652Z  
 > **Learning ID**: `learn-github-go-kratos-kratos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/go-kratos-kratos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/go-kratos/kratos](https://github.com/go-kratos/kratos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T17:38:25.095Z  
+> **Harvest Timestamp**: 2026-10-27T10:57:59.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Your ultimate Go microservices framework for the cloud-native era.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 25984 stars
+- **Stars / Engagement**: 25994 stars
 
 ---
 
@@ -1035,520 +1035,180 @@ func fatal(err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f6b3b6c` (2026-10-21)
-**Commit Message**: fix(transport): escape path values and fix form encoding (#3902)
+### Incident Patch 1: `dd0fb7df` (2026-10-26)
+**Commit Message**: build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)
 
-* fix encoding form
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4 to 4.37.3.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4...v4.37.3)
 
-* fix(transport): escape path values with RFC 3986 segment rules
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.37.3
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Keep characters allowed in a path segment unchanged so values that were
-already valid build the same path as before, and escape the rest.
-Document that path values must not be pre-escaped, and add a timestamp
-encode/decode round-trip test across time zones.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Windfarer <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
-* test(transport): use byte escapes for non-ASCII path test value
-
-The non-English comments check flags any Han character in changed files,
-including test data.
-
-Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: TONY <[REDACTED_EMAIL]>
-Co-authored-by: Claude Code <[REDACTED_EMAIL]>
-
-**File**: `encoding/form/form_test.go` (modified, +1/-1)
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
 ```diff
-@@ -165,7 +165,7 @@ func TestProtoEncodeDecode(t *testing.T) {
- 		Byte:    []byte("123"),
- 		Map:     map[string]string{"kratos": "https://go-kratos.dev/", "kratos_start": "https://go-kratos.dev/en/docs/getting-started/start/"},
+@@ -14,9 +14,9 @@ jobs:
+       uses: actions/checkout@v7
  
--		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.Local)),
-+		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.UTC)),
- 		Duration:  &durationpb.Duration{Seconds: 120, Nanos: 22},
- 		Field:     &fieldmaskpb.FieldMask{Paths: []string{"1", "2"}},
- 		Double:    &wrapperspb.DoubleValue{Value: 12.33},
+     - name: Initialize CodeQL
+-      uses: github/codeql-action/init@v4
++      uses: github/codeql-action/init@v4.37.3
+       with:
+         languages: go
+ 
+     - name: CodeQL Analysis
+-      uses: github/codeql-action/analyze@v4
++      uses: github/codeql-action/analyze@v4.37.3
 ```
 
-**File**: `encoding/form/proto_encode.go` (modified, +3/-2)
+---
+
+### Incident Patch 2: `26d0365a` (2026-10-26)
+**Commit Message**: build(deps): bump actions/checkout from 6 to 7 (#3849)
+
+Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
+- [Release notes](https://github.com/actions/checkout/releases)
+- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/actions/checkout/compare/v6...v7)
+
+---
+updated-dependencies:
+- dependency-name: actions/checkout
+  dependency-version: '7'
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Windfarer <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +1/-1)
 ```diff
-@@ -160,10 +160,11 @@ func encodeMessage(msgDescriptor protoreflect.MessageDescriptor, value protorefl
- 		if !ok || m == nil {
- 			return "", nil
- 		}
-+		paths := make([]string, len(m.Paths))
- 		for i, v := range m.Paths {
--			m.Paths[i] = jsonCamelCase(v)
-+			paths[i] = jsonCamelCase(v)
- 		}
--		return strings.Join(m.Paths, ","), nil
-+		return strings.Join(paths, ","), nil
- 	default:
- 		return "", fmt.Errorf("unsupported message type: %q", string(msgDescriptor.FullName()))
- 	}
+@@ -11,7 +11,7 @@ jobs:
+ 
+     steps:
+     - name: Checkout repo
+-      uses: actions/checkout@v6
++      uses: actions/checkout@v7
+ 
+     - name: Initialize CodeQL
+       uses: github/codeql-action/init@v4
 ```
 
-**File**: `encoding/form/proto_encode_test.go` (modified, +58/-1)
+**File**: `.github/workflows/comment-check.yml` (modified, +1/-1)
 ```diff
-@@ -4,11 +4,14 @@ import (
- 	"testing"
- 	"time"
+@@ -21,7 +21,7 @@ jobs:
+       EXCLUDE_FILES: ".md .txt .html .css .min.js .mdx"
  
-+	"google.golang.org/protobuf/encoding/protojson"
-+	"google.golang.org/protobuf/proto"
- 	"google.golang.org/protobuf/types/known/durationpb"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
- 	"google.golang.org/protobuf/types/known/timestamppb"
- 	"google.golang.org/protobuf/types/known/wrapperspb"
- 
-+	"github.com/go-kratos/kratos/v3/internal/testdata/binding"
- 	"github.com/go-kratos/kratos/v3/internal/testdata/complex"
- )
- 
-@@ -29,7 +32,7 @@ func TestEncodeValues(t *testing.T) {
- 		Map:         map[string]string{"kratos": "https://go-kratos.dev/", "kratos_start": "https://go-kratos.dev/docs/getting-started/start/"},
- 		MapInt64Key: map[int64]string{1: "kratos", 2: "go-zero"},
- 
--		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.Local)),
-+		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.UTC)),
- 		Duration:  &durationpb.Duration{Seconds: 120, Nanos: 22},
- 		Field:     &fieldmaskpb.FieldMask{Paths: []string{"1", "2"}},
- 		Double:    &wrapperspb.DoubleValue{Value: 12.33},
-@@ -52,6 +55,60 @@ func TestEncodeValues(t *testing.T) {
- 	}
- }
- 
-+func TestTimestampRoundTrip(t *testing.T) {
-+	for _, zone := range []struct {
-+		name   string
-+		offset int
-+	}{
-+		{"UTC+8", 8 * 60 * 60},
-+		{"UTC-7", -7 * 60 * 60},
-+	} {
-+		t.Run(zone.name, func(t *testing.T) {
-+			previous := time.Local
-+			time.Local = time.FixedZone(zone.name, zone.offset)
-+			t.Cleanup(func() { time.Local = previous })
-+			want := &complex.Complex{Timestamp: timestamppb.New(time.Date(2026, 10, 1, 23, 30, 0, 123456789, time.UTC))}
-+			values, err := EncodeValues(want)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			got := &complex.Complex{}
-+			if err := DecodeValues(got, values); err != nil {
-+				t.Fatal(err)
-+			}
-+			if !proto.Equal(got.Timestamp, want.Timestamp) {
-+				t.Fatalf("timestamp round trip = %v, want %v (query %q)", got.Timestamp.AsTime(), want.Timestamp.AsTime(), values.Get("timestamp"))
-+			}
-+		})
-+	}
-+}
-+
-+func TestFieldMaskEncodingPreservesRequest(t *testing.T) {
-+	request := &binding.HelloRequest{
-+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"opt_string", "sub.name"}},
-+	}
-+	for _, query := range []bool{false, true} {
-+		input := proto.Clone(request)
-+		if query {
-+			values, err := EncodeValues(input)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if got := values.Get("updateMask"); got != "optString,sub.name" {
-+				t.Fatalf("FieldMask query = %q", got)
-+			}
-+		} else if got := EncodeFieldMask(input.ProtoReflect()); got != "updateMask=optString,sub.name" {
-+			t.Fatalf("FieldMask = %q", got)
-+		}
-+		if !proto.Equal(input, request) {
-+			t.Fatalf("FieldMask encoding mutated the request: %v", input)
-+		}
-+		if _, err := protojson.Marshal(input); err != nil {
-+			t.Fatalf("request can no longer be encoded as ProtoJSON: %v", err)
-+		}
-+	}
-+}
-+
- func TestJsonCamelCase(t *testing.T) {
- 	tests := []struct {
- 		camelCase string
+     steps:
+-      - uses: actions/checkout@v6
++      - uses: actions/checkout@v7
+         with:
+           ref: ${{ github.event.pull_request.head.ref }}
+           repository: ${{ github.event.pull_request.head.repo.full_name }}
 ```
 
-**File**: `encoding/form/well_known_types.go` (modified, +1/-1)
+**File**: `.github/workflows/gitee-sync.yml` (modified, +1/-1)
 ```diff
-@@ -52,7 +52,7 @@ func marshalTimestamp(m protoreflect.Message) (string, error) {
- 	}
- 	// Uses RFC 3339, where generated output will be Z-normalized and uses 0, 3,
- 	// 6 or 9 fractional digits.
--	t := time.Unix(secs, nanos).Local()
-+	t := time.Unix(secs, nanos).UTC()
- 	x := t.Format("2006-01-02T15:04:05.000000000")
- 	x = strings.TrimSuffix(x, "000")
- 	x = strings.TrimSuffix(x, "000")
+@@ -12,7 +12,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout source code
+-        uses: actions/checkout@v6
++        uses: actions/checkout@v7
+       - name: Mirror Github to Gitee
+         uses: Yikun/hub-mirror-action@v1.5
+         with:
 ```
 
-**File**: `encoding/form/well_known_types_test.go` (modified, +33/-2)
+**File**: `.github/workflows/go.yml` (modified, +1/-1)
 ```diff
-@@ -17,11 +17,11 @@ func TestMarshalTimeStamp(t *testing.T) {
- 		expect string
- 	}{
- 		{
--			input:  timestamppb.New(time.Date(2022, 1, 2, 3, 4, 5, 6, time.Local)),
-+			input:  timestamppb.New(time.Date(2022, 1, 2, 3, 4, 5, 6, time.UTC)),
- 			expect: "2022-01-02T03:04:05.000000006Z",
- 		},
- 		{
--			input:  timestamppb.New(time.Date(2022, 13, 1, 13, 61, 61, 100, time.Local)),
-+			input:  timestamppb.New(time.Date(2022, 13, 1, 13, 61, 61, 100, time.UTC)),
- 			expect: "2023-01-01T14:02:01.000000100Z",
- 		},
- 	}
-@@ -36,6 +36,37 @@ func TestMarshalTimeStamp(t *testing.T) {
- 	}
- }
- 
-+func TestMarshalTimestampUsesUTC(t *testing.T) {
-+	for _, zone := range []struct {
-+		name   string
-+		offset int
-+	}{
-+		{"UTC+8", 8 * 60 * 60},
-+		{"UTC-7", -7 * 60 * 60},
-+	} {
-+		t.Run(zone.name, func(t *testing.T) {
-+			previous := time.Local
-+			time.Local = time.FixedZone(zone.name, zone.offset)
-+			t.Cleanup(func() { time.Local = previous })
-+			for _, tt := range []struct {
-+				nanos int
-+				want  string
-+			}{
-+				{0, "2026-10-01T00:00:00Z"},
-+				{123000000, "2026-10-01T00:00:00.123Z"},
-+				{123456000, "2026-10-01T00:00:00.123456Z"},
-+				{123456789, "2026-10-01T00:00:00.123456789Z"},
-+			} {
-+				input := timestamppb.New(time.Date(2026, 10, 1, 0, 0, 0, tt.nanos, time.UTC))
-+				got, err := marshalTimestamp(input.ProtoReflect())
-+				if err != nil || got != tt.want {
-+					t.Fatalf("marshalTimestamp() = %q, %v; want %q", got, err, tt.want)
-+				}
-+			}
-+		})
-+	}
-+}
-+
- func TestMarshalDuration(t *testing.T) {
- 	tests := []struct {
- 		input  *durationpb.Duration
+@@ -42,7 +42,7 @@ jobs:
+           - 8091:8091
+           - 8093:8093
+     steps:
+-      - uses: actions/checkout@v6
++      - uses: actions/checkout@v7
+       - name: Set up Go
+         uses: actions/setup-go@v7
+         with:
 ```
 
-**File**: `transport/http/path.go` (modified, +100/-4)
+**File**: `.github/workflows/lint.yml` (modified, +2/-2)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"strings"
+@@ -15,7 +15,7 @@ jobs:
+       matrix: ${{ steps.set-matrix.outputs.matrix }}
+     steps:
+       - name: Checkout Repo
+-        uses: actions/checkout@v6
++        uses: actions/checkout@v7
  
- 	"google.golang.org/protobuf/proto"
-+	"google.golang.org/protobuf/reflect/protoreflect"
- 
- 	"github.com/go-kratos/kratos/v3/encoding/form"
- )
-@@ -28,13 +29,22 @@ func WithQueryParams() BuildPathOption {
- }
- 
- // WithOmitFields excludes fields from generated query parameters.
-+// Protobuf fields may use their proto names or JSON names.
- func WithOmitFields(fields ...string) BuildPathOption {
- 	return func(o *buildPathOptions) {
- 		o.omitFields = append(o.omitFields, fields...)
- 	}
- }
- 
- // BuildPath builds an HTTP request path from a path template and request message.
-+// Protobuf field paths may use proto names or JSON names.
-+//
-+// Path values must not be pre-escaped: BuildPath escapes characters that are not
-+// allowed in a path segment ("/", "?", "#", "%", spaces, non-ASCII, ...), so an
-+// already escaped value such as "a%20b" is sent as "a%2520b". Values made of
-+// characters allowed in a segment are left unchanged. A plain variable or "*"
-+// is one segment and escapes "/"; resource-name templates such as
-+// {name=publishers/*} or {name=**} keep "/" as the separator.
- func BuildPath(pathTemplate string, msg any, opts ...BuildPathOption) string {
- 	if msg == nil || (reflect.ValueOf(msg).Kind() == reflect.Pointer && reflect.ValueOf(msg).IsNil()) {
- 		return pathTemplate
-@@ -51,9 +61,9 @@ func BuildPath(pathTemplate string, msg any, opts ...BuildPathOption) string {
- 	if strings.ContainsRune(pathTemplate, '{') {
- 		path = pathTemplateParamRE.ReplaceAllStringFunc(pathTemplate, func(in string) string {
- 			matches := pathTemplateParamRE.FindStringSubmatch(in)
--			key := matches[1]
-+			key := queryFieldName(msg, matches[1])
- 			pathParams[key] = struct{}{}
--			return queryParams.Get(key)
-+			return escapePathValue(queryParams.Get(key), matches[2])
- 		})
- 	}
- 
-@@ -69,19 +79,105 @@ func BuildPath(pathTemplate string, msg any, opts ...BuildPathOption) string {
- 		for key := range pathParams {
- 			delete(queryParams, key)
- 		}
--		omitQueryParams(queryParams, options.omitFields)
-+		omitQueryParams(queryParams, options.omitFields, msg)
- 		if query := queryParams.Encode(); query != "" {
- 			path += "?" + query
- 		}
- 	}
- 	return path
- }
- 
--func omitQueryParams(values map[string][]string, fields []string) {
-+// queryFieldName resolves proto field paths to the names used by the form encoder.
-+func queryFieldName(msg any, path string) string {
-+	message, ok := msg.(proto.Message)
-+	if !ok {
-+		return path
-+	}
-+	fields := message.ProtoReflect().Descriptor().Fields()
-+	parts := strings.Split(path, ".")
-+	for i, name := range parts {
-+		field := fields.ByName(protoreflect.Name(name))
-+		if field == nil {
-+			field = fields.ByJSONName(name)
-+		}
-+		if field == nil {
-+			return path
-+		}
-+		parts[i] = field.TextName()
-+		if field.HasJSONName() {
-+			parts[i] = field.JSONName()
-+		}
-+		if i < len(parts)-1 {
-+			if field.Message() == nil {
-+				return path
-+			}
-+			fields = field.Message().Fields()
-+		}
-+	}
-+	return strings.Join(parts, ".")
-+}
-+
-+func escapePathValue(value, template string) string {
-+	// Resource-name templates preserve their hierarchy; a plain variable or *
-+	// represents one segment and must escape embedded slashes.
-+	if !strings.Contains(template, "/") && !strings.Contains(template, "**") {
-+		return escapePathSegment(value)
-+	}
-+	parts := strings.Split(value, "/")
-+	for i, part := range parts {
-+		parts[i] = escapePathSegment(part)
-+	}
-+	return strings.Join(parts, "/")
-+}
-+
-+// escapePathSegment escapes s as a single RFC 3986 path segment. Characters
-+// allowed in a segment are kept, so values that were already valid produce
-+// the same path as before escaping was introduced.
-+func escapePathSegment(s string) string {
-+	if s == "." || s == ".." {
-+		return strings.Repeat("%2E", len(s))
-+	}
-+	n := 0
-+	for i := 0; i < len(s); i++ {
-+		if !isPathSegmentChar(s[i]) {
-+			n++
-+		}
-+	}
-+	if n == 0 {
-+		return s
-+	}
-+	const upperhex = "0123456789ABCDEF"
-+	var b strings.Builder
-+	b.Grow(len(s) + 2*n)
-+	for i := 0; i < len(s); i++ {
-+		c := s[i]
-+		if isPathSegmentChar(c) {
-+			b.WriteByte(c)
-+			continue
-+		}
-+		b.WriteByte('%')
-+		b.WriteByte(upperhex[c>>4])
-+		b.WriteByte(upperhex[c&15])
-+	}
-+	return b.String()
-+}
-+
-+// isPathSegmentChar reports whether c is an RFC 3986 pchar that needs no escaping:
-+// unreserved, sub-delims, ':' or '@'.
-+func isPathSegmentChar(c byte) bool {
-+	switch {
-+	case 'a' <= c && c <= 'z', 'A' <= c && c <= 'Z', '0' <= c && c <= '9':
-+		return true
-+	}
-+	return strings.IndexByte("-._~!$&'()*+,;=:@", c) >= 0
-+}
-+
-+func omitQueryParams(values map[string][]string, fields []string, msg any) {
- 	for _, field := range fields {
- 		if field == "" {
- 			continue
- 		}
-+		field = queryFieldName(msg, field)
- 		delete(values, field)
- 		prefix := field + "."
- 		for key := range values {
+       - id: set-matrix
+         run: ./hack/resolve-modules.sh
+@@ -27,7 +27,7 @@ jobs:
+     strategy:
+       matrix: ${{ fromJson(needs.resolve-modules.outputs.matrix) }}
+     steps:
+-      - uses: actions/checkout@v6
++      - uses: actions/checkout@v7
+       - name: Lint
+         uses: golangci/golangci-lint-action@v7
+         with:
 ```
 
-**File**: `transport/http/path_test.go` (modified, +116/-0)
+---
+
+### Incident Patch 3: `201aabb8` (2026-10-26)
+**Commit Message**: build(deps): bump actions/cache from 5 to 6 (#3848)
+
+Bumps [actions/cache](https://github.com/actions/cache) from 5 to 6.
+- [Release notes](https://github.com/actions/cache/releases)
+- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)
+- [Commits](https://github.com/actions/cache/compare/v5...v6)
+
+---
+updated-dependencies:
+- dependency-name: actions/cache
+  dependency-version: '6'
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Windfarer <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/go.yml` (modified, +1/-1)
 ```diff
-@@ -3,9 +3,12 @@ package http
- import (
- 	"testing"
+@@ -54,7 +54,7 @@ jobs:
+           echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
  
-+	"google.golang.org/protobuf/encoding/protojson"
-+	"google.golang.org/protobuf/proto"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
- 
- 	"github.com/go-kratos/kratos/v3/internal/testdata/binding"
-+	"github.com/go-kratos/kratos/v3/internal/testdata/complex"
- )
- 
- func TestBuildPath(t *testing.T) {
-@@ -54,6 +57,119 @@ func TestBuildPath(t *testing.T) {
- 	}
- }
- 
-+func TestBuildPathFieldNames(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		template string
-+		request  any
-+		opts     []BuildPathOption
-+		want     string
-+	}{
-+		{
-+			name: "proto name", template: "/items/{opt_string}",
-+			request: &binding.HelloRequest{OptString: proto.String("item-1")},
-+			want:    "/items/item-1",
-+		},
-+		{
-+			name: "JSON name", template: "/items/{optString}",
-+			request: &binding.HelloRequest{OptString: proto.String("item-1")},
-+			want:    "/items/item-1",
-+		},
-+		{
-+			name: "nested proto name", template: "/items/{sub.name}",
-+			request: &binding.HelloRequest{Sub: &binding.Sub{Name: "item-1"}},
-+			want:    "/items/item-1",
-+		},
-+		{
-+			name: "nested JSON name", template: "/items/{sub.naming}",
-+			request: &binding.HelloRequest{Sub: &binding.Sub{Name: "item-1"}},
-+			want:    "/items/item-1",
-+		},
-+		{
-+			name: "custom parent JSON name", template: "/items/{simple.component}",
-+			request: &complex.Complex{Simple: &complex.Simple{Component: "item-1"}},
-+			want:    "/items/item-1",
-+		},
-+		{
-+			name: "omit proto field", template: "/items",
-+			request: &binding.HelloRequest{Name: "kratos", OptString: proto.String("body")},
-+			opts:    []BuildPathOption{WithOmitFields("opt_string")},
-+			want:    "/items?name=kratos",
-+		},
-+		{
-+			name: "omit nested proto field", template: "/items",
-+			request: &binding.HelloRequest{Sub: &binding.Sub{Name: "body"}},
-+			opts:    []BuildPathOption{WithOmitFields("sub.name")},
-+			want:    "/items",
-+		},
-+		{
-+			name: "omit custom JSON parent", template: "/items",
-+			request: &complex.Complex{NoOne: "kratos", Simple: &complex.Simple{Component: "body"}},
-+			opts:    []BuildPathOption{WithOmitFields("simple")},
-+			want:    "/items?numberOne=kratos",
-+		},
-+		{
-+			name: "struct", template: "/items/{resource_id}",
-+			request: &struct {
-+				ResourceID string `json:"resource_id"`
-+			}{ResourceID: "item-1"},
-+			want: "/items/item-1",
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			opts := append([]BuildPathOption{WithQueryParams()}, tt.opts...)
-+			if got := BuildPath(tt.template, tt.request, opts...); got != tt.want {
-+				t.Fatalf("BuildPath() = %q, want %q", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestBuildPathEscapesValues(t *testing.T) {
-+	tests := []struct {
-+		name, template, value, want string
-+	}{
-+		{"single segment", "/items/{name}", "one/two?#%", "/items/one%2Ftwo%3F%23%25"},
-+		{"explicit single segment", "/items/{name=*}", "one/two", "/items/one%2Ftwo"},
-+		{"dot", "/items/{name}", ".", "/items/%2E"},
-+		{"dot dot", "/items/{name}", "..", "/items/%2E%2E"},
-+		{"resource name", "/v1/{name=publishers/*/books/*}", "publishers/go/books/one?#%", "/v1/publishers/go/books/one%3F%23%25"},
-+		{"multiple segments", "/v1/{name=**}", "publishers/go/books/one?#%", "/v1/publishers/go/books/one%3F%23%25"},
-+		{"resource dot segment", "/v1/{name=publishers/*}", "publishers/..", "/v1/publishers/%2E%2E"},
-+		// Characters allowed in a segment are kept, matching the unescaped output.
-+		{"segment chars unchanged", "/items/{name}", "a-b_c.d~e!$&'()*+,;=:@", "/items/a-b_c.d~e!$&'()*+,;=:@"},
-+		{"dots in value", "/items/{name}", "v1.2...", "/items/v1.2..."},
-+		{"space and non-ASCII", "/items/{name}", "a b\xe4\xb8\xad", "/items/a%20b%E4%B8%AD"},
-+		// Values must not be pre-escaped; "%" is always escaped.
-+		{"pre-escaped value", "/items/{name}", "a%20b", "/items/a%2520b"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if got := BuildPath(tt.template, &binding.HelloRequest{Name: tt.value}, WithQueryParams()); got != tt.want {
-+				t.Fatalf("BuildPath() = %q, want %q", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
-+func TestBuildPathPreservesFieldMask(t *testing.T) {
-+	request := &binding.HelloRequest{
-+		Name:       "kratos",
-+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"opt_string", "sub.name"}},
-+	}
-+	for _, opts := range [][]BuildPathOption{nil, {WithQueryParams()}, {WithQueryParams(), WithOmitFields("update_mask")}} {
-+		input := proto.Clone(request)
-+		BuildPath("/items/{name}", input, opts...)
-+		if !proto.Equal(input, request) {
-+			t.Fatalf("BuildPath mutated the request: %v", input)
-+		}
-+		if _, err := protojson.Marshal(input); err != nil {
-+			t.Fatalf("request can no longer be encoded as the body: %v", err)
-+		}
-+	}
-+}
-+
- func TestBuildPathCompatibility(t *testing.T) {
- 	tests := []struct {
- 		pathTemplate string
+       - name: Module cache
+-        uses: actions/cache@v5
++        uses: actions/cache@v6
+         with:
+           path: |
+             ~/.cache/go-build
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #3902** (2026-10-21): fix(transport): escape path values and fix form encoding (@tonybase)
 - **PR #3901** (2026-10-20): feat(contrib): add oauth2 middleware (@tonybase)
 - **PR #3891** (2026-10-20): fix(config): resolve bool placeholders to bool (@tonybase)
-- **PR #3845** (2026-06-26): deps: upgrade kratos version to v3.0.0 (@shenqidebaozi)
-- **PR #3844** (2026-06-21): feat(errors): add standard library errors wrappers (@tonybase)
-- **PR #3843** (2026-06-17): feat(transport/http): add read/write deadline control to ServerStream (@tonybase)
+- **PR #3863** (2026-10-26): build(deps): bump github/codeql-action from 4 to 4.37.3 (@dependabot[bot])
+- **PR #3862** (2026-10-26): build(deps): bump actions/setup-go from 6 to 7 (@dependabot[bot])
+- **PR #3849** (2026-10-26): build(deps): bump actions/checkout from 6 to 7 (@dependabot[bot])
 
 ---
 
@@ -1568,28 +1228,30 @@ Co-authored-by: Claude Code <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): escape path values and fix form encoding (#3902)
+## X. build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)
 
 **RULE**:
-When implementing operations in `encoding/form/form_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in go-kratos/kratos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codeql-analysis.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in go-kratos/kratos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f6b3b6c`: transport): escape path values and fix form encoding (#3902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd0fb7df`: build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `encoding/form/form_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql-analysis.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.UTC)),
+      uses: github/codeql-action/init@v4.37.3
+      uses: github/codeql-action/analyze@v4.37.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Timestamp: timestamppb.New(time.Date(1970, 1, 1, 0, 0, 20, 2, time.Local)),
+      uses: github/codeql-action/init@v4
+      uses: github/codeql-action/analyze@v4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f6b3b6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd0fb7df` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-4PE7",
-    "timestamp": "2026-10-25T06:55:57.583Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "c64aad709fb664098eec5ea5ed50e9699f3d4643ac3050931ca8d0bce3dbf4f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-4Q8W",
-    "timestamp": "2026-10-25T06:55:58.688Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "4edc8929b03e3e5ff279926f620eb988bb60cdeef6b9f65a9828aa18dd413b88",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-5VNE",
-    "timestamp": "2026-10-25T06:56:52.346Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "0dc2ffa19444d83902ebab3836278c2ad1ca56feff05210fe46cc17cf5826d24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-GMIN",
-    "timestamp": "2026-10-25T07:05:13.727Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "0a82625c487aaf7b53b3ed2b34e31fd6ceb6a092a3b3dd7a014f957fb28cd247",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-GOS0",
     "timestamp": "2026-10-25T07:05:16.656Z",
     "repository": "shoutem/ui",
@@ -7490,6 +7430,66 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "c391847ec83851f71763aec91eba13c317522a1574fd6e04b9b1731e2ec01244",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NHAE",
+    "timestamp": "2026-10-27T10:57:50.918Z",
+    "repository": "elastic/eui",
+    "learningId": "learn-github-elastic-eui",
+    "contentHash": "6ee3bd030e452cff0ee3c800e943bdd0076c6cbef4037e71f2c468c6983df335",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NLR1",
+    "timestamp": "2026-10-27T10:57:56.701Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NOCN",
+    "timestamp": "2026-10-27T10:58:00.071Z",
+    "repository": "go-kratos/kratos",
+    "learningId": "learn-github-go-kratos-kratos",
+    "contentHash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-NQC0",
+    "timestamp": "2026-10-27T10:58:02.640Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

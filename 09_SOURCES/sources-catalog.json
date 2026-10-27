@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "8f54626e",
+    "sourceVersion": "51370d96",
     "license": "NOASSERTION",
-    "contentHash": "58ba65b748fdccb083607b9226365fa74cb7b3cf50b1e897703993397ef1f7ea",
-    "lastHarvestedAt": "2026-10-26T13:34:06.067Z",
+    "contentHash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
+    "lastHarvestedAt": "2026-10-27T10:58:02.643Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -4833,10 +4833,10 @@
     "repository": "elastic/eui",
     "platform": "github",
     "sourceUrl": "https://github.com/elastic/eui",
-    "sourceVersion": "1d4161ec",
+    "sourceVersion": "e058541f",
     "license": "NOASSERTION",
-    "contentHash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
-    "lastHarvestedAt": "2026-10-25T05:52:29.532Z",
+    "contentHash": "6ee3bd030e452cff0ee3c800e943bdd0076c6cbef4037e71f2c468c6983df335",
+    "lastHarvestedAt": "2026-10-27T10:57:50.921Z",
     "learningId": "learn-github-elastic-eui"
   },
   "aome510-spotify-player": {
@@ -7223,10 +7223,10 @@
     "repository": "go-kratos/kratos",
     "platform": "github",
     "sourceUrl": "https://github.com/go-kratos/kratos",
-    "sourceVersion": "3f6b3b6c",
+    "sourceVersion": "dd0fb7df",
     "license": "MIT",
-    "contentHash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
-    "lastHarvestedAt": "2026-10-22T17:38:26.430Z",
+    "contentHash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
+    "lastHarvestedAt": "2026-10-27T10:58:00.074Z",
     "learningId": "learn-github-go-kratos-kratos"
   },
   "tencent-tds-kuiklyui": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "efcfb72c",
+    "sourceVersion": "c550994e",
     "license": "GPL-3.0",
-    "contentHash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
-    "lastHarvestedAt": "2026-10-22T21:28:51.618Z",
+    "contentHash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
+    "lastHarvestedAt": "2026-10-27T10:57:56.705Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

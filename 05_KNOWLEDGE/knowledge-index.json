@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:54:28.518Z",
+  "last_updated": "2026-10-27T10:58:02.573Z",
   "total_verified_learnings": 1102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9933,8 +9933,8 @@
       "slug": "elastic-eui",
       "platform": "github",
       "source_url": "https://github.com/elastic/eui",
-      "source_version": "1d4161ec",
-      "content_hash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
+      "source_version": "e058541f",
+      "content_hash": "6ee3bd030e452cff0ee3c800e943bdd0076c6cbef4037e71f2c468c6983df335",
       "dossier_path": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "promoted_rules": [
@@ -9957,6 +9957,11 @@
           "number": 3703,
           "title": "[test-helpers] Add EuiSideNavObject (#10229)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4694,
+          "title": "ci: add workflow for running security advisory on github actions (#10243)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9964,7 +9969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:52:29.430Z",
+      "verified_at": "2026-10-27T10:57:50.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13167,8 +13172,8 @@
       "slug": "go-kratos-kratos",
       "platform": "github",
       "source_url": "https://github.com/go-kratos/kratos",
-      "source_version": "3f6b3b6c",
-      "content_hash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
+      "source_version": "dd0fb7df",
+      "content_hash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
       "dossier_path": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-kratos-kratos-learnings.md",
       "promoted_rules": [
@@ -13196,6 +13201,11 @@
           "number": 3668,
           "title": "transport): escape path values and fix form encoding (#3902)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4696,
+          "title": "build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13203,7 +13213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T17:38:26.348Z",
+      "verified_at": "2026-10-27T10:57:59.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44399,8 +44409,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "8f54626e",
-      "content_hash": "58ba65b748fdccb083607b9226365fa74cb7b3cf50b1e897703993397ef1f7ea",
+      "source_version": "51370d96",
+      "content_hash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -44428,6 +44438,11 @@
           "number": 4610,
           "title": "Expand exactly key_len bytes for TLS 1.3 AEAD keys.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4697,
+          "title": "Test for EndOfEarlyData handshake alignment check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44435,7 +44450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:34:05.994Z",
+      "verified_at": "2026-10-27T10:58:02.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50973,8 +50988,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "efcfb72c",
-      "content_hash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
+      "source_version": "c550994e",
+      "content_hash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -50987,6 +51002,11 @@
           "number": 3751,
           "title": "Add Correct Last Dictation to fix and copy the latest dictation (#1691)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4695,
+          "title": "the nightly CodeQL Swift build on Xcode 26.6 (#1720)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50994,7 +51014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:28:51.554Z",
+      "verified_at": "2026-10-27T10:57:56.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131101,6 +131121,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:54:28.506Z"
+    },
+    "rule-4694": {
+      "learning_id": "rule-4694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4694,
+      "title": "ci: add workflow for running security advisory on github actions (#10243)",
+      "source_url": "https://github.com/elastic/eui",
+      "source_version": "e058541f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:57:50.847Z"
+    },
+    "rule-4695": {
+      "learning_id": "rule-4695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4695,
+      "title": "the nightly CodeQL Swift build on Xcode 26.6 (#1720)",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "c550994e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:57:56.629Z"
+    },
+    "rule-4696": {
+      "learning_id": "rule-4696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4696,
+      "title": "build(deps): bump github/codeql-action from 4 to 4.37.3 (#3863)",
+      "source_url": "https://github.com/go-kratos/kratos",
+      "source_version": "dd0fb7df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:57:59.992Z"
+    },
+    "rule-4697": {
+      "learning_id": "rule-4697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4697,
+      "title": "Test for EndOfEarlyData handshake alignment check",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "51370d96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:58:02.560Z"
     }
   },
   "aliases": {

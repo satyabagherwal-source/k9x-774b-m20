@@ -5226,3 +5226,7 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `d822d80c` | Multi-dimensional audit evidence | 2026-10-27T10:54:23.333Z |
 | `learn-github-scrapecreators-social-media-research-skills` | `https://github.com/ScrapeCreators/social-media-research-skills` | `64ba7b4d` | Multi-dimensional audit evidence | 2026-10-27T10:54:24.962Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `e1a7365f` | Multi-dimensional audit evidence | 2026-10-27T10:54:28.577Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `e058541f` | Multi-dimensional audit evidence | 2026-10-27T10:57:50.921Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `c550994e` | Multi-dimensional audit evidence | 2026-10-27T10:57:56.705Z |
+| `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `dd0fb7df` | Multi-dimensional audit evidence | 2026-10-27T10:58:00.074Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `51370d96` | Multi-dimensional audit evidence | 2026-10-27T10:58:02.643Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:54:28.585Z",
+  "last_updated": "2026-10-27T10:58:02.652Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "58ba65b748fdccb083607b9226365fa74cb7b3cf50b1e897703993397ef1f7ea",
-      "verified_at": "2026-10-26T13:34:06.075Z",
+      "content_hash": "c2fa65f21e067832461244ab6db0ad39eadc41c121f7ab012e522638d67dfd64",
+      "verified_at": "2026-10-27T10:58:02.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T13:34:06.075Z"
+      "last_updated": "2026-10-27T10:58:02.652Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -7371,14 +7371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-elastic-eui",
-      "content_hash": "d3f794986f25e0c6d94d27772c65d9d759372e9950a17be2d59907ab2fcdcac2",
-      "verified_at": "2026-10-25T05:52:29.542Z",
+      "content_hash": "6ee3bd030e452cff0ee3c800e943bdd0076c6cbef4037e71f2c468c6983df335",
+      "verified_at": "2026-10-27T10:57:50.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:52:29.542Z"
+      "last_updated": "2026-10-27T10:57:50.930Z"
     },
     "aome510/spotify-player": {
       "repository": "aome510/spotify-player",
@@ -10881,14 +10881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-go-kratos-kratos",
-      "content_hash": "ec1c033cccffd799c74c0ed2eaa8d8c802e619040f223ff89bbe6d459dc17405",
-      "verified_at": "2026-10-22T17:38:26.437Z",
+      "content_hash": "20ceb7493f20fc5988ae1f98e03a58659ded240b6a353ffdcb78a7f8a3b26723",
+      "verified_at": "2026-10-27T10:58:00.085Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T17:38:26.437Z"
+      "last_updated": "2026-10-27T10:58:00.085Z"
     },
     "Tencent-TDS/KuiklyUI": {
       "repository": "Tencent-TDS/KuiklyUI",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "3f9676ed555b31d171a2f366ec769bcc24e9b63dd59d2b23128c6673de633d5f",
-      "verified_at": "2026-10-22T21:28:51.631Z",
+      "content_hash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
+      "verified_at": "2026-10-27T10:57:56.713Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T21:28:51.631Z"
+      "last_updated": "2026-10-27T10:57:56.713Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",
