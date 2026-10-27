@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T12:18:37.658Z",
+  "last_updated": "2026-10-27T12:21:58.743Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8026,8 +8026,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "505c1a23",
-      "content_hash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
+      "source_version": "8ca46580",
+      "content_hash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8265,6 +8265,11 @@
           "number": 4684,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (#4943)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4747,
+          "title": "get): --output files follow the umask, not the cache's 0600 (#4945)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8272,7 +8277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:27:34.028Z",
+      "verified_at": "2026-10-27T12:21:58.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36422,8 +36427,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "e139573e",
-      "content_hash": "065515d4b7be0793c72b6933f91e45bfae7e318f3e59d59a636d2f292d758d58",
+      "source_version": "8050b1b0",
+      "content_hash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -36506,6 +36511,11 @@
           "number": 4495,
           "title": "reopen main for development",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4746,
+          "title": "Link the Python scripting feature to the Addons guide (#8448)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36513,7 +36523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:12:17.511Z",
+      "verified_at": "2026-10-27T12:21:52.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37737,8 +37747,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "6068694d",
-      "content_hash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
+      "source_version": "eb1a86e6",
+      "content_hash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -37766,6 +37776,11 @@
           "number": 4095,
           "title": "[FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4745,
+          "title": "[FIXED] JetStream reconnect watcher cleanup (#2216)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37773,7 +37788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T06:06:20.224Z",
+      "verified_at": "2026-10-27T12:21:50.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47680,8 +47695,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "ae13ea66",
-      "content_hash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
+      "source_version": "029ff91d",
+      "content_hash": "4f00426c10c439646d5b6f106a99b087095d100c3da8591cf474f20c811e95fd",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -47694,6 +47709,11 @@
           "number": 3785,
           "title": "svelte): build story snippets on the docgen server",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4744,
+          "title": "ci): run Chromatic on every focus sandbox when a shared template story changes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47701,7 +47721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:17:18.819Z",
+      "verified_at": "2026-10-27T12:21:48.245Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53439,8 +53459,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "921b14bd",
-      "content_hash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
+      "source_version": "df783638",
+      "content_hash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -53478,6 +53498,11 @@
           "number": 4445,
           "title": "Reduce ut_restore CPU requirement from 4 to 1 (#56745)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4748,
+          "title": "tiering compatibility (#57038)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53485,7 +53510,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:36:46.592Z",
+      "verified_at": "2026-10-27T12:21:58.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66126,8 +66151,8 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "b45055d1",
-      "content_hash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
+      "source_version": "e32b1b0e",
+      "content_hash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
@@ -66140,6 +66165,11 @@
           "number": 3701,
           "title": "deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4743,
+          "title": "tokenizer): append attribute values and character runs as slices of the input (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66147,7 +66177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T18:56:55.937Z",
+      "verified_at": "2026-10-27T12:21:46.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -132060,6 +132090,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T12:18:37.634Z"
+    },
+    "rule-4743": {
+      "learning_id": "rule-4743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4743,
+      "title": "tokenizer): append attribute values and character runs as slices of the input (#",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "e32b1b0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:46.902Z"
+    },
+    "rule-4744": {
+      "learning_id": "rule-4744",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4744,
+      "title": "ci): run Chromatic on every focus sandbox when a shared template story changes",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "029ff91d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:48.245Z"
+    },
+    "rule-4745": {
+      "learning_id": "rule-4745",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4745,
+      "title": "[FIXED] JetStream reconnect watcher cleanup (#2216)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "eb1a86e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:50.802Z"
+    },
+    "rule-4746": {
+      "learning_id": "rule-4746",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4746,
+      "title": "Link the Python scripting feature to the Addons guide (#8448)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "8050b1b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:52.825Z"
+    },
+    "rule-4747": {
+      "learning_id": "rule-4747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4747,
+      "title": "get): --output files follow the umask, not the cache's 0600 (#4945)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8ca46580",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:58.049Z"
+    },
+    "rule-4748": {
+      "learning_id": "rule-4748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4748,
+      "title": "tiering compatibility (#57038)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "df783638",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:21:58.729Z"
     }
   },
   "aliases": {

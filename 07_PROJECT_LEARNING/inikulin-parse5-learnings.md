@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `b45055d1`  
+> **Source Version**: `e32b1b0e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:56:55.625Z  
+> **Timestamp**: 2026-10-27T12:21:46.495Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:56:49.921Z  
+> **Harvest Timestamp**: 2026-10-27T12:21:44.721Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3939 stars
+- **Stars / Engagement**: 3940 stars
 
 ---
 
@@ -860,6 +860,29 @@ export class ParserStream<T extends TreeAdapterTypeMap = DefaultTreeAdapterMap> 
     }
 
     /**
+     * Synchronously delivers buffered character tokens to the tree builder without ending the input stream.
+     * Incomplete tags and character references are retained for subsequent writes. This does not resume a
+     * suspended script or process queued writes, and must not be called from a parser callback.
+     *
+     * Flushing splits character-token runs. Their source locations do not extend through subsequently
+     * ignored input, such as CDATA delimiters or the leading newline in a `pre` element, so text-node
+     * source ranges can differ from parsing without flushing.
+     *
+     * @example
+     *
+     * ```js
+     * const stream = new ParserStream();
+     * stream.write('<p>hello');
+     * stream.flushCharacters();
+     * // The paragraph's text is now available in `stream.document`.
+     * stream.end(' world</p>');
+     * ```
+     */
+    public flushCharacters(): void {
+        this.parser.tokenizer.flushCharacters();
+    }
+
+    /**
      * @param options Parsing options.
      */
     constructor(
@@ -1578,84 +1601,341 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b45055d1` (2026-10-22)
-**Commit Message**: chore(deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)
+### Incident Patch 1: `e32b1b0e` (2026-10-26)
+**Commit Message**: perf(tokenizer): append attribute values and character runs as slices of the input (#1897)
 
-Bumps [markdown-it](https://github.com/markdown-it/markdown-it) from 14.3.2 to 14.3.3.
-- [Changelog](https://github.com/markdown-it/markdown-it/blob/14.3.3/CHANGELOG.md)
-- [Commits](https://github.com/markdown-it/markdown-it/compare/14.3.2...14.3.3)
+**File**: `packages/parse5/lib/tokenizer/index.test.ts` (modified, +220/-1)
+```diff
+@@ -1,5 +1,5 @@
+ import { it, assert, describe } from 'vitest';
+-import { Tokenizer, type Token } from 'parse5';
++import { Tokenizer, TokenizerMode, type Token } from 'parse5';
+ import { generateTokenizationTests } from 'parse5-test-utils/utils/generate-tokenization-tests.js';
+ 
+ const dataPath = new URL('../../../../test/data/html5lib-tests/tokenizer', import.meta.url);
+@@ -13,7 +13,226 @@ function noop(): void {
+     // Noop
+ }
+ 
++/** Every token as text, with attributes as `name=value`, to compare tokenizations of the same input. */
++function tokenize(chunks: string[], foreign = false, opts = tokenizerOpts): string[] {
++    const tokens: string[] = [];
++    const tokenizer = new Tokenizer(opts, {
++        onStartTag(t): void {
++            tokens.push(`<${t.tagName} ${t.attrs.map(({ name, value }) => `${name}=${value}`).join(' ')}>`);
++            // The tree builder switches the state for these elements.
++            if (t.tagName === 'textarea') tokenizer.state = TokenizerMode.RCDATA;
++            if (t.tagName === 'script') tokenizer.state = TokenizerMode.SCRIPT_DATA;
++        },
++        onEndTag(t): void {
++            tokens.push(`</${t.tagName}>`);
++        },
++        onCharacter(t): void {
++            tokens.push(`c:${t.chars}`);
++        },
++        onWhitespaceCharacter(t): void {
++            tokens.push(`w:${t.chars}`);
++        },
++        onNullCharacter(t): void {
++            tokens.push(`n:${t.chars}`);
++        },
++        onComment(t): void {
++            tokens.push(`#${t.data}`);
++        },
++        onDoctype: noop,
++        onEof: noop,
++    });
++    tokenizer.inForeignNode = foreign;
++    for (const [i, chunk] of chunks.entries()) {
++        tokenizer.write(chunk, i === chunks.length - 1);
++    }
++    return tokens;
++}
++
++function chunked(input: string, size: number): string[] {
++    const chunks: string[] = [];
++    for (let i = 0; i < input.length; i += size) chunks.push(input.slice(i, i + size));
++    return chunks;
++}
++
+ describe('Tokenizer methods', () => {
++    // TODO: upstream to html5lib-tests
++    it('should keep long attribute values, character runs and comments exact', () => {
++        const long = 'x'.repeat(40_000);
++        const values: string[] = [];
++        const comments: string[] = [];
++        let chars = '';
++        const tokenizer = new Tokenizer(tokenizerOpts, {
++            onStartTag(t): void {
++                values.push(...t.attrs.map(({ value }) => value));
++            },
++            onCharacter(t): void {
++                chars += t.chars;
++            },
++            onComment(t): void {
++                comments.push(t.data);
++            },
++            onDoctype: noop,
++            onEndTag: noop,
++            onEof: noop,
++            onNullCharacter: noop,
++            onWhitespaceCharacter: noop,
++        });
++
++        tokenizer.write(`<p title="${long}&am`, false);
++        tokenizer.write(`p;${long}" id=${long} id=${long}discarded end=ok>${long}&l`, false);
++        tokenizer.write(`t;${long}</p><!--${long}-`, false);
++        tokenizer.write(`-${long}--><?${long}>`, true);
++
++        assert.deepStrictEqual(values, [`${long}&${long}`, long, 'ok']);
++        assert.strictEqual(chars, `${long}<${long}`);
++        assert.deepStrictEqual(comments, [`${long}--${long}`, `?${long}`]);
++    });
++
++    // TODO: upstream to html5lib-tests
++    it.each([false, true])(
++        'should append lookahead text that precedes a dropped chunk (locations: %s)',
++        (locations) => {
++            // Without locations, the token switch drops the parsed chunk before the lookahead text is appended.
++            const whitespace = ' '.repeat(65_537);
++            const opts = { sourceCodeLocationInfo: locations };
++
++            assert.deepStrictEqual(tokenize([`${whitespace}<<x>`], false, opts), [`w:${whitespace}`, 'c:<', '<x >']);
++            assert.deepStrictEqual(tokenize([`${whitespace}<![CDATA[]]]>x`], true, opts), [`w:${whitespace}`, 'c:]x']);
++        },
++    );
++
++    it('should keep the text apart from a tag or comment that is being built', () => {
++        const values: string[] = [];
++        const comments: string[] = [];
++        let chars = '';
++        const tokenizer = new Tokenizer(tokenizerOpts, {
++            onStartTag(t): void {
++                values.push(...t.attrs.map(({ value }) => value));
++            },
++            onCharacter(t): void {
++                chars += t.chars;
++            },
++            onComment(t): void {
++                comments.push(t.data);
++            },
++            onDoctype: noop,
++            onEndTag: noop,
++            onEof: noop,
++            onNullCharacter: noop,
++            onWhitespaceCharacter: noop,
++        });
++
++        // A flush inside a value or comment, and EOF inside a value, must not move their text into the character token.
++        tokenizer.write('abc<p x="de', false);
++        tokenizer.flushCharacters();
++        tokenizer.write('f"><!--gh', false);
++        tokenizer.flus
+```
+
+**File**: `packages/parse5/lib/tokenizer/index.ts` (modified, +135/-41)
+```diff
+@@ -224,6 +224,12 @@ export class Tokenizer {
+     protected currentToken: Token | null = null;
+     protected currentAttr: Attribute = { name: '', value: '' };
+     private currentAttrLocation: Location | null = null;
++    /**
++     * `[start, end)` of `preprocessor.html` still to be appended to the attribute value, comment data or character
++     * token being built (`_flushRun`): input that is used as is is appended as one slice, not a code point at a time.
++     */
++    protected runStart = 0;
++    protected runEnd = 0;
+ 
+     constructor(
+         protected options: TokenizerOptions,
+@@ -238,7 +244,18 @@ export class Tokenizer {
+                 // Note: Set `pos` _before_ flushing, as flushing might drop
+                 // the current chunk and invalidate `entityStartPos`.
+                 this.preprocessor.pos = this.entityStartPos + consumed - 1;
+-                this._flushCodePointConsumedAsCharacterReference(cp);
++
++                if (!this._isCharacterReferenceInAttribute()) {
++                    this._ensureCharacterToken(
++                        isWhitespace(cp)
++                            ? TokenType.WHITESPACE_CHARACTER
++                            : cp === $.NULL
++                              ? TokenType.NULL_CHARACTER
++                              : TokenType.CHARACTER,
++                    );
++                }
++
++                this._extendRunWith(String.fromCodePoint(cp), 0);
+             },
+             handler.onParseError
+                 ? {
+@@ -473,6 +490,7 @@ export class Tokenizer {
+ 
+     //Token creation
+     protected _createStartTagToken(): void {
++        this._flushRun('');
+         this.currentToken = {
+             type: TokenType.START_TAG,
+             tagName: '',
+@@ -485,6 +503,7 @@ export class Tokenizer {
+     }
+ 
+     protected _createEndTagToken(): void {
++        this._flushRun('');
+         this.currentToken = {
+             type: TokenType.END_TAG,
+             tagName: '',
+@@ -497,6 +516,7 @@ export class Tokenizer {
+     }
+ 
+     protected _createCommentToken(offset: number): void {
++        this._flushRun('');
+         this.currentToken = {
+             type: TokenType.COMMENT,
+             data: '',
+@@ -505,6 +525,7 @@ export class Tokenizer {
+     }
+ 
+     protected _createDoctypeToken(initialName: string | null): void {
++        this._flushRun('');
+         this.currentToken = {
+             type: TokenType.DOCTYPE,
+             name: initialName,
+@@ -515,7 +536,7 @@ export class Tokenizer {
+         };
+     }
+ 
+-    protected _createCharacterToken(type: CharacterToken['type'], chars: string): void {
++    protected _createCharacterToken(type: CharacterToken['type']): void {
+         if (this.currentLocation) {
+             const start = this.currentLocation.startOffset - this.preprocessor.droppedBufferSize;
+             // A flushed CR already advanced the line; exclude its ignored LF from the next token's range.
+@@ -525,13 +546,14 @@ export class Tokenizer {
+         }
+         this.currentCharacterToken = {
+             type,
+-            chars,
++            chars: '',
+             location: this.currentLocation,
+         };
+     }
+ 
+     //Tag attributes
+     protected _createAttr(attrNameFirstCh: string): void {
++        this._flushRun('');
+         this.currentAttr = {
+             name: attrNameFirstCh,
+             value: '',
+@@ -565,6 +587,73 @@ export class Tokenizer {
+         }
+     }
+ 
++    /**
++     * Append the pending run and `text` to the attribute value, comment data or character token being built.
++     * The run is a string of its own: V8 copies a slice of fewer than 13 characters but lets a longer one share
++     * the input's buffer, which would keep that buffer alive for as long as any attribute value or text cut from
++     * it is; a concatenation is flattened into a buffer of its own when it is sliced.
++     */
++    protected _flushRun(text: string): void {
++        if (this.runEnd === this.runStart && text.length === 0) {
++            return;
++        }
++
++        const slice = this.preprocessor.html.slice(this.runStart, this.runEnd);
++        const run = (slice.length < 13 ? slice : ` ${slice}`.slice(1)) + text;
++        const token = this.currentToken;
++
++        this.runStart = this.runEnd;
++
++        if (token === null) {
++            (this.currentCharacterToken as CharacterToken).chars += run;
++        } else if (token.type === TokenType.COMMENT) {
++            token.data += run;
++        } else {
++            this.currentAttr.value += run;
++        }
++    }
++
++    /** Extend the pending run by the current input code point, read as `cp`, or flush it and start a new one. */
++    protected _extendRun(cp: number): void {
++        const { preprocessor } = this;
++
++        //NOTE: a CR is read as LF, which is then not in the input.
++        if (cp === $.LINE_FEED && preprocessor.html.charCodeAt(preprocessor.pos) !== $.LINE_FEED) {
++            this._flushRun('\n');
++            this.runStart = preprocessor.pos + 1;
++      
+```
+
+**File**: `packages/parse5/lib/tokenizer/preprocessor.ts` (modified, +6/-1)
+```diff
+@@ -37,9 +37,14 @@ export class Preprocessor {
+         return this.pos - this.lineStartPos + Number(this.lastGapPos !== this.pos);
+     }
+ 
++    /** The index in `html` at which the current code point starts (the high surrogate of a pair). */
++    public get codePointStart(): number {
++        return this.pos - Number(this.lastGapPos === this.pos);
++    }
++
+     /** The offset of the current code point, before the second unit of a surrogate pair. */
+     public get offset(): number {
+-        return this.droppedBufferSize + this.pos - Number(this.lastGapPos === this.pos);
++        return this.droppedBufferSize + this.codePointStart;
+     }
+ 
+     public getError(code: ERR, cpOffset: number): ParserError {
+```
+
+---
+
+### Incident Patch 2: `25fe482d` (2026-10-26)
+**Commit Message**: chore(deps): bump the codeql group with 2 updates (#1898)
+
+Bumps the codeql group with 2 updates: [github/codeql-action/init](https://github.com/github/codeql-action) and [github/codeql-action/analyze](https://github.com/github/codeql-action).
+
+
+Updates `github/codeql-action/init` from 4.39.0 to 4.39.1
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
+
+Updates `github/codeql-action/analyze` from 4.39.0 to 4.39.1
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
 
 ---
 updated-dependencies:
-- dependency-name: markdown-it
-  dependency-version: 14.3.3
-  dependency-type: indirect
-...
+- dependency-name: github/codeql-action/init
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: codeql
+- dependency-name: github/codeql-action/anal
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `package-lock.json` (modified, +6/-6)
+**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
 ```diff
-@@ -2501,9 +2501,9 @@
-             "dev": true
-         },
-         "node_modules/markdown-it": {
--            "version": "14.3.2",
--            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
--            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
-+            "version": "14.3.3",
-+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
-+            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
-             "dev": true,
-             "funding": [
-                 {
-@@ -5026,9 +5026,9 @@
-             "dev": true
-         },
-         "markdown-it": {
--            "version": "14.3.2",
--            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
--            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
-+            "version": "14.3.3",
-+            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
-+            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
-             "dev": true,
-             "requires": {
-                 "argparse": "^2.0.1",
-```
-
----
-
-### Incident Patch 2: `bcac2c55` (2026-10-20)
-**Commit Message**: chore: group codeql dependabot updates (#1894)
-
-Every time they do a release, both actions get bumped and fail if
-they're not on the same version. So instead of me patching it up every
-time, this tells dependabot to group them into one PR.
-
-**File**: `.github/dependabot.yml` (modified, +4/-0)
-```diff
-@@ -10,6 +10,10 @@ updates:
-       directory: '/'
-       schedule:
-           interval: daily
-+      groups:
-+          codeql:
-+              patterns:
-+                  - 'github/codeql-action*'
-     - package-ecosystem: gitsubmodule
-       directory: '/'
-       schedule:
+@@ -26,9 +26,9 @@ jobs:
+                   persist-credentials: false
+ 
+             - name: Initialize CodeQL
+-              uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++              uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+               with:
+                   languages: 'javascript'
+ 
+             - name: Perform CodeQL Analysis
+-              uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
++              uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1898** (2026-10-26): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
+- **PR #1897** (2026-10-26): perf(tokenizer): append attribute values and character runs as slices of the input (@fb55)
+- **PR #1896** (2026-10-23): chore(deps-dev): bump typescript-eslint from 8.71.2 to 8.72.0 (@dependabot[bot])
 - **PR #1895** (2026-10-22): chore(deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (@dependabot[bot])
 - **PR #1894** (2026-10-20): chore: group codeql dependabot updates (@43081j)
 - **PR #1893** (2026-10-20): chore(deps-dev): bump eslint from 10.12.0 to 10.13.0 (@dependabot[bot])
-- **PR #1892** (2026-10-20): chore(deps): bump github/codeql-action/analyze from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #1891** (2026-10-19): chore(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #1890** (2026-10-19): chore(deps-dev): bump @vitest/coverage-v8 from 5.0.4 to 5.0.5 (@dependabot[bot])
 
 ---
 
@@ -1675,38 +1955,57 @@ time, this tells dependabot to group them into one PR.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895)
+## X. tokenizer): append attribute values and character runs as slices of the input (#
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/parse5/lib/tokenizer/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b45055d1`: deps-dev): bump markdown-it from 14.3.2 to 14.3.3 (#1895). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e32b1b0e`: tokenizer): append attribute values and character runs as slices of the input (#1897). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/tokenizer/index.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            "version": "14.3.3",
-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
-            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
-            "version": "14.3.3",
-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.3.tgz",
-            "integrity": "sha512-L//tDAkjTjJCU6pBUSBTgs3Kg4InVaZuUZog/b6V12UKhcDQ7S78877ibbCanRExwPuYP1CZD7Gd2dxSy1GXRg==",
+import { Tokenizer, TokenizerMode, type Token } from 'parse5';
+/** Every token as text, with attributes as `name=value`, to compare tokenizations of the same input. */
+function tokenize(chunks: string[], foreign = false, opts = tokenizerOpts): string[] {
+    const tokens: string[] = [];
+    const tokenizer = new Tokenizer(opts, {
+        onStartTag(t): void {
+            tokens.push(`<${t.tagName} ${t.attrs.map(({ name, value }) => `${name}=${value}`).join(' ')}>`);
+            // The tree builder switches the state for these elements.
+            if (t.tagName === 'textarea') tokenizer.state = TokenizerMode.RCDATA;
+            if (t.tagName === 'script') tokenizer.state = TokenizerMode.SCRIPT_DATA;
+        },
+        onEndTag(t): void {
+            tokens.push(`</${t.tagName}>`);
+        },
+        onCharacter(t): void {
+            tokens.push(`c:${t.chars}`);
+        },
+        onWhitespaceCharacter(t): void {
+            tokens.push(`w:${t.chars}`);
+        },
+        onNullCharacter(t): void {
+            tokens.push(`n:${t.chars}`);
+        },
+        onComment(t): void {
+            tokens.push(`#${t.data}`);
+        },
+        onDoctype: noop,
+        onEof: noop,
+    });
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            "version": "14.3.2",
-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
-            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
-            "version": "14.3.2",
-            "resolved": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.3.2.tgz",
-            "integrity": "sha512-sHHjZ5fJKlgrG4qns2YwVcdNep35h5fERrfkD2YNsb9UFk0UIHarbiTaHKVMlPuWAoiilyK8Fv/jAm11slsY7Q==",
+import { Tokenizer, type Token } from 'parse5';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b45055d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e32b1b0e` are properly handled with clean fallback behavior.

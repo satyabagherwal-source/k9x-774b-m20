@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `6068694d`  
+> **Source Version**: `eb1a86e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:06:20.041Z  
+> **Timestamp**: 2026-10-27T12:21:50.411Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:06:19.689Z  
+> **Harvest Timestamp**: 2026-10-27T12:21:49.621Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6791 stars
+- **Stars / Engagement**: 6793 stars
 
 ---
 
@@ -1561,433 +1561,216 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8afc2075` (2026-10-23)
-**Commit Message**: [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)
+### Incident Patch 1: `7c6add47` (2026-10-26)
+**Commit Message**: [FIXED] JetStream reconnect watcher cleanup (#2216)
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+Capture the status channel before starting the watcher so cleanup or
+publisher reuse cannot redirect a delayed watcher to a nil or new channel.
+Cover cleanup before watcher startup, with and without publisher reuse.
 
-**File**: `jetstream/ordered.go` (modified, +25/-50)
+Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
+
+**File**: `jetstream/jetstream_test.go` (modified, +32/-1)
 ```diff
-@@ -44,6 +44,7 @@ type (
- 		stopAfter         int // StopAfter of Consume or Messages, 0 if not set
- 		deliveredMessages int // messages handed to the caller, across resets
- 		runningFetch      *fetchResult
-+		fetchInProgress   bool
- 		subscription      *orderedSubscription
- 		sync.Mutex
- 	}
-@@ -419,13 +420,24 @@ func (c *orderedConsumer) Fetch(batch int, opts ...FetchOpt) (MessageBatch, erro
- }
- 
- func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...FetchOpt) (MessageBatch, error) {
-+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-+		return p.fetchWithOpts(batch, allowMaxBytes, opts...)
-+	})
-+}
-+
-+func (c *orderedConsumer) fetch(f func(*pullConsumer) (MessageBatch, error)) (MessageBatch, error) {
- 	c.Lock()
- 	if c.consumerType == consumerTypeConsume {
- 		c.Unlock()
- 		return nil, ErrOrderConsumerUsedAsConsume
- 	}
-+	if c.fetchInProgress {
-+		c.Unlock()
-+		return nil, ErrOrderedConsumerConcurrentRequests
-+	}
- 	if c.runningFetch != nil {
- 		if !c.runningFetch.closed() {
-+			c.Unlock()
- 			return nil, ErrOrderedConsumerConcurrentRequests
+@@ -45,7 +45,7 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
+ 			}
+ 			called <- struct{}{}
  		}
- 		if c.runningFetch.sseq != 0 {
-@@ -438,12 +450,16 @@ func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...F
- 		done:     make(chan struct{}),
- 	}
- 	c.subscription = &sub
-+	c.fetchInProgress = true
- 	c.Unlock()
- 	err := c.reset()
--	if err != nil {
--		return nil, err
-+	var msgs MessageBatch
-+	if err == nil {
-+		msgs, err = f(c.currentConsumer)
- 	}
--	msgs, err := c.currentConsumer.fetchWithOpts(batch, allowMaxBytes, opts...)
-+	c.Lock()
-+	defer c.Unlock()
-+	c.fetchInProgress = false
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -459,36 +475,9 @@ func (c *orderedConsumer) fetchWithOpts(batch int, allowMaxBytes bool, opts ...F
- // reset the consumer for each subsequent Fetch call.
- // Consider using [Consumer.Consume] or [Consumer.Messages] instead.
- func (c *orderedConsumer) FetchBytes(maxBytes int, opts ...FetchOpt) (MessageBatch, error) {
--	c.Lock()
--	if c.consumerType == consumerTypeConsume {
--		c.Unlock()
--		return nil, ErrOrderConsumerUsedAsConsume
--	}
--	if c.runningFetch != nil {
--		if !c.runningFetch.closed() {
--			return nil, ErrOrderedConsumerConcurrentRequests
--		}
--		if c.runningFetch.sseq != 0 {
--			c.cursor.streamSeq = c.runningFetch.sseq
--		}
--	}
--	c.consumerType = consumerTypeFetch
--	sub := orderedSubscription{
--		consumer: c,
--		done:     make(chan struct{}),
--	}
--	c.subscription = &sub
--	c.Unlock()
--	err := c.reset()
--	if err != nil {
--		return nil, err
--	}
--	msgs, err := c.currentConsumer.FetchBytes(maxBytes, opts...)
--	if err != nil {
--		return nil, err
--	}
--	c.runningFetch = msgs.(*fetchResult)
--	return msgs, nil
-+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-+		return p.FetchBytes(maxBytes, opts...)
-+	})
- }
- 
- // FetchNoWait is used to retrieve up to a provided number of messages
-@@ -500,23 +489,9 @@ func (c *orderedConsumer) FetchBytes(maxBytes int, opts ...FetchOpt) (MessageBat
- // reset the consumer for each subsequent Fetch call.
- // Consider using [Consumer.Consume] or [Consumer.Messages] instead.
- func (c *orderedConsumer) FetchNoWait(batch int) (MessageBatch, error) {
--	if c.consumerType == consumerTypeConsume {
--		return nil, ErrOrderConsumerUsedAsConsume
--	}
--	if c.runningFetch != nil && !c.runningFetch.done {
--		return nil, ErrOrderedConsumerConcurrentRequests
--	}
--	c.consumerType = consumerTypeFetch
--	sub := orderedSubscription{
--		consumer: c,
--		done:     make(chan struct{}),
--	}
--	c.subscription = &sub
--	err := c.reset()
--	if err != nil {
--		return nil, err
--	}
--	return c.currentConsumer.FetchNoWait(batch)
-+	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-+		return p.FetchNoWait(batch)
-+	})
- }
- 
- // Next is used to retrieve the next message from the stream. This
-```
-
-**File**: `jetstream/test/ordered_test.go` (modified, +135/-0)
-```diff
-@@ -1239,6 +1239,54 @@ func TestOrderedConsumerFetch(t *testing.T) {
- 			for msg := range res.Messages() {
- 				msg.Ack()
- 			}
-+
-+			errs := make(chan error, 1)
-+			go func() {
-+				_, err := c.Fetch(1, jetstream.FetchMaxWait(100*time.Millisecond))
-+				errs <- err
-+			}()
-+			select {
-+			case err := <-errs:
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %s", err)
-+				}
-+			case <-time.After(5 * time.Second):
-+				t.Fatal("Fetch blocked after a concurrent request was rejected")
-+			}
-+		})
-+	})
-+
-+	t.Run("concurrent fetch requests from multiple goroutines", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+
-+			var wg sync.WaitGroup
-+			var started atomic.Int32
-+			start := make(chan struct{})
-+			for range 10 {
-+				wg.Go(func() {
-+					<-start
-+					_, err := c.Fetch(1, jetstream.FetchMaxWait(time.Second))
-+					if err == nil {
-+						started.Add(1)
-+					} else if !errors.Is(err, jetstream.ErrOrderedConsumerConcurrentRequests) {
-+						t.Errorf("Unexpected error: %s", err)
-+					}
-+				})
-+			}
-+			close(start)
-+			wg.Wait()
-+			if n := started.Load(); n != 1 {
-+				t.Fatalf("Expected exactly one fetch to start; got: %d", n)
-+			}
- 		})
- 	})
- 	t.Run("byte limit reached first", func(t *testing.T) {
-@@ -1381,6 +1429,20 @@ func TestOrderedConsumerFetchBytes(t *testing.T) {
- 			for msg := range res.Messages() {
- 				msg.Ack()
- 			}
-+
-+			errs := make(chan error, 1)
-+			go func() {
-+				_, err := c.FetchBytes(500, jetstream.FetchMaxWait(100*time.Millisecond))
-+				errs <- err
-+			}()
-+			select {
-+			case err := <-errs:
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %s", err)
-+				}
-+			case <-time.After(5 * time.Second):
-+				t.Fatal("FetchBytes blocked after a concurrent request was rejected")
-+			}
- 		})
+-		go js.resetPendingAcksOnReconnect()
++		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
+ 		defer func() {
+ 			close(js.publisher.connStatusCh)
+ 			synctest.Wait()
+@@ -65,6 +65,37 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
  	})
  }
-@@ -1575,6 +1637,79 @@ func TestOrderedConsumerFetchNoWait(t *testing.T) {
- 		})
- 	})
  
-+	t.Run("continue from previous fetch", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			for range 3 {
-+				publishTestMsgs(t, js)
-+			}
++func TestJetStreamReconnectWatcherCleanup(t *testing.T) {
++	for _, reuse := range []bool{false, true} {
++		t.Run(fmt.Sprintf("reuse=%v", reuse), func(t *testing.T) {
++			synctest.Test(t, func(t *testing.T) {
++				nc := &nats.Conn{}
++				js := &jetStream{conn: nc, publisher: &jetStreamClient{}}
++				js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
++				connStatusCh := js.publisher.connStatusCh
 +
-+			fetches := []func() (jetstream.MessageBatch, error){
-+				func() (jetstream.MessageBatch, error) { return c.FetchNoWait(5) },
-+				func() (jetstream.MessageBatch, error) { return c.Fetch(5) },
-+				func() (jetstream.MessageBatch, error) { return c.FetchNoWait(5) },
-+			}
-+			var seq uint64
-+			for _, fetch := range fetches {
-+				res, err := fetch()
-+				if err != nil {
-+					t.Fatalf("Unexpected error: %s", err)
++				// Cleanup can finish before the reconnect watcher starts running.
++				js.CleanupPublisher()
++				if reuse {
++					js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
++					defer js.CleanupPublisher()
 +				}
-+				for msg := range res.Messages() {
-+					meta, err := msg.Metadata()
-+					if err != nil {
-+						t.Fatalf("Unexpected error: %s", err)
-+					}
-+					seq++
-+					if meta.Sequence.Stream != seq {
-+						t.Fatalf("Expected stream sequence %d; got: %d", seq, meta.Sequence.Stream)
-+					}
++				stopped := make(chan struct{})
++				go func() {
++					js.resetPendingAcksOnReconnect(connStatusCh)
++					close(stopped)
++				}()
++				synctest.Wait()
++				select {
++				case <-stopped:
++				default:
++					t.Error("Reconnect watcher did not exit after publisher cleanup")
 +				}
-+				if res.Error() != nil {
-+					t.Fatalf("Unexpected error: %s", res.Error())
-+				}
-+			}
-+			if seq != 3*uint64(len(testMsgs)) {
-+				t.Fatalf("Expected %d messages; got: %d", 3*len(testMsgs), seq)
-+			}
-+		})
-+	})
-+
-+	t.Run("concurrent fetch requests", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 20*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+
-+			if _, err := c.Fetch(1, jetstream.FetchMaxWait(100*time.Millisecond)); err != nil {
-+				t.Fatalf("Unexpected error: %s", err)
-+			}
-+			_, err = c.FetchNoWait(1)
-+			if !errors.Is(err, jetstream.ErrOrderedConsumerConcurrentRequests) {
-+				t.Fatalf("Expected error: %s; got: %s", jetstream.ErrOrderedConsumerConcurrentRequests, err)
-+			}
-+			// The pending fetch is never read, so retry until it expires.
-+			checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+				_, err := c.FetchNoWait(1)
-+				return err
 +			})
 +		})
-+	})
++	}
++}
 +
- 	t.Run("consumer used as consume", func(t *testing.T) {
- 		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
- 			ctx := newTesterCtx(t, 20*time.Second)
+ func TestMessageMetadata(t *testing.T) {
+ 	tests := []struct {
+ 		name             string
+```
+
+**File**: `jetstream/publish.go` (modified, +2/-5)
+```diff
+@@ -448,7 +448,7 @@ func (js *jetStream) newAsyncReply() error {
+ 	}
+ 	if js.publisher.connStatusCh == nil {
+ 		js.publisher.connStatusCh = js.conn.StatusChanged(nats.RECONNECTING, nats.CLOSED)
+-		go js.resetPendingAcksOnReconnect()
++		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
+ 	}
+ 	return nil
+ }
+@@ -562,10 +562,7 @@ func (js *jetStream) handleAsyncErrAndUnlock(paf *pubAckFuture, err error) {
+ 	}
+ }
+ 
+-func (js *jetStream) resetPendingAcksOnReconnect() {
+-	js.publisher.Lock()
+-	connStatusCh := js.publisher.connStatusCh
+-	js.publisher.Unlock()
++func (js *jetStream) resetPendingAcksOnReconnect(connStatusCh <-chan nats.Status) {
+ 	for {
+ 		newStatus, ok := <-connStatusCh
+ 		if !ok || newStatus == nats.CLOSED {
 ```
 
 ---
 
-### Incident Patch 2: `063b4ad8` (2026-10-23)
-**Commit Message**: [FIXED] Honor ReconnectWait after ForceReconnect during reconnect (#2179)
+### Incident Patch 2: `b961bad6` (2026-10-26)
+**Commit Message**: [FIXED] Keep TLS server name for IPs discovered via an IP entry (#2217)
 
-* [FIXED] Honor ReconnectWait after ForceReconnect during reconnect
+Servers learned from INFO connect_urls that are bare IPs get the current
+URL's hostname as tlsName so the TLS handshake verifies against it
+instead of the IP. This was skipped whenever the current URL was itself
+an IP. After a failover to a discovered IP entry, a server that came
+back on a new IP was added without a tlsName, and the next reconnect to
+it failed certificate verification against the IP.
 
-doReconnect copied nc.rqch into a local variable once. When ForceReconnect (or close) closes that channel, the loop creates a fresh nc.rqch but kept selecting on the stale, closed local one, so every following backoff returned immediately and the client dialed in a hot loop until the connection closed.
+Inherit the tlsName of the current IP entry when it has one.
 
-Refresh the local channel after each replacement, in both the ReconnectWait branch and the CustomReconnectDelay/ReconnectToServer delay branch. Add a server-free regression test using a counting dialer.
+Signed-off-by: Igor Kupczyński <[REDACTED_EMAIL]>
 
-Resolves #2172
-
-Signed-off-by: Arsen Arakelian <[REDACTED_EMAIL]>
-
-* Replace backoff test with server-free regression test
-
-Co-authored-by: Mohith <[REDACTED_EMAIL]>
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Arsen Arakelian <[REDACTED_EMAIL]>
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-Co-authored-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-Co-authored-by: Mohith <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +5/-1)
+**File**: `nats.go` (modified, +10/-4)
 ```diff
-@@ -3503,6 +3503,7 @@ func (nc *Conn) doReconnect(err error, forceReconnect bool) {
- 					rt.Stop()
- 					nc.mu.Lock()
- 					nc.rqch = make(chan struct{})
-+					rqch = nc.rqch
- 					nc.mu.Unlock()
- 				case <-rt.C:
- 				}
-@@ -3535,9 +3536,12 @@ func (nc *Conn) doReconnect(err error, forceReconnect bool) {
- 				rt.Stop()
+@@ -2273,9 +2273,14 @@ func (nc *Conn) parseServerURL(sURL string, implicit, saveTLSName bool) (*Server
+ 		}
+ 		// We are checking to see if we have a secure connection and are
+ 		// adding an implicit server that just has an IP. If so we will remember
+-		// the current hostname we are connected to.
++		// the current hostname we are connected to. If we are connected to an
++		// IP ourselves, inherit the name that entry carries.
+ 		if saveTLSName && hostIsIP(u) {
+-			tlsName = curl.Hostname()
++			if hostIsIP(curl) {
++				tlsName = nc.current.tlsName
++			} else {
++				tlsName = curl.Hostname()
++			}
+ 		}
+ 	}
  
- 				// we need to reset the rqch channel to avoid
--				// closing a closed channel in the next iteration
-+				// closing a closed channel in the next iteration,
-+				// and keep selecting on the new channel so the
-+				// delay is honored again on the next iteration.
- 				nc.mu.Lock()
- 				nc.rqch = make(chan struct{})
-+				rqch = nc.rqch
- 				nc.mu.Unlock()
- 			case <-rt.C:
- 			}
+@@ -4361,8 +4366,9 @@ func (nc *Conn) processInfo(info string) error {
+ 			i--
+ 		}
+ 	}
+-	// Figure out if we should save off the current non-IP hostname if we encounter a bare IP.
+-	saveTLS := nc.current != nil && !hostIsIP(nc.current.URL)
++	// Figure out if we should save off the current non-IP hostname, or the
++	// name saved on the current IP entry, if we encounter a bare IP.
++	saveTLS := nc.current != nil && (!hostIsIP(nc.current.URL) || nc.current.tlsName != _EMPTY_)
+ 
+ 	// If there are any left in the tmp map, these are new (or restarted) servers
+ 	// and need to be added to the pool.
 ```
 
-**File**: `nats_test.go` (modified, +70/-0)
+**File**: `nats_test.go` (modified, +58/-0)
 ```diff
-@@ -2241,3 +2241,73 @@ func TestMakeTLSConnUsesPreservedTLSName(t *testing.T) {
- 		})
+@@ -2123,6 +2123,64 @@ func TestParseServerURLPreservesTLSName(t *testing.T) {
  	}
  }
-+
-+type failDialer struct {
-+	attempts chan struct{}
-+}
-+
-+func (d *failDialer) Dial(network, address string) (net.Conn, error) {
-+	select {
-+	case d.attempts <- struct{}{}:
-+	default:
-+	}
-+	return nil, errors.New("dial failed")
-+}
-+
-+func TestForceReconnectRestoresBackoff(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		opts []Option
-+	}{
-+		{"ReconnectWait", nil},
-+		{"CustomReconnectDelay", []Option{CustomReconnectDelay(func(int) time.Duration { return time.Hour })}},
-+		{"ReconnectToServer", []Option{ReconnectToServer(func(servers []Server, _ ServerInfo) (*Server, time.Duration) {
-+			return &servers[0], time.Hour
-+		})}},
+ 
++// TestProcessInfoPropagatesTLSNameFromIPEntry verifies that a server learned
++// through INFO connect_urls while connected through an implicit IP entry
++// inherits that entry's tlsName, so a later reconnect to it still verifies
++// the certificate against the original hostname.
++func TestProcessInfoPropagatesTLSNameFromIPEntry(t *testing.T) {
++	opts := GetDefaultOptions()
++	opts.Url = "tls://nats.example.com:4222"
++	opts.NoRandomize = true
++	nc := &Conn{Opts: opts}
++	if err := nc.setupServerPool(); err != nil {
++		t.Fatalf("Problem setting up Server Pool: %v", err)
 +	}
 +
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			dialer := &failDialer{attempts: make(chan struct{}, 16)}
-+			opts := append([]Option{
-+				SetCustomDialer(dialer),
-+				RetryOnFailedConnect(true),
-+				MaxReconnects(-1),
-+				ReconnectWait(time.Hour),
-+				ReconnectJitter(0, 0),
-+			}, test.opts...)
-+			nc, err := Connect(DefaultURL, opts...)
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
++	poolServer := func(hostPort string) *Server {
++		t.Helper()
++		for _, s := range nc.srvPool {
++			if s.URL.Host == hostPort {
++				return s
 +			}
-+			defer nc.Close()
++		}
++		t.Fatalf("Server %q not in pool", hostPort)
++		return nil
++	}
++	info := func(urls ...string) string {
++		b, _ := json.Marshal(map[string]any{"connect_urls": urls})
++		return string(b)
++	}
 +
-+			waitForDial := func() {
-+				t.Helper()
-+				select {
-+				case <-dialer.attempts:
-+				case <-time.After(3 * time.Second):
-+					t.Fatal("ForceReconnect did not interrupt the backoff")
-+				}
-+			}
-+			// Initial failed connect.
-+			waitForDial()
-+			for i := range 2 {
-+				if err := nc.ForceReconnect(); err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+				waitForDial()
-+				select {
-+				case <-dialer.attempts:
-+					t.Fatalf("Backoff skipped after forced attempt %d", i+1)
-+				case <-time.After(100 * time.Millisecond):
-+				}
-+			}
++	// Connected through the hostname: IPs learned get its name.
++	if err := nc.processInfo(info("10.0.0.1:4222", "10.0.0.2:4222")); err != nil {
++		t.Fatalf("processInfo: %v", err)
++	}
++	for _, hp := range []string{"10.0.0.1:4222", "10.0.0.2:4222"} {
++		if got := poolServer(hp).tlsName; got != "nats.example.com" {
++			t.Fatalf("tlsName for %s = %q, want %q", hp, got, "nats.example.com")
++		}
++	}
 +
-+			nc.Close()
-+			if err := nc.ForceReconnect(); !errors.Is(err, ErrConnectionClosed) {
-+				t.Fatalf("Expected %v, got: %v", ErrConnectionClosed, err)
-+			}
-+		})
++	// Reconnected through an IP entry, then a server comes back on a new IP.
++	nc.current = poolServer("10.0.0.2:4222")
++	if err := nc.processInfo(info("10.0.0.2:4222", "10.0.0.3:4222")); err != nil {
++		t.Fatalf("processInfo: %v", err)
++	}
++	if got := poolServer("10.0.0.3:4222").tlsName; got != "nats.example.com" {
++		t.Fatalf("tlsName for new IP = %q, want %q", got, "nats.example.com")
++	}
++
++	// An IP entry without a tlsName has nothing to pass on.
++	nc.current = poolServer("10.0.0.3:4222")
++	nc.current.tlsName = _EMPTY_
++	if err := nc.processInfo(info("10.0.0.3:4222", "10.0.0.4:4222")); err != nil {
++		t.Fatalf("processInfo: %v", err)
++	}
++	if got := poolServer("10.0.0.4:4222").tlsName; got != _EMPTY_ {
++		t.Fatalf("tlsName for new IP = %q, want empty", got)
 +	}
 +}
++
+ // hostOnlyTLSCert mints a self-signed cert carrying a single "localhost" DNS
+ // SAN and deliberately no IP SANs, so verifying it against an IP-form
+ // ServerName fails. Returns the server cert and a pool trusting it.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2217** (2026-10-26): [FIXED] Keep TLS server name for IPs discovered via an IP entry (@igor-kupczynski)
+- **PR #2216** (2026-10-26): [FIXED] Release the JetStream reconnect watcher after publisher cleanup (@Grivn)
 - **PR #2214** (2026-10-23): Release v1.55.0 (@piotrpio)
 - **PR #2213** (2026-10-23): [IMPROVED] Document default MaxAckPending for legacy JetStream subscriptions (@piotrpio)
 - **PR #2212** (2026-10-23): [IMPROVED] Avoid per-message metadata allocations in JetStream consumers (@piotrpio)
 - **PR #2211** (2026-10-23): [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (@piotrpio)
-- **PR #2208** (2026-10-22): [FIXED] Correct StopAfter pending accounting for pull consumers (@huynguyen7)
-- **PR #2204** (2026-10-20): [DOC] Document that Msg is not reused (@kave08)
 
 ---
 
@@ -2007,101 +1790,59 @@ Co-authored-by: Mohith <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211)
+## X. [FIXED] JetStream reconnect watcher cleanup (#2216)
 
 **RULE**:
-When implementing operations in `jetstream/ordered.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8afc2075`: [FIXED] Ordered consumer Fetch deadlock and FetchNoWait redelivery (#2211). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c6add47`: [FIXED] JetStream reconnect watcher cleanup (#2216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/ordered.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		fetchInProgress   bool
-	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-		return p.fetchWithOpts(batch, allowMaxBytes, opts...)
-	})
+		go js.resetPendingAcksOnReconnect(js.publisher.connStatusCh)
+func TestJetStreamReconnectWatcherCleanup(t *testing.T) {
+	for _, reuse := range []bool{false, true} {
+		t.Run(fmt.Sprintf("reuse=%v", reuse), func(t *testing.T) {
+			synctest.Test(t, func(t *testing.T) {
+				nc := &nats.Conn{}
+				js := &jetStream{conn: nc, publisher: &jetStreamClient{}}
+				js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
+				connStatusCh := js.publisher.connStatusCh
+
+				// Cleanup can finish before the reconnect watcher starts running.
+				js.CleanupPublisher()
+				if reuse {
+					js.publisher.connStatusCh = nc.StatusChanged(nats.RECONNECTING, nats.CLOSED)
+					defer js.CleanupPublisher()
+				}
+				stopped := make(chan struct{})
+				go func() {
+					js.resetPendingAcksOnReconnect(connStatusCh)
+					close(stopped)
+				}()
+				synctest.Wait()
+				select {
+				case <-stopped:
+				default:
+					t.Error("Reconnect watcher did not exit after publisher cleanup")
+				}
+			})
+		})
+	}
 }
 
-func (c *orderedConsumer) fetch(f func(*pullConsumer) (MessageBatch, error)) (MessageBatch, error) {
-	if c.fetchInProgress {
-		c.Unlock()
-		return nil, ErrOrderedConsumerConcurrentRequests
-	}
-			c.Unlock()
-	c.fetchInProgress = true
-	var msgs MessageBatch
-	if err == nil {
-		msgs, err = f(c.currentConsumer)
-	c.Lock()
-	defer c.Unlock()
-	c.fetchInProgress = false
-	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-		return p.FetchBytes(maxBytes, opts...)
-	})
-	return c.fetch(func(p *pullConsumer) (MessageBatch, error) {
-		return p.FetchNoWait(batch)
-	})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if err != nil {
-		return nil, err
-	msgs, err := c.currentConsumer.fetchWithOpts(batch, allowMaxBytes, opts...)
-	c.Lock()
-	if c.consumerType == consumerTypeConsume {
-		c.Unlock()
-		return nil, ErrOrderConsumerUsedAsConsume
-	}
-	if c.runningFetch != nil {
-		if !c.runningFetch.closed() {
-			return nil, ErrOrderedConsumerConcurrentRequests
-		}
-		if c.runningFetch.sseq != 0 {
-			c.cursor.streamSeq = c.runningFetch.sseq
-		}
-	}
-	c.consumerType = consumerTypeFetch
-	sub := orderedSubscription{
-		consumer: c,
-		done:     make(chan struct{}),
-	}
-	c.subscription = &sub
-	c.Unlock()
-	err := c.reset()
-	if err != nil {
-		return nil, err
-	}
-	msgs, err := c.currentConsumer.FetchBytes(maxBytes, opts...)
-	if err != nil {
-		return nil, err
-	}
-	c.runningFetch = msgs.(*fetchResult)
-	return msgs, nil
-	if c.consumerType == consumerTypeConsume {
-		return nil, ErrOrderConsumerUsedAsConsume
-	}
-	if c.runningFetch != nil && !c.runningFetch.done {
-		return nil, ErrOrderedConsumerConcurrentRequests
-	}
-	c.consumerType = consumerTypeFetch
-	sub := orderedSubscription{
-		consumer: c,
-		done:     make(chan struct{}),
-	}
-	c.subscription = &sub
-	err := c.reset()
-	if err != nil {
-		return nil, err
-	}
-	return c.currentCon
+		go js.resetPendingAcksOnReconnect()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8afc2075` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c6add47` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T12:18:37.740Z",
+  "last_updated": "2026-10-27T12:21:58.807Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
-      "verified_at": "2026-10-27T11:27:34.137Z",
+      "content_hash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
+      "verified_at": "2026-10-27T12:21:58.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:27:34.137Z"
+      "last_updated": "2026-10-27T12:21:58.130Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
-      "verified_at": "2026-10-25T06:06:20.277Z",
+      "content_hash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
+      "verified_at": "2026-10-27T12:21:50.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T06:06:20.277Z"
+      "last_updated": "2026-10-27T12:21:50.915Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "065515d4b7be0793c72b6933f91e45bfae7e318f3e59d59a636d2f292d758d58",
-      "verified_at": "2026-10-26T00:12:17.562Z",
+      "content_hash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
+      "verified_at": "2026-10-27T12:21:52.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:12:17.562Z"
+      "last_updated": "2026-10-27T12:21:52.907Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
-      "verified_at": "2026-10-25T20:36:46.657Z",
+      "content_hash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
+      "verified_at": "2026-10-27T12:21:58.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T20:36:46.657Z"
+      "last_updated": "2026-10-27T12:21:58.807Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
-      "verified_at": "2026-10-22T18:56:56.029Z",
+      "content_hash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
+      "verified_at": "2026-10-27T12:21:46.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T18:56:56.029Z"
+      "last_updated": "2026-10-27T12:21:46.984Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
-      "verified_at": "2026-10-23T06:17:18.894Z",
+      "content_hash": "4f00426c10c439646d5b6f106a99b087095d100c3da8591cf474f20c811e95fd",
+      "verified_at": "2026-10-27T12:21:48.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:17:18.894Z"
+      "last_updated": "2026-10-27T12:21:48.330Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "505c1a23",
+    "sourceVersion": "8ca46580",
     "license": "NOASSERTION",
-    "contentHash": "5882a7fada5d72dee877ae164a8703b95083b7720c50a59e29660372ea3fd246",
-    "lastHarvestedAt": "2026-10-27T11:27:34.123Z",
+    "contentHash": "753de2a8c60fab1bd5d41cce11c1456f3020e20a4028e159776304785595186c",
+    "lastHarvestedAt": "2026-10-27T12:21:58.122Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "6068694d",
+    "sourceVersion": "eb1a86e6",
     "license": "Apache-2.0",
-    "contentHash": "e705fdae239550e89763f5f342bb808ac77403a460fa301d387db7cd25779315",
-    "lastHarvestedAt": "2026-10-25T06:06:20.267Z",
+    "contentHash": "c7b343de97de19db6e7efac6156430ff3df660d00c6ab86cba10df41c1bc8523",
+    "lastHarvestedAt": "2026-10-27T12:21:50.908Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "e139573e",
+    "sourceVersion": "8050b1b0",
     "license": "MIT",
-    "contentHash": "065515d4b7be0793c72b6933f91e45bfae7e318f3e59d59a636d2f292d758d58",
-    "lastHarvestedAt": "2026-10-26T00:12:17.556Z",
+    "contentHash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
+    "lastHarvestedAt": "2026-10-27T12:21:52.899Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "921b14bd",
+    "sourceVersion": "df783638",
     "license": "Apache-2.0",
-    "contentHash": "3227ba0c4ded78d52a02f3a7bd965b35c91679aed3e06063053beaaca98da657",
-    "lastHarvestedAt": "2026-10-25T20:36:46.650Z",
+    "contentHash": "32fc7a9ed96dacff6f2cd178b4e327ad4a794a83470ead9cd0570644a6e1381e",
+    "lastHarvestedAt": "2026-10-27T12:21:58.799Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "b45055d1",
+    "sourceVersion": "e32b1b0e",
     "license": "MIT",
-    "contentHash": "c0ffe9f8958f44648a276055da1fc5c829cb6576adfaf7925bf618b354bee011",
-    "lastHarvestedAt": "2026-10-22T18:56:56.015Z",
+    "contentHash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
+    "lastHarvestedAt": "2026-10-27T12:21:46.976Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "ae13ea66",
+    "sourceVersion": "029ff91d",
     "license": "MIT",
-    "contentHash": "65b027dff6ef6c4590d1b358554a69f10cc3a3e165fe16b665194f5a290e8110",
-    "lastHarvestedAt": "2026-10-23T06:17:18.883Z",
+    "contentHash": "4f00426c10c439646d5b6f106a99b087095d100c3da8591cf474f20c811e95fd",
+    "lastHarvestedAt": "2026-10-27T12:21:48.320Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

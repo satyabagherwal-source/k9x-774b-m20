@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `505c1a23`  
+> **Source Version**: `8ca46580`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:27:33.920Z  
+> **Timestamp**: 2026-10-27T12:21:57.668Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:27:33.634Z  
+> **Harvest Timestamp**: 2026-10-27T12:21:57.194Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,183 +2203,189 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `505c1a23` (2026-10-27)
-**Commit Message**: fix(get): step past stale cache temps; tighten a symlinked cache root (#4944)
+### Incident Patch 1: `48462a79` (2026-10-27)
+**Commit Message**: fix(get): --output files follow the umask, not the cache's 0600 (#4945)
 
-* fix(get): step past stale cache temps; tighten a symlinked cache root
+* fix(get): --output files follow the umask, not the cache's 0600
 
-Since #4928 the get cache's temp files are opened with create_new, so a temp
-left by a crashed download (`ingest-<pid>-0.tmp`, `*.tmp-<pid>-<n>`) made a
-later process that got the same pid fail with AlreadyExists - routine in
-containers, where qsv has the same low pid every run. create_private_temp now
-moves on to the next token, as DerivedFile::create does.
+Since #4928, `get --output` and `get cache-fetch --output` went through the
+cache's private atomic_write, so a file the user asked for was written 0600
+and any parent directories created for it 0700, whatever the umask. Every
+other qsv writer leaves the mode to the umask, and an owner-only export in a
+shared project or web directory quietly breaks whoever else reads it.
 
-make_private used symlink_metadata, so a `get` root relocated by a symlink was
-never tightened and downloads an earlier qsv left there at 0644 stayed
-readable by others. It now follows the link.
-
-roborev 5902.
+write_output now uses write_user_file: still a temp file renamed into place,
+with #4944's collision retry (create_temp, now shared with the cache), but with
+the umask's mode and a plain create_dir_all. The cache itself stays owner-only.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #4944
+* docs(changelog): cite #4945
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* fix(get): --output over an existing file keeps its mode; umask-proof test
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+roborev 5923:
+- High: writing via temp + rename replaced an existing destination's mode, so
+  exporting over a 0600 file under umask 022 left a 0644 file. The temp now
+  takes the existing file's mode while still empty, as File::create 
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -132,7 +132,7 @@ Read **Breaking Changes** before upgrading: `sqlp` subquery aliases, three `vali
+ - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
  
-+## [Unreleased]
-+
-+### Fixed
-+* `get`: a temp file left behind by a crashed download no longer makes later downloads fail with "File exists" when a new process gets the same process ID, which is routine in containers. A regression from the private caches in 27.0.0 (#4928). ([#4944](https://github.com/dathere/qsv/pull/4944))
-+* `get`: a cache directory relocated with a symlink (`<cache>/get` → elsewhere) is now made owner-only at its real location, like an ordinary one. ([#4944](https://github.com/dathere/qsv/pull/4944))
-+
- ## [27.0.0] - 2026-10-27 📡 The "Live Data Schematics" Release 📊
- 
- ### Highlights
+ ### Fixed
+-- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private directory. The old shared `qsv-dc` and `qsv-getidx` directories aren't removed: delete them from your temp dir.
++- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. A file you ask for with `--output` (`get`, `get cache-fetch`) is not part of the cache and keeps your umask's mode, as with every other qsv command, and overwriting an existing file keeps that file's mode ([#4945](https://github.com/dathere/qsv/pull/4945)). The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private directory. The old shared `qsv-dc` and `qsv-getidx` directories aren't removed: delete them from your temp dir.
+ - **Security: `stats`' `.stats.csv.json` sidecar is no more readable than its CSV** ([#4929](https://github.com/dathere/qsv/pull/4929)). The `.stats.csv` and `.stats.csv.data.jsonl` caches beside a CSV never get a wider mode than the CSV (since [#4619](https://github.com/dathere/qsv/issues/4619)), but the `.stats.csv.json` sidecar was created at the umask default, so a private (`0600`) CSV got a world-readable sidecar. It holds no data values, but it does record the CSV's full path, record count, size and BLAKE3 hash, which is enough to confirm a guess at a small file's contents. It is now derived from the CSV's mode like the other two, including the copy written beside a symlink's target. Sidecars left by earlier versions are tightened the next time `stats` recomputes them.
+ - **`writestat` no longer writes wrong data to SPSS portable (`.por`) files** ([#4927](https://github.com/dathere/qsv/pull/4927), polars-readstat-rs [0.27.0](https://github.com/jrothbaum/polars_readstat/releases)). Numbers of about 1.8e19 and above came back as 1.8e19, and text outside printable ASCII was written as NUL bytes (`café` came back as `caf` and two NULs), or, for a line break, as a file that couldn't be read back. Large numbers now come back as written. **Behavior change:** text a `.por` file can't hold is now an error naming the column, and no file is written; write `.sav` to keep such text.
+ - **`writestat` refuses numbers a SAS transport (`.xpt`) file would write as missing** ([#4927](https://github.com/dathere/qsv/pull/4927)). XPT stores IBM floats, which stop at about 7.2e75, so a larger number wa
 ```
 
-**File**: `src/diskcache.rs` (modified, +53/-8)
+**File**: `src/diskcache.rs` (modified, +41/-4)
 ```diff
-@@ -711,7 +711,11 @@ mod rich {
-         #[cfg(unix)]
-         {
-             use std::os::unix::fs::PermissionsExt;
--            if let Ok(meta) = fs::symlink_metadata(root)
-+            // `metadata` follows a symlinked root, so a cache relocated by a
-+            // symlink gets its real directory tightened too. Following adds no
-+            // exposure: every cache read and write already goes through the link,
-+            // and chmod only succeeds on a directory the user owns.
-+            if let Ok(meta) = fs::metadata(root)
-                 && meta.is_dir()
-                 && meta.permissions().mode() & 0o077 != 0
-                 && let Err(e) = fs::set_permissions(root, fs::Permissions::from_mode(0o700))
-@@ -820,12 +824,30 @@ mod rich {
+@@ -824,15 +824,23 @@ mod rich {
          format!("{}-{n}", std::process::id())
      }
  
-+    /// Create an owner-only temp file at `make(token)`, moving on to the next
-+    /// token if that name is taken. A crashed run leaves its temps behind, and
-+    /// a later process that gets the same pid (routine in containers, where
-+    /// qsv often has the same low pid every run) would otherwise hit them.
+-    /// Create an owner-only temp file at `make(token)`, moving on to the next
++    /// Create an owner-only (0600) temp file for the cache; see `create_temp`.
 +    fn create_private_temp(make: impl Fn(&str) -> PathBuf) -> std::io::Result<(PathBuf, fs::File)> {
-+        let mut last_err = None;
-+        for _ in 0..16 {
-+            let tmp = make(&unique_token());
-+            match create_private_file(&tmp) {
-+                Ok(file) => return Ok((tmp, file)),
-+                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => last_err = Some(e),
-+                Err(e) => return Err(e),
-+            }
++        create_temp(make, create_private_file)
++    }
++
++    /// Create a temp file at `make(token)` with `open`, moving on to the next
+     /// token if that name is taken. A crashed run leaves its temps behind, and
+     /// a later process that gets the same pid (routine in containers, where
+     /// qsv often has the same low pid every run) would otherwise hit them.
+-    fn create_private_temp(make: impl Fn(&str) -> PathBuf) -> std::io::Result<(PathBuf, fs::File)> {
++    fn create_temp(
++        make: impl Fn(&str) -> PathBuf,
++        open: impl Fn(&Path) -> std::io::Result<fs::File>,
++    ) -> std::io::Result<(PathBuf, fs::File)> {
+         let mut last_err = None;
+         for _ in 0..16 {
+             let tmp = make(&unique_token());
+-            match create_private_file(&tmp) {
++            match open(&tmp) {
+                 Ok(file) => return Ok((tmp, file)),
+                 Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => last_err = Some(e),
+                 Err(e) => return Err(e),
+@@ -841,6 +849,35 @@ mod rich {
+         Err(last_err.unwrap_or_else(|| std::io::Error::other("no free temp filename")))
+     }
+ 
++    /// Write a file the user asked for (`--output`) atomically, with the
++    /// umask's mode, like every other qsv writer. Only the cache's own files are
++    /// owner-only: where an export goes, and who may read it, is the user's call.
++    /// Overwriting an existing file keeps its mode, as `File::create` would: the
++    /// temp gets that mode while still empty, so a file the user locked down is
++    /// never replaced by a more readable one.
++    fn write_user_file(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
++        if let Some(parent) = path.parent() {
++            fs::create_dir_all(parent)?;
 +        }
-+        Err(last_err.unwrap_or_else(|| std::io::Error::other("no free temp filename")))
++        let (tmp, mut file) = create_temp(
++            |t| path.with_extension(format!("tmp-{t}")),
++            |p| fs::OpenOptions::new().write(true).create_new(true).open(p),
++        )?;
++        let written = (|| {
++            #[cfg(unix)]
++            if let Ok(existing) = fs::metadata(path) {
++                file.set_permissions(existing.permissions())?;
++            }
++            file.write_all(bytes)
++        })();
++        drop(file);
++        if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
++            let _ = fs::remove_file(&tmp);
++            return Err(e);
++        }
++        Ok(())
 +    }
 +
      fn atomic_write(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
          if let Some(parent) = path.parent() {
              super::create_private_dir_all(parent)?;
-         }
--        let tmp = path.with_extension(format!("tmp-{}", unique_token()));
--        let written = create_private_file(&tmp).and_then(|mut f| f.write_all(bytes));
-+        let (tmp, mut file) = create_private_temp(|t| path.with_extension(format!("tmp-{t}")))?;
-+        let written = file.write_all(bytes);
-+        drop(file);
-         if let Err(e) = written.and_then(|()| fs::rename(&tmp, path)) {
-             // Best-effort cleanup so a failed write or rename doesn't leave temp litter.
-             let _ = fs::remove_file(&tmp);
-@@ -849,10 +871,10 @@ mod rich {
-         if let Some(parent) = destination.parent() {
-             super::create_private_dir_all(parent)?;
-         }
--        let tmp = destination.with_extension(format!("tmp-{}", unique_token()));
-+        let input = fs::File::open(blob_path(root, b3, compression))?;
-+        let (tmp, file) = create_private_temp(|t| destination.with_extension(format!("tmp-{t}")))?;
-         let result = (|| {
--            let input = fs::File::open(blob_path(root, b3, compression))?;
--            let mut output = BufWriter::with_capacity(1024 * 1024, create_private_file(&tmp)?);
-+            let mut output = BufWriter::with_capacity(1024 * 1024, file);
-             match compression {
-                 Compression::Zstd => {
-                     let mut decoder = zstd::stream::read::Decoder::new(input)?;
-@@ -924,8 +946,8 @@ mod rich {
-         fn new(root: &Path, compression: Compression) -> CliResult<Self> {
-             let blobs = root.join("blobs");
-             super::create_private_dir_all(&blobs)?;
--            let tmp = blobs.join(format!("ingest-{}.tmp", unique_token()));
--            let buf = BufWriter::new(create_private_file(&tmp)?);
-+            let (tmp, file) = create_private_temp(|t| blobs.join(format!("ingest-{t}.tmp")))?;
-+            let buf = BufWriter::new(file);
-             let writer = match compression {
-                 Compression::Zstd => {
-                     BlobSinkWriter::Zstd(zstd::stream::write::Encoder::new(buf, ZSTD_LEVEL)?)
-@@ -3578,6 +3600,29 @@ mod rich {
-             }
-         }
- 
-+        // A crashed run leaves `<name>.tmp-<pid>-<n>` behind; a later process
-+        // with the same pid (routine in containers) must step past it, not fail.
-+        #[test]
-+        fn atomic_write_steps_past_stale_temps_from_a_reused_pid() {
-+            let dir = tempfile::tempdir().unwrap();
-+            let path = dir.path().join("entry.json");
-+            let current = super::unique_token();
-+            let (pid, n) = current.rsplit_once('-').unwrap();
-+            let n: u64 = n.parse().unwrap();
-+            for k in n + 1..=n + 8 {
-+                std::fs::write(path.with_extension(format!("tmp-{pid}-{k}")), b"stale").unwrap();
-+            }
-+
-+            super::atomic_write(&path, b"fresh").unwrap();
-+
-+            assert_eq!(std::fs::read(&path).unwrap(), b"fresh");
-+            // the stale temps are left alone, never overwritten or renamed in
-+            for k in n + 1..=n + 8 {
-+                let stale = path.with_extension(format!("tmp-{pid}-{k}"));
-+                a
+@@ -3444,7 +3481,7 @@ mod rich {
+             .ok_or_else(|| CliError::Other(format!("get: no cached entry named '{name}'")))?;
+         let body = read_blob(&root, &entry.meta.blake3, entry.meta.compression)?;
+         match output {
+-            Some(p) if p != "-" => atomic_write(Path::new(p), &body)?,
++            Some(p) if p != "-" => write_user_file(Path::new(p), &body)?,
+             _ => {
+                 use std::io::Write;
+                 std::io::stdout().write_all(&body)?;
 ```
 
-**File**: `tests/test_get.rs` (modified, +30/-0)
+**File**: `tests/test_get.rs` (modified, +62/-0)
 ```diff
-@@ -2825,6 +2825,36 @@ fn get_cache_and_dc_copies_are_owner_only() {
+@@ -2855,6 +2855,68 @@ fn get_symlinked_cache_root_is_made_owner_only() {
      );
  }
  
-+// A `get` root relocated by a symlink is tightened at its real directory, so
-+// downloads an earlier qsv left there at 0644 aren't readable by others.
++// The cache is owner-only, but a file the user asks for with --output is not:
++// it gets the umask's mode, as every other qsv writer's output does, and so do
++// the directories created for it. Overwriting an existing file keeps that
++// file's mode instead. qsv runs under a fixed umask (022), so the expected
++// modes don't depend on the umask the test suite happens to run with.
 +#[cfg(unix)]
 +#[test]
 +#[serial]
-+fn get_symlinked_cache_root_is_made_owner_only() {
-+    use std::os::unix::fs::PermissionsExt;
-+    let wrk = Workdir::new("get_symlinked_cache_root_is_made_owner_only");
++fn get_output_and_cache_fetch_output_follow_the_umask() {
++    use std::os::unix::{fs::PermissionsExt, process::CommandExt};
++    fn umask_022(cmd: &mut std::process::Command) {
++        // SAFETY: umask is async-signal-safe and touches only the child.
++        unsafe {
++            cmd.pre_exec(|| {
++                libc::umask(0o022);
++                Ok(())
++            });
++        }
++    }
++    let wrk = Workdir::new("get_output_and_cache_fetch_output_follow_the_umask");
 +    let cache_dir = wrk.path("qsvcache");
 +    let tmp_dir = private_qsv_tmp(&wrk);
-+    let real_root = wrk.path("relocated_get");
-+    std::fs::create_dir_all(&cache_dir).unwrap();
-+    std::fs::create_dir(&real_root).unwrap();
-+    std::fs::set_permissions(&real_root, std::fs::Permissions::from_mode(0o755)).unwrap();
-+    std::os::unix::fs::symlink(&real_root, cache_dir.join("get")).unwrap();
 +    wrk.create_from_string("src.csv", "a,b\n1,2\n");
++    // an existing file the user locked down
++    wrk.create_from_string("locked.csv", "old\n");
++    std::fs::set_permissions(
++        wrk.path("locked.csv"),
++        std::fs::Permissions::from_mode(0o600),
++    )
++    .unwrap();
 +
 +    let mut get = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
-+    get.args(["--name", "t.csv", "src.csv"]);
++    get.args(["--name", "t.csv", "src.csv", "--output", "dl/sub/got.csv"]);
++    umask_022(&mut get);
 +    wrk.assert_success(&mut get);
++    let mut fetch = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
++    fetch.args(["cache-fetch", "t.csv", "--output", "cf/fetched.csv"]);
++    umask_022(&mut fetch);
++    wrk.assert_success(&mut fetch);
++    let mut over = dc_command(&wrk, "get", &cache_dir, &tmp_dir);
++    over.args(["cache-fetch", "t.csv", "--output", "locked.csv"]);
++    umask_022(&mut over);
++    wrk.assert_success(&mut over);
 +
-+    assert_eq!(mode_of(&real_root), 0o700);
-+    assert!(
-+        std::fs::symlink_metadata(cache_dir.join("get"))
-+            .unwrap()
-+            .file_type()
-+            .is_symlink()
-+    );
++    for dir in ["dl", "dl/sub", "cf"] {
++        assert_eq!(mode_of(&wrk.path(dir)), 0o755, "{dir}");
++    }
++    for (file, want) in [
++        ("dl/sub/got.csv", 0o644),
++        ("cf/fetched.csv", 0o644),
++        ("locked.csv", 0o600),
++    ] {
++        assert_eq!(mode_of(&wrk.path(file)), want, "{file}");
++        assert_eq!(
++            std::fs::read_to_string(wrk.path(file)).unwrap(),
++            "a,b\n1,2\n"
++        );
++    }
++    // the cache itself stays owner-only
++    assert_eq!(mode_of(&cache_dir.join("get")), 0o700);
 +}
 +
  // The dc: directory's name is predictable, so in a shared /tmp another user
@@ -2388,12 +2394,12 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4945** (2026-10-27): fix(get): --output files follow the umask, not the cache's 0600 (@jqnatividad)
 - **PR #4944** (2026-10-27): fix(get): step past stale cache temps; tighten a symlinked cache root (@jqnatividad)
 - **PR #4943** (2026-10-27): build(deps): bump anthropics/claude-code-action from 1.0.261 to 1.0.262 (@dependabot[bot])
 - **PR #4929** (2026-10-27): fix(stats): the .stats.csv.json sidecar is no more readable than its CSV (@jqnatividad)
 - **PR #4928** (2026-10-27): fix(get): make the get cache and its dc: copies owner-only (@jqnatividad)
 - **PR #4927** (2026-10-27): deps: polars-readstat-rs 0.27.0; writestat refuses XPT numbers past IBM float range (@jqnatividad)
-- **PR #4926** (2026-10-27): feat(viz): Advanced Filter and Export CSV on live results; data viewer date-filter fixes (@jqnatividad)
 
 ---
 
@@ -2413,13 +2419,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. get): step past stale cache temps; tighten a symlinked cache root (#4944)
+## X. get): --output files follow the umask, not the cache's 0600 (#4945)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `505c1a23`: get): step past stale cache temps; tighten a symlinked cache root (#4944). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48462a79`: get): --output files follow the umask, not the cache's 0600 (#4945). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2427,19 +2433,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Fixed
-* `get`: a temp file left behind by a crashed download no longer makes later downloads fail with "File exists" when a new process gets the same process ID, which is routine in containers. A regression from the private caches in 27.0.0 (#4928). ([#4944](https://github.com/dathere/qsv/pull/4944))
-* `get`: a cache directory relocated with a symlink (`<cache>/get` → elsewhere) is now made owner-only at its real location, like an ordinary one. ([#4944](https://github.com/dathere/qsv/pull/4944))
-
+- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. A file you ask for with `--output` (`get`, `get cache-fetch`) is not part of the cache and keeps your umask's mode, as with every other qsv command, and overwriting an existing file keeps that file's mode ([#4945](https://github.com/dathere/qsv/pull/4945)). The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- **Security: the `get` cache and its `dc:` copies are readable by you only** ([#4928](https://github.com/dathere/qsv/pull/4928)). On a shared machine, other local users could read everything `qsv get` had fetched, including private CKAN resources fetched with an API token: the cache's files were created world-readable (`0644`) in directories anyone could open (`0755`). The copies of `dc:` entries that other commands read were in a shared `qsv-dc` directory in the system temp dir (`/tmp` on Linux), and the index build left a copy in `qsv-getidx` there too. On Unix, the cache's `get/` directory is now owner-only (`0700`), and a cache made by an earlier qsv is tightened the next time it is used. Its files are `0600`. The `dc:` copies are in a per-user, owner-only `qsv-dc-<uid>`. A `QSV_CACHE_DIR` you created keeps its mode, as it may be shared on purpose. The cache directory qsv creates itself is owner-only too. **Behavior changes:** a `get/` cache directory shared with a group on purpose is now owner-only. If `qsv-dc-<uid>` exists and isn't a directory owned by you (in a shared `/tmp`, another user could create it first), `dc:` inputs fail with an error; set `TMPDIR` to a private di
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `505c1a23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48462a79` are properly handled with clean fallback behavior.

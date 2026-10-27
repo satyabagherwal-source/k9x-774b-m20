@@ -5264,3 +5264,9 @@
 | `CYCLE-20261027-ED9U` | `2026-10-27T12:14:44.658Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4738` | Yes (`bbbb5446...`) |
 | `CYCLE-20261027-EF2J` | `2026-10-27T12:14:46.987Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4739` | Yes (`af6824af...`) |
 | `CYCLE-20261027-JD3Z` | `2026-10-27T12:18:37.727Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4740, Rule 4741, Rule 4742` | Yes (`0922156e...`) |
+| `CYCLE-20261027-NF4T` | `2026-10-27T12:21:46.973Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4743` | Yes (`b3d242fd...`) |
+| `CYCLE-20261027-NG65` | `2026-10-27T12:21:48.317Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4744` | Yes (`4f00426c...`) |
+| `CYCLE-20261027-NI61` | `2026-10-27T12:21:50.905Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4745` | Yes (`c7b343de...`) |
+| `CYCLE-20261027-NJPC` | `2026-10-27T12:21:52.896Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4746` | Yes (`ecaff472...`) |
+| `CYCLE-20261027-NNQF` | `2026-10-27T12:21:58.119Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4747` | Yes (`753de2a8...`) |
+| `CYCLE-20261027-NO99` | `2026-10-27T12:21:58.797Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4748` | Yes (`32fc7a9e...`) |

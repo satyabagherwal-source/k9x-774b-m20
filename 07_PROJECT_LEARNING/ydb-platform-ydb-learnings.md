@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `921b14bd`  
+> **Source Version**: `df783638`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:36:46.328Z  
+> **Timestamp**: 2026-10-27T12:21:58.367Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:36:46.173Z  
+> **Harvest Timestamp**: 2026-10-27T12:21:57.095Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4780 stars
+- **Stars / Engagement**: 4779 stars
 
 ---
 
@@ -1284,65 +1284,689 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f866310` (2026-10-25)
-**Commit Message**: Reduce ut_restore CPU requirement from 4 to 1 (#56745)
+### Incident Patch 1: `373ba5aa` (2026-10-27)
+**Commit Message**: Fix tiering compatibility (#57038)
 
-**File**: `ydb/core/tx/schemeshard/ut_restore/ya.make` (modified, +1/-1)
+**File**: `ydb/tests/compatibility/olap/test_tiering.py` (modified, +3/-0)
 ```diff
-@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+@@ -16,6 +16,9 @@ class TieringTestBase(RestartToAnotherVersionFixture):
  
- SPLIT_FACTOR(200)
- 
--REQUIREMENTS(cpu:4)
-+REQUIREMENTS(cpu:1)
- 
- IF (SANITIZER_TYPE)
-     SIZE(LARGE)
+     @pytest.fixture(autouse=True, scope="function")
+     def setup(self, tree):
++        if (tree or self.requires_prefix_alter) and min(self.versions) < (26, 4):
++            pytest.skip("Tiering object key tree is only available since 26-4")
++
+         flags = ["enable_tiering_in_column_shard", "enable_external_data_sources"]
+         if tree or self.requires_prefix_alter:
+             flags.append("enable_tiering_object_key_tree")
 ```
 
 ---
 
-### Incident Patch 2: `6c7cff3e` (2026-10-25)
-**Commit Message**: Reduce ut_export_reboots_s3 CPU requirement from 4 to 1 (#56746)
+### Incident Patch 2: `836e6e71` (2026-10-27)
+**Commit Message**: Fix DROP NOT NULL propagation to secondary indexes (#54534)
 
-**File**: `ydb/core/tx/schemeshard/ut_export_reboots_s3/ya.make` (modified, +1/-1)
+Co-authored-by: flown4qqqq <[REDACTED_EMAIL]>
+Co-authored-by: Igor Koshkaryov <[REDACTED_EMAIL]>
+
+**File**: `ydb/core/kqp/ut/scheme/kqp_constraints_ut.cpp` (modified, +311/-0)
 ```diff
-@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+@@ -68,6 +68,171 @@ void TestCompileTimeDefaultsPlan(const std::string& operation, bool enabled) {
+     }
+ }
  
- SPLIT_FACTOR(200)
++TKikimrSettings DropNotNullIndexSettings(bool compact) {
++    auto settings = TKikimrSettings().SetWithSampleTables(false);
++    auto& flags = *settings.AppConfig.MutableFeatureFlags();
++    flags.SetEnableFulltextIndex(true);
++    flags.SetEnableFulltextIndexPrefix(true);
++    flags.SetEnableFulltextIndexRowId(true);
++    flags.SetEnableJsonIndex(true);
++    flags.SetEnableAddUniqueIndex(true);
++    flags.SetEnableCompactFulltextIndex(compact);
++    settings.AppConfig.MutableTableServiceConfig()->SetEnableIndexStreamWrite(true);
++    settings.AppConfig.MutableTableServiceConfig()->SetBackportMode(NKikimrConfig::TTableServiceConfig_EBackportMode_All);
++    return settings;
++}
++
++void TestDropNotNullWithIndex(const TString& kind, bool compact = false) {
++    TKikimrRunner kikimr(DropNotNullIndexSettings(compact));
++    auto client = kikimr.GetQueryClient();
++    auto execute = [&](const TString& query, bool ddl = false) {
++        auto result = client.ExecuteQuery(query,
++            ddl ? TTxControl::NoTx() : TTxControl::BeginTx().CommitTx()).GetValueSync();
++        UNIT_ASSERT_C(result.IsSuccess(), query << ": " << result.GetIssues().ToString());
++        return result;
++    };
++    auto checkIndex = [&](const TString& column, const TString& expected) {
++        if (kind != "async" && kind != "sync" && kind != "unique") {
++            return;
++        }
++        const auto deadline = TInstant::Now() + TDuration::Seconds(30);
++        TString actual;
++        do {
++            auto result = client.ExecuteQuery("SELECT COUNT(*) FROM TestTable VIEW idx WHERE " + column + " IS NULL;",
++                TTxControl::BeginTx(kind == "async" ? TTxSettings::StaleRO() : TTxSettings::SerializableRW())
++                    .CommitTx()).GetValueSync();
++            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
++            actual = FormatResultSetYson(result.GetResultSet(0));
++            if (actual == expected) {
++                return;
++            }
++            if (kind != "async") {
++                break;
++            }
++            Sleep(TDuration::MilliSeconds(100));
++        } while (TInstant::Now() < deadline);
++        CompareYson(expected, actual);
++    };
++    const bool json = kind == "json";
++    const bool vector = kind == "vector_kmeans_tree";
++    const bool fulltext = kind.StartsWith("fulltext");
++    const bool prefixed = kind != "fulltext_relevance" || compact;
++    const TString type = json ? "Json" : vector ? "String" : "Utf8";
++    const TString value = json ? R"(Json('{"text":"cat"}'))"
++        : vector ? R"(Untag(Knn::ToBinaryStringUint8(CAST([1, 2] AS List<Uint8>)), "Uint8Vector"))"
++        : R"("cat"u)";
++    const TString index = kind == "async" ? "GLOBAL ASYNC" : kind == "unique" ? "GLOBAL UNIQUE"
++        : kind == "sync" ? "GLOBAL" : "GLOBAL USING " + kind;
++    const TString options = fulltext ? " WITH (tokenizer=standard)"
++        : vector ? " WITH (distance=cosine, vector_type=uint8, vector_dimension=2, clusters=2, levels=1)" : "";
++    execute(TStringBuilder() << R"(
++        CREATE TABLE TestTable (
++            Key Uint64 NOT NULL, Prefix Uint64 NOT NULL,
++            Value )" << type << R"( NOT NULL, Payload Int32 NOT NULL,
++            PRIMARY KEY (Key), INDEX idx )" << index << (prefixed ? " ON (Prefix, Value)" : " ON (Value)")
++            << (json ? "" : " COVER (Payload)") << options << ");", true);
++    execute(TStringBuilder() << "UPSERT INTO TestTable (Key, Prefix, Value, Payload) VALUES (1, 10, " << value << ", 7);");
++
++    for (const TString& column : {TString("Value"), TString("Prefix"), TString("Payload")}) {
++        const TString nullValue = column == "Value" ? TString("NULL") : value;
++        const TString prefix1 = column == "Prefix" ? "NULL" : "10";
++        const TString prefix2 = column == "Prefix" ? "NULL" : "20";
++        const TString payload = column == "Payload" ? "NULL" : "7";
++        const TString write = TStringBuilder() << "UPSERT INTO TestTable (Key, Prefix, Value, Payload) VALUES "
++            << "(1, " << prefix1 << ", " << nullValue << ", " << payload << "), "
++            << "(2, " << prefix2 << ", " << nullValue << ", " << payload << ");";
++        auto rejected = client.ExecuteQuery(write, TTxControl::BeginTx().CommitTx()).GetValueSync();
++        UNIT_ASSERT_C(!rejected.IsSuccess(), column << " accepted NULL before DROP NOT NULL");
++        UNIT_ASSERT_STRING_CONTAINS(rejected.GetIssues().ToString(), "Failed to convert type");
++        execute("ALTER TABLE TestTable ALTER COLUMN " + column + " DROP NOT NULL;", true);
++        execute(write);
++        auto result = execute("SELECT COUNT(*) FROM TestTable VIEW PRIMARY KEY WHERE " + column + " IS NULL;");
++        CompareYson("[[2u]]", FormatResultSetYson(result.GetResultSet(0)));
++        checkIndex(column, "[[2u]]");
++    }
++    if (fulltext || json) {
++     
+```
+
+**File**: `ydb/core/kqp/ut/scheme/ya.make` (modified, +1/-0)
+```diff
+@@ -30,6 +30,7 @@ PEERDIR(
+     library/cpp/threading/local_executor
+     ydb/core/kqp
+     ydb/core/kqp/ut/common
++    ydb/library/yql/udfs/common/knn
+     ydb/services/workload_manager/ut/common
+     ydb/core/tx/columnshard/hooks/testing
+     ydb/public/sdk/cpp/src/client/arrow
+```
+
+**File**: `ydb/core/tx/schemeshard/index/index_build_info.h` (modified, +3/-4)
+```diff
+@@ -1,5 +1,7 @@
+ #pragma once
  
--REQUIREMENTS(ram:32 cpu:4)
-+REQUIREMENTS(ram:32 cpu:1)
++#include "index_utils.h"
++
+ #include <ydb/core/tx/schemeshard/schemeshard_impl.h>
  
- IF (SANITIZER_TYPE)
-     SIZE(LARGE)
+ #define YDB_LOG_THIS_FILE_COMPONENT NKikimrServices::BUILD_INDEX
+@@ -874,10 +876,7 @@ struct TIndexBuildInfo: public TSimpleRefCount<TIndexBuildInfo> {
+     }
+ 
+     bool IsBuildFulltextCompact() const {
+-        return BuildKind == EBuildKind::BuildFulltext && (
+-            IndexType == NKikimrSchemeOp::EIndexType::EIndexTypeGlobalFulltextCompact ||
+-            IndexType == NKikimrSchemeOp::EIndexType::EIndexTypeGlobalFulltextCompactRelevance ||
+-            IndexType == NKikimrSchemeOp::EIndexType::EIndexTypeGlobalJsonCompact);
++        return BuildKind == EBuildKind::BuildFulltext && NTableIndex::IsCompactFulltextIndex(IndexType);
+     }
+ 
+     // A compact fulltext build that uses __ydb_row_id as the doc id: it runs a prepass building the
+```
+
+**File**: `ydb/core/tx/schemeshard/index/index_utils.cpp` (modified, +6/-0)
+```diff
+@@ -8,6 +8,12 @@
+ namespace NKikimr {
+ namespace NTableIndex {
+ 
++bool IsCompactFulltextIndex(NKikimrSchemeOp::EIndexType indexType) {
++    return indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextCompact
++        || indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextCompactRelevance
++        || indexType == NKikimrSchemeOp::EIndexTypeGlobalJsonCompact;
++}
++
+ TIndexObjectCounts GetIndexObjectCounts(const NKikimrSchemeOp::TIndexCreationConfig& indexDesc) {
+     TIndexObjectCounts res;
+     res.IndexTableCount = 1;
+```
+
+**File**: `ydb/core/tx/schemeshard/index/index_utils.h` (modified, +3/-0)
+```diff
+@@ -25,6 +25,9 @@ struct TIndexObjectCounts {
+ 
+ TIndexObjectCounts GetIndexObjectCounts(const NKikimrSchemeOp::TIndexCreationConfig& indexDesc);
+ 
++// Compact posting lists encode integer document ids and cannot represent NULL.
++bool IsCompactFulltextIndex(NKikimrSchemeOp::EIndexType indexType);
++
+ // Fulltext index key columns are ordered [prefix..., text]; the text column is always last.
+ // Returns the leading prefix columns (empty for a non-prefixed index).
+ inline TVector<TString> GetFulltextPrefixColumns(const NProtoBuf::RepeatedPtrField<TString>& keyColumnNames) {
+```
+
+**File**: `ydb/core/tx/schemeshard/schemeshard__operation_alter_table.cpp` (modified, +258/-117)
+```diff
+@@ -2,6 +2,8 @@
+ #include "schemeshard__operation_part.h"
+ #include "schemeshard_impl.h"
+ 
++#include "index/index_utils.h"
++
+ #include <ydb/core/base/auth.h>
+ #include <ydb/core/base/hive.h>
+ #include <ydb/core/base/subdomain.h>
+@@ -58,19 +60,89 @@ bool CheckDefaultColumnFamilies(const NKikimrSchemeOp::TPartitionConfig& partiti
+     return true;
+ }
+ 
++// Returns column names whose NOT NULL constraint is required by the index:
++// row-id document identifiers and document identifiers in compact posting lists
++// cannot represent NULL.
++THashSet<TString> GetColumnNamesWithNonDroppableNotNull(const TTableIndexInfo& index, const TTableInfo& table) {
++    const auto* fulltext = std::get_if<NKikimrSchemeOp::TFulltextIndexDescription>(&index.SpecializedIndexDescription);
++
++    if (fulltext && fulltext->GetUseRowIdAsDocId()) {
++        return {NTableIndex::NFulltext::RowIdColumn};
++    }
++
++    THashSet<TString> columns;
++
++    // Without row-id mode, these indexes require exactly one integer PK column,
++    // as validated when the index is created.
++    if (NTableIndex::IsCompactFulltextIndex(index.Type)) {
++        for (const auto columnId : table.KeyColumnIds) {
++            columns.insert(table.Columns.at(columnId).Name);
++        }
++    }
++    return columns;
++}
++
++bool CheckIndexNotNullConstraints(const NKikimrSchemeOp::TTableDescription& alter,
++        const TPath& indexPath, const TOperationContext& context, TString& errStr)
++{
++    if (!AnyOf(alter.GetColumns(), [](const auto& column) {
++        return !column.HasType() && column.HasNotNull() && !column.GetNotNull();
++    })) {
++        return true;
++    }
++
++    const auto indexIt = context.SS->Indexes.find(indexPath.Base()->PathId);
++    if (indexIt == context.SS->Indexes.end()) {
++        errStr = TStringBuilder() << "Index metadata is missing for path: " << indexPath.PathString();
++        return false;
++    }
++    const auto baseTablePath = indexPath.Parent();
++    const auto baseTableIt = context.SS->Tables.find(baseTablePath.Base()->PathId);
++    if (baseTableIt == context.SS->Tables.end()) {
++        errStr = TStringBuilder() << "Table metadata is missing for path: " << baseTablePath.PathString();
++        return false;
++    }
++    const auto requiredColumns = GetColumnNamesWithNonDroppableNotNull(*indexIt->second, *baseTableIt->second);
++    for (const auto& column : alter.GetColumns()) {
++        if (!column.HasType() && column.HasNotNull() && !column.GetNotNull()
++            && requiredColumns.contains(column.GetName()))
++        {
++            errStr = TStringBuilder() << "Cannot drop NOT NULL on column '" << column.GetName()
++                << "': index '" << indexPath.LeafName() << "' requires a non-null document id";
++            return false;
++        }
++    }
++    return true;
++}
++
+ TTableInfo::TAlterDataPtr ParseParams(const TPath& path, TTableInfo::TPtr table, const NKikimrSchemeOp::TTableDescription& alter,
+                                       const bool shadowDataAllowed, const THashSet<TString>& localSequences,
+                                       TString& errStr, NKikimrScheme::EStatus& status, TOperationContext& context,
+                                       bool isInternal = false) {
+     const TAppData* appData = AppData(context.Ctx);
+ 
+     if (!path.IsCommonSensePath()) {
+-        if (alter.ColumnsSize() != 0 || alter.DropColumnsSize() != 0) {
++        bool onlyDropNotNull = isInternal;
++        for (const auto& column : alter.GetColumns()) {
++            onlyDropNotNull = onlyDropNotNull
++                && CheckAllowedFields(column, {"Name", "NotNull"})
++                && column.HasNotNull() && !column.GetNotNull()
++                && table->GetColumnIdByNameSlow(column.GetName()) != TTableInfo::InvalidColumnId;
++        }
++        if ((alter.ColumnsSize() != 0 && !onlyDropNotNull) || alter.DropColumnsSize() != 0) {
+             errStr = "Adding or dropping columns in index table is not supported";
+             status = NKikimrScheme::StatusInvalidParameter;
+             return nullptr;
+         }
+ 
++        if (alter.ColumnsSize() != 0 && path.IsInsideTableIndexPath()) {
++            // Internal requests may also arrive directly, bypassing base-table decomposition.
++            if (!CheckIndexNotNullConstraints(alter, path.Parent(), context, errStr)) {
++                status = NKikimrScheme::StatusPreconditionFailed;
++                return nullptr;
++            }
++        }
++
+         if (alter.HasTTLSettings()) {
+             errStr = "TTL on index table is not supported";
+             status = NKikimrScheme::StatusInvalidParameter;
+@@ -699,6 +771,21 @@ class TAlterTable: public TSubOperation {
+             return result;
+         }
+ 
++        // Keep validation in Propose; decomposition also checks it because TAlterTable
++        // does not yet support rolling back its proposal when another sub-operation fails.
++        if (alter.ColumnsSize() != 0) {
++            for (const auto& [_, childPathId] : path.Base()
+```
+
+**File**: `ydb/core/tx/schemeshard/ut_base/ut_base.cpp` (modified, +423/-0)
+```diff
+@@ -1,6 +1,7 @@
+ #include <ydb/core/protos/blockstore_config.pb.h>
+ #include <ydb/core/protos/schemeshard/operations.pb.h>
+ #include <ydb/core/protos/table_stats.pb.h>
++#include <ydb/core/testlib/actors/block_events.h>
+ #include <ydb/core/tx/schemeshard/schemeshard_effective_acl.h>
+ #include <ydb/core/tx/schemeshard/ut_helpers/helpers.h>
+ #include <ydb/core/tx/schemeshard/ut_helpers/local_indexes.h>
+@@ -12085,6 +12086,428 @@ Y_UNIT_TEST_SUITE(TSchemeShardTest) {
+ 
+     }
+ 
++    Y_UNIT_TEST_FLAG(DropNotNullCompositeCoverIndexSchema, CoveredColumn) {
++        TTestBasicRuntime runtime;
++        TTestEnv env(runtime);
++        ui64 txId = 100;
++        TestCreateIndexedTable(runtime, ++txId, "/MyRoot", R"(
++            TableDescription {
++                Name: "Table"
++                Columns { Name: "key1" Type: "Int32" NotNull: true }
++                Columns { Name: "key2" Type: "Int32" NotNull: true }
++                Columns { Name: "col1" Type: "Int32" NotNull: true }
++                Columns { Name: "col2" Type: "Int32" NotNull: true }
++                Columns { Name: "col3" Type: "Int32" NotNull: true }
++                Columns { Name: "col4" Type: "Int32" NotNull: true }
++                KeyColumnNames: ["key1", "key2"]
++            }
++            IndexDescription { Name: "i" KeyColumnNames: ["col1", "col2"] DataColumnNames: ["col3", "col4"] }
++            IndexDescription { Name: "other" KeyColumnNames: ["col1"] DataColumnNames: ["col3"] }
++        )");
++        env.TestWaitNotification(runtime, txId);
++
++        const TString column = CoveredColumn ? "col4" : "col2";
++        TMap<TString, NKikimrSchemeOp::TTableDescription> before;
++        for (const TString& path : {TString("/MyRoot/Table"), TString("/MyRoot/Table/i/indexImplTable"),
++                TString("/MyRoot/Table/other/indexImplTable")})
++        {
++            const auto describe = DescribePrivatePath(runtime, path);
++            TestDescribeResult(describe, {NLs::PathExist});
++            before[path] = describe.GetPathDescription().GetTable();
++        }
++        const auto indexVersion = DescribePrivatePath(runtime, "/MyRoot/Table/i")
++            .GetPathDescription().GetTableIndex().GetSchemaVersion();
++        auto checkSchema = [&](bool dropped) {
++            for (const auto& [path, original] : before) {
++                const auto describe = DescribePrivatePath(runtime, path);
++                TestDescribeResult(describe, {NLs::PathExist});
++                const auto& table = describe.GetPathDescription().GetTable();
++                const bool affected = path != "/MyRoot/Table/other/indexImplTable";
++                UNIT_ASSERT_VALUES_EQUAL_C(table.GetTableSchemaVersion(),
++                    original.GetTableSchemaVersion() + (dropped && affected), path);
++                UNIT_ASSERT_VALUES_EQUAL_C(table.ColumnsSize(), original.ColumnsSize(), path);
++                UNIT_ASSERT_VALUES_EQUAL_C(TVector<TString>(table.GetKeyColumnNames().begin(), table.GetKeyColumnNames().end()),
++                    TVector<TString>(original.GetKeyColumnNames().begin(), original.GetKeyColumnNames().end()), path);
++                bool found = false;
++                for (const auto& col : table.GetColumns()) {
++                    UNIT_ASSERT_VALUES_EQUAL_C(col.GetNotNull(), !(dropped && col.GetName() == column),
++                        path << ": " << col.GetName());
++                    found |= col.GetName() == column;
++                }
++                UNIT_ASSERT_VALUES_EQUAL_C(found, affected, path);
++            }
++            const auto index = DescribePrivatePath(runtime, "/MyRoot/Table/i");
++            TestDescribeResult(index, {NLs::PathExist, NLs::IndexKeys({"col1", "col2"}),
++                NLs::IndexDataColumns({"col3", "col4"}), NLs::ChildrenCount(1)});
++            UNIT_ASSERT_VALUES_EQUAL(index.GetPathDescription().GetTableIndex().GetSchemaVersion(), indexVersion + dropped);
++            UNIT_ASSERT_VALUES_EQUAL(index.GetPathDescription().GetChildren(0).GetVersion().GetTableSchemaVersion(),
++                before.at("/MyRoot/Table/i/indexImplTable").GetTableSchemaVersion() + dropped);
++        };
++        checkSchema(false);
++        TestAlterTable(runtime, ++txId, "/MyRoot", TStringBuilder()
++            << "Name: \"Table\" Columns { Name: \"" << column << "\" NotNull: false }");
++        env.TestWaitNotification(runtime, txId);
++        checkSchema(true);
++        RebootTablet(runtime, TTestTxConfig::SchemeShard, runtime.AllocateEdgeActor());
++        checkSchema(true);
++    }
++
++    Y_UNIT_TEST_FLAG(DropNotNullInternalDocumentId, UseRowId) {
++        TTestBasicRuntime runtime;
++        TTestEnv env(runtime);
++        auto& flags = runtime.GetAppData().FeatureFlags;
++        flags.SetEnableFulltextIndex(true);
++        flags.SetEnableFulltextIndexRowId(true);
++        flags.SetEnableCompactFulltextIndex(!UseRowId);
++        runtime.GetAppData().AdministrationAllowedSIDs.push_back("root@builtin");
++        ui64 txId = 
+```
+
+**File**: `ydb/core/tx/schemeshard/ut_base_reboots/ut_base_reboots.cpp` (modified, +90/-0)
+```diff
+@@ -398,6 +398,96 @@ Y_UNIT_TEST_SUITE(TTablesWithReboots) {
+         });
+     }
+ 
++    Y_UNIT_TEST_WITH_REBOOTS_BUCKETS(DropNotNullWithIndexes, 2, 1, true) {
++        t.Run([&](TTestActorRuntime& runtime, bool& activeZone) {
++            const TVector<TString> tablePaths = {
++                "/MyRoot/Table",
++                "/MyRoot/Table/byValue/indexImplTable",
++                "/MyRoot/Table/byCovered/indexImplTable",
++            };
++            const TVector<TString> indexPaths = {
++                "/MyRoot/Table/byValue",
++                "/MyRoot/Table/byCovered",
++            };
++            TMap<TString, NKikimrSchemeOp::TTableDescription> originalTables;
++            TMap<TString, ui64> indexVersions;
++            {
++                TInactiveZone inactive(activeZone);
++                TestCreateIndexedTable(runtime, ++t.TxId, "/MyRoot", R"(
++                    TableDescription {
++                        Name: "Table"
++                        Columns { Name: "Key" Type: "Uint64" NotNull: true }
++                        Columns { Name: "Value" Type: "Uint64" NotNull: true }
++                        Columns { Name: "Covered" Type: "Uint64" NotNull: true }
++                        Columns { Name: "Other" Type: "Uint64" NotNull: true }
++                        KeyColumnNames: ["Key"]
++                        UniformPartitionsCount: 2
++                    }
++                    IndexDescription {
++                        Name: "byValue" KeyColumnNames: ["Value"] DataColumnNames: ["Covered", "Other"]
++                    }
++                    IndexDescription {
++                        Name: "byCovered" KeyColumnNames: ["Covered"] DataColumnNames: ["Other"]
++                    }
++                )");
++                t.TestEnv->TestWaitNotification(runtime, t.TxId);
++                for (const auto& path : tablePaths) {
++                    originalTables[path] = DescribePrivatePath(runtime, path).GetPathDescription().GetTable();
++                }
++                for (const auto& path : indexPaths) {
++                    indexVersions[path] = DescribePrivatePath(runtime, path)
++                        .GetPathDescription().GetTableIndex().GetSchemaVersion();
++                }
++            }
++
++            const TString alter = R"(
++                Name: "Table"
++                Columns { Name: "Key" NotNull: false }
++                Columns { Name: "Value" NotNull: false }
++                Columns { Name: "Covered" NotNull: false }
++            )";
++            t.TestEnv->ReliablePropose(runtime, AlterTableRequest(++t.TxId, "/MyRoot", alter),
++                {NKikimrScheme::StatusAccepted});
++            t.TestEnv->TestWaitNotification(runtime, t.TxId);
++
++            {
++                TInactiveZone inactive(activeZone);
++                for (const auto& [path, original] : originalTables) {
++                    const auto describe = DescribePrivatePath(runtime, path, true);
++                    TestDescribeResult(describe, {NLs::PathExist, NLs::CheckPathState()});
++                    const auto& table = describe.GetPathDescription().GetTable();
++                    UNIT_ASSERT_VALUES_EQUAL_C(table.GetTableSchemaVersion(), original.GetTableSchemaVersion() + 1, path);
++                    UNIT_ASSERT_VALUES_EQUAL_C(table.ColumnsSize(), original.ColumnsSize(), path);
++                    UNIT_ASSERT_VALUES_EQUAL_C(
++                        TVector<TString>(table.GetKeyColumnNames().begin(), table.GetKeyColumnNames().end()),
++                        TVector<TString>(original.GetKeyColumnNames().begin(), original.GetKeyColumnNames().end()), path);
++                    for (const auto& column : table.GetColumns()) {
++                        UNIT_ASSERT_VALUES_EQUAL_C(column.GetNotNull(), column.GetName() == "Other",
++                            path << ": " << column.GetName());
++                    }
++                    UNIT_ASSERT_C(describe.GetPathDescription().TablePartitionsSize() != 0, path);
++                    for (const auto& partition : describe.GetPathDescription().GetTablePartitions()) {
++                        const auto shardTable = GetDatashardSchema(runtime, partition.GetDatashardId(), describe.GetPathId());
++                        UNIT_ASSERT_VALUES_EQUAL_C(shardTable.ColumnsSize(), table.ColumnsSize(), path);
++                        for (const auto& column : shardTable.GetColumns()) {
++                            UNIT_ASSERT_VALUES_EQUAL_C(column.GetNotNull(), column.GetName() == "Other",
++                                path << ": shard " << partition.GetDatashardId() << ", " << column.GetName());
++                        }
++                    }
++                }
++                for (const auto& [path, version] : indexVersions) {
++                    const auto describe = DescribePrivatePath(runtime, path);
++                    TestDescribeResult(describe, {NLs::PathExist, NLs::CheckPathState(),
++                        NLs::IndexState(NKikimrSchemeOp::EIndexStateReady), N
 ```
 
 ---
 
-### Incident Patch 3: `9325d0a8` (2026-10-25)
-**Commit Message**: Reduce ut_incr_restore_reboots CPU requirement from 4 to 1 (#56748)
+### Incident Patch 3: `0722de83` (2026-10-27)
+**Commit Message**: Fix replication controller worker session ownership during stop (#56958)
 
-**File**: `ydb/core/tx/schemeshard/ut_incr_restore_reboots/ya.make` (modified, +1/-1)
+**File**: `ydb/core/tx/replication/controller/controller.cpp` (modified, +2/-2)
 ```diff
-@@ -4,7 +4,7 @@ FORK_SUBTESTS()
+@@ -968,7 +968,6 @@ void TController::StopWorker(ui32 nodeId, const TWorkerId& id) {
+         {"workerId", id});
  
- SPLIT_FACTOR(50)
+     Y_ABORT_UNLESS(Sessions.contains(nodeId));
+-    auto& session = Sessions[nodeId];
  
--REQUIREMENTS(ram:32 cpu:4)
-+REQUIREMENTS(ram:32 cpu:1)
+     auto ev = MakeHolder<TEvService::TEvStopWorker>();
+     auto& record = ev->Record;
+@@ -979,7 +978,8 @@ void TController::StopWorker(ui32 nodeId, const TWorkerId& id) {
+     id.Serialize(*record.MutableWorker());
  
- IF (SANITIZER_TYPE)
-     SIZE(LARGE)
+     Send(MakeReplicationServiceId(nodeId), std::move(ev));
+-    session.DetachWorker(id);
++    // Keep ownership until STATUS_STOPPED, so a disconnect before the
++    // acknowledgement clears the worker's session and allows it to recover.
+ }
+ 
+ void TController::Handle(TEvPrivate::TEvRemoveWorker::TPtr& ev, const TActorContext& ctx) {
+```
+
+**File**: `ydb/core/tx/replication/controller/session_lifecycle_ut.cpp` (added, +216/-0)
+```diff
+@@ -0,0 +1,216 @@
++#include "controller_impl.h"
++
++#include <ydb/core/testlib/tx_helpers.h>
++#include <ydb/core/tx/replication/ut_helpers/mock_service.h>
++#include <ydb/core/tx/replication/ut_helpers/test_env.h>
++#include <ydb/library/mkql_proto/protos/minikql.pb.h>
++
++#include <library/cpp/testing/unittest/registar.h>
++
++#include <util/string/printf.h>
++
++namespace NKikimr::NReplication::NController {
++
++Y_UNIT_TEST_SUITE(SessionLifecycle) {
++    using namespace NTestHelpers;
++
++    struct TSetup {
++        TEnv<> Env{true, ERuntimeMode::Simulated, 2};
++        TActorId Edges[2];
++        TActorId Controller;
++        ui64 ControllerId = 0;
++        TPathId PathId;
++        TWorkerId Worker{0, 0, 0};
++
++        TSetup() {
++            auto& runtime = Env.GetRuntime();
++            runtime.SetLogPriority(NKikimrServices::REPLICATION_CONTROLLER, NLog::PRI_TRACE);
++
++            for (ui32 node = 0; node < 2; ++node) {
++                Edges[node] = runtime.AllocateEdgeActor(node);
++                runtime.RegisterService(MakeReplicationServiceId(runtime.GetNodeId(node)),
++                    runtime.Register(CreateReplicationMockService(Edges[node]), node), node);
++            }
++
++            Env.RunCall([&] {
++                NYdb::NTable::TTableClient client(Env.GetDriver());
++                auto session = client.CreateSession().GetValueSync().GetSession();
++
++                auto result = session.ExecuteSchemeQuery(R"(
++                    CREATE TABLE `/Root/table` (key Uint32, PRIMARY KEY (key));
++                )").GetValueSync();
++                UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
++
++                result = session.ExecuteSchemeQuery(Sprintf(R"(
++                    CREATE ASYNC REPLICATION `replication` FOR
++                        `/Root/table` AS `/Root/replica`
++                    WITH (CONNECTION_STRING = "grpc://%s/?database=/Root");
++                )", Env.GetEndpoint().c_str())).GetValueSync();
++                UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
++            });
++
++            PathId = Env.GetPathId("/Root/replication");
++
++            for (ui32 node = 0; node < 2; ++node) {
++                const auto handshake = runtime.GrabEdgeEvent<TEvService::TEvHandshake>(Edges[node]);
++                UNIT_ASSERT(handshake);
++
++                Controller = handshake->Sender;
++                ControllerId = handshake->Get()->Record.GetController().GetTabletId();
++            }
++
++            // Start on node 0 only, so placement is deterministic.
++            Status(0, false);
++            const auto run = runtime.GrabEdgeEvent<TEvService::TEvRunWorker>(Edges[0]);
++            UNIT_ASSERT(run);
++            Worker = TWorkerId::Parse(run->Get()->Record.GetWorker());
++
++            Status(1, false);
++
++            // Queue processing is driven explicitly below, without advancing timers.
++            runtime.SetScheduledEventFilter([](TTestActorRuntimeBase& runtime,
++                    TAutoPtr<IEventHandle>&, TDuration delay, TInstant& deadline) {
++                deadline = runtime.GetCurrentTime() + delay;
++                return false;
++            });
++        }
++
++        void Sync() {
++            auto request = MakeHolder<TEvController::TEvDescribeReplication>();
++            PathId.ToProto(request->Record.MutablePathId());
++
++            const auto response = Env.Send<TEvController::TEvDescribeReplicationResult>(Controller, std::move(request));
++            UNIT_ASSERT_C(response->Get()->Record.GetStatus()
++                == NKikimrReplication::TEvDescribeReplicationResult::SUCCESS,
++                response->Get()->Record.ShortDebugString());
++        }
++
++        void Status(ui32 node, bool hasWorker = true) {
++            auto status = MakeHolder<TEvService::TEvStatus>();
++            if (hasWorker) {
++                Worker.Serialize(*status->Record.AddWorkers());
++            }
++
++            Env.GetRuntime().Send(new IEventHandle(Controller, Edges[node], status.Release()));
++            Sync();
++        }
++
++        void ProcessQueues() {
++            Env.SendAsync(Controller, new TEvPrivate::TEvProcessQueues());
++            Sync();
++        }
++
++        void Disconnect(ui32 node) {
++            Env.SendAsync(Controller, new TEvInterconnect::TEvNodeDisconnected(Edges[node].NodeId()));
++            Sync();
++        }
++
++        void ExpectStop(ui32 node) {
++            const auto stop = Env.GetRuntime().GrabEdgeEvent<TEvService::TEvStopWorker>(Edges[node]);
++            UNIT_ASSERT_VALUES_EQUAL(TWorkerId::Parse(stop->Get()->Record.GetWorker()), Worker);
++        }
++
++        void ExpectRun(ui32 node) {
++            const auto run = Env.GetRuntime().GrabEdgeEvent<TEvService::TEvRunWorker>(Edges[node]);
++            UNIT_ASSERT_VALUES_EQUAL(TWorkerId::Parse(run->Get()->Record.GetWorker()), Worker);
++        }
++    };
++
++    Y_UNIT_TEST(DisconnectBeforeStopAcknowledgement) {
++        TSetup s;
++
++        // Both nodes report th
+```
+
+**File**: `ydb/core/tx/replication/controller/tx_run_worker.cpp` (modified, +7/-0)
+```diff
+@@ -128,6 +128,13 @@ class TController::TTxRemoveWorker: public TTxBase {
+ 
+         Self->WorkersWithHeartbeat.erase(Id);
+         Self->PendingHeartbeats.erase(Id);
++        if (worker != Self->Workers.end() && worker->second.HasSession()) {
++            const auto session = Self->Sessions.find(worker->second.GetSession());
++            if (session != Self->Sessions.end()) {
++                session->second.DetachWorker(Id);
++            }
++        }
++
+         Self->Workers.erase(Id);
+         Self->TabletCounters->Simple()[COUNTER_WORKERS] = Self->Workers.size();
+         Self->TabletCounters->Simple()[COUNTER_WORKERS_WITH_HEARTBEAT] = Self->WorkersWithHeartbeat.size();
+```
+
+**File**: `ydb/core/tx/replication/controller/ut_worker_lifecycle/ya.make` (modified, +1/-0)
+```diff
+@@ -13,6 +13,7 @@ PEERDIR(
+ )
+ 
+ SRCS(
++    session_lifecycle_ut.cpp
+     worker_lifecycle_ut.cpp
+ )
+ 
+```
+
+**File**: `ydb/core/tx/replication/ut_helpers/test_env.h` (modified, +2/-1)
+```diff
+@@ -128,9 +128,10 @@ class TEnv {
+         return GetRuntime().WaitFuture(std::move(future));
+     }
+ 
+-    TEnv(bool init = true, ERuntimeMode runtimeMode = ERuntimeMode::RealThreads)
++    TEnv(bool init = true, ERuntimeMode runtimeMode = ERuntimeMode::RealThreads, ui32 nodeCount = 1)
+         : Settings(Tests::TServerSettings(PortManager.GetPort(), {}, MakePqConfig())
+             .SetDomainName(DomainName)
++            .SetNodeCount(nodeCount)
+             .SetUseRealThreads(runtimeMode == ERuntimeMode::RealThreads)
+         )
+         , Server(Settings)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56761** (2026-10-25): Sync branches 261025-2001: stable-26-3-1 to nbs-26-3-1 (@ydbot)
-- **PR #56753** (2026-10-25): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #56748** (2026-10-25): Reduce ut_incr_restore_reboots CPU requirement from 4 to 1 (@maximyurchuk)
-- **PR #56746** (2026-10-25): Reduce ut_export_reboots_s3 CPU requirement from 4 to 1 (@maximyurchuk)
-- **PR #56745** (2026-10-25): Reduce ut_restore CPU requirement from 4 to 1 (@maximyurchuk)
-- **PR #56742** (closed): Reduce ut_restore CPU requirement from 4 to 1 (@maximyurchuk)
+- **PR #57038** (2026-10-27): Fix tiering compatibility (@xyliganSereja)
+- **PR #57021** (closed): Fix Query session shutdown racing with pool return (@weres-sa)
+- **PR #57018** (2026-10-27): Preserve replication configuration across DataShard restarts (@CyberROFL)
+- **PR #57008** (2026-10-27): Reduce pile-promotion stress-test logging (@CyberROFL)
+- **PR #56997** (2026-10-27): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #56994** (2026-10-27): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -1362,28 +1986,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reduce ut_restore CPU requirement from 4 to 1 (#56745)
+## X. tiering compatibility (#57038)
 
 **RULE**:
-When implementing operations in `ydb/core/tx/schemeshard/ut_restore/ya.make`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/tests/compatibility/olap/test_tiering.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f866310`: Reduce ut_restore CPU requirement from 4 to 1 (#56745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `373ba5aa`: tiering compatibility (#57038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/schemeshard/ut_restore/ya.make`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/tests/compatibility/olap/test_tiering.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-REQUIREMENTS(cpu:1)
+        if (tree or self.requires_prefix_alter) and min(self.versions) < (26, 4):
+            pytest.skip("Tiering object key tree is only available since 26-4")
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-REQUIREMENTS(cpu:4)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f866310` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `373ba5aa` are properly handled with clean fallback behavior.

@@ -5273,3 +5273,9 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `a3e5ddfc` | Multi-dimensional audit evidence | 2026-10-27T12:14:44.662Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `5b4efd90` | Multi-dimensional audit evidence | 2026-10-27T12:14:46.990Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `c287925f` | Multi-dimensional audit evidence | 2026-10-27T12:18:37.731Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `e32b1b0e` | Multi-dimensional audit evidence | 2026-10-27T12:21:46.976Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `029ff91d` | Multi-dimensional audit evidence | 2026-10-27T12:21:48.320Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `eb1a86e6` | Multi-dimensional audit evidence | 2026-10-27T12:21:50.908Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `8050b1b0` | Multi-dimensional audit evidence | 2026-10-27T12:21:52.899Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8ca46580` | Multi-dimensional audit evidence | 2026-10-27T12:21:58.122Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `df783638` | Multi-dimensional audit evidence | 2026-10-27T12:21:58.799Z |

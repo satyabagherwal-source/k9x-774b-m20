@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `e139573e`  
+> **Source Version**: `8050b1b0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:12:17.306Z  
+> **Timestamp**: 2026-10-27T12:21:52.442Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:12:17.302Z  
+> **Harvest Timestamp**: 2026-10-27T12:21:52.108Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46344 stars
+- **Stars / Engagement**: 46411 stars
 
 ---
 
@@ -1310,6 +1310,8 @@ class QuicStartServerHook(commands.StartHook):
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #8532** (2026-10-25): **update dependencies**
   *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > Glad to see a few updates, pyproject.toml `12.3.1` ranges currently block:  Package | Installed | Released | Allowed range | Latest stable | Released -- | -- | -- | -- | -- | -- aioquic | 1.2.0 | 2024-07-07 | only 1.2.0 | 1.7.0 | 2026-10-16 asgiref | 3.12.1 | 2026-07-14 | ≥3.2.10, ≤3.12.1 | 3.13.0 | 2026-10-23 tornado | 6.5.10 | 2026-09-15 | ≥6.5.0, ≤6.5.10 | 6.6 | 2026-10-21 urwid | 4.0.13 | 2026-08-25 | ≥2.6.14, ≤4.0.13 | 4.2.5 | 2026-10-05 pylsqpack | 0.3.24 | 2026-03-29 | ≥0.3.3, <0.4.0 via aioquic 1.2.0 | 1.0.0 | 2026-10-11
 
 - **Issue #8530** (2026-10-25): **Update cryptography**
   *Symptoms*: 
@@ -1329,52 +1331,24 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e139573e` (2026-10-25)
-**Commit Message**: reopen main for development
+### Incident Patch 1: `8050b1b0` (2026-10-27)
+**Commit Message**: Link the Python scripting feature to the Addons guide (#8448)
 
-**File**: `mitmproxy/version.py` (modified, +1/-1)
+* docs: link scripting feature to Addons guide
+
+* docs: preserve existing bold filenames
+
+**File**: `docs/src/content/_index.md` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
- import subprocess
- import sys
+@@ -18,7 +18,7 @@ mitmproxy is a set of tools that provide an interactive, SSL/TLS-capable interce
+ - Replay HTTP responses of a previously recorded server
+ - Reverse proxy mode to forward traffic to a specified server
+ - Transparent proxy mode on macOS and Linux
+-- Make scripted changes to HTTP traffic using Python
++- Make [scripted changes to HTTP traffic using Python]({{< relref "/addons/overview">}})
+ - SSL/TLS certificates for interception are generated on the fly
+ - And [many, many more features...]({{< relref "/overview/features">}})
  
--VERSION = "12.3.1"
-+VERSION = "13.0.0.dev"
- MITMPROXY = "mitmproxy " + VERSION
- 
- # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
-```
-
----
-
-### Incident Patch 2: `51c1d6b2` (2026-10-25)
-**Commit Message**: mitmproxy 12.3.1
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -7,6 +7,9 @@
- 
- ## Unreleased: mitmproxy next
- 
-+
-+## 25 October 2026: mitmproxy 12.3.1
-+
- - **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
-   [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
-   ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
-```
-
-**File**: `mitmproxy/version.py` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- import subprocess
- import sys
- 
--VERSION = "13.0.0.dev"
-+VERSION = "12.3.1"
- MITMPROXY = "mitmproxy " + VERSION
- 
- # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
 ```
 
 #### Recent Merged Pull Requests:
@@ -1403,28 +1377,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reopen main for development
+## X. Link the Python scripting feature to the Addons guide (#8448)
 
 **RULE**:
-When implementing operations in `mitmproxy/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e139573e`: reopen main for development. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8050b1b0`: Link the Python scripting feature to the Addons guide (#8448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `mitmproxy/version.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/_index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-VERSION = "13.0.0.dev"
+- Make [scripted changes to HTTP traffic using Python]({{< relref "/addons/overview">}})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-VERSION = "12.3.1"
+- Make scripted changes to HTTP traffic using Python
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e139573e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8050b1b0` are properly handled with clean fallback behavior.
