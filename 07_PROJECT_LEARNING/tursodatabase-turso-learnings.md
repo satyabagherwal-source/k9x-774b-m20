@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `aa93d669`  
+> **Source Version**: `222c3929`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:48:36.744Z  
+> **Timestamp**: 2026-10-27T14:46:56.766Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:48:36.736Z  
+> **Harvest Timestamp**: 2026-10-27T14:46:55.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25043 stars
+- **Stars / Engagement**: 25068 stars
 
 ---
 
@@ -1376,11 +1376,17 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10721** (2026-10-25): **core: key the schema by namespace and resolve names to a namespace**
-  *Symptoms*: ## Description  Key the schema by namespace. A `Schema` keeps its objects per `NamespaceId`: every database has the root namespace, and a schema can have more, each with its own tables, views, indexes, triggers and sequences. Every object lookup on `Schema` takes a namespace id, and the resolver turns a written name into a `NamespaceRef`, the database and the namespace of the object, instead of a bare database id. The search order of unqualified names is a list of namespaces, and the scope of a view or trigger body is its namespace.  This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed by `(relname, relnamespace)` and `namespace.c` walks a list of namespace ids, probing each. Core now has the same split. `Schema` is the catalog keyed by namespace, the resolver is the policy that picks the namespace, and the connection owns the names it knows. The follow-up, #10585, stores PostgreSQL schemas as namespaces of the main database, and nothing above `Schema` has to learn how they are stored.  Nothing changes in behavior. Only the root namespace exists, so every namespace is the root of a database and every lookup finds what it found before. The maps of a namespace are private to `schema.rs`; the code that used to reach into `schema.tables` and friends goes through named methods such as `tables`, `views`, `indices_including_backing`, `add_sequence`, `take_triggers` and `table_with_indices_mut`. Each method treats its name argument exactly as the map access it repla
+- **Issue #10892** (2026-10-27): **core: map namespace name to a Namespace value**
+  *Symptoms*: ## Description  The connection's table of namespace names mapped each name to a database id, so a name could only ever mean the whole of a database. That cannot express a namespace that is one of several in a database.  `Namespaces` now maps a name to a `Namespace`: the name together with the `NamespaceRef` it refers to. `search_order` returns the namespaces of the search path rather than their database ids, resolving a qualifier goes through the `Namespace`, and the trigger and sequence code that prints a namespace's name asks for the name of a `NamespaceRef` instead of the name of a database. `Connection::find_sequence` returns the `NamespaceRef` the sequence was found in. The PostgreSQL session adapts to the new return types without changing what it does.  Every `Namespace` a connection has is still the root of a database, so the search order and every lookup resolve as before. The qualifier of a sequence named in `nextval`, `currval` or `setval` is looked up without the scope a trigger or view body is compiled in, as before, so a trigger of main may still use a sequence of an attached database. `Namespaces::others` is gone, since `attached_databases` was its only caller.  ## Motivation and context  Second preparatory commit carved out of #10585, stacked on #10890. That PR made every table and opcode carry a namespace; this one lets the connection name one, which is what a stored namespace will need to be reachable from SQL. Still no stored names and no `CREATE SCHEMA`.  #
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Live status: Autofixer edits this comment as the review runs. Each finished review is also posted as its own GitHub review.</sub>  A maintainer asked Autofixer to review this pull request. Its review of `384b3ae1cd49` is [here](https://github.com/tursodatabase/turso/pull/10892#pullrequestreview-5668875176); each reviewed commit gets its own review, so the earlier ones stay in this pull request's timeline.  ✅ **Verdict: looks good to merge** Autofixer adds the `autofixer: merge-recommended` label while CI is green, the branch merges cleanly, and no maintainer has requested changes.  <sub>An automated review by Autofixer's agents; maintainers decide what to merge. Autofixer reviews each new head while the `autofixer: review-requested` label stays.</sub>  <!-- autofixer:contributor-review:384b3ae1cd49f62c59493d23a9a6fe08afd5cc40 --> <!-- autofixer:contributor-review-recommends:384b3ae1cd49f62c59493d23a9a6fe08afd5cc40 --> <!-- autofixer:contributor-review-state
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/namespace-type?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **104 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > 
 
-- **Issue #10719** (2026-10-25): **postgres: support timestamptz and date/time types**
-  *Symptoms*: Part 3 of 3: #10717 → #10718 → #10719. Replaces #10668.  ## What this does  tursopg gets PostgreSQL's date/time types: `timestamptz`, `timestamp`, `date`, `time` and `interval`. Input, output, arithmetic, `to_char` and error codes all follow PostgreSQL.  ```sql SELECT '2026-10-08 12:34:56.123456+02'::timestamptz;   -- 2026-10-08 10:34:56.123456+00 SELECT 'infinity'::timestamptz, 'epoch'::timestamptz;  -- infinity | 1970-01-01 00:00:00+00 SELECT '2026-01-31'::date + interval '1 month';        -- 2026-02-28 00:00:00 SELECT '2026-10-08'::date = '2026-10-08 00:00'::timestamp;  -- true SELECT 'garbage'::timestamptz;                         -- ERROR 22007 SELECT '2026-10-08 25:00'::timestamptz;                -- ERROR 22008 ```  It works the same in CAST, INSERT, WHERE and bind parameters. A parameter sent with a date OID is a date, so `$1 + 1` adds a day.  Also: - `now()` and `CURRENT_TIMESTAMP` give the transaction start time. `statement_timestamp()` and `clock_timestamp()` work as in PostgreSQL. - `interval * n` and `interval / n` work. - timestamptz is stored as UTC text, the same as before. `+00` is added when the value is shown.  Fixes #10262.  ## Dialect method  - `takes_operand_type_names`: `time` and `interval` values are both stored as text like `'01:00:00'`. For `a + b`, `datetime_pl` can't tell which is which from the value. With this method on, core passes each column's declared type to the function, so `time_col + interval_col` works in joins and with any column name.
+- **Issue #10890** (2026-10-27): **core: replace database id with namespace in plans and schema opcodes**
+  *Symptoms*: ## Description  The planner knew a table by the database it is in, and the opcodes that change the schema in memory looked every object up in the root namespace of their database. Neither can tell two tables of the same name apart once a database stores more than one namespace.  This change replaces the database id with a `NamespaceRef` in `JoinedTable` and `OuterQueryReference`, in the trigger, foreign key, sequence and index helpers, and in the opcodes that drop, rename or alter an object (`DropTable`, `DropView`, `DropIndex`, `DropTrigger`, `DropSequence`, `RenameTable`, `DropColumn`, `AddColumn`, `AlterColumn`, `AddSequence`, `SequenceComputeNext`, `SequenceTrackAllocation`), which now look the object up in its namespace instead of the root.  Every namespace is still the root of its database, so this changes nothing for SQLite. The one place that behaves differently is `REPLACE` on a table of an attached database: it consulted main's schema for the table's child foreign keys and now consults the schema of the table's database.  Two small cleanups come along: `InsertEmitCtx` loses its `database_id` field, which repeated the one in its namespace, and `set_delete_stmt_journal_flags` no longer takes a database id it did not use.  ## Motivation and context  This is the first of the preparatory commits carved out of #10585 (storing PostgreSQL schemas as namespaces of the main database), so that the on-disk format change can be reviewed on its own. It is the mechanical part of t
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Live status: Autofixer edits this comment as the review runs. Each finished review is also posted as its own GitHub review.</sub>  A maintainer asked Autofixer to review this pull request. Its review of `ee30adb92b3a` is [here](https://github.com/tursodatabase/turso/pull/10890#pullrequestreview-5667967013); each reviewed commit gets its own review, so the earlier ones stay in this pull request's timeline.  ✅ **Verdict: looks good to merge** Autofixer adds the `autofixer: merge-recommended` label while CI is green, the branch merges cleanly, and no maintainer has requested changes.  <sub>An automated review by Autofixer's agents; maintainers decide what to merge. Autofixer reviews each new head while the `autofixer: review-requested` label stays.</sub>  <!-- autofixer:contributor-review:ee30adb92b3a00b3168cd86390f10158cd433e3c --> <!-- autofixer:contributor-review-recommends:ee30adb92b3a00b3168cd86390f10158cd433e3c --> <!-- autofixer:contributor-review-state
+  > ### Autofixer follow-ups  - Not filed: ALTER TABLE RENAME does not rewrite schema-qualified table references in views. Duplicate of #10799: Reproduces, but on main ALTER TABLE RENAME does not rewrite any view reference, qualified or not, which open issue #10799 already covers.  <!-- autofixer:follow-ups-done -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,622 +1403,512 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa93d669` (2026-10-25)
-**Commit Message**: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg
+### Incident Patch 1: `8c29f3e6` (2026-10-27)
+**Commit Message**: Merge 'core/json: match SQLite's null document and null path handling' from 
 
-Key the schema by namespace. A `Schema` keeps its objects per
-`NamespaceId`: every database has the root namespace, and a schema can
-have more, each with its own tables, views, indexes, triggers and
-sequences. Every object lookup on `Schema` takes a namespace id, and the
-resolver turns a written name into a `NamespaceRef`, the database and
-the namespace of the object, instead of a bare database id. The search
-order of unqualified names is a list of namespaces, and the scope of a
-view or trigger body is its namespace.
+## Update: rebased onto `main` (2026-10-15)
 
-This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
-by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
-ids, probing each. Core now has the same split. `Schema` is the catalog
-keyed by namespace, the resolver is the policy that picks the namespace,
-and the connection owns the names it knows. The follow-up, #10585,
-stores PostgreSQL schemas as namespaces of the main database, and
-nothing above `Schema` has to learn how they are stored.
+`main` now has `json_edit_path()`, which already drops a
+`json_set()`/`json_insert()`/`json_replace()` pair whose path is SQL
+NULL without reading its value, and only checks for a BLOB value once
+the path is known to start with `$`. I took `main`'s version of those
+loops, so the `json_set()` ordering caveat below no longer applies. What
+this PR still adds:
 
-Nothing changes in behavior. Only the root namespace exists, so every
-namespace is the root of a datab
+* the JSON `null` document result (first commit, unchanged);
+* a SQL NULL document returns SQL NULL before any path or value is read,
+in all the mutators;
+* `json_remove()`/`jsonb_remove()` return SQL NULL when one of their
+paths is SQL NULL.
 
-**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
+The second commit message is updated to match. Re-run after the rebase:
+`cargo test -p turso_core --lib -- json` (180 passed, including
+`test_null_path_drops_pair_without_reading_value`) and `cargo fmt -p
+turso_core --check` (clean). The conformance suite and clippy were not
+re-run for this rebase.
+
+---
+
+The JSON mutators (`json_set`, `json_insert`, `json_replace`,
+`json_remove` and the `jsonb_` variants) did not follow SQLite's
+handling of a JSON `null` document or of
+
+**File**: `core/json/mod.rs` (modified, +23/-2)
 ```diff
-@@ -12,6 +12,7 @@
+@@ -394,6 +394,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
  
- #[cfg(not(feature = "codspeed"))]
- use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
-+use turso_core::NamespaceId;
- use turso_core::SqliteDialect;
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+@@ -417,7 +420,7 @@ where
  
- #[cfg(feature = "codspeed")]
-@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
-         let attachment = conn
-             .with_schema_mut(|schema| {
-                 schema
--                    .get_index("docs", "docs_fts")
-+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
-                     .unwrap()
-                     .index_method
-                     .clone()
-```
-
-**File**: `core/btree_dump.rs` (modified, +5/-6)
-```diff
-@@ -1,3 +1,4 @@
-+use crate::namespace::NamespaceId;
- use crate::schema::Schema;
- use crate::storage::btree::BTreeCursor;
- use crate::storage::btree::CursorTrait;
-@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
-     /// Look up the root page for a given name (index first, then table).
-     fn find_root_page(&self, name: &str) -> Option<i64> {
-         // Search indexes first (indexes are stored by table name, so iterate all)
--        for indexes in self.schema.indexes.values() {
--            for index in indexes {
--                if index.name.eq_ignore_ascii_case(name) {
--                    return Some(index.root_page);
--                }
-+        for index in self.schema.indexes(NamespaceId::ROOT) {
-+            if index.name.eq_ignore_ascii_case(name) {
-+                return Some(index.root_page);
-             }
-         }
-         // Then search tables
--        if let Some(table) = self.schema.get_table(name) {
-+        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
-             return table.get_root_page().ok();
-         }
-         None
-```
-
-**File**: `core/connection.rs` (modified, +32/-17)
-```diff
-@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
- use crate::error::io_error;
- #[cfg(any(test, injected_yields))]
- use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
-+use crate::namespace::NamespaceId;
- use crate::state_machine::StateMachine;
- use crate::statement::StatementOrigin;
- use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
-@@ -1519,7 +1520,7 @@ impl Connection {
-                     // descriptor SELECTs can resolve the backing tables.
-                     if pending.is_none() {
-                         if let Some(sequences) = inner.preserved_sequences.take() {
--                            inner.fresh.sequences = sequences;
-+                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
-                             *pending = Some(crate::alloc::vec![]);
-                         } else {
-                             let work = inner.fresh.sequence_backing_table_names();
-@@ -1548,7 +1549,11 @@ impl Connection {
-                         };
-                         let (backing_table_name, seq_name) = entry;
-                         let normalized = crate::util::normalize_ident(&seq_name);
--                        if inner.fresh.sequences.contains_key(&normalized) {
-+                        if inner
-+                            .fresh
-+                            .get_sequence(NamespaceId::ROOT, &normalized)
-+                            .is_some()
-+                        {
-                             *idx += 1;
-                             *stmt = None;
-                             *meta = None;
-@@ -1588,7 +1593,11 @@ impl Connection {
-                             mv_store.set_sequence_watermark(&normalized, watermark);
-                         }
-                         let sequence = seq.take().expect("sequence set above");
--                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
-+                        inner.fresh.insert_sequence(
-+                            NamespaceId::ROOT,
-+                            normalized,
-+                            Arc::new(sequence),
-+                        );
-                         *idx += 1;
-                         *stmt = None;
-                         *meta = None;
-@@ -1600,8 +1609,7 @@ impl Connection {
-                     if self.experimental_custom_types_enabled()
-                         && inner
-                             .fresh
--                            .tables
--                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-                     {
-                         // Temporarily install the schema so we can query against it.
-                         self.with_schema_mut(|schema| {
-@@ -1646,7 +1654,7 @@ impl Connection {
-                     tracing::debug!(
-                         "reparse_schema: schema_version={}, tables={:?}",
-                         fresh.schema_version,
--                        fresh.tables.keys()
-+                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
-                     );
-                     self.with_schema_mut(|schema| {
-                         *schema = fresh;
-@@ -1937,7 +1945,7 @@ impl Connection {
-     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
-         let has_types_table = {
-             let s = self.schema.read();
--            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-         };
-         if !has_types_table {
-             return Ok(Vec::new());
-@@ -3301,7 +3309,7 @@ impl Connection {
-         let entry = attached_dbs
-             .index_to_data
-             .get(&database_id)
--            .expect("Database ID should be valid after resolve_database_id");
-+            .expect("Database ID should be valid after resolve_namespace");
-         let schema = entry.db.schema.lock().clone();
-         schema
-     }
-@@ -3602,7 +3610,9 @@ impl Connection {
-         };
-         let get = |db_id: usize, seq_name: &str| {
-             self.with_schema(db_id, |schema| {
--                schema.get_sequence(seq_name).map(Arc::clone)
-+                schema
-+                    .get_sequence(NamespaceId::ROOT, seq_name)
-+                    .map(Arc::clone)
-             })
-             .map(|sequence| (db_id, sequence))
-         };
-@@ -3734,8 +3744,9 @@ impl Connection {
-                     };
-                     let (backing_table_name, seq_name) = entry;
-                     let normalized = crate::util::normalize_ident(&seq_name);
--                    let already_present =
--                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
-+                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
-+                        s.get_sequence(Names
-```
-
-**File**: `core/database.rs` (modified, +2/-1)
-```diff
-@@ -4,6 +4,7 @@
- //! attached databases.
+     let el_type = json.element_type()?;
  
- use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
-+use crate::namespace::NamespaceId;
- use crate::types::IOResultOr;
- use crate::util::IOExt;
- #[cfg(feature = "io_memory_yield")]
-@@ -3474,7 +3475,7 @@ impl Database {
- 
-     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
-         let name = table.name.clone();
--        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
-+        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
-         Ok(name)
-     }
- 
-```
-
-**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
-```diff
-@@ -9,6 +9,7 @@
- //! SQLite one namespace per database, are in [`attach`].
- 
- pub mod attach;
-+use crate::namespace::NamespaceId;
- use crate::pragma::PragmaVirtualTable;
- use crate::schema::{BTreeTable, Schema, Table};
- use crate::sync::Arc;
-@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
-     enable_custom_types: bool,
- ) -> crate::Result<()> {
-     for vtab in pragma_vtabs() {
--        schema.tables.insert(
-+        schema.insert_table(
-+            NamespaceId::ROOT,
-             vtab.name.to_owned(),
-             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
-         );
-```
-
-**File**: `core/ext/mod.rs` (modified, +2/-1)
-```diff
-@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
- use crate::index_method::{
-     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
- };
-+use crate::namespace::NamespaceId;
- use crate::schema::{Schema, Table};
- use crate::sync::atomic::{AtomicU64, Ordering};
- use crate::sync::Mutex;
-@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
-                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
-                     return ResultCode::Error;
-                 };
--                schema.tables.insert(name_str, table);
-+                schema.insert_table(NamespaceId::ROOT, name_str, table);
-             } else {
-                 return ResultCode::Error;
-             }
-```
-
-**File**: `core/incremental/cursor.rs` (modified, +2/-1)
-```diff
-@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::namespace::NamespaceId;
-     use crate::storage::btree::BTreeCursor;
-     use crate::sync::Arc;
-     use crate::util::IOExt;
-@@ -325,7 +326,7 @@ mod tests {
-         let view_mutex = conn
-             .schema
-             .read()
--            .get_materialized_view(view_name)
-+            .get_materialized_view(NamespaceId::ROOT, view_name)
-             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
- 
-         // Get the view's root page
-```
-
-**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
-```diff
-@@ -24,6 +24,7 @@
- //! completion (or before an in-statement view read), or inside the CREATE
- //! MATERIALIZED VIEW statement for initial population.
- 
-+use crate::namespace::NamespaceRef;
- use rustc_hash::FxHashMap;
- use turso_parser::ast;
- 
-@@ -219,9 +220,11 @@ impl Connection {
-         view_name: &str,
-     ) -> Result<Vec<Option<String>>> {
-         let schema = self.schema.read().clone();
--        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
--            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
--        })?;
-+        let view = schema
-+            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
-+            .ok_or_else(|| {
-+                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
-+            })?;
-         let select = view.lock().select_stmt.clone();
-         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
-         Ok(plan
-@@ -256,9 +259,11 @@ fn build_plan_for_connection(
-     // names the same way CREATE did: within the view's own database, never
-     // through a TEMP table that happens to share a source table's name
-     // (#9456). Materialized views always live in main.
--    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
--        plan_view(view_name, select, &resolver, connection)
--    })
-+    resolver.with_view_scope(
-+        NamespaceRef::root_of(crate::MAIN_DB_ID),
-+        view_name.to_string(),
-+        || plan_view(view_name, select, &resolver, connection),
-+    )
+-    json_string_to_db_type(json, el_type, OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
  }
  
- /// Emit every node once in DAG topological order.
+ pub fn jsonb_set<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -435,6 +438,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+ 
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+@@ -456,7 +462,7 @@ where
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, OutputVariant::Binary)
++    json_document_to_db_type(json, el_type, OutputVariant::Binary)
+ }
+ 
+ /// Implements the -> operator. Always returns a proper JSON value.
+@@ -850,6 +856,21 @@ fn json_edit_path<'a>(
+     json_path_from_db_value(path, true)
+ }
+ 
++pub fn json_document_to_db_type(
++    json: Jsonb,
++    element_type: ElementType,
++    output: OutputVariant,
++) -> crate::Result<Value> {
++    if element_type == ElementType::NULL {
++        return if matches!(output, OutputVariant::Binary) {
++            Ok(Value::Blob(json.data()))
++        } else {
++            Ok(Value::Text(Text::json("null".to_string())))
++        };
++    }
++    json_string_to_db_type(json, element_type, output)
++}
++
+ pub fn json_error_position(json: impl AsValueRef) -> crate::Result<Value> {
+     match json.as_value_ref() {
+         ValueRef::Text(t) => {
+```
+
+**File**: `core/json/ops.rs` (modified, +294/-40)
+```diff
+@@ -1,11 +1,11 @@
+ use super::{
+-    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_edit_path,
+-    json_path_from_db_value, json_string_to_db_type,
++    convert_dbtype_to_jsonb, curry_convert_dbtype_to_jsonb, json_document_to_db_type,
++    json_edit_path, json_path_from_db_value, json_path_text,
+     jsonb::{DeleteOperation, InsertOperation, ReplaceOperation},
+     Conv, JsonCacheCell, OutputVariant,
+ };
+ use crate::{
+-    types::{AsValueRef, Text, Value},
++    types::{AsValueRef, Value},
+     ValueRef,
+ };
+ 
+@@ -39,14 +39,7 @@ pub fn json_patch(
+ 
+     let element_type = target.element_type()?;
+ 
+-    // A JSON null patch result stays JSON here: SQLite returns the
+-    // text 'null', while json_string_to_db_type would map it to SQL
+-    // NULL the way extraction does.
+-    if element_type == super::jsonb::ElementType::NULL {
+-        return Ok(Value::Text(Text::json("null".to_string())));
+-    }
+-
+-    json_string_to_db_type(target, element_type, OutputVariant::String)
++    json_document_to_db_type(target, element_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_patch(
+@@ -74,14 +67,7 @@ pub fn jsonb_patch(
+ 
+     let element_type = target.element_type()?;
+ 
+-    // A JSON null patch result stays JSON here: SQLite returns the
+-    // JSONB null blob, while json_string_to_db_type would map it to
+-    // SQL NULL the way extraction does.
+-    if element_type == super::jsonb::ElementType::NULL {
+-        return Ok(Value::Blob(target.data()));
+-    }
+-
+-    json_string_to_db_type(target, element_type, OutputVariant::Binary)
++    json_document_to_db_type(target, element_type, OutputVariant::Binary)
+ }
+ 
+ pub fn json_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -99,22 +85,24 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     for arg in args {
+-        if let ValueRef::Text(s) = arg.as_value_ref() {
+-            if s.as_str() == "$" {
+-                return Ok(Value::Null);
+-            }
+-        }
+-        if let Some(path) = json_path_from_db_value(&arg, true)? {
+-            let mut op = DeleteOperation::new();
+-            let _ = json.operate_on_path(&path, &mut op);
++        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
++            return Ok(Value::Null);
+         }
++        let Some(path) = json_path_from_db_value(&arg, true)? else {
++            return Ok(Value::Null);
++        };
++        let mut op = DeleteOperation::new();
++        let _ = json.operate_on_path(&path, &mut op);
+     }
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_remove<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -132,17 +120,19 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     for arg in args {
+-        if let ValueRef::Text(s) = arg.as_value_ref() {
+-            if s.as_str() == "$" {
+-                return Ok(Value::Null);
+-            }
+-        }
+-        if let Some(path) = json_path_from_db_value(&arg, true)? {
+-            let mut op = DeleteOperation::new();
+-            let _ = json.operate_on_path(&path, &mut op);
++        if json_path_text(arg.as_value_ref()).as_deref() == Some("$") {
++            return Ok(Value::Null);
+         }
++        let Some(path) = json_path_from_db_value(&arg, true)? else {
++            return Ok(Value::Null);
++        };
++        let mut op = DeleteOperation::new();
++        let _ = json.operate_on_path(&path, &mut op);
+     }
+ 
+     Ok(Value::Blob(json.data()))
+@@ -163,6 +153,9 @@ where
+     let first_arg = args.next().ok_or_else(|| {
+         crate::LimboError::InternalError("args should not be empty after length check".to_string())
+     })?;
++    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
++        return Ok(Value::Null);
++    }
+     let mut json = json_cache.get_or_insert_with(first_arg, make_jsonb_fn)?;
+     // TODO: when `array_chunks` is stabilized we can chunk by 2 here
+     while args.len() > 1 {
+@@ -184,7 +177,7 @@ where
+ 
+     let el_type = json.element_type()?;
+ 
+-    json_string_to_db_type(json, el_type, super::OutputVariant::String)
++    json_document_to_db_type(json, el_type, OutputVariant::String)
+ }
+ 
+ pub fn jsonb_replace<I, E, V>(args: I, json_cache: &JsonCacheCell) -> crate::Result<Value>
+@@ -202,6 +195,9 @@ where
+     let 
 ```
 
 ---
 
-### Incident Patch 2: `3eece806` (2026-10-24)
-**Commit Message**: core: key the schema by namespace and resolve names to a namespace
+### Incident Patch 2: `212ebc87` (2026-10-27)
+**Commit Message**: Merge 'core/translate: report expression index columns as cid -2 with NULL name in index_info pragmas' from app/turso-github-handyman
 
-A schema keeps its objects per namespace. Every database has the root
-namespace; a schema can have more, each with its own tables, views,
-indexes, triggers and sequences. Every object lookup on `Schema` takes a
-`NamespaceId`, and the resolver turns a written name into a
-`NamespaceRef`, the database and the namespace of the object, instead
-of a bare database id. The search order of unqualified names is a list
-of namespaces, and the scope of a view or trigger body is its
-namespace.
+## Problem
 
-This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
-by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
-ids, probing each. Core now has the same split: `Schema` is the catalog
-keyed by namespace, the resolver is the policy that picks the namespace,
-and the connection owns the names it knows. A later change stores
-PostgreSQL schemas as namespaces of the main database and nothing above
-`Schema` has to learn how they are stored.
-
-Nothing changes in behavior: only the root namespace exists, so every
-namespace is the root of a database and every lookup finds what it found
-before. The maps of a namespace 
-
-**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
-```diff
-@@ -12,6 +12,7 @@
- 
- #[cfg(not(feature = "codspeed"))]
- use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
-+use turso_core::NamespaceId;
- use turso_core::SqliteDialect;
- 
- #[cfg(feature = "codspeed")]
-@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
-         let attachment = conn
-             .with_schema_mut(|schema| {
-                 schema
--                    .get_index("docs", "docs_fts")
-+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
-                     .unwrap()
-                     .index_method
-                     .clone()
+```sql
+CREATE TABLE t(a, b, c, d);
+CREATE INDEX i_expr ON t(substr(b,1,1));
+SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
+-- Turso:
+-- 0|-1|'substr (b, 1, 1)'|1
+-- 1|-1|''|0
+-- SQLite:
+-- 0|-2|NULL|1
+-- 1|-1|NULL|0
 ```
 
-**File**: `core/btree_dump.rs` (modified, +5/-6)
-```diff
-@@ -1,3 +1,4 @@
-+use crate::namespace::NamespaceId;
- use crate::schema::Schema;
- use crate::storage::btree::BTreeCursor;
- use crate::storage::btree::CursorTrait;
-@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
-     /// Look up the root page for a given name (index first, then table).
-     fn find_root_page(&self, name: &str) -> Option<i64> {
-         // Search indexes first (indexes are stored by table name, so iterate all)
--        for indexes in self.schema.indexes.values() {
--            for index in indexes {
--                if index.name.eq_ignore_ascii_case(name) {
--                    return Some(index.root_page);
--                }
-+        for index in self.schema.indexes(NamespaceId::ROOT) {
-+            if index.name.eq_ignore_ascii_case(name) {
-+                return Some(index.root_page);
-             }
-         }
-         // Then search tables
--        if let Some(table) = self.schema.get_table(name) {
-+        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
-             return table.get_root_page().ok();
-         }
-         None
-```
+`PRAGMA index_info` has the same bug for the expression column.
 
-**File**: `core/connection.rs` (modified, +32/-17)
+Both pragmas printed `IndexColumn::pos_in_table` and `name` directly.
+For an expression column, `pos_in_table` is `EXPR_INDEX_SENTINEL`
+(`usize::MAX`), which prints as `-1`. The name is the expression text.
+The rowid row of `index_xinfo` also had `''` as its name instead of
+NULL.
+
+The issue also says the output changed after an unrelated `ALTER TABLE
+... DROP COLUMN`. That no longer happens on main, but the values were
+wrong before and after the `ALTER`.
+
+## Fix
+
+Like SQLite, an expression column gets cid `-2` and a NULL name. The
+rowid row of `index_xinfo` gets a NULL name.
+
+`emit_index_column_cid_and_name` writes the cid and name for both
+pragmas. If `pos_in_table == EXPR_INDEX_SENTINEL`, it writes `-2` and
+NULL. Otherwise it write
+
+**File**: `core/translate/pragma.rs` (modified, +16/-6)
 ```diff
-@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
- use crate::error::io_error;
- #[cfg(any(test, injected_yields))]
- use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
-+use crate::namespace::NamespaceId;
- use crate::state_machine::StateMachine;
- use crate::statement::StatementOrigin;
- use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
-@@ -1519,7 +1520,7 @@ impl Connection {
-                     // descriptor SELECTs can resolve the backing tables.
-                     if pending.is_none() {
-                         if let Some(sequences) = inner.preserved_sequences.take() {
--                            inner.fresh.sequences = sequences;
-+                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
-                             *pending = Some(crate::alloc::vec![]);
-                         } else {
-                             let work = inner.fresh.sequence_backing_table_names();
-@@ -1548,7 +1549,11 @@ impl Connection {
-                         };
-                         let (backing_table_name, seq_name) = entry;
-                         let normalized = crate::util::normalize_ident(&seq_name);
--                        if inner.fresh.sequences.contains_key(&normalized) {
-+                        if inner
-+                            .fresh
-+                            .get_sequence(NamespaceId::ROOT, &normalized)
-+                            .is_some()
-+                        {
-                             *idx += 1;
-                             *stmt = None;
-                             *meta = None;
-@@ -1588,7 +1593,11 @@ impl Connection {
-                             mv_store.set_sequence_watermark(&normalized, watermark);
+@@ -15,7 +15,7 @@ use super::integrity_check::{
+ use crate::function::Func;
+ use crate::namespace::{NamespaceId, NamespaceRef};
+ use crate::pragma::pragma_for;
+-use crate::schema::{BTreeTable, Index, Schema, Table};
++use crate::schema::{BTreeTable, Index, IndexColumn, Schema, Table, EXPR_INDEX_SENTINEL};
+ use crate::storage::encryption::{CipherMode, EncryptionKey};
+ use crate::storage::pager::AutoVacuumMode;
+ use crate::storage::pager::Pager;
+@@ -1136,8 +1136,7 @@ fn query_pragma(
+                     )? {
+                         for (seqno, col) in index.columns.iter().enumerate() {
+                             program.emit_int(seqno as i64, base_reg);
+-                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
+-                            program.emit_string8(col.name.clone(), base_reg + 2);
++                            emit_index_column_cid_and_name(program, col, base_reg + 1);
+                             program.emit_result_row(base_reg, 3);
                          }
-                         let sequence = seq.take().expect("sequence set above");
--                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
-+                        inner.fresh.insert_sequence(
-+                            NamespaceId::ROOT,
-+                            normalized,
-+                            Arc::new(sequence),
-+                        );
-                         *idx += 1;
-                         *stmt = None;
-                         *meta = None;
-@@ -1600,8 +1609,7 @@ impl Connection {
-                     if self.experimental_custom_types_enabled()
-                         && inner
-                             .fresh
--                            .tables
--                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-                     {
-                         // Temporarily install the schema so we can query against it.
-                         self.with_schema_mut(|schema| {
-@@ -1646,7 +1654,7 @@ impl Connection {
-                     tracing::debug!(
-                         "reparse_schema: schema_version={}, tables={:?}",
-                         fresh.schema_version,
--                        fresh.tables.keys()
-+                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
-                     );
-                     self.with_schema_mut(|schema| {
-                         *schema = fresh;
-@@ -1937,7 +1945,7 @@ impl Connection {
-     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
-         let has_types_table = {
-             let s = self.schema.read();
--            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-         };
-         if !has_types_table {
-             return Ok(Vec::new());
-@@ -3290,7 +3298,7 @@ impl Connection {
-         let entry = attached_dbs
-             .index_to_data
-             .get(&database_id)
--            .expect("Database ID should be valid after resolve_database_id");
-+            .expect("Database ID should be valid after resolve_namespace");
-         let schema = entry.db.schema.lock().clone();
-         schema
-     }
-@@ -3591,7 +3599,9 @@ impl Connection {
-         };
-         let get = |db_id: usize, seq_name: &str| {
-             self.with_schema(db_id, |schema| {
--                schema.get_sequence(seq_name).map(Arc::clone)
-+                schema
-+                    .get_sequence(NamespaceId::ROOT, seq_name)
-+                    .map(Arc::clone)
-             })
-             .map(|sequence| (db_id, sequence))
-         };
-@@ -3723,8 +3733,9 @@ impl Connection {
-                     };
-                     let (backing_table_name, seq_name) = entry;
-                     let normalized = crate::util::normalize_ident(&seq_name);
--                    let already_present =
--                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
-+                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
-+                        s.get_sequence(Names
-```
-
-**File**: `core/database.rs` (modified, +2/-1)
-```diff
-@@ -4,6 +4,7 @@
- //! attached databases.
+                     }
+@@ -1182,8 +1181,7 @@ fn query_pragma(
+                                 .unwrap_or_else(|| "BINARY".to_string());
  
- use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
-+use crate::namespace::NamespaceId;
- use crate::types::IOResultOr;
- use crate::util::IOExt;
- #[cfg(feature = "io_memory_yield")]
-@@ -3474,7 +3475,7 @@ impl Database {
- 
-     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
-         let name = table.name.clone();
--        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
-+        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
-         Ok(name)
-     }
- 
-```
-
-**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
-```diff
-@@ -9,6 +9,7 @@
- //! SQLite one namespace per database, are in [`attach`].
- 
- pub mod attach;
-+use crate::namespace::NamespaceId;
- use crate::pragma::PragmaVirtualTable;
- use crate::schema::{BTreeTable, Schema, Table};
- use crate::sync::Arc;
-@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
-     enable_custom_types: bool,
- ) -> crate::Result<()> {
-     for vtab in pragma_vtabs() {
--        schema.tables.insert(
-+        schema.insert_table(
-+            NamespaceId::ROOT,
-             vtab.name.to_owned(),
-             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
-         );
-```
-
-**File**: `core/ext/mod.rs` (modified, +2/-1)
-```diff
-@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
- use crate::index_method::{
-     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
- };
-+use crate::namespace::NamespaceId;
- use crate::schema::{Schema, Table};
- use crate::sync::atomic::{AtomicU64, Ordering};
- use crate::sync::Mutex;
-@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
-                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
-                     return ResultCode::Error;
-                 };
--                schema.tables.insert(name_str, table);
-+                schema.insert_table(NamespaceId::ROOT, name_str, table);
-             } else {
-                 return ResultCode::Error;
-             }
-```
-
-**File**: `core/incremental/cursor.rs` (modified, +2/-1)
-```diff
-@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::namespace::NamespaceId;
-     use crate::storage::btree::BTreeCursor;
-     use crate::sync::Arc;
-     use crate::util::IOExt;
-@@ -325,7 +326,7 @@ mod tests {
-         let view_mutex = conn
-             .schema
-             .read()
--            .get_materialized_view(view_name)
-+            .get_materialized_view(NamespaceId::ROOT, view_name)
-             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
- 
-         // Get the view's root page
-```
-
-**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
-```diff
-@@ -24,6 +24,7 @@
- //! completion (or before an in-statement view read), or inside the CREATE
- //! MATERIALIZED VIEW statement for initial population.
- 
-+use crate::namespace::NamespaceRef;
- use rustc_hash::FxHashMap;
- use turso_parser::ast;
- 
-@@ -219,9 +220,11 @@ impl Connection {
-         view_name: &str,
-     ) -> Result<Vec<Option<String>>> {
-         let schema = self.schema.read().clone();
--        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
--            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
--        })?;
-+        let view = schema
-+            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
-+            .ok_or_else(|| {
-+                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
-+            })?;
-         let select = view.lock().select_stmt.clone();
-         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
-         Ok(plan
-@@ -256,9 +259,11 @@ fn build_plan_for_connection(
-     // names the same way CREATE did: within the view's own database, never
-     // through a TEMP table that happens to share a source table's name
-     // (#9456). Materialized views always live in main.
--    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
--        plan_view(view_name, select, &resolver, connection)
--    })
-+    resolver.with_view_scope(
-+        NamespaceRef::root_of(crate::MAIN_DB_ID),
-+        view_name.to_string(),
-+        || plan_view(view_name, select, &resolver, connection),
-+    )
+                             program.emit_int(seqno as i64, base_reg);
+-                            program.emit_int(col.pos_in_table as i64, base_reg + 1);
+-                            program.emit_string8(col.name.clone(), base_reg + 2);
++                            emit_index_column_cid_and_name(program, col, base_reg + 1);
+                             program.emit_int(desc as i64, base_reg + 3);
+                             program.emit_string8(coll, base_reg + 4);
+                             program.emit_int(1, base_reg + 5); // key column
+@@ -1195,7 +1193,7 @@ fn query_pragma(
+                             let seqno = index.columns.len();
+                             program.emit_int(seqno as i64, base_reg);
+                             program.emit_int(-1, base_reg + 1);
+-                            program.emit_string8(String::new(), base_reg + 2);
++                            program.emit_null(base_reg + 2, None);
+                             program.emit_int(0, base_reg + 3);
+                             program.emit_string8("BINARY".to_string(), base_reg + 4);
+                             program.emit_int(0, base_reg + 5); // not a key column
+@@ -1957,6 +1955,18 @@ fn without_rowid_primary_key_index(table: &BTreeTable) -> Result<Option<Index>>
+     Ok(Some(index))
  }
  
- /// Emit every node once in DAG topological order.
++/// Emits the `cid` and `name` of PRAGMA index_info / index_xinfo. Like SQLite,
++/// an expression column has cid -2 and a NULL name.
++fn emit_index_column_cid_and_name(program: &mut ProgramBuilder, col: &IndexColumn, dest: usize) {
++    if col.pos_in_table == EXPR_INDEX_SENTINEL {
++        program.emit_int(-2, dest);
++        program.emit_null(dest + 1, None);
++    } else {
++        program.emit_int(col.pos_in_table as i64, dest);
++        program.emit_string8(col.name.clone(), dest + 1);
++    }
++}
++
+ /// 0-based index of `column` within `primary_key_columns`, if present.
+ fn column_pk_index(
+     column: &crate::schema::Column,
+```
+
+**File**: `docs/sql-reference/pragmas.mdx` (modified, +2/-0)
+```diff
+@@ -178,6 +178,8 @@ PRAGMA index_info(index-name);
+ -- 0     | 2   | email
+ ```
+ 
++An expression column (for example `CREATE INDEX i ON t(lower(name))`) has `cid` -2 and a NULL `name`.
++
+ The PRIMARY KEY of a `WITHOUT ROWID` table is reported as an index named `sqlite_autoindex_<table>_1`. Passing the table's name to `index_info` or `index_xinfo` also describes that index.
+ 
+ ### index_xinfo
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_info.sqltest` (modified, +26/-0)
+```diff
+@@ -112,3 +112,29 @@ expect {
+     pk|0|0|z
+     0|0|z
+ }
++
++@cross-check-integrity
++test pragma-index-info-expression-column {
++    CREATE TABLE t(a, b, c, d);
++    CREATE INDEX i_expr ON t(substr(b,1,1), a);
++    SELECT seqno, cid, quote(name) FROM pragma_index_info('i_expr');
++    ALTER TABLE t DROP COLUMN d;
++    ALTER TABLE t RENAME COLUMN a TO z;
++    PRAGMA index_info('i_expr');
++}
++expect {
++    0|-2|NULL
++    1|0|'a'
++    0|-2|
++    1|0|z
++}
++
++@cross-check-integrity
++test pragma-index-info-virtual-generated-column {
++    CREATE TABLE t(a, b, g AS (a*2));
++    CREATE INDEX i ON t(g);
++    PRAGMA index_info('i');
++}
++expect {
++    0|2|g
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/pragma/index_xinfo.sqltest` (modified, +34/-0)
+```diff
+@@ -115,3 +115,37 @@ expect {
+     0|0|id|0|BINARY|1
+     1|1|v|0|BINARY|0
+ }
++
++@cross-check-integrity
++test pragma-index-xinfo-expression-column {
++    CREATE TABLE t(a, b, c, d);
++    CREATE INDEX i_expr ON t(substr(b,1,1), a);
++    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
++    ALTER TABLE t DROP COLUMN d;
++    SELECT seqno, cid, quote(name), key FROM pragma_index_xinfo('i_expr');
++    ALTER TABLE t RENAME COLUMN a TO z;
++    PRAGMA index_xinfo('i_expr');
++}
++expect {
++    0|-2|NULL|1
++    1|0|'a'|1
++    2|-1|NULL|0
++    0|-2|NULL|1
++    1|0|'a'|1
++    2|-1|NULL|0
++    0|-2||0|BINARY|1
++    1|0|z|0|BINARY|1
++    2|-1||0|BINARY|0
++}
++
++@cross-check-integrity
++test pragma-index-xinfo-virtual-generated-column {
++    CREATE TABLE t(a, b, g AS (a*2));
++    CREATE INDEX i ON t(g COLLATE NOCASE DESC, g*2);
++    SELECT seqno, cid, quote(name), desc, coll, key FROM pragma_index_xinfo('i');
++}
++expect {
++    0|2|'g'|1|NOCASE|1
++    1|-2|NULL|0|BINARY|1
++    2|-1|NULL|0|BINARY|0
++}
+```
+
+---
+
+### Incident Patch 3: `89e24b3d` (2026-10-27)
+**Commit Message**: Merge 'core/json: return no rows from json_each/json_tree with a NULL path' from Yunus Ozen
+
+`json_each(json, NULL)` and `json_tree(json, NULL)` failed with `root
+path should be text`. SQLite parses the JSON first and then returns an
+empty result when the path is NULL, the same as for a NULL JSON
+argument.
+
+`JsonEachCursor::filter` now returns no rows for a NULL path right after
+the JSON is converted, so malformed JSON with a NULL path is still a
+`malformed JSON` error, like in SQLite. A non-text, non-NULL path keeps
+erroring as before.
+
+New `json-each-null-path.sqltest` covers json_each, json_tree, a NULL
+path coming from a join, and malformed JSON with a NULL path. The
+existing `json_tree` and `json_tree_columns` tests still pass.
+
+Fixes #9838
+
+I used Claude Code to make the change and write the tests, following the
+code pointer in the issue. I reviewed the diff and ran the tests myself,
+and compared the results with sqlite3.
+
+Closes #9877
+
+**File**: `core/json/vtab.rs` (modified, +5/-0)
+```diff
+@@ -252,6 +252,11 @@ impl InternalVirtualTableCursor for JsonEachCursor {
+         }
+         let root_path = match args.get(1) {
+             None => Cow::Borrowed("$"),
++            // Like SQLite, a NULL path is an empty result once the JSON has parsed.
++            Some(Value::Null) => {
++                convert_dbtype_to_jsonb(&args[0], Conv::Strict)?;
++                return Ok(false);
++            }
+             Some(path) => json_path_text(path.as_value_ref()).ok_or_else(|| {
+                 LimboError::InvalidArgument("root path should be text".to_owned())
+             })?,
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/json/json-each-null-path.sqltest` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++@database :memory:
++
++# A NULL PATH makes json_each and json_tree return no rows, the same as a
++# NULL JSON argument. The JSON is still parsed first, so malformed JSON is
++# an error even with a NULL path.
++
++test json-each-null-path-is-empty {
++    SELECT count(*) FROM json_each('[1,2]', NULL);
++}
++expect {
++    0
++}
++
++test json-tree-null-path-is-empty {
++    SELECT count(*) FROM json_tree('[1,2]', NULL);
++}
++expect {
++    0
++}
++
++test json-each-null-path-from-join {
++    SELECT count(*) FROM (SELECT NULL AS p) JOIN json_each('[1,2]', p);
++}
++expect {
++    0
++}
++
++test json-each-null-path-still-parses-json {
++    SELECT count(*) FROM json_each('not json', NULL);
++}
++expect error {
++    .*malformed JSON.*
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10721** (2026-10-25): core: key the schema by namespace and resolve names to a namespace (@penberg)
-- **PR #10719** (closed): postgres: support timestamptz and date/time types (@jussisaurio)
-- **PR #10718** (closed): postgres: support casts to boolean, uuid and varchar(n) (@jussisaurio)
-- **PR #10717** (closed): core: convert literals and text compared with custom type columns (@jussisaurio)
-- **PR #10714** (2026-10-25): postgres: keep mod() integer when both arguments are integers (@turso-github-handyman[bot])
-- **PR #10713** (2026-10-25): postgres: expose empty pg_seclabels catalog (@pedrocarlo)
+- **PR #10892** (2026-10-27): core: map namespace name to a Namespace value (@penberg)
+- **PR #10890** (2026-10-27): core: replace database id with namespace in plans and schema opcodes (@penberg)
+- **PR #10884** (2026-10-27): postgres/parser: merge the two function_name functions (@jussisaurio)
+- **PR #10875** (2026-10-27): postgres: implement current_schemas from the session search path (@pedrocarlo)
+- **PR #10874** (2026-10-27): core/translate: fill existing rows for ADD COLUMN with a non-constant default in tursopg (@turso-github-handyman[bot])
+- **PR #10869** (closed): core: rewrite views when renaming their table (@abrahamperz)
 
 ---
 
@@ -2032,29 +1928,51 @@ before. The maps of a namespace
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core: key the schema by namespace and resolve names to a namespace' from 
+## X. Merge 'core/json: match SQLite's null document and null path handling' from
 
 **RULE**:
-When implementing operations in `core/benches/fts_benchmark.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/json/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa93d669`: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c29f3e6`: Merge 'core/json: match SQLite's null document and null path handling' from. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/benches/fts_benchmark.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/json/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use turso_core::NamespaceId;
-                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
+        return Ok(Value::Null);
+    }
+    json_document_to_db_type(json, el_type, OutputVariant::String)
+    if matches!(first_arg.as_value_ref(), ValueRef::Null) {
+        return Ok(Value::Null);
+    }
+    json_document_to_db_type(json, el_type, OutputVariant::Binary)
+pub fn json_document_to_db_type(
+    json: Jsonb,
+    element_type: ElementType,
+    output: OutputVariant,
+) -> crate::Result<Value> {
+    if element_type == ElementType::NULL {
+        return if matches!(output, OutputVariant::Binary) {
+            Ok(Value::Blob(json.data()))
+        } else {
+            Ok(Value::Text(Text::json("null".to_string())))
+        };
+    }
+    json_string_to_db_type(json, element_type, output)
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    .get_index("docs", "docs_fts")
+    json_string_to_db_type(json, el_type, OutputVariant::String)
+    json_string_to_db_type(json, el_type, OutputVariant::Binary)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa93d669` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c29f3e6` are properly handled with clean fallback behavior.

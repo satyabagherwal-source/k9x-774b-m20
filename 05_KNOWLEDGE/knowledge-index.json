@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:43:17.426Z",
+  "last_updated": "2026-10-27T14:46:57.080Z",
   "total_verified_learnings": 1135,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51109,13 +51109,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "e02cfcd7",
-      "content_hash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "222c3929",
+      "content_hash": "266ddef2004b1aa89013f065ba4b08a5fe6c13d347d9750f5031031746786203",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -51175,7 +51175,7 @@
         {
           "number": 4812,
           "title": "Merge 'core/json: match SQLite's null document and null path handling' from",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51183,7 +51183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:35:20.560Z",
+      "verified_at": "2026-10-27T14:46:57.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133900,14 +133900,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4812,
       "title": "Merge 'core/json: match SQLite's null document and null path handling' from",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "e02cfcd7",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "222c3929",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T13:35:20.560Z"
+      "verified_at": "2026-10-27T14:46:57.056Z"
     },
     "rule-4813": {
       "learning_id": "rule-4813",

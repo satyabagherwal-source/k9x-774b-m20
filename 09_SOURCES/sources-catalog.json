@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "aa93d669",
+    "sourceVersion": "222c3929",
     "license": "MIT",
-    "contentHash": "6c8a53c370fd0a3a87ab52b03a28eb3bef43a5eabaeb13a933cf73ae61a73337",
-    "lastHarvestedAt": "2026-10-26T00:48:37.245Z",
+    "contentHash": "266ddef2004b1aa89013f065ba4b08a5fe6c13d347d9750f5031031746786203",
+    "lastHarvestedAt": "2026-10-27T14:46:57.153Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

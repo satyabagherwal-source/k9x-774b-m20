@@ -5384,3 +5384,4 @@
 | `CYCLE-20261027-PA8O` | `2026-10-27T14:43:12.024Z` | `A9T9/RPA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4855` | Yes (`417a57ae...`) |
 | `CYCLE-20261027-PCRO` | `2026-10-27T14:43:15.300Z` | `CYB3RMX/Qu1cksc0pe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4856` | Yes (`64eb85a2...`) |
 | `CYCLE-20261027-PEGF` | `2026-10-27T14:43:17.487Z` | `apioo/fusio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4857, Rule 4858, Rule 4859` | Yes (`df5a92b2...`) |
+| `CYCLE-20261027-U3Y6` | `2026-10-27T14:46:57.150Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4812` | Yes (`266ddef2...`) |

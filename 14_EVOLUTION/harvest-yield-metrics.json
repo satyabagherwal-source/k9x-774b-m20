@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:43:17.495Z",
-  "total_cycles_completed": 5361,
-  "total_learnings_persisted": 5361,
-  "total_rules_promoted": 4766,
+  "last_updated": "2026-10-27T14:46:57.158Z",
+  "total_cycles_completed": 5362,
+  "total_learnings_persisted": 5362,
+  "total_rules_promoted": 4767,
   "history": [
-    {
-      "timestamp": "2026-10-26T18:25:35.185Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T18:32:20.243Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1396,13 @@
       "repository": "apioo/fusio",
       "learningId": "learn-github-apioo-fusio",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:46:57.158Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

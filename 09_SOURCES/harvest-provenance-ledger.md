@@ -5393,3 +5393,4 @@ Every entry in this ledger must capture:
 | `learn-github-a9t9-rpa` | `https://github.com/A9T9/RPA` | `17b6302f` | Multi-dimensional audit evidence | 2026-10-27T14:43:12.028Z |
 | `learn-github-cyb3rmx-qu1cksc0pe` | `https://github.com/CYB3RMX/Qu1cksc0pe` | `180d44f4` | Multi-dimensional audit evidence | 2026-10-27T14:43:15.303Z |
 | `learn-github-apioo-fusio` | `https://github.com/apioo/fusio` | `9dedd6f6` | Multi-dimensional audit evidence | 2026-10-27T14:43:17.490Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `222c3929` | Multi-dimensional audit evidence | 2026-10-27T14:46:57.153Z |
