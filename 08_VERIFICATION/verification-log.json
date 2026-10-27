@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-HZNZ",
-    "timestamp": "2026-10-25T06:38:17.807Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "71dc756e2b1e456b28f395329a5ef7e924f60451ac50cac42711985ec40ac847",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-I4HN",
-    "timestamp": "2026-10-25T06:38:24.059Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "03351615b630a95aa8707a32d0b4509e73a620ea169ba50d6baa75aa18c2738f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-I9SE",
     "timestamp": "2026-10-25T06:38:30.926Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7460,36 @@
     "repository": "sfu-db/connector-x",
     "learningId": "learn-github-sfu-db-connector-x",
     "contentHash": "05f665fcdcf64645af174efd8679dd98163d2328f9225dae076479d45be3329d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EFZO",
+    "timestamp": "2026-10-27T10:50:49.332Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-EHYC",
+    "timestamp": "2026-10-27T10:50:51.876Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

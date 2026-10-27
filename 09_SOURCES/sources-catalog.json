@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "24a991fd",
+    "sourceVersion": "1c76855d",
     "license": "MIT",
-    "contentHash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
-    "lastHarvestedAt": "2026-10-25T02:36:21.630Z",
+    "contentHash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
+    "lastHarvestedAt": "2026-10-27T10:50:51.878Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "fd59ce39",
+    "sourceVersion": "4fce4e76",
     "license": "MIT",
-    "contentHash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
-    "lastHarvestedAt": "2026-10-25T19:51:44.642Z",
+    "contentHash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
+    "lastHarvestedAt": "2026-10-27T10:50:49.335Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

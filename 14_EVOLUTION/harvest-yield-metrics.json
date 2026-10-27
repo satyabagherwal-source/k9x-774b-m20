@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T10:47:41.239Z",
-  "total_cycles_completed": 5187,
-  "total_learnings_persisted": 5187,
-  "total_rules_promoted": 4588,
+  "last_updated": "2026-10-27T10:50:51.881Z",
+  "total_cycles_completed": 5189,
+  "total_learnings_persisted": 5189,
+  "total_rules_promoted": 4590,
   "history": [
-    {
-      "timestamp": "2026-10-25T22:00:41.875Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:42.019Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-25T22:00:48.474Z",
       "repository": "RediSearch/RediSearch",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T10:47:41.239Z",
       "repository": "sfu-db/connector-x",
       "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:50:49.338Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T10:50:51.881Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

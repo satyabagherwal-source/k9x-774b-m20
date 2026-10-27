@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T10:47:41.241Z",
+  "last_updated": "2026-10-27T10:50:51.884Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
-      "verified_at": "2026-10-25T02:36:21.643Z",
+      "content_hash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
+      "verified_at": "2026-10-27T10:50:51.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:36:21.643Z"
+      "last_updated": "2026-10-27T10:50:51.884Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
-      "verified_at": "2026-10-25T19:51:44.651Z",
+      "content_hash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
+      "verified_at": "2026-10-27T10:50:49.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:51:44.651Z"
+      "last_updated": "2026-10-27T10:50:49.340Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

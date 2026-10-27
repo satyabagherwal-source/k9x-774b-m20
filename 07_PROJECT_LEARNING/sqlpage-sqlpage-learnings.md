@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `24a991fd`  
+> **Source Version**: `1c76855d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:36:21.286Z  
+> **Timestamp**: 2026-10-27T10:50:51.553Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:36:20.970Z  
+> **Harvest Timestamp**: 2026-10-27T10:50:51.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2579 stars
+- **Stars / Engagement**: 2578 stars
 
 ---
 
@@ -479,6 +479,7 @@ export function initComparison(root, signal) {
   const next = section.querySelector("[data-comparison-next]");
   const status = section.querySelector("[data-comparison-status]");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  let destination = null;
 
   function update() {
     const offsets = cards.map((card) => card.offsetLeft);
@@ -499,8 +500,12 @@ export function initComparison(root, signal) {
   }
 
   function goTo(left) {
+    destination = Math.max(
+      0,
+      Math.min(left, track.scrollWidth - track.clientWidth),
+    );
     track.scrollTo({
-      left,
+      left: destination,
       behavior: motion.matches ? "instant" : "smooth",
     });
   }
@@ -508,16 +513,28 @@ export function initComparison(root, signal) {
   function move(direction) {
     // Equal-width grid columns snap one card at a time; native scrolling clamps the ends.
     const step = cards[1].offsetLeft;
+    // Repeated clicks advance from the requested card, even while a previous
+    // smooth scroll is still exposing a partial card and updating the status.
     const index =
-      direction > 0
-        ? Math.floor((track.scrollLeft + 2) / step) + 1
-        : Math.ceil((track.scrollLeft - 2) / step) - 1;
+      Math.round((destination ?? track.scrollLeft) / step) + direction;
     goTo(index * step);
   }
 
   previous.addEventListener("click", () => move(-1), { signal });
   next.addEventListener("click", () => move(1), { signal });
   track.addEventListener("scroll", update, { passive: true, signal });
+  const followNativeScroll = () => {
+    destination = null;
+  };
+  track.addEventListener("scrollend", followNativeScroll, { signal });
+  track.addEventListener("pointerdown", followNativeScroll, {
+    passive: true,
+    signal,
+  });
+  track.addEventListener("wheel", followNativeScroll, {
+    passive: true,
+    signal,
+  });
   const keys = {
     ArrowLeft: () => move(-1),
     ArrowRight: () => move(1),
@@ -533,7 +550,10 @@ export function initComparison(root, signal) {
     },
     { signal },
   );
-  const observer = new ResizeObserver(update);
+  const observer = new ResizeObserver(() => {
+    destination = null;
+    update();
+  });
   observer.observe(track);
   section.querySelector(".comparison-controls").hidden = false;
   update();
@@ -1050,281 +1070,668 @@ window.addEventListener("pagehide", (event) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99c68467` (2026-10-24)
-**Commit Message**: Move detailed chart checks to minimal SQL fixtures (#1560)
+### Incident Patch 1: `1c76855d` (2026-10-27)
+**Commit Message**: Refine the official site with a more restrained visual identity (#1561)
 
-**File**: `tests/end-to-end/fixtures/chart/hidden-legend.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
-+WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
-```
+* Refine official site with a restrained blue visual identity
 
-**File**: `tests/end-to-end/fixtures/chart/horizontal-reference-lines.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS horizontal, 100 AS ymax;
-+SELECT 90 AS yline, 'full' AS label;
-+SELECT 'db-1' AS xline, 'watched' AS label;
-+WITH points(x, y) AS (VALUES ('backup-1', 41), ('db-1', 88)) SELECT * FROM points;
-```
+* Centralize landing page colors in the shared brand palette
 
-**File**: `tests/end-to-end/fixtures/chart/stacked-time-series.sql` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS stacked, TRUE AS time, 4 AS marker;
--WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
-+WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('CPU', '2024-01-01T00:04:00Z', 30), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
-```
+* Reuse the existing Tabler theme instead of a parallel brand palette
 
-**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +55/-2)
+* Pin Hurl CI to Ubuntu 24.04 for libxml2 ABI compatibility
+
+* Install Ubuntu's native Hurl package on ubuntu-latest
+
+* Ground the landing sculpture in a brushed-metal studio and restore timeline contrast
+
+* Preserve Tabler utility colors and use surface tokens for landing backgrounds
+
+* Track carousel destinations across rapid smooth-scroll navigation
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-46)
 ```diff
-@@ -308,6 +308,7 @@ test("gives a stacked series a zero at every x it did not measure", async ({
-     ["2024-01-01T00:01:00.000Z", 50],
-     ["2024-01-01T00:02:00.000Z", 50],
-     ["2024-01-01T00:03:00.000Z", 50],
-+    ["2024-01-01T00:04:00.000Z", 0],
-   ]);
- });
+@@ -23,7 +23,6 @@ concurrency:
  
-@@ -316,8 +317,13 @@ test("stacks a series above the one it shares an x with", async ({ page }) => {
-   const [cpu, gpu] = chart.drawnPerSeries;
-   assert.ok(cpu && gpu, "Both series were drawn");
+ env:
+   CARGO_TERM_COLOR: always
+-  HURL_VERSION: 8.0.1
+   REGISTRY_USERNAME: lovasoa
+   REGISTRY_IMAGE: lovasoa/sqlpage
  
--  expect(gpu.heights).toHaveLength(4);
--  expect(gpu.heights[0]).toBe(cpu.heights[0]);
-+  expect(cpu.lefts).toHaveLength(5);
-+  expect(gpu.lefts).toEqual(cpu.lefts);
-+  expect(gpu.heights).toHaveLength(5);
-+  expect([gpu.heights[0], gpu.heights[4]]).toEqual([
-+    cpu.heights[0],
-+    cpu.heights[4],
-+  ]);
-   const cpuHeight = cpu.heights[1];
-   assert.ok(cpuHeight !== undefined, "CPU has a second point");
-   expect(gpu.heights[1]).toBeLessThan(cpuHeight);
-@@ -507,6 +513,53 @@ test("gives every slice of a pie chart its label and its share", async ({
-   expect(chart.dataLabels).toEqual(["Yes: 65%", "No: 35%"]);
- });
+@@ -412,36 +411,6 @@ jobs:
+           PATHS_OUTCOME: ${{ steps.paths.outcome }}
+           ALL_EXAMPLES: ${{ steps.paths.outputs.all_examples }}
+           MATCHED_EXAMPLES: ${{ steps.paths.outputs.changes }}
+-      - name: Restore Hurl archive
+-        id: hurl-cache
+-        if: steps.examples.outputs.examples != '[]'
+-        uses: actions/cache@v6
+-        with:
+-          path: .cache/hurl
+-          key: hurl-${{ runner.os }}-x86_64-unknown-linux-gnu-${{ env.HURL_VERSION }}
+-      - name: Download Hurl archive
+-        if: steps.examples.outputs.examples != '[]' && steps.hurl-cache.outputs.cache-hit != 'true'
+-        run: |
+-          set -euo pipefail
+-          archive="hurl-${HURL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+-          base_url="https://github.com/Orange-OpenSource/hurl/releases/download/${HURL_VERSION}"
+-          mkdir -p .cache/hurl
+-          curl --fail --location --retry 5 --retry-delay 2 --output ".cache/hurl/${archive}" "${base_url}/${archive}"
+-          curl --fail --location --retry 5 --retry-delay 2 --output ".cache/hurl/${archive}.sha256" "${base_url}/${archive}.sha256"
+-          (
+-            cd .cache/hurl
+-            expected_sha="$(tr -d '[:space:]' < "${archive}.sha256")"
+-            actual_sha="$(sha256sum "$archive" | cut -d ' ' -f 1)"
+-            test "$expected_sha" = "$actual_sha"
+-          )
+-      - name: Upload Hurl archive
+-        if: steps.examples.outputs.examples != '[]'
+-        uses: actions/upload-artifact@v7
+-        with:
+-          name: hurl-${{ env.HURL_VERSION }}-x86_64-unknown-linux-gnu
+-          path: .cache/hurl/*
+-          if-no-files-found: error
+-          retention-days: 1
  
-+test("shows series legends by default and hides them when requested", async ({
-+  page,
-+}) => {
-+  await renderChart(page, "stacked-time-series");
-+  await expect(page.locator("#test-chart .apexcharts-legend-text")).toHaveText([
-+    "CPU",
-+    "GPU",
-+  ]);
-+
-+  await renderChart(page, "hidden-legend");
-+  await expect(page.locator("#test-chart .apexcharts-legend")).toBeHidden();
-+});
-+
-+for (const { axis, fixture, labels } of [
-+  { axis: "y", fixture: "y-reference-band", labels: ["target", "throttling"] },
-+  { axis: "x", fixture: "x-reference-band", labels: ["deploy", "incident"] },
-+]) {
-+  test(`draws a ${axis} reference line and band with their labels`, async ({
-+    page,
-+  }) => {
-+    await renderChart(page, fixture);
-+    const annotations = page.locator(
-+      `#test-chart .apexcharts-${axis}axis-annotations`,
-+    );
-+    await expect(annotations.locator("line")).toHaveCount(1);
-+    await expect(
-+      annotations.locator(".apexcharts-annotation-rect"),
-+    ).toHaveCount(1);
-+    for (const label of labels) {
-+      await expect(annotations.getByText(label, { exact: true })).toBeVisible();
-+    }
-+  });
-+}
-+
-+test("horizontal bars keep reference lines on their data axes", async ({
-+  page,
-+}) => {
-+  await renderChart(page, "horizontal-reference-lines");
-+  const down = page.locator("#test-chart .apexcharts-xaxis-annotations");
-+  const across = page.locator("#test-chart .apexcharts-yaxis-annotations");
-+
-+  await expect(down.locator("line")).toHaveCount(1);
-+  await expect(down.getByText("full", { exact: true })).toBeVisible();
-+  await expect(across.locator("line")).toHaveCount(1);
-+  await expect(across.getByText("watched", { exact: true })).toBeVisible();
-+});
-+
- test("draws a reference line that carries no label", async ({ page }) => {
-   const chart = await renderChart(page, "unlabeled-reference-lines");
- 
+   hurl:
+     name: hurl (${{ matrix.example }})
+@@ -457,23 +426,12 @@ jobs:
+         example: ${{ fromJSON(needs.hurl_examples.outputs.examples) }}
+     steps:
+       - uses: actions/checkout@v7
+-      - name: Download Hurl archive
+-        uses: actions/download-artifact@v8
+-        with:
+-          name: hurl-${{ env.HURL_VERSION }}-x86_64-unknown-linux-gnu
+-          path: ${{ runner.temp }}/hurl
+       - name: Install Hurl
++        # Use Ubuntu's build so apt resolves the matching libcurl/libxml2 ABI.
+         run: |
+-          set -euo pipefail
+-          archive="hurl-${HURL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+-          (
+-            cd "$RUNNER_TEMP/hurl"
+-            expected_sha="$(tr -d '[:space:]' < "${archive}.sha256")"
+-            actual_sha="$(sha256sum "$archive" | cut -d ' ' -f 1)"
+-            test "$expected_sha" = "$actual_sha"
+-            tar xzf "$archive" -C "$RUNNER_TEMP/hurl"
+-          )
+-          echo "$RUNNER_TEMP/hurl/hurl-${HURL_VERSION}-x86_64-unknown-linux-gnu/bin" >> "$GITHUB_PATH"
++          sudo apt-get update
++          sudo apt-get install -y --no-install-recommends hurl
++          hurl --version
+       - name: Download SQLPage image
+         uses: actions/download-artifact@v8
+         with:
 ```
 
-**File**: `tests/end-to-end/fixtures/chart/x-reference-band.sql` (added, +4/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS time;
-+SELECT '2024-05-01T10:00:00Z' AS xline, 'deploy' AS label;
-+SELECT '2024-05-01T11:30:00Z' AS xline, '2024-05-01T13:00:00Z' AS xline_end, 'incident' AS label;
-+WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 120), ('2024-05-01T12:00:00Z', 512), ('2024-05-01T15:00:00Z', 133)) SELECT * FROM points;
-```
-
-**File**: `tests/end-to-end/fixtures/chart/y-reference-band.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'line' AS type, TRUE AS time, 100 AS ymax;
-+SELECT 70 AS yline, 'target' AS label;
-+SELECT 90 AS yline, 100 AS yline_end, 'throttling' AS label;
-+WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 52), ('2024-05-01T11:00:00Z', 83), ('2024-05-01T14:00:00Z', 63)) SELECT * FROM points;
-```
-
-**File**: `tests/end-to-end/official-site.spec.ts` (modified, +26/-123)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, type Locator, type Page, test } from "@playwright/test";
-+import { expect, type Page, test } from "@playwright/test";
- import {
-   checkModal,
-   checkTableFiltering,
-@@ -20,131 +20,38 @@ test("Open documentation", async ({ page }) => {
-   }
- });
+@@ -2,6 +2,8 @@
  
--async function openChartDocumentation(page: Page) {
--  await page.goto("/documentation.sql?component=chart#component");
--  // This page initializes every documented chart, which can take several seconds.
--  await expect(page.locator('[data-pre-init="chart"]')).toHaveCount(0, {
--    timeout: 15_000,
--  });
+ ## unreleased
+ 
++- Refined the official website with muted blue accents, simpler navigation, a clearer primary action, and a level SQL ribbon with vertical separators, and a grounded studio scene with brushed metal and physical reflections. Restored visible progress in the streaming comparison animation.
++
+ - Restored parameter reuse for repeated variables on SQL Server, PostgreSQL, and SQLite, fixing SQL Server and PostgreSQL queries that repeat a variable-dependent expression in `SELECT` and `GROUP BY`.
+ 
+ ## v0.47.0 (2026-10-15)
+```
+
+**File**: `examples/official-site/assets/brand/brand.css` (modified, +96/-10)
+```diff
+@@ -5,14 +5,100 @@
+   font-weight: 100 900;
+   font-display: swap;
+ }
+-:root {
+-  --brand-ink: #080e11;
+-  --brand-graphite: #18262d;
+-  --brand-paper: #f4f7f8;
+-  --brand-cyan: #58cce0;
+-  --brand-teal: #146575;
+-  --brand-steel: #9caeb5;
+-  --brand-font: Outfit, system-ui, sans-serif;
+-  --brand-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+-  --tblr-font-sans-serif: var(--brand-font);
++/* Official-site overrides use Tabler's existing theme properties directly.
++   Both the standalone landing page and documentation import this file. */
++:root,
++.layout-boxed[data-bs-theme="dark"] {
++  color-scheme: dark;
++  --tblr-font-sans-serif: Outfit, system-ui, sans-serif;
++  --tblr-font-monospace:
++    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
++  /* Native Tabler utility colors also serve component foregrounds. Keep their
++     defaults; use the surface properties below for dark page backgrounds. */
++  --tblr-black: #000;
++  --tblr-white: #fff;
++  --tblr-light: #f9fafb;
++  --tblr-dark: #1f2937;
++  --tblr-gray-300: #d1d5db;
++  --tblr-primary-fg: var(--tblr-white);
++
++  /* Core colors refined for better contrast */
++  --tblr-body-color: hsl(225deg 35% 86%);
++  --tblr-secondary-color: hsl(225, 15%, 80%);
++  --tblr-muted-color: hsla(225, 15%, 75%, 0.8);
++
++  /* Background system */
++  --tblr-body-bg: hsl(225deg 44% 9%);
++  --tblr-bg-surface: hsl(225, 47%, 10%);
++  --tblr-bg-surface-secondary: hsl(225, 47%, 12%);
++  --tblr-bg-surface-tertiary: hsl(225, 47%, 14%);
++
++  /* Border colors */
++  --tblr-border-color: hsl(225deg, 26%, 19%);
++  --tblr-border-color-translucent: hsla(225deg 27% 19% / 0.7);
++
++  /* Text secondary RGB */
++  --tblr-text-secondary-rgb:
++    204, 209, 217; /* RGB equivalent of hsl(225, 15%, 80%) */
++
++  /* Code colors */
++  --tblr-code-color: hsl(
++    225deg 45.4% 76.93%
++  ); /* Light code text for dark theme */
++  --tblr-code-bg: hsla(225, 47%, 15%, 0.5); /* Subtle dark background */
++  --tblr-active-bg: var(--tblr-code-bg);
++
++  /* Ethereal accent colors */
++  --tblr-blue-rgb: 84, 151, 213;
++  --tblr-blue: rgb(var(--tblr-blue-rgb));
++  --tblr-blue-lt-rgb: 21, 31, 53;
++  --tblr-blue-lt: rgb(var(--tblr-blue-lt-rgb));
++  --tblr-primary-rgb: 139, 184, 232;
++  --tblr-primary: rgb(var(--tblr-primary-rgb));
++  --tblr-secondary: hsla(247, 60%, 94%, 0.7); /* Nebula purple */
++
++  /* Status + accent colors aligned with the brand palette */
++  --tblr-success-rgb: 16, 132, 86; /* Deep green for white text */
++  --tblr-success: rgb(var(--tblr-success-rgb));
++  --tblr-warning-rgb: 197, 124, 0; /* Deep amber */
++  --tblr-warning: rgb(var(--tblr-warning-rgb));
++  --tblr-danger-rgb: 196, 68, 68; /* Deep crimson */
++  --tblr-danger: rgb(var(--tblr-danger-rgb));
++  --tblr-purple-rgb: 118, 82, 200; /* Deep violet */
++  --tblr-purple: rgb(var(--tblr-purple-rgb));
++  --tblr-cyan-rgb: 0, 149, 168; /* Deep cyan */
++  --tblr-cyan: rgb(var(--tblr-cyan-rgb));
++  --tblr-indigo-rgb: 96, 113, 215; /* Deep indigo */
++  --tblr-indigo: rgb(var(--tblr-indigo-rgb));
++  --tblr-teal: #267d63;
++  --tblr-teal-fg: #20050b;
++
++  --tblr-green: var(--tblr-success);
++  --tblr-yellow: var(--tblr-warning);
++  --tblr-red: var(--tblr-danger);
++
++  /* Luminous links */
++  --tblr-link-color: hsl(212, 70%, 75%); /* Star glow */
++  --tblr-link-hover-color: hsl(212, 70%, 85%); /* Supernova */
++  --tblr-carousel-caption-color: var(--tblr-muted-color);
++
++  /* Ethereal shadows */
++  --tblr-box-shadow:
++    0 2px 4px rgba(0, 0, 0, 0.2), 0 0 15px rgba(66, 153, 225, 0.15);
++  --tblr-box-shadow-dropdown:
++    0px 8px 24px rgba(0, 0, 0, 0.25), 1px 9px 20px rgba(174, 62, 201, 0.15);
++
++  /* Pure white emphasis */
++  --tblr-emphasis-color: #ffffff;
++  --tblr-heading-color: #ffffff;
++
++  /* Syntax highlighting colors */
++  --hljs-cosmic-comment: hsl(290, 10%, 60%); /* Distant star */
++  --hljs-cosmic-punctuation: hsl(60, 40%, 85%); /* Stardust */
++  --hljs-cosmic-property: hsl(340, 60%, 65%); /* Red giant */
++  --hljs-cosmic-number: hsl(0, 50%, 75%); /* Solar flare */
++  --hljs-cosmic-boolean: hsl(270, 100%, 75%); /* Purple nebula */
++  --hljs-cosmic-string: hsl(120, 40%, 75%); /* Green aurora */
++  --hljs-cosmic-operator: hsl(0, 0%, 95%); /* White dwarf */
++  --hljs-cosmic-keyword: hsl(210, 100%, 75%); /* Blue giant */
+ }
+```
+
+**File**: `examples/official-site/assets/brand/logo-horizontal-light.svg` (modified, +2/-2)
+```diff
+@@ -1,11 +1,11 @@
+ <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 442 120" width="442" height="120"><g fill="none" stroke-linejoin="round" stroke-linecap="round">
+-      <g stroke="#58cce0" stroke-width="3">
++      <g stroke="#8bb8e8" stroke-width="3">
+         <path d="M24 9 33 3h30l9 6-24 24Z"/>
+         <path d="m24 9 24 5 24-5M33 3l15 11L63 3M48 14v19" stroke-width="1.5"/>
+       </g>
+       <g transform="translate(-3.2 26) scale(.1)" stroke="#f4f7f8" stroke-width="60">
+         <path d="M171 264v489a341 122 0 0 0 682 0V264"/>
+         <ellipse cx="512" cy="264" rx="341" ry="122"/>
+-        <path d="M171 427a341 122 0 0 0 682 0M171 591a341 122 0 0 0 682 0" stroke="#58cce0" stroke-width="70"/>
++        <path d="M171 427a341 122 0 0 0 682 0M171 591a341 122 0 0 0 682 0" stroke="#8bb8e8" stroke-width="70"/>
+       </g>
+     </g><path fill="#f4f7f8" d="M129.489 86.819Q122.859 86.819 118.14975 84.54724999999999Q113.4405 82.2755 109.638 77.7515L116.6385 70.751Q119.0955 73.9295 122.274 75.6845Q125.4525 77.4395 130.035 77.4395Q134.2275 77.4395 136.65525 75.79175000000001Q139.083 74.144 139.083 71.258Q139.083 68.7815 137.679 67.21175Q136.275 65.642 133.974 64.5695Q131.673 63.497 128.904 62.59025Q126.135 61.683499999999995 123.37575000000001 60.50375Q120.6165 59.324 118.3155 57.55925Q116.0145 55.7945 114.6105 53.035250000000005Q113.2065 50.276 113.2065 46.0835Q113.2065 41.111 115.63425000000001 37.59125Q118.062 34.0715 122.274 32.20925Q126.486 30.347 131.8095 30.347Q137.406 30.347 141.93 32.42375Q146.454 34.5005 149.3205 37.874L142.3005 44.8745Q139.902 42.2615 137.35725 40.994Q134.8125 39.7265 131.595 39.7265Q127.9485 39.7265 125.862 41.150000000000006Q123.7755 42.5735 123.7755 45.1865Q123.7755 47.468 125.17949999999999 48.872Q126.5835 50.276 128.8845 51.28025Q131.1855 52.2845 133.9545 53.2205Q136.7235 54.1565 139.48275 55.35575Q142.242 56.555 144.543 58.427Q146.844 60.299 148.248 63.204499999999996Q149.652 66.11 149.652 70.439Q149.652 78.0635 144.2505 82.44125Q138.849 86.819 129.489 86.819Z"/><path fill="#f4f7f8" d="M182.738 86.858Q176.7125 86.858 171.53525000000002 84.674Q166.358 82.49 162.46775000000002 78.61925Q158.57750000000001 74.7485 156.40325 69.59075Q154.229 64.43299999999999 154.229 58.504999999999995Q154.229 52.5575 156.39350000000002 47.448499999999996Q158.558 42.3395 162.40925 38.46875Q166.2605 34.598 171.4085 32.453Q176.5565 30.308 182.582 30.308Q188.60750000000002 30.308 193.7555 32.453Q198.9035 34.598 202.784 38.46875Q206.6645 42.3395 208.829 47.4875Q210.9935 52.6355 210.9935 58.583Q210.9935 64.511 208.829 69.65899999999999Q206.6645 74.807 202.81324999999998 78.65825000000001Q198.962 82.5095 193.82375 84.68375Q188.6855 86.858 182.738 86.858ZM207.4835 90.0755 182.32850000000002 64.9205 188.76350000000002 58.4855 213.9185 83.6405ZM182.582 76.991Q187.82750000000001 76.991 191.75675 74.65100000000001Q195.686 72.311 197.89925 68.14775Q200.1125 63.9845 200.1125 58.504999999999995Q200.1125 54.429500000000004 198.84500000000003 51.075500000000005Q197.57750000000001 47.7215 195.2375 45.2645Q192.8975 42.8075 189.6995 41.491249999999994Q186.50150000000002 40.175 182.582 40.175Q177.395 40.175 173.46575 42.476Q169.5365 44.777 167.32325 48.901250000000005Q165.11 53.0255 165.11 58.504999999999995Q165.11 62.6 166.3775 66.02225Q167.645 69.4445 169.95575000000002 71.87225000000001Q172.2665 74.3 175.49375 75.6455Q178.721 76.991 182.582 76.991Z"/><path fill="#f4f7f8" d="M219.9385 86.0V31.165999999999997H230.566V86.0ZM227.73850000000002 86.0V76.5425H255.64300000000003V86.0Z"/><path fill="#f4f7f8" d="M270.08700000000005 65.681V57.022999999999996H282.84000000000003Q285.3681242774567 57.022999999999996 287.37048121387284 56.001022727272726Q289.37283815028906 54.97904545454546 290.54266907514454 53.05085Q291.71250000000003 51.122654545454544 291.71250000000003 48.4235Q291.71250000000003 45.72434545454545 290.54266907514454 43.79615Q289.37283815028906 41.86795454545455 287.37048121387284 40.845977272727275Q285.3681242774567 39.824 282.84000000000003 39.824H270.08700000000005V31.165999999999997H283.9515Q289.158 31.165999999999997 293.3115 33.28175Q297.46500000000003 35.3975 299.88300000000004 39.25683536585366Q302.30100000000004 43.11617073170732 302.30100000000004 48.41208536585366Q302.30100000000004 53.6885 299.88300000000004 57.569Q297.46500000000003 61.4495 293.3115 63.56525Q289.158 65.681 283.9515 65.681ZM262.3065 86.0V31.165999999999997H272.934V86.0Z"/><path fill="#f4f7f8" d="M323.999 86.78Q318.85100000000006 86.78 314.74625000000003 84.206Q310.64150000000006 81.632 308.27225000000004 77.2055Q305.903 72.779 305.903 67.22149999999999Q305.903 61.6055 308.27225000000004 57.16925Q310.64150000000006 52.733 314.74625000000003 50.1395Q318.85100000000006 47.546 323.999 47.546Q328.05500000000006 47.546 331.25300000000004 49.2035Q334.451 50.861 336.39125 53.76649999999999Q338.33150000000006 56.672 338.468 60.376999999999995V73.949Q338.33150000000006 77.654 336.42050000000006 80.5
+```
+
+**File**: `examples/official-site/assets/highlightjs-and-tabler-theme.css` (modified, +1/-89)
+```diff
+@@ -1,91 +1,6 @@
+ @charset "utf-8";
+ @import url("./brand/brand.css");
+ 
+-:root,
+-.layout-boxed[data-bs-theme="dark"] {
+-  color-scheme: dark;
+-
+-  /* Core colors refined for better contrast */
+-  --tblr-body-color: hsl(225deg 35% 86%);
+-  --tblr-secondary-color: hsl(225, 15%, 80%);
+-  --tblr-muted-color: hsla(225, 15%, 75%, 0.8);
+-
+-  /* Background system */
+-  --tblr-body-bg: hsl(225deg 44% 9%);
+-  --tblr-bg-surface: hsl(225, 47%, 10%);
+-  --tblr-bg-surface-secondary: hsl(225, 47%, 12%);
+-  --tblr-bg-surface-tertiary: hsl(225, 47%, 14%);
+-
+-  /* Border colors */
+-  --tblr-border-color: hsl(225deg, 26%, 19%);
+-  --tblr-border-color-translucent: hsla(225deg 27% 19% / 0.7);
+-
+-  /* Text secondary RGB */
+-  --tblr-text-secondary-rgb:
+-    204, 209, 217; /* RGB equivalent of hsl(225, 15%, 80%) */
+-
+-  /* Code colors */
+-  --tblr-code-color: hsl(
+-    225deg 45.4% 76.93%
+-  ); /* Light code text for dark theme */
+-  --tblr-code-bg: hsla(225, 47%, 15%, 0.5); /* Subtle dark background */
+-  --tblr-active-bg: var(--tblr-code-bg);
+-
+-  /* Ethereal accent colors */
+-  --tblr-blue-rgb: 84, 151, 213;
+-  --tblr-blue: rgb(var(--tblr-blue-rgb));
+-  --tblr-blue-lt-rgb: 21, 31, 53;
+-  --tblr-blue-lt: rgb(var(--tblr-blue-lt-rgb));
+-  --tblr-primary-rgb: 95, 132, 169;
+-  --tblr-primary: rgb(var(--tblr-primary-rgb));
+-  --tblr-secondary: hsla(247, 60%, 94%, 0.7); /* Nebula purple */
+-
+-  /* Status + accent colors aligned with the brand palette */
+-  --tblr-success-rgb: 16, 132, 86; /* Deep green for white text */
+-  --tblr-success: rgb(var(--tblr-success-rgb));
+-  --tblr-warning-rgb: 197, 124, 0; /* Deep amber */
+-  --tblr-warning: rgb(var(--tblr-warning-rgb));
+-  --tblr-danger-rgb: 196, 68, 68; /* Deep crimson */
+-  --tblr-danger: rgb(var(--tblr-danger-rgb));
+-  --tblr-purple-rgb: 118, 82, 200; /* Deep violet */
+-  --tblr-purple: rgb(var(--tblr-purple-rgb));
+-  --tblr-cyan-rgb: 0, 149, 168; /* Deep cyan */
+-  --tblr-cyan: rgb(var(--tblr-cyan-rgb));
+-  --tblr-indigo-rgb: 96, 113, 215; /* Deep indigo */
+-  --tblr-indigo: rgb(var(--tblr-indigo-rgb));
+-  --tblr-teal: #267d63;
+-  --tblr-teal-fg: #20050b;
+-
+-  --tblr-green: var(--tblr-success);
+-  --tblr-yellow: var(--tblr-warning);
+-  --tblr-red: var(--tblr-danger);
+-
+-  /* Luminous links */
+-  --tblr-link-color: hsl(212, 70%, 75%); /* Star glow */
+-  --tblr-link-hover-color: hsl(212, 70%, 85%); /* Supernova */
+-  --tblr-carousel-caption-color: var(--tblr-muted-color);
+-
+-  /* Ethereal shadows */
+-  --tblr-box-shadow:
+-    0 2px 4px rgba(0, 0, 0, 0.2), 0 0 15px rgba(66, 153, 225, 0.15);
+-  --tblr-box-shadow-dropdown:
+-    0px 8px 24px rgba(0, 0, 0, 0.25), 1px 9px 20px rgba(174, 62, 201, 0.15);
+-
+-  /* Pure white emphasis */
+-  --tblr-emphasis-color: #ffffff;
+-  --tblr-heading-color: #ffffff;
+-
+-  /* Syntax highlighting colors */
+-  --hljs-cosmic-comment: hsl(290, 10%, 60%); /* Distant star */
+-  --hljs-cosmic-punctuation: hsl(60, 40%, 85%); /* Stardust */
+-  --hljs-cosmic-property: hsl(340, 60%, 65%); /* Red giant */
+-  --hljs-cosmic-number: hsl(0, 50%, 75%); /* Solar flare */
+-  --hljs-cosmic-boolean: hsl(270, 100%, 75%); /* Purple nebula */
+-  --hljs-cosmic-string: hsl(120, 40%, 75%); /* Green aurora */
+-  --hljs-cosmic-operator: hsl(0, 0%, 95%); /* White dwarf */
+-  --hljs-cosmic-keyword: hsl(210, 100%, 75%); /* Blue giant */
 -}
 -
--test("chart", async ({ page }) => {
--  await openChartDocumentation(page);
--  await expect(page.getByText("Loading...")).toHaveCount(0);
--  await expect(page.locator(".apexcharts-canvas").first()).toBeVisible();
--});
+ .btn-primary {
+   --tblr-btn-border-color: var(--tblr-secondary);
+   --tblr-btn-active-border-color: transparent;
+@@ -249,11 +164,8 @@ pre:has(code) {
+ }
+ 
+ /* Self-hosted official-site typography; retain the established documentation theme. */
+-:root {
+-  --tblr-font-sans-serif: var(--brand-font);
+-}
+ .layout-boxed {
+-  font-family: var(--brand-font);
++  font-family: var(--tblr-font-sans-serif);
+ }
+ .navbar-brand {
+   font-weight: 600;
+```
+
+**File**: `examples/official-site/assets/landing/js/comparison.js` (modified, +25/-5)
+```diff
+@@ -7,6 +7,7 @@ export function initComparison(root, signal) {
+   const next = section.querySelector("[data-comparison-next]");
+   const status = section.querySelector("[data-comparison-status]");
+   const motion = matchMedia("(prefers-reduced-motion: reduce)");
++  let destination = null;
+ 
+   function update() {
+     const offsets = cards.map((card) => card.offsetLeft);
+@@ -27,25 +28,41 @@ export function initComparison(root, signal) {
+   }
+ 
+   function goTo(left) {
++    destination = Math.max(
++      0,
++      Math.min(left, track.scrollWidth - track.clientWidth),
++    );
+     track.scrollTo({
+-      left,
++      left: destination,
+       behavior: motion.matches ? "instant" : "smooth",
+     });
+   }
+ 
+   function move(direction) {
+     // Equal-width grid columns snap one card at a time; native scrolling clamps the ends.
+     const step = cards[1].offsetLeft;
++    // Repeated clicks advance from the requested card, even while a previous
++    // smooth scroll is still exposing a partial card and updating the status.
+     const index =
+-      direction > 0
+-        ? Math.floor((track.scrollLeft + 2) / step) + 1
+-        : Math.ceil((track.scrollLeft - 2) / step) - 1;
++      Math.round((destination ?? track.scrollLeft) / step) + direction;
+     goTo(index * step);
+   }
+ 
+   previous.addEventListener("click", () => move(-1), { signal });
+   next.addEventListener("click", () => move(1), { signal });
+   track.addEventListener("scroll", update, { passive: true, signal });
++  const followNativeScroll = () => {
++    destination = null;
++  };
++  track.addEventListener("scrollend", followNativeScroll, { signal });
++  track.addEventListener("pointerdown", followNativeScroll, {
++    passive: true,
++    signal,
++  });
++  track.addEventListener("wheel", followNativeScroll, {
++    passive: true,
++    signal,
++  });
+   const keys = {
+     ArrowLeft: () => move(-1),
+     ArrowRight: () => move(1),
+@@ -61,7 +78,10 @@ export function initComparison(root, signal) {
+     },
+     { signal },
+   );
+-  const observer = new ResizeObserver(update);
++  const observer = new ResizeObserver(() => {
++    destination = null;
++    update();
++  });
+   observer.observe(track);
+   section.querySelector(".comparison-controls").hidden = false;
+   update();
+```
+
+**File**: `examples/official-site/assets/landing/js/scene/database-scene.js` (modified, +46/-21)
+```diff
+@@ -1,14 +1,14 @@
+ /**
+  * Owns one square renderer and its resource lifetime. Scroll supplies placement;
+- * controls supply local rotation. Materials, decoration and glow stay independent.
++ * controls supply local rotation. Materials, studio surfaces and glow stay independent.
+  */
+ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
++import { RectAreaLightUniformsLib } from "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/lights/RectAreaLightUniformsLib.js/+esm";
+ import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/loaders/GLTFLoader.js/+esm";
+ import { createFiniteJewelLight } from "./finite-jewel-light.js";
+ import { JEWEL_EDGES } from "./jewel-edges.js";
+ import { MODEL_URL } from "./sculpture-assets.js";
+ import { createSculptureControls } from "./sculpture-controls.js";
+-import { createSculptureDecoration } from "./sculpture-decoration.js";
+ import {
+   CAMERA_DISTANCE,
+   cameraForSculpture,
+@@ -19,6 +19,7 @@ import {
+   finishMetal,
+   loadMetalEnvironment,
+ } from "./sculpture-materials.js";
++import { createSculptureStudio } from "./sculpture-studio.js";
+ import { createSelectiveGlow } from "./selective-glow.js";
+ import { loadSculptureShaders } from "./shader-sources.js";
+ 
+@@ -88,6 +89,9 @@ export function createDatabaseScene({
+   renderer.toneMapping = THREE.ACESFilmicToneMapping;
+   renderer.toneMappingExposure = 0.95;
+   renderer.setClearColor(0x000000, 0);
++  renderer.shadowMap.enabled = true;
++  renderer.shadowMap.autoUpdate = false;
++  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+   let canvas = renderer.domElement;
+   const canvasStyle =
+     "position:absolute;left:0;top:0;width:1000px;height:1000px;transform-origin:0 0";
+@@ -127,6 +131,8 @@ export function createDatabaseScene({
+     renderer.domElement.removeEventListener("webglcontextlost", onLost);
+     resetBudget();
+     glow?.dispose();
++    studioSet?.dispose();
++    key.shadow.dispose();
+     environment?.dispose();
+     renderer.dispose();
+     // This scene owns the context; losing it releases all its GPU allocations.
+@@ -136,7 +142,7 @@ export function createDatabaseScene({
+     releaseGraphics();
+     baked = new Image();
+     const replacement = document.createElement("canvas");
+-    replacement.width = 320;
++    replacement.width = 400;
+     replacement.height = 400;
+     context = replacement.getContext("2d");
+     if (!context) {
+@@ -146,13 +152,6 @@ export function createDatabaseScene({
+     canvas.replaceWith(replacement);
+     canvas = replacement;
+     canvas.style.cssText = canvasStyle;
+-    // Keep the square layout while rasterizing only the cropped sculpture.
+-    Object.assign(canvas.style, {
+-      boxSizing: "content-box",
+-      width: "700px",
+-      height: "850px",
+-      padding: "75px 150px",
+-    });
+     root.dataset.renderer = "baked";
+     root.dataset.scene = "loading";
+     loaded = readySent = false;
+@@ -189,6 +188,17 @@ export function createDatabaseScene({
+   let glow, jewelReflection;
+   const key = new THREE.DirectionalLight(0xe5edf1, 1.7);
+   key.position.set(-3.5, 5, 5);
++  key.castShadow = true;
++  key.shadow.mapSize.set(512, 512);
++  Object.assign(key.shadow.camera, {
++    left: -4,
++    right: 4,
++    top: 4,
++    bottom: -4,
++    near: 0.5,
++    far: 18,
++  });
++  key.shadow.normalBias = 0.025;
+   scene.add(key);
+   const rim = new THREE.DirectionalLight(0xa1bac7, 0.8);
+   rim.position.set(4, 2, -2);
+@@ -197,6 +207,17 @@ export function createDatabaseScene({
+   fill.position.set(-5, -0.5, -2);
+   scene.add(fill);
+ 
++  RectAreaLightUniformsLib.init();
++  const softbox = new THREE.RectAreaLight(0xe5edf1, 7, 2.5, 6);
++  softbox.position.set(-3.5, 1.5, 4);
++  softbox.lookAt(0, 0, 0);
++  scene.add(softbox);
++  const edgeSoftbox = new THREE.RectAreaLight(0xa1bac7, 4, 1.2, 5);
++  edgeSoftbox.position.set(3.5, 1.5, 2);
++  edgeSoftbox.lookAt(0, 0, 0);
++  scene.add(edgeSoftbox);
++  scene.add(new THREE.HemisphereLight(0xa1bac7, 0x18262d, 0.55));
++
+   const parallaxPivot = new THREE.Group();
+   scene.add(parallaxPivot);
+   const scrollPivot = new THREE.Group();
+@@ -207,7 +228,7 @@ export function createDatabaseScene({
+   let model;
+   let wireMaterial;
+   const modelCenter = new THREE.Vector3();
+-  let decoration;
++  let studioSet;
+   assets
+     .then(async ([gltf, shaders, studio]) => {
+       if (disposed) return;
+@@ -221,8 +242,8 @@ export function createDatabaseScene({
+       );
+       glow.setSize(1000, 1000, 1);
+       jewelReflection = createFiniteJewelLight(JEWEL_EDGES, shaders);
+-      decoration = createSculptureDecoration(shaders);
+-      parallaxPivot.add(decoration.group);
++      studioSet = createSculptureStudio();
++      scene.add(studioSet.group);
+       performance.mark("sqlpage:assets-ready");
+       const bounds = new THREE.Box3().setFromObject(gltf.scene);
+       bounds.getCenter(modelCenter);
+@@ -241,8 +262,10 @@ export function createDatabaseScene({
+           if (
+             material.name.includes("Black") 
+```
+
+**File**: `examples/official-site/assets/landing/js/scene/sculpture-decoration.js` (removed, +0/-99)
+```diff
+@@ -1,99 +0,0 @@
+-/** Deterministic stars and orbital tracks; resources are owned by the scene. */
+-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/+esm";
 -
--test("chart supports hiding legend", async ({ page }) => {
--  await openChartDocumentation(page);
+-export function createSculptureDecoration(shaders) {
+-  const decoration = new THREE.Group();
+-  const orbMaterial = new THREE.MeshBasicMaterial({ color: 0x377e94 });
+-  const orbGeometry = new THREE.SphereGeometry(0.015, 10, 8);
+-  const orbs = new THREE.InstancedMesh(orbGeometry, orbMaterial, 8);
+-  orbs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+-  // All eight moving nodes stay inside the orbital tracks.
+-  orbs.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 4);
+-  decoration.add(orbs);
+-  const transform = new THREE.Object3D();
+-  for (let i = 0; i < 4; i++) {
+-    const rx = 1.65 + i * 0.46,
+-      rz = 1.24 + i * 0.22,
+-      y = -1.3 - i * 0.18;
+-    const points = Array.from({ length: 192 }, (_, j) => {
+-      const a = (j / 192) * Math.PI * 2;
+-      return new THREE.Vector3(
+-        Math.cos(a) * rx,
+-        y + Math.sin(a) * (0.07 + i * 0.07),
+-        Math.sin(a) * rz,
+-      );
+-    });
+-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+-    const material = new THREE.LineBasicMaterial({
+-      color: i === 1 ? 0x3e7f90 : 0x22424f,
+-      transparent: true,
+-      opacity: i === 1 ? 0.24 : 0.14,
+-      depthWrite: false,
+-    });
+-    decoration.add(new THREE.LineLoop(geometry, material));
+-  }
 -
--  const expensesChart = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Expenses" }),
--  });
--
--  await expect(expensesChart.locator(".apexcharts-canvas")).toBeVisible();
--  await expect(expensesChart.locator(".apexcharts-legend")).toBeHidden();
--});
--
--const DATA_POINT_MARKERS = ".apexcharts-series-markers > .apexcharts-marker";
--
--const chartCard = (page: Page, title: string) =>
--  page.locator(".card", { has: page.getByRole("heading", { name: title }) });
--
--const drawnPoints = (card: Locator, series: string) =>
--  card
--    .locator(`.apexcharts-series[seriesName='${series}'] ${DATA_POINT_MARKERS}`)
--    .evaluateAll((markers) =>
--      markers.map((m) => ({
--        x: m.getAttribute("cx"),
--        y: m.getAttribute("cy"),
--      })),
+-  const starsGeometry = new THREE.BufferGeometry();
+-  const positions = [],
+-    sizes = [],
+-    phases = [];
+-  let seed = 7331;
+-  const random = () => {
+-    seed = (seed * 1664525 + 1013904223) >>> 0;
+-    return seed / 4294967296;
+-  };
+-  for (let i = 0; i < 65; i++) {
+-    positions.push(
+-      (random() - 0.5) * 8,
+-      (random() - 0.42) * 5.6,
+-      (random() - 0.5) * 5.5,
 -    );
--
--test("stacked chart draws every series at every x of the chart", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--  const powerChart = chartCard(page, "Power draw");
--  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
--
--  const cpu = await drawnPoints(powerChart, "CPU");
--  const gpu = await drawnPoints(powerChart, "GPU");
--
--  expect(cpu).toHaveLength(4);
--  expect(gpu.map((p) => p.x)).toEqual(cpu.map((p) => p.x));
--});
--
--test("stacked chart raises a series only where it has a value", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--  const powerChart = chartCard(page, "Power draw");
--  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
--
--  const cpu = await drawnPoints(powerChart, "CPU");
--  const gpu = await drawnPoints(powerChart, "GPU");
--
--  expect([gpu[0], gpu[3]]).toEqual([cpu[0], cpu[3]]);
--  expect(Number(gpu[1]?.y)).toBeLessThan(Number(cpu[1]?.y));
--});
--
--test("chart draws a yline as a line and a yline_end as a band", async ({
-+test("chart documentation renders its examples without browser errors", async ({
-   page,
- }) => {
--  await openChartDocumentation(page);
--
--  const temperature = page.locator(".card", {
--    has: page.getByRole("heading", { name: "CPU temperature" }),
-+  const errors: string[] = [];
-+  page.on("pageerror", (error) => errors.push(error.message));
-+  page.on("console", (message) => {
-+    if (message.type() === "error") errors.push(message.text());
-   });
--  await expect(temperature.locator(".apexcharts-canvas")).toBeVisible();
--
--  const annotations = temperature.locator(".apexcharts-yaxis-annotations");
--  const lines = annotations.locator("line");
--  const bands = annotations.locator(".apexcharts-annotation-rect");
--
--  await expect(lines).toHaveCount(1);
--  await expect(bands).toHaveCount(1);
--  await expect(annotations.getByText("target")).toBeVisible();
--  await expect(annotations.getByText("throttling")).toBeVisible();
--});
- 
--test("chart draws an xline as a line and an xline_end as a band", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--
--  const latency = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Request latency" }),
-+  await test.step("Open the chart reference", async () => {
-+    await page.goto("/documentation.sql?component=chart#component");
-+    await expect(
-+      page.getByRole("heading", { name: "The chart component", exact: true }),
-+    ).toBeVisible();
-   });
--  await expect(latency.locator(".apexcharts-canvas")).toBeVisible();
--
--  const annotations = latency.locator(".apexcharts-xaxis-annotations");
--  const lines = annotations.locator("line");
--  const bands = annotations.locator(".apexcharts-annotation-rect");
- 
--  await expect(lines).toHaveCount(1);
--  await expect(bands).toHaveCount(1);
--  await expect(annotations.getByText("deploy")).toBeVisible();
--  await expect(annotations.getByText("incident")).toBeVisible();
--});
--
--test("horizontal chart draws a yline down it and an xline across it", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--
--  const disks = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Disk usage" }),
-+  await test.step("Render every inline and embedded example", async () => {
-+    // Work around Ch
+-    sizes.push(i % 11 === 0 ? 3 : 1 + random() * 1.4);
+-    phases.push(random() * Math.PI * 2);
+-  }
+-  starsGeometry.setAttribute(
+-    "position",
+-    new THREE.Float32BufferAttribute(positions, 3),
+-  );
+-  starsGeometry.setAttribute(
+-    "pointSize",
+-    new THREE.Float32BufferAttribute(sizes, 1),
+-  );
+-  starsGeometry.setAttribute(
+-    "phase",
+-    new THREE.Float32BufferAttribute(phases, 1),
+-  );
+-  const starsMaterial = new THREE.ShaderMaterial({
+-    uniforms: {
+-      uTime: { value: 0 },
+-    },
+-    vertexShader: shaders.starsVertex,
+-    fragmentShader: shaders.starsFragment,
+-    transparent: true,
+-    depthWrite: false,
+-    blending: THREE.AdditiveBlending,
+-  });
+-  const stars = new THREE.Points(starsGeometry, starsMaterial);
+-  decoration.add(stars);
+-  return {
+-    group: decoration,
+-    update(time, motion) {
+-      if (motion) decoration.rotation.y = time * 0.014;
+-      starsMaterial.uniforms.uTime.value = time;
+-      for (let i = 0; i < 8; i++) {
+-        const ring = Math.floor(i / 2);
+-        const a =
+-          ring * 1.34 + (i % 2) * Math.PI + time * (0.09 + ring * 0.013);
+-        transform.scale.setScalar(i % 2 === 0 ? 1 : 0.66);
+-        transform.position.set(
+-          Math.cos(a) * (1.65 + ring * 0.46),
+-          -1.3 - ring * 0.18 + Math.sin(a) * 0.07,
+-          Math.sin(a) * (1.24 + ring * 0.22),
+-        );
+-        transform.updateMatrix();
+-        orbs.setMatrixAt(i, transform.matrix);
+-      }
+-      orbs.instanceMatrix.needsUpdate = true;
+-    },
+-  };
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1561** (2026-10-27): Refine the official site with a more restrained visual identity (@lovasoa)
 - **PR #1560** (2026-10-24): Consolidate chart documentation tests and isolate rendering assertions (@lovasoa)
 - **PR #1559** (2026-10-23): Reuse repeated variable bindings for numbered placeholders (@lovasoa)
 - **PR #1557** (2026-10-24): Fuzz complete SQL file compilation across database dialects (@lovasoa)
 - **PR #1556** (2026-10-23): Expose connection-free SQL file compilation (@lovasoa)
 - **PR #1553** (2026-10-17): Run selected CI jobs behind one required gate (@lovasoa)
-- **PR #1552** (2026-10-17): Update the README video and fix required checks for docs-only PRs (@lovasoa)
 
 ---
 
@@ -1344,29 +1751,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move detailed chart checks to minimal SQL fixtures (#1560)
+## X. Refine the official site with a more restrained visual identity (#1561)
 
 **RULE**:
-When implementing operations in `tests/end-to-end/fixtures/chart/hidden-legend.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99c68467`: Move detailed chart checks to minimal SQL fixtures (#1560). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c76855d`: Refine the official site with a more restrained visual identity (#1561). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/end-to-end/fixtures/chart/hidden-legend.sql`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
-WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
+        # Use Ubuntu's build so apt resolves the matching libcurl/libxml2 ABI.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends hurl
+          hurl --version
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  HURL_VERSION: 8.0.1
+      - name: Restore Hurl archive
+        id: hurl-cache
+        if: steps.examples.outputs.examples != '[]'
+        uses: actions/cache@v6
+        with:
+          path: .cache/hurl
+          key: hurl-${{ runner.os }}-x86_64-unknown-linux-gnu-${{ env.HURL_VERSION }}
+      - name: Download Hurl archive
+        if: steps.examples.outputs.examples != '[]' && steps.hurl-cache.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          archive="hurl-${HURL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          base_url="https://github.com/Orange-OpenSource/hurl/releases/download/${HURL_VERSION}"
+          mkdir -p .cache/hurl
+          curl --fail --location --retry 5 --retry-delay 2 --output ".cache/hurl/${archive}" "${base_url}/${archive}"
+          curl --fail --location --retry 5 --retry-delay 2 --output ".cache/hurl/${archive}.sha256" "${base_url}/${archive}.sha256"
+          (
+            cd .cache/hurl
+            expected_sha="$(tr -d '[:space:]' < "${archive}.sha256")"
+            actual_sha="$(sha256sum "$archive" | cut -d ' ' -f 1)"
+            test "$expected_sha" = "$actual_sha"
+          )
+      - name: Upload Hurl archive
+        
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99c68467` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c76855d` are properly handled with clean fallback behavior.

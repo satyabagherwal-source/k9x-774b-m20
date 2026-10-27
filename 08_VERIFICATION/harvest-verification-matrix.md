@@ -5210,3 +5210,5 @@
 | `CYCLE-20261027-A34S` | `2026-10-27T10:47:26.044Z` | `DouyinFE/semi-design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4685` | Yes (`38a33326...`) |
 | `CYCLE-20261027-ABOW` | `2026-10-27T10:47:37.136Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4686` | Yes (`994045af...`) |
 | `CYCLE-20261027-AEUO` | `2026-10-27T10:47:41.232Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4687` | Yes (`05f665fc...`) |
+| `CYCLE-20261027-EFZO` | `2026-10-27T10:50:49.332Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4688` | Yes (`3f7e6511...`) |
+| `CYCLE-20261027-EHYC` | `2026-10-27T10:50:51.876Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4689` | Yes (`8c86aa6c...`) |

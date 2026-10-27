@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T10:47:41.188Z",
+  "last_updated": "2026-10-27T10:50:51.835Z",
   "total_verified_learnings": 1099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47137,8 +47137,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "24a991fd",
-      "content_hash": "6b0e7b8b53d6488568e1a25c56d7876903da570d5780f932c7722587cd42a5c3",
+      "source_version": "1c76855d",
+      "content_hash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -47151,6 +47151,11 @@
           "number": 3990,
           "title": "Move detailed chart checks to minimal SQL fixtures (#1560)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4689,
+          "title": "Refine the official site with a more restrained visual identity (#1561)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47158,7 +47163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:36:21.565Z",
+      "verified_at": "2026-10-27T10:50:51.826Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53969,8 +53974,8 @@
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "fd59ce39",
-      "content_hash": "5cfd378456458d57b39d94cfcf69b61aaab8bd2462bfbe7397a9e4d6fe5d8ba5",
+      "source_version": "4fce4e76",
+      "content_hash": "3f7e65113dbba137f625ce50cc6b07ae14aea769373fd5aae153ca3c821a1974",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "promoted_rules": [
@@ -53998,6 +54003,11 @@
           "number": 4431,
           "title": "filex): return EOF at range end (#5805)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4688,
+          "title": "zrpc): skip not-ready endpoints in kube resolver (#5786)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54005,7 +54015,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:51:44.572Z",
+      "verified_at": "2026-10-27T10:50:49.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130898,6 +130908,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T10:47:41.178Z"
+    },
+    "rule-4688": {
+      "learning_id": "rule-4688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4688,
+      "title": "zrpc): skip not-ready endpoints in kube resolver (#5786)",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "4fce4e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:50:49.285Z"
+    },
+    "rule-4689": {
+      "learning_id": "rule-4689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4689,
+      "title": "Refine the official site with a more restrained visual identity (#1561)",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "1c76855d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T10:50:51.826Z"
     }
   },
   "aliases": {

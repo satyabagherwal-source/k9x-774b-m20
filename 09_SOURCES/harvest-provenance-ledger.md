@@ -5219,3 +5219,5 @@ Every entry in this ledger must capture:
 | `learn-github-douyinfe-semi-design` | `https://github.com/DouyinFE/semi-design` | `0580665e` | Multi-dimensional audit evidence | 2026-10-27T10:47:26.046Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e0faf3fe` | Multi-dimensional audit evidence | 2026-10-27T10:47:37.139Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `0f5ee234` | Multi-dimensional audit evidence | 2026-10-27T10:47:41.235Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `4fce4e76` | Multi-dimensional audit evidence | 2026-10-27T10:50:49.335Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `1c76855d` | Multi-dimensional audit evidence | 2026-10-27T10:50:51.878Z |

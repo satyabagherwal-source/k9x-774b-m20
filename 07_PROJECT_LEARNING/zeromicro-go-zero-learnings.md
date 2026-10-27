@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `fd59ce39`  
+> **Source Version**: `4fce4e76`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:44.261Z  
+> **Timestamp**: 2026-10-27T10:50:48.994Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:44.253Z  
+> **Harvest Timestamp**: 2026-10-27T10:50:47.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33403 stars
+- **Stars / Engagement**: 33408 stars
 
 ---
 
@@ -1305,152 +1305,291 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd59ce39` (2026-10-25)
-**Commit Message**: fix(filex): return EOF at range end (#5805)
+### Incident Patch 1: `4fce4e76` (2026-10-27)
+**Commit Message**: fix(zrpc): skip not-ready endpoints in kube resolver (#5786)
 
 Co-authored-by: kevin <[REDACTED_EMAIL]>
 
-**File**: `core/filex/rangereader.go` (modified, +8/-1)
+**File**: `zrpc/resolver/internal/kube/eventhandler.go` (modified, +37/-27)
 ```diff
-@@ -2,6 +2,7 @@ package filex
- 
- import (
- 	"errors"
-+	"io"
- 	"os"
- )
- 
-@@ -31,7 +32,13 @@ func (rr *RangeReader) Read(p []byte) (n int, err error) {
- 		return 0, err
- 	}
- 
--	if rr.stop < rr.start || rr.start >= stat.Size() {
-+	if rr.stop < rr.start || rr.start > stat.Size() {
-+		return 0, errExceedFileSize
-+	}
-+	if rr.start == rr.stop {
-+		return 0, io.EOF
-+	}
-+	if rr.start == stat.Size() {
- 		return 0, errExceedFileSize
- 	}
- 
-```
-
-**File**: `core/filex/rangereader_test.go` (modified, +42/-0)
-```diff
-@@ -1,6 +1,7 @@
- package filex
- 
- import (
-+	"io"
- 	"os"
- 	"testing"
- 
-@@ -25,6 +26,10 @@ world`
- 	assert.Equal(t, 3, n)
- 	assert.Equal(t, `
- wo`, string(buf[:n]))
-+
-+	n, err = reader.Read(buf)
-+	assert.Zero(t, n)
-+	assert.ErrorIs(t, err, io.EOF)
+@@ -15,6 +15,7 @@ var _ cache.ResourceEventHandler = (*EventHandler)(nil)
+ type EventHandler struct {
+ 	update    func([]string)
+ 	endpoints map[string]lang.PlaceholderType
++	slices    map[string]map[string]lang.PlaceholderType
+ 	lock      sync.Mutex
  }
  
- func TestRangeReader_OutOfRange(t *testing.T) {
-@@ -42,3 +47,40 @@ world`
- 	_, err = reader.Read(buf)
- 	assert.NotNil(t, err)
+@@ -23,6 +24,7 @@ func NewEventHandler(update func([]string)) *EventHandler {
+ 	return &EventHandler{
+ 		update:    update,
+ 		endpoints: make(map[string]lang.PlaceholderType),
++		slices:    make(map[string]map[string]lang.PlaceholderType),
+ 	}
  }
+ 
+@@ -37,19 +39,9 @@ func (h *EventHandler) OnAdd(obj any, _ bool) {
+ 	h.lock.Lock()
+ 	defer h.lock.Unlock()
+ 
+-	var changed bool
+-	for _, point := range endpoints.Endpoints {
+-		for _, address := range point.Addresses {
+-			if _, ok := h.endpoints[address]; !ok {
+-				h.endpoints[address] = lang.Placeholder
+-				changed = true
+-			}
+-		}
+-	}
++	h.slices[sliceKey(endpoints)] = readyAddresses(endpoints)
+ 
+-	if changed {
+-		h.notify()
+-	}
++	h.rebuildEndpoints()
+ }
+ 
+ // OnDelete handles the endpoints delete events.
+@@ -63,19 +55,9 @@ func (h *EventHandler) OnDelete(obj any) {
+ 	h.lock.Lock()
+ 	defer h.lock.Unlock()
+ 
+-	var changed bool
+-	for _, point := range endpoints.Endpoints {
+-		for _, address := range point.Addresses {
+-			if _, ok := h.endpoints[address]; ok {
+-				delete(h.endpoints, address)
+-				changed = true
+-			}
+-		}
+-	}
++	delete(h.slices, sliceKey(endpoints))
+ 
+-	if changed {
+-		h.notify()
+-	}
++	h.rebuildEndpoints()
+ }
+ 
+ // OnUpdate handles the endpoints update events.
+@@ -104,19 +86,39 @@ func (h *EventHandler) Update(endpoints *v1.EndpointSlice) {
+ 	h.lock.Lock()
+ 	defer h.lock.Unlock()
+ 
++	h.slices[sliceKey(endpoints)] = readyAddresses(endpoints)
++	h.rebuildEndpoints()
++}
 +
-+func TestRangeReader_AtFileEOF(t *testing.T) {
-+	const text = "hello\nworld"
-+	file, err := fs.TempFileWithText(text)
-+	if !assert.NoError(t, err) {
-+		return
-+	}
-+	t.Cleanup(func() {
-+		file.Close()
-+		os.Remove(file.Name())
-+	})
-+
-+	for _, test := range []struct {
-+		name  string
-+		start int64
-+		want  string
-+		err   error
-+	}{
-+		{name: "range ending at file EOF", start: 5, want: "\nworld"},
-+		{name: "empty range at file EOF", start: int64(len(text)), err: io.EOF},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			reader := NewRangeReader(file, test.start, int64(len(text)))
-+			buf := make([]byte, len(text)+1)
-+			n, err := reader.Read(buf)
-+			assert.Equal(t, len(test.want), n)
-+			assert.Equal(t, test.want, string(buf[:n]))
-+			assert.ErrorIs(t, err, test.err)
-+
-+			for i := 0; i < 2; i++ {
-+				n, err = reader.Read(buf)
-+				assert.Zero(t, n)
-+				assert.ErrorIs(t, err, io.EOF)
++func (h *EventHandler) rebuildEndpoints() {
+ 	old := h.endpoints
+ 	h.endpoints = make(map[string]lang.PlaceholderType)
+-	for _, point := range endpoints.Endpoints {
+-		for _, address := range point.Addresses {
++	for _, addresses := range h.slices {
++		for address := range addresses {
+ 			h.endpoints[address] = lang.Placeholder
+ 		}
+ 	}
+-
+ 	if diff(old, h.endpoints) {
+ 		h.notify()
+ 	}
+ }
+ 
++func readyAddresses(endpoints *v1.EndpointSlice) map[string]lang.PlaceholderType {
++	addresses := make(map[string]lang.PlaceholderType)
++	for _, point := range endpoints.Endpoints {
++		if isReady(point) {
++			for _, address := range point.Addresses {
++				addresses[address] = lang.Placeholder
 +			}
-+		})
++		}
 +	}
++	return addresses
 +}
-```
-
----
-
-### Incident Patch 2: `98fe33f5` (2026-10-25)
-**Commit Message**: fix: stop text line scanner at empty EOF (#5798)
-
-**File**: `core/iox/textlinescanner.go` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@ func (scanner *TextLineScanner) Scan() bool {
- 	scanner.line = strings.TrimRight(line, "\n")
- 	if errors.Is(err, io.EOF) {
- 		scanner.hasNext = false
--		return true
-+		return len(line) > 0
- 	} else if err != nil {
- 		scanner.err = err
- 		return false
-```
-
-**File**: `core/iox/textlinescanner_test.go` (modified, +23/-0)
-```diff
-@@ -24,6 +24,29 @@ func TestScanner(t *testing.T) {
- 	assert.EqualValues(t, []string{"1", "2", "3", "4"}, lines)
++
++func sliceKey(endpoints *v1.EndpointSlice) string {
++	return endpoints.Namespace + "/" + endpoints.Name
++}
++
+ func (h *EventHandler) notify() {
+ 	targets := make([]string, 0, len(h.endpoints))
+ 
+@@ -127,6 +129,14 @@ func (h *EventHandler) notify() {
+ 	h.update(targets)
  }
  
-+func TestScannerDoesNotReturnEmptyEOF(t *testing.T) {
-+	tests := []struct {
-+		input string
-+		want  []string
-+	}{
-+		{input: ""},
-+		{input: "one\n", want: []string{"one"}},
-+		{input: "\n", want: []string{""}},
-+		{input: "one\n\n", want: []string{"one", ""}},
-+	}
-+
-+	for _, test := range tests {
-+		scanner := NewTextLineScanner(strings.NewReader(test.input))
-+		var lines []string
-+		for scanner.Scan() {
-+			line, err := scanner.Line()
-+			assert.NoError(t, err)
-+			lines = append(lines, line)
-+		}
-+		assert.Equal(t, test.want, lines)
-+	}
++// isReady reports whether the endpoint should receive new traffic, the same
++// set of addresses the Endpoints API listed as ready. Kubernetes reports
++// terminating endpoints as not ready, and a nil Ready condition means unknown,
++// which consumers should treat as ready.
++func isReady(point v1.Endpoint) bool {
++	return point.Conditions.Ready == nil || *point.Conditions.Ready
 +}
 +
- func TestBadScanner(t *testing.T) {
- 	scanner := NewTextLineScanner(iotest.ErrReader(iotest.ErrTimeout))
- 	assert.False(t, scanner.Scan())
+ func diff(o, n map[string]lang.PlaceholderType) bool {
+ 	if len(o) != len(n) {
+ 		return true
+```
+
+**File**: `zrpc/resolver/internal/kube/eventhandler_test.go` (modified, +123/-8)
+```diff
+@@ -36,28 +36,27 @@ func TestDelete(t *testing.T) {
+ 		endpoints = change
+ 	})
+ 	h.OnAdd(&discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "first"},
+ 		Endpoints: []discoveryv1.Endpoint{
+ 			{
+ 				Addresses: []string{"0.0.0.1"},
+ 			},
+ 			{
+ 				Addresses: []string{"0.0.0.2"},
+ 			},
++		},
++	}, false)
++	h.OnAdd(&discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "second"},
++		Endpoints: []discoveryv1.Endpoint{
+ 			{
+ 				Addresses: []string{"0.0.0.3"},
+ 			},
+ 		},
+ 	}, false)
+ 	h.OnDelete("bad")
+ 	h.OnDelete(&discoveryv1.EndpointSlice{
+-		Endpoints: []discoveryv1.Endpoint{
+-			{
+-				Addresses: []string{"0.0.0.1"},
+-			},
+-			{
+-				Addresses: []string{"0.0.0.2"},
+-			},
+-		},
++		ObjectMeta: metav1.ObjectMeta{Name: "first"},
+ 	})
+ 	assert.ElementsMatch(t, []string{"0.0.0.3"}, endpoints)
+ }
+@@ -228,3 +227,119 @@ func TestUpdateNoChangeWithDifferentVersion(t *testing.T) {
+ 	})
+ 	assert.ElementsMatch(t, []string{"0.0.0.1", "0.0.0.2"}, endpoints)
+ }
++
++func TestAddSkipsNotReadyEndpoints(t *testing.T) {
++	var endpoints []string
++	h := NewEventHandler(func(change []string) {
++		endpoints = change
++	})
++	h.OnAdd(&discoveryv1.EndpointSlice{
++		Endpoints: notReadyTestEndpoints(),
++	}, false)
++	assert.ElementsMatch(t, []string{"0.0.0.1", "0.0.0.2"}, endpoints)
++}
++
++func TestUpdateSkipsNotReadyEndpoints(t *testing.T) {
++	var endpoints []string
++	h := NewEventHandler(func(change []string) {
++		endpoints = change
++	})
++	h.OnAdd(&discoveryv1.EndpointSlice{
++		Endpoints: []discoveryv1.Endpoint{
++			{
++				Addresses: []string{"0.0.0.1"},
++			},
++			{
++				Addresses: []string{"0.0.0.3"},
++			},
++		},
++	}, false)
++	h.OnUpdate(&discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{
++			ResourceVersion: "1",
++		},
++	}, &discoveryv1.EndpointSlice{
++		Endpoints: notReadyTestEndpoints(),
++		ObjectMeta: metav1.ObjectMeta{
++			ResourceVersion: "2",
++		},
++	})
++	assert.ElementsMatch(t, []string{"0.0.0.1", "0.0.0.2"}, endpoints)
++}
++
++func TestUpdatePreservesOtherEndpointSlices(t *testing.T) {
++	var endpoints []string
++	h := NewEventHandler(func(change []string) {
++		endpoints = change
++	})
++	ready, notReady := true, false
++	first := &discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "first", ResourceVersion: "1"},
++		Endpoints: []discoveryv1.Endpoint{{
++			Addresses:  []string{"0.0.0.1"},
++			Conditions: discoveryv1.EndpointConditions{Ready: &ready},
++		}},
++	}
++	second := &discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "second"},
++		Endpoints:  []discoveryv1.Endpoint{{Addresses: []string{"0.0.0.2"}}},
++	}
++	h.OnAdd(first, false)
++	h.OnAdd(second, false)
++	assert.ElementsMatch(t, []string{"0.0.0.1", "0.0.0.2"}, endpoints)
++
++	updatedFirst := first.DeepCopy()
++	updatedFirst.ResourceVersion = "2"
++	updatedFirst.Endpoints[0].Conditions.Ready = &notReady
++	h.OnUpdate(first, updatedFirst)
++	assert.ElementsMatch(t, []string{"0.0.0.2"}, endpoints)
++}
++
++func TestDeletePreservesAddressInOtherEndpointSlice(t *testing.T) {
++	var endpoints []string
++	h := NewEventHandler(func(change []string) {
++		endpoints = change
++	})
++	first := &discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "first"},
++		Endpoints:  []discoveryv1.Endpoint{{Addresses: []string{"0.0.0.1"}}},
++	}
++	second := &discoveryv1.EndpointSlice{
++		ObjectMeta: metav1.ObjectMeta{Name: "second"},
++		Endpoints:  []discoveryv1.Endpoint{{Addresses: []string{"0.0.0.1", "0.0.0.2"}}},
++	}
++	h.OnAdd(first, false)
++	h.OnAdd(second, false)
++	h.OnDelete(first)
++	assert.ElementsMatch(t, []string{"0.0.0.1", "0.0.0.2"}, endpoints)
++}
++
++func notReadyTestEndpoints() []discoveryv1.Endpoint {
++	ready, notReady, terminating := true, false, true
++	return []discoveryv1.Endpoint{
++		{
++			Addresses: []string{"0.0.0.1"},
++			Conditions: discoveryv1.EndpointConditions{
++				Ready: &ready,
++			},
++		},
++		{
++			// A nil Ready condition means unknown and is treated as ready.
++			Addresses: []string{"0.0.0.2"},
++		},
++		{
++			Addresses: []string{"0.0.0.3"},
++			Conditions: discoveryv1.EndpointConditions{
++				Ready: &notReady,
++			},
++		},
++		{
++			Addresses: []string{"0.0.0.4"},
++			Conditions: discoveryv1.EndpointConditions{
++				Ready:       &notReady,
++				Serving:     &ready,
++				Terminating: &terminating,
++			},
++		},
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1479,35 +1618,88 @@ Co-authored-by: kevin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filex): return EOF at range end (#5805)
+## X. zrpc): skip not-ready endpoints in kube resolver (#5786)
 
 **RULE**:
-When implementing operations in `core/filex/rangereader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zrpc/resolver/internal/kube/eventhandler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd59ce39`: filex): return EOF at range end (#5805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4fce4e76`: zrpc): skip not-ready endpoints in kube resolver (#5786). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/rangereader.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `zrpc/resolver/internal/kube/eventhandler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"io"
-	if rr.stop < rr.start || rr.start > stat.Size() {
-		return 0, errExceedFileSize
+	slices    map[string]map[string]lang.PlaceholderType
+		slices:    make(map[string]map[string]lang.PlaceholderType),
+	h.slices[sliceKey(endpoints)] = readyAddresses(endpoints)
+	h.rebuildEndpoints()
+	delete(h.slices, sliceKey(endpoints))
+	h.rebuildEndpoints()
+	h.slices[sliceKey(endpoints)] = readyAddresses(endpoints)
+	h.rebuildEndpoints()
+}
+
+func (h *EventHandler) rebuildEndpoints() {
+	for _, addresses := range h.slices {
+		for address := range addresses {
+func readyAddresses(endpoints *v1.EndpointSlice) map[string]lang.PlaceholderType {
+	addresses := make(map[string]lang.PlaceholderType)
+	for _, point := range endpoints.Endpoints {
+		if isReady(point) {
+			for _, address := range point.Addresses {
+				addresses[address] = lang.Placeholder
+			}
+		}
 	}
-	if rr.start == rr.stop {
-		return 0, io.EOF
-	}
-	if rr.start == stat.Size() {
+	return addresses
+}
+
+func sliceKey(endpoints *v1.EndpointSlice) string {
+	return endpoints.Namespace + "/" + endpoints.Name
+}
+
+// isReady reports whether the endpoint should receive new traffic, the same
+// set of addresses the Endpoints API listed as ready. Kubernetes reports
+// terminating endpoints as not ready, and a nil Ready condition means unknown,
+// which consumers should treat as ready.
+func isReady(point v1.Endpoint) bool {
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if rr.stop < rr.start || rr.start >= stat.Size() {
+	var changed bool
+	for _, point := range endpoints.Endpoints {
+		for _, address := range point.Addresses {
+			if _, ok := h.endpoints[address]; !ok {
+				h.endpoints[address] = lang.Placeholder
+				changed = true
+			}
+		}
+	}
+	if changed {
+		h.notify()
+	}
+	var changed bool
+	for _, point := range endpoints.Endpoints {
+		for _, address := range point.Addresses {
+			if _, ok := h.endpoints[address]; ok {
+				delete(h.endpoints, address)
+				changed = true
+			}
+		}
+	}
+	if changed {
+		h.notify()
+	}
+	for _, point := range endpoints.Endpoints {
+		for _, address := range point.Addresses {
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd59ce39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4fce4e76` are properly handled with clean fallback behavior.
