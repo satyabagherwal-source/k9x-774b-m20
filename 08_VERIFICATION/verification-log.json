@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261026-6RF1",
-    "timestamp": "2026-10-26T01:37:18.157Z",
-    "repository": "ISTIFANO/seo-auditor",
-    "learningId": "learn-github-istifano-seo-auditor",
-    "contentHash": "e977839347cd3eca14dd96c5b6a0b67c35346d69ac675bbd087efcf1001f81b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261026-6SPK",
-    "timestamp": "2026-10-26T01:37:19.832Z",
-    "repository": "joreilly/Confetti",
-    "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261026-6YNQ",
     "timestamp": "2026-10-26T01:37:27.542Z",
     "repository": "SeaQL/sea-orm",
@@ -7490,6 +7460,36 @@
     "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
     "contentHash": "097b839eb8a58e973d5804eb9f87ca3280d2f40ac4301ccb8c0e480efc123c7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-T8DI",
+    "timestamp": "2026-10-27T23:10:09.318Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-TFRT",
+    "timestamp": "2026-10-27T23:10:18.905Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
+    "contentHash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

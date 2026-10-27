@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T23:03:21.358Z",
+  "last_updated": "2026-10-27T23:10:18.835Z",
   "total_verified_learnings": 1152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11590,8 +11590,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "4fc541b2",
-      "content_hash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
+      "source_version": "ca36bfa1",
+      "content_hash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -11624,6 +11624,11 @@
           "number": 4595,
           "title": "ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5049,
+          "title": "build(asan): give the module its own pinned nightly, not RediSearch's (#3536)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11631,7 +11636,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T11:25:33.537Z",
+      "verified_at": "2026-10-27T23:10:09.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108814,7 +108819,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
-      "content_hash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
+      "content_hash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md",
       "promoted_rules": [
@@ -108847,6 +108852,21 @@
           "number": 3988,
           "title": "MoE Expert Routing Top-K Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5050,
+          "title": "Hybrid Precision Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5051,
+          "title": "Abliteration Stability & Compliance Regression Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5052,
+          "title": "M Context KV Cache Compression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -108854,7 +108874,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T02:36:17.553Z",
+      "verified_at": "2026-10-27T23:10:18.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -139231,6 +139251,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T23:03:21.345Z"
+    },
+    "rule-5049": {
+      "learning_id": "rule-5049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5049,
+      "title": "build(asan): give the module its own pinned nightly, not RediSearch's (#3536)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "ca36bfa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:10:09.224Z"
+    },
+    "rule-5050": {
+      "learning_id": "rule-5050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5050,
+      "title": "Hybrid Precision Quantization Fidelity Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:10:18.813Z"
+    },
+    "rule-5051": {
+      "learning_id": "rule-5051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5051,
+      "title": "Abliteration Stability & Compliance Regression Guard",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:10:18.813Z"
+    },
+    "rule-5052": {
+      "learning_id": "rule-5052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5052,
+      "title": "M Context KV Cache Compression Invariant",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T23:10:18.813Z"
     }
   },
   "aliases": {

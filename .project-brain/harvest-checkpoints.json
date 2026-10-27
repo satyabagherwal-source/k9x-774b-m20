@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T23:03:21.431Z",
+  "last_updated": "2026-10-27T23:10:18.918Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "ebc55e6f08e579d1e3bbfcbe5574e436353cf7b7df697a87611051bf282d0a53",
-      "verified_at": "2026-10-26T11:25:33.619Z",
+      "content_hash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
+      "verified_at": "2026-10-27T23:10:09.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T11:25:33.619Z"
+      "last_updated": "2026-10-27T23:10:09.330Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -15576,14 +15576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "content_hash": "2110765d6b297ba7e8dc94ba8fa27a4de822b1bba993fbb19a8ca9f376710cc5",
-      "verified_at": "2026-10-25T02:36:17.629Z",
+      "content_hash": "6d065bcc3a2588f8cd040168a33ace8c4b8a911454f55d3ce1015a05e43316b4",
+      "verified_at": "2026-10-27T23:10:18.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:36:17.629Z"
+      "last_updated": "2026-10-27T23:10:18.917Z"
     },
     "lodestones/MOSS-Image-SFT-8-steps-dmd": {
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",

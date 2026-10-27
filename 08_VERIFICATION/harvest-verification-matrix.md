@@ -5576,3 +5576,5 @@
 | `CYCLE-20261027-I9DI` | `2026-10-27T23:01:37.398Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5044` | Yes (`bddd7212...`) |
 | `CYCLE-20261027-IBWE` | `2026-10-27T23:01:40.670Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5045` | Yes (`1be2e4c0...`) |
 | `CYCLE-20261027-KHMY` | `2026-10-27T23:03:21.418Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5046, Rule 5047, Rule 5048` | Yes (`097b839e...`) |
+| `CYCLE-20261027-T8DI` | `2026-10-27T23:10:09.318Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5049` | Yes (`bfe4ea99...`) |
+| `CYCLE-20261027-TFRT` | `2026-10-27T23:10:18.905Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5050, Rule 5051, Rule 5052` | Yes (`6d065bcc...`) |

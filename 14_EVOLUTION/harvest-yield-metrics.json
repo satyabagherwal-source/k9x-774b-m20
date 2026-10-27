@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T23:03:21.427Z",
-  "total_cycles_completed": 5553,
-  "total_learnings_persisted": 5553,
-  "total_rules_promoted": 4962,
+  "last_updated": "2026-10-27T23:10:18.914Z",
+  "total_cycles_completed": 5555,
+  "total_learnings_persisted": 5555,
+  "total_rules_promoted": 4966,
   "history": [
-    {
-      "timestamp": "2026-10-27T14:33:15.787Z",
-      "repository": "lackeyjb/playwright-skill",
-      "learningId": "learn-github-lackeyjb-playwright-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T14:33:18.881Z",
-      "repository": "boardgameio/boardgame.io",
-      "learningId": "learn-github-boardgameio-boardgame-io",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T14:33:26.030Z",
       "repository": "NirDiamant/RAG_Techniques",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-27T23:03:21.427Z",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:10:09.326Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T23:10:18.914Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

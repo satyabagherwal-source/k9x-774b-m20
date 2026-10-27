@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `4fc541b2`  
+> **Source Version**: `ca36bfa1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:25:33.190Z  
+> **Timestamp**: 2026-10-27T23:10:08.770Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:31.279Z  
+> **Harvest Timestamp**: 2026-10-27T23:10:07.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10492 stars
+- **Stars / Engagement**: 10494 stars
 
 ---
 
@@ -2305,11 +2305,13 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3478** (2026-10-23): **MATCH accepts a scalar already bound to a node variable**
-  *Symptoms*: **Affected versions:** FalkorDB 6.0.3 , 4.22.0 and 4.22.2   ## Summary  FalkorDB accepts a node pattern when the corresponding variable has already been bound to a non-node value. Instead of reporting a variable type conflict, the query returns the original scalar value.  The issue reproduces with integers, booleans, and strings, and has been observed on both the Rust and C engine implementations.  ## Steps to reproduce  Start a fresh FalkorDB 6.0.3 container:  ```bash docker run -d --name fk \   -p 127.0.0.1:6379:6379 \   falkordb/falkordb:6.0.3 ```  Run the following queries:  ```bash docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 1 AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH true AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 'x' AS n MATCH (n) RETURN n" ```  The same behavior reproduces on FalkorDB 4.22.0 and 4.22.2.  ## Actual behavior  The queries are accepted and return the previously bound scalar values:  | Query binding | Returned value | |---|---| | `WITH 1 AS n` | `1` | | `WITH true AS n` | `true` | | `WITH 'x' AS n` | `'x'` |  The `MATCH (n)` clause does not reject the incompatible binding. The variable retains its original scalar value rather than being validated as a node.  ## Expected behavior  The corresponding scenario, **"Fail when matching a node variable bound to a value"**, in `tests/tck/features/clauses/match/Match1.feature` specifies a compile-time `SyntaxError` with `VariableTypeC
+- **Issue #3518** (2026-10-26): **6.x regression: UNWIND + unlabeled start node + variable-length path + WHERE returns 0 rows (Unwind dropped from plan)**
+  *Symptoms*: **Version:** FalkorDB 6.0.3 (`falkordb/falkordb:6.0.3`, currently `latest`). Works correctly on 4.22.2, so this is a regression.  **Bug:** `UNWIND` feeding an **unlabeled** start node with an inline property filter, followed by a variable-length traversal and a `WHERE` on both ends, returns 0 rows. The `Unwind` operation and the start-node filter are missing from the 6.x plan.  **Repro** ``` GRAPH.QUERY g "CREATE (:A {k:1,g:'x'})-[:R]->(:B {g:'x'})-[:R]->(:B {g:'x'})" GRAPH.QUERY g "UNWIND [1] AS u MATCH (o {k:u})-[:R*1..2]->(n:B) WHERE n.g = o.g RETURN count(n)" ```  | Query | 6.0.3 | 4.22.2 | |---|---|---| | Unlabeled origin (above) | **0** | 2 | | Labeled origin `(o:A {k:u})` (control) | 2 | 2 | | No `UNWIND`: `MATCH (o {k:1})-[:R*1..2]->(n:B) WHERE n.g=o.g` (control) | 2 | 2 |  Reproduced 3/3 on fresh graphs. Expected: 2.  **Plans:** - 6.0.3: `Aggregate > Filter > Conditional Variable Length Traverse (o)-[_anon_0:R*1..2]->(n) > Node By Label Scan (n:B)`. There is no `Unwind`, and `o` is never bound. - 4.22.2: `... Conditional Variable Length Traverse (n)-[@anon_0:R*1..2]->(o) > Node By Label Scan (n:B) > Unwind`.  **Impact:** Graphiti's `node_bfs_search` uses this exact pattern (`UNWIND $uuids AS origin_uuid MATCH (origin {uuid: origin_uuid})-[:RELATES_TO|MENTIONS*1..$depth]->(n:Entity) WHERE n.group_id = origin.group_id`), so BFS search silently returns nothing on 6.x. Workaround: label the origin node, or add `WITH DISTINCT origin, n` before the `WHERE`. 
 
-- **Issue #3477** (2026-10-23): **duration equality treats distinct calendar components as equal**
-  *Symptoms*: ## Summary  FalkorDB 4.14.8 returns `true` when comparing two durations that differ in their day and seconds components. The openCypher TCK expects `false` for this case.  This reproduces a failure in Temporal7, Scenario [6], "Should compare durations for equality". The same query returns the expected result on Neo4j.  ## Environment  - FalkorDB: 4.14.8 - Docker image: `falkordb/falkordb:v4.14.8` - Image digest: `sha256:3ec1d09889d6c9711de120a02edcea3c8312d915a86e10e48a7d6d177b9dde1b` - Control: Neo4j 2026.08.1 Community - Reproduction: 3/3 runs on FalkorDB  ## Reproduction  Run the following query on a fresh or existing database. No graph data is required.  ```cypher RETURN duration({   years: 12, months: 5, days: 14,   hours: 16, minutes: 12, seconds: 70 }) = duration({   years: 12, months: 5, days: 13,   hours: 40, minutes: 13, seconds: 10 }) AS eq ```  ## Expected vs. Actual  | Engine | Result | |---|---| | openCypher TCK, Temporal7 Scenario [6] | `false` | | FalkorDB 4.14.8 | `true` | | Neo4j 2026.08.1 | `false` |  The operands have identical year and month components but differ in their day and seconds components. Their elapsed lengths coincide only if a day can be exchanged for 24 hours. The TCK expects these duration values to compare as unequal.  ## Additional Reproducer  The following query also returns different results on FalkorDB and Neo4j:  ```cypher RETURN duration({months: 5})      = duration({seconds: 13046400}) AS eq ```  | Engine | Result | |---|---| | Falk
+- **Issue #3484** (2026-10-27): **[Rust] 6.0.3 drops the RANGE index of an attribute that also has a FULLTEXT index when it loads a v4.22.x RDB**
+  *Symptoms*: ### Summary  When 6.0.3 loads an RDB that v4.22.2 saved, it drops the RANGE index of each attribute that also has a FULLTEXT index. The FULLTEXT index stays. A RANGE index on an attribute without a FULLTEXT index also stays. Node and relationship indexes both lose the RANGE index. The load shows no error and no log line.  A 6.0.3 save and load of its own RDB keeps both index types. The loss occurs only on the v4.22.x to 6.0.3 path.  ### Reproduction  Start `falkordb/falkordb:v4.22.2` on an empty directory:  ```sh mkdir -p data docker run -d --name v4 -e REDIS_ARGS="--appendonly no --save ''" \   -v "$PWD/data:/var/lib/falkordb/data" falkordb/falkordb:v4.22.2 ```  Then run:  ``` GRAPH.QUERY g "CREATE INDEX FOR (n:E) ON (n.g, n.h)" GRAPH.QUERY g "CREATE FULLTEXT INDEX FOR (n:E) ON (n.g)" GRAPH.QUERY g "CREATE INDEX FOR ()-[r:R]-() ON (r.g)" GRAPH.QUERY g "CREATE FULLTEXT INDEX FOR ()-[r:R]-() ON (r.g)" GRAPH.QUERY g "CREATE (:E {g:'a', h:1})-[:R {g:'b'}]->(:E {g:'c', h:2})" SAVE ```  Stop the server. Start `falkordb/falkordb:6.0.3` on the same `dump.rdb`. The 6.0.3 image runs as uid 999, so make the directory writable first:  ```sh chmod -R a+rwX ./data docker run -d --name v6 -e REDIS_ARGS="--appendonly no --save ''" \   -v "$PWD/data:/var/lib/falkordb/data" falkordb/falkordb:6.0.3 ```  Then run:  ``` GRAPH.QUERY g "CALL db.indexes() YIELD label, types, entitytype RETURN entitytype, label, types" GRAPH.EXPLAIN g "MATCH (n:E) WHERE n.g = 'a' RETURN count(n)" GRAPH.EXPLAIN g "MA
+  **Post-Mortem & Fix Analysis**:
+  > **Triage — Bug.** Set the issue type to Bug and added the `bug` label.  Reproduced the migration: created node and relationship RANGE plus FULLTEXT indexes on `falkordb/falkordb:v4.22.2`, saved the RDB, and loaded it into the current Rust `falkordb/falkordb:edge-rs` image. `db.indexes()` retained only FULLTEXT for the overlapping `g` attribute on both entities (the unrelated node `h` RANGE index remained); `GRAPH.EXPLAIN` used a node label scan and an all-node scan/conditional traverse for the affected lookups. This is not fixed in Rust, so I did not apply `fixed-rust`. #3248 is related but not a duplicate: it tracks incorrect lookups when both index types coexist in memory, whereas this issue is loss of the RANGE index during cross-version RDB load.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2326,396 +2328,237 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06e6ca30` (2026-10-25)
-**Commit Message**: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
+### Incident Patch 1: `428e7885` (2026-10-27)
+**Commit Message**: build(asan): give the module its own pinned nightly, not RediSearch's (#3536)
 
-* ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix
-
-rust-pr.yml now builds its images through the reusable _ci-pipeline.yml,
-so the jobs preflight waits for are named
-"ci-pipeline / build-rc-image / build (...)". The wait step matched
-`startswith("build-rc-image")`, found nothing, read that as "not
-scheduled yet" and polled to its 15-minute timeout with the image
-already published, so no labelled PR got a benchmark.
-
-Match `build-rc-image` as a path segment, so the lookup works whether or
-not the job is nested under a caller. It also picks up
-`build-rc-image / manifest`, the job that publishes the multi-arch tag.
-It does not match `build-rc-asan-image`.
-
-Fixes #3472
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(benchmark-cov): fix the jobs the wait used to hide
-
-With preflight no longer stuck, the jobs behind it ran for the first time
-in a while and three of them failed:
-
-- measure (pr), measure (base): `scalar iterables` ran
-  `[y IN 6 | y]`, which #2954 made a type error on purpose, so the
-  harness reported a failed query and exited 1. Keep the query to
-  UNWIND's scalar a
-
-**File**: `.github/workflows/benchmark-cov.yml` (modified, +21/-3)
-```diff
-@@ -158,9 +158,16 @@ jobs:
-                           | sort_by(.run_number) | last | .id // empty')
-             if [ -n "$RUN" ]; then
-               # `build-rc-image` calls a reusable workflow, so its jobs surface as
--              # "build-rc-image / build (...)" — match on the prefix.
-+              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
-+              # through `_ci-pipeline.yml`, which adds one more caller prefix:
-+              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
-+              # segment, so the wait survives being nested one level deeper (or
-+              # less) again. A bare prefix match on the old name found nothing,
-+              # read that as "not scheduled yet", and polled to the timeout with
-+              # the image already published (#3472). The segment form does not
-+              # match `build-rc-asan-image`, a different image.
-               STATES=$(gh api "repos/$REPO/actions/runs/$RUN/jobs?per_page=100" --paginate \
--                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
-+                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
-                                 | .conclusion // "pending"] | join(",")')
-               case "$STATES" in
-                 "")            echo "run $RUN has not scheduled build-rc-image yet" ;;
-@@ -430,9 +437,14 @@ jobs:
-     runs-on: ubuntu-latest
-     timeout-minutes: 90
-     steps:
-+      # Submodules: this job compiles the engine, and native-deps builds
-+      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
-+      # prebuilt archives do not match the current key — e.g. after a dep bump.
-+      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
-+          submodules: recursive
- 
-       # coverage is the one job that cannot use the prebaked measurement image: it
-       # needs cargo and llvm-tools to build an instrumented module, which only the
-@@ -457,7 +469,13 @@ jobs:
-           # `rustup default stable`: the toolchain image ships rustup without a
-           # default, so a bare `cargo` fails with "could not choose a version of
-           # cargo to run".
--          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
-+          #
-+          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
-+          # (clang-23 / clang++-23, build/Dockerfile) and ships no bare
-+          # `clang++`. Overriding it to `clang++` broke the first build that had
-+          # to compile a native dep from source: LAGraph's CMake could not find
-+          # the C++ compiler.
-+          docker run --rm -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
-             set -e
-             # /w/.bin, not /w: prepending the checkout root would put every
-             # root-level script ahead of /usr/bin for cargo and all its children.
-```
-
-**File**: `bench/src/falkorbench/coverage.py` (modified, +13/-1)
-```diff
-@@ -116,7 +116,19 @@ def _llvm_tool(name: str) -> Path:
-     path `./llvm-profdata` and failed with a confusing "No such file or
-     directory" — hence the explicit error below.
-     """
--    roots = [Path.home() / ".rustup/toolchains"]
-+    # The *active* toolchain's sysroot comes first: `~/.rustup/toolchains` holds
-+    # every installed toolchain, and globbing it picks whichever sorts first — an
-+    # old 1.85 there read a 1.99 build's profiles as "raw profile version
-+    # mismatch" and the whole coverage run failed after the query pass.
-+    roots = []
-+    try:
-+        sysroot = subprocess.run(
-+            ["rustc", "--print", "sysroot"], capture_output=True, text=True, check=True
-+        ).stdout.strip()
-+        roots.append(Path(sysroot) / "lib/rustlib")
-+    except (OSError, subprocess.CalledProcessError):
-+        pass
-+    roots.append(Path.home() / ".rustup/toolchains")
-     rustc = shutil.which("rustc")
-     if rustc:
-         # rustup shims resolve to ~/.rustup/toolchains/<tc>/bin/rustc, so the
-```
-
-**File**: `bench/src/falkorbench/queries.py` (modified, +1/-2)
-```diff
-@@ -503,7 +503,7 @@
-     Q("MSF nodes yield",     False, "CALL algo.MSF({relationshipTypes: ['SIMILAR'], weightAttribute: 'weight'}) YIELD nodes, edges RETURN size(nodes), size(edges)", 200),
-     Q("maxFlow KNOWS",       False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) CALL algo.maxFlow({sourceNodes: [a], targetNodes: [b], relationshipTypes: ['KNOWS'], capacityProperty: 'weight', defaultCapacity: 1.0}) YIELD maxFlow RETURN maxFlow", 200),
- 
--    # ---- round 10: comprehension-body (Row-context) eval, null/scalar
-+    # ---- round 10: comprehension-body (Row-context) eval, null
-     # iterables, chained-compare null arms, temporal component accessors,
-     # value ordering arms, CALL{}+UNION binder, pending-entity reads,
-     # label predicate, label-filtered algo matrices, lexer corners ----------
-@@ -518,7 +518,6 @@
-     Q("rel subscript",       False, "MATCH (a:Person {id: 1})-[r:KNOWS]->() RETURN r['weight'] LIMIT 5"),
-     Q("list null subscript", False, "RETURN [1, 2, 3][null]"),
-     Q("null iterable",       False, "RETURN [x IN null | x], all(x IN null WHERE x > 0), any(x IN null WHERE x > 0), none(x IN null WHERE x > 0), single(x IN null WHERE x > 0)"),
--    Q("scalar iterables",    False, "UNWIND 5 AS x RETURN x, [y IN 6 | y]"),
-     Q("single multi true",   False, "RETURN single(x IN [1, 2, 3] WHERE x > 1)"),
-     Q("unary minus null",    False, "MATCH (p:Person {id: 1}) RETURN -p.noSuchProp"),
-     Q("untyped shortestPath", False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) RETURN shortestPath((a)-[*..5]->(b))"),
-```
-
----
-
-### Incident Patch 2: `23397304` (2026-10-26)
-**Commit Message**: fix: slow log keeps its cached minimum fresh on an entry update (#3442) (#3456)
-
-SlowLog::add returned from the existing-entry branch without recomputing
-min_latency. Once the log was full, a query faster than every retained
-entry passed the admission check against the stale minimum and evicted a
-slower entry. The update arm now falls through to the shared recompute,
-as C's SlowLog_Add does via cleanup.
+The ASan image built the module with RediSearch's .rust-nightly
+(nightly-2026-01-05, rustc 1.94). parking_lot 0.13 / lock_api 0.5 need
+rustc 1.95, so #3487's dependency bump failed only in this image. Pin the
+module to nightly-2026-10-20 instead; redisearch_rs still builds with its own
+pin through the recipe's +toolchain modifier.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/slow_log.rs` (modified, +32/-42)
+**File**: `build/runtime/Dockerfile.asan` (modified, +11/-8)
 ```diff
-@@ -119,54 +119,44 @@ impl SlowLog {
- 
-         // Check for existing entry with same hash.
-         if let Some(existing) = inner.entries.iter_mut().find(|e| e.hash == hash) {
--            if latency_ms > existing.latency {
--                // Update latency, timestamp, and params.
--                existing.latency = latency_ms;
--                existing.timestamp = unix_now();
--                existing.params = if params_text.is_empty() {
--                    None
--                } else {
--                    Some(truncate(params_text))
--                };
-+            if latency_ms <= existing.latency {
-+                return;
-             }
--            return;
--        }
--
--        // Build truncated strings.
--        let truncated_query = truncate(query_text);
--        let truncated_params = if params_text.is_empty() {
--            None
--        } else {
--            Some(truncate(params_text))
--        };
--        let timestamp = unix_now();
--
--        if inner.entries.len() < MAX_ENTRIES {
--            inner.entries.push(SlowLogEntry {
--                cmd: cmd.to_owned(),
--                query: truncated_query,
--                params: truncated_params,
--                latency: latency_ms,
--                timestamp,
--                hash,
--            });
-+            // Update latency, timestamp, and params. This can raise the
-+            // minimum, so fall through to recompute it (#3442).
-+            existing.latency = latency_ms;
-+            existing.timestamp = unix_now();
-+            existing.params = if params_text.is_empty() {
-+                None
-+            } else {
-+                Some(truncate(params_text))
-+            };
-         } else {
--            // Replace the fastest (min-latency) entry.
--            let idx = inner
--                .entries
--                .iter()
--                .enumerate()
--                .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
--                .map(|(i, _)| i)
--                .unwrap();
--            inner.entries[idx] = SlowLogEntry {
-+            let entry = SlowLogEntry {
-                 cmd: cmd.to_owned(),
--                query: truncated_query,
--                params: truncated_params,
-+                query: truncate(query_text),
-+                params: if params_text.is_empty() {
-+                    None
-+                } else {
-+                    Some(truncate(params_text))
-+                },
-                 latency: latency_ms,
--                timestamp,
-+                timestamp: unix_now(),
-                 hash,
-             };
-+            if inner.entries.len() < MAX_ENTRIES {
-+                inner.entries.push(entry);
-+            } else {
-+                // Replace the fastest (min-latency) entry.
-+                let idx = inner
-+                    .entries
-+                    .iter()
-+                    .enumerate()
-+                    .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
-+                    .map(|(i, _)| i)
-+                    .unwrap();
-+                inner.entries[idx] = entry;
-+            }
-         }
- 
-         // Recompute min_latency.
-```
-
-**File**: `tests/flow/test_slowlog.py` (modified, +40/-0)
-```diff
-@@ -351,3 +351,43 @@ def test07_truncate_on_char_boundary(self):
-             logged = {e[2]: e[4] for e in entries}
-             self.env.assertContains(query[:STR_MAX_LEN - 1] + "...", logged)
-             self.env.assertEqual(logged[body], params[:STR_MAX_LEN - 1] + "...")
-+
-+    def test08_update_refreshes_min_latency(self):
-+        # Re-running a logged query slower updates its entry in place. That
-+        # update used to leave the log's cached minimum latency stale (#3442):
-+        # once the log was full, a query faster than every retained entry
-+        # passed the admission check against the stale minimum and evicted a
-+        # slower one. C recomputes the minimum on the update path too.
-+
-+        # make sure the graph key exists, so RESET works when run on its own
-+        self.graph.query("RETURN 1")
-+        self.redis_con.execute_command("GRAPH.SLOWLOG", GRAPH_ID, "RESET")
-+
-+        # Each tier is 4x the rows of the one below it, so the latency order
-+        # Q1 < Q11 < Q2..Q10 < Q1-again holds with a 4x margin.
-+        rows = 1_000_000
-+
-+        # Q1: the fastest entry, and so the log's cached minimum.
-+        q1 = "UNWIND range(0, $n) AS x WITH x WHERE x % 1 = 0 RETURN count(x)"
-+        self.graph.query(q1, {'n': rows})
-+
-+        # Q2..Q10 fill the log.
-+        for d in range(2, 11):
-+            self.graph.query(slow_query(rows * 16, d))
-+        self.env.assertEqual(len(self.graph.slowlog()), 10)
-+
-+        # Q1 again, now the slowest: its entry is updated in place, and the
-+        # true minimum moves up to the fastest of Q2..Q10.
-+        self.graph.query(q1, {'n': rows * 64})
-+
-+        # Q11 is slower than Q1 was but faster than every retained entry: it
-+        # must be rejected rather than evict one of Q2..Q10.
-+        q11 = slow_query(rows * 4, 1)
-+        self.graph.query(q11)
-+
-+        queries = [entry[2] for entry in self.graph.slowlog()]
-+        self.env.assertEqual(len(queries), 10)
-+        self.env.assertNotContains(q11, queries)
-+        self.env.assertContains(q1, queries)
-+        for d in range(2, 11):
-+            self.env.assertContains(slow_query(rows * 16, d), queries)
+@@ -34,7 +34,15 @@ RUN git clone --depth 1 --branch ${REDIS_ASAN_VER} https://github.com/redis/redi
+ # directly. The dep-layer caching cargo-chef provides isn't worth the extra
+ # plumbing for the one-off ASAN image.
+ FROM $BUILD_IMAGE AS builder
+-RUN rustup install nightly && rustup default nightly
++# The module's own nightly, pinned so the image is reproducible. It is
++# independent of RediSearch's `.rust-nightly`: the redisearch recipe below
++# builds redisearch_rs with that pin, and this one only has to meet the
++# module's dependencies' MSRV (parking_lot 0.13 needs rustc 1.95). Linking
++# archives from two nightlies is the pairing the fuzz job already uses
++# (stable-built RediSearch into a nightly module); each archive's std carries
++# its own crate hashes, so the symbols do not collide.
++ARG MODULE_NIGHTLY=nightly-2026-10-20
++RUN rustup install "$MODULE_NIGHTLY" && rustup default "$MODULE_NIGHTLY"
+ # OpenSSL dev: RediSearch 8.6's CMake find_package(OpenSSL) + link-time
+ # libssl/libcrypto. (Also added to build/Dockerfile, but the cached base image
+ # predates that, so install here too.)
+@@ -70,13 +78,8 @@ COPY . .
+ # pass them via `env`.
+ ARG TARGETARCH
+ RUN set -eux; \
+-    # Build the module with the SAME pinned nightly that the RediSearch recipe used for
+-    # redisearch_rs (RediSearch's .rust-nightly), not the floating `nightly`
+-    # alias defaulted above — so the -Zsanitizer toolchain matches across both
+-    # archives. The pin is read from the RediSearch checkout, which `COPY . .`
+-    # re-copies identically from the submodule. The native-deps redisearch
+-    # recipe already installed this toolchain (with rust-src) during the SAN build.
+-    rustup default "$(cat deps/RediSearch/.rust-nightly)"; \
++    # Back on the module nightly: the redisearch recipe ran under its own pin.
++    rustup default "$MODULE_NIGHTLY"; \
+     case "$TARGETARCH" in \
+       amd64) RT=x86_64-unknown-linux-gnu ;; \
+       arm64) RT=aarch64-unknown-linux-gnu ;; \
 ```
 
 ---
 
-### Incident Patch 3: `773a333d` (2026-10-26)
-**Commit Message**: fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2988)
+### Incident Patch 2: `b29a2885` (2026-10-26)
+**Commit Message**: fix: MERGE no longer matches an edge of a DETACH DELETEd node (#3452) (#3463)
 
-* fix: temporal constructors never panic on out-of-range components (#2930)
+* fix: MERGE no longer matches an edge of a DETACH DELETEd node (#3452)
 
-Range-check week (1-53), quarter (1-4) and dayOfQuarter (1-92) with C's
-error message before any chrono arithmetic, convert year/month/day with
-try_from instead of truncating casts, add the week offset with
-checked_add_signed, and split the week string with split_at_checked so a
-multi-byte character errors instead of panicking.
+DETACH DELETE of a committed node only marks the node deleted; its edges
+are dropped at commit. ExpandInto skipped pending-deleted edges but not
+pending-deleted endpoints, so in
+`MATCH (a:A), (b:B) DETACH DELETE a MERGE (a)-[r:R]->(b)` the MERGE
+matched the doomed edge, created nothing and returned it.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+ExpandInto now yields no row when either bound endpoint is pending
+deleted. The MERGE then takes its create branch, which refuses a deleted
+endpoint ("endpoint was not found"), as CREATE already does and as
+MERGE does for a deleted node without edges (#651). The emptiness of the
+deleted-node set is checked once per batch, so rows pay nothing when
+nothing was deleted.
 
-* fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2936)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The map form took 0..6 with 0 = Sunday while the string form, C and
-openCypher use 1..7. Accept 1..=7 and reject anything else with C's
-'Invalid value for dayOfWeek (valid values 1 - 7)'.
+* refactor: check pending-deleted endpoints directly in ExpandInto
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+expand_row already has the Pending; the precomputed flag bought nothing
+(16.5-16.7 ms vs 17.0-17.1 ms median on the 100k-pair MATCH, 52.7-53.4 vs
+53.1-53.3 ms on MERGE, 3 interleaved rounds of 40). Review on #3463.
 
----------
+Co-Authored-By: Claude Opus 5.5 <[RE
 
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/functions/temporal.rs` (modified, +21/-6)
+**File**: `graph/src/runtime/ops/expand_into.rs` (modified, +7/-0)
 ```diff
-@@ -93,15 +93,12 @@ fn date_from_components(
- 
-     if let Some(week) = week {
-         check_range("week", Some(week), 1, 53)?;
--        let dow_raw = day_of_week.unwrap_or(1);
--        if !(0..=6).contains(&dow_raw) {
--            return Err(format!("Invalid dayOfWeek: {dow_raw}, expected 0..6"));
--        }
--        let dow = dow_raw as u32;
-+        // ISO day of week, as in the string form and C: 1 = Monday .. 7 = Sunday
-+        check_range("dayOfWeek", day_of_week, 1, 7)?;
-+        let day_offset = day_of_week.unwrap_or(1) - 1;
-         let jan4 =
-             NaiveDate::from_ymd_opt(year, 1, 4).ok_or_else(|| format!("Invalid year: {year}"))?;
-         let weekday_of_jan4 = jan4.weekday().num_days_from_monday();
--        let day_offset = if dow == 0 { 6 } else { i64::from(dow) - 1 };
-         // week is in 1..=53, so the offset is at most 370 days
-         let days = (week - 1) * 7 + day_offset - i64::from(weekday_of_jan4);
-         return jan4
-@@ -955,6 +952,24 @@ mod tests {
-         }
-     }
- 
-+    // dayOfWeek is ISO 1..=7 (7 = Sunday), like the string form and C.
-+    #[test]
-+    fn date_day_of_week_is_iso() {
-+        let sunday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 7)])]).unwrap();
-+        assert_eq!(
-+            sunday,
-+            date_pure(&[Value::String(Arc::new("2021-W01-7".to_string()))]).unwrap()
-+        );
-+        let monday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 1)])]).unwrap();
-+        assert_eq!(
-+            monday,
-+            date_pure(&[Value::String(Arc::new("2021-W01-1".to_string()))]).unwrap()
-+        );
-+        for dow in [0, 8, -1] {
-+            assert!(date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", dow)])]).is_err());
+@@ -151,6 +151,13 @@ impl<'a> ExpandIntoOp<'a> {
+                 ));
+             }
+         };
++        // A node deleted earlier in this commit segment matches nothing: its
++        // edges are only dropped at commit (`DETACH DELETE` defers them), so
++        // without this check e.g. `DETACH DELETE a MERGE (a)-[:R]->(b)` would
++        // match an edge that is about to disappear.
++        if pending.is_node_deleted(src) || pending.is_node_deleted(dst) {
++            return Ok(None);
 +        }
-+    }
-+
-     #[test]
-     fn date_in_range_components_still_work() {
-         let d = |y: i32, m: u32, day: u32| {
+ 
+         if synthetic_label {
+             let has_all_labels = rp
 ```
 
-**File**: `tests/flow/test_temporal.py` (modified, +8/-0)
+**File**: `tests/flow/test_graph_merge.py` (modified, +30/-0)
 ```diff
-@@ -193,6 +193,8 @@ def test_date_out_of_range_components(self):
-             ("RETURN date({year: 2021, quarter: 1, dayOfQuarter: 200})", "dayOfQuarter"),
-             ("RETURN date({year: 2020, quarter: 4294967297})", "quarter"),
-             ("RETURN date('2020W1é')", "week"),
-+            ("RETURN date({year: 2021, week: 1, dayOfWeek: 0})", "dayOfWeek"),
-+            ("RETURN date({year: 2021, week: 1, dayOfWeek: 8})", "dayOfWeek"),
-         ]
-         for q, msg in queries:
-             try:
-@@ -207,6 +209,12 @@ def test_date_out_of_range_components(self):
-         res = self.graph.query(q)
-         self.env.assertEqual(res.result_set[0], ['1984-12-31', '1984-12-31'])
+@@ -863,6 +863,36 @@ def test39_equal_patterns_in_separate_merge_clauses(self):
+         self.env.assertEqual(res.nodes_created, 2)
+         g.delete()
  
-+        # dayOfWeek is ISO 1..7 with 7 = Sunday, like the string form
-+        q = """RETURN toString(date({year: 2021, week: 1, dayOfWeek: 7})),
-+                      toString(date('2021-W01-7'))"""
-+        res = self.graph.query(q)
-+        self.env.assertEqual(res.result_set[0], ['2021-01-10', '2021-01-10'])
++    def test42_merge_edge_of_detach_deleted_node(self):
++        """
++        DETACH DELETE defers a node's edges to commit, but a MERGE later in
++        the same query must not match one of them: the endpoint is gone, so
++        the MERGE has to create, and creating on a deleted node is an error
++        https://github.com/FalkorDB/FalkorDB/issues/3452
++        """
 +
-     def test_date_compare(self):
-         q = """WITH date({year: 1980, month: 12, day: 24}) AS x,
-                     date({year: 1984, month: 10, day: 11}) AS d
++        queries = ["""MATCH (a:A), (b:B) DETACH DELETE a
++                      MERGE (a)-[r:R]->(b) RETURN count(r)""",
++                   """MATCH (a:A), (b:B) DETACH DELETE b
++                      MERGE (a)-[r:R]->(b) RETURN count(r)""",
++                   """MATCH (a:A), (b:B) DETACH DELETE a
++                      MERGE (a)-[r:R]-(b) RETURN count(r)""",
++                   """MATCH (a:A), (b:B) DETACH DELETE a
++                      MERGE (a)-[:R]->(b)"""]
++
++        con = self.env.getConnection()
++        for q in queries:
++            self.graph.query("MATCH (n) DETACH DELETE n")
++            self.graph.query("CREATE (:A)-[:R]->(:B)")
++
++            msg = assert_error_reply(self.env, con, "GRAPH.QUERY", GRAPH_ID, q)
++            self.env.assertContains("endpoint was not found", msg or "")
++
++            # the failed query left the graph as it was
++            actual = self.graph.query("""MATCH (a:A)-[r:R]->(b:B)
++                                         RETURN count(r)""")
++            self.env.assertEqual(actual.result_set, [[1]])
++
+     def test40_merge_path_over_bound_endpoints_keeps_every_match(self):
+         # With every node bound and no named relationship, MERGE kept only the
+         # first match. A path variable still tells parallel edges apart (#3040).
+```
+
+---
+
+### Incident Patch 3: `ca36bfa1` (2026-10-27)
+**Commit Message**: fix: a null grouping key that shares a slot with an accumulator no longer crashes the reply (#3150) (#3522)
+
+`AggregateOp::next` unbound the aggregates' accumulator slots after it had
+written the grouping keys. The binder may give an accumulator the slot id
+of a key (`RETURN null AS x, count(1) AS n`: both are id 0), so the unbind
+cleared the key's bound bit; a null value in an unbound slot is dropped from
+the batch, and `reply_compact` then unwrapped `None` and the server exited.
+
+Unbind the accumulators first, then write the keys and the outputs, so
+every key and every output is bound on the emitted row.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/ops/aggregate.rs` (modified, +10/-6)
+```diff
+@@ -1181,6 +1181,16 @@ impl<'a> Iterator for AggregateOp<'a> {
+                     combined.insert(name, val.clone());
+                     agg_outputs.push((name, val));
+                 }
++                // Unbind internal accumulator variables so they don't leak
++                // to downstream operators and collide with variables in
++                // subsequent scopes that reuse the same slot IDs. This comes
++                // before any key is written: the binder may give an
++                // accumulator the slot id of a grouping key, and unbinding
++                // after the key is written would drop that key (a null key
++                // then vanishes from the batch, #3150).
++                for (_, tree) in self.agg {
++                    unbind_agg_accumulators(&tree.root(), &mut acc);
++                }
+                 // Insert pre-projection key variable values into acc so
+                 // downstream operators can find them, but skip any slot that
+                 // is already occupied by an aggregation output to avoid
+@@ -1197,12 +1207,6 @@ impl<'a> Iterator for AggregateOp<'a> {
+                     }
+                 }
+                 acc.merge(&key);
+-                // Unbind internal accumulator variables so they don't leak
+-                // to downstream operators and collide with variables in
+-                // subsequent scopes that reuse the same slot IDs.
+-                for (_, tree) in self.agg {
+-                    unbind_agg_accumulators(&tree.root(), &mut acc);
+-                }
+                 // Re-bind aggregate output names last: an accumulator slot id
+                 // can coincide with another aggregate's output name (the binder
+                 // may reuse slot IDs), and the unbind above would otherwise
+```
+
+**File**: `tests/flow/test_aggregation.py` (modified, +29/-0)
+```diff
+@@ -498,3 +498,32 @@ def kind(v):
+                 self.env.assertEqual(sorted(r[1] for r in res), expected, message=q)
+         finally:
+             g.delete()
++
++    def test_null_key_sharing_an_accumulator_slot(self):
++        # The binder may give an aggregate's accumulator the slot id of a
++        # grouping key. Unbinding the accumulator after the key was written
++        # left the key unbound, and a null key then dropped out of the batch,
++        # so the reply hit an unwrap on None and the server exited (#3150).
++        g = self.db.select_graph("agg_null_key")
++        try:
++            g.query("""CREATE (:Invitation {id: 'inv1', email: 'm@x.org', created_at: 1}),
++                              (:K:Node {id: 'k', tier: 1})-[:P {w: 1}]->(:D:Node {id: 'd'})""")
++            for q, expected in [
++                ("RETURN null AS x, count(1) AS n", [[None, 1]]),
++                ("RETURN null AS x, collect(1) AS c", [[None, [1]]]),
++                ("MATCH (n:D) RETURN n.id AS k, n.missing AS x, count(n) AS c", [['d', None, 1]]),
++                ("MATCH (n:D) WITH n, 1 AS hops RETURN n.id AS id, min(hops), n.tier AS tier",
++                 [['d', 1, None]]),
++                ("""MATCH (inv:Invitation {id: 'inv1'})
++                    OPTIONAL MATCH (u:User) WHERE u.email = inv.email
++                    OPTIONAL MATCH (newer:Invitation)
++                        WHERE newer.email = inv.email AND newer.created_at > inv.created_at
++                    RETURN inv.id, u IS NOT NULL, u.a, u.b, collect(newer)""",
++                 [['inv1', False, None, None, []]]),
++                # keys must not be overwritten by one another either
++                ("WITH 1 AS a, 2 AS b RETURN b AS x, a AS y, count(*)", [[2, 1, 1]]),
++            ]:
++                res = g.query(q).result_set
++                self.env.assertEqual(res, expected, message=q)
++        finally:
++            g.delete()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3488** (2026-10-25): chore(deps): bump the github-actions group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #3474** (2026-10-22): fix(optional-traverse): guard NULL GraphBLAS vectors in CondTraverseReset (@swilly22)
-- **PR #3473** (2026-10-25): ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (@AviAvni)
-- **PR #3465** (2026-10-22): [6.0] Batch backport (56 commits) (@github-actions[bot])
-- **PR #3462** (2026-10-26): fix: GRAPH.RECORD no longer panics on deleted or uncommitted relationships (#3449) (@AviAvni)
-- **PR #3458** (2026-10-26): fix: LOAD CSV follows no redirects and fetches over https only (#3443) (@AviAvni)
+- **PR #3536** (2026-10-27): build(asan): give the module its own pinned nightly, not RediSearch's (#3537) (@AviAvni)
+- **PR #3525** (closed): fix: parse a chained unary minus such as `RETURN - -5` (#2309) (@AviAvni)
+- **PR #3522** (2026-10-27): fix: null grouping key sharing a slot with an accumulator crashes the reply (#3150) (@AviAvni)
+- **PR #3514** (2026-10-27): fix: loading a C-written RDB keeps every index type of an attribute (#3484) (@AviAvni)
+- **PR #3513** (2026-10-26): fix(index): numeric 0 dropped from index on RDB reload — bump RediSearch + regression tests (@swilly22)
+- **PR #3502** (2026-10-27): feat(threadpool): named workers, and a shutdown with a time limit (@DvirDukhan)
 
 ---
 
@@ -2735,46 +2578,45 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
+## X. build(asan): give the module its own pinned nightly, not RediSearch's (#3536)
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmark-cov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/runtime/Dockerfile.asan`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06e6ca30`: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `428e7885`: build(asan): give the module its own pinned nightly, not RediSearch's (#3536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark-cov.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/runtime/Dockerfile.asan`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
-              # through `_ci-pipeline.yml`, which adds one more caller prefix:
-              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
-              # segment, so the wait survives being nested one level deeper (or
-              # less) again. A bare prefix match on the old name found nothing,
-              # read that as "not scheduled yet", and polled to the timeout with
-              # the image already published (#3472). The segment form does not
-              # match `build-rc-asan-image`, a different image.
-                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
-      # Submodules: this job compiles the engine, and native-deps builds
-      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
-      # prebuilt archives do not match the current key — e.g. after a dep bump.
-      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
-          submodules: recursive
-          #
-          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
-          # (clang-23 / clang++-23, build/Dockerfile) and shi
+# The module's own nightly, pinned so the image is reproducible. It is
+# independent of RediSearch's `.rust-nightly`: the redisearch recipe below
+# builds redisearch_rs with that pin, and this one only has to meet the
+# module's dependencies' MSRV (parking_lot 0.13 needs rustc 1.95). Linking
+# archives from two nightlies is the pairing the fuzz job already uses
+# (stable-built RediSearch into a nightly module); each archive's std carries
+# its own crate hashes, so the symbols do not collide.
+ARG MODULE_NIGHTLY=nightly-2026-10-20
+RUN rustup install "$MODULE_NIGHTLY" && rustup default "$MODULE_NIGHTLY"
+    # Back on the module nightly: the redisearch recipe ran under its own pin.
+    rustup default "$MODULE_NIGHTLY"; \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-              # "build-rc-image / build (...)" — match on the prefix.
-                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
-          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
+RUN rustup install nightly && rustup default nightly
+    # Build the module with the SAME pinned nightly that the RediSearch recipe used for
+    # redisearch_rs (RediSearch's .rust-nightly), not the floating `nightly`
+    # alias defaulted above — so the -Zsanitizer toolchain matches across both
+    # archives. The pin is read from the RediSearch checkout, which `COPY . .`
+    # re-copies identically from the submodule. The native-deps redisearch
+    # recipe already installed this toolchain (with rust-src) during the SAN build.
+    rustup default "$(cat deps/RediSearch/.rust-nightly)"; \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06e6ca30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `428e7885` are properly handled with clean fallback behavior.

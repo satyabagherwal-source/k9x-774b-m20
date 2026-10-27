@@ -5585,3 +5585,5 @@ Every entry in this ledger must capture:
 | `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `6f07e305` | Multi-dimensional audit evidence | 2026-10-27T23:01:37.402Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `e15f8938` | Multi-dimensional audit evidence | 2026-10-27T23:01:40.673Z |
 | `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-10-27T23:03:21.422Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `ca36bfa1` | Multi-dimensional audit evidence | 2026-10-27T23:10:09.321Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-27T23:10:18.909Z |
