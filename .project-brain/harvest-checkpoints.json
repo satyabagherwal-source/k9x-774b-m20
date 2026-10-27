@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T11:56:17.925Z",
+  "last_updated": "2026-10-27T12:04:32.782Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
-      "verified_at": "2026-10-25T05:34:08.652Z",
+      "content_hash": "8b6b6c3b6cff9bdd4fa53898006e9e1aa873102c1ab81c8c4df85580e5acff35",
+      "verified_at": "2026-10-27T11:59:45.682Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T05:34:08.652Z"
+      "last_updated": "2026-10-27T11:59:45.682Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -7896,14 +7896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-reshaped-ui-reshaped",
-      "content_hash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
-      "verified_at": "2026-10-25T07:05:31.504Z",
+      "content_hash": "6831636c25f9d59aad11623037a343b4f8a9e1c075f306e2bff694c34c7eed86",
+      "verified_at": "2026-10-27T11:59:39.953Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T07:05:31.504Z"
+      "last_updated": "2026-10-27T11:59:39.953Z"
     },
     "actix/actix-web": {
       "repository": "actix/actix-web",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
-      "verified_at": "2026-10-25T17:49:09.064Z",
+      "content_hash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
+      "verified_at": "2026-10-27T12:04:32.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:49:09.064Z"
+      "last_updated": "2026-10-27T12:04:32.781Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
-      "verified_at": "2026-10-25T03:53:00.332Z",
+      "content_hash": "929c70ca02037c0eda45937f27d0ec05a35e167995a1a84146facc42b3c5c7af",
+      "verified_at": "2026-10-27T11:59:51.126Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:53:00.332Z"
+      "last_updated": "2026-10-27T11:59:51.126Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

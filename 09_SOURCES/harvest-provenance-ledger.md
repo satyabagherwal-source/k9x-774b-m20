@@ -5258,3 +5258,7 @@ Every entry in this ledger must capture:
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `4ab614bc` | Multi-dimensional audit evidence | 2026-10-27T11:56:08.102Z |
 | `learn-github-fission-fission` | `https://github.com/fission/fission` | `ae2aabf5` | Multi-dimensional audit evidence | 2026-10-27T11:56:13.070Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `f24c6fc4` | Multi-dimensional audit evidence | 2026-10-27T11:56:17.916Z |
+| `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `21e0bc77` | Multi-dimensional audit evidence | 2026-10-27T11:59:39.944Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `35842157` | Multi-dimensional audit evidence | 2026-10-27T11:59:45.672Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `2d15aef3` | Multi-dimensional audit evidence | 2026-10-27T11:59:51.118Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `88d7742d` | Multi-dimensional audit evidence | 2026-10-27T12:04:32.773Z |

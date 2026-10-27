@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T11:56:17.856Z",
+  "last_updated": "2026-10-27T12:04:32.691Z",
   "total_verified_learnings": 1103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -432,8 +432,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "7b23d81b",
-      "content_hash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
+      "source_version": "88d7742d",
+      "content_hash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -451,6 +451,16 @@
           "number": 4400,
           "title": "deny vulnerable TLS dependency versions (#4353)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4728,
+          "title": "Bounded Allocation Reset Invariant for Persistent Sockets",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4729,
+          "title": "Guarded Early Pre-Allocation Against Size-Hint Exploits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -458,7 +468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:49:08.986Z",
+      "verified_at": "2026-10-27T12:04:32.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5733,8 +5743,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "37f49f24",
-      "content_hash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
+      "source_version": "35842157",
+      "content_hash": "8b6b6c3b6cff9bdd4fa53898006e9e1aa873102c1ab81c8c4df85580e5acff35",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -5757,6 +5767,11 @@
           "number": 4081,
           "title": "workflow): support serviceAccountName for task pods (#5162)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4726,
+          "title": "build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5764,7 +5779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T05:34:08.584Z",
+      "verified_at": "2026-10-27T11:59:45.588Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43564,8 +43579,8 @@
       "slug": "reshaped-ui-reshaped",
       "platform": "github",
       "source_url": "https://github.com/reshaped-ui/reshaped",
-      "source_version": "de2c2493",
-      "content_hash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
+      "source_version": "21e0bc77",
+      "content_hash": "6831636c25f9d59aad11623037a343b4f8a9e1c075f306e2bff694c34c7eed86",
       "dossier_path": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "promoted_rules": [
@@ -43603,6 +43618,11 @@
           "number": 4135,
           "title": "Native Prototype Setter Hijacking for Synthetic Form Integration",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4725,
+          "title": "useRTL): read the Reshaped provider state instead of creating it per component (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43610,7 +43630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T07:05:31.417Z",
+      "verified_at": "2026-10-27T11:59:39.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47393,8 +47413,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "2aa0822f",
-      "content_hash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
+      "source_version": "2d15aef3",
+      "content_hash": "929c70ca02037c0eda45937f27d0ec05a35e167995a1a84146facc42b3c5c7af",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -47432,6 +47452,11 @@
           "number": 4029,
           "title": "Guarded Bit-Stream Memory Alignment & Safe Overflow Shifting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4727,
+          "title": "[BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexe",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47439,7 +47464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:53:00.238Z",
+      "verified_at": "2026-10-27T11:59:51.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131718,6 +131743,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T11:56:17.844Z"
+    },
+    "rule-4725": {
+      "learning_id": "rule-4725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4725,
+      "title": "useRTL): read the Reshaped provider state instead of creating it per component (",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "21e0bc77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:59:39.870Z"
+    },
+    "rule-4726": {
+      "learning_id": "rule-4726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4726,
+      "title": "build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "35842157",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:59:45.588Z"
+    },
+    "rule-4727": {
+      "learning_id": "rule-4727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4727,
+      "title": "[BugFix] Bump lastSchemaUpdateTime before shared-data schema change swaps indexe",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "2d15aef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T11:59:51.044Z"
+    },
+    "rule-4728": {
+      "learning_id": "rule-4728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4728,
+      "title": "Bounded Allocation Reset Invariant for Persistent Sockets",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "88d7742d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:04:32.679Z"
+    },
+    "rule-4729": {
+      "learning_id": "rule-4729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4729,
+      "title": "Guarded Early Pre-Allocation Against Size-Hint Exploits",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "88d7742d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T12:04:32.679Z"
     }
   },
   "aliases": {

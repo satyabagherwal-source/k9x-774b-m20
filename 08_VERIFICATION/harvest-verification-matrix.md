@@ -5249,3 +5249,7 @@
 | `CYCLE-20261027-QFQB` | `2026-10-27T11:56:08.099Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4722` | Yes (`192b8e55...`) |
 | `CYCLE-20261027-QJKB` | `2026-10-27T11:56:13.067Z` | `fission/fission` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4723` | Yes (`3926dd91...`) |
 | `CYCLE-20261027-QNAX` | `2026-10-27T11:56:17.913Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4724` | Yes (`8d342f16...`) |
+| `CYCLE-20261027-UZ6T` | `2026-10-27T11:59:39.941Z` | `reshaped-ui/reshaped` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4725` | Yes (`6831636c...`) |
+| `CYCLE-20261027-V3LX` | `2026-10-27T11:59:45.669Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4726` | Yes (`8b6b6c3b...`) |
+| `CYCLE-20261027-V7T7` | `2026-10-27T11:59:51.115Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4727` | Yes (`929c70ca...`) |
+| `CYCLE-20261027-194Y` | `2026-10-27T12:04:32.770Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4728, Rule 4729` | Yes (`e2e690fe...`) |

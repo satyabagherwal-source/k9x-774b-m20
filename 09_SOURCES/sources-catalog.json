@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "37f49f24",
+    "sourceVersion": "35842157",
     "license": "Apache-2.0",
-    "contentHash": "0214aaac60f0eba23c53b26c081c50ae6946a151da78d3d9ba64355d09fc6ec7",
-    "lastHarvestedAt": "2026-10-25T05:34:08.641Z",
+    "contentHash": "8b6b6c3b6cff9bdd4fa53898006e9e1aa873102c1ab81c8c4df85580e5acff35",
+    "lastHarvestedAt": "2026-10-27T11:59:45.672Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -5183,20 +5183,20 @@
     "repository": "reshaped-ui/reshaped",
     "platform": "github",
     "sourceUrl": "https://github.com/reshaped-ui/reshaped",
-    "sourceVersion": "de2c2493",
+    "sourceVersion": "21e0bc77",
     "license": "MIT",
-    "contentHash": "987762afae7d391b856c483dd348fd03c2a988fc5086af955823656d53fe97c5",
-    "lastHarvestedAt": "2026-10-25T07:05:31.493Z",
+    "contentHash": "6831636c25f9d59aad11623037a343b4f8a9e1c075f306e2bff694c34c7eed86",
+    "lastHarvestedAt": "2026-10-27T11:59:39.944Z",
     "learningId": "learn-github-reshaped-ui-reshaped"
   },
   "actix-actix-web": {
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "7b23d81b",
+    "sourceVersion": "88d7742d",
     "license": "Apache-2.0",
-    "contentHash": "fc44c6ff299c56894b194e4ce1ad7296f9e237de2a5a63399948649d59cc6964",
-    "lastHarvestedAt": "2026-10-25T17:49:09.056Z",
+    "contentHash": "e2e690fe008ab3736b1dfc55de9edcc266bcd7053749fad8f995bab920846c7b",
+    "lastHarvestedAt": "2026-10-27T12:04:32.773Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "2aa0822f",
+    "sourceVersion": "2d15aef3",
     "license": "Apache-2.0",
-    "contentHash": "b39cd79c4f070255b8f62d1825bd5a047ae249396209fd2c6564944a8a51807c",
-    "lastHarvestedAt": "2026-10-25T03:53:00.324Z",
+    "contentHash": "929c70ca02037c0eda45937f27d0ec05a35e167995a1a84146facc42b3c5c7af",
+    "lastHarvestedAt": "2026-10-27T11:59:51.118Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

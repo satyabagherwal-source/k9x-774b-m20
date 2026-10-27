@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `37f49f24`  
+> **Source Version**: `35842157`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:34:08.329Z  
+> **Timestamp**: 2026-10-27T11:59:45.244Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:34:07.948Z  
+> **Harvest Timestamp**: 2026-10-27T11:59:44.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7949 stars
+- **Stars / Engagement**: 7953 stars
 
 ---
 
@@ -917,16 +917,11 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5162** (2026-10-23): **feat(workflow): support serviceAccountName for task pods**
-  *Symptoms*: ## Why  Workflow Task scripts need dedicated ServiceAccounts so users can grant task-specific permissions without extending the shared default account.  Closes #5154.  ## What changed  - Add optional `task.serviceAccountName` and pass it to the generated Pod. - Regenerate CRDs, Swagger, and the UI API client, and add a changelog entry.  ## Scope  Each Task refers to an existing ServiceAccount in its Pod namespace. Users create the account and configure RBAC.  ## Blast radius  Omitted or empty names preserve the current Kubernetes default-account behavior. Existing node selectors and tolerations remain unchanged.  ## Verification  - `make generate` and UI OpenAPI code generation completed. - Existing Workflow API validation and type tests, focused Go vet, and standalone checks of four account configurations through the actual Pod constructor with a fake client passed. Generated CRD and Swagger schemas were checked. - All 9 OpenAPI generator tests and `pnpm build` passed.  UI lint reports 251 errors and 10 warnings, all in files unchanged from the base commit. No modified file has a lint diagnostic. No live-cluster test was run. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5162?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `0%` with `3 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 31.87%. Comparing base ([`9a80e21`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/9a80e21f6a06b3648dbd1fabd7ecd26c54846ff8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`9040bc0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/9040bc0fcf409c5b4ffd3b4d30a41c78f0725224?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5162?drop
-  > Thanks for implementing and merging this feature!  Do you know when a new Chaos Mesh Helm chart version including this change will be released?
+- **Issue #5170** (2026-10-27): **chore(deps): upgrade tproxy to v0.5.7**
+  *Symptoms*: ## What problem does this PR solve?  HTTPChaos needs the startup rollback, network restoration, and HTTP value preservation fixes in [tproxy v0.5.7](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.5.7).  ## What's changed and how does it work?  Upgrade the tproxy download used by chaos-daemon from v0.5.6 to v0.5.7 and add a changelog entry.  ## Scope  The upgrade applies to the embedded tproxy binary for AMD64 and ARM64 daemon images.  ## Verification  - Downloaded both published archives and verified their SHA256 digests against GitHub release metadata. - Checked both ELF architectures and ran each binary in Debian Bookworm, the daemon runtime base. Both report `chaos-tproxy 0.5.7`. ARM64 ran natively and AMD64 used emulation. - `git diff --check` passed. Full daemon image builds and Kubernetes E2E tests were not run.  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test 
 
-- **Issue #5160** (2026-10-23): **feat: backport workflow task scheduling to release-2.8**
-  *Symptoms*: ## Why  Backport #4790 to `release-2.8` so Workflow Task pods can use `nodeSelector` and `tolerations`.  ## What changed  - Copy the Task scheduling fields into the Pod specification. - Regenerate API artifacts against the release dependencies, including existing definitions missing from the generated UI client. - Update the Unreleased changelog with the original PR link.  ## Scope  Workflow Task scheduling on the 2.8 release branch. Website documentation needs a separate update for the release that includes this feature.  ## Blast Radius  This affects pods created by Workflow Task nodes. Both scheduling fields are optional, so existing task definitions keep their behavior.  ## Verification  - Task package compilation, vet and an external JSON-to-Pod/schema check passed. - Existing API envtest suite, UI production build and 9 OpenAPI generator tests passed. - Repeated generation left all changed files identical. UI lint diagnostics match the release baseline.  Full repository checks and cluster E2E await this PR's CI. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5160?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `0%` with `10 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 23.29%. Comparing base ([`c58b44f`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/c58b44f18ff02f04965be5d439a68658e5d65fde?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`859db49`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/859db492c865d372c48a3e71bbccf2163a3f6421?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on release-2.8.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/516
+- **Issue #5168** (2026-10-27): **ci(ghcr): clean up stale untagged images**
+  *Symptoms*: ## What problem does this PR solve?  Old untagged GHCR build outputs accumulate. Add retention cleanup for container packages linked to `chaos-mesh/chaos-mesh`.  ## What's changed and how does it work?  - Run on the first day of every other month at 02:00 UTC, or manually. Queue cleanup and image publishing through the same concurrency group. - Keep every tagged version, versions created or updated within 30 days, and all directly or indirectly referenced manifests. - Delete the remaining old untagged versions sequentially, waiting 2 seconds after each successful deletion. Stop on errors without retrying, and log tagged/untagged counts before and after cleanup. Final counts use the initial inventory minus successful deletions.  Scheduled and manual runs perform deletion. The README describes the policy and local requirements.  ## Related changes  - [ ] This change also requires further updates to the website - [ ] This change also requires further updates to the UI interface  ## Checklist  ### CHANGELOG  - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Manual test  Offline simulations passed for retention, recursive manifest references, pagination, deletion failures, pacing, and count output. Python compilation, workflow YAML parsing, and diff whitespace checks passed. No live deletion or hosted workflow execution was performed.  ### Side effects  - [ ] Breaking backward compatibility 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -943,514 +938,245 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37f49f24` (2026-10-23)
-**Commit Message**: feat(workflow): support serviceAccountName for task pods (#5162)
+### Incident Patch 1: `550ccc35` (2026-10-27)
+**Commit Message**: build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (#5166)
 
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `ui/pnpm-lock.yaml` (modified, +7/-6)
 ```diff
-@@ -10,6 +10,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -3125,6 +3125,7 @@ packages:
+   eslint@9.27.0:
+     resolution: {integrity: sha512-ixRawFQuMB9DZ7fjU3iGGganFDp3+45bPOdaRurcFHSXO1e/sYwUX/FtQZpLZJR6SjMoJH8hR2pPEAfDyCoU2Q==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
++    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+     hasBin: true
+     peerDependencies:
+       jiti: '*'
+@@ -3202,8 +3203,8 @@ packages:
+   fast-string-width@3.0.2:
+     resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
  
- ### Added
+-  fast-uri@3.1.8:
+-    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
++  fast-uri@3.1.9:
++    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
  
-+- Support `serviceAccountName` for Workflow Task pods [#5162](https://github.com/chaos-mesh/chaos-mesh/pull/5162)
- - Support `nodeSelector` and `tolerations` for Workflow Task pods [#4790](https://github.com/chaos-mesh/chaos-mesh/pull/4790)
- - Add the DNSChaos `static` action to resolve exact domain names to configured IPv4 or IPv6 addresses [#4674](https://github.com/chaos-mesh/chaos-mesh/pull/4674)
- - Add Prometheus Operator ServiceMonitor support to the Helm chart [#5076](https://github.com/chaos-mesh/chaos-mesh/pull/5076)
-```
-
-**File**: `api/v1alpha1/workflow_types.go` (modified, +6/-0)
-```diff
-@@ -153,6 +153,12 @@ type Task struct {
+   fast-wrap-ansi@0.2.2:
+     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
+@@ -7406,7 +7407,7 @@ snapshots:
+   ajv@8.20.0:
+     dependencies:
+       fast-deep-equal: 3.1.3
+-      fast-uri: 3.1.8
++      fast-uri: 3.1.9
+       json-schema-traverse: 1.0.0
+       require-from-string: 2.0.2
  
- 	Labels map[string]string `json:"labels,omitempty"`
+@@ -8176,7 +8177,7 @@ snapshots:
+     dependencies:
+       fast-string-truncated-width: 3.0.3
  
-+	// ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+	// The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+	// If omitted or empty, the default ServiceAccount is used.
-+	// +optional
-+	ServiceAccountName string `json:"serviceAccountName,omitempty"`
-+
- 	// NodeSelector is a selector which must be true for the pod to fit on a node.
- 	// Selector which must match a node's labels for the pod to be scheduled on that node.
- 	// +optional
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +6/-0)
-```diff
-@@ -11927,6 +11927,12 @@ spec:
-                                 NodeSelector is a selector which must be true for the pod to fit on a node.
-                                 Selector which must match a node's labels for the pod to be scheduled on that node.
-                               type: object
-+                            serviceAccountName:
-+                              description: |-
-+                                ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                If omitted or empty, the default ServiceAccount is used.
-+                              type: string
-                             tolerations:
-                               description: |-
-                                 Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +12/-0)
-```diff
-@@ -15073,6 +15073,12 @@ spec:
-                                     NodeSelector is a selector which must be true for the pod to fit on a node.
-                                     Selector which must match a node's labels for the pod to be scheduled on that node.
-                                   type: object
-+                                serviceAccountName:
-+                                  description: |-
-+                                    ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                    The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                    If omitted or empty, the default ServiceAccount is used.
-+                                  type: string
-                                 tolerations:
-                                   description: |-
-                                     Tolerations is a list of tolerations attached to the pod.
-@@ -19270,6 +19276,12 @@ spec:
-                       NodeSelector is a selector which must be true for the pod to fit on a node.
-                       Selector which must match a node's labels for the pod to be scheduled on that node.
-                     type: object
-+                  serviceAccountName:
-+                    description: |-
-+                      ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                      The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                      If omitted or empty, the default ServiceAccount is used.
-+                    type: string
-                   tolerations:
-                     description: |-
-                       Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +6/-0)
-```diff
-@@ -8495,6 +8495,12 @@ spec:
-                             NodeSelector is a selector which must be true for the pod to fit on a node.
-                             Selector which must match a node's labels for the pod to be scheduled on that node.
-                           type: object
-+                        serviceAccountName:
-+                          description: |-
-+                            ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                            The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                            If omitted or empty, the default ServiceAccount is used.
-+                          type: string
-                         tolerations:
-                           description: |-
-                             Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +6/-0)
-```diff
-@@ -11927,6 +11927,12 @@ spec:
-                                 NodeSelector is a selector which must be true for the pod to fit on a node.
-                                 Selector which must match a node's labels for the pod to be scheduled on that node.
-                               type: object
-+                            serviceAccountName:
-+                              description: |-
-+                                ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                If omitted or empty, the default ServiceAccount is used.
-+                              type: string
-                             tolerations:
-                               description: |-
-                                 Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_workflownodes.yaml` (modified, +12/-0)
-```diff
-@@ -15073,6 +15073,12 @@ spec:
-                                     NodeSelector is a selector which must be true for the pod to fit on a node.
-                                     Selector which must match a node's labels for the pod to be scheduled on that node.
-                                   type: object
-+                                serviceAccountName:
-+                                  description: |-
-+                                    ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                    The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                    If omitted or empty, the default ServiceAccount is used.
-+                                  type: string
-                                 tolerations:
-                                   description: |-
-                                     Tolerations is a list of tolerations attached to the pod.
-@@ -19270,6 +19276,12 @@ spec:
-                       NodeSelector is a selector which must be true for the pod to fit on a node.
-                       Selector which must match a node's labels for the pod to be scheduled on that node.
-                     type: object
-+                  serviceAccountName:
-+                    description: |-
-+                      ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                      The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                      If omitted or empty, the default ServiceAccount is used.
-+                    type: string
-                   tolerations:
-                     description: |-
-                       Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_workflows.yaml` (modified, +6/-0)
-```diff
-@@ -8495,6 +8495,12 @@ spec:
-                             NodeSelector is a selector which must be true for the pod to fit on a node.
-                             Selector which must match a node's labels for the pod to be scheduled on that node.
-                           type: object
-+                        serviceAccountName:
-+                          description: |-
-+                            ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                            The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                            If omitted or empty, the default ServiceAccount is used.
-+                          type: string
-                         tolerations:
-                           description: |-
-                             Tolerations is a list of tolerations attached to the pod.
+-  fast-uri@3.1.8: {}
++  fast-uri@3.1.9: {}
+ 
+   fast-wrap-ansi@0.2.2:
+     dependencies:
+@@ -8445,7 +8446,7 @@ snapshots:
+ 
+   is-core-module@2.16.1:
+     dependencies:
+-      hasown: 2.0.2
++      hasown: 2.0.4
+ 
+   is-extglob@2.1.1: {}
+ 
+@@ -9244,7 +9245,7 @@ snapshots:
+ 
+   parse-json@5.2.0:
+     dependencies:
+-      '@babel/code-frame': 7.29.0
++      '@babel/code-frame': 7.29.7
+       error-ex: 1.3.2
+       json-parse-even-better-errors: 2.3.1
+       lines-and-columns: 1.2.4
 ```
 
 ---
 
-### Incident Patch 2: `9a80e21f` (2026-10-23)
-**Commit Message**: feat: add nodeSelector and tolerations support for workflow tasks (#4790)
+### Incident Patch 2: `72c26021` (2026-10-26)
+**Commit Message**: fix(stresschaos): skip inactive cgroup controllers (#4407)
 
 Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: mantaspumputissumup <[REDACTED_EMAIL]>
+Signed-off-by: KAAAsS <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -67,6 +67,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
- ### Added
+ ### Fixed
  
-+- Support `nodeSelector` and `tolerations` for Workflow Task pods [#4790](https://github.com/chaos-mesh/chaos-mesh/pull/4790)
- - Add the DNSChaos `static` action to resolve exact domain names to configured IPv4 or IPv6 addresses [#4674](https://github.com/chaos-mesh/chaos-mesh/pull/4674)
- - Add Prometheus Operator ServiceMonitor support to the Helm chart [#5076](https://github.com/chaos-mesh/chaos-mesh/pull/5076)
- - Add fail-fast rejection behavior for NetworkChaos partitions, using TCP resets for TCP traffic and the platform-default rejection for remaining traffic [#5068](https://github.com/chaos-mesh/chaos-mesh/pull/5068)
++- Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
+ - Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
+ - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
+ - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
 ```
 
-**File**: `api/v1alpha1/workflow_types.go` (modified, +10/-0)
+**File**: `pkg/chaosdaemon/cgroups/cgroups_suite_test.go` (added, +28/-0)
 ```diff
-@@ -153,6 +153,16 @@ type Task struct {
- 
- 	Labels map[string]string `json:"labels,omitempty"`
- 
-+	// NodeSelector is a selector which must be true for the pod to fit on a node.
-+	// Selector which must match a node's labels for the pod to be scheduled on that node.
-+	// +optional
-+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+@@ -0,0 +1,28 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
 +
-+	// Tolerations is a list of tolerations attached to the pod.
-+	// Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+	// +optional
-+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
++package cgroups
 +
- 	// TODO: maybe we could specify parameters in other ways, like loading context from file
- }
- 
++import (
++	"testing"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++)
++
++func TestCgroups(t *testing.T) {
++	RegisterFailHandler(Fail)
++	RunSpecs(t, "Cgroups Suite")
++}
 ```
 
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +14/-0)
+**File**: `pkg/chaosdaemon/cgroups/pidpath.go` (modified, +5/-1)
 ```diff
-@@ -4736,6 +4736,20 @@ func (in *Task) DeepCopyInto(out *Task) {
- 			(*out)[key] = val
+@@ -45,6 +45,10 @@ func V1() ([]cgroups.Subsystem, error) {
+ 
+ func PidPath(pid int) cgroups.Path {
+ 	p := fmt.Sprintf("/proc/%d/cgroup", pid)
++	return pidPathFromFile(p)
++}
++
++func pidPathFromFile(p string) cgroups.Path {
+ 	paths, err := cgroups.ParseCgroupFile(p)
+ 	if err != nil {
+ 		return func(_ cgroups.Name) (string, error) {
+@@ -56,7 +60,7 @@ func PidPath(pid int) cgroups.Path {
+ 		root, ok := paths[string(name)]
+ 		if !ok {
+ 			if root, ok = paths["name="+string(name)]; !ok {
+-				return "", errors.New("controller is not supported")
++				return "", cgroups.ErrControllerNotActive
+ 			}
  		}
- 	}
-+	if in.NodeSelector != nil {
-+		in, out := &in.NodeSelector, &out.NodeSelector
-+		*out = make(map[string]string, len(*in))
-+		for key, val := range *in {
-+			(*out)[key] = val
-+		}
-+	}
-+	if in.Tolerations != nil {
-+		in, out := &in.Tolerations, &out.Tolerations
-+		*out = make([]v1.Toleration, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
- }
  
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Task.
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +49/-0)
+**File**: `pkg/chaosdaemon/cgroups/pidpath_controller_test.go` (added, +85/-0)
 ```diff
-@@ -11920,6 +11920,55 @@ spec:
-                               additionalProperties:
-                                 type: string
-                               type: object
-+                            nodeSelector:
-+                              additionalProperties:
-+                                type: string
-+                              description: |-
-+                                NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                Selector which must match a node's labels for the pod to be scheduled on that node.
-+                              type: object
-+                            tolerations:
-+                              description: |-
-+                                Tolerations is a list of tolerations attached to the pod.
-+                                Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                              items:
-+                                description: |-
-+                                  The pod this Toleration is attached to tolerates any taint that matches
-+                                  the triple <key,value,effect> using the matching operator <operator>.
-+                                properties:
-+                                  effect:
-+                                    description: |-
-+                                      Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                      When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                    type: string
-+                                  key:
-+                                    description: |-
-+                                      Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                      If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                    type: string
-+                                  operator:
-+                                    description: |-
-+                                      Operator represents a key's relationship to the value.
-+                                      Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                      Exists is equivalent to wildcard for value, so that a pod can
-+                                      tolerate all taints of a particular category.
-+                                      Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                    type: string
-+                                  tolerationSeconds:
-+                                    description: |-
-+                                      TolerationSeconds represents the period of time the toleration (which must be
-+                                      of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                      it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                      negative values will be treated as 0 (evict immediately) by the system.
-+                                    format: int64
-+                                    type: integer
-+                                  value:
-+                                    description: |-
-+                                      Value is the taint value the toleration matches to.
-+                                      If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                    type: string
-+                                type: object
-+                              type: array
-                             volumes:
-                               description: Volumes is a list of volumes that can be
-                                 mounted by containers in a template.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +98/-0)
-```diff
-@@ -15066,6 +15066,55 @@ spec:
-                                   additionalProperties:
-                                     type: string
-                                   type: object
-+                                nodeSelector:
-+                                  additionalProperties:
-+                                    type: string
-+                                  description: |-
-+                                    NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                    Selector which must match a node's labels for the pod to be scheduled on that node.
-+                                  type: object
-+                                tolerations:
-+                                  description: |-
-+                                    Tolerations is a list of tolerations attached to the pod.
-+                                    Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                                  items:
-+                                    description: |-
-+                                      The pod this Toleration is attached to tolerates any taint that matches
-+                                      the triple <key,value,effect> using the matching operator <operator>.
-+                                    properties:
-+                                      effect:
-+                                        description: |-
-+                                          Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                          When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                        type: string
-+                                      key:
-+                                        description: |-
-+                                          Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                          If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                        type: string
-+                                      operator:
-+                                        description: |-
-+                                          Operator represents a key's relationship to the value.
-+                                          Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                          Exists is equivalent to wildcard for value, so that a pod can
-+                                          tolerate all taints of a particular category.
-+                                          Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                        type: string
-+                                      tolerationSeconds:
-+                                        description: |-
-+                                          TolerationSeconds represents the period of time the toleration (which must be
-+                                          of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                          it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                          negative values will be treated as 0 (evict immediately) by the system.
-+                                        format: int64
-+                                        type: integer
-+                                      value:
-+                                        description: |-
-+                                          Value is the taint value the toleration matches to.
-+                                          If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                        type: string
-+                                    type: object
-+                                  type: array
-                                 volumes:
-                                   description: Volumes is a list of volumes that can
-                                     be mounted by containers in a template.
-@@ -19214,6 +19263,55 @@ spec:
-                     additionalProperties:
-                       type: string
-                     type: object
-+                  nodeSelector:
-+                    additionalProperties:
-+                      type: string
-+                    description: |-
-+                      NodeSelector is a selector which must be true for the pod to fit on a node.
-+                      Selector which must match a node's labels for the pod to be scheduled on that node.
-+                    type: object
-+                  tolerations:
-+                    description: |-
-+                      Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +49/-0)
-```diff
-@@ -8488,6 +8488,55 @@ spec:
-                           additionalProperties:
-                             type: string
-                           type: object
-+                        nodeSelector:
-+                          additionalProperties:
-+                            type: string
-+                          description: |-
-+                            NodeSelector is a selector which must be true for the pod to fit on a node.
-+                            Selector which must match a node's labels for the pod to be scheduled on that node.
-+                          type: object
-+                        tolerations:
-+                          description: |-
-+                            Tolerations is a list of tolerations attached to the pod.
-+                            Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                          items:
-+                            description: |-
-+                              The pod this Toleration is attached to tolerates any taint that matches
-+                              the triple <key,value,effect> using the matching operator <operator>.
-+                            properties:
-+                              effect:
-+                                description: |-
-+                                  Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                  When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                type: string
-+                              key:
-+                                description: |-
-+                                  Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                  If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                type: string
-+                              operator:
-+                                description: |-
-+                                  Operator represents a key's relationship to the value.
-+                                  Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                  Exists is equivalent to wildcard for value, so that a pod can
-+                                  tolerate all taints of a particular category.
-+                                  Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                type: string
-+                              tolerationSeconds:
-+                                description: |-
-+                                  TolerationSeconds represents the period of time the toleration (which must be
-+                                  of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                  it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                  negative values will be treated as 0 (evict immediately) by the system.
-+                                format: int64
-+                                type: integer
-+                              value:
-+                                description: |-
-+                                  Value is the taint value the toleration matches to.
-+                                  If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                type: string
-+                            type: object
-+                          type: array
-                         volumes:
-                           description: Volumes is a list of volumes that can be mounted
-                             by containers in a template.
-```
-
-**File**: `examples/workflow/custom-task.yaml` (modified, +10/-0)
-```diff
-@@ -78,3 +78,13 @@ spec:
-             - -d
-             - k1=v1&k2=v2
-             - https://jsonplaceholder.typicode.com/posts
-+        # Optional: nodeSelector to schedule the pod on specific nodes
-+        # nodeSelector:
-+        #   kubernetes.io/os: linux
-+        #   node-role.kubernetes.io/worker: ""
-+        # Optional: tolerations to allow scheduling on tainted nodes
-+        # tolerations:
-+        #   - key: "key1"
-+        #     operator: "Equal"
-+        #     value: "value1"
-+        #     effect: "NoSchedule"
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +49/-0)
-```diff
-@@ -11920,6 +11920,55 @@ spec:
-                               additionalProperties:
-                                 type: string
-                               type: object
-+                            nodeSelector:
-+                              additionalProperties:
-+                                type: string
-+                              description: |-
-+                                NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                Selector which must match a node's labels for the pod to be scheduled on that node.
-+                              type: object
-+                            tolerations:
-+                              description: |-
-+                                Tolerations is a list of tolerations attached to the pod.
-+                                Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                              items:
-+                                description: |-
-+                                  The pod this Toleration is attached to tolerates any taint that matches
-+                                  the triple <key,value,effect> using the matching operator <operator>.
-+                                properties:
-+                                  effect:
-+                                    description: |-
-+                                      Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                      When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                    type: string
-+                                  key:
-+                                    description: |-
-+                                      Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                      If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                    type: string
-+                                  operator:
-+                                    description: |-
-+                                      Operator represents a key's relationship to the value.
-+                                      Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                      Exists is equivalent to wildcard for value, so that a pod can
-+                                      tolerate all taints of a particular category.
-+                                      Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                    type: string
-+                                  tolerationSeconds:
-+                                    description: |-
-+                                      TolerationSeconds represents the period of time the toleration (which must be
-+                                      of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                      it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                      negative values will be treated as 0 (evict immediately) by the system.
-+                                    format: int64
-+                                    type: integer
-+                                  value:
-+                                    description: |-
-+                                      Value is the taint value the toleration matches to.
-+                                      If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                    type: string
-+                                type: object
-+                              type: array
-                             volumes:
-                               description: Volumes is a list of volumes that can be
-                                 mounted by containers in a template.
+@@ -0,0 +1,85 @@
++// Copyright 2026 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package cgroups
++
++import (
++	"errors"
++	"os"
++	"path/filepath"
++
++	"github.com/containerd/cgroups"
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++)
++
++var _ = Describe("Loading a process's cgroup controllers", func() {
++	var root, procFile string
++	var hierarchy cgroups.Hierarchy
++
++	writeFile := func(path, contents string) {
++		GinkgoHelper()
++		Expect(os.MkdirAll(filepath.Dir(path), 0755)).To(Succeed())
++		Expect(os.WriteFile(path, []byte(contents), 0644)).To(Succeed())
++	}
++
++	expectContents := func(path, contents string) {
++		GinkgoHelper()
++		actual, err := os.ReadFile(path)
++		Expect(err).NotTo(HaveOccurred())
++		Expect(string(actual)).To(Equal(contents))
++	}
++
++	BeforeEach(func() {
++		root = GinkgoT().TempDir()
++		procFile = filepath.Join(root, "proc", "cgroup")
++		writeFile(procFile, "2:cpu:/workload\n3:memory:/workload\n")
++		for _, controller := range []string{"cpu", "memory", "net_prio"} {
++			writeFile(filepath.Join(root, controller, "cgroup.procs"), "root membership\n")
++		}
++		hierarchy = func() ([]cgroups.Subsystem, error) {
++			return []cgroups.Subsystem{
++				cgroups.NewNetPrio(root),
++				cgroups.NewCpu(root),
++				cgroups.NewMemory(root),
++			}, nil
++		}
++	})
++
++	It("adds the process to CPU and memory when net_prio is absent from its membership", func() {
++		for _, controller := range []string{"cpu", "memory"} {
++			writeFile(filepath.Join(root, controller, "workload", "cgroup.procs"), "")
++		}
++
++		group, err := cgroups.Load(hierarchy, pidPathFromFile(procFile))
++		Expect(err).NotTo(HaveOccurred())
++		Expect(group.Add(cgroups.Process{Pid: 4242})).To(Succeed())
++
++		for _, controller := range []string{"cpu", "memory"} {
++			expectContents(filepath.Join(root, controller, "workload", "cgroup.procs"), "4242")
++		}
++		expectContents(filepath.Join(root, "net_prio", "cgroup.procs"), "root membership\n")
++	})
++
++	It("reports a deleted cgroup when no target controller is usable", func() {
++		group, err := cgroups.Load(hierarchy, pidPathFromFile(procFile))
++		Expect(errors.Is(err, cgroups.ErrCgroupDeleted)).To(BeTrue())
++		Expect(group).To(BeNil())
++
++		for _, controller := range []string{"cpu", "memory", "net_prio"} {
++			expectContents(filepath.Join(root, controller, "cgroup.procs"), "root membership\n")
++		}
++	})
++})
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5170** (2026-10-27): chore(deps): upgrade tproxy to v0.5.7 (@g1eny0ung)
+- **PR #5168** (2026-10-27): ci(ghcr): clean up stale untagged images (@g1eny0ung)
+- **PR #5167** (2026-10-26): chore(deps): migrate containerd client to v2.3.7 (@g1eny0ung)
+- **PR #5166** (2026-10-27): build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #5165** (2026-10-26): chore(deps): migrate Docker client to Moby SDK (@g1eny0ung)
 - **PR #5162** (2026-10-23): feat(workflow): support serviceAccountName for task pods (@g1eny0ung)
-- **PR #5160** (2026-10-23): feat: backport workflow task scheduling to release-2.8 (@g1eny0ung)
-- **PR #5157** (2026-10-22): fix(remotecluster): reconcile the Ready condition (@g1eny0ung)
-- **PR #5156** (2026-10-22): chore(helm): upgrade tooling and SDK to Helm 4.3.1 (@g1eny0ung)
-- **PR #5155** (2026-10-22): refactor(go): modernize code for Go 1.27 (@g1eny0ung)
-- **PR #5153** (2026-10-21): chore: ready for v2.8.6 (@g1eny0ung)
 
 ---
 
@@ -1470,28 +1196,39 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workflow): support serviceAccountName for task pods (#5162)
+## X. build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37f49f24`: workflow): support serviceAccountName for task pods (#5162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `550ccc35`: build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /ui in the npm_and_yarn group across 1 directory (#5166). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Support `serviceAccountName` for Workflow Task pods [#5162](https://github.com/chaos-mesh/chaos-mesh/pull/5162)
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+  fast-uri@3.1.9:
+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
+      fast-uri: 3.1.9
+  fast-uri@3.1.9: {}
+      hasown: 2.0.4
+      '@babel/code-frame': 7.29.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  fast-uri@3.1.8:
+    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
+      fast-uri: 3.1.8
+  fast-uri@3.1.8: {}
+      hasown: 2.0.2
+      '@babel/code-frame': 7.29.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37f49f24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `550ccc35` are properly handled with clean fallback behavior.

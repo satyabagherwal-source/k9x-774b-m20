@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T11:56:17.921Z",
-  "total_cycles_completed": 5226,
-  "total_learnings_persisted": 5226,
-  "total_rules_promoted": 4629,
+  "last_updated": "2026-10-27T12:04:32.778Z",
+  "total_cycles_completed": 5230,
+  "total_learnings_persisted": 5230,
+  "total_rules_promoted": 4634,
   "history": [
-    {
-      "timestamp": "2026-10-26T00:18:23.961Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:41.776Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:42.010Z",
-      "repository": "mantinedev/mantine",
-      "learningId": "learn-github-mantinedev-mantine",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:44.114Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T00:32:36.294Z",
       "repository": "biomejs/biome",
@@ -1403,6 +1375,34 @@
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:59:39.949Z",
+      "repository": "reshaped-ui/reshaped",
+      "learningId": "learn-github-reshaped-ui-reshaped",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:59:45.679Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T11:59:51.123Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T12:04:32.778Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
