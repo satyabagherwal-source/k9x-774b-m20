@@ -5374,3 +5374,8 @@
 | `CYCLE-20261027-3WAQ` | `2026-10-27T14:26:34.178Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4846` | Yes (`9a2955f4...`) |
 | `CYCLE-20261027-8010` | `2026-10-27T14:29:45.636Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4847` | Yes (`8c990616...`) |
 | `CYCLE-20261027-8ASQ` | `2026-10-27T14:29:59.594Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4848` | Yes (`e4de1c5a...`) |
+| `CYCLE-20261027-CEFF` | `2026-10-27T14:33:10.923Z` | `TokenRhythm/opensquilla` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4849` | Yes (`d75753c2...`) |
+| `CYCLE-20261027-CGUT` | `2026-10-27T14:33:14.069Z` | `eracle/OpenOutreach` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4850` | Yes (`aa704d86...`) |
+| `CYCLE-20261027-CI6B` | `2026-10-27T14:33:15.779Z` | `lackeyjb/playwright-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4851` | Yes (`9039cdfe...`) |
+| `CYCLE-20261027-CKK8` | `2026-10-27T14:33:18.872Z` | `boardgameio/boardgame.io` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4852` | Yes (`daea718f...`) |
+| `CYCLE-20261027-CQ2T` | `2026-10-27T14:33:26.021Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4853` | Yes (`c52b5ca7...`) |

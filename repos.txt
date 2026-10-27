@@ -4576,3 +4576,11 @@ https://github.com/ooples/token-optimizer-mcp
 https://github.com/subnetmarco/pgmcp
 # [AI-AGENTS] concierge-hq/concierge (553 score) - 🚀 Universal SDK for building next-gen MCP servers
 https://github.com/concierge-hq/concierge
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:33:03.098Z] ---
+# [AI-AGENTS] TokenRhythm/opensquilla (4069 score) - OpenSquilla — Token-Efficient AI Agent with same budget, higher intelligence den
+https://github.com/TokenRhythm/opensquilla
+# [AI-AGENTS] eracle/OpenOutreach (2149 score) - Open-source AI agent for B2B lead generation — describe your product, it finds t
+https://github.com/eracle/OpenOutreach
+# [AI-AGENTS] lackeyjb/playwright-skill (1868 score) - General-purpose Playwright automation for coding agents
+https://github.com/lackeyjb/playwright-skill

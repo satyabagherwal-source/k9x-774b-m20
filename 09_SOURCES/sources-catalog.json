@@ -3503,10 +3503,10 @@
     "repository": "boardgameio/boardgame.io",
     "platform": "github",
     "sourceUrl": "https://github.com/boardgameio/boardgame.io",
-    "sourceVersion": "5e9a2c94",
+    "sourceVersion": "47adef2b",
     "license": "MIT",
-    "contentHash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
-    "lastHarvestedAt": "2026-10-18T23:26:50.937Z",
+    "contentHash": "daea718fdf67409a2fc6186d9662a06f0073d12e2a65efa5b3f37a12d214d59b",
+    "lastHarvestedAt": "2026-10-27T14:33:18.876Z",
     "learningId": "learn-github-boardgameio-boardgame-io"
   },
   "dragonflyoss-dragonfly": {
@@ -6903,10 +6903,10 @@
     "repository": "NirDiamant/RAG_Techniques",
     "platform": "github",
     "sourceUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "sourceVersion": "afab9abc",
+    "sourceVersion": "9e2e9930",
     "license": "NOASSERTION",
-    "contentHash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
-    "lastHarvestedAt": "2026-10-25T09:53:59.388Z",
+    "contentHash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
+    "lastHarvestedAt": "2026-10-27T14:33:26.025Z",
     "learningId": "learn-github-nirdiamant-rag_techniques"
   },
   "medialab-xan": {
@@ -11128,5 +11128,35 @@
     "contentHash": "b4140bcc4d54484c9325e02d3fabeae090017a088aa3c1382165d053ef0a957e",
     "lastHarvestedAt": "2026-10-27T14:23:11.830Z",
     "learningId": "learn-github-ooples-token-optimizer-mcp"
+  },
+  "tokenrhythm-opensquilla": {
+    "repository": "TokenRhythm/opensquilla",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TokenRhythm/opensquilla",
+    "sourceVersion": "5fce6c3a",
+    "license": "Apache-2.0",
+    "contentHash": "d75753c2b8196017d997790e245e2547e625644d9bc10a9fa648b772f35760f8",
+    "lastHarvestedAt": "2026-10-27T14:33:10.927Z",
+    "learningId": "learn-github-tokenrhythm-opensquilla"
+  },
+  "eracle-openoutreach": {
+    "repository": "eracle/OpenOutreach",
+    "platform": "github",
+    "sourceUrl": "https://github.com/eracle/OpenOutreach",
+    "sourceVersion": "05ce1fa2",
+    "license": "GPL-3.0",
+    "contentHash": "aa704d86b6bdbb8021eba66c3a715d2c9d3a37ef6af3dc865d437391239ef43a",
+    "lastHarvestedAt": "2026-10-27T14:33:14.073Z",
+    "learningId": "learn-github-eracle-openoutreach"
+  },
+  "lackeyjb-playwright-skill": {
+    "repository": "lackeyjb/playwright-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lackeyjb/playwright-skill",
+    "sourceVersion": "dd47a6a0",
+    "license": "MIT",
+    "contentHash": "9039cdfe5187c23a936a77e71195e3fba4819e4938da741460f885460b77111b",
+    "lastHarvestedAt": "2026-10-27T14:33:15.782Z",
+    "learningId": "learn-github-lackeyjb-playwright-skill"
   }
 }

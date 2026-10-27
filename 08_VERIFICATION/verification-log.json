@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-ZLRX",
-    "timestamp": "2026-10-25T15:15:52.701Z",
-    "repository": "Nanbeige/Nanbeige4.3-33B",
-    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-    "contentHash": "545e22d7b2b9da911dd8d50d26dcaac22ee4a19b435a4c09cf6a29929c1ebb61",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZP1I",
-    "timestamp": "2026-10-25T15:15:56.934Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "0e8b9f1d03ecd575010a9ed94d0bf2543cb75276d30a789f2040bfe3870de84c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZUSM",
-    "timestamp": "2026-10-25T15:16:04.390Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "7313231ad861cf0c187e64a55a310a622e0a51233fab7f03a297c23cfb4cb0eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-008L",
-    "timestamp": "2026-10-25T15:16:11.445Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "5587bdb6ecfa1abab4f8c711e479082a50f790ea60e1ee177a2ae967575b1df8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-DR2X",
-    "timestamp": "2026-10-25T15:26:52.761Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "d0edded8b428627f156a711da1a2f3958082f8341b1859c7c076631cc71a1aeb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-SEWB",
     "timestamp": "2026-10-25T15:38:16.811Z",
     "repository": "meshtastic/Meshtastic-Android",
@@ -7490,6 +7415,81 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "e4de1c5a6fe57aa2fec9869f42d5058d883551e4867f7d3f4086561048c48567",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CEFF",
+    "timestamp": "2026-10-27T14:33:10.923Z",
+    "repository": "TokenRhythm/opensquilla",
+    "learningId": "learn-github-tokenrhythm-opensquilla",
+    "contentHash": "d75753c2b8196017d997790e245e2547e625644d9bc10a9fa648b772f35760f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CGUT",
+    "timestamp": "2026-10-27T14:33:14.069Z",
+    "repository": "eracle/OpenOutreach",
+    "learningId": "learn-github-eracle-openoutreach",
+    "contentHash": "aa704d86b6bdbb8021eba66c3a715d2c9d3a37ef6af3dc865d437391239ef43a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CI6B",
+    "timestamp": "2026-10-27T14:33:15.779Z",
+    "repository": "lackeyjb/playwright-skill",
+    "learningId": "learn-github-lackeyjb-playwright-skill",
+    "contentHash": "9039cdfe5187c23a936a77e71195e3fba4819e4938da741460f885460b77111b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CKK8",
+    "timestamp": "2026-10-27T14:33:18.872Z",
+    "repository": "boardgameio/boardgame.io",
+    "learningId": "learn-github-boardgameio-boardgame-io",
+    "contentHash": "daea718fdf67409a2fc6186d9662a06f0073d12e2a65efa5b3f37a12d214d59b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-CQ2T",
+    "timestamp": "2026-10-27T14:33:26.021Z",
+    "repository": "NirDiamant/RAG_Techniques",
+    "learningId": "learn-github-nirdiamant-rag_techniques",
+    "contentHash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

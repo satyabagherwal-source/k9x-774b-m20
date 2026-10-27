@@ -5383,3 +5383,8 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `abcdcf19` | Multi-dimensional audit evidence | 2026-10-27T14:26:34.182Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `79cab5be` | Multi-dimensional audit evidence | 2026-10-27T14:29:45.639Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `ad54fb8b` | Multi-dimensional audit evidence | 2026-10-27T14:29:59.597Z |
+| `learn-github-tokenrhythm-opensquilla` | `https://github.com/TokenRhythm/opensquilla` | `5fce6c3a` | Multi-dimensional audit evidence | 2026-10-27T14:33:10.927Z |
+| `learn-github-eracle-openoutreach` | `https://github.com/eracle/OpenOutreach` | `05ce1fa2` | Multi-dimensional audit evidence | 2026-10-27T14:33:14.073Z |
+| `learn-github-lackeyjb-playwright-skill` | `https://github.com/lackeyjb/playwright-skill` | `dd47a6a0` | Multi-dimensional audit evidence | 2026-10-27T14:33:15.782Z |
+| `learn-github-boardgameio-boardgame-io` | `https://github.com/boardgameio/boardgame.io` | `47adef2b` | Multi-dimensional audit evidence | 2026-10-27T14:33:18.876Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `9e2e9930` | Multi-dimensional audit evidence | 2026-10-27T14:33:26.025Z |

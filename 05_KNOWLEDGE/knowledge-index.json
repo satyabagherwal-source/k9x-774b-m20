@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T14:29:59.546Z",
-  "total_verified_learnings": 1129,
+  "last_updated": "2026-10-27T14:33:25.954Z",
+  "total_verified_learnings": 1132,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4631,14 +4631,19 @@
       "slug": "boardgameio-boardgame.io",
       "platform": "github",
       "source_url": "https://github.com/boardgameio/boardgame.io",
-      "source_version": "5e9a2c94",
-      "content_hash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
+      "source_version": "47adef2b",
+      "content_hash": "daea718fdf67409a2fc6186d9662a06f0073d12e2a65efa5b3f37a12d214d59b",
       "dossier_path": "07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md",
       "promoted_rules": [
         {
           "number": 1847,
           "title": "build(integration): stop test:integration modifying tracked files (#1315)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4852,
+          "title": "server): validate numPlayers when creating a match (#1336)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4647,7 +4652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:26:50.894Z",
+      "verified_at": "2026-10-27T14:33:18.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38596,8 +38601,8 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "afab9abc",
-      "content_hash": "b72052d1d558ea3f5700242085fc2b72dbb025913d58409752bbc6f04744ab35",
+      "source_version": "9e2e9930",
+      "content_hash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
@@ -38615,6 +38620,11 @@
           "number": 4220,
           "title": "Point book links to Amazon instead of the Gumroad landing pages",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4853,
+          "title": "Banner: AI Agents Made Simple reached #1 in three Kindle categories",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38622,7 +38632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T09:53:59.314Z",
+      "verified_at": "2026-10-27T14:33:25.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -134781,6 +134791,175 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T14:29:59.536Z"
+    },
+    "learn-github-tokenrhythm-opensquilla": {
+      "learning_id": "learn-github-tokenrhythm-opensquilla",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TokenRhythm/opensquilla",
+      "repository": "TokenRhythm/opensquilla",
+      "slug": "tokenrhythm-opensquilla",
+      "platform": "github",
+      "source_url": "https://github.com/TokenRhythm/opensquilla",
+      "source_version": "5fce6c3a",
+      "content_hash": "d75753c2b8196017d997790e245e2547e625644d9bc10a9fa648b772f35760f8",
+      "dossier_path": "07_PROJECT_LEARNING/tokenrhythm-opensquilla-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tokenrhythm-opensquilla-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4849,
+          "title": "sessions): restore saved titles before background indexing (#1967)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:33:10.840Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4849": {
+      "learning_id": "rule-4849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4849,
+      "title": "sessions): restore saved titles before background indexing (#1967)",
+      "source_url": "https://github.com/TokenRhythm/opensquilla",
+      "source_version": "5fce6c3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:33:10.840Z"
+    },
+    "learn-github-eracle-openoutreach": {
+      "learning_id": "learn-github-eracle-openoutreach",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "eracle/OpenOutreach",
+      "repository": "eracle/OpenOutreach",
+      "slug": "eracle-openoutreach",
+      "platform": "github",
+      "source_url": "https://github.com/eracle/OpenOutreach",
+      "source_version": "05ce1fa2",
+      "content_hash": "aa704d86b6bdbb8021eba66c3a715d2c9d3a37ef6af3dc865d437391239ef43a",
+      "dossier_path": "07_PROJECT_LEARNING/eracle-openoutreach-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/eracle-openoutreach-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4850,
+          "title": "Pin openoutfind 0.1.27 and openoutsend 0.1.43: OpenAI providers build with OpenA",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:33:13.984Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4850": {
+      "learning_id": "rule-4850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4850,
+      "title": "Pin openoutfind 0.1.27 and openoutsend 0.1.43: OpenAI providers build with OpenA",
+      "source_url": "https://github.com/eracle/OpenOutreach",
+      "source_version": "05ce1fa2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:33:13.984Z"
+    },
+    "learn-github-lackeyjb-playwright-skill": {
+      "learning_id": "learn-github-lackeyjb-playwright-skill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lackeyjb/playwright-skill",
+      "repository": "lackeyjb/playwright-skill",
+      "slug": "lackeyjb-playwright-skill",
+      "platform": "github",
+      "source_url": "https://github.com/lackeyjb/playwright-skill",
+      "source_version": "dd47a6a0",
+      "content_hash": "9039cdfe5187c23a936a77e71195e3fba4819e4938da741460f885460b77111b",
+      "dossier_path": "07_PROJECT_LEARNING/lackeyjb-playwright-skill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lackeyjb-playwright-skill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4851,
+          "title": "Implement dynamic path resolution for all installation methods (#2)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T14:33:15.676Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4851": {
+      "learning_id": "rule-4851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4851,
+      "title": "Implement dynamic path resolution for all installation methods (#2)",
+      "source_url": "https://github.com/lackeyjb/playwright-skill",
+      "source_version": "dd47a6a0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:33:15.676Z"
+    },
+    "rule-4852": {
+      "learning_id": "rule-4852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4852,
+      "title": "server): validate numPlayers when creating a match (#1336)",
+      "source_url": "https://github.com/boardgameio/boardgame.io",
+      "source_version": "47adef2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:33:18.789Z"
+    },
+    "rule-4853": {
+      "learning_id": "rule-4853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4853,
+      "title": "Banner: AI Agents Made Simple reached #1 in three Kindle categories",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "9e2e9930",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T14:33:25.937Z"
     }
   },
   "aliases": {

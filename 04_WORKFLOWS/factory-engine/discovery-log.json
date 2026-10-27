@@ -19258,5 +19258,50 @@
     "qualityScore": 553,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T14:21:30.975Z"
+  },
+  {
+    "name": "opensquilla",
+    "fullName": "TokenRhythm/opensquilla",
+    "url": "https://github.com/TokenRhythm/opensquilla",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "OpenSquilla — Token-Efficient AI Agent with same budget, higher intelligence density",
+    "stars": 7086,
+    "forks": 586,
+    "openIssues": 284,
+    "language": "Python",
+    "qualityScore": 4069,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:32:48.199Z"
+  },
+  {
+    "name": "OpenOutreach",
+    "fullName": "eracle/OpenOutreach",
+    "url": "https://github.com/eracle/OpenOutreach",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source AI agent for B2B lead generation — describe your product, it finds the people who fit, explains why each one does, and emails them from your mailbox. Self-hosted CLI, one install.",
+    "stars": 3427,
+    "forks": 618,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 2149,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:32:51.156Z"
+  },
+  {
+    "name": "playwright-skill",
+    "fullName": "lackeyjb/playwright-skill",
+    "url": "https://github.com/lackeyjb/playwright-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "General-purpose Playwright automation for coding agents",
+    "stars": 3244,
+    "forks": 254,
+    "openIssues": 10,
+    "language": "JavaScript",
+    "qualityScore": 1868,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T14:32:51.156Z"
   }
 ]

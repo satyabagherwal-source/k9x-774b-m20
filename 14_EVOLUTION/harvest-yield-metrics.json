@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T14:29:59.601Z",
-  "total_cycles_completed": 5351,
-  "total_learnings_persisted": 5351,
-  "total_rules_promoted": 4755,
+  "last_updated": "2026-10-27T14:33:26.030Z",
+  "total_cycles_completed": 5356,
+  "total_learnings_persisted": 5356,
+  "total_rules_promoted": 4760,
   "history": [
-    {
-      "timestamp": "2026-10-26T18:05:21.409Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T18:05:30.100Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T18:05:34.227Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T18:05:35.292Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T18:12:30.848Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T18:12:34.589Z",
       "repository": "trailbaseio/trailbase",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-27T14:29:59.601Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:33:10.932Z",
+      "repository": "TokenRhythm/opensquilla",
+      "learningId": "learn-github-tokenrhythm-opensquilla",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:33:14.078Z",
+      "repository": "eracle/OpenOutreach",
+      "learningId": "learn-github-eracle-openoutreach",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:33:15.787Z",
+      "repository": "lackeyjb/playwright-skill",
+      "learningId": "learn-github-lackeyjb-playwright-skill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:33:18.881Z",
+      "repository": "boardgameio/boardgame.io",
+      "learningId": "learn-github-boardgameio-boardgame-io",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T14:33:26.030Z",
+      "repository": "NirDiamant/RAG_Techniques",
+      "learningId": "learn-github-nirdiamant-rag_techniques",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
