@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "8050b1b0",
+    "sourceVersion": "df14a286",
     "license": "MIT",
-    "contentHash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
-    "lastHarvestedAt": "2026-10-27T12:21:52.899Z",
+    "contentHash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
+    "lastHarvestedAt": "2026-10-27T17:16:56.687Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -4703,10 +4703,10 @@
     "repository": "DylanVann/react-native-fast-image",
     "platform": "github",
     "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "sourceVersion": "2042b419",
+    "sourceVersion": "3eef0244",
     "license": "MIT",
-    "contentHash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
-    "lastHarvestedAt": "2026-10-25T03:31:48.533Z",
+    "contentHash": "49684705479f3e5ba55697b133d5f643faa6493bcc980a50f772bb5c14e6ece0",
+    "lastHarvestedAt": "2026-10-27T17:16:53.306Z",
     "learningId": "learn-github-dylanvann-react-native-fast-image"
   },
   "pulumi-pulumi": {
@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "f4e28705",
+    "sourceVersion": "d3d4a37a",
     "license": "MIT",
-    "contentHash": "3991a4f1aaa254b1089c0d6769c09f7572632300167a518207b2dd7fa14ca897",
-    "lastHarvestedAt": "2026-10-25T15:56:02.175Z",
+    "contentHash": "af9ea2322064f4dc5663c10828d4bdcece9840d015833a2e761ddcfbb10fb44b",
+    "lastHarvestedAt": "2026-10-27T17:16:54.327Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {
@@ -11258,5 +11258,35 @@
     "contentHash": "dbdabc46b20d6e485afbb7bea0f3ff9414554609565da3da3eff413366e43978",
     "lastHarvestedAt": "2026-10-27T16:18:19.708Z",
     "learningId": "learn-github-paperdebugger-paperdebugger"
+  },
+  "mcpjam-inspector": {
+    "repository": "MCPJam/inspector",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MCPJam/inspector",
+    "sourceVersion": "6b50480f",
+    "license": "NOASSERTION",
+    "contentHash": "cc653b1ad46bf238f979ee65720cdcedb7dd7edb70ac360c647ff328e2c19a59",
+    "lastHarvestedAt": "2026-10-27T17:16:42.730Z",
+    "learningId": "learn-github-mcpjam-inspector"
+  },
+  "cjo4m06-mcp-shrimp-task-manager": {
+    "repository": "cjo4m06/mcp-shrimp-task-manager",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cjo4m06/mcp-shrimp-task-manager",
+    "sourceVersion": "8a3be6bc",
+    "license": "MIT",
+    "contentHash": "beef38a5b453e78cc7e5c2fb739c38143ec3e78af97a0506f9874e29dd312b80",
+    "lastHarvestedAt": "2026-10-27T17:16:47.166Z",
+    "learningId": "learn-github-cjo4m06-mcp-shrimp-task-manager"
+  },
+  "chongdashu-unreal-mcp": {
+    "repository": "chongdashu/unreal-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chongdashu/unreal-mcp",
+    "sourceVersion": "4e5f00da",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "2e7b999e76114db71fad2f988fe84c1756d93d1fc49867bac39e6b731a180dd9",
+    "lastHarvestedAt": "2026-10-27T17:16:49.274Z",
+    "learningId": "learn-github-chongdashu-unreal-mcp"
   }
 }

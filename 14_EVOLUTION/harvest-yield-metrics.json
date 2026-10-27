@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T17:10:00.944Z",
-  "total_cycles_completed": 5423,
-  "total_learnings_persisted": 5423,
-  "total_rules_promoted": 4824,
+  "last_updated": "2026-10-27T17:16:56.692Z",
+  "total_cycles_completed": 5429,
+  "total_learnings_persisted": 5429,
+  "total_rules_promoted": 4829,
   "history": [
-    {
-      "timestamp": "2026-10-27T11:56:08.107Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:56:13.075Z",
-      "repository": "fission/fission",
-      "learningId": "learn-github-fission-fission",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:56:17.921Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:59:39.949Z",
-      "repository": "reshaped-ui/reshaped",
-      "learningId": "learn-github-reshaped-ui-reshaped",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:59:45.679Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-27T11:59:51.123Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-27T12:04:32.778Z",
       "repository": "actix/actix-web",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-27T17:10:00.944Z",
       "repository": "cosscom/coss",
       "learningId": "learn-github-cosscom-coss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:42.735Z",
+      "repository": "MCPJam/inspector",
+      "learningId": "learn-github-mcpjam-inspector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:47.171Z",
+      "repository": "cjo4m06/mcp-shrimp-task-manager",
+      "learningId": "learn-github-cjo4m06-mcp-shrimp-task-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:49.279Z",
+      "repository": "chongdashu/unreal-mcp",
+      "learningId": "learn-github-chongdashu-unreal-mcp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:53.311Z",
+      "repository": "DylanVann/react-native-fast-image",
+      "learningId": "learn-github-dylanvann-react-native-fast-image",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:54.331Z",
+      "repository": "octodns/octodns",
+      "learningId": "learn-github-octodns-octodns",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T17:16:56.692Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

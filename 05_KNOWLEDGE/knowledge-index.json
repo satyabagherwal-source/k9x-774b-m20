@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T17:10:00.899Z",
-  "total_verified_learnings": 1142,
+  "last_updated": "2026-10-27T17:16:56.621Z",
+  "total_verified_learnings": 1145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9834,8 +9834,8 @@
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "2042b419",
-      "content_hash": "dcd0699c78d6415735ae4b2756d2edbb86a3adeea2fa946a4d308eda156886f6",
+      "source_version": "3eef0244",
+      "content_hash": "49684705479f3e5ba55697b133d5f643faa6493bcc980a50f772bb5c14e6ece0",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "promoted_rules": [
@@ -9853,6 +9853,11 @@
           "number": 4014,
           "title": "ios): require SDWebImage 5.21.5 or later (#1355)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4919,
+          "title": "android): keep bitmaps for very large views under Android's drawing limit (#1379",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9860,7 +9865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:31:48.468Z",
+      "verified_at": "2026-10-27T17:16:53.229Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36733,8 +36738,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "8050b1b0",
-      "content_hash": "ecaff472851dcfefb6b16964bef91465dbb3603f1089c6d176b80dc1e2f00d5d",
+      "source_version": "df14a286",
+      "content_hash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -36822,6 +36827,11 @@
           "number": 4746,
           "title": "Link the Python scripting feature to the Addons guide (#8448)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4921,
+          "title": "filters like !(~s) being rejected as invalid (#8537)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36829,7 +36839,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:21:52.825Z",
+      "verified_at": "2026-10-27T17:16:56.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39597,8 +39607,8 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "f4e28705",
-      "content_hash": "3991a4f1aaa254b1089c0d6769c09f7572632300167a518207b2dd7fa14ca897",
+      "source_version": "d3d4a37a",
+      "content_hash": "af9ea2322064f4dc5663c10828d4bdcece9840d015833a2e761ddcfbb10fb44b",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
@@ -39616,6 +39626,11 @@
           "number": 4373,
           "title": "Merge pull request #1481 from joshpurvis/docs-spf-pr-tutorial",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4920,
+          "title": "Merge pull request #1482 from octodns/update-requirements",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39623,7 +39638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:56:02.119Z",
+      "verified_at": "2026-10-27T17:16:54.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136437,6 +136452,169 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T17:10:00.891Z"
+    },
+    "learn-github-mcpjam-inspector": {
+      "learning_id": "learn-github-mcpjam-inspector",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MCPJam/inspector",
+      "repository": "MCPJam/inspector",
+      "slug": "mcpjam-inspector",
+      "platform": "github",
+      "source_url": "https://github.com/MCPJam/inspector",
+      "source_version": "6b50480f",
+      "content_hash": "cc653b1ad46bf238f979ee65720cdcedb7dd7edb70ac360c647ff328e2c19a59",
+      "dossier_path": "07_PROJECT_LEARNING/mcpjam-inspector-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mcpjam-inspector-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4917,
+          "title": "oauth): tighten the debugger's automatic code exchange (#6801)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T17:16:42.652Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4917": {
+      "learning_id": "rule-4917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4917,
+      "title": "oauth): tighten the debugger's automatic code exchange (#6801)",
+      "source_url": "https://github.com/MCPJam/inspector",
+      "source_version": "6b50480f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:16:42.652Z"
+    },
+    "learn-github-cjo4m06-mcp-shrimp-task-manager": {
+      "learning_id": "learn-github-cjo4m06-mcp-shrimp-task-manager",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cjo4m06/mcp-shrimp-task-manager",
+      "repository": "cjo4m06/mcp-shrimp-task-manager",
+      "slug": "cjo4m06-mcp-shrimp-task-manager",
+      "platform": "github",
+      "source_url": "https://github.com/cjo4m06/mcp-shrimp-task-manager",
+      "source_version": "8a3be6bc",
+      "content_hash": "beef38a5b453e78cc7e5c2fb739c38143ec3e78af97a0506f9874e29dd312b80",
+      "dossier_path": "07_PROJECT_LEARNING/cjo4m06-mcp-shrimp-task-manager-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cjo4m06-mcp-shrimp-task-manager-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4918,
+          "title": "Handle null/undefined language to prevent raw HTML display",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T17:16:47.082Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4918": {
+      "learning_id": "rule-4918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4918,
+      "title": "Handle null/undefined language to prevent raw HTML display",
+      "source_url": "https://github.com/cjo4m06/mcp-shrimp-task-manager",
+      "source_version": "8a3be6bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:16:47.082Z"
+    },
+    "learn-github-chongdashu-unreal-mcp": {
+      "learning_id": "learn-github-chongdashu-unreal-mcp",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "chongdashu/unreal-mcp",
+      "repository": "chongdashu/unreal-mcp",
+      "slug": "chongdashu-unreal-mcp",
+      "platform": "github",
+      "source_url": "https://github.com/chongdashu/unreal-mcp",
+      "source_version": "4e5f00da",
+      "content_hash": "2e7b999e76114db71fad2f988fe84c1756d93d1fc49867bac39e6b731a180dd9",
+      "dossier_path": "07_PROJECT_LEARNING/chongdashu-unreal-mcp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/chongdashu-unreal-mcp-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T17:16:49.178Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4919": {
+      "learning_id": "rule-4919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4919,
+      "title": "android): keep bitmaps for very large views under Android's drawing limit (#1379",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "3eef0244",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:16:53.229Z"
+    },
+    "rule-4920": {
+      "learning_id": "rule-4920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4920,
+      "title": "Merge pull request #1482 from octodns/update-requirements",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "d3d4a37a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:16:54.249Z"
+    },
+    "rule-4921": {
+      "learning_id": "rule-4921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4921,
+      "title": "filters like !(~s) being rejected as invalid (#8537)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "df14a286",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T17:16:56.602Z"
     }
   },
   "aliases": {

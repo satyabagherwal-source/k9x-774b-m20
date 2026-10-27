@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `8050b1b0`  
+> **Source Version**: `df14a286`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:21:52.442Z  
+> **Timestamp**: 2026-10-27T17:16:56.209Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:21:52.108Z  
+> **Harvest Timestamp**: 2026-10-27T17:16:55.814Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46411 stars
+- **Stars / Engagement**: 46419 stars
 
 ---
 
@@ -1308,13 +1308,13 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8537** (2026-10-27): **Fix filters like !(~s) being rejected as invalid**
+  *Symptoms*: #### Description  Filters that take no argument (`~s`, `~q`, `~a`, `~websocket` etc.) couldn't be followed directly by a closing bracket. So `(~s)`, `!(~s)` or `~c 200 & !(~q)` all failed with "Invalid filter expression", and you had to write `!(~s )` with a space to make it work. The web UI filter grammar already accepts these.  The `WordEnd` after the filter name treats `)` as a word character. This uses a `WordEnd` that doesn't, so `~s)` ends the filter name but `~sx` is still rejected.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
+
 - **Issue #8532** (2026-10-25): **update dependencies**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
   > Glad to see a few updates, pyproject.toml `12.3.1` ranges currently block:  Package | Installed | Released | Allowed range | Latest stable | Released -- | -- | -- | -- | -- | -- aioquic | 1.2.0 | 2024-07-07 | only 1.2.0 | 1.7.0 | 2026-10-16 asgiref | 3.12.1 | 2026-07-14 | ≥3.2.10, ≤3.12.1 | 3.13.0 | 2026-10-23 tornado | 6.5.10 | 2026-09-15 | ≥6.5.0, ≤6.5.10 | 6.6 | 2026-10-21 urwid | 4.0.13 | 2026-08-25 | ≥2.6.14, ≤4.0.13 | 4.2.5 | 2026-10-05 pylsqpack | 0.3.24 | 2026-03-29 | ≥0.3.3, <0.4.0 via aioquic 1.2.0 | 1.0.0 | 2026-10-11
-
-- **Issue #8530** (2026-10-25): **Update cryptography**
-  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1331,33 +1331,73 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8050b1b0` (2026-10-27)
-**Commit Message**: Link the Python scripting feature to the Addons guide (#8448)
+### Incident Patch 1: `df14a286` (2026-10-27)
+**Commit Message**: Fix filters like !(~s) being rejected as invalid (#8537)
 
-* docs: link scripting feature to Addons guide
+* Fix filters like !(~s) being rejected as invalid
 
-* docs: preserve existing bold filenames
+* [autofix.ci] apply automated fixes
 
-**File**: `docs/src/content/_index.md` (modified, +1/-1)
+---------
+
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -18,7 +18,7 @@ mitmproxy is a set of tools that provide an interactive, SSL/TLS-capable interce
- - Replay HTTP responses of a previously recorded server
- - Reverse proxy mode to forward traffic to a specified server
- - Transparent proxy mode on macOS and Linux
--- Make scripted changes to HTTP traffic using Python
-+- Make [scripted changes to HTTP traffic using Python]({{< relref "/addons/overview">}})
- - SSL/TLS certificates for interception are generated on the fly
- - And [many, many more features...]({{< relref "/overview/features">}})
+@@ -7,6 +7,9 @@
+ 
+ ## Unreleased: mitmproxy next
+ 
++- Fix filter expressions where a filter without an argument is followed by a closing bracket,
++  e.g. `!(~s)` or `(~q & ~s)`, which were rejected as invalid.
++  ([#8537](https://github.com/mitmproxy/mitmproxy/pull/8537), @qodelicious)
+ 
+ ## 25 October 2026: mitmproxy 12.3.1
  
 ```
 
+**File**: `mitmproxy/flowfilter.py` (modified, +3/-1)
+```diff
+@@ -738,8 +738,10 @@ def _make():
+     # Order is important - multi-char expressions need to come before narrow
+     # ones.
+     parts = []
++    # A closing bracket ends a filter name, so that e.g. "!(~s)" works.
++    word_end = pp.WordEnd(pp.printables.replace(")", ""))
+     for cls in filter_unary:
+-        f = pp.Literal(f"~{cls.code}") + pp.WordEnd()
++        f = pp.Literal(f"~{cls.code}") + word_end
+         f.set_parse_action(cls.make)
+         parts.append(f)
+ 
+```
+
+**File**: `test/mitmproxy/test_flowfilter.py` (modified, +8/-0)
+```diff
+@@ -386,6 +386,14 @@ def test_not(self):
+         assert self.q("!~c 201 !~c 202", s)
+         assert not self.q("!~c 201 !~c 200", s)
+ 
++    def test_unary_before_closing_bracket(self):
++        s = self.resp()
++        assert self.q("(~s)", s)
++        assert not self.q("!(~s)", s)
++        assert self.q("~c 200 & !(~q)", s)
++        assert not self.q("(~h head & ~q)", s)
++        assert self.q("(~h nohead | ~s)", s)
++
+     def test_replay(self):
+         f = tflow.tflow()
+         assert not self.q("~replay", f)
+```
+
 #### Recent Merged Pull Requests:
+- **PR #8537** (2026-10-27): Fix filters like !(~s) being rejected as invalid (@qodelicious)
 - **PR #8532** (2026-10-25): update dependencies (@mhils)
 - **PR #8530** (2026-10-25): Update cryptography (@mhils)
 - **PR #8526** (closed): Bundle Python ABI3T DLL in Windows builds (@Copilot)
 - **PR #8524** (2026-10-25): Add support for Python 3.15 (@mhils)
 - **PR #8521** (2026-10-25): Preserve caller value lists in MultiDict.set_all (@hakarrr)
-- **PR #8520** (2026-10-25): Refresh expiration dates for empty-valued cookies during replay (@hakarrr)
 
 ---
 
@@ -1377,28 +1417,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Link the Python scripting feature to the Addons guide (#8448)
+## X. filters like !(~s) being rejected as invalid (#8537)
 
 **RULE**:
-When implementing operations in `docs/src/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8050b1b0`: Link the Python scripting feature to the Addons guide (#8448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df14a286`: filters like !(~s) being rejected as invalid (#8537). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/_index.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Make [scripted changes to HTTP traffic using Python]({{< relref "/addons/overview">}})
+- Fix filter expressions where a filter without an argument is followed by a closing bracket,
+  e.g. `!(~s)` or `(~q & ~s)`, which were rejected as invalid.
+  ([#8537](https://github.com/mitmproxy/mitmproxy/pull/8537), @qodelicious)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-- Make scripted changes to HTTP traffic using Python
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8050b1b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df14a286` are properly handled with clean fallback behavior.

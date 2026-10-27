@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source**: github ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
-> **Source Version**: `2042b419`  
+> **Source Version**: `3eef0244`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:31:48.162Z  
+> **Timestamp**: 2026-10-27T17:16:52.816Z  
 > **Learning ID**: `learn-github-dylanvann-react-native-fast-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DylanVann/react-native-fast-image](https://github.com/DylanVann/react-native-fast-image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:31:47.954Z  
+> **Harvest Timestamp**: 2026-10-27T17:16:52.341Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Performant React Native image component.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8420 stars
+- **Stars / Engagement**: 8418 stars
 
 ---
 
@@ -536,11 +536,11 @@ const styles = StyleSheet.create({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1385** (2026-10-26): **Android: image swaps to thumbhash during stack screen closing animation**
+  *Symptoms*: **Describe the bug** On Android, image that already loaded swaps back to `thumbhash` the moment screen is being popped  **To Reproduce** 1. Push a screen that renders <FastImage source={{uri, thumbhash}} /> and let the image load. 2. Go back. 3. During the closing animation, the image is replaced by the ThumbHash.  **Expected behavior** The image stays during the transition  **Dependency versions**  - React Native version: 0.86.3 - React version: 19.2.3 - React Native Fast Image version: 10.9.4 - react-native-screens: 4.30.0  **Claude-generated suggestions, please verify the correctness & safety:** Likely cause FastImageViewManager.onDropViewInstance → view.drop() → clearView() → requestManager.clear(this) (FastImageViewWithUrl.java:646, :1980). Clearing the Glide request calls the target's onLoadCleared, which puts the placeholder drawable back. With react-native-screens, React Native drops the view at unmount, while the view is still on screen for the exit animation.  Possible fix On drop, wait until the view leaves the window (onDetachedFromWindow) before clearing the request, or clear without putting the placeholder back. Re-setting the last drawable after clearing is risky, since Glide may already have recycled the bitmap.
+
 - **Issue #1077** (2026-09-24): **can anyone add support for React 19, i don't want to ruin my package.json with peer deps**
   *Symptoms*: **Describe the bug** A clear and concise description of what the bug is.  **To Reproduce** Steps to reproduce the behavior if possible, or a link to a reproduction repo: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error  **Expected behavior** A clear and concise description of what you expected to happen.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Dependency versions**  - React Native version: - React version: - React Native Fast Image version:  **Note:** if these are not the latest versions of each I recommend updating as extra effort will not be taken to be backwards compatible, and updating might resolving your issue. 
-
-- **Issue #1069** (2025-07-21): **Tried to access a JS module before the React instance was fully set up.**
-  *Symptoms*: Hi everyone,  I've been trying to fix this issue but nothing work.  Tried to access a JS module before the React instance was fully set up. Calls to ReactContext#getJSModule should only happen once initialize() has been called on your native module. 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at com.facebook.react.bridge.BridgeReactContext.getJSModule(BridgeReactContext.java:106) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at com.mrousavy.camera.react.CameraDevicesManager.sendAvailableDevicesChangedEvent(CameraDevicesManager.kt:102) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at com.mrousavy.camera.react.CameraDevicesManager<span>1.invokeSuspend(CameraDevicesManager.kt:74) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at java.util.concurrent.ThreadPoolExecutor</span>Worker.run(ThreadPoolExecutor.java:644) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: at java.lang.Thread.run(Thread.java:1012) 07-21 11:53:22.790 19288 19373 E AndroidRuntime: Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@89dd266, java.util.concurrent.T
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -557,1142 +557,1125 @@ const styles = StyleSheet.create({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9191fdfd` (2026-10-22)
-**Commit Message**: fix(ios): require SDWebImage 5.21.5 or later (#1355)
+### Incident Patch 1: `d11bb53f` (2026-10-25)
+**Commit Message**: fix(android): keep bitmaps for very large views under Android's drawing limit (#1379)
 
-SDWebImage 5.21.5 fixes a crash in -[SDWebImageDownloaderOperation start]
-reported from iOS 26 devices: the operation set its data task outside its
-lock, so a cancel at the same time could read it half set. Every download
-goes through that operation, and views cancel theirs whenever their source
-changes.
+Glide fits or crops an image to its view's size in pixels, scaling it up
+when it's smaller, so a very large view got a bitmap its size: a 2400 x 2400
+view on a 2.625x phone is 6300 x 6300 px, 159 MB. Android won't draw a bitmap
+over 100 MB, and the app crashed ("Canvas: trying to draw too large bitmap").
+That's any view over about 26 megapixels: content zoomed out with a
+transform, or a long image shown full width.
 
-Apps with an older SDWebImage in their Podfile.lock update it with
-`cd ios && pod update SDWebImage`.
+Images in a view are now decoded for at most 16 megapixels (4096 x 4096,
+64 MB), keeping the view's shape, and the view scales the bitmap up as it
+draws it. The same goes for placeholder urls, GIFs, and the copy of what the
+view showed that a cross-dissolve fades from. Views under the cap are
+unchanged.
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +151/-0)
 ```diff
-@@ -77,7 +77,7 @@ To set the cache's size when the app starts, see [Native config](#native-config)
+@@ -7737,6 +7737,134 @@ function DownsampleZoomCase() {
+     )
+ }
  
- If your Android app has its own Glide `AppGlideModule`, read [using FastImage with an AppGlideModule](docs/android-build-settings.md#if-your-app-has-its-own-appglidemodule) first, or FastImage may not work.
++// A view much larger than the screen (2400x2400, about 6300 px square on the
++// Android emulator), drawn 20 times smaller with a transform. Glide fits an
++// image to the view's size, so the bitmap would be about 160 MB, which Android
++// won't draw ("Canvas: trying to draw too large bitmap"): the app crashed.
++function LargeViewCase() {
++    const [status, onLoad] = useLoadedThenOk(1)
++    return (
++        <View style={blurStyles.stacked}>
++            <View style={downsampleStyles.largeViewClip}>
++                <FastImage
++                    style={downsampleStyles.largeView}
++                    source={{ uri: imageUrl('quadrants.png?case=large-view') }}
++                    onLoad={onLoad}
++                />
++            </View>
++            <CaseStatus
++                id="large-view"
++                status={status}
++                description={{
++                    checks: "An image in a view far larger than the screen shows (on Android its bitmap was the view's size, about 160 MB, and the app crashed drawing it).",
++                    steps: 'Loads a 20x20 image of four colored squares into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).',
++                    shows: 'A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure.',
++                }}
++            />
++        </View>
++    )
++}
++
++// The same view, cross-dissolving to a new source: the fade drew what the
++// view showed into a bitmap the view's size (about 160 MB), which Android
++// won't draw either.
++function LargeViewFadeCase() {
++    const [second, setSecond] = useState(false)
++    const [status, onLoad] = useLoadedThenOk(2)
++    return (
++        <View style={blurStyles.stacked}>
++            <View style={downsampleStyles.largeViewClip}>
++                <FastImage
++                    style={downsampleStyles.largeView}
++                    source={{
++                        uri: imageUrl(
++                            second
++                                ? 'quadrants.png?case=large-view-fade-2'
++                                : 'quadrants.png?case=large-view-fade',
++                        ),
++                    }}
++                    transition={{ duration: 300, betweenImages: true }}
++                    onLoad={() => {
++                        onLoad()
++                        setSecond(true)
++                    }}
++                />
++            </View>
++            <CaseStatus
++                id="large-view-fade"
++                status={status}
++                description={{
++                    checks: "transition's betweenImages in a view far larger than the screen (on Android the fade copied what the view showed into a bitmap the view's size, about 160 MB, and the app crashed drawing it).",
++                    steps: 'The large-view case, with transition { duration: 300, betweenImages: true }: once the image loads, its source changes to the same image at another url, which cross-dissolves from it. Passes once both have loaded (and a moment more).',
++                    shows: 'A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure.',
++                }}
++            />
++        </View>
++    )
++}
++
++// The same view with a GIF: the view's own copy of its animation (see
++// FastImageGif) cropped each frame to the view's size, about 160 MB.
++function LargeViewGifCase() {
++    const [status, onLoad] = useLoadedThenOk(1)
++    return (
++        <View style={blurStyles.stacked}>
++            <View style={downsampleStyles.largeViewClip}>
++                <FastImage
++                    style={downsampleStyles.largeView}
++                    source={{
++                        uri: imageUrl('loop-once.gif?case=large-view-gif'),
++                    }}
++                    onLoad={onLoad}
++                />
++            </View>
++            <CaseStatus
++                id="large-view-gif"
++                status={status}
++                description={{
++                    checks: "A GIF in a view far larger than the screen shows (on Android each frame was cropped to the view's size, about 160 MB, and the app crashed drawing it).",
++                    steps: 'Loads an 80x80 GIF that plays once, magenta then cyan, into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).',
++                    shows: 'A 120x120 cyan square. The app closing is a failure.',
++                }}
++            />
++        </View>
++    )
++}
++
++// The same view with a placeholder url, shown while the image comes from the
++// slow server: the placeholder was loaded at the view's size, about 160 MB.
++function LargeViewPlaceholderCase() {
++    const [status, onLoad] = useLoadedThenOk(1)
++    return (
++        <View style={blurStyles.stacked}>
++           
+```
+
+**File**: `android/src/main/java/com/fastimage/FastImageSourceSize.java` (modified, +20/-2)
+```diff
+@@ -185,11 +185,29 @@ private static DownsampleStrategy strategy(@Nullable ImageView.ScaleType scaleTy
  
--If `pod install` can't find a compatible SDWebImage (FastImage needs 5.21.4 or later), update it with `cd ios && pod update SDWebImage`.
-+If `pod install` can't find a compatible SDWebImage (FastImage needs 5.21.5 or later), update it with `cd ios && pod update SDWebImage`.
+     static final float MAX_PIXELS = 4096f * 4096f;
  
- ## Usage
++    // The scale that brings this many pixels down to at most MAX_PIXELS, or 1.
++    static float capScale(float pixels) {
++        return pixels > MAX_PIXELS ? (float) Math.sqrt(MAX_PIXELS / pixels) : 1;
++    }
++
++    // The box (in pixels) Glide decodes an image for in a view: the view's
++    // size, or that scaled down to at most MAX_PIXELS pixels, keeping its
++    // shape. Glide crops or fits an image to the box, scaling it up if it's
++    // smaller, so a very large view (e.g. a long image shown full width) would
++    // get a bitmap its size, which Android won't draw over 100 MB ("Canvas:
++    // trying to draw too large bitmap"). The view scales it up as it draws it.
++    static int[] box(int width, int height) {
++        float scale = capScale((float) width * height);
++        if (width <= 0 || height <= 0 || scale == 1) return new int[]{width, height};
++        return new int[]{
++                Math.max(1, (int) Math.floor(width * scale)),
++                Math.max(1, (int) Math.floor(height * scale))};
++    }
++
+     private static final class FullSize extends DownsampleStrategy {
+         @Override
+         public float getScaleFactor(int sourceWidth, int sourceHeight, int requestedWidth, int requestedHeight) {
+-            float pixels = (float) sourceWidth * sourceHeight;
+-            return pixels > MAX_PIXELS ? (float) Math.sqrt(MAX_PIXELS / pixels) : 1;
++            return capScale((float) sourceWidth * sourceHeight);
+         }
+ 
+         @Override
+```
+
+**File**: `android/src/main/java/com/fastimage/FastImageSvgRenderer.java` (modified, +2/-4)
+```diff
+@@ -24,8 +24,6 @@ final class FastImageSvgRenderer {
+     // An SVG with neither a size nor a viewBox, as browsers size one.
+     private static final float DEFAULT_WIDTH = 300;
+     private static final float DEFAULT_HEIGHT = 150;
+-    // At most this many pixels (a 4096 x 4096 bitmap), however large the view.
+-    private static final float MAX_PIXELS = 4096f * 4096f;
+ 
+     private FastImageSvgRenderer() {
+     }
+@@ -85,8 +83,8 @@ static Resource<Bitmap> render(byte[] data, int width, int height, Options optio
+             }
+         }
+         if (Float.isNaN(scale) || Float.isInfinite(scale) || scale <= 0) scale = 1f;
+-        float pixels = sourceWidth * scale * sourceHeight * scale;
+-        if (pixels > MAX_PIXELS) scale *= (float) Math.sqrt(MAX_PIXELS / pixels);
++        // At most FastImageSourceSize.MAX_PIXELS, however large the view.
++        scale *= FastImageSourceSize.capScale(sourceWidth * scale * sourceHeight * scale);
+         int bitmapWidth = Math.max(1, Math.round(sourceWidth * scale));
+         int bitmapHeight = Math.max(1, Math.round(sourceHeight * scale));
  
 ```
 
-**File**: `RNFastImage.podspec` (modified, +4/-4)
+**File**: `android/src/main/java/com/fastimage/FastImageViewWithUrl.java` (modified, +56/-9)
 ```diff
-@@ -20,12 +20,12 @@ Pod::Spec.new do |s|
-   # TurboModule (React-Core, Codegen's output for src/specs, ...).
-   install_modules_dependencies(s)
+@@ -467,7 +467,8 @@ private void startUrlPlaceholderLoad() {
+         }
+         FastImageSource imageSource = FastImageViewConverter.getImageSource(getContext(), mPlaceholderSource);
+         if (imageSource == null) return;
+-        CustomTarget<Drawable> target = new CustomTarget<Drawable>(getWidth(), getHeight()) {
++        int[] box = FastImageSourceSize.box(getWidth(), getHeight());
++        CustomTarget<Drawable> target = new CustomTarget<Drawable>(box[0], box[1]) {
+             @Override
+             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                 if (this != mUrlPlaceholderTarget) return;
+@@ -743,8 +744,11 @@ private boolean skips(DataSource dataSource) {
+     // view after the fade, still drawing (and animating) the previous image.
+     @Nullable
+     private ValueAnimator mFade;
++    // At most the size Android draws a bitmap at (see
++    // FastImageSourceSize.box), stretched to the view.
+     @Nullable
+     private Bitmap mFadeFrom;
++    private final Rect mFadeFromBounds = new Rect();
+     // Or, instead of a copy, the placeholder prop the view showed, with the
+     // matrix it drew it with: FastImage's own drawable, which Glide doesn't
+     // recycle, so it's drawn again as it was, rather than copied into a
+@@ -777,8 +781,11 @@ private void startFade(int duration) {
+             fromMatrix = new Matrix(getImageMatrix());
+         } else if (shown != null) {
+             try {
+-                from = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+-                onDraw(new Canvas(from));
++                int[] box = FastImageSourceSize.box(width, height);
++                from = Bitmap.createBitmap(box[0], box[1], Bitmap.Config.ARGB_8888);
++                Canvas canvas = new Canvas(from);
++                canvas.scale((float) box[0] / width, (float) box[1] / height);
++                onDraw(canvas);
+             } catch (OutOfMemoryError | RuntimeException e) {
+                 // Out of memory, or a hardware bitmap (Android 8+; an app's
+                 // Glide module can enable them), which a software canvas
+@@ -902,7 +909,8 @@ private void drawImage(Canvas canvas) {
+             drawFadeFrom(canvas, mFadeFromDrawable, 255 - alpha);
+         } else {
+             mFadeFromPaint.setAlpha(255 - alpha);
+-            canvas.drawBitmap(mFadeFrom, 0, 0, mFadeFromPaint);
++            mFadeFromBounds.set(0, 0, getWidth(), getHeight());
++            canvas.drawBitmap(mFadeFrom, null, mFadeFromBounds, mFadeFromPaint);
+         }
+         mFadeInPaint.setAlpha(alpha);
+         canvas.saveLayer(0, 0, width, height, mFadeInPaint);
+@@ -932,7 +940,8 @@ private boolean drawFadeWithoutLayers(Canvas canvas, int alpha) {
+             drawFadeFrom(canvas, mFadeFromDrawable, 255);
+         } else if (mFadeFrom != null) {
+             mFadeFromPaint.setAlpha(255);
+-            canvas.drawBitmap(mFadeFrom, 0, 0, mFadeFromPaint);
++            mFadeFromBounds.set(0, 0, getWidth(), getHeight());
++            canvas.drawBitmap(mFadeFrom, null, mFadeFromBounds, mFadeFromPaint);
+         }
+         // Without the drawable asking the view to draw again.
+         Drawable.Callback callback = image.getCallback();
+@@ -1038,6 +1047,32 @@ public void setPaused(boolean paused) {
+     @Nullable
+     private Drawable mAnimated;
  
--  # Any 5.x from 5.21.4, so apps can use newer versions (and share them with
-+  # Any 5.x from 5.21.5, so apps can use newer versions (and share them with
-   # other libraries, such as expo-image, which uses ~> 5.21.0 from Expo SDK 53)
-   # without having to update. downsample needs 5.19.7, tinted animated images
--  # and maxDiskAge counting from an image's last use 5.20, and 5.21.4 fixes a
--  # crash on iOS 26 (SDWebImage #3849).
--  s.dependency 'SDWebImage', '>= 5.21.4', '< 6.0'
-+  # and maxDiskAge counting from an image's last use 5.20, and 5.21.4 and 5.21.5
-+  # fix crashes on iOS 26 (SDWebImage #3849 and #3842).
-+  s.dependency 'SDWebImage', '>= 5.21.5', '< 6.0'
-   s.dependency 'SDWebImageWebPCoder', '>= 0.8.4', '< 1.0'
-   # SVG images. From 1.7, as expo-image's, so apps with it share one copy.
-   s.dependency 'SDWebImageSVGCoder', '>= 1.7.0', '< 2.0'
++    // Passes on a size capped by FastImageSourceSize.box. Equal to another
++    // for the same callback, so the target can remove it.
++    private static final class CappedSize implements SizeReadyCallback {
++        private final SizeReadyCallback cb;
++
++        CappedSize(SizeReadyCallback cb) {
++            this.cb = cb;
++        }
++
++        @Override
++        public void onSizeReady(int width, int height) {
++            int[] box = FastImageSourceSize.box(width, height);
++            cb.onSizeReady(box[0], box[1]);
++        }
++
++        @Override
++        public boolean equals(Object o) {
++            return o instanceof CappedSize && ((CappedSize) o).cb.equals(cb);
++        }
++
++        @Override
++        public int hashCode() {
++            return cb.hashCode();
++        }
++    }
++
+     // Shows each GIF as this view's own animation. Glide's target also starts
+     // and stops it with the Activity, as it does Glide's own GifDrawable.
+     private final class OwnGifTarget extends DrawableImageViewTarget {
+@@ -1053,6 +1088,17 @@ private final class OwnGifTarget extends DrawableImageViewTarget {
+             mMeanwhile = meanwhile;
+         }
+ 
++        // The view's size, capped (FastImageSourceSize.box).
++        @Override
++        public void getSize(@NonNull SizeReadyCallback cb) {
++            super.getSize(new CappedSize(cb));
++        }
++
++        @Override
++        public void removeCallback(@NonNull SizeReadyCallback cb) {
++            super.removeCallback(new CappedSize(cb));
++        }
++
+         @Override
+         public void onLoadStarted(@Nullable Drawable placeholder) {
+             Dr
+```
+
+**File**: `docs/comparisons.md` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@ Checked: the fork's `main` at `eabb78f` (2026-02-04; its latest release is 8.13.
+ Potential issues in the dream-horizon-org fork: [issues/dream-horizon-org-fork-issues.md](issues/dream-horizon-org-fork-issues.md)
+ 
+ - **Architectures.** The fork supports both the legacy architecture and the New Architecture in one package, and declares no minimum React Native version. Fast Image needs React Native 0.83+ with the New Architecture, iOS 15.1+ and Android 7.0+; apps on the legacy architecture or older React Native use Fast Image 9.x, which is maintained. _(Both packages' code and docs.)_
+-- **Correctness.** Many issues Fast Image fixed in 8.x–10.0 are still in the fork, among them crashes, a preload's headers sent with every later request on iOS, Android downloads failing when another image of the url mounts, a replaced load reported as `onError` on iOS and reloads with load events on unrelated prop changes. The full list is in the file linked above. _(Code reading; most were reproduced in Fast Image's regression cases while it had the same code, and several are reported in the fork's tracker.)_
++- **Correctness.** Many issues Fast Image fixed in 8.x–10.0 are still in the fork, among them crashes (one with an image in a view much larger than the screen, on Android), a preload's headers sent with every later request on iOS, Android downloads failing when another image of the url mounts, a replaced load reported as `onError` on iOS and reloads with load events on unrelated prop changes. The full list is in the file linked above. _(Code reading; most were reproduced in Fast Image's regression cases while it had the same code, and several are reported in the fork's tracker.)_
+ - **Network and memory.** On iOS with the New Architecture the fork loads sources without `cache` as `cache: 'web'`, so cached images are requested again, and it decodes iOS images at full size where Fast Image decodes them at the view's size ([`downsample`](../README.md#downsample)). On Android it downloads an image once per size and has no download timeouts, where Fast Image shares one download per image, queues downloads by `priority` and fails stalled ones. _(Code reading; the fork wasn't in Fast Image's [benchmarks](benchmarks.md).)_
+ - **Features only Fast Image has.** `objectFit` and `objectPosition`, per-view `loop` and `paused`, keeping the previous image while a new source loads (`recyclingKey`), several sources picked for the view's size, `source.cacheKey`, `memoryCache` and `diskCache`, `getCachePath`, `writeToCache`, `configureCache`, `setDefaults`, preload results per source, a 0–1 `progress`, `FastImageBackground`, photo library (`ph://`) images, a web version for react-native-web, and an Expo config plugin. The fork's API is Fast Image 8's plus `blurRadius` and `transition="fade"`, which Fast Image also has. _(Both packages' code and docs.)_
+ - **AVIF on older OS versions, where the fork does more.** It bundles libavif (with dav1d on iOS) and Glide's AVIF integration, so AVIF decodes on every OS version it supports, while Fast Image uses the system decoders (iOS 16+, and Android devices with an AVIF decoder, required from Android 14). The cost is app size and native libraries to keep updated (the fork's tracker has an open report about its libdav1d version). _(Build files and docs.)_
+```
+
+**File**: `docs/issues/dream-horizon-org-fork-issues.md` (modified, +7/-0)
+```diff
+@@ -97,6 +97,13 @@ Fast Image's maintainers found these while comparing Fast Image with the dream-h
+ - **How to reproduce:** Found by reading the code. Fast Image before the fix below, which loaded the same way, showed the image zoomed in about 5 times in a regression case where the view's height grows after it loads.
+ - **How Fast Image handles it:** when the view's size changes after the image loaded, the same image loads again at the new size, without events, keeping the current image until then ([#1142](https://github.com/DylanVann/react-native-fast-image/pull/1142)).
+ 
++## Android crashes with an image in a very large view
++
++- **What happens:** an image in a view of more than about 26 million pixels (a 2400 × 2400 view on a 2.625× phone, or a long image shown full width) crashes the app with "Canvas: trying to draw too large bitmap".
++- **Where:** `FastImageViewWithUrl.onAfterUpdate()` loads with `into(this)`, so Glide crops or fits the image to the view's size (the `CENTER_CROP` and `FIT_CENTER` scale types from `FastImageViewConverter`), scaling a smaller image up. The bitmap is then the view's size at 4 bytes a pixel, and Android throws when drawing a bitmap over 100 MB.
++- **How to reproduce:** Found by reading the code. Fast Image before the fix below, which loaded the same way, crashed in regression cases with a 20 × 20 image, a GIF and a placeholder url in a 2400 × 2400 view.
++- **How Fast Image handles it:** in a very large view, an image is decoded for the view's size scaled down to at most 16 megapixels (4096 × 4096, 64 MB), keeping its shape, and the view scales it up as it draws it. The same goes for placeholder urls, GIFs and the cross-dissolve's copy of the previous image ([#1379](https://github.com/DylanVann/react-native-fast-image/pull/1379)).
++
+ ## Android views showing the same animated image share one animation
+ 
+ - **What happens:** GIFs, APNGs and animated WebPs are decoded by APNG4Android's Glide plugin, and every view showing the same image at the same size gets the same drawable. When one of those views loads another source, Glide stops the drawable it showed, so the other views' animations stop too.
+```
+
+**File**: `screenshots/main-android/descriptions.json` (modified, +27/-0)
+```diff
+@@ -641,6 +641,33 @@
+             }
+         }
+     },
++    "large-view": {
++        "description": {
++            "checks": "An image in a view far larger than the screen shows: a still image, one cross-dissolving to a new source, a GIF and a placeholder url."
++        },
++        "cases": {
++            "large-view": {
++                "checks": "An image in a view far larger than the screen shows (on Android its bitmap was the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "Loads a 20x20 image of four colored squares into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            },
++            "large-view-fade": {
++                "checks": "transition's betweenImages in a view far larger than the screen (on Android the fade copied what the view showed into a bitmap the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "The large-view case, with transition { duration: 300, betweenImages: true }: once the image loads, its source changes to the same image at another url, which cross-dissolves from it. Passes once both have loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            },
++            "large-view-gif": {
++                "checks": "A GIF in a view far larger than the screen shows (on Android each frame was cropped to the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "Loads an 80x80 GIF that plays once, magenta then cyan, into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
++                "shows": "A 120x120 cyan square. The app closing is a failure."
++            },
++            "large-view-placeholder": {
++                "checks": "A placeholder url in a view far larger than the screen shows while the image loads (on Android it was loaded at the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "The large-view case, with the image from the slow server (about 4 s) and a placeholder url of the logo, which shows meanwhile. Passes once the image has loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            }
++        }
++    },
+     "loading": {
+         "description": {
+             "checks": "Loading: props that don't reload, source changes, onLoadStart and onProgress, cache: 'web' and cookies."
+```
+
+**File**: `screenshots/main-ios/descriptions.json` (modified, +27/-0)
+```diff
+@@ -641,6 +641,33 @@
+             }
+         }
+     },
++    "large-view": {
++        "description": {
++            "checks": "An image in a view far larger than the screen shows: a still image, one cross-dissolving to a new source, a GIF and a placeholder url."
++        },
++        "cases": {
++            "large-view": {
++                "checks": "An image in a view far larger than the screen shows (on Android its bitmap was the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "Loads a 20x20 image of four colored squares into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            },
++            "large-view-fade": {
++                "checks": "transition's betweenImages in a view far larger than the screen (on Android the fade copied what the view showed into a bitmap the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "The large-view case, with transition { duration: 300, betweenImages: true }: once the image loads, its source changes to the same image at another url, which cross-dissolves from it. Passes once both have loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            },
++            "large-view-gif": {
++                "checks": "A GIF in a view far larger than the screen shows (on Android each frame was cropped to the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "Loads an 80x80 GIF that plays once, magenta then cyan, into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loaded (and a moment more).",
++                "shows": "A 120x120 cyan square. The app closing is a failure."
++            },
++            "large-view-placeholder": {
++                "checks": "A placeholder url in a view far larger than the screen shows while the image loads (on Android it was loaded at the view's size, about 160 MB, and the app crashed drawing it).",
++                "steps": "The large-view case, with the image from the slow server (about 4 s) and a placeholder url of the logo, which shows meanwhile. Passes once the image has loaded (and a moment more).",
++                "shows": "A 120x120 square of four colors: red, green, blue and yellow quadrants. The app closing is a failure."
++            }
++        }
++    },
+     "loading": {
+         "description": {
+             "checks": "Loading: props that don't reload, source changes, onLoadStart and onProgress, cache: 'web' and cookies."
+```
+
+---
+
+### Incident Patch 2: `f669c7c0` (2026-10-27)
+**Commit Message**: fix(ios): draw every SVG in the load, at its own size for a full-size load (#1392)
+
+* fix(ios): draw every SVG in the load, at its own size for a full-size load
+
+A full-size load (downsample false, objectFit none, a preload) kept an SVG
+as a vector image, which UIKit draws on the main thread at the view's size
+whenever the view shows it at a new size: zoomed in on with a transform or
+a zoomed ScrollView, it was scaled up from that and soft, which is what
+downsample false is for. It's now drawn in the load at its own size (its
+full size), at the screen's scale, at most 16 megapixels, so it's sharp
+zoomed in on up to its own size, never drawn on the main thread, and a
+tint is a template like any bitmap's. A url placeholder, shown as with
+contain whatever objectFit is, now loads for the view's size also with
+downsample false or objectFit none, so an SVG placeholder fills the view
+sharp rather than being drawn at its own size and scaled up.
+
+* test: svg-tint-placeholder, and the zoom cases' references with the SVG sharp
+
+* fix(ios): draw a full-size load's SVG for the view if that's larger than its own size
+
+downsample false drew an SVG at its own size only, so one shown larger
+than th
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -421,7 +421,7 @@ Downloads, local files (`file://`, `content://`) and bundled images (`require()`
+ Decodes a large image at about the size it's shown at, instead of at full size, so it takes much less memory.
+ 
+ - `true`: an image at least twice the size its view needs is decoded at about the view's size (on Android, any image larger than its view), and an SVG is drawn at the size it's shown at. If the view grows, the image is decoded again for its new size (from the disk cache).
+-- `false`: images are decoded at full size, e.g. for an image that's zoomed in on with a transform (a pinch-to-zoom viewer), which would otherwise show the smaller copy enlarged. **It uses more memory:** a 12-megapixel photo takes about 48 MB decoded, however small it's shown. On Android, an image over 16 megapixels (4096 × 4096, 64 MB) is decoded at the largest size under that, which Android can still draw. On iOS, an image over 64 megapixels (8192 × 8192) is decoded at 16 megapixels, except with `objectFit="none"`, which shows it at its own size.
++- `false`: images are decoded at full size, e.g. for an image that's zoomed in on with a transform (a pinch-to-zoom viewer), which would otherwise show the smaller copy enlarged. **It uses more memory:** a 12-megapixel photo takes about 48 MB decoded, however small it's shown. On Android, an image over 16 megapixels (4096 × 4096, 64 MB) is decoded at the largest size under that, which Android can still draw. On iOS, an image over 64 megapixels (8192 × 8192) is decoded at 16 megapixels, except with `objectFit="none"`, which shows it at its own size. On iOS, an SVG is drawn at its own size, or the view's if that's larger.
+ 
+ It doesn't change `onLoad`'s width and height (the image's own size) or the cached file. Photo library images are always decoded at about the view's size. Android 16 and later decode animated WebP at full size either way, and scale it as they draw it.
+ 
+```
+
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +77/-0)
+```diff
+@@ -3300,6 +3300,81 @@ function ObjectFitSizeCase() {
+     )
+ }
+ 
++// An SVG with downsample={false} in a view larger than its own size, once a
++// smaller view of it has loaded: drawn for the larger view, sharp. A full-size
++// load draws an SVG at its own size, or for the view if that's larger, and the
++// second view gets the first one's drawing from the memory cache, so it's
++// drawn again for it.
++function SvgFullSizeLargerCase() {
++    const [first, setFirst] = useState(false)
++    const [status, onLoad] = useLoadedThenOk(1)
++    const source = {
++        uri: imageUrl(`svg-rings.svg?svg-full-size-larger=${RUN}`),
++    }
++    return (
++        <View style={styles.row}>
++            <FastImage
++                style={{ width: 40, height: 40 }}
++                source={source}
++                downsample={false}
++                onLoad={() => setFirst(true)}
++            />
++            {first && (
++                <FastImage
++                    style={[{ width: 160, height: 160 }, styles.gap]}
++                    source={source}
++                    downsample={false}
++                    onLoad={onLoad}
++                />
++            )}
++            <CaseStatus
++                id="svg-full-size-larger"
++                status={first ? status : 'loading'}
++                description={{
++                    checks: 'An SVG with downsample={false} shown larger than its own size is drawn for the view, sharp, also when a smaller view of it loaded first (whose drawing the memory cache has).',
++                    steps: 'A 40 pt view loads a 20×20 SVG (three thin black rings on white) with downsample={false}; once it has loaded, a 160 pt view of the same url mounts. Passes a moment after that one loads; the screenshot checks the sharpness.',
++                    shows: 'The rings at 40 pt, then at 160 pt, both thin and sharp. Blurry or thick rings in the large one would mean it was scaled up from the small drawing.',
++                }}
++            />
++        </View>
++    )
++}
++
++// A tinted SVG as the placeholder, with objectFit none: a url placeholder is
++// shown as with contain, so it's drawn for the view's size, filling it, not
++// at its own size (24 pt) and scaled up as a full-size load would draw it.
++function SvgTintPlaceholderCase() {
++    const { status, setStatus, after } = usePlaceholderUrlStatus()
++    useEffect(() => () => void releaseThumbhashHold('svg-tint-placeholder'), [])
++    return (
++        <View style={styles.row}>
++            <FastImage
++                style={{ width: 160, height: 160 }}
++                source={{
++                    uri: thumbhashHeld('svg-tint-placeholder'),
++                    headers: SLOW_HEADERS,
++                }}
++                placeholder={imageUrl(
++                    `svg-icon.svg?svg-tint-placeholder=${RUN}`,
++                )}
++                objectFit="none"
++                tintColor="green"
++                onLoadStart={after}
++                onLoad={() => setStatus('onLoad: the download should be held')}
++            />
++            <CaseStatus
++                id="svg-tint-placeholder"
++                status={status}
++                description={{
++                    checks: 'A tinted SVG as the placeholder url, with objectFit none, is drawn for the size it fills, sharp (a url placeholder shows as with contain; drawn at its own size, 24 pt, it would be scaled up).',
++                    steps: 'A 160 pt view with objectFit="none" and tintColor green loads a photo the slow server holds, with placeholder set to the url of a 24×24 SVG icon (a black ring). Passes 1 s after onLoadStart; onLoad fails it.',
++                    shows: 'A green ring filling the 160 pt square, with sharp edges.',
++                }}
++            />
++        </View>
++    )
++}
++
+ // A zoom viewer: a 30-point image shown 4 times larger, with a transform or
+ // a zoomed ScrollView (iOS), as pinch-to-zoom does. downsample={false}
+ // decodes the photo (a 1600x1000 page of text) at full size, so it stays
+@@ -12763,6 +12838,8 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
+                 }}
+             />,
+             <SvgSharpCase key="svg-sharp" />,
++            <SvgTintPlaceholderCase key="svg-tint-placeholder" />,
++            <SvgFullSizeLargerCase key="svg-full-size-larger" />,
+         ],
+     },
+     {
 ```
 
 **File**: `docs/comparisons.md` (modified, +1/-1)
 ```diff
 @@ -39,7 +39,7 @@ Potential issues in Expo Image: [issues/expo-image-issues.md](issues/expo-image-
+ - **blurRadius.** Fast Image's looks the same whatever the file's resolution and platform, and a change sends no load events. Expo Image's depends on the image's resolution on iOS, is capped at 25 on Android, and reloads on Android. _(Code.)_
  - **Events.** Fast Image sends only the events an image has handlers for; Expo Image sends every event for every image, including progress per network chunk on Android. On Android, Expo Image's `onProgress` reaches only the view that started a shared load. _(Code.)_
+ - **`alt`.** Both take it as the label after `accessibilityLabel`, and as the image's alt text on the web. Fast Image also makes an image with `alt` an accessibility element on iOS (an explicit `accessible` wins), so VoiceOver reads it (a label alone isn't read there). Expo Image only uses it as the label. _(Code.)_
+-- **SVG on iOS.** Fast Image draws an SVG into a bitmap for the view's size in the load, off the main thread, so a cached one shows as fast as a PNG. Expo Image shows it as a vector image, which UIKit draws on the main thread (again on every frame of a size change), and with `tintColor` draws it at three times the pixels needed each way ([issues](issues/expo-image-issues.md#ios-svgs-are-drawn-on-the-main-thread-and-a-tinted-one-at-three-times-its-pixels-each-way)), on several threads at once, where Core Graphics can draw some edges wrong ([issues](issues/expo-image-issues.md#ios-tinted-svgs-drawn-at-the-same-time-can-come-out-with-wrong-pixels)); Fast Image draws one SVG at a time. _(Fast Image's measurements of vector images in its views; Expo Image's code.)_
++- **SVG on iOS.** Fast Image draws an SVG into a bitmap in the load, off the main thread (for the view's size, or with `downsample={false}` at its own size if that's larger, to stay sharp zoomed in on), so a cached one shows as fast as a PNG. Expo Image shows it as a vector image, soft when zoomed in on with a transform, which UIKit draws on the main thread (again on every frame of a size change), and with `tintColor` draws it at three times the pixels needed each way ([issues](issues/expo-image-issues.md#ios-svgs-are-drawn-on-the-main-thread-and-a-tinted-one-at-three-times-its-pixels-each-way)), on several threads at once, where Core Graphics can draw some edges wrong ([issues](issues/expo-image-issues.md#ios-tinted-svgs-drawn-at-the-same-time-can-come-out-with-wrong-pixels)); Fast Image draws one SVG at a time. _(Fast Image's measurements of vector images in its views; Expo Image's code.)_
  - **What Expo Image has that Fast Image doesn't.** SF Symbols (`sf:` sources, with symbol effects), `svgVariables` (CSS variables in SVGs), Live Text (`enableLiveTextInteraction`), `decodeFormat` (16-bit bitmaps on Android), `onDisplay`, `lockResourceAsync`/`reloadAsync`, and an `imageLoaded` event for expo-observe. _(Code.)_
  - **What Fast Image has that Expo Image doesn't.** `cache: 'web'` and `'cacheOnly'`, `loop`, `imageRendering` (`'pixelated'` and `'smooth'`), `onLoadEnd` with the load's result, `onError` with the HTTP status, a global default for fades (`setDefaults`), and cache limits in native config. _(Code.)_
--- **Platforms and install.** Fast Image needs React Native 0.83+ with the New Architecture and iOS/tvOS 15.1+ (Fast Image 9 for older setups); Expo Image 58 needs iOS/tvOS 16.4+ and its Expo SDK. Fast Image accepts any SDWebImage 5.x from 5.21.4, where Expo Image pins 5.21.x, and Expo Image adds libavif and libdav1d for AVIF on iOS, where Fast Image uses the system's decoder. Both can be in one app: Fast Image adds its Glide components to Expo Image's Glide setup on Android ([with expo-image](android-build-settings.md#with-expo-image)). _(Code.)_
-+- **Platforms and install.** Fast Image needs React Native 0.83+ with the New Architecture and iOS/tvOS 15.1+ (Fast Image 9 for older setups); Expo Image 58 needs iOS/tvOS 16.4+ and its Expo SDK. Fast Image accepts any SDWebImage 5.x from 5.21.5, where Expo Image pins 5.21.x, and Expo Image adds libavif and libdav1d for AVIF on iOS, where Fast Image uses the system's decoder. Both can be in one app: Fast Image adds its Glide components to Expo Image's Glide setup on Android ([with expo-image](android-build-settings.md#with-expo-image)). _(Code.)_
- - **At parity:** headers, `cacheKey`, `recyclingKey`, several sizes in `source` picked by the view's size, an `ImageBackground` component, `tintColor` on still images, SVG, HEIC, `onProgress` with a 0–1 `progress` and no events while the total is unknown, tvOS, and padding (both ignore it). _(Code.)_
- 
- ## React Native's Image
+ - **Platforms and install.** Fast Image needs React Native 0.83+ with the New Architecture and iOS/tvOS 15.1+ (Fast Image 9 for older setups); Expo Image 58 needs iOS/tvOS 16.4+ and its Expo SDK. Fast Image accepts any SDWebImage 5.x from 5.21.5, where Expo Image pins 5.21.x, and Expo Image adds libavif and libdav1d for AVIF on iOS, where Fast Image uses the system's decoder. Both can be in one app: Fast Image adds its Glide components to Expo Image's Glide setup on Android ([with expo-image](android-build-settings.md#with-expo-image)). _(Code.)_
 ```
 
-**File**: `docs/troubleshooting.md` (modified, +1/-1)
+**File**: `docs/formats.md` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,7 @@ After installing or updating FastImage, or when a build fails for no clear reaso
- - Watchman: `watchman watch-del-all`.
- - Dependencies: delete `node_modules` and install them again.
+@@ -52,7 +52,7 @@ FastImage loads images with [Glide](https://github.com/bumptech/glide), which de
  
--If `pod install` says it can't find compatible versions for `SDWebImage` after updating FastImage (which needs 5.21.4 or later), update it: `cd ios && pod update SDWebImage`. If another pod pins an older SDWebImage, update that pod too.
-+If `pod install` says it can't find compatible versions for `SDWebImage` after updating FastImage (which needs 5.21.5 or later), update it: `cd ios && pod update SDWebImage`. If another pod pins an older SDWebImage, update that pod too.
+ SVG images (remote, bundled with `require()`, or local files) load with SDWebImageSVGCoder on iOS and AndroidSVG on Android, which FastImage includes. On Android, an app with AndroidSVG's other package (`com.caverock:androidsvg`) leaves FastImage's out: see [duplicate AndroidSVG classes](troubleshooting.md#duplicate-androidsvg-classes).
  
- ## Duplicate AndroidSVG classes
+-An SVG is drawn at the size it's shown at, so it's sharp at any size, and then works like any other image: `objectFit`, `tintColor`, `blurRadius`, `transition` and caching. `onLoad` reports the SVG's own size: its `width` and `height`, or its `viewBox`'s (300x150 if it has neither). Animated SVGs (SMIL or CSS animations) show their first state.
++An SVG is drawn at the size it's shown at, so it's sharp at that size (with `downsample={false}`, on iOS at its own size if that's larger, for zooming in on it), and then works like any other image: `objectFit`, `tintColor`, `blurRadius`, `transition` and caching. `onLoad` reports the SVG's own size: its `width` and `height`, or its `viewBox`'s (300x150 if it has neither). Animated SVGs (SMIL or CSS animations) show their first state.
+ 
+ ## Animated PNG (Android)
  
 ```
 
-**File**: `docs/upgrading.md` (modified, +1/-1)
+**File**: `docs/issues/expo-image-issues.md` (modified, +3/-3)
 ```diff
-@@ -6,7 +6,7 @@ FastImage 10 is a native New Architecture component. Apart from the changes belo
+@@ -193,10 +193,10 @@ Fast Image's maintainers found these while comparing Fast Image with Expo Image.
  
- - React Native 0.83 or later, with the New Architecture (the legacy architecture isn't supported).
- - Expo SDK 55 or later.
--- iOS and tvOS 15.1 or later, with SDWebImage 5.21.4 or later. If `pod install` can't find a compatible SDWebImage (your `Podfile.lock` has an older one), update it with `cd ios && pod update SDWebImage`.
-+- iOS and tvOS 15.1 or later, with SDWebImage 5.21.5 or later. If `pod install` can't find a compatible SDWebImage (your `Podfile.lock` has an older one), update it with `cd ios && pod update SDWebImage`.
- - Android 7.0 (API 24) or later. FastImage builds with `compileSdkVersion` and `targetSdkVersion` 36 by default, and uses Glide 5.0.7 (`glideVersion` 4.15 or later works too): see [Android build settings](android-build-settings.md).
+ ## iOS: SVGs are drawn on the main thread, and a tinted one at three times its pixels each way
  
- ## Changes
+-- **What happens:** an SVG without `tintColor` is shown as a vector image, which UIKit draws on the main thread when the view shows it, and again on every frame its size changes. Fast Image measured the same vector images in its own views (iPhone 15 Pro Max, Release): 40 cached 24-point icons took 36 ms of the main thread to mount, against 11 ms as PNGs, and 7 illustrations (200 shapes) 112 ms, against 7 ms; one illustration animating its width blocked the main thread for 5–9 ms on every frame. With `tintColor`, the SVG is drawn into a bitmap in SDWebImage's decode, off the main thread, but at the view's size in pixels taken as points, so at three times the pixels needed each way on a 3× screen (a 24-point icon is 216 × 216 px, nine times the memory).
++- **What happens:** an SVG without `tintColor` is shown as a vector image, which UIKit draws on the main thread when the view shows it, and again on every frame its size changes. UIKit draws it at the view's size, so a view zoomed in on with a transform or a zoomed ScrollView (a pinch-to-zoom viewer) shows it scaled up and soft. Fast Image measured the same vector images in its own views (iPhone 15 Pro Max, Release): 40 cached 24-point icons took 36 ms of the main thread to mount, against 11 ms as PNGs, and 7 illustrations (200 shapes) 112 ms, against 7 ms; one illustration animating its width blocked the main thread for 5–9 ms on every frame. With `tintColor`, the SVG is drawn into a bitmap in SDWebImage's decode, off the main thread, but at the view's size in pixels taken as points, so at three times the pixels needed each way on a 3× screen (a 24-point icon is 216 × 216 px, nine times the memory).
+ - **Where:** `packages/expo-image/ios/ImageView.swift`, `thumbnailPixelSize(for:)` returns the view's size in pixels only for `tintColor`, `enforceEarlyResizing` or photo library assets, and without it `SDImageSVGCoder` decodes a vector image. With it, `SDImageSVGCoder`'s `createBitmapSVGWithData:targetSize:preserveAspectRatio:` (SDWebImageSVGCoder 1.7.0, which expo-image's podspec pins with `~> 1.7.0`) draws the SVG at `targetSize` with `SDGraphicsBeginImageContextWithOptions(targetRect.size, NO, 0)`, and a scale of 0 is the screen's scale.
+-- **How to reproduce:** Found by reading the code, not run; the main-thread times are Fast Image's own measurements of vector images in its views before [#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389). Show a tinted 24-point SVG icon and check the image's `CGImage` size (216 × 216 on a 3× screen); show an SVG whose view animates its size and watch the main thread in Instruments.
+-- **How Fast Image handles it:** an SVG is drawn into a bitmap for the view's size in pixels in the load, off the main thread, tinted or not, and kept in the memory cache at that size; it's drawn again when the view grows by a fifth, as other images are decoded again ([#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389)).
++- **How to reproduce:** Found by reading the code, not run; the main-thread times are Fast Image's own measurements of vector images in its views before [#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389), and the zoomed vector is what Fast Image's `zoom` cases showed before [#1392](https://github.com/DylanVann/react-native-fast-image/pull/1392). Show a tinted 24-point SVG icon and check the image's `CGImage` size (216 × 216 on a 3× screen); show an SVG whose view animates its size and watch the main thread in Instruments.
++- **How Fast Image handles it:** an SVG is drawn into a bitmap for the view's size in pixels in the load, off the main thread, tinted or not, and kept in the memory cache at that size; it's drawn again when the view grows by a fifth, as other images are decoded again ([#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389)); with `downsample={false}` at its own size, or the view's if that's larger, so it's sharp zoomed in on up to its own size ([#1392](https://github.com/DylanVann/react-native-fast-image/pull/1392)).
+ 
+ ## iOS: tinted SVGs drawn at the same time can come out with wrong pixels
+ 
+```
+
+**File**: `ios/FastImage/FFFDownsampledImage.h` (modified, +17/-3)
+```diff
+@@ -20,6 +20,14 @@ FOUNDATION_EXTERN id FFFWithSVGLock(id (^block)(void));
+ // cover or fill) rather than fit in it (contain or scale-down). SDWebImage's
+ // own thumbnail decoding can only fit, so this class works out the size from
+ // the image's header before it decodes, as React Native's Image does.
++// The pixels per point an SVG of this size (in points) is drawn at for scale:
++// at most 16 megapixels.
++FOUNDATION_EXTERN CGFloat FFFDrawnSVGScale(CGSize size, CGFloat scale);
++
++// The scale that fits an image of this size (in points) in a box (in pixels),
++// or covers it, or zero.
++FOUNDATION_EXTERN CGFloat FFFBoxScale(CGSize size, CGSize box, BOOL cover);
++
+ @interface FFFDownsampledImage : SDAnimatedImage
+ 
+ // Sets a load's context to decode the image for a box (in pixels) to cover
+@@ -29,12 +37,14 @@ FOUNDATION_EXTERN id FFFWithSVGLock(id (^block)(void));
+ + (void) addToContext: (SDWebImageMutableContext*)context box: (CGSize)box cover: (BOOL)cover maxScale: (CGFloat)maxScale;
+ 
+ // Sets a load's context to decode the image at full size, through this
+-// class: an image over 64 megapixels at 16 megapixels unless `uncapped`.
+-// Every FastImage load uses it, so loads of the same url
++// class: an image over 64 megapixels at 16 megapixels unless `uncapped`, and
++// an SVG drawn at its own size at `screenScale` (or kept a vector if it's
++// zero, for a load that only checks the file), or for `vectorBox` (in pixels,
++// to cover or fit) if that's larger. Every FastImage load uses it, so loads of the same url
+ // can share a download: SDWebImage's downloader decodes each load of a
+ // download with the first load's image class (and each with its own size),
+ // and SDWebImage's own thumbnail decoding can't cover a box.
+-+ (void) addFullSizeToContext: (SDWebImageMutableContext*)context uncapped: (BOOL)uncapped;
+++ (void) addFullSizeToContext: (SDWebImageMutableContext*)context uncapped: (BOOL)uncapped screenScale: (CGFloat)screenScale vectorBox: (CGSize)vectorBox cover: (BOOL)cover;
+ 
+ // The size of the full image (in points, like UIImage's size) that an image
+ // loaded this way was decoded from, for onLoad, or zero for other images.
+@@ -43,6 +53,10 @@ FOUNDATION_EXTERN id FFFWithSVGLock(id (^block)(void));
+ // Whether an image loaded this way is an SVG drawn into a bitmap for the box.
+ + (BOOL) isDrawnForBox: (UIImage*)image;
+ 
++// Whether an image loaded this way is an SVG a full-size load drew into a
++// bitmap (at its own size, or its vectorBox's).
+++ (BOOL) isDrawnAtFullSize: (UIImage*)image;
++
+ // Whether an image loaded this way is at least the size a full-size load
+ // (not uncapped) decodes it at.
+ + (BOOL) isFullSizeImage: (UIImage*)image;
+```
+
+**File**: `ios/FastImage/FFFDownsampledImage.m` (modified, +81/-26)
+```diff
+@@ -18,6 +18,13 @@
+ // size (objectFit scale-down): the screen's scale, the most pixels per point
+ // an SVG is drawn at (see FFFDrawnSVG).
+ static SDImageCoderOption const FFFDecodeMaxScale = @"FFFDecodeMaxScale";
++// The decode options for a full-size load: the screen's scale, the pixels per
++// point an SVG is drawn at there (its own size), or zero to keep it a vector;
++// and the box (in pixels) to draw it for if that's larger, and whether it
++// covers it.
++static SDImageCoderOption const FFFDecodeScreenScale = @"FFFDecodeScreenScale";
++static SDImageCoderOption const FFFDecodeVectorBox = @"FFFDecodeVectorBox";
++static SDImageCoderOption const FFFDecodeVectorCover = @"FFFDecodeVectorCover";
+ 
+ // The most pixels a full-size load decodes an image of at least twice that
+ // size each way at (each frame, for an animated image): 4096 x 4096, 64 MB
+@@ -103,26 +110,27 @@ id FFFWithSVGLock(id (^block)(void)) {
+     }
+ }
+ 
+-// An SVG (a vector image, its size in points) drawn into a bitmap for a box
+-// (in pixels) to fit in or cover, with at most maxScale pixels per point if
+-// it's not zero, on SDWebImage's decode queue. Shown as a
+-// vector, UIKit draws it on the main thread whenever the view shows it at a
+-// new size (on an iPhone 15 Pro Max, mounting 40 cached 24-point icons took
+-// 36 ms of the main thread against 11 ms as PNGs). It keeps the SVG's size in
+-// points, with the pixels per point the box needs, so objectFit and onLoad
+-// treat it as the SVG, and at most FFFMaxPixels (a thin SVG covering a box).
+-static UIImage* FFFDrawnSVG(UIImage* image, CGSize box, BOOL cover, CGFloat maxScale) {
++// An SVG (a vector image, its size in points) drawn into a bitmap at scale
++// pixels per point, on SDWebImage's decode queue. Shown as a vector, UIKit
++// draws it on the main thread whenever the view shows it at a new size (on an
++// iPhone 15 Pro Max, mounting 40 cached 24-point icons took 36 ms of the main
++// thread against 11 ms as PNGs), at the view's size, so it's soft when the
++// view is zoomed in on with a transform. It keeps the SVG's size in points,
++// so objectFit and onLoad treat it as the SVG, and at most FFFMaxPixels (a
++// thin SVG covering a box, or a large one at its own size).
++CGFloat FFFDrawnSVGScale(CGSize size, CGFloat scale) {
++    if (size.width <= 0 || size.height <= 0 || scale <= 0) {
++        return 0;
++    }
++    return MIN(scale, sqrt(FFFMaxPixels / (size.width * size.height)));
++}
++
++static UIImage* FFFDrawnSVGAtScale(UIImage* image, CGFloat scale) {
+     CGSize size = image.size;
+-    if (size.width <= 0 || size.height <= 0 || box.width <= 0 || box.height <= 0) {
++    scale = FFFDrawnSVGScale(size, scale);
++    if (scale <= 0) {
+         return nil;
+     }
+-    CGFloat widthRatio = box.width / size.width;
+-    CGFloat heightRatio = box.height / size.height;
+-    CGFloat scale = cover ? MAX(widthRatio, heightRatio) : MIN(widthRatio, heightRatio);
+-    if (maxScale > 0) {
+-        scale = MIN(scale, maxScale);
+-    }
+-    scale = MIN(scale, sqrt(FFFMaxPixels / (size.width * size.height)));
+     UIGraphicsImageRendererFormat* format = [UIGraphicsImageRendererFormat preferredFormat];
+     format.scale = scale;
+     format.opaque = NO;
+@@ -137,6 +145,25 @@ id FFFWithSVGLock(id (^block)(void)) {
+     });
+ }
+ 
++CGFloat FFFBoxScale(CGSize size, CGSize box, BOOL cover) {
++    if (size.width <= 0 || size.height <= 0 || box.width <= 0 || box.height <= 0) {
++        return 0;
++    }
++    CGFloat widthRatio = box.width / size.width;
++    CGFloat heightRatio = box.height / size.height;
++    return cover ? MAX(widthRatio, heightRatio) : MIN(widthRatio, heightRatio);
++}
++
++// An SVG drawn for a box (in pixels) to fit in or cover, with at most maxScale
++// pixels per point if it's not zero.
++static UIImage* FFFDrawnSVG(UIImage* image, CGSize box, BOOL cover, CGFloat maxScale) {
++    CGFloat scale = FFFBoxScale(image.size, box, cover);
++    if (maxScale > 0) {
++        scale = MIN(scale, maxScale);
++    }
++    return FFFDrawnSVGAtScale(image, scale);
++}
++
+ // Where the decode puts the full image's size, passed in the load's decode
+ // options. SDWebImage attaches those options to the image it ends up with
+ // (sd_decodeOptions), also when its force decoding replaces the decoded image
+@@ -146,6 +173,8 @@ @interface FFFSourceSize : NSObject
+ // The image is an SVG drawn into a bitmap for the box (see FFFDrawnSVG): it
+ // has no full size to decode at, so it's always smaller than one.
+ @property (atomic, assign) BOOL drawnForBox;
++// The image is an SVG drawn into a bitmap by a full-size load.
++@property (atomic, assign) BOOL drawnAtFullSize;
+ @end
+ 
+ @implementation FFFSourceSize
+@@ -276,11 +305,17 @@ - (void) clearWithCacheType: (SDImageCacheType)cacheType completion: (nullable S
+ 
+ @implementation FFFDownsampledImage
+ 
+-+ (void) addFullSizeToContext: (SDWebImageMutableContext*)context uncapped: (BOOL)uncapped {
+++ (void) addFullSizeToContext: (SDWebImageMutableContext*)context uncapped: (B
+```
+
+**File**: `ios/FastImage/FFFastImageModule.mm` (modified, +6/-2)
+```diff
+@@ -2,6 +2,7 @@
+ #import "RCTConvert+FFFastImage.h"
+ #import "FFFastImageView.h"
+ #import "FFFDownsampledImage.h"
++#import <React/RCTUtils.h>
+ 
+ #import <SDWebImage/SDImageCache.h>
+ #import <SDWebImage/SDImageCoderHelper.h>
+@@ -142,7 +143,7 @@ + (void)initialize
+     context[SDWebImageContextDownloadRequestModifier] = source.requestModifier;
+     context[SDWebImageContextImageLoader] = source.imageLoader;
+     context[SDWebImageContextCacheKeyFilter] = source.cacheKeyFilter;
+-    [FFFDownsampledImage addFullSizeToContext:context uncapped:NO];
++    [FFFDownsampledImage addFullSizeToContext:context uncapped:NO screenScale:RCTScreenScale() vectorBox:CGSizeZero cover:NO];
+     return context;
+ }
+ 
+@@ -311,7 +312,8 @@ - (void)preload:(NSArray *)sourcesJSON
+                 // kept in memory, also when it comes from the disk cache. At
+                 // full size even if it's over 64 megapixels: ImageIO decodes
+                 // a smaller copy at once.
+-                [FFFDownsampledImage addFullSizeToContext:context uncapped:YES];
++                // An SVG isn't drawn either (screen scale zero).
++                [FFFDownsampledImage addFullSizeToContext:context uncapped:YES screenScale:0 vectorBox:CGSizeZero cover:NO];
+                 context[SDWebImageContextImageForceDecodePolicy] = @(SDImageForceDecodePolicyNever);
+                 context[SDWebImageContextStoreCacheType] = @(SDImageCacheTypeDisk);
+             }
+@@ -382,6 +384,8 @@ - (void)getCachePath:(NSDictionary *)sourceJSON
+         // the file is written.
+         SDWebImageOptions options = FFFPreloadOptions(source) | SDWebImageWaitStoreCache;
+         SDWebImageMutableContext *context = FFFPreloadContext(source);
++        // An SVG isn't drawn either (screen scale zero).
++        [FFFDownsampledImage addFullSizeToContext:context uncapped:NO screenScale:0 vectorBox:CGSizeZero cover:NO];
+         context[SDWebImageContextImageForceDecodePolicy] = @(SDImageForceDecodePolicyNever);
+         context[SDWebImageContextQueryCacheType] = @(SDImageCacheTypeDisk);
+         context[SDWebImageContextStoreCacheType] = @(SDImageCacheTypeDisk);
 ```
 
 ---
 
-### Incident Patch 2: `73b1375b` (2026-10-22)
-**Commit Message**: fix(android): report a failed preload once when the network comes back (#1356)
+### Incident Patch 3: `cc190432` (2026-10-27)
+**Commit Message**: fix(ios): draw SVGs for the view's size in the load, off the main thread (#1389)
 
-Glide keeps the request of a failed preload, and with ACCESS_NETWORK_STATE
-(which apps often have through other libraries) starts it again when the
-network comes back. Its second result built preload's results again from
-maps already consumed (a crash on the main thread), could resolve preload
-before its other sources had finished, and freed its slot twice, so more
-than 3 preloads and getCachePath downloads ran at once. The image was also
-downloaded again on every reconnect.
+A downsampled load (the default) kept an SVG as a vector image, which UIKit draws on the main thread whenever the view shows it at a new size, and a tinted one was drawn into a bitmap on the main thread. Now the load draws the SVG into a bitmap for the view's size in pixels on SDWebImage's decode queue, tinted or not, keeping the SVG's size in points (objectFit and onLoad are unchanged). It's kept in the memory cache at that size and drawn again when the view grows by a fifth. With objectFit scale-down it's drawn at no more than the screen's scale, under its own memory cache key, after an app's own SDWebImage transformer. Full-size loads (downsample false, objectFit none) and data uris keep the vector image.
 
-Preload's loads now pass on only their first result, each source is
-reported once, and a load is cleared each time it fails, so Glide doesn't
-start it again. The module's blocking loads (getCachePath's cache lookup,
-writeToCache's store) are cleared once their result is in.
+On an iPhone 15 Pro Max (Release), mounting 40 cached 24-point icons took 36 ms of the main thread (11.6 ms now; 11 ms as PNGs), 7 illustrations 112-120 ms (7 ms now), and an illustration animating its size blocked the main thread on every frame (not at all now).
 
-**File**: `android/src/main/java/com/fastimage/FastImageViewModule.java` (modified, +75/-18)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- import com.bumptech.glide.load.engine.DiskCacheStrategy;
- import com.bumptech.glide.load.engine.GlideException;
- import com.bumptech.glide.load.model.GlideUrl;
-+import com.bumptech.glide.request.FutureTarget;
- import com.bumptech.glide.request.RequestListener;
- import com.bumptech.glide.request.RequestOptions;
- import com.bumptech.glide.request.target.Target;
-@@ -33,6 +34,7 @@
- import java.io.IOException;
- import java.io.InputStream;
- import java.util.ArrayDeque;
-+import java.util.concurrent.ExecutionException;
- import java.util.concurrent.Executor;
- import java.util.concurrent.Executors;
+@@ -420,7 +420,7 @@ Downloads, local files (`file://`, `content://`) and bundled images (`require()`
  
-@@ -156,6 +158,10 @@ public void run() {
-                     final ResultCallback done = new ResultCallback() {
-                         @Override
-                         public void run(WritableMap result) {
-+                            // Once per source: a second result would build
-+                            // the results again from consumed maps, and free
-+                            // the slot twice.
-+                            if (results[index] != null) return;
-                             results[index] = result;
-                             preloadsInFlight--;
-                             finishOne.run();
-@@ -205,19 +211,17 @@ public void run() {
-                                     // (file://, content://, asset:/) work too.
-                                     .load(imageSource.getSourceForLoad())
-                                     .apply(preloadOptions)
--                                    .listener(new RequestListener<Drawable>() {
-+                                    .listener(new FirstResult<Drawable>(context) {
-                                         @Override
--                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-+                                        void failed(@Nullable GlideException e) {
-                                             done.run(failure(FastImageRequestListener.errorMessage(e)));
--                                            return false;
-                                         }
+ Decodes a large image at about the size it's shown at, instead of at full size, so it takes much less memory.
  
-                                         @Override
--                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-+                                        void ready(Drawable resource) {
-                                             // Preloaded at its original size, so this is
-                                             // the image's own size.
-                                             done.run(success(resource.getIntrinsicWidth(), resource.getIntrinsicHeight()));
--                                            return false;
-                                         }
-                                     })
-                                     .preload();
-@@ -261,7 +265,52 @@ private static RequestOptions preloadOptions(Context context, FastImageSource im
-         return source.priority != null ? options : options.priority(Priority.LOW);
-     }
+-- `true`: an image at least twice the size its view needs is decoded at about the view's size (on Android, any image larger than its view). If the view grows, the image is decoded again for its new size (from the disk cache).
++- `true`: an image at least twice the size its view needs is decoded at about the view's size (on Android, any image larger than its view), and an SVG is drawn at the size it's shown at. If the view grows, the image is decoded again for its new size (from the disk cache).
+ - `false`: images are decoded at full size, e.g. for an image that's zoomed in on with a transform (a pinch-to-zoom viewer), which would otherwise show the smaller copy enlarged. **It uses more memory:** a 12-megapixel photo takes about 48 MB decoded, however small it's shown. On Android, an image over 16 megapixels (4096 × 4096, 64 MB) is decoded at the largest size under that, which Android can still draw. On iOS, an image over 64 megapixels (8192 × 8192) is decoded at 16 megapixels, except with `objectFit="none"`, which shows it at its own size.
  
--    private interface FileCallback {
-+    // A preload's listener: it passes on only the load's first result, and
-+    // clears the load each time it fails, so Glide doesn't start it again.
-+    // (Glide keeps a failed request, and with ACCESS_NETWORK_STATE, which apps
-+    // often have through other libraries, starts it again when the network
-+    // comes back.)
-+    private abstract static class FirstResult<T> implements RequestListener<T> {
-+        private final Context context;
-+        private boolean finished;
-+
-+        FirstResult(Context context) {
-+            this.context = context;
-+        }
-+
-+        abstract void failed(@Nullable GlideException e);
-+
-+        abstract void ready(T resource);
-+
-+        @Override
-+        public final boolean onLoadFailed(@Nullable GlideException e, Object model, final Target<T> target, boolean isFirstResource) {
-+            // Every failure, also one after the first result (a load started
-+            // again before the clear ran). Glide doesn't allow clearing a load
-+            // from its own callback. At the front of the queue, so it runs
-+            // before a restart Glide already queued (the network coming back
-+            // as the load failed).
-+            UiThreadUtil.getUiThreadHandler().postAtFrontOfQueue(new Runnable() {
-+                @Override
-+                public void run() {
-+                    Glide.with(context).clear(target);
-+                }
-+            });
-+            if (finished) return false;
-+            finished = true;
-+            failed(e);
-+            return false;
-+        }
-+
-+        @Override
-+        public final boolean onResourceReady(T resource, Object model, Target<T> target, DataSource dataSource, boolean isFirstResource) {
-+            if (finished) return false;
-+            finished = true;
-+          
+ It doesn't change `onLoad`'s width and height (the image's own size) or the cached file. Photo library images are always decoded at about the view's size. Android 16 and later decode animated WebP at full size either way, and scale it as they draw it.
 ```
 
-**File**: `android/src/test/java/com/bumptech/glide/manager/GlideConnectivity.java` (added, +13/-0)
+**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +50/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+package com.bumptech.glide.manager;
-+
-+// Glide's network monitor is a process-wide singleton that Glide.tearDown()
-+// doesn't reset: a test that grants ACCESS_NETWORK_STATE resets it after, so
-+// the next one gets a monitor on its own ConnectivityManager (reset() is
-+// package-private, so this is in Glide's package).
-+public final class GlideConnectivity {
-+    private GlideConnectivity() {}
-+
-+    public static void reset() {
-+        SingletonConnectivityReceiver.reset();
-+    }
-+}
-```
-
-**File**: `android/src/test/java/com/fastimage/FastImageGlideNetworkTest.java` (modified, +52/-4)
-```diff
-@@ -1,13 +1,19 @@
- package com.fastimage;
- 
- import static org.junit.Assert.assertEquals;
-+import static org.junit.Assert.assertFalse;
- import static org.junit.Assert.assertNull;
- 
-+import android.Manifest;
- import android.content.Context;
-+import android.net.ConnectivityManager;
-+import android.net.Network;
- 
- import com.bumptech.glide.Glide;
- import com.bumptech.glide.load.model.GlideUrl;
-+import com.bumptech.glide.manager.GlideConnectivity;
- import com.bumptech.glide.request.FutureTarget;
-+import com.bumptech.glide.request.RequestOptions;
- import com.facebook.react.modules.network.OkHttpClientProvider;
- 
- import org.junit.After;
-@@ -16,17 +22,24 @@
- import org.junit.runner.RunWith;
- import org.robolectric.RobolectricTestRunner;
- import org.robolectric.RuntimeEnvironment;
-+import org.robolectric.shadow.api.Shadow;
-+import org.robolectric.shadows.ShadowApplication;
-+import org.robolectric.shadows.ShadowConnectivityManager;
- import org.robolectric.shadows.ShadowLooper;
- 
- import java.io.File;
- import java.io.IOException;
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.Set;
- 
- import okhttp3.OkHttpClient;
- 
--// Images an app loads with Glide itself (a plain GlideUrl, not FastImage's
--// source), from its own native code or another library, as Glide starts with
--// FastImage's modules: they go through React Native's OkHttp client, as
--// FastImage's images do, so the app's interceptors and cookies apply to them.
-+// Glide's network behavior with FastImage's modules: images an app loads with
-+// Glide itself (a plain GlideUrl, not FastImage's source), from its own native
-+// code or another library, go through React Native's OkHttp client, as
-+// FastImage's images do, so the app's interceptors and cookies apply to them;
-+// and a failed preload isn't started again when the network comes back.
- @RunWith(RobolectricTestRunner.class)
- public class FastImageGlideNetworkTest {
-     private TestServer server;
-@@ -50,6 +63,7 @@ public void setUp() throws IOException {
-     public void tearDown() throws IOException {
-         server.close();
-         Glide.tearDown();
-+        GlideConnectivity.reset();
-         OkHttpClientProvider.setOkHttpClientFactory(null);
-     }
- 
-@@ -88,4 +102,38 @@ public void glideUrlLoadsDontHoldUpFastImagesDownloads() throws Exception {
-         }
-         assertNull("the downloads still hold " + busy, busy);
-     }
-+
-+    // With ACCESS_NETWORK_STATE, which apps often have through other
-+    // libraries, Glide starts the requests it holds that haven't completed,
-+    // failed ones too, again when the network comes back. A preload's
-+    // download that failed isn't: its result has already been reported.
-+    @Test
-+    public void failedPreloadDownloadIsntStartedAgainWhenTheNetworkComesBack() throws Exception {
-+        Context context = RuntimeEnvironment.getApplication();
-+        ((ShadowApplication) Shadow.extract(context)).grantPermissions(Manifest.permission.ACCESS_NETWORK_STATE);
-+        server.route("/missing").status(404);
-+        final List<String> results = new ArrayList<>();
-+        FastImageViewModule.loadFile(context, new FastImageUrl(new GlideUrl(server.url("/missing"))),
-+                new RequestOptions(), false, (file, error) -> results.add(file != null ? "file" : error));
-+        for (long end = System.currentTimeMillis() + 10_000; results.isEmpty() && System.currentTimeMillis() < end; ) {
-+            ShadowLooper.idleMainLooper();
-+            Thread.sleep(20);
-+        }
-+        // The network lost and back, as Glide's connectivity monitor sees it.
-+        ConnectivityManager manager = context.getSystemService(ConnectivityManager.class);
-+        Network network = manager.getActiveNetwork();
-+        Set<ConnectivityManager.NetworkCallback> callbacks = ((ShadowConnectivityManager) Shadow.extract(manager)).getNetworkCallbacks();
-+        assertFalse("Glide watches the network", callbacks.isEmpty());
-+        for (ConnectivityManager.NetworkCallback callback : callbacks) {
-+            callback.onLost(network);
-+            callback.onAvailable(network);
-+        }
-+        // Time for a download started again to be requested and fail.
-+        for (long end = System.currentTimeMillis() + 1_000; System.currentTimeMillis() < end; ) {
-+            ShadowLooper.idleMainLooper();
-+            Thread.sleep(20);
-+        }
-+        assertEquals(1, server.count("/missing"));
-+        assertEquals("one result: " + results, 1, results.size());
-+    }
+@@ -3342,6 +3342,55 @@ function ObjectFitSvgCase() {
+     )
  }
-```
-
-**File**: `docs/comparisons.md` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ Potential issues in Expo Image: [issues/expo-image-issues.md](issues/expo-image-
- - **Backgrounding on iOS.** Fast Image loads an image again if its download was cut off by the app going to the background; with Expo Image it fails with `onError` after 15 s away. _(Code; Fast Image's regression case for the SDWebImage behavior.)_
- - **Caching.** Both keep images until their url or `cacheKey` changes. Fast Image also has `cache: 'web'` (follow the server's HTTP cache headers) and `'cacheOnly'`; Expo Image's `cachePolicy` chooses memory and disk, and by default (`'disk'`) doesn't keep decoded images in memory, so an image shown again is decoded from disk ([caching](how-is-caching-handled.md)). _(Code.)_
- - **Cache functions.** Fast Image's `getCachePath(source)` downloads the image if needed and resolves with its path or why it failed; Expo Image's `getCachePathAsync(cacheKey)` is a lookup that resolves `null` when the file isn't there yet. Fast Image's `configureCache` works on both platforms and its limits can be set in native config; Expo Image's is iOS only, and throws on Android. Both have `writeToCache`, which in Expo Image also takes an `ImageRef` and behaves differently on the two platforms for a key already cached. Clearing the caches on Android needs an Activity in Expo Image. _(Code.)_
--- **Preloading.** Fast Image's `preload` resolves with a result per source (with its size or error), loads 3 at a time at low priority, and can skip decoding (`memoryCache: false`). Expo Image's `prefetch` resolves one boolean for the batch, starts every url at once on Android, and on iOS doesn't try a url again after some failures until the app restarts. _(Code.)_
-+- **Preloading.** Fast Image's `preload` resolves with a result per source (with its size or error), loads 3 at a time at low priority, and can skip decoding (`memoryCache: false`). Expo Image's `prefetch` resolves one boolean for the batch, starts every url at once on Android, downloads a failed url again whenever the network comes back on Android, and on iOS doesn't try a url again after some failures until the app restarts. _(Code.)_
- - **Animated images.** Both animate GIF, animated WebP, APNG and animated AVIF on both platforms. Fast Image has `loop` (a count, or once, or forever) and `paused`; Expo Image has `autoplay` and `startAnimating`/`stopAnimating`, without loop control. A tinted animated image doesn't play tinted on iOS in Expo Image. _(Code.)_
- - **Transitions.** Expo Image has more effects (flips, curls, SF Symbol replace effects on iOS 17+) and timing curves, and no fade by default. Fast Image cross-dissolves only, fades on Android by default (300 ms), skips memory cache hits by default, has a global default (`setDefaults`), and its Android cross-dissolve is exact, where Expo Image's shows the background mid-fade. _(Code.)_
- - **HDR photos.** Both show HDR photos in HDR on iOS 17+, neither on Android. Expo Image's `preferHighDynamicRange` is a boolean for constrained HDR (brighter highlights, held below the display's peak); Fast Image's `dynamicRangeLimit` has CSS's three levels (`'standard'`, `'constrained'`, `'no-limit'`, the last for a full-screen photo viewer), and on the web it's CSS's `dynamic-range-limit`. Expo Image's memory cache can give a view an image decoded the other way (an HDR decode to a standard view, or the reverse), which Fast Image checks for. _(Code; Fast Image's checked on an iPhone.)_
-@@ -86,7 +86,7 @@ Potential issues in the dream-horizon-org fork: [issues/dream-horizon-org-fork-i
- - **Expo.** Fast Image works next to expo-image on Android and has a config plugin; in an app with expo-image, the fork's Glide modules aren't registered (no `onProgress`). _(Code reading.)_
- - **SVG.** Both include it. The fork can leave it out with `DISABLE_SVG=1` (its iOS build then fails, per an open report in its tracker); Fast Image has no such switch. Both bring the `androidsvg-aar` package, which conflicts with AndroidSVG's other package; Fast Image documents the Gradle exclude. _(Code and docs.)_
- - **TypeScript and Jest.** The fork's `ImageStyle` loses layout props with React Native's Strict TypeScript API, and its TypeScript entry point needs `transformIgnorePatterns` in Jest; Fast Image's types build on `ViewStyle`, and it renders in Jest without setup. _(Code reading, and a report in the fork's tracker.)_
--- **At parity.** Caching by url with `immutable`, `web` and `cacheOnly`, `headers`, `priority` (a hint to the loaders in the fork), `tintColor`, `blurRadius`, `defaultSource`, `preload`, `clearMemoryCache` and `clearDiskCache`, tvOS, and SDWebImage 5.21 and Glide underneath. _(Code and docs.)_
-+- **At parity.** Caching by url with `immutable`, `web` and `cacheOnly`, `headers`, `priority` (a hint to the loaders in the fork), `tintColor`, `blurRadius`, `defaultSource`, `clearMemoryCache` and `clearDiskCache`, tvOS, and SDWebImage 5.21 and Glide underneath. (Not `preload`: on Android the fork downloads a fa
-```
-
-**File**: `docs/issues/dream-horizon-org-fork-issues.md` (modified, +7/-0)
-```diff
-@@ -316,6 +316,13 @@ Fast Image's maintainers found these while comparing Fast Image with the dream-h
- - **How to reproduce:** Found by reading the code. Render `<FastImage source={{ uri, cache: 'reload' }} />` on Android. Fast Image before the fix below, which had the same converter, crashed in its `unknown-cache` and `non-string-cache` regression cases.
- - **How Fast Image handles it:** a value it doesn't know, or that isn't a string, loads with the default (`'immutable'`, `'normal'`) on both platforms, and views take React Native's `cache` values, with `'only-if-cached'` read as `'cacheOnly'` ([#1326](https://github.com/DylanVann/react-native-fast-image/pull/1326)).
  
-+## Android: a failed preload is downloaded again when the network comes back
++// An SVG loading with objectFit scale-down, changed to contain before it has
++// loaded: it ends up drawn for contain, as sharp as the contain view next to
++// it. iOS draws an SVG smaller than a scale-down view at no more than its own
++// size, so it's drawn again for contain once it has loaded.
++function ObjectFitSvgChangeCase() {
++    const [contain, setContain] = useState(false)
++    const [status, onLoad] = useLoadedThenOk(2)
++    useEffect(() => {
++        const timer = setTimeout(() => setContain(true), 300)
++        return () => clearTimeout(timer)
++    }, [])
++    return (
++        <View style={objectFitStyles.stacked}>
++            <View style={objectFitStyles.images}>
++                <FastImage
++                    style={objectFitStyles.large}
++                    objectFit={contain ? 'contain' : 'scale-down'}
++                    source={{
++                        uri: slowImageUrl(
++                            'svg-stripes.svg?case=object-fit-svg-change&delay=150',
++                        ),
++                        headers: SLOW_HEADERS,
++                    }}
++                    onLoad={onLoad}
++                />
++                <FastImage
++                    style={[objectFitStyles.large, styles.gap]}
++                    objectFit="contain"
++                    source={{
++                        uri: imageUrl(
++                            'svg-stripes.svg?case=object-fit-svg-change-reference',
++                        ),
++                    }}
++                    onLoad={onLoad}
++                />
++            </View>
++            <CaseStatus
++                id="object-fit-svg-change"
++                status={status}
++                description={{
++                    checks: "An SVG whose objectFit changes from scale-down to contain while it loads is drawn for contain, sharp at the view's size.",
++                    steps: 'An 88-point view loads a 60x60 SVG of black and white stripes, one unit wide, from the slow server (8 parts, 150 ms apart) with scale-down, and changes to contain 300 ms later. An 88-point view next to it shows the same SVG with contain from the start. Passes once both have loaded; the screenshot checks the sharpness.',
++                    shows: 'Black and white stripes filling two squares, both with the same crisp stripes. Soft or gray stripes in the first are a failure.',
++                }}
++            />
++        </View>
++    )
++}
 +
-+- **What happens:** in an app with `ACCESS_NETWORK_STATE` (common through other libraries), an image that `FastImage.preload()` failed to load is requested again each time the network comes back, until Glide drops the request.
-+- **Where:** `preload()` in `android/src/main/java/com/dylanvann/fastimage/FastImageViewModuleImplementation.java` calls Glide's `.preload()` without a listener and never clears a failed load. Glide's `PreloadTarget` clears itself only on success, and its connectivity monitor calls `RequestTracker.restartRequests()` when the network comes back, which starts every request that hasn't completed, failed ones included (Glide internals).
-+- **How to reproduce:** Found by reading the code. Preload a url that fails, turn the network off and on, and count the requests the server gets. Fast Image's unit test `failedPreloadDownloadIsntStartedAgainWhenTheNetworkComesBack` saw the second request before its fix.
-+- **How Fast Image handles it:** a preload's failed load is cleared once its result is in, so Glide doesn't start it again, and each source reports once ([#1356](https://github.com/DylanVann/react-native-fast-image/pull/1356)).
+ // objectFit changed from cover to scale-down and none after load, while the
+ // image for the new fit loads (slowly, from the slow server, with cache
+ // 'web' so it isn't on disk): Android keeps the cover image as it was until
+@@ -10736,6 +10785,7 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
+             <ObjectFitSizeCase key="object-fit-size" />,
+             <ObjectFitBlurCase key="object-fit-blur" />,
+             <ObjectFitSvgCase key="object-fit-svg" />,
++            <ObjectFitSvgChangeCase key="object-fit-svg-change" />,
+             <ObjectFitFromCoverCase key="object-fit-from-cover" />,
+             <ObjectFitStyleCase key="object-fit-style" />,
+             <ObjectFitChangeCase key="object-fit-change" />,
+```
+
+**File**: `docs/comparisons.md` (modified, +2/-1)
+```diff
+@@ -39,11 +39,12 @@ Potential issues in Expo Image: [issues/expo-image-issues.md](issues/expo-image-
+ - **blurRadius.** Fast Image's looks the same whatever the file's resolution and platform, and a change sends no load events. Expo Image's depends on the image's resolution on iOS, is capped at 25 on Android, and reloads on Android. _(Code.)_
+ - **Events.** Fast Image sends only the events an image has handlers for; Expo Image sends every event for every image, including progress per network chunk on Android. On Android, Expo Image's `onProgress` reaches only the view that started a shared load. _(Code.)_
+ - **`alt`.** Both take it as the label after `accessibilityLabel`, and as the image's alt text on the web. Fast Image also makes an image with `alt` an accessibility element on iOS (an explicit `accessible` wins), so VoiceOver reads it (a label alone isn't read there). Expo Image only uses it as the label. _(Code.)_
++- **SVG on iOS.** Fast Image draws an SVG into a bitmap for the view's size in the load, off the main thread, so a cached one shows as fast as a PNG. Expo Image shows it as a vector image, which UIKit draws on the main thread (again on every frame of a size change), and with `tintColor` draws it at three times the pixels needed each way ([issues](issues/expo-image-issues.md#ios-svgs-are-drawn-on-the-main-thread-and-a-tinted-one-at-three-times-its-pixels-each-way)). _(Fast Image's measurements of vector images in its views; Expo Image's code.)_
+ - **What Expo Image has that Fast Image doesn't.** SF Symbols (`sf:` sources, with symbol effects), `svgVariables` (CSS variables in SVGs), Live Text (`enableLiveTextInteraction`), `decodeFormat` (16-bit bitmaps on Android), `onDisplay`, `lockResourceAsync`/`reloadAsync`, and an `imageLoaded` event for expo-observe. _(Code.)_
+ - **What Fast Image has that Expo Image doesn't.** `cache: 'web'` and `'cacheOnly'`, `loop`, `imageRendering` (`'pixelated'` and `'smooth'`), `onLoadEnd` with the load's result, `onError` with the HTTP status, a global default for fades (`setDefaults`), and cache limits in native config. _(Code.)_
+ - **Platforms and install.** Fast Image needs React Native 0.83+ with the New Architecture and iOS/tvOS 15.1+ (Fast Image 9 for older setups); Expo Image 58 needs iOS/tvOS 16.4+ and its Expo SDK. Fast Image accepts any SDWebImage 5.x from 5.21.5, where Expo Image pins 5.21.x, and Expo Image adds libavif and libdav1d for AVIF on iOS, where Fast Image uses the system's decoder. Both can be in one app: Fast Image adds its Glide components to Expo Image's Glide setup on Android ([with expo-image](android-build-settings.md#with-expo-image)). _(Code.)_
+ - **Background component.** Both have one (`FastImageBackground`, `ImageBackground`): a view the image fills, with the children on top. Fast Image gives View props (accessibility, focus, `testID`, layout, touch) to the view, and its own (`source`, `objectFit`, `onLoad`, …) to the image, with `imageProps` for any prop on the image instead. Expo Image's gives every prop but `style` to the image, so an accessibility label or `focusable` on it is the image's, behind the children. _(Code.)_
+-- **At parity:** headers, `cacheKey`, `recyclingKey`, several sizes in `source` picked by the view's size, `tintColor` on still images, SVG, HEIC, `onProgress` with a 0–1 `progress` and no events while the total is unknown, tvOS, and padding (both ignore it). _(Code.)_
++- **At parity:** headers, `cacheKey`, `recyclingKey`, several sizes in `source` picked by the view's size, `tintColor` on still images, HEIC, `onProgress` with a 0–1 `progress` and no events while the total is unknown, tvOS, and padding (both ignore it). _(Code.)_
+ 
+ ## React Native's Image
+ 
+```
+
+**File**: `docs/issues/expo-image-issues.md` (modified, +7/-0)
+```diff
+@@ -191,6 +191,13 @@ Fast Image's maintainers found these while comparing Fast Image with Expo Image.
+ - **How to reproduce:** Found by reading the code (expo repository at `5599fba0d`), not run. Push a screen with an `Image` in a native stack, let it load and go back. Fast Image's regression case `navigation-pop-thumbhash` saw its own image go back to its placeholder there before the fix below.
+ - **How Fast Image handles it:** on Android, a view dropped while it's still attached keeps its image, and its request is cleared once it's detached ([#1386](https://github.com/DylanVann/react-native-fast-image/pull/1386)).
+ 
++## iOS: SVGs are drawn on the main thread, and a tinted one at three times its pixels each way
++
++- **What happens:** an SVG without `tintColor` is shown as a vector image, which UIKit draws on the main thread when the view shows it, and again on every frame its size changes. Fast Image measured the same vector images in its own views (iPhone 15 Pro Max, Release): 40 cached 24-point icons took 36 ms of the main thread to mount, against 11 ms as PNGs, and 7 illustrations (200 shapes) 112 ms, against 7 ms; one illustration animating its width blocked the main thread for 5–9 ms on every frame. With `tintColor`, the SVG is drawn into a bitmap in SDWebImage's decode, off the main thread, but at the view's size in pixels taken as points, so at three times the pixels needed each way on a 3× screen (a 24-point icon is 216 × 216 px, nine times the memory).
++- **Where:** `packages/expo-image/ios/ImageView.swift`, `thumbnailPixelSize(for:)` returns the view's size in pixels only for `tintColor`, `enforceEarlyResizing` or photo library assets, and without it `SDImageSVGCoder` decodes a vector image. With it, `SDImageSVGCoder`'s `createBitmapSVGWithData:targetSize:preserveAspectRatio:` (SDWebImageSVGCoder 1.7.0, which expo-image's podspec pins with `~> 1.7.0`) draws the SVG at `targetSize` with `SDGraphicsBeginImageContextWithOptions(targetRect.size, NO, 0)`, and a scale of 0 is the screen's scale.
++- **How to reproduce:** Found by reading the code, not run; the main-thread times are Fast Image's own measurements of vector images in its views before [#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389). Show a tinted 24-point SVG icon and check the image's `CGImage` size (216 × 216 on a 3× screen); show an SVG whose view animates its size and watch the main thread in Instruments.
++- **How Fast Image handles it:** an SVG is drawn into a bitmap for the view's size in pixels in the load, off the main thread, tinted or not, and kept in the memory cache at that size; it's drawn again when the view grows by a fifth, as other images are decoded again ([#1389](https://github.com/DylanVann/react-native-fast-image/pull/1389)).
 +
  ## Other issues
  
  These were found while comparing the two libraries, but Fast Image has no counterpart for them, so there's no fix to point to.
 ```
 
-**File**: `docs/issues/expo-image-issues.md` (modified, +7/-0)
+**File**: `ios/FastImage/FFFDownsampledImage.h` (modified, +7/-2)
 ```diff
-@@ -30,6 +30,13 @@ Fast Image's maintainers found these while comparing Fast Image with Expo Image.
- - **How to reproduce:** Reproduced in Fast Image's benchmark (expo-image 57.0.5, "Sizes" in [benchmarks.md](../benchmarks.md#android)). For the prefetch: call `Image.prefetch(url)` for a slow url, mount an `Image` of it before the prefetch resolves, and count the requests the server gets (found by reading the code; Fast Image reproduced the same race with Glide before [#1231](https://github.com/DylanVann/react-native-fast-image/pull/1231)).
- - **How Fast Image handles it:** on Android, requests for one url (or `cacheKey`), of any size, from views, preloads or `getCachePath`, share one download, and each decodes its own size from it ([#1271](https://github.com/DylanVann/react-native-fast-image/pull/1271), [#1231](https://github.com/DylanVann/react-native-fast-image/pull/1231)).
+@@ -11,8 +11,10 @@
+ @interface FFFDownsampledImage : SDAnimatedImage
  
-+## Android: a failed prefetch is downloaded again when the network comes back
-+
-+- **What happens:** with `ACCESS_NETWORK_STATE` (which expo-image's own manifest declares), a url that `Image.prefetch` failed to load is requested again each time the network comes back, until Glide drops the request. Its result is no longer used: since expo/expo#49944 the promise ignores it.
-+- **Where:** `prefetch` in `packages/expo-image/android/src/main/java/expo/modules/image/ExpoImageModule.kt` loads each url with `.submit()` and never clears the request. Glide keeps a request until it's cleared, and its connectivity monitor calls `RequestTracker.restartRequests()` when the network comes back, which starts every request that hasn't completed, failed ones included (Glide internals).
-+- **How to reproduce:** Found by reading the code (expo repository at `cae0f09b4`). Prefetch a url that fails while offline, turn the network off and on, and count the requests the server gets. Fast Image's preload had the same restart, and its unit test `failedPreloadDownloadIsntStartedAgainWhenTheNetworkComesBack` saw the second request before the fix.
-+- **How Fast Image handles it:** a preload's failed load is cleared once its result is in, so Glide doesn't start it again, and each source reports once ([#1356](https://github.com/DylanVann/react-native-fast-image/pull/1356)).
-+
- ## Android: priority 'high' doesn't move an image ahead of downloads already waiting
+ // Sets a load's context to decode the image for a box (in pixels) to cover
+-// or fit in.
+-+ (void) addToContext: (SDWebImageMutableContext*)context box: (CGSize)box cover: (BOOL)cover;
++// or fit in. An SVG is drawn into a bitmap for it, with at most maxScale
++// pixels per point if it's not zero (objectFit scale-down shows an image no
++// larger than its own size).
+++ (void) addToContext: (SDWebImageMutableContext*)context box: (CGSize)box cover: (BOOL)cover maxScale: (CGFloat)maxScale;
  
- - **What happens:** an image with `priority="high"` mounted while many others load is requested after them. In Fast Image's benchmark (the grid's 60 photos loading, then the last one opened at the screen's width 100 ms later, with `priority="high"`), Expo Image showed the photo at 764 ms (median; 816 ms at the 90th percentile), downloading it a second time (61 requests); in 5 of 20 runs it showed it within 280–432 ms, in the others within 480–864 ms. Fast Image showed it at 280 ms with 60 requests.
+ // Sets a load's context to decode the image at full size, through this
+ // class: an image over 64 megapixels at 16 megapixels unless `uncapped`.
+@@ -26,6 +28,9 @@
+ // loaded this way was decoded from, for onLoad, or zero for other images.
+ + (CGSize) sourceSizeOfImage: (UIImage*)image;
+ 
++// Whether an image loaded this way is an SVG drawn into a bitmap for the box.
+++ (BOOL) isDrawnForBox: (UIImage*)image;
++
+ // Whether an image loaded this way is at least the size a full-size load
+ // (not uncapped) decodes it at.
+ + (BOOL) isFullSizeImage: (UIImage*)image;
 ```
 
----
-
-### Incident Patch 3: `a3b392ea` (2026-10-22)
-**Commit Message**: fix: parse sources once on Android, and keep the other headers on iOS when one isn't a string (#1359)
-
-Android read each source's values where it used them, without checking
-their types, so `headers: null`, an array, a header value that isn't a
-string, a uri that isn't a string, or a width, height or scale that isn't a
-number threw on the UI thread and crashed the app, in views, url
-placeholders, preload, getCachePath and writeToCache. It now reads each
-source once where it comes in, into a typed FastImageSourceProps, with a
-default for each value that's missing, of another type or unknown, and the
-view compares sources by those values instead of copying each one into a
-HashMap.
-
-iOS dropped every header when one value wasn't a string. It now leaves out
-only that value.
-
-Header values that are numbers, booleans or BigInts are sent as strings, as
-fetch's Headers converts them; null and undefined values are left out, as
-headers that aren't set; objects and functions are left out with a warning
-in development.
-
-**File**: `ReactNativeFastImageExample/src/RegressionExample.tsx` (modified, +82/-0)
+**File**: `ios/FastImage/FFFDownsampledImage.m` (modified, +99/-10)
 ```diff
-@@ -622,6 +622,54 @@ function PreloadHeadersCase() {
-     )
+@@ -7,12 +7,17 @@
+ #import <SDWebImage/SDImageCodersManager.h>
+ #import <SDWebImage/SDImageCache.h>
+ #import <SDWebImage/SDWebImageManager.h>
++#import <SDWebImage/SDImageTransformer.h>
+ 
+ // The decode option that carries the full image's size to the view.
+ static SDImageCoderOption const FFFDecodeSourceSize = @"FFFDecodeSourceSize";
+ // The decode option for a full-size load that decodes an image at its own
+ // size however large it is (objectFit none, which shows it at that size).
+ static SDImageCoderOption const FFFDecodeUncapped = @"FFFDecodeUncapped";
++// The decode option for a view that shows an image no larger than its own
++// size (objectFit scale-down): the screen's scale, the most pixels per point
++// an SVG is drawn at (see FFFDrawnSVG).
++static SDImageCoderOption const FFFDecodeMaxScale = @"FFFDecodeMaxScale";
+ 
+ // The most pixels a full-size load decodes an image of at least twice that
+ // size each way at (each frame, for an animated image): 4096 x 4096, 64 MB
+@@ -63,12 +68,47 @@ static CGSize FFFPixelSize(NSData* data) {
+     return CGSizeMake(width, height);
  }
  
-+// `headers` that isn't an object of strings: null (e.g. a header object
-+// built only when signed in), an array, and values native can't send (null,
-+// an object) next to a string one. The private urls fail without the string
-+// header, so they check it's still sent: iOS dropped every header when one
-+// wasn't a string, and Android crashed on all of these. (Numbers and booleans
-+// are sent as strings, converted in JS: src/index.test.tsx's headers tests.)
-+const INVALID_HEADERS = {
-+    'x-token': 'fast-image',
-+    'x-null': null,
-+    'x-object': {},
-+} as unknown as { [key: string]: string }
-+const HEADERS_PRIVATE = imageUrl(
-+    `private/picsum/1020-120x120.jpg?invalid-headers=${RUN}`,
-+)
-+const HEADERS_PRELOAD_PRIVATE = imageUrl(
-+    `private/picsum/1021-120x120.jpg?invalid-headers-preload=${RUN}`,
-+)
-+function PreloadInvalidHeadersCase() {
-+    const [status, setStatus] = useState('waiting')
-+    useEffect(() => {
-+        FastImage.preload([
-+            { uri: LOGO, headers: null as unknown as {} },
-+            { uri: LOGO, headers: ['x-token'] as unknown as {} },
-+            { uri: HEADERS_PRELOAD_PRIVATE, headers: INVALID_HEADERS },
-+        ])
-+            .then((results) => {
-+                const failed = results.findIndex((result) => !result.ok)
-+                const result = results[failed]
-+                setStatus(
-+                    result && !result.ok
-+                        ? `source ${failed + 1} failed: ${result.error}`
-+                        : 'OK',
-+                )
-+            })
-+            .catch((e) => setStatus(`error: ${e}`))
-+    }, [])
-+    return (
-+        <View style={styles.row}>
-+            <View style={styles.image} />
-+            <CaseStatus
-+                id="headers-invalid-preload"
-+                status={status}
-+                description="preload with headers null, an array, or values that aren't strings loads, and sends the string ones (Android crashed)"
-+            />
-+        </View>
-+    )
++// An SVG (a vector image, its size in points) drawn into a bitmap for a box
++// (in pixels) to fit in or cover, with at most maxScale pixels per point if
++// it's not zero, on SDWebImage's decode queue. Shown as a
++// vector, UIKit draws it on the main thread whenever the view shows it at a
++// new size (on an iPhone 15 Pro Max, mounting 40 cached 24-point icons took
++// 36 ms of the main thread against 11 ms as PNGs). It keeps the SVG's size in
++// points, with the pixels per point the box needs, so objectFit and onLoad
++// treat it as the SVG, and at most FFFMaxPixels (a thin SVG covering a box).
++static UIImage* FFFDrawnSVG(UIImage* image, CGSize box, BOOL cover, CGFloat maxScale) {
++    CGSize size = image.size;
++    if (size.width <= 0 || size.height <= 0 || box.width <= 0 || box.height <= 0) {
++        return nil;
++    }
++    CGFloat widthRatio = box.width / size.width;
++    CGFloat heightRatio = box.height / size.height;
++    CGFloat scale = cover ? MAX(widthRatio, heightRatio) : MIN(widthRatio, heightRatio);
++    if (maxScale > 0) {
++        scale = MIN(scale, maxScale);
++    }
++    scale = MIN(scale, sqrt(FFFMaxPixels / (size.width * size.height)));
++    UIGraphicsImageRendererFormat* format = [UIGraphicsImageRendererFormat preferredFormat];
++    format.scale = scale;
++    format.opaque = NO;
++    // 8 bits per channel, as SVG colors are (not the display's extended range,
++    // which takes twice the memory).
++    format.preferredRange = UIGraphicsImageRendererFormatRangeStandard;
++    UIGraphicsImageRenderer* renderer = [[UIGraphicsImageRenderer alloc] initWithSize: size format: format];
++    return [renderer imageWithActions: ^(UIGraphicsImageRendererContext* context) {
++        [image drawInRect: CGRectMake(0, 0, size.width, size.height)];
++    }];
 +}
 +
- // React Native's RawEventEmitter, which gets each native event before React
- // looks for its handler (it's there for performance monitoring). Not in React
- // Native's types. Its deep import logs a warning in development, which would
-@@ -9060,6 +9108,40 @@ export const REGRESSION_GROUPS: RegressionGroup[] = [
-             <ErrorMessageCase key="error-message" />,
-         ],
-     },
-+    {
-+        name: 'headers-invalid',
-+        cases: [
-+            <EventCase
-+                key="headers-null"
-+                id="headers-null"
-+                description="headers: null loads (Android crashed)"
-+                event="onLoad"
-+                source={{ uri: LOGO, headers: null as unknown as {} }}
-+            />,
-+            <EventCase
-+                key="headers-array"
-+                id="headers-array"
-+                description="headers as an array loads (Android crashed)"
-+                event="onLoad"
-+                source={{ uri: LOGO, headers: ['x-token'] as unknown as {} }}
-+            />,
-+            <EventCase
-+                key="headers-non-string"
-+                id="headers-non-string"
-+                description="header values that aren't strings are left out, and the string ones sent (Android crashed, iOS sent none)"
-+                event="onLoad"
-+                source={{ uri: HEADERS_PRIVATE, headers: INVALID_HEADERS }}
-+            />,
-+            <EventCase
-+                key="uri-non-string"
-+                id="uri-non-string"
-+                description="a uri that isn't a string fires onError"
-+                event="onError"
-+                source={{ uri: 1 as unknown as string }}
-+            />,
-+            <PreloadInvalidHeadersCase key="headers-invalid-preload" />,
-+        ],
-+    },
-     {
-         name: 'no-crash',
-         cases: [
+ // Where the decode puts the full image's size, passed in the load's decode
+ // options. SDWebImage attaches those options to the image it ends up with
+ // (sd_decodeOptions), also when its force decoding replaces the decoded image
+ // with another one, which drops anything kept on the image itself.
+ @interface FFFSourceSize : NSObject
+ @property (atomic, assign) CGSize size;
++// The image is an SVG drawn into a bitmap for the box (see FFFDrawnSVG): it
++// has no full size to decode at, so it's always smaller than one.
++@property (atomic, assign) BOOL drawnForBox;
+ @end
+ 
+ @implementation FFFSourceSize
+@@ -86,6 +126,21 @@ - (NSUInteger) hash {
+ 
+ @end
+ 
++// Gives a load its own memory cache key, which SDWebImage makes from the url,
++// the box and whether it's covered, not the decode options (see
++// FFFDecodeMaxScale). The image is unchanged.
++@interface FFFKeyTransformer : NSObject <SDImageTransformer>
++@property (nonatomic, copy) NSString* transformerKey;
++@end
++
++@implementation FFFKeyTransformer
++
++- (UIImage*) transformedImageWithImage: (UIImage*)image forKey: (NSString*)key {
++    return image;
++}
++
++@end
++
+ // The cache a downsampled load reads the downloaded file from (SDWebImage's
+ // original image cache): the manager's, without its memory, except for an
+ // image decoded at full size, which full-size loads can use (5.21.5 keeps
+@@ -191,24 +246,41 @@ + (void) addFullSizeToContext: (SDWebImageMutableContext*)context uncapped: (BOO
+         : @{FFFDecodeSourceSize: [FFFSourceSize new]};
+ }
+ 
+-+ (void) addToContext: (SDWebImageMutableContext*)context box: (CGSize)box cover: (BOOL)cover {
+++ (void) addToContext: (SDWebImageMutableContext*)context box: (CGSize)box cover: (BOOL)cover maxScale: (CGFloat)maxScale {
+     context[SDWebImageContextAnimatedImageClass] = [FFFDownsampledImage class];
+     // The memory cache key is the source's key with these (SDWebImage's
+     // thumbnail key), so views of other sizes don't get this image. The disk
+     // cache keeps the downloaded file under the source's key, for every size.
+     context[SDWebImageContextImageThumb
 ```
 
-**File**: `android/src/main/java/com/fastimage/FastImageSource.java` (modified, +3/-2)
+**File**: `ios/FastImage/FFFastImageView.m` (modified, +19/-2)
 ```diff
-@@ -173,12 +173,13 @@ boolean isRemote() {
-         return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme);
-     }
+@@ -56,6 +56,8 @@ @interface FFFastImageView ()
+ // whether it covers it; zero for a full-size image.
+ @property(nonatomic, assign) CGSize decodedBox;
+ @property(nonatomic, assign) BOOL decodedCover;
++// The most pixels per point an SVG was drawn at for it (decodeMaxScale).
++@property(nonatomic, assign) CGFloat decodedMaxScale;
+ // Whether it's decoded at full size however large (objectFit none).
+ @property(nonatomic, assign) BOOL decodedUncapped;
+ // Counts loads, so a quiet reload's completion can tell if it's still current.
+@@ -704,6 +706,8 @@ - (void) showImage: (UIImage*)image {
+             if (!image.CGImage) {
+                 // A vector image (an SVG), which UIKit doesn't draw as a
+                 // template: drawn into a bitmap at the size it's shown at.
++                // Only a full-size load's or a data uri's: a downsampled
++                // load draws it in the load (FFFDrawnSVG).
+                 image = [self rasterizedImage: image];
+             }
+             image = [image imageWithRenderingMode: UIImageRenderingModeAlwaysTemplate];
+@@ -1282,6 +1286,15 @@ - (CGSize) decodeBox {
+     return CGSizeMake(ceil(size.width * scale), ceil(size.height * scale));
+ }
  
--    // `cacheKey`: the key to cache the image under instead of its url.
-+    // `cacheKey`: the key to cache the image under instead of its url (null
-+    // without one, or for an empty one: see FastImageSourceProps).
-     @Nullable
-     private String mCacheKey = null;
- 
-     void setCacheKey(@Nullable String cacheKey) {
--        mCacheKey = cacheKey == null || cacheKey.isEmpty() ? null : cacheKey;
-+        mCacheKey = cacheKey;
-     }
- 
-     public GlideUrl getGlideUrl() {
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageSourceProps.java` (added, +196/-0)
-```diff
-@@ -0,0 +1,196 @@
-+package com.fastimage;
-+
-+import androidx.annotation.NonNull;
-+import androidx.annotation.Nullable;
-+
-+import com.bumptech.glide.Priority;
-+import com.bumptech.glide.load.model.Headers;
-+import com.bumptech.glide.load.model.LazyHeaders;
-+import com.facebook.react.bridge.ReadableArray;
-+import com.facebook.react.bridge.ReadableMap;
-+import com.facebook.react.bridge.ReadableMapKeySetIterator;
-+import com.facebook.react.bridge.ReadableType;
-+
-+import java.util.HashMap;
-+import java.util.Map;
-+import java.util.Objects;
-+
-+// A source ({ uri, headers, priority, cache, ... }) as JS sent it, read once
-+// where it comes in (the view's props, the module's functions): everything
-+// else reads these fields, not the map. The specs can't type a source (one or
-+// several, and headers, are UnsafeMixed/UnsafeObject), so a value that's
-+// missing, of another type or unknown gets its default here instead of
-+// throwing where it's read. (iOS's RCTConvert+FFFastImage also defaults
-+// unknown values, but converts some of another type, e.g. a number string.)
-+final class FastImageSourceProps {
-+    private static final Map<String, FastImageCacheControl> CACHE_CONTROLS = new HashMap<>();
-+    private static final Map<String, Priority> PRIORITIES = new HashMap<>();
-+
-+    static {
-+        CACHE_CONTROLS.put("immutable", FastImageCacheControl.IMMUTABLE);
-+        CACHE_CONTROLS.put("web", FastImageCacheControl.WEB);
-+        CACHE_CONTROLS.put("cacheOnly", FastImageCacheControl.CACHE_ONLY);
-+        // React Native's ImageURISource value, which views take. Its others
-+        // (e.g. 'reload') are immutable, as any value this map doesn't have.
-+        CACHE_CONTROLS.put("only-if-cached", FastImageCacheControl.CACHE_ONLY);
-+        PRIORITIES.put("low", Priority.LOW);
-+        PRIORITIES.put("normal", Priority.NORMAL);
-+        PRIORITIES.put("high", Priority.HIGH);
++// The most pixels per point an SVG is drawn at for the box, or zero: the
++// screen's scale for scale-down, which shows it no larger than its own size.
++- (CGFloat) decodeMaxScale {
++    if (_objectFit != FFFObjectFitScaleDown) {
++        return 0;
 +    }
++    return self.window.screen.scale ?: [UIScreen mainScreen].scale;
++}
 +
-+    // A string, or null.
-+    @Nullable
-+    final String uri;
-+    // Only the values that are strings: JS sends numbers and booleans as
-+    // strings (as fetch's Headers converts them, see src/headers.ts), and
-+    // others (null, objects) are left out. Headers.DEFAULT without any (the
-+    // same cache key as no headers).
-+    final Headers headers;
-+    final FastImageCacheControl cache;
-+    // Null if the source doesn't set one (preload then uses low): a value it
-+    // doesn't know, or one of another type, is set, as on iOS (hasPriority).
-+    @Nullable
-+    final Priority priority;
-+    final boolean memoryCache;
-+    final boolean diskCache;
-+    // Null without one, or for an empty one.
-+    @Nullable
-+    final String cacheKey;
-+    // Several sources: each one's size, to pick the one for the view's size.
-+    final double width;
-+    final double height;
-+    final double scale;
-+    // A bundled image (from require()), whose scale is its density.
-+    final boolean packagerAsset;
-+    // Its ThumbHash, or its blurDataUri if that's a data uri (JS warns about
-+    // another), or null. It isn't part of the source's identity (equals): a
-+    // new one shows without loading the image again.
-+    @Nullable
-+    final String placeholder;
-+    // Whether it has a thumbhash or blurDataUri key, even an empty one: the
-+    // `placeholder` prop is then a preview, not a url to load.
-+    final boolean hasPlaceholderKey;
-+    // A source without a uri as JS sent it (without its thumbhash and
-+    // blurDataUri, as a data uri can be long), to compare it and for its
-+    // error; null for one with a uri, which its uri describes. Kept only for
-+    // these, so a source doesn't keep its map.
-+    @Nullable
-+    private final HashMap<String, Object> invalidSource;
-+
-+    private FastImageSourceProps(ReadableMap map) {
-+        uri = string(map, "uri");
-+        headers = headers(map);
-+        cache = CACHE_CONTROLS.getOrDefault(string(map, "cache"), FastImageCacheControl.IMMUTABLE);
-+        priority = map.hasKey("priority") && !map.isNull("priority")
-+                ? PRIORITIES.getOrDefault(string(map, "priority"), Priority.NORMAL)
-+                : null;
-+        memoryCache = bool(map, "memoryCache", true);
-+        diskCache = bool(map, "diskCache", true);
-+        String key = string(map, "cacheKey");
-+        cacheKey = key == null || key.isEmpty() ? null : key;
-+        width = number(map, "width", 0);
-+        height = number(map, "height", 0);
-+        scale = number(map, "scale", 1);
-+        packagerAsset = map.hasKey("__packager_asset");
-+        hasPlaceholderKey = map.hasKey("thumbhash") || map.hasKey("blurDataUri");
-+        String thumbhash = string(map, "thumbhash");
-+        String blurDataUri = string(map, "blurDataUri");
-+        placeholder = thumbhash != null && !thumbhash.isEmpty() ? thumbhash
-+                : blurDataUri != null && FastImageThumbHash.isDataUri(blurDataUri) ? blurDataUri
-+                : null;
-+        invalidSource = hasUri() ? null : withoutPlaceholders(map);
-+    }
-+
-+    stati
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageViewConverter.java` (modified, +12/-102)
-```diff
-@@ -11,14 +11,9 @@
- 
- import com.bumptech.glide.Priority;
- import com.bumptech.glide.load.engine.DiskCacheStrategy;
--import com.bumptech.glide.load.model.Headers;
--import com.bumptech.glide.load.model.LazyHeaders;
- import com.bumptech.glide.request.RequestOptions;
- import com.bumptech.glide.signature.ApplicationVersionSignature;
- import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
--import com.facebook.react.bridge.ReadableMap;
--import com.facebook.react.bridge.ReadableMapKeySetIterator;
--import com.facebook.react.bridge.ReadableType;
- 
- import java.util.HashMap;
- import java.util.Map;
-@@ -28,24 +23,6 @@
- class FastImageViewConverter {
-     static final Drawable TRANSPARENT_DRAWABLE = new ColorDrawable(Color.TRANSPARENT);
- 
--    private static final Map<String, FastImageCacheControl> FAST_IMAGE_CACHE_CONTROL_MAP =
--            new HashMap<String, FastImageCacheControl>() {{
--                put("immutable", FastImageCacheControl.IMMUTABLE);
--                put("web", FastImageCacheControl.WEB);
--                put("cacheOnly", FastImageCacheControl.CACHE_ONLY);
--                // React Native's ImageURISource value, which views take. Its
--                // others (e.g. 'reload') are immutable, as any value this map
--                // doesn't have (see getValueFromSource).
--                put("only-if-cached", FastImageCacheControl.CACHE_ONLY);
--            }};
--
--    private static final Map<String, Priority> FAST_IMAGE_PRIORITY_MAP =
--            new HashMap<String, Priority>() {{
--                put("low", Priority.LOW);
--                put("normal", Priority.NORMAL);
--                put("high", Priority.HIGH);
--            }};
--
-     // objectFit's scale types. scale-down and none are laid out by the view
-     // itself, at the image's own size in dp (see
-     // FastImageViewWithUrl.updateImageMatrix).
-@@ -58,62 +35,22 @@ class FastImageViewConverter {
-                 put("none", ScaleType.CENTER);
-             }};
- 
--    // Whether the source has a uri to load (not null, missing or blank).
--    static boolean hasUri(@Nullable ReadableMap source) {
--        if (source == null || !source.hasKey("uri") || source.isNull("uri")) return false;
--        String uri = source.getString("uri");
--        return uri != null && !uri.trim().isEmpty();
--    }
--
--    // `diskCache`: whether the image is kept in the disk cache (true unless
--    // the source sets false).
--    static boolean isDiskCache(@Nullable ReadableMap source) {
--        return source == null || !source.hasKey("diskCache") || source.getType("diskCache") != ReadableType.Boolean
--                || source.getBoolean("diskCache");
--    }
--
--    // Resolve the source uri to a file path that android understands.
-+    // The source to load, with its uri resolved to one Android understands, or
-+    // null without a uri.
-     static @Nullable
--    FastImageSource getImageSource(Context context, @Nullable ReadableMap source) {
--        if (source == null) return null;
--        FastImageSource imageSource = new FastImageSource(context, source.getString("uri"), getHeaders(source));
--        imageSource.setWebCache(getCacheControl(source) == FastImageCacheControl.WEB);
--        if (source.hasKey("memoryCache") && source.getType("memoryCache") == ReadableType.Boolean) {
--            imageSource.setMemoryCache(source.getBoolean("memoryCache"));
--        }
--        imageSource.setDiskCache(isDiskCache(source));
--        if (source.hasKey("cacheKey") && source.getType("cacheKey") == ReadableType.String) {
--            imageSource.setCacheKey(source.getString("cacheKey"));
--        }
-+    FastImageSource getImageSource(Context context, @Nullable FastImageSourceProps source) {
-+        if (source == null || !source.hasUri()) return null;
-+        FastImageSource imageSource = new FastImageSource(context, source.uri, source.headers);
-+        imageSource.setWebCache(source.cache == FastImageCacheControl.WEB);
-+        imageSource.setMemoryCache(source.memoryCache);
-+        imageSource.setDiskCache(source.diskCache);
-+        imageSource.setCacheKey(source.cacheKey);
-         return imageSource;
-     }
- 
--    static Headers getHeaders(ReadableMap source) {
--        Headers headers = Headers.DEFAULT;
--
--        if (source.hasKey("headers")) {
--            ReadableMap headersMap = source.getMap("headers");
--            ReadableMapKeySetIterator iterator = headersMap.keySetIterator();
--            LazyHeaders.Builder builder = new LazyHeaders.Builder();
--
--            while (iterator.hasNextKey()) {
--                String header = iterator.nextKey();
--                String value = headersMap.getString(header);
--
--                builder.addHeader(header, value);
--            }
--
--            headers = builder.build();
--        }
--
--        return headers;
--    }
--
--    static RequestOptions getOptions(Context context, @Nullable FastImageSource imageSource, @Nullable ReadableMap source) {
--        // Get priority.
--        final Priority p
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageViewManager.java` (modified, +20/-10)
-```diff
-@@ -20,7 +20,6 @@
- import com.facebook.react.bridge.ColorPropConverter;
- import com.facebook.react.bridge.Dynamic;
- import com.facebook.react.bridge.DynamicFromObject;
--import com.facebook.react.bridge.JavaOnlyArray;
- import com.facebook.react.bridge.ReadableArray;
- import com.facebook.react.bridge.ReadableMap;
- import com.facebook.react.bridge.ReadableType;
-@@ -306,10 +305,22 @@ protected FastImageViewWithUrl createViewInstance(@NonNull ThemedReactContext re
- 
-     @Override
-     public void setSource(FastImageViewWithUrl view, Dynamic source) {
--        // One source, or several (an array).
--        view.setSource(source.isNull() ? null
--                : source.getType() == ReadableType.Array ? source.asArray()
--                : JavaOnlyArray.of(source.asMap()));
-+        // One source, or several (an array). Something else (e.g. a string)
-+        // is no source.
-+        switch (source.getType()) {
-+            case Array: {
-+                ReadableArray array = source.asArray();
-+                FastImageSourceProps[] sources = new FastImageSourceProps[array.size()];
-+                for (int i = 0; i < sources.length; i++) sources[i] = FastImageSourceProps.parse(array, i);
-+                view.setSource(sources);
-+                break;
-+            }
-+            case Map:
-+                view.setSource(new FastImageSourceProps[]{FastImageSourceProps.parse(source.asMap())});
-+                break;
-+            default:
-+                view.setSource(null);
-+        }
-     }
- 
-     // The `placeholder` prop: a thumbhash or blurDataUri, or a url to load
-@@ -318,16 +329,15 @@ public void setSource(FastImageViewWithUrl view, Dynamic source) {
-     @Override
-     public void setPlaceholder(FastImageViewWithUrl view, Dynamic source) {
-         if (source.getType() == ReadableType.Map) {
--            ReadableMap map = source.asMap();
--            boolean hash = map.hasKey("thumbhash") || map.hasKey("blurDataUri");
-+            FastImageSourceProps placeholder = FastImageSourceProps.parse(source.asMap());
-             view.setPlaceholder(null);
--            view.setPlaceholderHash(hash ? FastImageViewWithUrl.sourcePlaceholder(map) : null);
--            view.setPlaceholderSource(hash ? null : map);
-+            view.setPlaceholderHash(placeholder.hasPlaceholderKey ? placeholder.placeholder : null);
-+            view.setPlaceholderSource(placeholder.hasPlaceholderKey ? null : placeholder);
+ // Whether the image has to cover the box, rather than fit in it.
+ - (BOOL) decodeCovers {
+     return _objectFit == FFFObjectFitCover || _objectFit == FFFObjectFitFill;
+@@ -1315,7 +1328,10 @@ - (void) reloadIfResized {
              return;
          }
-         view.setPlaceholderHash(null);
-         view.setPlaceholderSource(null);
--        String uri = source.isNull() ? null : source.asString();
-+        String uri = source.getType() == ReadableType.String ? source.asString() : null;
-         if (uri != null && FastImageThumbHash.isDataUri(uri)) {
-             Bitmap bitmap = FastImageThumbHash.dataUri(uri);
-             // One pixel per dp, as on iOS and the web (decoded, it's at the
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageViewModule.java` (modified, +20/-22)
-```diff
-@@ -128,17 +128,17 @@ public void run() {
-                 };
-                 for (int i = 0; i < count; i++) {
-                     final int index = i;
--                    final ReadableMap source = sources.isNull(i) ? null : sources.getMap(i);
-+                    final FastImageSourceProps source = FastImageSourceProps.parse(sources, i);
-                     // Glide throws on an empty url. Invalid sources fail
-                     // without taking a slot.
--                    if (!FastImageViewConverter.hasUri(source)) {
-+                    if (source == null || !source.hasUri()) {
-                         results[i] = failure("Invalid source: no uri");
-                         finishOne.run();
-                         continue;
-                     }
-                     // Views decode an image for their own size, so one only
-                     // preloaded into memory would be downloaded again.
--                    if (!FastImageViewConverter.isDiskCache(source)) {
-+                    if (!source.diskCache) {
-                         results[i] = failure(NOT_ON_DISK);
-                         finishOne.run();
-                         continue;
-@@ -147,7 +147,7 @@ public void run() {
-                     // A uri that can't be resolved (e.g. a relative path) resolves
-                     // to an empty one.
-                     if (imageSource.getUri().toString().isEmpty()) {
--                        results[i] = failure("Invalid source: can't resolve " + source.getString("uri"));
-+                        results[i] = failure("Invalid source: can't resolve " + source.uri);
-                         finishOne.run();
-                         continue;
-                     }
-@@ -256,9 +256,9 @@ private interface ResultCallback {
- 
-     // A preload's options: low priority unless the source sets one, as on
-     // iOS (the prefetcher's options), so the images the app shows load first.
--    private static RequestOptions preloadOptions(Context context, FastImageSource imageSource, ReadableMap source) {
-+    private static RequestOptions preloadOptions(Context context, FastImageSource imageSource, FastImageSourceProps source) {
-         RequestOptions options = FastImageViewConverter.getOptions(context, imageSource, source);
--        return source.hasKey("priority") && !source.isNull("priority") ? options : options.priority(Priority.LOW);
-+        return source.priority != null ? options : options.priority(Priority.LOW);
+         BOOL grew = box.width > self.decodedBox.width * 1.2 || box.height > self.decodedBox.height * 1.2;
+-        if (!grew && (self.decodedCover || !cover)) {
++        // Or an SVG drawn for the box is no longer, or now, drawn at most
++        // at its own size (other images are decoded the same either way).
++        BOOL maxScaleChanged = [self decodeMaxScale] != self.decodedMaxScale && [FFFDownsampledImage isDrawnForBox: image];
++        if (!grew && (self.decodedCover || !cover) && !maxScaleChanged) {
+             return;
+         }
      }
- 
-     private interface FileCallback {
-@@ -351,17 +351,17 @@ private static WritableMap pathResult(File file) {
-     // With `cacheOnly`, or a cacheKey without a uri, it doesn't download. A
-     // local file is its own path.
-     @Override
--    public void getCachePath(final ReadableMap source, final Promise promise) {
-+    public void getCachePath(final ReadableMap map, final Promise promise) {
-         final ReactApplicationContext context = getReactApplicationContext();
--        if (!FastImageViewConverter.isDiskCache(source)) {
-+        final FastImageSourceProps source = FastImageSourceProps.parse(map);
-+        if (!source.diskCache) {
-             promise.resolve(failure(NOT_ON_DISK));
-             return;
-         }
--        if (!FastImageViewConverter.hasUri(source)) {
-+        final FastImageSource imageSource = FastImageViewConverter.getImageSource(context, source);
-+        if (imageSource == null) {
-             // `web` images ignore cacheKey.
--            final String cacheKey = FastImageViewConverter.getCacheControl(source) == FastImageCacheControl.WEB
--                    ? null
--                    : FastImageViewConverter.getCacheKey(source);
-+            final String cacheKey = source.cache == FastImageCacheControl.WEB ? null : source.cacheKey;
-             if (cacheKey == null) {
-                 promise.resolve(failure("Invalid source: no uri or cacheKey"));
-                 return;
-@@ -375,9 +375,8 @@ public void run() {
-             });
-             return;
-         }
--        final FastImageSource imageSource = FastImageViewConverter.getImageSource(context, source);
-         if (imageSource.getUri().toString().isEmpty()) {
--            promise.resolve(failure("Invalid source: can't resolve " + source.getString("uri")));
-+            promise.resolve(failure("Invalid source: can't resolve " + source.uri));
-             return;
-         }
-         if ("file".equalsIgnoreCase(imageSource.getUri().getScheme())) {
-@@ -390,7 +389,7 @@ public void run() {
-             promise.resolve(failure("Not a remote image"));
-             return;
-         }
--        final boolean cacheOnly = FastImageViewConverter.getCacheControl(source) == FastImageCacheControl.CACHE_ONLY;
-+        final boolean cacheOnly = source.cache == FastImageCacheControl.CACHE_ONLY;
-         final RequestOptions options = preloadOptions(context, imageSource, source);
-         cachePathExecutor.execute(new Runnable() {
-             @Override
-@@ -487,22 +486,21 @@ public void run() {
-     // cache
-```
-
-**File**: `android/src/main/java/com/fastimage/FastImageViewWithUrl.java` (modified, +32/-89)
-```diff
-@@ -46,9 +46,6 @@
- import com.bumptech.glide.request.transition.NoTransition;
- import com.bumptech.glide.request.transition.Transition;
- import com.bumptech.glide.request.transition.TransitionFactory;
--import com.facebook.react.bridge.ReadableArray;
--import com.facebook.react.bridge.ReadableMap;
--import com.facebook.react.bridge.ReadableType;
- import com.facebook.react.bridge.WritableMap;
- import com.facebook.react.bridge.WritableNativeMap;
- import com.facebook.react.modules.i18nmanager.I18nUtil;
-@@ -59,15 +56,13 @@
- import com.facebook.react.uimanager.ReactPointerEventsView;
- import com.facebook.react.uimanager.style.LogicalEdge;
- 
--import java.util.ArrayList;
--import java.util.HashMap;
--import java.util.List;
-+import java.util.Arrays;
- import java.util.Objects;
- import javax.annotation.Nonnull;
- 
- class FastImageViewWithUrl extends AppCompatImageView implements ReactPointerEventsView, ReactHitSlopView {
-     private boolean mNeedsReload = false;
--    private ReadableMap mSource = null;
-+    private FastImageSourceProps mSource = null;
-     // The `placeholder` prop.
-     private Drawable mPlaceholder = null;
- 
-@@ -222,72 +217,31 @@ public boolean hasOverlappingRendering() {
-     // with its thumbhash or blurDataUri if it has one. Only a change besides
-     // those loads again: a new thumbhash for the same image (e.g. one that
-     // arrives later) shows at once (see updatePlaceholder).
--    public void setSource(@Nullable ReadableArray sources) {
--        List<Object> key = sourceKey(sources);
--        if (!mHasSource || !Objects.equals(key, mSourceKey)) {
-+    public void setSource(@Nullable FastImageSourceProps[] sources) {
-+        boolean same = mHasSource && Arrays.equals(sources, mAllSources);
-+        mAllSources = sources;
-+        if (!same) {
-             mHasSource = true;
--            mSourceKey = key;
-             mNeedsReload = true;
--            mSources = sources != null && sources.size() > 1 ? sources : null;
-             mSourceIndex = -1;
--            if (mSources == null) mSource = sources != null && sources.size() == 1 ? map(sources, 0) : null;
--        }
--        mSourcePlaceholders = new ArrayList<>();
--        for (int i = 0; sources != null && i < sources.size(); i++) {
--            mSourcePlaceholders.add(sourcePlaceholder(map(sources, i)));
-+            if (severalSources() == null) mSource = sources != null && sources.length == 1 ? sources[0] : null;
-         }
-         updatePlaceholder();
+@@ -1447,6 +1463,7 @@ - (SDWebImageContext*) loadContext {
+     CGSize box = [self decodeBox];
+     self.decodedBox = box;
+     self.decodedCover = [self decodeCovers];
++    self.decodedMaxScale = CGSizeEqualToSize(box, CGSizeZero) ? 0 : [self decodeMaxScale];
+     self.decodedUncapped = CGSizeEqualToSize(box, CGSizeZero) && _objectFit == FFFObjectFitNone;
+     return [self contextForSource: _source box: box cover: self.decodedCover];
+ }
+@@ -1490,7 +1507,7 @@ - (SDWebImageContext*) contextForSource: (FFFastImageSource*)source box: (CGSize
+         [FFFDownsampledImage forgetUnusableImageForURL: source.url context: context];
+         return context;
      }
- 
--    // The sources without their thumbhashes and blurDataUris, to compare.
--    private boolean mHasSource = false;
--    @Nullable
--    private List<Object> mSourceKey = null;
--
--    @Nullable
--    private static List<Object> sourceKey(@Nullable ReadableArray sources) {
--        if (sources == null) return null;
--        List<Object> key = new ArrayList<>();
--        for (int i = 0; i < sources.size(); i++) {
--            ReadableMap source = map(sources, i);
--            key.add(source == null ? null : withoutPlaceholders(source));
--        }
--        return key;
--    }
--
--    // A source without its thumbhash and blurDataUri.
--    private static HashMap<String, Object> withoutPlaceholders(ReadableMap source) {
--        HashMap<String, Object> map = source.toHashMap();
--        map.remove("thumbhash");
--        map.remove("blurDataUri");
--        return map;
--    }
--
--    @Nullable
--    private static ReadableMap map(ReadableArray array, int index) {
--        return array.getType(index) == ReadableType.Map ? array.getMap(index) : null;
--    }
--
--    // A source's (or `placeholder`'s) ThumbHash, or its blurDataUri if it's a
--    // data uri (JS warns about another), or null.
--    @Nullable
--    static String sourcePlaceholder(@Nullable ReadableMap source) {
--        if (source == null) return null;
--        String thumbhash = string(source, "thumbhash");
--        if (thumbhash != null && !thumbhash.isEmpty()) return thumbhash;
--        String blurDataUri = string(source, "blurDataUri");
--        return blurDataUri != null && FastImageThumbHash.isDataUri(blurDataUri) ? blurDataUri : null;
--    }
--
-+    // The `source` prop's sources (with their latest placeholders), and
-+    // whether it has been set.
-     @Nullable
--    private static String string(ReadableMap map, String key) {
--        return map.hasKey(key) && map.getType(key) == ReadableType.String ? map.getString(key) : null;
--    }
-+    private FastImageSourceProps[] mAllSources = null;
-+    private boolean mHasSource = false;
- 
-     // Several sources (2 or more) of the same image at different sizes, or
-     // null: the view loads the one whose size is closest to its own.
-     @Nullable
--    private ReadableArray mSources = null;
-+    private FastImageSourceProps[] severalSources() {
-+        return mAllSources != null && mAllSources.length > 1 ? mAllSources : null;
-+    }
-+
-     // Several sources: the index of the one picked (-1 before one is), and
-     // whether the load waits for the view's size (after layout), or h
+-    [FFFDownsampledImage addToContext: context box: box cover: cover];
++    [FFFDownsampledImage addToContext: context box: box cover: cover maxScale: [self decodeMaxScale]];
+     if ([source isPhotoLibrary]) {
+         // Photos makes the photo at the size asked for, with no file
+         // downloaded: SDWebImage would keep this smaller copy on disk as the
 ```
 
-**File**: `android/src/test/java/com/fastimage/FastImageSourcePropsTest.java` (added, +201/-0)
+**File**: `screenshots/main-android/descriptions.json` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,201 @@
-+package com.fastimage;
-+
-+import static org.junit.Assert.assertEquals;
-+import static org.junit.Assert.assertFalse;
-+import static org.junit.Assert.assertNotEquals;
-+import static org.junit.Assert.assertNull;
-+import static org.junit.Assert.assertSame;
-+import static org.junit.Assert.assertTrue;
-+
-+import com.bumptech.glide.Priority;
-+import com.bumptech.glide.load.model.Headers;
-+import com.facebook.react.bridge.JavaOnlyArray;
-+import com.facebook.react.bridge.JavaOnlyMap;
-+
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.robolectric.RobolectricTestRunner;
-+
-+import java.util.Map;
-+
-+// A source as JS sends it, read once: each value of the wrong type, or one
-+// FastImage doesn't know, gets its default instead of throwing (the views and
-+// the module read only what this gives them).
-+@RunWith(RobolectricTestRunner.class)
-+public class FastImageSourcePropsTest {
-+    @Test
-+    public void readsEachValue() {
-+        FastImageSourceProps source = FastImageSourceProps.parse(JavaOnlyMap.of(
-+                "uri", "https://example.com/a.jpg",
-+                "headers", JavaOnlyMap.of("x-token", "fast-image"),
-+                "cache", "web",
-+                "priority", "high",
-+                "memoryCache", false,
-+                "diskCache", false,
-+                "cacheKey", "a",
-+                "width", 100,
-+                "height", 50.5,
-+                "scale", 3,
-+                "__packager_asset", true,
-+                "thumbhash", "1QcSHQRnh493V4dIh4eXh1h4kJUI"));
-+        assertEquals("https://example.com/a.jpg", source.uri);
-+        assertTrue(source.hasUri());
-+        assertEquals("fast-image", source.headers.getHeaders().get("x-token"));
-+        assertEquals(FastImageCacheControl.WEB, source.cache);
-+        assertEquals(Priority.HIGH, source.priority);
-+        assertFalse(source.memoryCache);
-+        assertFalse(source.diskCache);
-+        assertEquals("a", source.cacheKey);
-+        assertEquals(100, source.width, 0);
-+        assertEquals(50.5, source.height, 0);
-+        assertEquals(3, source.scale, 0);
-+        assertTrue(source.packagerAsset);
-+        assertEquals("1QcSHQRnh493V4dIh4eXh1h4kJUI", source.placeholder);
-+        assertTrue(source.hasPlaceholderKey);
-+    }
-+
-+    @Test
-+    public void missingValuesAreTheDefaults() {
-+        FastImageSourceProps source = FastImageSourceProps.parse(new JavaOnlyMap());
-+        assertNull(source.uri);
-+        assertFalse(source.hasUri());
-+        assertSame(Headers.DEFAULT, source.headers);
-+        assertEquals(FastImageCacheControl.IMMUTABLE, source.cache);
-+        assertNull(source.priority);
-+        assertEquals(Priority.NORMAL, source.priorityOrNormal());
-+        assertTrue(source.memoryCache);
-+        assertTrue(source.diskCache);
-+        assertNull(source.cacheKey);
-+        assertEquals(0, source.width, 0);
-+        assertEquals(1, source.scale, 0);
-+        assertFalse(source.packagerAsset);
-+        assertNull(source.placeholder);
-+        assertFalse(source.hasPlaceholderKey);
-+    }
-+
-+    // What used to throw where it was read (UnexpectedNativeTypeException, a
-+    // NullPointerException), or what TypeScript allows but FastImage doesn't
-+    // know.
-+    @Test
-+    public void valuesOfAnotherTypeAreTheDefaults() {
-+        FastImageSourceProps source = FastImageSourceProps.parse(JavaOnlyMap.of(
-+                "uri", 1,
-+                "headers", JavaOnlyArray.of("x-token"),
-+                "cache", 1,
-+                "priority", 1,
-+                "memoryCache", "false",
-+                "diskCache", null,
-+                "cacheKey", 2,
-+                "width", "100",
-+                "height", null,
-+                "scale", JavaOnlyMap.of(),
-+                "thumbhash", 3,
-+                "blurDataUri", "https://example.com/blur.jpg"));
-+        assertNull(source.uri);
-+        assertFalse(source.hasUri());
-+        assertSame(Headers.DEFAULT, source.headers);
-+        assertEquals(FastImageCacheControl.IMMUTABLE, source.cache);
-+        // Set, as on iOS (so preload doesn't lower it), but to the default.
-+        assertEquals(Priority.NORMAL, source.priority);
-+        assertTrue(source.memoryCache);
-+        assertTrue(source.diskCache);
-+        assertNull(source.cacheKey);
-+        assertEquals(0, source.width, 0);
-+        assertEquals(0, source.height, 0);
-+        assertEquals(1, source.scale, 0);
-+        // Not a data uri, and a thumbhash that isn't a string: no preview,
-+        // but the keys still make a `placeholder` prop a preview.
-+        assertNull(source.placeholder);
-+        assertTrue(source.hasPlaceholderKey);
-+        assertSame(Headers.DEFAULT, FastImageSourceProps.parse(JavaOnlyMap.of("headers", null)).headers);
-+        assertSame(Headers.DEFAULT, FastImageSourceProps.parse(JavaOnlyMap.of("headers", "x")).headers);
-+    }
-+
-+    @Test
-+    public void unknownStringsAreTheDefaults() {
-+        FastImageSourceProps source = Fast
+@@ -472,6 +472,11 @@
+                 "steps": "Loads an SVG of 60x60 black and white stripes, one unit wide, with scale-down and none in 72-point views, and with contain in a 60-point view (the reference). Passes once all three have loaded; the screenshot checks the sharpness.",
+                 "shows": "Black and white stripes three times: centered in a gray 72-point square, again, then on their own at 60 points, all with the same crisp 1-unit stripes. Soft or gray stripes in the first two are a failure."
+             },
++            "object-fit-svg-change": {
++                "checks": "An SVG whose objectFit changes from scale-down to contain while it loads is drawn for contain, sharp at the view's size.",
++                "steps": "An 88-point view loads a 60x60 SVG of black and white stripes, one unit wide, from the slow server (8 parts, 150 ms apart) with scale-down, and changes to contain 300 ms later. An 88-point view next to it shows the same SVG with contain from the start. Passes once both have loaded; the screenshot checks the sharpness.",
++                "shows": "Black and white stripes filling two squares, both with the same crisp stripes. Soft or gray stripes in the first are a failure."
++            },
+             "object-fit-from-cover": {
+                 "checks": "Changing objectFit from cover after load, while the image for the new fit loads: on Android the view keeps showing the cover image as it was until then, and iOS shows the new fit at once (Android stretched the cropped image to its own size, squashed with scale-down and enlarged about 12 times with none; changed twice before the first change loaded, it went blank).",
+                 "steps": "Three 88-point views load a 1600x1000 page of text from the slow server with cache: 'web' (so it isn't on disk) and cover. Once all three have loaded, the first changes to scale-down, the second to none, and the third to scale-down and 150 ms later to none. Passes 800 ms after the change, while the new images are still loading, which is when the screenshot is taken.",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1378** (2026-10-24): test: compare the Expo web version's screenshots, in Playwright's Chromium (@DylanVann)
-- **PR #1375** (2026-10-24): test: rework the regression screenshots: a crop per case, plain-English descriptions, and a viewer (@DylanVann)
-- **PR #1374** (closed): test: fix flaky regression cases and Android unit tests (@DylanVann)
-- **PR #1373** (closed): test: compare each regression case's own screenshot (@DylanVann)
-- **PR #1371** (closed): test: add a regression screenshot viewer (@DylanVann)
-- **PR #1370** (closed): test: describe each regression case and group in plain English (@DylanVann)
+- **PR #1392** (2026-10-27): fix(ios): draw every SVG in the load, at its own size for a full-size load (@DylanVann)
+- **PR #1391** (2026-10-27): test: zoom cases for downsample false, a transform and a zoomed ScrollView [skip actions] (@DylanVann)
+- **PR #1390** (2026-10-27): fix(ios): draw SVGs one at a time (@DylanVann)
+- **PR #1389** (2026-10-27): fix(ios): draw SVGs for the view's size in the load, off the main thread (@DylanVann)
+- **PR #1388** (2026-10-27): test: run verify.mts on a phone named by ANDROID_SERIAL [skip actions] (@DylanVann)
+- **PR #1386** (2026-10-26): fix(android): keep a popped screen's images while it slides away (@DylanVann)
 
 ---
 
@@ -1712,28 +1695,48 @@ in development.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): require SDWebImage 5.21.5 or later (#1355)
+## X. android): keep bitmaps for very large views under Android's drawing limit (#1379
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ReactNativeFastImageExample/src/RegressionExample.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DylanVann/react-native-fast-image. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9191fdfd`: ios): require SDWebImage 5.21.5 or later (#1355). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d11bb53f`: android): keep bitmaps for very large views under Android's drawing limit (#1379). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ReactNativeFastImageExample/src/RegressionExample.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-If `pod install` can't find a compatible SDWebImage (FastImage needs 5.21.5 or later), update it with `cd ios && pod update SDWebImage`.
+// A view much larger than the screen (2400x2400, about 6300 px square on the
+// Android emulator), drawn 20 times smaller with a transform. Glide fits an
+// image to the view's size, so the bitmap would be about 160 MB, which Android
+// won't draw ("Canvas: trying to draw too large bitmap"): the app crashed.
+function LargeViewCase() {
+    const [status, onLoad] = useLoadedThenOk(1)
+    return (
+        <View style={blurStyles.stacked}>
+            <View style={downsampleStyles.largeViewClip}>
+                <FastImage
+                    style={downsampleStyles.largeView}
+                    source={{ uri: imageUrl('quadrants.png?case=large-view') }}
+                    onLoad={onLoad}
+                />
+            </View>
+            <CaseStatus
+                id="large-view"
+                status={status}
+                description={{
+                    checks: "An image in a view far larger than the screen shows (on Android its bitmap was the view's size, about 160 MB, and the app crashed drawing it).",
+                    steps: 'Loads a 20x20 image of four colored squares into a 2400x2400 view with cover, drawn 20 times smaller with a transform. Passes once it has loade
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-If `pod install` can't find a compatible SDWebImage (FastImage needs 5.21.4 or later), update it with `cd ios && pod update SDWebImage`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9191fdfd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d11bb53f` are properly handled with clean fallback behavior.

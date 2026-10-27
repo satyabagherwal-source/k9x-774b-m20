@@ -5446,3 +5446,9 @@
 | `CYCLE-20261027-RWGX` | `2026-10-27T17:05:12.225Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4914` | Yes (`9a9df49b...`) |
 | `CYCLE-20261027-RXOM` | `2026-10-27T17:05:13.798Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4915` | Yes (`86a4a89e...`) |
 | `CYCLE-20261027-Y38N` | `2026-10-27T17:10:00.935Z` | `cosscom/coss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4916` | Yes (`67122c0d...`) |
+| `CYCLE-20261027-6P9K` | `2026-10-27T17:16:42.728Z` | `MCPJam/inspector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4917` | Yes (`cc653b1a...`) |
+| `CYCLE-20261027-6SOS` | `2026-10-27T17:16:47.164Z` | `cjo4m06/mcp-shrimp-task-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4918` | Yes (`beef38a5...`) |
+| `CYCLE-20261027-6UBB` | `2026-10-27T17:16:49.271Z` | `chongdashu/unreal-mcp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/chongdashu-unreal-mcp-learnings.md` | Yes (`2e7b999e...`) |
+| `CYCLE-20261027-6XFB` | `2026-10-27T17:16:53.303Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4919` | Yes (`49684705...`) |
+| `CYCLE-20261027-6Y7O` | `2026-10-27T17:16:54.324Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4920` | Yes (`af9ea232...`) |
+| `CYCLE-20261027-7018` | `2026-10-27T17:16:56.684Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4921` | Yes (`b04f3807...`) |

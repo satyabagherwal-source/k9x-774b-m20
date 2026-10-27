@@ -19453,5 +19453,50 @@
     "qualityScore": 979,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T16:14:46.308Z"
+  },
+  {
+    "name": "inspector",
+    "fullName": "MCPJam/inspector",
+    "url": "https://github.com/MCPJam/inspector",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Testing and evaluation platform to chat, inspect, and debug MCP servers, MCP apps, and ChatGPT apps.",
+    "stars": 2287,
+    "forks": 298,
+    "openIssues": 320,
+    "language": "TypeScript",
+    "qualityScore": 1583,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T17:13:18.453Z"
+  },
+  {
+    "name": "mcp-shrimp-task-manager",
+    "fullName": "cjo4m06/mcp-shrimp-task-manager",
+    "url": "https://github.com/cjo4m06/mcp-shrimp-task-manager",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Shrimp Task Manager is a task tool built for AI Agents, emphasizing chain-of-thought, reflection, and style consistency. It converts natural language into structured dev tasks with dependency tracking and iterative refinement, enabling agent-like developer behavior in reasoning AI systems.",
+    "stars": 2148,
+    "forks": 256,
+    "openIssues": 48,
+    "language": "JavaScript",
+    "qualityScore": 1497,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T17:13:18.453Z"
+  },
+  {
+    "name": "unreal-mcp",
+    "fullName": "chongdashu/unreal-mcp",
+    "url": "https://github.com/chongdashu/unreal-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Enable AI assistant clients like Cursor, Windsurf and Claude Desktop to control Unreal Engine through natural language using the Model Context Protocol (MCP).",
+    "stars": 2107,
+    "forks": 349,
+    "openIssues": 41,
+    "language": "C++",
+    "qualityScore": 1240,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T17:13:18.453Z"
   }
 ]

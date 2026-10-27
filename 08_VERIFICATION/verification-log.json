@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-BEBD",
-    "timestamp": "2026-10-25T18:41:00.217Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "98acc68f055bfe4fa5f9113f9c10f59038fc3f666df20b58089f81611ded0ce0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-JHGL",
-    "timestamp": "2026-10-25T18:47:17.541Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "a170f5aa4f27d6a6a8638426c50cbf70fe0f8e7fb43228da51e5b33d95abc986",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-S7ZT",
-    "timestamp": "2026-10-25T18:54:05.177Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "bde2cb99fa85398f19eb8d7f5266a0dab55f87652d577c8ef61e33310c177b55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-ZTZQ",
-    "timestamp": "2026-10-25T19:00:00.278Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "5293fa399a393463db8837c4a3675136a496cd49a8f9a34875c65add4c442671",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-84NM",
-    "timestamp": "2026-10-25T19:06:27.346Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "ef43878094c05a0b2eaa2b4bbc23359da25f1007807f07b2784c2b1a3dfb6c0e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-84UU",
-    "timestamp": "2026-10-25T19:06:27.606Z",
-    "repository": "rsuite/rsuite",
-    "learningId": "learn-github-rsuite-rsuite",
-    "contentHash": "ff9907d7780aec2c6afea8d1150c542df9c97f0cc25d42e116a39a73edc2a878",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-85JD",
     "timestamp": "2026-10-25T19:06:28.489Z",
     "repository": "mlua-rs/mlua",
@@ -7490,6 +7400,96 @@
     "repository": "cosscom/coss",
     "learningId": "learn-github-cosscom-coss",
     "contentHash": "67122c0d74315fed3f8d7aaa95b94dfc1b8a4d02af7dc4ff1e1dbf3fe054d4f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6P9K",
+    "timestamp": "2026-10-27T17:16:42.728Z",
+    "repository": "MCPJam/inspector",
+    "learningId": "learn-github-mcpjam-inspector",
+    "contentHash": "cc653b1ad46bf238f979ee65720cdcedb7dd7edb70ac360c647ff328e2c19a59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6SOS",
+    "timestamp": "2026-10-27T17:16:47.164Z",
+    "repository": "cjo4m06/mcp-shrimp-task-manager",
+    "learningId": "learn-github-cjo4m06-mcp-shrimp-task-manager",
+    "contentHash": "beef38a5b453e78cc7e5c2fb739c38143ec3e78af97a0506f9874e29dd312b80",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6UBB",
+    "timestamp": "2026-10-27T17:16:49.271Z",
+    "repository": "chongdashu/unreal-mcp",
+    "learningId": "learn-github-chongdashu-unreal-mcp",
+    "contentHash": "2e7b999e76114db71fad2f988fe84c1756d93d1fc49867bac39e6b731a180dd9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6XFB",
+    "timestamp": "2026-10-27T17:16:53.303Z",
+    "repository": "DylanVann/react-native-fast-image",
+    "learningId": "learn-github-dylanvann-react-native-fast-image",
+    "contentHash": "49684705479f3e5ba55697b133d5f643faa6493bcc980a50f772bb5c14e6ece0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-6Y7O",
+    "timestamp": "2026-10-27T17:16:54.324Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "af9ea2322064f4dc5663c10828d4bdcece9840d015833a2e761ddcfbb10fb44b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-7018",
+    "timestamp": "2026-10-27T17:16:56.684Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

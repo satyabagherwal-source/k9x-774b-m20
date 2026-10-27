@@ -5455,3 +5455,9 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `2b5ab29c` | Multi-dimensional audit evidence | 2026-10-27T17:05:12.228Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `83c386bc` | Multi-dimensional audit evidence | 2026-10-27T17:05:13.801Z |
 | `learn-github-cosscom-coss` | `https://github.com/cosscom/coss` | `4960bab3` | Multi-dimensional audit evidence | 2026-10-27T17:10:00.940Z |
+| `learn-github-mcpjam-inspector` | `https://github.com/MCPJam/inspector` | `6b50480f` | Multi-dimensional audit evidence | 2026-10-27T17:16:42.730Z |
+| `learn-github-cjo4m06-mcp-shrimp-task-manager` | `https://github.com/cjo4m06/mcp-shrimp-task-manager` | `8a3be6bc` | Multi-dimensional audit evidence | 2026-10-27T17:16:47.166Z |
+| `learn-github-chongdashu-unreal-mcp` | `https://github.com/chongdashu/unreal-mcp` | `4e5f00da` | Multi-dimensional audit evidence | 2026-10-27T17:16:49.274Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `3eef0244` | Multi-dimensional audit evidence | 2026-10-27T17:16:53.306Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `d3d4a37a` | Multi-dimensional audit evidence | 2026-10-27T17:16:54.327Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `df14a286` | Multi-dimensional audit evidence | 2026-10-27T17:16:56.687Z |

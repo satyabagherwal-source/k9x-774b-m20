@@ -4612,3 +4612,11 @@ https://github.com/datagouv/datagouv-mcp
 https://github.com/BlackSnufkin/LitterBox
 # [AI-AGENTS] PaperDebugger/paperdebugger (979 score) - A Plugin-Based Multi-Agent System for In-Editor Academic Writing, Review, and Ed
 https://github.com/PaperDebugger/paperdebugger
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T17:16:35.404Z] ---
+# [AI-AGENTS] MCPJam/inspector (1583 score) - Testing and evaluation platform to chat, inspect, and debug MCP servers, MCP app
+https://github.com/MCPJam/inspector
+# [AI-AGENTS] cjo4m06/mcp-shrimp-task-manager (1497 score) - Shrimp Task Manager is a task tool built for AI Agents, emphasizing chain-of-tho
+https://github.com/cjo4m06/mcp-shrimp-task-manager
+# [AI-AGENTS] chongdashu/unreal-mcp (1240 score) - Enable AI assistant clients like Cursor, Windsurf and Claude Desktop to control 
+https://github.com/chongdashu/unreal-mcp
