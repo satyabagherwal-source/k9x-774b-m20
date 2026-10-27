@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:54:35.244Z",
-  "total_cycles_completed": 5324,
-  "total_learnings_persisted": 5324,
-  "total_rules_promoted": 4729,
+  "last_updated": "2026-10-27T13:57:56.466Z",
+  "total_cycles_completed": 5327,
+  "total_learnings_persisted": 5327,
+  "total_rules_promoted": 4731,
   "history": [
-    {
-      "timestamp": "2026-10-26T13:28:56.997Z",
-      "repository": "ant-design/pro-components",
-      "learningId": "learn-github-ant-design-pro-components",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:29:01.710Z",
-      "repository": "superhighfives/pika",
-      "learningId": "learn-github-superhighfives-pika",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:29:04.831Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-26T13:34:06.072Z",
       "repository": "rustls/rustls",
@@ -1403,6 +1382,27 @@
       "repository": "meilisearch/meilisearch",
       "learningId": "learn-github-meilisearch-meilisearch",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:57:47.900Z",
+      "repository": "frankbria/ralph-claude-code",
+      "learningId": "learn-github-frankbria-ralph-claude-code",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:57:52.368Z",
+      "repository": "ntegrals/openbrowser",
+      "learningId": "learn-github-ntegrals-openbrowser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-27T13:57:56.466Z",
+      "repository": "lastmile-ai/mcp-agent",
+      "learningId": "learn-github-lastmile-ai-mcp-agent",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

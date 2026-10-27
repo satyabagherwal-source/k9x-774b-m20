@@ -4544,3 +4544,11 @@ https://github.com/nexu-io/html-anything
 https://github.com/lemomo-ai/lemo-opuscar
 # [AI-AGENTS] automazeio/ccpm (4724 score) - Project management skill system for Agents that uses GitHub Issues and Git workt
 https://github.com/automazeio/ccpm
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:57:42.120Z] ---
+# [AI-AGENTS] frankbria/ralph-claude-code (5363 score) - Autonomous AI development loop for Claude Code with intelligent exit detection
+https://github.com/frankbria/ralph-claude-code
+# [AI-AGENTS] ntegrals/openbrowser (5336 score) - Let AI agents browse the web. An autonomous toolkit for browser-based AI agents.
+https://github.com/ntegrals/openbrowser
+# [AI-AGENTS] lastmile-ai/mcp-agent (4901 score) - Build effective agents using Model Context Protocol and simple workflow patterns
+https://github.com/lastmile-ai/mcp-agent

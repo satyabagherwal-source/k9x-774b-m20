@@ -11008,5 +11008,35 @@
     "contentHash": "426fdfa8200dbb78499bec9135cdbe388e393f688504a4fd4bb134c4f82e34f3",
     "lastHarvestedAt": "2026-10-27T13:28:23.900Z",
     "learningId": "learn-github-automazeio-ccpm"
+  },
+  "frankbria-ralph-claude-code": {
+    "repository": "frankbria/ralph-claude-code",
+    "platform": "github",
+    "sourceUrl": "https://github.com/frankbria/ralph-claude-code",
+    "sourceVersion": "a4ea748f",
+    "license": "MIT",
+    "contentHash": "d2a8297fb6b166a4de6942c79a5c4017e76f55133f3f39efa8d33dd28aa5e7c3",
+    "lastHarvestedAt": "2026-10-27T13:57:47.895Z",
+    "learningId": "learn-github-frankbria-ralph-claude-code"
+  },
+  "ntegrals-openbrowser": {
+    "repository": "ntegrals/openbrowser",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ntegrals/openbrowser",
+    "sourceVersion": "067fc45d",
+    "license": "MIT",
+    "contentHash": "aaf0552bf54fbd0a3a60db00193836b4571eaf9ec58443269e213199154061a2",
+    "lastHarvestedAt": "2026-10-27T13:57:52.362Z",
+    "learningId": "learn-github-ntegrals-openbrowser"
+  },
+  "lastmile-ai-mcp-agent": {
+    "repository": "lastmile-ai/mcp-agent",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lastmile-ai/mcp-agent",
+    "sourceVersion": "f62d8493",
+    "license": "Apache-2.0",
+    "contentHash": "beddf37864af3098f1f55f00b5861dea5ed59920a4741b0da564064429751ee9",
+    "lastHarvestedAt": "2026-10-27T13:57:56.459Z",
+    "learningId": "learn-github-lastmile-ai-mcp-agent"
   }
 }

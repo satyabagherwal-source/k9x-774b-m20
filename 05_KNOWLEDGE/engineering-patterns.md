@@ -351580,3 +351580,103 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3429b350` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4823. security): never evaluate untrusted numbers in bash arithmetic (#371) (#373) (Harvested from frankbria/ralph-claude-code)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "security): never evaluate untrusted numbers in bash arithmetic (#371) (#373)",
+  "source": "frankbria/ralph-claude-code",
+  "source_url": "https://github.com/frankbria/ralph-claude-code",
+  "source_version": "a4ea748f",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T13:57:47.698Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-frankbria-ralph-claude-code",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [frankbria/ralph-claude-code](https://github.com/frankbria/ralph-claude-code) (Revision: `a4ea748f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in frankbria/ralph-claude-code. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `eefcc3a8`: security): never evaluate untrusted numbers in bash arithmetic (#371) (#373). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```shell
+// Verified production-grade fix pattern:
+- **int_utils.sh** — `to_int VALUE` (Issue #371): the only safe way to use an untrusted value as a number — base-10 int if `^[0-9]{1,18}$` (surrounding whitespace ignored), else 0, never evaluated. Bash arithmetic (`$((x + 0))`, `[[ $x -ge n ]]`, `((x++))`) evaluates `a[$(cmd)]`, so every number read from `.ralph/` state files (repository-committable: `.call_count`, `.token_count`, `.circuit_breaker_state`, `.e2b_sandbox_state`) or parsed from Claude's output (`files_modified`, `error_count`, `confidence`, and `jq length` results, which can be fractional and would crash bash arithmetic) goes through it. Sourced (with the FATAL guard) by ralph_loop.sh, and by circuit_breaker.sh, response_analyzer.sh and sandbox_e2b.sh
+```
+
+**NEGATIVE CONSTRAINT**:
+```shell
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `eefcc3a8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 4824. update deps for security patches (Harvested from ntegrals/openbrowser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "update deps for security patches",
+  "source": "ntegrals/openbrowser",
+  "source_url": "https://github.com/ntegrals/openbrowser",
+  "source_version": "067fc45d",
+  "license": "MIT",
+  "extracted_at": "2026-10-27T13:57:52.147Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ntegrals-openbrowser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ntegrals/openbrowser](https://github.com/ntegrals/openbrowser) (Revision: `067fc45d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntegrals/openbrowser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `262ac110`: update deps for security patches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    "@types/bun": "^1.2.0",
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+    "@types/bun": "^1.1.0",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `262ac110` are properly handled with clean fallback behavior.

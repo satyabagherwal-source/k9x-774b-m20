@@ -5356,3 +5356,6 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `5c060064` | Multi-dimensional audit evidence | 2026-10-27T13:54:23.864Z |
 | `learn-github-feathersjs-feathers` | `https://github.com/feathersjs/feathers` | `e73ad697` | Multi-dimensional audit evidence | 2026-10-27T13:54:28.112Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9bbe2813` | Multi-dimensional audit evidence | 2026-10-27T13:54:35.240Z |
+| `learn-github-frankbria-ralph-claude-code` | `https://github.com/frankbria/ralph-claude-code` | `a4ea748f` | Multi-dimensional audit evidence | 2026-10-27T13:57:47.895Z |
+| `learn-github-ntegrals-openbrowser` | `https://github.com/ntegrals/openbrowser` | `067fc45d` | Multi-dimensional audit evidence | 2026-10-27T13:57:52.362Z |
+| `learn-github-lastmile-ai-mcp-agent` | `https://github.com/lastmile-ai/mcp-agent` | `f62d8493` | Multi-dimensional audit evidence | 2026-10-27T13:57:56.459Z |

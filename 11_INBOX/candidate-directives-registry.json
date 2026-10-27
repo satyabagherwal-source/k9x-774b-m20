@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:40:53.575Z",
+  "last_updated": "2026-10-27T13:57:56.464Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2939,6 +2939,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-pubkey-rxdb"
+    },
+    {
+      "id": "CD-32WG",
+      "directive_title": "Add SECURITY.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "lastmile-ai/mcp-agent",
+      "source_commit": "f62d8493",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-lastmile-ai-mcp-agent"
     }
   ]
 }

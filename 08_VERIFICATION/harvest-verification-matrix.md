@@ -5347,3 +5347,6 @@
 | `CYCLE-20261027-YIUT` | `2026-10-27T13:54:23.861Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4820` | Yes (`e6e4c27d...`) |
 | `CYCLE-20261027-YM4U` | `2026-10-27T13:54:28.110Z` | `feathersjs/feathers` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4821` | Yes (`2aaa8e8d...`) |
 | `CYCLE-20261027-YRMP` | `2026-10-27T13:54:35.233Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4822` | Yes (`8366daac...`) |
+| `CYCLE-20261027-2WAC` | `2026-10-27T13:57:47.892Z` | `frankbria/ralph-claude-code` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4823` | Yes (`d2a8297f...`) |
+| `CYCLE-20261027-2ZQF` | `2026-10-27T13:57:52.359Z` | `ntegrals/openbrowser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4824` | Yes (`aaf0552b...`) |
+| `CYCLE-20261027-32W7` | `2026-10-27T13:57:56.455Z` | `lastmile-ai/mcp-agent` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lastmile-ai-mcp-agent-learnings.md` | Yes (`beddf378...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:54:35.191Z",
-  "total_verified_learnings": 1117,
+  "last_updated": "2026-10-27T13:57:56.382Z",
+  "total_verified_learnings": 1120,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -133953,6 +133953,127 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:54:35.182Z"
+    },
+    "learn-github-frankbria-ralph-claude-code": {
+      "learning_id": "learn-github-frankbria-ralph-claude-code",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "frankbria/ralph-claude-code",
+      "repository": "frankbria/ralph-claude-code",
+      "slug": "frankbria-ralph-claude-code",
+      "platform": "github",
+      "source_url": "https://github.com/frankbria/ralph-claude-code",
+      "source_version": "a4ea748f",
+      "content_hash": "d2a8297fb6b166a4de6942c79a5c4017e76f55133f3f39efa8d33dd28aa5e7c3",
+      "dossier_path": "07_PROJECT_LEARNING/frankbria-ralph-claude-code-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/frankbria-ralph-claude-code-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4823,
+          "title": "security): never evaluate untrusted numbers in bash arithmetic (#371) (#373)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:57:47.819Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4823": {
+      "learning_id": "rule-4823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4823,
+      "title": "security): never evaluate untrusted numbers in bash arithmetic (#371) (#373)",
+      "source_url": "https://github.com/frankbria/ralph-claude-code",
+      "source_version": "a4ea748f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:57:47.819Z"
+    },
+    "learn-github-ntegrals-openbrowser": {
+      "learning_id": "learn-github-ntegrals-openbrowser",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ntegrals/openbrowser",
+      "repository": "ntegrals/openbrowser",
+      "slug": "ntegrals-openbrowser",
+      "platform": "github",
+      "source_url": "https://github.com/ntegrals/openbrowser",
+      "source_version": "067fc45d",
+      "content_hash": "aaf0552bf54fbd0a3a60db00193836b4571eaf9ec58443269e213199154061a2",
+      "dossier_path": "07_PROJECT_LEARNING/ntegrals-openbrowser-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ntegrals-openbrowser-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 4824,
+          "title": "update deps for security patches",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:57:52.280Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-4824": {
+      "learning_id": "rule-4824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4824,
+      "title": "update deps for security patches",
+      "source_url": "https://github.com/ntegrals/openbrowser",
+      "source_version": "067fc45d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:57:52.280Z"
+    },
+    "learn-github-lastmile-ai-mcp-agent": {
+      "learning_id": "learn-github-lastmile-ai-mcp-agent",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lastmile-ai/mcp-agent",
+      "repository": "lastmile-ai/mcp-agent",
+      "slug": "lastmile-ai-mcp-agent",
+      "platform": "github",
+      "source_url": "https://github.com/lastmile-ai/mcp-agent",
+      "source_version": "f62d8493",
+      "content_hash": "beddf37864af3098f1f55f00b5861dea5ed59920a4741b0da564064429751ee9",
+      "dossier_path": "07_PROJECT_LEARNING/lastmile-ai-mcp-agent-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lastmile-ai-mcp-agent-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-27T13:57:56.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

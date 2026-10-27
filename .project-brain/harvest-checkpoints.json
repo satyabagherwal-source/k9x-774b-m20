@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:54:35.247Z",
+  "last_updated": "2026-10-27T13:57:56.469Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16544,6 +16544,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-27T13:28:23.908Z"
+    },
+    "frankbria/ralph-claude-code": {
+      "repository": "frankbria/ralph-claude-code",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-frankbria-ralph-claude-code",
+      "content_hash": "d2a8297fb6b166a4de6942c79a5c4017e76f55133f3f39efa8d33dd28aa5e7c3",
+      "verified_at": "2026-10-27T13:57:47.903Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:57:47.903Z"
+    },
+    "ntegrals/openbrowser": {
+      "repository": "ntegrals/openbrowser",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ntegrals-openbrowser",
+      "content_hash": "aaf0552bf54fbd0a3a60db00193836b4571eaf9ec58443269e213199154061a2",
+      "verified_at": "2026-10-27T13:57:52.371Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:57:52.371Z"
+    },
+    "lastmile-ai/mcp-agent": {
+      "repository": "lastmile-ai/mcp-agent",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lastmile-ai-mcp-agent",
+      "content_hash": "beddf37864af3098f1f55f00b5861dea5ed59920a4741b0da564064429751ee9",
+      "verified_at": "2026-10-27T13:57:56.469Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-27T13:57:56.469Z"
     }
   },
   "repos": {

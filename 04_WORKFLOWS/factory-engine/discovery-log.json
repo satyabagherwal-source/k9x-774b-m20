@@ -19078,5 +19078,50 @@
     "qualityScore": 4724,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-27T13:28:07.277Z"
+  },
+  {
+    "name": "ralph-claude-code",
+    "fullName": "frankbria/ralph-claude-code",
+    "url": "https://github.com/frankbria/ralph-claude-code",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Autonomous AI development loop for Claude Code with intelligent exit detection",
+    "stars": 9716,
+    "forks": 730,
+    "openIssues": 18,
+    "language": "Shell",
+    "qualityScore": 5363,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:57:17.447Z"
+  },
+  {
+    "name": "openbrowser",
+    "fullName": "ntegrals/openbrowser",
+    "url": "https://github.com/ntegrals/openbrowser",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Let AI agents browse the web. An autonomous toolkit for browser-based AI agents.",
+    "stars": 9573,
+    "forks": 864,
+    "openIssues": 20,
+    "language": "TypeScript",
+    "qualityScore": 5336,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:57:17.447Z"
+  },
+  {
+    "name": "mcp-agent",
+    "fullName": "lastmile-ai/mcp-agent",
+    "url": "https://github.com/lastmile-ai/mcp-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build effective agents using Model Context Protocol and simple workflow patterns",
+    "stars": 8567,
+    "forks": 891,
+    "openIssues": 149,
+    "language": "Python",
+    "qualityScore": 4901,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-27T13:57:17.447Z"
   }
 ]
