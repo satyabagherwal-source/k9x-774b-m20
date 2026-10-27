@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-27T13:35:20.645Z",
+  "last_updated": "2026-10-27T13:41:01.660Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -200,14 +200,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-source-legal-opencontracts",
-      "content_hash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
-      "verified_at": "2026-10-25T22:48:13.525Z",
+      "content_hash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
+      "verified_at": "2026-10-27T13:41:01.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:48:13.525Z"
+      "last_updated": "2026-10-27T13:41:01.660Z"
     },
     "Qwen/Qwen3.8-27B": {
       "repository": "Qwen/Qwen3.8-27B",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
-      "verified_at": "2026-10-23T10:24:39.177Z",
+      "content_hash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
+      "verified_at": "2026-10-27T13:40:53.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T10:24:39.177Z"
+      "last_updated": "2026-10-27T13:40:53.582Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
-      "verified_at": "2026-10-25T10:17:02.317Z",
+      "content_hash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
+      "verified_at": "2026-10-27T13:40:56.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:17:02.317Z"
+      "last_updated": "2026-10-27T13:40:56.285Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -9096,14 +9096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-guokaigdg-animal-island-ui",
-      "content_hash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
-      "verified_at": "2026-10-25T11:20:46.718Z",
+      "content_hash": "08935b7da488034eeb5d8987b1e9497fb867ec0fb9f36cb2c9b996e7e6c62774",
+      "verified_at": "2026-10-27T13:40:47.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T11:20:46.718Z"
+      "last_updated": "2026-10-27T13:40:47.228Z"
     },
     "nezhahq/nezha": {
       "repository": "nezhahq/nezha",

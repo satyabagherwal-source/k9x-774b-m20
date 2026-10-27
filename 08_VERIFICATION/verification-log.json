@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261025-6B9P",
-    "timestamp": "2026-10-25T13:57:06.829Z",
-    "repository": "vuetifyjs/vuetify",
-    "learningId": "learn-github-vuetifyjs-vuetify",
-    "contentHash": "bb5b37fd939ab964f0ec16494af086b61785afeb096b6140c7e905284778a081",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6CS2",
-    "timestamp": "2026-10-25T13:57:08.786Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "5e447f10f5690677e501c6e0fbd0664a4cfef8bb3a38da1924b299f2d23f1d66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6EU3",
-    "timestamp": "2026-10-25T13:57:11.451Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "bce98ef75b41a905a600f60d6b8e58a8217569edce3660097e86f109907fa02b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261025-6JGU",
-    "timestamp": "2026-10-25T13:57:17.454Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "160c89bfce4b14b76b2091282cc76d6ff753655aaed62f05a4c8569b8fb9299c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261025-6LXX",
     "timestamp": "2026-10-25T13:57:20.661Z",
     "repository": "tickernelz/opencode-mem",
@@ -7490,6 +7430,66 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "0721d572230a6ac84edeedfebc2346e44f47e8a83e8d4fb6d5c8d13da4646b64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-H0QA",
+    "timestamp": "2026-10-27T13:40:47.218Z",
+    "repository": "guokaigdg/animal-island-ui",
+    "learningId": "learn-github-guokaigdg-animal-island-ui",
+    "contentHash": "08935b7da488034eeb5d8987b1e9497fb867ec0fb9f36cb2c9b996e7e6c62774",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-H5MN",
+    "timestamp": "2026-10-27T13:40:53.567Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-H7PV",
+    "timestamp": "2026-10-27T13:40:56.275Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261027-HBV5",
+    "timestamp": "2026-10-27T13:41:01.649Z",
+    "repository": "Open-Source-Legal/OpenContracts",
+    "learningId": "learn-github-open-source-legal-opencontracts",
+    "contentHash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

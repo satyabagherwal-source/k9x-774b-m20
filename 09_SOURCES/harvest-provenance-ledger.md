@@ -5345,3 +5345,7 @@ Every entry in this ledger must capture:
 | `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `641efd1e` | Multi-dimensional audit evidence | 2026-10-27T13:35:11.675Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `65ce26b8` | Multi-dimensional audit evidence | 2026-10-27T13:35:14.802Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e02cfcd7` | Multi-dimensional audit evidence | 2026-10-27T13:35:20.635Z |
+| `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `1cdab9d4` | Multi-dimensional audit evidence | 2026-10-27T13:40:47.221Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `a8a2bb3d` | Multi-dimensional audit evidence | 2026-10-27T13:40:53.570Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a1ca224c` | Multi-dimensional audit evidence | 2026-10-27T13:40:56.277Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `6652e8dd` | Multi-dimensional audit evidence | 2026-10-27T13:41:01.652Z |

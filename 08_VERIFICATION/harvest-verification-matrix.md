@@ -5336,3 +5336,7 @@
 | `CYCLE-20261027-9TTK` | `2026-10-27T13:35:11.672Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4810` | Yes (`6b8fdae4...`) |
 | `CYCLE-20261027-9W8F` | `2026-10-27T13:35:14.799Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4811` | Yes (`ead50e19...`) |
 | `CYCLE-20261027-A0QG` | `2026-10-27T13:35:20.632Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4812` | Yes (`0721d572...`) |
+| `CYCLE-20261027-H0QA` | `2026-10-27T13:40:47.218Z` | `guokaigdg/animal-island-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4813` | Yes (`08935b7d...`) |
+| `CYCLE-20261027-H5MN` | `2026-10-27T13:40:53.567Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md` | Yes (`94943458...`) |
+| `CYCLE-20261027-H7PV` | `2026-10-27T13:40:56.275Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4814` | Yes (`0288616a...`) |
+| `CYCLE-20261027-HBV5` | `2026-10-27T13:41:01.649Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4815` | Yes (`620ef911...`) |

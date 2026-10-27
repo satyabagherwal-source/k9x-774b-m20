@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-27T13:35:20.573Z",
+  "last_updated": "2026-10-27T13:41:01.603Z",
   "total_verified_learnings": 1117,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14336,8 +14336,8 @@
       "slug": "guokaigdg-animal-island-ui",
       "platform": "github",
       "source_url": "https://github.com/guokaigdg/animal-island-ui",
-      "source_version": "8df30b8f",
-      "content_hash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
+      "source_version": "1cdab9d4",
+      "content_hash": "08935b7da488034eeb5d8987b1e9497fb867ec0fb9f36cb2c9b996e7e6c62774",
       "dossier_path": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "promoted_rules": [
@@ -14360,6 +14360,11 @@
           "number": 4258,
           "title": "overlays): stop the modal and drawer chrome from being selectable",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4813,
+          "title": "add FUNDING.yml with custom sponsor link",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14367,7 +14372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:20:46.653Z",
+      "verified_at": "2026-10-27T13:40:47.161Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31704,8 +31709,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "c11f9323",
-      "content_hash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
+      "source_version": "a1ca224c",
+      "content_hash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -31728,6 +31733,11 @@
           "number": 4239,
           "title": "codehost): handle bot identity changes in review summaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4814,
+          "title": "Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31735,7 +31745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:17:02.264Z",
+      "verified_at": "2026-10-27T13:40:56.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40012,8 +40022,8 @@
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "dd471b03",
-      "content_hash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
+      "source_version": "6652e8dd",
+      "content_hash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "promoted_rules": [
@@ -40026,6 +40036,11 @@
           "number": 4479,
           "title": "deps): update pydantic-ai-slim requirement (#2476)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 4815,
+          "title": "deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40035,7 +40050,7 @@
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-10-25T22:48:13.446Z",
+      "verified_at": "2026-10-27T13:41:01.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42462,8 +42477,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "924ba206",
-      "content_hash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
+      "source_version": "a8a2bb3d",
+      "content_hash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -42493,7 +42508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T10:24:39.097Z",
+      "verified_at": "2026-10-27T13:40:53.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133763,6 +133778,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-27T13:35:20.560Z"
+    },
+    "rule-4813": {
+      "learning_id": "rule-4813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4813,
+      "title": "add FUNDING.yml with custom sponsor link",
+      "source_url": "https://github.com/guokaigdg/animal-island-ui",
+      "source_version": "1cdab9d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:40:47.161Z"
+    },
+    "rule-4814": {
+      "learning_id": "rule-4814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4814,
+      "title": "Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "a1ca224c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:40:56.208Z"
+    },
+    "rule-4815": {
+      "learning_id": "rule-4815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 4815,
+      "title": "deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491)",
+      "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
+      "source_version": "6652e8dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-27T13:41:01.592Z"
     }
   },
   "aliases": {

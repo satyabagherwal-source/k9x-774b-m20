@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "924ba206",
+    "sourceVersion": "a8a2bb3d",
     "license": "Apache-2.0",
-    "contentHash": "52ff3f1d2600fb79f8ce835fe7e02817721a72d2532ce5f55f8ecf74eed1e21b",
-    "lastHarvestedAt": "2026-10-23T10:24:39.164Z",
+    "contentHash": "94943458ed99d37d50d9c50da7c1252c92df919cc927efd37dfaaf38464e8b41",
+    "lastHarvestedAt": "2026-10-27T13:40:53.570Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "c11f9323",
+    "sourceVersion": "a1ca224c",
     "license": "NOASSERTION",
-    "contentHash": "5e28044b24eb129ea5689425d9a7fd2817de5f483550162eb6c671512988a676",
-    "lastHarvestedAt": "2026-10-25T10:17:02.311Z",
+    "contentHash": "0288616a70f8707c0d35c49309c682ef3a1a37b24dae8744e1735d1bbed1791b",
+    "lastHarvestedAt": "2026-10-27T13:40:56.277Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -5983,10 +5983,10 @@
     "repository": "guokaigdg/animal-island-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/guokaigdg/animal-island-ui",
-    "sourceVersion": "8df30b8f",
+    "sourceVersion": "1cdab9d4",
     "license": "MIT",
-    "contentHash": "b4d7d103a9170c14c7ce2c2b45e421f9add13b9c3dcc879be1f3d15e62d8a172",
-    "lastHarvestedAt": "2026-10-25T11:20:46.711Z",
+    "contentHash": "08935b7da488034eeb5d8987b1e9497fb867ec0fb9f36cb2c9b996e7e6c62774",
+    "lastHarvestedAt": "2026-10-27T13:40:47.221Z",
     "learningId": "learn-github-guokaigdg-animal-island-ui"
   },
   "nezhahq-nezha": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "dd471b03",
+    "sourceVersion": "6652e8dd",
     "license": "MIT",
-    "contentHash": "c486de2c441f5f5f8e08b2cd87c25ba13d1bf82b30dd59b409f78c1f1e3da700",
-    "lastHarvestedAt": "2026-10-25T22:48:13.517Z",
+    "contentHash": "620ef9119e36cf5703e824cd8629bfe043fb791cb50cc8436b292dcb23a28d61",
+    "lastHarvestedAt": "2026-10-27T13:41:01.652Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {

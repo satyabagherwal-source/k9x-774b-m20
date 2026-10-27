@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-27T13:28:23.904Z",
+  "last_updated": "2026-10-27T13:40:53.575Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2928,6 +2928,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule title references repository-specific PR/issue rather than a universal engineering principle",
       "learning_id": "learn-github-automazeio-ccpm"
+    },
+    {
+      "id": "CD-H5MV",
+      "directive_title": "Tests: add url reserved chars to TEST_DATA_CHARSET, FIX backup, OneDrive and Goo",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pubkey/rxdb",
+      "source_commit": "a8a2bb3d",
+      "date_staged": "2026-10-27",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-pubkey-rxdb"
     }
   ]
 }

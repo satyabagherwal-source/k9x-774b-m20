@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `c11f9323`  
+> **Source Version**: `a1ca224c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:17:02.064Z  
+> **Timestamp**: 2026-10-27T13:40:55.923Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:17:01.856Z  
+> **Harvest Timestamp**: 2026-10-27T13:40:55.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3258 stars
+- **Stars / Engagement**: 3260 stars
 
 ---
 
@@ -1158,512 +1158,324 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebae75b4` (2026-10-20)
-**Commit Message**: fix(codehost): handle bot identity changes in review summaries
+### Incident Patch 1: `8e99b968` (2026-10-26)
+**Commit Message**: Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps
 
-Archive only summaries by the current author and bound GitHub App validation to 30 seconds.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go` (modified, +5/-5)
+**File**: `pkg/microservice/aslan/core/common/service/environment.go` (modified, +3/-1)
 ```diff
-@@ -18,7 +18,7 @@ func isAIReviewSummary(body string) bool {
- 
- const aiReviewArchiveCheckpoint = "<!-- zadig-ai-review-archive-checkpoint -->"
- 
--func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID int64, currentBody string) error {
-+func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID, authorID int64, currentBody string) error {
- 	if !isAIReviewSummary(currentBody) {
- 		return fmt.Errorf("current GitHub comment %d is not an AI review summary", currentID)
- 	}
-@@ -46,7 +46,7 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 		}
- 		for i := len(comments) - 1; i >= 0; i-- {
- 			comment := comments[i]
--			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || !isAIReviewSummary(comment.GetBody()) {
-+			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || comment.GetUser().GetID() != authorID || !isAIReviewSummary(comment.GetBody()) {
- 				continue
- 			}
- 			if comment.GetNodeID() == "" {
-@@ -55,7 +55,7 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 			if err := reviewfeedback.MinimizeGitHubComment(ctx, cli, comment.GetNodeID()); err != nil {
- 				return fmt.Errorf("minimize GitHub summary comment %d: %w", comment.GetID(), err)
- 			}
--			// A checkpoint confirms every older summary was successfully archived.
-+			// A checkpoint confirms every older summary by this author was successfully archived.
- 			if strings.Contains(comment.GetBody(), aiReviewArchiveCheckpoint) {
- 				complete = true
- 				break
-@@ -75,15 +75,15 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 	return nil
+@@ -998,7 +998,7 @@ func FindServiceFromIstioGateway(gwObjs *v1alpha3.GatewayList, serviceName strin
  }
  
--func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64) error {
-+func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64, authorID int) error {
- 	opts := &gitlab.ListMergeRequestNotesOptions{OrderBy: gitlab.String("created_at"), Sort: gitlab.String("asc"), ListOptions: gitlab.ListOptions{PerPage: 100}}
- 	for {
- 		notes, resp, err := cli.Notes.ListMergeRequestNotes(project, pr, opts, gitlab.WithContext(ctx))
- 		if err != nil {
- 			return err
- 		}
- 		for _, note := range notes {
--			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
-+			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.Author.ID != authorID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
- 				continue
- 			}
- 			body := "<details>\n<summary>点击展开 Zadig AI Review 详情</summary>\n\n" + note.Body + "\n\n</details>"
+ // GetHelmServiceName get service name from annotations of resources deployed by helm
+-// resType currently only support Deployment, StatefulSet, Job and CronJob.
++// resType currently only supports Deployment, DaemonSet, StatefulSet, Job and CronJob.
+ // this function needs to be optimized
+ func GetHelmServiceName(prod *models.Product, resType, resName string, kubeClient client.Client, version *version.Info) (string, error) {
+ 	res := &unstructured.Unstructured{}
+@@ -1012,6 +1012,8 @@ func GetHelmServiceName(prod *models.Product, resType, resName string, kubeClien
+ 	switch resType {
+ 	case setting.Deployment:
+ 		res.SetGroupVersionKind(getter.DeploymentGVK)
++	case setting.DaemonSet:
++		res.SetGroupVersionKind(getter.DaemonSetGVK)
+ 	case setting.StatefulSet:
+ 		res.SetGroupVersionKind(getter.StatefulSetGVK)
+ 	case setting.Job:
 ```
 
-**File**: `pkg/microservice/aslan/core/common/service/scmnotify/client.go` (modified, +2/-2)
+**File**: `pkg/microservice/aslan/core/common/service/kube/apply.go` (modified, +2/-0)
 ```diff
-@@ -141,7 +141,7 @@ func (c *Client) createAIReviewComment(ctx context.Context, cli *aiReviewComment
- 		if isAIReviewSummary(comment) {
- 			ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
- 			defer cancel()
--			if err := archiveGitLabAIReviewSummaries(ctx, cli.gitlab, projectID, prID, int64(item.ID)); err != nil && c.logger != nil {
-+			if err := archiveGitLabAIReviewSummaries(ctx, cli.gitlab, projectID, prID, int64(item.ID), item.Author.ID); err != nil && c.logger != nil {
- 				c.logger.Warnf("failed to collapse previous GitLab AI review summaries for %s#%d: %v", projectID, prID, err)
- 			}
- 		}
-@@ -154,7 +154,7 @@ func (c *Client) createAIReviewComment(ctx context.Context, cli *aiReviewComment
- 	if isAIReviewSummary(comment) {
- 		ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
- 		defer cancel()
--		if err := archiveGitHubAIReviewSummaries(ctx, cli.github, repoOwner, repoName, prID, item.GetID(), comment); err != nil && c.logger != nil {
-+		if err := archiveGitHubAIReviewSummaries(ctx, cli.github, repoOwner, repoName, prID, item.GetID(), item.GetUser().GetID(), comment); err != nil && c.logger != nil {
- 			c.logger.Warnf("failed to minimize previous GitHub AI review summaries for %s/%s#%d: %v", repoOwner, repoName, prID, err)
- 		}
- 	}
+@@ -230,6 +230,8 @@ func removeResources(currentItems, newItems []*unstructured.Unstructured, namesp
+ 		switch item.GetKind() {
+ 		case setting.Deployment:
+ 			watcher, err = clientSet.AppsV1().Deployments(namespace).Watch(ctx, watchOpts)
++		case setting.DaemonSet:
++			watcher, err = clientSet.AppsV1().DaemonSets(namespace).Watch(ctx, watchOpts)
+ 		case setting.Service:
+ 			watcher, err = clientSet.CoreV1().Services(namespace).Watch(ctx, watchOpts)
+ 		case setting.StatefulSet:
 ```
 
-**File**: `pkg/tool/git/github/client.go` (modified, +1/-1)
+**File**: `pkg/microservice/aslan/core/common/service/kube/render.go` (modified, +12/-0)
 ```diff
-@@ -157,7 +157,7 @@ func GetApp(cfg *Config) (*github.App, error) {
- 		return nil, fmt.Errorf("%w: %v", ErrInvalidAppPrivateKey, err)
- 	}
+@@ -552,6 +552,9 @@ func FetchImportedAllManifests(envInfo *models.Product, serviceTmp *models.Servi
+ 		case setting.Deployment:
+ 			bs, exist, err = getter.GetDeploymentYamlFormat(envInfo.Namespace, name, kubeClient)
+ 			isWorkload = true
++		case setting.DaemonSet:
++			bs, exist, err = getter.GetDaemonSetYamlFormat(envInfo.Namespace, name, kubeClient)
++			isWorkload = true
+ 		case setting.StatefulSet:
+ 			bs, exist, err = getter.GetStatefulSetYamlFormat(envInfo.Namespace, name, kubeClient)
+ 			isWorkload = true
+@@ -811,6 +814,15 @@ func FetchImportedManifests(option *GeneSvcYamlOption, productInfo *models.Produ
+ 				return "", nil, errors.Errorf("deployment %s not found", u.GetName())
+ 			}
+ 			manifestArr = append(manifestArr, string(workloadBs))
++		case setting.DaemonSet:
++			workloadBs, exist, err := getter.GetDaemonSetYamlFormat(productInfo.Namespace, u.GetName(), kubeClient)
++			if err != nil {
++				return "", nil, errors.Wrapf(err, "failed to get daemonset %s", u.GetName())
++			}
++			if !exist {
++				return "", nil, errors.Errorf("daemonset %s not found", u.GetName())
++			}
++			manifestArr = append(manifestArr, string(workloadBs))
+ 		case setting.StatefulSet:
+ 			workloadBs, exist, err := getter.GetStatefulSetYamlFormat(productInfo.Namespace, u.GetName(), kubeClient)
+ 			if err != nil {
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/service.go` (modified, +14/-0)
+```diff
+@@ -1419,6 +1419,20 @@ func GetServiceImpl(serviceName string, serviceTmpl *commonmodels.Service, workL
+ 	case setting.SourceFromHelm:
+ 		k8sServices, _ := getter.ListServicesWithCache(nil, inf)
+ 		switch workLoadType {
++		case setting.DaemonSet:
++			daemonSet, err := getter.GetDaemonSetByNameWithCache(serviceName, namespace, inf)
++			if err != nil {
++				return nil, e.ErrGetService.AddDesc(fmt.Sprintf("service %s not found for daemonset, err: %v", serviceName, err))
++			}
++			ret.Scales = append(ret.Scales, GetDaemonSetWorkloadResource(daemonSet, inf, log))
++			ret.Workloads = append(ret.Workloads, ToDaemonSetWorkload(daemonSet))
++			podLabels := labels.Set(daemonSet.Spec.Template.GetLabels())
++			for _, svc := range k8sServices {
++				if labels.SelectorFromValidatedSet(svc.Spec.Selector).Matches(podLabels) {
++					ret.Services = append(ret.Services, wrapper.Service(svc).Resource())
++					break
++				}
++			}
+ 		case setting.StatefulSet:
+ 			statefulSet, err := getter.GetStatefulSetByNameWWithCache(serviceName, namespace, inf)
+ 			if err != nil {
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +1/-1)
+```diff
+@@ -667,7 +667,7 @@ func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envNam
  
--	gc := NewClient(&Config{HTTPClient: &http.Client{Transport: trans}})
-+	gc := NewClient(&Config{HTTPClient: &http.Client{Transport: trans, Timeout: 30 * time.Second}})
- 	app, _, err := gc.Apps.Get(context.TODO(), "")
- 	return app, err
+ 					for _, us := range unstructuredList {
+ 						switch us.GetKind() {
+-						case setting.Deployment, setting.StatefulSet:
++						case setting.Deployment, setting.DaemonSet, setting.StatefulSet:
+ 							podLabels, _, err := unstructured.NestedStringMap(us.Object, "spec", "template", "metadata", "labels")
+ 							if err == nil {
+ 								rollbackStatus.RelatedPodLabels = append(rollbackStatus.RelatedPodLabels, podLabels)
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_restart.go` (modified, +10/-8)
+```diff
+@@ -242,7 +242,7 @@ func (c *RestartJobCtl) restartHelmService(ctx context.Context, env *commonmodel
  }
-```
-
----
-
-### Incident Patch 2: `09ea74d9` (2026-10-20)
-**Commit Message**: chore(codehost): exclude local regression tests
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/systemconfig/core/codehost/repository/mongodb/codehost_bot_test.go` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package mongodb
--
--import (
--	"testing"
--
--	"go.mongodb.org/mongo-driver/bson"
--	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
--
--	"github.com/koderover/zadig/v2/pkg/microservice/systemconfig/core/codehost/repository/models"
--	"github.com/koderover/zadig/v2/pkg/setting"
--)
--
--func TestCodeHostUpdatePersistsBotAtomically(t *testing.T) {
--	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
--	defer mt.Close()
--	for _, tc := range []struct {
--		name             string
--		updateBot, clear bool
--	}{
--		{name: "omitted bot"},
--		{name: "configured bot", updateBot: true},
--		{name: "clear bot", updateBot: true, clear: true},
--	} {
--		mt.Run(tc.name, func(mt *mtest.T) {
--			host := &models.CodeHost{ID: 7, Type: setting.SourceFromGitlab, Alias: "new-alias", AccessToken: "oauth-token", RefreshToken: "oauth-refresh", UpdatedAt: 123,
--				Bot: &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "bot-pat"}},
--			}
--			if tc.clear {
--				host.Bot = nil
--			}
--			mt.AddMockResponses(mtest.CreateSuccessResponse(bson.E{Key: "n", Value: 1}, bson.E{Key: "nModified", Value: 1}))
--			coll := &CodehostColl{Collection: mt.Coll}
--			if _, err := coll.UpdateCodeHost(host, tc.updateBot); err != nil {
--				mt.Fatal(err)
--			}
--			events := mt.GetAllStartedEvents()
--			if len(events) != 1 || events[0].CommandName != "update" {
--				mt.Fatal("codehost and bot did not use one update")
--			}
--			update := events[0].Command.Lookup("updates").Array().Index(0).Value().Document().Lookup("u").Document()
--			set := update.Lookup("$set").Document()
--			if set.Lookup("alias").StringValue() != "new-alias" || set.Lookup("access_token").StringValue() != "oauth-token" || set.Lookup("refresh_token").StringValue() != "oauth-refresh" || set.Lookup("updated_at").Int64() != 123 {
--				mt.Fatal("codehost or OAuth fields were changed incorrectly")
--			}
--			_, setBotErr := set.LookupErr("bot")
--			unset, unsetErr := update.LookupErr("$unset")
--			if tc.updateBot && !tc.clear {
--				if setBotErr != nil || set.Lookup("bot").Document().Lookup("gitlab").Document().Lookup("token").StringValue() != "bot-pat" {
--					mt.Fatal("bot not persisted with codehost")
--				}
--			} else if setBotErr == nil {
--				mt.Fatal("bot was overwritten unexpectedly")
--			}
--			if tc.clear {
--				if unsetErr != nil {
--					mt.Fatal("bot not removed")
--				}
--				if _, err := unset.Document().LookupErr("bot"); err != nil {
--					mt.Fatal("bot not removed")
--				}
--			} else if unsetErr == nil {
--				mt.Fatal("unrelated update removed bot")
--			}
--		})
--	}
--}
-```
-
-**File**: `pkg/microservice/systemconfig/core/codehost/service/codehost_bot_test.go` (removed, +0/-224)
-```diff
-@@ -1,224 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package service
--
--import (
--	"encoding/json"
--	"fmt"
--	"net/http"
--	"net/http/httptest"
--	"strings"
--	"testing"
--
--	"github.com/gin-gonic/gin"
--	"github.com/koderover/zadig/v2/pkg/microservice/systemconfig/core/codehost/repository/models"
--	"github.com/koderover/zadig/v2/pkg/setting"
--	internalhandler "github.com/koderover/zadig/v2/pkg/shared/handler"
--)
--
--func TestCodeHostBotPreserveClearAndReject(t *testing.T) {
--	for _, tc := range []struct {
--		name, body, wantError string
--		cleared               bool
--	}{
--		{name: "omitted", body: `{}`},
--		{name: "explicit null", body: `{"bot":null}`, cleared: true},
--		{name: "empty object", body: `{"bot":{}}`, wantError: "gitlab"},
--		{name: "wrong provider", body: `{"bot":{"github":{"app_id":2}}}`, wantError: "gitlab"},
--		{name: "both providers", body: `{"bot":{"gitlab":{},"github":{}}}`, wantError: "gitlab"},
--		{name: "invalid shape", body: `{"bot":"secret"}`, wantError: "bot"},
--	} {
--		t.Run(tc.name, func(t *testing.T) {
--			old := &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "old-token"}}
--			host := &models.CodeHost{IntegrationLevel: setting.IntegrationLevelSystem, Type: setting.SourceFromGitlab, Bot: old}
--			var args CodeHostArgs
--			if err := json.Unmarshal([]byte(tc.body), &args); err != nil {
--				t.Fatal(err)
--			}
--			err := applyCodeHostBot(host, args.Bot, "admin")
--			if tc.wantError != "" {
--				if err == nil || !strings.Contains(err.Error(), tc.wantError) {
--					t.Fatalf("got %v, want %q", err, tc.wantError)
--				}
--			} else if err != nil {
--				t.Fatal(err)
--			}
--			if tc.cleared {
--				if host.Bot != nil {
--					t.Fatal("bot was not cleared")
--				}
--			} else if host.Bot != old {
--				t.Fatal("existing configuration changed")
--			}
--		})
--	}
--}
--
--func TestCodeHostGitLabBotValidatesEffectiveSettings(t *testing.T) {
--	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		if r.URL.Path == "/api/v4/" {
--			return
--		}
--		if r.URL.Path != "/api/v4/user" {
--			t.Errorf("unexpected path: %s", r.URL.Path)
--		}
--		if r.Header.Get("PRIVATE-TOKEN") != "service-account-pat" {
--			w.WriteHeader(http.StatusUnauthorized)
--			return
--		}
--		w.Header().Set("Content-Type", "application/json")
--		fmt.Fprint(w, `{"username":"ai-review-service-account"}`)
--	}))
--	defer server.Close()
--	for _, tc := range []struct {
--		name, raw, wantError string
--		existing             bool
--	}{
--		{name: "first configuration", raw: `{"gitlab":{"token":"service-account-pat"}}`},
--		{name: "retained token", raw: `{"gitlab":{}}`, existing: true},
--		{name: "blank retains token", raw: `{"gitlab":{"token":""}}`, existing: true},
--		{name: "missing first token", raw: `{"gitlab":{}}`, wantError: "首次配置"},
--		{name: "invalid token", raw: `{"gitlab":{"token":"bad-token"}}`, existing: true, wantError: "校验失败"},
--	} {
--		t.Run(tc.name, func(t *testing.T) {
--			host := &models.CodeHost{IntegrationLevel: setting.IntegrationLevelSystem, Type: setting.SourceFromGitlab, Address: server.URL, DisableSSL: true, UpdatedAt: 123}
--			if tc.existing {
--				host.Bot = &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "service-account-pat"}}
--			}
--			old := host.Bot
--			err := applyCodeHostBot(host, json.RawMessage(tc.raw), "admin")
--			if tc.wantError != "" {
--				if err == nil || !strings.Contains(err.Error(), tc.wantError) {
--					t.Fatalf("got %v, want %q", err, tc.wantError)
--				}
--				if host.Bot != old {
--					t.Fatal("failed validation modified stored configuration")
--				}
--				return
--			}
--			if err != nil {
--				t.Fatal(err)
--			}
--			if host.Bot.GitLab.Token != "service-account-pat" || host.Bot.GitLab.BotUsername != "ai-review-service-account" {
--				t.Fatal("wrong bot identity")
--			}
--			if host.Bot.UpdatedBy != "admin" || host.Bot.UpdatedAt == 0 {
--				t.Fatal("missing bot audit fields")
--			}
--			if host.UpdatedAt != 123 {
--				t.Fatal("bot update changed OAuth timestamp")
--			}
--		})
--	}
--}
--
--func TestCodeHostBotResponseHidesCredentials(t *testing.T) {
--	for _, source := range []string{setting.SourceFromGitlab, setting.SourceFromGithub, setting.SourceFromGitee} {
--		for _, level := range []setting.IntegrationLevel{setting.IntegrationLevelSystem, setting.IntegrationLevelProject} {
--			host := &models.CodeHost{ID: 7, Type: source, IntegrationLevel: level, Alias: "existing-alias", Bot: &models.CodeHostBot{
--				GitLab
-```
-
-**File**: `pkg/middleware/gin/request_log_codehost_test.go` (removed, +0/-66)
-```diff
-@@ -1,66 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package gin
--
--import (
--	"io"
--	"net/http/httptest"
--	"strings"
--	"testing"
--
--	gingonic "github.com/gin-gonic/gin"
--	"go.uber.org/zap"
--	"go.uber.org/zap/zaptest/observer"
--)
--
--func TestCodeHostCredentialsAreNotLogged(t *testing.T) {
--	for _, tc := range []struct {
--		method, path string
--		hidden       bool
--	}{
--		{"POST", "/api/v1/codehosts", true},
--		{"PATCH", "/api/v1/codehosts/7", true},
--		{"POST", "/api/directory/codehosts", true},
--		{"PATCH", "/api/directory/codehosts/7", true},
--		{"POST", "/api/v1/other", false},
--	} {
--		t.Run(tc.method+tc.path, func(t *testing.T) {
--			core, logs := observer.New(zap.InfoLevel)
--			r := gingonic.New()
--			r.Use(RequestLog(zap.New(core)))
--			body := `{"bot":{"gitlab":{"token":"secret-token"}}}`
--			r.Handle(tc.method, tc.path, func(c *gingonic.Context) {
--				got, err := io.ReadAll(c.Request.Body)
--				if err != nil || string(got) != body {
--					t.Fatal("middleware changed the request body")
--				}
--				c.Status(200)
--			})
--			r.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(tc.method, tc.path, strings.NewReader(body)))
--			if logs.Len() != 1 {
--				t.Fatalf("got %d log entries", logs.Len())
--			}
--			got := logs.All()[0].ContextMap()["body"]
--			if tc.hidden && got != "" {
--				t.Fatal("codehost credentials were captured in request logs")
--			}
--			if !tc.hidden && got != body {
--				t.Fatal("unrelated request logging changed")
--			}
--		})
--	}
--}
-```
-
----
-
-### Incident Patch 3: `c11f9323` (2026-10-23)
-**Commit Message**: fix: use target Kubernetes version when rendering Helm charts
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_helm_deploy.go` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ func (c *HelmDeployJobCtl) Run(ctx context.Context) {
- 	}
  
- 	helmDeploySvc := helmservice.NewHelmDeployService()
--	helmClient, err := helmtool.NewClient()
-+	helmClient, err := helmtool.NewClientFromNamespace(productInfo.ClusterID, productInfo.Namespace)
+ func restartWorkloadResources(ctx context.Context, clusterID string, resources []*kube.WorkloadResource, env *commonmodels.Product, kubeClient crClient.Client, clientSet *kubernetes.Clientset) (replaceResources []commonmodels.Resource, relatedPodLabels []map[string]string, err error) {
+-	deployments, _, statefulSets, _, _, _, err := kube.FetchSelectedWorkloads(env.Namespace, resources, kubeClient, clientSet)
++	deployments, daemonSets, statefulSets, _, _, _, err := kube.FetchSelectedWorkloads(env.Namespace, resources, kubeClient, clientSet)
  	if err != nil {
- 		msg := fmt.Sprintf("failed to new helm client, err %s", err)
- 		logError(c.job, msg, c.logger)
+ 		return nil, nil, err
+ 	}
+@@ -300,14 +300,16 @@ func restartWorkloadResources(ctx context.Context, clusterID string, resources [
+ 		relatedPodLabels = append(relatedPodLabels, sts.Spec.Template.Labels)
+ 	}
+ 
+-	for _, resource := range resources {
+-		switch resource.Type {
+-		case setting.DaemonSet:
+-			if err := updater.RestartDaemonSet(ctx, clusterID, env.Namespace, resource.Name); err != nil {
+-				return nil, nil, fmt.Errorf("failed to restart daemonset %s/%s: %v", env.Namespace, resource.Name, err)
+-			}
+-			replaceResources = append(replaceResources, commonmodels.Resource{Kind: setting.DaemonSet, Name: resource.Name})
++	for _, daemonSet := range daemonSets {
++		if err := updater.RestartDaemonSet(ctx, clusterID, daemonSet.Namespace, daemonSet.Name); err != nil {
++			return nil, nil, fmt.Errorf("failed to restart daemonset %s/%s: %v", daemonSet.Namespace, daemonSet.Name, err)
+ 		}
++		replaceResources = append(replaceResources, commonmodels.Resource{
++			Kind:        setting.DaemonSet,
++			Name:        daemonSet.Name,
++			PodOwnerUID: string(daemonSet.UID),
++		})
++		relatedPodLabels = append(relatedPodLabels, daemonSet.Spec.Template.Labels)
+ 	}
+ 	return replaceResources, relatedPodLabels, nil
+ }
 ```
 
-**File**: `pkg/tool/helmclient/clone_version_test.go` (added, +55/-0)
+**File**: `pkg/microservice/aslan/core/environment/service/common_env_cfg_informer.go` (modified, +100/-0)
 ```diff
-@@ -0,0 +1,55 @@
-+package helmclient
-+
-+import (
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	hc "github.com/mittwald/go-helm-client"
-+	"helm.sh/helm/v3/pkg/chart"
-+	"helm.sh/helm/v3/pkg/chartutil"
-+	"k8s.io/client-go/rest"
-+)
-+
-+func TestHelmClientCloneRendersWithClusterVersion(t *testing.T) {
-+	t.Setenv("HELM_DRIVER", "memory")
-+	client, err := NewClientFromRestConf(&rest.Config{Host: "https://127.0.0.1:6443"}, "test")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	client.KubeVersion, err = chartutil.ParseKubeVersion("v1.30.0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	clone, err := client.Clone()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	chartDir := t.TempDir()
-+	err = chartutil.SaveDir(&chart.Chart{
-+		Metadata: &chart.Metadata{
-+			APIVersion:  "v2",
-+			Name:        "version-check",
-+			Version:     "0.1.0",
-+			KubeVersion: ">=1.24.0-0",
+@@ -81,6 +81,22 @@ func NewClusterInformerFactory(clusterID string, cls *kubernetes.Clientset) (inf
+ 		DeleteFunc: onStatefulSetDelete,
+ 	})
+ 
++	informerFactory.Apps().V1().DaemonSets().Lister()
++	informerFactory.Apps().V1().DaemonSets().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
++		AddFunc: func(obj interface{}) {
++			go onDaemonSetAddAndUpdate(obj)
 +		},
-+		Templates: []*chart.File{{
-+			Name: "templates/configmap.yaml",
-+			Data: []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: version-check\ndata:\n  kubeVersion: {{ .Capabilities.KubeVersion.Version | quote }}\n"),
-+		}},
-+	}, chartDir)
-+	if err != nil {
-+		t.Fatal(err)
++		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
++			newDaemonSet := newObj.(*appsv1.DaemonSet)
++			oldDaemonSet := oldObj.(*appsv1.DaemonSet)
++			if newDaemonSet.ResourceVersion == oldDaemonSet.ResourceVersion {
++				return
++			}
++			go onDaemonSetAddAndUpdate(newObj)
++		},
++		DeleteFunc: onDaemonSetDelete,
++	})
++
+ 	stopchan := make(chan struct{})
+ 	informerFactory.Start(stopchan)
+ 	informerFactory.WaitForCacheSync(make(chan struct{}))
+@@ -258,6 +274,90 @@ func VisitStatefulSet(sts *appsv1.StatefulSet) (sets.String, sets.String, sets.S
+ 	return cfgSets, secretSets, pvcSets
+ }
+ 
++func onDaemonSetAddAndUpdate(obj interface{}) {
++	daemonSet := obj.(*appsv1.DaemonSet)
++	serviceName := daemonSet.GetLabels()[setting.ServiceLabel]
++	product, continueFlag := GetProductAndFilterNs(daemonSet.Namespace, daemonSet.Name, serviceName)
++	if !continueFlag {
++		return
 +	}
-+	manifest, err := clone.TemplateChart(&hc.ChartSpec{
-+		ReleaseName: "version-check",
-+		ChartName:   filepath.Join(chartDir, "version-check"),
-+	}, &hc.HelmTemplateOptions{KubeVersion: clone.KubeVersion})
-+	if err != nil {
-+		t.Fatal(err)
++
++	configMaps, secrets, pvcs := VisitDaemonSet(daemonSet)
++	envSvcDepend := &models.EnvSvcDepend{
++		ProductName:   product.ProductName,
++		EnvName:       product.EnvName,
++		Namespace:     daemonSet.Namespace,
++		ServiceName:   serviceName,
++		ServiceModule: daemonSet.Name,
++		WorkloadType:  setting.DaemonSet,
++		ConfigMaps:    configMaps.List(),
++		Pvcs:          pvcs.List(),
++		Secrets:       secrets.List(),
 +	}
-+	if !strings.Contains(string(manifest), `kubeVersion: "v1.30.0"`) {
-+		t.Fatalf("rendered manifest does not use the cluster version:\n%s", manifest)
++	if err := commonrepo.NewEnvSvcDependColl().CreateOrUpdate(envSvcDepend); err != nil {
++		log.Error("onDaemonSetAddAndUpdate EnvSvcDepend CreateOrUpdate error:", err)
 +	}
 +}
++
++func onDaemonSetDelete(obj interface{}) {
++	daemonSet, ok := obj.(*appsv1.DaemonSet)
++	if !ok {
++		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
++		if !ok {
++			return
++		}
++		daemonSet, ok = tombstone.Obj.(*appsv1.DaemonSet)
++		if !ok {
++			return
++		}
++	}
++	serviceName := daemonSet.GetLabels()[setting.ServiceLabel]
++	product, continueFlag := GetProductAndFilterNs(daemonSet.Namespace, daemonSet.Name, serviceName)
++	if !continueFlag {
++		return
++	}
++	opts := &commonrepo.DeleteEnvSvcDependOption{
++		ProductName:   product.ProductName,
++		EnvName:       product.EnvName,
++		ServiceName:   serviceName,
++		ServiceModule: daemonSet.Name,
++	}
++	if err := commonrepo.NewEnvSvcDependColl().Delete(opts); err != nil {
++		log.Error("onDaemonSetDelete EnvSvcDepend Delete error:", err)
++	}
++}
++
++func VisitDaemonSet(daemonSet *appsv1.DaemonSet) (sets.String, sets.String, sets.String) {
++	cfgSets := sets.NewString()
++	secretSets := sets.NewString()
++	pvcSets := sets.NewString()
++	for _, initCon := range daemonSet.Spec.Template.Spec.InitContainers {
++		cfg, sec := visitContainerConfigmapAndSecretNames(initCon)
++		cfgSets = cfgSets.Union(cfg)
++		secretSets = secretSets.Union(sec)
++	}
++	for _, con := range daemonSet.Spec.Template.Spec.Containers {
++		cfg, sec := visitContainerConfigmapAndSecretNames(con)
++		cfgSets = cfgSets.Union(cfg)
++		secretSets = secretSets.Union(sec)
++	}
++	for _, ephemeralCon := range daemonSet.Spec.Template.Spec.EphemeralContainers {
++		cfg, sec := visitContainerConfigmapAndSecretNames(corev1.Container(ephemeralCon.DeepCopy().EphemeralContainerCommon))
++		cfgSets = cfgSets.Union(cfg)
++		secretSets = secretSets.Union(sec)
++	}
++	for _, volume := range daemonSet.Spec.Template.Spec.Volumes {
++		cfg, sec, pvc := visitVolumeConfigmapAndSecretAndPvcNames(volume)
++		cfgSets = cfgSets.Union(cfg)
++		secretSets = secretSets.Union(sec)
++		pvcSets = pvcSets.Union(pvc)
++	}
++	for _, sec := range daemonSet.Spec.Template.Spec.ImagePullSecrets {
++		secretSets.Insert(sec.Name)
++	}
++	return cfgSets, secretSets, pvcSets
++}
++
+ func GetProductAndFilterNs(namespace, workloadName, svcName string) (*models.Product, bool) {
+ 	products, err := commonrepo.NewProductColl().List(&commonrepo.ProductListOptions{Namespace: namespace})
+ 	if err != nil {
 ```
 
-**File**: `pkg/tool/helmclient/helmclient.go` (modified, +5/-2)
+**File**: `pkg/microservice/aslan/core/environment/service/environment.go` (modified, +14/-1)
 ```diff
-@@ -101,8 +101,10 @@ type HelmClient struct {
- 	Transport      *http.Transport
- }
+@@ -4633,9 +4633,12 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
  
--// NewClient returns a new Helm client with no construct parameters
--// used to update helm repo data and download index.yaml or helm charts
-+// NewClient returns a Helm client for repository operations and chart downloads.
-+// It is not bound to a target cluster and leaves KubeVersion unset, so template
-+// rendering uses Helm's default Kubernetes version. Use NewClientFromNamespace
-+// when rendering charts for a target cluster to honor its Kubernetes version.
- func NewClient() (*HelmClient, error) {
- 	hcClient, err := hc.New(&hc.Options{
- 		RepositoryConfig: generalSettings.RepositoryConfig,
-@@ -1079,6 +1081,7 @@ func (hClient *HelmClient) Clone() (*HelmClient, error) {
- 		return nil, err
- 	}
- 	ret.kubeClient = hClient.kubeClient
-+	ret.KubeVersion = hClient.KubeVersion
- 	return ret, nil
- }
+ 	scaleMap := make(map[string]*commonservice.Workload)
+ 	cronjobMap := make(map[string]*commonservice.Workload)
++	daemonSetMap := make(map[string]*commonservice.Workload)
+ 	for _, workLoad := range workLoads {
+ 		if workLoad.Type == setting.CronJob {
+ 			cronjobMap[workLoad.Name] = workLoad
++		} else if workLoad.Type == setting.DaemonSet {
++			daemonSetMap[workLoad.Name] = workLoad
+ 		} else {
+ 			scaleMap[workLoad.Name] = workLoad
+ 		}
+@@ -4672,6 +4675,11 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
+ 				}
  
+ 				switch u.GetKind() {
++				case setting.DaemonSet:
++					if workLoad, ok := daemonSetMap[u.GetName()]; ok {
++						workLoad.ServiceName = svc.ServiceName
++						workLoad.DeployedFromZadig = true
++					}
+ 				case setting.Deployment, setting.StatefulSet:
+ 					if workLoad, ok := scaleMap[u.GetName()]; ok {
+ 						workLoad.ServiceName = svc.ServiceName
+@@ -4702,7 +4710,7 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
+ 				}
+ 				for _, workload := range workLoads {
+ 					if workload.ReleaseName == releaseName {
+-						if workload.Type != setting.CronJob {
++						if workload.Type != setting.CronJob && workload.Type != setting.DaemonSet {
+ 							newScaleNumMap[workload.Name] = int(workload.Replicas)
+ 						}
+ 					}
+@@ -4755,6 +4763,11 @@ func EnvSleep(productName, envName string, isEnable, isProduction bool, userName
+ 		}
+ 
+ 		switch workload.Type {
++		case setting.DaemonSet:
++			log.Infof("set daemonset %s/%s sleep=%t", prod.Namespace, workload.Name, isEnable)
++			if err := updater.SetDaemonSetSleep(context.TODO(), clientset, prod.Namespace, workload.Name, isEnable); err != nil {
++				log.Errorf("failed to set daemonset %s/%s sleep=%t: %v", prod.Namespace, workload.Name, isEnable, err)
++			}
+ 		case setting.Deployment:
+ 			log.Infof("scale workload %s(%s) to %d", workload.Name, workload.Type, scaleNum)
+ 			err := updater.ScaleDeploymentV2(context.TODO(), prod.ClusterID, prod.Namespace, workload.Name, scaleNum)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
+- **PR #5045** (2026-10-26): perf: batch test report queries in workflow task history (@PetrusZ)
+- **PR #5044** (2026-10-26): cherry pick #5041 to release 5.0.0 (@PetrusZ)
 - **PR #5041** (2026-10-23): fix: use target Kubernetes version when rendering Helm charts (@PetrusZ)
 - **PR #5036** (2026-10-23): feat(codehost): support bot identities for AI review comments (@huanghongbo-hhb)
-- **PR #5033** (2026-10-20): feat: ai apollo create summary (@Cynthia-0203)
-- **PR #5032** (2026-10-19): feat(workflow): support variable-group freestyle tasks (@Cynthia-0203)
-- **PR #5030** (2026-10-16): fix: sync Helm chart values and preserve source metadata (@Cynthia-0203)
-- **PR #5029** (2026-10-19): fix(zgctl): launch local script without shell command interpolation (@PetrusZ)
+- **PR #5035** (2026-10-26): fix: daemonset support gaps (@Cynthia-0203)
 
 ---
 
@@ -1683,36 +1495,30 @@ Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codehost): handle bot identity changes in review summaries
+## X. Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/service/environment.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebae75b4`: codehost): handle bot identity changes in review summaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e99b968`: Merge pull request #5035 from Cynthia-0203/fix/daemonset-support-gaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/environment.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID, authorID int64, currentBody string) error {
-			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || comment.GetUser().GetID() != authorID || !isAIReviewSummary(comment.GetBody()) {
-			// A checkpoint confirms every older summary by this author was successfully archived.
-func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64, authorID int) error {
-			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.Author.ID != authorID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
+// resType currently only supports Deployment, DaemonSet, StatefulSet, Job and CronJob.
+	case setting.DaemonSet:
+		res.SetGroupVersionKind(getter.DaemonSetGVK)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID int64, currentBody string) error {
-			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || !isAIReviewSummary(comment.GetBody()) {
-			// A checkpoint confirms every older summary was successfully archived.
-func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64) error {
-			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
+// resType currently only support Deployment, StatefulSet, Job and CronJob.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebae75b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e99b968` are properly handled with clean fallback behavior.
